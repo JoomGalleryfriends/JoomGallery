@@ -296,7 +296,7 @@ class TableJoomgalleryCategories extends JTableNested
           ->set('published = '.(int) $this->published)
           ->where('cid IN ('.implode(',', $cats).')');
     $this->_db->setQuery($query);
-    if(!$this->_db->query())
+    if(!$this->_db->execute())
     {
       $this->setError($this->_db->getErrorMsg());
 
@@ -324,7 +324,7 @@ class TableJoomgalleryCategories extends JTableNested
             ->set('in_hidden = '.(int) ($this->hidden || $this->in_hidden))
             ->where('cid IN ('.implode(',', $cats).')');
       $this->_db->setQuery($query);
-      if(!$this->_db->query())
+      if(!$this->_db->execute())
       {
         $this->setError($this->_db->getErrorMsg());
 
@@ -477,7 +477,7 @@ class TableJoomgalleryCategories extends JTableNested
     $this->_db->setQuery($query);
 
     // If there is an update failure, return false to break out of the recursion.
-    if(!$this->_db->query())
+    if(!$this->_db->execute())
     {
       $e = new JException(JText::sprintf('JLIB_DATABASE_ERROR_REBUILD_FAILED', get_class($this), $this->_db->getErrorMsg()));
       $this->setError($e);

@@ -42,7 +42,7 @@ class JoomGalleryControllerVotes extends JoomGalleryController
           ->set('imgvotesum = 0');
     $this->_db->setQuery($query);
 
-    if(!$this->_db->query())
+    if(!$this->_db->execute())
     {
       $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=votes'), $this->_db->getErrorMsg(), 'error');
 
@@ -71,7 +71,7 @@ class JoomGalleryControllerVotes extends JoomGalleryController
           ->where('(u.id IS NULL OR i.id IS NULL)');
     $this->_db->setQuery($query);
 
-    if(!$this->_db->query())
+    if(!$this->_db->execute())
     {
       $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=votes'), $this->_db->getErrorMsg(), 'error');
       return;
@@ -93,7 +93,7 @@ class JoomGalleryControllerVotes extends JoomGalleryController
           ->set('p.imgvotesum  = ('.$sum_subquery.')');
     $this->_db->setQuery($query);
 
-    if(!$this->_db->query())
+    if(!$this->_db->execute())
     {
       $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=votes'), $this->_db->getErrorMsg(), 'error');
 

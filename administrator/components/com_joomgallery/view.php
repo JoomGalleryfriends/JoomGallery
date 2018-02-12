@@ -11,8 +11,6 @@
 
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
-jimport( 'joomla.application.component.view');
-
 /**
  * Parent HTML View Class for JoomGallery
  *
@@ -27,7 +25,7 @@ class JoomGalleryView extends JViewLegacy
    * @access  protected
    * @var     object
    */
-  var $_mainframe;
+  protected $_mainframe;
 
   /**
    * JoomConfig object
@@ -35,7 +33,7 @@ class JoomGalleryView extends JViewLegacy
    * @access  protected
    * @var     object
    */
-  var $_config;
+  protected $_config;
 
   /**
    * JoomAmbit object
@@ -43,7 +41,7 @@ class JoomGalleryView extends JViewLegacy
    * @access  protected
    * @var     object
    */
-  var $_ambit;
+  protected $_ambit;
 
   /**
    * JUser object, holds the current user data
@@ -51,7 +49,7 @@ class JoomGalleryView extends JViewLegacy
    * @access  protected
    * @var     object
    */
-  var $_user;
+  protected $_user;
 
   /**
    * JDocument object
@@ -59,7 +57,7 @@ class JoomGalleryView extends JViewLegacy
    * @access  protected
    * @var     object
    */
-  var $_doc;
+  protected $_doc;
 
   /**
    * Constructor
@@ -74,8 +72,7 @@ class JoomGalleryView extends JViewLegacy
 
     $this->_ambit     = JoomAmbit::getInstance();
     $this->_config    = JoomConfig::getInstance();
-
-    $this->_mainframe = JFactory::getApplication('administrator');
+    $this->_mainframe = JFactory::getApplication();
     $this->_user      = JFactory::getUser();
     $this->_doc       = JFactory::getDocument();
 
@@ -91,8 +88,8 @@ class JoomGalleryView extends JViewLegacy
     // Check for available updates
     if(!$checked = $this->_mainframe->getUserState('joom.update.checked'))
     {
-      $controller = JRequest::getCmd('controller');
-      if($this->_config->get('jg_checkupdate') && $controller && $controller != 'control')
+      $controller = $this->_mainframe->input->getCmd('controller');
+      if($this->_config->jg_checkupdate && $controller && $controller != 'control')
       {
         $dated_extensions = JoomExtensions::checkUpdate();
         if(count($dated_extensions))
@@ -110,7 +107,7 @@ class JoomGalleryView extends JViewLegacy
     {
       if($checked == -1)
       {
-        $controller = JRequest::getCmd('controller');
+        $controller = $this->_mainframe->input->getCmd('controller');
         if($controller && $controller != 'control')
         {
           $this->_mainframe->enqueueMessage(JText::_('COM_JOOMGALLERY_ADMENU_SYSTEM_NOT_UPTODATE'), 'warning');

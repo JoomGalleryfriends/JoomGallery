@@ -30,7 +30,7 @@ class JoomGalleryControllerJupload extends JoomGalleryController
     parent::__construct();
 
     // Set view
-    JRequest::setVar('view', 'jupload');
+    $this->input->set('view', 'jupload');
   }
 
   /**
@@ -64,6 +64,6 @@ class JoomGalleryControllerJupload extends JoomGalleryController
   {
     require_once JPATH_COMPONENT.'/helpers/upload.php';
     $uploader = new JoomUpload();
-    $uploader->upload(JRequest::getCmd('type', 'java'));
+    $uploader->upload($this->input->getCmd('type', 'java'));
   }
 }

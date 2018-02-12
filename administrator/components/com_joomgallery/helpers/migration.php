@@ -11,6 +11,8 @@
 
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Helper class for migration procedures
  *
@@ -150,17 +152,17 @@ abstract class JoomMigration
 
     // Connect to second database if necessary
     $db = $this->getStateFromRequest('db2', 'db', array(), 'array');
-    if(JArrayHelper::getValue($db, 'enabled', false, 'boolean'))
+    if(ArrayHelper::getValue($db, 'enabled', false, 'boolean'))
     {
-      $driver   = JArrayHelper::getValue($db, 'db_type', 'mysqli', 'string');
-      $host     = JArrayHelper::getValue($db, 'db_host', 'localhost', 'string');
-      $name     = JArrayHelper::getValue($db, 'db_name', '', 'string');
-      $user     = JArrayHelper::getValue($db, 'db_user', '', 'string');
-      $password = JArrayHelper::getValue($db, 'db_pass', '', 'string');
+      $driver   = ArrayHelper::getValue($db, 'db_type', 'mysqli', 'string');
+      $host     = ArrayHelper::getValue($db, 'db_host', 'localhost', 'string');
+      $name     = ArrayHelper::getValue($db, 'db_name', '', 'string');
+      $user     = ArrayHelper::getValue($db, 'db_user', '', 'string');
+      $password = ArrayHelper::getValue($db, 'db_pass', '', 'string');
       $prefix   = $this->getStateFromRequest('prefix', 'prefix', '', 'cmd');
       if(!$prefix)
       {
-        $prefix   = JArrayHelper::getValue($db, 'prefix', '', 'cmd');
+        $prefix   = ArrayHelper::getValue($db, 'prefix', '', 'cmd');
         $this->setState('prefix', $prefix);
       }
 
@@ -478,11 +480,11 @@ abstract class JoomMigration
       $data->db = array();
       $db = (array) $this->getState('db2', array());
       $data->db['enabled'] = $data->database;
-      $data->db['db_type'] = JArrayHelper::getValue($db, 'db_type', 'mysqli', 'string');
-      $data->db['db_host'] = JArrayHelper::getValue($db, 'db_host', 'localhost', 'string');
-      $data->db['db_user'] = JArrayHelper::getValue($db, 'db_user', '', 'string');
-      $data->db['db_pass'] = JArrayHelper::getValue($db, 'db_pass', '', 'string');
-      $data->db['db_name'] = JArrayHelper::getValue($db, 'db_name', '', 'string');
+      $data->db['db_type'] = ArrayHelper::getValue($db, 'db_type', 'mysqli', 'string');
+      $data->db['db_host'] = ArrayHelper::getValue($db, 'db_host', 'localhost', 'string');
+      $data->db['db_user'] = ArrayHelper::getValue($db, 'db_user', '', 'string');
+      $data->db['db_pass'] = ArrayHelper::getValue($db, 'db_pass', '', 'string');
+      $data->db['db_name'] = ArrayHelper::getValue($db, 'db_name', '', 'string');
       $data->db['prefix'] = $this->getState('prefix');
       $form->bind($data);
 

@@ -30,7 +30,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
     parent::__construct();
 
     // Set view
-    JRequest::setVar('view', JRequest::getCmd('view', 'images'));
+    $this->input->set('view', $this->input->getCmd('view', 'images'));
 
     // Register tasks
     $this->registerTask('new',              'edit');
@@ -56,8 +56,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
   public function publish()
   {
     // Initialize variables
-    $cid      = JRequest::getVar('cid', array(), 'post', 'array');
-    $task     = JRequest::getCmd('task');
+    $cid      = $this->input->post->get('cid', array(), 'array');
+    $task     = $this->input->getCmd('task');
     $publish  = (int)($task == 'publish');
 
     if(empty($cid))
@@ -79,7 +79,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
 
     if($unchanged_images)
     {
-      JError::raiseNotice(403, JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_EDITSTATE_NOT_PERMITTED', $unchanged_images));
+      JFactory::getApplication()->enqueueMessage(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_EDITSTATE_NOT_PERMITTED', $unchanged_images), 'notice');
     }
 
     $model = $this->getModel('images');
@@ -111,8 +111,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
   public function feature()
   {
     // Initialize variables
-    $cid      = JRequest::getVar('cid', array(), 'post', 'array');
-    $task     = JRequest::getCmd('task');
+    $cid      = $this->input->post->get('cid', array(), 'array');
+    $task     = $this->input->getCmd('task');
     $feature  = (int)($task == 'feature');
 
     if(empty($cid))
@@ -134,7 +134,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
 
     if($unchanged_images)
     {
-      JError::raiseNotice(403, JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_EDITSTATE_NOT_PERMITTED', $unchanged_images));
+      JFactory::getApplication()->enqueueMessage(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_EDITSTATE_NOT_PERMITTED', $unchanged_images), 'notice');
     }
 
     $model = $this->getModel('images');
@@ -166,8 +166,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
   public function approve()
   {
     // Initialize variables
-    $cid      = JRequest::getVar('cid', array(), 'post', 'array');
-    $task     = JRequest::getCmd('task');
+    $cid      = $this->input->post->get('cid', array(), 'array');
+    $task     = $this->input->getCmd('task');
     $publish  = -1;
     if($task == 'approve')
     {
@@ -193,7 +193,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
 
     if($unchanged_images)
     {
-      $this->_mainframe->enqueueMessage(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_EDITSTATE_NOT_PERMITTED', $unchanged_images), 'notice');
+      JFactory::getApplication()->enqueueMessage(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_EDITSTATE_NOT_PERMITTED', $unchanged_images), 'notice');
     }
 
     $model = $this->getModel('images');
@@ -208,7 +208,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
         $msg = JText::_($publish == 1 ? 'COM_JOOMGALLERY_IMGMAN_MSG_IMAGE_APPROVED' : 'COM_JOOMGALLERY_IMGMAN_MSG_IMAGE_REJECTED');
 
         // Send message about rejection if a message was specified
-        if($task == 'reject' && $message = JRequest::getString('message'))
+        if($task == 'reject' && $message = $this->input->getString('message'))
         {
           $model->sendRejectionMessage($cid[0], $message);
         }
@@ -233,7 +233,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
   {
     $model = $this->getModel('images');
 
-    $cid  = JRequest::getVar('cid', array(), 'post', 'array');
+    $cid  = $this->input->post->get('cid', array(), 'array');
     $unaffected_images = 0;
     foreach($cid as $key => $id)
     {
@@ -245,7 +245,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
       }
     }
 
-    JRequest::setVar('cid', $cid);
+    // TODO Remove this line completely, do we really need this here?
+    // $this->input->set('cid', $cid);
 
     if($unaffected_images)
     {
@@ -289,7 +290,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
    */
   public function edit()
   {
-    $cid = JRequest::getVar('cid', array(), '', 'array');
+    $cid = $this->input->get('cid', array(), 'array');
+
     if(count($cid) <= 1)
     {
       if(count($cid))
@@ -297,26 +299,26 @@ class JoomGalleryControllerImages extends JoomGalleryController
         $exploded = explode(',', $cid[0]);
         if(count($exploded) > 1)
         {
-          JRequest::setVar('cid',   $exploded);
-          JRequest::setVar('view',  'editimages');
+          $this->input->set('cid',   $exploded);
+          $this->input->set('view',  'editimages');
         }
         else
         {
-          JRequest::setVar('view',  'image');
+          $this->input->set('view',  'image');
         }
       }
       else
       {
-        JRequest::setVar('view',  'image');
+        $this->input->set('view',  'image');
       }
     }
     else
     {
-      JRequest::setVar('view',  'editimages');
+      $this->input->set('view',  'editimages');
     }
 
-    JRequest::setVar('layout',  'form');
-    JRequest::setVar('hidemainmenu', 1);
+    $this->input->set('layout',  'form');
+    $this->input->set('hidemainmenu', 1);
 
     parent::display();
   }
@@ -331,7 +333,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
   {
     $model = $this->getModel('image');
 
-    $data = JRequest::get('post', 2);
+    $data         = $this->input->post->get('jform', array(), 'array');
+    $data['cids'] = $this->input->post->getString('cids', NULL);
 
     // Editing more than one image?
     if(isset($data['cids']))
@@ -394,7 +397,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
         }
 
         // Check whether images shall be moved or copied
-        if(isset($cloned_data['catid']) && JRequest::getCmd('movecopy') == 'copy')
+        if(isset($cloned_data['catid']) && $this->input->getCmd('movecopy') == 'copy')
         {
           $orig_img = (array) $this->_ambit->getImgObject($cid);
 
@@ -431,7 +434,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
         }
         else
         {
-          JError::raiseWarning(100, $model->getError());
+          JFactory::getApplication()->enqueueMessage($model->getError(), 'error');
         }
       }
 
@@ -445,25 +448,26 @@ class JoomGalleryControllerImages extends JoomGalleryController
       }
 
       return;
-    }
+    } // Editing more than one image?
 
-    if(JRequest::getCmd('task') == 'save2copy')
+    if($this->input->getCmd('task') == 'save2copy')
     {
       // Reset the ID and then treat the request as for apply.
       // This way a new image will be created and after that
       // it will be displayed right away
-      JRequest::setVar('cid', 0);
-      JRequest::setVar('task', 'apply');
+      $data['cid'] = 0;
+      $this->input->post->set('jform', $data);
+      $this->input->set('task', 'apply');
     }
 
     // Editing only one image
     if($cid = $model->store())
     {
-      if(JRequest::getCmd('task') == 'save2new')
+      if($this->input->getCmd('task') == 'save2new')
       {
         // Reset the ID after storing so that we
         // will be redirected to an empty form
-        JRequest::setVar('task', 'apply');
+        $this->input->set('task', 'apply');
         $cid = 0;
       }
 
@@ -485,11 +489,11 @@ class JoomGalleryControllerImages extends JoomGalleryController
    */
   public function order()
   {
-    $cid = JRequest::getVar('cid', array(), 'post', 'array');
+    $cid = $this->input->post->get('cid', array(), 'array');
 
     // Direction
     $dir  = 1;
-    $task = JRequest::getCmd('task');
+    $task = $this->input->getCmd('task');
     if($task == 'orderup')
     {
       $dir = -1;
@@ -522,8 +526,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
    */
   public function saveOrder()
   {
-    $cid    = JRequest::getVar('cid', array(), 'post', 'array');
-    $order  = JRequest::getVar('order', array (0), 'post', 'array');
+    $cid    = $this->input->post->get('cid', array(), 'array');
+    $order  = $this->input->post->get('order', array(0), 'array');
     $user   = JFactory::getUser();
 
     // Create and load the images table object
@@ -545,7 +549,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
         $row->ordering = $order[$i];
         if(!$row->store())
         {
-          JError::raiseError(500, $this->_db->getErrorMsg());
+          throw new Exception($this->_db->getErrorMsg());
+
           return false;
         }
       }
@@ -553,7 +558,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
 
     if($unchanged_images)
     {
-      JError::raiseNotice(403, JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_EDITSTATE_NOT_PERMITTED', $unchanged_images));
+      JFactory::getApplication()->enqueueMessage(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_EDITSTATE_NOT_PERMITTED', $unchanged_images), 'notice');
     }
 
     $row->reorderAll();
@@ -570,8 +575,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
    */
   public function showmove()
   {
-    JRequest::setVar('view',    'move');
-    JRequest::setVar('hidemainmenu', 1);
+    $this->input->set('view',    'move');
+    $this->input->set('hidemainmenu', 1);
 
     parent::display();
   }
@@ -584,8 +589,8 @@ class JoomGalleryControllerImages extends JoomGalleryController
    */
   public function move()
   {
-    $cid    = JRequest::getVar('cid', array(), 'post', 'array');
-    $catid  = JRequest::getInt('catid');
+    $cid    = $this->input->post->get('cid', array(), 'array');
+    $catid  = $this->input->getInt('catid');
 
     if(!count($cid))
     {
@@ -754,7 +759,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
    */
   public function resetHits()
   {
-    $id = JRequest::getInt('cid');
+    $id = $this->input->getInt('cid');
 
     if(!JFactory::getUser()->authorise('core.edit', _JOOM_OPTION.'.image.'.$id))
     {
@@ -770,7 +775,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
     $row->hits = 0;
     $row->store();
 
-    JRequest::setVar('task', 'apply');
+    $this->input->set('task', 'apply');
     $msg = JText::_('COM_JOOMGALLERY_IMGMAN_MSG_HITS_RESETED');
     $this->setRedirect($this->_ambit->getRedirectUrl(null, $id), $msg);
   }
@@ -783,7 +788,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
    */
   public function resetDownloads()
   {
-    $id = JRequest::getInt('cid');
+    $id = $this->input->getInt('cid');
 
     if(!JFactory::getUser()->authorise('core.edit', _JOOM_OPTION.'.image.'.$id))
     {
@@ -799,7 +804,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
     $row->downloads = 0;
     $row->store();
 
-    JRequest::setVar('task', 'apply');
+    $this->input->set('task', 'apply');
     $msg = JText::_('COM_JOOMGALLERY_IMGMAN_MSG_DOWNLOADS_RESETED');
     $this->setRedirect($this->_ambit->getRedirectUrl(null, $id), $msg);
   }
@@ -812,7 +817,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
    */
   public function resetVotes()
   {
-    $id = JRequest::getInt('cid');
+    $id = $this->input->getInt('cid');
 
     if(!JFactory::getUser()->authorise('core.edit', _JOOM_OPTION.'.image.'.$id))
     {
@@ -833,7 +838,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
           ->delete(_JOOM_TABLE_VOTES)
           ->where('picid = '.$row->id);
     $this->_db->setQuery($query);
-    if(!$this->_db->query())
+    if(!$this->_db->execute())
     {
       JFactory::getApplication()->enqueueMessagge($this->_db->getErrorMsg(), 'error');
 
@@ -841,7 +846,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
     }
     $row->store();
 
-    JRequest::setVar('task', 'apply');
+    $this->input->set('task', 'apply');
     $msg = JText::_('COM_JOOMGALLERY_IMGMAN_MSG_VOTES_RESETED');
     $this->setRedirect($this->_ambit->getRedirectUrl(null, $id), $msg);
   }

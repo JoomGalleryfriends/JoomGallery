@@ -45,7 +45,7 @@ class JoomGalleryControllerUpload extends JControllerLegacy
       $msg  = JText::_('COM_JOOMGALLERY_UPLOAD_MSG_SUCCESSFULL');
 
       // Set redirect if we are asked for that
-      if($redirect = JRequest::getVar('redirect', '', '', 'base64'))
+      if($redirect = $this->input->getBase64('redirect', ''))
       {
         $url  = base64_decode($redirect);
         if(JURI::isInternal($url))

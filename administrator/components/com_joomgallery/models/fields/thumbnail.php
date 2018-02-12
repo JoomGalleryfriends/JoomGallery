@@ -49,7 +49,7 @@ class JFormFieldThumbnail extends JFormField
     if($app->isAdmin())
     {
       // Get category id from request
-      $cids   = JRequest::getVar('cid', array(), '', 'array');
+      $cids = $app->input->get('cid', array(), 'array');
 
       if(isset($cids[0]))
       {
@@ -62,7 +62,7 @@ class JFormFieldThumbnail extends JFormField
     else
     {
       // Get category id from request
-      $catid = JRequest::getInt('catid', 0);
+      $catid = $app->input->getInt('catid', 0);
 
       // Prepare the path for the thumbnail preview
       $path = JRoute::_('index.php?option=' . _JOOM_OPTION . '&view=image&format=raw&type=thumb', false) . '&id=';

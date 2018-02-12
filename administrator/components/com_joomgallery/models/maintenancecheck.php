@@ -42,7 +42,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
     $this->_db->truncateTable(_JOOM_TABLE_MAINTENANCE);
     $this->_db->truncateTable(_JOOM_TABLE_ORPHANS);
 
-    $this->_mainframe->setUserState('joom.maintenance.checkoriginals', JRequest::getBool('check_originals'));
+    $this->_mainframe->setUserState('joom.maintenance.checkoriginals', $this->_mainframe->input->getBool('check_originals'));
 
     // Prepare next step: Calculate an approximate value for the number of folders to parse
     $query = $this->_db->getQuery(true)
@@ -181,10 +181,10 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
           $query->set("type = 'folder'");
           $query->set("fullpath = '".JPath::clean($new_folder, '/')."'");
           $this->_db->setQuery($query);
-          $this->_db->query();
+          $this->_db->execute();
         }
         //$this->_db->setQuery($query);
-        //$this->_db->query();
+        //$this->_db->execute();
       }
 
       // Collect all images of the current folder
@@ -208,7 +208,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
           $query->values("'".$type."', '".JPath::clean($file, '/')."'");
         }
         $this->_db->setQuery($query);
-        $this->_db->query();
+        $this->_db->execute();
       }
 
       if(!$refresher->check())
@@ -310,7 +310,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
                   ->where("fullpath = '".JPath::clean($file, '/')."'")
                   ->where("(type = 'thumb' OR type = 'img' OR type = 'orig')");
             $this->_db->setQuery($delete_query);
-            $this->_db->query();
+            $this->_db->execute();
           }
           else
           {
@@ -439,7 +439,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
                   ->where("fullpath = '".JPath::clean($folder, '/')."'")
                   ->where("type = 'folder'");
             $this->_db->setQuery($delete_query);
-            $this->_db->query();
+            $this->_db->execute();
           }
           else
           {
@@ -550,7 +550,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
               ->set("title = '".$suggestion->imgtitle."'")
               ->where('id = '.$file->id);
         $this->_db->setQuery($query);
-        $this->_db->query();
+        $this->_db->execute();
 
         if($suggestion->orphan_id)
         {
@@ -559,7 +559,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
                 ->set($file->type.'orphan = '.$file->id)
                 ->where('id = '.$suggestion->orphan_id);
           $this->_db->setQuery($query);
-          $this->_db->query();
+          $this->_db->execute();
         }
       }
 
@@ -679,7 +679,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
                 ->set("title = '".$suggestion->name."'")
                 ->where('id = '.$folder->id);
           $this->_db->setQuery($query);
-          $this->_db->query();
+          $this->_db->execute();
 
           if($suggestion->orphan_id)
           {
@@ -688,7 +688,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
                   ->set($type.'orphan = '.$folder->id)
                   ->where('id = '.$suggestion->orphan_id);
             $this->_db->setQuery($query);
-            $this->_db->query();
+            $this->_db->execute();
           }
         }
       }

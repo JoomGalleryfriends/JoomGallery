@@ -39,9 +39,9 @@ class Com_JoomGalleryInstallerScript
    */
   public function preflight($type = 'install')
   {
-    if(version_compare(JVERSION, '4.0', 'ge') || version_compare(JVERSION, '3.0', 'lt'))
+    if(version_compare(JVERSION, '5.0', 'ge') || version_compare(JVERSION, '3.0', 'lt'))
     {
-      JError::raiseWarning(500, 'JoomGallery 3.x is only compatible to Joomla! 3.x');
+      JFactory::getApplication()->enqueueMessage('JoomGallery 4.x is only compatible to Joomla! 4.x', 'error');
 
       return false;
     }
@@ -91,6 +91,7 @@ class Com_JoomGalleryInstallerScript
 
     $row = JTable::getInstance('module');
     $row->title     = 'JoomGallery News';
+    $row->content   = '';
     $row->ordering  = 1;
     $row->position  = 'joom_cpanel';
     $row->published = 1;
@@ -121,7 +122,7 @@ class Com_JoomGalleryInstallerScript
     $query->set('moduleid = '.$row->id);
     $query->set('menuid = 0');
     $db->setQuery($query);
-    if(!$db->query())
+    if(!$db->execute())
     {
       $app->enqueueMessage(JText::_('Unable to assign feed module!'), 'error');
     }
@@ -175,7 +176,7 @@ class Com_JoomGalleryInstallerScript
     {
       if(!JFile::delete(JPATH_ROOT.'/media/joomgallery/css/joom_settings.temp.css'))
       {
-        JError::raiseWarning(500, JText::_('Unable to delete temporary joom_settings.temp.css!'));
+        JFactory::getApplication()->enqueueMessage(JText::_('Unable to delete temporary joom_settings.temp.css!'), 'error');
 
         $error = true;
       }
@@ -380,7 +381,7 @@ class Com_JoomGalleryInstallerScript
         <a title="Languages" class="btn btn-primary" onclick="location.href='index.php?option=com_joomgallery&controller=help'; return false;" href="#">Languages</a>
       </p>
     </div>
-    <?php JHtml::_('bootstrap.modal', 'jg-changelog-popup'); ?>
+    <?php JHtmlBootstrap::renderModal('jg-changelog-popup'); ?>
     <div class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="PopupChangelogModalLabel" aria-hidden="true" id="jg-changelog-popup">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

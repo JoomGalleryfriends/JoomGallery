@@ -199,7 +199,7 @@ class JoomGalleryModelConfigs extends JoomGalleryModel
     {
       $options = $this->_db->loadObjectList();
     }
-    catch(DatabaseException $e)
+    catch(JDatabaseExceptionExecuting $e)
     {
       $this->setError($this->_db->getErrorMsg());
 
@@ -239,7 +239,7 @@ class JoomGalleryModelConfigs extends JoomGalleryModel
     {
       $subgroups = $this->_db->loadResult();
     }
-    catch(DatabaseException $e)
+    catch(JDatabaseExceptionExecuting $e)
     {
       $this->setError($e->getMessage());
 
@@ -271,7 +271,7 @@ class JoomGalleryModelConfigs extends JoomGalleryModel
     {
       $subgroups = $this->_db->loadObjectList();
     }
-    catch(DatabaseException $e)
+    catch(JDatabaseExceptionExecuting $e)
     {
       $this->setError($e->getMessage());
 
@@ -472,7 +472,7 @@ class JoomGalleryModelConfigs extends JoomGalleryModel
     {
       $ids = $this->_db->loadColumn();
     }
-    catch(DatabaseException $e)
+    catch(JDatabaseExceptionExecuting $e)
     {
       $this->setError($this->_db->getErrorMsg());
 
@@ -532,7 +532,7 @@ class JoomGalleryModelConfigs extends JoomGalleryModel
    * @param   string  The default value for the variable if not found. Optional.
    * @param   string  Filter for the variable, for valid values see {@link JFilterInput::clean()}. Optional.
    * @param   boolean If true, the limitstart in request is set to zero
-   * @return  The requested user state.
+   * @return  mixed The requested user state.
    * @since   2.0
    */
   public function getUserStateFromRequest($key, $request, $default = null, $type = 'none', $resetPage = true)
@@ -540,10 +540,10 @@ class JoomGalleryModelConfigs extends JoomGalleryModel
     $app = JFactory::getApplication();
     $old_state = $app->getUserState($key);
     $cur_state = (!is_null($old_state)) ? $old_state : $default;
-    $new_state = JRequest::getVar($request, null, 'default', $type);
+    $new_state = $this->_mainframe->input->get($request, null, $type);
 
     if (($cur_state != $new_state) && ($resetPage)){
-      JRequest::setVar('limitstart', 0);
+      $this->_mainframe->input->set('limitstart', 0);
     }
 
     // Save the new value only if it was set in this request.

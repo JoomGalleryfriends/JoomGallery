@@ -34,7 +34,7 @@ class JoomGalleryControllerMigration extends JoomGalleryController
     require_once JPATH_COMPONENT.'/helpers/migration.php';
 
     // Set view
-    JRequest::setVar('view', 'migration');
+    $this->input->set('view', 'migration');
 
     // Register tasks
     $this->registerTask('check',  'migrate');
@@ -52,8 +52,8 @@ class JoomGalleryControllerMigration extends JoomGalleryController
   {
     jimport('joomla.filesystem.file');
 
-    $migration = JRequest::getCmd('migration', '');
-    $task      = JRequest::getCmd('task');
+    $migration = $this->input->getCmd('migration', '');
+    $task      = $this->input->getCmd('task');
 
     if(!JFile::exists(JPATH_COMPONENT.'/helpers/migration/migrate'.$migration.'.php'))
     {

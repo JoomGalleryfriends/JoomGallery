@@ -38,7 +38,7 @@ class JoomGalleryModelNametags extends JoomGalleryModel
   {
     parent::__construct();
 
-    $id = JRequest::getInt('id');
+    $id = $this->_mainframe->input->getInt('id');
     $this->setId((int)$id);
   }
 
@@ -53,7 +53,7 @@ class JoomGalleryModelNametags extends JoomGalleryModel
     // Set new image ID if valid
     if(!$id)
     {
-      JError::raiseError(500, JText::_('COM_JOOMGALLERY_COMMON_NO_IMAGE_SPECIFIED'));
+      throw new RuntimeException(JText::_('COM_JOOMGALLERY_COMMON_NO_IMAGE_SPECIFIED'));
     }
     $this->_id  = $id;
   }
@@ -77,14 +77,14 @@ class JoomGalleryModelNametags extends JoomGalleryModel
    */
   public function save()
   {
-    $yvalue   = JRequest::getInt('yvalue',  0, 'post');
-    $xvalue   = JRequest::getInt('xvalue',  0, 'post');
+    $yvalue   = $this->_mainframe->input->post->getInt('yvalue', 0);
+    $xvalue   = $this->_mainframe->input->post->getInt('xvalue', 0);
     $height   = $this->_config->get('jg_nameshields_height');
 
     // Access check
     if(!$by = $this->_user->get('id'))
     {
-      JError::raiseError(500, JText::_('COM_JOOMGALLERY_COMMON_PERMISSION_DENIED'));
+      throw new JAccessExceptionNotallowed(JText::_('COM_JOOMGALLERY_COMMON_PERMISSION_DENIED'));
     }
 
     // Check for hacking attempt
@@ -114,7 +114,7 @@ class JoomGalleryModelNametags extends JoomGalleryModel
 
     if($this->_config->get('jg_nameshields_others'))
     {
-      $userid = JRequest::getInt('userid');
+      $userid = $this->_mainframe->input->getInt('userid');
     }
     else
     {
@@ -275,7 +275,7 @@ class JoomGalleryModelNametags extends JoomGalleryModel
   {
     if(!$userid = $this->_user->get('id'))
     {
-      JError::raiseError(500, JText::_('COM_JOOMGALLERY_COMMON_PERMISSION_DENIED'));
+      throw new JAccessExceptionNotallowed(JText::_('COM_JOOMGALLERY_COMMON_PERMISSION_DENIED'));
     }
 
     if(!$this->_config->get('jg_nameshields_others'))
@@ -287,7 +287,7 @@ class JoomGalleryModelNametags extends JoomGalleryModel
             ->where('nuserid = '.$userid);
       $this->_db->setQuery($query);
 
-      if(!$this->_db->query())
+      if(!$this->_db->execute())
       {
         $this->setError(JText::_('COM_JOOMGALLERY_DETAIL_NAMETAGS_MSG_ERROR_DELETING'));
         return false;
@@ -295,7 +295,7 @@ class JoomGalleryModelNametags extends JoomGalleryModel
     }
     else
     {
-      $nid = JRequest::getInt('nid');
+      $nid = $this->_mainframe->input->getInt('nid');
 
       $row = $this->getTable('joomgallerynameshields');
       $row->load($nid);

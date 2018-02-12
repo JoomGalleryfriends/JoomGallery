@@ -11,6 +11,8 @@
 
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Images model
  *
@@ -192,7 +194,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
   protected function loadForm($name, $source = null, $options = array(), $clear = false, $xpath = false)
   {
     // Handle the optional arguments.
-    $options['control'] = JArrayHelper::getValue($options, 'control', false);
+    $options['control'] = ArrayHelper::getValue($options, 'control', false);
 
     // Get the form.
     JForm::addFormPath(JPATH_COMPONENT . '/models/forms');
@@ -488,7 +490,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
             ->where('cmtpic = '.$cid);
 
       $this->_db->setQuery($query);
-      if(!$this->_db->query())
+      if(!$this->_db->execute())
       {
         JLog::add(JText::sprintf('COM_JOOMGALLERY_MAIMAN_MSG_NOT_DELETE_COMMENTS', $cid), JLog::WARNING, 'jerror');
       }
@@ -500,7 +502,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
             ->where('npicid = '.$cid);
 
       $this->_db->setQuery($query);
-      if(!$this->_db->query())
+      if(!$this->_db->execute())
       {
         JLog::add(JText::sprintf('COM_JOOMGALLERY_MAIMAN_MSG_NOT_DELETE_NAMETAGS', $cid), JLog::WARNING, 'jerror');
       }
@@ -512,7 +514,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
             ->where('picid = '.$cid);
 
       $this->_db->setQuery($query);
-      if(!$this->_db->query())
+      if(!$this->_db->execute())
       {
         JLog::add(JText::sprintf('COM_JOOMGALLERY_MAIMAN_MSG_NOT_DELETE_VOTES', $cid), JLog::WARNING, 'jerror');
       }
@@ -551,7 +553,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
    */
   public function publish($cid, $publish = 1, $task = 'publish')
   {
-    JArrayHelper::toInteger($cid);
+    ArrayHelper::toInteger($cid);
     $publish = intval($publish);
     $count = count($cid);
 
@@ -661,7 +663,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
     require_once JPATH_COMPONENT.'/helpers/refresher.php';
 
-    $refresher = new JoomRefresher(array('controller' => 'images', 'task' => 'recreate', 'remaining' => count($cids), 'start' => JRequest::getBool('cid')));
+    $refresher = new JoomRefresher(array('controller' => 'images', 'task' => 'recreate', 'remaining' => count($cids), 'start' => $this->_mainframe->input->getBool('cid')));
 
     $debugoutput = '';
 
@@ -716,7 +718,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
         }
         else
         {
-          JError::raiseWarning(100, JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_IMAGE_NOT_EXISTENT', $img));
+          $this->_mainframe->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_IMAGE_NOT_EXISTENT', $img), 'error');
           $this->_mainframe->setUserState('joom.recreate.cids', array());
           $this->_mainframe->setUserState('joom.recreate.imgcount', null);
           $this->_mainframe->setUserState('joom.recreate.thumbcount', null);
@@ -750,7 +752,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
         if(!$return)
         {
-          JError::raiseWarning(100, JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_COULD_NOT_CREATE_THUMB', $thumb));
+          $this->_mainframe->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_COULD_NOT_CREATE_THUMB', $thumb), 'error');
           $this->_mainframe->setUserState('joom.recreate.cids', array());
           $this->_mainframe->setUserState('joom.recreate.thumbcount', null);
           $this->_mainframe->setUserState('joom.recreate.imgcount', null);
@@ -790,7 +792,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
         if(!$return)
         {
-          JError::raiseWarning(100, JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_COULD_NOT_CREATE_IMG', $img));
+          $this->_mainframe->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_COULD_NOT_CREATE_IMG', $img), 'error');
           $this->_mainframe->setUserState('joom.recreate.cids', array());
           $this->_mainframe->setUserState('joom.recreate.thumbcount', null);
           $this->_mainframe->setUserState('joom.recreate.imgcount', null);
@@ -1202,7 +1204,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
     $old_state = $app->getUserState($key);
     $cur_state = (!is_null($old_state)) ? $old_state : $default;
-    $new_state = JRequest::getVar($request, null, 'default', $type);
+    $new_state = $app->input->get($request, null, $type);
 
     // Special case for owner filter since Joomla! 3.5 when using modal user selection
     if(    !is_null($new_state) && isset($new_state['owner'])
@@ -1214,7 +1216,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
     if($cur_state != $new_state && !is_null($new_state) && !is_null($old_state) && $resetPage)
     {
-      JRequest::setVar('limitstart', 0);
+      $app->input->set('limitstart', 0);
     }
 
     // Save the new value only if it was set in this request.

@@ -45,11 +45,11 @@ class JoomGalleryControllerConfig extends JoomGalleryController
     // Set view
     if($this->_config->isExtended())
     {
-      JRequest::setVar('view', 'configs');
+      $this->input->set('view', 'configs');
     }
     else
     {
-      JRequest::setVar('view', 'config');
+      $this->input->set('view', 'config');
     }
   }
 
@@ -61,16 +61,16 @@ class JoomGalleryControllerConfig extends JoomGalleryController
    */
   public function edit()
   {
-    $id  = JRequest::getInt('id');
-    $cid = JRequest::getVar('cid', array(), 'post', 'array');
+    $id  = $this->input->getInt('id');
+    $cid = $this->input->post->get('cid', array(), 'array');
 
     if(!$id && count($cid) && $cid[0])
     {
-      JRequest::setVar('id', (int) $cid[0]);
+      $this->input->set('id', (int) $cid[0]);
     }
 
-    JRequest::setVar('view', 'config');
-    JRequest::setVar('hidemainmenu', 1);
+    $this->input->set('view', 'config');
+    $this->input->set('hidemainmenu', 1);
 
     parent::display();
   }
@@ -90,12 +90,12 @@ class JoomGalleryControllerConfig extends JoomGalleryController
     $group_id = 0;
     if($config->isExtended())
     {
-      $id = JRequest::getInt('id');
-      $existing_row = JRequest::getInt('based_on');
+      $id = $this->input->getInt('id');
+      $existing_row = $this->input->getInt('based_on');
 
       if(!$id)
       {
-        $group_id = JRequest::getInt('group_id');
+        $group_id = $this->input->getInt('group_id');
       }
     }
     else
@@ -103,7 +103,7 @@ class JoomGalleryControllerConfig extends JoomGalleryController
       $id = 1;
     }
 
-    $post = JRequest::get('post');
+    $post = $this->input->post->getArray();
 
     if(!$id = $config->save($post, $id, $existing_row, $group_id))
     {
@@ -112,7 +112,7 @@ class JoomGalleryControllerConfig extends JoomGalleryController
       return;
     }
 
-    $propagate_changes = JRequest::getBool('propagate_changes');
+    $propagate_changes = $this->input->getBool('propagate_changes');
 
     // The changes have to be propagated to the other config rows
     // if the default row was changed or if propagation is requested
@@ -127,7 +127,7 @@ class JoomGalleryControllerConfig extends JoomGalleryController
       $controller = '';
       if(!$config->isExtended())
       {
-        if(JRequest::getCmd('task') == 'apply')
+        if($this->input->getCmd('task') == 'apply')
         {
           $controller = 'config';
         }
@@ -153,7 +153,7 @@ class JoomGalleryControllerConfig extends JoomGalleryController
   public function remove()
   {
     $config = JoomConfig::getInstance('admin');
-    $cid    = JRequest::getVar('cid', array(), 'post', 'array');
+    $cid    = $this->input->post->get('cid', array(), 'array');
 
     if(!count($cid))
     {
@@ -171,7 +171,7 @@ class JoomGalleryControllerConfig extends JoomGalleryController
       }
       else
       {
-        JError::raiseWarning(500, $config->getError());
+        JFactory::getApplication()->enqueueMessage($config->getError(), 'error');
       }
     }
 
@@ -197,11 +197,11 @@ class JoomGalleryControllerConfig extends JoomGalleryController
    */
   public function order()
   {
-    $cid = JRequest::getVar('cid', array(), 'post', 'array');
+    $cid = $this->input->post->get('cid', array(), 'array');
 
     // Direction
     $dir  = 1;
-    $task = JRequest::getCmd('task');
+    $task = $this->input->getCmd('task');
     if($task == 'orderup')
     {
       $dir = -1;
@@ -226,8 +226,8 @@ class JoomGalleryControllerConfig extends JoomGalleryController
    */
   public function saveOrder()
   {
-    $cid    = JRequest::getVar('cid', array(0), 'post', 'array');
-    $order  = JRequest::getVar('order', array(0), 'post', 'array');
+    $cid    = $this->input->post->get('cid', array(0), 'array');
+    $order  = $this->input->post->get('order', array(0), 'array');
 
     // Create and load the categories table object
     $row = JTable::getInstance('joomgalleryconfig', 'Table');
@@ -242,7 +242,7 @@ class JoomGalleryControllerConfig extends JoomGalleryController
         $row->check();
         if(!$row->store())
         {
-          JError::raiseError( 500, $this->_db->getErrorMsg());
+          throw new Exception($this->_db->getErrorMsg());
 
           return false;
         }

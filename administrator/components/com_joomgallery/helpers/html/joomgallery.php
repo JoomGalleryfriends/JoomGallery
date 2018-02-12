@@ -11,6 +11,8 @@
 
 defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Utility class for creating HTML Grids
  *
@@ -375,7 +377,7 @@ abstract class JHtmlJoomGallery
     $config   = JoomConfig::getInstance();
     $ambit    = JoomAmbit::getInstance();
     $user     = JFactory::getUser();
-    $view     = JRequest::getCmd('view');
+    $view     = JFactory::getApplication()->input->getCmd('view');
 
     $html = '';
 
@@ -551,7 +553,7 @@ abstract class JHtmlJoomGallery
       }
       else
       {
-        if(JRequest::getCmd('view') == 'detail')
+        if(JFactory::getApplication()->input->getCmd('view') == 'detail')
         {
           $type = 'orig';
         }
@@ -1431,7 +1433,7 @@ abstract class JHtmlJoomGallery
    */
   public static function approved($states, $value, $i, $prefix = '', $enabled = true, $id = 0, $owner = 0, $translate = true, $checkbox = 'cb')
   {
-    $state = JArrayHelper::getValue($states, (int) $value, $states[0]);
+    $state = ArrayHelper::getValue($states, (int) $value, $states[0]);
     $task = array_key_exists('task', $state) ? $state['task'] : $state[0];
     $text = array_key_exists('text', $state) ? $state['text'] : (array_key_exists(1, $state) ? $state[1] : '');
     $active_title = array_key_exists('active_title', $state) ? $state['active_title'] : (array_key_exists(2, $state) ? $state[2] : '');

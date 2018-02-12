@@ -31,6 +31,6 @@ class JoomGalleryControllerChangelog extends JoomGalleryController
     parent::__construct();
 
     // Set view
-    JRequest::setVar('view', 'changelog');
+    $this->input->set('view', 'changelog');
   }
 }

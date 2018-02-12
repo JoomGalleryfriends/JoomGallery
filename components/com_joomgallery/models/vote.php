@@ -36,7 +36,7 @@ class JoomGalleryModelVote extends JoomGalleryModel
   {
     parent::__construct();
 
-    $id = JRequest::getInt('id');
+    $id = $this->_mainframe->input->getInt('id');
     $this->setId($id);
   }
 
@@ -112,7 +112,7 @@ class JoomGalleryModelVote extends JoomGalleryModel
       return false;
     }
 
-    $vote = JRequest::getInt('imgvote');
+    $vote = $this->_mainframe->input->getInt('imgvote');
 
     // Check if vote was manipulated with modifying the HTML code
     if($vote < 1 || $vote > $this->_config->get('jg_maxvoting'))
@@ -201,7 +201,7 @@ class JoomGalleryModelVote extends JoomGalleryModel
           ->set('imgvotesum = '.$row->imgvotesum)
           ->where('id = '.$this->_id);
     $this->_db->setQuery($query);
-    if(!$this->_db->query())
+    if(!$this->_db->execute())
     {
       $this->setError($this->_db->getErrorMsg());
 
