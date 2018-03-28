@@ -476,8 +476,7 @@ class JoomHelper
       $smileys[':cry:']           = $path.'sm_cry.gif';
     }
 
-    $dispatcher = JDispatcher::getInstance();
-    $dispatcher->trigger('onJoomGetSmileys', array(&$smileys));
+    JFactory::getApplication()->triggerEvent('onJoomGetSmileys', array(&$smileys));
 
     return $smileys;
   }
