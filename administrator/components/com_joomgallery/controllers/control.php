@@ -109,6 +109,8 @@ class JoomGalleryControllerControl extends JoomGalleryController
     {
       // There was an error installing the package
       $result = false;
+      $msg    = '';
+
       if(is_object($installer->manifest))
       {
         $msg = JText::sprintf('COM_INSTALLER_INSTALL_ERROR', JText::_('COM_INSTALLER_TYPE_TYPE_'.strtoupper($installer->manifest->attributes()->type)));
