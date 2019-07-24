@@ -972,3 +972,7 @@ echo JHtml::_('tabs.end');
     <?php JHtml::_('joomgallery.credits'); ?>
   </div>
 </form>
+<?php
+$layout = new JLayoutFile('joomgallery.config.reset', JPATH_COMPONENT . '/layouts');
+echo $layout->render();
+?>
