@@ -1006,7 +1006,7 @@ joom_local.css.README umbenennen und anpassen
 
     // Save the file
     jimport('joomla.filesystem.file');
-    $css_settings_file = JPATH_ROOT.'/media/joomgallery/css/'.$this->getStyleSheetName($this->id);
+    $css_settings_file = JPATH_ROOT.'/media/joomgallery/css/'.$this->getStyleSheetName(isset($this->id) ? $this->id : 0);
     if(!JFile::write($css_settings_file, $css_settings))
     {
       return false;
