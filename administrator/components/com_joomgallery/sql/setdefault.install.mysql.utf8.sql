@@ -303,6 +303,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_nameshields_others*/     1,
   /*jg_nameshields_unreg*/      1,
   /*jg_show_nameshields_unreg*/ 0,
+  /*jg_storenametagip*/         0,
   /*jg_nameshields_height*/     10,
   /*jg_nameshields_width*/      6,
 
