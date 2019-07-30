@@ -47,9 +47,11 @@
       <field
         name="imgtext"
         id="ajax-imgtext"
-        type="textarea"
+        type="editor"
         class="inputbox"
         label="COM_JOOMGALLERY_UPLOAD_GENERIC_DESCRIPTION_OPTIONAL"
+        buttons="true"
+        hide="pagebreak"
       />
       <field
         name="imgauthor"
