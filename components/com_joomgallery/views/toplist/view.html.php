@@ -206,20 +206,22 @@ class JoomGalleryViewToplist extends JoomGalleryView
           $rows[$key]->show_delete_icon = true;
         }
       }
-    }
 
-    // Download Icon
-    if($this->_config->get('jg_download') && $this->_config->get('jg_showtoplistdownload'))
-    {
-      if($this->_user->get('id') || $this->_config->get('jg_download_unreg'))
+      // Show download icon for that image/category
+      $rows[$key]->show_download_icon = 0;
+      if(  ($row->allow_download == (-1) ? $this->_config->get('jg_download') : $row->allow_download)
+        && $this->_config->get('jg_showtoplistdownload'))
       {
-        $params->set('show_download_icon', 1);
-      }
-      else
-      {
-        if($this->_config->get('jg_download_hint'))
+        if($this->_user->get('id') || $this->_config->get('jg_download_unreg'))
         {
-          $params->set('show_download_icon', -1);
+          $rows[$key]->show_download_icon = 1;
+        }
+        else
+        {
+          if($this->_config->get('jg_download_hint'))
+          {
+            $rows[$key]->show_download_icon = -1;
+          }
         }
       }
     }
