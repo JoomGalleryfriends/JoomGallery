@@ -64,8 +64,26 @@ class JoomGalleryViewImage extends JoomGalleryView
       // Downloading
       if($download)
       {
-        // Is the download allowed for the user group of the current user?
-        if(   !$this->_config->get('jg_download')
+        // Get category settings
+        $cat_allow_download           = -1;
+        $cat_allow_watermark_download = -1;
+
+        $this->_db = JFactory::getDBO();
+        $query = $this->_db->getQuery(true)
+              ->select('c.allow_download, c.allow_watermark_download')
+              ->from(_JOOM_TABLE_IMAGES . ' AS a')
+              ->leftJoin(_JOOM_TABLE_CATEGORIES . ' AS c ON c.cid = a.catid')
+              ->where('a.id = ' . JRequest::getInt('id'));
+        $this->_db->setQuery($query);
+
+        if(!empty($row = $this->_db->loadRow()))
+        {
+          $cat_allow_download           = $row[0];
+          $cat_allow_watermark_download = $row[1];
+        }
+
+        // Is the download allowed for the user group of the current user and in this category?
+        if(   !($cat_allow_download == (-1) ? $this->_config->get('jg_download') : $cat_allow_download)
           ||  (!$this->_config->get('jg_download_unreg') && !$this->_user->get('id'))
           )
         {
@@ -92,7 +110,7 @@ class JoomGalleryViewImage extends JoomGalleryView
         }
 
         // Include watermark when downloading image?
-        if($this->_config->get('jg_downloadwithwatermark'))
+        if(($cat_allow_watermark_download == (-1) ? $this->_config->get('jg_downloadwithwatermark') : $cat_allow_watermark_download))
         {
           $include_watermark = true;
         }
@@ -136,7 +154,17 @@ class JoomGalleryViewImage extends JoomGalleryView
         }
 
         // Include watermark when displaying image in the detail view?
-        if($this->_config->get('jg_watermark'))
+        // Check category settings
+        $this->_db = JFactory::getDBO();
+        $query = $this->_db->getQuery(true)
+              ->select('c.allow_watermark')
+              ->from(_JOOM_TABLE_IMAGES . ' AS a')
+              ->innerJoin(_JOOM_TABLE_CATEGORIES . ' AS c ON c.cid = a.catid')
+              ->where('a.id = ' . JRequest::getInt('id'));
+        $this->_db->setQuery($query);
+        $cat_allow_watermark = $this->_db->loadResult();
+
+        if(($cat_allow_watermark == (-1) ? $this->_config->get('jg_watermark') : $cat_allow_watermark))
         {
           $include_watermark = true;
         }

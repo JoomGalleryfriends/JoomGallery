@@ -656,7 +656,7 @@ class JoomGalleryViewDetail extends JoomGalleryView
       }
 
       // Download icon
-      if(   $this->_config->get('jg_download')
+      if(   ($image->catallow_download == (-1) ? $this->_config->get('jg_download') : $image->catallow_download)
         &&  $this->_config->get('jg_showdetaildownload')
         &&  ($image->orig_exists || $this->_config->get('jg_downloadfile') != 1)
         )
@@ -892,7 +892,7 @@ class JoomGalleryViewDetail extends JoomGalleryView
       }
 
       // Rating
-      if($this->_config->get('jg_showrating'))
+      if($image->catallow_rating == (-1) ? $this->_config->get('jg_showrating') : $image->catallow_rating)
       {
         if($this->_config->get('jg_votingonlyreg') && !$this->_user->get('id'))
         {
@@ -982,7 +982,7 @@ class JoomGalleryViewDetail extends JoomGalleryView
         }
       }
 
-      if($this->_config->get('jg_showcomment'))
+      if($image->catallow_comment == (-1) ? $this->_config->get('jg_showcomment') : $image->catallow_comment)
       {
         $params->set('show_comments_block', 1);
 
