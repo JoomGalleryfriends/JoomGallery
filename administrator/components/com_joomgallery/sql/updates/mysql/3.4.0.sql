@@ -17,3 +17,9 @@ ALTER TABLE `#__joomgallery_catg` ADD `allow_comment` int(1) NOT NULL default -1
 ALTER TABLE `#__joomgallery_catg` ADD `allow_rating` int(1) NOT NULL default -1 AFTER `allow_comment`;
 ALTER TABLE `#__joomgallery_catg` ADD `allow_watermark` int(1) NOT NULL default -1 AFTER `allow_rating`;
 ALTER TABLE `#__joomgallery_catg` ADD `allow_watermark_download` int(1) NOT NULL default -1 AFTER `allow_watermark`;
+
+ALTER TABLE `#__joomgallery_config` ADD `jg_be_exif_rotation` int(1) NOT NULL AFTER `jg_delete_original`;
+UPDATE `#__joomgallery_config` SET `jg_be_exif_rotation` = 1;
+
+ALTER TABLE `#__joomgallery_config` ADD `jg_fe_exif_rotation` int(1) NOT NULL AFTER `jg_edit_metadata`;
+UPDATE `#__joomgallery_config` SET `jg_fe_exif_rotation` = 1;

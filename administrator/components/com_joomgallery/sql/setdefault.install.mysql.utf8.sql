@@ -37,6 +37,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_useorigfilename*/    0,
   /*jg_filenamenumber*/     1,
   /*jg_delete_original*/    0,
+  /*jg_be_exif_rotation*/   1,
 
   /* ### General settings->Messages ####*/
   /*jg_msg_upload_type*/          2,
@@ -91,6 +92,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_newpicnote*/               1,
   /*jg_redirect_after_upload*/    1,
   /*jg_edit_metadata*/            0,
+  /*jg_fe_exif_rotation*/         1,
 
   /* ### User Access rights->Download ####*/
   /*jg_download*/               1,
