@@ -649,11 +649,18 @@ class JoomFile
         // +repage needed to delete the canvas
         if(!is_null($offsetx) && !is_null($offsety))
         {
-          $commands .= ' -crop "'.$srcWidth.'x'.$srcHeight.'+'.$offsetx.'+'.$offsety.'" +repage';
+          if($angle > 0)
+          {
+            $commands .= ' -crop "'.$srcHeight.'x'.$srcWidth.'+'.$offsety.'+'.$offsetx.'" +repage';
+          }
+          else
+          {
+            $commands .= ' -crop "'.$srcWidth.'x'.$srcHeight.'+'.$offsetx.'+'.$offsety.'" +repage';
+          }
         }
         if($angle > 0)
         {
-          $commands .= ' -rotate "-'.$angle.'"';
+          $commands .= ' -auto-orient';
         }
         // Finally the resize
         $commands  .= ' -resize "'.$destWidth.'x'.$destHeight.'" -quality "'.$dest_qual.'" -unsharp "3.5x1.2+1.0+0.10"';
@@ -834,7 +841,7 @@ class JoomFile
             $convert_path='convert';
           }
 
-          $commands = ' -rotate -'.$angle;
+          $commands = '-auto-orient';
           // Finally the rotate
           $commands  .= ' -quality '.$dest_qual;
           $convert    = $convert_path.' '.$commands.' "'.$orig.'" "'.$orig.'"';

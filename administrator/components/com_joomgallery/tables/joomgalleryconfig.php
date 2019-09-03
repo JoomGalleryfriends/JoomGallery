@@ -51,11 +51,11 @@ class TableJoomgalleryConfig extends JTable
   var $jg_thumbwidth;
   var $jg_thumbheight;
   var $jg_thumbquality;
+  var $jg_upload_exif_rotation;
   var $jg_uploadorder;
   var $jg_useorigfilename;
   var $jg_filenamenumber;
   var $jg_delete_original;
-  var $jg_be_exif_rotation;
   var $jg_msg_upload_type;
   var $jg_msg_upload_recipients;
   var $jg_msg_download_type;
@@ -102,7 +102,6 @@ class TableJoomgalleryConfig extends JTable
   var $jg_newpicnote;
   var $jg_redirect_after_upload;
   var $jg_edit_metadata;
-  var $jg_fe_exif_rotation;
   var $jg_download;
   var $jg_download_unreg;
   var $jg_download_hint;

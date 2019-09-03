@@ -94,6 +94,12 @@ JHTML::_('joomconfig.start', 'page3');
     JHTML::_('joomconfig.row', 'jg_thumbwidth', 'text', 'COM_JOOMGALLERY_CONFIG_GS_IP_THUMBNAIL_WIDTH', $this->_config->jg_thumbwidth);
     JHTML::_('joomconfig.row', 'jg_thumbheight', 'text', 'COM_JOOMGALLERY_CONFIG_GS_IP_THUMBNAIL_HEIGHT', $this->_config->jg_thumbheight);
     JHTML::_('joomconfig.row', 'jg_thumbquality', 'text', 'COM_JOOMGALLERY_CONFIG_GS_IP_THUMBNAIL_QUALITY', $this->_config->jg_thumbquality);
+    JHTML::_('joomconfig.intro', '<div align="center">'.JText::_('COM_JOOMGALLERY_COMMON_GS_ADDITIONAL_SETTINGS_INTRO').'</div>');
+    $upload_exif_rotation[] = JHTML::_('select.option','0', JText::_('JNO'));
+    $upload_exif_rotation[] = JHTML::_('select.option','1', JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_EXIF_ROTATION_THUMBS_DETAILS'));
+    $upload_exif_rotation[] = JHTML::_('select.option','2', JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_EXIF_ROTATION_ORIGINALS'));
+    $mc_jg_upload_exif_rotation = JHTML::_('select.genericlist',$upload_exif_rotation, 'jg_upload_exif_rotation', 'class="inputbox" size="3"', 'value', 'text', $this->_config->jg_upload_exif_rotation);
+    JHTML::_('joomconfig.row', 'jg_upload_exif_rotation', 'custom', 'COM_JOOMGALLERY_COMMON_ROTATE_USE_AUTOROTATE', $mc_jg_upload_exif_rotation);
 JHTML::_('joomconfig.end');
 endif;
 
@@ -113,11 +119,6 @@ JHTML::_('joomconfig.start', 'page4');
     $delete_original[] = JHTML::_('select.option','2', JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_DELETE_ORIGINAL_CHECKBOX'));
     $mc_jg_delete_original = JHTML::_('select.genericlist',$delete_original, 'jg_delete_original', 'class="inputbox" size="3"', 'value', 'text', $this->_config->jg_delete_original);
     JHTML::_('joomconfig.row', 'jg_delete_original', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_BU_DELETE_ORIGINAL', $mc_jg_delete_original);
-    $be_exif_rotation[] = JHTML::_('select.option','0', JText::_('JNO'));
-    $be_exif_rotation[] = JHTML::_('select.option','1', JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_EXIF_ROTATION_THUMBS_DETAILS'));
-    $be_exif_rotation[] = JHTML::_('select.option','2', JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_EXIF_ROTATION_ORIGINALS'));
-    $mc_jg_be_exif_rotation = JHTML::_('select.genericlist',$be_exif_rotation, 'jg_be_exif_rotation', 'class="inputbox" size="3"', 'value', 'text', $this->_config->jg_be_exif_rotation);
-    JHTML::_('joomconfig.row', 'jg_be_exif_rotation', 'custom', 'COM_JOOMGALLERY_COMMON_ROTATE_USE_AUTOROTATE', $mc_jg_be_exif_rotation);
 JHTML::_('joomconfig.end');
 
 // start Tab "Grundlegende Einstellungen->Benachrichtigungen"
@@ -221,11 +222,6 @@ JHTML::_('joomconfig.start', 'page7');
     $mc_jg_redirect_after_upload = JHTML::_('select.genericlist', $redirect_after_upload, 'jg_redirect_after_upload', 'class="inputbox" size="4"', 'value', 'text', $this->_config->jg_redirect_after_upload);
     JHTML::_('joomconfig.row', 'jg_redirect_after_upload', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_BU_REDIRECT_AFTER_UPLOAD', $mc_jg_redirect_after_upload);
     JHtml::_('joomconfig.row', 'jg_edit_metadata', 'yesno', 'COM_JOOMGALLERY_CONFIG_UR_UU_EDIT_METADATA', $this->_config->jg_edit_metadata);
-    $fe_exif_rotation[] = JHTML::_('select.option','0', JText::_('JNO'));
-    $fe_exif_rotation[] = JHTML::_('select.option','1', JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_EXIF_ROTATION_THUMBS_DETAILS'));
-    $fe_exif_rotation[] = JHTML::_('select.option','2', JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_EXIF_ROTATION_ORIGINALS'));
-    $mc_jg_fe_exif_rotation = JHTML::_('select.genericlist',$fe_exif_rotation, 'jg_fe_exif_rotation', 'class="inputbox" size="3"', 'value', 'text', $this->_config->jg_fe_exif_rotation);
-    JHTML::_('joomconfig.row', 'jg_fe_exif_rotation', 'custom', 'COM_JOOMGALLERY_COMMON_ROTATE_USE_AUTOROTATE', $mc_jg_fe_exif_rotation);
 JHTML::_('joomconfig.end');
 
 // start Tab "Benutzer-Rechte->Download"
