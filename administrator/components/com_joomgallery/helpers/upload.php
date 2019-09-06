@@ -408,7 +408,7 @@ class JoomUpload extends JObject
       }*/
 
       // Create thumbnail and detail image
-      if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename, true, false))
+      if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
       {
         $this->rollback($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid),
                         $this->_ambit->getImg('img_path', $newfilename, null, $this->catid),
@@ -775,7 +775,7 @@ class JoomUpload extends JObject
       $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE').'<br />';
 
       // Create thumbnail and detail image
-      if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename, true, false))
+      if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
       {
         $this->rollback($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid),
                         $this->_ambit->getImg('img_path', $newfilename, null, $this->catid),
@@ -1117,7 +1117,7 @@ class JoomUpload extends JObject
         }*/
 
         // Create thumbnail and detail image
-        if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename, true, false))
+        if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
         {
           $this->rollback($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid),
                           $this->_ambit->getImg('img_path', $newfilename, null, $this->catid),
@@ -1319,19 +1319,9 @@ class JoomUpload extends JObject
 
       $newfilename = $this->_genFilename($newfilename, $tag, $filecounter);
 
-      // Copy original image into original folder
-      $return = JFile::copy($this->_ambit->get('ftp_path').$subdirectory.$origfilename,
-                            $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid));
-      if(!$return)
-      {
-        $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_COPYING', $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)).'<br />';
-        $this->debug        = true;
-        return false;
-      }
-
       // Resize image
       $delete_file = $this->_mainframe->getUserStateFromRequest('joom.upload.file_delete', 'file_delete', false, 'bool');
-      if(!$this->resizeImage(JPath::clean($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)), $newfilename, true, $delete_file))
+      if(!$this->resizeImage(JPath::clean($this->_ambit->get('ftp_path').$subdirectory.$origfilename), $newfilename, false, $delete_file))
       {
         $this->rollback($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid),
                         $this->_ambit->getImg('img_path', $newfilename, null, $this->catid),
@@ -1340,19 +1330,6 @@ class JoomUpload extends JObject
         $this->debug = true;
         unset($ftpfiles[$key]);
         continue;
-      }
-      else
-      {
-        // Delete file from ftp path if needed
-        if($delete_file)
-        {
-          if(!JFile::delete(JPath::clean($this->_ambit->get('ftp_path').$subdirectory.$origfilename)))
-          {
-            $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_DELETING_ORIGINAL_FROM_FTP', $this->_ambit->get('ftp_path').$subdirectory.$origfilename).' '.JText::_('COM_JOOMGALLERY_COMMON_CHECK_PERMISSIONS').'<br />';
-            $this->debug = true;
-            return false;
-          }
-        }
       }
 
       $row = JTable::getInstance('joomgalleryimages', 'Table');
@@ -1639,7 +1616,7 @@ class JoomUpload extends JObject
       //     }
 
     // Create thumbnail and detail image
-    if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename, true, false))
+    if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
     {
       $this->rollback($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid),
               $this->_ambit->getImg('img_path', $newfilename, null, $this->catid),
@@ -2106,24 +2083,6 @@ class JoomUpload extends JObject
                         ||  (!$this->_site && $this->_config->get('jg_delete_original') == 2 && $delete_original)
                         );
 
-    // Rotate original image if needed
-    if($angle > 0 && !$delete_original && $autorotate_images == 2)
-    {
-      // $this->_debugoutput .= JText::sprintf('source: '. $source).'<br />';
-      $return = JoomFile::rotateOriginal($this->_debugoutput,
-                                    $source,
-                                    $this->_config->get('jg_thumbcreation'),
-                                    $this->_config->get('jg_picturequality'),
-                                    $angle
-                                    );
-      if(!$return)
-      {
-        $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGINAL_NOT_ROTATED', $this->_ambit->getImg('orig_path', $filename, null, $this->catid)).'<br />';
-        $this->debug = true;
-        return false;
-      }
-    }
-
     if(   ($delete_original && !$is_in_original && $delete_source)
       ||  ($delete_original && $is_in_original)
       )
@@ -2222,6 +2181,23 @@ class JoomUpload extends JObject
           $this->debug        = true;
           return false;
         }
+      }
+    }
+
+    // Rotate original image if needed
+    if($angle > 0 && !$delete_original && $autorotate_images == 2)
+    {
+      $return = JoomFile::rotateOriginal($this->_debugoutput,
+                                    $source,
+                                    $this->_config->get('jg_thumbcreation'),
+                                    $this->_config->get('jg_picturequality'),
+                                    $angle
+                                    );
+      if(!$return)
+      {
+        $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGINAL_NOT_ROTATED', $this->_ambit->getImg('orig_path', $filename, null, $this->catid)).'<br />';
+        $this->debug = true;
+        return false;
       }
     }
 

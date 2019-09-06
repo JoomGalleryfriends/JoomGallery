@@ -647,21 +647,17 @@ class JoomFile
         // Crop the source image before resiszing if offsets setted before
         // example of crop: convert input -crop destwidthxdestheight+offsetx+offsety +repage output
         // +repage needed to delete the canvas
-        if(!is_null($offsetx) && !is_null($offsety))
-        {
-          if($angle > 0)
-          {
-            $commands .= ' -crop "'.$srcHeight.'x'.$srcWidth.'+'.$offsety.'+'.$offsetx.'" +repage';
-          }
-          else
-          {
-            $commands .= ' -crop "'.$srcWidth.'x'.$srcHeight.'+'.$offsetx.'+'.$offsety.'" +repage';
-          }
-        }
+
         if($angle > 0)
         {
           $commands .= ' -auto-orient';
         }
+
+        if(!is_null($offsetx) && !is_null($offsety))
+        {
+          $commands .= ' -crop "'.$srcWidth.'x'.$srcHeight.'+'.$offsetx.'+'.$offsety.'" +repage';
+        }
+
         // Finally the resize
         $commands  .= ' -resize "'.$destWidth.'x'.$destHeight.'" -quality "'.$dest_qual.'" -unsharp "3.5x1.2+1.0+0.10"';
         $convert    = $convert_path.' '.$commands.' "'.$src_file.'" "'.$dest_file.'"';
