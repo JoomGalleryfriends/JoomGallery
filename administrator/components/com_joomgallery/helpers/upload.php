@@ -1955,7 +1955,7 @@ class JoomUpload extends JObject
    */
   protected function resizeImage($source, $filename, $is_in_original = true, $delete_source = false)
   {
-    if(!getimagesize($source))
+    if(!($imginfo = getimagesize($source)))
     {
       // getimagesize didn't find a valid image
       $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_INVALID_IMAGE_FILE').'<br />';
@@ -1976,44 +1976,35 @@ class JoomUpload extends JObject
     $angle             = 0;
     $autorotate_images = $this->_config->get('jg_upload_exif_rotation');
 
-    if($autorotate_images != 0)
+    if($autorotate_images != 0 && $imginfo[2] == IMAGETYPE_JPEG)
     {
-      $imginfo = getimagesize($source);
-      $imagetype = array(1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF', 5 => 'PSD',
-                         6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC', 10 => 'JP2',
-                         11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF');
-
-      $imginfo[2] = $imagetype[$imginfo[2]];
-      if($imginfo[2] == 'JPG')
+      if(extension_loaded('exif') && function_exists('exif_read_data'))
       {
-        if(extension_loaded('exif') && function_exists('exif_read_data'))
+        $exif = exif_read_data($source, 'IFD0');
+        if(empty($exif['Orientation']))
         {
-          $exif = exif_read_data($source, 'IFD0');
-          if(empty($exif['Orientation']))
+          $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_NO_EXIF').'<br />';
+        }
+        else
+        {
+          switch ($exif['Orientation'])
           {
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_NO_EXIF').'<br />';
-          }
-          else
-          {
-            switch ($exif['Orientation'])
-            {
-              case 3:
-                $angle = 180;
-                $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_180').'<br />';
-                break;
-              case 6:
-                $angle = 270;
-                $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_270').'<br />';
-                break;
-              case 8:
-                $angle = 90;
-                $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_90').'<br />';
-                break;
-              default:
-                $angle = 0;
-                $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_0').'<br />';
-                break;
-            }
+            case 3:
+              $angle = 180;
+              $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_180').'<br />';
+              break;
+            case 6:
+              $angle = 270;
+              $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_270').'<br />';
+              break;
+            case 8:
+              $angle = 90;
+              $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_90').'<br />';
+              break;
+            default:
+              $angle = 0;
+              $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_AUTOROTATE_0').'<br />';
+              break;
           }
         }
       }
