@@ -1348,7 +1348,7 @@ class JoomUpload extends JObject
       $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_NEW_FILENAME', $newfilename).'<br /><br />';
 
       $this->_mainframe->triggerEvent('onJoomAfterUpload', array($row));
-	  
+
       unset($ftpfiles[$key]);
     }
 
@@ -2188,11 +2188,11 @@ class JoomUpload extends JObject
     if($angle > 0 && !$delete_original && $autorotate_images == 2)
     {
       $return = JoomFile::rotateOriginal($this->_debugoutput,
-                                    $source,
-                                    $this->_config->get('jg_thumbcreation'),
-                                    $this->_config->get('jg_picturequality'),
-                                    $angle
-                                    );
+                                         $this->_ambit->getImg('orig_path', $filename, null, $this->catid),
+                                         $this->_config->get('jg_thumbcreation'),
+                                         $this->_config->get('jg_picturequality'),
+                                         $angle
+                                        );
       if(!$return)
       {
         $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGINAL_NOT_ROTATED', $this->_ambit->getImg('orig_path', $filename, null, $this->catid)).'<br />';
