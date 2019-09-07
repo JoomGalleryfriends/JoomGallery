@@ -129,6 +129,13 @@ class JoomUpload extends JObject
   protected $chunksExpireIn = 86400;
 
   /**
+   * Upload type
+   *
+   * @var string
+   */
+  protected $type;
+
+  /**
    * Constructor
    *
    * @return  void
@@ -185,6 +192,8 @@ class JoomUpload extends JObject
    */
   public function upload($type = 'single')
   {
+    $this->type = $type;
+
     // Additional security check for unregistered users
     if(!$this->_user->get('id') && !$this->_config->get('jg_unregistered_permissions'))
     {
@@ -195,7 +204,7 @@ class JoomUpload extends JObject
 
     jimport('joomla.filesystem.file');
 
-    switch($type)
+    switch($this->type)
     {
       case 'batch':
         return $this->uploadBatch();
@@ -1976,7 +1985,7 @@ class JoomUpload extends JObject
     $angle             = 0;
     $autorotate_images = $this->_config->get('jg_upload_exif_rotation');
 
-    if($autorotate_images != 0 && $imginfo[2] == IMAGETYPE_JPEG)
+    if($autorotate_images != 0 && $imginfo[2] == IMAGETYPE_JPEG && $this->type != 'java')
     {
       if(extension_loaded('exif') && function_exists('exif_read_data'))
       {
