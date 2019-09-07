@@ -644,15 +644,15 @@ class JoomFile
           $convert_path='convert';
         }
         $commands = '';
-        // Crop the source image before resiszing if offsets setted before
-        // example of crop: convert input -crop destwidthxdestheight+offsetx+offsety +repage output
-        // +repage needed to delete the canvas
 
         if($angle > 0)
         {
           $commands .= ' -auto-orient';
         }
 
+        // Crop the source image before resiszing if offsets setted before
+        // example of crop: convert input -crop destwidthxdestheight+offsetx+offsety +repage output
+        // +repage needed to delete the canvas
         if(!is_null($offsetx) && !is_null($offsety))
         {
           $commands .= ' -crop "'.$srcWidth.'x'.$srcHeight.'+'.$offsetx.'+'.$offsety.'" +repage';
