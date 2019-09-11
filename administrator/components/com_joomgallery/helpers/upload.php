@@ -1955,10 +1955,10 @@ class JoomUpload extends JObject
   /**
    * Creates thumbnail and detail image for an image file and rotate if needed
    *
-   * @param   string  $source             The source file for which the thumbnail and the detail image shall be created
-   * @param   string  $filename           The file name for the created files
-   * @param   boolean $is_in_original     Determines whether the source file is already in the original images folders
-   * @param   boolean $delete_source      Determines whether the source file shall be deleted after the procedure
+   * @param   string  $source         The source file for which the thumbnail and the detail image shall be created
+   * @param   string  $filename       The file name for the created files
+   * @param   boolean $is_in_original Determines whether the source file is already in the original images folders
+   * @param   boolean $delete_source  Determines whether the source file shall be deleted after the procedure
    * @return  boolean True on success, false otherwise
    * @since   1.5.7
    */
@@ -2187,12 +2187,12 @@ class JoomUpload extends JObject
     // Rotate original image if needed
     if($angle > 0 && !$delete_original && $autorotate_images == 2)
     {
-      $return = JoomFile::rotateOriginal($this->_debugoutput,
-                                         $this->_ambit->getImg('orig_path', $filename, null, $this->catid),
-                                         $this->_config->get('jg_thumbcreation'),
-                                         $this->_config->get('jg_picturequality'),
-                                         $angle
-                                        );
+      $return = JoomFile::rotateImage($this->_debugoutput,
+                                      $this->_ambit->getImg('orig_path', $filename, null, $this->catid),
+                                      $this->_config->get('jg_thumbcreation'),
+                                      $this->_config->get('jg_picturequality'),
+                                      $angle
+                                     );
       if(!$return)
       {
         $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGINAL_NOT_ROTATED', $this->_ambit->getImg('orig_path', $filename, null, $this->catid)).'<br />';
