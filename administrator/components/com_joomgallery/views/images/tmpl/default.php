@@ -188,6 +188,16 @@ JFactory::getDocument()->addScriptDeclaration(
         </tr>
       </tfoot>
     </table>
+<?php // Load the batch processing form. ?>
+<?php if ($this->_user->authorise('core.edit', _JOOM_OPTION) || $this->_user->authorise('core.edit.own', _JOOM_OPTION)) :
+        echo JHtml::_('bootstrap.renderModal',
+                      'collapseModal',
+                      array('title'  => JText::_('COM_JOOMGALLERY_COMMON_ROTATE_OPTIONS'),
+                            'footer' => $this->loadTemplate('rotate_footer'),
+                           ),
+                      $this->loadTemplate('rotate_body')
+                     ); ?>
+<?php endif; ?>
 <?php endif; ?>
 <?php echo $this->pagination->getListFooter(); ?>
 <?php if($display_hidden_asterisk): ?>

@@ -106,15 +106,6 @@ Joomla.submitbutton = function(task)
       </div>
       <div class="control-group form-inline">
         <div class="control-label">
-          <?php echo $this->form->getLabel('rotateimages'); ?>
-        </div>
-        <div class="controls">
-          <?php echo $this->form->getInput('rotateimages'); ?>
-          <?php echo $this->form->getInput('rotateimagesangle'); ?>
-        </div>
-      </div>
-      <div class="control-group form-inline">
-        <div class="control-label">
           <?php echo $this->form->getLabel('txtclearvotes'); ?>
         </div>
         <div class="controls">

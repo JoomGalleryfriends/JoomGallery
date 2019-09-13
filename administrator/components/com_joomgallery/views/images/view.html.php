@@ -58,6 +58,9 @@ class JoomGalleryViewImages extends JoomGalleryView
     // Get the results for each action
     $canDo = JoomHelper::getActions();
 
+    // Get the toolbar object instance
+    $bar = JToolbar::getInstance('toolbar');
+
     JToolBarHelper::title(JText::_('COM_JOOMGALLERY_IMGMAN_IMAGE_MANAGER'), 'images');
 
     if(($this->_config->get('jg_disableunrequiredchecks') || $canDo->get('joom.upload') || count(JoomHelper::getAuthorisedCategories('joom.upload'))) && $this->pagination->total)
@@ -71,6 +74,12 @@ class JoomGalleryViewImages extends JoomGalleryView
       JToolbarHelper::custom('edit', 'checkbox-partial', 'checkbox-partial', 'JTOOLBAR_BATCH');
       JToolbarHelper::custom('showmove', 'move.png', 'move.png', 'COM_JOOMGALLERY_COMMON_TOOLBAR_MOVE');
       JToolbarHelper::custom('recreate', 'refresh.png', 'refresh.png', 'COM_JOOMGALLERY_COMMON_TOOLBAR_RECREATE');
+
+      // Instantiate a new JLayoutFile instance and render the rotate button
+      $layout = new JLayoutFile('joomgallery.toolbar.rotate', JPATH_COMPONENT_ADMINISTRATOR . '/layouts');
+      $dhtml  = $layout->render(array('title' => JText::_('COM_JOOMGALLERY_COMMON_TOOLBAR_ROTATE')));
+      $bar->appendButton('Custom', $dhtml, 'rotate');
+
       JToolbarHelper::divider();
     }
 
