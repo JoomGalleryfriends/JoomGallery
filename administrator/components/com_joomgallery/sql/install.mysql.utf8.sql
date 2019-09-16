@@ -114,6 +114,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_config` (
   `jg_thumbheight` int(5) NOT NULL,
   `jg_thumbquality` int(3) NOT NULL,
   `jg_upload_exif_rotation` int(1) NOT NULL,
+  `jg_originalquality` int(3) NOT NULL,
   `jg_uploadorder` int(1) NOT NULL,
   `jg_useorigfilename` int(1) NOT NULL,
   `jg_filenamenumber` int(1) NOT NULL,

@@ -835,7 +835,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       if($rotateImageTypes == 2)
       {
         if(JoomFile::rotateImage($debugoutput, $orig, $this->_config->get('jg_thumbcreation'),
-                                 $this->_config->get('jg_picturequality'), $rotateImageAngle, false))
+                                 $this->_config->get('jg_originalquality'), $rotateImageAngle, false))
         {
           $orig_count--;
           $doResize = true;
@@ -871,7 +871,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                      $this->_config->get('jg_thumbcreation'),
                                      $this->_config->get('jg_thumbquality'),
                                      false,
-                                     $this->_config->get('jg_cropposition'),
+                                     $this->_config->get('jg_cropposition')
                                     );
       }
       else

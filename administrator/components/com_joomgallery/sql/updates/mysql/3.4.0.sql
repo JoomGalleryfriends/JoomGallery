@@ -20,3 +20,5 @@ ALTER TABLE `#__joomgallery_catg` ADD `allow_watermark_download` int(1) NOT NULL
 
 ALTER TABLE `#__joomgallery_config` ADD `jg_upload_exif_rotation` int(1) NOT NULL AFTER `jg_thumbquality`;
 UPDATE `#__joomgallery_config` SET `jg_upload_exif_rotation` = 0;
+ALTER TABLE `#__joomgallery_config` ADD `jg_originalquality` int(3) NOT NULL AFTER `jg_upload_exif_rotation`;
+UPDATE `#__joomgallery_config` SET `jg_originalquality` = 100;

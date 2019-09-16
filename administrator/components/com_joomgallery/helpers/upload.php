@@ -2190,7 +2190,7 @@ class JoomUpload extends JObject
       $return = JoomFile::rotateImage($this->_debugoutput,
                                       $this->_ambit->getImg('orig_path', $filename, null, $this->catid),
                                       $this->_config->get('jg_thumbcreation'),
-                                      $this->_config->get('jg_picturequality'),
+                                      $this->_config->get('jg_originalquality'),
                                       $angle
                                      );
       if(!$return)

@@ -100,6 +100,7 @@ JHTML::_('joomconfig.start', 'page3');
     $upload_exif_rotation[] = JHTML::_('select.option','2', JText::_('COM_JOOMGALLERY_COMMON_ROTATE_OPTIONS_THUMBS_DETAILS_ORIGINALS'));
     $mc_jg_upload_exif_rotation = JHTML::_('select.genericlist',$upload_exif_rotation, 'jg_upload_exif_rotation', 'class="inputbox" size="3"', 'value', 'text', $this->_config->jg_upload_exif_rotation);
     JHTML::_('joomconfig.row', 'jg_upload_exif_rotation', 'custom', 'COM_JOOMGALLERY_COMMON_ROTATE_USE_AUTOROTATE', $mc_jg_upload_exif_rotation);
+    JHTML::_('joomconfig.row', 'jg_originalquality', 'text', 'COM_JOOMGALLERY_CONFIG_GS_IP_ORIGINAL_QUALITY', $this->_config->jg_originalquality);
 JHTML::_('joomconfig.end');
 endif;
 
