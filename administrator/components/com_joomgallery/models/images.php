@@ -842,7 +842,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
         }
         else
         {
-          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $orig);
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $orig).'<br />';
         }
       }
 
@@ -853,7 +853,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       }
       else
       {
-        $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img);
+        $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img).'<br />';
       }
 
       $tmpdebugoutput = '';
@@ -891,7 +891,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
         else
         {
           $debugoutput .= $tmpdebugoutput;
-          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $thumb);
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $thumb).'<br />';
         }
       }
 
