@@ -685,6 +685,43 @@ class JoomGalleryControllerImages extends JoomGalleryController
   }
 
   /**
+   * Rotates images
+   *
+   * @return  void
+   *
+   * @since   4.0
+   */
+  public function rotate()
+  {
+    $model  = $this->getModel('images');
+    $ret    = $model->rotate();
+
+    if($ret === false)
+    {
+      $type = 'error';
+      $msg  = $model->getError();
+    }
+    else
+    {
+      $notRotated = $ret[1] + $ret[1] + $ret[2];
+
+      if($notRotated == 0)
+      {
+        $type = 'message';
+        $msg  = JText::_('COM_JOOMGALLERY_IMGMAN_MSG_IMAGES_ROTATED');
+      }
+      else
+      {
+        $type = 'error';
+        $msg  = JText::sprintf('COM_JOOMGALLERY_IMGMAN_ERROR_IMAGES_ROTATED', $notRotated).'<br />';
+        $msg .= $ret[3];
+      }
+    }
+
+    $this->setRedirect($this->_ambit->getRedirectUrl(), $msg, $type);
+  }
+
+  /**
    * Resets hits of an image
    *
    * @return  void

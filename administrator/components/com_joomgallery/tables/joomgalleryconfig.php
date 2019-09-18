@@ -51,6 +51,8 @@ class TableJoomgalleryConfig extends JTable
   var $jg_thumbwidth;
   var $jg_thumbheight;
   var $jg_thumbquality;
+  var $jg_upload_exif_rotation;
+  var $jg_originalquality;
   var $jg_uploadorder;
   var $jg_useorigfilename;
   var $jg_filenamenumber;

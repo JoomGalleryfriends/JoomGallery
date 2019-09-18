@@ -299,11 +299,12 @@ class JoomFile
    * @param   int     $dest_qual              $config->jg_thumbquality/jg_picturequality
    * @param   boolean $max_width              true=resize to maxwidth
    * @param   int     $cropposition           $config->jg_cropposition
+   * @param   int     $angle                  $angle to rotate the created image anticlockwise
    * @return  boolean True on success, false otherwise
    * @since   1.0.0
    */
   public static function resizeImage(&$debugoutput, $src_file, $dest_file, $useforresizedirection,
-                                     $new_width, $thumbheight, $method, $dest_qual, $max_width = false, $cropposition)
+                                     $new_width, $thumbheight, $method, $dest_qual, $max_width = false, $cropposition, $angle = 0)
   {
     $config = JoomConfig::getInstance();
 
@@ -340,8 +341,16 @@ class JoomFile
     $imginfo[2] = $imagetype[$imginfo[2]];
 
     // Height/width
-    $srcWidth  = $imginfo[0];
-    $srcHeight = $imginfo[1];
+    if($angle == 0 || $angle == 180)
+    {
+      $srcWidth  = $imginfo[0];
+      $srcHeight = $imginfo[1];
+    }
+    else
+    {
+      $srcWidth  = $imginfo[1];
+      $srcHeight = $imginfo[0];
+    }
 
     if(   ($max_width && $srcWidth <= $new_width && $srcHeight <= $new_width)
       ||  (!$max_width && $srcWidth <= $new_width && $srcHeight <= $thumbheight)
@@ -508,7 +517,14 @@ class JoomFile
         {
           return false;
         }
+
+        if($angle > 0)
+        {
+          $src_img = imagerotate($src_img, $angle, 0);
+        }
+
         $dst_img = imagecreate($destWidth, $destHeight);
+
         if (!is_null($offsetx) && !is_null($offsety))
         {
           imagecopyresized( $dst_img, $src_img, 0, 0, $offsetx, $offsety,
@@ -561,6 +577,12 @@ class JoomFile
         {
           return false;
         }
+
+        if($angle > 0)
+        {
+          $src_img = imagerotate($src_img, $angle, 0);
+        }
+
         $dst_img = imagecreatetruecolor($destWidth, $destHeight);
 
         if($config->jg_fastgd2thumbcreation == 0)
@@ -622,6 +644,12 @@ class JoomFile
           $convert_path='convert';
         }
         $commands = '';
+
+        if($angle > 0)
+        {
+          $commands .= ' -auto-orient';
+        }
+
         // Crop the source image before resiszing if offsets setted before
         // example of crop: convert input -crop destwidthxdestheight+offsetx+offsety +repage output
         // +repage needed to delete the canvas
@@ -629,6 +657,7 @@ class JoomFile
         {
           $commands .= ' -crop "'.$srcWidth.'x'.$srcHeight.'+'.$offsetx.'+'.$offsety.'" +repage';
         }
+
         // Finally the resize
         $commands  .= ' -resize "'.$destWidth.'x'.$destHeight.'" -quality "'.$dest_qual.'" -unsharp "3.5x1.2+1.0+0.10"';
         $convert    = $convert_path.' '.$commands.' "'.$src_file.'" "'.$dest_file.'"';
@@ -661,6 +690,149 @@ class JoomFile
     $imginfo = getimagesize($dest_file);
     if(!$imginfo)
     {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Rotate an image (only JPGs) with functions from gd/gd2/imagemagick
+   *
+   * @param   &string $debugoutput  Debug information
+   * @param   string  $src          Path to source file
+   * @param   int     $method       gd1/gd2/im
+   * @param   int     $dest_qual    Image quality
+   * @param   int     $angle        Angle to rotate the image anticlockwise
+   * @param   boolean $auto_orient  If true, use the command option -auto-orient with
+   *                                convert (ImageMagick), otherwise option -rotate is used
+   * @return  boolean True on success, false otherwise
+   * @since   3.4
+   */
+  public static function rotateImage(&$debugoutput, $src, $method = 'gd2', $dest_qual, $angle = 0, $auto_orient = true)
+  {
+    if($angle == 0)
+    {
+      // Nothing to do
+      return true;
+    }
+
+    // Ensure that the path is valid and clean
+    $src = JPath::clean($src);
+
+    if(!($imginfo = getimagesize($src)))
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_FILE_NOT_FOUND').'<br />';
+
+      return false;
+    }
+
+    // Automatic rotation during upload is only supported for JPG images
+    if($imginfo[2] != IMAGETYPE_JPEG)
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_ONLY_JPG').'<br />';
+
+      return false;
+    }
+
+    switch($method)
+    {
+      case 'gd1':
+      case 'gd2':
+        if(!function_exists('imagecreatefromjpeg'))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED').'<br />';
+
+          return false;
+        }
+
+        // Beginn Rotation
+        $src_img     = imagecreatefromjpeg($src);
+        $rotated_img = imagerotate($src_img, $angle, 0);
+
+        if(!@imagejpeg($rotated_img, $src, $dest_qual))
+        {
+          // Workaround for servers with wwwrun problem
+          $dir = dirname($src);
+          JoomFile::chmod($dir, '0777', true);
+          imagejpeg($rotated_img, $src, $dest_qual);
+          JoomFile::chmod($dir, '0755', true);
+        }
+
+        imagedestroy($src_img);
+        imagedestroy($rotated_img);
+
+        break;
+      case 'im':
+        $disabled_functions = explode(',', ini_get('disabled_functions'));
+
+        foreach($disabled_functions as $disabled_function)
+        {
+          if(trim($disabled_function) == 'exec')
+          {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_EXEC_DISABLED').'<br />';
+
+            return false;
+          }
+        }
+
+        $config = JoomConfig::getInstance();
+
+        if(!empty($config->jg_impath))
+        {
+          $convert_path = $config->jg_impath.'convert';
+        }
+        else
+        {
+          $convert_path = 'convert';
+        }
+
+        // Finally the rotate
+        if($auto_orient)
+        {
+          $commands = '-auto-orient';
+        }
+        else
+        {
+          $commands = '-rotate "-' . $angle . '"';
+        }
+        $commands  .= ' -quality '.$dest_qual;
+        $convert    = $convert_path.' '.$commands.' "'.$src.'" "'.$src.'"';
+        $return_var = null;
+        $dummy      = null;
+        @exec($convert, $dummy, $return_var);
+
+        if($return_var != 0)
+        {
+          // Workaround for servers with wwwrun problem
+          $dir = dirname($src);
+          JoomFile::chmod($dir, '0777', true);
+          @exec($convert, $dummy, $return_var);
+          JoomFile::chmod($dir, '0755', true);
+
+          if($return_var != 0)
+          {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_IM_IMAGE_NOT_ROTATED').'<br />';
+
+            return false;
+          }
+        }
+        break;
+      default:
+        $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_UNSUPPORTED_RESIZING_METHOD').'<br />';
+
+        return false;
+        break;
+    }
+
+    // Set mode of uploaded picture
+    JPath::setPermissions($src);
+
+    // We check that the image is valid
+    if(!getimagesize($src))
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_FILE_NOT_FOUND').'<br />';
+
       return false;
     }
 

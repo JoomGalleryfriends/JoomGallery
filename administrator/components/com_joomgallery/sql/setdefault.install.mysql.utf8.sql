@@ -31,6 +31,8 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_thumbwidth*/             133,
   /*jg_thumbheight*/            100,
   /*jg_thumbquality*/           100,
+  /*jg_upload_exif_rotation*/   0,
+  /*jg_originalquality*/        100,
 
   /* ### General settings->Backend Upload ####*/
   /*jg_uploadorder*/        2,
