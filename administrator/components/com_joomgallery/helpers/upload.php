@@ -65,7 +65,7 @@ class JoomUpload extends JObject
   protected $_debugoutput = '';
 
   /**
-   * Holds warning which occurs during the upload procedure
+   * Holds warnings and informations about the uploaded images
    *
    * @var string
    */
@@ -151,6 +151,7 @@ class JoomUpload extends JObject
 
     $this->debug        = $this->_mainframe->getUserStateFromRequest('joom.upload.debug', 'debug', false, 'post', 'bool');
     $this->_debugoutput = $this->_mainframe->getUserStateFromRequest('joom.upload.debugoutput', 'debugoutput', '', 'post', 'string');
+    $this->_warningoutput = $this->_mainframe->getUserStateFromRequest('joom.upload.warningoutput', 'warningoutput', '', 'post', 'string');
     $this->catid        = $this->_mainframe->getUserStateFromRequest('joom.upload.catid', 'catid', 0, 'int');
     $this->imgtitle     = $this->_mainframe->getUserStateFromRequest('joom.upload.title', 'imgtitle', '', 'string');
 
@@ -184,12 +185,12 @@ class JoomUpload extends JObject
         if (empty($this->_warningoutput)) {
           return '<br />'.$this->_debugoutput;
         } else {
-          return '<br />'.$title_warningoutput.'<br />'.$this->_warningoutput.'<hr />'.$this->_debugoutput;
+          return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<hr />'.$this->_debugoutput;
         }
       }
       // debug is not enabled, but there are some warnings to show
       elseif (!($this->debug) && !empty($this->_warningoutput)) {
-        return '<br />'.$title_warningoutput.'<br />'.$this->_warningoutput.'<br />';
+        return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<br />';
       }
       return false;
     }
@@ -454,7 +455,7 @@ class JoomUpload extends JObject
 
       // check for overriding with meta data
       $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
-      $overridevalues = $this->getOverrideValues($readfile);
+      $overridevalues = $this->getOverrideValues($readfile, 'uploadSingles');
 
       // Create thumbnail and detail image
       if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
@@ -508,6 +509,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.create_special_gif', false);
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
+    $this->_mainframe->setUserState('joom.upload.warningoutput', null);
        
     if (!$this->getDebugOutput())
     {
@@ -688,6 +690,7 @@ class JoomUpload extends JObject
       {
         $this->_mainframe->setUserState('joom.upload.batch.files', $ziplist);
         //$this->_mainframe->setUserState('joom.upload.debugoutput', $this->_debugoutput);
+        //$this->_mainframe->setUserState('joom.upload.warningoutput', $this->_warningoutput);
         $this->_mainframe->setUserState('joom.upload.debug', $this->debug);
         $this->_mainframe->setUserState('joom.upload.batch.counter', $counter);
         $refresher->refresh(count($ziplist));
@@ -832,7 +835,7 @@ class JoomUpload extends JObject
 
       // check for overriding with meta data
       $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
-      $overridevalues = $this->getOverrideValues($readfile);
+      $overridevalues = $this->getOverrideValues($readfile, 'uploadBatch');
 
       // Create thumbnail and detail image
       if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
@@ -901,6 +904,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.create_special_gif', false);
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
+    $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
     if (!$this->getDebugOutput())
     {
@@ -1186,7 +1190,7 @@ class JoomUpload extends JObject
 
         // check for overriding with meta data
         $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
-        $overridevalues = $this->getOverrideValues($readfile);
+        $overridevalues = $this->getOverrideValues($readfile, 'uploadJava');
 
         // Create thumbnail and detail image
         if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
@@ -1225,6 +1229,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.create_special_gif', false);
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
+    $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
     if($this->debug)
     {
@@ -1307,6 +1312,7 @@ class JoomUpload extends JObject
       {
         $this->_mainframe->setUserState('joom.upload.ftp.files', $ftpfiles);
         //$this->_mainframe->setUserState('joom.upload.debugoutput', $this->_debugoutput);
+        //$this->_mainframe->setUserState('joom.upload.warningoutput', $this->_warningoutput);
         $this->_mainframe->setUserState('joom.upload.debug', $this->debug);
         $refresher->refresh(count($ftpfiles));
       }
@@ -1399,7 +1405,7 @@ class JoomUpload extends JObject
 
       // check for overriding with meta data
       $readfile = JPath::clean($this->_ambit->get('ftp_path').$subdirectory.$origfilename);
-      $overridevalues = $this->getOverrideValues($readfile);
+      $overridevalues = $this->getOverrideValues($readfile, 'uploadFTP');
 
       // Resize image
       $delete_file = $this->_mainframe->getUserStateFromRequest('joom.upload.file_delete', 'file_delete', false, 'bool');
@@ -1443,6 +1449,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.create_special_gif', false);
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
+    $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
     if (!$this->getDebugOutput())
     {
@@ -1701,7 +1708,7 @@ class JoomUpload extends JObject
 
     // check for overriding with meta data
     $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
-    $overridevalues = $this->getOverrideValues($readfile);
+    $overridevalues = $this->getOverrideValues($readfile, 'uploadAJAX');
 
     // Create thumbnail and detail image
     if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
@@ -1751,6 +1758,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.create_special_gif', false);
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
+    $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
     return $row;
   }
@@ -2416,10 +2424,11 @@ class JoomUpload extends JObject
    * Method to get the values from image data to override the defaults
    *
    * @param   readfile        The image file to read
+   * @param   uploadMethod   The upload method who is actually working
    * @return  overridevalues  The meta data from the image if exists
    * @since   3.4
    */
-  protected function getOverrideValues($readfile)
+  protected function getOverrideValues($readfile, $uploadMethod)
   {
     $overridevalues = array(
       "imgtitle"  => null,
@@ -2443,6 +2452,7 @@ class JoomUpload extends JObject
 
       if (!($tag == 'jpg' || $tag == 'jpeg' || $tag == 'jpe' || $tag == 'jfif'))
       {
+        // Chenk for the right file-format, else throw warning
         if($this->_config->get('jg_replaceshowwarning') > 0)
         {
           $this->_warningoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_WRONGFILEFORMAT').'<br />';
@@ -2451,6 +2461,12 @@ class JoomUpload extends JObject
       }
       else
       {
+        // Header of the metadata replacement warningoutput
+        if ($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles') {
+          $this->_warningoutput .= JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.basename($readfile).'<br /><br />';
+        }
+
+        // Replacement with metadata according to settings
         if($this->_config->get('jg_replaceimgtitle') > 0 )
         {
           if($this->readMetaData($readfile, $this->_config->get('jg_replaceimgtitle')))
@@ -2553,8 +2569,14 @@ class JoomUpload extends JObject
           }
         }
 
+        // Hint for the metadata replacement in warningoutput 
         if ($metaWarning == true && $this->_config->get('jg_replaceshowwarning') == 2) {
           $this->_warningoutput .= '<br />'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAHINT').'<br />';
+        }
+
+        // Footer of the metadata replacement warningoutput
+        if ($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles') {
+          $this->_warningoutput .= '<hr />';
         }
       }
     }
