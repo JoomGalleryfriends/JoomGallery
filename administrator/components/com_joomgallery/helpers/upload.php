@@ -905,6 +905,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.create_special_gif', false);
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
+    $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
     if (!$this->getDebugOutput())
     {
@@ -1229,6 +1230,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.create_special_gif', false);
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
+    $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
     if($this->debug)
     {
@@ -1450,6 +1452,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.create_special_gif', false);
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
+    $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
     if (!$this->getDebugOutput())
     {
