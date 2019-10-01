@@ -2519,7 +2519,7 @@ class JoomUpload extends JObject
       else
       {
         // Header of the metadata replacement warningoutput
-        if ($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles') {
+        if (($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles') && $this->_config->get('jg_replaceshowwarning') > 0) {
           $this->_warningoutput .= JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.basename($readfile).'<br /><br />';
         }
 
@@ -2632,7 +2632,7 @@ class JoomUpload extends JObject
         }
 
         // Footer of the metadata replacement warningoutput
-        if ($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles') {
+        if (($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles') && $this->_config->get('jg_replaceshowwarning') > 0) {
           $this->_warningoutput .= '<hr />';
         }
       }
