@@ -690,8 +690,8 @@ class JoomUpload extends JObject
       if(!$refresher->check())
       {
         $this->_mainframe->setUserState('joom.upload.batch.files', $ziplist);
-        //$this->_mainframe->setUserState('joom.upload.debugoutput', $this->_debugoutput);
-        //$this->_mainframe->setUserState('joom.upload.warningoutput', $this->_warningoutput);
+        $this->_mainframe->setUserState('joom.upload.debugoutput', $this->_debugoutput);
+        $this->_mainframe->setUserState('joom.upload.warningoutput', $this->_warningoutput);
         $this->_mainframe->setUserState('joom.upload.debug', $this->debug);
         $this->_mainframe->setUserState('joom.upload.batch.counter', $counter);
         $refresher->refresh(count($ziplist));
@@ -1313,8 +1313,8 @@ class JoomUpload extends JObject
       if(!$refresher->check())
       {
         $this->_mainframe->setUserState('joom.upload.ftp.files', $ftpfiles);
-        //$this->_mainframe->setUserState('joom.upload.debugoutput', $this->_debugoutput);
-        //$this->_mainframe->setUserState('joom.upload.warningoutput', $this->_warningoutput);
+        $this->_mainframe->setUserState('joom.upload.debugoutput', $this->_debugoutput);
+        $this->_mainframe->setUserState('joom.upload.warningoutput', $this->_warningoutput);
         $this->_mainframe->setUserState('joom.upload.debug', $this->debug);
         $refresher->refresh(count($ftpfiles));
       }
