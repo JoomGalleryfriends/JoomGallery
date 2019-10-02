@@ -456,7 +456,7 @@ class JoomUpload extends JObject
       
       // check for overriding with meta data
       $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
-      $overridevalues = $this->getOverrideValues($readfile, 'uploadSingles');
+      $overridevalues = $this->getOverrideValues($readfile, 'uploadSingles', $origfilename);
 
       // Create thumbnail and detail image
       if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
@@ -836,7 +836,7 @@ class JoomUpload extends JObject
       
       // check for overriding with meta data
       $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
-      $overridevalues = $this->getOverrideValues($readfile, 'uploadBatch');
+      $overridevalues = $this->getOverrideValues($readfile, 'uploadBatch', $origfilename);
       
       // Create thumbnail and detail image
       if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
@@ -1191,7 +1191,7 @@ class JoomUpload extends JObject
         
         // check for overriding with meta data
         $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
-        $overridevalues = $this->getOverrideValues($readfile, 'uploadJava');
+        $overridevalues = $this->getOverrideValues($readfile, 'uploadJava', $origfilename);
 
         // Create thumbnail and detail image
         if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
@@ -1407,7 +1407,7 @@ class JoomUpload extends JObject
       
       // check for overriding with meta data
       $readfile = JPath::clean($this->_ambit->get('ftp_path').$subdirectory.$origfilename);
-      $overridevalues = $this->getOverrideValues($readfile, 'uploadFTP');
+      $overridevalues = $this->getOverrideValues($readfile, 'uploadFTP', $origfilename);
 
       // Resize image
       $delete_file = $this->_mainframe->getUserStateFromRequest('joom.upload.file_delete', 'file_delete', false, 'bool');
@@ -1711,7 +1711,7 @@ class JoomUpload extends JObject
     
     // check for overriding with meta data
     $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
-    $overridevalues = $this->getOverrideValues($readfile, 'uploadAJAX');
+    $overridevalues = $this->getOverrideValues($readfile, 'uploadAJAX', $origfilename);
 
     // Create thumbnail and detail image
     if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
@@ -2485,7 +2485,7 @@ class JoomUpload extends JObject
    * @return  overridevalues  The meta data from the image if exists
    * @since   3.4
    */
-  protected function getOverrideValues($readfile, $uploadMethod)
+  protected function getOverrideValues($readfile, $uploadMethod, $origfilename)
   {
     $overridevalues = array(
       "imgtitle"  => null,
@@ -2633,7 +2633,7 @@ class JoomUpload extends JObject
       if ($metaWarning == true && ($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles' || $uploadMethod == 'uploadBatch') && $this->_config->get('jg_replaceshowwarning') > 0) {
         
         // Header of the metadata replacement warningoutput
-        $warningoutput = JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.basename($readfile).'<br /><br />' . $warningoutput;
+        $warningoutput = JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.$origfilename . ' (' . basename($readfile).')<br /><br />' . $warningoutput;
         // Footer of the metadata replacement warningoutput
         $warningoutput .= '<hr />';
       }
