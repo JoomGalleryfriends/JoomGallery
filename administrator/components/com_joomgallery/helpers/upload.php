@@ -2507,6 +2507,7 @@ class JoomUpload extends JObject
       $metaWarning = false;
       $tag = strtolower(JFile::getExt($readfile));
 
+
       if (!($tag == 'jpg' || $tag == 'jpeg' || $tag == 'jpe' || $tag == 'jfif'))
       {
         // Chenk for the right file-format, else throw warning
@@ -2518,11 +2519,6 @@ class JoomUpload extends JObject
       }
       else
       {
-        // Header of the metadata replacement warningoutput
-        if (($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles') && $this->_config->get('jg_replaceshowwarning') > 0) {
-          $this->_warningoutput .= JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.basename($readfile).'<br /><br />';
-        }
-
         // Replacement with metadata according to settings
         if($this->_config->get('jg_replaceimgtitle') > 0 )
         {
@@ -2629,12 +2625,16 @@ class JoomUpload extends JObject
         // Hint for the metadata replacement in warningoutput 
         if ($metaWarning == true && $this->_config->get('jg_replaceshowwarning') == 2) {
           $this->_warningoutput .= '<br />'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAHINT').'<br />';
-        }
+        }        
+      }
 
+      // If there are warnings to show placement of a header and footer to the warningoutput
+      if ($metaWarning == true && ($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles') && $this->_config->get('jg_replaceshowwarning') > 0) {
+        
+        // Header of the metadata replacement warningoutput
+        $this->_warningoutput = JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.basename($readfile).'<br /><br />' . $this->_warningoutput;
         // Footer of the metadata replacement warningoutput
-        if (($uploadMethod == 'uploadFTP' || $uploadMethod == 'uploadSingles') && $this->_config->get('jg_replaceshowwarning') > 0) {
-          $this->_warningoutput .= '<hr />';
-        }
+        $this->_warningoutput .= '<hr />';
       }
     }
 
