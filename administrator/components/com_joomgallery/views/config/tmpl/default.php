@@ -61,9 +61,10 @@ JHTML::_('joomconfig.start', 'page2');
     $tl_jg_filenamereplace = '<textarea name="jg_filenamereplace" cols="60" rows="10" >'.$this->_config->jg_filenamereplace.'</textarea>';
     JHTML::_('joomconfig.row', 'jg_filenamereplace', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_RP_FILENAME_REPLACE', $tl_jg_filenamereplace);
 JHTML::_('joomconfig.end');
-    
+
 // start Tab "Grundlegende Einstellungen->Werte Ersetzung durch Meta-Daten"
 echo JHtml::_('tabs.panel', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES'), 'nested-two-one');
+
 JHTML::_('joomconfig.start', 'page21');
     JHTML::_('joomconfig.intro', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_INTRO'));
     // Exif data

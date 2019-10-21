@@ -23,10 +23,10 @@ UPDATE `#__joomgallery_config` SET `jg_upload_exif_rotation` = 0;
 ALTER TABLE `#__joomgallery_config` ADD `jg_originalquality` int(3) NOT NULL AFTER `jg_upload_exif_rotation`;
 UPDATE `#__joomgallery_config` SET `jg_originalquality` = 100;
 
-ALTER TABLE `#__joomgallery_config` ADD `jg_replaceimgtitle` text NOT NULL AFTER `jg_filenamereplace`;
-ALTER TABLE `#__joomgallery_config` ADD `jg_replaceimgtext` text NOT NULL AFTER `jg_replaceimgtitle`;
-ALTER TABLE `#__joomgallery_config` ADD `jg_replaceimgauthor` text NOT NULL AFTER `jg_replaceimgtext`;
-ALTER TABLE `#__joomgallery_config` ADD `jg_replaceimgdate` text NOT NULL AFTER `jg_replaceimgauthor`;
-ALTER TABLE `#__joomgallery_config` ADD `jg_replacemetakey` text NOT NULL AFTER `jg_replaceimgdate`;
-ALTER TABLE `#__joomgallery_config` ADD `jg_replacemetadesc` text NOT NULL AFTER `jg_replacemetakey`;
+ALTER TABLE `#__joomgallery_config` ADD `jg_replaceimgtitle` int(4) NOT NULL AFTER `jg_filenamereplace`;
+ALTER TABLE `#__joomgallery_config` ADD `jg_replaceimgtext` int(4) NOT NULL AFTER `jg_replaceimgtitle`;
+ALTER TABLE `#__joomgallery_config` ADD `jg_replaceimgauthor` int(4) NOT NULL AFTER `jg_replaceimgtext`;
+ALTER TABLE `#__joomgallery_config` ADD `jg_replaceimgdate` int(4) NOT NULL AFTER `jg_replaceimgauthor`;
+ALTER TABLE `#__joomgallery_config` ADD `jg_replacemetakey` int(4) NOT NULL AFTER `jg_replaceimgdate`;
+ALTER TABLE `#__joomgallery_config` ADD `jg_replacemetadesc` int(4) NOT NULL AFTER `jg_replacemetakey`;
 ALTER TABLE `#__joomgallery_config` ADD `jg_replaceshowwarning` int(1) NOT NULL AFTER `jg_replacemetadesc`;
