@@ -2593,7 +2593,7 @@ class JoomUpload extends JObject
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
-              $warningoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACEIMGDATE').'<br />';
+              $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACEIMGDATE', $this->getMetaName($this->_config->get('jg_replaceimgdate'))).'<br />';
               $metaWarning = true;
             }
           }
@@ -2766,11 +2766,11 @@ class JoomUpload extends JObject
     $string = '';
 
     if (array_key_exists($fieldNR,$this->exif_config_array['IFD0'])) {
-      $string = JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][$fieldNR]['Name'];
+      $string = $this->exif_config_array['IFD0'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . ')';
     } elseif (array_key_exists($fieldNR,$this->exif_config_array['EXIF'])) {
-      $string = JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][$fieldNR]['Name'];
+      $string = $this->exif_config_array['EXIF'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . ')';
     } elseif (array_key_exists($fieldNR,$this->iptc_config_array['IPTC'])) {
-      $string = JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][$fieldNR]['Name'];
+      $string = $this->iptc_config_array['IPTC'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . ')';
     } else {
       $string = '';
     }
