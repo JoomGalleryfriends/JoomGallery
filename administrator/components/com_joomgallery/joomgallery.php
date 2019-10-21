@@ -26,6 +26,11 @@ if(version_compare(JVERSION, '4.0', 'ge') || version_compare(JVERSION, '3.0', 'l
 require_once(JPATH_COMPONENT.'/controller.php');
 require_once(JPATH_COMPONENT.'/includes/defines.php');
 
+// Load language files of frontend for Exif and IPTC data
+$language = JFactory::getLanguage();
+$language->load(_JOOM_OPTION.'.exif', JPATH_SITE);
+$language->load(_JOOM_OPTION.'.iptc', JPATH_SITE);
+
 // Access check
 if(!JFactory::getUser()->authorise('core.manage', _JOOM_OPTION))
 {

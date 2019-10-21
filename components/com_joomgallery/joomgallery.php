@@ -21,6 +21,11 @@ if(version_compare(JVERSION, '4.0', 'ge') || version_compare(JVERSION, '3.0', 'l
 // Require the defines
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/defines.php';
 
+// Load language files of frontend for Exif and IPTC data
+$language = JFactory::getLanguage();
+$language->load(_JOOM_OPTION.'.exif', JPATH_SITE);
+$language->load(_JOOM_OPTION.'.iptc', JPATH_SITE);
+
 // Enable JoomGallery plugins
 JPluginHelper::importPlugin('joomgallery');
 
