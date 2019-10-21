@@ -101,6 +101,11 @@ class JoomGalleryView extends JViewLegacy
       $this->_doc->addStyleSheet($this->_ambit->getStyleSheet('joom_local.css'));
     }
 
+    // Load language files of frontend for Exif and IPTC data
+    $language = JFactory::getLanguage();
+    $language->load(_JOOM_OPTION.'.exif', JPATH_SITE);
+    $language->load(_JOOM_OPTION.'.iptc', JPATH_SITE);
+
     // Set documents meta data taken from menu entry definition
     $params = $this->_mainframe->getParams();
     if($params->get('menu-meta_description'))

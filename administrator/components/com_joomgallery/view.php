@@ -90,6 +90,11 @@ class JoomGalleryView extends JViewLegacy
 
     JHTML::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 
+    // Load language files of frontend for Exif and IPTC data
+    $language = JFactory::getLanguage();
+    $language->load(_JOOM_OPTION.'.exif', JPATH_SITE);
+    $language->load(_JOOM_OPTION.'.iptc', JPATH_SITE);
+
     // Check for available updates
     if(!$checked = $this->_mainframe->getUserState('joom.update.checked'))
     {

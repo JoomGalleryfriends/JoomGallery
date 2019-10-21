@@ -143,6 +143,20 @@ class JoomUpload extends JObject
   protected $type;
 
   /**
+   * Exif Structure Array
+   *
+   * @var array
+   */
+  protected $exif_config_array;
+
+  /**
+   * IPTC Structure Array
+   *
+   * @var array
+   */
+  protected $iptc_config_array;
+
+  /**
    * Constructor
    *
    * @return  void
@@ -155,6 +169,18 @@ class JoomUpload extends JObject
     $this->_ambit     = JoomAmbit::getInstance();
     $this->_user      = JFactory::getUser();
     $this->_db        = JFactory::getDBO();
+
+    if ($this->_mainframe->isAdmin())
+    {
+      require_once JPATH_COMPONENT.'/includes/exifarray.php';
+      require_once JPATH_COMPONENT.'/includes/iptcarray.php';
+    } else {
+      require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/includes/exifarray.php';
+      require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/includes/iptcarray.php';
+    }
+    
+    $this->exif_config_array = $exif_config_array;
+    $this->iptc_config_array = $iptc_config_array;
 
     $this->debug        = $this->_mainframe->getUserStateFromRequest('joom.upload.debug', 'debug', false, 'post', 'bool');
     $this->_debugoutput = $this->_mainframe->getUserStateFromRequest('joom.upload.debugoutput', 'debugoutput', '', 'post', 'string');
@@ -2684,7 +2710,7 @@ class JoomUpload extends JObject
       $return[] = iptcparse($info['APP13']);
     }
 
-    return $return;
+    return $return; 
   }
 
 
@@ -2704,208 +2730,27 @@ class JoomUpload extends JObject
     {
       $separator = ', ';
 
-      switch($configoption)
-      {
-        // Exif UserComment
-        case 1:
-          if(isset($metadata_array[0]["COMMENT"]))
-          {
-            $return = implode($separator, $metadata_array[0]["COMMENT"]);
-          }
-          break;
-        // Exif FileName
-        case 2:
-          if(isset($metadata_array[0]["FileName"]))
-          {
-            $return = $metadata_array[0]["FileName"];
-          }
-          break;
-        // Exif Maker
-        case 3:
-          if(isset($metadata_array[0]["Make"]))
-          {
-            $return = $metadata_array[0]["Make"];
-          }
-          break;
-        // Exif Model
-        case 4:
-          if(isset($metadata_array[0]["Model"]))
-          {
-            $return = $metadata_array[0]["Model"];
-          }
-          break;
-        // Exif Software
-        case 5:
-          if(isset($metadata_array[0]["Software"]))
-          {
-            $return = $metadata_array[0]["Software"];
-          }
-          break;
-        // Exif DateTime
-        case 6:
-          if(isset($metadata_array[0]["DateTime"]))
-          {
-            $return = $metadata_array[0]["DateTime"];
-          }
-          break;
-        // Exif DateTimeOriginal
-        case 7:
-          if(isset($metadata_array[0]["DateTimeOriginal"]))
-          {
-            $return = $metadata_array[0]["DateTimeOriginal"];
-          }
-          break;
-        // IPTC Data
-        // IPTC Title
-        case 205:
-          if(isset($metadata_array[1]["2#005"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#005"]);
-          }
-          break;
-        // IPTC Author
-        case 280:
-          if(isset($metadata_array[1]["2#080"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#080"]);
-          }
-          break;
-        // IPTC Author Job Title
-        case 285:
-          if(isset($metadata_array[1]["2#085"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#085"]);
-          }
-          break;
-        // IPTC copyright
-        case 2116:
-          if(isset($metadata_array[1]["2#116"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#116"]);
-          }
-          break;
-        // IPTC caption
-        case 2120:
-          if(isset($metadata_array[1]["2#120"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#120"]);
-          }
-          break;
-        // IPTC caption writer
-        case 2122:
-          if(isset($metadata_array[1]["2#122"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#122"]);
-          }
-          break;
-        // IPTC Headine
-        case 2105:
-          if(isset($metadata_array[1]["2#105"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#105"]);
-          }
-          break;
-        // IPTC Special instructions
-        case 240:
-          if(isset($metadata_array[1]["2#040"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#040"]);
-          }
-          break;
-        // IPTC Supplemental category - deprecated
-        case 220:
-          if(isset($metadata_array[1]["2#020"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#020"]);
-          }
-          break;
-        // IPTC Keywords
-        case 225:
-          if(isset($metadata_array[1]["2#025"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#025"]);
-          }
-          break;
-        // IPTC Category - deprecated!
-        case 29:
-          if(isset($metadata_array[1]["2#015"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#015"]);
-          }
-          break;
-        // IPTC Urgency  - deprecated!
-        case 210:
-          if(isset($metadata_array[1]["2#010"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#010"]);
-          }
-          break;
-        // IPTC Credit
-        case 2110:
-          if(isset($metadata_array[1]["2#110"]))
-          {
-            $return = implode($separator, $metadata_array["2#110"]);
-          }
-          break;
-        // IPTC Source
-        case 2115:
-          if(isset($metadata_array[1]["2#115"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#115"]);
-          }
-          break;
-        // IPTC Date created
-        case 255:
-          if(isset($metadata_array[1]["2#055"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#055"]);
-          }
-          break;
-        // IPTC City
-        case 290:
-          if(isset($metadata_array[1]["2#090"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#090"]);
-          }
-          break;
-        // IPTC Sublocation
-        case 292:
-          if(isset($metadata_array[1]["2#092"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#092"]);
-          }
-          break;
-        // IPTC State
-        case 295:
-          if(isset($metadata_array[1]["2#095"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#095"]);
-          }
-          break;
-        // IPTC Country
-        case 2101:
-          if(isset($metadata_array[1]["2#101"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#101"]);
-          }
-          break;
-        // IPTC Original transmission reference - fehlt in defines.php
-        case 2103:
-          if(isset($metadata_array[1]["2#103"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#103"]);
-          }
-          break;
-        // IPTC Photo Source - identisch mit Source? - noch prüfen mit Beispielfoto Dom
-        case 39:
-          if(isset($metadata_array[1]["2#115"]))
-          {
-            $return = implode($separator, $metadata_array[1]["2#115"]);
-          }
-          break;
+      if (array_key_exists($configoption,$this->exif_config_array['IFD0'])) {
+        $attribute = $this->exif_config_array['IFD0'][$configoption]['Attribute'];
+        if(isset($metadata_array[0][$attribute])) {
+          $return = $metadata_array[0][$attribute];
+        }
+      } elseif (array_key_exists($configoption,$this->exif_config_array['EXIF'])) {
+        $attribute = $this->exif_config_array['EXIF'][$configoption]['Attribute'];
+        if(isset($metadata_array[0][$attribute])) {
+          $return = $metadata_array[0][$attribute];
+        }
+      } elseif (array_key_exists($configoption,$this->iptc_config_array['IPTC'])) {
+        $imm = $this->iptc_config_array['IPTC'][$configoption]['IMM'];
+        $imm = str_replace(':', '#', $imm); 
+        if(isset($metadata_array[1][$imm]))
+        {
+          $return = implode($separator, $metadata_array[1][$imm]);
+        }
+      } else {
+        $return = false;
       }
     }
-
     return $return;
   }
 
@@ -2917,34 +2762,19 @@ class JoomUpload extends JObject
    * @since   3.4
    */
   protected function getMetaName($fieldNR)
-  {
-    $separator = '-';
+  {   
+    $string = '';
 
-    $fields = array
-      (
-        "1"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . $separator . JText::_('COM_JOOMGALLERY_SUBIFD_USERCOMMENT'),
-        "3"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . $separator . JText::_('COM_JOOMGALLERY_IFD0_MAKE'),
-        "4"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . $separator . JText::_('COM_JOOMGALLERY_IFD0_MODEL'),
-        "5"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . $separator . JText::_('COM_JOOMGALLERY_IFD0_SOFTWARE'),
-        "6"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . $separator . JText::_('COM_JOOMGALLERY_IFD0_DATETIME'),
-        "7"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . $separator . JText::_('COM_JOOMGALLERY_SUBIFD_DATETIMEORIGINAL'),
-        "205"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_TITLE'),
-        "280"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_CREATOR'),
-        "285"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_CREATORSJOBTITLE'),
-        "2116"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_COPYRIGHTNOTICE'),
-        "2120"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_DESCRIPTION'),
-        "2122"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_DESCRIPTIONWRITER'),
-        "2105"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_HEADLINE'),
-        "240"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_INSTRUCTIONS'),
-        "225"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_KEYWORDS'),
-        "2110"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_CREDITLINE'),
-        "2115"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_SOURCE'),
-        "255"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_DATECREATED'),
-        "290"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_CITYLEGACY'),
-        "292"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_SUBLOCATIONLEGACY'),
-        "2101"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_COUNTRYLEGACY'),
-        "2103"=>JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . $separator . JText::_('COM_JOOMGALLERY_IPTC_TRANSMISSIONREFERENCE'),
-      );
-    return $fields[$fieldNR];
+    if (array_key_exists($fieldNR,$this->exif_config_array['IFD0'])) {
+      $string = JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][$fieldNR]['Name'];
+    } elseif (array_key_exists($fieldNR,$this->exif_config_array['EXIF'])) {
+      $string = JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][$fieldNR]['Name'];
+    } elseif (array_key_exists($fieldNR,$this->iptc_config_array['IPTC'])) {
+      $string = JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][$fieldNR]['Name'];
+    } else {
+      $string = '';
+    }
+
+    return $string;
   }
 }
