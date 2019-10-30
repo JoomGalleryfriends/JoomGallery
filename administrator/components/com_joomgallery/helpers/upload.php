@@ -2693,6 +2693,8 @@ class JoomUpload extends JObject
     }
 
     // Get IPTC data
+    $size = getimagesize($readfile, $info);
+
     if(isset($info['APP13']))
     {
       $return[] = iptcparse($info['APP13']);
