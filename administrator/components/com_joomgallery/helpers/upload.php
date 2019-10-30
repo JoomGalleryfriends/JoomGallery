@@ -2747,10 +2747,10 @@ class JoomUpload extends JObject
   }
 
   /**
-   * Method to extract the name of the metadata-field, chosen in configuration-manager for a specific value
+   * Method to extract the name of the metadata field, chosen in configuration manager for a specific value
    *
-   * @param   fieldNR  number of the chosen metadata-field
-   * @return  string   The name of the chosen metadata-field
+   * @param   int     fieldNR Number of the chosen metadata field
+   * @return  string  string  The name of the chosen metadata field
    * @since   3.4
    */
   protected function getMetaName($fieldNR)
