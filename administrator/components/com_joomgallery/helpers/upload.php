@@ -2700,9 +2700,9 @@ class JoomUpload extends JObject
   /**
    * Method to extract the value from metadata array
    *
-   * @param   metadata_array  Array with all metadata
-   * @param   configoption    Determines which value should be read from metadata
-   * @return  value           The metadata from the image if exists
+   * @param   array   metadata_array  Array with all metadata
+   * @param   string  configoption    Determines which value should be read from metadata
+   * @return  mixed   return          The metadata from the image if exists, false otherwise
    * @since   3.4
    */
   protected function MetaDataValue($metadata_array, $configoption = Null)
