@@ -2491,8 +2491,8 @@ class JoomUpload extends JObject
   /**
    * Method to get the values from image data to override the defaults
    *
-   * @param   readfile        The image file to read
-   * @return  overridevalues  The meta data from the image if exists
+   * @param   string  readfile        The image file to read
+   * @return  array   overridevalues  The meta data from the image if exists
    * @since   3.4
    */
   protected function getOverrideValues($readfile, $origfilename)
