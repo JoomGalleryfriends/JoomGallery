@@ -473,8 +473,8 @@ class JoomUpload extends JObject
         continue;
       }*/
 
-      // check for overriding with meta data
-      $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
+      // Check for overriding with meta data
+      $readfile       = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
       $overridevalues = $this->getOverrideValues($readfile, $origfilename);
 
       // Create thumbnail and detail image
@@ -531,11 +531,9 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
     $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
-    if (!$this->getDebugOutput())
+    if(($debugOutput = $this->getDebugOutput()) !== false)
     {
-      // if there is nothing to show
-    } else {
-      echo $this->getDebugOutput();
+      echo $debugOutput;
       $this->debug = true;
     }
 
@@ -853,8 +851,8 @@ class JoomUpload extends JObject
 
       $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE').'<br />';
 
-      // check for overriding with meta data
-      $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
+      // Check for overriding with meta data
+      $readfile       = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
       $overridevalues = $this->getOverrideValues($readfile, $origfilename);
 
       // Create thumbnail and detail image
@@ -926,11 +924,9 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
     $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
-    if (!$this->getDebugOutput())
+    if(($debugOutput = $this->getDebugOutput()) !== false)
     {
-      // if there is nothing to show
-    } else {
-      echo $this->getDebugOutput();
+      echo $debugOutput;
       $this->debug = true;
     }
 
@@ -1208,8 +1204,8 @@ class JoomUpload extends JObject
           continue;
         }*/
 
-        // check for overriding with meta data
-        $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
+        // Check for overriding with meta data
+        $readfile       = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
         $overridevalues = $this->getOverrideValues($readfile, $origfilename);
 
         // Create thumbnail and detail image
@@ -1267,11 +1263,9 @@ class JoomUpload extends JObject
       echo "\nJOOMGALLERYUPLOADSUCCESS\n";
     }
 
-    if (!$this->getDebugOutput())
+    if(($debugOutput = $this->getDebugOutput()) !== false)
     {
-      // if there is nothing to show
-    } else {
-      echo $this->getDebugOutput();
+      echo $debugOutput;
       $this->debug = true;
     }
 
@@ -1424,8 +1418,8 @@ class JoomUpload extends JObject
 
       $newfilename = $this->_genFilename($newfilename, $tag, $filecounter);
 
-      // check for overriding with meta data
-      $readfile = JPath::clean($this->_ambit->get('ftp_path').$subdirectory.$origfilename);
+      // Check for overriding with meta data
+      $readfile       = JPath::clean($this->_ambit->get('ftp_path').$subdirectory.$origfilename);
       $overridevalues = $this->getOverrideValues($readfile, $origfilename);
 
       // Resize image
@@ -1473,11 +1467,9 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
     $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
-    if (!$this->getDebugOutput())
+    if(($debugOutput = $this->getDebugOutput()) !== false)
     {
-      // if there is nothing to show
-    } else {
-      echo $this->getDebugOutput();
+      echo $debugOutput;
       $this->debug = true;
     }
 
@@ -1728,8 +1720,8 @@ class JoomUpload extends JObject
       //       return false;
       //     }
 
-    // check for overriding with meta data
-    $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
+    // Check for overriding with meta data
+    $readfile       = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
     $overridevalues = $this->getOverrideValues($readfile, $origfilename);
 
     // Create thumbnail and detail image
