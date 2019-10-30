@@ -2540,9 +2540,9 @@ class JoomUpload extends JObject
         // Replacement with metadata according to settings
         if($this->_config->get('jg_replaceimgtitle') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')))
+          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')))
           {
-            $overridevalues["imgtitle"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')), 'STRING');
+            $overridevalues["imgtitle"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')), 'STRING');
             $this->_debugoutput        .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTITLE').'<br />';
           }
           else
@@ -2557,9 +2557,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replaceimgtext') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')))
+          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')))
           {
-            $overridevalues["imgtext"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')), 'HTML');
+            $overridevalues["imgtext"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')), 'HTML');
             $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTEXT').'<br />';
           }
           else
@@ -2574,9 +2574,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replaceimgdate') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')))
+          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')))
           {
-            $overridevalues["imgdate"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')), 'STRING');
+            $overridevalues["imgdate"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')), 'STRING');
             $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGDATE').'<br />';
           }
           else
@@ -2591,9 +2591,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replaceimgauthor') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')))
+          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')))
           {
-            $overridevalues["imgauthor"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')), 'STRING');
+            $overridevalues["imgauthor"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')), 'STRING');
             $this->_debugoutput         .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGAUTHOR').'<br />';
           }
           else
@@ -2608,9 +2608,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replacemetakey') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetakey')))
+          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetakey')))
           {
-            $overridevalues["metakey"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetakey')), 'STRING');
+            $overridevalues["metakey"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetakey')), 'STRING');
             $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAKEYS').'<br />';
           }
           else
@@ -2625,9 +2625,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replacemetadesc') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')))
+          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')))
           {
-            $overridevalues["metadesc"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')), 'STRING');
+            $overridevalues["metadesc"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')), 'STRING');
             $this->_debugoutput        .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METADESC').'<br />';
           }
           else
@@ -2710,7 +2710,7 @@ class JoomUpload extends JObject
    * @return  mixed   return          The metadata from the image if exists, false otherwise
    * @since   3.4
    */
-  protected function MetaDataValue($metadata_array, $configoption = Null)
+  protected function getMetaDataValue($metadata_array, $configoption = Null)
   {
     $return = false;
 
@@ -2718,7 +2718,7 @@ class JoomUpload extends JObject
     {
       $separator = ', ';
 
-      if(array_key_exists($configoption,$this->exif_config_array['IFD0']))
+      if(array_key_exists($configoption, $this->exif_config_array['IFD0']))
       {
         $attribute = $this->exif_config_array['IFD0'][$configoption]['Attribute'];
 
@@ -2727,7 +2727,7 @@ class JoomUpload extends JObject
           $return = $metadata_array[0][$attribute];
         }
       }
-      elseif(array_key_exists($configoption,$this->exif_config_array['EXIF']))
+      elseif(array_key_exists($configoption, $this->exif_config_array['EXIF']))
       {
         $attribute = $this->exif_config_array['EXIF'][$configoption]['Attribute'];
 
@@ -2736,7 +2736,7 @@ class JoomUpload extends JObject
           $return = $metadata_array[0][$attribute];
         }
       }
-      elseif(array_key_exists($configoption,$this->iptc_config_array['IPTC']))
+      elseif(array_key_exists($configoption, $this->iptc_config_array['IPTC']))
       {
         $imm = $this->iptc_config_array['IPTC'][$configoption]['IMM'];
         $imm = str_replace(':', '#', $imm);
