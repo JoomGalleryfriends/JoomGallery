@@ -2713,27 +2713,36 @@ class JoomUpload extends JObject
     {
       $separator = ', ';
 
-      if (array_key_exists($configoption,$this->exif_config_array['IFD0'])) {
+      if(array_key_exists($configoption,$this->exif_config_array['IFD0']))
+      {
         $attribute = $this->exif_config_array['IFD0'][$configoption]['Attribute'];
-        if(isset($metadata_array[0][$attribute])) {
+
+        if(isset($metadata_array[0][$attribute]))
+        {
           $return = $metadata_array[0][$attribute];
         }
-      } elseif (array_key_exists($configoption,$this->exif_config_array['EXIF'])) {
+      }
+      elseif(array_key_exists($configoption,$this->exif_config_array['EXIF']))
+      {
         $attribute = $this->exif_config_array['EXIF'][$configoption]['Attribute'];
-        if(isset($metadata_array[0][$attribute])) {
+
+        if(isset($metadata_array[0][$attribute]))
+        {
           $return = $metadata_array[0][$attribute];
         }
-      } elseif (array_key_exists($configoption,$this->iptc_config_array['IPTC'])) {
+      }
+      elseif(array_key_exists($configoption,$this->iptc_config_array['IPTC']))
+      {
         $imm = $this->iptc_config_array['IPTC'][$configoption]['IMM'];
         $imm = str_replace(':', '#', $imm);
+
         if(isset($metadata_array[1][$imm]))
         {
           $return = implode($separator, $metadata_array[1][$imm]);
         }
-      } else {
-        $return = false;
       }
     }
+
     return $return;
   }
 
