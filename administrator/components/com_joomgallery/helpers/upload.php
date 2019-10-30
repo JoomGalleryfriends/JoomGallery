@@ -2757,14 +2757,17 @@ class JoomUpload extends JObject
   {
     $string = '';
 
-    if (array_key_exists($fieldNR,$this->exif_config_array['IFD0'])) {
+    if(array_key_exists($fieldNR,$this->exif_config_array['IFD0']))
+    {
       $string = $this->exif_config_array['IFD0'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . ')';
-    } elseif (array_key_exists($fieldNR,$this->exif_config_array['EXIF'])) {
+    }
+    elseif(array_key_exists($fieldNR,$this->exif_config_array['EXIF']))
+    {
       $string = $this->exif_config_array['EXIF'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . ')';
-    } elseif (array_key_exists($fieldNR,$this->iptc_config_array['IPTC'])) {
+    }
+    elseif(array_key_exists($fieldNR,$this->iptc_config_array['IPTC']))
+    {
       $string = $this->iptc_config_array['IPTC'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . ')';
-    } else {
-      $string = '';
     }
 
     return $string;
