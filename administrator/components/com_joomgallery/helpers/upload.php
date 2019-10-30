@@ -2540,9 +2540,9 @@ class JoomUpload extends JObject
         // Replacement with metadata according to settings
         if($this->_config->get('jg_replaceimgtitle') > 0)
         {
-          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle'))))
           {
-            $overridevalues["imgtitle"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')), 'STRING');
+            $overridevalues["imgtitle"] = $filter->clean($metaDataValue, 'STRING');
             $this->_debugoutput        .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTITLE').'<br />';
           }
           else
@@ -2557,9 +2557,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replaceimgtext') > 0)
         {
-          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtext'))))
           {
-            $overridevalues["imgtext"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')), 'HTML');
+            $overridevalues["imgtext"] = $filter->clean($metaDataValue, 'HTML');
             $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTEXT').'<br />';
           }
           else
@@ -2574,9 +2574,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replaceimgdate') > 0)
         {
-          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgdate'))))
           {
-            $overridevalues["imgdate"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')), 'STRING');
+            $overridevalues["imgdate"] = $filter->clean($metaDataValue, 'STRING');
             $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGDATE').'<br />';
           }
           else
@@ -2591,9 +2591,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replaceimgauthor') > 0)
         {
-          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor'))))
           {
-            $overridevalues["imgauthor"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')), 'STRING');
+            $overridevalues["imgauthor"] = $filter->clean($metaDataValue, 'STRING');
             $this->_debugoutput         .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGAUTHOR').'<br />';
           }
           else
@@ -2608,9 +2608,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replacemetakey') > 0)
         {
-          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetakey')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetakey'))))
           {
-            $overridevalues["metakey"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetakey')), 'STRING');
+            $overridevalues["metakey"] = $filter->clean($metaDataValue, 'STRING');
             $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAKEYS').'<br />';
           }
           else
@@ -2625,9 +2625,9 @@ class JoomUpload extends JObject
 
         if($this->_config->get('jg_replacemetadesc') > 0)
         {
-          if($this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetadesc'))))
           {
-            $overridevalues["metadesc"] = $filter->clean($this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')), 'STRING');
+            $overridevalues["metadesc"] = $filter->clean($metaDataValue, 'STRING');
             $this->_debugoutput        .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METADESC').'<br />';
           }
           else
