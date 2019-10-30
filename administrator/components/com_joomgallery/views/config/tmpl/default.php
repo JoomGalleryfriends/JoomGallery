@@ -1,7 +1,6 @@
 <?php defined('_JEXEC') or die('Direct Access to this location is not allowed.'); ?>
-<style>select{min-width: 250px;}</style>
 <form action="index.php" method="post" id="adminForm" name="adminForm" class="form-inline">
-<?php if(!empty($this->sidebar)): ?> 
+<?php if(!empty($this->sidebar)): ?>
   <div id="j-sidebar-container" class="span2">
     <?php echo $this->sidebar; ?>
   </div>
@@ -62,6 +61,7 @@ JHTML::_('joomconfig.start', 'page2');
     $tl_jg_filenamereplace = '<textarea name="jg_filenamereplace" cols="60" rows="10" >'.$this->_config->jg_filenamereplace.'</textarea>';
     JHTML::_('joomconfig.row', 'jg_filenamereplace', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_RP_FILENAME_REPLACE', $tl_jg_filenamereplace);
 JHTML::_('joomconfig.end');
+
 // start Tab "Grundlegende Einstellungen->Werte Ersetzung durch Meta-Daten"
 echo JHtml::_('tabs.panel', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES'), 'nested-two-one');
 
@@ -69,7 +69,7 @@ JHTML::_('joomconfig.start', 'page21');
     JHTML::_('joomconfig.intro', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_INTRO'));
     // Value-Replacer
     //----------------
-    // Exif data 
+    // Exif data
     $imgvaluereplacer[] = JHTML::_('select.option','0', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_NONE'));
     $imgvaluereplacer[] = JHTML::_('select.option','270', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][270]['Name']); // Image Description
     $imgvaluereplacer[] = JHTML::_('select.option','37510', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][37510]['Name']); // User Comment
@@ -80,43 +80,45 @@ JHTML::_('joomconfig.start', 'page21');
     //$imgvaluereplacer[] = JHTML::_('select.option','305', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][305]['Name']); // Software
     //$imgvaluereplacer[] = JHTML::_('select.option','41728', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][41728]['Name']); // File Source
     $imgvaluereplacer[] = JHTML::_('select.option','306', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][306]['Name']); // DateTime
-    $imgvaluereplacer[] = JHTML::_('select.option','36867', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][36867]['Name']); //DateTimeOriginal
-    $imgvaluereplacer[] = JHTML::_('select.option','36868', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][36868]['Name']); //DateTimeDigitized
+    $imgvaluereplacer[] = JHTML::_('select.option','36867', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][36867]['Name']); // DateTimeOriginal
+    $imgvaluereplacer[] = JHTML::_('select.option','36868', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][36868]['Name']); // DateTimeDigitized
+
     // IPTC data
-    $imgvaluereplacer[] = JHTML::_('select.option','205',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][205]['Name']); //ObjectName
-    $imgvaluereplacer[] = JHTML::_('select.option','2105', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2105]['Name']); //Headline/Title
-    $imgvaluereplacer[] = JHTML::_('select.option','2120', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2120]['Name']); //Caption/Description
-    $imgvaluereplacer[] = JHTML::_('select.option','240',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][240]['Name']); //Instructions
-    $imgvaluereplacer[] = JHTML::_('select.option','285',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][285]['Name']); //By-Line Title
-    $imgvaluereplacer[] = JHTML::_('select.option','280',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][280]['Name']); //By-Line
-    $imgvaluereplacer[] = JHTML::_('select.option','225',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][225]['Name']); //Keywords
-    $imgvaluereplacer[] = JHTML::_('select.option','280',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][280]['Name']); //Creator
-    //$imgvaluereplacer[] = JHTML::_('select.option','285',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][285]['Name']); //Creator Job Title
-    $imgvaluereplacer[] = JHTML::_('select.option','2116', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2116]['Name']); //Copyright   
-    $imgvaluereplacer[] = JHTML::_('select.option','2110', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2110]['Name']); //Credit
-    $imgvaluereplacer[] = JHTML::_('select.option','2115', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2115]['Name']); //Source
-    $imgvaluereplacer[] = JHTML::_('select.option','2122', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2122]['Name']); //Editor
-    $imgvaluereplacer[] = JHTML::_('select.option','255',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][255]['Name']); //Creation Date
-    //$imgvaluereplacer[] = JHTML::_('select.option','290',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][290]['Name']); //City
-    $imgvaluereplacer[] = JHTML::_('select.option','292',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][292]['Name']); //Location
-    //$imgvaluereplacer[] = JHTML::_('select.option','2101', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2101]['Name']); //Country
+    $imgvaluereplacer[] = JHTML::_('select.option','205',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][205]['Name']); // ObjectName
+    $imgvaluereplacer[] = JHTML::_('select.option','2105', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2105]['Name']); // Headline/Title
+    $imgvaluereplacer[] = JHTML::_('select.option','2120', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2120]['Name']); // Caption/Description
+    $imgvaluereplacer[] = JHTML::_('select.option','240',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][240]['Name']); // Instructions
+    $imgvaluereplacer[] = JHTML::_('select.option','285',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][285]['Name']); // By-Line Title
+    $imgvaluereplacer[] = JHTML::_('select.option','280',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][280]['Name']); // By-Line
+    $imgvaluereplacer[] = JHTML::_('select.option','225',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][225]['Name']); // Keywords
+    $imgvaluereplacer[] = JHTML::_('select.option','280',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][280]['Name']); // Creator
+    //$imgvaluereplacer[] = JHTML::_('select.option','285',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][285]['Name']); // reator Job Title
+    $imgvaluereplacer[] = JHTML::_('select.option','2116', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2116]['Name']); // Copyright
+    $imgvaluereplacer[] = JHTML::_('select.option','2110', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2110]['Name']); // Credit
+    $imgvaluereplacer[] = JHTML::_('select.option','2115', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2115]['Name']); // Source
+    $imgvaluereplacer[] = JHTML::_('select.option','2122', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2122]['Name']); // Editor
+    $imgvaluereplacer[] = JHTML::_('select.option','255',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][255]['Name']); // Creation Date
+    //$imgvaluereplacer[] = JHTML::_('select.option','290',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][290]['Name']); // City
+    $imgvaluereplacer[] = JHTML::_('select.option','292',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][292]['Name']); // Location
+    //$imgvaluereplacer[] = JHTML::_('select.option','2101', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2101]['Name']); // Country
     //$imgvaluereplacer[] = JHTML::_('select.option','2103', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . JText::_('COM_JOOMGALLERY_IPTC_TRANSMISSIONREFERENCE'));
-    // $imgvaluereplacer[] = JHTML::_('select.option','220',  JText::_('COM_JOOMGALLERY_IPTC_SUBLEMENTALS'));
-    // $imgvaluereplacer[] = JHTML::_('select.option','210',  JText::_('COM_JOOMGALLERY_IPTC_URGENCY'));
-    // $imgvaluereplacer[] = JHTML::_('select.option','29',   JText::_('COM_JOOMGALLERY_IPTC_CATEGORY'));
+    //$imgvaluereplacer[] = JHTML::_('select.option','220',  JText::_('COM_JOOMGALLERY_IPTC_SUBLEMENTALS'));
+    //$imgvaluereplacer[] = JHTML::_('select.option','210',  JText::_('COM_JOOMGALLERY_IPTC_URGENCY'));
+    //$imgvaluereplacer[] = JHTML::_('select.option','29',   JText::_('COM_JOOMGALLERY_IPTC_CATEGORY'));
     // Date-Replacer
     //----------------
     $imgdatereplacer[] = JHTML::_('select.option','0', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_NONE'));
     $imgdatereplacer[] = JHTML::_('select.option','306', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][306]['Name']); // DateTime
-    $imgdatereplacer[] = JHTML::_('select.option','36867', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][36867]['Name']); //DateTimeOriginal
-    $imgdatereplacer[] = JHTML::_('select.option','36868', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][36868]['Name']); //DateTimeDigitized
-    $imgdatereplacer[] = JHTML::_('select.option','255',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][255]['Name']); //Creation Date
+    $imgdatereplacer[] = JHTML::_('select.option','36867', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][36867]['Name']); // DateTimeOriginal
+    $imgdatereplacer[] = JHTML::_('select.option','36868', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][36868]['Name']); // DateTimeDigitized
+    $imgdatereplacer[] = JHTML::_('select.option','255',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][255]['Name']); // Creation Date
     // Warnings
     //----------------
     $imgreplaceshowwarning[] = JHTML::_('select.option','0', JText::_('JNO'));
     $imgreplaceshowwarning[] = JHTML::_('select.option','1', JText::_('JYES'));
     $imgreplaceshowwarning[] = JHTML::_('select.option','2', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACE_OPTION_2_SHOWWARNING'));
     //----------------
+
     $mc_imgtitlereplacer = JHTML::_('select.genericlist',$imgvaluereplacer, 'jg_replaceimgtitle', 'class="inputbox" size="6"', 'value', 'text', $this->_config->jg_replaceimgtitle);
     JHTML::_('joomconfig.row', 'jg_replaceimgtitle', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_IMGTITLE', $mc_imgtitlereplacer);
     $mc_imgtextreplacer = JHTML::_('select.genericlist',$imgvaluereplacer, 'jg_replaceimgtext', 'class="inputbox" size="6"', 'value', 'text', $this->_config->jg_replaceimgtext);
@@ -132,6 +134,7 @@ JHTML::_('joomconfig.start', 'page21');
     $mc_imgreplaceshowwarning = JHTML::_('select.genericlist',$imgreplaceshowwarning, 'jg_replaceshowwarning', 'class="inputbox" size="3"', 'value', 'text', $this->_config->jg_replaceshowwarning);
     JHtml::_('joomconfig.row', 'jg_replaceshowwarning', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACE_SHOWWARNING', $mc_imgreplaceshowwarning);
 JHTML::_('joomconfig.end');
+
 // start Tab "Grundlegende Einstellungen->Bildmanipulation"
 echo JHtml::_('tabs.panel', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_IMAGE_PROCESSING'), 'nested-three');
 
