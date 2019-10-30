@@ -170,6 +170,11 @@ class JoomUpload extends JObject
     $this->_user      = JFactory::getUser();
     $this->_db        = JFactory::getDBO();
 
+    // Load language files for Exif and IPTC data
+    $language = JFactory::getLanguage();
+    $language->load(_JOOM_OPTION.'.exif', JPATH_SITE);
+    $language->load(_JOOM_OPTION.'.iptc', JPATH_SITE);
+
     require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/exifarray.php';
     require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/iptcarray.php';
 
