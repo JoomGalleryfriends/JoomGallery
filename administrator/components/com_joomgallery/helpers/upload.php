@@ -250,10 +250,6 @@ class JoomUpload extends JObject
   {
     $this->type = $type;
 
-    $language = JFactory::getLanguage();
-    $language->load(_JOOM_OPTION.'.exif', JPATH_SITE);
-    $language->load(_JOOM_OPTION.'.iptc', JPATH_SITE);
-
     // Additional security check for unregistered users
     if(!$this->_user->get('id') && !$this->_config->get('jg_unregistered_permissions'))
     {
