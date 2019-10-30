@@ -2513,18 +2513,18 @@ class JoomUpload extends JObject
       || $this->_config->get('jg_replacemetakey') > 0
       || $this->_config->get('jg_replacemetadesc') > 0 )
     {
-      $filter = JFilterInput::getInstance();
-      $metaWarning = false;
-      $tag = strtolower(JFile::getExt($readfile));
+      $filter        = JFilterInput::getInstance();
+      $metaWarning   = false;
+      $tag           = strtolower(JFile::getExt($readfile));
       $warningoutput = '';
 
-      if (!($tag == 'jpg' || $tag == 'jpeg' || $tag == 'jpe' || $tag == 'jfif'))
+      if(!($tag == 'jpg' || $tag == 'jpeg' || $tag == 'jpe' || $tag == 'jfif'))
       {
         // Check for the right file-format, else throw warning
         if($this->_config->get('jg_replaceshowwarning') > 0)
         {
           $warningoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_WRONGFILEFORMAT').'<br />';
-          $metaWarning = true;
+          $metaWarning    = true;
         }
       }
       else
@@ -2533,119 +2533,120 @@ class JoomUpload extends JObject
         $metadata = $this->readMetaData($readfile);
 
         // Replacement with metadata according to settings
-        if($this->_config->get('jg_replaceimgtitle') > 0 )
+        if($this->_config->get('jg_replaceimgtitle') > 0)
         {
           if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')))
           {
             $overridevalues["imgtitle"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTITLE').'<br />';
+            $this->_debugoutput        .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTITLE').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replaceimgtitle'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        if($this->_config->get('jg_replaceimgtext') > 0 )
+        if($this->_config->get('jg_replaceimgtext') > 0)
         {
           if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')))
           {
             $overridevalues["imgtext"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')), 'HTML');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTEXT').'<br />';
+            $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTEXT').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replaceimgtext'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        if($this->_config->get('jg_replaceimgdate') > 0 )
+        if($this->_config->get('jg_replaceimgdate') > 0)
         {
           if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')))
           {
             $overridevalues["imgdate"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGDATE').'<br />';
+            $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGDATE').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACEIMGDATE', $this->getMetaName($this->_config->get('jg_replaceimgdate'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        if($this->_config->get('jg_replaceimgauthor') > 0 )
+        if($this->_config->get('jg_replaceimgauthor') > 0)
         {
           if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')))
           {
             $overridevalues["imgauthor"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGAUTHOR').'<br />';
+            $this->_debugoutput         .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGAUTHOR').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replaceimgauthor'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        if($this->_config->get('jg_replacemetakey') > 0 )
+        if($this->_config->get('jg_replacemetakey') > 0)
         {
           if($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetakey')))
           {
             $overridevalues["metakey"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetakey')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAKEYS').'<br />';
+            $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAKEYS').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replacemetakey'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        if($this->_config->get('jg_replacemetadesc') > 0 )
+        if($this->_config->get('jg_replacemetadesc') > 0)
         {
           if($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')))
           {
             $overridevalues["metadesc"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METADESC').'<br />';
+            $this->_debugoutput        .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METADESC').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replacemetadesc'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
         // Hint for the metadata replacement in warningoutput
-        if ($metaWarning == true && $this->_config->get('jg_replaceshowwarning') == 2) {
+        if($metaWarning == true && $this->_config->get('jg_replaceshowwarning') == 2)
+        {
           $warningoutput .= '<br />'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAHINT').'<br />';
         }
       }
 
       // If there are warnings to show placement of a header and footer to the warningoutput
-      if ($metaWarning == true && ($this->type == 'ftp' || $this->type == 'single' || $this->type == 'batch') && $this->_config->get('jg_replaceshowwarning') > 0) {
-
+      if($metaWarning == true && ($this->type == 'ftp' || $this->type == 'single' || $this->type == 'batch') && $this->_config->get('jg_replaceshowwarning') > 0)
+      {
         // Header of the metadata replacement warningoutput
-        $warningoutput = JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.$origfilename . ' (' . basename($readfile).')<br /><br />' . $warningoutput;
+        $warningoutput  = JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.$origfilename . ' (' . basename($readfile).')<br /><br />' . $warningoutput;
         // Footer of the metadata replacement warningoutput
         $warningoutput .= '<hr />';
       }
