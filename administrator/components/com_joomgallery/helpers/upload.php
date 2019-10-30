@@ -63,7 +63,7 @@ class JoomUpload extends JObject
    * @var string
    */
   protected $_debugoutput = '';
-  
+
   /**
    * Holds warnings and informations about the uploaded images
    *
@@ -170,15 +170,9 @@ class JoomUpload extends JObject
     $this->_user      = JFactory::getUser();
     $this->_db        = JFactory::getDBO();
 
-    if ($this->_mainframe->isAdmin())
-    {
-      require_once JPATH_COMPONENT.'/includes/exifarray.php';
-      require_once JPATH_COMPONENT.'/includes/iptcarray.php';
-    } else {
-      require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/includes/exifarray.php';
-      require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/includes/iptcarray.php';
-    }
-    
+    require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/exifarray.php';
+    require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/iptcarray.php';
+
     $this->exif_config_array = $exif_config_array;
     $this->iptc_config_array = $iptc_config_array;
 
@@ -242,7 +236,7 @@ class JoomUpload extends JObject
 
       return true;
     }
-  
+
   /**
    * Calls the correct upload method according to the specified type
    *
@@ -252,7 +246,7 @@ class JoomUpload extends JObject
   public function upload($type = 'single')
   {
     $this->type = $type;
-    
+
     $language = JFactory::getLanguage();
     $language->load(_JOOM_OPTION.'.exif', JPATH_SITE);
     $language->load(_JOOM_OPTION.'.iptc', JPATH_SITE);
@@ -479,7 +473,7 @@ class JoomUpload extends JObject
         $this->debug  = true;
         continue;
       }*/
-      
+
       // check for overriding with meta data
       $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
       $overridevalues = $this->getOverrideValues($readfile, $origfilename);
@@ -537,7 +531,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
     $this->_mainframe->setUserState('joom.upload.warningoutput', null);
-       
+
     if (!$this->getDebugOutput())
     {
       // if there is nothing to show
@@ -859,11 +853,11 @@ class JoomUpload extends JObject
       $return = JoomFile::chmod($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), '0644');
 
       $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE').'<br />';
-      
+
       // check for overriding with meta data
       $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
       $overridevalues = $this->getOverrideValues($readfile, $origfilename);
-      
+
       // Create thumbnail and detail image
       if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
       {
@@ -981,7 +975,7 @@ class JoomUpload extends JObject
 
     // The Applet recognize an error with the text 'JOOMGALLERYUPLOADERROR'
     // and shows them within an JS alert box
-   
+
     $this->_debugoutput .= '<strong>___'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_DEBUG_HEADING').'___</strong>'.'<br />';
 
     // Check common requirements
@@ -1214,7 +1208,7 @@ class JoomUpload extends JObject
           $this->debug        = true;
           continue;
         }*/
-        
+
         // check for overriding with meta data
         $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
         $overridevalues = $this->getOverrideValues($readfile, $origfilename);
@@ -1430,7 +1424,7 @@ class JoomUpload extends JObject
       }
 
       $newfilename = $this->_genFilename($newfilename, $tag, $filecounter);
-      
+
       // check for overriding with meta data
       $readfile = JPath::clean($this->_ambit->get('ftp_path').$subdirectory.$origfilename);
       $overridevalues = $this->getOverrideValues($readfile, $origfilename);
@@ -1734,7 +1728,7 @@ class JoomUpload extends JObject
       //       $this->debug = true;
       //       return false;
       //     }
-    
+
     // check for overriding with meta data
     $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
     $overridevalues = $this->getOverrideValues($readfile, $origfilename);
@@ -2400,7 +2394,7 @@ class JoomUpload extends JObject
     // Date
     $date           = JFactory::getDate();
     $row->imgdate   = $date->toSQL();
-    
+
     // Check for override data
     if($this->_config->get('jg_replaceimgtitle') > 0 && $overridevalues["imgtitle"])
     {
@@ -2502,7 +2496,7 @@ class JoomUpload extends JObject
     $this->_db->setQuery($query);
     return $this->_db->loadObject();
   }
-  
+
   /**
    * Method to get the values from image data to override the defaults
    *
@@ -2579,7 +2573,7 @@ class JoomUpload extends JObject
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replaceimgtext'))).'<br />';
               $metaWarning = true;
             }
-          } 
+          }
         }
 
         if($this->_config->get('jg_replaceimgdate') > 0 )
@@ -2650,15 +2644,15 @@ class JoomUpload extends JObject
           }
         }
 
-        // Hint for the metadata replacement in warningoutput 
+        // Hint for the metadata replacement in warningoutput
         if ($metaWarning == true && $this->_config->get('jg_replaceshowwarning') == 2) {
           $warningoutput .= '<br />'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAHINT').'<br />';
-        }        
+        }
       }
 
       // If there are warnings to show placement of a header and footer to the warningoutput
       if ($metaWarning == true && ($this->type == 'ftp' || $this->type == 'single' || $this->type == 'batch') && $this->_config->get('jg_replaceshowwarning') > 0) {
-        
+
         // Header of the metadata replacement warningoutput
         $warningoutput = JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.$origfilename . ' (' . basename($readfile).')<br /><br />' . $warningoutput;
         // Footer of the metadata replacement warningoutput
@@ -2710,7 +2704,7 @@ class JoomUpload extends JObject
       $return[] = iptcparse($info['APP13']);
     }
 
-    return $return; 
+    return $return;
   }
 
 
@@ -2742,7 +2736,7 @@ class JoomUpload extends JObject
         }
       } elseif (array_key_exists($configoption,$this->iptc_config_array['IPTC'])) {
         $imm = $this->iptc_config_array['IPTC'][$configoption]['IMM'];
-        $imm = str_replace(':', '#', $imm); 
+        $imm = str_replace(':', '#', $imm);
         if(isset($metadata_array[1][$imm]))
         {
           $return = implode($separator, $metadata_array[1][$imm]);
@@ -2762,7 +2756,7 @@ class JoomUpload extends JObject
    * @since   3.4
    */
   protected function getMetaName($fieldNR)
-  {   
+  {
     $string = '';
 
     if (array_key_exists($fieldNR,$this->exif_config_array['IFD0'])) {
