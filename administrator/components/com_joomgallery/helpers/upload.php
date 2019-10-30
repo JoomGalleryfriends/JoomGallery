@@ -2670,6 +2670,7 @@ class JoomUpload extends JObject
 
     // Check the installation of Exif
     $checkexif = false;
+
     if(extension_loaded('exif') && function_exists('exif_read_data'))
     {
       $checkexif = true;
@@ -2677,8 +2678,7 @@ class JoomUpload extends JObject
 
     if($readfile && $checkexif)
     {
-      // check for $exif data
-      $returnexif = array();
+      // Read EXIF data
       $returnexif = exif_read_data($readfile);
 
       if($returnexif)
@@ -2687,10 +2687,7 @@ class JoomUpload extends JObject
       }
     }
 
-    // Check for iptc data
-    $size = getimagesize($readfile, $info);
-    $returniptc = array();
-
+    // Get IPTC data
     if(isset($info['APP13']))
     {
       $return[] = iptcparse($info['APP13']);
