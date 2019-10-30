@@ -175,16 +175,13 @@ class JoomUpload extends JObject
 
     $this->exif_config_array = $exif_config_array;
     $this->iptc_config_array = $iptc_config_array;
-
-    $this->debug        = $this->_mainframe->getUserStateFromRequest('joom.upload.debug', 'debug', false, 'post', 'bool');
-    $this->_debugoutput = $this->_mainframe->getUserStateFromRequest('joom.upload.debugoutput', 'debugoutput', '', 'post', 'string');
-    $this->_warningoutput = $this->_mainframe->getUserStateFromRequest('joom.upload.warningoutput', 'warningoutput', '', 'post', 'string');
-    $this->catid        = $this->_mainframe->getUserStateFromRequest('joom.upload.catid', 'catid', 0, 'int');
-    $this->imgtitle     = $this->_mainframe->getUserStateFromRequest('joom.upload.title', 'imgtitle', '', 'string');
-
-    $this->counter = $this->getImageNumber();
-
-    $this->_site = $this->_mainframe->isSite();
+    $this->debug             = $this->_mainframe->getUserStateFromRequest('joom.upload.debug', 'debug', false, 'post', 'bool');
+    $this->_debugoutput      = $this->_mainframe->getUserStateFromRequest('joom.upload.debugoutput', 'debugoutput', '', 'post', 'string');
+    $this->_warningoutput    = $this->_mainframe->getUserStateFromRequest('joom.upload.warningoutput', 'warningoutput', '', 'post', 'string');
+    $this->catid             = $this->_mainframe->getUserStateFromRequest('joom.upload.catid', 'catid', 0, 'int');
+    $this->imgtitle          = $this->_mainframe->getUserStateFromRequest('joom.upload.title', 'imgtitle', '', 'string');
+    $this->counter           = $this->getImageNumber();
+    $this->_site             = $this->_mainframe->isSite();
 
     // TODO Parameter in JoomGallery configuration neccessary ?
     // Create folder for image chunks
@@ -202,25 +199,30 @@ class JoomUpload extends JObject
    * @return  mixed  The debug/warning output or false if debug is not enabled or debug/warning output is empty.
    * @since   3.0
    */
-    public function getDebugOutput()
-    {
-      $title_warningoutput = '<strong>!!__'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_HEADING').'__!!</strong>';
+  public function getDebugOutput()
+  {
+    $title_warningoutput = '<strong>!!__'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_HEADING').'__!!</strong>';
 
-      // debug is enabled and there are some outputs (debug and/or warnings) to show
-      if($this->debug && (!empty($this->_debugoutput) || !empty($this->_warningoutput)))
+    // Debug is enabled and there are some outputs (debug and/or warnings) to show
+    if($this->debug && (!empty($this->_debugoutput) || !empty($this->_warningoutput)))
+    {
+      if(empty($this->_warningoutput))
       {
-        if (empty($this->_warningoutput)) {
-          return '<br />'.$this->_debugoutput;
-        } else {
-          return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<hr />'.$this->_debugoutput;
-        }
+        return '<br />'.$this->_debugoutput;
       }
-      // debug is not enabled, but there are some warnings to show
-      elseif (!($this->debug) && !empty($this->_warningoutput)) {
-        return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<br />';
+      else
+      {
+        return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<hr />'.$this->_debugoutput;
       }
-      return false;
     }
+    // Debug is not enabled, but there are some warnings to show
+    elseif(!($this->debug) && !empty($this->_warningoutput))
+    {
+      return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<br />';
+    }
+
+    return false;
+  }
 
   /**
    * Returns if redirect shoud be done after successful upload
@@ -228,14 +230,15 @@ class JoomUpload extends JObject
    * @return  boolean  True for redirect, false for no redirect
    * @since   3.4
    */
-    public function getIfRedirect()
+  public function getIfRedirect()
+  {
+    if($this->debug || !empty($this->_warningoutput))
     {
-      if ($this->debug || !empty($this->_warningoutput)) {
-        return false;
-      }
-
-      return true;
+      return false;
     }
+
+    return true;
+  }
 
   /**
    * Calls the correct upload method according to the specified type
