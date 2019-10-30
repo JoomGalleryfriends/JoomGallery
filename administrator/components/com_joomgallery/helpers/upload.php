@@ -2660,8 +2660,8 @@ class JoomUpload extends JObject
   /**
    * Method to read MetaData from image
    *
-   * @param   readfile  The image file to read
-   * @return  value     The array with all meta data from the image if exists
+   * @param   string  readfile  The image file to read
+   * @return  array   return    The array with all meta data from the image if exists
    * @since   3.4
    */
   protected function readMetaData($readfile = Null)
