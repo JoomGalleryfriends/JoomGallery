@@ -364,3 +364,10 @@ dl.tabs dt h3 a:link {
 .js-stools-field-filter #jg-filter_category-input {
   margin-bottom: 0px;
 }
+
+/* Editor height in upload views */
+#upload-form .CodeMirror,
+#upload-form .js-editor-tinymce iframe,
+#upload-form .editor iframe {
+  height: 250px !important;
+}

@@ -670,3 +670,10 @@ div.current .formu td {
 .jg-icon-disabled img {
   filter:grayscale(100%);
 }
+
+/* Editor height in upload views */
+[id*="UploadForm"] .CodeMirror,
+[id*="UploadForm"] .js-editor-tinymce iframe,
+[id*="UploadForm"] .editor iframe {
+  height: 250px !important;
+}
