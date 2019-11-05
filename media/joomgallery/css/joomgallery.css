@@ -674,6 +674,7 @@ div.current .formu td {
 /* Editor height in upload views */
 [id*="UploadForm"] .CodeMirror,
 [id*="UploadForm"] .js-editor-tinymce iframe,
-[id*="UploadForm"] .editor iframe {
+[id*="UploadForm"] .editor iframe,
+[id*="UploadForm"] .cke .cke_contents {
   height: 250px !important;
 }

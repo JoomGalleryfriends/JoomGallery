@@ -368,6 +368,7 @@ dl.tabs dt h3 a:link {
 /* Editor height in upload views */
 #upload-form .CodeMirror,
 #upload-form .js-editor-tinymce iframe,
-#upload-form .editor iframe {
+#upload-form .editor iframe,
+#upload-form .cke .cke_contents {
   height: 250px !important;
 }
