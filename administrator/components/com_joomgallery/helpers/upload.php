@@ -63,7 +63,7 @@ class JoomUpload extends JObject
    * @var string
    */
   protected $_debugoutput = '';
-  
+
   /**
    * Holds warnings and informations about the uploaded images
    *
@@ -170,27 +170,23 @@ class JoomUpload extends JObject
     $this->_user      = JFactory::getUser();
     $this->_db        = JFactory::getDBO();
 
-    if ($this->_mainframe->isAdmin())
-    {
-      require_once JPATH_COMPONENT.'/includes/exifarray.php';
-      require_once JPATH_COMPONENT.'/includes/iptcarray.php';
-    } else {
-      require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/includes/exifarray.php';
-      require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/includes/iptcarray.php';
-    }
-    
+    // Load language files for Exif and IPTC data
+    $language = JFactory::getLanguage();
+    $language->load(_JOOM_OPTION.'.exif', JPATH_SITE);
+    $language->load(_JOOM_OPTION.'.iptc', JPATH_SITE);
+
+    require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/exifarray.php';
+    require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/iptcarray.php';
+
     $this->exif_config_array = $exif_config_array;
     $this->iptc_config_array = $iptc_config_array;
-
-    $this->debug        = $this->_mainframe->getUserStateFromRequest('joom.upload.debug', 'debug', false, 'post', 'bool');
-    $this->_debugoutput = $this->_mainframe->getUserStateFromRequest('joom.upload.debugoutput', 'debugoutput', '', 'post', 'string');
-    $this->_warningoutput = $this->_mainframe->getUserStateFromRequest('joom.upload.warningoutput', 'warningoutput', '', 'post', 'string');
-    $this->catid        = $this->_mainframe->getUserStateFromRequest('joom.upload.catid', 'catid', 0, 'int');
-    $this->imgtitle     = $this->_mainframe->getUserStateFromRequest('joom.upload.title', 'imgtitle', '', 'string');
-
-    $this->counter = $this->getImageNumber();
-
-    $this->_site = $this->_mainframe->isSite();
+    $this->debug             = $this->_mainframe->getUserStateFromRequest('joom.upload.debug', 'debug', false, 'post', 'bool');
+    $this->_debugoutput      = $this->_mainframe->getUserStateFromRequest('joom.upload.debugoutput', 'debugoutput', '', 'post', 'string');
+    $this->_warningoutput    = $this->_mainframe->getUserStateFromRequest('joom.upload.warningoutput', 'warningoutput', '', 'post', 'string');
+    $this->catid             = $this->_mainframe->getUserStateFromRequest('joom.upload.catid', 'catid', 0, 'int');
+    $this->imgtitle          = $this->_mainframe->getUserStateFromRequest('joom.upload.title', 'imgtitle', '', 'string');
+    $this->counter           = $this->getImageNumber();
+    $this->_site             = $this->_mainframe->isSite();
 
     // TODO Parameter in JoomGallery configuration neccessary ?
     // Create folder for image chunks
@@ -208,25 +204,30 @@ class JoomUpload extends JObject
    * @return  mixed  The debug/warning output or false if debug is not enabled or debug/warning output is empty.
    * @since   3.0
    */
-    public function getDebugOutput()
-    {
-      $title_warningoutput = '<strong>!!__'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_HEADING').'__!!</strong>';
+  public function getDebugOutput()
+  {
+    $title_warningoutput = '<strong>!!__'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_HEADING').'__!!</strong>';
 
-      // debug is enabled and there are some outputs (debug and/or warnings) to show
-      if($this->debug && (!empty($this->_debugoutput) || !empty($this->_warningoutput)))
+    // Debug is enabled and there are some outputs (debug and/or warnings) to show
+    if($this->debug && (!empty($this->_debugoutput) || !empty($this->_warningoutput)))
+    {
+      if(empty($this->_warningoutput))
       {
-        if (empty($this->_warningoutput)) {
-          return '<br />'.$this->_debugoutput;
-        } else {
-          return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<hr />'.$this->_debugoutput;
-        }
+        return '<br />'.$this->_debugoutput;
       }
-      // debug is not enabled, but there are some warnings to show
-      elseif (!($this->debug) && !empty($this->_warningoutput)) {
-        return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<br />';
+      else
+      {
+        return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<hr />'.$this->_debugoutput;
       }
-      return false;
     }
+    // Debug is not enabled, but there are some warnings to show
+    elseif(!($this->debug) && !empty($this->_warningoutput))
+    {
+      return '<br />'.$title_warningoutput.'<br /><br />'.$this->_warningoutput.'<br />';
+    }
+
+    return false;
+  }
 
   /**
    * Returns if redirect shoud be done after successful upload
@@ -234,15 +235,16 @@ class JoomUpload extends JObject
    * @return  boolean  True for redirect, false for no redirect
    * @since   3.4
    */
-    public function getIfRedirect()
+  public function getIfRedirect()
+  {
+    if($this->debug || !empty($this->_warningoutput))
     {
-      if ($this->debug || !empty($this->_warningoutput)) {
-        return false;
-      }
-
-      return true;
+      return false;
     }
-  
+
+    return true;
+  }
+
   /**
    * Calls the correct upload method according to the specified type
    *
@@ -252,10 +254,6 @@ class JoomUpload extends JObject
   public function upload($type = 'single')
   {
     $this->type = $type;
-    
-    $language = JFactory::getLanguage();
-    $language->load(_JOOM_OPTION.'.exif', JPATH_SITE);
-    $language->load(_JOOM_OPTION.'.iptc', JPATH_SITE);
 
     // Additional security check for unregistered users
     if(!$this->_user->get('id') && !$this->_config->get('jg_unregistered_permissions'))
@@ -479,9 +477,9 @@ class JoomUpload extends JObject
         $this->debug  = true;
         continue;
       }*/
-      
-      // check for overriding with meta data
-      $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
+
+      // Check for overriding with meta data
+      $readfile       = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
       $overridevalues = $this->getOverrideValues($readfile, $origfilename);
 
       // Create thumbnail and detail image
@@ -537,12 +535,10 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
     $this->_mainframe->setUserState('joom.upload.warningoutput', null);
-       
-    if (!$this->getDebugOutput())
+
+    if(($debugOutput = $this->getDebugOutput()) !== false)
     {
-      // if there is nothing to show
-    } else {
-      echo $this->getDebugOutput();
+      echo $debugOutput;
       $this->debug = true;
     }
 
@@ -859,11 +855,11 @@ class JoomUpload extends JObject
       $return = JoomFile::chmod($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), '0644');
 
       $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE').'<br />';
-      
-      // check for overriding with meta data
-      $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
+
+      // Check for overriding with meta data
+      $readfile       = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
       $overridevalues = $this->getOverrideValues($readfile, $origfilename);
-      
+
       // Create thumbnail and detail image
       if(!$this->resizeImage($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), $newfilename))
       {
@@ -933,11 +929,9 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
     $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
-    if (!$this->getDebugOutput())
+    if(($debugOutput = $this->getDebugOutput()) !== false)
     {
-      // if there is nothing to show
-    } else {
-      echo $this->getDebugOutput();
+      echo $debugOutput;
       $this->debug = true;
     }
 
@@ -981,7 +975,7 @@ class JoomUpload extends JObject
 
     // The Applet recognize an error with the text 'JOOMGALLERYUPLOADERROR'
     // and shows them within an JS alert box
-   
+
     $this->_debugoutput .= '<strong>___'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_DEBUG_HEADING').'___</strong>'.'<br />';
 
     // Check common requirements
@@ -1214,9 +1208,9 @@ class JoomUpload extends JObject
           $this->debug        = true;
           continue;
         }*/
-        
-        // check for overriding with meta data
-        $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
+
+        // Check for overriding with meta data
+        $readfile       = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
         $overridevalues = $this->getOverrideValues($readfile, $origfilename);
 
         // Create thumbnail and detail image
@@ -1274,11 +1268,9 @@ class JoomUpload extends JObject
       echo "\nJOOMGALLERYUPLOADSUCCESS\n";
     }
 
-    if (!$this->getDebugOutput())
+    if(($debugOutput = $this->getDebugOutput()) !== false)
     {
-      // if there is nothing to show
-    } else {
-      echo $this->getDebugOutput();
+      echo $debugOutput;
       $this->debug = true;
     }
 
@@ -1430,9 +1422,9 @@ class JoomUpload extends JObject
       }
 
       $newfilename = $this->_genFilename($newfilename, $tag, $filecounter);
-      
-      // check for overriding with meta data
-      $readfile = JPath::clean($this->_ambit->get('ftp_path').$subdirectory.$origfilename);
+
+      // Check for overriding with meta data
+      $readfile       = JPath::clean($this->_ambit->get('ftp_path').$subdirectory.$origfilename);
       $overridevalues = $this->getOverrideValues($readfile, $origfilename);
 
       // Resize image
@@ -1480,11 +1472,9 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
     $this->_mainframe->setUserState('joom.upload.warningoutput', null);
 
-    if (!$this->getDebugOutput())
+    if(($debugOutput = $this->getDebugOutput()) !== false)
     {
-      // if there is nothing to show
-    } else {
-      echo $this->getDebugOutput();
+      echo $debugOutput;
       $this->debug = true;
     }
 
@@ -1734,9 +1724,9 @@ class JoomUpload extends JObject
       //       $this->debug = true;
       //       return false;
       //     }
-    
-    // check for overriding with meta data
-    $readfile = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
+
+    // Check for overriding with meta data
+    $readfile       = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
     $overridevalues = $this->getOverrideValues($readfile, $origfilename);
 
     // Create thumbnail and detail image
@@ -2400,7 +2390,7 @@ class JoomUpload extends JObject
     // Date
     $date           = JFactory::getDate();
     $row->imgdate   = $date->toSQL();
-    
+
     // Check for override data
     if($this->_config->get('jg_replaceimgtitle') > 0 && $overridevalues["imgtitle"])
     {
@@ -2502,12 +2492,12 @@ class JoomUpload extends JObject
     $this->_db->setQuery($query);
     return $this->_db->loadObject();
   }
-  
+
   /**
    * Method to get the values from image data to override the defaults
    *
-   * @param   readfile        The image file to read
-   * @return  overridevalues  The meta data from the image if exists
+   * @param   string  readfile        The image file to read
+   * @return  array   overridevalues  The meta data from the image if exists
    * @since   3.4
    */
   protected function getOverrideValues($readfile, $origfilename)
@@ -2528,18 +2518,18 @@ class JoomUpload extends JObject
       || $this->_config->get('jg_replacemetakey') > 0
       || $this->_config->get('jg_replacemetadesc') > 0 )
     {
-      $filter = JFilterInput::getInstance();
-      $metaWarning = false;
-      $tag = strtolower(JFile::getExt($readfile));
+      $filter        = JFilterInput::getInstance();
+      $metaWarning   = false;
+      $tag           = strtolower(JFile::getExt($readfile));
       $warningoutput = '';
 
-      if (!($tag == 'jpg' || $tag == 'jpeg' || $tag == 'jpe' || $tag == 'jfif'))
+      if(!($tag == 'jpg' || $tag == 'jpeg' || $tag == 'jpe' || $tag == 'jfif'))
       {
         // Check for the right file-format, else throw warning
         if($this->_config->get('jg_replaceshowwarning') > 0)
         {
           $warningoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_WRONGFILEFORMAT').'<br />';
-          $metaWarning = true;
+          $metaWarning    = true;
         }
       }
       else
@@ -2548,119 +2538,120 @@ class JoomUpload extends JObject
         $metadata = $this->readMetaData($readfile);
 
         // Replacement with metadata according to settings
-        if($this->_config->get('jg_replaceimgtitle') > 0 )
+        if($this->_config->get('jg_replaceimgtitle') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle'))))
           {
-            $overridevalues["imgtitle"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtitle')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTITLE').'<br />';
+            $overridevalues["imgtitle"] = $filter->clean($metaDataValue, 'STRING');
+            $this->_debugoutput        .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTITLE').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replaceimgtitle'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        if($this->_config->get('jg_replaceimgtext') > 0 )
+        if($this->_config->get('jg_replaceimgtext') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgtext'))))
           {
-            $overridevalues["imgtext"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgtext')), 'HTML');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTEXT').'<br />';
+            $overridevalues["imgtext"] = $filter->clean($metaDataValue, 'HTML');
+            $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGTEXT').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replaceimgtext'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
-          } 
+          }
         }
 
-        if($this->_config->get('jg_replaceimgdate') > 0 )
+        if($this->_config->get('jg_replaceimgdate') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgdate'))))
           {
-            $overridevalues["imgdate"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgdate')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGDATE').'<br />';
+            $overridevalues["imgdate"] = $filter->clean($metaDataValue, 'STRING');
+            $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGDATE').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACEIMGDATE', $this->getMetaName($this->_config->get('jg_replaceimgdate'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        if($this->_config->get('jg_replaceimgauthor') > 0 )
+        if($this->_config->get('jg_replaceimgauthor') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor'))))
           {
-            $overridevalues["imgauthor"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replaceimgauthor')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGAUTHOR').'<br />';
+            $overridevalues["imgauthor"] = $filter->clean($metaDataValue, 'STRING');
+            $this->_debugoutput         .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_IMGAUTHOR').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replaceimgauthor'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        if($this->_config->get('jg_replacemetakey') > 0 )
+        if($this->_config->get('jg_replacemetakey') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetakey')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetakey'))))
           {
-            $overridevalues["metakey"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetakey')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAKEYS').'<br />';
+            $overridevalues["metakey"] = $filter->clean($metaDataValue, 'STRING');
+            $this->_debugoutput       .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAKEYS').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replacemetakey'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        if($this->_config->get('jg_replacemetadesc') > 0 )
+        if($this->_config->get('jg_replacemetadesc') > 0)
         {
-          if($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')))
+          if(false !== ($metaDataValue = $this->getMetaDataValue($metadata, $this->_config->get('jg_replacemetadesc'))))
           {
-            $overridevalues["metadesc"] = $filter->clean($this->MetaDataValue($metadata, $this->_config->get('jg_replacemetadesc')), 'STRING');
-            $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METADESC').'<br />';
+            $overridevalues["metadesc"] = $filter->clean($metaDataValue, 'STRING');
+            $this->_debugoutput        .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METADESC').'<br />';
           }
           else
           {
             if($this->_config->get('jg_replaceshowwarning') > 0)
             {
               $warningoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_WARNING_REPLACE', $this->getMetaName($this->_config->get('jg_replacemetadesc'))).'<br />';
-              $metaWarning = true;
+              $metaWarning    = true;
             }
           }
         }
 
-        // Hint for the metadata replacement in warningoutput 
-        if ($metaWarning == true && $this->_config->get('jg_replaceshowwarning') == 2) {
+        // Hint for the metadata replacement in warningoutput
+        if($metaWarning == true && $this->_config->get('jg_replaceshowwarning') == 2)
+        {
           $warningoutput .= '<br />'.JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_REPLACE_METAHINT').'<br />';
-        }        
+        }
       }
 
       // If there are warnings to show placement of a header and footer to the warningoutput
-      if ($metaWarning == true && ($this->type == 'ftp' || $this->type == 'single' || $this->type == 'batch') && $this->_config->get('jg_replaceshowwarning') > 0) {
-        
+      if($metaWarning == true && ($this->type == 'ftp' || $this->type == 'single' || $this->type == 'batch') && $this->_config->get('jg_replaceshowwarning') > 0)
+      {
         // Header of the metadata replacement warningoutput
-        $warningoutput = JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.$origfilename . ' (' . basename($readfile).')<br /><br />' . $warningoutput;
+        $warningoutput  = JText::_('COM_JOOMGALLERY_COMMON_IMAGE').': '.$origfilename . ' (' . basename($readfile).')<br /><br />' . $warningoutput;
         // Footer of the metadata replacement warningoutput
         $warningoutput .= '<hr />';
       }
@@ -2674,8 +2665,8 @@ class JoomUpload extends JObject
   /**
    * Method to read MetaData from image
    *
-   * @param   readfile  The image file to read
-   * @return  value     The array with all meta data from the image if exists
+   * @param   string  readfile  The image file to read
+   * @return  array   return    The array with all meta data from the image if exists
    * @since   3.4
    */
   protected function readMetaData($readfile = Null)
@@ -2684,6 +2675,7 @@ class JoomUpload extends JObject
 
     // Check the installation of Exif
     $checkexif = false;
+
     if(extension_loaded('exif') && function_exists('exif_read_data'))
     {
       $checkexif = true;
@@ -2691,8 +2683,7 @@ class JoomUpload extends JObject
 
     if($readfile && $checkexif)
     {
-      // check for $exif data
-      $returnexif = array();
+      // Read EXIF data
       $returnexif = exif_read_data($readfile);
 
       if($returnexif)
@@ -2701,28 +2692,27 @@ class JoomUpload extends JObject
       }
     }
 
-    // Check for iptc data
+    // Get IPTC data
     $size = getimagesize($readfile, $info);
-    $returniptc = array();
 
     if(isset($info['APP13']))
     {
       $return[] = iptcparse($info['APP13']);
     }
 
-    return $return; 
+    return $return;
   }
 
 
   /**
    * Method to extract the value from metadata array
    *
-   * @param   metadata_array  Array with all metadata
-   * @param   configoption    Determines which value should be read from metadata
-   * @return  value           The metadata from the image if exists
+   * @param   array   metadata_array  Array with all metadata
+   * @param   string  configoption    Determines which value should be read from metadata
+   * @return  mixed   return          The metadata from the image if exists, false otherwise
    * @since   3.4
    */
-  protected function MetaDataValue($metadata_array, $configoption = Null)
+  protected function getMetaDataValue($metadata_array, $configoption = Null)
   {
     $return = false;
 
@@ -2730,49 +2720,61 @@ class JoomUpload extends JObject
     {
       $separator = ', ';
 
-      if (array_key_exists($configoption,$this->exif_config_array['IFD0'])) {
+      if(array_key_exists($configoption, $this->exif_config_array['IFD0']))
+      {
         $attribute = $this->exif_config_array['IFD0'][$configoption]['Attribute'];
-        if(isset($metadata_array[0][$attribute])) {
+
+        if(isset($metadata_array[0][$attribute]))
+        {
           $return = $metadata_array[0][$attribute];
         }
-      } elseif (array_key_exists($configoption,$this->exif_config_array['EXIF'])) {
+      }
+      elseif(array_key_exists($configoption, $this->exif_config_array['EXIF']))
+      {
         $attribute = $this->exif_config_array['EXIF'][$configoption]['Attribute'];
-        if(isset($metadata_array[0][$attribute])) {
+
+        if(isset($metadata_array[0][$attribute]))
+        {
           $return = $metadata_array[0][$attribute];
         }
-      } elseif (array_key_exists($configoption,$this->iptc_config_array['IPTC'])) {
+      }
+      elseif(array_key_exists($configoption, $this->iptc_config_array['IPTC']))
+      {
         $imm = $this->iptc_config_array['IPTC'][$configoption]['IMM'];
-        $imm = str_replace(':', '#', $imm); 
+        $imm = str_replace(':', '#', $imm);
+
         if(isset($metadata_array[1][$imm]))
         {
           $return = implode($separator, $metadata_array[1][$imm]);
         }
-      } else {
-        $return = false;
       }
     }
+
     return $return;
   }
 
   /**
-   * Method to extract the name of the metadata-field, chosen in configuration-manager for a specific value
+   * Method to extract the name of the metadata field, chosen in configuration manager for a specific value
    *
-   * @param   fieldNR  number of the chosen metadata-field
-   * @return  string   The name of the chosen metadata-field
+   * @param   int     fieldNR Number of the chosen metadata field
+   * @return  string  string  The name of the chosen metadata field
    * @since   3.4
    */
   protected function getMetaName($fieldNR)
-  {   
+  {
     $string = '';
 
-    if (array_key_exists($fieldNR,$this->exif_config_array['IFD0'])) {
+    if(array_key_exists($fieldNR,$this->exif_config_array['IFD0']))
+    {
       $string = $this->exif_config_array['IFD0'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . ')';
-    } elseif (array_key_exists($fieldNR,$this->exif_config_array['EXIF'])) {
+    }
+    elseif(array_key_exists($fieldNR,$this->exif_config_array['EXIF']))
+    {
       $string = $this->exif_config_array['EXIF'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . ')';
-    } elseif (array_key_exists($fieldNR,$this->iptc_config_array['IPTC'])) {
+    }
+    elseif(array_key_exists($fieldNR,$this->iptc_config_array['IPTC']))
+    {
       $string = $this->iptc_config_array['IPTC'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . ')';
-    } else {
-      $string = '';
     }
 
     return $string;
