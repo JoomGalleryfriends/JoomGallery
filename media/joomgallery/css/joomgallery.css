@@ -676,5 +676,5 @@ div.current .formu td {
 [id*="UploadForm"] .js-editor-tinymce iframe,
 [id*="UploadForm"] .editor iframe,
 [id*="UploadForm"] .cke .cke_contents {
-  height: 250px !important;
+  max-height: 250px;
 }
