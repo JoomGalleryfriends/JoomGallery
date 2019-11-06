@@ -671,10 +671,10 @@ div.current .formu td {
   filter:grayscale(100%);
 }
 
-/* Editor height in upload views */
-[id*="UploadForm"] .CodeMirror,
-[id*="UploadForm"] .js-editor-tinymce iframe,
-[id*="UploadForm"] .editor iframe,
-[id*="UploadForm"] .cke .cke_contents {
+/* Editor height in form views */
+[id*="Form"] .CodeMirror,
+[id*="Form"] .js-editor-tinymce iframe,
+[id*="Form"] .editor iframe,
+[id*="Form"] .cke .cke_contents {
   max-height: 250px;
 }

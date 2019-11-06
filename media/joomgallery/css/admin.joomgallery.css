@@ -365,10 +365,10 @@ dl.tabs dt h3 a:link {
   margin-bottom: 0px;
 }
 
-/* Editor height in upload views */
-#upload-form .CodeMirror,
-#upload-form .js-editor-tinymce iframe,
-#upload-form .editor iframe,
-#upload-form .cke .cke_contents {
+/* Editor height in form views */
+[id*="form"] .CodeMirror,
+[id*="form"] .js-editor-tinymce iframe,
+[id*="form"] .editor iframe,
+[id*="form"] .cke .cke_contents {
   max-height: 250px;
 }
