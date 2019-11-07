@@ -89,8 +89,10 @@ JHTML::_('joomconfig.start', 'page21');
     $imgvaluereplacer[] = JHTML::_('select.option','2120', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2120]['Name']); // Caption/Description
     $imgvaluereplacer[] = JHTML::_('select.option','240',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][240]['Name']); // Instructions
     $imgvaluereplacer[] = JHTML::_('select.option','285',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][285]['Name']); // By-Line Title
+    $imgvaluereplacer[] = JHTML::_('select.option','280',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][280]['Name']); // By-Line
     $imgvaluereplacer[] = JHTML::_('select.option','225',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][225]['Name']); // Keywords
     $imgvaluereplacer[] = JHTML::_('select.option','280',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][280]['Name']); // Creator
+    //$imgvaluereplacer[] = JHTML::_('select.option','285',  JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][285]['Name']); // reator Job Title
     $imgvaluereplacer[] = JHTML::_('select.option','2116', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2116]['Name']); // Copyright
     $imgvaluereplacer[] = JHTML::_('select.option','2110', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2110]['Name']); // Credit
     $imgvaluereplacer[] = JHTML::_('select.option','2115', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_IPTC') . '-' . $this->iptc_config_array['IPTC'][2115]['Name']); // Source
