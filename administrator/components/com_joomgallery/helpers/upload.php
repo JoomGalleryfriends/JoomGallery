@@ -2741,15 +2741,6 @@ class JoomUpload extends JObject
           $return = $metadata_array[0][$attribute];
         }
       }
-      elseif(array_key_exists($configoption, $this->exif_config_array['COMMENT']))
-      {
-        $attribute = $this->exif_config_array['COMMENT'][$configoption]['Attribute'];
-
-        if(isset($metadata_array[0][$attribute][0]))
-        {
-          $return = $metadata_array[0][$attribute][0];
-        }
-      }
       elseif(array_key_exists($configoption, $this->iptc_config_array['IPTC']))
       {
         $imm = $this->iptc_config_array['IPTC'][$configoption]['IMM'];
@@ -2783,10 +2774,6 @@ class JoomUpload extends JObject
     elseif(array_key_exists($fieldNR,$this->exif_config_array['EXIF']))
     {
       $string = $this->exif_config_array['EXIF'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . ')';
-    }
-    elseif(array_key_exists($fieldNR,$this->exif_config_array['COMMENT']))
-    {
-      $string = $this->exif_config_array['COMMENT'][$fieldNR]['Name'] . ' (' . JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . ')';
     }
     elseif(array_key_exists($fieldNR,$this->iptc_config_array['IPTC']))
     {

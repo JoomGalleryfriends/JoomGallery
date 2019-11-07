@@ -72,7 +72,7 @@ JHTML::_('joomconfig.start', 'page21');
     // Exif data
     $imgvaluereplacer[] = JHTML::_('select.option','0', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_NONE'));
     $imgvaluereplacer[] = JHTML::_('select.option','270', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][270]['Name']); // Image Description
-    $imgvaluereplacer[] = JHTML::_('select.option','37510', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['COMMENT'][37510]['Name']); // User Comment
+    $imgvaluereplacer[] = JHTML::_('select.option','37510', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['EXIF'][37510]['Name']); // User Comment
     $imgvaluereplacer[] = JHTML::_('select.option','315', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][315]['Name']); // Artist
     $imgvaluereplacer[] = JHTML::_('select.option','33432', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][33432]['Name']); // Copyright
     //$imgvaluereplacer[] = JHTML::_('select.option','271', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUES_EXIF') . '-' . $this->exif_config_array['IFD0'][271]['Name']); // Make
