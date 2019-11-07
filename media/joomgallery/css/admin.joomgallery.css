@@ -364,3 +364,15 @@ dl.tabs dt h3 a:link {
 .js-stools-field-filter #jg-filter_category-input {
   margin-bottom: 0px;
 }
+
+/* Configuration manager */
+#jg_replaceimgtitle,
+#jg_replaceimgtitle,
+#jg_replaceimgtext,
+#jg_replaceimgauthor,
+#jg_replaceimgdate,
+#jg_replacemetakey,
+#jg_replacemetadesc,
+#jg_replaceshowwarning {
+	width: 250px;
+}

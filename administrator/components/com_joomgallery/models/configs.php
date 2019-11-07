@@ -512,6 +512,7 @@ class JoomGalleryModelConfigs extends JoomGalleryModel
   {
     return  array('jg_paththumbs', 'jg_pathimages', 'jg_pathoriginalimages', 'jg_pathtemp',
                   'jg_filenamewithjs', 'jg_filenamereplace',
+                  'jg_replaceimgtitle', 'jg_replaceimgtext', 'jg_replaceimgdate', 'jg_replaceimgauthor', 'jg_replacemetakey', 'jg_replacemetadesc', 'jg_replaceshowwarning',
                   'jg_thumbcreation', 'jg_fastgd2thumbcreation', 'jg_impath', 'jg_resizetomaxwidth', 'jg_maxwidth', 'jg_picturequality', 'jg_useforresizedirection', 'jg_cropposition', 'jg_thumbwidth', 'jg_thumbheight', 'jg_thumbquality',
                   'jg_download_unreg',
                   'jg_anoncomment', 'jg_namedanoncomment', 'jg_anonapprovecom',
