@@ -365,10 +365,22 @@ dl.tabs dt h3 a:link {
   margin-bottom: 0px;
 }
 
+/* Configuration manager */
+#jg_replaceimgtitle,
+#jg_replaceimgtitle,
+#jg_replaceimgtext,
+#jg_replaceimgauthor,
+#jg_replaceimgdate,
+#jg_replacemetakey,
+#jg_replacemetadesc,
+#jg_replaceshowwarning {
+  width: 250px;
+}
+
 /* Editor height in form views */
 [id*="form"] .CodeMirror,
 [id*="form"] .js-editor-tinymce iframe,
 [id*="form"] .editor iframe,
 [id*="form"] .cke .cke_contents {
-  max-height: 250px;
+  height: 250px;
 }
