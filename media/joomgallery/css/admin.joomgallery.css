@@ -382,5 +382,5 @@ dl.tabs dt h3 a:link {
 [id*="form"] .js-editor-tinymce iframe,
 [id*="form"] .editor iframe,
 [id*="form"] .cke .cke_contents {
-  height: 250px;
+  max-height: 250px;
 }
