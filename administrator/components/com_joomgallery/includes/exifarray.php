@@ -346,6 +346,13 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
                         'Format'      => "Unsigned Rational",
                         'Units'       => JText::_('COM_JOOMGALLERY_SUBIFD_FOCALLENGTH_UNIT')
                     ),
+      37510 => array(   'Attribute'   => "UserComment",
+                        'Name'        => JText::_('COM_JOOMGALLERY_SUBIFD_USERCOMMENT'),
+                        'Description' => JText::_('COM_JOOMGALLERY_SUBIFD_USERCOMMENT_DESCRIPTION'),
+                        'Calculation' => "",
+                        'Format'      => "Undefined",
+                        'Units'       => ""
+                    ),
 //       37520 => array(   'Attribute'   => "SubsecTime",
 //                         'Name'        => JText::_('COM_JOOMGALLERY_SUBIFD_SUBSECTIME'),
 //                         'Description' => JText::_('COM_JOOMGALLERY_SUBIFD_SUBSECTIME_DESCRIPTION'),
@@ -587,9 +594,9 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
       "COMMENT" => array 
       (
-      37510 => array(   'Attribute'   => "COMMENT",
-                        'Name'        => JText::_('COM_JOOMGALLERY_SUBIFD_USERCOMMENT'),
-                        'Description' => JText::_('COM_JOOMGALLERY_SUBIFD_USERCOMMENT_DESCRIPTION'),
+      99999 => array(   'Attribute'   => "COMMENT",
+                        'Name'        => JText::_('COM_JOOMGALLERY_FILE_USERCOMMENT'),
+                        'Description' => JText::_('COM_JOOMGALLERY_FILE_USERCOMMENT_DESCRIPTION'),
                         'Calculation' => "",
                         'Format'      => "Undefined",
                         'Units'       => ""
