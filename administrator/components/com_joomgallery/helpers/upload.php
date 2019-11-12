@@ -2733,9 +2733,19 @@ class JoomUpload extends JObject
       {
         $attribute = $this->exif_config_array['EXIF'][$configoption]['Attribute'];
 
-        if(isset($metadata_array[0][$attribute]))
+        if($attribute == 'UserComment')
         {
-          $return = $metadata_array[0][$attribute];
+          if(isset($metadata_array[0]['COMPUTED'][$attribute]))
+          {
+            $return = $metadata_array[0]['COMPUTED'][$attribute];
+          }
+        }
+        else
+        {
+          if(isset($metadata_array[0][$attribute]))
+          {
+            $return = $metadata_array[0][$attribute];
+          }
         }
       }
       elseif(array_key_exists($configoption, $this->iptc_config_array['IPTC']))
