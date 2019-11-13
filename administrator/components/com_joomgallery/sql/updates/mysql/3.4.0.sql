@@ -30,3 +30,5 @@ ALTER TABLE `#__joomgallery_config` ADD `jg_replaceimgdate` int(5) NOT NULL DEFA
 ALTER TABLE `#__joomgallery_config` ADD `jg_replacemetakey` int(5) NOT NULL DEFAULT 0 AFTER `jg_replaceimgdate`;
 ALTER TABLE `#__joomgallery_config` ADD `jg_replacemetadesc` int(5) NOT NULL DEFAULT 0 AFTER `jg_replacemetakey`;
 ALTER TABLE `#__joomgallery_config` ADD `jg_replaceshowwarning` int(1) NOT NULL DEFAULT 0 AFTER `jg_replacemetadesc`;
+
+ALTER TABLE `#__joomgallery_config` ADD `jg_unsafe_zip_upload` int(1) NOT NULL default 0 AFTER `jg_delete_original`;

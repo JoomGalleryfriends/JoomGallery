@@ -63,6 +63,7 @@ class JoomConfig extends JObject
   var $jg_useorigfilename;
   var $jg_filenamenumber;
   var $jg_delete_original;
+  var $jg_unsafe_zip_upload;
   var $jg_msg_upload_type;
   var $jg_msg_upload_recipients;
   var $jg_msg_download_type;

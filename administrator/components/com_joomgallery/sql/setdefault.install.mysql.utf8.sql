@@ -26,7 +26,6 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_replacemetadesc*/    0,
   /*jg_replaceshowwarning*/ 0,
 
-
   /* ### General settings->Image Processing ####*/
   /*jg_thumbcreation*/          'gd2',
   /*jg_fastgd2thumbcreation*/   1,
@@ -47,6 +46,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_useorigfilename*/    0,
   /*jg_filenamenumber*/     1,
   /*jg_delete_original*/    0,
+  /*jg_unsafe_zip_upload*/  0,
 
   /* ### General settings->Messages ####*/
   /*jg_msg_upload_type*/          2,

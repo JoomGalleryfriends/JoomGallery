@@ -126,6 +126,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_config` (
   `jg_useorigfilename` int(1) NOT NULL,
   `jg_filenamenumber` int(1) NOT NULL,
   `jg_delete_original` int(1) NOT NULL,
+  `jg_unsafe_zip_upload` int(1) NOT NULL,
   `jg_msg_upload_type` int(1) NOT NULL,
   `jg_msg_upload_recipients` text NOT NULL,
   `jg_msg_download_type` int(1) NOT NULL,

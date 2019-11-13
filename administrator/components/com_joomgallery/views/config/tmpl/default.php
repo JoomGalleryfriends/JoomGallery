@@ -193,6 +193,7 @@ JHTML::_('joomconfig.start', 'page4');
     $delete_original[] = JHTML::_('select.option','2', JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_DELETE_ORIGINAL_CHECKBOX'));
     $mc_jg_delete_original = JHTML::_('select.genericlist',$delete_original, 'jg_delete_original', 'class="inputbox" size="3"', 'value', 'text', $this->_config->jg_delete_original);
     JHTML::_('joomconfig.row', 'jg_delete_original', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_BU_DELETE_ORIGINAL', $mc_jg_delete_original);
+    JHTML::_('joomconfig.row', 'jg_unsafe_zip_upload', 'yesno', 'COM_JOOMGALLERY_CONFIG_GS_BU_ALLOW_UNSAFE_ZIP_UPLOAD', $this->_config->jg_unsafe_zip_upload);
 JHTML::_('joomconfig.end');
 
 // start Tab "Grundlegende Einstellungen->Benachrichtigungen"

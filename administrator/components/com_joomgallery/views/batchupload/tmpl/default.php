@@ -15,6 +15,11 @@ JHtml::_('bootstrap.tooltip'); ?>
         <h4><?php echo JText::_('COM_JOOMGALLERY_COMMON_IMPORTANT_NOTICE'); ?></h4>
         <?php echo JText::_('COM_JOOMGALLERY_UPLOAD_BATCH_UPLOAD_NOTE'); ?>
       </div>
+  <?php if(!$this->_config->get('jg_unsafe_zip_upload') == 0): ?>
+      <div class="alert alert-block alert-warning">
+        <?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_ALLOW_UNSAFE_ZIP_WARNING'); ?>
+      </div>
+  <?php endif;?>
     </div>
     <div class="row-fluid">
       <div class="span6 well">
