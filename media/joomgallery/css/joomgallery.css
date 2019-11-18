@@ -672,9 +672,10 @@ div.current .formu td {
 }
 
 /* Editor height in form views */
-[id*="Form"] .CodeMirror,
-[id*="Form"] .js-editor-tinymce iframe,
-[id*="Form"] .editor iframe,
-[id*="Form"] .cke .cke_contents {
+[id*="Form"] .CodeMirror:not(.CodeMirror-fullscreen),
+[id*="Form"] .mce-tinymce:not(.mce-fullscreen) iframe,
+[id*="Form"] .editor:not(.mce-fullscreen) iframe,
+[id*="Form"] .cke_inner:not(.cke_maximized) .cke_contents {
+  min-height: 150px;
   max-height: 250px;
 }

@@ -378,9 +378,10 @@ dl.tabs dt h3 a:link {
 }
 
 /* Editor height in form views */
-[id*="form"] .CodeMirror,
-[id*="form"] .js-editor-tinymce iframe,
-[id*="form"] .editor iframe,
-[id*="form"] .cke .cke_contents {
+[id*="form"] .CodeMirror:not(.CodeMirror-fullscreen),
+[id*="form"] .mce-tinymce:not(.mce-fullscreen) iframe,
+[id*="form"] .editor:not(.mce-fullscreen) iframe,
+[id*="form"] .cke_inner:not(.cke_maximized) .cke_contents {
+  min-height: 150px;
   max-height: 250px;
 }
