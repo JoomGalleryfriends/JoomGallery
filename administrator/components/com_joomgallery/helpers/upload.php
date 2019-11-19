@@ -648,7 +648,8 @@ class JoomUpload extends JObject
 
       $upload_unsafe = false;
       // Check if unsafe zip upload is allowed
-      if(!$this->_site && $this->_config->get('jg_unsafe_zip_upload') == 1)
+      $unsafe_zip_upload = $this->_mainframe->getUserStateFromRequest('joom.upload.batch.unsafe_zip_upload', 'unsafe_zip_upload', false, 'bool');
+      if(!$this->_site && $this->_config->get('jg_unsafe_zip_upload') == 1 && $unsafe_zip_upload == 1)
       {
         $upload_unsafe = true;
       }
@@ -940,6 +941,7 @@ class JoomUpload extends JObject
     $this->_mainframe->setUserState('joom.upload.debug', false);
     $this->_mainframe->setUserState('joom.upload.debugoutput', null);
     $this->_mainframe->setUserState('joom.upload.warningoutput', null);
+    $this->_mainframe->setUserState('joom.upload.batch.unsafe_zip_upload', false);
 
     if(($debugOutput = $this->getDebugOutput()) !== false)
     {

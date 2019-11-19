@@ -79,6 +79,14 @@ JHtml::_('bootstrap.tooltip'); ?>
             <?php echo $this->form->getInput('access'); ?>
           </div>
         </div>
+        <?php if(!$this->_config->get('jg_unsafe_zip_upload') == 0): ?>
+        <div class="control-group">
+          <?php echo $this->form->getLabel('unsafe_zip_upload'); ?>
+          <div class="controls">
+            <?php echo $this->form->getInput('unsafe_zip_upload'); ?>
+          </div>
+        </div>
+        <?php endif; ?>
         <?php if($this->_config->get('jg_delete_original') == 2): ?>
         <div class="control-group">
           <?php echo $this->form->getLabel('original_delete'); ?>

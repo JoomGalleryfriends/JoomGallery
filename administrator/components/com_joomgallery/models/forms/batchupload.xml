@@ -83,6 +83,15 @@
         size="1"
       />
       <field
+        name="unsafe_zip_upload"
+        type="checkbox"
+        class="inputbox"
+        labelclass="control-label"
+        label="COM_JOOMGALLERY_CONFIG_GS_BU_ALLOW_UNSAFE_ZIP_UPLOAD"
+        description="COM_JOOMGALLERY_CONFIG_GS_BU_ALLOW_UNSAFE_ZIP_UPLOAD_ASTERISK"
+        value="1"
+      />
+      <field
         name="original_delete"
         type="checkbox"
         class="inputbox"
