@@ -573,8 +573,19 @@ function displayInsertOptions(uploader, item, fileName, r)
     'class': 'controls'
   });
   controls4.inject(controlGroup4);
-  var insert = 'insertJoomPluWithId(' + r.id + ', jg_e_name, document.id(\'insertOptionsForm' + r.id + '\'), default_values.linked, ';
-  insert    += 'default_values.linked_type, default_values.opt_class, default_values.text, document.id(\'caption' + r.id + '\').value);';
+
+  var insert = '';
+  if(sessionStorage.getItem('joom.mini.prefix') == 'mediaField')
+  {
+    insert  = 'window.parent.mediaField_selectimage(' + r.id + ', \'' + r.imgtitle + '\', \'' + sessionStorage.getItem('joom.mini.object') + '\', \'';
+    insert += r.imgtitle + '\', ' + 'document.id(\'insertOptionsForm' + r.id + '\') != null ? radioGetCheckedValue(document.id(\'insertOptionsForm' + r.id + '\').type)  : \'thumb\');';
+  }
+  else
+  {
+    insert  = 'insertJoomPluWithId(' + r.id + ', jg_e_name, document.id(\'insertOptionsForm' + r.id + '\'), default_values.linked, ';
+    insert += 'default_values.linked_type, default_values.opt_class, default_values.text, document.id(\'caption' + r.id + '\').value);';
+  }
+
   var button = new Element('button', {
     'class': 'btn btn-primary',
     html: 'Insert',
