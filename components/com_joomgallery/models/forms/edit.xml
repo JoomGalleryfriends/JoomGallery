@@ -56,6 +56,7 @@
       label="COM_JOOMGALLERY_COMMON_DESCRIPTION"
       description="COM_JOOMGALLERY_EDIT_DESCRIPTION_TIP"
       filter="JComponentHelper::filterText"
+      height="250"
       buttons="true"
       hide="pagebreak"
     />
