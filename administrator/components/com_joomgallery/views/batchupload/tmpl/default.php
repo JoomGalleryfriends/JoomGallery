@@ -15,11 +15,6 @@ JHtml::_('bootstrap.tooltip'); ?>
         <h4><?php echo JText::_('COM_JOOMGALLERY_COMMON_IMPORTANT_NOTICE'); ?></h4>
         <?php echo JText::_('COM_JOOMGALLERY_UPLOAD_BATCH_UPLOAD_NOTE'); ?>
       </div>
-<?php if(!$this->_config->get('jg_unsafe_zip_upload') == 0): ?>
-      <div class="alert alert-block alert-warning">
-        <?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_ALLOW_UNSAFE_ZIP_WARNING'); ?>
-      </div>
-<?php endif;?>
     </div>
     <div class="row-fluid">
       <div class="span6 well">
@@ -120,3 +115,43 @@ JHtml::_('bootstrap.tooltip'); ?>
     <?php JHtml::_('joomgallery.credits'); ?>
   </div>
 </form>
+<?php if(!$this->_config->get('jg_unsafe_zip_upload') == 0): ?>
+<div id="safezipModal" class="modal hide fade" role="dialog">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_BU_ALLOW_UNSAFE_ZIP_UPLOAD'); ?></h3>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-warning">
+      <p><?php echo JText::_('COM_JOOMGALLERY_UPLOAD_BATCH_ALLOW_UNSAFE_ZIP_WARNING_MODAL'); ?></p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" onclick="unsafezipDeactivate()"><?php echo JText::_('JTOOLBAR_CANCEL'); ?></button>
+    <button class="btn btn-primary" onclick="unsafezipActivate()"><?php echo JText::_('COM_JOOMGALLERY_BTN_ACTIVATE'); ?></button>
+  </div>
+</div>
+<script>
+  jQuery(document).ready(function()
+  {
+    jQuery('#unsafe_zip_upload').change(function()
+    {
+      if(this.checked == true)
+      {
+        jQuery('#unsafe_zip_upload').prop("checked", false);
+        jQuery('#safezipModal').modal('show');
+      }
+    });
+  });
+
+  function unsafezipActivate() {
+    jQuery('#unsafe_zip_upload').prop("checked", true);
+    jQuery('#safezipModal').modal('hide');
+  }
+
+  function unsafezipDeactivate() {
+    jQuery('#unsafe_zip_upload').prop("checked", false);
+    jQuery('#safezipModal').modal('hide');
+  }
+</script>
+<?php endif; ?>
