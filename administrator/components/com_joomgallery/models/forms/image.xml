@@ -79,6 +79,7 @@
       class="inputbox"
       label="COM_JOOMGALLERY_COMMON_DESCRIPTION"
       filter="JComponentHelper::filterText"
+      height="250"
       buttons="true"
       hide="pagebreak"
     />

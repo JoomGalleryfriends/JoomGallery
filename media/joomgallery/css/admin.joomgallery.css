@@ -364,3 +364,24 @@ dl.tabs dt h3 a:link {
 .js-stools-field-filter #jg-filter_category-input {
   margin-bottom: 0px;
 }
+
+/* Configuration manager */
+#jg_replaceimgtitle,
+#jg_replaceimgtitle,
+#jg_replaceimgtext,
+#jg_replaceimgauthor,
+#jg_replaceimgdate,
+#jg_replacemetakey,
+#jg_replacemetadesc,
+#jg_replaceshowwarning {
+  width: 250px;
+}
+
+/* Editor height in form views */
+[id*="form"] .CodeMirror:not(.CodeMirror-fullscreen),
+[id*="form"] .mce-tinymce:not(.mce-fullscreen) iframe,
+[id*="form"] .editor:not(.mce-fullscreen) iframe,
+[id*="form"] .cke_inner:not(.cke_maximized) .cke_contents {
+  min-height: 150px;
+  max-height: 250px;
+}
