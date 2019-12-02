@@ -446,10 +446,22 @@ div.limit, div.counter {
 }
 
 .jg_up_eminithumb {
-  border:0;
-  height:24px;
-  width:24px;
+  border: 0;
+  height: 60px;
+  width: 60px;
 }
+
+img.jg_up_eminithumb {
+  max-height: 60px;
+  max-width: 60px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+}
+
+.com_joomgallery table#imageList td, .com_joomgallery table.table-striped td {
+  vertical-align: middle;
+}
+
 /*description of category under header - Kategoriebeschreibung unterhalb des Header*/
 .jg_catdescr{
   text-align:center;

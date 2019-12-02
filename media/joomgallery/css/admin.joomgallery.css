@@ -136,10 +136,25 @@
 }
 
 /* Mini thumbnails */
+span.hasTooltip > a {
+  display: block;
+}
+
 .jg_minithumb {
-  border:0;
-  height:24px;
-  width:24px;
+  border: 0;
+  height: 60px;
+  width: 60px;
+}
+
+img.jg_minithumb {
+  max-height: 60px;
+  max-width: 60px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+}
+
+.admin.com_joomgallery table#imageList td, .admin.com_joomgallery table.table-striped td {
+  vertical-align: middle;
 }
 
 .jg_spinner {
