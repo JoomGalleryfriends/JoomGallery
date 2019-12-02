@@ -117,7 +117,7 @@ echo $this->loadTemplate('header');
               <?php echo JText::_('COM_JOOMGALLERY_COMMON_ACTION'); ?>
             </th>
 <?php       if(!$this->_config->get('jg_approve')): ?>
-            <th class="nowrap" width="65px">
+            <th class="nowrap" width="5%">
               <?php echo JText::_('COM_JOOMGALLERY_COMMON_PUBLISHED'); ?>
             </th>
 <?php       endif; ?>
@@ -178,10 +178,10 @@ echo $this->loadTemplate('header');
               </a>
 <?php       endif; ?>
             </td>
-            <td>
+            <td class="hidden-phone">
               <?php echo $item->hits; ?>
             </td>
-            <td>
+            <td class="hidden-phone">
               <?php echo $item->downloads; ?>
             </td>
             <td class="hidden-phone">
