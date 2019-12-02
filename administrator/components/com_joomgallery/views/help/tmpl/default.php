@@ -105,7 +105,10 @@
 <?php   if($credit['author']): ?>
             <br />Author: <?php echo $credit['author']; ?>
 <?php   endif; ?>
-            <br /><a href="<?php echo $credit['link']; ?>" target="_blank"><?php echo $credit['link']; ?></a></li>
+<?php   if($credit['link']): ?>
+            <br /><a href="<?php echo $credit['link']; ?>" target="_blank"><?php echo $credit['link']; ?></a>
+<?php   endif; ?>
+          </li>
 <?php endforeach; ?>
         </ul>
       </div>
@@ -118,7 +121,7 @@
         <div class="center">
           <p><?php echo JText::_('COM_JOOMGALLERY_HLPIFO_DONATIONS_LONG'); ?></p>
           <p>
-            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=donate%40joomgallery%2enet&amp;item_name=JoomGallery&amp;tax=0&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8" title="Donate" target="_blank">
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LVQBAFEZHPL2J" title="Donate" target="_blank">
               <img src="<?php echo $this->_ambit->getIcon('others/donate.gif'); ?>"  alt="Donate!" title="Donate!" border="0"/></a>
           </p>
         </div>
