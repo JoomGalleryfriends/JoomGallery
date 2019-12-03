@@ -14,7 +14,7 @@ $approved_states  = array(1 => array('reject', 'COM_JOOMGALLERY_COMMON_APPROVED'
                     <td class="center nowrap">
                       <?php echo JHTML::_('jgrid.state', $approved_states, $item->approved, $i, '', false); ?>
                     </td>
-                    <td class="center" width="25">
+                    <td class="center">
                       <?php echo JHTML::_('joomgallery.minithumbimg', $item, 'jg_minithumb', 'href="'.JRoute::_('index.php?option='._JOOM_OPTION.'&controller=comments&filter[state]=4&list[fullordering]=c.cmtdate DESC'), true); ?>
                     </td>
                     <td>
