@@ -14,7 +14,7 @@
                     <td class="center nowrap">
                       <span class="badge badge-info hasTooltip" title="<?php echo JText::_('COM_JOOMGALLERY_COMMON_DOWNLOADS');?>"><?php echo $item->downloads;?></span>
                     </td>
-                    <td class="center" width="25">
+                    <td class="center">
                       <?php echo JHTML::_('joomgallery.minithumbimg', $item, 'jg_minithumb', $canEdit || $canEditOwn ? 'href="'.JRoute::_('index.php?option='._JOOM_OPTION.'&controller=images&task=edit&cid='.$item->id) : null, true); ?>
                     </td>
                     <td>
