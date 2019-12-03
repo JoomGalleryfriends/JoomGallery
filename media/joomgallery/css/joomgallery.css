@@ -691,3 +691,7 @@ div.current .formu td {
   min-height: 150px;
   max-height: 250px;
 }
+
+span.hasHint > a {
+  display: block;
+}
