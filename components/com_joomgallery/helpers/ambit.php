@@ -1,6 +1,4 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/helpers/ambit.php $
-// $Id: ambit.php 4288 2013-05-27 21:31:08Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **

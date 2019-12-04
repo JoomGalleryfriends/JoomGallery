@@ -1,6 +1,4 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/models/upload.php $
-// $Id: upload.php 4331 2013-09-08 08:27:42Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **

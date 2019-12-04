@@ -1,6 +1,4 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/models/fields/fineuploader.php $
-// $Id: fineuploader.php 4076 2015-05-19 10:35:29Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **

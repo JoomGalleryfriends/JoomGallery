@@ -1,5 +1,3 @@
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/media/joomgallery/js/mini.js $
-// $Id: mini.js 4403 2014-06-13 07:13:01Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **

@@ -1,5 +1,3 @@
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/media/joomgallery/js/admin.js $
-// $Id: admin.js 4078 2013-02-12 10:56:43Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **

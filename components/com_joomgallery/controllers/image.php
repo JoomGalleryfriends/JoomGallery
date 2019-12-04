@@ -1,6 +1,4 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/controllers/image.php $
-// $Id: image.php 4405 2014-07-02 07:13:31Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                   **
 **   By: JoomGallery::ProjectTeam                                                       **

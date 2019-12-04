@@ -1,6 +1,4 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/views/move/view.html.php $
-// $Id: view.html.php 4361 2014-02-24 18:03:18Z erftralle $
 /******************************************************************************\
 **   JoomGallery 3                                                            **
 **   By: JoomGallery::ProjectTeam                                             **

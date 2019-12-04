@@ -1,6 +1,4 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/models/category.php $
-// $Id: category.php 4345 2013-11-16 05:53:14Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                   **
 **   By: JoomGallery::ProjectTeam                                                       **

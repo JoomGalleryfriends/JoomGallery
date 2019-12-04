@@ -1,5 +1,3 @@
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/media/joomgallery/js/maintenance.js $
-// $Id: maintenance.js 4078 2013-02-12 10:56:43Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
