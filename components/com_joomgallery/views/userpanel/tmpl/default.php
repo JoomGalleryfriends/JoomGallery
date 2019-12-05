@@ -104,16 +104,16 @@ echo $this->loadTemplate('header');
             <th class="nowrap">
               <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_COMMON_IMAGE_NAME', 'imgtitle', $listDirn, $listOrder); ?>
             </th>
-            <th class="nowrap" width="5%">
+            <th class="nowrap hidden-phone" width="5%">
               <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_COMMON_HITS', 'hits', $listDirn, $listOrder); ?>
             </th>
-            <th class="nowrap" width="7%">
+            <th class="nowrap hidden-phone" width="7%">
               <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_COMMON_DOWNLOADS', 'downloads', $listDirn, $listOrder); ?>
             </th>
             <th class="nowrap hidden-phone" width="30%">
               <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_COMMON_CATEGORY', 'catid', $listDirn, $listOrder); ?>
             </th>
-            <th class="nowrap" width="13%">
+            <th class="nowrap" width="20%">
               <?php echo JText::_('COM_JOOMGALLERY_COMMON_ACTION'); ?>
             </th>
 <?php       if(!$this->_config->get('jg_approve')): ?>
@@ -178,10 +178,10 @@ echo $this->loadTemplate('header');
               </a>
 <?php       endif; ?>
             </td>
-            <td>
+            <td class="hidden-phone">
               <?php echo $item->hits; ?>
             </td>
-            <td>
+            <td class="hidden-phone">
               <?php echo $item->downloads; ?>
             </td>
             <td class="hidden-phone">

@@ -462,6 +462,13 @@ img.jg_up_eminithumb {
   vertical-align: middle;
 }
 
+@media screen and (max-width: 767px) {
+  img.jg_up_eminithumb {
+    max-height: 25px;
+    max-width: 25px;
+  }
+}
+
 /*description of category under header - Kategoriebeschreibung unterhalb des Header*/
 .jg_catdescr{
   text-align:center;
