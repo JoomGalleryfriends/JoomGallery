@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/models/vote.php $
-// $Id: vote.php 4077 2013-02-12 10:46:13Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -80,7 +78,7 @@ class JoomGalleryModelVote extends JoomGalleryModel
     // Check for hacking attempt
     $categories = $this->_ambit->getCategoryStructure();
     $query = $this->_db->getQuery(true)
-          ->select('a.owner')
+          ->select('a.owner, c.allow_rating')
           ->from(_JOOM_TABLE_IMAGES.' AS a')
           ->leftJoin(_JOOM_TABLE_CATEGORIES.' AS c ON c.cid = a.catid')
           ->where('a.published  = 1')
@@ -89,8 +87,17 @@ class JoomGalleryModelVote extends JoomGalleryModel
           ->where('a.access     IN ('.implode(',', $this->_user->getAuthorisedViewLevels()).')')
           ->where('c.cid        IN ('.implode(',', array_keys($categories)).')');
     $this->_db->setQuery($query);
-    $owner = $this->_db->loadResult();
-    if(is_null($owner) || ($this->_config->get('jg_votingonlyreg') && !$this->_user->get('id')))
+
+    $owner           = null;
+    $catallow_rating = -1;
+    if(!empty($row = $this->_db->loadRow()))
+    {
+      $owner = $row[0];
+      $catallow_rating = $row[1];
+    }
+
+    if(  !($catallow_rating == (-1) ? $this->_config->get('jg_showrating') : $catallow_rating)
+      || (is_null($owner) || ($this->_config->get('jg_votingonlyreg') && !$this->_user->get('id'))))
     {
       $this->setError('Stop Hacking attempt!');
 
@@ -115,7 +122,17 @@ class JoomGalleryModelVote extends JoomGalleryModel
       return false;
     }
 
-      // Get voted or not
+    // Clearing stored but unused IP addresses of voters on a regulary base
+    $query->clear()
+    ->update(_JOOM_TABLE_VOTES)
+    ->set('userip = ' . "''")
+    ->where('datevoted <= DATE_SUB(NOW(), INTERVAL 24 HOUR)')
+    ->where("userip != ''");
+
+    $this->_db->setQuery($query);
+    $this->_db->execute();
+
+    // Checking wether it is allowed to count the vote
     if($this->_config->get('jg_votingonlyreg'))
     {
       // Check whether the user already voted on that image
@@ -143,7 +160,7 @@ class JoomGalleryModelVote extends JoomGalleryModel
         $query->clear()
               ->select('COUNT(*)')
               ->from(_JOOM_TABLE_VOTES)
-              ->where('userip  = '.$this->_db->q($_SERVER['REMOTE_ADDR']))
+              ->where('userip  = '.$this->_db->q($this->_mainframe->input->server->getString('REMOTE_ADDR', '')))
               ->where('picid   = '.$this->_id)
               ->where('datevoted > DATE_SUB(NOW(), INTERVAL 24 HOUR)');
         $this->_db->setQuery($query);
@@ -197,7 +214,7 @@ class JoomGalleryModelVote extends JoomGalleryModel
 
     $row->picid     = $this->_id;
     $row->userid    = $this->_user->get('id');
-    $row->userip    = $_SERVER['REMOTE_ADDR'];
+    $row->userip    = $this->_mainframe->input->server->getString('REMOTE_ADDR', '');
     $row->datevoted = $date->toSQL();
     $row->vote      = $vote;
 

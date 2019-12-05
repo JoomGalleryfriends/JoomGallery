@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/views/config/view.html.php $
-// $Id: view.html.php 4361 2014-02-24 18:03:18Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -245,7 +243,12 @@ class JoomGalleryViewConfig extends JoomGalleryView
 
   function addToolbar()
   {
+    require_once JPATH_COMPONENT.'/includes/popup.php';
+
     $title = JText::_('COM_JOOMGALLERY_CONFIG_CONFIGURATION_MANAGER');
+
+    $toolbar = JToolbar::getInstance('toolbar');
+
     if($this->_config->isExtended())
     {
       $config_title = $this->get('ConfigTitle');
@@ -263,6 +266,10 @@ class JoomGalleryViewConfig extends JoomGalleryView
     if($this->_config->isExtended())
     {
       JToolBarHelper::cancel('cancel', 'JTOOLBAR_CANCEL');
+    }
+    else
+    {
+      $toolbar->appendButton('JoomPopup', 'reset', 'COM_JOOMGALLERY_CONFIG_RESETCONFIG', 'index.php?option='._JOOM_OPTION.'&amp;controller=config&amp;layout=reset&amp;tmpl=component', 400, 150, 0, 0, '', 'COM_JOOMGALLERY_CONFIG_RESETCONFIG', 'jg-reset-popup', 'warning-2');
     }
   }
 

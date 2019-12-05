@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/controllers/nametags.php $
-// $Id: nametags.php 4318 2013-08-18 07:58:35Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -67,5 +65,31 @@ class JoomGalleryControllerNametags extends JoomGalleryController
     }
 
     $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=nametags'), JText::_('COM_JOOMGALLERY_MAIMAN_MSG_NAMETAGS_SYNCHRONIZED'));
+  }
+
+  /**
+   * Deletes the stored IP addresses of all nametags.
+   *
+   * @return  void
+   * @since   3.4
+   */
+  public function deleteip()
+  {
+    $query = $this->_db->getQuery(true)
+          ->update(_JOOM_TABLE_NAMESHIELDS)
+          ->set('nuserip='."''");
+
+    $this->_db->setQuery($query);
+
+    if(!$this->_db->execute())
+    {
+      // Redirect to maintenance manager because this task is usually launched there
+      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=nametags'), $this->_db->getErrorMsg(), 'error');
+
+      return;
+    }
+
+    // Redirect to maintenance manager because this task is usually launched there
+    $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=nametags'), JText::_('COM_JOOMGALLERY_MAIMAN_NT_MSG_NAMETAGS_IPS_DELETED'));
   }
 }

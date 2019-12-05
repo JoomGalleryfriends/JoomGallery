@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/views/search/view.html.php $
-// $Id: view.html.php 4077 2013-02-12 10:46:13Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -139,20 +137,22 @@ class JoomGalleryViewSearch extends JoomGalleryView
           $rows[$key]->show_delete_icon = true;
         }
       }
-    }
 
-    // Download icon
-    if($this->_config->get('jg_download') && $this->_config->get('jg_showsearchdownload'))
-    {
-      if($this->_user->get('id') || $this->_config->get('jg_download_unreg'))
+      // Show download icon for that image/category
+      $rows[$key]->show_download_icon = 0;
+      if(  ($row->allow_download == (-1) ? $this->_config->get('jg_download') : $row->allow_download)
+        && $this->_config->get('jg_showsearchdownload'))
       {
-        $params->set('show_download_icon', 1);
-      }
-      else
-      {
-        if($this->_config->get('jg_download_hint'))
+        if($this->_user->get('id') || $this->_config->get('jg_download_unreg'))
         {
-          $params->set('show_download_icon', -1);
+          $rows[$key]->show_download_icon = 1;
+        }
+        else
+        {
+          if($this->_config->get('jg_download_hint'))
+          {
+            $rows[$key]->show_download_icon = -1;
+          }
         }
       }
     }

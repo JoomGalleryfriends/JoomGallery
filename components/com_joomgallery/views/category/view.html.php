@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/views/category/view.html.php $
-// $Id: view.html.php 4250 2013-05-02 16:49:22Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -681,7 +679,8 @@ class JoomGalleryViewCategory extends JoomGalleryView
     }
 
     // Download icon
-    if($this->_config->get('jg_download') && $this->_config->get('jg_showcategorydownload'))
+    if(  ($cat->allow_download == (-1) ? $this->_config->get('jg_download') : $cat->allow_download)
+      && $this->_config->get('jg_showcategorydownload'))
     {
       if($this->_user->get('id') || $this->_config->get('jg_download_unreg'))
       {

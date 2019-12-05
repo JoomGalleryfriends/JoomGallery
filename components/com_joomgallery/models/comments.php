@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/models/comments.php $
-// $Id: comments.php 4175 2013-04-05 11:13:27Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -83,7 +81,7 @@ class JoomGalleryModelComments extends JoomGalleryModel
     $authorised_viewlevels = implode(',', $this->_user->getAuthorisedViewLevels());
 
     $query = $this->_db->getQuery(true)
-          ->select('c.cid')
+          ->select('c.cid, c.allow_comment')
           ->from(_JOOM_TABLE_IMAGES.' AS a')
           ->leftJoin(_JOOM_TABLE_CATEGORIES.' AS c ON c.cid = a.catid')
           ->where('a.published = 1')
@@ -93,8 +91,17 @@ class JoomGalleryModelComments extends JoomGalleryModel
           ->where('c.access IN ('.$authorised_viewlevels.')');
 
     $this->_db->setQuery($query);
-    $result = $this->_db->loadResult();
+
+    $result           = null;
+    $catallow_comment = -1;
+    if(!empty($row = $this->_db->loadRow()))
+    {
+      $result           = $row[0];
+      $catallow_comment = $row[1];
+    }
+
     if(   !$result
+      ||  !($catallow_comment == (-1) ? $this->_config->get('jg_showcomment') : $catallow_comment)
       ||  !$this->_config->get('jg_showcomment')
       || (!$this->_config->get('jg_anoncomment') && !$this->_user->get('id'))
       )
@@ -224,7 +231,13 @@ class JoomGalleryModelComments extends JoomGalleryModel
     $row  = $this->getTable('joomgallerycomments');
 
     $row->cmtpic    = $this->_id;
-    $row->cmtip     = $_SERVER['REMOTE_ADDR'];
+    $row->cmtip     = '';
+
+    if($this->_config->jg_storecommentip)
+    {
+      $row->cmtip   = $this->_mainframe->input->server->getString('REMOTE_ADDR', '');
+    }
+
     $row->userid    = $this->_user->get('id');
     $row->cmtname   = $name;
     $row->cmttext   = $text;

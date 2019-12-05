@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/controllers/images.php $
-// $Id: images.php 4405 2014-07-02 07:13:31Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -681,6 +679,43 @@ class JoomGalleryControllerImages extends JoomGalleryController
     }
 
     // Some messages are enqueued by the model
+    $this->setRedirect($this->_ambit->getRedirectUrl(), $msg, $type);
+  }
+
+  /**
+   * Rotates images
+   *
+   * @return  void
+   *
+   * @since   4.0
+   */
+  public function rotate()
+  {
+    $model  = $this->getModel('images');
+    $ret    = $model->rotate();
+
+    if($ret === false)
+    {
+      $type = 'error';
+      $msg  = $model->getError();
+    }
+    else
+    {
+      $notRotated = $ret[1] + $ret[1] + $ret[2];
+
+      if($notRotated == 0)
+      {
+        $type = 'message';
+        $msg  = JText::_('COM_JOOMGALLERY_IMGMAN_MSG_IMAGES_ROTATED');
+      }
+      else
+      {
+        $type = 'error';
+        $msg  = JText::sprintf('COM_JOOMGALLERY_IMGMAN_ERROR_IMAGES_ROTATED', $notRotated).'<br />';
+        $msg .= $ret[3];
+      }
+    }
+
     $this->setRedirect($this->_ambit->getRedirectUrl(), $msg, $type);
   }
 

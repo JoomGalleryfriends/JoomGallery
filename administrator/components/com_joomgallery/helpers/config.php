@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/helpers/config.php $
-// $Id: config.php 4267 2013-05-10 11:41:59Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -39,6 +37,13 @@ class JoomConfig extends JObject
   var $jg_checkupdate;
   var $jg_filenamewithjs;
   var $jg_filenamereplace;
+  var $jg_replaceimgtitle;
+  var $jg_replaceimgtext;
+  var $jg_replaceimgauthor;
+  var $jg_replaceimgdate;
+  var $jg_replacemetakey;
+  var $jg_replacemetadesc;
+  var $jg_replaceshowwarning;
   var $jg_thumbcreation;
   var $jg_fastgd2thumbcreation;
   var $jg_impath;
@@ -50,6 +55,8 @@ class JoomConfig extends JObject
   var $jg_thumbwidth;
   var $jg_thumbheight;
   var $jg_thumbquality;
+  var $jg_upload_exif_rotation;
+  var $jg_originalquality;
   var $jg_uploadorder;
   var $jg_useorigfilename;
   var $jg_filenamenumber;
@@ -115,6 +122,7 @@ class JoomConfig extends JObject
   var $jg_namedanoncomment;
   var $jg_anonapprovecom;
   var $jg_approvecom;
+  var $jg_storecommentip;
   var $jg_bbcodesupport;
   var $jg_smiliesupport;
   var $jg_anismilie;
@@ -268,6 +276,7 @@ class JoomConfig extends JObject
   var $jg_nameshields_others;
   var $jg_nameshields_unreg;
   var $jg_show_nameshields_unreg;
+  var $jg_storenametagip;
   var $jg_nameshields_height;
   var $jg_nameshields_width;
   var $jg_slideshow;

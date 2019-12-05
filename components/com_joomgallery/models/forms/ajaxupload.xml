@@ -47,9 +47,12 @@
       <field
         name="imgtext"
         id="ajax-imgtext"
-        type="textarea"
+        type="editor"
         class="inputbox"
         label="COM_JOOMGALLERY_UPLOAD_GENERIC_DESCRIPTION_OPTIONAL"
+        height="250"
+        buttons="true"
+        hide="pagebreak"
       />
       <field
         name="imgauthor"
@@ -57,6 +60,13 @@
         type="text"
         class="inputbox"
         label="COM_JOOMGALLERY_COMMON_AUTHOR"
+      />
+      <field
+        name="owner"
+        id="ajax-owner"
+        type="text"
+        class="inputbox"
+        label="COM_JOOMGALLERY_COMMON_OWNER"
         disabled="true"
         readonly="true"
       />

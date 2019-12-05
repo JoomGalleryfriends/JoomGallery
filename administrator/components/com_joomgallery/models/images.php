@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/models/images.php $
-// $Id: images.php 2015-03-23 $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -788,6 +786,141 @@ class JoomGalleryModelImages extends JoomGalleryModel
     $this->_mainframe->setUserState('joom.recreate.recreated', null);
 
     return array($thumb_count, $img_count, $recreated);
+  }
+
+  /**
+   * Rotate selected images
+   *
+   * @return  mixed   Result information
+   *
+   * @since   3.4
+   */
+  public function rotate()
+  {
+    jimport('joomla.filesystem.file');
+
+    $cids             = $this->_mainframe->getUserStateFromRequest('joom.rotate.cids', 'cid', array(), 'array');
+    $rotateImageTypes = $this->_mainframe->getUserStateFromRequest('joom.rotate.imagetypes', 'rotateimagetypes', 1, 'int');
+    $rotateImageAngle = $this->_mainframe->getUserStateFromRequest('joom.rotate.imageangle', 'rotateimageangle', 90, 'int');
+
+    $thumb_count  = $this->_mainframe->getUserState('joom.rotate.thumbcount', count($cids));
+    $img_count    = $this->_mainframe->getUserState('joom.rotate.imgcount', count($cids));
+    $orig_count   = $this->_mainframe->getUserState('joom.rotate.origcount', $rotateImageTypes == 2 ? count($cids) : 0);
+    $debugoutput  = $this->_mainframe->getUserState('joom.rotate.debugoutput', '');
+    $firstLoop    = $this->_mainframe->getUserState('joom.rotate.firstloop', true);
+
+    // Before first loop check for selected images
+    if($firstLoop && !count($cids))
+    {
+      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
+
+      return false;
+    }
+
+    require_once JPATH_COMPONENT_ADMINISTRATOR.'/helpers/refresher.php';
+
+    $refresher = new JoomRefresher(array('controller' => 'images', 'task' => 'rotate', 'remaining' => count($cids), 'start' => JRequest::getBool('cid')));
+
+    // Loop through selected images
+    foreach($cids as $key => $cid)
+    {
+      $orig  = $this->_ambit->getImg('orig_path', $cid);
+      $img   = $this->_ambit->getImg('img_path', $cid);
+      $thumb = $this->_ambit->getImg('thumb_path', $cid);
+
+      $doResize = false;
+
+      if($rotateImageTypes == 2)
+      {
+        if(JoomFile::rotateImage($debugoutput, $orig, $this->_config->get('jg_thumbcreation'),
+                                 $this->_config->get('jg_originalquality'), $rotateImageAngle, false))
+        {
+          $orig_count--;
+          $doResize = true;
+        }
+        else
+        {
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $orig).'<br />';
+        }
+      }
+
+      if(JoomFile::rotateImage($debugoutput, $img, $this->_config->get('jg_thumbcreation'),
+                               $this->_config->get('jg_picturequality'), $rotateImageAngle, false))
+      {
+        $img_count--;
+      }
+      else
+      {
+        $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img).'<br />';
+      }
+
+      $tmpdebugoutput = '';
+
+      if($doResize)
+      {
+        // As we have a successfully rotated original we should use a resize here to ensure the correct
+        // appearance according to the thumbnail conversion settings
+        $ret = JoomFile::resizeImage($tmpdebugoutput,
+                                     $orig,
+                                     $thumb,
+                                     $this->_config->get('jg_useforresizedirection'),
+                                     $this->_config->get('jg_thumbwidth'),
+                                     $this->_config->get('jg_thumbheight'),
+                                     $this->_config->get('jg_thumbcreation'),
+                                     $this->_config->get('jg_thumbquality'),
+                                     false,
+                                     $this->_config->get('jg_cropposition')
+                                    );
+      }
+      else
+      {
+        $ret = JoomFile::rotateImage($tmpdebugoutput,
+                                     $thumb,
+                                     $this->_config->get('jg_thumbcreation'),
+                                     $this->_config->get('jg_thumbquality'),
+                                     $rotateImageAngle,
+                                     false
+                                    );
+
+        if($ret)
+        {
+          $thumb_count--;
+        }
+        else
+        {
+          $debugoutput .= $tmpdebugoutput;
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $thumb).'<br />';
+        }
+      }
+
+      unset($cids[$key]);
+
+      // Check remaining time
+      if(!$refresher->check())
+      {
+        $this->_mainframe->setUserState('joom.rotate.cids', $cids);
+        $this->_mainframe->setUserState('joom.rotate.imagetypes', $rotateImageTypes);
+        $this->_mainframe->setUserState('joom.rotate.imageangle', $rotateImageAngle);
+        $this->_mainframe->setUserState('joom.rotate.thumbcount', $thumb_count);
+        $this->_mainframe->setUserState('joom.rotate.imgcount', $img_count);
+        $this->_mainframe->setUserState('joom.rotate.rotated', $orig_count);
+        $this->_mainframe->setUserState('joom.rotate.debugoutput', $debugoutput);
+        $this->_mainframe->setUserState('joom.rotate.firstloop', false);
+
+        $refresher->refresh(count($cids));
+      }
+    }
+
+    $this->_mainframe->setUserState('joom.rotate.cids', null);
+    $this->_mainframe->setUserState('joom.rotate.imagetypes', null);
+    $this->_mainframe->setUserState('joom.rotate.imageangle', null);
+    $this->_mainframe->setUserState('joom.rotate.thumbcount', null);
+    $this->_mainframe->setUserState('joom.rotate.imgcount', null);
+    $this->_mainframe->setUserState('joom.rotate.origcount', null);
+    $this->_mainframe->setUserState('joom.rotate.debugoutput', null);
+    $this->_mainframe->setUserState('joom.rotate.firstloop', null);
+
+    return array($thumb_count, $img_count, $orig_count, $debugoutput);
   }
 
   /**
