@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-  <release version="3.4.0" published="20191205">
+  <release version="3.4.0" published="20191206">
     <entries date="20191205">
       <logentry type="^">Improved user panel view (mobile)</logentry>
     </entries>
