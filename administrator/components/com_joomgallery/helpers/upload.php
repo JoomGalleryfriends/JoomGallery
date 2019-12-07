@@ -1,8 +1,10 @@
 <?php
+// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/helpers/upload.php $
+// $Id: upload.php 4370 2014-02-27 10:40:34Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -643,11 +645,7 @@ class JoomUpload extends JObject
       // because the uploaded archive is saved like php8900.tmp and JArchive
       // needs a valid extension
       $zipfile = $extractdir.'/'.$zippack['name'];
-      if(!JFile::upload($zippack['tmp_name'], $zipfile, false, true))
-      {
-        $this->setError(JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_FILE_NOT_UPLOADED'));
-        return false;
-      }
+      JFile::upload($zippack['tmp_name'], $zipfile);
 
       // Extract archive to new directory, JArchive chooses the right adapter
       // according to the extension
@@ -2136,7 +2134,6 @@ class JoomUpload extends JObject
                                     $this->_config->get('jg_thumbheight'),
                                     $this->_config->get('jg_thumbcreation'),
                                     $this->_config->get('jg_thumbquality'),
-                                    false,
                                     $this->_config->get('jg_cropposition'),
                                     $angle
                                     );
@@ -2163,13 +2160,12 @@ class JoomUpload extends JObject
       $return = JoomFile::resizeImage($this->_debugoutput,
                                       $source,
                                       $this->_ambit->getImg('img_path', $filename, null, $this->catid),
-                                      false,
+                                      2,
                                       $this->_config->get('jg_maxwidth'),
-                                      false,
+                                      $this->_config->get('jg_maxwidth'),
                                       $this->_config->get('jg_thumbcreation'),
                                       $this->_config->get('jg_picturequality'),
-                                      true,
-                                      0,
+                                      false,
                                       $angle
                                       );
       if(!$return)
