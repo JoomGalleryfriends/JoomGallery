@@ -519,8 +519,9 @@ class JoomFile
           return false;
         }
         // create empty image of specified size
-        $dst_img = imagecreate($destWidth, $destHeight);        
-        if (!$src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]));
+        $dst_img = imagecreate($destWidth, $destHeight);
+        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]);       
+        if (!$src_img);
         {
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
           return false;
@@ -577,7 +578,8 @@ class JoomFile
         }
         // create empty image of specified size
         $dst_img = imagecreatetruecolor($destWidth, $destHeight);
-        if (!$src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]));
+        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]);       
+        if (!$src_img);
         {
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
           return false;
