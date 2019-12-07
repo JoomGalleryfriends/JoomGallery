@@ -29,6 +29,7 @@ JLoader::register('JoomHelper',       JPATH_COMPONENT.'/helpers/helper.php');
 JLoader::register('JoomAmbit',        JPATH_COMPONENT.'/helpers/ambit.php');
 JLoader::register('JoomConfig',       JPATH_COMPONENT_ADMINISTRATOR.'/helpers/config.php');
 JLoader::register('JoomFile',         JPATH_COMPONENT_ADMINISTRATOR.'/helpers/file.php');
+JLoader::register('JoomIMGtools',     JPATH_COMPONENT_ADMINISTRATOR.'/helpers/imgtools.php');
 JTable::addIncludePath(               JPATH_COMPONENT_ADMINISTRATOR.'/tables');
 
 // Create the controller

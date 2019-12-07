@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/helpers/migration.php $
-// $Id: migration.php 4278 2013-05-25 23:58:54Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -1633,6 +1631,35 @@ abstract class JoomMigration
       $neworigimage = $this->_ambit->getImg('orig_path', $row);
     }
 
+    // Check if auto-rotation is enabled
+    $angle         = 0;    
+    switch($this->_config->get('jg_upload_exif_rotation'))
+    {
+      case 0:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+
+      case 1:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = false;
+        break;
+
+      case 2:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = true;
+        break;
+      
+      default:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+    }
+
     if(!$img_exists)
     {
       // If it doesn't already exists with another name try to copy or move from source directory or create a new one
@@ -1641,15 +1668,20 @@ abstract class JoomMigration
       {
         // Create new detail image
         $debugoutput = '';
-        $result['detail'] = JoomFile::resizeImage($debugoutput,
-                                                  $neworigimage,
-                                                  $newdetailimage,
-                                                  2,
-                                                  $this->_config->get('jg_maxwidth'),
-                                                  $this->_config->get('jg_maxwidth'),
-                                                  $this->_config->get('jg_thumbcreation'),
-                                                  $this->_config->get('jg_picturequality')
-                                                  );
+        $result['detail'] = JoomIMGtools::resizeImage($debugoutput,
+                                                      $neworigimage,
+                                                      $newdetailimage,
+                                                      2,
+                                                      $this->_config->get('jg_maxwidth'),
+                                                      $this->_config->get('jg_maxwidth'),
+                                                      $this->_config->get('jg_thumbcreation'),
+                                                      $this->_config->get('jg_picturequality'),
+                                                      false,
+                                                      $angle,
+                                                      $autorot_det,
+                                                      false,
+                                                      true
+                                                      );
         if(!$result['detail'])
         {
           $this->setError('Could not create detail image '.$newdetailimage);
@@ -1696,16 +1728,20 @@ abstract class JoomMigration
       {
         // Create new thumbnail
         $debugoutput = '';
-        $result['thumb'] = JoomFile::resizeImage( $debugoutput,
-                                                  $neworigimage,
-                                                  $newthumbnail,
-                                                  $this->_config->get('jg_useforresizedirection'),
-                                                  $this->_config->get('jg_thumbwidth'),
-                                                  $this->_config->get('jg_thumbheight'),
-                                                  $this->_config->get('jg_thumbcreation'),
-                                                  $this->_config->get('jg_thumbquality'),
-                                                  $this->_config->get('jg_cropposition')
-                                                );
+        $result['thumb'] = JoomIMGtools::resizeImage( $debugoutput,
+                                                      $neworigimage,
+                                                      $newthumbnail,
+                                                      $this->_config->get('jg_useforresizedirection'),
+                                                      $this->_config->get('jg_thumbwidth'),
+                                                      $this->_config->get('jg_thumbheight'),
+                                                      $this->_config->get('jg_thumbcreation'),
+                                                      $this->_config->get('jg_thumbquality'),
+                                                      $this->_config->get('jg_cropposition'),
+                                                      $angle,
+                                                      $autorot_thumb,
+                                                      false,
+                                                      false
+                                                    );
         if(!$result['thumb'])
         {
           $this->setError('Could not create thumbnail '.$newthumbnail);
@@ -1752,8 +1788,30 @@ abstract class JoomMigration
       {
         $this->setError('Could not delete original image '.$neworigimage);
       }
+    } else
+    {
+      // If original image is kept
+      // Rotate original image if needed
+      $debugoutput = '';
+      $return = JoomIMGtools::rotateImage($debugoutput,
+                                          $neworigimage,
+                                          $neworigimage,
+                                          $this->_config->get('jg_thumbcreation'),
+                                          $this->_config->get('jg_originalquality'),
+                                          $angle,
+                                          $autorot_orig,
+                                          true,
+                                          true
+                                         );
+      if(!$return)
+      {
+        $this->setError('Could not rotate original image '.$neworigimage);
+      }
     }
 
+    // Replace with metadata
+    // modify Object $row with informations from metadata
+    
     // Create database entry
     $query = $this->_db->getQuery(true)
           ->insert(_JOOM_TABLE_IMAGES)

@@ -80,30 +80,25 @@ class JoomGalleryModelConfig extends JoomGalleryModel
    * @return  string  The result of request
    * @since   1.0.0
    */
-  public function getIMVersion()
+  public function getIMVersion() 
   {
     $config = JoomConfig::getInstance();
     $status = null;
-    $output = array();
 
-    if(!empty($config->jg_impath))
+    @exec(trim($config->get('jg_impath')).'convert -version', $output_convert, $status);
+    @exec(trim($config->get('jg_impath')).'magick -version', $output_magick, $status);
+
+    if ($output_magick)
     {
-      $execstring = $config->get('jg_impath').'convert -version';
+      return $output_magick[0];
+    }
+    elseif ($output_convert)
+    {
+      return $output_convert[0];
     }
     else
-    {
-      $execstring = 'convert -version';
-    }
-
-    @exec($execstring, $output, $status);
-
-    if(count($output) == 0)
     {
       return 0;
-    }
-    else
-    {
-      return $output[0];
     }
   }
 
