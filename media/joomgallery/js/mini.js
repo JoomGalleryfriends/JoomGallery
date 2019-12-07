@@ -1,9 +1,7 @@
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/media/joomgallery/js/mini.js $
-// $Id: mini.js 4403 2014-06-13 07:13:01Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -573,8 +571,19 @@ function displayInsertOptions(uploader, item, fileName, r)
     'class': 'controls'
   });
   controls4.inject(controlGroup4);
-  var insert = 'insertJoomPluWithId(' + r.id + ', jg_e_name, document.id(\'insertOptionsForm' + r.id + '\'), default_values.linked, ';
-  insert    += 'default_values.linked_type, default_values.opt_class, default_values.text, document.id(\'caption' + r.id + '\').value);';
+
+  var insert = '';
+  if(sessionStorage.getItem('joom.mini.prefix') == 'mediaField')
+  {
+    insert  = 'window.parent.mediaField_selectimage(' + r.id + ', \'' + r.imgtitle + '\', \'' + sessionStorage.getItem('joom.mini.object') + '\', \'';
+    insert += r.imgtitle + '\', ' + 'document.id(\'insertOptionsForm' + r.id + '\') != null ? radioGetCheckedValue(document.id(\'insertOptionsForm' + r.id + '\').type)  : \'thumb\');';
+  }
+  else
+  {
+    insert  = 'insertJoomPluWithId(' + r.id + ', jg_e_name, document.id(\'insertOptionsForm' + r.id + '\'), default_values.linked, ';
+    insert += 'default_values.linked_type, default_values.opt_class, default_values.text, document.id(\'caption' + r.id + '\').value);';
+  }
+
   var button = new Element('button', {
     'class': 'btn btn-primary',
     html: 'Insert',

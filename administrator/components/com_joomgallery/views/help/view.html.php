@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/views/help/view.html.php $
-// $Id: view.html.php 4416 2014-10-26 02:04:29Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -160,7 +158,7 @@ class JoomGalleryViewHelp extends JoomGalleryView
                             'link'    => 'http://jupload.sourceforge.net/'),
                       array('title'   => 'Watermark (modified)',
                             'author'  => 'Michael Mueller',
-                            'link'    => 'http://www.php4u.net'),
+                            'link'    => ''),
                       array('title'   => 'fastimagecopyresampled (fast conversion of pictures in GD)',
                             'author'  => 'Tim Eckel',
                             'link'    => 'http://de.php.net/manual/en/function.imagecopyresampled.php#77679'),
@@ -169,10 +167,10 @@ class JoomGalleryViewHelp extends JoomGalleryView
                             'link'    => 'http://www.famfamfam.com'),
                       array('title'   => 'Smoothgallery (modified) slideshow in detail view',
                             'author'  => 'Jonathan Schemoul',
-                            'link'    => 'http://smoothgallery.jondesign.net'),
+                            'link'    => ''),
                       array('title'   => 'Resize Image with Different Aspect Ratio - resizing thumbnails',
                             'author'  => 'Nash',
-                            'link'    => 'http://nashruddin.com/Resize_Image_to_Different_Aspect_Ratio_on_the_fly'),
+                            'link'    => ''),
                       array('title'   => 'Weighted rating according to Thomas Bayes',
                             'author'  => 'Michael Jašek',
                             'link'    => 'http://www.buntesuppe.de/blog/123/bayessche-bewertung'),

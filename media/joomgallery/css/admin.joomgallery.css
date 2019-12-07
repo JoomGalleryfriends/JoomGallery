@@ -1,9 +1,7 @@
-/* $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/media/joomgallery/css/admin.joomgallery.css $*/
-/* $Id: admin.joomgallery.css 4373 2014-03-05 09:07:31Z erftralle $*/
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -136,10 +134,25 @@
 }
 
 /* Mini thumbnails */
+span.hasTooltip > a {
+  display: block;
+}
+
 .jg_minithumb {
-  border:0;
-  height:24px;
-  width:24px;
+  border: 0;
+  height: 60px;
+  width: 60px;
+}
+
+img.jg_minithumb {
+  max-height: 60px;
+  max-width: 60px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+}
+
+.admin.com_joomgallery table#imageList td, .admin.com_joomgallery table.table-striped td {
+  vertical-align: middle;
 }
 
 .jg_spinner {

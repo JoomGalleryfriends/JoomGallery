@@ -1,5 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+  <release version="3.4.0" published="20191206">
+    <entries date="20191205">
+      <logentry type="^">Improved user panel view (mobile)</logentry>
+    </entries>
+    <entries date="20191203">
+      <logentry type="^">Improved thumbnail display</logentry>
+    </entries>
+    <entries date="20191128">
+      <logentry type="^">Disable Joomla security check on archive files during batch upload</logentry>
+    </entries>
+    <entries date="20191120">
+      <logentry type="#">Fixes not working insertion of images after upload when using JoomMediaFormField</logentry>
+      <logentry type="^">Limiting WYSIWYG editor height for image description (frontend and backend)</logentry>
+    </entries>
+    <entries date="20191117">
+      <logentry type="#">Remove/update wrong links to websites in the backend</logentry>
+    </entries>
+    <entries date="20191112">
+      <logentry type="#">Fix use 'Exif.Photo.UserComment' for the ReplaceWithMetadata feature</logentry>
+    </entries>
+    <entries date="20191107">
+      <logentry type="+">Replace with metadata</logentry>
+    </entries>
+    <entries date="20191012">
+      <logentry type="#">Fix error in long time upload</logentry>
+    </entries>
+    <entries date="20190918">
+      <logentry type="+">Rotate images</logentry>
+    </entries>
+    <entries date="20190810">
+      <logentry type="#">Fix link to Google Maps API</logentry>
+      <logentry type="+">Extended category settings</logentry>
+    </entries>
+    <entries date="20190730">
+      <logentry type="+">Configuration reset to default</logentry>
+      <logentry type="+">Allow HTML editor in upload form</logentry>
+    </entries>
+    <entries date="20190725">
+      <logentry type="+">New option to disable storing of nametag IP addresses</logentry>
+      <logentry type="+">Clearing stored but unused IP addresses of voters on a regulary base</logentry>
+    </entries>
+    <entries date="20190509">
+      <logentry type="#">Fix PHP 7 notice during errorneous install</logentry>
+    </entries>
+    <entries date="20190505">
+      <logentry type="#">Fix character set encoding and other problems with IPTC data</logentry>
+      <logentry type="+">New option to disable storing of commenter's IP addresses</logentry>
+    </entries>
+  </release>
   <release version="3.3.5" published="20190405">
     <entries date="20190325">
       <logentry type="^">change update server to new website</logentry>

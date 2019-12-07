@@ -45,6 +45,12 @@ $debug = JFactory::getConfig()->get('debug'); ?>
         Joomla.JText.load(strings);
       }
     })();
+    (function(window, document, $, undefined) {
+      $(document).ready(function(){
+        sessionStorage.setItem('joom.mini.prefix', '<?php echo (isset($this->prefix) ? $this->prefix : '') ?>');
+        sessionStorage.setItem('joom.mini.object', '<?php echo (isset($this->object) ? $this->object : '') ?>');
+      });
+    }(window, document, window.jQuery));
   </script>
   <!--[if lt IE 9]>
     <script src="<?php echo JUri::root(); ?>media/jui/js/html5.js"></script>
