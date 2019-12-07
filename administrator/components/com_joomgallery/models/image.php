@@ -1,8 +1,10 @@
 <?php
+// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/models/image.php $
+// $Id: image.php 4362 2014-02-24 19:09:23Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -463,7 +465,6 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                             $this->_config->get('jg_thumbheight'),
                                             $this->_config->get('jg_thumbcreation'),
                                             $this->_config->get('jg_thumbquality'),
-                                            false,
                                             $this->_config->get('jg_cropposition')
                                             );
             break;
@@ -471,13 +472,11 @@ class JoomGalleryModelImage extends JoomGalleryModel
             $return = JoomFile::resizeImage($debugoutput,
                                             $file,
                                             $file,
-                                            false,
+                                            2,
                                             $this->_config->get('jg_maxwidth'),
-                                            false,
+                                            $this->_config->get('jg_maxwidth'),
                                             $this->_config->get('jg_thumbcreation'),
-                                            $this->_config->get('jg_picturequality'),
-                                            true,
-                                            0
+                                            $this->_config->get('jg_picturequality')
                                             );
             break;
           default:

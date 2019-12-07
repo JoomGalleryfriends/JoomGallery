@@ -1,8 +1,10 @@
 <?php
+// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/models/images.php $
+// $Id: images.php 2015-03-23 $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -714,7 +716,6 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                         $this->_config->get('jg_thumbheight'),
                                         $this->_config->get('jg_thumbcreation'),
                                         $this->_config->get('jg_thumbquality'),
-                                        false,
                                         $this->_config->get('jg_cropposition')
                                         );
         if(!$return)
@@ -743,13 +744,11 @@ class JoomGalleryModelImages extends JoomGalleryModel
         $return = JoomFile::resizeImage($debugoutput,
                                         $orig,
                                         $img,
-                                        false,
+                                        2,
                                         $this->_config->get('jg_maxwidth'),
-                                        false,
+                                        $this->_config->get('jg_maxwidth'),
                                         $this->_config->get('jg_thumbcreation'),
-                                        $this->_config->get('jg_picturequality'),
-                                        true,
-                                        0
+                                        $this->_config->get('jg_picturequality')
                                         );
         if(!$return)
         {
