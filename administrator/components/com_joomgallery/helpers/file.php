@@ -341,7 +341,8 @@ class JoomFile
     $imginfo[2] = $imagetype[$imginfo[2]];
 
     // get the desired image type out of the destination path
-    $dest_imgtype = strtolower(end(explode('.', $dest_file)));
+    $tmp = explode('.', $dest_file);
+    $dest_imgtype = strtolower(end($tmp));
     if ($dest_imgtype == 'jpg' || $dest_imgtype == 'jpeg' || $dest_imgtype == 'jpe' || $dest_imgtype == 'jif' || $dest_imgtype == 'jfif' || $dest_imgtype == 'jfi')
     {
       $dest_imgtype = 'JPG';
@@ -520,8 +521,8 @@ class JoomFile
         }
         // create empty image of specified size
         $dst_img = imagecreate($destWidth, $destHeight);
-        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]);       
-        if (!$src_img);
+        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]);
+        if ($src_img == false)
         {
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
           return false;
@@ -543,20 +544,31 @@ class JoomFile
                             (int)$destHeight, $srcWidth, $srcHeight);
         }
         // write resized image to file
-        $success = JoomFile::imageWriteFrom_GD());        
+        $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_img,$dest_qual,$dest_imgtype);    
         if ($metadata)
         // copy metadata if needed
         {
-          JoomFile::copyJPGmetadata($src_file,$dest_file);
+          $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imagetype, $dest_imgtype);
+          if (!$meta_success)
+          {
+            $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+            return false;
+          }      
         }
         if(!$success)
         {
           // Workaround for servers with wwwrun problem
           $dir = dirname($dest_file);
           JoomFile::chmod($dir, '0777', true);
-          $success = JoomFile::imageWriteFrom_GD());
+          $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_img,$dest_qual,$dest_imgtype);
           if ($metadata)
-            JoomFile::copyJPGmetadata($src_file,$dest_file);
+          {
+            $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imagetype, $dest_imgtype);
+            if (!$meta_success)
+            {
+              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              return false;
+            }      
           }
           JoomFile::chmod($dir, '0755', true);
         }
@@ -579,7 +591,7 @@ class JoomFile
         // create empty image of specified size
         $dst_img = imagecreatetruecolor($destWidth, $destHeight);
         $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]);       
-        if (!$src_img);
+        if ($src_img == false)
         {
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
           return false;
@@ -591,7 +603,7 @@ class JoomFile
         }
 
         if($config->jg_fastgd2thumbcreation == 0)
-        // use fast GD2 for resizing
+        // use normal GD2 for resizing
         {
           if(!is_null($offsetx) && !is_null($offsety))
           {
@@ -605,7 +617,7 @@ class JoomFile
           }
         }
         else
-        // use normal GD2 for resizing
+        // use fast GD2 for resizing
         {
           if(!is_null($offsetx) && !is_null($offsety))
           {
@@ -619,20 +631,31 @@ class JoomFile
           }
         }
         // write resized image to file
-        $success = JoomFile::imageWriteFrom_GD());
+        $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_img,$dest_qual,$dest_imgtype);
         if ($metadata)
         // copy metadata if needed
         {
-          JoomFile::copyJPGmetadata($src_file,$dest_file);
+          $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imagetype, $dest_imgtype);
+          if (!$meta_success)
+          {
+            $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+            return false;
+          }      
         }
         if(!$success)
         {
           // Workaround for servers with wwwrun problem
           $dir = dirname($dest_file);
           JoomFile::chmod($dir, '0777', true);
-          $success = JoomFile::imageWriteFrom_GD());
+          $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_img,$dest_qual,$dest_imgtype);
           if ($metadata)
-            JoomFile::copyJPGmetadata($src_file,$dest_file);
+          {
+            $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imagetype, $dest_imgtype);
+            if (!$meta_success)
+            {
+              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              return false;
+            }
           }
           JoomFile::chmod($dir, '0755', true);
         }
@@ -985,8 +1008,9 @@ class JoomFile
   {
     if($dest_imgtype == 'PNG')
       {
-        $dest_qual = $dest_qual / 10 - 1;
-        $success = imagepng($dst_img, $dest_file, $dest_qual);
+        $png_qual = ($dest_qual - 100) / 11.111111;
+        $png_qual = round(abs($png_qual));
+        $success = imagepng($dst_img, $dest_file, $png_qual);
       }
       elseif($dest_imgtype == 'GIF')
       {
@@ -1006,6 +1030,32 @@ class JoomFile
         $success = imagejpeg($dst_img, $dest_file, $dest_qual);
       }
       return $success;
+  }
+
+  /**
+   * Copy image metadata with GD depending on file type
+   *
+   * @param   string  Path to source file
+   * @param   string  Path to destination file
+   * @param   string  Type of the source image file
+   * @param   string  Type of the destination image file
+   * @return  boolean True on success, false otherwise
+   * @since   3.5.0
+   */
+  public static function copyImageMetadata($src_file, $dest_file, $src_imagetype, $dest_imgtype)
+  {
+    if ($src_imagetype == 'JPG' && $dest_imgtype == 'JPG')
+    {
+      $success = JoomFile::copyJPGmetadata($src_file,$dest_file);
+    }
+    elseif ($src_imagetype == 'PNG' && $dest_imgtype == 'PNG') {
+      $success = JoomFile::copyPNGmetadata($src_file,$dest_file);
+    }
+    else
+    {
+      $success = false;
+    }
+    return $success;
   }
 
   /**
