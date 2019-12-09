@@ -305,7 +305,7 @@ class JoomFile
                                      $new_width, $new_height, $method, $dest_qual, $cropposition = false, $angle = 0, $metadata = false)
   {
 
-    // animated gifs: https://github.com/Yuriy-Khomenko/GIF_eXG
+    // animated gifs: https://phpimageworkshop.com/tutorial/5/manage-animated-gif-with-imageworkshop.html
 
     $config = JoomConfig::getInstance();
 
@@ -325,7 +325,6 @@ class JoomFile
     if(    $imginfo[2] != IMAGETYPE_JPEG
        &&  $imginfo[2] != IMAGETYPE_PNG
        &&  $imginfo[2] != IMAGETYPE_GIF
-       &&  !( $imginfo[2] == IMAGETYPE_BMP && function_exists('imagebmp') )
        &&  ($method == 'gd1' || $method == 'gd2')
       )
     {
@@ -395,10 +394,6 @@ class JoomFile
     elseif ($dest_imgtype == 'png')
     {
       $dest_imgtype = 'PNG';
-    }
-    elseif ($dest_imgtype == 'bmp' || $dest_imgtype == 'dib')
-    {
-      $dest_imgtype = 'BMP';
     }
     else
     {
@@ -629,6 +624,7 @@ class JoomFile
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_NO_TRUECOLOR');
           return false;
         }
+
         // create empty image of specified size
         $dst_img = imagecreatetruecolor($destWidth, $destHeight);
         echo 'imagecreatetruecolor<br/>';
@@ -644,7 +640,6 @@ class JoomFile
           $src_img = imagerotate($src_img, $angle, 0);
           echo 'imagerotate<br/>';
         }
-
         if($config->jg_fastgd2thumbcreation == 0)
         // use normal GD2 for resizing
         {
@@ -1062,11 +1057,6 @@ class JoomFile
         echo 'imageCreateFrom_JPG<br/>';
         $src_img = imagecreatefromjpeg($src_file);
         break;
-
-      case 'BMP':
-        echo 'imageCreateFrom_BMP<br/>';
-        $src_img = imagecreatefrombmp($src_file);
-        break;
       
       default:
         return false;
@@ -1099,16 +1089,6 @@ class JoomFile
       case 'GIF':
         echo 'imageWriteFrom_GIF<br/>';
         $success = imagegif($dst_img, $dest_file);
-        break;
-
-      case 'BMP':
-        $comp = false;
-        if ($dest_qual < 100)
-        {
-          $comp = true;
-        }
-        echo 'imageWriteFrom_BMP<br/>';
-        $success = imagebmp($dst_img, $dest_file, $comp);
         break;
       
       default:
