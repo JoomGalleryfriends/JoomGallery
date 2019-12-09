@@ -354,7 +354,7 @@ class JoomFile
     if ($imginfo[2] == 'GIF')
     {
       //detect, if gif is animated
-      $fh = @fopen($src_file, 'rb')
+      $fh = @fopen($src_file, 'rb');
       $count = 0;
       while(!feof($fh) && $count < 2)
       {
@@ -362,11 +362,20 @@ class JoomFile
         $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
       }
       fclose($fh);
-      if ($count > 1)
-      {
-        $special_image = array(true, 'PNG', array('animated'));
-      }
       //detect, if gif has transparency
+      $tmp = imagecreatefromgif($src_file);
+      $tmp_trans = imagecolortransparent($tmp);
+
+      if ($count > 1 && $tmp_trans == -1)
+      {
+        $special_image = array(true, 'GIF', array('animated'));
+      }
+      elseif ($count > 1 && $tmp_trans >= 0) {
+        $special_image = array(true, 'GIF', array('animated', 'transparency'));
+      }
+      elseif ($count <= 1 && $tmp_trans >= 0) {
+        $special_image = array(true, 'GIF', array('transparency'));
+      }
     }
     echo 'special_image: ';
     print_r($special_image[0]);
@@ -553,7 +562,7 @@ class JoomFile
         }
         // create empty image of specified size
         $dst_img = imagecreate($destWidth, $destHeight);
-        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]);
+        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2], $special_image);
         if ($src_img == false)
         {
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
@@ -623,7 +632,7 @@ class JoomFile
         // create empty image of specified size
         $dst_img = imagecreatetruecolor($destWidth, $destHeight);
         echo 'imagecreatetruecolor<br/>';
-        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]);       
+        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2], $special_image);       
         if ($src_img == false)
         {
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
@@ -1009,10 +1018,11 @@ class JoomFile
    * @param   string  Path to source file
    * @param   object  GD image identifier created with imagecreate() or imagecreatetruecolor()
    * @param   string  Type of the source image file
+   * @param   array   array which specifies the special type of the source file
    * @return  boolean True on success, false otherwise
    * @since   3.5.0
    */
-  public static function imageCreateFrom_GD($src_file, $dst_img, $imgtype)
+  public static function imageCreateFrom_GD($src_file, $dst_img, $imgtype, $special)
   {
     switch ($imgtype)
     {
@@ -1024,10 +1034,28 @@ class JoomFile
         break;
 
       case 'GIF':
-        echo 'imageCreateFrom_GIF<br/>';
-        imageAlphaBlending($dst_img, false);
-        imageSaveAlpha($dst_img, true);
-        $src_img = imagecreatefromgif($src_file);
+        if ($special[0])
+        {
+          if (in_array('transparency', $special[2]))
+          {
+            echo 'imageCreateFrom_GIFtrans<br/>';
+            $src_img = imagecreatefromgif($src_file);
+            $trnprt_indx = imagecolortransparent($src_img);
+            $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
+            $trnprt_indx = imagecolorallocate($dst_img, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+            imagefill($dst_img, 0, 0, $trnprt_indx);
+            imagecolortransparent($dst_img, $trnprt_indx);
+          }
+          else
+          {
+            echo 'imageCreateFrom_GIF????<br/>';
+          }        
+        }
+        else
+        {
+          echo 'imageCreateFrom_GIF<br/>';
+          $src_img = imagecreatefromgif($src_file);
+        }
         break;
 
       case 'JPG':
