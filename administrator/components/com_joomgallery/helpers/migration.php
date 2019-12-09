@@ -1646,7 +1646,11 @@ abstract class JoomMigration
                                                   $this->_config->get('jg_maxwidth'),
                                                   $this->_config->get('jg_maxwidth'),
                                                   $this->_config->get('jg_thumbcreation'),
-                                                  $this->_config->get('jg_picturequality')
+                                                  $this->_config->get('jg_picturequality'),
+                                                  false,
+                                                  0,
+                                                  false,
+                                                  true
                                                   );
         if(!$result['detail'])
         {
@@ -1702,7 +1706,10 @@ abstract class JoomMigration
                                                   $this->_config->get('jg_thumbheight'),
                                                   $this->_config->get('jg_thumbcreation'),
                                                   $this->_config->get('jg_thumbquality'),
-                                                  $this->_config->get('jg_cropposition')
+                                                  $this->_config->get('jg_cropposition'),
+                                                  0,
+                                                  false,
+                                                  false
                                                 );
         if(!$result['thumb'])
         {

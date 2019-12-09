@@ -1,6 +1,6 @@
 <?php
 
-namespace GifFrameExtractor;
+//namespace GifFrameExtractor;
 
 /**
  * Extract the frames (and their duration) of a GIF

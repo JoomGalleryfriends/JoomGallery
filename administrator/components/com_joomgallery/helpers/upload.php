@@ -2133,7 +2133,9 @@ class JoomUpload extends JObject
                                     $this->_config->get('jg_thumbcreation'),
                                     $this->_config->get('jg_thumbquality'),
                                     $this->_config->get('jg_cropposition'),
-                                    $angle
+                                    $angle,
+                                    false,
+                                    false
                                     );
     if(!$return)
     {
@@ -2164,7 +2166,9 @@ class JoomUpload extends JObject
                                       $this->_config->get('jg_thumbcreation'),
                                       $this->_config->get('jg_picturequality'),
                                       false,
-                                      $angle
+                                      $angle,
+                                      false,
+                                      true
                                       );
       if(!$return)
       {

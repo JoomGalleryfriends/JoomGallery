@@ -1,6 +1,6 @@
 <?php
 
-namespace GifCreator;
+//namespace GifCreator;
 
 /**
  * Create an animated GIF from multiple images

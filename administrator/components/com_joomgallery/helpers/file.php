@@ -298,11 +298,12 @@ class JoomFile
    *                                          image section to use for cropping
    * @param   int     $angle                  $angle to rotate the resized image anticlockwise
    * @param   boolean $metadata               true=preserve metadata in the resized image
+   * @param   boolean $anim                   true=preserve animation if any
    * @return  boolean True on success, false otherwise
    * @since   1.0.0
    */
   public static function resizeImage(&$debugoutput, $src_file, $dest_file, $settings,
-                                     $new_width, $new_height, $method, $dest_qual, $cropposition = false, $angle = 0, $metadata = false)
+                                     $new_width, $new_height, $method, $dest_qual, $cropposition = false, $angle = 0, $metadata = false, $anim = false)
   {
 
     // animated gifs: https://phpimageworkshop.com/tutorial/5/manage-animated-gif-with-imageworkshop.html
@@ -377,7 +378,7 @@ class JoomFile
       }
     }
     echo 'special_image: ';
-    print_r($special_image[0]);
+    print_r($special_image);
     echo '<br/>';
 
     // get the desired image type out of the destination path
@@ -549,6 +550,7 @@ class JoomFile
     switch($method)
     {
       case 'gd1':
+      // no animated gif support
         if(!function_exists('imagecreatefromjpeg'))
         // check, if GD is available
         {
@@ -556,9 +558,10 @@ class JoomFile
           return false;
         }
         // create empty image of specified size
-        $dst_img = imagecreate($destWidth, $destHeight);
-        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2], $special_image);
-        if ($src_img == false)
+        $dst_frames = array(imagecreate($destWidth, $destHeight));
+        $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $imginfo[2], $special_image);
+
+        if (in_array(false, $src_frames))
         {
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
           return false;
@@ -566,21 +569,29 @@ class JoomFile
         if($angle > 0)
         // rotate image, if needed
         {
-          $src_img = imagerotate($src_img, $angle, 0);
+          foreach ($src_frames as $frame)
+          {
+            $frame['image'] = imagerotate($frame['image'], $angle, 0);
+          }
         }
-        if (!is_null($offsetx) && !is_null($offsety))
-        // resizing with GD1
+
+        foreach ($src_frames as $key => $frame)
         {
-          imagecopyresized( $dst_img, $src_img, 0, 0, $offsetx, $offsety,
-                            $destWidth, (int)$destHeight, $srcWidth, $srcHeight);
+          if (!is_null($offsetx) && !is_null($offsety))
+          // resizing with GD1
+          {
+            imagecopyresized( $dst_frames[$key], $src_frames[$key]['image'], 0, 0, $offsetx, $offsety,
+                              $destWidth, (int)$destHeight, $srcWidth, $srcHeight);
+          }
+          else
+          {
+            imagecopyresized( $dst_frames[$key], $src_frames[$key]['image'], 0, 0, 0, 0, $destWidth,
+                              (int)$destHeight, $srcWidth, $srcHeight);
+          }
+          // write resized image to file
+          $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imgtype);
         }
-        else
-        {
-          imagecopyresized( $dst_img, $src_img, 0, 0, 0, 0, $destWidth,
-                            (int)$destHeight, $srcWidth, $srcHeight);
-        }
-        // write resized image to file
-        $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_img,$dest_qual,$dest_imgtype);    
+
         if ($metadata)
         // copy metadata if needed
         {
@@ -608,8 +619,11 @@ class JoomFile
           }
           JoomFile::chmod($dir, '0755', true);
         }
-        imagedestroy($src_img);
-        imagedestroy($dst_img);
+        foreach ($src_frames as $key => $frame)
+        {
+          imagedestroy($src_frames[$key]['image']);
+          imagedestroy($dst_frames[$key]);
+        }
         break;
       case 'gd2':
         if(!function_exists('imagecreatefromjpeg'))
@@ -624,12 +638,35 @@ class JoomFile
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_NO_TRUECOLOR');
           return false;
         }
-
         // create empty image of specified size
-        $dst_img = imagecreatetruecolor($destWidth, $destHeight);
-        echo 'imagecreatetruecolor<br/>';
-        $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2], $special_image);       
-        if ($src_img == false)
+        $dst_frames = array();
+        if ($special_image[0])
+        {
+          if ($anim && in_array('animated', $special_image[2]) && in_array('GIF', $special_image))
+          {
+            JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
+            $gfe = new GifFrameExtractor();
+            $src_frames = $gfe->extract($src_file);
+            echo 'GifFrameExtractor<br/>';
+            foreach ($src_frames as $key => $frame)
+            {
+              $dst_frames[$key] = imagecreatetruecolor($destWidth, $destHeight);
+            }     
+          }
+          else
+          {
+            $dst_frames[0] = imagecreatetruecolor($destWidth, $destHeight);
+            echo 'imagecreatetruecolor<br/>';
+            $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $imginfo[2], $special_image);
+          }
+        }
+        else
+        {
+          $dst_frames[0] = imagecreatetruecolor($destWidth, $destHeight);
+          echo 'imagecreatetruecolor<br/>';
+          $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $imginfo[2], $special_image);
+        }               
+        if (in_array(false, $src_frames))
         {
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
           return false;
@@ -637,43 +674,71 @@ class JoomFile
         if($angle > 0)
         // rotate image, if needed
         {
-          $src_img = imagerotate($src_img, $angle, 0);
-          echo 'imagerotate<br/>';
-        }
-        if($config->jg_fastgd2thumbcreation == 0)
-        // use normal GD2 for resizing
-        {
-          if(!is_null($offsetx) && !is_null($offsety))
+          foreach ($src_frames as $frame)
           {
-            imagecopyresampled( $dst_img, $src_img, 0, 0, $offsetx, $offsety,
-                                $destWidth, (int)$destHeight, $srcWidth, $srcHeight);
-            echo 'imagecopyresampled, with offset<br/>';
+            $frame['image'] = imagerotate($frame['image'], $angle, 0);
+            echo 'imagerotate<br/>';
+          }
+          
+        }
+        foreach ($src_frames as $key => $frame)
+        {
+          if($config->jg_fastgd2thumbcreation == 0)
+          // use normal GD2 for resizing
+          {
+            if(!is_null($offsetx) && !is_null($offsety))
+            {
+              imagecopyresampled( $dst_frames[$key], $src_frames[$key]['image'], 0, 0, $offsetx, $offsety,
+                                  $destWidth, (int)$destHeight, $srcWidth, $srcHeight);
+              echo 'imagecopyresampled, with offset<br/>';
+            }
+            else
+            {
+              imagecopyresampled( $dst_frames[$key], $src_frames[$key]['image'], 0, 0, 0, 0, $destWidth,
+                                  (int)$destHeight, $srcWidth, $srcHeight);
+              echo 'imagecopyresampled, without offset<br/>';
+            }
           }
           else
+          // use fast GD2 for resizing
           {
-            imagecopyresampled( $dst_img, $src_img, 0, 0, 0, 0, $destWidth,
-                                (int)$destHeight, $srcWidth, $srcHeight);
-            echo 'imagecopyresampled, without offset<br/>';
-          }
-        }
-        else
-        // use fast GD2 for resizing
-        {
-          if(!is_null($offsetx) && !is_null($offsety))
-          {
-            echo 'fast imagecopyresampled, with offset<br/>';
-            JoomFile::fastImageCopyResampled( $dst_img, $src_img, 0, 0, $offsetx, $offsety,
-                                              $destWidth, (int)$destHeight, $srcWidth, $srcHeight, 3,$special_image[0]);
-          }
-          else
-          {
-            echo 'fast imagecopyresampled, without offset<br/>';
-            JoomFile::fastImageCopyResampled( $dst_img, $src_img, 0, 0, 0, 0, $destWidth,
-                                              (int)$destHeight, $srcWidth, $srcHeight, 3,$special_image[0]);
+            if(!is_null($offsetx) && !is_null($offsety))
+            {
+              echo 'fast imagecopyresampled, with offset<br/>';
+              $dst_frames[$key] = JoomFile::fastImageCopyResampled( $dst_frames[$key], $src_frames[$key]['image'], 0, 0, $offsetx, $offsety,
+                                                                    $destWidth, (int)$destHeight, $srcWidth, $srcHeight, 3,$special_image[0]);
+            }
+            else
+            {
+              echo 'fast imagecopyresampled, without offset<br/>';
+              $dst_frames[$key] = JoomFile::fastImageCopyResampled( $dst_frames[$key], $src_frames[$key]['image'], 0, 0, 0, 0, $destWidth,
+                                                                    (int)$destHeight, $srcWidth, $srcHeight, 3,$special_image[0]);
+            }
           }
         }
         // write resized image to file
-        $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_img,$dest_qual,$dest_imgtype);
+        if ($special_image[0])
+        {
+          if ($anim && in_array('animated', $special_image[2]) && in_array('GIF', $special_image))
+          {
+            JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
+            $gc = new GifCreator();
+            $gc->create($dst_frames, $gfe->getFrameDurations(), 0);
+            $success = file_put_contents($dest_file, $gc->getGif());
+            echo 'GifCreator -> mergeGIF<br/>';
+          }
+          else
+          {
+            $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imgtype);
+            echo 'imagewriteGC<br/>';
+          }
+        }
+        else
+        {
+          $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imgtype);
+          echo 'imagewriteGC<br/>';
+        }
+        
         if ($metadata)
         // copy metadata if needed
         {
@@ -691,7 +756,20 @@ class JoomFile
           echo 'workaround (wwwrun problem)<br/>';
           $dir = dirname($dest_file);
           JoomFile::chmod($dir, '0777', true);
-          $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_img,$dest_qual,$dest_imgtype);
+          if ($special_image[0])
+          {
+            if (in_array('animated', $special_image[2]))
+            {
+              require './GifCreator.php';
+              $gc = new GifCreator();
+              $gc->create($dst_frames, $gfe->getFrameDurations(), 0);
+              $success = file_put_contents($dest_file, $gc->getGif());
+            }
+          }
+          else
+          {
+            $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imgtype);
+          }
           if ($metadata)
           {
             $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imagetype, $dest_imgtype);
@@ -704,8 +782,11 @@ class JoomFile
           JoomFile::chmod($dir, '0755', true);
         }
         echo 'imagedestroy<br/>';
-        imagedestroy($src_img);
-        imagedestroy($dst_img);
+        foreach ($src_frames as $key => $frame)
+        {
+          imagedestroy($src_frames[$key]['image']);
+          imagedestroy($dst_frames[$key]);
+        }
         break;
       case 'im':
         $disabled_functions = explode(',', ini_get('disabled_functions'));
@@ -961,33 +1042,30 @@ class JoomFile
    * @return  boolean True on success, false otherwise
    * @since   1.0.0
    */
-  public static function fastImageCopyResampled(&$dst_image, $src_image, $dst_x, $dst_y,
+  public static function fastImageCopyResampled($dst_image, $src_image, $dst_x, $dst_y,
                                   $src_x, $src_y, $dst_w, $dst_h,
                                   $src_w, $src_h, $quality = 3, $special = false)
   {
     if(empty($src_image) || empty($dst_image) || $quality <= 0)
     {
-      echo 'error<br/>';
       return false;
     }
 
     if($quality < 5 && (($dst_w * $quality) < $src_w || ($dst_h * $quality) < $src_h) && !$special)
     {
-      echo 'fast<br/>';
       $temp = imagecreatetruecolor($dst_w * $quality + 1, $dst_h * $quality + 1);
       imagecopyresized  ($temp, $src_image, 0, 0, $src_x, $src_y, $dst_w * $quality + 1,
                          $dst_h * $quality + 1, $src_w, $src_h);
       imagecopyresampled($dst_image, $temp, $dst_x, $dst_y, 0, 0, $dst_w,
-                         $dst_h, $dst_w * $quality, $dst_h * $quality);
+                                      $dst_h, $dst_w * $quality, $dst_h * $quality);
       imagedestroy      ($temp);
     }
     else
     {
-      echo 'normal<br/>';
       imagecopyresampled($dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w,
-                         $dst_h, $src_w, $src_h);
+                                      $dst_h, $src_w, $src_h);
     }
-    return true;
+    return $dst_image;
   }
 
   /**
@@ -1011,21 +1089,22 @@ class JoomFile
    * Creates GD image objects from different file types
    *
    * @param   string  Path to source file
-   * @param   object  GD image identifier created with imagecreate() or imagecreatetruecolor()
+   * @param   array   array with one GD object on position 0 ; array(GDobject)
    * @param   string  Type of the source image file
    * @param   array   array which specifies the special type of the source file
-   * @return  boolean True on success, false otherwise
+   * @return  $array  array with one GD object on position 0 created from specifiy file type ; array(array('duration'=>0, 'image'=>GDobject))
    * @since   3.5.0
    */
-  public static function imageCreateFrom_GD($src_file, $dst_img, $imgtype, $special)
+  public static function imageCreateFrom_GD($src_file, $dst_frame, $imgtype, $special)
   {
+    $src_frame = array(array('duration'=>0));
     switch ($imgtype)
     {
       case 'PNG':
         echo 'imageCreateFrom_PNG<br/>';
-        imageAlphaBlending($dst_img, false);
-        imageSaveAlpha($dst_img, true);
-        $src_img = imagecreatefrompng($src_file);
+        imageAlphaBlending($dst_frame[0], false);
+        imageSaveAlpha($dst_frame[0], true);
+        $src_frame[0]['image'] = imagecreatefrompng($src_file);
         break;
 
       case 'GIF':
@@ -1034,48 +1113,49 @@ class JoomFile
           if (in_array('transparency', $special[2]))
           {
             echo 'imageCreateFrom_GIFtrans<br/>';
-            $src_img = imagecreatefromgif($src_file);
-            $trnprt_indx = imagecolortransparent($src_img);
-            $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
-            $trnprt_indx = imagecolorallocate($dst_img, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-            imagefill($dst_img, 0, 0, $trnprt_indx);
-            imagecolortransparent($dst_img, $trnprt_indx);
+            $src_frame[0]['image'] = imagecreatefromgif($src_file);
+            $trnprt_indx = imagecolortransparent($src_frame[0]['image']);
+            $trnprt_color = imagecolorsforindex($src_frame[0]['image'], $trnprt_indx);
+            $trnprt_indx = imagecolorallocate($dst_frame[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+            imagefill($dst_frame[0], 0, 0, $trnprt_indx);
+            imagecolortransparent($dst_frame[0], $trnprt_indx);
           }
           else
           {
-            echo 'imageCreateFrom_GIF????<br/>';
+            echo 'imageCreateFrom_GIF<br/>';
+            $src_frame[0]['image'] = imagecreatefromgif($src_file);
           }        
         }
         else
         {
           echo 'imageCreateFrom_GIF<br/>';
-          $src_img = imagecreatefromgif($src_file);
+          $src_frame[0]['image'] = imagecreatefromgif($src_file);
         }
         break;
 
       case 'JPG':
         echo 'imageCreateFrom_JPG<br/>';
-        $src_img = imagecreatefromjpeg($src_file);
+        $src_frame[0]['image'] = imagecreatefromjpeg($src_file);
         break;
       
       default:
         return false;
         break;
     }
-    return $src_img;
+    return $src_frame;
   }
 
   /**
    * Output GD image object to file from different file types
    *
    * @param   string  Path to destination file
-   * @param   object  GD image object
+   * @param   array   array with one GD object on position 0 ; array(GDobject)
    * @param   int     Quality of the image to be saved (1-100)
    * @param   string  Type of the destination image file
    * @return  boolean True on success, false otherwise
    * @since   3.5.0
    */
-  public static function imageWriteFrom_GD($dest_file, $dst_img, $dest_qual, $dest_imgtype)
+  public static function imageWriteFrom_GD($dest_file, $dst_frame, $dest_qual, $dest_imgtype)
   {
     switch ($dest_imgtype)
     {
@@ -1083,17 +1163,17 @@ class JoomFile
         echo 'imageWriteFrom_PNG<br/>';
         $png_qual = ($dest_qual - 100) / 11.111111;
         $png_qual = round(abs($png_qual));
-        $success = imagepng($dst_img, $dest_file, $png_qual);
+        $success = imagepng($dst_frame[0], $dest_file, $png_qual);
         break;
 
       case 'GIF':
         echo 'imageWriteFrom_GIF<br/>';
-        $success = imagegif($dst_img, $dest_file);
+        $success = imagegif($dst_frame[0], $dest_file);
         break;
       
       default:
         echo 'imageWriteFrom_JPG<br/>';
-        $success = imagejpeg($dst_img, $dest_file, $dest_qual);
+        $success = imagejpeg($dst_frame[0], $dest_file, $dest_qual);
         break;
     }
     return $success;
