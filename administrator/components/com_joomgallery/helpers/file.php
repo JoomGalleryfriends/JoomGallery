@@ -340,6 +340,38 @@ class JoomFile
 
     $imginfo[2] = $imagetype[$imginfo[2]];
 
+    //detect, if source image is a special image
+    $special_image = array(false);
+    if ($imginfo[2] == 'PNG')
+    {
+      //detect, if png has transparency
+      $pngtype = ord(@file_get_contents($src_file, NULL, NULL, 25, 1));
+      if ($pngtype == 4 || $pngtype == 6)
+      {
+        $special_image = array(true, 'PNG', array('transparency'));
+      }
+    }
+    if ($imginfo[2] == 'GIF')
+    {
+      //detect, if gif is animated
+      $fh = @fopen($src_file, 'rb')
+      $count = 0;
+      while(!feof($fh) && $count < 2)
+      {
+        $chunk = fread($fh, 1024 * 100); //read 100kb at a time
+        $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
+      }
+      fclose($fh);
+      if ($count > 1)
+      {
+        $special_image = array(true, 'PNG', array('animated'));
+      }
+      //detect, if gif has transparency
+    }
+    echo 'special_image: ';
+    print_r($special_image[0]);
+    echo '<br/>';
+
     // get the desired image type out of the destination path
     $tmp = explode('.', $dest_file);
     $dest_imgtype = strtolower(end($tmp));
@@ -590,6 +622,7 @@ class JoomFile
         }
         // create empty image of specified size
         $dst_img = imagecreatetruecolor($destWidth, $destHeight);
+        echo 'imagecreatetruecolor<br/>';
         $src_img = JoomFile::imageCreateFrom_GD($src_file, $dst_img, $imginfo[2]);       
         if ($src_img == false)
         {
@@ -600,6 +633,7 @@ class JoomFile
         // rotate image, if needed
         {
           $src_img = imagerotate($src_img, $angle, 0);
+          echo 'imagerotate<br/>';
         }
 
         if($config->jg_fastgd2thumbcreation == 0)
@@ -609,11 +643,13 @@ class JoomFile
           {
             imagecopyresampled( $dst_img, $src_img, 0, 0, $offsetx, $offsety,
                                 $destWidth, (int)$destHeight, $srcWidth, $srcHeight);
+            echo 'imagecopyresampled, with offset<br/>';
           }
           else
           {
             imagecopyresampled( $dst_img, $src_img, 0, 0, 0, 0, $destWidth,
                                 (int)$destHeight, $srcWidth, $srcHeight);
+            echo 'imagecopyresampled, without offset<br/>';
           }
         }
         else
@@ -621,13 +657,15 @@ class JoomFile
         {
           if(!is_null($offsetx) && !is_null($offsety))
           {
+            echo 'fast imagecopyresampled, with offset<br/>';
             JoomFile::fastImageCopyResampled( $dst_img, $src_img, 0, 0, $offsetx, $offsety,
-                                              $destWidth, (int)$destHeight, $srcWidth, $srcHeight);
+                                              $destWidth, (int)$destHeight, $srcWidth, $srcHeight, 3,$special_image[0]);
           }
           else
           {
+            echo 'fast imagecopyresampled, without offset<br/>';
             JoomFile::fastImageCopyResampled( $dst_img, $src_img, 0, 0, 0, 0, $destWidth,
-                                              (int)$destHeight, $srcWidth, $srcHeight);
+                                              (int)$destHeight, $srcWidth, $srcHeight, 3,$special_image[0]);
           }
         }
         // write resized image to file
@@ -636,6 +674,7 @@ class JoomFile
         // copy metadata if needed
         {
           $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imagetype, $dest_imgtype);
+          echo 'copymetadata<br/>';
           if (!$meta_success)
           {
             $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
@@ -645,6 +684,7 @@ class JoomFile
         if(!$success)
         {
           // Workaround for servers with wwwrun problem
+          echo 'workaround (wwwrun problem)<br/>';
           $dir = dirname($dest_file);
           JoomFile::chmod($dir, '0777', true);
           $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_img,$dest_qual,$dest_imgtype);
@@ -659,6 +699,7 @@ class JoomFile
           }
           JoomFile::chmod($dir, '0755', true);
         }
+        echo 'imagedestroy<br/>';
         imagedestroy($src_img);
         imagedestroy($dst_img);
         break;
@@ -912,20 +953,23 @@ class JoomFile
    * @param   int     $src_w      source width
    * @param   int     $src_h      source height
    * @param   int     $quality    quality of destination (fix = 3) read instructions above
+   * @param   boolean $special    is it a special image (transparency, animated gif,...)
    * @return  boolean True on success, false otherwise
    * @since   1.0.0
    */
   public static function fastImageCopyResampled(&$dst_image, $src_image, $dst_x, $dst_y,
                                   $src_x, $src_y, $dst_w, $dst_h,
-                                  $src_w, $src_h, $quality = 3)
+                                  $src_w, $src_h, $quality = 3, $special = false)
   {
     if(empty($src_image) || empty($dst_image) || $quality <= 0)
     {
+      echo 'error<br/>';
       return false;
     }
 
-    if($quality < 5 && (($dst_w * $quality) < $src_w || ($dst_h * $quality) < $src_h))
+    if($quality < 5 && (($dst_w * $quality) < $src_w || ($dst_h * $quality) < $src_h) && !$special)
     {
+      echo 'fast<br/>';
       $temp = imagecreatetruecolor($dst_w * $quality + 1, $dst_h * $quality + 1);
       imagecopyresized  ($temp, $src_image, 0, 0, $src_x, $src_y, $dst_w * $quality + 1,
                          $dst_h * $quality + 1, $src_w, $src_h);
@@ -935,6 +979,7 @@ class JoomFile
     }
     else
     {
+      echo 'normal<br/>';
       imagecopyresampled($dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w,
                          $dst_h, $src_w, $src_h);
     }
@@ -969,27 +1014,35 @@ class JoomFile
    */
   public static function imageCreateFrom_GD($src_file, $dst_img, $imgtype)
   {
-    if($imgtype == 'PNG')
+    switch ($imgtype)
     {
-      imageAlphaBlending($dst_img, false);
-      imageSaveAlpha($dst_img, true);
-      $src_img = imagecreatefrompng($src_file);
-    }
-    elseif($imgtype == 'GIF')
-    {
-      $src_img = imagecreatefromgif($src_file);
-    }
-    elseif($imgtype == 'JPG')
-    {
-      $src_img = imagecreatefromjpeg($src_file);
-    }
-    elseif($imgtype == 'BMP')
-    {
-      $src_img = imagecreatefrombmp($src_file);
-    }
-    else
-    {
-      return false;
+      case 'PNG':
+        echo 'imageCreateFrom_PNG<br/>';
+        imageAlphaBlending($dst_img, false);
+        imageSaveAlpha($dst_img, true);
+        $src_img = imagecreatefrompng($src_file);
+        break;
+
+      case 'GIF':
+        echo 'imageCreateFrom_GIF<br/>';
+        imageAlphaBlending($dst_img, false);
+        imageSaveAlpha($dst_img, true);
+        $src_img = imagecreatefromgif($src_file);
+        break;
+
+      case 'JPG':
+        echo 'imageCreateFrom_JPG<br/>';
+        $src_img = imagecreatefromjpeg($src_file);
+        break;
+
+      case 'BMP':
+        echo 'imageCreateFrom_BMP<br/>';
+        $src_img = imagecreatefrombmp($src_file);
+        break;
+      
+      default:
+        return false;
+        break;
     }
     return $src_img;
   }
@@ -1006,30 +1059,36 @@ class JoomFile
    */
   public static function imageWriteFrom_GD($dest_file, $dst_img, $dest_qual, $dest_imgtype)
   {
-    if($dest_imgtype == 'PNG')
-      {
+    switch ($dest_imgtype)
+    {
+      case 'PNG':
+        echo 'imageWriteFrom_PNG<br/>';
         $png_qual = ($dest_qual - 100) / 11.111111;
         $png_qual = round(abs($png_qual));
         $success = imagepng($dst_img, $dest_file, $png_qual);
-      }
-      elseif($dest_imgtype == 'GIF')
-      {
+        break;
+
+      case 'GIF':
+        echo 'imageWriteFrom_GIF<br/>';
         $success = imagegif($dst_img, $dest_file);
-      }
-      elseif($dest_imgtype == 'BMP' && function_exists('imagebmp'))
-      {
+        break;
+
+      case 'BMP':
         $comp = false;
         if ($dest_qual < 100)
         {
           $comp = true;
         }
+        echo 'imageWriteFrom_BMP<br/>';
         $success = imagebmp($dst_img, $dest_file, $comp);
-      }
-      else
-      {
+        break;
+      
+      default:
+        echo 'imageWriteFrom_JPG<br/>';
         $success = imagejpeg($dst_img, $dest_file, $dest_qual);
-      }
-      return $success;
+        break;
+    }
+    return $success;
   }
 
   /**
