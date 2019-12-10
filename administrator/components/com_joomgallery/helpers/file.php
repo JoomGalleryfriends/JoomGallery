@@ -368,10 +368,10 @@ class JoomFile
 
       if ($count > 1 && $tmp_trans == -1)
       {
-        $special_image = array(true, 'GIF', array('animated'));
+        $special_image = array(true, 'GIF', array('animation'));
       }
       elseif ($count > 1 && $tmp_trans >= 0) {
-        $special_image = array(true, 'GIF', array('animated', 'transparency'));
+        $special_image = array(true, 'GIF', array('animation', 'transparency'));
       }
       elseif ($count <= 1 && $tmp_trans >= 0) {
         $special_image = array(true, 'GIF', array('transparency'));
@@ -431,10 +431,26 @@ class JoomFile
     }
 
     // determine resizing width and height
-      $offsetx = null;
+      $offsetx = null; 
       $offsety = null;
       // Resizing to thumbnail
-      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_THUMBNAIL_FROM').' '.$imginfo[2].', '.$imginfo[0].' x '.$imginfo[1].'...<br />';
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_THUMBNAIL_FROM').' '.$imginfo[2];
+      if ($special_image[0])
+      {
+        if ($anim && in_array('animation', $special_image[2]))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_WITH_ANIM');
+        }
+        elseif (in_array('transparency', $special_image[2]))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_WITH_TRANS');
+        }
+        elseif ($anim && in_array('animation', $special_image[2]) && in_array('transparency', $special_image[2]))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_WITH_TRANS_ANIM');
+        }
+      }
+      $debugoutput .= ', '.$imginfo[0].' x '.$imginfo[1].'...<br />';
 
       if($new_width <= 0 || $new_height <= 0)
       {
@@ -447,6 +463,7 @@ class JoomFile
       {
       // Resize to height ratio (but keep original ratio)
       case 0:
+        $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_HEIGHT');
         $ratio = ($srcHeight / $new_height);
         $testwidth = ($srcWidth / $ratio);
         // If new width exceeds setted max. width
@@ -457,6 +474,7 @@ class JoomFile
         break;
       // Resize to width ratio (but keep original ratio)
       case 1:
+        $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_WIDTH');
         $ratio = ($srcWidth / $new_width);
         $testheight = ($srcHeight/$ratio);
         // If new height exceeds the setted max. height
@@ -467,7 +485,7 @@ class JoomFile
         break;
       // Resize to max side lenght - height or width (but keep original ratio)
       case 2:
-        $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_MAX').'<br />';
+        $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_MAX');
         if ($srcHeight > $srcWidth)
         {
           $ratio = ($srcHeight / $new_height);
@@ -480,6 +498,7 @@ class JoomFile
         break;
       // Free resizing and cropping
       case 3:
+        $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_CROP');
         if($srcWidth < $new_width)
         {
           $new_width = $srcWidth;
@@ -550,7 +569,8 @@ class JoomFile
     switch($method)
     {
       case 'gd1':
-      // no animated gif support
+        $debugoutput.='GD1...<br/>';
+        // no animated gif support
         if(!function_exists('imagecreatefromjpeg'))
         // check, if GD is available
         {
@@ -626,6 +646,7 @@ class JoomFile
         }
         break;
       case 'gd2':
+        $debugoutput.='GD2...<br/>';
         if(!function_exists('imagecreatefromjpeg'))
         // check, if GD is available
         {
@@ -642,7 +663,7 @@ class JoomFile
         $dst_frames = array();
         if ($special_image[0])
         {
-          if ($anim && in_array('animated', $special_image[2]) && in_array('GIF', $special_image))
+          if ($anim && in_array('animation', $special_image[2]) && in_array('GIF', $special_image))
           {
             JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
             $gfe = new GifFrameExtractor();
@@ -719,7 +740,7 @@ class JoomFile
         // write resized image to file
         if ($special_image[0])
         {
-          if ($anim && in_array('animated', $special_image[2]) && in_array('GIF', $special_image))
+          if ($anim && in_array('animation', $special_image[2]) && in_array('GIF', $special_image))
           {
             JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
             $gc = new GifCreator();
@@ -758,7 +779,7 @@ class JoomFile
           JoomFile::chmod($dir, '0777', true);
           if ($special_image[0])
           {
-            if (in_array('animated', $special_image[2]))
+            if (in_array('animation', $special_image[2]))
             {
               require './GifCreator.php';
               $gc = new GifCreator();
@@ -789,6 +810,7 @@ class JoomFile
         }
         break;
       case 'im':
+        $debugoutput.='ImageMagick...<br/>';
         $disabled_functions = explode(',', ini_get('disabled_functions'));
         foreach($disabled_functions as $disabled_function)
         {

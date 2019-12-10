@@ -2172,12 +2172,12 @@ class JoomUpload extends JObject
                                       );
       if(!$return)
       {
-        $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IMG_NOT_CREATED', $this->_ambit->getImg('img_path', $filename, null, $this->catid)).'<br />';
+        $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_NOT_CREATED', $this->_ambit->getImg('img_path', $filename, null, $this->catid)).'<br />';
         $this->debug        = true;
         return false;
       }
 
-      $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_RESIZED_TO_MAXWIDTH').'<br />';
+      $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_CREATED').'<br />';
       $detail_image_created = true;
     }
 
