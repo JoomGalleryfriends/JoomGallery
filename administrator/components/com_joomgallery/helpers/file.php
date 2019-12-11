@@ -339,7 +339,7 @@ class JoomFile
                        15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
 
     $imginfo[2] = $imagetype[$imginfo[2]];
-
+    $src_imagetype = $imginfo[2];
     //detect, if source image is a special image
     $special_image = array(false);
     if ($imginfo[2] == 'PNG')
@@ -576,7 +576,7 @@ class JoomFile
         }
         // create empty image of specified size
         $dst_frames = array(imagecreate($destWidth, $destHeight));
-        $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $imginfo[2], $special_image);
+        $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $src_imagetype, $special_image);
 
         if (in_array(false, $src_frames))
         {
@@ -673,13 +673,13 @@ class JoomFile
           else
           {
             $dst_frames[0] = imagecreatetruecolor($destWidth, $destHeight);
-            $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $imginfo[2], $special_image);
+            $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $src_imagetype, $special_image);
           }
         }
         else
         {
           $dst_frames[0] = imagecreatetruecolor($destWidth, $destHeight);
-          $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $imginfo[2], $special_image);
+          $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $src_imagetype, $special_image);
         }               
         if (in_array(false, $src_frames))
         {
@@ -890,10 +890,11 @@ class JoomFile
    * @param   int     $angle        Angle to rotate the image anticlockwise
    * @param   boolean $auto_orient  If true, use the command option -auto-orient with
    *                                convert (ImageMagick), otherwise option -rotate is used
+   * @param   boolean $metadata     true=preserve metadata during rotation
    * @return  boolean True on success, false otherwise
    * @since   3.4
    */
-  public static function rotateImage(&$debugoutput, $src, $method = 'gd2', $dest_qual = 100, $angle = 0, $auto_orient = true)
+  public static function rotateImage(&$debugoutput, $src, $method = 'gd2', $dest_qual = 100, $angle = 0, $auto_orient = true, $metadata = true)
   {
     if($angle == 0)
     {
@@ -924,6 +925,7 @@ class JoomFile
                        15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
 
     $imginfo[2] = $imagetype[$imginfo[2]];
+    $src_imagetype = $imginfo[2];
     //detect, if source image is a special image
     $special_image = array(false);
     if ($imginfo[2] == 'PNG')
@@ -1026,12 +1028,32 @@ class JoomFile
         // Beginn Rotation
         $rotated_img[0] = imagerotate($src_img, $angle, 0);
         $success = JoomFile::imageWriteFrom_GD($src,$rotated_img,$dest_qual,$dest_imgtype);
+        if ($metadata)
+        // copy metadata if needed
+        {
+          $meta_success = JoomFile::copyImageMetadata($src, $src, $src_imagetype, $dest_imgtype);
+          if (!$meta_success)
+          {
+            $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+            return false;
+          }
+        }
         if(!$success)
         {
           // Workaround for servers with wwwrun problem
           $dir = dirname($src);
           JoomFile::chmod($dir, '0777', true);
           JoomFile::imageWriteFrom_GD($src,$rotated_img,$dest_qual,$dest_imgtype);
+          if ($metadata)
+          // copy metadata if needed
+          {
+            $meta_success = JoomFile::copyImageMetadata($src, $src, $src_imagetype, $dest_imgtype);
+            if (!$meta_success)
+            {
+              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              return false;
+            }
+          }
           JoomFile::chmod($dir, '0755', true);
         }
         imagedestroy($src_img);
