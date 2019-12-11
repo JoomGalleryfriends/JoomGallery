@@ -814,6 +814,19 @@ class JoomFile
         }
         $commands = '';
 
+        // if resizing an animation but not preserving the animation, modify the src path for imagick
+        if ($special_image[0])
+        {
+          if (in_array('animation', $special_image[2])  && !$anim)
+          {
+            $src_file = $src_file.'[0]';
+          }
+          elseif (in_array('animation', $special_image[2])  && $anim && $imginfo[2] == 'GIF')
+          {
+            $commands .= ' -coalesce';
+          }
+        }
+
         if($angle > 0)
         {
           $commands .= ' -auto-orient';
@@ -828,14 +841,21 @@ class JoomFile
         // +repage needed to delete the canvas
         if(!is_null($offsetx) && !is_null($offsety))
         {
+          // Assembling the imagick command for cropping
           $commands .= ' -crop "'.$srcWidth.'x'.$srcHeight.'+'.$offsetx.'+'.$offsety.'" +repage';
         }
-        // Finally the resize
-        $commands  .= ' -resize "'.$destWidth.'x'.$destHeight.'" -quality "'.$dest_qual.'" -unsharp "3.5x1.2+1.0+0.10"';
+        else
+        {
+          // Assembling the imagick command for resizing
+          $commands  .= ' -resize "'.$destWidth.'x'.$destHeight.'" -quality "'.$dest_qual.'" -unsharp "3.5x1.2+1.0+0.10"';
+        }        
+
+        // Assembling the shell code for the resize with imagick
         $convert    = $convert_path.' '.$commands.' "'.$src_file.'" "'.$dest_file.'"';
 
         $return_var = null;
         $dummy      = null;
+        // execute the resize
         @exec($convert, $dummy, $return_var);
         if($return_var != 0)
         {
