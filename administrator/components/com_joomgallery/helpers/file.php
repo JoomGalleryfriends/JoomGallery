@@ -692,8 +692,7 @@ class JoomFile
           foreach ($src_frames as $frame)
           {
             $frame['image'] = imagerotate($frame['image'], $angle, 0);
-          }
-          
+          }          
         }
         foreach ($src_frames as $key => $frame)
         {
@@ -813,7 +812,6 @@ class JoomFile
           $convert_path='convert';
         }
         $commands = '';
-
         // if resizing an animation but not preserving the animation, modify the src path for imagick
         if ($special_image[0])
         {
@@ -826,12 +824,10 @@ class JoomFile
             $commands .= ' -coalesce';
           }
         }
-
         if($angle > 0)
         {
           $commands .= ' -auto-orient';
         }
-
         if(!$metadata)
         {
           $commands .= ' -strip';
@@ -848,8 +844,7 @@ class JoomFile
         {
           // Assembling the imagick command for resizing
           $commands  .= ' -resize "'.$destWidth.'x'.$destHeight.'" -quality "'.$dest_qual.'" -unsharp "3.5x1.2+1.0+0.10"';
-        }        
-
+        }
         // Assembling the shell code for the resize with imagick
         $convert    = $convert_path.' '.$commands.' "'.$src_file.'" "'.$dest_file.'"';
 
@@ -905,25 +900,88 @@ class JoomFile
       // Nothing to do
       return true;
     }
-
     // Ensure that the path is valid and clean
     $src = JPath::clean($src);
 
     if(!($imginfo = getimagesize($src)))
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_FILE_NOT_FOUND').'<br />';
-
       return false;
     }
-
-    // Automatic rotation during upload is only supported for JPG images
-    if($imginfo[2] != IMAGETYPE_JPEG)
+    // GD can only handle JPG & PNG images
+    if(    $imginfo[2] != IMAGETYPE_JPEG
+       &&  $imginfo[2] != IMAGETYPE_PNG
+       &&  $imginfo[2] != IMAGETYPE_GIF
+       &&  ($method == 'gd1' || $method == 'gd2')
+      )
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_ONLY_JPG').'<br />';
-
       return false;
     }
+    $imagetype = array(0=>'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
+                       5 => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
+                       10 => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
+                       15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
 
+    $imginfo[2] = $imagetype[$imginfo[2]];
+    //detect, if source image is a special image
+    $special_image = array(false);
+    if ($imginfo[2] == 'PNG')
+    {
+      //detect, if png has transparency
+      $pngtype = ord(@file_get_contents($src_file, NULL, NULL, 25, 1));
+      if ($pngtype == 4 || $pngtype == 6)
+      {
+        $special_image = array(true, 'PNG', array('transparency'));
+      }
+    }
+    if ($imginfo[2] == 'GIF')
+    {
+      //detect, if gif is animated
+      $fh = @fopen($src_file, 'rb');
+      $count = 0;
+      while(!feof($fh) && $count < 2)
+      {
+        $chunk = fread($fh, 1024 * 100); //read 100kb at a time
+        $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
+      }
+      fclose($fh);
+      //detect, if gif has transparency
+      $tmp = imagecreatefromgif($src_file);
+      $tmp_trans = imagecolortransparent($tmp);
+
+      if ($count > 1 && $tmp_trans == -1)
+      {
+        $special_image = array(true, 'GIF', array('animation'));
+      }
+      elseif ($count > 1 && $tmp_trans >= 0) {
+        $special_image = array(true, 'GIF', array('animation', 'transparency'));
+      }
+      elseif ($count <= 1 && $tmp_trans >= 0) {
+        $special_image = array(true, 'GIF', array('transparency'));
+      }
+    }
+    // get the desired image type out of the destination path
+    $tmp = explode('.', $dest_file);
+    $dest_imgtype = strtolower(end($tmp));
+    if ($dest_imgtype == 'jpg' || $dest_imgtype == 'jpeg' || $dest_imgtype == 'jpe' || $dest_imgtype == 'jif' || $dest_imgtype == 'jfif' || $dest_imgtype == 'jfi')
+    {
+      $dest_imgtype = 'JPG';
+    }
+    elseif ($dest_imgtype == 'gif')
+    {
+      $dest_imgtype = 'GIF';
+    }
+    elseif ($dest_imgtype == 'png')
+    {
+      $dest_imgtype = 'PNG';
+    }
+    else
+    {
+      $dest_imgtype = null;
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ONLY_JPG_PNG').'<br />';
+      return false;
+    }
     switch($method)
     {
       case 'gd1':
@@ -931,42 +989,65 @@ class JoomFile
         if(!function_exists('imagecreatefromjpeg'))
         {
           $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED').'<br />';
-
           return false;
         }
+        if ($special_image[0] && in_array('animation', $special_image[2]))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_NO_ROTATION').'<br />';
+          return false;
+        }
+        else
+        {
+          $rotated_img = array();
+          switch ($imginfo[2])
+          {
+            case 'PNG':
+              $src_img = imagecreatefrompng($src);
+              break;
 
+            case 'GIF':
+              $src_img = imagecreatefromgif($src);
+              break;
+
+            case 'JPG':
+              $src_img = imagecreatefromjpeg($src);
+              break;
+            
+            default:
+              return false;
+              break;
+          }
+        }
+        if (!$src_img)
+        {
+          $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+          return false;
+        }
         // Beginn Rotation
-        $src_img     = imagecreatefromjpeg($src);
-        $rotated_img = imagerotate($src_img, $angle, 0);
-
-        if(!@imagejpeg($rotated_img, $src, $dest_qual))
+        $rotated_img[0] = imagerotate($src_img, $angle, 0);
+        $success = JoomFile::imageWriteFrom_GD($src,$rotated_img,$dest_qual,$dest_imgtype);
+        if(!$success)
         {
           // Workaround for servers with wwwrun problem
           $dir = dirname($src);
           JoomFile::chmod($dir, '0777', true);
-          imagejpeg($rotated_img, $src, $dest_qual);
+          JoomFile::imageWriteFrom_GD($src,$rotated_img,$dest_qual,$dest_imgtype);
           JoomFile::chmod($dir, '0755', true);
         }
-
         imagedestroy($src_img);
-        imagedestroy($rotated_img);
-
+        imagedestroy($rotated_img[0]);
         break;
       case 'im':
         $disabled_functions = explode(',', ini_get('disabled_functions'));
-
         foreach($disabled_functions as $disabled_function)
         {
           if(trim($disabled_function) == 'exec')
           {
             $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_EXEC_DISABLED').'<br />';
-
             return false;
           }
         }
-
         $config = JoomConfig::getInstance();
-
         if(!empty($config->jg_impath))
         {
           $convert_path = $config->jg_impath.'convert';
@@ -975,8 +1056,14 @@ class JoomFile
         {
           $convert_path = 'convert';
         }
-
         // Finally the rotate
+        if ($special_image[0])
+        {
+          if (in_array('animation', $special_image[2]) && $imginfo[2] == 'GIF')
+          {
+            $commands .= ' -coalesce';
+          }
+        }
         if($auto_orient)
         {
           $commands = '-auto-orient';
@@ -990,7 +1077,6 @@ class JoomFile
         $return_var = null;
         $dummy      = null;
         @exec($convert, $dummy, $return_var);
-
         if($return_var != 0)
         {
           // Workaround for servers with wwwrun problem
@@ -998,11 +1084,9 @@ class JoomFile
           JoomFile::chmod($dir, '0777', true);
           @exec($convert, $dummy, $return_var);
           JoomFile::chmod($dir, '0755', true);
-
           if($return_var != 0)
           {
             $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_IM_IMAGE_NOT_ROTATED').'<br />';
-
             return false;
           }
         }
