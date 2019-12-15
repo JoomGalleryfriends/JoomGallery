@@ -995,7 +995,11 @@ class JoomFile
                 if (in_array('transparency', $special_image[2]))
                 {
                   $trnprt_indx = imagecolortransparent($src_img);
-                  $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
+                  $palletsize = imagecolorstotal($src_frame[0]['image']);
+                  if ($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
+                  {
+                    $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
+                  }
                 }
               }
               break;
@@ -1025,7 +1029,7 @@ class JoomFile
           case 'GIF':
             if ($special_image[0])
             {
-              if (in_array('transparency', $special_image[2]))
+              if (in_array('transparency', $special_image[2]) && $trnprt_indx >= 0 && $trnprt_indx < $palletsize)
               {
                 $trnprt_indx = imagecolorallocate($rotated_img[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
                 imagefill($rotated_img[0], 0, 0, $trnprt_indx);
@@ -1269,10 +1273,14 @@ class JoomFile
           if (in_array('transparency', $special[2]))
           {
             $trnprt_indx = imagecolortransparent($src_frame[0]['image']);
-            $trnprt_color = imagecolorsforindex($src_frame[0]['image'], $trnprt_indx);
-            $trnprt_indx = imagecolorallocate($dst_frame[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-            imagefill($dst_frame[0], 0, 0, $trnprt_indx);
-            imagecolortransparent($dst_frame[0], $trnprt_indx);
+            $palletsize = imagecolorstotal($src_frame[0]['image']);
+            if ($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
+            {
+              $trnprt_color = imagecolorsforindex($src_frame[0]['image'], $trnprt_indx);
+              $trnprt_indx = imagecolorallocate($dst_frame[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+              imagefill($dst_frame[0], 0, 0, $trnprt_indx);
+              imagecolortransparent($dst_frame[0], $trnprt_indx);
+            }
           }
         }
         break;
