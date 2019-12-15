@@ -1025,39 +1025,54 @@ class JoomFile
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
           return false;
         }
-        // Beginn Rotation
+        // Rotate image
         $rotated_img[0] = imagerotate($src_img, $angle, 0);
-        $success = JoomFile::imageWriteFrom_GD($src,$rotated_img,$dest_qual,$dest_imgtype);
-        if ($metadata)
-        // copy metadata if needed
+        // Rename source file so it dont gets overwritten
+        $tmp = explode('.', $src);
+        $src_orig = str_replace('.'.end($tmp),'_orig.'.end($tmp), $src);
+        $rn_success = rename($src,$src_orig);
+        // Write rotated file
+        if ($rn_success)
         {
-          $meta_success = JoomFile::copyImageMetadata($src, $src, $src_imagetype, $dest_imgtype);
-          if (!$meta_success)
-          {
-            $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
-            return false;
-          }
-        }
-        if(!$success)
-        {
-          // Workaround for servers with wwwrun problem
-          $dir = dirname($src);
-          JoomFile::chmod($dir, '0777', true);
-          JoomFile::imageWriteFrom_GD($src,$rotated_img,$dest_qual,$dest_imgtype);
+          $success = JoomFile::imageWriteFrom_GD($src,$rotated_img,$dest_qual,$dest_imgtype);
           if ($metadata)
           // copy metadata if needed
           {
-            $meta_success = JoomFile::copyImageMetadata($src, $src, $src_imagetype, $dest_imgtype);
+            $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imagetype, $dest_imgtype);
             if (!$meta_success)
             {
               $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
               return false;
             }
           }
+        }
+        else
+        {
+          $success = false;
+        }
+        if(!$success)
+        {
+          // Workaround for servers with wwwrun problem
+          $dir = dirname($src);
+          JoomFile::chmod($dir, '0777', true);
+          rename($src,$src_orig);
+          JoomFile::imageWriteFrom_GD($src,$rotated_img,$dest_qual,$dest_imgtype);
+          if ($metadata)
+          // copy metadata if needed
+          {
+            $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imagetype, $dest_imgtype);
+            if (!$meta_success)
+            {
+              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              return false;
+            }
+          }
+          unlink($src_orig);
           JoomFile::chmod($dir, '0755', true);
         }
         imagedestroy($src_img);
         imagedestroy($rotated_img[0]);
+        unlink($src_orig);
         break;
       case 'im':
         $disabled_functions = explode(',', ini_get('disabled_functions'));
