@@ -931,7 +931,7 @@ class JoomFile
     if ($imginfo[2] == 'PNG')
     {
       //detect, if png has transparency
-      $pngtype = ord(@file_get_contents($src_file, NULL, NULL, 25, 1));
+      $pngtype = ord(@file_get_contents($src, NULL, NULL, 25, 1));
       if ($pngtype == 4 || $pngtype == 6)
       {
         $special_image = array(true, 'PNG', array('transparency'));
@@ -940,7 +940,7 @@ class JoomFile
     if ($imginfo[2] == 'GIF')
     {
       //detect, if gif is animated
-      $fh = @fopen($src_file, 'rb');
+      $fh = @fopen($src, 'rb');
       $count = 0;
       while(!feof($fh) && $count < 2)
       {
@@ -949,7 +949,7 @@ class JoomFile
       }
       fclose($fh);
       //detect, if gif has transparency
-      $tmp = imagecreatefromgif($src_file);
+      $tmp = imagecreatefromgif($src);
       $tmp_trans = imagecolortransparent($tmp);
 
       if ($count > 1 && $tmp_trans == -1)
@@ -964,26 +964,7 @@ class JoomFile
       }
     }
     // get the desired image type out of the destination path
-    $tmp = explode('.', $dest_file);
-    $dest_imgtype = strtolower(end($tmp));
-    if ($dest_imgtype == 'jpg' || $dest_imgtype == 'jpeg' || $dest_imgtype == 'jpe' || $dest_imgtype == 'jif' || $dest_imgtype == 'jfif' || $dest_imgtype == 'jfi')
-    {
-      $dest_imgtype = 'JPG';
-    }
-    elseif ($dest_imgtype == 'gif')
-    {
-      $dest_imgtype = 'GIF';
-    }
-    elseif ($dest_imgtype == 'png')
-    {
-      $dest_imgtype = 'PNG';
-    }
-    else
-    {
-      $dest_imgtype = null;
-      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ONLY_JPG_PNG').'<br />';
-      return false;
-    }
+    $dest_imgtype = $src_imagetype;
     switch($method)
     {
       case 'gd1':
@@ -1009,6 +990,14 @@ class JoomFile
 
             case 'GIF':
               $src_img = imagecreatefromgif($src);
+              if ($special_image[0])
+              {
+                if (in_array('transparency', $special_image[2]))
+                {
+                  $trnprt_indx = imagecolortransparent($src_img);
+                  $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
+                }
+              }
               break;
 
             case 'JPG':
@@ -1027,6 +1016,27 @@ class JoomFile
         }
         // Rotate image
         $rotated_img[0] = imagerotate($src_img, $angle, 0);
+        switch ($imginfo[2]) {
+          case 'PNG':
+            imageAlphaBlending($rotated_img[0], false);
+            imageSaveAlpha($rotated_img[0], true);
+            break; 
+
+          case 'GIF':
+            if ($special_image[0])
+            {
+              if (in_array('transparency', $special_image[2]))
+              {
+                $trnprt_indx = imagecolorallocate($rotated_img[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+                imagefill($rotated_img[0], 0, 0, $trnprt_indx);
+                imagecolortransparent($rotated_img[0], $trnprt_indx);
+              }
+            }
+            break;
+
+          default:
+            break;
+        }
         // Rename source file so it dont gets overwritten
         $tmp = explode('.', $src);
         $src_orig = str_replace('.'.end($tmp),'_orig.'.end($tmp), $src);
@@ -1253,25 +1263,17 @@ class JoomFile
         break;
 
       case 'GIF':
+        $src_frame[0]['image'] = imagecreatefromgif($src_file);
         if ($special[0])
         {
           if (in_array('transparency', $special[2]))
           {
-            $src_frame[0]['image'] = imagecreatefromgif($src_file);
             $trnprt_indx = imagecolortransparent($src_frame[0]['image']);
             $trnprt_color = imagecolorsforindex($src_frame[0]['image'], $trnprt_indx);
             $trnprt_indx = imagecolorallocate($dst_frame[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
             imagefill($dst_frame[0], 0, 0, $trnprt_indx);
             imagecolortransparent($dst_frame[0], $trnprt_indx);
           }
-          else
-          {
-            $src_frame[0]['image'] = imagecreatefromgif($src_file);
-          }        
-        }
-        else
-        {
-          $src_frame[0]['image'] = imagecreatefromgif($src_file);
         }
         break;
 
@@ -1331,6 +1333,7 @@ class JoomFile
   {
     if ($src_imagetype == 'JPG' && $dest_imgtype == 'JPG')
     {
+      //JFactory::getApplication()->enqueueMessage('src: '.print_r($src_file).'<br/>dest: '.print_r($dest_file).'<br/>');
       $success = JoomFile::copyJPGmetadata($src_file,$dest_file);
     }
     elseif ($src_imagetype == 'PNG' && $dest_imgtype == 'PNG') {
@@ -1338,7 +1341,7 @@ class JoomFile
     }
     else
     {
-      $success = false;
+      $success = true;
     }
     return $success;
   }
@@ -1364,8 +1367,9 @@ class JoomFile
 
       if (file_exists($srcfile) && file_exists($destfile)) {
           $srcsize = @getimagesize($srcfile, $imageinfo);
+          $dstsize = @getimagesize($destfile, $destimageinfo);
           // Check if file is jpg
-          if ($imageinfo != 2) return false;
+          if ($srcsize[2] != 2 && $dstsize[2] != 2) return false;
           // Prepare EXIF data bytes from source file
           $exifdata = (is_array($imageinfo) && key_exists("APP1", $imageinfo)) ? $imageinfo['APP1'] : null;
           if ($exifdata) {
