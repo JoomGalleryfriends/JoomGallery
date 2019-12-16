@@ -840,11 +840,9 @@ class JoomFile
           // Assembling the imagick command for cropping
           $commands .= ' -crop "'.$srcWidth.'x'.$srcHeight.'+'.$offsetx.'+'.$offsety.'" +repage';
         }
-        else
-        {
-          // Assembling the imagick command for resizing
-          $commands  .= ' -resize "'.$destWidth.'x'.$destHeight.'" -quality "'.$dest_qual.'" -unsharp "3.5x1.2+1.0+0.10"';
-        }
+        // Assembling the imagick command for resizing
+        $commands  .= ' -resize "'.$destWidth.'x'.$destHeight.'" -quality "'.$dest_qual.'" -unsharp "3.5x1.2+1.0+0.10"';
+        
         // Assembling the shell code for the resize with imagick
         $convert    = $convert_path.' '.$commands.' "'.$src_file.'" "'.$dest_file.'"';
 
@@ -995,11 +993,7 @@ class JoomFile
                 if (in_array('transparency', $special_image[2]))
                 {
                   $trnprt_indx = imagecolortransparent($src_img);
-                  $palletsize = imagecolorstotal($src_frame[0]['image']);
-                  if ($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
-                  {
-                    $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
-                  }
+                  $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
                 }
               }
               break;
@@ -1029,7 +1023,7 @@ class JoomFile
           case 'GIF':
             if ($special_image[0])
             {
-              if (in_array('transparency', $special_image[2]) && $trnprt_indx >= 0 && $trnprt_indx < $palletsize)
+              if (in_array('transparency', $special_image[2]))
               {
                 $trnprt_indx = imagecolorallocate($rotated_img[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
                 imagefill($rotated_img[0], 0, 0, $trnprt_indx);
@@ -1049,16 +1043,6 @@ class JoomFile
         if ($rn_success)
         {
           $success = JoomFile::imageWriteFrom_GD($src,$rotated_img,$dest_qual,$dest_imgtype);
-          if ($metadata)
-          // copy metadata if needed
-          {
-            $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imagetype, $dest_imgtype);
-            if (!$meta_success)
-            {
-              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
-              return false;
-            }
-          }
         }
         else
         {
@@ -1083,6 +1067,19 @@ class JoomFile
           }
           unlink($src_orig);
           JoomFile::chmod($dir, '0755', true);
+        }
+        else
+        {
+          if ($metadata)
+          // copy metadata if needed
+          {
+            $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imagetype, $dest_imgtype);
+            if (!$meta_success)
+            {
+              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              return false;
+            }
+          }
         }
         imagedestroy($src_img);
         imagedestroy($rotated_img[0]);
@@ -1124,7 +1121,18 @@ class JoomFile
           $commands = '-rotate "-' . $angle . '"';
         }
         $commands  .= ' -quality '.$dest_qual;
-        $convert    = $convert_path.' '.$commands.' "'.$src.'" "'.$src.'"';
+        if ($imginfo[2] == 'PNG')
+        {
+          // Rename source file so it dont gets overwritten
+          $tmp = explode('.', $src);
+          $src_orig = str_replace('.'.end($tmp),'_orig.'.end($tmp), $src);
+          $rn_success = rename($src,$src_orig);
+        }
+        else
+        {
+          $src_orig = $src;
+        }       
+        $convert    = $convert_path.' '.$commands.' "'.$src_orig.'" "'.$src.'"';
         $return_var = null;
         $dummy      = null;
         @exec($convert, $dummy, $return_var);
@@ -1134,12 +1142,40 @@ class JoomFile
           $dir = dirname($src);
           JoomFile::chmod($dir, '0777', true);
           @exec($convert, $dummy, $return_var);
+          if ($imginfo[2] == 'PNG')
+          // copy metadata with GD for PNG images
+          {
+            $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imagetype, $dest_imgtype);
+            if (!$meta_success)
+            {
+              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              return false;
+            }
+            unlink($src_orig);
+          }
           JoomFile::chmod($dir, '0755', true);
           if($return_var != 0)
           {
             $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_IM_IMAGE_NOT_ROTATED').'<br />';
             return false;
           }
+        }
+        else
+        {
+          if ($imginfo[2] == 'PNG')
+          // copy metadata with GD for PNG images
+          {
+            $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imagetype, $dest_imgtype);
+            if (!$meta_success)
+            {
+              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              return false;
+            }
+          }
+        }
+        if ($imginfo[2] == 'PNG')
+        {
+          unlink($src_orig);
         }
         break;
       default:
