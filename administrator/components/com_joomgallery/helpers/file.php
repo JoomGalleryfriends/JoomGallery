@@ -792,24 +792,29 @@ class JoomFile
         }
         break;
       case 'im':
-        $debugoutput.='ImageMagick...<br/>';
         $disabled_functions = explode(',', ini_get('disabled_functions'));
         foreach($disabled_functions as $disabled_function)
         {
           if(trim($disabled_function) == 'exec')
           {
             $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_EXEC_DISABLED').'<br />';
-
             return false;
           }
         }
-        if(!empty($config->jg_impath))
+        @exec(trim($config->jg_impath).'convert -version', $output_convert);
+        @exec(trim($config->jg_impath).'magick -version', $output_magick);
+        if ($output_magick)
         {
-          $convert_path=$config->jg_impath.'convert';
+          $convert_path=trim($config->jg_impath).'magick';
+        }
+        elseif ($output_convert)
+        {
+          $convert_path=trim($config->jg_impath).'convert';
         }
         else
         {
-          $convert_path='convert';
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_NOTFOUND').'<br />';
+          return false;
         }
         $commands = '';
         // if resizing an animation but not preserving the animation, modify the src path for imagick
@@ -1096,13 +1101,20 @@ class JoomFile
           }
         }
         $config = JoomConfig::getInstance();
-        if(!empty($config->jg_impath))
+        @exec(trim($config->jg_impath).'convert -version', $output_convert);
+        @exec(trim($config->jg_impath).'magick -version', $output_magick);
+        if ($output_magick)
         {
-          $convert_path = $config->jg_impath.'convert';
+          $convert_path=trim($config->jg_impath).'magick';
+        }
+        elseif ($output_convert)
+        {
+          $convert_path=trim($config->jg_impath).'convert';
         }
         else
         {
-          $convert_path = 'convert';
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_NOTFOUND').'<br />';
+          return false;
         }
         // Finally the rotate
         if ($special_image[0])
