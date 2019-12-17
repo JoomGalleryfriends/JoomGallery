@@ -1389,7 +1389,6 @@ class JoomFile
   {
     if ($src_imagetype == 'JPG' && $dest_imgtype == 'JPG')
     {
-      //JFactory::getApplication()->enqueueMessage('src: '.print_r($src_file).'<br/>dest: '.print_r($dest_file).'<br/>');
       $success = JoomFile::copyJPGmetadata($src_file,$dest_file);
     }
     elseif ($src_imagetype == 'PNG' && $dest_imgtype == 'PNG') {
