@@ -877,7 +877,7 @@ class JoomFile
     // Set mode of uploaded picture
     JPath::setPermissions($dest_file);
     // Check that the resized image is valid
-    if(!($imginfo = getimagesize($src)))
+    if(!($imginfo = getimagesize($dest_file)))
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM').'<br />';
       return false;
