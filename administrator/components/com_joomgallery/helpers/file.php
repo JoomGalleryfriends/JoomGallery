@@ -877,9 +877,9 @@ class JoomFile
     // Set mode of uploaded picture
     JPath::setPermissions($dest_file);
     // Check that the resized image is valid
-    $imginfo = getimagesize($dest_file);
-    if(!$imginfo)
+    if(!($imginfo = getimagesize($src)))
     {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM').'<br />';
       return false;
     }
     return true;
@@ -1191,10 +1191,15 @@ class JoomFile
         {
           unlink($src_orig);
         }
+        // Check that the resized image is valid
+        if(!($imginfo = getimagesize($src)))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM').'<br />';
+          return false;
+        }
         break;
       default:
         $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_UNSUPPORTED_RESIZING_METHOD').'<br />';
-
         return false;
         break;
     }
