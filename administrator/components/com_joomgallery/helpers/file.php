@@ -865,7 +865,7 @@ class JoomFile
           JoomFile::chmod($dir, '0755', true);
           if($return_var != 0)
           {
-            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM').'<br />';
+            $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM','exec('.$convert.');').'<br />';
             return false;
           }
         }
@@ -879,7 +879,7 @@ class JoomFile
     // Check that the resized image is valid
     if(!($imginfo = getimagesize($dest_file)))
     {
-      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM').'<br />';
+      $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM','exec('.$convert.');').'<br />';
       return false;
     }
     return true;
@@ -1170,7 +1170,7 @@ class JoomFile
           JoomFile::chmod($dir, '0755', true);
           if($return_var != 0)
           {
-            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM').'<br />';
+            $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM','exec('.$convert.');').'<br />';
             return false;
           }
         }
@@ -1194,7 +1194,7 @@ class JoomFile
         // Check that the resized image is valid
         if(!($imginfo = getimagesize($src)))
         {
-          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM').'<br />';
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM','exec('.$convert.');').'<br />';
           return false;
         }
         break;
