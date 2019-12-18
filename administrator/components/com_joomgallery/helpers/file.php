@@ -428,7 +428,7 @@ class JoomFile
     }
 
     // determine resizing width and height
-      $offsetx = null; 
+      $offsetx = null;  
       $offsety = null;
       // Resizing to thumbnail
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_THUMBNAIL_FROM').' '.$imginfo[2];
@@ -792,6 +792,7 @@ class JoomFile
         }
         break;
       case 'im':
+        $debugoutput.='ImageMagick...<br/>';
         $disabled_functions = explode(',', ini_get('disabled_functions'));
         foreach($disabled_functions as $disabled_function)
         {
@@ -803,13 +804,13 @@ class JoomFile
         }
         @exec(trim($config->jg_impath).'convert -version', $output_convert);
         @exec(trim($config->jg_impath).'magick -version', $output_magick);
-        if ($output_magick)
-        {
-          $convert_path=trim($config->jg_impath).'magick';
-        }
-        elseif ($output_convert)
+        if ($output_convert)
         {
           $convert_path=trim($config->jg_impath).'convert';
+        }
+        elseif ($output_magick)
+        {
+          $convert_path=trim($config->jg_impath).'magick convert';
         }
         else
         {
@@ -864,6 +865,7 @@ class JoomFile
           JoomFile::chmod($dir, '0755', true);
           if($return_var != 0)
           {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM').'<br />';
             return false;
           }
         }
@@ -1103,13 +1105,13 @@ class JoomFile
         $config = JoomConfig::getInstance();
         @exec(trim($config->jg_impath).'convert -version', $output_convert);
         @exec(trim($config->jg_impath).'magick -version', $output_magick);
-        if ($output_magick)
-        {
-          $convert_path=trim($config->jg_impath).'magick';
-        }
-        elseif ($output_convert)
+        if ($output_convert)
         {
           $convert_path=trim($config->jg_impath).'convert';
+        }
+        elseif ($output_magick)
+        {
+          $convert_path=trim($config->jg_impath).'magick convert';
         }
         else
         {
@@ -1168,7 +1170,7 @@ class JoomFile
           JoomFile::chmod($dir, '0755', true);
           if($return_var != 0)
           {
-            $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_IM_IMAGE_NOT_ROTATED').'<br />';
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM').'<br />';
             return false;
           }
         }
