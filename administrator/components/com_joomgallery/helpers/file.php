@@ -586,9 +586,9 @@ class JoomFile
         if($angle > 0)
         // rotate image, if needed
         {
-          foreach ($src_frames as $frame)
+          foreach ($src_frames as $key => $frame)
           {
-            $frame['image'] = imagerotate($frame['image'], $angle, 0);
+            $src_frames[$key]['image'] = imagerotate($src_frames[$key]['image'], $angle, 0);
           }
         }
 
@@ -689,10 +689,10 @@ class JoomFile
         if($angle > 0)
         // rotate image, if needed
         {
-          foreach ($src_frames as $frame)
+          foreach ($src_frames as $key => $frame)
           {
-            $frame['image'] = imagerotate($frame['image'], $angle, 0);
-          }          
+            $src_frames[$key]['image'] = imagerotate($src_frames[$key]['image'], $angle, 0);
+          }
         }
         foreach ($src_frames as $key => $frame)
         {

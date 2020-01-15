@@ -2089,7 +2089,7 @@ class JoomUpload extends JObject
     $angle             = 0;
     $autorotate_images = $this->_config->get('jg_upload_exif_rotation');
 
-    if($autorotate_images != 0 && $imginfo[2] == IMAGETYPE_JPEG && $this->type != 'java')
+    if($autorotate_images != 0 && $this->type != 'java')
     {
       if(extension_loaded('exif') && function_exists('exif_read_data'))
       {
@@ -2297,7 +2297,9 @@ class JoomUpload extends JObject
                                       $this->_ambit->getImg('orig_path', $filename, null, $this->catid),
                                       $this->_config->get('jg_thumbcreation'),
                                       $this->_config->get('jg_originalquality'),
-                                      $angle
+                                      $angle,
+                                      true,
+                                      true
                                      );
       if(!$return)
       {
