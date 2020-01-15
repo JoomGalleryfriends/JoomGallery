@@ -836,8 +836,13 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
       if($rotateImageTypes == 2)
       {
-        if(JoomFile::rotateImage($debugoutput, $orig, $this->_config->get('jg_thumbcreation'),
-                                 $this->_config->get('jg_originalquality'), $rotateImageAngle, false))
+        if(JoomFile::rotateImage($debugoutput,
+                                 $orig,
+                                 $this->_config->get('jg_thumbcreation'),
+                                 $this->_config->get('jg_originalquality'),
+                                 $rotateImageAngle,
+                                 false,
+                                 true))
         {
           $orig_count--;
           $doResize = true;
@@ -848,8 +853,13 @@ class JoomGalleryModelImages extends JoomGalleryModel
         }
       }
 
-      if(JoomFile::rotateImage($debugoutput, $img, $this->_config->get('jg_thumbcreation'),
-                               $this->_config->get('jg_picturequality'), $rotateImageAngle, false))
+      if(JoomFile::rotateImage($debugoutput,
+                               $img,
+                               $this->_config->get('jg_thumbcreation'),
+                               $this->_config->get('jg_picturequality'),
+                               $rotateImageAngle,
+                               false,
+                               false))
       {
         $img_count--;
       }
@@ -872,8 +882,10 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                      $this->_config->get('jg_thumbheight'),
                                      $this->_config->get('jg_thumbcreation'),
                                      $this->_config->get('jg_thumbquality'),
+                                     $this->_config->get('jg_cropposition'),
+                                     0,
                                      false,
-                                     $this->_config->get('jg_cropposition')
+                                     false
                                     );
       }
       else
@@ -883,6 +895,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                      $this->_config->get('jg_thumbcreation'),
                                      $this->_config->get('jg_thumbquality'),
                                      $rotateImageAngle,
+                                     false,
                                      false
                                     );
 
