@@ -1456,9 +1456,9 @@ class JoomFile
               $exifadded = !$exifdata;
               $iptcadded = !$iptcdata;
 
-              while ((substr($destfilecontent, 0, 2) & 0xFFF0) === 0xFFE0) {
-                  $segmentlen = (substr($destfilecontent, 2, 2) & 0xFFFF);
-                  $iptcsegmentnumber = (substr($destfilecontent, 1, 1) & 0x0F);   // Last 4 bits of second byte is IPTC segment #
+              while ((JoomFile::get_safe_chunk(substr($destfilecontent, 0, 2)) & 0xFFF0) === 0xFFE0) {
+                  $segmentlen = (JoomFile::get_safe_chunk(substr($destfilecontent, 2, 2)) & 0xFFFF);
+                  $iptcsegmentnumber = (JoomFile::get_safe_chunk(substr($destfilecontent, 1, 1)) & 0x0F);   // Last 4 bits of second byte is IPTC segment #
                   if ($segmentlen <= 2) return false;
                   $thisexistingsegment = substr($destfilecontent, 0, $segmentlen + 2);
                   if ((1 <= $iptcsegmentnumber) && (!$exifadded)) {
@@ -1484,6 +1484,22 @@ class JoomFile
       } else {
           return false;
       }
+  }
+
+  /**
+   * Get integer value of binary chunk.
+   * Source: https://plugins.trac.wordpress.org/browser/image-watermark/tags/1.6.6#image-watermark.php#line:954
+   *
+   * @param bin $value Binary data
+   * @return int
+   */
+  public static function get_safe_chunk( $value ) {
+    // check for numeric value
+    if ( is_numeric( $value ) ) {
+      // cast to integer to do bitwise AND operation
+      return (int) $value;
+    } else
+      return 0;
   }
 
   /**
