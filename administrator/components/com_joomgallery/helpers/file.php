@@ -314,69 +314,25 @@ class JoomFile
     $src_file  = JPath::clean($src_file);
     $dest_file = JPath::clean($dest_file);
 
-    // Check that the source image is valid
-    $imginfo = getimagesize($src_file, $src_metainfo);
-    if(!$imginfo)
+    // Analysis of the source image, if image is valid
+    //$imginfo = getimagesize($src_file, $src_metainfo);
+    if(!($imginfo = JoomFile::analyseImage($src_file)))
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_FILE_NOT_FOUND').'<br />';
       return false;
     }
 
-    // GD can only handle JPG & PNG images
-    if(    $imginfo[2] != IMAGETYPE_JPEG
-       &&  $imginfo[2] != IMAGETYPE_PNG
-       &&  $imginfo[2] != IMAGETYPE_GIF
+    // GD can only handle JPG, PNG and GIF images
+    if(    $imginfo['type'] != 'JPG'
+       &&  $imginfo['type'] != 'PNG'
+       &&  $imginfo['type'] != 'GIF'
        &&  ($method == 'gd1' || $method == 'gd2')
       )
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ONLY_JPG_PNG').'<br />';
       return false;
     }
-
-    $imagetype = array(0=>'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
-                       5 => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
-                       10 => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
-                       15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
-
-    $imginfo[2] = $imagetype[$imginfo[2]];
-    $src_imagetype = $imginfo[2];
-    //detect, if source image is a special image
-    $special_image = array(false);
-    if ($imginfo[2] == 'PNG')
-    {
-      //detect, if png has transparency
-      $pngtype = ord(@file_get_contents($src_file, NULL, NULL, 25, 1));
-      if ($pngtype == 4 || $pngtype == 6)
-      {
-        $special_image = array(true, 'PNG', array('transparency'));
-      }
-    }
-    if ($imginfo[2] == 'GIF')
-    {
-      //detect, if gif is animated
-      $fh = @fopen($src_file, 'rb');
-      $count = 0;
-      while(!feof($fh) && $count < 2)
-      {
-        $chunk = fread($fh, 1024 * 100); //read 100kb at a time
-        $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
-      }
-      fclose($fh);
-      //detect, if gif has transparency
-      $tmp = imagecreatefromgif($src_file);
-      $tmp_trans = imagecolortransparent($tmp);
-
-      if ($count > 1 && $tmp_trans == -1)
-      {
-        $special_image = array(true, 'GIF', array('animation'));
-      }
-      elseif ($count > 1 && $tmp_trans >= 0) {
-        $special_image = array(true, 'GIF', array('animation', 'transparency'));
-      }
-      elseif ($count <= 1 && $tmp_trans >= 0) {
-        $special_image = array(true, 'GIF', array('transparency'));
-      }
-    }
+    $src_imagetype = $imginfo['type'];
 
     // get the desired image type out of the destination path
     $tmp = explode('.', $dest_file);
@@ -395,7 +351,7 @@ class JoomFile
     }
     else
     {
-      $dest_imgtype = null;
+      $dest_imgtype = 'UNKNOWN';
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ONLY_JPG_PNG').'<br />';
       return false;
     }
@@ -403,13 +359,13 @@ class JoomFile
     // Height/width
     if($angle == 0 || $angle == 180)
     {
-      $srcWidth  = $imginfo[0];
-      $srcHeight = $imginfo[1];
+      $srcWidth  = $imginfo['width'];
+      $srcHeight = $imginfo['height'];
     }
     else
     {
-      $srcWidth  = $imginfo[1];
-      $srcHeight = $imginfo[0];
+      $srcWidth  = $imginfo['height'];
+      $srcHeight = $imginfo['width'];
     }
 
     if($srcWidth <= $new_width && $srcHeight <= $new_width)
@@ -430,24 +386,20 @@ class JoomFile
     // determine resizing width and height
       $offsetx = null;  
       $offsety = null;
-      // Resizing to thumbnail
-      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_THUMBNAIL_FROM').' '.$imginfo[2];
-      if ($special_image[0])
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_THUMBNAIL_FROM').' '.$imginfo['type'];
+      if ($anim && $imginfo['animation'])
       {
-        if ($anim && in_array('animation', $special_image[2]))
-        {
-          $debugoutput .= ' '.JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_WITH_ANIM');
-        }
-        elseif (in_array('transparency', $special_image[2]))
-        {
-          $debugoutput .= ' '.JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_WITH_TRANS');
-        }
-        elseif ($anim && in_array('animation', $special_image[2]) && in_array('transparency', $special_image[2]))
-        {
-          $debugoutput .= ' '.JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_WITH_TRANS_ANIM');
-        }
+        $debugoutput .= ' '.JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_WITH_ANIM');
       }
-      $debugoutput .= ', '.$imginfo[0].' x '.$imginfo[1].'...<br />';
+      elseif ($imginfo['transparency'])
+      {
+        $debugoutput .= ' '.JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_WITH_TRANS');
+      }
+      elseif ($anim && $imginfo['animation'] && $imginfo['transparency'])
+      {
+        $debugoutput .= ' '.JText::_('COM_JOOMGALLERY_UPLOAD_CREATE_WITH_TRANS_ANIM');
+      }
+      $debugoutput .= ', '.$imginfo['width'].' x '.$imginfo['height'].'...<br />';
 
       if($new_width <= 0 || $new_height <= 0)
       {
@@ -576,7 +528,7 @@ class JoomFile
         }
         // create empty image of specified size
         $dst_frames = array(imagecreate($destWidth, $destHeight));
-        $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $src_imagetype, $special_image);
+        $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $imginfo);
 
         if (in_array(false, $src_frames))
         {
@@ -658,29 +610,21 @@ class JoomFile
         }
         // create empty image of specified size
         $dst_frames = array();
-        if ($special_image[0])
+        if ($anim && $imginfo['animation'] && $imginfo['type'] == 'GIF')
         {
-          if ($anim && in_array('animation', $special_image[2]) && in_array('GIF', $special_image))
+          JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
+          $gfe = new GifFrameExtractor();
+          $src_frames = $gfe->extract($src_file);
+          foreach ($src_frames as $key => $frame)
           {
-            JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
-            $gfe = new GifFrameExtractor();
-            $src_frames = $gfe->extract($src_file);
-            foreach ($src_frames as $key => $frame)
-            {
-              $dst_frames[$key] = imagecreatetruecolor($destWidth, $destHeight);
-            }     
-          }
-          else
-          {
-            $dst_frames[0] = imagecreatetruecolor($destWidth, $destHeight);
-            $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $src_imagetype, $special_image);
+            $dst_frames[$key] = imagecreatetruecolor($destWidth, $destHeight);
           }
         }
         else
         {
           $dst_frames[0] = imagecreatetruecolor($destWidth, $destHeight);
-          $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $src_imagetype, $special_image);
-        }               
+          $src_frames = JoomFile::imageCreateFrom_GD($src_file, $dst_frames, $imginfo);
+        }
         if (in_array(false, $src_frames))
         {
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
@@ -716,29 +660,22 @@ class JoomFile
             if(!is_null($offsetx) && !is_null($offsety))
             {
               $dst_frames[$key] = JoomFile::fastImageCopyResampled( $dst_frames[$key], $src_frames[$key]['image'], 0, 0, $offsetx, $offsety,
-                                                                    $destWidth, (int)$destHeight, $srcWidth, $srcHeight, 3,$special_image[0]);
+                                                                    $destWidth, (int)$destHeight, $srcWidth, $srcHeight, 3,$imginfo);
             }
             else
             {
               $dst_frames[$key] = JoomFile::fastImageCopyResampled( $dst_frames[$key], $src_frames[$key]['image'], 0, 0, 0, 0, $destWidth,
-                                                                    (int)$destHeight, $srcWidth, $srcHeight, 3,$special_image[0]);
+                                                                    (int)$destHeight, $srcWidth, $srcHeight, 3,$imginfo);
             }
           }
         }
         // write resized image to file
-        if ($special_image[0])
+        if ($anim && $imginfo['animation'] && $imginfo['type'] == 'GIF')
         {
-          if ($anim && in_array('animation', $special_image[2]) && in_array('GIF', $special_image))
-          {
-            JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
-            $gc = new GifCreator();
-            $gc->create($dst_frames, $gfe->getFrameDurations(), 0);
-            $success = file_put_contents($dest_file, $gc->getGif());
-          }
-          else
-          {
-            $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imgtype);
-          }
+          JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
+          $gc = new GifCreator();
+          $gc->create($dst_frames, $gfe->getFrameDurations(), 0);
+          $success = file_put_contents($dest_file, $gc->getGif());
         }
         else
         {
@@ -760,15 +697,12 @@ class JoomFile
           // Workaround for servers with wwwrun problem
           $dir = dirname($dest_file);
           JoomFile::chmod($dir, '0777', true);
-          if ($special_image[0])
+          if ($anim && $imginfo['animation'] && $imginfo['type'] == 'GIF')
           {
-            if (in_array('animation', $special_image[2]))
-            {
-              require './GifCreator.php';
-              $gc = new GifCreator();
-              $gc->create($dst_frames, $gfe->getFrameDurations(), 0);
-              $success = file_put_contents($dest_file, $gc->getGif());
-            }
+            JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
+            $gc = new GifCreator();
+            $gc->create($dst_frames, $gfe->getFrameDurations(), 0);
+            $success = file_put_contents($dest_file, $gc->getGif());
           }
           else
           {
@@ -819,16 +753,13 @@ class JoomFile
         }
         $commands = '';
         // if resizing an animation but not preserving the animation, modify the src path for imagick
-        if ($special_image[0])
+        if ($imginfo['animation']  && !$anim)
         {
-          if (in_array('animation', $special_image[2])  && !$anim)
-          {
-            $src_file = $src_file.'[0]';
-          }
-          elseif (in_array('animation', $special_image[2])  && $anim && $imginfo[2] == 'GIF')
-          {
-            $commands .= ' -coalesce';
-          }
+          $src_file = $src_file.'[0]';
+        }
+        elseif ($imginfo['animation']  && $anim && $imginfo['type'] == 'GIF')
+        {
+          $commands .= ' -coalesce';
         }
         if($angle > 0)
         {
@@ -886,7 +817,7 @@ class JoomFile
   }
 
   /**
-   * Rotate an image (only JPGs) with functions from gd/gd2/imagemagick
+   * Rotate an image (only JPGs) with functions from gd/gd2/imagemagick (Supported image-types: JPG,PNG,GIF)
    *
    * @param   &string $debugoutput  Debug information
    * @param   string  $src          Path to source file
@@ -909,67 +840,29 @@ class JoomFile
     // Ensure that the path is valid and clean
     $src = JPath::clean($src);
 
-    if(!($imginfo = getimagesize($src)))
+    // Analysis of the source image, if image is valid
+    //$imginfo = getimagesize($src_file, $src_metainfo);
+    if(!($imginfo = JoomFile::analyseImage($src)))
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_FILE_NOT_FOUND').'<br />';
       return false;
     }
-    // GD can only handle JPG & PNG images
-    if(    $imginfo[2] != IMAGETYPE_JPEG
-       &&  $imginfo[2] != IMAGETYPE_PNG
-       &&  $imginfo[2] != IMAGETYPE_GIF
+
+    // GD can only handle JPG, PNG and GIF images
+    if(    $imginfo['type'] != 'JPG'
+       &&  $imginfo['type'] != 'PNG'
+       &&  $imginfo['type'] != 'GIF'
        &&  ($method == 'gd1' || $method == 'gd2')
       )
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_ONLY_JPG').'<br />';
       return false;
     }
-    $imagetype = array(0=>'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
-                       5 => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
-                       10 => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
-                       15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
+    $src_imagetype = $imginfo['type'];
 
-    $imginfo[2] = $imagetype[$imginfo[2]];
-    $src_imagetype = $imginfo[2];
-    //detect, if source image is a special image
-    $special_image = array(false);
-    if ($imginfo[2] == 'PNG')
-    {
-      //detect, if png has transparency
-      $pngtype = ord(@file_get_contents($src, NULL, NULL, 25, 1));
-      if ($pngtype == 4 || $pngtype == 6)
-      {
-        $special_image = array(true, 'PNG', array('transparency'));
-      }
-    }
-    if ($imginfo[2] == 'GIF')
-    {
-      //detect, if gif is animated
-      $fh = @fopen($src, 'rb');
-      $count = 0;
-      while(!feof($fh) && $count < 2)
-      {
-        $chunk = fread($fh, 1024 * 100); //read 100kb at a time
-        $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
-      }
-      fclose($fh);
-      //detect, if gif has transparency
-      $tmp = imagecreatefromgif($src);
-      $tmp_trans = imagecolortransparent($tmp);
-
-      if ($count > 1 && $tmp_trans == -1)
-      {
-        $special_image = array(true, 'GIF', array('animation'));
-      }
-      elseif ($count > 1 && $tmp_trans >= 0) {
-        $special_image = array(true, 'GIF', array('animation', 'transparency'));
-      }
-      elseif ($count <= 1 && $tmp_trans >= 0) {
-        $special_image = array(true, 'GIF', array('transparency'));
-      }
-    }
     // get the desired image type out of the destination path
-    $dest_imgtype = $src_imagetype;
+    $dest_imgtype = $src_imagetype;  
+
     switch($method)
     {
       case 'gd1':
@@ -979,7 +872,7 @@ class JoomFile
           $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED').'<br />';
           return false;
         }
-        if ($special_image[0] && in_array('animation', $special_image[2]))
+        if ($imginfo['animation'])
         {
           $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_NO_ROTATION').'<br />';
           return false;
@@ -987,7 +880,7 @@ class JoomFile
         else
         {
           $rotated_img = array();
-          switch ($imginfo[2])
+          switch ($imginfo['type'])
           {
             case 'PNG':
               $src_img = imagecreatefrompng($src);
@@ -995,13 +888,10 @@ class JoomFile
 
             case 'GIF':
               $src_img = imagecreatefromgif($src);
-              if ($special_image[0])
+              if ($imginfo['transparency'])
               {
-                if (in_array('transparency', $special_image[2]))
-                {
-                  $trnprt_indx = imagecolortransparent($src_img);
-                  $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
-                }
+                $trnprt_indx = imagecolortransparent($src_img);
+                $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
               }
               break;
 
@@ -1021,21 +911,19 @@ class JoomFile
         }
         // Rotate image
         $rotated_img[0] = imagerotate($src_img, $angle, 0);
-        switch ($imginfo[2]) {
+        switch ($imginfo['type'])
+        {
           case 'PNG':
             imageAlphaBlending($rotated_img[0], false);
             imageSaveAlpha($rotated_img[0], true);
             break; 
 
           case 'GIF':
-            if ($special_image[0])
+            if ($imginfo['transparency'])
             {
-              if (in_array('transparency', $special_image[2]))
-              {
-                $trnprt_indx = imagecolorallocate($rotated_img[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-                imagefill($rotated_img[0], 0, 0, $trnprt_indx);
-                imagecolortransparent($rotated_img[0], $trnprt_indx);
-              }
+              $trnprt_indx = imagecolorallocate($rotated_img[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+              imagefill($rotated_img[0], 0, 0, $trnprt_indx);
+              imagecolortransparent($rotated_img[0], $trnprt_indx);
             }
             break;
 
@@ -1119,12 +1007,9 @@ class JoomFile
           return false;
         }
         // Finally the rotate
-        if ($special_image[0])
+        if ($imginfo['animation'] && $imginfo['type'] == 'GIF')
         {
-          if (in_array('animation', $special_image[2]) && $imginfo[2] == 'GIF')
-          {
-            $commands .= ' -coalesce';
-          }
+          $commands .= ' -coalesce';
         }
         if($auto_orient)
         {
@@ -1135,7 +1020,7 @@ class JoomFile
           $commands = '-rotate "-' . $angle . '"';
         }
         $commands  .= ' -quality '.$dest_qual;
-        if ($imginfo[2] == 'PNG')
+        if ($imginfo['type'] == 'PNG')
         {
           // Rename source file so it dont gets overwritten
           $tmp = explode('.', $src);
@@ -1176,7 +1061,7 @@ class JoomFile
         }
         else
         {
-          if ($imginfo[2] == 'PNG')
+          if ($imginfo['type'] == 'PNG')
           // copy metadata with GD for PNG images
           {
             $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imagetype, $dest_imgtype);
@@ -1187,7 +1072,7 @@ class JoomFile
             }
           }
         }
-        if ($imginfo[2] == 'PNG')
+        if ($imginfo['type'] == 'PNG')
         {
           unlink($src_orig);
         }
@@ -1253,17 +1138,24 @@ class JoomFile
    * @param   int     $src_w      source width
    * @param   int     $src_h      source height
    * @param   int     $quality    quality of destination (fix = 3) read instructions above
-   * @param   boolean $special    is it a special image (transparency, animated gif,...)
+   * @param   array   $imginfo    imginfo-array from analysing the source image (JoomFile::analyseImage)
    * @return  boolean True on success, false otherwise
    * @since   1.0.0
    */
   public static function fastImageCopyResampled($dst_image, $src_image, $dst_x, $dst_y,
                                   $src_x, $src_y, $dst_w, $dst_h,
-                                  $src_w, $src_h, $quality = 3, $special = false)
+                                  $src_w, $src_h, $quality = 3, $imginfo)
   {
     if(empty($src_image) || empty($dst_image) || $quality <= 0)
     {
       return false;
+    }
+
+    //check, if it is a special image (transparency or animation)
+    $special = false;
+    if ($imginfo['animation'] || $imginfo['transparency'])
+    {
+      $special = true;
     }
 
     if($quality < 5 && (($dst_w * $quality) < $src_w || ($dst_h * $quality) < $src_h) && !$special)
@@ -1301,19 +1193,81 @@ class JoomFile
   }
 
   /**
-   * Creates GD image objects from different file types
+   * Analysis of an image
+   *
+   * @param   string  $src          Path to image file
+   * @return  array imginfo[width,height,type,transparency,animation] on success, false otherwise
+   * @since   3.4
+   */
+  public static function analyseImage($img)
+  {
+    $width = $height = $type = $attr = $transparency = $animation = false;
+    list($width, $height, $type, $attr) = getimagesize($img);
+    if($width == false)
+    {
+      // image file not found
+      return false;
+    }
+    $imagetype = array(0=>'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
+                       5 => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
+                       10 => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
+                       15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
+
+    $type = $imagetype[$type];
+    //detect, if image is a special image
+    if ($type == 'PNG')
+    {
+      //detect, if png has transparency
+      $pngtype = ord(@file_get_contents($img, NULL, NULL, 25, 1));
+      if ($pngtype == 4 || $pngtype == 6)
+      {
+        $transparency = true;
+      }
+    }
+    if ($type == 'GIF')
+    {
+      //detect, if gif is animated
+      $fh = @fopen($img, 'rb');
+      $count = 0;
+      while(!feof($fh) && $count < 2)
+      {
+        $chunk = fread($fh, 1024 * 100); //read 100kb at a time
+        $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
+      }
+      fclose($fh);
+      //detect, if gif has transparency
+      $tmp = imagecreatefromgif($img);
+      $tmp_trans = imagecolortransparent($tmp);
+
+      if ($count > 1 && $tmp_trans == -1)
+      {
+        $animation = true;
+      }
+      elseif ($count > 1 && $tmp_trans >= 0) {
+        $animation = true;
+        $transparency = true;
+      }
+      elseif ($count <= 1 && $tmp_trans >= 0) {
+        $transparency = true;
+      }
+    }
+    $imginfo = array('width' => $width, 'height' => $height, 'type' => $type, 'transparency' => $transparency, 'animation' => $animation);
+    return $imginfo;
+  }
+
+  /**
+   * Creates GD image objects from different file types (Supported: JPG,PNG,GIF)
    *
    * @param   string  Path to source file
    * @param   array   array with one GD object on position 0 ; array(GDobject)
-   * @param   string  Type of the source image file
-   * @param   array   array which specifies the special type of the source file
-   * @return  $array  array with one GD object on position 0 created from specifiy file type ; array(array('duration'=>0, 'image'=>GDobject))
+   * @param   array   imginfo-array from analysing the source image (JoomFile::analyseImage)
+   * @return  array   array with one GD object on position 0 created from specifiy file type ; array(array('duration'=>0, 'image'=>GDobject))
    * @since   3.5.0
    */
-  public static function imageCreateFrom_GD($src_file, $dst_frame, $imgtype, $special)
+  public static function imageCreateFrom_GD($src_file, $dst_frame, $imginfo)
   {
     $src_frame = array(array('duration'=>0));
-    switch ($imgtype)
+    switch ($imginfo['type'])
     {
       case 'PNG':
         imageAlphaBlending($dst_frame[0], false);
@@ -1323,19 +1277,16 @@ class JoomFile
 
       case 'GIF':
         $src_frame[0]['image'] = imagecreatefromgif($src_file);
-        if ($special[0])
+        if ($imginfo['transparency'])
         {
-          if (in_array('transparency', $special[2]))
+          $trnprt_indx = imagecolortransparent($src_frame[0]['image']);
+          $palletsize = imagecolorstotal($src_frame[0]['image']);
+          if ($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
           {
-            $trnprt_indx = imagecolortransparent($src_frame[0]['image']);
-            $palletsize = imagecolorstotal($src_frame[0]['image']);
-            if ($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
-            {
-              $trnprt_color = imagecolorsforindex($src_frame[0]['image'], $trnprt_indx);
-              $trnprt_indx = imagecolorallocate($dst_frame[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-              imagefill($dst_frame[0], 0, 0, $trnprt_indx);
-              imagecolortransparent($dst_frame[0], $trnprt_indx);
-            }
+            $trnprt_color = imagecolorsforindex($src_frame[0]['image'], $trnprt_indx);
+            $trnprt_indx = imagecolorallocate($dst_frame[0], $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+            imagefill($dst_frame[0], 0, 0, $trnprt_indx);
+            imagecolortransparent($dst_frame[0], $trnprt_indx);
           }
         }
         break;
@@ -1352,7 +1303,7 @@ class JoomFile
   }
 
   /**
-   * Output GD image object to file from different file types
+   * Output GD image object to file from different file types (Supported: JPG,PNG,GIF)
    *
    * @param   string  Path to destination file
    * @param   array   array with one GD object on position 0 ; array(GDobject)
@@ -1383,7 +1334,7 @@ class JoomFile
   }
 
   /**
-   * Copy image metadata with GD depending on file type
+   * Copy image metadata with GD depending on file type (Supported: JPG,PNG,GIF)
    *
    * @param   string  Path to source file
    * @param   string  Path to destination file
