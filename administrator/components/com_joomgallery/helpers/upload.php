@@ -2089,7 +2089,8 @@ class JoomUpload extends JObject
     $angle             = 0;
     $autorotate_images = $this->_config->get('jg_upload_exif_rotation');
 
-    if($autorotate_images != 0 && $this->type != 'java')
+    if($autorotate_images != 0 && $this->type != 'java' && $imginfo[2] == 2)
+    // auto rotation only with jpg-files possible
     {
       if(extension_loaded('exif') && function_exists('exif_read_data'))
       {
