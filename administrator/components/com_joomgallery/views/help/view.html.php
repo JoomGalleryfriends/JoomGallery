@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -46,6 +46,9 @@ class JoomGalleryViewHelp extends JoomGalleryView
                         'bg-BG'           => array( 'translator'    => 'JoomGallery::TranslationTeam::Bulgarian (Bulgaria) bg-BG',
                                                     'downloadlink'  => 'https://www.en.joomgalleryfriends.net/downloads/joomgallery-for-joomla-3/languages/the-bulgarian-language-files.html',
                                                     'flag'          => 'bg.png'),
+                        'ca-ES'           => array( 'translator'    => 'JoomGallery::TranslationTeam::Catalan ca-ES',
+                                                    'downloadlink'  => 'https://www.en.joomgalleryfriends.net/downloads/joomgallery-for-joomla-3/languages/the-catalan-language-files.html',
+                                                    'flag'          => 'ct.png'),
                         'zh-CN'           => array( 'translator'    => 'JoomGallery::TranslationTeam::Chinese (China) zh-CN',
                                                     'downloadlink'  => 'https://www.en.joomgalleryfriends.net/downloads/joomgallery-for-joomla-3/languages/the-chinese-simplified-language-files.html',
                                                     'flag'          => 'cn.png'),
@@ -64,6 +67,9 @@ class JoomGalleryViewHelp extends JoomGalleryView
                         'nl-NL'           => array( 'translator'    => 'JoomGallery::TranslationTeam::Dutch (Netherlands) nl-NL',
                                                     'downloadlink'  => 'https://www.en.joomgalleryfriends.net/downloads/joomgallery-for-joomla-3/languages/the-dutch-language-files.html',
                                                     'flag'          => 'nl.png'),
+                        'et-EE'           => array( 'translator'    => 'JoomGallery::TranslationTeam::Estonian (Estonia) et-EE',
+                                                    'downloadlink'  => 'https://www.en.joomgalleryfriends.net/downloads/joomgallery-for-joomla-3/languages/the-estonian-language-files.html',
+                                                    'flag'          => 'ee.png'),
                         'fi-FI'           => array( 'translator'    => 'JoomGallery::TranslationTeam::Finnish (Finland) fi-FI',
                                                     'downloadlink'  => 'https://www.en.joomgalleryfriends.net/downloads/joomgallery-for-joomla-3/languages/the-finnish-language-files.html',
                                                     'flag'          => 'fi.png'),
@@ -79,6 +85,9 @@ class JoomGalleryViewHelp extends JoomGalleryView
                         'hu-HU-informal'  => array( 'translator'    => 'JoomGallery::TranslationTeam::Hungarian (Hungary) hu-HU (informal)',
                                                     'downloadlink'  => 'https://www.en.joomgalleryfriends.net/downloads/joomgallery-for-joomla-3/languages/the-hungarian-informal-language-files.html',
                                                     'flag'          => 'hu.png'),
+                        'id-ID'           => array( 'translator'    => 'JoomGallery::TranslationTeam::Indonesian (Indonesia) id-ID',
+                                                    'downloadlink'  => 'https://www.en.joomgalleryfriends.net/downloads/joomgallery-for-joomla-3/languages/the-indonesian-language-files.html',
+                                                    'flag'          => 'id.png'),
                         'it-IT'           => array( 'translator'    => 'JoomGallery::TranslationTeam::Italian (Italy) it-IT',
                                                     'downloadlink'  => 'https://www.en.joomgalleryfriends.net/downloads/joomgallery-for-joomla-3/languages/the-italian-language-files.html',
                                                     'flag'          => 'it.png'),
