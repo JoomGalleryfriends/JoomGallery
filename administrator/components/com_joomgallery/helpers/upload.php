@@ -461,7 +461,8 @@ class JoomUpload extends JObject
         continue;
       }
 
-      $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE').'<br />';
+      $upfilesize = filesize($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)) / 1000; //KB
+      $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE', $upfilesize).'<br />';
 
       // Set permissions of uploaded file
       $return = JoomFile::chmod($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), '0644');
@@ -852,7 +853,8 @@ class JoomUpload extends JObject
       // Try to set permissions to 644
       $return = JoomFile::chmod($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), '0644');
 
-      $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE').'<br />';
+      $upfilesize = filesize($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)) / 1000; //KB
+      $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE', $upfilesize).'<br />';
 
       // Check for overriding with meta data
       $readfile       = $this->_ambit->getImg('orig_path', $newfilename, null, $this->catid);
@@ -1182,7 +1184,8 @@ class JoomUpload extends JObject
           $this->debug        = true;
           continue;
         }
-        $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_CREATED').'<br />';
+        $thumbfilesize = filesize($this->_ambit->getImg('thumb_path', $newfilename, null, $this->catid)) / 1000; //KB      
+        $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_CREATED', $thumbfilesize).'<br />';
       }
       else
       {
@@ -1710,7 +1713,8 @@ class JoomUpload extends JObject
       return false;
     }
 
-    $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE').'<br />';
+    $upfilesize = filesize($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)) / 1000; //KB
+      $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE', $upfilesize).'<br />';
 
     // Set permissions of uploaded file
     $return = JoomFile::chmod($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), '0644');
@@ -2144,7 +2148,8 @@ class JoomUpload extends JObject
       $this->debug = true;
       return false;
     }
-    $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_CREATED').'<br />';
+    $thumbfilesize = filesize($this->_ambit->getImg('thumb_path', $filename, null, $this->catid)) / 1000; //KB     
+    $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_CREATED', $thumbfilesize).'<br />';
 
     // Optionally create detail image
     $detail_image_created = false;
@@ -2177,8 +2182,8 @@ class JoomUpload extends JObject
         $this->debug        = true;
         return false;
       }
-
-      $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_CREATED').'<br />';
+      $detailfilesize = filesize($this->_ambit->getImg('img_path', $filename, null, $this->catid)) / 1000; //KB
+      $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_CREATED', $detailfilesize).'<br />';
       $detail_image_created = true;
     }
 
