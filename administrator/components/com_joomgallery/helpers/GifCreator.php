@@ -76,18 +76,26 @@ class GifCreator
 	/**
      * Create the GIF string (old: GIFEncoder)
      * 
-     * @param array $frames An array of frame: can be file paths, resource image variables, binary sources or image URLs
-     * @param array $durations An array containing the duration of each frame
+     * @param array $dst_frames An array of frames and durations: frames can be file paths, resource image variables, binary sources or image URLs
      * @param integer $loop Number of GIF loops before stopping animation (Set 0 to get an infinite loop)
      * 
      * @return string The GIF string source
      */
-	public function create($frames = array(), $durations = array(), $loop = 0)
+	public function create($dst_frames = array(), $loop = 0)
     {
-		if (!is_array($frames) && !is_array($GIF_tim)) {
+		if (!is_array($dst_frames) && !is_array($GIF_tim)) {
             
             throw new \Exception($this->version.': '.$this->errors['ERR00']);
 		}
+
+		$frames = array();
+		$durations = array();
+		foreach ($dst_frames as $key => $frame)
+		{
+			$frames[$key] = $dst_frames[$key]['image'];
+			$durations[$key] = $dst_frames[$key]['duration'];
+		}
+		
         
 		$this->loop = ($loop > -1) ? $loop : 0;
 		$this->dis = 2;
