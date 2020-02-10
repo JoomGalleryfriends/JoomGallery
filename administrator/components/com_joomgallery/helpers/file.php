@@ -414,12 +414,12 @@ class JoomFile
           // resizing with GD1
           {
             imagecopyresized( $dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0, $dest_imginfo['offset_x'], $dest_imginfo['offset_y'],
-                              $dest_imginfo['width'], $dest_imginfo['height'], $src_imginfo['width'], $src_imginfo['height']);
+                              $dest_imginfo['width'], $dest_imginfo['height'], $dest_imginfo['src']['width'], $dest_imginfo['src']['height'] );
           }
           else
           {
             imagecopyresized( $dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0, 0, 0,
-                              $dest_imginfo['width'], $dest_imginfo['height'], $src_imginfo['width'], $src_imginfo['height']);
+                              $dest_imginfo['width'], $dest_imginfo['height'], $dest_imginfo['src']['width'], $dest_imginfo['src']['height'] );
           }
           // write resized image to file
           $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imginfo['type']);
@@ -502,7 +502,6 @@ class JoomFile
           $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
           return false;
         }
-
         if($angle > 0)
         // rotate image, if needed
         {
@@ -521,12 +520,12 @@ class JoomFile
             if(!is_null($dest_imginfo['offset_x']) && !is_null($dest_imginfo['offset_y']))
             {
               imagecopyresampled( $dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0, $dest_imginfo['offset_x'], $dest_imginfo['offset_y'],
-                                  $dest_imginfo['width'], $dest_imginfo['height'], $src_imginfo['width'], $src_imginfo['height'] );
+                                  $dest_imginfo['width'], $dest_imginfo['height'], $dest_imginfo['src']['width'], $dest_imginfo['src']['height'] );
             }
             else
             {
               imagecopyresampled( $dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0, 0, 0,
-                                  $dest_imginfo['width'], $dest_imginfo['height'], $src_imginfo['width'], $src_imginfo['height'] );
+                                  $dest_imginfo['width'], $dest_imginfo['height'], $dest_imginfo['src']['width'], $dest_imginfo['src']['height'] );
             }
           }
           else
@@ -537,13 +536,13 @@ class JoomFile
               $dst_frames[$key]['image'] = JoomFile::fastImageCopyResampled( $dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0,
                                                                              $dest_imginfo['offset_x'], $dest_imginfo['offset_y'],
                                                                              $dest_imginfo['width'], $dest_imginfo['height'],
-                                                                             $src_imginfo['width'], $src_imginfo['height'], 3,$src_imginfo );
+                                                                             $dest_imginfo['src']['width'], $dest_imginfo['src']['height'], 3,$src_imginfo );
             }
             else
             {
               $dst_frames[$key]['image'] = JoomFile::fastImageCopyResampled( $dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0, 0, 0,
                                                                              $dest_imginfo['width'], $dest_imginfo['height'],
-                                                                             $src_imginfo['width'], $src_imginfo['height'], 3,$src_imginfo );
+                                                                             $dest_imginfo['src']['width'], $dest_imginfo['src']['height'], 3,$src_imginfo );
             }
           }
         }
@@ -1283,9 +1282,12 @@ class JoomFile
     {
       $destWidth = (int)$new_width;
       $destHeight = (int)$new_height;
+      $srcWidth  = (int)($destWidth * $ratio);
+      $srcHeight = (int)($destHeight * $ratio);
     }
 
-    $dest_imginfo = array('width' => $destWidth, 'height' => $destHeight, 'type' => $dest_imgtype, 'offset_x' => $offsetx, 'offset_y' => $offsety);
+    $dest_imginfo = array('width' => $destWidth, 'height' => $destHeight, 'type' => $dest_imgtype, 'offset_x' => $offsetx, 'offset_y' => $offsety,
+                          'src' => array('width' => $srcWidth, 'height' => $srcHeight));
     if (key_exists('channels',$src_imginfo))
     {
       $dest_imginfo['channels'] = $src_imginfo['channels'];
