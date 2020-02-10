@@ -1659,7 +1659,7 @@ class JoomFile
           $chunk = @unpack('Nsize/a4type', $chunkHeader);
 
           // Store position into internal array
-          if (is_null($_src_chunks[$chunk['type']]))
+          if ( !key_exists($chunk['type'], $_src_chunks) )
               $_src_chunks[$chunk['type']] = array ();
           $_src_chunks[$chunk['type']][] = array (
               'offset' => ftell($_fp),
