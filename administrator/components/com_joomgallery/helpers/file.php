@@ -856,17 +856,18 @@ class JoomFile
           return false;
         }
         // Finally the rotate
+        $commands = '';
         if ($src_imginfo['animation'] && $src_imginfo['type'] == 'GIF')
         {
           $commands .= ' -coalesce';
         }
         if($auto_orient)
         {
-          $commands = '-auto-orient';
+          $commands .= '-auto-orient';
         }
         else
         {
-          $commands = '-rotate "-' . $angle . '"';
+          $commands .= '-rotate "-' . $angle . '"';
         }
         $commands  .= ' -quality '.$dest_qual;
         if ($src_imginfo['type'] == 'PNG')
@@ -1134,7 +1135,7 @@ class JoomFile
   }
 
   /**
-   * Definition of the resized destination image (dimansions,type,origin)
+   * Collect informations (definition) for the resized (destination) image (informations: dimansions,type,origin)
    *
    * @param   string  $dest_img         Path of destination image file
    * @param   array   $src_imginfo      array with image informations from analysing the source image (JoomFile::analyseSRCimg)
@@ -1143,7 +1144,7 @@ class JoomFile
    * @param   int     $new_height       Height to resize
    * @param   int     $cropposition     Only if $settings=3; image section to use for cropping
    * @param   int     $angle            angle to rotate the resized image anticlockwise
-   * @return  array $imginfo[width,height,type,offset_x,offset_y] on success, false otherwise
+   * @return  array $imginfo[width,height,type,offset_x,offset_y,channels,bits] on success, false otherwise
    * @since   3.4
    */
   public static function defineDESTimg($dest_img, $src_imginfo, $settings, $new_width, $new_height, $cropposition, $angle)
