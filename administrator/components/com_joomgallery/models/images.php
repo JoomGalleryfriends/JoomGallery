@@ -833,6 +833,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       $thumb = $this->_ambit->getImg('thumb_path', $cid);
 
       $doResize = false;
+      $err = false;
 
       if($rotateImageTypes == 2)
       {
@@ -850,63 +851,70 @@ class JoomGalleryModelImages extends JoomGalleryModel
         else
         {
           $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $orig).'<br />';
+          $err = true;
         }
       }
 
-      if(JoomFile::rotateImage($debugoutput,
-                               $img,
-                               $this->_config->get('jg_thumbcreation'),
-                               $this->_config->get('jg_picturequality'),
-                               $rotateImageAngle,
-                               false,
-                               false))
+      if($rotateImageTypes != 2 || ($rotateImageTypes == 2 && !$err) )
       {
-        $img_count--;
-      }
-      else
-      {
-        $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img).'<br />';
-      }
-
-      $tmpdebugoutput = '';
-
-      if($doResize)
-      {
-        // As we have a successfully rotated original we should use a resize here to ensure the correct
-        // appearance according to the thumbnail conversion settings
-        $ret = JoomFile::resizeImage($tmpdebugoutput,
-                                     $orig,
-                                     $thumb,
-                                     $this->_config->get('jg_useforresizedirection'),
-                                     $this->_config->get('jg_thumbwidth'),
-                                     $this->_config->get('jg_thumbheight'),
-                                     $this->_config->get('jg_thumbcreation'),
-                                     $this->_config->get('jg_thumbquality'),
-                                     $this->_config->get('jg_cropposition'),
-                                     0,
-                                     false,
-                                     false
-                                    );
-      }
-      else
-      {
-        $ret = JoomFile::rotateImage($tmpdebugoutput,
-                                     $thumb,
-                                     $this->_config->get('jg_thumbcreation'),
-                                     $this->_config->get('jg_thumbquality'),
-                                     $rotateImageAngle,
-                                     false,
-                                     false
-                                    );
-
-        if($ret)
+        if(JoomFile::rotateImage($debugoutput,
+                                 $img,
+                                 $this->_config->get('jg_thumbcreation'),
+                                 $this->_config->get('jg_picturequality'),
+                                 $rotateImageAngle,
+                                 false,
+                                 false))
         {
-          $thumb_count--;
+          $img_count--;
         }
         else
         {
-          $debugoutput .= $tmpdebugoutput;
-          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $thumb).'<br />';
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img).'<br />';
+          // As the rotation of the detail image failed the thumb should be resized instead of rotated.
+          $doResize = true;
+          $err = true;
+        }
+
+        $tmpdebugoutput = '';
+
+        if($doResize || $err)
+        {
+          // As we have a successfully rotated original we should use a resize here to ensure the correct
+          // appearance according to the thumbnail conversion settings
+          $ret = JoomFile::resizeImage($tmpdebugoutput,
+                                       $orig,
+                                       $thumb,
+                                       $this->_config->get('jg_useforresizedirection'),
+                                       $this->_config->get('jg_thumbwidth'),
+                                       $this->_config->get('jg_thumbheight'),
+                                       $this->_config->get('jg_thumbcreation'),
+                                       $this->_config->get('jg_thumbquality'),
+                                       $this->_config->get('jg_cropposition'),
+                                       0,
+                                       false,
+                                       false
+                                      );
+        }
+        else
+        {
+          $ret = JoomFile::rotateImage($tmpdebugoutput,
+                                       $thumb,
+                                       $this->_config->get('jg_thumbcreation'),
+                                       $this->_config->get('jg_thumbquality'),
+                                       $rotateImageAngle,
+                                       false,
+                                       false
+                                      );
+
+          if($ret)
+          {
+            $thumb_count--;
+          }
+          else
+          {
+            $debugoutput .= $tmpdebugoutput;
+            $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $thumb).'<br />';
+          }
         }
       }
 
