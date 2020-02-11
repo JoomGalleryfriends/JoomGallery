@@ -280,11 +280,12 @@ class JoomFile
 
   /**
    * Resize image with functions from gd/gd2/imagemagick
+   * Supported image-types: JPG ,PNG, GIF
    *
-   * Cropping function adapted from
-   * 'Resize Image with Different Aspect Ratio'
-   * Author: Nash
-   * Website: http://nashruddin.com/Resize_Image_to_Different_Aspect_Ratio_on_the_fly
+   * Animated gif support according to ImageWorkshop
+   * 'Manage animated GIF with ImageWorkshop'
+   * Author: Clément Guillemain
+   * Website: https://phpimageworkshop.com/tutorial/5/manage-animated-gif-with-imageworkshop.html
    *
    * @param   &string $debugoutput            debug information
    * @param   string  $src_file               Path to source file
@@ -305,9 +306,6 @@ class JoomFile
   public static function resizeImage(&$debugoutput, $src_file, $dest_file, $settings,$new_width, $new_height, $method,
                                       $dest_qual = 100, $cropposition = 0, $angle = 0, $metadata = false, $anim = false)
   {
-
-    // animated gifs: https://phpimageworkshop.com/tutorial/5/manage-animated-gif-with-imageworkshop.html
-
     $config = JoomConfig::getInstance();
 
     // Ensure that the paths are valid and clean
@@ -315,9 +313,10 @@ class JoomFile
     $dest_file = JPath::clean($dest_file);
 
     // Analysis of the source image, if image is valid
-    if( !($src_imginfo = JoomFile::analyseSRCimg($src_file)) )
+    if(!($src_imginfo = JoomFile::analyseSRCimg($src_file)))
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_FILE_NOT_FOUND').'<br />';
+
       return false;
     }
 
@@ -329,15 +328,15 @@ class JoomFile
       )
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ONLY_JPG_PNG').'<br />';
+
       return false;
     }
 
-    if( ( $src_imginfo['width'] <= $new_width && $src_imginfo['height'] <= $new_width &&
-          ($angle == 0 || $angle == 180 || $angle == -180) )
+    // Conditions where no resize is needed
+    if(   ($src_imginfo['width'] <= $new_width && $src_imginfo['height'] <= $new_width && ($angle == 0 || $angle == 180 || $angle == -180))
         ||
-        ( $src_imginfo['height'] <= $new_width && $src_imginfo['width'] <= $new_width &&
-          ($angle == 270 || $angle == -270 || $angle == 90 || $angle == -90))
-        )
+          ($src_imginfo['height'] <= $new_width && $src_imginfo['width'] <= $new_width && ($angle == 270 || $angle == -270 || $angle == 90 || $angle == -90))
+      )
     {
       // If source image is already of the same size or smaller than the image
       // which shall be created only copy the source image to destination
@@ -345,19 +344,22 @@ class JoomFile
       if(!JFile::copy($src_file, $dest_file))
       {
         $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_COPYING', $dest_file).' '.JText::_('COM_JOOMGALLERY_COMMON_CHECK_PERMISSIONS').'<br />';
+
         return false;
       }
+
       return true;
     }
 
-    // Definition of type, dimension and origin of resized image
-    if( !($dest_imginfo = JoomFile::defineDESTimg($dest_file, $src_imginfo, $settings, $new_width, $new_height, $cropposition, $angle)) )
+    // Get informations about type, dimension and origin of resized image
+    if(!($dest_imginfo = JoomFile::getResizeInfo($dest_file, $src_imginfo, $settings, $new_width, $new_height, $cropposition, $angle)))
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ONLY_JPG_PNG').'<br />';
+
       return false;
     }
 
-    // create debugoutput
+    // Create debugoutput
     switch($settings)
     {
     case 0:
@@ -381,26 +383,31 @@ class JoomFile
       case 'gd1':
         $debugoutput.='GD1...<br/>';
         // no animated gif support
+
         if(!function_exists('imagecreate'))
-        // check, if GD is available
         {
-          $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED');
+
           return false;
         }
-        // create GD Object from file
+
+        // Create GD-Object from file
         $src_frames = JoomFile::imageCreateFrom_GD($src_file, $src_imginfo);
-        // create empty GD Object for the resized image
-        $dst_frames = array(array('duration'=>0));
+
+        // Create empty GD-Object for the resized image
+        $dst_frames = array(array('duration' => 0));
         $dst_frames[0]['image'] = JoomFile::imageCreateEmpty_GD($dest_imginfo, $src_imginfo['transparency'], $src_frames[0]['image']);
-        if (in_array(false, $src_frames))
+        if(in_array(false, $src_frames))
         {
-          $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+
           return false;
         }
+
+        // Rotate image, if needed
         if($angle > 0)
-        // rotate image, if needed
         {
-          foreach ($src_frames as $key => $frame)
+          foreach($src_frames as $key => $frame)
           {
             $src_frames[$key]['image'] = JoomFile::imageRotate_GD($src_frames[$key]['image'], $src_imginfo, $angle);
             $src_imginfo['width'] = imagesx($src_frames[$key]['image']);
@@ -408,114 +415,138 @@ class JoomFile
           }
         }
 
-        foreach ($src_frames as $key => $frame)
+        // Resizing with GD1
+        foreach($src_frames as $key => $frame)
         {
           if (!is_null($dest_imginfo['offset_x']) && !is_null($dest_imginfo['offset_y']))
-          // resizing with GD1
           {
-            imagecopyresized( $dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0, $dest_imginfo['offset_x'], $dest_imginfo['offset_y'],
-                              $dest_imginfo['width'], $dest_imginfo['height'], $dest_imginfo['src']['width'], $dest_imginfo['src']['height'] );
+            imagecopyresized($dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0, $dest_imginfo['offset_x'], $dest_imginfo['offset_y'],
+                             $dest_imginfo['width'], $dest_imginfo['height'], $dest_imginfo['src']['width'], $dest_imginfo['src']['height']);
           }
           else
           {
-            imagecopyresized( $dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0, 0, 0,
-                              $dest_imginfo['width'], $dest_imginfo['height'], $dest_imginfo['src']['width'], $dest_imginfo['src']['height'] );
+            imagecopyresized($dst_frames[$key]['image'], $src_frames[$key]['image'], 0, 0, 0, 0,
+                             $dest_imginfo['width'], $dest_imginfo['height'], $dest_imginfo['src']['width'], $dest_imginfo['src']['height']);
           }
-          // write resized image to file
+
+          // Write resized image to file
           $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imginfo['type']);
         }
 
-        if ($metadata)
-        // copy metadata if needed
+        // Copy metadata if needed
+        if($metadata)
         {
           $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imginfo['type'], $dest_imginfo['type']);
-          if (!$meta_success)
+          if(!$meta_success)
           {
-            $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+
             return false;
           }      
         }
+
+        // Workaround for servers with wwwrun problem
         if(!$success)
         {
-          // Workaround for servers with wwwrun problem
           $dir = dirname($dest_file);
           JoomFile::chmod($dir, '0777', true);
+          // Write resized image to file
           $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imginfo['type']);
-          if ($metadata)
+
+          // Copy metadata if needed
+          if($metadata)
           {
             $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imginfo['type'], $dest_imginfo['type']);
-            if (!$meta_success)
+            if(!$meta_success)
             {
-              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+
               return false;
             }      
           }
+
           JoomFile::chmod($dir, '0755', true);
         }
-        foreach ($src_frames as $key => $frame)
+
+        // destroy GD-Objects
+        foreach($src_frames as $key => $frame)
         {
           imagedestroy($src_frames[$key]['image']);
           imagedestroy($dst_frames[$key]['image']);
         }
+
         break;
       case 'gd2':
-        $debugoutput.='GD2...<br/>';
+        $debugoutput .= 'GD2...<br/>';
+
         if(!function_exists('imagecreatefromjpeg'))
-        // check, if GD is available
         {
-          $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED');
-          return false;
-        }
-        if(!function_exists('imagecreatetruecolor'))
-        // check, if GD2 is available
-        {
-          $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_NO_TRUECOLOR');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED');
+
           return false;
         }
 
-        // create empty image of specified size
+        if(!function_exists('imagecreatetruecolor'))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_NO_TRUECOLOR');
+
+          return false;
+        }
+
+        // Create empty image of specified size
         $dst_frames = array();
         $dst_frames = array(array());
+
         if ($anim && $src_imginfo['animation'] && $src_imginfo['type'] == 'GIF')
         {
-          // create GD Objects from gif-file
+          // Animated GIF image (image with more than one frame)
+          // Create GD-Objects from gif-file
           JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
           $gfe = new GifFrameExtractor();
           $src_frames = $gfe->extract($src_file);
-          foreach ($src_frames as $key => $frame)
+
+          foreach($src_frames as $key => $frame)
           {
-            // create empty GD Objects for the resized frames
+            // create empty GD-Objects for the resized frames
             $dst_frames[$key]['duration'] = $src_frames[$key]['duration'];
             $dst_frames[$key]['image'] = JoomFile::imageCreateEmpty_GD($dest_imginfo, $src_imginfo['transparency'], $src_frames[$key]['image']);
           }
+
         }
         else
         {
-          // create GD Object from file
+          // Normal image (image with one frame)
+          // Create GD-Object from file
           $src_frames = JoomFile::imageCreateFrom_GD($src_file, $src_imginfo);
-          $dst_frames[0]['duration'] = 0;
 
+          // Create empty GD-Object for the resized image
+          $dst_frames[0]['duration'] = 0;
           $dst_frames[0]['image'] = JoomFile::imageCreateEmpty_GD($dest_imginfo, $src_imginfo['transparency'], $src_frames[0]['image']);
         }
+
         if (in_array(false, $src_frames))
         {
-          $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+
           return false;
         }
+
+        // Rotate image, if needed
         if($angle > 0)
-        // rotate image, if needed
         {
-          foreach ($src_frames as $key => $frame)
+          foreach($src_frames as $key => $frame)
           {
             $src_frames[$key]['image'] = JoomFile::imageRotate_GD($src_frames[$key]['image'], $src_imginfo, $angle);
             $src_imginfo['width'] = imagesx($src_frames[$key]['image']);
             $src_imginfo['height'] = imagesy($src_frames[$key]['image']);
           }
         }
-        foreach ($src_frames as $key => $frame)
+
+        // Resizing with GD2
+        foreach($src_frames as $key => $frame)
         {
           if($config->jg_fastgd2thumbcreation == 0)
-          // use normal GD2 for resizing
+          // Use normal GD2 for resizing
           {
             if(!is_null($dest_imginfo['offset_x']) && !is_null($dest_imginfo['offset_y']))
             {
@@ -529,7 +560,7 @@ class JoomFile
             }
           }
           else
-          // use fast GD2 for resizing
+          // Use fast GD2 for resizing
           {
             if(!is_null($dest_imginfo['offset_x']) && !is_null($dest_imginfo['offset_y']))
             {
@@ -546,9 +577,11 @@ class JoomFile
             }
           }
         }
-        // write resized image to file
-        if ($anim && $src_imginfo['animation'] && $src_imginfo['type'] == 'GIF')
+
+        // Write resized image to file
+        if($anim && $src_imginfo['animation'] && $src_imginfo['type'] == 'GIF')
         {
+          // Animated GIF image (image with more than one frame)
           JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
           $gc = new GifCreator();
           $gc->create($dst_frames, 0);
@@ -556,26 +589,32 @@ class JoomFile
         }
         else
         {
+          // Normal image (image with one frame)
           $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imginfo['type']);
         }
         
-        if ($metadata)
-        // copy metadata if needed
+        // Copy metadata if needed
+        if($metadata)
         {
           $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imginfo['type'], $dest_imginfo['type']);
-          if (!$meta_success)
+          if(!$meta_success)
           {
-            $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+
             return false;
-          }      
+          }
         }
+
+        // Workaround for servers with wwwrun problem
         if(!$success)
         {
-          // Workaround for servers with wwwrun problem
           $dir = dirname($dest_file);
           JoomFile::chmod($dir, '0777', true);
-          if ($anim && $src_imginfo['animation'] && $src_imginfo['type'] == 'GIF')
+
+          // Write resized image to file
+          if($anim && $src_imginfo['animation'] && $src_imginfo['type'] == 'GIF')
           {
+            // Animated GIF image (image with more than one frame)
             JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
             $gc = new GifCreator();
             $gc->create($dst_frames, 0);
@@ -583,69 +622,100 @@ class JoomFile
           }
           else
           {
+            // Normal image (image with one frame)
             $success = JoomFile::imageWriteFrom_GD($dest_file,$dst_frames,$dest_qual,$dest_imginfo['type']);
           }
-          if ($metadata)
+
+          // Copy metadata if needed
+          if($metadata)
           {
             $meta_success = JoomFile::copyImageMetadata($src_file, $dest_file, $src_imginfo['type'], $dest_imginfo['type']);
-            if (!$meta_success)
+
+            if(!$meta_success)
             {
-              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+
               return false;
             }
           }
+
           JoomFile::chmod($dir, '0755', true);
         }
-        foreach ($src_frames as $key => $frame)
+
+        // destroy GD-Objects
+        foreach($src_frames as $key => $frame)
         {
           imagedestroy($src_frames[$key]['image']);
           imagedestroy($dst_frames[$key]['image']);
         }
+
         break;
       case 'im':
-        $debugoutput.='ImageMagick...<br/>';
+        $debugoutput .= 'ImageMagick...<br/>';
         $disabled_functions = explode(',', ini_get('disabled_functions'));
+
+        // Check, if exec command is available
         foreach($disabled_functions as $disabled_function)
         {
           if(trim($disabled_function) == 'exec')
           {
             $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_EXEC_DISABLED').'<br />';
+
             return false;
           }
         }
+
+        // Check availability and version of ImageMagick
         @exec(trim($config->jg_impath).'convert -version', $output_convert);
         @exec(trim($config->jg_impath).'magick -version', $output_magick);
-        if ($output_convert)
+
+        if($output_convert)
         {
-          $convert_path=trim($config->jg_impath).'convert';
-        }
-        elseif ($output_magick)
-        {
-          $convert_path=trim($config->jg_impath).'magick convert';
+          $convert_path = trim($config->jg_impath).'convert';
         }
         else
         {
-          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_NOTFOUND').'<br />';
-          return false;
+          if($output_magick)
+          {
+            $convert_path = trim($config->jg_impath).'magick convert';
+          }
+          else
+          {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_NOTFOUND').'<br />';
+
+            return false;
+          }
         }
+
+        // Create imagick command
         $commands = '';
-        // if resizing an animation but not preserving the animation, modify the src path for imagick
+
         if ($src_imginfo['animation']  && !$anim)
         {
+          // if resizing an animation but not preserving the animation, consider only first frame
           $src_file = $src_file.'[0]';
         }
-        elseif ($src_imginfo['animation']  && $anim && $src_imginfo['type'] == 'GIF')
+        else
         {
-          $commands .= ' -coalesce';
+          if ($src_imginfo['animation']  && $anim && $src_imginfo['type'] == 'GIF')
+          {
+            // if resizing an animation, use coalesce for better results
+            $commands .= ' -coalesce';
+          }
         }
+        
+        // Rotate image, if needed (use auto-orient command)
         if($angle > 0)
         {
           $commands .= ' -auto-orient';
         }
+
+        // Delete all metadata, if needed
         if(!$metadata)
         {
           $commands .= ' -strip';
         }
+
         // Crop the source image before resiszing if offsets setted before
         // example of crop: convert input -crop destwidthxdestheight+offsetx+offsety +repage output
         // +repage needed to delete the canvas
@@ -654,6 +724,7 @@ class JoomFile
           // Assembling the imagick command for cropping
           $commands .= ' -crop "'.$dest_imginfo['width'].'x'.$dest_imginfo['height'].'+'.$dest_imginfo['offset_x'].'+'.$dest_imginfo['offset_y'].'" +repage';
         }
+
         // Assembling the imagick command for resizing
         $commands  .= ' -resize "'.$dest_imginfo['width'].'x'.$dest_imginfo['height'].'" -quality "'.$dest_qual.'" -unsharp "3.5x1.2+1.0+0.10"';
         
@@ -662,39 +733,52 @@ class JoomFile
 
         $return_var = null;
         $dummy      = null;
+
         // execute the resize
         @exec($convert, $dummy, $return_var);
+
+        // Workaround for servers with wwwrun problem
         if($return_var != 0)
         {
-          // Workaround for servers with wwwrun problem
           $dir = dirname($dest_file);
           JoomFile::chmod($dir, '0777', true);
+
+          // execute the resize
           @exec($convert, $dummy, $return_var);
+
           JoomFile::chmod($dir, '0755', true);
+
           if($return_var != 0)
           {
             $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM','exec('.$convert.');').'<br />';
+
             return false;
           }
         }
+
         break;
       default:
         JError::raiseError(500, JText::_('COM_JOOMGALLERY_UPLOAD_UNSUPPORTED_RESIZING_METHOD'));
         break;
     }
+
     // Set mode of uploaded picture
     JPath::setPermissions($dest_file);
+
     // Check that the resized image is valid
     if(!($src_imginfo = getimagesize($dest_file)))
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_ERROR').'<br />';
+
       return false;
     }
+
     return true;
   }
 
   /**
-   * Rotate an image (only JPGs) with functions from gd/gd2/imagemagick (Supported image-types: JPG,PNG,GIF)
+   * Rotate image with functions from gd/gd2/imagemagick
+   * Supported image-types: JPG ,PNG, GIF
    *
    * @param   &string $debugoutput  Debug information
    * @param   string  $src          Path to source file
@@ -705,23 +789,25 @@ class JoomFile
    *                                convert (ImageMagick), otherwise option -rotate is used
    * @param   boolean $metadata     true=preserve metadata during rotation
    * @return  boolean True on success, false otherwise
-   * @since   3.4
+   * @since   3.4.0
    */
   public static function rotateImage(&$debugoutput, $src, $method = 'gd2', $dest_qual = 100, $angle = 0, $auto_orient = true, $metadata = true)
   {
+
     if($angle == 0)
     {
       // Nothing to do
       return true;
     }
+
     // Ensure that the path is valid and clean
     $src = JPath::clean($src);
 
     // Analysis of the source image, if image is valid
-    //$imginfo = getimagesize($src_file, $src_metainfo);
     if(!($src_imginfo = JoomFile::analyseSRCimg($src)))
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_FILE_NOT_FOUND').'<br />';
+
       return false;
     }
 
@@ -733,46 +819,63 @@ class JoomFile
       )
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_ONLY_JPG').'<br />';
+
       return false;
     }
 
     // Definition of type, dimension and origin of rotated image
     $dest_imginfo = array('width' => $src_imginfo['width'], 'height' => $src_imginfo['height'], 'type' => $src_imginfo['type'],
-                          'offset_x' => 0, 'offset_y' => 0);
-    if (key_exists('channels',$src_imginfo))
+                          'offset_x' => 0, 'offset_y' => 0, 'src' => array('width' => $src_imginfo['width'], 'height' => $src_imginfo['height']));
+
+    if(key_exists('channels',$src_imginfo))
     {
       $dest_imginfo['channels'] = $src_imginfo['channels'];
     }
-    if (key_exists('bits',$src_imginfo))
+
+    if(key_exists('bits',$src_imginfo))
     {
       $dest_imginfo['bits'] = $src_imginfo['bits'];
     }
 
+    // Method for creation of the rotated image
     switch($method)
     {
       case 'gd1':
+        // 'break' intentionally omitted
       case 'gd2':
+
         if(!function_exists('imagecreatefromjpeg'))
         {
           $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED').'<br />';
+
           return false;
         }
-        if ($src_imginfo['animation'])
+
+        if($src_imginfo['animation'])
         {
+          // Animated GIF image (image with more than one frame)
           $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_NO_ROTATION').'<br />';
+
           return false;
         }
         else
         {
+          // Normal image (image with one frame)
+          // Create GD-Object from file
           $src_frames = JoomFile::imageCreateFrom_GD($src, $src_imginfo);
+
+          // Create empty GD-Object for the resized image
           $dst_frames = array(array());
           $dst_frames[0]['image'] = JoomFile::imageCreateEmpty_GD($dest_imginfo, $src_imginfo['transparency'], $src_frames[0]['image']);
         }
-        if (!$src_frames)
+
+        if(!$src_frames)
         {
-          $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+
           return false;
         }
+
         // Rotate image
         $dst_frames[0]['image'] = JoomFile::imageRotate_GD($src_frames[0]['image'], $src_imginfo, $angle);
         $dst_imginfo['width'] = imagesx($src_frames[0]['image']);
@@ -782,6 +885,7 @@ class JoomFile
         $tmp = explode('.', $src);
         $src_orig = str_replace('.'.end($tmp),'_orig.'.end($tmp), $src);
         $rn_success = rename($src,$src_orig);
+
         // Write rotated file
         if ($rn_success)
         {
@@ -791,85 +895,119 @@ class JoomFile
         {
           $success = false;
         }
+
+        // Workaround for servers with wwwrun problem
         if(!$success)
-        {
-          // Workaround for servers with wwwrun problem
+        {  
           $dir = dirname($src);
           JoomFile::chmod($dir, '0777', true);
+
+          // Rename source file so it dont gets overwritten 
           rename($src,$src_orig);
+
+          // Write rotated file
           JoomFile::imageWriteFrom_GD($src,$dst_frames,$dest_qual,$dest_imgtype);
-          if ($metadata)
-          // copy metadata if needed
+
+          // Copy metadata if needed
+          if($metadata)
           {
-             $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imginfo['type'], $dest_imginfo['type']);
-            if (!$meta_success)
+            $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imginfo['type'], $dest_imginfo['type']);
+
+            if(!$meta_success)
             {
-              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+
               return false;
             }
+
           }
+
           unlink($src_orig);
           JoomFile::chmod($dir, '0755', true);
         }
         else
         {
-          if ($metadata)
-          // copy metadata if needed
+          // Copy metadata if needed
+          if($metadata)
           {
-             $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imginfo['type'], $dest_imginfo['type']);
-            if (!$meta_success)
+            $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imginfo['type'], $dest_imginfo['type']);
+
+            if(!$meta_success)
             {
-              $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+
               return false;
             }
+
           }
         }
+
+        // destroy GD-Objects
         imagedestroy($src_frames[0]['image']);
         imagedestroy($dst_frames[0]['image']);
+        
         unlink($src_orig);
         break;
       case 'im':
         $disabled_functions = explode(',', ini_get('disabled_functions'));
+
+        // Check, if exec command is available
         foreach($disabled_functions as $disabled_function)
         {
           if(trim($disabled_function) == 'exec')
           {
             $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_EXEC_DISABLED').'<br />';
+
             return false;
           }
         }
+
         $config = JoomConfig::getInstance();
+
+        // Check availability and version of ImageMagick
         @exec(trim($config->jg_impath).'convert -version', $output_convert);
         @exec(trim($config->jg_impath).'magick -version', $output_magick);
+
         if ($output_convert)
         {
-          $convert_path=trim($config->jg_impath).'convert';
+          $convert_path = trim($config->jg_impath).'convert';
         }
-        elseif ($output_magick)
-        {
-          $convert_path=trim($config->jg_impath).'magick convert';
-        }
+        else
+          if($output_magick)
+          {
+            $convert_path = trim($config->jg_impath).'magick convert';
+          }        
         else
         {
           $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_NOTFOUND').'<br />';
+
           return false;
         }
-        // Finally the rotate
+
+        // Create imagick command
         $commands = '';
-        if ($src_imginfo['animation'] && $src_imginfo['type'] == 'GIF')
+
+        if($src_imginfo['animation'] && $src_imginfo['type'] == 'GIF')
         {
+          // if resizing an animation, use coalesce for better results
           $commands .= ' -coalesce';
         }
+
         if($auto_orient)
         {
+          // Rotate image with auto-orien if needed
           $commands .= '-auto-orient';
         }
         else
         {
-          $commands .= '-rotate "-' . $angle . '"';
+          // Else rotate by angle
+          $commands .= '-rotate "-'.$angle.'"';
         }
+
+        // Rotation quality
         $commands  .= ' -quality '.$dest_qual;
-        if ($src_imginfo['type'] == 'PNG')
+
+        if($src_imginfo['type'] == 'PNG')
         {
           // Rename source file so it dont gets overwritten
           $tmp = explode('.', $src);
@@ -879,56 +1017,78 @@ class JoomFile
         else
         {
           $src_orig = $src;
-        }       
+        }
+
+        // Assembling the shell code for the rotation with imagick 
         $convert    = $convert_path.' '.$commands.' "'.$src_orig.'" "'.$src.'"';
+
         $return_var = null;
         $dummy      = null;
+
+        // execute the rotation
         @exec($convert, $dummy, $return_var);
+
+        // Workaround for servers with wwwrun problem
         if($return_var != 0)
         {
-          // Workaround for servers with wwwrun problem
           $dir = dirname($src);
           JoomFile::chmod($dir, '0777', true);
+
+          // execute the rotation
           @exec($convert, $dummy, $return_var);
-          if ($src_imginfo[2] == 'PNG')
-          // copy metadata with GD for PNG images
+
+          // Preserve metadata of png files with php functions
+          if($src_imginfo[2] == 'PNG')
           {
+            // copy metadata
             $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imginfo['type'], $dest_imginfo['type']);
-            if (!$meta_success)
+
+            if(!$meta_success)
             {
               $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+
               return false;
             }
+
             unlink($src_orig);
           }
+
           JoomFile::chmod($dir, '0755', true);
+
           if($return_var != 0)
           {
             $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM','exec('.$convert.');').'<br />';
+
             return false;
           }
         }
         else
         {
-          if ($src_imginfo['type'] == 'PNG')
-          // copy metadata with GD for PNG images
+          // Preserve metadata of png files with php functions
+          if($src_imginfo['type'] == 'PNG')
           {
-             $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imginfo['type'], $dest_imginfo['type']);
-            if (!$meta_success)
+            // copy metadata
+            $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imginfo['type'], $dest_imginfo['type']);
+
+            if(!$meta_success)
             {
               $debugoutput.=JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+
               return false;
             }
           }
         }
+
         if ($src_imginfo['type'] == 'PNG')
         {
           unlink($src_orig);
         }
+
         // Check that the resized image is valid
         if(!($src_imginfo = getimagesize($src)))
         {
           $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM','exec('.$convert.');').'<br />';
+
           return false;
         }
         break;
@@ -941,7 +1101,7 @@ class JoomFile
     // Set mode of uploaded picture
     JPath::setPermissions($src);
 
-    // We check that the image is valid
+    // Check that the rotated image is valid
     if(!getimagesize($src))
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_FILE_NOT_FOUND').'<br />';
@@ -999,27 +1159,28 @@ class JoomFile
       return false;
     }
 
-    //check, if it is a special image (transparency or animation)
+    // Check, if it is a special image (transparency or animation)
     $special = false;
-    if ($imginfo['animation'] || $imginfo['transparency'])
+    if($imginfo['animation'] || $imginfo['transparency'])
     {
       $special = true;
     }
 
+    // Perform the resize
     if($quality < 5 && (($dst_w * $quality) < $src_w || ($dst_h * $quality) < $src_h) && !$special)
     {
+      // Fast resizing
       $temp = imagecreatetruecolor($dst_w * $quality + 1, $dst_h * $quality + 1);
-      imagecopyresized  ($temp, $src_image, 0, 0, $src_x, $src_y, $dst_w * $quality + 1,
-                         $dst_h * $quality + 1, $src_w, $src_h);
-      imagecopyresampled($dst_image, $temp, $dst_x, $dst_y, 0, 0, $dst_w,
-                                      $dst_h, $dst_w * $quality, $dst_h * $quality);
-      imagedestroy      ($temp);
+      imagecopyresized($temp, $src_image, 0, 0, $src_x, $src_y, $dst_w * $quality + 1,$dst_h * $quality + 1, $src_w, $src_h);
+      imagecopyresampled($dst_image, $temp, $dst_x, $dst_y, 0, 0, $dst_w,$dst_h, $dst_w * $quality, $dst_h * $quality);
+      imagedestroy($temp);
     }
     else
     {
-      imagecopyresampled($dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w,
-                                      $dst_h, $src_w, $src_h);
+      // Normal resizing
+      imagecopyresampled($dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w,$dst_h, $src_w, $src_h);
     }
+
     return $dst_image;
   }
 
@@ -1043,98 +1204,133 @@ class JoomFile
   /**
    * Analysis of an image
    *
-   * @param   string  $src_img          Path to source image file
-   * @return  array $imginfo[width,height,type,orientation,transparency,animation] on success, false otherwise
-   * @since   3.4
+   * @param   string    $src_img        Path to source image file
+   * @return  array     $imginfo[width,height,type,orientation,transparency,animation] on success, false otherwise
+   * @since   3.5.0
    */
   public static function analyseSRCimg($src_img)
   {
     $type = $transparency = $animation = false;
     $info = getimagesize($src_img);
+
+    // Check, if image exists
     if($info == false)
     {
-      // image file not found
+
       return false;
     }
-    if (key_exists('bits',$info))
+
+    // Extract bits and channels from info
+    if(key_exists('bits',$info))
     {
       $bits = $info['bits'];
     }
-    if (key_exists('channels',$info))
+
+    if(key_exists('channels',$info))
     {
       $channels = $info['channels'];
     }
+
+    // Decrypt the imagetype
     $imagetype = array(0=>'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
                        5 => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
                        10 => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
                        15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
 
     $type = $imagetype[$info[2]];
-    //get the image orientation
-    if ($info[0] > $info[1])
+
+    // Get the image orientation
+    if($info[0] > $info[1])
     {
       $orientation = 'landscape';
     }
-    elseif ($info[0] < $info[1])
-    {
-      $orientation = 'portrait';
-    }
     else
     {
-      $orientation = 'square';
-    }
-    //detect, if image is a special image
-    if ($type == 'PNG')
+      if($info[0] < $info[1])
+      {
+        $orientation = 'portrait';
+      }
+      else
+      {
+        $orientation = 'square';
+      }
+    }    
+
+    // Detect, if image is a special image
+    if($type == 'PNG')
     {
-      //detect, if png has transparency
+      // Detect, if png has transparency
       $pngtype = ord(@file_get_contents($src_img, NULL, NULL, 25, 1));
-      if ($pngtype == 4 || $pngtype == 6)
+
+      if($pngtype == 4 || $pngtype == 6)
       {
         $transparency = true;
       }
     }
-    if ($type == 'GIF')
+
+    if($type == 'GIF')
     {
-      //detect, if gif is animated
+      // Detect, if gif is animated
       $fh = @fopen($src_img, 'rb');
       $count = 0;
+
       while(!feof($fh) && $count < 2)
       {
         $chunk = fread($fh, 1024 * 100); //read 100kb at a time
         $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
       }
+
       fclose($fh);
-      //detect, if gif has transparency
+
+      // Detect, if gif has transparency
       $tmp = imagecreatefromgif($src_img);
       $tmp_trans = imagecolortransparent($tmp);
 
-      if ($count > 1 && $tmp_trans == -1)
+      if($count > 1 && $tmp_trans == -1)
       {
         $animation = true;
       }
-      elseif ($count > 1 && $tmp_trans >= 0) {
-        $animation = true;
-        $transparency = true;
-      }
-      elseif ($count <= 1 && $tmp_trans >= 0) {
-        $transparency = true;
+      else
+      {
+        if($count > 1 && $tmp_trans >= 0)
+        {
+          $animation = true;
+          $transparency = true;
+        }
+        else
+        {
+          if($count <= 1 && $tmp_trans >= 0)
+          {
+            $transparency = true;
+          }
+        }
       }
     }
+
+    // Assemble the imginfo array
     $imginfo = array('width' => $info[0], 'height' => $info[1], 'type' => $type, 'orientation' => $orientation,
                      'transparency' => $transparency, 'animation' => $animation);
+
     if (key_exists('channels',$info))
     {
       $imginfo['channels'] = $info['channels'];
     }
+
     if (key_exists('bits',$info))
     {
       $imginfo['bits'] = $info['bits'];
     }
+
     return $imginfo;
   }
 
   /**
-   * Collect informations (definition) for the resized (destination) image (informations: dimansions,type,origin)
+   * Collect informations for the resize (informations: dimansions,type,origin)
+   *
+   * Cropping function adapted from
+   * 'Resize Image with Different Aspect Ratio'
+   * Author: Nash
+   * Website: http://nashruddin.com/Resize_Image_to_Different_Aspect_Ratio_on_the_fly
    *
    * @param   string  $dest_img         Path of destination image file
    * @param   array   $src_imginfo      array with image informations from analysing the source image (JoomFile::analyseSRCimg)
@@ -1144,29 +1340,37 @@ class JoomFile
    * @param   int     $cropposition     Only if $settings=3; image section to use for cropping
    * @param   int     $angle            angle to rotate the resized image anticlockwise
    * @return  array $imginfo[width,height,type,offset_x,offset_y,channels,bits] on success, false otherwise
-   * @since   3.4
+   * @since   3.5.0
    */
-  public static function defineDESTimg($dest_img, $src_imginfo, $settings, $new_width, $new_height, $cropposition, $angle)
+  public static function getResizeInfo($dest_img, $src_imginfo, $settings, $new_width, $new_height, $cropposition, $angle)
   {
-    // get the desired image type out of the destination path
+    // Get the desired image type out of the destination path
     $tmp = explode('.', $dest_img);
     $dest_imgtype = strtolower(end($tmp));
-    if ($dest_imgtype == 'jpg' || $dest_imgtype == 'jpeg' || $dest_imgtype == 'jpe' || $dest_imgtype == 'jif' || $dest_imgtype == 'jfif' || $dest_imgtype == 'jfi')
+
+    if($dest_imgtype == 'jpg' || $dest_imgtype == 'jpeg' || $dest_imgtype == 'jpe' || $dest_imgtype == 'jif' || $dest_imgtype == 'jfif' || $dest_imgtype == 'jfi')
     {
       $dest_imgtype = 'JPG';
     }
-    elseif ($dest_imgtype == 'gif')
-    {
-      $dest_imgtype = 'GIF';
-    }
-    elseif ($dest_imgtype == 'png')
-    {
-      $dest_imgtype = 'PNG';
-    }
     else
     {
-      $dest_imgtype = 'UNKNOWN';
-      return false;
+      if($dest_imgtype == 'gif')
+      {
+        $dest_imgtype = 'GIF';
+      }
+      else
+      {
+        if ($dest_imgtype == 'png')
+        {
+          $dest_imgtype = 'PNG';
+        }
+        else
+        {
+          $dest_imgtype = 'UNKNOWN';
+
+          return false;
+        }
+      }
     }
 
     // Height/width
@@ -1183,55 +1387,63 @@ class JoomFile
 
     $offsetx = null;
     $offsety = null;
+
     switch($settings)
     {
-    // Resize to height ratio (but keep original ratio)
     case 0:
+      // Resize to height ratio (but keep original ratio)
       $ratio = ($srcHeight / $new_height);
       $testwidth = ($srcWidth / $ratio);
+
       // If new width exceeds setted max. width
       if($testwidth > $new_width)
       {
         $ratio = ($srcWidth / $new_width);
       }
+
       break;
-    // Resize to width ratio (but keep original ratio)
     case 1:
+      // Resize to width ratio (but keep original ratio)
       $ratio = ($srcWidth / $new_width);
       $testheight = ($srcHeight / $ratio);
+
       // If new height exceeds the setted max. height
       if($testheight > $new_height)
       {
         $ratio = ($srcHeight / $new_height);
       }
+
       break;
-    // Resize to max side lenght - height or width (but keep original ratio)
     case 2:
-      if ($srcHeight > $srcWidth)
+      // Resize to max side lenght - height or width (but keep original ratio)
+      if($srcHeight > $srcWidth)
       {
         $ratio = ($srcHeight / $new_height);
         $testwidth = ($srcWidth / $ratio);
-      } else
+      }
+      else
       {
         $ratio = ($srcWidth / $new_width);
         $testheight = ($srcHeight / $ratio);
       }
       break;
-    // Free resizing and cropping
     case 3:
+      // Free resizing and cropping
       if($srcWidth < $new_width)
       {
         $new_width = $srcWidth;
       }
+
       if($srcHeight < $new_height)
       {
         $new_height = $srcHeight;
       }
-      // Expand the thumbnail's aspect ratio
-      // to fit the width/height of the image
+
+      // Expand the thumbnail's aspect ratio to fit the width/height of the image
       $ratiowidth = $srcWidth / $new_width;
       $ratioheight = $srcHeight / $new_height;
-      if ($ratiowidth < $ratioheight)
+
+      if($ratiowidth < $ratioheight)
       {
         $ratio = $ratiowidth;
       }
@@ -1240,43 +1452,45 @@ class JoomFile
         $ratio = $ratioheight;
       }
 
-      // Calculate the offsets for cropping the source image according
-      // to thumbposition
+      // Calculate the offsets for cropping the source image according to thumbposition
       switch($cropposition)
       {
-        // Left upper corner
         case 0:
+          // Left upper corner
           $offsetx = null;
           $offsety = null;
           break;
-        // Right upper corner
         case 1:
+          // Right upper corner
           $offsetx = (int)floor(($srcWidth - ($new_width * $ratio)));
           $offsety = 0;
           break;
-        // Left lower corner
         case 3:
+          // Left lower corner
           $offsetx = 0;
           $offsety = (int)floor(($srcHeight - ($new_height * $ratio)));
           break;
-        // Right lower corner
         case 4:
+          // Right lower corner
           $offsetx = (int)floor(($srcWidth - ($new_width * $ratio)));
           $offsety = (int)floor(($srcHeight - ($new_height * $ratio)));
           break;
-        // Default center
         default:
+          // Default center
           $offsetx = (int)floor(($srcWidth - ($new_width * $ratio)) * 0.5);
           $offsety = (int)floor(($srcHeight - ($new_height * $ratio)) * 0.5);
           break;
       }
     }
 
+    // Calculate widths and heights necessary for resize and bring them to integer values
     if(is_null($offsetx) && is_null($offsety))
     {
       $ratio = max($ratio, 1.0);
       $destWidth  = (int)floor($srcWidth / $ratio);
       $destHeight = (int)floor($srcHeight / $ratio);
+      $srcWidth  = (int)$srcWidth;
+      $srcHeight = (int)$srcHeight;
     }
     else
     {
@@ -1286,21 +1500,26 @@ class JoomFile
       $srcHeight = (int)($destHeight * $ratio);
     }
 
+    // Assemble imginfo array
     $dest_imginfo = array('width' => $destWidth, 'height' => $destHeight, 'type' => $dest_imgtype, 'offset_x' => $offsetx, 'offset_y' => $offsety,
                           'src' => array('width' => $srcWidth, 'height' => $srcHeight));
+
     if (key_exists('channels',$src_imginfo))
     {
       $dest_imginfo['channels'] = $src_imginfo['channels'];
     }
+
     if (key_exists('bits',$src_imginfo))
     {
       $dest_imginfo['bits'] = $src_imginfo['bits'];
     }
+
     return $dest_imginfo;
   }
 
   /**
-   * Creates GD image objects from different file types with one frame (Supported: JPG,PNG,GIF)
+   * Creates GD image objects from different file types with one frame
+   * Supported: JPG, PNG, GIF
    *
    * @param   string  $src_file     Path to source file
    * @param   array   $imginfo      array with image informations from analysing the source image (JoomFile::analyseSRCimg)
@@ -1315,25 +1534,21 @@ class JoomFile
       case 'PNG':
         $src_frame[0]['image'] = imagecreatefrompng($src_file);
         break;
-
       case 'GIF':
-        $src_frame[0]['image'] = imagecreatefromgif($src_file);
-        
+        $src_frame[0]['image'] = imagecreatefromgif($src_file);        
         break;
-
       case 'JPG':
         $src_frame[0]['image'] = imagecreatefromjpeg($src_file);
-        break;
-      
+        break;      
       default:
         return false;
         break;
     }
 
     // Convert pallete images to true color images
-    if (function_exists('imagepalettetotruecolor'))
+    if (function_exists('imagepalettetotruecolor') && $imginfo['type'] != 'GIF')
     {
-      //imagepalettetotruecolor($src_frame[0]['image']);
+      imagepalettetotruecolor($src_frame[0]['image']);
     }
 
     return $src_frame;
@@ -1351,6 +1566,7 @@ class JoomFile
    */
   public static function imageCreateEmpty_GD($imginfo, $transparency, $src_img)
   {
+    // Create empty GD-Object
     if(function_exists('imagecreatetruecolor'))
     {
       $img = imagecreatetruecolor($imginfo['width'], $imginfo['height']);
@@ -1362,21 +1578,14 @@ class JoomFile
 
     if($transparency)
     {
+      // Set transparent backgraound
       switch ($imginfo['type'])
       {
-        case 'PNG':
-          if(function_exists('imagecolorallocatealpha'))
-            {
-              imagealphablending($img, false);
-              $colorTransparent = imagecolorallocatealpha($img, 0, 0, 0, 127);
-              imagefill($img, 0, 0, $colorTransparent);
-              imagesavealpha($img, true);
-            }
-          break;
-
         case 'GIF':
+          // Special threatment for gif files
           $trnprt_indx = imagecolortransparent($src_img);
           $palletsize = imagecolorstotal($src_img);
+
           if ($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
           {
             $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
@@ -1384,18 +1593,28 @@ class JoomFile
             imagefill($img, 0, 0, $trnprt_indx);
             imagecolortransparent($img, $trnprt_indx);
           }
+
           if ($imginfo['bits'] == 1)
           {
+
            if(function_exists('imagecolorallocatealpha'))
             {
               $transparentColor = imagecolorallocatealpha($img, 0, 0, 0, 127);
               imagecolortransparent($img, $transparentColor);
               imagefill($img, 0, 0, $transparentColor);
             }
+
           }
-          break;
-        
+          break;        
         default:
+          if(function_exists('imagecolorallocatealpha'))
+          {
+            imagealphablending($img, false);
+            $colorTransparent = imagecolorallocatealpha($img, 0, 0, 0, 127);
+            imagefill($img, 0, 0, $colorTransparent);
+            imagesavealpha($img, true);
+          }
+
           break;
       }
     }
@@ -1404,11 +1623,13 @@ class JoomFile
       // set black background
       imagefill($img, 0, 0, imagecolorallocate($img, 0, 0, 0));
     }
+
     return $img;
   }
 
   /**
-   * Output GD image object to file from different file types with one frame (Supported: JPG,PNG,GIF)
+   * Output GD image object to file from different file types with one frame
+   * Supported: JPG, PNG, GIF
    *
    * @param   string  $dest_file    Path to destination file
    * @param   array   $dst_frame    array with one GD object for one frame ; array(array('duration'=>0, 'image'=>GDobject))
@@ -1422,23 +1643,34 @@ class JoomFile
     switch ($dest_imgtype)
     {
       case 'PNG':
+        // Calculate png quality, since it should be between 1 and 9
         $png_qual = ($dest_qual - 100) / 11.111111;
         $png_qual = round(abs($png_qual));
+
+        // Write file
         $success = imagepng($dst_frame[0]['image'], $dest_file, $png_qual);
         break;
-
       case 'GIF':
+        // Write file
         $success = imagegif($dst_frame[0]['image'], $dest_file);
-        break;
-      
+        break;      
       case 'JPG':
-        imageinterlace($dst_frame[0]['image'], true);
+        // Enable progressive image creation
+        if(function_exists('imageistruecolor'))
+        {
+          if (imageistruecolor($dst_frame[0]['image']))
+          {
+            imageinterlace($dst_frame[0]['image'], true);
+          }
+        }
+
+        // Write file
         $success = imagejpeg($dst_frame[0]['image'], $dest_file, $dest_qual);
         break;
-
       default:
         $success = false;
     }
+
     return $success;
   }
 
@@ -1466,29 +1698,31 @@ class JoomFile
       $backgroundColor = imagecolorallocate($img, 0, 0, 0);
     }
 
+    // Rotate image
     $new_img = imagerotate($img, $angle, $backgroundColor);
 
-    // keeping transparency
+    // Keeping transparency
     if($imginfo['transparency'])
     {
       switch ($imginfo['type'])
       {
         case 'PNG':
-          imageAlphaBlending($new_img, false);
-          imageSaveAlpha($new_img, true);
+          // Special threatment for png files
+          if(function_exists('imagealphablending'))
+          {
+            imagealphablending($new_img, false);
+            imagesavealpha($new_img, true);
+          }
           break;
-
-        case 'GIF':
+        default:
           if(function_exists('imagecolorallocatealpha'))
           {
             imagecolortransparent($new_img, imagecolorallocatealpha($new_img, 0, 0, 0, 127));
           }
           break;
-
-        default:
-          break;
       }
     }
+
     return $new_img;
   }
 
@@ -1505,17 +1739,23 @@ class JoomFile
    */
   public static function copyImageMetadata($src_file, $dest_file, $src_imagetype, $dest_imgtype)
   {
-    if ($src_imagetype == 'JPG' && $dest_imgtype == 'JPG')
+    if($src_imagetype == 'JPG' && $dest_imgtype == 'JPG')
     {
       $success = JoomFile::copyJPGmetadata($src_file,$dest_file);
     }
-    elseif ($src_imagetype == 'PNG' && $dest_imgtype == 'PNG') {
-      $success = JoomFile::copyPNGmetadata($src_file,$dest_file);
-    }
     else
     {
-      $success = true;
+      if ($src_imagetype == 'PNG' && $dest_imgtype == 'PNG')
+      {
+        $success = JoomFile::copyPNGmetadata($src_file,$dest_file);
+      }
+      else
+      {
+        // In all other cases dont copy metadata
+        $success = true;
+      }
     }
+
     return $success;
   }
 
@@ -1526,76 +1766,100 @@ class JoomFile
    * Author: ebashkoff
    * Website: https://www.php.net/manual/de/function.iptcembed.php
    *
-   * @param   string  $srcfile               Path to source file
-   * @param   string  $destfile              Path to destination file
-   * @return  int number of bytes written on success, false otherwise
+   * @param   string  $srcfile         Path to source file
+   * @param   string  $destfile        Path to destination file
+   * @return  int     number of bytes written on success, false otherwise
    * @since   3.5.0
    */
   public static function copyJPGmetadata($srcfile, $destfile)
   {
-      // Function transfers EXIF (APP1) and IPTC (APP13) from $srcfile and adds it to $destfile
-      // JPEG file has format 0xFFD8 + [APP0] + [APP1] + ... [APP15] + <image data> where [APPi] are optional
-      // Segment APPi (where i=0x0 to 0xF) has format 0xFFEi + 0xMM + 0xLL + <data> (where 0xMM is
-      //   most significant 8 bits of (strlen(<data>) + 2) and 0xLL is the least significant 8 bits
-      //   of (strlen(<data>) + 2) 
+    // Function transfers EXIF (APP1) and IPTC (APP13) from $srcfile and adds it to $destfile
+    // JPEG file has format 0xFFD8 + [APP0] + [APP1] + ... [APP15] + <image data> where [APPi] are optional
+    // Segment APPi (where i=0x0 to 0xF) has format 0xFFEi + 0xMM + 0xLL + <data> (where 0xMM is
+    //   most significant 8 bits of (strlen(<data>) + 2) and 0xLL is the least significant 8 bits
+    //   of (strlen(<data>) + 2) 
 
-      if (file_exists($srcfile) && file_exists($destfile)) {
-          $srcsize = @getimagesize($srcfile, $imageinfo);
-          $dstsize = @getimagesize($destfile, $destimageinfo);
-          // Check if file is jpg
-          if ($srcsize[2] != 2 && $dstsize[2] != 2) return false;
-          // Prepare EXIF data bytes from source file
-          $exifdata = (is_array($imageinfo) && key_exists("APP1", $imageinfo)) ? $imageinfo['APP1'] : null;
-          if ($exifdata) {
-              $exiflength = strlen($exifdata) + 2;
-              if ($exiflength > 0xFFFF) return false;
-              // Construct EXIF segment
-              $exifdata = chr(0xFF) . chr(0xE1) . chr(($exiflength >> 8) & 0xFF) . chr($exiflength & 0xFF) . $exifdata;
-          }
-          // Prepare IPTC data bytes from source file
-          $iptcdata = (is_array($imageinfo) && key_exists("APP13", $imageinfo)) ? $imageinfo['APP13'] : null;
-          if ($iptcdata) {
-              $iptclength = strlen($iptcdata) + 2;
-              if ($iptclength > 0xFFFF) return false;
-              // Construct IPTC segment
-              $iptcdata = chr(0xFF) . chr(0xED) . chr(($iptclength >> 8) & 0xFF) . chr($iptclength & 0xFF) . $iptcdata;
-          }
-          $destfilecontent = @file_get_contents($destfile);
-          if (!$destfilecontent) return false;
-          if (strlen($destfilecontent) > 0) {
-              $destfilecontent = substr($destfilecontent, 2);
-              $portiontoadd = chr(0xFF) . chr(0xD8);          // Variable accumulates new & original IPTC application segments
-              $exifadded = !$exifdata;
-              $iptcadded = !$iptcdata;
+    if(file_exists($srcfile) && file_exists($destfile))
+    {
+        $srcsize = @getimagesize($srcfile, $imageinfo);
+        $dstsize = @getimagesize($destfile, $destimageinfo);
 
-              while ((JoomFile::get_safe_chunk(substr($destfilecontent, 0, 2)) & 0xFFF0) === 0xFFE0) {
-                  $segmentlen = (JoomFile::get_safe_chunk(substr($destfilecontent, 2, 2)) & 0xFFFF);
-                  $iptcsegmentnumber = (JoomFile::get_safe_chunk(substr($destfilecontent, 1, 1)) & 0x0F);   // Last 4 bits of second byte is IPTC segment #
-                  if ($segmentlen <= 2) return false;
-                  $thisexistingsegment = substr($destfilecontent, 0, $segmentlen + 2);
-                  if ((1 <= $iptcsegmentnumber) && (!$exifadded)) {
-                      $portiontoadd .= $exifdata;
-                      $exifadded = true;
-                      if (1 === $iptcsegmentnumber) $thisexistingsegment = '';
-                  }
-                  if ((13 <= $iptcsegmentnumber) && (!$iptcadded)) {
-                      $portiontoadd .= $iptcdata;
-                      $iptcadded = true;
-                      if (13 === $iptcsegmentnumber) $thisexistingsegment = '';
-                  }
-                  $portiontoadd .= $thisexistingsegment;
-                  $destfilecontent = substr($destfilecontent, $segmentlen + 2);
-              }
-              if (!$exifadded) $portiontoadd .= $exifdata;  //  Add EXIF data if not added already
-              if (!$iptcadded) $portiontoadd .= $iptcdata;  //  Add IPTC data if not added already
-              $outputfile = fopen($destfile, 'w');
-              if ($outputfile) return fwrite($outputfile, $portiontoadd . $destfilecontent); else return false;
-          } else {
-              return false;
+        // Check if file is jpg
+        if($srcsize[2] != 2 && $dstsize[2] != 2) return false;
+
+        // Prepare EXIF data bytes from source file
+        $exifdata = (is_array($imageinfo) && key_exists("APP1", $imageinfo)) ? $imageinfo['APP1'] : null;
+        if($exifdata)
+        {
+          $exiflength = strlen($exifdata) + 2;
+          if($exiflength > 0xFFFF) return false;
+          // Construct EXIF segment
+          $exifdata = chr(0xFF) . chr(0xE1) . chr(($exiflength >> 8) & 0xFF) . chr($exiflength & 0xFF) . $exifdata;
+        }
+
+        // Prepare IPTC data bytes from source file
+        $iptcdata = (is_array($imageinfo) && key_exists("APP13", $imageinfo)) ? $imageinfo['APP13'] : null;
+        if($iptcdata)
+        {
+          $iptclength = strlen($iptcdata) + 2;
+          if ($iptclength > 0xFFFF) return false;
+          // Construct IPTC segment
+          $iptcdata = chr(0xFF) . chr(0xED) . chr(($iptclength >> 8) & 0xFF) . chr($iptclength & 0xFF) . $iptcdata;
+        }
+
+        // Check destination File
+        $destfilecontent = @file_get_contents($destfile);
+        if(!$destfilecontent) return false;
+        if(strlen($destfilecontent) > 0)
+        {
+          $destfilecontent = substr($destfilecontent, 2);
+          $portiontoadd = chr(0xFF) . chr(0xD8);          // Variable accumulates new & original IPTC application segments
+          $exifadded = !$exifdata;
+          $iptcadded = !$iptcdata;
+
+          while((JoomFile::get_safe_chunk(substr($destfilecontent, 0, 2)) & 0xFFF0) === 0xFFE0)
+          {
+            $segmentlen = (JoomFile::get_safe_chunk(substr($destfilecontent, 2, 2)) & 0xFFFF);
+            $iptcsegmentnumber = (JoomFile::get_safe_chunk(substr($destfilecontent, 1, 1)) & 0x0F);   // Last 4 bits of second byte is IPTC segment #
+            if($segmentlen <= 2) return false;
+            $thisexistingsegment = substr($destfilecontent, 0, $segmentlen + 2);
+            
+            if((1 <= $iptcsegmentnumber) && (!$exifadded))
+            {
+              $portiontoadd .= $exifdata;
+              $exifadded = true;
+              if (1 === $iptcsegmentnumber) $thisexistingsegment = '';
+            }
+
+            if((13 <= $iptcsegmentnumber) && (!$iptcadded))
+            {
+              $portiontoadd .= $iptcdata;
+              $iptcadded = true;
+              if (13 === $iptcsegmentnumber) $thisexistingsegment = '';
+            }
+
+            $portiontoadd .= $thisexistingsegment;
+            $destfilecontent = substr($destfilecontent, $segmentlen + 2);
           }
-      } else {
+
+          if (!$exifadded) $portiontoadd .= $exifdata;  //  Add EXIF data if not added already
+          if (!$iptcadded) $portiontoadd .= $iptcdata;  //  Add IPTC data if not added already
+
+          $outputfile = fopen($destfile, 'w');
+          if ($outputfile) return fwrite($outputfile, $portiontoadd . $destfilecontent); else return false;
+        }
+        else
+        {
+          // Destination file dont exist
           return false;
-      }
+        }
+
+    }
+    else
+    {
+      // Source file dont exist
+      return false;
+    }
   }
 
   /**
@@ -1607,12 +1871,16 @@ class JoomFile
    */
   public static function get_safe_chunk( $value )
   {
-    // check for numeric value
-    if ( is_numeric( $value ) ) {
-      // cast to integer to do bitwise AND operation
+    // Check for numeric value
+    if(is_numeric( $value))
+    {
+      // Cast to integer to do bitwise AND operation
       return (int) $value;
-    } else
+    }
+    else
+    {
       return 0;
+    }
   }
 
   /**
@@ -1633,36 +1901,38 @@ class JoomFile
    */
   public static function copyPNGmetadata($srcfile, $destfile)
   {
-      if (file_exists($srcfile) && file_exists($destfile))
+      if(file_exists($srcfile) && file_exists($destfile))
       {
         $_src_chunks = array ();
         $_fp = fopen($srcfile, 'r');
         $chunks = array ();
 
-        if (!$_fp)
+        if(!$_fp)
         {
-          //unable to open file
+          // Unable to open file
           return false;
         }
+
         // Read the magic bytes and verify
         $header = fread($_fp, 8);
 
-        if ($header != "\x89PNG\x0d\x0a\x1a\x0a")
+        if($header != "\x89PNG\x0d\x0a\x1a\x0a")
         {
-          //not a valid PNG image
+          // Not a valid PNG image
           return false;
         }
 
         // Loop through the chunks. Byte 0-3 is length, Byte 4-7 is type
         $chunkHeader = fread($_fp, 8);
-        while ($chunkHeader)
+        while($chunkHeader)
         {
           // Extract length and type from binary data
           $chunk = @unpack('Nsize/a4type', $chunkHeader);
 
           // Store position into internal array
-          if ( !key_exists($chunk['type'], $_src_chunks) )
+          if(!key_exists($chunk['type'], $_src_chunks))
               $_src_chunks[$chunk['type']] = array ();
+
           $_src_chunks[$chunk['type']][] = array (
               'offset' => ftell($_fp),
               'size' => $chunk['size']
@@ -1674,61 +1944,72 @@ class JoomFile
           // Read next chunk header
           $chunkHeader = fread($_fp, 8);
         }
-        //Read iTXt chunk
-        if (isset($_src_chunks['iTXt']))
+
+        // Read iTXt chunk
+        if(isset($_src_chunks['iTXt']))
         {
-          foreach ($_src_chunks['iTXt'] as $chunk)
+          foreach($_src_chunks['iTXt'] as $chunk)
           {
-            if ($chunk['size'] > 0)
+            if($chunk['size'] > 0)
             {
                 fseek($_fp, $chunk['offset'], SEEK_SET);
                 $chunks['iTXt'] = fread($_fp, $chunk['size']);
             }
           }
         }
-        //Read tEXt chunk
-        if (isset($_src_chunks['tEXt']))
+
+        // Read tEXt chunk
+        if(isset($_src_chunks['tEXt']))
         {
-          foreach ($_src_chunks['tEXt'] as $chunk) {
+          foreach($_src_chunks['tEXt'] as $chunk)
+          {
             if ($chunk['size'] > 0) {
                 fseek($_fp, $chunk['offset'], SEEK_SET);
                 $chunks['tEXt'] = fread($_fp, $chunk['size']);
             }
           }
         }
-        //Read zTXt chunk
-        if (isset($_src_chunks['zTXt']))
+
+        // Read zTXt chunk
+        if(isset($_src_chunks['zTXt']))
         {
-          foreach ($_src_chunks['zTXt'] as $chunk) {
-            if ($chunk['size'] > 0) {
+          foreach($_src_chunks['zTXt'] as $chunk)
+          {
+            if($chunk['size'] > 0)
+            {
                 fseek($_fp, $chunk['offset'], SEEK_SET);
                 $chunks['zTXt'] = fread($_fp, $chunk['size']);
             }
           }
         }
 
-        //write chucks to destination image
+        // Write chucks to destination image
         $_dfp = file_get_contents($destfile);
         $data = '';
-        if (isset($chunks['iTXt']))
+
+        if(isset($chunks['iTXt']))
         {
           $data .= pack("N",strlen($chunks['iTXt'])) . 'iTXt' . $chunks['iTXt'] . pack("N", crc32('iTXt' . $chunks['iTXt']));
         }
-        if (isset($chunks['tEXt']))
+
+        if(isset($chunks['tEXt']))
         {
           $data .= pack("N",strlen($chunks['tEXt'])) . 'tEXt' . $chunks['tEXt'] . pack("N", crc32('tEXt' . $chunks['tEXt']));
         }
-        if (isset($chunks['zTXt']))
+
+        if(isset($chunks['zTXt']))
         {
           $data .= pack("N",strlen($chunks['zTXt'])) . 'zTXt' . $chunks['zTXt'] . pack("N", crc32('zTXt' . $chunks['zTXt']));
         }
+
         $len = strlen($_dfp);
         $png = substr($_dfp,0,$len-12) . $data . substr($_dfp,$len-12,12);
+
         return file_put_contents($destfile, $png);
       }
       else
       {
-        //files dont exist
+        // File dont exist
         return false;
       }
   }
