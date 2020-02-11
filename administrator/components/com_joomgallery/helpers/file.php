@@ -1204,8 +1204,12 @@ class JoomFile
   /**
    * Analysis of an image
    *
+   * Structure of the array $imginfo:
+   * array('width' => int,'height' => int,'type' => str,'orientation' => str, 'transparency' => boolean, 'animation' => boolean,
+   *       'channels' => int,'bits' => int)
+   *
    * @param   string    $src_img        Path to source image file
-   * @return  array     $imginfo[width,height,type,orientation,transparency,animation] on success, false otherwise
+   * @return  array     $imginfo[] on success, false otherwise
    * @since   3.5.0
    */
   public static function analyseSRCimg($src_img)
@@ -1332,6 +1336,10 @@ class JoomFile
    * Author: Nash
    * Website: http://nashruddin.com/Resize_Image_to_Different_Aspect_Ratio_on_the_fly
    *
+   * Structure of the array $imginfo:
+   * array('width' => int,'height' => int,'type' => str,'offset_x' => int, 'offset_y' => int, 'channels' => int,'bits' => int,
+   *       'src' => array('width' => int,'height' => int))
+   *
    * @param   string  $dest_img         Path of destination image file
    * @param   array   $src_imginfo      array with image informations from analysing the source image (JoomFile::analyseSRCimg)
    * @param   int     $settings         Resize to 0=width,1=height,2=max(width,height) or 3=crop
@@ -1339,7 +1347,7 @@ class JoomFile
    * @param   int     $new_height       Height to resize
    * @param   int     $cropposition     Only if $settings=3; image section to use for cropping
    * @param   int     $angle            angle to rotate the resized image anticlockwise
-   * @return  array $imginfo[width,height,type,offset_x,offset_y,channels,bits] on success, false otherwise
+   * @return  array   $imginfo[] on success, false otherwise
    * @since   3.5.0
    */
   public static function getResizeInfo($dest_img, $src_imginfo, $settings, $new_width, $new_height, $cropposition, $angle)
