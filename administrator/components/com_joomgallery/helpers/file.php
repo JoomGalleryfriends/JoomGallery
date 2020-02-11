@@ -722,7 +722,7 @@ class JoomFile
         if(!is_null($dest_imginfo['offset_x']) && !is_null($dest_imginfo['offset_y']))
         {
           // Assembling the imagick command for cropping
-          $commands .= ' -crop "'.$dest_imginfo['width'].'x'.$dest_imginfo['height'].'+'.$dest_imginfo['offset_x'].'+'.$dest_imginfo['offset_y'].'" +repage';
+          $commands .= ' -crop "'.$dest_imginfo['src']['width'].'x'.$dest_imginfo['src']['height'].'+'.$dest_imginfo['offset_x'].'+'.$dest_imginfo['offset_y'].'" +repage';
         }
 
         // Assembling the imagick command for resizing
