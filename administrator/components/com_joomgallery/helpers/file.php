@@ -1543,7 +1543,7 @@ class JoomFile
         $src_frame[0]['image'] = imagecreatefrompng($src_file);
         break;
       case 'GIF':
-        $src_frame[0]['image'] = imagecreatefromgif($src_file);        
+        $src_frame[0]['image'] = imagecreatefromgif($src_file);
         break;
       case 'JPG':
         $src_frame[0]['image'] = imagecreatefromjpeg($src_file);
@@ -1577,6 +1577,7 @@ class JoomFile
     // Create empty GD-Object
     if(function_exists('imagecreatetruecolor'))
     {
+      // needs at least php v4.0.6
       $img = imagecreatetruecolor($imginfo['width'], $imginfo['height']);
     }
     else
@@ -1592,6 +1593,7 @@ class JoomFile
         case 'GIF':
           if(function_exists('imagecolorallocatealpha'))
           {
+            // needs at least php v4.3.2
             $trnprt_color = imagecolorallocatealpha($img, 0, 0, 0, 127);
             imagefill($img, 0, 0, $trnprt_color);
             imagecolortransparent($img, $trnprt_color);            
@@ -1614,10 +1616,10 @@ class JoomFile
         case 'PNG':
           if(function_exists('imagecolorallocatealpha'))
           {
+            // needs at least php v4.3.2
             imagealphablending($img, false);
             $trnprt_color = imagecolorallocatealpha($img, 0, 0, 0, 127);
             imagefill($img, 0, 0, $trnprt_color);
-            //imagesavealpha($img, true);
           }
 
           break;
@@ -1656,9 +1658,12 @@ class JoomFile
         $png_qual = ($dest_qual - 100) / 11.111111;
         $png_qual = round(abs($png_qual));
 
-        // Save transparency
+        // Save transparency -- needs at least php v4.3.2
         imagealphablending($dst_frame[0]['image'], false);
         imagesavealpha($dst_frame[0]['image'], true);
+
+        // Enable interlancing (progressive image transmission)
+        //imageinterlace($im, true);
 
         // Write file
         $success = imagepng($dst_frame[0]['image'], $dest_file, $png_qual);
@@ -1666,16 +1671,10 @@ class JoomFile
       case 'GIF':
         // Write file
         $success = imagegif($dst_frame[0]['image'], $dest_file);
-        break;      
+        break;
       case 'JPG':
-        // Enable progressive image creation
-        if(function_exists('imageistruecolor'))
-        {
-          if (imageistruecolor($dst_frame[0]['image']))
-          {
-            imageinterlace($dst_frame[0]['image'], true);
-          }
-        }
+        // Enable interlancing (progressive image transmission)
+        //imageinterlace($im, true);
 
         // Write file
         $success = imagejpeg($dst_frame[0]['image'], $dest_file, $dest_qual);

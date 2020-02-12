@@ -450,6 +450,15 @@ class JoomGalleryModelImage extends JoomGalleryModel
           // Revert database entry
           $row->$columnname = $filename;
         }
+        else
+        {
+          if($new_ext != $old_ext)
+          {
+            // Delete old file, if new one has another image format and therefore dont gets overwritten by JFile::upload
+            $oldfile = substr_replace($file, '.'.$old_ext, - (strlen($new_ext) + 1));
+            JFile::delete($oldfile);
+          }
+        }
         // Resize image
         $debugoutput = '';
         switch($type)
