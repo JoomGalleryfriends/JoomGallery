@@ -1590,39 +1590,40 @@ class JoomFile
       switch ($imginfo['type'])
       {
         case 'GIF':
-          // Special threatment for gif files
-          $trnprt_indx = imagecolortransparent($src_img);
-          $palletsize = imagecolorstotal($src_img);
-
-          if ($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
+          if(function_exists('imagecolorallocatealpha'))
           {
-            $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
-            $trnprt_indx = imagecolorallocate($img, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-            imagefill($img, 0, 0, $trnprt_indx);
-            imagecolortransparent($img, $trnprt_indx);
+            $trnprt_color = imagecolorallocatealpha($img, 0, 0, 0, 127);
+            imagefill($img, 0, 0, $trnprt_color);
+            imagecolortransparent($img, $trnprt_color);            
           }
-
-          if ($imginfo['bits'] == 1)
+          else
           {
+            $trnprt_indx = imagecolortransparent($src_img);
+            $palletsize = imagecolorstotal($src_img);
 
-           if(function_exists('imagecolorallocatealpha'))
+            if($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
             {
-              $transparentColor = imagecolorallocatealpha($img, 0, 0, 0, 127);
-              imagecolortransparent($img, $transparentColor);
-              imagefill($img, 0, 0, $transparentColor);
+              $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
+              $trnprt_indx = imagecolorallocate($img, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+              imagefill($img, 0, 0, $trnprt_indx);
+              imagecolortransparent($img, $trnprt_indx);
             }
-
           }
-          break;        
-        default:
+
+        break;
+        case 'PNG':
           if(function_exists('imagecolorallocatealpha'))
           {
             imagealphablending($img, false);
-            $colorTransparent = imagecolorallocatealpha($img, 0, 0, 0, 127);
-            imagefill($img, 0, 0, $colorTransparent);
-            imagesavealpha($img, true);
+            $trnprt_color = imagecolorallocatealpha($img, 0, 0, 0, 127);
+            imagefill($img, 0, 0, $trnprt_color);
+            //imagesavealpha($img, true);
           }
 
+          break;
+          default:
+
+            return fals;
           break;
       }
     }
@@ -1654,6 +1655,10 @@ class JoomFile
         // Calculate png quality, since it should be between 1 and 9
         $png_qual = ($dest_qual - 100) / 11.111111;
         $png_qual = round(abs($png_qual));
+
+        // Save transparency
+        imagealphablending($dst_frame[0]['image'], false);
+        imagesavealpha($dst_frame[0]['image'], true);
 
         // Write file
         $success = imagepng($dst_frame[0]['image'], $dest_file, $png_qual);
