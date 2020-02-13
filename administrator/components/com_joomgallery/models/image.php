@@ -417,6 +417,52 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $row->downloads = 0;
     }
 
+    // Workaround - Different filetypes for orig/img images are forbidden
+    $columnname = 'imgfilename';
+    $ext = JFile::getExt($row->$columnname);   //extension of orig/img file before replace
+    $replace_img_orig = null;
+    if(isset($files['tmp_name']) && isset($files['tmp_name']['img']) && $files['tmp_name']['img'])
+    {
+      if(isset($files['tmp_name']) && isset($files['tmp_name']['orig']) && $files['tmp_name']['orig'])
+      {
+        // both original and detail will be replaced
+        $replace_img_orig = $row->$columnname;
+        $orig_ext = strtolower(JFile::getExt($files['name']['orig']));
+        $det_ext  = strtolower(JFile::getExt($files['name']['img']));
+        if($orig_ext != $det_ext)
+        {
+          JError::raiseWarning(500, JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_IMG_NOTEQUAL_ORIG'));
+
+          return false;
+        }
+      }
+      else
+      {
+        // detail will be replaced, original dont
+        $det_ext  = strtolower(JFile::getExt($files['name']['img']));
+        if($ext != $det_ext)
+        {
+          JError::raiseWarning(500, JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_IMG_NOTEQUAL_ORIG'));
+
+          return false;
+        }
+      } 
+    }
+    else
+    {
+      if(isset($files['tmp_name']) && isset($files['tmp_name']['orig']) && $files['tmp_name']['orig'])
+      {
+        // original will be replaced, detail dont
+        $orig_ext  = strtolower(JFile::getExt($files['name']['orig']));
+        if($ext != $orig_ext)
+        {
+          JError::raiseWarning(500, JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_IMG_NOTEQUAL_ORIG'));
+
+          return false;
+        }
+      }
+    }
+
     // Upload and handle new image files
     $types = array('thumb', 'img', 'orig');
     foreach($types as $type)
@@ -425,48 +471,55 @@ class JoomGalleryModelImage extends JoomGalleryModel
       {
         jimport('joomla.filesystem.file');
 
-        // Possibly the file name has to be changed because of another image format
-        $temp_filename = $files['name'][$type];
-        $columnname = 'imgfilename';
         if($type == 'thumb')
         {
           $columnname = 'imgthumbname';
         }
-        $filename = $row->$columnname;
-        $new_ext = JFile::getExt($temp_filename);
-        $old_ext = JFile::getExt($filename);
-        if($new_ext != $old_ext)
+        else
         {
-          $row->$columnname = substr_replace($row->$columnname, '.'.$new_ext, - (strlen($old_ext) + 1));
+          $columnname = 'imgfilename';
         }
 
-        // Upload the file
-        $file = $this->_ambit->getImg($type.'_path', $row);
-        //JFile::delete($file);
-        if(!JFile::upload($files['tmp_name'][$type], $file))
+        $old_image   = $row->$columnname;   //image name of the old image
+        $old_path    = $this->_ambit->getImg($type.'_path', $row);   //path of the old image
+        if($type == 'thumb')
         {
-          JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_ERROR_UPLOADING', $this->_ambit->getImg($type.'_path', $row)));
-
-          // Revert database entry
-          $row->$columnname = $filename;
+          $old_ext   = JFile::getExt($old_image);   //extension of the old image
         }
         else
         {
-          if($new_ext != $old_ext)
-          {
-            // Delete old file, if new one has another image format and therefore dont gets overwritten by JFile::upload
-            $oldfile = substr_replace($file, '.'.$old_ext, - (strlen($new_ext) + 1));
-            JFile::delete($oldfile);
-          }
+          // Workaround - Different filetypes for orig/img images are forbidden
+          $old_ext   = $ext;   //extension of the old image
+        }        
+
+        $new_ext     = strtolower(JFile::getExt($files['name'][$type]));   //extension of the new image
+        if($new_ext != $old_ext)
+        {
+          $new_image = str_replace($old_ext, $new_ext, $old_image);   //image name of the new image
         }
-        // Resize image
+        else
+        {
+          $new_image = $old_image;
+        }
+        $new_path    = str_replace($old_image,$new_image,$old_path);   //path of the new, resized image
+        $new_tmp     = str_replace($old_image,$new_image.'_up',$old_path);   //path of the uploaded temp image in image folder
+        
+        $tmp_path    = $files['tmp_name'][$type];   //path of the new uploaded image in tmp folder
+
+        // // Upload the file
+        if(!JFile::upload($tmp_path, $new_tmp))
+        {
+          JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_ERROR_UPLOADING', $this->_ambit->getImg($type.'_path', $row)));
+        }
+
+        // Resize new image
         $debugoutput = '';
         switch($type)
         {
           case 'thumb':
             $return = JoomFile::resizeImage($debugoutput,
-                                            $file,
-                                            $file,
+                                            $new_tmp,
+                                            $new_path,
                                             $this->_config->get('jg_useforresizedirection'),
                                             $this->_config->get('jg_thumbwidth'),
                                             $this->_config->get('jg_thumbheight'),
@@ -477,11 +530,25 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                             false,
                                             false
                                             );
+            if(!$return)
+            {
+              JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_NOT_CREATED', $files['name'][$type]));
+
+              // Delete uploaded temp image
+              JFile::delete($new_tmp);
+
+              return false;
+            }
+            else
+            {
+              $filesize = filesize($new_path) / 1000; //KB
+              JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_CREATED', $filesize));
+            }
             break;
           case 'img':
             $return = JoomFile::resizeImage($debugoutput,
-                                            $file,
-                                            $file,
+                                            $new_tmp,
+                                            $new_path,
                                             2,
                                             $this->_config->get('jg_maxwidth'),
                                             $this->_config->get('jg_maxwidth'),
@@ -492,10 +559,49 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                             false,
                                             true
                                             );
+            if(!$return)
+            {
+              JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_NOT_CREATED', $files['name'][$type]));
+
+              // Delete uploaded temp image
+              JFile::delete($new_tmp);
+
+              return false;
+            }
+            else
+            {
+              $filesize = filesize($new_path) / 1000; //KB
+              JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_CREATED', $filesize));
+            }
+            break;
+          case 'orig':
+            $return = JFile::copy($new_tmp,$new_path);
+
             break;
           default:
             break;
         }
+
+        // Delete uploaded temp image
+        JFile::delete($new_tmp);
+
+        if($new_image != $old_image)
+        {
+          if($return != false)
+          {
+            // Renew database entry, if resize/copy was successfully
+            $row->$columnname = $new_image;
+          }          
+          // Delete old file, if new one has another image format and therefore dont gets overwritten
+          JFile::delete($old_path);
+        }
+
+        // Workaround - Different filetypes for orig/img images are forbidden
+        if(!(is_null($replace_img_orig)) && $new_ext != $ext)
+        {
+          $path = str_replace($new_image,$replace_img_orig,$new_path);
+          JFile::delete($path);
+        }    
       }
     }
 
