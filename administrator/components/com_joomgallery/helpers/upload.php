@@ -2072,9 +2072,9 @@ class JoomUpload extends JObject
    */
   protected function resizeImage($source, $filename, $is_in_original = true, $delete_source = false)
   {
-    if(!($imginfo = getimagesize($source)))
+    if(!(JoomFile::checkValidImage($source)))
     {
-      // getimagesize didn't find a valid image
+      // there is no valid image file
       $this->_debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_INVALID_IMAGE_FILE').'<br />';
       $this->debug = true;
       return false;
@@ -2088,6 +2088,8 @@ class JoomUpload extends JObject
       $this->debug = true;
       return false;
     }
+
+    $imginfo = getimagesize($source);
 
     // Check if rotation needed
     $angle             = 0;

@@ -1217,6 +1217,62 @@ class JoomFile
   }
 
   /**
+   * Check image if it's a valid image
+   * @param   string    $img          Path to image file
+   * @return  boolean   True if image is valid, false otherwise
+   * @since   3.5.0
+  */
+  public static function checkValidImage($img)
+  {
+    // Path must point to an existing file
+    if(!(JFile::exists($img)))
+    {
+
+      return false;
+    }
+
+    $imginfo = getimagesize($img);
+
+    // Image needs to have a valid file type
+    if(!$imginfo || $imginfo[2] == 0 || !key_exists('mime',$imginfo) || $imginfo['mime'] == '')
+    {
+
+      return false;
+    }
+
+    // If available, bits has to be between 1 and 64
+    if(key_exists('bits',$imginfo))
+    {
+      if($imginfo['bits'] < 1 || $imginfo['bits'] > 64)
+      {
+
+        return false;
+      }
+    }
+
+    // Get width and height from $imginfo[3]
+    $str = explode(' ', $imginfo[3]);
+    $width = explode('=', $str[0]);
+    $width = $width[1];
+    $width = str_replace('"', '', $width);
+    $height = explode('=', $str[1]);
+    $height = $height[1];
+    $height = str_replace('"', '', $height);
+
+    // Image width and height as to be between 1 and 1'000'000 pixel
+    if( $width < 1 || $height < 1 || $imginfo[0] < 1 || $imginfo[1] < 1
+        ||
+        $width > 1000000 || $height > 1000000 || $imginfo[0] > 1000000  || $imginfo[1] > 1000000
+      )
+    {
+
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Analysis of an image
    *
    * Structure of the array $imginfo:
@@ -1229,15 +1285,14 @@ class JoomFile
    */
   public static function analyseSRCimg($src_img)
   {
-    $type = $transparency = $animation = false;
-    $info = getimagesize($src_img);
-
-    // Check, if image exists
-    if($info == false)
+    // Check, if file exists and is a valid image
+    if(!(JoomFile::checkValidImage($src_img)))
     {
-
       return false;
     }
+
+    $type = $transparency = $animation = false;
+    $info = getimagesize($src_img);
 
     // Extract bits and channels from info
     if(key_exists('bits',$info))
