@@ -1053,7 +1053,7 @@ class JoomFile
           @exec($convert, $dummy, $return_var);
 
           // Preserve metadata of png files with php functions
-          if($src_imginfo[2] == 'PNG')
+          if($src_imginfo['type'] == 'PNG')
           {
             // copy metadata
             $meta_success = JoomFile::copyImageMetadata($src_orig, $src, $src_imginfo['type'], $dest_imginfo['type']);
