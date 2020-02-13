@@ -733,12 +733,19 @@ class JoomFile
 
         $return_var = null;
         $dummy      = null;
+        $filecheck  = true;
 
         // execute the resize
         @exec($convert, $dummy, $return_var);
 
+        // Check that the resized image is valid
+        if(!($src_imginfo = getimagesize($dest_file)))
+        {
+          $filecheck  = false;
+        }
+
         // Workaround for servers with wwwrun problem
-        if($return_var != 0)
+        if($return_var != 0 || !$filecheck)
         {
           $dir = dirname($dest_file);
           JoomFile::chmod($dir, '0777', true);
@@ -748,7 +755,13 @@ class JoomFile
 
           JoomFile::chmod($dir, '0755', true);
 
-          if($return_var != 0)
+          // Check that the resized image is valid
+          if(!($src_imginfo = getimagesize($dest_file)))
+          {
+            $filecheck  = false;
+          }
+
+          if($return_var != 0 || !$filecheck)
           {
             $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM','exec('.$convert.');').'<br />';
 
@@ -759,6 +772,8 @@ class JoomFile
         break;
       default:
         JError::raiseError(500, JText::_('COM_JOOMGALLERY_UPLOAD_UNSUPPORTED_RESIZING_METHOD'));
+
+        return false;
         break;
     }
 
