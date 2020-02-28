@@ -1011,12 +1011,12 @@ class JoomFile
         if($auto_orient)
         {
           // Rotate image with auto-orien if needed
-          $commands .= '-auto-orient';
+          $commands .= ' -auto-orient';
         }
         else
         {
           // Else rotate by angle
-          $commands .= '-rotate "-'.$angle.'"';
+          $commands .= ' -rotate "-'.$angle.'"';
         }
 
         // Rotation quality
