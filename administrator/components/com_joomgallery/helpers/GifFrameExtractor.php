@@ -141,24 +141,61 @@ class GifFrameExtractor
                 if ($i > 0) {
                     
                     $prevImg = $this->frames[$i - 1]['image'];
-                    $sprite = imagecreate($this->gifMaxWidth, $this->gifMaxHeight);
-                    imagesavealpha($sprite, true);
-                    
-                    $transparent = imagecolortransparent($prevImg);
-                    
-                    if ($transparent > -1 && imagecolorstotal($prevImg) > $transparent) {
-                    
-                        $actualTrans = imagecolorsforindex($prevImg, $transparent);
-                        imagecolortransparent($sprite, imagecolorallocate($sprite, $actualTrans['red'], $actualTrans['green'], $actualTrans['blue']));
+
+                    // Create empty GD-Object
+                    if (function_exists('imagecreatetruecolor')) {
+
+                      // needs at least php v4.0.6
+                      $sprite = imagecreatetruecolor($this->gifMaxWidth, $this->gifMaxHeight);
+
+                    } else {
+
+                      $sprite = imagecreate($this->gifMaxWidth, $this->gifMaxHeight);
+                    }
+
+                    if (function_exists('imagecolorallocatealpha')) {
+
+                        // needs at least php v4.0.6
+                        $actualTrans = imagecolorallocatealpha($sprite, 0, 0, 0, 127);
+                        imagefill($sprite, 0, 0, $actualTrans);
+                        imagecolortransparent($sprite, $actualTrans);
+
+                    } else {
+
+                        $transparent = imagecolortransparent($prevImg);                    
+                        if ($transparent > -1 && imagecolorstotal($prevImg) > $transparent) {
+
+                            $actualTrans = imagecolorsforindex($prevImg, $transparent);
+                            $actualTransIndx = imagecolorallocate($sprite, $actualTrans['red'], $actualTrans['green'], $actualTrans['blue']);
+                            imagefill($sprite, 0, 0, $actualTransIndx);
+                            imagecolortransparent($sprite, $actualTransIndx);
+                        }
                     }
                     
-                    if ((int) $this->frameSources[$i]['disposal_method'] == 1 && $i > 0) {
-                        
-                        imagecopy($sprite, $prevImg, 0, 0, 0, 0, $this->gifMaxWidth, $this->gifMaxHeight);
+                    if (((int) $this->frameSources[$i]['disposal_method'] == 1 || (int) $this->frameSources[$i]['disposal_method'] == 3) && $i > 0) {
+
+                        if (function_exists('imagecopyresampled')) {
+
+                            // needs at least php v4.0.6
+                            imagecopyresampled($sprite, $prevImg, 0, 0, 0, 0, $this->gifMaxWidth, $this->gifMaxHeight, $this->gifMaxWidth, $this->gifMaxHeight);
+                        } else {
+
+                            imagecopy($sprite, $prevImg, 0, 0, 0, 0, $this->gifMaxWidth, $this->gifMaxHeight);
+                        }                        
                     }
+
                     $w = imagesx($img);
                     $h = imagesy($img);
-                    imagecopyresampled($sprite, $img, $this->frameSources[$i]["offset_left"], $this->frameSources[$i]["offset_top"], 0, 0, $w, $h, $w, $h);
+
+                    if (function_exists('imagecopyresampled')) {
+
+                        // needs at least php v4.3.2
+                        imagecopyresampled($sprite, $img, $this->frameSources[$i]["offset_left"], $this->frameSources[$i]["offset_top"], 0, 0, $w, $h, $w, $h);
+                    } else {
+
+                        imagecopy($sprite, $img, $this->frameSources[$i]["offset_left"], $this->frameSources[$i]["offset_top"], 0, 0, $w, $h);
+                    }
+
                     $img = $sprite;
 
                 } else {
