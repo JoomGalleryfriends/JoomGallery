@@ -1631,6 +1631,38 @@ abstract class JoomMigration
       $neworigimage = $this->_ambit->getImg('orig_path', $row);
     }
 
+    // Check if rotation needed
+    $imginfo           = getimagesize($neworigimage);
+    $angle             = 0;
+    $autorotate_images = $this->_config->get('jg_upload_exif_rotation');
+
+    if($autorotate_images != 0 && $imginfo[2] == 2)
+    // auto rotation only with jpg-files possible
+    {
+      if(extension_loaded('exif') && function_exists('exif_read_data'))
+      {
+        $exif = exif_read_data($neworigimage, 'IFD0');
+        if(!empty($exif['Orientation']))
+        {
+          switch ($exif['Orientation'])
+          {
+            case 3:
+              $angle = 180;
+              break;
+            case 6:
+              $angle = 270;
+              break;
+            case 8:
+              $angle = 90;
+              break;
+            default:
+              $angle = 0;
+              break;
+          }
+        }
+      }
+    }
+
     if(!$img_exists)
     {
       // If it doesn't already exists with another name try to copy or move from source directory or create a new one
@@ -1648,7 +1680,7 @@ abstract class JoomMigration
                                                   $this->_config->get('jg_thumbcreation'),
                                                   $this->_config->get('jg_picturequality'),
                                                   false,
-                                                  0,
+                                                  $angle,
                                                   false,
                                                   true
                                                   );
@@ -1707,7 +1739,7 @@ abstract class JoomMigration
                                                   $this->_config->get('jg_thumbcreation'),
                                                   $this->_config->get('jg_thumbquality'),
                                                   $this->_config->get('jg_cropposition'),
-                                                  0,
+                                                  $angle,
                                                   false,
                                                   false
                                                 );
@@ -1757,8 +1789,29 @@ abstract class JoomMigration
       {
         $this->setError('Could not delete original image '.$neworigimage);
       }
+    } else
+    {
+      // If original image is kept
+      // Rotate original image if needed
+      if($angle > 0 && $autorotate_images == 2)
+      {
+        $debugoutput = '';
+        $return = JoomFile::rotateImage($debugoutput,
+                                        $neworigimage,
+                                        $this->_config->get('jg_thumbcreation'),
+                                        $this->_config->get('jg_originalquality'),
+                                        $angle,
+                                        true,
+                                        true
+                                       );
+        if(!$return)
+        {
+          $this->setError('Could not rotate original image '.$neworigimage);
+        }
+      }
     }
 
+    
     // Create database entry
     $query = $this->_db->getQuery(true)
           ->insert(_JOOM_TABLE_IMAGES)
