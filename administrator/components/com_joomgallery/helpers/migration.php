@@ -1811,6 +1811,8 @@ abstract class JoomMigration
       }
     }
 
+    // Replace with metadata
+    // modify Object $row with informations from metadata
     
     // Create database entry
     $query = $this->_db->getQuery(true)
