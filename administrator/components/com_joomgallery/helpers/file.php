@@ -1562,20 +1562,21 @@ class JoomFile
     }
 
     // Calculate widths and heights necessary for resize and bring them to integer values
-    if(is_null($offsetx) && is_null($offsety))
+    if($settings != 3)
     {
-      $ratio = max($ratio, 1.0);
+      $ratio      = max($ratio, 1.0);
       $destWidth  = (int)floor($srcWidth / $ratio);
       $destHeight = (int)floor($srcHeight / $ratio);
-      $srcWidth  = (int)$srcWidth;
-      $srcHeight = (int)$srcHeight;
+      $srcWidth   = (int)$srcWidth;
+      $srcHeight  = (int)$srcHeight;
     }
     else
     {
-      $destWidth = (int)$new_width;
+      // cropping
+      $destWidth  = (int)$new_width;
       $destHeight = (int)$new_height;
-      $srcWidth  = (int)($destWidth * $ratio);
-      $srcHeight = (int)($destHeight * $ratio);
+      $srcWidth   = (int)($destWidth * $ratio);
+      $srcHeight  = (int)($destHeight * $ratio);
     }
 
     // Assemble imginfo array
