@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -799,7 +799,7 @@ class JoomGalleryModelDetail extends JoomGalleryModel
               $tagdata = '';
               for($num = 0; $num < 4; $num++ )
               {
-                $value = ord($exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']]{$num});
+                $value = ord($exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']][$num]);
                 $tagdata .= JText::_('COM_JOOMGALLERY_SUBIFD_COMPONENTSCONFIGURATION_COMPONENT') . ( $num + 1 ) . ': ';
                 switch($value)
                 {
@@ -833,7 +833,7 @@ class JoomGalleryModelDetail extends JoomGalleryModel
             if($exif_config_array[$tagcat][$jgtag]['Attribute'] == 'FileSource')
             {
               $tagdata = '';
-              $value = ord($exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']]{0});
+              $value = ord($exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']][0]);
               switch($value)
               {
                 case 3:
@@ -846,7 +846,7 @@ class JoomGalleryModelDetail extends JoomGalleryModel
             if($exif_config_array[$tagcat][$jgtag]['Attribute'] == 'SceneType')
             {
               $tagdata = '';
-              $value = ord($exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']]{0});
+              $value = ord($exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']][0]);
               switch($value)
               {
                 case 1:
@@ -923,7 +923,7 @@ class JoomGalleryModelDetail extends JoomGalleryModel
             if($exif_config_array[$tagcat][$jgtag]['Attribute'] == 'GPSAltitudeRef')
             {
               $tagdata = '';
-              $value = $exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']]{0};
+              $value = $exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']][0];
               $value = bindec($value);
               switch($value)
               {
