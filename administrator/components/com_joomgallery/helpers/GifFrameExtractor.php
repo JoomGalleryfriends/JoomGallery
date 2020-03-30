@@ -114,7 +114,8 @@ class GifFrameExtractor
     /**
      * Extract frames of a GIF
      * 
-     * @param string $filename GIF filename path
+     * @param string $filename              GIF filename path
+     * @param int    $memory_needed_frame   memory requirement for manipultion of one frame (byte)
      * @param boolean $originalFrames Get original frames (with transparent background)
      * 
      * @return array
@@ -235,16 +236,13 @@ class GifFrameExtractor
         fclose($fh);
         return $count > 1;
     }
-    
-    // Internals
-    // ===================================================================================
-    
+
     /**
      * Parse the frame informations contained in the GIF file
      * 
      * @param string $filename GIF filename path
      */
-    private function parseFramesInfo($filename)
+    public function parseFramesInfo($filename)
     {
         $this->openFile($filename);
         $this->parseGifHeader();
@@ -265,6 +263,10 @@ class GifFrameExtractor
             $this->getApplicationData();
         }
     }
+
+
+    // Internals
+    // ===================================================================================
     
     /** 
      * Parse the gif header (old: get_gif_header)
@@ -776,5 +778,15 @@ class GifFrameExtractor
     public function getFrameDurations()
     {
         return $this->frameDurations;
+    }
+
+    /**
+     * Get the number of frames
+     * 
+     * @return array
+     */
+    public function getNumberFramens()
+    {
+        return count($this->frameSources);
     }
 }

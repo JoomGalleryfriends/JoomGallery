@@ -21,6 +21,14 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
  */
 class JoomIMGtools
 {
+  /**
+   * Memory needed in bytes for manipulation of a one-frame image with GD
+   * depending on resolution, color-space, file-type
+   *
+   * @var array
+   */
+  protected static $memory_needed;
+
 	/**
    * Holds all image informations of the source image, which are relevant for
    * image manipulation and metadata handling
@@ -28,7 +36,7 @@ class JoomIMGtools
    * @var array
    */
   protected static $src_imginfo = array('width' => 0,'height' => 0,'type' => '','orentation' => '','exif' => array('IFD0' => array(),'EXIF' => array()),
-  															 'iptc' => array(),'comment' => '','transparency' => false,'animation' => false);
+  															 'iptc' => array(),'comment' => '','transparency' => false,'animation' => false, 'frames' => 1);
 
   /**
    * Holds all image informations of the destination image, which are relevant for
@@ -102,6 +110,9 @@ class JoomIMGtools
     $src_file  = JPath::clean($src_file);
     $dst_file = JPath::clean($dst_file);
 
+    // Load GifFrameExtractor-Class
+    JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
+
     // Analysis and validation of the source image
     if(!(self::$src_imginfo = self::analyseImage($src_file)))
     {
@@ -109,6 +120,10 @@ class JoomIMGtools
 
       return false;
     }
+    if(!$anim)
+    {
+      self::$src_imginfo['frames'] = 1;
+    } 
 
     // GD can only handle JPG, PNG and GIF images
     if(    self::$src_imginfo['type'] != 'JPG'
@@ -118,16 +133,6 @@ class JoomIMGtools
       )
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ONLY_JPG_PNG').'<br />';
-
-      return false;
-    }
-
-    // Analysis if available memory is enough
-    $memory = self::checkMemory(self::$src_imginfo);
-    if(!$memory['success'])
-    {
-      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_ERROR_MEM_EXCEED').
-                      $memory['needed']." MByte, Serverlimit: ".$memory['limit']." MByte<br />" ;
 
       return false;
     }
@@ -190,7 +195,6 @@ class JoomIMGtools
       }
     }
 
-
     // Generate informations about type, dimension and origin of resized image
     if(!($dst_imginfo = self::getResizeInfo($dst_file, $settings, $new_width, $new_height, $cropposition)))
     {
@@ -199,6 +203,27 @@ class JoomIMGtools
       self::rollback($src_file, $dst_file);
       return false;
     }
+
+    // Calculation for the amount of memory needed, when assuming one frame (in bytes, GD)
+    $clc_method = 'resize';
+    if(self::$dst_imginfo['angle'] > 0 || self::$dst_imginfo['flip'] != 'none')
+    {
+      $clc_method = 'rotate';
+    }
+    self::$memory_needed = self::calculateMemory(self::$src_imginfo, self::$dst_imginfo, $clc_method);
+    // Check if there is enough memory for the manipulation
+    $memory = self::checkMemory(self::$memory_needed);
+    if(!$memory['success'])
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_ERROR_MEM_EXCEED').
+                      $memory['needed']." MByte, Serverlimit: ".$memory['limit']." MByte<br />" ;
+
+      self::rollback($src_file, $dst_file);
+      return false;
+    }
+
+    //$tmp_memory_needed = round(self::$memory_needed / 1048576,3);
+    //$debugoutput .= 'calculated memory: '.$tmp_memory_needed.' MB<br/>';
 
     // Create debugoutput
     switch($settings)
@@ -235,7 +260,7 @@ class JoomIMGtools
 
         if(!function_exists('imagecreate'))
         {
-          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED').'<br />';
 
           self::rollback($src_file, $dst_file);
           return false;
@@ -246,9 +271,17 @@ class JoomIMGtools
         {
           // Animated GIF image (image with more than one frame)
           // Create GD-Objects from gif-file
-          JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
           $gfe = new GifFrameExtractor();
           self::$src_frames = $gfe->extract($src_file);
+
+          // Check for failures in GIF extraction
+          if(self::checkError(self::$src_frames))
+          {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING').'<br />';          
+
+            self::rollback($src_file, $dst_file);
+            return false;
+          }
 
           foreach(self::$src_frames as $key => $frame)
           {
@@ -274,7 +307,7 @@ class JoomIMGtools
         // Check for failures
         if(self::checkError(self::$src_frames) || self::checkError(self::$dst_frames))
         {
-          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING').'<br />';
 
           self::rollback($src_file, $dst_file);
           return false;
@@ -303,7 +336,7 @@ class JoomIMGtools
         // Check for failures
         if(self::checkError(self::$src_frames) || self::checkError(self::$dst_frames))
         {
-          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING').'<br />';
 
           self::rollback($src_file, $dst_file);
           return false;
@@ -326,7 +359,7 @@ class JoomIMGtools
         // Check for failures
         if(self::checkError(self::$src_frames) || self::checkError(self::$dst_frames))
         {
-          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING').'<br />';
 
           self::rollback($src_file, $dst_file);
           return false;
@@ -395,7 +428,7 @@ class JoomIMGtools
             $meta_success = self::copyImageMetadata($quelle, $dst_file, self::$src_imginfo['type'], self::$dst_imginfo['type'], $new_orient);
             if(!$meta_success)
             {
-              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA').'<br />';
 
               self::rollback($src_file, $dst_file);
               return false;
@@ -433,7 +466,7 @@ class JoomIMGtools
             $meta_success = self::copyImageMetadata($quelle, $dst_file, self::$src_imginfo['type'], self::$dst_imginfo['type'], $new_orient);
             if(!$meta_success)
             {
-              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA');
+              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA').'<br />';
 
               self::rollback($src_file, $dst_file);
               return false;
@@ -444,7 +477,7 @@ class JoomIMGtools
         // Check for failures
         if(!$success)
         {
-          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING');
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING').'<br />';
 
           self::rollback($src_file, $dst_file);
           return false;
@@ -591,6 +624,11 @@ class JoomIMGtools
     // Set mode of uploaded picture
     JPath::setPermissions($dst_file);
 
+    //$tmp_nmb_farmes = count(self::$src_frames);
+    //$debugoutput .= 'number of frames: '.$tmp_nmb_farmes.'<br/>';
+    //$tmp_memory_used = round(memory_get_peak_usage(true) / 1048576,3);
+    //$debugoutput .= 'used memory: '.$tmp_memory_used.' MB<br/>';
+
     // Check, if file exists and is a valid image
     if(self::checkValidImage($dst_file))
     {
@@ -644,6 +682,9 @@ class JoomIMGtools
       return true;
     }
 
+    // Load GifFrameExtractor-Class
+    JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
+
     // Ensure that the path is valid and clean
     $src_file  = JPath::clean($src_file);
     $dst_file = JPath::clean($dst_file);
@@ -664,16 +705,6 @@ class JoomIMGtools
       )
     {
       $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_ONLY_JPG').'<br />';
-
-      return false;
-    }
-
-    // Analysis if available memory is enough
-    $memory = self::checkMemory(self::$src_imginfo);
-    if(!$memory['success'])
-    {
-      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_ERROR_MEM_EXCEED').
-                      $memory['needed']." MByte, Serverlimit: ".$memory['limit']." MByte<br />" ;
 
       return false;
     }
@@ -705,6 +736,21 @@ class JoomIMGtools
       return true;
     }
 
+    // Calculation for the amount of memory needed, when assuming one frame (in bytes, GD)
+    self::$memory_needed = self::calculateMemory(self::$src_imginfo, self::$dst_imginfo, 'rotate');
+    // Check if there is enough memory for the manipulation (assuming one frame)
+    $memory = self::checkMemory(self::$memory_needed);
+    if(!$memory['success'])
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_ERROR_MEM_EXCEED').
+                      $memory['needed']." MByte, Serverlimit: ".$memory['limit']." MByte<br />" ;
+
+      return false;
+    }
+
+    //$tmp_memory_needed = round(self::$memory_needed / 1048576,3);
+    //$output = 'calculated memory: '.$tmp_memory_needed.' MB<br/>';
+
     // Create backup file, if source and destination are the same
     if($src_file == $dst_file)
     {
@@ -729,7 +775,7 @@ class JoomIMGtools
     }
 
     // Create debugoutput
-    $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_ROTATE_BY_ANGLE', self::$dst_imginfo['angle']) . '<br />';
+    //$debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_ROTATE_BY_ANGLE', self::$dst_imginfo['angle']) . '<br />';
 
     // Method for creation of the rotated image
     switch($method)
@@ -751,9 +797,17 @@ class JoomIMGtools
         {
           // Animated GIF image (image with more than one frame)
           // Create GD-Objects from gif-file
-          JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
           $gfe = new GifFrameExtractor();
           self::$src_frames = $gfe->extract($src_file);
+
+          // Check for failures in GIF extraction
+          if(self::checkError(self::$src_frames))
+          {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING').'<br />';          
+
+            self::rollback($src_file, $dst_file);
+            return false;
+          }
 
           foreach(self::$src_frames as $key => $frame)
           {
@@ -1127,6 +1181,13 @@ class JoomIMGtools
     // Set mode of uploaded picture
     JPath::setPermissions($dst_file);
 
+    //$tmp_nmb_farmes = count(self::$src_frames);
+    //$debugoutput .= 'number of frames: '.$tmp_nmb_farmes.'<br/>';
+    //$tmp_memory_used = round(memory_get_peak_usage(true) / 1048576,3);
+    //$output .= 'used memory: '.$tmp_memory_used.' MB<br/>';
+    //JFactory::getApplication()->enqueueMessage($output);
+
+
     // Check, if file exists and is a valid image
     if(self::checkValidImage($dst_file))
     {
@@ -1243,6 +1304,10 @@ class JoomIMGtools
       if($count > 1 && $tmp_trans == -1)
       {
         $imginfo['animation'] = true;
+
+        $gfe = new GifFrameExtractor();
+        $gfe->parseFramesInfo($img);
+        $imginfo['frames'] = $gfe->getNumberFramens();
       }
       else
       {
@@ -1250,6 +1315,10 @@ class JoomIMGtools
         {
           $imginfo['animation'] = true;
           $imginfo['transparency'] = true;
+
+          $gfe = new GifFrameExtractor();
+          $gfe->parseFramesInfo($img);
+          $imginfo['frames'] = $gfe->getNumberFramens();
         }
         else
         {
@@ -1283,7 +1352,7 @@ class JoomIMGtools
   protected static function clearVariables()
   {
   	self::$src_imginfo = array('width' => 0,'height' => 0,'type' => '','orentation' => '','exif' => array('IFD0' => array(),'EXIF' => array()),
-                               'iptc' => array(),'comment' => '','transparency' => false,'animation' => false);
+                                 'iptc' => array(),'comment' => '','transparency' => false,'animation' => false, 'frames' => 1);
 
  		self::$dst_imginfo = array('width' => 0,'height' => 0,'type' => '','offset_x' => 0,'offset_y' => 0,'angle' => 0,
   														 'flip' => 'none','quality' => 100,'src' => array('width' => 0,'height' => 0));
@@ -1351,14 +1420,198 @@ class JoomIMGtools
   }
 
   /**
-   * Calculates whether the memory limit is enough
+   * Calculates the amaount of memory (in bytes)
+   * needed for manipulating a one-frame image with GD
+   *
+   * @param   array   $src_imginfo      array with source image informations
+   * @param   array   $dst_imginfo      array with destination image informations
+   * @param   str     $method           manipulation method (resize or rotate)
+   * @return  int     memory needed
+   * @since   3.5.0
+   */
+  protected static function calculateMemory($src_imginfo, $dst_imginfo, $method)
+  {
+    $config = JoomConfig::getInstance();
+      // quantify number of bits per channel
+      if(key_exists('bits',$src_imginfo))
+      {
+        $bits = $src_imginfo['bits'];
+      }
+      else
+      {
+        $bits = 8;
+      }
+
+      // Check, if it is a special image (transparency or animation)
+      $special = false;
+      if($src_imginfo['animation'] || $src_imginfo['transparency'])
+      {
+        $special = true;
+      }
+
+      // Check, if GD2 is available
+      $gd2 = false;
+      if(function_exists('imagecopyresampled'))
+      {
+        $gd2 = true;
+      }
+
+      // quantify the tweakfactor coefficients and the number of channels per pixel
+      // based on image-type and manipulation method
+      // formula for tweakfactor calculation:
+      // tweakfactor = m*pixel + c
+      switch($src_imginfo['type'])
+      {
+        case 'GIF':
+          switch($method)
+          {
+            case 'resize':
+              if(!$src_imginfo['animation'])
+              {
+                // tweakfactor dependent on number of pixels (~0.5)
+                $m = -0.0000000020072;
+                $c = 0.60054;
+              }
+              else
+              {
+                // tweakfactor dependent on number of pixels (~1.8)
+                $m = -0.000000030872;
+                $c = 1.9125;
+              }
+              break;
+
+            case 'rotate':
+              if(!$src_imginfo['animation'])
+              {
+                // tweakfactor dependent on number of pixels (~3.0)
+                $m = -0.000000019085;
+                $c = 2.70515;
+              }
+              else
+              {
+                // tweakfactor dependent on number of pixels (~2.3)
+                $m = -0.00000006174;
+                $c = 2.41248;
+              }
+              break;
+            
+            default:
+              // constant tweakfactor of 0.5
+              $m = 0;
+              $c = 0.5;
+              break;
+          }
+
+          // gif has always 3 channels (RGB)
+          $channels = 3;
+          break;
+
+        case 'JPG':
+        case 'JPEG':
+        case 'JPE':
+          switch($method)
+          {
+            case 'resize':
+              if($config->get('jg_fastgd2thumbcreation') && $gd2 && !$special)
+              {
+                // tweakfactor dependent on number of pixels (~1.6)
+                $m = -0.000000007157;
+                $c = 2.00193;
+              }
+              else
+              {
+                // tweakfactor dependent on number of pixels (~1.5)
+                $m = -0.000000003579;
+                $c = 1.60097;
+              }
+              break;
+
+            case 'rotate':
+              // tweakfactor dependent on number of pixels (~3.0)
+              $m = -0.000000007157;
+              $c = 3.2019;
+              break;
+            
+            default:
+              // constant tweakfactor of 1.5
+              $m = 0;
+              $c = 1.5;
+              break;
+          }
+
+          // get channel number from imginfo
+          $channels = $src_imginfo['channels'];
+          break;
+
+        case 'PNG':
+          switch($method)
+          {
+            case 'resize':
+              // tweakfactor dependent on number of pixels (~2.5)
+              $m = -0.000000007157;
+              $c = 2.70193;
+              break;
+
+            case 'rotate':
+              // tweakfactor dependent on number of pixels (~3.3)
+              $m = -0.000000011928;
+              $c = 3.50322;
+              break;
+            
+            default:
+              // constant tweakfactor of 2.5
+              $m = 0;
+              $c = 2.5;
+              break;
+          }
+
+            // png has always 3 channels (RGB)
+            $channels = 3;
+          break;
+      }
+
+      // pixel calculation for source and destination GD-Frame
+      $src_pixel = $src_imginfo['width'] * $src_imginfo['height'];
+      $dst_pixel = $dst_imginfo['width'] * $dst_imginfo['height'];
+
+      $securityfactor = 1.08;
+      $powerfactor = 1.02;
+      $tweakfactor = self::tweakfactor($m, $c, $src_pixel);
+
+      $oneMB = 1048576;
+
+      $memoryUsage = round(( ((($bits * $channels) / 8) * $src_pixel * $tweakfactor + (($bits * $channels) / 8) * $dst_pixel * $tweakfactor)
+                             * pow($src_imginfo['frames'], $powerfactor) + 2 * $oneMB
+                            ) * $securityfactor);
+
+      // Calculate needed memory in bytes (1byte = 8bits).
+      // We need to calculate the usage for both source and destination GD-Frame
+      return $memoryUsage;
+  }
+
+  /**
+   * Calculates the tweakfactor for the GD memory usage.
+   *
+   * @param   num     $m         linear dependency coefficient
+   * @param   num     $c         constant coefficient
+   * @param   num     $pixel     number of pixels of the frame
+   * @return  num     tweakfactor
+   * @since   3.5.0
+   */
+  protected static function tweakfactor($m, $c, $pixel)
+  {
+    return ($m * $pixel) + $c;
+  }
+
+  /**
+   * Calculates whether there is enough memory
    * to work on a specific image.
    *
-   * @param   array   $imginfo      array with image informations
+   * @param   int     $memory_needed    memory (in bytes) that is needed for manipulating
    * @return  array   True, if we have enough memory to work, false and memory info otherwise
    * @since   3.5.0
    */
-  protected static function checkMemory($imginfo)
+  protected static function checkMemory($memory_needed)
   {
     $config = JoomConfig::getInstance();
     if($config->get('jg_thumbcreation') == 'im')
@@ -1367,64 +1620,27 @@ class JoomIMGtools
       return array('success' => true);
     }
 
+    $byte_values = array('K' => 1024, 'M' => 1048576, 'G' => 1073741824);
+
     if((function_exists('memory_get_usage')) && (ini_get('memory_limit')))
     {
-      $jpgpic = false;
-      switch($imginfo['type'])
-      {
-        case 'GIF':
-          // Measured factor 1 is better
-          $channel = 1;
-          break;
-        case 'JPG':
-        case 'JPEG':
-        case 'JPE':
-          $channel = $imginfo['channels'];
-          $jpgpic=true;
-          break;
-        case 'PNG':
-          // No channel for png
-          $channel = 3;
-          break;
-      }
-      $MB  = 1048576;
-      $K64 = 65536;
 
-      if($config->get('jg_fastgd2thumbcreation') && $jpgpic && $config->get('jg_thumbcreation') == 'gd2')
-      {
-        // Function of fast gd2 creation needs more memory
-        $corrfactor = 2.1;
-      }
-      else
-      {
-        $corrfactor = 1.7;
-      }
-
-      if(!key_exists('bits',$imginfo))
-      {
-        $imginfo['bits'] = 8;
-      }
-
-      $memoryNeeded = round(($imginfo['width']
-                             * $imginfo['height']
-                             * $imginfo['bits']
-                             * $channel / 8
-                             + $K64)
-                             * $corrfactor);
-
-      $memoryNeeded = memory_get_usage() + $memoryNeeded;
-      // Get memory limit
+      $memoryNeeded = memory_get_usage() + $memory_needed;
+      
+      // Get memory limit in bytes
       $memory_limit = @ini_get('memory_limit');
       if(!empty($memory_limit) && $memory_limit != 0)
       {
-        $memory_limit = substr($memory_limit, 0, -1) * 1024 * 1024;
+        $val = substr($memory_limit, -1);
+        $memory_limit = substr($memory_limit, 0, -1) * $byte_values[$val];
       }
 
       if($memory_limit != 0 && $memoryNeeded > $memory_limit)
       {
-        $memoryNeededMB = round ($memoryNeeded / 1024 / 1024, 0);
+        $memoryNeededMB = round($memoryNeeded / $byte_values['M'], 0);
+        $memoryLimitMB  = round($memory_limit / $byte_values['M'], 0);
 
-        return array('success' => false, 'needed' => $memoryNeededMB, 'limit' => $memory_limit/$MB);
+        return array('success' => false, 'needed' => $memoryNeededMB, 'limit' => $memoryLimitMB);
       }
     }
 
@@ -2434,18 +2650,18 @@ class JoomIMGtools
   protected static function checkError($value)
   {
     if(is_array($value))
+    {
+      return self::in_array_r(false,$value);
+    }
+    else
+    {
+      if($value == false)
       {
-        self::in_array_r(false,$value);
+        return true;
       }
-      else
-      {
-        if($value == false)
-        {
-          return true;
-        }
-      }    
+    }
 
-      return false;
+    return false;
   }
 
   /**
@@ -2694,7 +2910,7 @@ class JoomIMGtools
    * @return  boolean true if needle is found in the array, false otherwise
    * @since   3.5.0
    */
-  protected static function in_array_r($needle, $haystack, $strict = false)
+  protected static function in_array_r($needle, $haystack, $strict = true)
   {
     foreach($haystack as $item)
     {
