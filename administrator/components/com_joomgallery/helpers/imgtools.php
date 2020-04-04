@@ -44,7 +44,7 @@ class JoomIMGtools
    *
    * @var array
    */
-  protected static $dst_imginfo = array('width' => 0,'height' => 0,'type' => '','offset_x' => 0,'offset_y' => 0,'angle' => 0,
+  protected static $dst_imginfo = array('width' => 0,'height' => 0,'type' => '','orentation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
   															 'flip' => 'none','quality' => 100,'src' => array('width' => 0,'height' => 0));
 
   /**
@@ -86,7 +86,7 @@ class JoomIMGtools
    * @param   &string $debugoutput            Debug information
    * @param   string  $src_file               Path to source file
    * @param   string  $dst_file               Path to destination file
-   * @param   int     $settings               Resize to 0=width,1=height,2=max(width,height) or 3=crop
+   * @param   int     $settings               Resize to 0=height,1=width,2=max(width,height) or 3=crop
    * @param   int     $new_width              Width to resize
    * @param   int     $new_height             Height to resize
    * @param   int     $method                 Image processor: gd1,gd2,im
@@ -123,7 +123,7 @@ class JoomIMGtools
     if(!$anim)
     {
       self::$src_imginfo['frames'] = 1;
-    } 
+    }
 
     // GD can only handle JPG, PNG and GIF images
     if(    self::$src_imginfo['type'] != 'JPG'
@@ -148,13 +148,50 @@ class JoomIMGtools
     {
     	self::$dst_imginfo['angle'] = $angle;
       self::$dst_imginfo['flip'] = 'none';
-    }    
+    }
+
+    // get dest orientation
+    if(abs(self::$dst_imginfo['angle']) == 90 || abs(self::$dst_imginfo['angle']) == 270)
+    {
+      if(self::$src_imginfo['orientation'] == 'landscape')
+      {
+        self::$dst_imginfo['orientation'] = 'portrait';
+      }
+      elseif(self::$src_imginfo['orientation'] == 'portrait')
+      {
+        self::$dst_imginfo['orientation'] = 'landscape';
+      }
+      else
+      {
+        self::$dst_imginfo['orientation'] = self::$src_imginfo['orientation'];
+      }
+    }
+    else
+    {
+      self::$dst_imginfo['orientation'] = self::$src_imginfo['orientation'];
+    }
+
 
     // Conditions where no resize is needed
-    if(   (self::$src_imginfo['width'] <= $new_width && self::$src_imginfo['height'] <= $new_width && ($angle == 0 || $angle == 180 || $angle == -180))
-        ||
-          (self::$src_imginfo['height'] <= $new_width && self::$src_imginfo['width'] <= $new_width && ($angle == 270 || $angle == -270 || $angle == 90 || $angle == -90))
-      )
+    $noResize = false;
+    if(self::$src_imginfo['orientation'] == self::$dst_imginfo['orientation'])
+    {
+      // dst and src same orientation
+      if(self::$src_imginfo['width'] <= $new_width && self::$src_imginfo['height'] <= $new_height)
+      {
+        $noResize = true;
+      }
+    }
+    else
+    {
+      // dst and src different orientation
+      if(self::$src_imginfo['width'] <= $new_height && self::$src_imginfo['height'] <= $new_width)
+      {
+        $noResize = true;
+      }
+    }
+
+    if($noResize)
     {
       if($src_file != $dst_file)
       {
@@ -1354,8 +1391,8 @@ class JoomIMGtools
   	self::$src_imginfo = array('width' => 0,'height' => 0,'type' => '','orentation' => '','exif' => array('IFD0' => array(),'EXIF' => array()),
                                  'iptc' => array(),'comment' => '','transparency' => false,'animation' => false, 'frames' => 1);
 
- 		self::$dst_imginfo = array('width' => 0,'height' => 0,'type' => '','offset_x' => 0,'offset_y' => 0,'angle' => 0,
-  														 'flip' => 'none','quality' => 100,'src' => array('width' => 0,'height' => 0));
+ 		self::$dst_imginfo = array('width' => 0,'height' => 0,'type' => '','orentation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
+                                 'flip' => 'none','quality' => 100,'src' => array('width' => 0,'height' => 0));
 
   	self::$src_frames = array(array('duration' => 0,'image' => null));
 
@@ -1812,15 +1849,16 @@ class JoomIMGtools
     //if($settings != 3 || (self::$dst_imginfo['offset_x'] == 0 && self::$dst_imginfo['offset_y'] == 0))
     if($settings != 3)
     {
-      //cropping
       $ratio = max($ratio, 1.0);
       self::$dst_imginfo['width']  			  = (int)floor($srcWidth / $ratio);
       self::$dst_imginfo['height'] 			  = (int)floor($srcHeight / $ratio);
       self::$dst_imginfo['src']['width']  = (int)$srcWidth;
       self::$dst_imginfo['src']['height'] = (int)$srcHeight;
+
     }
     else
     {
+      //cropping
       self::$dst_imginfo['width'] 				= (int)$new_width;
       self::$dst_imginfo['height'] 			  = (int)$new_height;
       self::$dst_imginfo['src']['width']  = (int)(self::$dst_imginfo['width'] * $ratio);
