@@ -619,10 +619,25 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                   true,
                                                   true
                                                   );
-              if(!$return || !$autorot_orig)
-              {
-                $return = JFile::copy($new_tmp,$new_path);
-              }
+            }
+
+            // Copy detail image if no rotation is needed or rotation failed
+            if(!$return || !$autorot_orig)
+            {
+              $return = JFile::copy($new_tmp,$new_path);
+            }
+
+            if(!$return)
+            {
+              JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGIMG_NOT_CREATED', $files['name'][$type]));
+
+              // Delete uploaded temp image
+              JFile::delete($new_tmp);
+
+              return false;
+            }
+            else
+            {
               $filesize = filesize($new_path) / 1000; //KB
               JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGIMG_CREATED', $filesize));
             }

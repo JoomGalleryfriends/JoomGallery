@@ -704,7 +704,7 @@ class JoomIMGtools
    *                                          if true: overwrites the value of angle
    * @param   boolean $metadata               true=preserve metadata during rotation
    * @param   boolean $anim     		          true=preserve animation during rotation
-   * @return  boolean True on success, false otherwise
+   * @return  boolean True on success, false otherwise (false, if no rotation is needed)
    * @since   3.4.0
    */
   public static function rotateImage(&$debugoutput, $src_file, $dst_file, $method,
@@ -716,7 +716,7 @@ class JoomIMGtools
     if($angle == 0 && !$auto_orient)
     {
       // Nothing to do
-      return true;
+      return false;
     }
 
     // Load GifFrameExtractor-Class
@@ -770,7 +770,7 @@ class JoomIMGtools
     if(self::$dst_imginfo['angle'] == 0)
     {
       // Nothing to do
-      return true;
+      return false;
     }
 
     // Calculation for the amount of memory needed, when assuming one frame (in bytes, GD)
