@@ -866,7 +866,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       $doResize = false;
       $err = false;
 
-      if($rotateImageTypes == 2)
+      if($rotateImageTypes == 2 && JFile::exists($orig))
       {
         if(JoomIMGtools::rotateImage($debugoutput,
                                      $orig,
@@ -887,8 +887,13 @@ class JoomGalleryModelImages extends JoomGalleryModel
           $err = true;
         }
       }
+      else
+      {
+        $debugoutput .= JText::sprintf('COM_JOOMGALLERY_ROTATE_NO_ORIG', $orig).'<br />';
+        $err = true;
+      }
 
-      if($rotateImageTypes != 2 || ($rotateImageTypes == 2 && !$err) )
+      if($rotateImageTypes != 2 || ($rotateImageTypes == 2 && !$err))
       {
         if(JoomIMGtools::rotateImage($debugoutput,
                                      $img,
@@ -914,6 +919,12 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
         if($doResize || $err)
         {
+          // As there is no original image available, use detai image instead 
+          if(!JFile::exists($orig))
+          {
+            $orig = $img;
+          }
+
           // As we have a successfully rotated original we should use a resize here to ensure the correct
           // appearance according to the thumbnail conversion settings
           $ret = JoomIMGtools::resizeImage($tmpdebugoutput,
