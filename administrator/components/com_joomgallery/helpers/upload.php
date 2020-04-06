@@ -2300,8 +2300,7 @@ class JoomUpload extends JObject
       if(!$return)
       {
         $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGINAL_NOT_ROTATED', $this->_ambit->getImg('orig_path', $filename, null, $this->catid)).'<br />';
-        $this->debug = true;
-        return false;
+        //$this->debug = true;
       }
       $origfilesize = filesize($this->_ambit->getImg('orig_path', $filename, null, $this->catid)) / 1000; //KB
       $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGIMG_CREATED', $origfilesize).'<br />';

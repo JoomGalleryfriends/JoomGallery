@@ -889,12 +889,16 @@ class JoomGalleryModelImages extends JoomGalleryModel
       }
       else
       {
-        $debugoutput .= JText::sprintf('COM_JOOMGALLERY_ROTATE_NO_ORIG', $orig).'<br />';
-        $err = true;
+        if(!JFile::exists($orig))
+        {
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_ROTATE_NO_ORIG', $orig).'<br />';
+          $err = true;
+        }
       }
 
       if($rotateImageTypes != 2 || ($rotateImageTypes == 2 && !$err))
       {
+
         if(JoomIMGtools::rotateImage($debugoutput,
                                      $img,
                                      $img,
@@ -915,7 +919,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
           $err = true;
         }
 
-        $tmpdebugoutput = '';
+        $tmpdebugoutput = '';        
 
         if($doResize || $err)
         {
