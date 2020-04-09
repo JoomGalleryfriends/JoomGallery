@@ -35,7 +35,7 @@ class JoomIMGtools
    *
    * @var array
    */
-  protected static $src_imginfo = array('width' => 0,'height' => 0,'type' => '','orentation' => '','exif' => array('IFD0' => array(),'EXIF' => array()),
+  protected static $src_imginfo = array('width' => 0,'height' => 0,'type' => '','orientation' => '','exif' => array('IFD0' => array(),'EXIF' => array()),
   															 'iptc' => array(),'comment' => '','transparency' => false,'animation' => false, 'frames' => 1);
 
   /**
@@ -44,7 +44,7 @@ class JoomIMGtools
    *
    * @var array
    */
-  protected static $dst_imginfo = array('width' => 0,'height' => 0,'type' => '','orentation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
+  protected static $dst_imginfo = array('width' => 0,'height' => 0,'type' => '','orientation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
   															 'flip' => 'none','quality' => 100,'src' => array('width' => 0,'height' => 0));
 
   /**
@@ -150,7 +150,7 @@ class JoomIMGtools
       self::$dst_imginfo['flip'] = 'none';
     }
 
-    // get dest orientation
+    // Get destination orientation
     if(abs(self::$dst_imginfo['angle']) == 90 || abs(self::$dst_imginfo['angle']) == 270)
     {
       if(self::$src_imginfo['orientation'] == 'landscape')
@@ -171,6 +171,8 @@ class JoomIMGtools
       self::$dst_imginfo['orientation'] = self::$src_imginfo['orientation'];
     }
 
+    // Get destination quality
+    self::$dst_imginfo['quality'] = $dst_qual;
 
     // Conditions where no resize is needed
     $noResize = false;
@@ -258,9 +260,6 @@ class JoomIMGtools
       self::rollback($src_file, $dst_file);
       return false;
     }
-
-    //$tmp_memory_needed = round(self::$memory_needed / 1048576,3);
-    //$debugoutput .= 'calculated memory: '.$tmp_memory_needed.' MB<br/>';
 
     // Create debugoutput
     switch($settings)
@@ -1388,10 +1387,10 @@ class JoomIMGtools
   */
   protected static function clearVariables()
   {
-  	self::$src_imginfo = array('width' => 0,'height' => 0,'type' => '','orentation' => '','exif' => array('IFD0' => array(),'EXIF' => array()),
+  	self::$src_imginfo = array('width' => 0,'height' => 0,'type' => '','orientation' => '','exif' => array('IFD0' => array(),'EXIF' => array()),
                                  'iptc' => array(),'comment' => '','transparency' => false,'animation' => false, 'frames' => 1);
 
- 		self::$dst_imginfo = array('width' => 0,'height' => 0,'type' => '','orentation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
+ 		self::$dst_imginfo = array('width' => 0,'height' => 0,'type' => '','orientation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
                                  'flip' => 'none','quality' => 100,'src' => array('width' => 0,'height' => 0));
 
   	self::$src_frames = array(array('duration' => 0,'image' => null));
