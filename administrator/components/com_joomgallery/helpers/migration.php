@@ -1803,7 +1803,7 @@ abstract class JoomMigration
                                           true,
                                           true
                                          );
-      if(!$return)
+      if(!$return && $debugoutput != '')
       {
         $this->setError('Could not rotate original image '.$neworigimage);
       }

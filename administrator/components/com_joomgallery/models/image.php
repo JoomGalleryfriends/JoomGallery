@@ -606,6 +606,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
             }
             break;
           case 'orig':
+            $debugoutput = '';
             // Rotate original image if needed
             if($autorot_orig)
             {
@@ -627,7 +628,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
               $return = JFile::copy($new_tmp,$new_path);
             }
 
-            if(!$return)
+            if(!$return && $debugoutput != '')
             {
               JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGIMG_NOT_CREATED', $files['name'][$type]));
 
