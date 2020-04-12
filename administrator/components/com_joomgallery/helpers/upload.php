@@ -2330,9 +2330,22 @@ class JoomUpload extends JObject
     $old_info = $this->_mainframe->getUserState('joom.upload.post');
     $cur_info = (!is_null($old_info)) ? $old_info : array();
     $new_info = JRequest::get('post');
-    if(isset($new_info['imgtext']))
+
+    // The use of different post variables for the image description is necessary for the editor form fields to work properly
+    // in the frontend upload view when using multiple upload methods
+    $imgtext = 'imgtext';
+    if($this->_site && ($this->type == 'single' || $this->type == 'batch' || $this->type == 'java'))
     {
-      $new_info['imgtext'] = JComponentHelper::filterText($this->_mainframe->input->post->get('imgtext', '', 'raw'));
+      $imgtexttmp = $this->type . '-' . $imgtext;
+      if(isset($new_info[$imgtexttmp]))
+      {
+        $imgtext = $imgtexttmp;
+      }
+    }
+
+    if(isset($new_info[$imgtext]))
+    {
+      $new_info['imgtext'] = JComponentHelper::filterText($this->_mainframe->input->post->get($imgtext, '', 'raw'));
     }
 
     // Prevent setting access level in frontend
