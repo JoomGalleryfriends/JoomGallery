@@ -193,12 +193,12 @@ class JoomIMGtools
       }
     }
 
-    if($noResize)
+    if($noResize && self::$dst_imginfo['angle'] == 0)
     {
       if($src_file != $dst_file)
       {
         // If source image is already of the same size or smaller than the image
-        // which shall be created only copy the source image to destination
+        // and no rotation is needed, only copy the source image to destination
         $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_NOT_NECESSARY').'<br />';
         if(!JFile::copy($src_file, $dst_file))
         {
@@ -379,17 +379,29 @@ class JoomIMGtools
         }
 
         // Resizing with GD
-        foreach(self::$src_frames as $key => $frame)
+        if(!$noResize)
         {
-          $fast_resize = false;
-
-          if($config->jg_fastgd2thumbcreation == 1)
+          // Resize image, if it is needed
+          foreach(self::$src_frames as $key => $frame)
           {
-            $fast_resize = true;
-          }
+            $fast_resize = false;
 
-          self::imageResize_GD(self::$dst_frames[$key]['image'], self::$src_frames[$key]['image'], self::$src_imginfo, self::$dst_imginfo,
-                               $fast_resize, 3);
+            if($config->jg_fastgd2thumbcreation == 1)
+            {
+              $fast_resize = true;
+            }
+
+            self::imageResize_GD(self::$dst_frames[$key]['image'], self::$src_frames[$key]['image'], self::$src_imginfo, self::$dst_imginfo,
+                                $fast_resize, 3);
+          }
+        }
+        else
+        {
+          // Copy image, if no resize is needed
+          foreach(self::$src_frames as $key => $frame)
+          {
+            self::imageCopy_GD(self::$dst_frames[$key]['image'], self::$src_frames[$key]['image']);
+          }
         }
 
         // Check for failures
@@ -603,8 +615,11 @@ class JoomIMGtools
           $commands .= ' -crop "'.self::$dst_imginfo['src']['width'].'x'.self::$dst_imginfo['src']['height'].'+'.self::$dst_imginfo['offset_x'].'+'.self::$dst_imginfo['offset_y'].'" +repage';
         }
 
-        // Assembling the imagick command for resizing
-        $commands  .= ' -resize "'.self::$dst_imginfo['width'].'x'.self::$dst_imginfo['height'].'" -quality "'.self::$dst_imginfo['quality'].'" -unsharp "3.5x1.2+1.0+0.10"';
+        if(!$noResize)
+        {
+          // Assembling the imagick command for resizing if resizing is needed
+          $commands  .= ' -resize "'.self::$dst_imginfo['width'].'x'.self::$dst_imginfo['height'].'" -quality "'.self::$dst_imginfo['quality'].'" -unsharp "3.5x1.2+1.0+0.10"';
+        }      
         
         // Assembling the shell code for the resize with imagick
         $convert    = $convert_path.' '.$commands.' "'.$src_file.'" "'.$dst_file.'"';
@@ -2154,6 +2169,27 @@ class JoomIMGtools
     }
 
     return $new_img;
+  }
+
+  /**
+   * Copy GD image object resource from one frame to another
+   *
+   * @param   obj     $dst_img       GDobject of the destination image-frame
+   * @param   obj     $src_img       GDobject of the source image-frame
+   * @return  obj 		copied GDobject on success, false otherwise
+   * @since   3.5.0
+   */
+  protected static function imageCopy_GD($dst_img, $src_img)
+  {
+    // Get width from image.
+    $w = imagesx($src_img);
+    // Get height from image.
+    $h = imagesy($src_img);
+
+    // Copy the image
+    imagecopy($dst_img, $src_img, 0, 0, 0, 0, $w, $h);
+
+    return $dst_img;
   }
 
   /**
