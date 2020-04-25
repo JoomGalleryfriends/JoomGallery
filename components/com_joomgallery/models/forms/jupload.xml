@@ -30,7 +30,7 @@
         required="true"
       />
       <field
-        name="imgtext"
+        name="java-imgtext"
         id="java-imgtext"
         type="editor"
         class="inputbox"
