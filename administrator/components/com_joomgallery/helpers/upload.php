@@ -2141,11 +2141,7 @@ class JoomUpload extends JObject
     if(
         $this->_config->get('jg_resizetomaxwidth')
       &&
-        (
-           ($this->_site && $this->_config->get('jg_special_gif_upload') == 0)
-        || !$this->_mainframe->getUserStateFromRequest('joom.upload.create_special_gif', 'create_special_gif', false, 'bool')
-        || ($tag != 'gif' && $tag != 'png')
-        )
+        !$this->_mainframe->getUserStateFromRequest('joom.upload.create_special_gif', 'create_special_gif', false, 'bool')
       )
     {
 
