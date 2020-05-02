@@ -1671,7 +1671,7 @@ abstract class JoomMigration
         $result['detail'] = JoomIMGtools::resizeImage($debugoutput,
                                                       $neworigimage,
                                                       $newdetailimage,
-                                                      2,
+                                                      3,
                                                       $this->_config->get('jg_maxwidth'),
                                                       $this->_config->get('jg_maxwidth'),
                                                       $this->_config->get('jg_thumbcreation'),

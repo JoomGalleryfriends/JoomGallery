@@ -579,7 +579,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
             $return = JoomIMGtools::resizeImage($debugoutput,
                                                 $new_tmp,
                                                 $new_path,
-                                                2,
+                                                3,
                                                 $this->_config->get('jg_maxwidth'),
                                                 $this->_config->get('jg_maxwidth'),
                                                 $this->_config->get('jg_thumbcreation'),

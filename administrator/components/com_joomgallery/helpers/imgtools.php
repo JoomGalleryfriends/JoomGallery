@@ -86,7 +86,7 @@ class JoomIMGtools
    * @param   &string $debugoutput            Debug information
    * @param   string  $src_file               Path to source file
    * @param   string  $dst_file               Path to destination file
-   * @param   int     $settings               Resize to 0=height,1=width,2=max(width,height) or 3=crop
+   * @param   int     $settings               Resize to 0=height,1=width,2=crop or 3=max(width,height)
    * @param   int     $new_width              Width to resize
    * @param   int     $new_height             Height to resize
    * @param   int     $method                 Image processor: gd1,gd2,im
@@ -95,7 +95,7 @@ class JoomIMGtools
    *                                          image section to use for cropping
    * @param   int     $angle                  Angle to rotate the resized image anticlockwise
    * @param   boolean $auto_orient            Auto orient image based on exif orientation (jpg only)
-   *                                          if true: overwrites the value of angle
+   *                                          if true: overwrites the value of angle 
    * @param   boolean $metadata               true=preserve metadata in the resized image
    * @param   boolean $anim                   true=preserve animation in the resized image
    * @return  boolean True on success, false otherwise
@@ -271,12 +271,12 @@ class JoomIMGtools
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_WIDTH');
       break;
     case 2:
-      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_MAX');
-      break;
-    // Free resizing and cropping
-    case 3:
+      // Free resizing and cropping
       $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_CROP');
       break;
+    case 3:
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_MAX');
+      break;    
     }
 
     // Method for creation of the resized image
@@ -1708,10 +1708,10 @@ class JoomIMGtools
    *
    *
    * @param   string  $dst_img          Path of destination image file
-   * @param   int     $settings         Resize to 0=width,1=height,2=max(width,height) or 3=crop
+   * @param   int     $settings         Resize to 0=width,1=height,2=crop or 3=max(width,height)
    * @param   int     $new_width        Width to resize
    * @param   int     $new_height       Height to resize
-   * @param   int     $cropposition     Only if $settings=3; image section to use for cropping
+   * @param   int     $cropposition     Only if $settings=2; image section to use for cropping
    * @return  array   true on success, false otherwise
    * @since   3.5.0
    */
@@ -1785,20 +1785,6 @@ class JoomIMGtools
 
       break;
     case 2:
-      // Resize to max side lenght - height or width (but keep original ratio)
-      if($srcHeight > $srcWidth)
-      {
-        $ratio = ($srcHeight / $new_height);
-        $testwidth = ($srcWidth / $ratio);
-      }
-      else
-      {
-        $ratio = ($srcWidth / $new_width);
-        $testheight = ($srcHeight / $ratio);
-      }
-
-      break;
-    case 3:
       // Free resizing and cropping
       if($srcWidth < $new_width)
       {
@@ -1854,15 +1840,30 @@ class JoomIMGtools
       }
 
       break;
+    case 3:
+      // Resize to max side lenght - height or width (but keep original ratio)
+      if($srcHeight > $srcWidth)
+      {
+        $ratio = ($srcHeight / $new_height);
+        $testwidth = ($srcWidth / $ratio);
+      }
+      else
+      {
+        $ratio = ($srcWidth / $new_width);
+        $testheight = ($srcHeight / $ratio);
+      }
+
+      break;
     default:
       echo 'undefined "settings"-parameter!';
       return false;
     }
 
     // Calculate widths and heights necessary for resize and bring them to integer values
-    //if($settings != 3 || (self::$dst_imginfo['offset_x'] == 0 && self::$dst_imginfo['offset_y'] == 0))
-    if($settings != 3)
+    //if($settings != 2 || (self::$dst_imginfo['offset_x'] == 0 && self::$dst_imginfo['offset_y'] == 0))
+    if($settings != 2)
     {
+      //not cropping
       $ratio = max($ratio, 1.0);
       self::$dst_imginfo['width']  			  = (int)floor($srcWidth / $ratio);
       self::$dst_imginfo['height'] 			  = (int)floor($srcHeight / $ratio);

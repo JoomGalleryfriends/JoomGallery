@@ -2153,7 +2153,7 @@ class JoomUpload extends JObject
       $return = JoomIMGtools::resizeImage($this->_debugoutput,
                                           $source,
                                           $this->_ambit->getImg('img_path', $filename, null, $this->catid),
-                                          2,
+                                          3,
                                           $this->_config->get('jg_maxwidth'),
                                           $this->_config->get('jg_maxwidth'),
                                           $this->_config->get('jg_thumbcreation'),
