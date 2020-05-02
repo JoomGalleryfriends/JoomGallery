@@ -644,7 +644,11 @@ class JoomUpload extends JObject
       // because the uploaded archive is saved like php8900.tmp and JArchive
       // needs a valid extension
       $zipfile = $extractdir.'/'.$zippack['name'];
-      JFile::upload($zippack['tmp_name'], $zipfile);
+      if(!JFile::upload($zippack['tmp_name'], $zipfile, false, true))
+      {
+        $this->setError(JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_FILE_NOT_UPLOADED'));
+        return false;
+      }
 
       // Extract archive to new directory, JArchive chooses the right adapter
       // according to the extension
