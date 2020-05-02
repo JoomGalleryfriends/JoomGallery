@@ -348,7 +348,7 @@ class JoomIMGtools
           self::rollback($src_file, $dst_file);
           return false;
         }
-
+ 
         // Orient image, if needed
         if(self::$dst_imginfo['flip'] != 'none')
         {
@@ -2153,23 +2153,29 @@ class JoomIMGtools
   {
   	switch($direction) {
     case 'hor':
-      $new_img = imageflip($img_frame, IMG_FLIP_HORIZONTAL);
+      $success = imageflip($img_frame, IMG_FLIP_HORIZONTAL);
       break;
     case 'vert':
-      $new_img = imageflip($img_frame, IMG_FLIP_VERTICAL);
+      $success = imageflip($img_frame, IMG_FLIP_VERTICAL);
       break;
     case 'both':
-      $new_img = imageflip($img_frame, IMG_FLIP_BOTH);
+      $success = imageflip($img_frame, IMG_FLIP_BOTH);
       break;
     case 'none':
-      $new_img = $img_frame;
-      break;
+      // 'break' intentionally omitted
     default:
-    	$new_img = $img_frame;
+    	$success = true;
     	break;
     }
 
-    return $new_img;
+    if($success)
+    {
+      return $img_frame;
+    }
+    else
+    {
+      return false;
+    }
   }
 
   /**
