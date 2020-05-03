@@ -193,12 +193,12 @@ class JoomIMGtools
       }
     }
 
-    if($noResize && self::$dst_imginfo['angle'] == 0)
+    if($noResize && self::$dst_imginfo['angle'] == 0 && self::$src_imginfo['flip'] == 'none')
     {
       if($src_file != $dst_file)
       {
         // If source image is already of the same size or smaller than the image
-        // and no rotation is needed, only copy the source image to destination
+        // and no rotation/flipping is needed, only copy the source image to destination
         $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_NOT_NECESSARY').'<br />';
         if(!JFile::copy($src_file, $dst_file))
         {
@@ -243,7 +243,7 @@ class JoomIMGtools
       return false;
     }
 
-    // Calculation for the amount of memory needed, when assuming one frame (in bytes, GD)
+    // Calculation for the amount of memory needed (in bytes, GD)
     $clc_method = 'resize';
     if(self::$dst_imginfo['angle'] > 0 || self::$dst_imginfo['flip'] != 'none')
     {
@@ -781,13 +781,13 @@ class JoomIMGtools
       self::$dst_imginfo['flip'] = 'none';
     }
 
-    if(self::$dst_imginfo['angle'] == 0)
+    if(self::$dst_imginfo['angle'] == 0 && self::$dst_imginfo['flip'] == 'none')
     {
       // Nothing to do
       return false;
     }
 
-    // Calculation for the amount of memory needed, when assuming one frame (in bytes, GD)
+    // Calculation for the amount of memory needed (in bytes, GD)
     self::$memory_needed = self::calculateMemory(self::$src_imginfo, self::$dst_imginfo, 'rotate');
     // Check if there is enough memory for the manipulation (assuming one frame)
     $memory = self::checkMemory(self::$memory_needed);
