@@ -534,8 +534,15 @@ class JoomIMGtools
         // destroy GD-Objects
         foreach(self::$src_frames as $key => $frame)
         {
-          imagedestroy(self::$src_frames[$key]['image']);
-          imagedestroy(self::$dst_frames[$key]['image']);
+          if(!empty(self::$src_frames[$key]['image']))
+          {
+            imagedestroy(self::$src_frames[$key]['image']);
+          }
+
+          if(!empty(self::$dst_frames[$key]['image']) && self::$dst_frames[$key]['image'] != self::$src_frames[$key]['image'])
+          {
+            imagedestroy(self::$dst_frames[$key]['image']);
+          }  
         }
  
       	break;
@@ -1049,8 +1056,15 @@ class JoomIMGtools
         // destroy GD-Objects
         foreach(self::$src_frames as $key => $frame)
         {
-          imagedestroy(self::$src_frames[$key]['image']);
-          imagedestroy(self::$dst_frames[$key]['image']);
+          if(!empty(self::$src_frames[$key]['image']))
+          {
+            imagedestroy(self::$src_frames[$key]['image']);
+          }
+
+          if(!empty(self::$dst_frames[$key]['image']) && self::$dst_frames[$key]['image'] != self::$src_frames[$key]['image'])
+          {
+            imagedestroy(self::$dst_frames[$key]['image']);
+          }
         }
 
       	break;
@@ -2683,10 +2697,10 @@ class JoomIMGtools
         imagedestroy(self::$src_frames[$key]['image']);
       }
 
-      if(!empty(self::$dst_frames[$key]['image']))
+      if(!empty(self::$dst_frames[$key]['image']) && self::$dst_frames[$key]['image'] != self::$src_frames[$key]['image'])
       {
         imagedestroy(self::$dst_frames[$key]['image']);
-      }    
+      }  
     }
 
     // restore src from backup file or delete corrupt dst file
