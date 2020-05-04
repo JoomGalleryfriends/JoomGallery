@@ -193,7 +193,7 @@ class JoomIMGtools
       }
     }
 
-    if($noResize && self::$dst_imginfo['angle'] == 0 && self::$src_imginfo['flip'] == 'none')
+    if($noResize && self::$dst_imginfo['angle'] == 0 && self::$dst_imginfo['flip'] == 'none')
     {
       if($src_file != $dst_file)
       {
