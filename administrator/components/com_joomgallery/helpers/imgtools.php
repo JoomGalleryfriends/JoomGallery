@@ -356,6 +356,8 @@ class JoomIMGtools
           {
             self::$src_frames[$key]['image'] = self::imageFlip_GD(self::$src_frames[$key]['image'], self::$dst_imginfo['flip']);
           }
+
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_FLIP_BY', self::$dst_imginfo['flip']).'<br />';
         }
 
         if(self::$dst_imginfo['angle'] > 0)
@@ -367,6 +369,8 @@ class JoomIMGtools
             self::$src_imginfo['width'] = imagesx(self::$src_frames[$key]['image']);
             self::$src_imginfo['height'] = imagesy(self::$src_frames[$key]['image']);
           }
+
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_ROTATE_BY_ANGLE', self::$dst_imginfo['angle']).'<br />';
         }
 
         // Check for failures
@@ -605,6 +609,8 @@ class JoomIMGtools
         if($auto_orient)
         {
           $commands .= ' -auto-orient';
+
+          $debugoutput .= JText::_('COM_JOOMGALLERY_AUTOORIENT_IMAGE').'<br />';
         }
 
         // Delete all metadata, if needed
@@ -832,9 +838,6 @@ class JoomIMGtools
       }
     }
 
-    // Create debugoutput
-    //$debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_ROTATE_BY_ANGLE', self::$dst_imginfo['angle']) . '<br />';
-
     // Method for creation of the rotated image
     switch($method)
     {
@@ -905,6 +908,7 @@ class JoomIMGtools
             self::$dst_frames[$key]['image'] = self::imageFlip_GD(self::$src_frames[$key]['image'], self::$dst_imginfo['flip']);
           }
 
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_FLIP_BY', self::$dst_imginfo['flip']).'<br />';
         }
         else
         {
@@ -915,6 +919,8 @@ class JoomIMGtools
             {
               self::$src_frames[$key]['image'] = self::imageFlip_GD(self::$src_frames[$key]['image'], self::$dst_imginfo['flip']);
             }
+
+            $debugoutput .= JText::sprintf('COM_JOOMGALLERY_FLIP_BY', self::$dst_imginfo['flip']).'<br />';
           }
 
           foreach(self::$src_frames as $key => $frame)
@@ -924,6 +930,8 @@ class JoomIMGtools
             self::$dst_imginfo['width'] = imagesx(self::$src_frames[$key]['image']);
             self::$dst_imginfo['height'] = imagesy(self::$src_frames[$key]['image']);
           }
+
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_ROTATE_BY_ANGLE', self::$dst_imginfo['angle']).'<br />';
         }        
 
         // Check for failures
@@ -1126,12 +1134,16 @@ class JoomIMGtools
         if($auto_orient)
         {
           $commands .= ' -auto-orient';
+
+          $debugoutput .= JText::_('COM_JOOMGALLERY_AUTOORIENT_IMAGE').'<br />';
         }
         else
         {
           if($angle > 0)
           {
             $commands .= ' -rotate "-'.$angle.'"';
+
+            $debugoutput .= JText::sprintf('COM_JOOMGALLERY_ROTATE_BY_ANGLE', $angle).'<br />';
           }          
         }
 
@@ -1913,7 +1925,7 @@ class JoomIMGtools
       self::$dst_imginfo['angle'] = 0;
       break;
     case 2: // Flip horizontally
-    	self::$dst_imginfo['flip'] = 'hor';
+    	self::$dst_imginfo['flip'] = 'horizontally';
       self::$dst_imginfo['angle'] = 0;
       break;
     case 3: // Rotate 180 degrees
@@ -1921,11 +1933,11 @@ class JoomIMGtools
     	self::$dst_imginfo['angle'] = 180;
       break;
     case 4: // Flip vertically
-      self::$dst_imginfo['flip'] = 'vert';
+      self::$dst_imginfo['flip'] = 'vertically';
       self::$dst_imginfo['angle'] = 0;
       break;
     case 5: // Rotate 90 degrees clockwise and flip vertically
-    	self::$dst_imginfo['flip'] = 'vert';
+    	self::$dst_imginfo['flip'] = 'vertically';
     	self::$dst_imginfo['angle'] = 270;
       break;
     case 6: // Rotate 90 clockwise
@@ -1933,7 +1945,7 @@ class JoomIMGtools
       self::$dst_imginfo['angle'] = 270;
       break;
     case 7: // Rotate 90 clockwise and flip horizontally
-    	self::$dst_imginfo['flip'] = 'hor';
+    	self::$dst_imginfo['flip'] = 'horizontally';
       self::$dst_imginfo['angle'] = 270;
       break;
     case 8: // Rotate 90 anticlockwise
@@ -2166,10 +2178,10 @@ class JoomIMGtools
   protected static function imageFlip_GD($img_frame, $direction)
   {
   	switch($direction) {
-    case 'hor':
+    case 'horizontally':
       $success = imageflip($img_frame, IMG_FLIP_HORIZONTAL);
       break;
-    case 'vert':
+    case 'vertically':
       $success = imageflip($img_frame, IMG_FLIP_VERTICAL);
       break;
     case 'both':
