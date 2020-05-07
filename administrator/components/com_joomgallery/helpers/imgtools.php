@@ -622,7 +622,7 @@ class JoomIMGtools
         // Crop the source image before resiszing if offsets setted before
         // example of crop: convert input -crop destwidthxdestheight+offsetx+offsety +repage output
         // +repage needed to delete the canvas
-        if(!is_null(self::$dst_imginfo['offset_x']) && !is_null(self::$dst_imginfo['offset_y']))
+        if($settings == 2)
         {
           // Assembling the imagick command for cropping
           $commands .= ' -crop "'.self::$dst_imginfo['src']['width'].'x'.self::$dst_imginfo['src']['height'].'+'.self::$dst_imginfo['offset_x'].'+'.self::$dst_imginfo['offset_y'].'" +repage';
@@ -632,7 +632,7 @@ class JoomIMGtools
         {
           // Assembling the imagick command for resizing if resizing is needed
           $commands  .= ' -resize "'.self::$dst_imginfo['width'].'x'.self::$dst_imginfo['height'].'" -quality "'.self::$dst_imginfo['quality'].'" -unsharp "3.5x1.2+1.0+0.10"';
-        }      
+        }    
         
         // Assembling the shell code for the resize with imagick
         $convert    = $convert_path.' '.$commands.' "'.$src_file.'" "'.$dst_file.'"';
