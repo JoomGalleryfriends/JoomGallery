@@ -33,7 +33,7 @@ echo $this->loadTemplate('header');?>
         <div class="jg_imgalign_fav">
           <div class="jg_favelem_photo">
             <a href="<?php echo $row->link; ?>" <?php echo $row->atagtitle; ?>>
-              <img src="<?php echo $row->thumb_src; ?>" class="jg_photo" alt="<?php echo $row->imgtitle; ?>" />
+              <img src="<?php echo $row->thumb_src; ?>" class="jg_photo" alt="<?php echo $row->imgtitle; ?>" loading="lazy" />
             </a>
           </div>
         </div>

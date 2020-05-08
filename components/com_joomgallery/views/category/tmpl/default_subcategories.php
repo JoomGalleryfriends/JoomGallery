@@ -54,7 +54,7 @@
         <div class="jg_imgalign_catsubs">
           <div class="<?php echo $row->photocontainer; ?>">
             <a title="<?php echo $row->name; ?>" href="<?php echo $row->link; ?>">
-              <img src="<?php echo $row->thumb_src; ?>" hspace="4" vspace="0" class="jg_photo" alt="<?php echo $row->name; ?>" />
+              <img src="<?php echo $row->thumb_src; ?>" hspace="4" vspace="0" class="jg_photo" alt="<?php echo $row->name; ?>" loading="lazy" />
             </a>
 <?php       endif;
           endif;
