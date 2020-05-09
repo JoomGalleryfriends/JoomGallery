@@ -611,6 +611,11 @@ class JoomIMGtools
           $debugoutput .= JText::_('COM_JOOMGALLERY_AUTOORIENT_IMAGE').'<br />';
         }
 
+        if($auto_orient && $settings == 2)
+        {
+          $commands .= ' +repage';
+        }
+
         // Delete all metadata, if needed
         if(!$metadata)
         {
@@ -630,7 +635,7 @@ class JoomIMGtools
         {
           // Assembling the imagick command for resizing if resizing is needed
           $commands  .= ' -resize "'.self::$dst_imginfo['width'].'x'.self::$dst_imginfo['height'].'" -quality "'.self::$dst_imginfo['quality'].'" -unsharp "3.5x1.2+1.0+0.10"';
-        }    
+        }
         
         // Assembling the shell code for the resize with imagick
         $convert    = $convert_path.' '.$commands.' "'.$src_file.'" "'.$dst_file.'"';
