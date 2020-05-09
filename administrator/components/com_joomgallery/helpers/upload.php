@@ -2306,6 +2306,22 @@ class JoomUpload extends JObject
       $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGIMG_CREATED', $origfilesize).'<br />';
     }
 
+    //control, if the exif orientation of the original was set to 1 during upload (only if JPG)
+    if(exif_imagetype($this->_ambit->getImg('orig_path', $filename, null, $this->catid)) == IMAGETYPE_JPEG && extension_loaded('exif') && function_exists('exif_read_data'))
+    {
+      // Read EXIF data (only JPG)
+      $exif_tmp = exif_read_data($this->_ambit->getImg('orig_path', $filename, null, $this->catid), null, 1);
+
+      if(isset($exif_tmp['IFD0']['Orientation']))
+      {
+        if($exif_tmp['IFD0']['Orientation'] != 1)
+        {
+          // set exif orientation to 1
+          $meta_success = JoomIMGtools::copyImageMetadata($this->_ambit->getImg('orig_path', $filename, null, $this->catid), $this->_ambit->getImg('orig_path', $filename, null, $this->catid), 'JPG', 'JPG', 1, true);
+        }
+      }
+    }
+
     return true;
   }
 

@@ -456,14 +456,13 @@ class JoomIMGtools
           // Copy metadata if needed
           if($metadata)
           {
-            // change the exif orientation tag based on rotation angle
             $new_orient = false;
 
-            if($auto_orient && isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
+            if(isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
             {
-              if($auto_orient && self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
+              if(self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
               {
-                // if image was auto oriented, change exif orientation tag to 1
+                // make sure, the exif orientation tag is set to 1
                 $new_orient = 1;
               }
             }
@@ -494,14 +493,13 @@ class JoomIMGtools
           // Copy metadata if needed
           if($metadata)
           {
-            // change the exif orientation tag based on rotation angle
             $new_orient = false;
 
-            if($auto_orient && isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
+            if(isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
             {
-              if($auto_orient && self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
+              if(self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
               {
-                // if image was auto oriented, change exif orientation tag to 1
+                // make sure, the exif orientation tag is set to 1
                 $new_orient = 1;
               }
             }
@@ -644,6 +642,22 @@ class JoomIMGtools
         // execute the resize
         @exec($convert, $dummy, $return_var);
 
+        //control, if the exif orientation was set to 1 during resize (only if JPG)
+        if($metadata && self::$dst_imginfo['type'] == 'JPG' && extension_loaded('exif') && function_exists('exif_read_data'))
+        {
+          // Read EXIF data (only JPG)
+          $exif_tmp = exif_read_data($dst_file, null, 1);
+
+          if(isset($exif_tmp['IFD0']['Orientation']))
+          {
+            if($exif_tmp['IFD0']['Orientation'] != 1)
+            {
+              // set exif orientation to 1
+              $meta_success = self::copyImageMetadata($dst_file, $dst_file, 'JPG', 'JPG', 1, true);
+            }
+          }
+        }
+
         // Check that the resized image is valid
         if(!self::checkValidImage($dst_file))
         {
@@ -658,6 +672,22 @@ class JoomIMGtools
 
           // execute the resize
           @exec($convert, $dummy, $return_var);
+
+          //control, if the exif orientation was set to 1 during resize (only if JPG)
+          if($metadata && self::$dst_imginfo['type'] == 'JPG' && extension_loaded('exif') && function_exists('exif_read_data'))
+          {
+            // Read EXIF data (only JPG)
+            $exif_tmp = exif_read_data($dst_file, null, 1);
+
+            if(isset($exif_tmp['IFD0']['Orientation']))
+            {
+              if($exif_tmp['IFD0']['Orientation'] != 1)
+              {
+                // set exif orientation to 1
+                $meta_success = self::copyImageMetadata($dst_file, $dst_file, 'JPG', 'JPG', 1, true);
+              }
+            }
+          }
 
           JoomFile::chmod($dir, '0755', true);
 
@@ -982,14 +1012,13 @@ class JoomIMGtools
           // Copy metadata if needed
           if($metadata)
           {
-            // change the exif orientation tag based on rotation angle
             $new_orient = false;
 
-            if($auto_orient && isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
+            if(isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
             {
-              if($auto_orient && self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
+              if(self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
               {
-                // if image was auto oriented, change exif orientation tag to 1
+                // make sure, the exif orientation tag is set to 1
                 $new_orient = 1;
               }
             }
@@ -1020,14 +1049,13 @@ class JoomIMGtools
           // Copy metadata if needed
           if($metadata)
           {
-            // change the exif orientation tag based on rotation angle
             $new_orient = false;
 
-            if($auto_orient && isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
+            if(isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
             {
-              if($auto_orient && self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
+              if(self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
               {
-                // if image was auto oriented, change exif orientation tag to 1
+                // make sure, the exif orientation tag is set to 1
                 $new_orient = 1;
               }
             }
@@ -1166,6 +1194,22 @@ class JoomIMGtools
         // execute the resize
         @exec($convert, $dummy, $return_var);
 
+        //control, if the exif orientation was set to 1 during rotation (only if JPG)
+        if($metadata && self::$dst_imginfo['type'] == 'JPG' && extension_loaded('exif') && function_exists('exif_read_data'))
+        {
+          // Read EXIF data (only JPG)
+          $exif_tmp = exif_read_data($dst_file, null, 1);
+
+          if(isset($exif_tmp['IFD0']['Orientation']))
+          {
+            if($exif_tmp['IFD0']['Orientation'] != 1)
+            {
+              // set exif orientation to 1
+              $meta_success = self::copyImageMetadata($dst_file, $dst_file, 'JPG', 'JPG', 1, true);
+            }
+          }
+        }
+
         // Check that the resized image is valid
         if(!self::checkValidImage($dst_file))
         {
@@ -1180,6 +1224,22 @@ class JoomIMGtools
 
           // execute the resize
           @exec($convert, $dummy, $return_var);
+
+          //control, if the exif orientation was set to 1 during rotation (only if JPG)
+          if($metadata && self::$dst_imginfo['type'] == 'JPG' && extension_loaded('exif') && function_exists('exif_read_data'))
+          {
+            // Read EXIF data (only JPG)
+            $exif_tmp = exif_read_data($dst_file, null, 1);
+
+            if(isset($exif_tmp['IFD0']['Orientation']))
+            {
+              if($exif_tmp['IFD0']['Orientation'] != 1)
+              {
+                // set exif orientation to 1
+                $meta_success = self::copyImageMetadata($dst_file, $dst_file, 'JPG', 'JPG', 1, true);
+              }
+            }
+          }
 
           // Preserve metadata of png files with php functions
           if(self::$src_imginfo['type'] == 'PNG')
@@ -1412,6 +1472,57 @@ class JoomIMGtools
     return $imginfo;
   }
 
+  /**
+   * Copy image metadata depending on file type (Supported: JPG,PNG / EXIF,IPTC)
+   *
+   * @param   str     $src_file        Path to source file
+   * @param   str     $dst_file        Path to destination file
+   * @param   str     $src_imagetype   Type of the source image file
+   * @param   str     $dst_imgtype     Type of the destination image file
+   * @param   int     $new_orient      New exif orientation (false: do not change exif orientation)
+   * @param   boolean $bak             true, if a backup-file should be created when $src_file=$dst_file
+   * @return  int     number of bytes written on success, false otherwise
+   * @since   3.5.0
+   */
+  public static function copyImageMetadata($src_file, $dst_file, $src_imagetype, $dst_imgtype, $new_orient = false, $bak = false)
+  {
+    $backupFile = false;
+
+    if($src_file == $dst_file && $bak)
+    {
+      if(!JFile::copy($src_file, $src_file.'bak'))
+      {
+
+        return false;
+      }
+      $backupFile = true;
+      $src_file = $src_file.'bak';
+    }
+
+    if($src_imagetype == 'JPG' && $dst_imgtype == 'JPG')
+    {
+      $success = self::copyJPGmetadata($src_file,$dst_file,$new_orient);
+    }
+    else
+    {
+      if($src_imagetype == 'PNG' && $dst_imgtype == 'PNG')
+      {
+        $success = self::copyPNGmetadata($src_file,$dst_file);
+      }
+      else
+      {
+        // In all other cases dont copy metadata
+        $success = true;
+      }
+    }
+
+    if($backupFile)
+    {
+      JFile::delete($src_file);
+    }
+
+    return $success;
+  }
   
 
 	//////////////////////////////////////////////////
@@ -2414,39 +2525,6 @@ class JoomIMGtools
     }
 
     return array($exif,$iptc,$comment);
-  }
-
-  /**
-   * Copy image metadata depending on file type (Supported: JPG,PNG / EXIF,IPTC)
-   *
-   * @param   str     $src_file        Path to source file
-   * @param   str     $dst_file        Path to destination file
-   * @param   str     $src_imagetype   Type of the source image file
-   * @param   str     $dst_imgtype     Type of the destination image file
-   * @param   int     $new_orient      New exif orientation (false: do not change exif orientation)
-   * @return  int     number of bytes written on success, false otherwise
-   * @since   3.5.0
-   */
-  protected static function copyImageMetadata($src_file, $dst_file, $src_imagetype, $dst_imgtype, $new_orient = false)
-  {
-    if($src_imagetype == 'JPG' && $dst_imgtype == 'JPG')
-    {
-      $success = self::copyJPGmetadata($src_file,$dst_file,$new_orient);
-    }
-    else
-    {
-      if($src_imagetype == 'PNG' && $dst_imgtype == 'PNG')
-      {
-        $success = self::copyPNGmetadata($src_file,$dst_file);
-      }
-      else
-      {
-        // In all other cases dont copy metadata
-        $success = true;
-      }
-    }
-
-    return $success;
   }
 
   /**
