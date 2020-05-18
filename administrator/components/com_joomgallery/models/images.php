@@ -942,6 +942,22 @@ class JoomGalleryModelImages extends JoomGalleryModel
         if($ret)
         {
           $thumb_count--;
+
+          //control, if the exif orientation of the original was set to 1 during upload (only if JPG)
+          if(exif_imagetype($orig) == IMAGETYPE_JPEG && extension_loaded('exif') && function_exists('exif_read_data'))
+          {
+            // Read EXIF data (only JPG)
+            $exif_tmp = exif_read_data($orig, null, 1);
+
+            if(isset($exif_tmp['IFD0']['Orientation']))
+            {
+              if($exif_tmp['IFD0']['Orientation'] != 1)
+              {
+                // set exif orientation to 1
+                $meta_success = JoomIMGtools::copyImageMetadata($orig, $orig, 'JPG', 'JPG', 1, true);
+              }
+            }
+          }
         }
         else
         {

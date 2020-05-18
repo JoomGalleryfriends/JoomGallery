@@ -458,11 +458,11 @@ class JoomIMGtools
           {
             $new_orient = false;
 
-            if(isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
+            if($auto_orient && isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
             {
-              if(self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
+              if($auto_orient && self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
               {
-                // make sure, the exif orientation tag is set to 1
+                // make sure, the exif orientation tag is set to 1 when auto-oriented
                 $new_orient = 1;
               }
             }
@@ -495,11 +495,11 @@ class JoomIMGtools
           {
             $new_orient = false;
 
-            if(isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
+            if($auto_orient && isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
             {
-              if(self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
+              if($auto_orient && self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
               {
-                // make sure, the exif orientation tag is set to 1
+                // make sure, the exif orientation tag is set to 1 when auto-oriented
                 $new_orient = 1;
               }
             }
@@ -647,22 +647,6 @@ class JoomIMGtools
         // execute the resize
         @exec($convert, $dummy, $return_var);
 
-        //control, if the exif orientation was set to 1 during resize (only if JPG)
-        if($metadata && self::$dst_imginfo['type'] == 'JPG' && extension_loaded('exif') && function_exists('exif_read_data'))
-        {
-          // Read EXIF data (only JPG)
-          $exif_tmp = exif_read_data($dst_file, null, 1);
-
-          if(isset($exif_tmp['IFD0']['Orientation']))
-          {
-            if($exif_tmp['IFD0']['Orientation'] != 1)
-            {
-              // set exif orientation to 1
-              $meta_success = self::copyImageMetadata($dst_file, $dst_file, 'JPG', 'JPG', 1, true);
-            }
-          }
-        }
-
         // Check that the resized image is valid
         if(!self::checkValidImage($dst_file))
         {
@@ -677,22 +661,6 @@ class JoomIMGtools
 
           // execute the resize
           @exec($convert, $dummy, $return_var);
-
-          //control, if the exif orientation was set to 1 during resize (only if JPG)
-          if($metadata && self::$dst_imginfo['type'] == 'JPG' && extension_loaded('exif') && function_exists('exif_read_data'))
-          {
-            // Read EXIF data (only JPG)
-            $exif_tmp = exif_read_data($dst_file, null, 1);
-
-            if(isset($exif_tmp['IFD0']['Orientation']))
-            {
-              if($exif_tmp['IFD0']['Orientation'] != 1)
-              {
-                // set exif orientation to 1
-                $meta_success = self::copyImageMetadata($dst_file, $dst_file, 'JPG', 'JPG', 1, true);
-              }
-            }
-          }
 
           JoomFile::chmod($dir, '0755', true);
 
@@ -1019,11 +987,11 @@ class JoomIMGtools
           {
             $new_orient = false;
 
-            if(isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
+            if($auto_orient && isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
             {
-              if(self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
+              if($auto_orient && elf::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
               {
-                // make sure, the exif orientation tag is set to 1
+                // if image was auto oriented, change exif orientation tag to 1
                 $new_orient = 1;
               }
             }
@@ -1056,11 +1024,11 @@ class JoomIMGtools
           {
             $new_orient = false;
 
-            if(isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
+            if($auto_orient && isset(self::$src_imginfo['exif']['IFD0']['Orientation']))
             {
-              if(self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
+              if($auto_orient && self::$src_imginfo['exif']['IFD0']['Orientation'] != 1)
               {
-                // make sure, the exif orientation tag is set to 1
+                // if image was auto oriented, change exif orientation tag to 1
                 $new_orient = 1;
               }
             }
@@ -1199,22 +1167,6 @@ class JoomIMGtools
         // execute the resize
         @exec($convert, $dummy, $return_var);
 
-        //control, if the exif orientation was set to 1 during rotation (only if JPG)
-        if($metadata && self::$dst_imginfo['type'] == 'JPG' && extension_loaded('exif') && function_exists('exif_read_data'))
-        {
-          // Read EXIF data (only JPG)
-          $exif_tmp = exif_read_data($dst_file, null, 1);
-
-          if(isset($exif_tmp['IFD0']['Orientation']))
-          {
-            if($exif_tmp['IFD0']['Orientation'] != 1)
-            {
-              // set exif orientation to 1
-              $meta_success = self::copyImageMetadata($dst_file, $dst_file, 'JPG', 'JPG', 1, true);
-            }
-          }
-        }
-
         // Check that the resized image is valid
         if(!self::checkValidImage($dst_file))
         {
@@ -1229,22 +1181,6 @@ class JoomIMGtools
 
           // execute the resize
           @exec($convert, $dummy, $return_var);
-
-          //control, if the exif orientation was set to 1 during rotation (only if JPG)
-          if($metadata && self::$dst_imginfo['type'] == 'JPG' && extension_loaded('exif') && function_exists('exif_read_data'))
-          {
-            // Read EXIF data (only JPG)
-            $exif_tmp = exif_read_data($dst_file, null, 1);
-
-            if(isset($exif_tmp['IFD0']['Orientation']))
-            {
-              if($exif_tmp['IFD0']['Orientation'] != 1)
-              {
-                // set exif orientation to 1
-                $meta_success = self::copyImageMetadata($dst_file, $dst_file, 'JPG', 'JPG', 1, true);
-              }
-            }
-          }
 
           // Preserve metadata of png files with php functions
           if(self::$src_imginfo['type'] == 'PNG')
