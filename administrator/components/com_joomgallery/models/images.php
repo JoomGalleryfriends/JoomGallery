@@ -896,25 +896,55 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
       if($rotateImageTypes != 2 || ($rotateImageTypes == 2 && !$err))
       {
-
-        if(JoomIMGtools::rotateImage($debugoutput,
-                                     $img,
-                                     $img,
-                                     $this->_config->get('jg_thumbcreation'),
-                                     $this->_config->get('jg_picturequality'),
-                                     $rotateImageAngle,
-                                     false,
-                                     false,
-                                     true))
+        // if there are no errors so far...
+        if($rotateImageTypes = 2)
         {
-          $img_count--;
+          // As we have a successfully rotated original we should use a resize here
+          if(JoomIMGtools::resizeImage($debugoutput,
+                                       $orig,
+                                       $img,
+                                       3,
+                                       $this->_config->get('jg_maxwidth'),
+                                       $this->_config->get('jg_maxwidth'),
+                                       $this->_config->get('jg_thumbcreation'),
+                                       $this->_config->get('jg_picturequality'),
+                                       false,
+                                       0,
+                                       false,
+                                       false,
+                                       true))
+          {
+            $img_count--;
+          }
+          else
+          {
+            $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img).'<br />';
+            $err = true;
+          }
+
         }
         else
         {
-          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img).'<br />';
-          // As the rotation of the detail image failed the thumb should be resized instead of rotated.
-          $err = true;
+          if(JoomIMGtools::rotateImage($debugoutput,
+                                       $img,
+                                       $img,
+                                       $this->_config->get('jg_thumbcreation'),
+                                       $this->_config->get('jg_picturequality'),
+                                       $rotateImageAngle,
+                                       false,
+                                       false,
+                                       true))
+          {
+            $img_count--;
+          }
+          else
+          {
+            $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img).'<br />';
+            // As the rotation of the detail image failed the thumb should be resized instead of rotated.
+            $err = true;
+          }
         }
+        
 
         $tmpdebugoutput = '';        
 
@@ -924,7 +954,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
           $orig = $img;
         }
 
-        // As we have a successfully rotated original we should use a resize here to ensure the correct
+        // As we have a successfully rotated original or detail we should use a resize here to ensure the correct
         // appearance according to the thumbnail conversion settings
         $ret = JoomIMGtools::resizeImage($tmpdebugoutput,
                                          $orig,

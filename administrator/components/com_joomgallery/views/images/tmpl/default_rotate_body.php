@@ -3,7 +3,7 @@
 JHtml::_('formbehavior.chosen', 'select');
 
 $optionsImageTypes = array(JHtml::_('select.option', 1, JText::_('COM_JOOMGALLERY_COMMON_ROTATE_OPTIONS_THUMBS_DETAILS')),
-                           JHtml::_('select.option', 2, JText::_('COM_JOOMGALLERY_COMMON_ROTATE_OPTIONS_THUMBS_DETAILS_ORIGINALS'))
+                           JHtml::_('select.option', 2, JText::_('COM_JOOMGALLERY_COMMON_ROTATE_OPTIONS_ORIGINALS'))
                           );
 
 $optionsRotationAngle = array(JHtml::_('select.option', 90, JText::_('COM_JOOMGALLERY_COMMON_ROTATE_OPTION_90')),
@@ -41,4 +41,28 @@ $optionsRotationAngle = array(JHtml::_('select.option', 90, JText::_('COM_JOOMGA
       </div>
     </div>
   </div>
+  <h4><?php echo JText::_('JGLOBAL_DESCRIPTION'); ?>:</h4>
+  <p id="desc1" class=""><?php echo JText::_('COM_JOOMGALLERY_COMMON_ROTATE_OPTIONS_THUMBS_DETAILS_DESC'); ?></p>
+  <p id="desc2" class="hidden"><?php echo JText::_('COM_JOOMGALLERY_COMMON_ROTATE_OPTIONS_ORIGINALS_DESC'); ?></p>
 </div>
+
+<script>
+  jQuery(document).ready(function(){
+    var rotateimagetypes = jQuery('#rotateimagetypes_chzn .chzn-single span');
+    var desc1 = document.getElementById('desc1');
+    var desc2 = document.getElementById('desc2');
+
+    rotateimagetypes.on('DOMSubtreeModified',function(){
+      if(rotateimagetypes.text() == 'Thumbs and details')
+      {
+        desc1.classList.remove('hidden');
+        desc2.classList.add('hidden');
+      }
+      else
+      {
+        desc1.classList.add('hidden');
+        desc2.classList.remove('hidden');
+      }
+    });
+  });
+</script>
