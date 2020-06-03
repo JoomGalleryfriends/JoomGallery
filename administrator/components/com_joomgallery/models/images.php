@@ -878,6 +878,22 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                      true))
         {
           $orig_count--;
+
+          //control, if the exif orientation of the original was set to 1 during upload (only if JPG)
+          if(exif_imagetype($orig) == IMAGETYPE_JPEG && extension_loaded('exif') && function_exists('exif_read_data'))
+          {
+            // Read EXIF data (only JPG)
+            $exif_tmp = exif_read_data($orig, null, 1);
+
+            if(isset($exif_tmp['IFD0']['Orientation']))
+            {
+              if($exif_tmp['IFD0']['Orientation'] != 1)
+              {
+                // set exif orientation to 1
+                $meta_success = JoomIMGtools::copyImageMetadata($orig, $orig, 'JPG', 'JPG', 1, true);
+              }
+            }
+          }
         }
         else
         {
@@ -897,7 +913,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       if($rotateImageTypes != 2 || ($rotateImageTypes == 2 && !$err))
       {
         // if there are no errors so far...
-        if($rotateImageTypes = 2)
+        if($rotateImageTypes == 2)
         {
           // As we have a successfully rotated original we should use a resize here
           if(JoomIMGtools::resizeImage($debugoutput,
@@ -972,22 +988,6 @@ class JoomGalleryModelImages extends JoomGalleryModel
         if($ret)
         {
           $thumb_count--;
-
-          //control, if the exif orientation of the original was set to 1 during upload (only if JPG)
-          if(exif_imagetype($orig) == IMAGETYPE_JPEG && extension_loaded('exif') && function_exists('exif_read_data'))
-          {
-            // Read EXIF data (only JPG)
-            $exif_tmp = exif_read_data($orig, null, 1);
-
-            if(isset($exif_tmp['IFD0']['Orientation']))
-            {
-              if($exif_tmp['IFD0']['Orientation'] != 1)
-              {
-                // set exif orientation to 1
-                $meta_success = JoomIMGtools::copyImageMetadata($orig, $orig, 'JPG', 'JPG', 1, true);
-              }
-            }
-          }
         }
         else
         {
