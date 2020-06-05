@@ -90,7 +90,7 @@ class JoomGalleryModelFavourites extends JoomGalleryModel
 
     // Set the image id
     $view = JRequest::getCmd('view');
-    $task = JRequest::getCmd('task');
+    $task = JFactory::getApplication()->input->get('task');
     if(  ($view != 'favourites' || $task == 'removeimage')
       &&  $view != 'downloadzip'
       &&  $task != 'removeall'
