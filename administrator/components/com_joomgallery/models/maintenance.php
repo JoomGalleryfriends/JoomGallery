@@ -465,6 +465,13 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    if(!count($cids))
+    {
+      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
+
+      return false;
+    }
+
     JArrayHelper::toInteger($cids);
 
     $query = $this->_db->getQuery(true);
@@ -486,13 +493,6 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     }
 
     $row = $this->getTable('joomgalleryimages');
-
-    if(!count($cids))
-    {
-      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
-
-      return false;
-    }
 
     $count = 0;
 
@@ -637,6 +637,13 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    if(!count($cids))
+    {
+      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_SELECTED'));
+
+      return false;
+    }
+
     JArrayHelper::toInteger($cids);
 
     if(!$recursion_level)
@@ -663,13 +670,6 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     }
 
     $row = $this->getTable('joomgallerycategories');
-
-    if(!count($cids))
-    {
-      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_SELECTED'));
-
-      return false;
-    }
 
     $count = 0;
     $extant_images  = false;
