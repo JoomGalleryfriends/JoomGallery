@@ -34,15 +34,23 @@
       <?php endif; ?>
   <div class="control-group">
     <div class="control-label">
-      <?php echo $this->batch_form->getLabel('imgtext'); ?>
+      <?php echo $this->batch_form->getLabel('batch-imgtext'); ?>
     </div>
     <div class="controls">
-      <?php echo $this->batch_form->getInput('imgtext'); ?>
+      <?php echo $this->batch_form->getInput('batch-imgtext'); ?>
     </div>
   </div>
   <div class="control-group">
     <div class="control-label">
       <?php echo $this->batch_form->getLabel('imgauthor'); ?>
+    </div>
+    <div class="controls">
+      <?php echo $this->batch_form->getInput('imgauthor'); ?>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="control-label">
+      <?php echo $this->batch_form->getLabel('owner'); ?>
     </div>
     <div class="controls">
       <div class="jg-uploader"><?php echo JHtml::_('joomgallery.displayname', $this->_user->get('id'), 'upload'); ?></div>

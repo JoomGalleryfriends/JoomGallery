@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/models/search.php $
-// $Id: search.php 4253 2013-05-06 20:26:05Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -107,7 +105,7 @@ class JoomGalleryModelSearch extends JoomGalleryModel
       $where .= ')';
 
       // General select clause of the query
-      $query->select('a.*, '.JoomHelper::getSQLRatingClause('a').' AS rating, u.username, ca.cid, ca.name AS name');
+      $query->select('a.*, '.JoomHelper::getSQLRatingClause('a').' AS rating, u.username, ca.cid, ca.name AS name, ca.allow_download AS allow_download');
 
       // Count comments of each image if required
       if($this->_config->get('jg_showcatcom'))

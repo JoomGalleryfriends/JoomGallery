@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/views/category/view.html.php $
-// $Id: view.html.php 4250 2013-05-02 16:49:22Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -655,6 +653,9 @@ class JoomGalleryViewCategory extends JoomGalleryView
         $categories[$key]->link = JRoute::_('index.php?view=category&catid='.$category->cid);
       }
 
+      // show only intro-text in subcategories
+      $categories[$key]->description = JoomHelper::getIntrotext($categories[$key]->description);
+
       // Icon for quick upload at sub-category thumbnail
       if(     $this->_config->get('jg_uploadiconsubcat')
           &&  (   $this->_user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$category->cid)
@@ -678,7 +679,8 @@ class JoomGalleryViewCategory extends JoomGalleryView
     }
 
     // Download icon
-    if($this->_config->get('jg_download') && $this->_config->get('jg_showcategorydownload'))
+    if(  ($cat->allow_download == (-1) ? $this->_config->get('jg_download') : $cat->allow_download)
+      && $this->_config->get('jg_showcategorydownload'))
     {
       if($this->_user->get('id') || $this->_config->get('jg_download_unreg'))
       {
@@ -744,6 +746,9 @@ class JoomGalleryViewCategory extends JoomGalleryView
         }
       }
     }
+
+    // Display Full text of category
+    $cat->description = JoomHelper::getFulltext($cat->description);
 
     foreach($images as $key => $image)
     {
@@ -826,6 +831,9 @@ class JoomGalleryViewCategory extends JoomGalleryView
         // Set the imgtitle by default
         $images[$key]->atagtitle = 'title="'.$images[$key]->imgtitle.'"';
       }
+
+      // show only intro-text of images
+      $images[$key]->imgtext = JoomHelper::getIntrotext($images[$key]->imgtext);
 
       $images[$key]->event  = new stdClass();
 

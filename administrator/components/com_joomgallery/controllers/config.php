@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/controllers/config.php $
-// $Id: config.php 4076 2013-02-12 10:35:29Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -39,10 +37,10 @@ class JoomGalleryControllerConfig extends JoomGalleryController
     }
 
     // Register tasks
-    $this->registerTask('new',        'edit');
-    $this->registerTask('apply',      'save');
-    $this->registerTask('orderup',    'order');
-    $this->registerTask('orderdown',  'order');
+    $this->registerTask('new',          'edit');
+    $this->registerTask('apply',        'save');
+    $this->registerTask('orderup',      'order');
+    $this->registerTask('orderdown',    'order');
 
     // Set view
     if($this->_config->isExtended())
@@ -267,5 +265,103 @@ class JoomGalleryControllerConfig extends JoomGalleryController
   function cancel()
   {
     $this->setRedirect($this->_ambit->getRedirectUrl());
+  }
+
+  /**
+   * Reset of the entire configuration
+   *
+   * @return  void
+   * @since   3.4.0
+   */
+  public function resetconfig()
+  {
+    $path = JPATH_ADMINISTRATOR.'/components/com_joomgallery/sql/setdefault.install.mysql.utf8.sql';
+
+    if(file_exists($path))
+    {
+      $config = JoomConfig::getInstance('admin');
+
+      // Get all configuration sets
+      $query = $this->_db->getQuery(true)
+            ->select('id')
+            ->from(_JOOM_TABLE_CONFIG)
+            ->order('id DESC');
+      $this->_db->setQuery($query);
+
+      try
+      {
+        $ids = $this->_db->loadObjectList();
+      }
+      catch(Exception $e)
+      {
+        $this->setRedirect($this->_ambit->getRedirectUrl(), $e->getMessage(), 'error');
+        return false;
+      }
+
+      // Delete all configuration sets
+      foreach($ids as $id)
+      {
+        if(!$config->delete((int)$id->id, true))
+        {
+          $this->setRedirect($this->_ambit->getRedirectUrl(), $config->getError(), 'error');
+          return false;
+        }
+      }
+
+      // Create a new configuration set with id = 1 with default values
+      $query = file_get_contents($path);
+      $this->_db->setQuery($query);
+
+      try
+      {
+        $this->_db->execute();
+
+        // Load additional alternative configuration options
+        $resetTo = JRequest::getInt('reset_to');
+        $path    = JPATH_ADMINISTRATOR.'/components/com_joomgallery/sql/';
+
+        switch($resetTo)
+        {
+          case 1:
+            $path .= 'setdefault.mini.mysql.utf8.sql';
+            break;
+          case 2:
+            $path .= 'setdefault.middle.mysql.utf8.sql';
+            break;
+          case 3:
+            $path .= 'setdefault.full.mysql.utf8.sql';
+            break;
+          case 99:
+            $path .= 'setdefault.user.mysql.utf8.sql';
+            break;
+          default:
+            $path = '';
+            break;
+        }
+
+        if(!empty($path) && file_exists($path))
+        {
+          $query = file_get_contents($path);
+          $this->_db->setQuery($query);
+
+          $this->_db->execute();
+        }
+
+        // Load configuration set with id = 1 and save the CSS file joom_settings.css
+        $config = new JoomAdminConfig(1);
+        $config->saveCSS();
+      }
+      catch(Exception $e)
+      {
+        $this->setRedirect($this->_ambit->getRedirectUrl(), $e->getMessage(), 'error');
+        return false;
+      }
+
+      $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('COM_JOOMGALLERY_CONFIG_MSG_RESETCONFIG_SUCCESSFUL'), 'message');
+    }
+    else
+    {
+      $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('COM_JOOMGALLERY_CONFIG_MSG_RESETCONFIG_NOT_SUCCESSFUL'), 'error');
+    }
   }
 }

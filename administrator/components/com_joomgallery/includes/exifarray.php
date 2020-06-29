@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/includes/exifarray.php $
-// $Id: exifarray.php 4076 2013-02-12 10:35:29Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -346,13 +344,13 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
                         'Format'      => "Unsigned Rational",
                         'Units'       => JText::_('COM_JOOMGALLERY_SUBIFD_FOCALLENGTH_UNIT')
                     ),
-//       37510 => array(   'Attribute'   => "UserComment",
-//                         'Name'        => JText::_('COM_JOOMGALLERY_SUBIFD_USERCOMMENT'),
-//                         'Description' => JText::_('COM_JOOMGALLERY_SUBIFD_USERCOMMENT_DESCRIPTION'),
-//                         'Calculation' => "",
-//                         'Format'      => "Undefined",
-//                         'Units'       => ""
-//                     ),
+      37510 => array(   'Attribute'   => "UserComment",
+                        'Name'        => JText::_('COM_JOOMGALLERY_SUBIFD_USERCOMMENT'),
+                        'Description' => JText::_('COM_JOOMGALLERY_SUBIFD_USERCOMMENT_DESCRIPTION'),
+                        'Calculation' => "",
+                        'Format'      => "Undefined",
+                        'Units'       => ""
+                    ),
 //       37520 => array(   'Attribute'   => "SubsecTime",
 //                         'Name'        => JText::_('COM_JOOMGALLERY_SUBIFD_SUBSECTIME'),
 //                         'Description' => JText::_('COM_JOOMGALLERY_SUBIFD_SUBSECTIME_DESCRIPTION'),

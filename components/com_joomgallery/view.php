@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/view.php $
-// $Id: view.php 4077 2013-02-12 10:46:13Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -88,7 +86,7 @@ class JoomGalleryView extends JViewLegacy
 
     // Add the main CSS file
     $this->_doc->addStyleSheet($this->_ambit->getStyleSheet('joomgallery.css'));
-  
+
     // Add the RTL CSS file if an RTL language is used
     if(JFactory::getLanguage()->isRTL())
     {
@@ -100,20 +98,6 @@ class JoomGalleryView extends JViewLegacy
     {
       $this->_doc->addStyleSheet($this->_ambit->getStyleSheet('joom_local.css'));
     }
-
-    $pngbehaviour = "  <!-- Do not edit IE conditional style below -->"
-                  . "\n"
-                  ."  <!--[if lte IE 6]>"
-                  . "\n"
-                  . "  <style type=\"text/css\">\n"
-                  . "    .pngfile {\n"
-                  . "      behavior:url('".JURI::root()."media/joomgallery/js/pngbehavior.htc') !important;\n"
-                  . "    }\n"
-                  . "  </style>\n"
-                  . "  <![endif]-->"
-                  . "\n"
-                  . "  <!-- End Conditional Style -->";
-    $this->_doc->addCustomTag($pngbehaviour);
 
     // Set documents meta data taken from menu entry definition
     $params = $this->_mainframe->getParams();

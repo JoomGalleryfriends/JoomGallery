@@ -56,9 +56,10 @@
       cbname="change[]"
       cbvalue="imgtext"
       label="COM_JOOMGALLERY_COMMON_DESCRIPTION"
+      height="250"
       filter="JComponentHelper::filterText"
       buttons="true"
-      hide="readmore,pagebreak"
+      hide="pagebreak"
       cols="50"
     />
     <field

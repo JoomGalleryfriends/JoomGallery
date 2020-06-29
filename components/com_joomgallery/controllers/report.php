@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/controllers/report.php $
-// $Id: report.php 4077 2013-02-12 10:46:13Z erftralle $
 /****************************************************************************************\
-**   JoomGallery 3                                                                   **
+**   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -40,6 +38,7 @@ class JoomGalleryControllerReport extends JControllerLegacy
     $sstring  = JRequest::getVar('sstring');
 
     $redirect_url = 'index.php?view=detail&id='.$id;
+    $query_append = '';
     if($catid)
     {
       // Request was initiated by category view

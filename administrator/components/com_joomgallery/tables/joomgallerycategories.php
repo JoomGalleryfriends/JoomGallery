@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/tables/joomgallerycategories.php $
-// $Id: joomgallerycategories.php 4350 2014-01-18 15:16:40Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -61,6 +59,16 @@ class TableJoomgalleryCategories extends JTableNested
   public $exclude_toplists  = 0;
   /** @var int */
   public $exclude_search    = 0;
+  /** @var int */
+  public $allow_download    = -1;
+  /** @var int */
+  public $allow_comment     = -1;
+  /** @var int */
+  public $allow_rating      = -1;
+  /** @var int */
+  public $allow_watermark   = -1;
+  /** @var int */
+  public $allow_watermark_download = -1;
 
   /**
    * Helper variable for checking whether

@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/helpers/adminconfig.php $
-// $Id: adminconfig.php 4076 2013-02-12 10:35:29Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -1006,7 +1004,7 @@ joom_local.css.README umbenennen und anpassen
 
     // Save the file
     jimport('joomla.filesystem.file');
-    $css_settings_file = JPATH_ROOT.'/media/joomgallery/css/'.$this->getStyleSheetName($this->id);
+    $css_settings_file = JPATH_ROOT.'/media/joomgallery/css/'.$this->getStyleSheetName(isset($this->id) ? $this->id : 0);
     if(!JFile::write($css_settings_file, $css_settings))
     {
       return false;
@@ -1019,12 +1017,13 @@ joom_local.css.README umbenennen und anpassen
    * Deletes a specific configuration row and corresponding CSS file
    *
    * @param   int     $id The Id of the row to delete
+   * @param   boolean $force If set to true the configuration row with id = 1 is allowed to be deleted too
    * @return  boolean True on success, false otherwise
    * @since   2.0
    */
-  public function delete($id)
+  public function delete($id, $force = false)
   {
-    if($id == 1)
+    if($id == 1 && !$force)
     {
       $this->setError(JText::_('COM_JOOMGALLERY_CONFIGS_DEFAULT_ROW_NOT_DELETABLE'));
 

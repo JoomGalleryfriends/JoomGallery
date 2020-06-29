@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/helpers/helper.php $
-// $Id: helper.php 4331 2013-09-08 08:27:42Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -967,5 +965,63 @@ class JoomHelper
     }
 
     return $val;
+  }
+
+  /**
+   * Returns the introtext of a category or image description
+   *
+   * @param   string  $description  The description where only the introtext should be returned
+   * @return  string  The introtext of the description
+   * @since   3.4
+   */
+  public static function getIntrotext($description)
+  {
+    $introtext = null;
+
+    if(isset($description))
+    {
+      $pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*\/*>#i';
+      $tagPos = preg_match($pattern, $description);
+
+      if($tagPos == 0)
+      {
+        $introtext = $description;
+      }
+      else
+      {
+        $introtext = preg_split($pattern, $description, 0)[0];
+      }
+    }
+
+    return $introtext;
+  }
+
+  /**
+   * Returns the fulltext of a category or image description
+   *
+   * @param   string  $description  The description where the fulltext should be returned
+   * @return  string  The fulltext of the description
+   * @since   3.4
+   */
+  public static function getFulltext($description)
+  {
+    $fulltext = null;
+
+    if(isset($description))
+    {
+      $pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*\/*>#i';
+      $tagPos = preg_match($pattern, $description);
+
+      if($tagPos == 0)
+      {
+        $fulltext = $description;
+      }
+      else
+      {
+        $fulltext = preg_replace($pattern, '', $description);
+      }
+    }
+
+    return $fulltext;
   }
 }

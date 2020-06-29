@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/interface.php $
-// $Id: interface.php 4408 2014-07-12 08:24:56Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -131,6 +129,8 @@ class JoomInterface
     $this->_config['showlastcomment'] = 0;
     // - Make use of hidden images and images in hidden categories
     $this->_config['showhidden']      = 0;
+    // - Show only introtext of description
+    $this->_config['showdescriptionintrotext'] = 1;
 
     // Store the config for being able to reset it later on (if useful)
     $this->storeConfig();
@@ -278,7 +278,7 @@ class JoomInterface
    */
   public function getGalleryVersion()
   {
-    return '3.3';
+    return '3.4';
   }
 
   /**
@@ -710,7 +710,7 @@ class JoomInterface
     }
     if ($this->getConfig('showimgdate'))
     {
-      $output .= '<li>'.JText::sprintf('COM_JOOMGALLERY_COMMON_UPLOAD_DATE', '<br />'.JHTML::_('date', $obj->imgdate, JText::_($this->getConfig('dateformat')))).'</li>';
+      $output .= '<li>'.JText::sprintf('COM_JOOMGALLERY_COMMON_UPLOAD_DATE', JHTML::_('date', $obj->imgdate, JText::_($this->getConfig('dateformat')))).'</li>';
     }
     if($this->getConfig('shownumcomments'))
     {
@@ -718,7 +718,14 @@ class JoomInterface
     }
     if($this->getConfig('showdescription')  && $obj->imgtext)
     {
-      $output .= '  <li>'. JText::sprintf('COM_JOOMGALLERY_COMMON_DESCRIPTION_VAR', $obj->imgtext).'</li>';
+      if($this->getConfig('showdescriptionintrotext') == 1)
+      {
+        $output .= '  <li>'.JText::sprintf('COM_JOOMGALLERY_COMMON_DESCRIPTION_VAR', JoomHelper::getIntrotext($obj->imgtext)).'</li>';
+      }
+      else
+      {
+        $output .= '  <li>'.JText::sprintf('COM_JOOMGALLERY_COMMON_DESCRIPTION_VAR', JoomHelper::getFulltext($obj->imgtext)).'</li>';
+      }
     }
     if($this->getConfig('showcmtdate') == 1 && !is_null($obj->cmtdate))
     {

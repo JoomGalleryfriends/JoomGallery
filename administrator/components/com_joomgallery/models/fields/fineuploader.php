@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/models/fields/fineuploader.php $
-// $Id: fineuploader.php 4076 2015-05-19 10:35:29Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2015  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -167,8 +165,8 @@ class JFormFieldFineuploader extends JFormField
           if(response.success) {
             uploader.fileCount--;
             var redirect = '<?php echo $redirect; ?>';
-            if(uploader.fileCount == 0 && redirect != '') {
-              // Redirect only if all file uploads were successful
+            if(uploader.fileCount == 0 && redirect != '' && response.ifRedirect) {
+              // Redirect only if all file uploads were successful and no warnings/
               location.href = redirect;
             }
           }
@@ -219,6 +217,14 @@ class JFormFieldFineuploader extends JFormField
     });
     jQuery('#triggerUpload').click(function() {
       Joomla.removeMessages();
+
+<?php if(!$isMini):
+        echo $this->form->getField('imgtext')->save(); ?>
+
+      if(typeof tinymce !== "undefined") {
+        tinyMCE.triggerSave();
+      }
+<?php endif; ?>
 
       if(uploader._storedIds.length == 0) {
         alert('<?php echo JText::_('COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_ONE_IMAGE', true); ?>');
@@ -275,12 +281,12 @@ class JFormFieldFineuploader extends JFormField
       }
       <?php if(!$isMini): ?>
       uploader.requestParams.imgtext = jQuery('#<?php echo $prefix; ?>imgtext').val();
+      uploader.requestParams.imgauthor = jQuery('#<?php echo $prefix; ?>imgauthor').val();
       uploader.requestParams.debug = jQuery('#<?php echo $prefix; ?>debug').prop('checked') ? 1 : 0;
       <?php   if($app->isSite()): ?>
       uploader.requestParams.published = jQuery('#<?php echo $prefix; ?>published').val();
       <?php   else: ?>
       uploader.requestParams.published = jQuery('#<?php echo $prefix; ?>published0').prop('checked') ? 0 : 1;
-      uploader.requestParams.imgauthor = jQuery('#<?php echo $prefix; ?>imgauthor').val();
       uploader.requestParams.access = jQuery('#<?php echo $prefix; ?>access').val();
       <?php   endif;
             else: ?>

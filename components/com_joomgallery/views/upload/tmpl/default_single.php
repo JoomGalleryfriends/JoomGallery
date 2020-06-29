@@ -30,15 +30,23 @@
       <?php endif; ?>
   <div class="control-group">
     <div class="control-label">
-      <?php echo $this->single_form->getLabel('imgtext'); ?>
+      <?php echo $this->single_form->getLabel('single-imgtext'); ?>
     </div>
     <div class="controls">
-      <?php echo $this->single_form->getInput('imgtext'); ?>
+      <?php echo $this->single_form->getInput('single-imgtext'); ?>
     </div>
   </div>
   <div class="control-group">
     <div class="control-label">
       <?php echo $this->single_form->getLabel('imgauthor'); ?>
+    </div>
+    <div class="controls">
+      <?php echo $this->single_form->getInput('imgauthor'); ?>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="control-label">
+      <?php echo $this->single_form->getLabel('owner'); ?>
     </div>
     <div class="controls">
       <div class="jg-uploader"><?php echo JHtml::_('joomgallery.displayname', $this->_user->get('id'), 'upload'); ?></div>

@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/components/com_joomgallery/views/detail/view.html.php $
-// $Id: view.html.php 4404 2014-06-26 21:23:58Z chraneco $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -220,6 +218,9 @@ class JoomGalleryViewDetail extends JoomGalleryView
     {
       $this->_doc->setMetaData('author', $image->author);
     }
+
+    // Show fulltext of description
+    $image->imgtext = JoomHelper::getFulltext($image->imgtext);
 
     // Set the title attribute in a tag with title and/or description of image
     // if a box is activated
@@ -438,7 +439,7 @@ class JoomGalleryViewDetail extends JoomGalleryView
           // Description
           if($row->imgtext != '')
           {
-            $description =JoomHelper::fixForJS($row->imgtext);
+            $description = JoomHelper::fixForJS(JoomHelper::getFulltext($row->imgtext));
           }
           else
           {
@@ -653,7 +654,7 @@ class JoomGalleryViewDetail extends JoomGalleryView
       }
 
       // Download icon
-      if(   $this->_config->get('jg_download')
+      if(   ($image->catallow_download == (-1) ? $this->_config->get('jg_download') : $image->catallow_download)
         &&  $this->_config->get('jg_showdetaildownload')
         &&  ($image->orig_exists || $this->_config->get('jg_downloadfile') != 1)
         )
@@ -889,7 +890,7 @@ class JoomGalleryViewDetail extends JoomGalleryView
       }
 
       // Rating
-      if($this->_config->get('jg_showrating'))
+      if($image->catallow_rating == (-1) ? $this->_config->get('jg_showrating') : $image->catallow_rating)
       {
         if($this->_config->get('jg_votingonlyreg') && !$this->_user->get('id'))
         {
@@ -979,7 +980,7 @@ class JoomGalleryViewDetail extends JoomGalleryView
         }
       }
 
-      if($this->_config->get('jg_showcomment'))
+      if($image->catallow_comment == (-1) ? $this->_config->get('jg_showcomment') : $image->catallow_comment)
       {
         $params->set('show_comments_block', 1);
 

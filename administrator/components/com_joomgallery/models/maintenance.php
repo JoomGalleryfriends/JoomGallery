@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/models/maintenance.php $
-// $Id: maintenance.php 4076 2013-02-12 10:35:29Z erftralle $
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -467,6 +465,13 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    if(!count($cids))
+    {
+      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
+
+      return false;
+    }
+
     JArrayHelper::toInteger($cids);
 
     $query = $this->_db->getQuery(true);
@@ -488,13 +493,6 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     }
 
     $row = $this->getTable('joomgalleryimages');
-
-    if(!count($cids))
-    {
-      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
-
-      return false;
-    }
 
     $count = 0;
 
@@ -639,6 +637,13 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    if(!count($cids))
+    {
+      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_SELECTED'));
+
+      return false;
+    }
+
     JArrayHelper::toInteger($cids);
 
     if(!$recursion_level)
@@ -665,13 +670,6 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     }
 
     $row = $this->getTable('joomgallerycategories');
-
-    if(!count($cids))
-    {
-      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_SELECTED'));
-
-      return false;
-    }
 
     $count = 0;
     $extant_images  = false;

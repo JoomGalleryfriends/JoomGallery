@@ -1,10 +1,8 @@
 <?php
-// $HeadURL: https://joomgallery.org/svn/joomgallery/JG-3/JG/trunk/administrator/components/com_joomgallery/helpers/html/joomconfig.php $
-// $Id: joomconfig.php 4076 2013-02-12 10:35:29Z erftralle $
 /******************************************************************************\
 **   JoomGallery 3                                                            **
 **   By: JoomGallery::ProjectTeam                                             **
-**   Copyright (C) 2008 - 2013  JoomGallery::ProjectTeam                      **
+**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                      **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                  **
 **   Released under GNU GPL Public License                                    **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look             **
@@ -59,6 +57,31 @@ class JHTMLJoomConfig
       <td colspan="3"><div class="alert alert-info"><?php echo $text; ?></div></td>
     </tr>
 <?php
+  }
+
+  /**
+   * Displays a selectable list of predefined configurations
+   *
+   * @return  string  The HTML output created
+   * @since   3.4
+   *
+   */
+  public static function reset()
+  {
+    $options    = array();
+    $options[]  = JHtml::_('select.option', 0, JText::_('COM_JOOMGALLERY_CONFIG_RESETCONFIG_OPTION_INSTALL'));
+    $options[]  = JHtml::_('select.option', 1, JText::_('COM_JOOMGALLERY_CONFIG_RESETCONFIG_OPTION_MINI'));
+    $options[]  = JHtml::_('select.option', 2, JText::_('COM_JOOMGALLERY_CONFIG_RESETCONFIG_OPTION_MIDDLE'));
+    $options[]  = JHtml::_('select.option', 3, JText::_('COM_JOOMGALLERY_CONFIG_RESETCONFIG_OPTION_FULL'));
+
+    $path = JPATH_ADMINISTRATOR . '/components/com_joomgallery/sql/setdefault.user.mysql.utf8.sql';
+
+    if(file_exists($path))
+    {
+      $options[] = JHtml::_('select.option', 99, JText::_('COM_JOOMGALLERY_CONFIG_RESETCONFIG_OPTION_USERDEFINED'));
+    }
+
+    return JHtml::_( 'select.genericlist', $options, 'reset_to');
   }
 
   /**
