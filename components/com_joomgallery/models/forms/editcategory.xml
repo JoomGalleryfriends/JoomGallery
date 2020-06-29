@@ -27,6 +27,7 @@
       description="COM_JOOMGALLERY_EDITCATEGORY_TITLE_TIP"
       size="50"
       required="true"
+      autofocus="true"
       message="COM_JOOMGALLERY_COMMON_ALERT_CATEGORY_MUST_HAVE_TITLE"
     />
     <field
