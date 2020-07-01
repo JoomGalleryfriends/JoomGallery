@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-  <release version="3.4.1" published="20200627">
+  <release version="3.4.1" published="20200701">
     <entries date="20200621">
       <logentry type="#">Fix SQL error in some batch jobs in Maintenance Manager</logentry>
     </entries>
