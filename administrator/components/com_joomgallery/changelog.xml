@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+  <release version="3.4.1" published="20200627">
+    <entries date="20200621">
+      <logentry type="#">Fix SQL error in some batch jobs in Maintenance Manager</logentry>
+    </entries>
+    <entries date="20200613">
+      <logentry type="^">Favourites conflict with K2 system plugin</logentry>
+    </entries>
+    <entries date="20200425">
+      <logentry type="#">Use of different post variables for the image description in the frontend upload view</logentry>
+    </entries>
+    <entries date="20200321">
+      <logentry type="^">Fix PHP 7.4 deprecated warnings</logentry>
+    </entries>
+    <entries date="20200130">
+      <logentry type="^">Add three missing languages</logentry>
+    </entries>
+    <entries date="20200125">
+      <logentry type="^">Remove link to Transifex</logentry>
+    </entries>
+    <entries date="20200108">
+      <logentry type="^">Remove duplicate lines</logentry>
+    </entries>
+  </release>
   <release version="3.4.0" published="20191206">
     <entries date="20191205">
       <logentry type="^">Improved user panel view (mobile)</logentry>
