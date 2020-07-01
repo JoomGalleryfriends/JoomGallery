@@ -198,7 +198,7 @@ JFactory::getDocument()->addScriptDeclaration(
 <?php endif;?>
     <input type="hidden" name="task" value="" />
     <input type="hidden" name="boxchecked" value="0" />
-    <input type="hidden" name="original_order_values" value="<?php echo implode($originalOrders, ','); ?>" />
+    <input type="hidden" name="original_order_values" value="<?php echo implode(',', $originalOrders); ?>" />
     <?php echo JHtml::_('form.token');
     JHtml::_('joomgallery.credits'); ?>
   </div>
