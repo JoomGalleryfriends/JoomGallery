@@ -24,10 +24,10 @@
       <?php endif; ?>
   <div class="control-group">
     <div class="control-label">
-      <?php echo $this->applet_form->getLabel('imgtext'); ?>
+      <?php echo $this->applet_form->getLabel('java-imgtext'); ?>
     </div>
     <div class="controls">
-      <?php echo $this->applet_form->getInput('imgtext'); ?>
+      <?php echo $this->applet_form->getInput('java-imgtext'); ?>
     </div>
   </div>
   <div class="control-group">

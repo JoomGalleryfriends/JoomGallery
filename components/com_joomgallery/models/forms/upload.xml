@@ -44,7 +44,7 @@
         required="true"
       />
       <field
-        name="imgtext"
+        name="single-imgtext"
         id="single-imgtext"
         type="editor"
         class="inputbox"
