@@ -417,6 +417,81 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $row->downloads = 0;
     }
 
+    // Workaround - Different filetypes for orig/img images are forbidden
+    $columnname = 'imgfilename';
+    $ext = JFile::getExt($row->$columnname);   //extension of orig/img file before replace
+    $replace_img_orig = null;
+    if(isset($files['tmp_name']) && isset($files['tmp_name']['img']) && $files['tmp_name']['img'])
+    {
+      if(isset($files['tmp_name']) && isset($files['tmp_name']['orig']) && $files['tmp_name']['orig'])
+      {
+        // both original and detail will be replaced
+        $replace_img_orig = $row->$columnname;
+        $orig_ext = strtolower(JFile::getExt($files['name']['orig']));
+        $det_ext  = strtolower(JFile::getExt($files['name']['img']));
+        if($orig_ext != $det_ext)
+        {
+          JError::raiseWarning(500, JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_IMG_NOTEQUAL_ORIG'));
+
+          return false;
+        }
+      }
+      else
+      {
+        // detail will be replaced, original dont
+        $det_ext  = strtolower(JFile::getExt($files['name']['img']));
+        if($ext != $det_ext)
+        {
+          JError::raiseWarning(500, JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_IMG_NOTEQUAL_ORIG'));
+
+          return false;
+        }
+      } 
+    }
+    else
+    {
+      if(isset($files['tmp_name']) && isset($files['tmp_name']['orig']) && $files['tmp_name']['orig'])
+      {
+        // original will be replaced, detail dont
+        $orig_ext  = strtolower(JFile::getExt($files['name']['orig']));
+        if($ext != $orig_ext)
+        {
+          JError::raiseWarning(500, JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_IMG_NOTEQUAL_ORIG'));
+
+          return false;
+        }
+      }
+    }
+
+    // Check if auto-rotation is enabled
+    $angle         = 0;    
+    switch($this->_config->get('jg_upload_exif_rotation'))
+    {
+      case 0:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+
+      case 1:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = false;
+        break;
+
+      case 2:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = true;
+        break;
+      
+      default:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+    }
+
     // Upload and handle new image files
     $types = array('thumb', 'img', 'orig');
     foreach($types as $type)
@@ -425,64 +500,174 @@ class JoomGalleryModelImage extends JoomGalleryModel
       {
         jimport('joomla.filesystem.file');
 
-        // Possibly the file name has to be changed because of another image format
-        $temp_filename = $files['name'][$type];
-        $columnname = 'imgfilename';
         if($type == 'thumb')
         {
           $columnname = 'imgthumbname';
         }
-        $filename = $row->$columnname;
-        $new_ext = JFile::getExt($temp_filename);
-        $old_ext = JFile::getExt($filename);
+        else
+        {
+          $columnname = 'imgfilename';
+        }
+
+        $old_image   = $row->$columnname;   //image name of the old image
+        $old_path    = $this->_ambit->getImg($type.'_path', $row);   //path of the old image
+        if($type == 'thumb')
+        {
+          $old_ext   = JFile::getExt($old_image);   //extension of the old image
+        }
+        else
+        {
+          // Workaround - Different filetypes for orig/img images are forbidden
+          $old_ext   = $ext;   //extension of the old image
+        }        
+
+        $new_ext     = strtolower(JFile::getExt($files['name'][$type]));   //extension of the new image
         if($new_ext != $old_ext)
         {
-          $row->$columnname = substr_replace($row->$columnname, '.'.$new_ext, - (strlen($old_ext) + 1));
+          $new_image = str_replace($old_ext, $new_ext, $old_image);   //image name of the new image
         }
+        else
+        {
+          $new_image = $old_image;
+        }
+        $new_path    = str_replace($old_image,$new_image,$old_path);   //path of the new, resized image
+        $new_tmp     = str_replace($old_image,$new_image.'_up',$old_path);   //path of the uploaded temp image in image folder
+        
+        $tmp_path    = $files['tmp_name'][$type];   //path of the new uploaded image in tmp folder
 
-        // Upload the file
-        $file = $this->_ambit->getImg($type.'_path', $row);
-        //JFile::delete($file);
-        if(!JFile::upload($files['tmp_name'][$type], $file))
+        // // Upload the file
+        if(!JFile::upload($tmp_path, $new_tmp))
         {
           JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_ERROR_UPLOADING', $this->_ambit->getImg($type.'_path', $row)));
-
-          // Revert database entry
-          $row->$columnname = $filename;
         }
-        // Resize image
+
+        // Resize new image
         $debugoutput = '';
         switch($type)
         {
           case 'thumb':
-            $return = JoomFile::resizeImage($debugoutput,
-                                            $file,
-                                            $file,
-                                            $this->_config->get('jg_useforresizedirection'),
-                                            $this->_config->get('jg_thumbwidth'),
-                                            $this->_config->get('jg_thumbheight'),
-                                            $this->_config->get('jg_thumbcreation'),
-                                            $this->_config->get('jg_thumbquality'),
-                                            false,
-                                            $this->_config->get('jg_cropposition')
-                                            );
+            $return = JoomIMGtools::resizeImage($debugoutput,
+                                                $new_tmp,
+                                                $new_path,
+                                                $this->_config->get('jg_useforresizedirection'),
+                                                $this->_config->get('jg_thumbwidth'),
+                                                $this->_config->get('jg_thumbheight'),
+                                                $this->_config->get('jg_thumbcreation'),
+                                                $this->_config->get('jg_thumbquality'),
+                                                $this->_config->get('jg_cropposition'),
+                                                $angle,
+                                                $autorot_thumb,
+                                                false,
+                                                false
+                                                );
+            if(!$return)
+            {
+              JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_NOT_CREATED', $files['name'][$type]));
+
+              // Delete uploaded temp image
+              JFile::delete($new_tmp);
+
+              return false;
+            }
+            else
+            {
+              $filesize = filesize($new_path) / 1000; //KB
+              JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_CREATED', $filesize));
+            }
             break;
           case 'img':
-            $return = JoomFile::resizeImage($debugoutput,
-                                            $file,
-                                            $file,
-                                            false,
-                                            $this->_config->get('jg_maxwidth'),
-                                            false,
-                                            $this->_config->get('jg_thumbcreation'),
-                                            $this->_config->get('jg_picturequality'),
-                                            true,
-                                            0
-                                            );
+            $return = JoomIMGtools::resizeImage($debugoutput,
+                                                $new_tmp,
+                                                $new_path,
+                                                3,
+                                                $this->_config->get('jg_maxwidth'),
+                                                $this->_config->get('jg_maxwidth'),
+                                                $this->_config->get('jg_thumbcreation'),
+                                                $this->_config->get('jg_picturequality'),
+                                                false,
+                                                $angle,
+                                                $autorot_det,
+                                                false,
+                                                true
+                                                );
+            if(!$return)
+            {
+              JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_NOT_CREATED', $files['name'][$type]));
+
+              // Delete uploaded temp image
+              JFile::delete($new_tmp);
+
+              return false;
+            }
+            else
+            {
+              $filesize = filesize($new_path) / 1000; //KB
+              JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_CREATED', $filesize));
+            }
+            break;
+          case 'orig':
+            $debugoutput = '';
+            // Rotate original image if needed
+            if($autorot_orig)
+            {
+              $return = JoomIMGtools::rotateImage($debugoutput,
+                                                  $new_tmp,
+                                                  $new_path,
+                                                  $this->_config->get('jg_thumbcreation'),
+                                                  $this->_config->get('jg_originalquality'),
+                                                  0,
+                                                  $autorot_orig,
+                                                  true,
+                                                  true
+                                                  );
+            }
+
+            // Copy detail image if no rotation is needed or rotation failed
+            if(!$return || !$autorot_orig)
+            {
+              $return = JFile::copy($new_tmp,$new_path);
+            }
+
+            if(!$return && $debugoutput != '')
+            {
+              JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGIMG_NOT_CREATED', $files['name'][$type]));
+
+              // Delete uploaded temp image
+              JFile::delete($new_tmp);
+
+              return false;
+            }
+            else
+            {
+              $filesize = filesize($new_path) / 1000; //KB
+              JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGIMG_CREATED', $filesize));
+            }
+
             break;
           default:
             break;
         }
+
+        // Delete uploaded temp image
+        JFile::delete($new_tmp);
+
+        if($new_image != $old_image)
+        {
+          if($return != false)
+          {
+            // Renew database entry, if resize/copy was successfully
+            $row->$columnname = $new_image;
+          }          
+          // Delete old file, if new one has another image format and therefore dont gets overwritten
+          JFile::delete($old_path);
+        }
+
+        // Workaround - Different filetypes for orig/img images are forbidden
+        if(!(is_null($replace_img_orig)) && $new_ext != $ext)
+        {
+          $path = str_replace($new_image,$replace_img_orig,$new_path);
+          JFile::delete($path);
+        }    
       }
     }
 
