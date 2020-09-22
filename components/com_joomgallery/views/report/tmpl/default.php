@@ -2,7 +2,7 @@
 JHtml::_('behavior.formvalidation');
 $this->_doc->addStyleSheet($this->_ambit->getStyleSheet('joomgallery.css')); ?>
 <div class="gallery minigallery" style="text-align:center;">
-  <fieldset style="width:550px;margin-right:auto; margin-left:auto;">
+  <fieldset style="width:550px; max-width:95%; margin-right:auto; margin-left:auto;">
     <legend><?php echo JText::_('COM_JOOMGALLERY_DETAIL_REPORT_IMAGE'); ?></legend>
     <form action="<?php echo JRoute::_('index.php'); ?>" id="reportimageform" name="reportimageform" method="post" class="form-validate">
 <?php if(!$this->_user->get('id')): ?>
