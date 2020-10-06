@@ -665,8 +665,9 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
     $debugoutput = '';
 
+    $angle = 0;
+
     // Check if auto-rotation is enabled
-    $angle         = 0;    
     switch($this->_config->get('jg_upload_exif_rotation'))
     {
       case 0:
@@ -674,19 +675,16 @@ class JoomGalleryModelImages extends JoomGalleryModel
         $autorot_det   = false;
         $autorot_orig  = false;
         break;
-
       case 1:
         $autorot_thumb = true;
         $autorot_det   = true;
         $autorot_orig  = false;
         break;
-
       case 2:
         $autorot_thumb = true;
         $autorot_det   = true;
         $autorot_orig  = true;
         break;
-      
       default:
         $autorot_thumb = false;
         $autorot_det   = false;
@@ -748,7 +746,8 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                             $autorot_thumb,
                                             false,
                                             false
-                                            );
+                                           );
+
         if(!$return)
         {
           JError::raiseWarning(100, JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_COULD_NOT_CREATE_THUMB', $thumb));
@@ -756,6 +755,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
           $this->_mainframe->setUserState('joom.recreate.thumbcount', null);
           $this->_mainframe->setUserState('joom.recreate.imgcount', null);
           $this->_mainframe->setUserState('joom.recreate.recreated', null);
+
           return false;
         }
 
@@ -772,6 +772,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
         {
           JFile::delete($img);
         }
+
         $return = JoomIMGtools::resizeImage($debugoutput,
                                             $orig,
                                             $img,
@@ -785,7 +786,8 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                             $autorot_det,
                                             false,
                                             true
-                                            );
+                                           );
+
         if(!$return)
         {
           JError::raiseWarning(100, JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_COULD_NOT_CREATE_IMG', $img));
@@ -793,6 +795,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
           $this->_mainframe->setUserState('joom.recreate.thumbcount', null);
           $this->_mainframe->setUserState('joom.recreate.imgcount', null);
           $this->_mainframe->setUserState('joom.recreate.recreated', null);
+
           return false;
         }
 
@@ -862,8 +865,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       $orig  = $this->_ambit->getImg('orig_path', $cid);
       $img   = $this->_ambit->getImg('img_path', $cid);
       $thumb = $this->_ambit->getImg('thumb_path', $cid);
-
-      $err = false;
+      $err   = false;
 
       if($rotateImageTypes == 2 && JFile::exists($orig))
       {
@@ -875,11 +877,13 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                      $rotateImageAngle,
                                      false,
                                      true,
-                                     true))
+                                     true
+                                    )
+          )
         {
           $orig_count--;
 
-          //control, if the exif orientation of the original was set to 1 during upload (only if JPG)
+          // Control, if the exif orientation of the original was set to 1 during upload (only if JPG)
           if(exif_imagetype($orig) == IMAGETYPE_JPEG && extension_loaded('exif') && function_exists('exif_read_data'))
           {
             // Read EXIF data (only JPG)
@@ -889,7 +893,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
             {
               if($exif_tmp['IFD0']['Orientation'] != 1)
               {
-                // set exif orientation to 1
+                // Set exif orientation to 1
                 $meta_success = JoomIMGtools::copyImageMetadata($orig, $orig, 'JPG', 'JPG', 1, true);
               }
             }
@@ -898,7 +902,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
         else
         {
           $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $orig).'<br />';
-          $err = true;
+          $err          = true;
         }
       }
       else
@@ -906,13 +910,13 @@ class JoomGalleryModelImages extends JoomGalleryModel
         if($rotateImageTypes == 2 && !JFile::exists($orig))
         {
           $debugoutput .= JText::sprintf('COM_JOOMGALLERY_ROTATE_NO_ORIG', $orig).'<br />';
-          $err = true;
+          $err          = true;
         }
       }
 
       if($rotateImageTypes != 2 || ($rotateImageTypes == 2 && !$err))
       {
-        // if there are no errors so far...
+        // If there are no errors so far...
         if($rotateImageTypes == 2)
         {
           // As we have a successfully rotated original we should use a resize here
@@ -928,16 +932,17 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                        0,
                                        false,
                                        false,
-                                       true))
+                                       true
+                                      )
+            )
           {
             $img_count--;
           }
           else
           {
             $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img).'<br />';
-            $err = true;
+            $err          = true;
           }
-
         }
         else
         {
@@ -949,22 +954,24 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                        $rotateImageAngle,
                                        false,
                                        false,
-                                       true))
+                                       true
+                                      )
+            )
           {
             $img_count--;
           }
           else
           {
             $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $img).'<br />';
+
             // As the rotation of the detail image failed the thumb should be resized instead of rotated.
             $err = true;
           }
         }
-        
 
-        $tmpdebugoutput = '';        
+        $tmpdebugoutput = '';
 
-        // As there is no original image available or original was not rotated, use detail image instead 
+        // As there is no original image available or original was not rotated, use detail image instead
         if(!JFile::exists($orig) || $rotateImageTypes != 2)
         {
           $orig = $img;
@@ -984,7 +991,9 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                          0,
                                          false,
                                          false,
-                                         false);
+                                         false
+                                        );
+
         if($ret)
         {
           $thumb_count--;
@@ -993,7 +1002,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
         {
           $debugoutput .= $tmpdebugoutput;
           $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_ROTATE_IMAGE', $thumb).'<br />';
-          $err = true;
+          $err          = true;
         }
       }
 

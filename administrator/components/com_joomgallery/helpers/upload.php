@@ -461,7 +461,7 @@ class JoomUpload extends JObject
         continue;
       }
 
-      $upfilesize = filesize($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)) / 1000; //KB
+      $upfilesize          = filesize($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)) / 1000; //KB
       $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE', $upfilesize).'<br />';
 
       // Set permissions of uploaded file
@@ -857,7 +857,7 @@ class JoomUpload extends JObject
       // Try to set permissions to 644
       $return = JoomFile::chmod($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), '0644');
 
-      $upfilesize = filesize($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)) / 1000; //KB
+      $upfilesize          = filesize($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)) / 1000; //KB
       $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE', $upfilesize).'<br />';
 
       // Check for overriding with meta data
@@ -1166,12 +1166,13 @@ class JoomUpload extends JObject
           continue;
         }*/
 
+        $angle      = 0;
+        $autorotate = false;
+
         // Check if auto-rotation is enabled
-        $angle             = 0;
-        $autorotate        = false;
         if ($this->_config->get('jg_upload_exif_rotation') > 0)
         {
-          $autorotate      = true;
+          $autorotate = true;
         }
 
         // Create thumbnail
@@ -1188,7 +1189,7 @@ class JoomUpload extends JObject
                                             $autorotate,
                                             false,
                                             false
-                                            );
+                                           );
         if(!$return)
         {
           $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_NOT_CREATED', $this->_ambit->getImg('thumb_path', $newfilename, null, $this->catid)).'\n';
@@ -1199,7 +1200,8 @@ class JoomUpload extends JObject
           $this->debug        = true;
           continue;
         }
-        $thumbfilesize = filesize($this->_ambit->getImg('thumb_path', $newfilename, null, $this->catid)) / 1000; //KB      
+
+        $thumbfilesize       = filesize($this->_ambit->getImg('thumb_path', $newfilename, null, $this->catid)) / 1000; //KB
         $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_CREATED', $thumbfilesize).'<br />';
       }
       else
@@ -1728,8 +1730,8 @@ class JoomUpload extends JObject
       return false;
     }
 
-    $upfilesize = filesize($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)) / 1000; //KB
-      $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE', $upfilesize).'<br />';
+    $upfilesize          = filesize($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid)) / 1000; //KB
+    $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_UPLOAD_COMPLETE', $upfilesize).'<br />';
 
     // Set permissions of uploaded file
     $return = JoomFile::chmod($this->_ambit->getImg('orig_path', $newfilename, null, $this->catid), '0644');
@@ -2051,6 +2053,7 @@ class JoomUpload extends JObject
       }
     }
   }
+
   /**
    * Returns the number of images of the current user
    *
@@ -2083,12 +2086,13 @@ class JoomUpload extends JObject
    * @param   boolean $is_in_original Determines whether the source file is already in the original images folders
    * @param   boolean $delete_source  Determines whether the source file shall be deleted after the procedure
    * @return  boolean True on success, false otherwise
-   * @since   1.5.7 
+   * @since   1.5.7
    */
   protected function resizeImage($source, $filename, $is_in_original = true, $delete_source = false)
   {
+    $angle = 0;
+
     // Check if auto-rotation is enabled
-    $angle         = 0;    
     switch($this->_config->get('jg_upload_exif_rotation'))
     {
       case 0:
@@ -2096,19 +2100,16 @@ class JoomUpload extends JObject
         $autorot_det   = false;
         $autorot_orig  = false;
         break;
-
       case 1:
         $autorot_thumb = true;
         $autorot_det   = true;
         $autorot_orig  = false;
         break;
-
       case 2:
         $autorot_thumb = true;
         $autorot_det   = true;
         $autorot_orig  = true;
         break;
-      
       default:
         $autorot_thumb = false;
         $autorot_det   = false;
@@ -2130,14 +2131,16 @@ class JoomUpload extends JObject
                                         $autorot_thumb,
                                         false,
                                         false
-                                        );
+                                       );
     if(!$return)
     {
       $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_NOT_CREATED', $this->_ambit->getImg('thumb_path', $filename, null, $this->catid)).'<br />';
-      $this->debug = true;
+      $this->debug         = true;
+
       return false;
     }
-    $thumbfilesize = filesize($this->_ambit->getImg('thumb_path', $filename, null, $this->catid)) / 1000; //KB
+
+    $thumbfilesize       = filesize($this->_ambit->getImg('thumb_path', $filename, null, $this->catid)) / 1000; //KB
     $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_CREATED', $thumbfilesize).'<br />';
 
     // Optionally create detail image
@@ -2148,7 +2151,6 @@ class JoomUpload extends JObject
         !$this->_mainframe->getUserStateFromRequest('joom.upload.create_special_gif', 'create_special_gif', false, 'bool')
       )
     {
-
       // Create new detail image
       $return = JoomIMGtools::resizeImage($this->_debugoutput,
                                           $source,
@@ -2163,15 +2165,17 @@ class JoomUpload extends JObject
                                           $autorot_det,
                                           false,
                                           true
-                                          );
+                                         );
       if(!$return)
       {
         $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_NOT_CREATED', $this->_ambit->getImg('img_path', $filename, null, $this->catid)).'<br />';
         $this->debug        = true;
+
         return false;
       }
-      $detailfilesize = filesize($this->_ambit->getImg('img_path', $filename, null, $this->catid)) / 1000; //KB
-      $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_CREATED', $detailfilesize).'<br />';
+
+      $detailfilesize       = filesize($this->_ambit->getImg('img_path', $filename, null, $this->catid)) / 1000; //KB
+      $this->_debugoutput  .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_CREATED', $detailfilesize).'<br />';
       $detail_image_created = true;
     }
 
@@ -2197,19 +2201,20 @@ class JoomUpload extends JObject
         else
         {
           $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_DELETING_ORIGINAL', $this->_ambit->getImg('orig_path', $filename, null, $this->catid)).' '.JText::_('COM_JOOMGALLERY_COMMON_CHECK_PERMISSIONS').'<br />';
-          $this->debug = true;
+          $this->debug         = true;
+
           return false;
         }
       }
       else
       {
         // Move original image to detail images folder if original image shall be deleted and detail image wasn't resized
-        $return = JFile::move($source,
-                              $this->_ambit->getImg('img_path', $filename, null, $this->catid));
+        $return = JFile::move($source, $this->_ambit->getImg('img_path', $filename, null, $this->catid));
         if(!$return)
         {
           $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_MOVING', $this->_ambit->getImg('img_path', $filename, null, $this->catid)).'<br />';
-          $this->debug        = true;
+          $this->debug         = true;
+
           return false;
         }
       }
@@ -2219,12 +2224,12 @@ class JoomUpload extends JObject
       if(!$detail_image_created)
       {
         // Copy original image into detail images folder if original image shouldn't be deleted and detail image wasn't resized
-        $return = JFile::copy($source,
-                              $this->_ambit->getImg('img_path', $filename, null, $this->catid));
+        $return = JFile::copy($source, $this->_ambit->getImg('img_path', $filename, null, $this->catid));
         if(!$return)
         {
           $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_COPYING', $this->_ambit->getImg('img_path', $filename, null, $this->catid)).'<br />';
-          $this->debug        = true;
+          $this->debug         = true;
+
           return false;
         }
 
@@ -2237,7 +2242,8 @@ class JoomUpload extends JObject
           else
           {
             $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_DELETING_ORIGINAL', $this->_ambit->getImg('orig_path', $filename, null, $this->catid)).' '.JText::_('COM_JOOMGALLERY_COMMON_CHECK_PERMISSIONS').'<br />';
-            $this->debug = true;
+            $this->debug         = true;
+
             return false;
           }
         }
@@ -2251,7 +2257,8 @@ class JoomUpload extends JObject
       /*if(!$return)
       {
         $this->_debugoutput .= $this->_ambit->getImg('img_path', $filename, null, $this->catid).' '.JText::_('COM_JOOMGALLERY_COMMON_CHECK_PERMISSIONS').'<br />';
-        $this->debug        = true;
+        $this->debug         = true;
+
         return false;
       }*/
     }
@@ -2259,12 +2266,12 @@ class JoomUpload extends JObject
     if(!$delete_original && !$is_in_original && !$delete_source)
     {
       // Copy source file to orginal images folder if original image shouldn't be deleted and if it's not already there
-      $return = JFile::copy($source,
-                            $this->_ambit->getImg('orig_path', $filename, null, $this->catid));
+      $return = JFile::copy($source, $this->_ambit->getImg('orig_path', $filename, null, $this->catid));
       if(!$return)
       {
         $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_COPYING', $this->_ambit->getImg('orig_path', $filename, null, $this->catid)).'<br />';
-        $this->debug        = true;
+        $this->debug         = true;
+
         return false;
       }
     }
@@ -2273,12 +2280,12 @@ class JoomUpload extends JObject
       if(!$delete_original && !$is_in_original && $delete_source)
       {
         // Move source file to orginal images folder if original image shall be deleted and if it's not already there
-        $return = JFile::move($source,
-                              $this->_ambit->getImg('orig_path', $filename, null, $this->catid));
+        $return = JFile::move($source, $this->_ambit->getImg('orig_path', $filename, null, $this->catid));
         if(!$return)
         {
           $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_MOVING', $this->_ambit->getImg('orig_path', $filename, null, $this->catid)).'<br />';
-          $this->debug        = true;
+          $this->debug         = true;
+
           return false;
         }
       }
@@ -2286,7 +2293,7 @@ class JoomUpload extends JObject
 
     // Rotate original image if needed
     if(!$delete_original && $autorot_orig)
-    { 
+    {
       $return = JoomIMGtools::rotateImage($this->_debugoutput,
                                           $this->_ambit->getImg('orig_path', $filename, null, $this->catid),
                                           $this->_ambit->getImg('orig_path', $filename, null, $this->catid),
@@ -2302,7 +2309,8 @@ class JoomUpload extends JObject
         $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGINAL_NOT_ROTATED', '').'<br />';
         //$this->debug = true;
       }
-      $origfilesize = filesize($this->_ambit->getImg('orig_path', $filename, null, $this->catid)) / 1000; //KB
+
+      $origfilesize        = filesize($this->_ambit->getImg('orig_path', $filename, null, $this->catid)) / 1000; //KB
       $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGIMG_CREATED', $origfilesize).'<br />';
     }
 
