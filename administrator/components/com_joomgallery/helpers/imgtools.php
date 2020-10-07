@@ -111,7 +111,7 @@ class JoomIMGtools
     $dst_file = JPath::clean($dst_file);
 
     // Load GifFrameExtractor-Class
-    JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
+    JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifframeextractor.php');
 
     // Analysis and validation of the source image
     if(!(self::$src_imginfo = self::analyseImage($src_file)))
@@ -426,7 +426,7 @@ class JoomIMGtools
         if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
         {
           // Animated GIF image (image with more than one frame)
-          JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
+          JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
           $gc = new GifCreator();
           $gc->create(self::$dst_frames, 0);
           $success = file_put_contents($dst_file, $gc->getGif());
@@ -447,7 +447,7 @@ class JoomIMGtools
           if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
           {
             // Animated GIF image (image with more than one frame)
-            JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
+            JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
             $gc = new GifCreator();
             $gc->create(self::$dst_frames, 0);
             $success = file_put_contents($dst_file, $gc->getGif());
@@ -752,7 +752,7 @@ class JoomIMGtools
     }
 
     // Load GifFrameExtractor-Class
-    JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifFrameExtractor.php');
+    JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifframeextractor.php');
 
     // Ensure that the path is valid and clean
     $src_file = JPath::clean($src_file);
@@ -950,7 +950,7 @@ class JoomIMGtools
         if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
         {
           // Animated GIF image (image with more than one frame)
-          JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
+          JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
           $gc = new GifCreator();
           $gc->create(self::$dst_frames, 0);
           $success = file_put_contents($dst_file, $gc->getGif());
@@ -971,7 +971,7 @@ class JoomIMGtools
           if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
           {
             // Animated GIF image (image with more than one frame)
-            JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/GifCreator.php');
+            JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
             $gc = new GifCreator();
             $gc->create(self::$dst_frames, 0);
             $success = file_put_contents($dst_file, $gc->getGif());
