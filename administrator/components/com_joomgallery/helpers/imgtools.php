@@ -2237,7 +2237,7 @@ class JoomIMGtools
    *
    * @param   object  $dst_img       GDobject of the destination image-frame
    * @param   object  $src_img       GDobject of the source image-frame
-   * @return  mixed  copied GDobject on success, false otherwise
+   * @return  mixed   copied GDobject on success, false otherwise
    * @since   3.5.0
    */
   protected static function imageCopy_GD($dst_img, $src_img)
@@ -2259,9 +2259,9 @@ class JoomIMGtools
    *
    * @param   object     $img_frame     GDobject of the image to rotate
    * @param   string     $type          image file type
-   * @param   int     $angle         rotation angle (anticlockwise)
-   * @param   boolean $transparency  transparent background color instead of black
-   * @return  mixed     rotated GDobject on success, false otherwise
+   * @param   int        $angle         rotation angle (anticlockwise)
+   * @param   boolean    $transparency  transparent background color instead of black
+   * @return  mixed      rotated GDobject on success, false otherwise
    * @since   3.5.0
    */
   protected static function imageRotate_GD($img_frame, $type, $angle, $transparency)
