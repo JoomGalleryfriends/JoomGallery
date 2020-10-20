@@ -418,17 +418,19 @@ class JoomGalleryModelImage extends JoomGalleryModel
     }
 
     // Workaround - Different filetypes for orig/img images are forbidden
-    $columnname = 'imgfilename';
-    $ext = JFile::getExt($row->$columnname);   //extension of orig/img file before replace
+    $columnname       = 'imgfilename';
+    $ext              = JFile::getExt($row->$columnname);   // Extension of orig/img file before replace
     $replace_img_orig = null;
+
     if(isset($files['tmp_name']) && isset($files['tmp_name']['img']) && $files['tmp_name']['img'])
     {
       if(isset($files['tmp_name']) && isset($files['tmp_name']['orig']) && $files['tmp_name']['orig'])
       {
-        // both original and detail will be replaced
+        // Both original and detail will be replaced
         $replace_img_orig = $row->$columnname;
-        $orig_ext = strtolower(JFile::getExt($files['name']['orig']));
-        $det_ext  = strtolower(JFile::getExt($files['name']['img']));
+        $orig_ext         = strtolower(JFile::getExt($files['name']['orig']));
+        $det_ext          = strtolower(JFile::getExt($files['name']['img']));
+
         if($orig_ext != $det_ext)
         {
           JError::raiseWarning(500, JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_IMG_NOTEQUAL_ORIG'));
@@ -438,22 +440,24 @@ class JoomGalleryModelImage extends JoomGalleryModel
       }
       else
       {
-        // detail will be replaced, original dont
-        $det_ext  = strtolower(JFile::getExt($files['name']['img']));
+        // Detail will be replaced, original dont
+        $det_ext = strtolower(JFile::getExt($files['name']['img']));
+
         if($ext != $det_ext)
         {
           JError::raiseWarning(500, JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_IMG_NOTEQUAL_ORIG'));
 
           return false;
         }
-      } 
+      }
     }
     else
     {
       if(isset($files['tmp_name']) && isset($files['tmp_name']['orig']) && $files['tmp_name']['orig'])
       {
-        // original will be replaced, detail dont
-        $orig_ext  = strtolower(JFile::getExt($files['name']['orig']));
+        // Original will be replaced, detail dont
+        $orig_ext = strtolower(JFile::getExt($files['name']['orig']));
+
         if($ext != $orig_ext)
         {
           JError::raiseWarning(500, JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_IMG_NOTEQUAL_ORIG'));
@@ -463,8 +467,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
       }
     }
 
+    $angle = 0;
+
     // Check if auto-rotation is enabled
-    $angle         = 0;    
     switch($this->_config->get('jg_upload_exif_rotation'))
     {
       case 0:
@@ -472,19 +477,16 @@ class JoomGalleryModelImage extends JoomGalleryModel
         $autorot_det   = false;
         $autorot_orig  = false;
         break;
-
       case 1:
         $autorot_thumb = true;
         $autorot_det   = true;
         $autorot_orig  = false;
         break;
-
       case 2:
         $autorot_thumb = true;
         $autorot_det   = true;
         $autorot_orig  = true;
         break;
-      
       default:
         $autorot_thumb = false;
         $autorot_det   = false;
@@ -494,6 +496,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
 
     // Upload and handle new image files
     $types = array('thumb', 'img', 'orig');
+
     foreach($types as $type)
     {
       if(isset($files['tmp_name']) && isset($files['tmp_name'][$type]) && $files['tmp_name'][$type])
@@ -509,40 +512,42 @@ class JoomGalleryModelImage extends JoomGalleryModel
           $columnname = 'imgfilename';
         }
 
-        $old_image   = $row->$columnname;   //image name of the old image
-        $old_path    = $this->_ambit->getImg($type.'_path', $row);   //path of the old image
+        $old_image = $row->$columnname;   // Image name of the old image
+        $old_path  = $this->_ambit->getImg($type.'_path', $row);   // Path of the old image
+
         if($type == 'thumb')
         {
-          $old_ext   = JFile::getExt($old_image);   //extension of the old image
+          $old_ext = JFile::getExt($old_image);   //extension of the old image
         }
         else
         {
           // Workaround - Different filetypes for orig/img images are forbidden
-          $old_ext   = $ext;   //extension of the old image
-        }        
+          $old_ext = $ext;   //extension of the old image
+        }
 
-        $new_ext     = strtolower(JFile::getExt($files['name'][$type]));   //extension of the new image
+        $new_ext = strtolower(JFile::getExt($files['name'][$type]));   // Extension of the new image
         if($new_ext != $old_ext)
         {
-          $new_image = str_replace($old_ext, $new_ext, $old_image);   //image name of the new image
+          $new_image = str_replace($old_ext, $new_ext, $old_image);    // Image name of the new image
         }
         else
         {
           $new_image = $old_image;
         }
-        $new_path    = str_replace($old_image,$new_image,$old_path);   //path of the new, resized image
-        $new_tmp     = str_replace($old_image,$new_image.'_up',$old_path);   //path of the uploaded temp image in image folder
-        
-        $tmp_path    = $files['tmp_name'][$type];   //path of the new uploaded image in tmp folder
 
-        // // Upload the file
+        $new_path = str_replace($old_image,$new_image,$old_path);       // Path of the new, resized image
+        $new_tmp  = str_replace($old_image,$new_image.'_up',$old_path); // Path of the uploaded temp image in image folder
+        $tmp_path = $files['tmp_name'][$type];                          // Path of the new uploaded image in tmp folder
+
+        // Upload the file
         if(!JFile::upload($tmp_path, $new_tmp))
         {
           JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_ERROR_UPLOADING', $this->_ambit->getImg($type.'_path', $row)));
         }
 
-        // Resize new image
         $debugoutput = '';
+
+        // Resize new image
         switch($type)
         {
           case 'thumb':
@@ -559,7 +564,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                 $autorot_thumb,
                                                 false,
                                                 false
-                                                );
+                                               );
             if(!$return)
             {
               JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_NOT_CREATED', $files['name'][$type]));
@@ -571,7 +576,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
             }
             else
             {
-              $filesize = filesize($new_path) / 1000; //KB
+              $filesize = filesize($new_path) / 1000; // KB
               JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_THUMBNAIL_CREATED', $filesize));
             }
             break;
@@ -589,7 +594,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                 $autorot_det,
                                                 false,
                                                 true
-                                                );
+                                               );
             if(!$return)
             {
               JError::raiseWarning(500, JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_NOT_CREATED', $files['name'][$type]));
@@ -601,12 +606,13 @@ class JoomGalleryModelImage extends JoomGalleryModel
             }
             else
             {
-              $filesize = filesize($new_path) / 1000; //KB
+              $filesize = filesize($new_path) / 1000; // KB
               JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_DETIMG_CREATED', $filesize));
             }
             break;
           case 'orig':
             $debugoutput = '';
+
             // Rotate original image if needed
             if($autorot_orig)
             {
@@ -619,7 +625,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                   $autorot_orig,
                                                   true,
                                                   true
-                                                  );
+                                                 );
             }
 
             // Copy detail image if no rotation is needed or rotation failed
@@ -639,10 +645,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
             }
             else
             {
-              $filesize = filesize($new_path) / 1000; //KB
+              $filesize = filesize($new_path) / 1000; // KB
               JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_ORIGIMG_CREATED', $filesize));
             }
-
             break;
           default:
             break;
@@ -657,7 +662,8 @@ class JoomGalleryModelImage extends JoomGalleryModel
           {
             // Renew database entry, if resize/copy was successfully
             $row->$columnname = $new_image;
-          }          
+          }
+
           // Delete old file, if new one has another image format and therefore dont gets overwritten
           JFile::delete($old_path);
         }
@@ -667,7 +673,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
         {
           $path = str_replace($new_image,$replace_img_orig,$new_path);
           JFile::delete($path);
-        }    
+        }
       }
     }
 

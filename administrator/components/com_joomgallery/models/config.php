@@ -80,7 +80,7 @@ class JoomGalleryModelConfig extends JoomGalleryModel
    * @return  string  The result of request
    * @since   1.0.0
    */
-  public function getIMVersion() 
+  public function getIMVersion()
   {
     $config = JoomConfig::getInstance();
     $status = null;
@@ -88,11 +88,11 @@ class JoomGalleryModelConfig extends JoomGalleryModel
     @exec(trim($config->get('jg_impath')).'convert -version', $output_convert, $status);
     @exec(trim($config->get('jg_impath')).'magick -version', $output_magick, $status);
 
-    if ($output_magick)
+    if($output_magick)
     {
       return $output_magick[0];
     }
-    elseif ($output_convert)
+    elseif($output_convert)
     {
       return $output_convert[0];
     }
