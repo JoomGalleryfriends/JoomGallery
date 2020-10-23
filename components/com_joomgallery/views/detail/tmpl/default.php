@@ -423,7 +423,8 @@ echo $this->loadTemplate('header'); ?>
             <input class="btn btn-small btn-primary center" type="submit" value="<?php echo JText::_('COM_JOOMGALLERY_DETAIL_MAP_SHOW'); ?>" name="showmap" />
           </p>
         </form>
-<?php   else: ?>
+<?php   else:
+          $this->_doc->addScript('http'.(JUri::getInstance()->isSSL() ? 's' : '').'://maps.google.com/maps/api/js?sensor=false'.(!empty($this->apikey) ? '&amp;key='.$this->apikey : '')); ?>
         <script type="text/javascript">
           document.write(Joomla.JText._('COM_JOOMGALLERY_DETAIL_MAPS_BROWSER_IS_INCOMPATIBLE'));
           var latlng = new google.maps.LatLng(<?php echo $this->mapdata; ?>);
