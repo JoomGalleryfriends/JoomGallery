@@ -416,6 +416,15 @@ echo $this->loadTemplate('header'); ?>
     <div <?php echo $this->slider; ?>>
 <?php   endif; ?>
       <div id="jg_geomap">
+<?php   if($this->_mainframe->getUserState('joom.geomap.show', 0) === 0): ?>
+        <form name="mapform" action="<?php echo JRoute::_('index.php?task=map.show&id='.$this->image->id); ?>" target="_top" method="post">
+          <p class="alert alert-info center"><?php echo JText::_('COM_JOOMGALLERY_DETAIL_MAP_PRIVACY_MSG'); ?></p>
+          <p class="center">
+            <input class="btn btn-small btn-primary center" type="submit" value="<?php echo JText::_('COM_JOOMGALLERY_DETAIL_MAP_SHOW'); ?>" name="showmap" />
+          </p>
+        </form>
+<?php   else:
+          $this->_doc->addScript('http'.(JUri::getInstance()->isSSL() ? 's' : '').'://maps.google.com/maps/api/js?sensor=false'.(!empty($this->apikey) ? '&amp;key='.$this->apikey : '')); ?>
         <script type="text/javascript">
           document.write(Joomla.JText._('COM_JOOMGALLERY_DETAIL_MAPS_BROWSER_IS_INCOMPATIBLE'));
           var latlng = new google.maps.LatLng(<?php echo $this->mapdata; ?>);
@@ -431,6 +440,7 @@ echo $this->loadTemplate('header'); ?>
           });
           marker.setMap(map);
         </script>
+<?php   endif; ?>
       </div>
 <?php   if(!empty($this->slider)): ?>
     </div>
