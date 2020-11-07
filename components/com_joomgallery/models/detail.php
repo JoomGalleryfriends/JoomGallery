@@ -923,8 +923,7 @@ class JoomGalleryModelDetail extends JoomGalleryModel
             if($exif_config_array[$tagcat][$jgtag]['Attribute'] == 'GPSAltitudeRef')
             {
               $tagdata = '';
-              $value = $exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']][0];
-              $value = bindec($value);
+              $value = (int) $exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']][0];
               switch($value)
               {
                 case '0':
