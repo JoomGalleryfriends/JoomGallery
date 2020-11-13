@@ -22,6 +22,7 @@
       label="COM_JOOMGALLERY_COMMON_TITLE"
       maxLength="255"
       required="true"
+      autofocus="true"
       message="COM_JOOMGALLERY_CATMAN_ALERT_CATEGORY_MUST_HAVE_TITLE"
     />
     <field
