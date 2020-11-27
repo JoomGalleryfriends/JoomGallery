@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+  <release version="3.5.0" published="20201127">
+    <entries date="20201127">
+      <logentry type="#">Fixes typo and removes unnecessary language constants</logentry>
+    </entries>
+    <entries date="20201107">
+      <logentry type="#">Fixes warning when EXIF tag GPSAltitudeRef is displayed in detail view</logentry>
+    </entries>
+    <entries date="20201026">
+      <logentry type="#">Makes the display of maps in the detail view GDPR compliant</logentry>
+    </entries>
+    <entries date="20201007">
+      <logentry type="+">Adds HTML attribute 'lazy loading' to thumbnails in the frontend</logentry>
+    </entries>
+    <entries date="20200929">
+      <logentry type="#">Fixes router to make language overrides of the toplist bar possible</logentry>
+    </entries>
+    <entries date="20200922">
+      <logentry type="#">Sets max-width for report window</logentry>
+      <logentry type="^">Sets autofocus to the title field in the category form (backend and frontend)</logentry>
+    </entries>
+    <entries date="20200723">
+      <logentry type="+">Extensions and improvements to image processing and manipulation introduced with the new JoomIMGTools class</logentry>
+    </entries>
+  </release>
   <release version="3.4.1" published="20200701">
     <entries date="20200621">
       <logentry type="#">Fix SQL error in some batch jobs in Maintenance Manager</logentry>

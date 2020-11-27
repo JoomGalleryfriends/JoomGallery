@@ -35,7 +35,7 @@ echo $this->loadTemplate('header'); ?>
       <div class="jg_imgalign_gal">
         <div class="<?php echo $row->photocontainer; ?>">
           <a title="<?php echo $row->name; ?>" href="<?php echo $row->link ?>">
-            <img src="<?php echo $row->thumb_src; ?>" class="jg_photo" alt="<?php echo $row->name; ?>" />
+            <img src="<?php echo $row->thumb_src; ?>" class="jg_photo" alt="<?php echo $row->name; ?>" loading="lazy" />
           </a>
         </div>
       </div>

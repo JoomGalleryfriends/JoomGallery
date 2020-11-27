@@ -17,7 +17,7 @@ jimport('joomla.application.component.controller');
  * JoomGallery Map Controller
  *
  * @package JoomGallery
- * @since   3.4.2
+ * @since   3.5.0
  */
 class JoomGalleryControllerMap extends JControllerLegacy
 {
@@ -25,7 +25,7 @@ class JoomGalleryControllerMap extends JControllerLegacy
    * Enables the display of maps in the detail view
    *
    * @return  void
-   * @since   3.4.2
+   * @since   3.5.0
    */
   public function show()
   {
