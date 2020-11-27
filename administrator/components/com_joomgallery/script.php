@@ -26,7 +26,7 @@ class Com_JoomGalleryInstallerScript
    *
    * @var string
    */
-  private $version = '3.4.1';
+  private $version = '3.5.0';
 
   /**
    * Preflight method
