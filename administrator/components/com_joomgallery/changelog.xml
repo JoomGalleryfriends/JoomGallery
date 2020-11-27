@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-  <release version="3.5.0" published="20201113">
+  <release version="3.5.0" published="20201127">
+    <entries date="20201127">
+      <logentry type="#">Fixes typo and removes unnecessary language constants</logentry>
+    </entries>
     <entries date="20201107">
       <logentry type="#">Fixes warning when EXIF tag GPSAltitudeRef is displayed in detail view</logentry>
     </entries>
