@@ -1172,6 +1172,8 @@ class JoomGalleryModelImage extends JoomGalleryModel
       return false;
     }
 
+    $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image', &$item, false));
+
     return true;
   }
 
