@@ -76,7 +76,7 @@ class JoomIMGtools
 
   /**
    * Resize image with GD or ImageMagick
-   * Supported image-types: JPG ,PNG, GIF
+   * Supported image-types: JPG, PNG, GIF
    *
    * Animated gif support according to ImageWorkshop
    * 'Manage animated GIF with ImageWorkshop'
@@ -724,7 +724,7 @@ class JoomIMGtools
 
   /**
    * Rotate image with GD or ImageMagick
-   * Supported image-types: JPG ,PNG, GIF
+   * Supported image-types: JPG, PNG, GIF
    *
    * @param   &string $debugoutput            Debug information
    * @param   string  $src_file               Path to source file
@@ -1283,6 +1283,24 @@ class JoomIMGtools
 
       return false;
     }
+  }
+
+  /**
+   * Add watermark to image using GD or ImageMagick
+   * Supported image-types: JPG, PNG, GIF
+   *
+   * @param   string  $src_file               Path to source file
+   * @param   string  $dst_file               Path to destination file
+   * @param   int     $method                 Image processor: gd1,gd2,im
+   * @param   int     $watermarksize          
+   * @param   boolean $metadata               true=preserve metadata during watermarking
+   * @param   boolean $anim                   true=preserve animation during watermarking
+   * @return  boolean True on success, false otherwise
+   * @since   3.5.1
+   */
+  public static function watermarkImage($src_file, $dst_file, $method, $metadata = true, $anim = true)
+  {
+
   }
 
   /**
