@@ -72,16 +72,16 @@ class JoomIMGtools
   //   Available image processors:
   //   GD: https://www.php.net/manual/en/intro.image.php
   //   IM: https://imagemagick.org/script/convert.php
+
+  //   Animated gif support according to ImageWorkshop
+  //   'Manage animated GIF with ImageWorkshop'
+  //   Author: Clément Guillemain
+  //   Website: https://phpimageworkshop.com/tutorial/5/manage-animated-gif-with-imageworkshop.html
   //////////////////////////////////////////////////////
 
   /**
    * Resize image with GD or ImageMagick
    * Supported image-types: JPG, PNG, GIF
-   *
-   * Animated gif support according to ImageWorkshop
-   * 'Manage animated GIF with ImageWorkshop'
-   * Author: Clément Guillemain
-   * Website: https://phpimageworkshop.com/tutorial/5/manage-animated-gif-with-imageworkshop.html
    *
    * @param   &string $debugoutput            Debug information
    * @param   string  $src_file               Path to source file
@@ -1291,20 +1291,486 @@ class JoomIMGtools
    *
    * @param   string  $src_file               Path to source file
    * @param   string  $dst_file               Path to destination file
+   * @param   string  $wtm_file               Path to watermark file
    * @param   int     $method                 Image processor: gd1,gd2,im
-   * @param   int     $watermarksize          
+   * @param   int     $wtm_pos                Positioning of the watermark
+   *                                          (1:topleft,2:topcenter,3:topright,4:middleleft,5:middlecenter
+   *                                           6:middleright,7:bottomleft,8:bottomcenter,9:bottomright)
+   * @param   int     $wtm_resize             resize watermark (0:no,1:by height,2:by width)
+   * @param   float   $wtm_newSize            new size of the resized watermark in percent related to the file (1-100)
+   * @param   int     $opacity                opacity of the watermark on the image in percent (0-100), 0: waternak invisible, 100: full coverage
    * @param   boolean $metadata               true=preserve metadata during watermarking
    * @param   boolean $anim                   true=preserve animation during watermarking
    * @return  boolean True on success, false otherwise
    * @since   3.5.1
    */
-  public static function watermarkImage($src_file, $dst_file, $method, $metadata = true, $anim = true)
+  public static function watermarkImage(&$debugoutput, $src_file, $dst_file, $wtm_file, $method,
+                                         $wtm_pos, $wtm_resize, $wtm_newSize, $opacity = 0, $metadata = true, $anim = true)
   {
+    self::clearVariables();
 
+    // Ensure that the paths are valid and clean
+    $src_file = JPath::clean($src_file);
+    $dst_file = JPath::clean($dst_file);
+    $wtm_file = JPath::clean($wtm_file);
+
+    // Checks if watermark file is existent
+    if(!JFile::exists($wtm_file))
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_ERROR_WATERMARK_NOT_EXIST');
+
+      return false;
+    }
+
+    // Load GifFrameExtractor-Class
+    JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifframeextractor.php');
+
+    // Analysis and validation of the source image
+    if(!($imginfo = self::analyseImage($src_file)))
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_INVALID_IMAGE_FILE').'<br />';
+
+      return false;
+    }
+
+    // Analysis and validation of the source watermark-image
+    if(!(self::$src_imginfo = self::analyseImage($wtm_file)))
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_OUTPUT_INVALID_WTM_FILE').'<br />';
+
+      return false;
+    }
+    self::$src_imginfo['frames'] = 1;
+
+
+    if(!$anim)
+    {
+      $imginfo['frames'] = 1;
+    }
+
+    // GD can only handle JPG, PNG and GIF images
+    if(   ($imginfo['type'] != 'JPG' && $imginfo['type'] != 'PNG' && $imginfo['type'] != 'GIF')
+       || (self::$src_imginfo['type'] != 'JPG' &&  self::$src_imginfo['type'] != 'PNG' &&  self::$src_imginfo['type'] != 'GIF')
+       &&  ($method == 'gd1' || $method == 'gd2')
+      )
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ONLY_JPG_PNG').'<br />';
+
+      return false;
+    }
+
+    $config = JoomConfig::getInstance();
+
+    // Create backup file, if source and destination are the same
+    if($src_file == $dst_file)
+    {
+      if(!JFile::copy($src_file, $src_file.'bak'))
+      {
+        $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_COPYING', $src_file).' '.JText::_('COM_JOOMGALLERY_COMMON_CHECK_PERMISSIONS').'<br />';
+
+        return false;
+      }
+    }
+    else
+    {
+      if(JFile::exists($dst_file))
+      {
+        if(!JFile::copy($dst_file, $dst_file.'bak'))
+        {
+          $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_PROBLEM_COPYING', $dst_file).' '.JText::_('COM_JOOMGALLERY_COMMON_CHECK_PERMISSIONS').'<br />';
+
+          return false;
+        }
+      }
+    }
+
+    // Generate informations about type, dimension and origin of resized image
+    $position = self::getWatermarkingInfo($imginfo, $wtm_pos, $wtm_resize, $wtm_newSize);
+
+    // Calculation for the amount of memory needed (in bytes, GD)
+    self::$memory_needed = self::calculateMemory(self::$src_imginfo, self::$dst_imginfo, 'resize');
+
+    // Check if there is enough memory for the manipulation
+    $memory = self::checkMemory(self::$memory_needed);
+    if(!$memory['success'])
+    {
+      $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_ERROR_MEM_EXCEED').
+                      $memory['needed']." MByte, Serverlimit: ".$memory['limit']." MByte<br />" ;
+      self::rollback($src_file, $dst_file);
+
+      return false;
+    }
+
+    // Create debugoutput
+    $debugoutput .= JText::_('COM_JOOMGALLERY_COMMON_OUTPUT_WATERMARK_IMAGE');
+
+    // Method for the manipulation
+    switch($method)
+    {
+      case 'gd1':
+        // 'break' intentionally omitted
+      case 'gd2':
+
+        if(!function_exists('imagecreate'))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED').'<br />';
+          self::rollback($src_file, $dst_file);
+
+          return false;
+        }
+
+        // Create empty watermark-image of specified size
+        // Create GD-Object from file
+        self::$src_frames = self::imageCreateFrom_GD($wtm_file, self::$src_imginfo);
+
+        // Create empty GD-Object for the resized watermark
+        self::$dst_frames[0]['duration'] = 0;
+        self::$dst_frames[0]['image']    = self::imageCreateEmpty_GD(self::$src_frames[0]['image'], self::$dst_imginfo,
+                                                                     self::$src_imginfo['transparency']);
+
+        // Check for failures
+        if(self::checkError(self::$src_frames) || self::checkError(self::$dst_frames))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_WATERMARKING').'<br />';
+          self::rollback($src_file, $dst_file);
+
+          return false;
+        }
+
+        // Check if resize is needed
+        $resizeWatermark = false;
+        if ($wtm_resize != 0 || self::$src_imginfo['width'] == self::$dst_imginfo['width'] || self::$src_imginfo['height'] == self::$dst_imginfo['height'])
+        {
+          $resizeWatermark = true;
+        }
+
+        // Resizing with GD
+        if($resizeWatermark)
+        {
+          self::imageResize_GD(self::$dst_frames[0]['image'], self::$src_frames[0]['image'], self::$src_imginfo, self::$dst_imginfo,
+                               false, 3);
+        }
+        else
+        {
+          // Copy watermark, if no resize is needed
+          self::$dst_frames[0]['image'] = self::$src_frames[0]['image'];
+        }
+
+        // Check for failures
+        if(self::checkError(self::$src_frames) || self::checkError(self::$dst_frames))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_WATERMARKING').'<br />';
+          self::rollback($src_file, $dst_file);
+
+          return false;
+        }
+
+        // src_frames will not be used anymore
+        // Destroy GD-Objects if there are any
+        foreach(self::$src_frames as $key => $frame)
+        {
+          if(!empty(self::$src_frames[$key]['image']))
+          {
+            imagedestroy(self::$src_frames[$key]['image']);
+          }
+        }
+        // Reset src_frames to default
+        self::$src_frames = array(array('duration' => 0,'image' => null));
+
+        // Create empty image of specified size
+        if($anim && $imginfo['animation'] && $imginfo['type'] == 'GIF')
+        {
+          // Animated GIF image (image with more than one frame)
+          // Create GD-Objects from gif-file
+          $gfe = new GifFrameExtractor();
+          self::$src_frames = $gfe->extract($src_file, true);
+
+          // Check for failures in GIF extraction
+          if(self::checkError(self::$src_frames))
+          {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_WATERMARKING').'<br />';
+            self::rollback($src_file, $dst_file);
+
+            return false;
+          }
+        }
+        else
+        {
+          // Normal image (image with one frame)
+          // Create GD-Object from file
+          self::$src_frames = self::imageCreateFrom_GD($src_file, $imginfo);
+        }
+
+        // Watermarking with GD
+        foreach(self::$src_frames as $key => $frame)
+        {
+          self::imageWatermark_GD(self::$src_frames[$key]['image'], self::$dst_frames[0]['image'], $imginfo, self::$src_imginfo, $position, $opacity);
+        }
+
+        // Check for failures
+        if(self::checkError(self::$src_frames))
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_WATERMARKING').'<br />';
+          self::rollback($src_file, $dst_file);
+
+          return false;
+        }
+
+        // Write resized image to file
+        $imginfo['quality'] = 100; 
+        if($anim && $imginfo['animation'] && $imginfo['type'] == 'GIF')
+        {
+          // Animated GIF image (image with more than one frame)
+          JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
+          $gc = new GifCreator();
+          $gc->create(self::$src_frames, 0);
+          $success = file_put_contents($dst_file, $gc->getGif());
+        }
+        else
+        {
+          // Normal image (image with one frame)
+          $success = self::imageWriteFrom_GD($dst_file, self::$src_frames, $imginfo);
+        }
+
+        // Workaround for servers with wwwrun problem
+        if(!$success)
+        {
+          $dir = dirname($dst_file);
+          JoomFile::chmod($dir, '0777', true);
+
+          // Write resized image to file
+          if($anim && $imginfo['animation'] && $imginfo['type'] == 'GIF')
+          {
+            // Animated GIF image (image with more than one frame)
+            JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
+            $gc = new GifCreator();
+            $gc->create(self::$src_frames, 0);
+            $success = file_put_contents($dst_file, $gc->getGif());
+          }
+          else
+          {
+            // Normal image (image with one frame)
+            $success = self::imageWriteFrom_GD($dst_file, self::$src_frames, $imginfo);
+          }
+
+          // Copy metadata if needed
+          if($metadata)
+          {
+            if($src_file == $dst_file)
+            {
+              $quelle = $src_file.'bak';
+            }
+            else
+            {
+              $quelle = $src_file;
+            }
+
+            $meta_success = self::copyImageMetadata($quelle, $dst_file, $imginfo['type'], $imginfo['type'], false);
+            if(!$meta_success)
+            {
+              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA').'<br />';
+              self::rollback($src_file, $dst_file);
+
+              return false;
+            }
+          }
+
+          JoomFile::chmod($dir, '0755', true);
+        }
+        else
+        {
+          // Copy metadata if needed
+          if($metadata)
+          {
+            if($src_file == $dst_file)
+            {
+              $quelle = $src_file.'bak';
+            }
+            else
+            {
+              $quelle = $src_file;
+            }
+
+            $meta_success = self::copyImageMetadata($quelle, $dst_file, $imginfo['type'], $imginfo['type'], false);
+            if(!$meta_success)
+            {
+              $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_ERROR_COPY_METADATA').'<br />';
+              self::rollback($src_file, $dst_file);
+
+              return false;
+            }
+          }
+        }
+
+        // Check for failures
+        if(!$success)
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_WATERMARKING').'<br />';
+          self::rollback($src_file, $dst_file);
+
+          return false;
+        }
+
+        // Destroy GD-Objects
+        foreach(self::$src_frames as $key => $frame)
+        {
+          if(!empty(self::$src_frames[$key]['image']))
+          {
+            imagedestroy(self::$src_frames[$key]['image']);
+          }
+
+          if(!empty(self::$dst_frames[$key]['image']) && self::$dst_frames[$key]['image'] != self::$src_frames[$key]['image'])
+          {
+            imagedestroy(self::$dst_frames[$key]['image']);
+          }
+        }
+        break;
+      case 'im':
+        $disabled_functions = explode(',', ini_get('disabled_functions'));
+
+        // Check, if exec command is available
+        foreach($disabled_functions as $disabled_function)
+        {
+          if(trim($disabled_function) == 'exec')
+          {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_EXEC_DISABLED').'<br />';
+
+            return false;
+          }
+        }
+
+        // Check availability and version of ImageMagick
+        @exec(trim($config->jg_impath).'convert -version', $output_convert);
+        @exec(trim($config->jg_impath).'magick -version', $output_magick);
+
+        if($output_convert)
+        {
+          $convert_path = trim($config->jg_impath).'convert';
+        }
+        else
+        {
+          if($output_magick)
+          {
+            $convert_path = trim($config->jg_impath).'magick convert';
+          }
+          else
+          {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_NOTFOUND').'<br />';
+
+            return false;
+          }
+        }
+
+        // Create imagick command
+        $commands = '';
+
+        if(self::$src_imginfo['animation']  && !$anim)
+        {
+          // If resizing an animation but not preserving the animation, consider only first frame
+          $src_file = $src_file.'[0]';
+        }
+        else
+        {
+          if(self::$src_imginfo['animation']  && $anim && self::$src_imginfo['type'] == 'GIF')
+          {
+            // If resizing an animation, use coalesce for better results
+            $commands .= ' -coalesce ';
+          }
+        }
+
+        // Delete all metadata, if needed
+        if(!$metadata)
+        {
+          $commands .= ' -strip ';
+        }
+
+        // Assembling the imagick command for watermarking
+          $commands  .= '( "'.$wtm_file.'" -resize "'.self::$dst_imginfo['width'].'x'.self::$dst_imginfo['height'].'" ) -gravity "northwest" -geometry "+'.$position[0].'+'.$position[1].'" -define compose:args='.$opacity.',100 -compose dissolve -composite';
+
+        // Assembling the shell code for the resize with imagick
+        $convert    = $convert_path.' "'.$src_file.'" '.$commands.' "'.$dst_file.'"';
+
+        $return_var = null;
+        $dummy      = null;
+        $filecheck  = true;
+
+        // execute the resize
+        @exec($convert, $dummy, $return_var);
+
+        // Check that the resized image is valid
+        if(!self::checkValidImage($dst_file))
+        {
+          $filecheck  = false;
+        }
+
+        // Workaround for servers with wwwrun problem
+        if($return_var != 0 || !$filecheck)
+        {
+          $dir = dirname($dst_file);
+          JoomFile::chmod($dir, '0777', true);
+
+          // Execute the resize
+          @exec($convert, $dummy, $return_var);
+
+          JoomFile::chmod($dir, '0755', true);
+
+          // Check that the resized image is valid
+          if(!self::checkValidImage($dst_file))
+          {
+            $filecheck = false;
+          }
+
+          if($return_var != 0 || !$filecheck)
+          {
+            $debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IM_SERVERPROBLEM','exec('.$convert.');').'<br />';
+            self::rollback($src_file, $dst_file);
+
+            return false;
+          }
+        }
+        break;
+      default:
+        $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_UNSUPPORTED_METHOD').'<br />';
+        self::rollback($src_file, $dst_file);
+
+        return false;
+        break;
+    }
+
+    // Set mode of uploaded picture
+    JPath::setPermissions($dst_file);
+
+    //$tmp_nmb_frames = count(self::$src_frames);
+    //$debugoutput .= 'number of frames: '.$tmp_nmb_frames.'<br/>';
+    //$tmp_memory_used = round(memory_get_peak_usage(true) / 1048576,3);
+    //$debugoutput .= 'used memory: '.$tmp_memory_used.' MB<br/>';
+
+    // Check, if file exists and is a valid image
+    if(self::checkValidImage($dst_file))
+    {
+      if(JFile::exists($src_file.'bak'))
+      {
+        JFile::delete($src_file.'bak');
+      }
+
+      if(JFile::exists($dst_file.'bak'))
+      {
+        JFile::delete($dst_file.'bak');
+      }
+
+      return true;
+    }
+    else
+    {
+      $debugoutput .= JText::sprintf('COM_JOOMGALLERY_COMMON_ERROR_WATERMARKING_IMAGE', $src_file).'<br />';
+      self::rollback($src_file, $dst_file);
+
+      return false;
+    }
   }
 
   /**
-   * Validation and analysis of an image file
+   * Validation and analysis of an image-file
    *
    * @param   string    $img        Path to the image file
    * @return  array     Imageinfo on success, false otherwise
@@ -1494,7 +1960,7 @@ class JoomIMGtools
   {
     self::$src_imginfo  = array('width' => 0,'height' => 0,'type' => '','orientation' => '','exif' => array('IFD0' => array(),'EXIF' => array()),
                                 'iptc' => array(),'comment' => '','transparency' => false,'animation' => false, 'frames' => 1);
-     self::$dst_imginfo = array('width' => 0,'height' => 0,'type' => '','orientation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
+    self::$dst_imginfo = array('width' => 0,'height' => 0,'type' => '','orientation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
                                 'flip' => 'none','quality' => 100,'src' => array('width' => 0,'height' => 0));
     self::$src_frames   = array(array('duration' => 0,'image' => null));
     self::$dst_frames   = array(array('duration' => 0,'image' => null));
@@ -1786,7 +2252,7 @@ class JoomIMGtools
    * @param   int     $new_width        Width to resize
    * @param   int     $new_height       Height to resize
    * @param   int     $cropposition     Only if $settings=2; image section to use for cropping
-   * @return  array   true on success, false otherwise
+   * @return  bool    true on success, false otherwise
    * @since   3.5.0
    */
   protected static function getResizeInfo($dst_img, $settings, $new_width, $new_height, $cropposition)
@@ -1952,6 +2418,102 @@ class JoomIMGtools
 
     return true;
   }
+
+  /**
+   * Collect informations for the watermarking (informations: dimensions, type, position)
+   *
+   * @param   array   $imginfo        array with image informations of the background image
+   * @param   int     $position       Positioning of the watermark 
+   * @param   int     $resize         resize watermark (0:no,1:by height,2:by width)
+   * @param   float   $new_size       new size of the resized watermark in percent related to the file (1-100)
+   * @return  array   array with watermark positions; array(x,y)
+   * @since   3.6.0
+   */
+  protected static function getWatermarkingInfo($imginfo, $position, $resize, $new_size)
+  {
+    // generate information about the new width and height
+    if($resize)
+    {
+
+      if($new_size <= 0)
+      {
+        $new_size = 1;
+      }
+      elseif($new_size > 100)
+      {
+        $new_size = 100;
+      }
+
+      $widthwm  = self::$src_imginfo['width'];
+      $heightwm = self::$src_imginfo['height'];
+
+      if($resize == 1)
+      {
+        // Resize by height
+        $newheight_watermark = $imginfo['height'] * $new_size / 100;
+        $newwidth_watermark  = $newheight_watermark * $widthwm / $heightwm;
+
+        if($newwidth_watermark > $imginfo['width'])
+        {
+          $newwidth_watermark  = $imginfo['width'];
+        }
+      }
+      else
+      {
+        // Resize by width
+        $newwidth_watermark  = $imginfo['width'] * $new_size / 100;
+        $newheight_watermark = $newwidth_watermark * $heightwm / $widthwm;
+
+        if($newheight_watermark > $imginfo['height'])
+        {
+          $newheight_watermark = $imginfo['height'];
+        }
+      }
+    }
+    else
+    {
+      $newwidth_watermark = self::$src_imginfo['width'];
+      $newheight_watermark = self::$src_imginfo['height'];
+    }
+    self::$dst_imginfo['width']  = (int) round($newwidth_watermark);
+    self::$dst_imginfo['height'] = (int) round($newheight_watermark);
+
+    // Other informations of the resized watermark image
+    self::$dst_imginfo['type']          = self::$src_imginfo['type'];
+    self::$dst_imginfo['orientation']   = self::$src_imginfo['orientation'];
+    self::$dst_imginfo['src']['width']  = self::$src_imginfo['width'];
+    self::$dst_imginfo['src']['height'] = self::$src_imginfo['height'];
+    
+    // Generate informations about position of the watermark inside the src image
+    // Position x
+    switch(($position - 1) % 3)
+    {
+      case 1:
+        $pos_x = round(($imginfo['width'] - self::$dst_imginfo['width']) / 2, 0);
+        break;
+      case 2:
+        $pos_x = $imginfo['width'] - self::$dst_imginfo['width'];
+        break;
+      default:
+        $pos_x = 0;
+        break;
+    }
+    // Position y
+    switch(floor(($position - 1) / 3))
+    {
+      case 1:
+        $pos_y = round(($imginfo['height'] - self::$dst_imginfo['height']) / 2, 0);
+        break;
+      case 2:
+        $pos_y = $imginfo['height'] - self::$dst_imginfo['height'];
+        break;
+      default:
+        $pos_y = 0;
+        break;
+    }
+
+    return array($pos_x, $pos_y);
+  }  
 
   /**
    * Get angle and flip value based on exif orientation tag
@@ -2126,12 +2688,12 @@ class JoomIMGtools
           }
           else
           {
-            $trnprt_indx = imagecolortransparent($src_img);
-            $palletsize  = imagecolorstotal($src_img);
+            $trnprt_indx = imagecolortransparent($src_frame);
+            $palletsize  = imagecolorstotal($src_frame);
 
             if($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
             {
-              $trnprt_color = imagecolorsforindex($src_img, $trnprt_indx);
+              $trnprt_color = imagecolorsforindex($src_frame, $trnprt_indx);
               $trnprt_indx  = imagecolorallocate($src_frame, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
               imagefill($src_frame, 0, 0, $trnprt_indx);
               imagecolortransparent($src_frame, $trnprt_indx);
@@ -2146,12 +2708,12 @@ class JoomIMGtools
             $trnprt_color = imagecolorallocatealpha($src_frame, 0, 0, 0, 127);
             imagefill($src_frame, 0, 0, $trnprt_color);
           }
-          break;
-          default:
-            $src_frame = false;
+        break;
+        default:
+          $src_frame = false;
 
-            return $src_frame;
-          break;
+          return $src_frame;
+        break;
       }
     }
     else
@@ -2328,6 +2890,74 @@ class JoomIMGtools
     }
 
     return $new_img;
+  }
+
+  /**
+   * Watermark GD image object (copy watermark on top of image)
+   *
+   * @param   object     $img_frame     GDobject of the image
+   * @param   object     $wtm_frame     GDobject of the watermark
+   * @param   array      $imginfo       array with image informations
+   * @param   array      $wtminfo       array with watermark informations
+   * @param   array      $position      position (in pixel) of watermark on image, array(x,y)
+   * @param   integer    $opacity       opacity of the watermark in percent (0-100)
+   * @return  mixed      watermarked GDobject on success, false otherwise
+   * @since   3.6.0
+   */
+  protected static function imageWatermark_GD($img_frame, $wtm_frame, $imginfo, $wtminfo, $position, $opacity)
+  {
+    // temporary transparent empty plane in the size of the image
+    $tmp = null;
+    $tmpinfo = $imginfo;
+    $tmpinfo['type'] = $wtminfo['type'];
+    // Create empty GD-Object
+    if(function_exists('imagecreatetruecolor'))
+    {
+      // Needs at least php v4.0.6
+      $tmp = imagecreatetruecolor($tmpinfo['width'], $tmpinfo['height']);
+      imagealphablending($tmp, false);
+    }
+    else
+    {
+      $tmp = imagecreate($tmpinfo['width'], $tmpinfo['height']);
+    }
+
+    // positioning watermark
+    if(function_exists('imagecopyresampled'))
+    {
+      imagecopyresampled($tmp, $wtm_frame, $position[0], $position[1], 0, 0, $wtminfo['width'], $wtminfo['height'],$wtminfo['width'], $wtminfo['height']);
+    }
+    else
+    {
+      imagecopy($tmp, $wtm_frame, $position[0], $position[1], 0, 0, $wtminfo['width'], $wtminfo['height']);
+    }
+
+    // make sure background is still transparent
+    if(function_exists('imagecolorallocatealpha'))
+    {
+      // Needs at least php v4.3.2
+      $trnprt_color = imagecolorallocatealpha($tmp, 0, 0, 0, 127);
+      imagefill($tmp, 0, 0, $trnprt_color);
+      imagecolortransparent($tmp, $trnprt_color);
+    }
+    else
+    {
+      $trnprt_indx = imagecolortransparent($tmp);
+      $palletsize  = imagecolorstotal($tmp);
+
+      if($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
+      {
+        $trnprt_color = imagecolorsforindex($tmp, $trnprt_indx);
+        $trnprt_indx  = imagecolorallocate($tmp, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+        imagefill($tmp, 0, 0, $trnprt_indx);
+        imagecolortransparent($tmp, $trnprt_indx);
+      }
+    }
+
+    // copy resized watermark on image
+    self::imageCopyMergeAlpha($img_frame, $tmp, 0, 0, 0, 0, $imginfo['width'], $imginfo['height'], $opacity);
+
+    return $img_frame;
   }
 
   /**
@@ -2595,15 +3225,15 @@ class JoomIMGtools
         if(!$exifadded) $portiontoadd .= $exifdata;  //  Add EXIF data if not added already
         if(!$iptcadded) $portiontoadd .= $iptcdata;  //  Add IPTC data if not added already
 
-//         $outputfile = fopen($dst_file, 'w');
-//         if($outputfile)
-//         {
-//           return fwrite($outputfile, $portiontoadd . $destfilecontent);
-//         }
-//         else
-//         {
-//           return false;
-//         }
+        // $outputfile = fopen($dst_file, 'w');
+        // if($outputfile)
+        // {
+        //   return fwrite($outputfile, $portiontoadd . $destfilecontent);
+        // }
+        // else
+        // {
+        //   return false;
+        // }
         return file_put_contents($dst_file, $portiontoadd . $destfilecontent);
       }
       else
@@ -3100,6 +3730,43 @@ class JoomIMGtools
     }
 
     return false;
+  }
+
+  /**
+   * Same as PHP's imagecopymerge, but works with transparent images. Used internally for overlay.
+   * Source: https://github.com/claviska/SimpleImage/blob/93b6df27e1d844a90d52d21a200d91b16371af0f/src/claviska/SimpleImage.php#L482
+   *
+   * @param resource $dstIm Destination image link resource.
+   * @param resource $srcIm Source image link resource.
+   * @param integer $dstX x-coordinate of destination point.
+   * @param integer $dstY y-coordinate of destination point.
+   * @param integer $srcX x-coordinate of source point.
+   * @param integer $srcY y-coordinate of source point.
+   * @param integer $srcW Source width.
+   * @param integer $srcH Source height.
+   * @param integer $pct
+   * @return boolean true if success.
+   */
+  protected static function imageCopyMergeAlpha($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $pct)
+  {
+    // Are we merging with transparency?
+    if ($pct < 100 && function_exists('imagefilter'))
+    {
+      // Disable alpha blending and "colorize" the image using a transparent color
+      imagealphablending($srcIm, false);
+      imagefilter($srcIm, IMG_FILTER_COLORIZE, 0, 0, 0, 127 * ((100 - $pct) / 100));
+    }
+
+    if(function_exists('imagecopyresampled'))
+    {
+      imagecopyresampled($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $srcW, $srcH);
+    }
+    else
+    {
+      imagecopy($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH);
+    }
+
+    return true;
   }
 
   /**
