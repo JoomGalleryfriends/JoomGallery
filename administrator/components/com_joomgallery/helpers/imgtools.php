@@ -2964,7 +2964,7 @@ class JoomIMGtools
     }
 
     // copy resized watermark on image
-    self::imageCopyMergeAlpha($img_frame, $tmp, 0, 0, 0, 0, $imginfo['width'], $imginfo['height'], $opacity);
+    self::imageCopyMergeAlpha_GD($img_frame, $tmp, 0, 0, 0, 0, $imginfo['width'], $imginfo['height'], $opacity);
 
     return $img_frame;
   }
@@ -3055,6 +3055,43 @@ class JoomIMGtools
     }
 
     return $dst_frame;
+  }
+
+    /**
+   * Same as PHP's imagecopymerge, but works with transparent images. Used internally for overlay.
+   * Source: https://github.com/claviska/SimpleImage/blob/93b6df27e1d844a90d52d21a200d91b16371af0f/src/claviska/SimpleImage.php#L482
+   *
+   * @param resource $dstIm Destination image link resource.
+   * @param resource $srcIm Source image link resource.
+   * @param integer $dstX x-coordinate of destination point.
+   * @param integer $dstY y-coordinate of destination point.
+   * @param integer $srcX x-coordinate of source point.
+   * @param integer $srcY y-coordinate of source point.
+   * @param integer $srcW Source width.
+   * @param integer $srcH Source height.
+   * @param integer $pct
+   * @return boolean true if success.
+   */
+  protected static function imageCopyMergeAlpha_GD($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $pct)
+  {
+    // Are we merging with transparency?
+    if ($pct < 100 && function_exists('imagefilter'))
+    {
+      // Disable alpha blending and "colorize" the image using a transparent color
+      imagealphablending($srcIm, false);
+      imagefilter($srcIm, IMG_FILTER_COLORIZE, 0, 0, 0, 127 * ((100 - $pct) / 100));
+    }
+
+    if(function_exists('imagecopyresampled'))
+    {
+      imagecopyresampled($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $srcW, $srcH);
+    }
+    else
+    {
+      imagecopy($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH);
+    }
+
+    return true;
   }
 
   /**
@@ -3739,43 +3776,6 @@ class JoomIMGtools
     }
 
     return false;
-  }
-
-  /**
-   * Same as PHP's imagecopymerge, but works with transparent images. Used internally for overlay.
-   * Source: https://github.com/claviska/SimpleImage/blob/93b6df27e1d844a90d52d21a200d91b16371af0f/src/claviska/SimpleImage.php#L482
-   *
-   * @param resource $dstIm Destination image link resource.
-   * @param resource $srcIm Source image link resource.
-   * @param integer $dstX x-coordinate of destination point.
-   * @param integer $dstY y-coordinate of destination point.
-   * @param integer $srcX x-coordinate of source point.
-   * @param integer $srcY y-coordinate of source point.
-   * @param integer $srcW Source width.
-   * @param integer $srcH Source height.
-   * @param integer $pct
-   * @return boolean true if success.
-   */
-  protected static function imageCopyMergeAlpha($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $pct)
-  {
-    // Are we merging with transparency?
-    if ($pct < 100 && function_exists('imagefilter'))
-    {
-      // Disable alpha blending and "colorize" the image using a transparent color
-      imagealphablending($srcIm, false);
-      imagefilter($srcIm, IMG_FILTER_COLORIZE, 0, 0, 0, 127 * ((100 - $pct) / 100));
-    }
-
-    if(function_exists('imagecopyresampled'))
-    {
-      imagecopyresampled($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $srcW, $srcH);
-    }
-    else
-    {
-      imagecopy($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH);
-    }
-
-    return true;
   }
 
   /**
