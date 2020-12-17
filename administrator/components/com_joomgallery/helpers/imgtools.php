@@ -428,18 +428,18 @@ class JoomIMGtools
         {
           foreach(self::$src_frames as $key => $frame)
           {
-            self::$dst_frames[$key]['image'] = self::unsharpMask_GD(self::$dst_frames[$key]['image'], 100, 3.5, 10);
+            self::$dst_frames[$key]['image'] = self::unsharpMask_GD(self::$dst_frames[$key]['image'], 100, 4.0, 30);
           }
-        }
 
-        // Check for failures
-        if(self::checkError(self::$src_frames) || self::checkError(self::$dst_frames))
-        {
-          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING').'<br />';
-          self::rollback($src_file, $dst_file);
+          // Check for failures
+          if(self::checkError(self::$src_frames) || self::checkError(self::$dst_frames))
+          {
+            $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_ABLE_RESIZING').'<br />';
+            self::rollback($src_file, $dst_file);
 
-          return false;
-        }
+            return false;
+          }
+        }        
 
         // Write resized image to file
         if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
@@ -661,7 +661,8 @@ class JoomIMGtools
 
         if($unsharp)
         {
-          $commands  .= ' -unsharp "3.5x1.2+1.0+0.10"'
+          // Assembling the imagick command for the unsharp masking
+          $commands  .= ' -unsharp "3.5x1.2+1.0+0.10"';
         }
 
         // Assembling the shell code for the resize with imagick
