@@ -1188,7 +1188,8 @@ class JoomUpload extends JObject
                                             $angle,
                                             $autorotate,
                                             false,
-                                            false
+                                            false,
+                                            true
                                            );
         if(!$return)
         {
@@ -2130,7 +2131,8 @@ class JoomUpload extends JObject
                                         $angle,
                                         $autorot_thumb,
                                         false,
-                                        false
+                                        false,
+                                        true
                                        );
     if(!$return)
     {
@@ -2164,7 +2166,8 @@ class JoomUpload extends JObject
                                           $angle,
                                           $autorot_det,
                                           false,
-                                          true
+                                          true,
+                                          false
                                          );
       if(!$return)
       {

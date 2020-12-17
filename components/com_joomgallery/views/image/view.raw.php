@@ -250,7 +250,7 @@ class JoomGalleryViewImage extends JoomGalleryView
       $method      = $this->_config->get('jg_thumbcreation');
       $debugoutput = '';
 
-      $success = JoomIMGtools::resizeImage($debugoutput,$img,$img_output,2,$cropwidth,$cropheight,$method,100,$croppos);
+      $success = JoomIMGtools::resizeImage($debugoutput,$img,$img_output,2,$cropwidth,$cropheight,$method,100,$croppos,0,false,false,false,true);
       
       if (!$success)
       {

@@ -745,7 +745,8 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                             $angle,
                                             $autorot_thumb,
                                             false,
-                                            false
+                                            false,
+                                            true
                                            );
 
         if(!$return)
@@ -785,7 +786,8 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                             $angle,
                                             $autorot_det,
                                             false,
-                                            true
+                                            true,
+                                            false
                                            );
 
         if(!$return)
@@ -932,7 +934,8 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                        0,
                                        false,
                                        false,
-                                       true
+                                       true,
+                                       false
                                       )
             )
           {
@@ -991,7 +994,8 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                          0,
                                          false,
                                          false,
-                                         false
+                                         false,
+                                         true
                                         );
 
         if($ret)

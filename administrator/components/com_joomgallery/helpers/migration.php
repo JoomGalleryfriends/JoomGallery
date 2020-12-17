@@ -1677,7 +1677,8 @@ abstract class JoomMigration
                                                       $angle,
                                                       $autorot_det,
                                                       false,
-                                                      true
+                                                      true,
+                                                      false
                                                       );
         if(!$result['detail'])
         {
@@ -1737,7 +1738,8 @@ abstract class JoomMigration
                                                       $angle,
                                                       $autorot_thumb,
                                                       false,
-                                                      false
+                                                      false,
+                                                      true
                                                     );
 
         if(!$result['thumb'])

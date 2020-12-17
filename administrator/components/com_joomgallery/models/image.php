@@ -563,7 +563,8 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                 $angle,
                                                 $autorot_thumb,
                                                 false,
-                                                false
+                                                false,
+                                                true
                                                );
             if(!$return)
             {
@@ -593,7 +594,8 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                 $angle,
                                                 $autorot_det,
                                                 false,
-                                                true
+                                                true,
+                                                false
                                                );
             if(!$return)
             {
