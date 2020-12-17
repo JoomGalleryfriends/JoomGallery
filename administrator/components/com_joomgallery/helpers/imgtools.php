@@ -1410,6 +1410,14 @@ class JoomIMGtools
       case 'gd1':
         // 'break' intentionally omitted
       case 'gd2':
+        if($method == 'gd2')
+        {
+          $debugoutput .= 'GD2...<br/>';
+        }
+        else
+        {
+          $debugoutput .= 'GD1...<br/>';
+        }
 
         if(!function_exists('imagecreate'))
         {
@@ -1626,6 +1634,7 @@ class JoomIMGtools
         }
         break;
       case 'im':
+        $debugoutput       .= 'ImageMagick...<br/>';
         $disabled_functions = explode(',', ini_get('disabled_functions'));
 
         // Check, if exec command is available
