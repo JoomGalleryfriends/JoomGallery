@@ -1635,7 +1635,7 @@ class JoomUpload extends JObject
     }
 
     // Trigger onJoomBeforeUpload
-    $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload', array($image['name']));
+    $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload', array($origfilename));
     if(in_array(false, $plugins, true))
     {
       $errorMsg = JText::_('COM_JOOMGALLERY_AJAXUPLOAD_UPLOAD_FAILED');
