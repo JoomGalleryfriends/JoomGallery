@@ -91,7 +91,7 @@ class JoomIMGtools
    * @param   int     $new_height             Height to resize
    * @param   int     $method                 Image processor: gd1,gd2,im
    * @param   int     $dst_qual               Quality of the resized image (1-100)
-   * @param   int     $cropposition           Only if $settings=3:
+   * @param   int     $cropposition           Only if $settings=2:
    *                                          image section to use for cropping
    * @param   int     $angle                  Angle to rotate the resized image anticlockwise
    * @param   boolean $auto_orient            Auto orient image based on exif orientation (jpg only)
