@@ -114,6 +114,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_config` (
   `jg_impath` varchar(50) NOT NULL,
   `jg_resizetomaxwidth` int(1) NOT NULL,
   `jg_maxwidth` int(5) NOT NULL,
+  `jg_maxheight` int(5) NOT NULL,
   `jg_picturequality` int(3) NOT NULL,
   `jg_useforresizedirection` int(1) NOT NULL,
   `jg_cropposition` int(1) NOT NULL,

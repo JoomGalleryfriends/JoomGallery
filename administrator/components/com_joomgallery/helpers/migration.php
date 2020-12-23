@@ -1670,7 +1670,7 @@ abstract class JoomMigration
                                                       $newdetailimage,
                                                       3,
                                                       $this->_config->get('jg_maxwidth'),
-                                                      $this->_config->get('jg_maxwidth'),
+                                                      $this->_config->get('jg_maxheight'), 
                                                       $this->_config->get('jg_thumbcreation'),
                                                       $this->_config->get('jg_picturequality'),
                                                       false,

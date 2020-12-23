@@ -1,0 +1,1 @@
+ALTER TABLE `#__joomgallery_config` ADD `jg_maxheight` int(1) NOT NULL DEFAULT 0 AFTER `jg_maxwidth`;

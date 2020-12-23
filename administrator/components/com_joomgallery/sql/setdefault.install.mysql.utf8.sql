@@ -33,6 +33,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_impath*/                 '',
   /*jg_resizetomaxwidth*/       1,
   /*jg_maxwidth*/               400,
+  /*jg_maxheight*/              400,
   /*jg_picturequality*/         100,
   /*jg_useforresizedirection*/  0,
   /*jg_cropposition*/           2,

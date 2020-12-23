@@ -50,6 +50,7 @@ class TableJoomgalleryConfig extends JTable
   var $jg_impath;
   var $jg_resizetomaxwidth;
   var $jg_maxwidth;
+  var $jg_maxheight;
   var $jg_picturequality;
   var $jg_useforresizedirection;
   var $jg_cropposition;

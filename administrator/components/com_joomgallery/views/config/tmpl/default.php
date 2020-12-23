@@ -148,6 +148,7 @@ JHTML::_('joomconfig.start', 'page3');
     JHTML::_('joomconfig.row', 'jg_impath', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_IP_PATH_TO_IMAGEMAGICK', $tl_jg_impath, true, '', $this->immsg);
     JHTML::_('joomconfig.row', 'jg_resizetomaxwidth', 'yesno', 'COM_JOOMGALLERY_CONFIG_GS_IP_RESIZING', $this->_config->jg_resizetomaxwidth);
     JHTML::_('joomconfig.row', 'jg_maxwidth', 'text', 'COM_JOOMGALLERY_CONFIG_GS_IP_MAX_WIDTH', $this->_config->jg_maxwidth);
+    JHTML::_('joomconfig.row', 'jg_maxheight', 'text', 'COM_JOOMGALLERY_CONFIG_GS_IP_MAX_HEIGHT', $this->_config->jg_maxheight);
     JHTML::_('joomconfig.row', 'jg_picturequality', 'text', 'COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_QUALITY', $this->_config->jg_picturequality);
     JHTML::_('joomconfig.intro', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_THUMBNAILS_INTRO'));
     $directionresize[] = JHTML::_('select.option','0', JText::_('COM_JOOMGALLERY_CONFIG_COMMON_SAMEHIGHT'));
