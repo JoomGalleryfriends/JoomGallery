@@ -294,10 +294,13 @@ class JoomGalleryViewImage extends JoomGalleryView
     // output image
     echo JFile::read($img_output);
 
-    // delete tmp file
-    if(JFile::exists($img_output))
+    if($crop_image || $include_watermark)
     {
-      JFile::delete($img_output);
+      // delete tmp file
+      if(JFile::exists($img_output))
+      {
+        JFile::delete($img_output);
+      }
     }
   }
 
