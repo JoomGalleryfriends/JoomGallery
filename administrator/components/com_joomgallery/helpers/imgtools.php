@@ -2335,26 +2335,14 @@ class JoomIMGtools
     switch($settings)
     {
     case 0:
-      // Resize to height ratio (but keep original ratio)
+      // calculate ratio by height
       $ratio     = ($srcHeight / $new_height);
-      $testwidth = ($srcWidth / $ratio);
 
-      // If new width exceeds setted max. width
-      if($testwidth > $new_width)
-      {
-        $ratio = ($srcWidth / $new_width);
-      }
       break;
     case 1:
-      // Resize to width ratio (but keep original ratio)
+      // calculate ratio by width
       $ratio      = ($srcWidth / $new_width);
-      $testheight = ($srcHeight / $ratio);
 
-      // If new height exceeds the setted max. height
-      if($testheight > $new_height)
-      {
-        $ratio = ($srcHeight / $new_height);
-      }
       break;
     case 2:
       // Free resizing and cropping
@@ -2412,16 +2400,16 @@ class JoomIMGtools
       }
       break;
     case 3:
-      // Resize to max side lenght - height or width (but keep original ratio)
-      if($srcHeight > $srcWidth)
+      // Resize to maximum allowed dimensions but keeping original ratio
+      // calculate ratio by height
+      $ratio     = ($srcHeight / $new_height);
+      $testwidth = ($srcWidth / $ratio);
+
+      // If new width exceeds setted max. width
+      if($testwidth > $new_width)
       {
-        $ratio     = ($srcHeight / $new_height);
-        $testwidth = ($srcWidth / $ratio);
-      }
-      else
-      {
-        $ratio      = ($srcWidth / $new_width);
-        $testheight = ($srcHeight / $ratio);
+        // calculate ratio by width
+        $ratio = ($srcWidth / $new_width);
       }
       break;
     default:

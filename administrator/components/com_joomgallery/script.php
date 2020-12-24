@@ -46,6 +46,39 @@ class Com_JoomGalleryInstallerScript
       return false;
     }
 
+    //************* Read old settings that will be changed/removed *************
+    if($type == 'update')
+    {
+      $config      = JTable::getInstance('config', 'joomgallery');
+      $config_keys = $config->getFields();
+      $config_ids  = $config->getPrimaryKey();
+
+      // create $old_settings with all available config rows
+      foreach($config_ids as $key => $id)
+      {
+        $this->$old_settings[$id] = array('id'=>$id);
+      }
+
+      if(array_key_exists('jg_thumbcreation'), $config_keys)
+      {
+        foreach($this->$old_settings as $key => $row)
+        {
+          $values = $config->load($row['id']);
+          $this->$old_settings[$key]['jg_thumbcreation'] = $values->jg_thumbcreation;
+        }
+      }
+
+      if(array_key_exists('jg_upload_exif_rotation'), $config_keys)
+      {
+        foreach($this->$old_settings as $key => $row)
+        {
+          $values = $config->load($row['id']);
+          $this->$old_settings[$key]['jg_upload_exif_rotation'] = $values->jg_upload_exif_rotation;
+        }
+      }
+    }
+    //*********************** End read old settings ***********************
+
     return true;
   }
 
@@ -358,6 +391,77 @@ class Com_JoomGalleryInstallerScript
     echo '</p>';
     echo '</div>';*/
     //******************* End write joom_settings.css ************************************
+
+    //************* Set new settings in config manager based on old settings *************
+    $config      = JTable::getInstance('config', 'joomgallery');
+
+    foreach($this->$old_settings as $key => $old_setting)
+    {
+      $act_value = $config->load($key);
+      $new_value = '';
+
+      foreach ($old_setting as $key => $old)
+      {
+        switch ($key)
+        {
+          case 'jg_thumbcreation':
+            if ($old == 'gd1' || $old == 'gd2')
+            {
+              $new_value = 'gd1';
+            }
+            else
+            {
+              $new_value = 'im';
+            }
+            $act_value->{$key} = $new_value;
+            break;
+
+          case 'jg_upload_exif_rotation':
+            switch ($old)
+            {
+              case 0:
+                $new_thumbautorot  = 0;
+                $new_detailautorot = 0;
+                $new_origautorot   = 0;
+                break;
+
+              case 1:
+                $new_thumbautorot  = 1;
+                $new_detailautorot = 1;
+                $new_origautorot   = 0;
+                break;
+
+              case 2:
+                $new_thumbautorot  = 1;
+                $new_detailautorot = 1;
+                $new_origautorot   = 1;
+                break;
+              
+              default:
+                $new_thumbautorot  = 0;
+                $new_detailautorot = 0;
+                $new_origautorot   = 0;
+                break;
+            }
+            $act_value->jg_origautorot   = $new_origautorot;
+            $act_value->jg_detailautorot = $new_detailautorot;
+            $act_value->jg_thumbautorot  = $new_thumbautorot;
+            break;
+          
+          default:
+            // Nothing to update
+            break;
+        }
+      }
+
+      // Store new values
+      if( !$act_value->store() )
+      {
+        echo '<span class="label label-important">Updating old setting-values with new configuration structure failed.</span>';
+        $error = true;
+      }
+    }
+    //********************** End set new settings in config manager **********************
 
     if($error)
     {

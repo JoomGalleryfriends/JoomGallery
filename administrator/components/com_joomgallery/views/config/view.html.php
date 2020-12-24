@@ -48,12 +48,12 @@ class JoomGalleryViewConfig extends JoomGalleryView
     }
 
     // Check the installation of GD
-    $gdver = $this->get('GDVersion');
+    $gdver = $this->get('GDVersion'); 
     // Returns version, 0 if not installed, or -1 if appears
     // to be installed but not verified
     if($gdver > 0)
     {
-      $gdmsg = JText::sprintf('COM_JOOMGALLERY_CONFIG_GS_IP_GDLIB_INSTALLED', $gdver);
+      $gdmsg = JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_GDLIB_INSTALLED');
     }
     else
     {

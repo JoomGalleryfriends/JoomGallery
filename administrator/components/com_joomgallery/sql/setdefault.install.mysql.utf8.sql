@@ -28,26 +28,28 @@ INSERT IGNORE INTO `#__joomgallery_config`
 
 
   /* ### General settings->Image Processing ####*/
-  /*jg_thumbcreation*/          'gd2',
+  /*jg_thumbcreation*/          'gd1',
   /*jg_fastgd2thumbcreation*/   1,
   /*jg_impath*/                 '',
+  /*jg_delete_original*/        0,
+  /*jg_origautorot*/            0,
+  /*jg_originalquality*/        100,
   /*jg_resizetomaxwidth*/       1,
   /*jg_maxwidth*/               400,
   /*jg_maxheight*/              400,
+  /*jg_detailautorot*/          0,
   /*jg_picturequality*/         100,
   /*jg_useforresizedirection*/  0,
   /*jg_cropposition*/           2,
   /*jg_thumbwidth*/             133,
   /*jg_thumbheight*/            100,
+  /*jg_thumbautorot*/           0,
   /*jg_thumbquality*/           100,
-  /*jg_upload_exif_rotation*/   0,
-  /*jg_originalquality*/        100,
 
   /* ### General settings->Backend Upload ####*/
   /*jg_uploadorder*/        2,
   /*jg_useorigfilename*/    0,
   /*jg_filenamenumber*/     1,
-  /*jg_delete_original*/    0,
 
   /* ### General settings->Messages ####*/
   /*jg_msg_upload_type*/          2,
