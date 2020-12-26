@@ -86,7 +86,7 @@ class JoomIMGtools
    * @param   &string $debugoutput            Debug information
    * @param   string  $src_file               Path to source file
    * @param   string  $dst_file               Path to destination file
-   * @param   int     $settings               Resize to 0=height,1=width,2=crop or 3=max(width,height)
+   * @param   int     $settings               Resize to 0=noresize 1=height,2=width,3=crop or 4=max(width,height)
    * @param   int     $new_width              Width to resize
    * @param   int     $new_height             Height to resize
    * @param   int     $method                 Image processor: gd1,gd2,im
@@ -181,7 +181,7 @@ class JoomIMGtools
     if(self::$src_imginfo['orientation'] == self::$dst_imginfo['orientation'])
     {
       // dst and src same orientation
-      if(self::$src_imginfo['width'] <= $new_width && self::$src_imginfo['height'] <= $new_height)
+      if($settings == 0 || (self::$src_imginfo['width'] <= $new_width && self::$src_imginfo['height'] <= $new_height))
       {
         $noResize = true;
       }
@@ -189,7 +189,7 @@ class JoomIMGtools
     else
     {
       // dst and src different orientation
-      if(self::$src_imginfo['width'] <= $new_height && self::$src_imginfo['height'] <= $new_width)
+      if($settings == 0 || self::$src_imginfo['width'] <= $new_height && self::$src_imginfo['height'] <= $new_width)
       {
         $noResize = true;
       }
@@ -2328,16 +2328,19 @@ class JoomIMGtools
     switch($settings)
     {
     case 0:
-      // calculate ratio by height
-      $ratio     = ($srcHeight / $new_height);
-
-      break;
+      // no resizing
+      $ratio = 1;
     case 1:
-      // calculate ratio by width
-      $ratio      = ($srcWidth / $new_width);
+      // calculate ratio by height
+      $ratio = ($srcHeight / $new_height);
 
       break;
     case 2:
+      // calculate ratio by width
+      $ratio = ($srcWidth / $new_width);
+
+      break;
+    case 3:
       // Free resizing and cropping
       if($srcWidth < $new_width)
       {
@@ -2392,7 +2395,7 @@ class JoomIMGtools
           break;
       }
       break;
-    case 3:
+    case 4:
       // Resize to maximum allowed dimensions but keeping original ratio
       // calculate ratio by height
       $ratio     = ($srcHeight / $new_height);
