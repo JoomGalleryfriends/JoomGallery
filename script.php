@@ -53,6 +53,14 @@ class Com_JoomGalleryInstallerScript
       return false;
     }
 
+    //************* Get actual installed JoomGallery version ************
+    $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
+    if(isset($xml->version))
+    {
+      $this->act_version = $xml->version;
+    }
+    //************* End et actual installed JoomGallery version ************
+
     //************* Read old settings that will be changed/removed *************
     if($type == 'update')
     {
@@ -66,7 +74,8 @@ class Com_JoomGalleryInstallerScript
         $this->$old_settings[$id] = array('id'=>$id);
       }
 
-      if(array_key_exists('jg_thumbcreation'), $config_keys)
+      // if jg_thumbcreation still exists
+      if(array_key_exists('jg_thumbcreation', $config_keys))
       {
         foreach($this->$old_settings as $key => $row)
         {
@@ -75,12 +84,24 @@ class Com_JoomGalleryInstallerScript
         }
       }
 
-      if(array_key_exists('jg_upload_exif_rotation'), $config_keys)
+      // if jg_upload_exif_rotation still exists
+      if(array_key_exists('jg_upload_exif_rotation', $config_keys))
       {
         foreach($this->$old_settings as $key => $row)
         {
           $values = $config->load($row['id']);
           $this->$old_settings[$key]['jg_upload_exif_rotation'] = $values->jg_upload_exif_rotation;
+        }
+      }
+
+      // act_version <= 3.5.x and new_version >= 3.6.x
+      if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
+      {
+        foreach($this->$old_settings as $key => $row)
+        {
+          $values = $config->load($row['id']);
+          $this->$old_settings[$key]['jg_resizetomaxwidth'] = $values->jg_resizetomaxwidth;
+          $this->$old_settings[$key]['jg_useforresizedirection'] = $values->jg_useforresizedirection;
         }
       }
     }
@@ -454,6 +475,18 @@ class Com_JoomGalleryInstallerScript
             $act_value->jg_origautorot   = $new_origautorot;
             $act_value->jg_detailautorot = $new_detailautorot;
             $act_value->jg_thumbautorot  = $new_thumbautorot;
+            break;
+
+          case 'jg_useforresizedirection':
+            $act_value->jg_useforresizedirection = $act_value->jg_useforresizedirection + 1;
+            break;
+
+          case 'jg_resizetomaxwidth':
+            if($act_value->jg_resizetomaxwidth == 1)
+            {
+              // if resize was yes
+              $act_value->jg_resizetomaxwidth = 4;
+            }
             break;
           
           default:
