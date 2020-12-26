@@ -80,7 +80,7 @@ class JoomGalleryViewConfig extends JoomGalleryView
       // Returns version, 0 if not installed or path not properly configured
       if($imver)
       {
-        $immsg = JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_IMAGIC_INSTALLED') .  $imver;
+        $immsg = JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_IMAGIC_INSTALLED') . '<br />' . $imver;
         // Add the information that IM was detected automatically if path is empty
         if(!$this->_config->get('jg_impath'))
         {
