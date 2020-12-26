@@ -2123,16 +2123,14 @@ class JoomUpload extends JObject
     // Optionally create detail image
     $detail_image_created = false;
     if(
-        $this->_config->get('jg_resizetomaxwidth')
-      &&
-        !$this->_mainframe->getUserStateFromRequest('joom.upload.create_special_gif', 'create_special_gif', false, 'bool')
+      !$this->_mainframe->getUserStateFromRequest('joom.upload.create_special_gif', 'create_special_gif', false, 'bool')
       )
     {
       // Create new detail image
       $return = JoomIMGtools::resizeImage($this->_debugoutput,
                                           $source,
                                           $this->_ambit->getImg('img_path', $filename, null, $this->catid),
-                                          3,
+                                          $this->_config->get('jg_resizetomaxwidth'),
                                           $this->_config->get('jg_maxwidth'),
                                           $this->_config->get('jg_maxheight'),
                                           $this->_config->get('jg_thumbcreation'),

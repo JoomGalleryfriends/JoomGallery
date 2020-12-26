@@ -1,4 +1,3 @@
-
 ALTER TABLE `#__joomgallery_config` CHANGE `jg_delete_original` `jg_delete_original` int(1) NOT NULL AFTER `jg_impath`;
 ALTER TABLE `#__joomgallery_config` ADD `jg_origautorot` int(1) NOT NULL DEFAULT 0 AFTER `jg_delete_original`;
 ALTER TABLE `#__joomgallery_config` CHANGE `jg_originalquality` `jg_originalquality` int(1) NOT NULL AFTER `jg_origautorot`;

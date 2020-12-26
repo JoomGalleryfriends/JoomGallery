@@ -248,9 +248,10 @@ class JoomGalleryViewImage extends JoomGalleryView
       $offsetx     = JRequest::getInt('x');   // what are this variables for?
       $offsety     = JRequest::getInt('y');   // what are this variables for? --> they werent used in the past either...
       $method      = $this->_config->get('jg_thumbcreation');
+      $setting      = 3;  // 0=noresize 1=height,2=width,3=crop or 4=maxdimension
       $debugoutput = '';
 
-      $success = JoomIMGtools::resizeImage($debugoutput,$img,$img_output,2,$cropwidth,$cropheight,$method,100,$croppos,0,false,false,false,true);
+      $success = JoomIMGtools::resizeImage($debugoutput,$img,$img_output,$setting,$cropwidth,$cropheight,$method,100,$croppos,0,false,false,false,true);
       
       if (!$success)
       {
