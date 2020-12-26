@@ -292,14 +292,7 @@ class JoomIMGtools
       case 'gd1':
         // 'break' intentionally omitted
       case 'gd2':
-        if($method == 'gd2')
-        {
-          $debugoutput .= 'GD2...<br/>';
-        }
-        else
-        {
-          $debugoutput .= 'GD1...<br/>';
-        }
+        $debugoutput .= 'GD...<br/>';
 
         if(!function_exists('imagecreate'))
         {
