@@ -1170,7 +1170,7 @@ class JoomUpload extends JObject
         $autorotate = false;
 
         // Check if auto-rotation is enabled
-        if ($this->_config->get('jg_upload_exif_rotation') > 0)
+        if ($this->_config->get('jg_thumbautorot') == 1)
         {
           $autorotate = true;
         }
@@ -2093,31 +2093,6 @@ class JoomUpload extends JObject
   {
     $angle = 0;
 
-    // Check if auto-rotation is enabled
-    switch($this->_config->get('jg_upload_exif_rotation'))
-    {
-      case 0:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-      case 1:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = false;
-        break;
-      case 2:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = true;
-        break;
-      default:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-    }
-
     // Create thumb
     $return = JoomIMGtools::resizeImage($this->_debugoutput,
                                         $source,
@@ -2129,7 +2104,7 @@ class JoomUpload extends JObject
                                         $this->_config->get('jg_thumbquality'),
                                         $this->_config->get('jg_cropposition'),
                                         $angle,
-                                        $autorot_thumb,
+                                        $this->_config->get('jg_thumbautorot'),
                                         false,
                                         false,
                                         true
@@ -2164,7 +2139,7 @@ class JoomUpload extends JObject
                                           $this->_config->get('jg_picturequality'),
                                           false,
                                           $angle,
-                                          $autorot_det,
+                                          $this->_config->get('jg_detailautorot'),
                                           false,
                                           true,
                                           false
@@ -2303,7 +2278,7 @@ class JoomUpload extends JObject
                                           $this->_config->get('jg_thumbcreation'),
                                           $this->_config->get('jg_originalquality'),
                                           $angle,
-                                          $autorot_orig,
+                                          $this->_config->get('jg_origautorot'),
                                           true,
                                           true
                                          );

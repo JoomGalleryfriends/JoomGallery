@@ -667,31 +667,6 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
     $angle = 0;
 
-    // Check if auto-rotation is enabled
-    switch($this->_config->get('jg_upload_exif_rotation'))
-    {
-      case 0:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-      case 1:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = false;
-        break;
-      case 2:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = true;
-        break;
-      default:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-    }
-
     // Loop through selected images
     foreach($cids as $key => $cid)
     {
@@ -743,7 +718,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                             $this->_config->get('jg_thumbquality'),
                                             $this->_config->get('jg_cropposition'),
                                             $angle,
-                                            $autorot_thumb,
+                                            $this->_config->get('jg_thumbautorot'),
                                             false,
                                             false,
                                             true
@@ -784,7 +759,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                             $this->_config->get('jg_picturequality'),
                                             false,
                                             $angle,
-                                            $autorot_det,
+                                            $this->_config->get('jg_detailautorot'),
                                             false,
                                             true,
                                             false
