@@ -86,12 +86,12 @@ class JoomIMGtools
    * @param   &string $debugoutput            Debug information
    * @param   string  $src_file               Path to source file
    * @param   string  $dst_file               Path to destination file
-   * @param   int     $settings               Resize to 0=noresize 1=height,2=width,3=crop or 4=max(width,height)
+   * @param   int     $settings               Resize to 0=noresize 1=height,2=width,3=crop or 4=maxdimension
    * @param   int     $new_width              Width to resize
    * @param   int     $new_height             Height to resize
    * @param   int     $method                 Image processor: gd1,gd2,im
    * @param   int     $dst_qual               Quality of the resized image (1-100)
-   * @param   int     $cropposition           Only if $settings=2:
+   * @param   int     $cropposition           Only if $settings=3:
    *                                          image section to use for cropping
    * @param   int     $angle                  Angle to rotate the resized image anticlockwise
    * @param   boolean $auto_orient            Auto orient image based on exif orientation (jpg only)
@@ -269,17 +269,17 @@ class JoomIMGtools
     // Create debugoutput
     switch($settings)
     {
-      case 0:
+      case 1:
         $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_HEIGHT');
         break;
-      case 1:
+      case 2:
         $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_WIDTH');
         break;
-      case 2:
+      case 3:
         // Free resizing and cropping
         $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_CROP');
         break;
-      case 3:
+      case 4:
         $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_RESIZE_TO_MAX');
         break;
       default:
@@ -626,7 +626,7 @@ class JoomIMGtools
           $debugoutput .= JText::_('COM_JOOMGALLERY_AUTOORIENT_IMAGE').'<br />';
         }
 
-        if($auto_orient && $settings == 2)
+        if($auto_orient && $settings == 3)
         {
           $commands .= ' +repage';
         }
@@ -640,7 +640,7 @@ class JoomIMGtools
         // Crop the source image before resiszing if offsets setted before
         // example of crop: convert input -crop destwidthxdestheight+offsetx+offsety +repage output
         // +repage needed to delete the canvas
-        if($settings == 2)
+        if($settings == 3)
         {
           // Assembling the imagick command for cropping
           $commands .= ' -crop "'.self::$dst_imginfo['src']['width'].'x'.self::$dst_imginfo['src']['height'].'+'.self::$dst_imginfo['offset_x'].'+'.self::$dst_imginfo['offset_y'].'" +repage';
@@ -1428,14 +1428,7 @@ class JoomIMGtools
       case 'gd1':
         // 'break' intentionally omitted
       case 'gd2':
-        if($method == 'gd2')
-        {
-          $debugoutput .= 'GD2...<br/>';
-        }
-        else
-        {
-          $debugoutput .= 'GD1...<br/>';
-        }
+        $debugoutput .= 'GD...<br/>';
 
         if(!function_exists('imagecreate'))
         {
@@ -2415,7 +2408,7 @@ class JoomIMGtools
     }
 
     // Calculate widths and heights necessary for resize and bring them to integer values
-    if($settings != 2)
+    if($settings != 3)
     {
       // Not cropping
       $ratio                               = max($ratio, 1.0);
