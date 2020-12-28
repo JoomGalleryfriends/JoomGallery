@@ -1693,11 +1693,17 @@ class JoomIMGtools
           $commands .= ' -strip ';
         }
 
-        // Assembling the imagick command for watermarking
-          $commands  .= '( "'.$wtm_file.'" -resize "'.self::$dst_imginfo['width'].'x'.self::$dst_imginfo['height'].'" ) -gravity "northwest" -geometry "+'.$position[0].'+'.$position[1].'" -define compose:args='.$opacity.',100 -compose dissolve -composite';
+        // Resize watermark file
+        $commands  .= ' "'.$wtm_file.'" -resize "'.self::$dst_imginfo['width'].'x'.self::$dst_imginfo['height'].'"';
+
+        // Positioning of the watermark
+        $commands  .= ' "'.$src_file.'" +swap -gravity "northwest" -geometry "+'.$position[0].'+'.$position[1].'"';
+
+        // copy watermark on top of image
+        $commands  .= ' -define compose:args='.$opacity.',100 -compose dissolve -composite'.' "'.$dst_file.'"';
 
         // Assembling the shell code for the resize with imagick
-        $convert    = $convert_path.' "'.$src_file.'" '.$commands.' "'.$dst_file.'"';
+        $convert    = $convert_path.$commands;
 
         $return_var = null;
         $dummy      = null;
