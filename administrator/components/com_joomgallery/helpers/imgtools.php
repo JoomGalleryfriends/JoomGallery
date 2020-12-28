@@ -1512,7 +1512,7 @@ class JoomIMGtools
         // Watermarking with GD
         foreach(self::$src_frames as $key => $frame)
         {
-          self::imageWatermark_GD(self::$src_frames[$key]['image'], self::$dst_frames[0]['image'], $imginfo, self::$src_imginfo, $position, $opacity);
+          self::imageWatermark_GD(self::$src_frames[$key]['image'], self::$dst_frames[0]['image'], $imginfo, self::$dst_imginfo, $position, $opacity);
         }
 
         // Check for failures
