@@ -432,7 +432,7 @@ class JoomIMGtools
 
             return false;
           }
-        }        
+        }
 
         // Write resized image to file
         if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
@@ -1523,7 +1523,7 @@ class JoomIMGtools
         // Watermarking with GD
         foreach(self::$src_frames as $key => $frame)
         {
-          self::imageWatermark_GD(self::$src_frames[$key]['image'], self::$dst_frames[0]['image'], $imginfo, self::$src_imginfo, $position, $opacity);
+          self::imageWatermark_GD(self::$src_frames[$key]['image'], self::$dst_frames[0]['image'], $imginfo, self::$dst_imginfo, $position, $opacity);
         }
 
         // Check for failures
@@ -1536,7 +1536,7 @@ class JoomIMGtools
         }
 
         // Write resized image to file
-        $imginfo['quality'] = 100; 
+        $imginfo['quality'] = 100;
         if($anim && $imginfo['animation'] && $imginfo['type'] == 'GIF')
         {
           // Animated GIF image (image with more than one frame)
@@ -2434,7 +2434,7 @@ class JoomIMGtools
    * Collect informations for the watermarking (informations: dimensions, type, position)
    *
    * @param   array   $imginfo        array with image informations of the background image
-   * @param   int     $position       Positioning of the watermark 
+   * @param   int     $position       Positioning of the watermark
    * @param   int     $resize         resize watermark (0:no,1:by height,2:by width)
    * @param   float   $new_size       new size of the resized watermark in percent related to the file (1-100)
    * @return  array   array with watermark positions; array(x,y)
@@ -2494,7 +2494,7 @@ class JoomIMGtools
     self::$dst_imginfo['orientation']   = self::$src_imginfo['orientation'];
     self::$dst_imginfo['src']['width']  = self::$src_imginfo['width'];
     self::$dst_imginfo['src']['height'] = self::$src_imginfo['height'];
-    
+
     // Generate informations about position of the watermark inside the src image
     // Position x
     switch(($position - 1) % 3)
@@ -2524,7 +2524,7 @@ class JoomIMGtools
     }
 
     return array($pos_x, $pos_y);
-  }  
+  }
 
   /**
    * Get angle and flip value based on exif orientation tag
