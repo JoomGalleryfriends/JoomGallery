@@ -125,6 +125,7 @@ class Com_JoomGalleryInstallerScript
         foreach($this->old_settings as $key => $row)
         {
           $config->load($row['id']);
+          $this->old_settings[$key]['jg_maxwidth'] = $config->jg_maxwidth;
           $this->old_settings[$key]['jg_resizetomaxwidth'] = $config->jg_resizetomaxwidth;
           $this->old_settings[$key]['jg_useforresizedirection'] = $config->jg_useforresizedirection;
         }
@@ -513,6 +514,15 @@ class Com_JoomGalleryInstallerScript
               $config->jg_resizetomaxwidth = 4;
             }
             break;
+
+            case 'jg_maxwidth':
+              if ($config->jg_maxheight == 0)
+              {
+                // if jg_maxheight is currently 0
+                // set jg_maxheight = jg_maxwidth
+                $config->jg_maxheight = $old;
+              }
+              break;
 
           default:
             // Nothing to update
