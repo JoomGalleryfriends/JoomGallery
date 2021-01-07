@@ -5,3 +5,4 @@ ALTER TABLE `#__joomgallery_config` ADD `jg_maxheight` int(5) NOT NULL DEFAULT 0
 ALTER TABLE `#__joomgallery_config` ADD `jg_detailautorot` int(1) NOT NULL DEFAULT 0 AFTER `jg_maxheight`;
 ALTER TABLE `#__joomgallery_config` ADD `jg_thumbautorot` int(1) NOT NULL DEFAULT 0 AFTER `jg_thumbheight`;
 ALTER TABLE `#__joomgallery_config` DROP `jg_upload_exif_rotation`;
+ALTER TABLE `#__joomgallery_config` DROP `jg_dyncropbgcol`;

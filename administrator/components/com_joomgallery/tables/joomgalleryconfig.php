@@ -61,10 +61,10 @@ class TableJoomgalleryConfig extends JTable
   var $jg_thumbwidth;
   var $jg_thumbheight;
   var $jg_thumbautorot;
-  var $jg_thumbquality;  
+  var $jg_thumbquality;
   var $jg_uploadorder;
   var $jg_useorigfilename;
-  var $jg_filenamenumber;  
+  var $jg_filenamenumber;
   var $jg_msg_upload_type;
   var $jg_msg_upload_recipients;
   var $jg_msg_download_type;
@@ -141,7 +141,6 @@ class TableJoomgalleryConfig extends JTable
   var $jg_dyncropposition;
   var $jg_dyncropwidth;
   var $jg_dyncropheight;
-  var $jg_dyncropbgcol;
   var $jg_hideemptycats;
   var $jg_skipcatview;
   var $jg_imgalign;

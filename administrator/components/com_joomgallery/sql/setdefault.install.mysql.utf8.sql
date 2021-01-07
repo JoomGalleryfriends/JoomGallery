@@ -146,7 +146,6 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_dyncropposition*/    2,
   /*jg_dyncropwidth*/       100,
   /*jg_dyncropheight*/      100,
-  /*jg_dyncropbgcol*/       '#ffffff',
   /*jg_hideemptycats*/      0,
   /*jg_skipcatview*/        0,
   /*jg_imgalign*/           0,
@@ -336,7 +335,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /* ### Detail View->Exif data ####*/
   /*jg_showexifdata*/   0,
   /*jg_showgeotagging*/ 0,
-  /*jg_geotaggingkey*/  '',  
+  /*jg_geotaggingkey*/  '',
   /*jg_subifdtags*/     '',
   /*jg_ifdotags*/       '',
   /*jg_gpstags*/        '',
