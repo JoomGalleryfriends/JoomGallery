@@ -71,11 +71,11 @@ class Com_JoomGalleryInstallerScript
     //************* Read old settings that will be changed/removed *************
     if($type == 'update')
     {
-      // Register JoomGallery Tables
-      JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_joomgallery/tables');
-
       // Define global constant _JOOM_TABLE_CONFIG
       define('_JOOM_TABLE_CONFIG', '#__joomgallery_config');
+
+      // Register Config-Table
+      include_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/tables/joomgalleryconfig.php';
 
       // Load JoomGallery configuration
       $config      = JTable::getInstance('joomgalleryconfig', 'Table');
@@ -448,12 +448,14 @@ class Com_JoomGalleryInstallerScript
 
 
     //************* Set new settings in config manager based on old settings *************
-    $config = JTable::getInstance('joomgalleryconfig', 'Table');
+    // Bring versions to a machine readable form
+    $act_version = explode('.',$this->act_version);
+    $new_version = explode('.',$this->version);
 
     foreach($this->old_settings as $key => $old_setting)
     {
-      $config->load($key);
-      $new_value = '';
+      $new_configs = new stdClass();
+      $new_configs->id = $key;
 
       foreach ($old_setting as $key => $old)
       {
@@ -462,13 +464,12 @@ class Com_JoomGalleryInstallerScript
           case 'jg_thumbcreation':
             if ($old == 'gd1' || $old == 'gd2')
             {
-              $new_value = 'gd1';
+              $new_configs->jg_thumbcreation = 'gd1';
             }
             else
             {
-              $new_value = 'im';
+              $new_configs->jg_thumbcreation = 'im';
             }
-            $config->{$key} = $new_value;
             break;
 
           case 'jg_upload_exif_rotation':
@@ -498,29 +499,33 @@ class Com_JoomGalleryInstallerScript
                 $new_origautorot   = 0;
                 break;
             }
-            $config->jg_origautorot   = $new_origautorot;
-            $config->jg_detailautorot = $new_detailautorot;
-            $config->jg_thumbautorot  = $new_thumbautorot;
+            $new_configs->jg_origautorot   = $new_origautorot;
+            $new_configs->jg_detailautorot = $new_detailautorot;
+            $new_configs->jg_thumbautorot  = $new_thumbautorot;
             break;
 
           case 'jg_useforresizedirection':
-            $config->jg_useforresizedirection = $config->jg_useforresizedirection + 1;
+            // act_version <= 3.5.x and new_version >= 3.6.x
+            if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
+            {
+              $new_configs->jg_useforresizedirection = $old + 1;
+            }
             break;
 
           case 'jg_resizetomaxwidth':
-            if($config->jg_resizetomaxwidth == 1)
+            // act_version <= 3.5.x and new_version >= 3.6.x and resize was yes
+            if( ($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6) && $old == 1 )
             {
-              // if resize was yes
-              $config->jg_resizetomaxwidth = 4;
+              $new_configs->jg_resizetomaxwidth = 4;
             }
             break;
 
           case 'jg_maxwidth':
-            if ($config->jg_maxheight == 0)
+            // act_version <= 3.5.x and new_version >= 3.6.x
+            if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
             {
-              // if jg_maxheight is currently 0
               // set jg_maxheight = jg_maxwidth
-              $config->jg_maxheight = $old;
+              $new_configs->jg_maxheight = $old;
             }
             break;
 
@@ -530,8 +535,9 @@ class Com_JoomGalleryInstallerScript
         }
       }
 
-      // Store new values
-      if( !$config->store() )
+      // Store new configs
+      $store = JFactory::getDbo()->updateObject(_JOOM_TABLE_CONFIG, $new_configs, 'id');
+      if( !$store )
       {
         echo '<span class="label label-important">Updating old setting-values with new configuration structure failed.</span>';
         $error = true;
