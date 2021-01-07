@@ -26,7 +26,14 @@ class Com_JoomGalleryInstallerScript
    *
    * @var string
    */
-  private $version = '3.5.0';
+  private $version = '3.6.0';
+
+  /**
+   * Version string of the current installed version
+   *
+   * @var string
+   */
+  private $act_version = '';
 
   /**
    * Settings that are set in the current installation, but will be removed/changed in a newer version
@@ -64,44 +71,62 @@ class Com_JoomGalleryInstallerScript
     //************* Read old settings that will be changed/removed *************
     if($type == 'update')
     {
-      $config      = JTable::getInstance('config', 'joomgallery');
+      // Register JoomGallery Tables
+      JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_joomgallery/tables');
+
+      // Define global constant _JOOM_TABLE_CONFIG
+      define('_JOOM_TABLE_CONFIG', '#__joomgallery_config');
+
+      // Load JoomGallery configuration
+      $config      = JTable::getInstance('joomgalleryconfig', 'Table');
       $config_keys = $config->getFields();
-      $config_ids  = $config->getPrimaryKey();
+
+      $db = JFactory::getDbo();
+      $query = $db
+          ->getQuery(true)
+          ->select('id')
+          ->from($db->quoteName(_JOOM_TABLE_CONFIG));
+      $db->setQuery($query);
+      $config_ids = $db->loadColumn();
+
+      // Bring versions to a machine readable form
+      $act_version = explode('.',$this->act_version);
+      $new_version = explode('.',$this->version);
 
       // create $old_settings with all available config rows
       foreach($config_ids as $key => $id)
       {
-        $this->$old_settings[$id] = array('id'=>$id);
+        $this->old_settings[$id] = array('id'=>$id);
       }
 
       // if jg_thumbcreation still exists
       if(array_key_exists('jg_thumbcreation', $config_keys))
       {
-        foreach($this->$old_settings as $key => $row)
+        foreach($this->old_settings as $key => $row)
         {
-          $values = $config->load($row['id']);
-          $this->$old_settings[$key]['jg_thumbcreation'] = $values->jg_thumbcreation;
+          $config->load($row['id']);
+          $this->old_settings[$key]['jg_thumbcreation'] = $config->jg_thumbcreation;
         }
       }
 
       // if jg_upload_exif_rotation still exists
       if(array_key_exists('jg_upload_exif_rotation', $config_keys))
       {
-        foreach($this->$old_settings as $key => $row)
+        foreach($this->old_settings as $key => $row)
         {
-          $values = $config->load($row['id']);
-          $this->$old_settings[$key]['jg_upload_exif_rotation'] = $values->jg_upload_exif_rotation;
+          $config->load($row['id']);
+          $this->old_settings[$key]['jg_upload_exif_rotation'] = $config->jg_upload_exif_rotation;
         }
       }
 
       // act_version <= 3.5.x and new_version >= 3.6.x
       if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
       {
-        foreach($this->$old_settings as $key => $row)
+        foreach($this->old_settings as $key => $row)
         {
-          $values = $config->load($row['id']);
-          $this->$old_settings[$key]['jg_resizetomaxwidth'] = $values->jg_resizetomaxwidth;
-          $this->$old_settings[$key]['jg_useforresizedirection'] = $values->jg_useforresizedirection;
+          $config->load($row['id']);
+          $this->old_settings[$key]['jg_resizetomaxwidth'] = $config->jg_resizetomaxwidth;
+          $this->old_settings[$key]['jg_useforresizedirection'] = $config->jg_useforresizedirection;
         }
       }
     }
@@ -422,11 +447,11 @@ class Com_JoomGalleryInstallerScript
 
 
     //************* Set new settings in config manager based on old settings *************
-    $config      = JTable::getInstance('config', 'joomgallery');
+    $config = JTable::getInstance('joomgalleryconfig', 'Table');
 
-    foreach($this->$old_settings as $key => $old_setting)
+    foreach($this->old_settings as $key => $old_setting)
     {
-      $act_value = $config->load($key);
+      $config->load($key);
       $new_value = '';
 
       foreach ($old_setting as $key => $old)
@@ -442,7 +467,7 @@ class Com_JoomGalleryInstallerScript
             {
               $new_value = 'im';
             }
-            $act_value->{$key} = $new_value;
+            $config->{$key} = $new_value;
             break;
 
           case 'jg_upload_exif_rotation':
@@ -465,30 +490,30 @@ class Com_JoomGalleryInstallerScript
                 $new_detailautorot = 1;
                 $new_origautorot   = 1;
                 break;
-              
+
               default:
                 $new_thumbautorot  = 0;
                 $new_detailautorot = 0;
                 $new_origautorot   = 0;
                 break;
             }
-            $act_value->jg_origautorot   = $new_origautorot;
-            $act_value->jg_detailautorot = $new_detailautorot;
-            $act_value->jg_thumbautorot  = $new_thumbautorot;
+            $config->jg_origautorot   = $new_origautorot;
+            $config->jg_detailautorot = $new_detailautorot;
+            $config->jg_thumbautorot  = $new_thumbautorot;
             break;
 
           case 'jg_useforresizedirection':
-            $act_value->jg_useforresizedirection = $act_value->jg_useforresizedirection + 1;
+            $config->jg_useforresizedirection = $config->jg_useforresizedirection + 1;
             break;
 
           case 'jg_resizetomaxwidth':
-            if($act_value->jg_resizetomaxwidth == 1)
+            if($config->jg_resizetomaxwidth == 1)
             {
               // if resize was yes
-              $act_value->jg_resizetomaxwidth = 4;
+              $config->jg_resizetomaxwidth = 4;
             }
             break;
-          
+
           default:
             // Nothing to update
             break;
@@ -496,7 +521,7 @@ class Com_JoomGalleryInstallerScript
       }
 
       // Store new values
-      if( !$act_value->store() )
+      if( !$config->store() )
       {
         echo '<span class="label label-important">Updating old setting-values with new configuration structure failed.</span>';
         $error = true;
