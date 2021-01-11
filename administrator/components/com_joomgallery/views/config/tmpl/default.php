@@ -179,7 +179,7 @@ JHTML::_('joomconfig.start', 'page3');
     JHTML::_('joomconfig.row', 'jg_thumbheight', 'text', 'COM_JOOMGALLERY_CONFIG_GS_IP_THUMBNAIL_HEIGHT', $this->_config->jg_thumbheight);
     JHTML::_('joomconfig.row', 'jg_thumbautorot', 'yesno', 'COM_JOOMGALLERY_CONFIG_GS_IP_THUMBNAIL_AUTOROT', $this->_config->jg_thumbautorot);
     JHTML::_('joomconfig.row', 'jg_thumbquality', 'text', 'COM_JOOMGALLERY_CONFIG_GS_IP_THUMBNAIL_QUALITY', $this->_config->jg_thumbquality);
-
+    JHTML::_('joomconfig.configTest', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_INTRO'), $this->configtest_info);
 JHTML::_('joomconfig.end');
 endif;
 

@@ -48,7 +48,7 @@ class JoomGalleryViewConfig extends JoomGalleryView
     }
 
     // Check the installation of GD
-    $gdver = $this->get('GDVersion'); 
+    $gdver = $this->get('GDVersion');
     // Returns version, 0 if not installed, or -1 if appears
     // to be installed but not verified
     if($gdver > 0)
@@ -208,6 +208,10 @@ class JoomGalleryViewConfig extends JoomGalleryView
     $iptc_definitions = array(
     1 => array ('TAG' => 'IPTC', 'JG' => $iptctags, 'NAME' => 'jg_iptctags[]', 'HEAD' => JText::_('COM_JOOMGALLERY_IPTCTAGS')),
     );
+
+    // Config test infos
+    $model = $this->getModel();
+    $this->configtest_info = $model->readInfoFromJson($this->_ambit->get('temp_path').'configtestimg.json');
 
     // Include javascript for form validation, cleaning and submitting
     $this->_doc->addScript($this->_ambit->getScript('config.js'));
