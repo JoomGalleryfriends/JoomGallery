@@ -167,7 +167,7 @@ JHTML::_('joomconfig.start', 'page3');
     $directionresize[] = JHTML::_('select.option','3', JText::_('COM_JOOMGALLERY_CONFIG_COMMON_FREEHEIGHTWIDTH'));
     $directionresize[] = JHTML::_('select.option','4', JText::_('COM_JOOMGALLERY_CONFIG_COMMON_MAXDIMENSION'));
     $mc_jg_useforresizedirection = JHTML::_('select.genericlist',$directionresize, 'jg_useforresizedirection', 'class="inputbox" size="4"', 'value', 'text', $this->_config->jg_useforresizedirection);
-    JHTML::_('joomconfig.row', 'jg_useforresizedirection', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_IP_DIRECTION_RESIZE', $mc_jg_useforresizedirection);
+    JHTML::_('joomconfig.row', 'jg_useforresizedirection', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_IP_DIRECTION_RESIZE', $mc_jg_useforresizedirection, true, '', JText::sprintf('COM_JOOMGALLERY_CONFIG_GS_IP_DIRECTION_RESIZE_LONG', JUri::root().'media/joomgallery/images/config/'));
     $cropposition[] = JHTML::_('select.option','0', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITIONLU'));
     $cropposition[] = JHTML::_('select.option','1', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITIONRU'));
     $cropposition[] = JHTML::_('select.option','2', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITIONC'));
