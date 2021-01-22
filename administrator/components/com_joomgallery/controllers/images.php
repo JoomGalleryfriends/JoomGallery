@@ -600,12 +600,18 @@ class JoomGalleryControllerImages extends JoomGalleryController
 
     $user = JFactory::getUser();
 
+    // Instantiate and load an image table
+    $row = JTable::getInstance('joomgalleryimages', 'Table');
+
     $count = 0;
     $unaffected_images = 0;
     $model = $this->getModel('image');
     foreach($cid as $id)
     {
-      if(!$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid))
+      $row->load($id);
+
+      if(!$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid) ||
+        (!$user->authorise('core.edit', _JOOM_OPTION.'.image.'.$id) && (!$user->authorise('core.edit.own', _JOOM_OPTION.'.image.'.$id) || !$row->owner || $row->owner != $user->get('id'))))
       {
         $unaffected_images++;
         continue;
