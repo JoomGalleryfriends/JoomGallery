@@ -591,7 +591,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       }
     }
 
-    $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.image', $cid, array($task=>$publish)));
+    $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.image', $cid, $publish, $task));
 
     return $count;
   }
