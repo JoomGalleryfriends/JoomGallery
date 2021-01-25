@@ -583,15 +583,15 @@ class JoomGalleryModelImages extends JoomGalleryModel
         continue;
       }
 
-      $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.image', $row, array('published'=>$row->published,'approved'=>$row->approved,'featured'=>$row->featured)));
-
       // If publishing or unpublishung wasn't successful, decrease the
       // counter of successfully published or unpublished images
       if($row->$column != $publish)
       {
         $count--;
       }
-    }    
+    }
+
+    $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.image', $cid, array($task=>$publish)));
 
     return $count;
   }
