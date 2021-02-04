@@ -9,4 +9,6 @@
 **   at administrator/components/com_joomgallery/LICENSE.TXT                            **
 \****************************************************************************************/
 
+defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+
 require JPATH_COMPONENT.'/views/image/view.raw.php';
