@@ -901,6 +901,11 @@ class JoomGalleryViewCategory extends JoomGalleryView
       $this->assignRef('order_dir', $orderdir);
     }
 
+    // Get additional view data
+    // Important Note: Please push the additional data into $image->additionalData['pluginName']
+    $cat->additionalData = array();
+    $this->_mainframe->triggerEvent('onJoomAfterPrepareDisplayHTML', array('category', &$cat));
+
     // Set redirect url used in editor links to redirect back to favourites view after edit/delete
     $redirect = '&redirect='.base64_encode(JFactory::getURI()->toString());
 

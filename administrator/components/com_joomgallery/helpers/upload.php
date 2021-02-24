@@ -374,7 +374,7 @@ class JoomUpload extends JObject
       }
 
       // Trigger onJoomBeforeUpload
-      $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload');
+      $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload', array($images['name'][$i]));
       if(in_array(false, $plugins, true))
       {
         continue;
@@ -729,20 +729,20 @@ class JoomUpload extends JObject
         break;
       }
 
-      // Trigger event 'onJoomBeforeUpload'
-      $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload');
-      if(in_array(false, $plugins, true))
-      {
-        unset($ziplist[$key]);
-        continue;
-      }
-
       // Get the filename without path, JFile::getName() does not
       // work on local installations
       $filepathinfos  = pathinfo($file);
       $origfilename   = $filepathinfos['basename'];
       $filesize       = filesize($file);
       $tag            = strtolower(JFile::getExt($origfilename));
+
+      // Trigger event 'onJoomBeforeUpload'
+      $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload', array($origfilename));
+      if(in_array(false, $plugins, true))
+      {
+        unset($ziplist[$key]);
+        continue;
+      }      
 
       $this->_debugoutput .= '<hr />';
       $this->_debugoutput .= JText::sprintf('COM_JOOMGALLERY_UPLOAD_FILENAME', $origfilename).'<br />';
@@ -1033,7 +1033,7 @@ class JoomUpload extends JObject
       }
 
       // Trigger event 'onJoomBeforeUpload'
-      $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload');
+      $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload', array($fileArray['name']));
       if(in_array(false, $plugins, true))
       {
         $this->_debugoutput .= 'Upload was stopped by a plugin';
@@ -1355,6 +1355,14 @@ class JoomUpload extends JObject
         $refresher->refresh(count($ftpfiles));
       }
 
+      // Trigger onJoomBeforeUpload
+      $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload', array($origfilename));
+      if(in_array(false, $plugins, true))
+      {
+        unset($ftpfiles[$key]);
+        continue;
+      }
+
       // Get extension
       $tag = strtolower(JFile::getExt($origfilename));
 
@@ -1627,7 +1635,7 @@ class JoomUpload extends JObject
     }
 
     // Trigger onJoomBeforeUpload
-    $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload');
+    $plugins  = $this->_mainframe->triggerEvent('onJoomBeforeUpload', array($origfilename));
     if(in_array(false, $plugins, true))
     {
       $errorMsg = JText::_('COM_JOOMGALLERY_AJAXUPLOAD_UPLOAD_FAILED');

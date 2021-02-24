@@ -721,6 +721,8 @@ class JoomGalleryModelCategories extends JoomGalleryModel
       }
     }
 
+    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION, $cid, $publish));
+
     return $count;
   }
 

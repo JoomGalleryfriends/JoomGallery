@@ -363,6 +363,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
         return false;
       }
 
+      // Trigger the before save event.
+		  $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, true, $data));
+
       // Copy the image files, the row will be stored, too
       if(!$this->_newImage($row, $catpath, $detail_catpath, $thumb_catpath, $data['copy_original']))
       {
@@ -374,6 +377,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
       // Successfully stored new image
       $row->reorder('catid = '.$row->catid);
 
+      // Trigger the after save event.
       $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image', &$row, true));
 
       return $row->id;
@@ -710,6 +714,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
       }
     }
 
+    // Trigger the before save event.
+		$this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false, $data));
+
     // Move the image if necessary (the data is stored in function moveImage because
     // we have ensured that the old and new category ID are different from each other)
     if($move && !$this->moveImage($row, $row->catid, $catid_old))
@@ -744,6 +751,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $row->reorder('catid = '.$catid_old);
     }
 
+    // Trigger the after save event.
     $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false));
 
     return $row->id;
@@ -1164,6 +1172,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
       return false;
     }
 
+    // Trigger the before save event.
+		$this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$item, false));
+
     // Store the entry to the database
     if(!$item->store())
     {
@@ -1171,6 +1182,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
 
       return false;
     }
+
+    // Trigger the after save event.
+    $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image', &$item, false));
 
     return true;
   }
