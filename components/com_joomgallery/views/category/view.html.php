@@ -669,6 +669,10 @@ class JoomGalleryViewCategory extends JoomGalleryView
 
       $categories[$key]->event  = new stdClass();
 
+      // Additional data added by plugins
+      $category->additionalData = array();
+      $this->_mainframe->triggerEvent('onJoomAfterPrepareDisplayHTML', array('category', &$category));
+
       // Additional HTML added by plugins
       $results  = $this->_mainframe->triggerEvent('onJoomAfterDisplayCatThumb', array($category->cid));
       $categories[$key]->event->afterDisplayCatThumb  = trim(implode('', $results));
