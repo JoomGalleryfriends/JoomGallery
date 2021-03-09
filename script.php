@@ -185,7 +185,9 @@ class Com_JoomGalleryInstallerScript
    */
   public function update()
   {
+    $app = JFactory::getApplication();
     jimport('joomla.filesystem.file'); ?>
+
     <div class="hero-unit">
       <img src="../media/joomgallery/images/joom_logo.png" alt="JoomGallery Logo" />
       <div class="alert alert-info">
