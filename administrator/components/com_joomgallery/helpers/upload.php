@@ -2268,7 +2268,7 @@ class JoomUpload extends JObject
     }
 
     // Rotate original image if needed
-    if(!$delete_original && $autorot_orig)
+    if(!$delete_original && $this->_config->get('jg_origautorot'))
     {
       $return = JoomIMGtools::rotateImage($this->_debugoutput,
                                           $this->_ambit->getImg('orig_path', $filename, null, $this->catid),

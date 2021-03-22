@@ -98,6 +98,7 @@ class JoomIMGtools
    *                                          if true: overwrites the value of angle
    * @param   boolean $metadata               true=preserve metadata in the resized image
    * @param   boolean $anim                   true=preserve animation in the resized image
+   * @param   boolean $unsharp                true=sharpen the image during resize
    * @return  boolean True on success, false otherwise
    * @since   1.0.0
    */
