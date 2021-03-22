@@ -1685,34 +1685,38 @@ class JoomIMGtools
         // Create imagick command
         $commands = '';
 
-        if(self::$src_imginfo['animation']  && !$anim)
-        {
-          // If resizing an animation but not preserving the animation, consider only first frame
-          $src_file = $src_file.'[0]';
-        }
-        else
-        {
-          if(self::$src_imginfo['animation']  && $anim && self::$src_imginfo['type'] == 'GIF')
-          {
-            // If resizing an animation, use coalesce for better results
-            $commands .= ' -coalesce ';
-          }
-        }
-
         // Delete all metadata, if needed
         if(!$metadata)
         {
           $commands .= ' -strip ';
         }
 
-        // Resize watermark file
-        $commands  .= ' "'.$wtm_file.'" -resize "'.self::$dst_imginfo['width'].'x'.self::$dst_imginfo['height'].'"';
+        if($imginfo['animation'] && $anim && $imginfo['type'] == 'GIF')
+        {
+          // TODO: resize of watermark when its animation
+          // Positioning of the watermark
+          $commands .= ' "'.$src_file.'" -coalesce -gravity "northwest" -geometry "+'.$position[0].'+'.$position[1].'" null:';
 
-        // Positioning of the watermark
-        $commands  .= ' "'.$src_file.'" +swap -gravity "northwest" -geometry "+'.$position[0].'+'.$position[1].'"';
+          // copy watermark on top of image
+          $commands .= ' "'.$wtm_file.'" -layers composite -layers optimize '.$dst_file.'"';
+        }
+        else
+        {
+          if($imginfo['animation'] && !$anim)
+          {
+            // If resizing an animation but not preserving the animation, consider only first frame
+            $src_file = $src_file.'[0]';
+          }
 
-        // copy watermark on top of image
-        $commands  .= ' -define compose:args='.$opacity.',100 -compose dissolve -composite'.' "'.$dst_file.'"';
+          // Resize watermark file
+          $commands .= ' "'.$wtm_file.'" -resize "'.self::$dst_imginfo['width'].'x'.self::$dst_imginfo['height'].'"';
+
+          // Positioning of the watermark
+          $commands .= ' "'.$src_file.'" +swap -gravity "northwest" -geometry "+'.$position[0].'+'.$position[1].'"';
+
+          // copy watermark on top of image
+          $commands .= ' -define compose:args='.$opacity.',100 -compose dissolve -composite'.' "'.$dst_file.'"';
+        }
 
         // Assembling the shell code for the watermarking with imagick
         $convert    = $convert_path.$commands;
