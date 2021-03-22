@@ -3293,6 +3293,52 @@ class JoomIMGtools
   }
 
   /**
+   * Output image to screen and close script
+   * (use for debugging only)
+   *
+   * @param   resource   $img   GDobject of the image to filter (has to be truecolor)
+   * @param   string     $type  Image type (PNG, GIF or JPG)
+   *
+   * @return  display image on success.
+   * @since   3.6.0
+   */
+  protected static function dump_GD($img, $type)
+  {
+    ob_start();
+
+    switch ($type)
+    {
+      case 'PNG':
+        // Save transparency -- needs at least php v4.3.2
+        imagealphablending($img, false);
+        imagesavealpha($img, true);
+
+        $src = 'image/png';
+        imagepng($img);
+        break;
+      case 'GIF':
+        $src = 'image/gif';
+        imagegif($img);
+        break;
+      case 'JPG':
+        $src = 'image/jpeg';
+        imagejpeg($img);
+        break;
+      default:
+        $src = 'image/jpeg';
+        imagejpeg($img);
+        break;
+    }
+
+    imagedestroy($img);
+    $i = ob_get_clean();
+
+    echo "<img src='data:".$src.";base64," . base64_encode( $i )."'>";
+
+    die;
+  }
+
+  /**
    * Read image metadata from image
    *
    * @param   string  img  The image file to read
