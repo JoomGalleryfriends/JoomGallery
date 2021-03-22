@@ -250,8 +250,26 @@ class JoomGalleryViewImage extends JoomGalleryView
       $method      = $this->_config->get('jg_thumbcreation');
       $setting      = 3;  // 0=noresize 1=height,2=width,3=crop or 4=maxdimension
       $debugoutput = '';
+      if($type == 'thumb')
+      {
+        $metadata  = false;
+        $animation = false;
+        $sharpen   = true;
+      }
+      elseif($type == 'orig')
+      {
+        $metadata  = true;
+        $animation = true;
+        $sharpen   = false;
+      }
+      else
+      {
+        $metadata  = false;
+        $animation = true;
+        $sharpen   = false;
+      }
 
-      $success = JoomIMGtools::resizeImage($debugoutput,$img,$img_output,$setting,$cropwidth,$cropheight,$method,100,$croppos,0,false,false,false,true);
+      $success = JoomIMGtools::resizeImage($debugoutput,$img,$img_output,$setting,$cropwidth,$cropheight,$method,100,$croppos,0,false,$metadata,$animation,$sharpen);
 
       if (!$success)
       {
@@ -260,9 +278,9 @@ class JoomGalleryViewImage extends JoomGalleryView
     }
 
     // watermark image
-    if ($include_watermark)
+    if($include_watermark)
     {
-      if ($crop_image)
+      if($crop_image)
       {
         $src_img = $img_output;
       }
@@ -277,6 +295,21 @@ class JoomGalleryViewImage extends JoomGalleryView
       $watermarksize = $this->_config->get('jg_watermarksize');
       $opacity       = 100;
       $debugoutput   = '';
+      if($type == 'thumb')
+      {
+        $metadata  = false;
+        $animation = false;
+      }
+      elseif($type == 'orig')
+      {
+        $metadata  = true;
+        $animation = true;
+      }
+      else
+      {
+        $metadata  = false;
+        $animation = true;
+      }
 
       // Checks if watermark file is existent
       if(!JFile::exists($wtm_file))
@@ -284,7 +317,7 @@ class JoomGalleryViewImage extends JoomGalleryView
         $this->displayError(JText::_('COM_JOOMGALLERY_COMMON_ERROR_WATERMARK_NOT_EXIST'));
       }
 
-      $success = JoomIMGtools::watermarkImage($debugoutput,$src_img,$img_output,$wtm_file,$method,$position,$watermarkzoom,$watermarksize,$opacity,false,false);
+      $success = JoomIMGtools::watermarkImage($debugoutput,$src_img,$img_output,$wtm_file,$method,$position,$watermarkzoom,$watermarksize,$opacity,$metadata,$animation);
 
       if (!$success)
       {
