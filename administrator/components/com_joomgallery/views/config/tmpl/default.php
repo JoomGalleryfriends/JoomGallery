@@ -139,8 +139,9 @@ echo JHtml::_('tabs.panel', JText::_('COM_JOOMGALLERY_CONFIG_GS_TAB_IMAGE_PROCES
 JHTML::_('joomconfig.start', 'page3');
     JHTML::_('joomconfig.intro', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_INTRO'));
     JHTML::_('joomconfig.intro', '<strong>'.JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_CREATOR').'</strong>');
-    $thumbcreator[] = JHTML::_('select.option','gd1', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_GDLIB'));
+    //$thumbcreator[] = JHTML::_('select.option','gd1', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_GDLIB'));
     //$thumbcreator[] = JHTML::_('select.option','gd2', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_GD2LIB'));
+    $thumbcreator[] = JHTML::_('select.option','gd2', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_GDLIB'));
     $thumbcreator[] = JHTML::_('select.option','im', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_IMAGEMAGICK'));
     $mc_jg_thumbcreation = JHTML::_('select.genericlist',$thumbcreator, 'jg_thumbcreation', 'class="inputbox" size="2"', 'value', 'text', $this->_config->jg_thumbcreation);
     JHTML::_('joomconfig.row', 'jg_thumbcreation', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_CREATOR', $mc_jg_thumbcreation);

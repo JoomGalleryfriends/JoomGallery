@@ -464,7 +464,7 @@ class Com_JoomGalleryInstallerScript
           case 'jg_thumbcreation':
             if ($old == 'gd1' || $old == 'gd2')
             {
-              $new_configs->jg_thumbcreation = 'gd1';
+              $new_configs->jg_thumbcreation = 'gd2';
             }
             else
             {

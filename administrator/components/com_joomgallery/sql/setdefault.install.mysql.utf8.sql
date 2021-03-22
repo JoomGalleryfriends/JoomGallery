@@ -28,7 +28,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
 
 
   /* ### General settings->Image Processing ####*/
-  /*jg_thumbcreation*/          'gd1',
+  /*jg_thumbcreation*/          'gd2',
   /*jg_fastgd2thumbcreation*/   1,
   /*jg_impath*/                 '',
   /*jg_delete_original*/        0,
