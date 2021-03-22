@@ -2928,17 +2928,9 @@ class JoomIMGtools
     $tmp = null;
     $tmpinfo = $imginfo;
     $tmpinfo['type'] = $wtminfo['type'];
+
     // Create empty GD-Object
-    if(function_exists('imagecreatetruecolor'))
-    {
-      // Needs at least php v4.0.6
-      $tmp = imagecreatetruecolor($tmpinfo['width'], $tmpinfo['height']);
-      imagealphablending($tmp, false);
-    }
-    else
-    {
-      $tmp = imagecreate($tmpinfo['width'], $tmpinfo['height']);
-    }
+    $tmp = self::imageCreateEmpty_GD($tmp, $tmpinfo, true);
 
     // positioning watermark
     if(function_exists('imagecopyresampled'))
