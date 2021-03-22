@@ -252,7 +252,7 @@ class JoomGalleryViewImage extends JoomGalleryView
       $debugoutput = '';
 
       $success = JoomIMGtools::resizeImage($debugoutput,$img,$img_output,$setting,$cropwidth,$cropheight,$method,100,$croppos,0,false,false,false,true);
-      
+
       if (!$success)
       {
         $this->displayError('Image cropping not successful');
@@ -275,7 +275,7 @@ class JoomGalleryViewImage extends JoomGalleryView
       $position      = $this->_config->get('jg_watermarkpos');
       $watermarkzoom = $this->_config->get('jg_watermarkzoom');
       $watermarksize = $this->_config->get('jg_watermarksize');
-      $opacity       = 70;
+      $opacity       = 100;
       $debugoutput   = '';
 
       // Checks if watermark file is existent
