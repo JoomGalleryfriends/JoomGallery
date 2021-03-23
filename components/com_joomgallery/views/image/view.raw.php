@@ -226,53 +226,115 @@ class JoomGalleryViewImage extends JoomGalleryView
     JResponse::setHeader('Content-disposition', $disposition.'; filename='.basename($img));
 
     // Inlude watermark and crop
-    if(($include_watermark || $crop_image) && !$model->isGif($img))
+    // Create tmp file
+    $tmp_folder = JFactory::getApplication()->get('tmp_path');
+    $img_output   = $tmp_folder.'/tmp_'.basename($img);
+    if($crop_image || $include_watermark)
     {
-      $img_resource = null;
-      if($crop_image)
+      if(!JFile::copy($img, $img_output))
       {
-        $croppos  = JRequest::getInt('pos');
-        $offsetx  = JRequest::getInt('x');
-        $offsety  = JRequest::getInt('y');
-        $img_resource = $model->cropImage($img, $cropwidth, $cropheight, $croppos, $offsetx, $offsety);
-      }
-
-      if($include_watermark)
-      {
-        if(!$img_resource = $model->includeWatermark($img, $img_resource, $cropwidth, $cropheight))
-        {
-          return $this->displayError($model->getError());
-        }
-      }
-
-      if(!$img_resource)
-      {
-        echo JFile::read($img);
-      }
-      else
-      {
-        switch($mime)
-        {
-          case 'image/gif':
-            imagegif($img_resource);
-            break;
-          case 'image/png':
-            imagepng($img_resource);
-            break;
-          case 'image/jpeg':
-            $quali = JRequest::getInt('quali', 95);
-            imagejpeg($img_resource, null, $quali);
-            break;
-          default:
-            return $this->displayError(JText::sprintf('COM_JOOMGALLERY_COMMON_MSG_MIME_NOT_ALLOWED', $mime));
-        }
-
-        imagedestroy($img_resource);
+        return $this->displayError(JText::_('COM_JOOMGALLERY_COMMON_MSG_IMAGE_NOT_EXIST'));
       }
     }
     else
     {
-      echo JFile::read($img);
+      $img_output = $img;
+    }
+
+    // crop image
+    if ($crop_image)
+    {
+      $croppos     = JRequest::getInt('pos');
+      $offsetx     = JRequest::getInt('x');   // what are this variables for?
+      $offsety     = JRequest::getInt('y');   // what are this variables for? --> they werent used in the past either...
+      $method      = $this->_config->get('jg_thumbcreation');
+      $setting      = 3;  // 0=noresize 1=height,2=width,3=crop or 4=maxdimension
+      $debugoutput = '';
+      if($type == 'thumb')
+      {
+        $metadata  = false;
+        $animation = false;
+        $sharpen   = true;
+      }
+      elseif($type == 'orig')
+      {
+        $metadata  = true;
+        $animation = true;
+        $sharpen   = false;
+      }
+      else
+      {
+        $metadata  = false;
+        $animation = true;
+        $sharpen   = false;
+      }
+
+      $success = JoomIMGtools::resizeImage($debugoutput,$img,$img_output,$setting,$cropwidth,$cropheight,$method,100,$croppos,0,false,$metadata,$animation,$sharpen);
+
+      if (!$success)
+      {
+        $this->displayError('Image cropping not successful');
+      }
+    }
+
+    // watermark image
+    if($include_watermark)
+    {
+      if($crop_image)
+      {
+        $src_img = $img_output;
+      }
+      else
+      {
+        $src_img = $img;
+      }
+      $wtm_file      = JPath::clean($this->_ambit->get('wtm_path').$this->_config->get('jg_wmfile'));
+      $method        = $this->_config->get('jg_thumbcreation');
+      $position      = $this->_config->get('jg_watermarkpos');
+      $watermarkzoom = $this->_config->get('jg_watermarkzoom');
+      $watermarksize = $this->_config->get('jg_watermarksize');
+      $opacity       = 100;
+      $debugoutput   = '';
+      if($type == 'thumb')
+      {
+        $metadata  = false;
+        $animation = false;
+      }
+      elseif($type == 'orig')
+      {
+        $metadata  = true;
+        $animation = true;
+      }
+      else
+      {
+        $metadata  = false;
+        $animation = true;
+      }
+
+      // Checks if watermark file is existent
+      if(!JFile::exists($wtm_file))
+      {
+        $this->displayError(JText::_('COM_JOOMGALLERY_COMMON_ERROR_WATERMARK_NOT_EXIST'));
+      }
+
+      $success = JoomIMGtools::watermarkImage($debugoutput,$src_img,$img_output,$wtm_file,$method,$position,$watermarkzoom,$watermarksize,$opacity,$metadata,$animation);
+
+      if (!$success)
+      {
+        $this->displayError(JText::_($debugoutput));
+      }
+    }
+
+    // output image
+    echo JFile::read($img_output);
+
+    if($crop_image || $include_watermark)
+    {
+      // delete tmp file
+      if(JFile::exists($img_output))
+      {
+        JFile::delete($img_output);
+      }
     }
   }
 
