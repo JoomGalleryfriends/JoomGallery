@@ -229,11 +229,11 @@ class JHTMLJoomConfig
         <div id="testsettings" class="accordion">
           <div class="accordion-group">
             <div class="accordion-heading">
-              <a id="detailIMG_title" class="accordion-toggle" data-toggle="collapse" data-parent="#testsettings" href="#detailIMG">
+              <p id="detailIMG_title" class="accordion-title">
                 <?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DETAILINFO'); ?>
-              </a>
+              </p>
             </div>
-            <div id="detailIMG" class="accordion-body collapse">
+            <div id="detailIMG" class="accordion-body">
               <div class="accordion-inner">
                 <table class="adminlist table table-bordered">
                   <tbody>
@@ -279,11 +279,11 @@ class JHTMLJoomConfig
           </div>
           <div class="accordion-group">
             <div class="accordion-heading">
-              <a id="thumbIMG_title" class="accordion-toggle" data-toggle="collapse" data-parent="#testsettings" href="#thumbIMG">
+              <p id="thumbIMG_title" class="accordion-title">
                 <?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_THUMBINFO'); ?>
-              </a>
+              </p>
             </div>
-            <div id="thumbIMG" class="accordion-body collapse">
+            <div id="thumbIMG" class="accordion-body">
               <div class="accordion-inner">
                 <table class="adminlist table table-bordered">
                   <tbody>
