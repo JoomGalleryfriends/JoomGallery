@@ -374,6 +374,7 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     }
 
     // Trigger the before save event.
+    JPluginHelper::importPlugin('content');
     $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, false, $data));
 
     if($move && !$this->moveImage($row, $row->catid, $catid_old))
@@ -464,6 +465,7 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     }
 
     // Trigger the before save event.
+    JPluginHelper::importPlugin('content');
     $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image.quick', &$row, false, $data));
 
     // Store the entry to the database
@@ -877,6 +879,9 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     {
       return false;
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.image', array($row->id), array('publish'=>1-$published,'task'=>'publish')));
 
     return true;
   }

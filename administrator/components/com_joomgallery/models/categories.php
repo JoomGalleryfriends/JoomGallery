@@ -591,6 +591,7 @@ class JoomGalleryModelCategories extends JoomGalleryModel
           throw new RuntimeException($row->getError());
         }
 
+        JPluginHelper::importPlugin('content');
         $this->_mainframe->triggerEvent('onContentAfterDelete', array(_JOOM_OPTION.'.category', $row));
 
         // Category successfully deleted
@@ -721,7 +722,8 @@ class JoomGalleryModelCategories extends JoomGalleryModel
       }
     }
 
-    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION, $cid, $publish));
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.category', $cid, array('publish'=>$publish,'task'=>$task)));
 
     return $count;
   }

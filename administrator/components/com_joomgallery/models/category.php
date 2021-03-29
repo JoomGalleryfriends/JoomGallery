@@ -81,6 +81,7 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       }
     }
 
+    JPluginHelper::importPlugin('content');
     $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.category', $this->_data));
 
     return $this->_data;
@@ -401,6 +402,9 @@ class JoomGalleryModelCategory extends JoomGalleryModel
           return false;
         }
 
+        JPluginHelper::importPlugin('content');
+        $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, true, $data));
+
         // Store the entry to the database
         if(!$row->store())
         {
@@ -531,6 +535,9 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       return false;
     }
 
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, false, $data));
+
     // Store the entry to the database
     if(!$row->store())
     {
@@ -539,7 +546,7 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       return false;
     }
 
-    $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$row, true));
+    $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$row, false));
 
     return $row->cid;
   }
@@ -670,6 +677,9 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         return false;
       }
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$table, false));
 
     return true;
   }
@@ -841,6 +851,7 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         return false;
       }
 
+      JPluginHelper::importPlugin('content');
       $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$table, true));
 
       // Get the new category ID
@@ -1007,6 +1018,9 @@ class JoomGalleryModelCategory extends JoomGalleryModel
 
         return false;
       }
+
+      JPluginHelper::importPlugin('content');
+      $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$table, false));
     }
 
     return true;

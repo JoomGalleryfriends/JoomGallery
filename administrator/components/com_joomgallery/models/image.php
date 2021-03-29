@@ -102,6 +102,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $row->copy_original = $this->_mainframe->getUserStateFromRequest('joom.image.copy_original',  'copy_original', 0, 'int');
     }
 
+    JPluginHelper::importPlugin('content');
     $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.image', $row));
 
     $this->_data = $row;
@@ -364,6 +365,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
       }
 
       // Trigger the before save event.
+      JPluginHelper::importPlugin('content');
 		  $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, true, $data));
 
       // Copy the image files, the row will be stored, too
@@ -715,6 +717,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
     }
 
     // Trigger the before save event.
+    JPluginHelper::importPlugin('content');
 		$this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false, $data));
 
     // Move the image if necessary (the data is stored in function moveImage because
@@ -1173,6 +1176,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
     }
 
     // Trigger the before save event.
+    JPluginHelper::importPlugin('content');
 		$this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$item, false));
 
     // Store the entry to the database

@@ -96,6 +96,9 @@ class JoomAdminConfig extends JoomConfig
       return false;
     }
 
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.config', &$config, $isNew, $data));
+
     if(!$config->store())
     {
       return false;
@@ -112,6 +115,8 @@ class JoomAdminConfig extends JoomConfig
     {
       return false;
     }
+
+    $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.config', &$config, $isNew));
 
     return $config->id;
   }
@@ -1045,6 +1050,9 @@ joom_local.css.README umbenennen und anpassen
     {
       return false;
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentAfterDelete', array(_JOOM_OPTION.'.config', $config));
 
     return true;
   }

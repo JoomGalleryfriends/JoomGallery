@@ -525,6 +525,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
         throw new RuntimeException(JText::sprintf('COM_JOOMGALLERY_MAIMAN_MSG_NOT_DELETE_IMAGE_DATA', $cid));
       }
 
+      JPluginHelper::importPlugin('content');
       $this->_mainframe->triggerEvent('onContentAfterDelete', array(_JOOM_OPTION.'.image', $row));
 
       // Image successfully deleted
@@ -591,6 +592,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       }
     }
 
+    JPluginHelper::importPlugin('content');
     $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.image', $cid, array('publish'=>$publish,'task'=>$task)));
 
     return $count;

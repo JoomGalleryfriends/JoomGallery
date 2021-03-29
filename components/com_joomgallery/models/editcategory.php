@@ -441,6 +441,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
           return false;
         }
 
+        JPluginHelper::importPlugin('content');
+        $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, true, $data));
+
         // Store the entry to the database
         if(!$row->store())
         {
@@ -569,6 +572,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
       $this->setError($row->getError());
       return false;
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, false, $data));
 
     // Store the entry to the database
     if(!$row->store())
@@ -954,6 +960,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
     {
       return false;
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.category', array($row->cid), array('publish'=>1-$published,'task'=>'publish')));
 
     return true;
   }
