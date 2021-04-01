@@ -775,7 +775,7 @@ class JoomGalleryViewCategory extends JoomGalleryView
         $images[$key]->isnew = JoomHelper::checkNew($image->imgdate, $this->_config->get('jg_daysnew'));
       }
 
-      $images[$key]->link = JHTML::_('joomgallery.openimage', $this->_config->get('jg_detailpic_open'), $image);
+      $images[$key]->link = JHTML::_('joomgallery.openimage', $this->_config->get('jg_detailpic_open'), $image).JHTML::_('joomgallery.anchor');
 
       if($this->_config->get('jg_showauthor'))
       {
