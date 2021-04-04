@@ -159,7 +159,7 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       // Unset the data of fields which we aren't allowed to change
       $form->setFieldAttribute('published', 'filter', 'unset');
     }
-
+    
     if(!$this->_config->get('jg_edit_metadata'))
     {
       $form->setFieldAttribute('metakey', 'disabled', 'true');
@@ -373,9 +373,6 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       }
     }
 
-    // Trigger the before save event.
-    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, false, $data));
-
     if($move && !$this->moveImage($row, $row->catid, $catid_old))
     {
       $this->_mainframe->enqueueMessage(JText::_('COM_JOOMGALLERY_EDITIMAGE_MSG_COULD_NOT_MOVE_IMAGE'), 'notice');
@@ -408,7 +405,6 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       $row->reorder('catid = '.$catid_old);
     }
 
-    // Trigger the after save event.
     $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image', &$row, false));
 
     return $row->id;
@@ -463,16 +459,13 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       throw new RuntimeException($row->getError());
     }
 
-    // Trigger the before save event.
-    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image.quick', &$row, false, $data));
-
     // Store the entry to the database
     if(!$row->store())
     {
       throw new RuntimeException($row->getError());
     }
 
-    // Trigger the after save event.
+    // Successfully stored image
     $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image.quick', &$row, false));
 
     return true;

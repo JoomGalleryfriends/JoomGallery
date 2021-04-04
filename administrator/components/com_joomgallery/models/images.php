@@ -591,8 +591,6 @@ class JoomGalleryModelImages extends JoomGalleryModel
       }
     }
 
-    $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.image', $cid, array('publish'=>$publish,'task'=>$task)));
-
     return $count;
   }
 
@@ -806,10 +804,6 @@ class JoomGalleryModelImages extends JoomGalleryModel
         $img_count++;
       }
 
-      // trigger Event "onJoomAfterRecreate". Attached is an array with infos about the recreation
-      // files: path to the files; orig_exists: true, if original exists; auto_rotation: is there auto rotation for the different image
-      $this->_mainframe->triggerEvent('onJoomAfterRecreate', array( 'files'=> array('original'=>$orig,'detail'=>$img,'thumbnail'=>$thumb),'orig_exists'=>$orig_existent,'auto_rotation'=> array('original'=>$autorot_orig,'detail'=>$autorot_det,'thumbnail'=>$autorot_thumb) ));
-
       unset($cids[$key]);
 
       // Check remaining time
@@ -1011,10 +1005,6 @@ class JoomGalleryModelImages extends JoomGalleryModel
           $err          = true;
         }
       }
-
-      // trigger Event "onJoomAfterRotate". Attached is an array with infos about the rotation
-      // files: path to the files; rotation_angle: the angle by which the images were rotated; rotateImageTypes: 1(Thumbs and details), 2(All images)
-      $this->_mainframe->triggerEvent('onJoomAfterRotate', array( 'files'=> array('original'=>$orig,'detail'=>$img,'thumbnail'=>$thumb),'rotation_angle'=> $rotateImageAngle,'rotateimagetypes'=>$rotateimagetypes));
 
       unset($cids[$key]);
 
