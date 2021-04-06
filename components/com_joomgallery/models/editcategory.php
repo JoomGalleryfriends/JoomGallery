@@ -266,7 +266,7 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
 
     // Creating a main category means creating
     // a category in ROOT category
-    if($data['parent_id'] == 0)
+    if($data['parent_id'] == 0 || $data['parent_id'] == "")
     {
       $data['parent_id'] = 1;
     }
