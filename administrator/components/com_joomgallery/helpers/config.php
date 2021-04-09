@@ -405,7 +405,8 @@ class JoomConfig extends JObject
       }
 
       JPluginHelper::importPlugin('content');
-      $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.config', (object)$properties));
+      $_mainframe = JFactory::getApplication('administrator');
+      $_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.config', (object)$properties));
 
       $this->_id = $properties['id'];
     }
