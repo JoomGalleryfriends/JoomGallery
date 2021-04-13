@@ -315,6 +315,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
       }
     }
 
+    // Trigger the before save event. ($row contains still the old values)
+    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $row, $isNew, $data));
+
     // Bind the form fields to the category table
     if(!$row->bind($data))
     {

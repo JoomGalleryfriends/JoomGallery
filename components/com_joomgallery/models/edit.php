@@ -321,6 +321,9 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       $this->_mainframe->redirect(JRoute::_('index.php?option=com_joomgallery&view=gallery', false), JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_TO_EDIT_IMAGE'), 'notice');
     }
 
+    // Trigger the before save event. ($row contains still the old values)
+    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, false, $data));
+
     // Read old category ID
     $catid_old  = $row->catid;
 
@@ -451,6 +454,9 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     {
       throw new RuntimeException(JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_TO_EDIT_IMAGE'));
     }
+
+    // Trigger the before save event. ($row contains still the old values)
+    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, false, $data));
 
     // Bind the form fields to the images table
     if(!$row->bind($data))

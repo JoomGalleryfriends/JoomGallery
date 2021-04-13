@@ -283,6 +283,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $isNew = true;
     }
 
+    // Trigger the before save event. ($row contains still the old values)
+    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, $isNew, $data));
+
     // Bind the form fields to the image table
     if(!$row->bind($data))
     {
@@ -1161,6 +1164,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
         }
       }
     }
+
+    // Trigger the before save event. ($item contains still the old values)
+    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $item, false, array('catid'=>$catid_new)));
 
     // If all folder operations for the image were successful
     // modify the database entry
