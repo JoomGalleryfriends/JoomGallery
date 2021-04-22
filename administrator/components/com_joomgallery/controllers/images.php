@@ -598,6 +598,14 @@ class JoomGalleryControllerImages extends JoomGalleryController
       $this->redirect();
     }
 
+    // Load category information for permission checks
+    $query = $this->_db->getQuery(true)
+          ->select('cid, owner')
+          ->from(_JOOM_TABLE_CATEGORIES)
+          ->where('cid = '.$catid);
+    $this->_db->setQuery($query);
+    $category = $this->_db->loadObject();
+
     $user = JFactory::getUser();
 
     // Instantiate and load an image table
@@ -610,8 +618,21 @@ class JoomGalleryControllerImages extends JoomGalleryController
     {
       $row->load($id);
 
-      if(!$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid) ||
-        (!$user->authorise('core.edit', _JOOM_OPTION.'.image.'.$id) && (!$user->authorise('core.edit.own', _JOOM_OPTION.'.image.'.$id) || !$row->owner || $row->owner != $user->get('id'))))
+      // Check whether we are allowed to move to target category
+      if(  (!$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid)
+        &&   (!$user->authorise('joom.upload.inown', _JOOM_OPTION.'.category.'.$catid)
+             || !$category->owner
+             || $category->owner != $user->get('id')
+             )
+           )
+        // Check whether we are allowed to move the image
+        || (!$user->authorise('core.edit', _JOOM_OPTION.'.image.'.$id)
+             && (!$user->authorise('core.edit.own', _JOOM_OPTION.'.image.'.$id)
+             || !$row->owner
+             || $row->owner != $user->get('id')
+                )
+           )
+        )
       {
         $unaffected_images++;
         continue;
@@ -625,7 +646,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
 
     if($unaffected_images)
     {
-      JError::raiseNotice(403, JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_MOVE_NOT_PERMITTED', $unaffected_images));
+      JError::raiseWarning(403, JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_MOVE_NOT_PERMITTED', $unaffected_images));
     }
 
     if($count)
