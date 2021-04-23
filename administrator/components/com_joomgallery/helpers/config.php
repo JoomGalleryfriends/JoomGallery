@@ -384,7 +384,7 @@ class JoomConfig extends JObject
       $config->load($this->_id);
 
       JPluginHelper::importPlugin('content');
-      $mainframe = JFactory::getApplication('administrator');
+      $mainframe = JFactory::getApplication();
       $mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.config', $config));
 
       // Get config values
@@ -405,7 +405,7 @@ class JoomConfig extends JObject
       }
 
       JPluginHelper::importPlugin('content');
-      $mainframe = JFactory::getApplication('administrator');
+      $mainframe = JFactory::getApplication();
       $mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.config', (object)$properties));
 
       $this->_id = $properties['id'];
