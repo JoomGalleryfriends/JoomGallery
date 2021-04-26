@@ -619,17 +619,17 @@ class JoomGalleryControllerImages extends JoomGalleryController
       $row->load($id);
 
       // Check whether we are allowed to move to target category
-      if(  (!$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid)
-        &&   (!$user->authorise('joom.upload.inown', _JOOM_OPTION.'.category.'.$catid)
-             || !$category->owner
-             || $category->owner != $user->get('id')
-             )
+      if(  (   !$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid)
+            && (   !$user->authorise('joom.upload.inown', _JOOM_OPTION.'.category.'.$catid)
+                || !$category->owner
+                || $category->owner != $user->get('id')
+               )
            )
-        // Check whether we are allowed to move the image
-        || (!$user->authorise('core.edit', _JOOM_OPTION.'.image.'.$id)
-             && (!$user->authorise('core.edit.own', _JOOM_OPTION.'.image.'.$id)
-             || !$row->owner
-             || $row->owner != $user->get('id')
+         // Check whether we are allowed to move the image
+         || (   !$user->authorise('core.edit', _JOOM_OPTION.'.image.'.$id)
+             && (   !$user->authorise('core.edit.own', _JOOM_OPTION.'.image.'.$id)
+                 || !$row->owner
+                 || $row->owner != $user->get('id')
                 )
            )
         )
@@ -646,7 +646,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
 
     if($unaffected_images)
     {
-      JError::raiseWarning(403, JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_MOVE_NOT_PERMITTED', $unaffected_images));
+      JFactory::getApplication()->enqueueMessage(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_MOVE_NOT_PERMITTED', $unaffected_images), 'warning');
     }
 
     if($count)
