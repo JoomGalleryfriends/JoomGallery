@@ -383,10 +383,6 @@ class JoomConfig extends JObject
       $config = JTable::getInstance('joomgalleryconfig', 'Table');
       $config->load($this->_id);
 
-      JPluginHelper::importPlugin('content');
-      $mainframe = JFactory::getApplication();
-      $mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.config', $config));
-
       // Get config values
       $properties = $config->getProperties();
     }
@@ -403,10 +399,6 @@ class JoomConfig extends JObject
       {
         JError::raiseError(500, JText::_('Error loading config data'));
       }
-
-      JPluginHelper::importPlugin('content');
-      $mainframe = JFactory::getApplication();
-      $mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.config', (object)$properties));
 
       $this->_id = $properties['id'];
     }
