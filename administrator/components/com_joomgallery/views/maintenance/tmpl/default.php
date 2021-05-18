@@ -32,6 +32,7 @@ echo JHtml::_('tabs.panel', JText::_('COM_JOOMGALLERY_MAIMAN_VOTES_MANAGER'), 'c
 echo $this->loadTemplate('votes');
 echo JHtml::_('tabs.panel', JText::_('COM_JOOMGALLERY_MAIMAN_TAB_DATABASE'), 'cpanel-panel-joom-maintenance-database');
 echo $this->loadTemplate('database');
+echo $this->event->afterDisplayTabs;
 echo JHtml::_('tabs.end');
 JHtml::_('joomgallery.credits'); ?>
 </div>
