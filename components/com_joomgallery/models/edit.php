@@ -159,7 +159,7 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       // Unset the data of fields which we aren't allowed to change
       $form->setFieldAttribute('published', 'filter', 'unset');
     }
-    
+
     if(!$this->_config->get('jg_edit_metadata'))
     {
       $form->setFieldAttribute('metakey', 'disabled', 'true');
@@ -321,6 +321,9 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       $this->_mainframe->redirect(JRoute::_('index.php?option=com_joomgallery&view=gallery', false), JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_TO_EDIT_IMAGE'), 'notice');
     }
 
+    // Trigger the before save event. ($row contains still the old values)
+    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, false, $data));
+
     // Read old category ID
     $catid_old  = $row->catid;
 
@@ -373,6 +376,10 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       }
     }
 
+    // Trigger the before save event.
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, false, $data));
+
     if($move && !$this->moveImage($row, $row->catid, $catid_old))
     {
       $this->_mainframe->enqueueMessage(JText::_('COM_JOOMGALLERY_EDITIMAGE_MSG_COULD_NOT_MOVE_IMAGE'), 'notice');
@@ -405,6 +412,7 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       $row->reorder('catid = '.$catid_old);
     }
 
+    // Trigger the after save event.
     $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image', &$row, false));
 
     return $row->id;
@@ -447,6 +455,9 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       throw new RuntimeException(JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_TO_EDIT_IMAGE'));
     }
 
+    // Trigger the before save event. ($row contains still the old values)
+    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, false, $data));
+
     // Bind the form fields to the images table
     if(!$row->bind($data))
     {
@@ -459,13 +470,17 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       throw new RuntimeException($row->getError());
     }
 
+    // Trigger the before save event.
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image.quick', &$row, false, $data));
+
     // Store the entry to the database
     if(!$row->store())
     {
       throw new RuntimeException($row->getError());
     }
 
-    // Successfully stored image
+    // Trigger the after save event.
     $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image.quick', &$row, false));
 
     return true;
@@ -870,6 +885,9 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     {
       return false;
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.image', array($row->id), array('publish'=>1-$published,'task'=>'publish')));
 
     return true;
   }

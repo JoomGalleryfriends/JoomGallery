@@ -416,6 +416,8 @@ class JoomGalleryModelCategory extends JoomGalleryModel
     $categories = array_unique(array_merge($categories, array($catid)));
     $this->_mainframe->setUserState('joom.unlockedCategories', $categories);
 
+    $this->_mainframe->triggerEvent('onJoomAfterUnlockCat', array($catid));
+
     return true;
   }
 

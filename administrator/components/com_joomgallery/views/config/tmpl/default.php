@@ -1032,9 +1032,11 @@ JHTML::_('joomconfig.start', 'page28');
     JHTML::_('joomconfig.row', 'jg_showsearchfavourite', 'yesno', 'COM_JOOMGALLERY_CONFIG_COMMON_FAVOURITES_LINK', $this->_config->jg_showsearchfavourite);
     JHTML::_('joomconfig.row', 'jg_search_report_images', 'yesno', 'COM_JOOMGALLERY_CONFIG_COMMON_REPORT_IMAGES', $this->_config->jg_search_report_images);
     JHTML::_('joomconfig.row', 'jg_showsearcheditorlinks', 'yesno', 'COM_JOOMGALLERY_CONFIG_COMMON_EDITOR_LINKS', $this->_config->jg_showsearcheditorlinks);
-    JHTML::_('joomconfig.end');
+  JHTML::_('joomconfig.end');
 
 echo JHtml::_('tabs.end');
+
+echo $this->event->afterDisplayTabs;
 
 echo JHtml::_('tabs.end');
 

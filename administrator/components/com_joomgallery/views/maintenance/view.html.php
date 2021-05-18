@@ -215,6 +215,11 @@ class JoomGalleryViewMaintenance extends JoomGalleryView
       }
     }
 
+    // Additional Tabs added by plugins
+    $this->event  = new stdClass();
+    $addTabs  = $this->_mainframe->triggerEvent('onJoomAfterDisplayTabs', array(_JOOM_OPTION.'.maintanance',$tab));
+    $this->event->afterDisplayTabs = trim(implode('', $addTabs));
+
     $this->assignRef('current_tab',   $tab);
     $this->assignRef('startOffset',   $tabs[$tab]);
     $this->assignRef('checked',       $checked);

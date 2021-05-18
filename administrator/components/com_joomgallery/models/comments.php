@@ -470,6 +470,9 @@ class JoomGalleryModelComments extends JoomGalleryModel
           $this->setError($row->getErrorMsg());
           return false;
         }
+
+        JPluginHelper::importPlugin('content');
+        $this->_mainframe->triggerEvent('onContentAfterDelete', array(_JOOM_OPTION.'.comment', $row));
       }
 
       return count($cids);
@@ -546,6 +549,9 @@ class JoomGalleryModelComments extends JoomGalleryModel
         }
       }
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.comment', $cid, array('publish'=>$publish,'task'=>$task)));
 
     return count($cid);
   }

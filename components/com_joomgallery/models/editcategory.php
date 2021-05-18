@@ -315,6 +315,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
       }
     }
 
+    // Trigger the before save event. ($row contains still the old values)
+    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $row, $isNew, $data));
+
     // Bind the form fields to the category table
     if(!$row->bind($data))
     {
@@ -440,6 +443,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
           $this->setError($row->getError());
           return false;
         }
+
+        JPluginHelper::importPlugin('content');
+        $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, true, $data));
 
         // Store the entry to the database
         if(!$row->store())
@@ -569,6 +575,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
       $this->setError($row->getError());
       return false;
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, false, $data));
 
     // Store the entry to the database
     if(!$row->store())
@@ -954,6 +963,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
     {
       return false;
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.category', array($row->cid), array('publish'=>1-$published,'task'=>'publish')));
 
     return true;
   }
