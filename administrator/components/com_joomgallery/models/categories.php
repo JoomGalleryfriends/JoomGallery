@@ -630,8 +630,11 @@ class JoomGalleryModelCategories extends JoomGalleryModel
         }
       }
       $msg .= '<br /><br />'.JText::_('COM_JOOMGALLERY_CATMAN_MSG_DELETECOMPLETELY_NOTE').'<p/>
-      <form action="index.php?option='._JOOM_OPTION.'&amp;controller=categories&amp;task=deletecompletely" method="post" onsubmit="if(!this.security_check.checked){return false;}">
-        <span><input type="checkbox" name="security_check" value="1" /> <button class="btn">'.JText::_('COM_JOOMGALLERY_CATMAN_MSG_DELETECOMPLETELY_BUTTON_LABEL').'</button></span>
+      <form method="post">
+        <span><button class="btn">'.JText::_('COM_JOOMGALLERY_CATMAN_MSG_DELETECOMPLETELY_BUTTON_LABEL').'</button></span>
+        <input type="hidden" name="option" value="'._JOOM_OPTION.'" />
+        <input type="hidden" name="controller" value="categories" />
+        <input type="hidden" name="task" value="deletecompletely" />
       </form><p/>';
       $this->_mainframe->enqueueMessage($msg, 'notice');
     }
