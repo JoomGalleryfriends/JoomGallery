@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -84,26 +84,21 @@ class JoomGalleryModelConfig extends JoomGalleryModel
   {
     $config = JoomConfig::getInstance();
     $status = null;
-    $output = array();
 
-    if(!empty($config->jg_impath))
+    @exec(trim($config->get('jg_impath')).'convert -version', $output_convert, $status);
+    @exec(trim($config->get('jg_impath')).'magick -version', $output_magick, $status);
+
+    if($output_magick)
     {
-      $execstring = $config->get('jg_impath').'convert -version';
+      return $output_magick[0];
+    }
+    elseif($output_convert)
+    {
+      return $output_convert[0];
     }
     else
-    {
-      $execstring = 'convert -version';
-    }
-
-    @exec($execstring, $output, $status);
-
-    if(count($output) == 0)
     {
       return 0;
-    }
-    else
-    {
-      return $output[0];
     }
   }
 

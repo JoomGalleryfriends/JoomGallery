@@ -1,5 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+  <release version="3.5.1" published="20210525">
+    <entries date="20210525">
+      <logentry type="#">Fix deletion of non-empty categories in the backend</logentry>
+    </entries>
+    <entries date="20210427">
+      <logentry type="*">Add missing permission check</logentry>
+    </entries>
+    <entries date="20210406">
+      <logentry type="#">Fix error when creating main category [PHP8]</logentry>
+      <logentry type="#">Add anchor to image link in the category view</logentry>
+    </entries>
+    <entries date="20210405">
+      <logentry type="#">Add missing language constants</logentry>
+      <logentry type="^">Fix the JED Checker errors</logentry>
+    </entries>
+  </release>
+  <release version="3.5.0" published="20201127">
+    <entries date="20201127">
+      <logentry type="#">Fixes typo and removes unnecessary language constants</logentry>
+    </entries>
+    <entries date="20201107">
+      <logentry type="#">Fixes warning when EXIF tag GPSAltitudeRef is displayed in detail view</logentry>
+    </entries>
+    <entries date="20201026">
+      <logentry type="#">Makes the display of maps in the detail view GDPR compliant</logentry>
+    </entries>
+    <entries date="20201007">
+      <logentry type="+">Adds HTML attribute 'lazy loading' to thumbnails in the frontend</logentry>
+    </entries>
+    <entries date="20200929">
+      <logentry type="#">Fixes router to make language overrides of the toplist bar possible</logentry>
+    </entries>
+    <entries date="20200922">
+      <logentry type="#">Sets max-width for report window</logentry>
+      <logentry type="^">Sets autofocus to the title field in the category form (backend and frontend)</logentry>
+    </entries>
+    <entries date="20200723">
+      <logentry type="+">Extensions and improvements to image processing and manipulation introduced with the new JoomIMGTools class</logentry>
+    </entries>
+  </release>
+  <release version="3.4.1" published="20200701">
+    <entries date="20200621">
+      <logentry type="#">Fix SQL error in some batch jobs in Maintenance Manager</logentry>
+    </entries>
+    <entries date="20200613">
+      <logentry type="^">Favourites conflict with K2 system plugin</logentry>
+    </entries>
+    <entries date="20200425">
+      <logentry type="#">Use of different post variables for the image description in the frontend upload view</logentry>
+    </entries>
+    <entries date="20200321">
+      <logentry type="^">Fix PHP 7.4 deprecated warnings</logentry>
+    </entries>
+    <entries date="20200130">
+      <logentry type="^">Add three missing languages</logentry>
+    </entries>
+    <entries date="20200125">
+      <logentry type="^">Remove link to Transifex</logentry>
+    </entries>
+    <entries date="20200108">
+      <logentry type="^">Remove duplicate lines</logentry>
+    </entries>
+  </release>
   <release version="3.4.0" published="20191206">
     <entries date="20191205">
       <logentry type="^">Improved user panel view (mobile)</logentry>

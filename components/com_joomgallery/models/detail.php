@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -923,8 +923,7 @@ class JoomGalleryModelDetail extends JoomGalleryModel
             if($exif_config_array[$tagcat][$jgtag]['Attribute'] == 'GPSAltitudeRef')
             {
               $tagdata = '';
-              $value = $exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']][0];
-              $value = bindec($value);
+              $value = (int) $exif_array[$tagcat][$exif_config_array[$tagcat][$jgtag]['Attribute']][0];
               switch($value)
               {
                 case '0':

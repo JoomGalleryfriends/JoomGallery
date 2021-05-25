@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2019  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -598,14 +598,41 @@ class JoomGalleryControllerImages extends JoomGalleryController
       $this->redirect();
     }
 
+    // Load category information for permission checks
+    $query = $this->_db->getQuery(true)
+          ->select('cid, owner')
+          ->from(_JOOM_TABLE_CATEGORIES)
+          ->where('cid = '.$catid);
+    $this->_db->setQuery($query);
+    $category = $this->_db->loadObject();
+
     $user = JFactory::getUser();
+
+    // Instantiate and load an image table
+    $row = JTable::getInstance('joomgalleryimages', 'Table');
 
     $count = 0;
     $unaffected_images = 0;
     $model = $this->getModel('image');
     foreach($cid as $id)
     {
-      if(!$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid))
+      $row->load($id);
+
+      // Check whether we are allowed to move to target category
+      if(  (   !$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid)
+            && (   !$user->authorise('joom.upload.inown', _JOOM_OPTION.'.category.'.$catid)
+                || !$category->owner
+                || $category->owner != $user->get('id')
+               )
+           )
+         // Check whether we are allowed to move the image
+         || (   !$user->authorise('core.edit', _JOOM_OPTION.'.image.'.$id)
+             && (   !$user->authorise('core.edit.own', _JOOM_OPTION.'.image.'.$id)
+                 || !$row->owner
+                 || $row->owner != $user->get('id')
+                )
+           )
+        )
       {
         $unaffected_images++;
         continue;
@@ -619,7 +646,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
 
     if($unaffected_images)
     {
-      JError::raiseNotice(403, JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_MOVE_NOT_PERMITTED', $unaffected_images));
+      JFactory::getApplication()->enqueueMessage(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_MOVE_NOT_PERMITTED', $unaffected_images), 'warning');
     }
 
     if($count)

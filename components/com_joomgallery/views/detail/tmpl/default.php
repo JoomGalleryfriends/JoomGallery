@@ -1,4 +1,16 @@
-<?php defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+<?php
+/****************************************************************************************\
+**   JoomGallery 3                                                                      **
+**   By: JoomGallery::ProjectTeam                                                       **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
+**   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
+**   Released under GNU GPL Public License                                              **
+**   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
+**   at administrator/components/com_joomgallery/LICENSE.TXT                            **
+\****************************************************************************************/
+
+defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+
 echo $this->loadTemplate('header'); ?>
   <a name="joomimg"></a>
 <?php if($this->_config->get('jg_showdetailtitle') == 1): ?>
@@ -218,7 +230,7 @@ echo $this->loadTemplate('header'); ?>
           if($row->id == $this->image->id):
             $cssid = ' id="jg_mini_akt"';
           endif; ?>
-            <img src="<?php echo $this->_ambit->getImg('thumb_url', $row); ?>"<?php echo $cssid; ?> class="jg_minipic" alt="<?php echo $row->imgtitle; ?>" /></a>
+            <img src="<?php echo $this->_ambit->getImg('thumb_url', $row); ?>"<?php echo $cssid; ?> class="jg_minipic" alt="<?php echo $row->imgtitle; ?>" loading="lazy" /></a>
 <?php     if($this->_config->get('jg_motionminis') == 2): ?>
         </li>
 <?php     endif; ?>
@@ -416,6 +428,15 @@ echo $this->loadTemplate('header'); ?>
     <div <?php echo $this->slider; ?>>
 <?php   endif; ?>
       <div id="jg_geomap">
+<?php   if($this->_mainframe->getUserState('joom.geomap.show', 0) === 0): ?>
+        <form name="mapform" action="<?php echo JRoute::_('index.php?task=map.show&id='.$this->image->id); ?>" target="_top" method="post">
+          <p class="alert alert-info center"><?php echo JText::_('COM_JOOMGALLERY_DETAIL_MAP_PRIVACY_MSG'); ?></p>
+          <p class="center">
+            <input class="btn btn-small btn-primary center" type="submit" value="<?php echo JText::_('COM_JOOMGALLERY_DETAIL_MAP_SHOW'); ?>" name="showmap" />
+          </p>
+        </form>
+<?php   else:
+          $this->_doc->addScript('http'.(JUri::getInstance()->isSSL() ? 's' : '').'://maps.google.com/maps/api/js?sensor=false'.(!empty($this->apikey) ? '&amp;key='.$this->apikey : '')); ?>
         <script type="text/javascript">
           document.write(Joomla.JText._('COM_JOOMGALLERY_DETAIL_MAPS_BROWSER_IS_INCOMPATIBLE'));
           var latlng = new google.maps.LatLng(<?php echo $this->mapdata; ?>);
@@ -431,6 +452,7 @@ echo $this->loadTemplate('header'); ?>
           });
           marker.setMap(map);
         </script>
+<?php   endif; ?>
       </div>
 <?php   if(!empty($this->slider)): ?>
     </div>
