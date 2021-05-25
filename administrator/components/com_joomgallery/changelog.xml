@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+  <release version="3.5.1" published="20210521">
+    <entries date="20210427">
+      <logentry type="*">Add missing permission check</logentry>
+    </entries>
+    <entries date="20210406">
+      <logentry type="#">Fix error when creating main category [PHP8]</logentry>
+      <logentry type="#">Add anchor to image link in the category view</logentry>
+    </entries>
+    <entries date="20210405">
+      <logentry type="#">Add missing language constants</logentry>
+      <logentry type="^">Fix the JED Checker errors</logentry>
+    </entries>
+  </release>
   <release version="3.5.0" published="20201127">
     <entries date="20201127">
       <logentry type="#">Fixes typo and removes unnecessary language constants</logentry>
