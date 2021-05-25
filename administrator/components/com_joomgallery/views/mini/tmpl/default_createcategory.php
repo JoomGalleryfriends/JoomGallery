@@ -1,4 +1,16 @@
-<?php defined('_JEXEC') or die('Restricted access');
+<?php
+/****************************************************************************************\
+**   JoomGallery 3                                                                      **
+**   By: JoomGallery::ProjectTeam                                                       **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
+**   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
+**   Released under GNU GPL Public License                                              **
+**   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
+**   at administrator/components/com_joomgallery/LICENSE.TXT                            **
+\****************************************************************************************/
+
+defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+
 if($this->_mainframe->isSite()):
   $action = JRoute::_('index.php?option='._JOOM_OPTION.'&task=category.save&tmpl=component&redirect='.base64_encode('index.php?option='._JOOM_OPTION.'&view=mini&format=raw'));
 else:

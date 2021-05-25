@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -201,7 +201,7 @@ class JoomGalleryModelCategory extends JoomGalleryModel
 
     // Creating a main category means creating
     // a category in ROOT category
-    if($data['parent_id'] == 0)
+    if($data['parent_id'] == 0 || $data['parent_id'] == "")
     {
       $data['parent_id'] = 1;
     }

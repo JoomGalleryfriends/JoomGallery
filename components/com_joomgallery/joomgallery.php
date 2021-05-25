@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -29,6 +29,7 @@ JLoader::register('JoomHelper',       JPATH_COMPONENT.'/helpers/helper.php');
 JLoader::register('JoomAmbit',        JPATH_COMPONENT.'/helpers/ambit.php');
 JLoader::register('JoomConfig',       JPATH_COMPONENT_ADMINISTRATOR.'/helpers/config.php');
 JLoader::register('JoomFile',         JPATH_COMPONENT_ADMINISTRATOR.'/helpers/file.php');
+JLoader::register('JoomIMGtools',     JPATH_COMPONENT_ADMINISTRATOR.'/helpers/imgtools.php');
 JTable::addIncludePath(               JPATH_COMPONENT_ADMINISTRATOR.'/tables');
 
 // Create the controller

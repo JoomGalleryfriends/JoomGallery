@@ -1,8 +1,20 @@
-<?php defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+<?php
+/****************************************************************************************\
+**   JoomGallery 3                                                                      **
+**   By: JoomGallery::ProjectTeam                                                       **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
+**   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
+**   Released under GNU GPL Public License                                              **
+**   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
+**   at administrator/components/com_joomgallery/LICENSE.TXT                            **
+\****************************************************************************************/
+
+defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+
 JHtml::_('behavior.formvalidation');
 $this->_doc->addStyleSheet($this->_ambit->getStyleSheet('joomgallery.css')); ?>
 <div class="gallery minigallery" style="text-align:center;">
-  <fieldset style="width:550px;margin-right:auto; margin-left:auto;">
+  <fieldset style="width:550px; max-width:95%; margin-right:auto; margin-left:auto;">
     <legend><?php echo JText::_('COM_JOOMGALLERY_DETAIL_REPORT_IMAGE'); ?></legend>
     <form action="<?php echo JRoute::_('index.php'); ?>" id="reportimageform" name="reportimageform" method="post" class="form-validate">
 <?php if(!$this->_user->get('id')): ?>

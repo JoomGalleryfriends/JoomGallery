@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -185,7 +185,16 @@ class JoomGalleryViewHelp extends JoomGalleryView
                             'link'    => 'http://www.buntesuppe.de/blog/123/bayessche-bewertung'),
                       array('title'   => 'Fine Uploader',
                             'author'  => 'Ray Nicholus, Andrew Valums',
-                            'link'    => 'http://fineuploader.com')
+                            'link'    => 'http://fineuploader.com'),
+                      array('title'   => 'GifCreator and GifFrameExtractor',
+                            'author'  => 'Clément Guillemain',
+                            'link'    => 'https://github.com/Sybio'),
+                      array('title'   => 'Copy IPTC and EXIF data of a JPG from source to destination image',
+                            'author'  => 'ebashkoff',
+                            'link'    => 'https://www.php.net/manual/de/function.iptcembed.php'),
+                      array('title'   => 'Decode/Encode IFD fields',
+                            'author'  => 'Evan Hunter',
+                            'link'    => 'https://www.ozhiker.com/electronics/pjmt/index.html')
                      );
 
     $params = JComponentHelper::getParams('com_joomgallery');

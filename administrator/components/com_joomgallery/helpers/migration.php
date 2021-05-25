@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -164,7 +164,7 @@ abstract class JoomMigration
         $this->setState('prefix', $prefix);
       }
 
-      $options	= array ('driver' => $driver, 'host' => $host, 'user' => $user, 'password' => $password, 'database' => $name, 'prefix' => $prefix);
+      $options = array ('driver' => $driver, 'host' => $host, 'user' => $user, 'password' => $password, 'database' => $name, 'prefix' => $prefix);
 
       $this->_db2 = JDatabaseDriver::getInstance($options);
 
@@ -351,7 +351,7 @@ abstract class JoomMigration
    * Please use this function and @see setTask(string) for managing different steps during the migration
    *
    * @param   string  $default  The default task to return if there isn't any task stored in the session
-   * @return  The current task of the migration
+   * @return  string  The current task of the migration
    * @since   3.1
    */
   protected function getTask($default = null)
@@ -365,7 +365,7 @@ abstract class JoomMigration
    * Please use this function and @see getTask() for managing different steps during the migration
    *
    * @param   string  $task The task name to set
-   * @return  The previous task if one existed
+   * @return  string  The previous task if one existed
    * @since   3.1
    */
   protected function setTask($task)
@@ -380,7 +380,7 @@ abstract class JoomMigration
    *
    * @param   string  $key      Name of the state to retrieve
    * @param   mixed   $default  The default state to return if it isn't stored in the session
-   * @return  The requested state
+   * @return  mixed   The requested state
    * @since   3.1
    */
   protected function getState($key, $default = null)
@@ -395,7 +395,7 @@ abstract class JoomMigration
    *
    * @param   string  $key  Name of the state to set
    * @param   mixed   $task The state to set
-   * @return  The previous state if one existed
+   * @return  mixed   The previous state if one existed
    * @since   3.1
    */
   protected function setState($key, $state)
@@ -412,7 +412,7 @@ abstract class JoomMigration
    * @param   string  $request  The name of the variable passed in a request
    * @param   string  $default  The default value for the variable if not found
    * @param   string  $type     Filter for the variable, for valid values see {@link JFilterInput::clean()}
-   * @return  The requested state
+   * @return  mixed   The requested state
    * @since   3.1
    */
   public function getStateFromRequest($key, $request, $default = null, $type = 'none')
@@ -799,7 +799,7 @@ abstract class JoomMigration
     }
     else
     {
-      $check['title'] = '<span style="color:#f30; font-weight:bold;">'.Text::_('COM_JOOMGALLERY_MIGMAN_ROOT_ASSET_DOES_NOT_EXIST').'</span> '.JText::_('COM_JOOMGALLERY_MIGMAN_PLEASE_REINSTALL');
+      $check['title'] = '<span style="color:#f30; font-weight:bold;">'.JText::_('COM_JOOMGALLERY_MIGMAN_ROOT_ASSET_DOES_NOT_EXIST').'</span> '.JText::_('COM_JOOMGALLERY_MIGMAN_PLEASE_REINSTALL');
       $check['state'] = false;
       $ready = false;
     }
@@ -1282,7 +1282,7 @@ abstract class JoomMigration
    * Marks a table row as migrated.
    *
    * This is important for migrating categories
-   * @see method 'prepareTable'
+   * @see 'prepareTable'
    *
    * @param   int     $catid  ID of the data set which has been migrated
    * @param   string  $key    Primary key name of the table $table
@@ -1319,7 +1319,7 @@ abstract class JoomMigration
    *
    * This method must be called after the iteration has been finished
    *
-   * @see method 'prepareTable'
+   * @see 'prepareTable'
    *
    * @param   string  $table  Name of the table to reset
    * @return  void
@@ -1631,6 +1631,32 @@ abstract class JoomMigration
       $neworigimage = $this->_ambit->getImg('orig_path', $row);
     }
 
+    // Check if auto-rotation is enabled
+    $angle = 0;
+    switch($this->_config->get('jg_upload_exif_rotation'))
+    {
+      case 0:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+      case 1:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = false;
+        break;
+      case 2:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = true;
+        break;
+      default:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+    }
+
     if(!$img_exists)
     {
       // If it doesn't already exists with another name try to copy or move from source directory or create a new one
@@ -1639,17 +1665,20 @@ abstract class JoomMigration
       {
         // Create new detail image
         $debugoutput = '';
-        $result['detail'] = JoomFile::resizeImage($debugoutput,
-                                                  $neworigimage,
-                                                  $newdetailimage,
-                                                  false,
-                                                  $this->_config->get('jg_maxwidth'),
-                                                  false,
-                                                  $this->_config->get('jg_thumbcreation'),
-                                                  $this->_config->get('jg_thumbquality'),
-                                                  true,
-                                                  0
-                                                  );
+        $result['detail'] = JoomIMGtools::resizeImage($debugoutput,
+                                                      $neworigimage,
+                                                      $newdetailimage,
+                                                      3,
+                                                      $this->_config->get('jg_maxwidth'),
+                                                      $this->_config->get('jg_maxwidth'),
+                                                      $this->_config->get('jg_thumbcreation'),
+                                                      $this->_config->get('jg_picturequality'),
+                                                      false,
+                                                      $angle,
+                                                      $autorot_det,
+                                                      false,
+                                                      true
+                                                      );
         if(!$result['detail'])
         {
           $this->setError('Could not create detail image '.$newdetailimage);
@@ -1695,18 +1724,22 @@ abstract class JoomMigration
       if(is_null($thumbnail) || !JFile::exists($thumbnail))
       {
         // Create new thumbnail
-        $debugoutput = '';
-        $result['thumb'] = JoomFile::resizeImage( $debugoutput,
-                                                  $neworigimage,
-                                                  $newthumbnail,
-                                                  $this->_config->get('jg_useforresizedirection'),
-                                                  $this->_config->get('jg_thumbwidth'),
-                                                  $this->_config->get('jg_thumbheight'),
-                                                  $this->_config->get('jg_thumbcreation'),
-                                                  $this->_config->get('jg_thumbquality'),
-                                                  false,
-                                                  $this->_config->get('jg_cropposition')
-                                                );
+        $debugoutput     = '';
+        $result['thumb'] = JoomIMGtools::resizeImage( $debugoutput,
+                                                      $neworigimage,
+                                                      $newthumbnail,
+                                                      $this->_config->get('jg_useforresizedirection'),
+                                                      $this->_config->get('jg_thumbwidth'),
+                                                      $this->_config->get('jg_thumbheight'),
+                                                      $this->_config->get('jg_thumbcreation'),
+                                                      $this->_config->get('jg_thumbquality'),
+                                                      $this->_config->get('jg_cropposition'),
+                                                      $angle,
+                                                      $autorot_thumb,
+                                                      false,
+                                                      false
+                                                    );
+
         if(!$result['thumb'])
         {
           $this->setError('Could not create thumbnail '.$newthumbnail);
@@ -1752,6 +1785,26 @@ abstract class JoomMigration
       if(!$result['delete_orig'])
       {
         $this->setError('Could not delete original image '.$neworigimage);
+      }
+    } else
+    {
+      // If original image is kept
+      // Rotate original image if needed
+      $debugoutput = '';
+      $return      = JoomIMGtools::rotateImage($debugoutput,
+                                               $neworigimage,
+                                               $neworigimage,
+                                               $this->_config->get('jg_thumbcreation'),
+                                               $this->_config->get('jg_originalquality'),
+                                               $angle,
+                                               $autorot_orig,
+                                               true,
+                                               true
+                                              );
+
+      if(!$return && $debugoutput != '')
+      {
+        $this->setError('Could not rotate original image '.$neworigimage);
       }
     }
 
