@@ -61,6 +61,10 @@ class JoomHelper
     {
       unset($controllers['config']);
       unset($controllers['cssedit']);
+    }
+
+    if(!$canDo->get('core.manage'))
+    {
       unset($controllers['maintenance']);
     }
 

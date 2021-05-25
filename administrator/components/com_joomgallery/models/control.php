@@ -59,6 +59,9 @@ class JoomGalleryModelControl extends JoomGalleryModel
     {
       $where[] = "link LIKE 'index.php?option=com_joomgallery&controller=config%'";
       $where[] = "link LIKE 'index.php?option=com_joomgallery&controller=cssedit%'";
+    }
+    if($canDo->get('core.manage'))
+    {
       $where[] = "link LIKE 'index.php?option=com_joomgallery&controller=maintenance%'";
     }
 
