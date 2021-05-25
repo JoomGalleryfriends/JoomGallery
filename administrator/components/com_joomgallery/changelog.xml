@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-  <release version="3.5.1" published="20210521">
+  <release version="3.5.1" published="20210525">
+    <entries date="20210525">
+      <logentry type="#">Fix deletion of non-empty categories in the backend</logentry>
+    </entries>
     <entries date="20210427">
       <logentry type="*">Add missing permission check</logentry>
     </entries>
