@@ -315,8 +315,13 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
       }
     }
 
-    // Trigger the before save event. ($row contains still the old values)
-    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $row, $isNew, $data));
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    // $row contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $row, $isNew, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
 
     // Bind the form fields to the category table
     if(!$row->bind($data))
@@ -444,8 +449,13 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
           return false;
         }
 
+        // Trigger Event onContentBeforeSave (Returnvalue: true or false)
         JPluginHelper::importPlugin('content');
-        $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, true, $data));
+        $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, true, $data));
+        if(in_array(false, $plugins, true))
+        {
+          return false;
+        }
 
         // Store the entry to the database
         if(!$row->store())
@@ -576,8 +586,13 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
       return false;
     }
 
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
     JPluginHelper::importPlugin('content');
-    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, false, $data));
+    $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
 
     // Store the entry to the database
     if(!$row->store())

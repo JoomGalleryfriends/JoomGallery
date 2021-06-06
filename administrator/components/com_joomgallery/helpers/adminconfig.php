@@ -96,9 +96,14 @@ class JoomAdminConfig extends JoomConfig
       return false;
     }
 
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
     JPluginHelper::importPlugin('content');
     $mainframe = JFactory::getApplication('administrator');
-    $mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.config', &$config, $isNew, $data));
+    $plugins = $mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.config', &$config, $isNew, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
 
     if(!$config->store())
     {

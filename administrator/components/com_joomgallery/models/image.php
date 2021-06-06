@@ -283,8 +283,13 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $isNew = true;
     }
 
-    // Trigger the before save event. ($row contains still the old values)
-    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, $isNew, $data));
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    //$row contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, $isNew, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
 
     // Bind the form fields to the image table
     if(!$row->bind($data))
@@ -367,9 +372,13 @@ class JoomGalleryModelImage extends JoomGalleryModel
         return false;
       }
 
-      // Trigger the before save event.
+      // Trigger Event onContentBeforeSave (Returnvalue: true or false)
       JPluginHelper::importPlugin('content');
-		  $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, true, $data));
+		  $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, true, $data));
+      if(in_array(false, $plugins, true))
+      {
+        return false;
+      }
 
       // Copy the image files, the row will be stored, too
       if(!$this->_newImage($row, $catpath, $detail_catpath, $thumb_catpath, $data['copy_original']))
@@ -719,9 +728,13 @@ class JoomGalleryModelImage extends JoomGalleryModel
       }
     }
 
-    // Trigger the before save event.
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
     JPluginHelper::importPlugin('content');
-		$this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false, $data));
+		$plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
 
     // Move the image if necessary (the data is stored in function moveImage because
     // we have ensured that the old and new category ID are different from each other)
@@ -1165,8 +1178,13 @@ class JoomGalleryModelImage extends JoomGalleryModel
       }
     }
 
-    // Trigger the before save event. ($item contains still the old values)
-    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $item, false, array('catid'=>$catid_new)));
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    // $item contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $item, false, array('catid'=>$catid_new)));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
 
     // If all folder operations for the image were successful
     // modify the database entry
@@ -1181,9 +1199,13 @@ class JoomGalleryModelImage extends JoomGalleryModel
       return false;
     }
 
-    // Trigger the before save event.
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
     JPluginHelper::importPlugin('content');
-		$this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$item, false));
+		$plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$item, false));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
 
     // Store the entry to the database
     if(!$item->store())

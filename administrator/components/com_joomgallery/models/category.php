@@ -255,8 +255,13 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       $data['password'] = $crypt.':'.$salt;
     }
 
-    // Trigger the before save event. ($row contains still the old values)
-    $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $row, $isNew, $data));
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    // $row contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $row, $isNew, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
 
     // Bind the form fields to the category table
     if(!$row->bind($data))
@@ -405,8 +410,13 @@ class JoomGalleryModelCategory extends JoomGalleryModel
           return false;
         }
 
+        // Trigger Event onContentBeforeSave (Returnvalue: true or false)
         JPluginHelper::importPlugin('content');
-        $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, true, $data));
+        $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, true, $data));
+        if(in_array(false, $plugins, true))
+        {
+          return false;
+        }
 
         // Store the entry to the database
         if(!$row->store())
@@ -538,8 +548,13 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       return false;
     }
 
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
     JPluginHelper::importPlugin('content');
-    $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, false, $data));
+    $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
 
     // Store the entry to the database
     if(!$row->store())
@@ -665,8 +680,13 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       {
         $table->load($pk);
 
-        // Trigger the before save event. ($table contains still the old values)
-        $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array('access'=>$value)));
+        // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+        // $table contains still the old values
+        $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array('access'=>$value)));
+        if(in_array(false, $plugins, true))
+        {
+          return false;
+        }
 
         $table->access = (int) $value;
 
@@ -776,8 +796,13 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         }
       }
 
-      // Trigger the before save event. ($table contains still the old values)
-      $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array()));
+      // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+      // $table contains still the old values
+      $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array()));
+      if(in_array(false, $plugins, true))
+      {
+        return false;
+      }
 
       // Reset the ID and the alias (resetting catpath is
       // necessary for that, too) because we are making a copy
@@ -969,8 +994,13 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         return false;
       }
 
-      // Trigger the before save event. ($table contains still the old values)
-      $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array('parent_id'=>$categoryId)));
+      // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+      // $table contains still the old values
+      $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array('parent_id'=>$categoryId)));
+      if(in_array(false, $plugins, true))
+      {
+        return false;
+      }
 
       // New parent category ID
       $table->parent_id = $categoryId;
