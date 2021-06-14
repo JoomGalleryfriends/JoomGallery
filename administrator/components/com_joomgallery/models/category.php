@@ -1352,8 +1352,8 @@ class JoomGalleryModelCategory extends JoomGalleryModel
 
         return false;
       }
-
-      return true;
     }
+
+    return true;
   }
 }
