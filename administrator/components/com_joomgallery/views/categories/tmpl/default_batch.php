@@ -49,6 +49,17 @@ $published  = $this->state->get('filter.published');
       <div class="control-group radio">
         <?php echo JHtml::_('select.radiolist', $options, 'batch[move_copy]', '', 'value', 'text', ''); ?>
       </div>
+      <div class="control-group">
+        <div class="controls">
+        <label id="batchalias-lbl" for="batchalias" class="control-label">
+          <?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_REG'); ?>
+        </label>
+          <?php
+            $default = 0;
+            $options = array(JHTML::_('select.option', '', JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_KEEP')),JHTML::_('select.option', 'gen', JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_REG')));
+            echo JHtml::_('select.genericlist',$options,'batch[alias]','class="inputbox"','value','text',$default); ?>
+        </div>
+      </div>
     <?php endif; ?>
   </div>
   <div class="modal-footer">
