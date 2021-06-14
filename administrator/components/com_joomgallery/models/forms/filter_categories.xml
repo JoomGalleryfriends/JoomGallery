@@ -18,6 +18,13 @@
       <option value="0">COM_JOOMGALLERY_COMMON_OPTION_NOT_PUBLISHED_ONLY</option>
     </field>
     <field
+      name="category"
+      type="joomcategory"
+      label="COM_JOOMGALLERY_COMMON_ALL"
+      onchange="document.getElementById('adminForm').submit();"
+      task="filter"
+    />
+    <field
       name="access"
       type="accesslevel"
       label="JOPTION_FILTER_ACCESS"
@@ -43,7 +50,7 @@
       <option value="1">COM_JOOMGALLERY_CATMAN_OPTION_USERCATEGORIES_ONLY</option>
       <option value="2">COM_JOOMGALLERY_CATMAN_OPTION_BACKENDCATEGORIES_ONLY</option>
     </field>
-  </fields>  
+  </fields>
   <fields name="list">
     <field
       name="fullordering"

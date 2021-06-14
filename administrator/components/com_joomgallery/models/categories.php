@@ -34,6 +34,13 @@ class JoomGalleryModelCategories extends JoomGalleryModel
   protected $_total = null;
 
   /**
+   * Category filter
+   *
+   * @var array
+   */
+  protected $_catfilter = array();
+
+  /**
    * Constructor
    *
    * @param   array An optional associative array of configuration settings
@@ -46,6 +53,7 @@ class JoomGalleryModelCategories extends JoomGalleryModel
 
     $this->filter_fields = array(
         'cid', 'c.cid',
+        'category',
         'name', 'c.name',
         'alias', 'c.alias',
         'parent_id', 'c.parent_id',
@@ -70,6 +78,12 @@ class JoomGalleryModelCategories extends JoomGalleryModel
     // Let's load the data if it doesn't already exist
     if(empty($this->_categories))
     {
+      // Get category and all sub-categories of the category selected in the filter
+      if($this->getState('filter.category') && $this->getState('filter.category') > 0)
+      {
+        $this->_catfilter = JoomHelper::getAllSubCategories($this->getState('filter.category'),true,true,true,false);
+      }
+
       // Get the data of the categories which will actually be displayed
       $query = $this->_buildQuery();
       $this->_db->setQuery($query, $this->getStart(), $this->getState('list.limit'));
@@ -423,6 +437,28 @@ class JoomGalleryModelCategories extends JoomGalleryModel
 
     // ROOT category shouldn't be selected
     $query->where('parent_id > 0');
+
+    // Filter by category
+    if(count($this->_catfilter) > 0)
+    {
+      $orWhere = array();
+      foreach($this->_catfilter as $key => $cid)
+      {
+        if($key === 0)
+        {
+          $query->where('c.cid = '.(int) $cid);
+        }
+        else
+        {
+          array_push($orWhere,'c.cid = '.(int) $cid);
+        }
+      }
+
+      if(count($orWhere) > 0)
+      {
+        $query->orWhere($orWhere, 'OR');
+      }
+    }
 
     // Filter by allowed access levels
     if(!$this->_user->authorise('core.admin'))
