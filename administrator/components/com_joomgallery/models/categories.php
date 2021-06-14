@@ -41,6 +41,13 @@ class JoomGalleryModelCategories extends JoomGalleryModel
   protected $_catfilter = array();
 
   /**
+   * Category root
+   *
+   * @var int
+   */
+  protected $_root = 0;
+
+  /**
    * Constructor
    *
    * @param   array An optional associative array of configuration settings
@@ -54,6 +61,7 @@ class JoomGalleryModelCategories extends JoomGalleryModel
     $this->filter_fields = array(
         'cid', 'c.cid',
         'category',
+        'max_level',
         'name', 'c.name',
         'alias', 'c.alias',
         'parent_id', 'c.parent_id',
@@ -82,6 +90,7 @@ class JoomGalleryModelCategories extends JoomGalleryModel
       if($this->getState('filter.category') && $this->getState('filter.category') > 0)
       {
         $this->_catfilter = JoomHelper::getAllSubCategories($this->getState('filter.category'),true,true,true,false);
+        $this->_root      = $this->_ambit->getCatObject($this->getState('filter.category'))->level;
       }
 
       // Get the data of the categories which will actually be displayed
@@ -96,7 +105,10 @@ class JoomGalleryModelCategories extends JoomGalleryModel
       // Add number of images in that category
       foreach($current_categories as $key => $cat)
       {
-        $current_categories[$key]->img_count = (string)$categories[$key]->piccount;
+        if($key > 1)
+        {
+          $current_categories[$key]->img_count = (string)$categories[$key]->piccount;
+        }
       }
 
       $levels             = array();
@@ -441,23 +453,22 @@ class JoomGalleryModelCategories extends JoomGalleryModel
     // Filter by category
     if(count($this->_catfilter) > 0)
     {
-      $orWhere = array();
+      $andWhere = array();
       foreach($this->_catfilter as $key => $cid)
       {
-        if($key === 0)
-        {
-          $query->where('c.cid = '.(int) $cid);
-        }
-        else
-        {
-          array_push($orWhere,'c.cid = '.(int) $cid);
-        }
+        array_push($andWhere,'c.cid = '.(int) $cid);
       }
 
-      if(count($orWhere) > 0)
+      if(count($andWhere) > 0)
       {
-        $query->orWhere($orWhere, 'OR');
+        $query->andWhere($andWhere, 'OR');
       }
+    }
+
+    // Filter by subcategory level
+    if($this->getState('filter.max_level') !== '')
+    {
+      $query->where('c.level <= '.((int) $this->_root + (int) $this->getState('filter.max_level')));
     }
 
     // Filter by allowed access levels
