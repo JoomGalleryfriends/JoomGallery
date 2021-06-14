@@ -79,6 +79,12 @@ class JoomGalleryModelCategories extends JoomGalleryModel
       // the categories which we are allowed to display)
       $categories = $this->_ambit->getCategoryStructure();
 
+      // Add number of images in that category
+      foreach($current_categories as $key => $cat)
+      {
+        $current_categories[$key]->img_count = (string)$categories[$key]->piccount;
+      }
+
       $levels             = array();
       $ordering           = array();
       $this->_categories  = array();

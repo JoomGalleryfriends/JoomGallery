@@ -76,6 +76,9 @@ JFactory::getDocument()->addScriptDeclaration(
           <th class="hidden-phone">
             <?php echo JHtml::_('searchtools.sort', 'COM_JOOMGALLERY_COMMON_PARENT_CATEGORY', 'c.parent_id', $listDirn, $listOrder); ?>
           </th>
+          <th width="10%" class="nowrap">
+            <?php echo JText::_('COM_JOOMGALLERY_MAIMAN_TAB_IMAGES'); ?>
+          </th>
           <th width="10%" class="nowrap hidden-phone">
             <?php echo JHtml::_('searchtools.sort', 'COM_JOOMGALLERY_COMMON_ACCESS', 'access_level', $listDirn, $listOrder); ?>
           </th>
@@ -173,6 +176,13 @@ JFactory::getDocument()->addScriptDeclaration(
           </td>
           <td class="hidden-phone">
             <?php echo JHtml::_('joomgallery.categorypath', $item->cid, false); ?>
+          </td>
+          <td class="nowrap">
+            <?php if($item->img_count > 0) : ?>
+              <a href="<?php echo JRoute::_('index.php?option='._JOOM_OPTION.'&controller=images&filter[category]='.$item->cid); ?>">(<?php echo $item->img_count; ?>)</a>
+            <?php else : ?>
+              (0)
+            <?php endif; ?>
           </td>
           <td class="small hidden-phone">
             <?php echo $this->escape($item->access_level); ?>
