@@ -163,7 +163,7 @@ JFactory::getDocument()->addScriptDeclaration(
             <?php echo JHTML::_('joomgallery.approved', $approved_states, $item->approved, $i, '', $canChange, $item->id, $item->owner); ?>
           </td>
           <td class="small hidden-phone">
-            <?php echo $this->escape($item->category_name); ?>
+            <a href="<?php echo JRoute::_('index.php?option='._JOOM_OPTION.'&controller=categories&filter[max_level]=&filter[category]='.$item->catid);?>"><?php echo $this->escape($item->category_name); ?></a>
           </td>
           <td class="small hidden-phone">
             <?php echo $this->escape($item->access_level); ?>
