@@ -79,6 +79,9 @@ JFactory::getDocument()->addScriptDeclaration(
           <th width="10%" class="nowrap">
             <?php echo JText::_('COM_JOOMGALLERY_MAIMAN_TAB_IMAGES'); ?>
           </th>
+          <th width="10%" class="hidden-phone">
+            <?php echo JText::_('COM_JOOMGALLERY_CATMAN_ORDERING'); ?>
+          </th>
           <th width="10%" class="nowrap hidden-phone">
             <?php echo JHtml::_('searchtools.sort', 'COM_JOOMGALLERY_COMMON_ACCESS', 'access_level', $listDirn, $listOrder); ?>
           </th>
@@ -98,7 +101,8 @@ JFactory::getDocument()->addScriptDeclaration(
         $i = 0;
         $display_hidden_asterisk = false;
         foreach($this->items as $key => $item):
-          $orderkey   = array_search($item->cid, $ordering[$item->parent_id]);
+          $orderkey   = array_search($item->cid, $ordering[$item->parent_id]); // position of current element
+          $ordercount = count($ordering[$item->parent_id]); // number of items in current level
           $canEdit    = $this->_user->authorise('core.edit', _JOOM_OPTION.'.category.'.$item->cid);
           $canEditOwn = $this->_user->authorise('core.edit.own', _JOOM_OPTION.'.category.'.$item->cid) && $item->owner == $this->_user->get('id');
           $canChange  = $this->_user->authorise('core.edit.state', _JOOM_OPTION.'.category.'.$item->cid);
@@ -183,6 +187,34 @@ JFactory::getDocument()->addScriptDeclaration(
             <?php else : ?>
               (0)
             <?php endif; ?>
+          </td>
+          <td class="hidden-phone">
+            <?php
+              $position = 'middle';
+              if($orderkey == 0)
+              {
+                $position = 'first';
+              }
+              elseif(($orderkey + 1) == $ordercount)
+              {
+                $position = 'last';
+              }
+            ?>
+            <div class="btn-group">
+              <a class="btn btn-micro <?php if($position != 'first'){echo 'active hasTooltip';}else{echo 'disabled';}; ?>"
+                 href="javascript:void(0);"
+                 <?php if($position != 'first'){echo 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderup\')"';}; ?>
+                 title=""
+                 <?php if($position != 'first'){echo 'data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_UP').'"';}; ?>
+              ><i class="<?php if($position != 'first'){echo 'icon-uparrow';}else{echo 'icon-empty';};?>"></i></a>
+
+              <a class="btn btn-micro <?php if($position != 'last'){echo 'active hasTooltip';}else{echo 'disabled';}; ?>"
+                 href="javascript:void(0);"
+                 <?php if($position != 'last'){echo 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderdown\')"';}; ?>
+                 title=""
+                 <?php if($position != 'last'){echo 'data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_DOWN').'"';}; ?>
+              ><i class="<?php if($position != 'last'){echo 'icon-downarrow';}else{echo 'icon-empty';};?>"></i></a>
+            </div>
           </td>
           <td class="small hidden-phone">
             <?php echo $this->escape($item->access_level); ?>
