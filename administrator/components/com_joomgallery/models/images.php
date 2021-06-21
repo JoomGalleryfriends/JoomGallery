@@ -1077,18 +1077,19 @@ class JoomGalleryModelImages extends JoomGalleryModel
       // Read image from database
       $row->load($id);
 
-      // Plugin event onJoomBeforeSafe
-
       $tmp_rep = 0;
       foreach ($fields as $fieldname)
       {
-        $replacements = 0;
+        if($fieldname != 'additional')
+        {
+          $replacements = 0;
 
-        // Replace image informations
-        $row->{$fieldname} = str_replace($searchVal,$replaceVal,$row->{$fieldname},$replacements);
+          // Replace image informations
+          $row->{$fieldname} = str_replace($searchVal,$replaceVal,$row->{$fieldname},$replacements);
 
-        // count replacements
-        $tmp_rep = $tmp_rep + $replacements;
+          // count replacements
+          $tmp_rep = $tmp_rep + $replacements;
+        }
       }
 
       // Make sure the record is valid
