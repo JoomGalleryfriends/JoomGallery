@@ -39,7 +39,7 @@
       <option value="3">J3</option>
       <option value="4">J4</option>
       <option value="5">J5</option>
-			</field>
+		</field>
     <field
       name="access"
       type="accesslevel"
