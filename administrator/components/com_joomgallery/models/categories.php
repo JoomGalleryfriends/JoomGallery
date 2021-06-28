@@ -466,7 +466,7 @@ class JoomGalleryModelCategories extends JoomGalleryModel
     }
 
     // Filter by subcategory level
-    if($this->getState('filter.max_level') != null or $this->getState('filter.max_level') === -1)
+    if($this->getState('filter.max_level') != null && $this->getState('filter.max_level') != -1)
     {
       $query->where('c.level <= '.((int) $this->_root + (int) $this->getState('filter.max_level')));
     }
