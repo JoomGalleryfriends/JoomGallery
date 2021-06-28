@@ -9,15 +9,11 @@
 **   at administrator/components/com_joomgallery/LICENSE.TXT                            **
 \****************************************************************************************/
 
-defined('_JEXEC') or die('Direct Access to this location is not allowed.');
+defined('_JEXEC') or die('Direct Access to this location is not allowed.'); ?>
 
-JHtml::_('behavior.core');
-
-$title = $displayData['title'];
-JText::script('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST');
-$message = "alert(Joomla.JText._('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST'));";
-?>
-<button type="button" data-toggle="modal" onclick="if (document.adminForm.boxchecked.value==0){<?php echo $message; ?>}else{jQuery( '#jg-rotate-popup' ).modal('show'); return true;}" class="btn btn-small">
-  <span class="icon-loop" aria-hidden="true"></span>
-  <?php echo $title; ?>
+<button type="button" class="btn" onclick="document.getElementById('rotateimagetypes').value=1;jQuery('#rotateimagetypes').trigger('liszt:updated');document.getElementById('rotateimageangle').value=90;jQuery('#rotateimageangle').trigger('liszt:updated');" data-dismiss="modal">
+  <?php echo JText::_('JCANCEL'); ?>
+</button>
+<button type="submit" class="btn btn-success" onclick="Joomla.submitbutton('replace');">
+  <?php echo JText::_('JGLOBAL_BATCH_PROCESS'); ?>
 </button>

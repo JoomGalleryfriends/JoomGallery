@@ -63,6 +63,8 @@ class JoomGalleryModelEditimages extends JoomGalleryModel
       $this->_images = $this->_getList($query);
     }
 
+    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.image.batch', $this->_images));
+
     return $this->_images;
   }
 
@@ -84,6 +86,43 @@ class JoomGalleryModelEditimages extends JoomGalleryModel
       return false;
     }
 
+    $data = array();
+    // Allow plugins to preprocess the form
+    $this->preprocessForm($form, $data);
+
     return $form;
+  }
+
+  /**
+   * Method to allow plugins to preprocess the form
+   *
+   * @param   JForm   $form   A JForm object.
+   * @param   mixed   $data   The data expected for the form.
+   * @param   string  $group  The name of the plugin group to import (defaults to "content").
+   * @return  void
+   * @since   3.6
+   */
+  protected function preprocessForm(JForm $form, $data, $group = 'content')
+  {
+    // Import the appropriate plugin group
+    JPluginHelper::importPlugin($group);
+
+    // Get the dispatcher
+    $dispatcher = JDispatcher::getInstance();
+
+    // Trigger the form preparation event
+    $results = $dispatcher->trigger('onContentPrepareForm', array($form, $data));
+
+    // Check for errors encountered while preparing the form
+    if(count($results) && in_array(false, $results, true))
+    {
+      // Get the last error
+      $error = $dispatcher->getError();
+
+      if(!($error instanceof Exception))
+      {
+        throw new Exception($error);
+      }
+    }
   }
 }
