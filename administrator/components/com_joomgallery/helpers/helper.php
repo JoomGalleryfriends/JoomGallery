@@ -96,7 +96,7 @@ class JoomHelper
     $user   = JFactory::getUser();
     $result = new JObject();
 
-    $actions = array('core.admin', 'core.manage', 'joom.upload', 'joom.upload.inown', 'core.create', 'joom.create.inown', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete');
+    $actions = array('core.admin', 'core.manage', 'joom.upload', 'joom.upload.inown', 'core.create', 'joom.create.inown', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete', 'joom.delete.own');
 
     switch($type)
     {
