@@ -526,8 +526,11 @@ class JoomGalleryModelCategories extends JoomGalleryModel
     // Loop through selected categories
     foreach($ids as $cid)
     {
+      $row->load($cid);
+
       // Check whether we are allowed to delete this category
-      if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$cid))
+      if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$cid)
+        && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.category.'.$cid) || !$row->owner || $row->owner != $this->_user->get('id')))
       {
         JLog::add(JText::sprintf('COM_JOOMGALLERY_CATMAN_ERROR_DELETE_NOT_PERMITTED', $cid), JLog::ERROR, 'jerror');
 
@@ -585,7 +588,6 @@ class JoomGalleryModelCategories extends JoomGalleryModel
           JLog::add(JText::_('COM_JOOMGALLERY_CATMAN_MSG_ERROR_DELETING_DIRECTORIES'), JLog::WARNING, 'jerror');
         }
 
-        $row->load($cid);
         if(!$row->delete())
         {
           throw new RuntimeException($row->getError());

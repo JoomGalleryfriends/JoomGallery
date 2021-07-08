@@ -129,7 +129,8 @@ class JoomGalleryViewFavourites extends JoomGalleryView
           $row->show_edit_icon = true;
         }
 
-        if($this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id))
+        if(   $this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id)
+          || ($this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$row->id) && $row->imgowner == $this->_user->get('id')))
         {
           $row->show_delete_icon = true;
         }

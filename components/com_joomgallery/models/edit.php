@@ -486,7 +486,8 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     $row->load($this->_id);
 
     // Check whether we are allowed to delete this image
-    if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id))
+    if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id)
+      && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$row->id) || !$row->owner || $row->owner != $this->_user->get('id')))
     {
       throw new RuntimeException(JText::_('COM_JOOMGALLERY_IMAGE_MSG_DELETE_NOT_PERMITTED'));
     }

@@ -232,13 +232,17 @@ class JoomGalleryControllerImages extends JoomGalleryController
   public function remove()
   {
     $model = $this->getModel('images');
-
-    $cid  = JRequest::getVar('cid', array(), 'post', 'array');
+    $user  = JFactory::getUser();
+    $row   = JTable::getInstance('joomgalleryimages', 'Table');
+    $cid   = JRequest::getVar('cid', array(), 'post', 'array');
     $unaffected_images = 0;
     foreach($cid as $key => $id)
     {
+      $row->load((int)$id);
+
       // Prune images which we aren't allowed to delete
-      if(!JFactory::getUser()->authorise('core.delete', _JOOM_OPTION.'.image.'.$id))
+      if(   !$user->authorise('core.delete', _JOOM_OPTION.'.image.'.$id)
+        && (!$user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$id) || !$row->owner || $row->owner != $user->get('id')))
       {
         unset($cid[$key]);
         $unaffected_images++;

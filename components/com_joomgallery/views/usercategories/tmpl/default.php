@@ -135,12 +135,13 @@ $sortFields = $this->getSortFields();
         $originalOrders     = array();
         $allowed_categories = $this->_ambit->getCategoryStructure();
         foreach($this->items as $i => $item):
-          $orderkey   = array_search($item->cid, $this->ordering[$item->parent_id]);
-          $canEdit    = $this->_user->authorise('core.edit', _JOOM_OPTION.'.category.'.$item->cid);
-          $canEditOwn = $this->_user->authorise('core.edit.own', _JOOM_OPTION.'.category.'.$item->cid) && $item->owner && $item->owner == $this->_user->get('id');
-          $canChange  = $this->_user->authorise('core.edit.state', _JOOM_OPTION.'.category.'.$item->cid);
-          $canDelete  = $this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$item->cid);
-          $canView    = isset($allowed_categories[$item->cid]);
+          $orderkey     = array_search($item->cid, $this->ordering[$item->parent_id]);
+          $canEdit      = $this->_user->authorise('core.edit', _JOOM_OPTION.'.category.'.$item->cid);
+          $canEditOwn   = $this->_user->authorise('core.edit.own', _JOOM_OPTION.'.category.'.$item->cid) && $item->owner && $item->owner == $this->_user->get('id');
+          $canChange    = $this->_user->authorise('core.edit.state', _JOOM_OPTION.'.category.'.$item->cid);
+          $canDelete    = $this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$item->cid);
+          $canDeleteOwn = $this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.category.'.$item->cid) && $item->owner && $item->owner == $this->_user->get('id');
+          $canView      = isset($allowed_categories[$item->cid]);
 
           // Get the parents of item for sorting
           if ($item->level > 1)
@@ -223,7 +224,7 @@ $sortFields = $this->getSortFields();
                   <?php echo JHTML::_('joomgallery.icon', 'edit.png', 'COM_JOOMGALLERY_COMMON_EDIT_CATEGORY_TIPCAPTION'); ?></a>
               </div>
 <?php       endif;
-            if($canDelete && !$item->children && !$item->images): ?>
+            if(($canDelete || $canDeleteOwn) && !$item->children && !$item->images): ?>
               <div class="pull-left<?php echo JHTML::_('joomgallery.tip', 'COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPTEXT', 'COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION'); ?>">
                 <a href="javascript:if (confirm('<?php echo JText::_('COM_JOOMGALLERY_COMMON_ALERT_SURE_DELETE_SELECTED_ITEM', true); ?>')){ location.href='<?php echo JRoute::_('index.php?task=category.delete&catid='.$item->cid.$this->slimitstart, false); ?>';}">
                   <?php echo JHTML::_('joomgallery.icon', 'edit_trash.png', 'COM_JOOMGALLERY_COMMON_DELETE'); ?></a>
