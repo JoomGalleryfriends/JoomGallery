@@ -149,6 +149,10 @@ class JoomHelper
       {
         $action2 = 'core.edit.own';
       }
+      if($action == 'core.delete')
+      {
+        $action2 = 'joom.delete.own';
+      }
 
       if(     $user->authorise($action, _JOOM_OPTION.'.category.'.$category->cid)
           ||  (     $action2
