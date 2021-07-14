@@ -89,10 +89,11 @@ class JoomGalleryViewImages extends JoomGalleryView
       JToolbarHelper::divider();
     }
 
-    if($canDo->get('core.delete') || $canDo->get('joom.delete.own'))
-    {
+    //if($canDo->get('core.delete') || $canDo->get('joom.delete.own'))
+    //{
       JToolbarHelper::deleteList('', 'remove');
-    }
+    //}
+
   }
 
   /**
