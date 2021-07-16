@@ -96,7 +96,7 @@ class JoomHelper
     $user   = JFactory::getUser();
     $result = new JObject();
 
-    $actions = array('core.admin', 'core.manage', 'joom.upload', 'joom.upload.inown', 'core.create', 'joom.create.inown', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete');
+    $actions = array('core.admin', 'core.manage', 'joom.upload', 'joom.upload.inown', 'core.create', 'joom.create.inown', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete', 'joom.delete.own');
 
     switch($type)
     {
@@ -148,6 +148,10 @@ class JoomHelper
       if($action == 'core.edit')
       {
         $action2 = 'core.edit.own';
+      }
+      if($action == 'core.delete')
+      {
+        $action2 = 'joom.delete.own';
       }
 
       if(     $user->authorise($action, _JOOM_OPTION.'.category.'.$category->cid)
