@@ -60,7 +60,7 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.'); ?>
       <?php echo JHTML::_('joomgallery.text', $this->category->description); ?>
     </div>
 <?php endif;
-      if($this->_config->get('jg_usercatorder') && isset($this->order_by) && isset($this->order_dir)): ?>
+      if($this->_config->get('jg_usercatorder')): ?>
     <div class="jg_catorderlist">
       <form action="<?php echo $this->sort_url;?>" method="post">
           <?php echo JText::_('COM_JOOMGALLERY_CATEGORY_OPTION_USER_ORDERBY'); ?>

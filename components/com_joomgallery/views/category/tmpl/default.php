@@ -13,10 +13,6 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
 echo $this->loadTemplate('header');
 
-if(!count($this->images)):
-  echo $this->loadTemplate('head');
-endif;
-
 if(count($this->categories)):
   echo $this->loadTemplate('subcategories');
 endif;
