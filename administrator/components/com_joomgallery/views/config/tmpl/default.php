@@ -624,11 +624,7 @@ JHTML::_('joomconfig.end');
 echo JHtml::_('tabs.panel', JText::_('COM_JOOMGALLERY_CONFIG_CV_TAB_SUBCAT_SETTINGS'), 'nested-eighteen');
 
 JHTML::_('joomconfig.start', 'page17');
-    $showsubcatheadsubs[] = JHTML::_('select.option', '0', JText::_('JNO'));
-    $showsubcatheadsubs[] = JHTML::_('select.option', '1', JText::_('JYES'));
-    $showsubcatheadsubs[] = JHTML::_('select.option', '2', JText::_('COM_JOOMGALLERY_CONFIG_CV_SC_OPTION_SHOW_PARENT_TITLE'));
-    $mc_jg_showsubcatheadsubs = JHTML::_('select.genericlist', $showsubcatheadsubs, 'jg_showsubcathead', 'class="inputbox" size="3"', 'value', 'text', $this->_config->jg_showsubcathead);
-    JHTML::_('joomconfig.row', 'jg_showsubcathead', 'custom', 'COM_JOOMGALLERY_CONFIG_CV_SC_SUBCATEGORYHEADER', $mc_jg_showsubcatheadsubs);
+    JHTML::_('joomconfig.row', 'jg_showsubcathead', 'yesno', 'COM_JOOMGALLERY_CONFIG_CV_SC_SUBCATEGORYHEADER', $this->_config->jg_showsubcathead);
     JHTML::_('joomconfig.row', 'jg_showsubcatcount', 'yesno', 'COM_JOOMGALLERY_CONFIG_CV_SC_NUMB_SUBCATEGORIES', $this->_config->jg_showsubcatcount);
     JHTML::_('joomconfig.row', 'jg_colsubcat', 'text', 'COM_JOOMGALLERY_CONFIG_CV_SC_NUMB_COLUMN', $this->_config->jg_colsubcat);
     JHTML::_('joomconfig.row', 'jg_subperpage', 'text', 'COM_JOOMGALLERY_CONFIG_CV_SC_SUBCATS_PER_PAGE', $this->_config->jg_subperpage);

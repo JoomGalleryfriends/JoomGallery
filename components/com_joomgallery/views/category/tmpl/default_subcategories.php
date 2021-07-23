@@ -48,11 +48,7 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
       </div>
 <?php $this->params->set('show_upload_icon', 0);
       endif; ?>
-<?php if($this->_config->get('jg_showsubcathead') == 2 && $this->totalimages == 0): ?>
-      <?php echo $this->category->name; ?>
-<?php else: ?>
-      <?php echo JText::_('COM_JOOMGALLERY_COMMON_SUBCATEGORIES');
-      endif; ?>
+      <?php echo JText::_('COM_JOOMGALLERY_COMMON_SUBCATEGORIES'); ?>
     </div>
 <?php endif;
       $cat_count = count($this->categories);
