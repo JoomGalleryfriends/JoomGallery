@@ -375,7 +375,7 @@ class JoomGalleryViewCategory extends JoomGalleryView
     }
 
     // Favourites icon for categories
-    if($this->_config->get('jg_allimagesofcategory') && $this->_config->get('jg_favourites') && $totalimages != 0)
+    if($this->_config->get('jg_allimagesofcategory') && $this->_config->get('jg_favourites'))
     {
       if(   $this->_user->get('id')
          || ($this->_config->get('jg_usefavouritesforpubliczip') == 1 && !$this->_user->get('id'))
