@@ -96,15 +96,6 @@ class JoomAdminConfig extends JoomConfig
       return false;
     }
 
-    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
-    JPluginHelper::importPlugin('content');
-    $mainframe = JFactory::getApplication('administrator');
-    $plugins = $mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.config', &$config, $isNew, $data));
-    if(in_array(false, $plugins, true))
-    {
-      return false;
-    }
-
     if(!$config->store())
     {
       return false;
@@ -121,8 +112,6 @@ class JoomAdminConfig extends JoomConfig
     {
       return false;
     }
-
-    $mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.config', &$config, $isNew));
 
     return $config->id;
   }
@@ -1056,10 +1045,6 @@ joom_local.css.README umbenennen und anpassen
     {
       return false;
     }
-
-    JPluginHelper::importPlugin('content');
-    $mainframe = JFactory::getApplication('administrator');
-    $mainframe->triggerEvent('onContentAfterDelete', array(_JOOM_OPTION.'.config', $config));
 
     return true;
   }
