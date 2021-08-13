@@ -121,7 +121,7 @@ class JoomGalleryControllerComments extends JoomGalleryController
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.delete'))
     {
-      JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
       return false;
     }
@@ -153,7 +153,7 @@ class JoomGalleryControllerComments extends JoomGalleryController
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.delete'))
     {
-      JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
       return false;
     }
@@ -231,7 +231,7 @@ class JoomGalleryControllerComments extends JoomGalleryController
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.delete'))
     {
-      JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
       return false;
     }

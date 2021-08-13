@@ -31,7 +31,7 @@ class JoomGalleryControllerNametags extends JoomGalleryController
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.delete'))
     {
-      JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=nametags'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
       return false;
     }
@@ -88,7 +88,7 @@ class JoomGalleryControllerNametags extends JoomGalleryController
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.delete'))
     {
-      JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=nametags'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
       return false;
     }
