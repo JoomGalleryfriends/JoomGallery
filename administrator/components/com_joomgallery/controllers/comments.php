@@ -227,6 +227,15 @@ class JoomGalleryControllerComments extends JoomGalleryController
    */
   public function deleteip()
   {
+    // Check whether we are allowed to delete
+    $canDo = JoomHelper::getActions();
+    if(!$canDo->get('core.delete'))
+    {
+      JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+
+      return false;
+    }
+
     $query = $this->_db->getQuery(true)
           ->update(_JOOM_TABLE_COMMENTS)
           ->set('cmtip='."''");
