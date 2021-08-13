@@ -117,6 +117,15 @@ class JoomGalleryControllerComments extends JoomGalleryController
    */
   public function remove()
   {
+    // Check whether we are allowed to delete
+    $canDo = JoomHelper::getActions();
+    if(!$canDo->get('core.delete'))
+    {
+      JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+
+      return false;
+    }
+
     $model = $this->getModel('comments');
     $count = $model->delete();
     if($count === false){
@@ -140,6 +149,15 @@ class JoomGalleryControllerComments extends JoomGalleryController
    */
   public function reset()
   {
+    // Check whether we are allowed to delete
+    $canDo = JoomHelper::getActions();
+    if(!$canDo->get('core.delete'))
+    {
+      JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+
+      return false;
+    }
+
     // Delete all comments
     $query = $this->_db->getQuery(true)
           ->delete()
