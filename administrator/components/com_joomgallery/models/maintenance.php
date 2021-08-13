@@ -499,8 +499,14 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     // Loop through selected images
     foreach($cids as $cid)
     {
+      if(!$row->load($cid))
+      {
+        continue;
+      }
+
       // Check whether we are allowed to delete this image
-      if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$cid))
+      if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$cid)
+        && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$cid) || !$row->owner || $row->owner != $this->_user->get('id')))
       {
         JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED').' (ID:'.$cid.')', 'error');
 
@@ -508,11 +514,6 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
       }
 
       $error = false;
-
-      if(!$row->load($cid))
-      {
-        continue;
-      }
 
       // Database query to check if there are other images with this thumbnail
       // assigned and how many
@@ -686,8 +687,14 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     // Loop through selected categories
     foreach($cids as $cid)
     {
+      if(!$row->load($cid))
+      {
+        continue;
+      }
+
       // Check whether we are allowed to delete this category
-      if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$cid))
+      if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$cid)
+        && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.category.'.$cid) || !$row->owner || $row->owner != $this->_user->get('id')))
       {
         JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED').' (ID:'.$cid.')', 'error');
 
@@ -1381,7 +1388,7 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
    */
   public function addOrphans()
   {
-    // Check whether we are allowed to delete
+    // Check whether we are allowed to create
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.create'))
     {
@@ -1444,7 +1451,7 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
    */
   public function addOrphan()
   {
-    // Check whether we are allowed to delete
+    // Check whether we are allowed to create
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.create'))
     {
@@ -1566,7 +1573,7 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
    */
   public function addOrphanedFolders()
   {
-    // Check whether we are allowed to delete
+    // Check whether we are allowed to create
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.create'))
     {
@@ -1628,7 +1635,7 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
    */
   public function addOrphanedFolder()
   {
-    // Check whether we are allowed to delete
+    // Check whether we are allowed to create
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.create'))
     {
