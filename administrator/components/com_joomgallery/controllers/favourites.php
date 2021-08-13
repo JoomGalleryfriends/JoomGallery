@@ -27,6 +27,15 @@ class JoomGalleryControllerFavourites extends JoomGalleryController
    */
   public function reset()
   {
+    // Check whether we are allowed to delete
+    $canDo = JoomHelper::getActions();
+    if(!$canDo->get('core.delete'))
+    {
+      JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+
+      return false;
+    }
+
     $model = $this->getModel('favourites');
     if(!$model->reset())
     {
