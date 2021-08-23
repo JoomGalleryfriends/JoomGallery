@@ -72,5 +72,4 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.'); ?>
     <?php $itemcount++; ?>
 <?php endforeach; ?>
 
-  </div>
 </div>
