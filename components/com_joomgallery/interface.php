@@ -490,6 +490,8 @@ class JoomInterface
       $output .= "    &nbsp;\n";
     }
 
+    $output = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $output);
+
     return $output;
   }
 
@@ -551,6 +553,8 @@ class JoomInterface
       $output .= "    &nbsp;\n";
     }
 
+    $output = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $output);
+
     return $output;
   }
 
@@ -604,6 +608,8 @@ class JoomInterface
     }
     $router->setVars($routervars, false);
 
+    $output = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $output);
+
     return $output;
   }
 
@@ -625,6 +631,8 @@ class JoomInterface
     $data = array('interface' => $this, '_ambit' => $this->_ambit, 'rows' => $rows);
     $layout = new JLayoutFile('interface.thumbs', null, array('component' => 'com_joomgallery', 'client' => 1));
     $return = $layout->render($data);
+
+    $return = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $return);
 
     return $return;
   }
