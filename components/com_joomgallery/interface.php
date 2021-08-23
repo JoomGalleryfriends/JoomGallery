@@ -461,7 +461,7 @@ class JoomInterface
 
       // Load layout
       $args = array('linked' => $linked, 'class' => $class, 'div' => $div, 'extra' => $extra, 'type' => $type);
-      $data = array('_config' => $this->_config, 'thumb_url' => $this->_ambit->getImg('thumb_url', $obj), 'group' => $this->getConfig('group'), 'args' => $args, 'obj' => $obj);
+      $data = array('interface' => $this, '_config' => $this->_config, 'thumb_url' => $this->_ambit->getImg('thumb_url', $obj), 'group' => $this->getConfig('group'), 'args' => $args, 'obj' => $obj);
       $layout = new JLayoutFile('interface.thumb', null, array('component' => 'com_joomgallery', 'client' => 1));
       $output .= $layout->render($data);
 
@@ -524,7 +524,7 @@ class JoomInterface
 
       // Load layout
       $args = array('linked' => $linked, 'class' => $class, 'div' => $div, 'extra' => $extra, 'type' => $type);
-      $data = array('_config' => $this->_config, 'img_url' => $this->_ambit->getImg('img_url', $obj), 'group' => $this->getConfig('group'), 'args' => $args, 'obj' => $obj);
+      $data = array('interface' => $this, '_config' => $this->_config, 'img_url' => $this->_ambit->getImg('img_url', $obj), 'group' => $this->getConfig('group'), 'args' => $args, 'obj' => $obj);
       $layout = new JLayoutFile('interface.detail', null, array('component' => 'com_joomgallery', 'client' => 1));
       $output .= $layout->render($data);
 
