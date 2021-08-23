@@ -43,7 +43,7 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.'); ?>
   <?php endif; ?>
 
   <?php //thumb ?>
-  <div class="jg_element_cat" style="width:<?php echo $elem_width; ?>">
+  <div class="jg_element_cat" style="width:<?php echo $elem_width; ?>%">
     <?php
       $type = 'img';
 

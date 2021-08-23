@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Direct Access to this location is not allowed.'); ?>
 
 <?php if($displayData['args']['div']) : ?>
-  <div class=" <?php echo $displayData['args']['div']; ?>">
+  <div class="<?php echo $displayData['args']['div']; ?>">
 <?php endif; ?>
 
 <?php if($displayData['args']['linked']) :
