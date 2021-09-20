@@ -91,7 +91,7 @@ class JoomGalleryViewImages extends JoomGalleryView
 
     if($this->pagination->total)
     {
-      JToolbarHelper::deleteList('', 'remove');
+      JToolbarHelper::deleteList('COM_JOOMGALLERY_IMGMAN_CONFIRM_DELETE_IMAGES', 'remove');
     }
   }
 
