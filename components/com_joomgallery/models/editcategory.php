@@ -980,7 +980,7 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
     }
 
     JPluginHelper::importPlugin('content');
-    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.category', array($row->cid), array('publish'=>1-$published,'task'=>'publish')));
+    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.category', $row->cid, $row->published));
 
     return true;
   }

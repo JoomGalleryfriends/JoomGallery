@@ -722,8 +722,43 @@ class JoomGalleryModelCategories extends JoomGalleryModel
       }
     }
 
+    // Convert tasks and states
+    switch($task)
+    {
+      case 'approve':
+        if($publish == 1)
+        {
+          // approved
+          $state = 4;
+        }
+        else
+        {
+          // not approved
+          $state = 3;
+        }
+        break;
+
+      case 'feature':
+        if($publish == 1)
+        {
+          // featured
+          $state = 6;
+        }
+        else
+        {
+          // not featured
+          $state = 5;
+        }
+        break;
+
+      default:
+        // publish
+        $state = $publish;
+        break;
+    }
+
     JPluginHelper::importPlugin('content');
-    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.category', $cid, array('publish'=>$publish,'task'=>$task)));
+    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.category', $cid, $state));
 
     return $count;
   }
