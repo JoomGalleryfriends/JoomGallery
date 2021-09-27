@@ -20,6 +20,14 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 class JoomGalleryControllerComments extends JoomGalleryController
 {
   /**
+   * URL to redirect
+   *
+   * @param   string
+   * @since   3.6.0
+   */
+  protected $redirectURL = null;
+
+  /**
    * Constructor
    *
    * @return  void
@@ -28,6 +36,13 @@ class JoomGalleryControllerComments extends JoomGalleryController
   public function __construct()
   {
     parent::__construct();
+
+    // Check if task was fired inside the maintenance manager
+    $source = JFactory::getApplication()->input->get('source','comments');
+    if($source = 'maintenance')
+    {
+      $this->redirectURL = 'maintenance&tab=comments';
+    }
 
     // Set view
     JRequest::setVar('view', 'comments');
@@ -121,7 +136,7 @@ class JoomGalleryControllerComments extends JoomGalleryController
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.delete'))
     {
-      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
       return false;
     }
@@ -138,7 +153,7 @@ class JoomGalleryControllerComments extends JoomGalleryController
       }
     }
 
-    $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+    $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), $msg);
   }
 
   /**
@@ -153,7 +168,7 @@ class JoomGalleryControllerComments extends JoomGalleryController
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.delete'))
     {
-      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
       return false;
     }
@@ -166,13 +181,12 @@ class JoomGalleryControllerComments extends JoomGalleryController
 
     if(!$this->_db->query())
     {
-      // Redirect to maintenance manager because this task is usually launched there
-      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), $this->_db->getErrorMsg(), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), $this->_db->getErrorMsg(), 'error');
+
       return;
     }
 
-    // Redirect to maintenance manager because this task is usually launched there
-    $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), JText::_('COM_JOOMGALLERY_MAIMAN_CM_MSG_ALL_COMMENTS_DELETED'));
+    $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), JText::_('COM_JOOMGALLERY_MAIMAN_CM_MSG_ALL_COMMENTS_DELETED'));
   }
 
   /**
@@ -194,8 +208,7 @@ class JoomGalleryControllerComments extends JoomGalleryController
 
     if(!$this->_db->query())
     {
-      // Redirect to maintenance manager because this task is usually launched there
-      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), $this->_db->getErrorMsg(), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), $this->_db->getErrorMsg(), 'error');
 
       return;
     }
@@ -209,14 +222,12 @@ class JoomGalleryControllerComments extends JoomGalleryController
 
     if(!$this->_db->query())
     {
-      // Redirect to maintenance manager because this task is usually launched there
-      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), $this->_db->getErrorMsg(), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), $this->_db->getErrorMsg(), 'error');
 
       return;
     }
 
-    // Redirect to maintenance manager because this task is usually launched there
-    $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), JText::_('COM_JOOMGALLERY_MAIMAN_CM_MSG_COMMENTS_SYNCHRONIZED'));
+    $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), JText::_('COM_JOOMGALLERY_MAIMAN_CM_MSG_COMMENTS_SYNCHRONIZED'));
   }
 
   /**
@@ -231,7 +242,7 @@ class JoomGalleryControllerComments extends JoomGalleryController
     $canDo = JoomHelper::getActions();
     if(!$canDo->get('core.delete'))
     {
-      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
       return false;
     }
@@ -244,13 +255,11 @@ class JoomGalleryControllerComments extends JoomGalleryController
 
     if(!$this->_db->execute())
     {
-      // Redirect to maintenance manager because this task is usually launched there
-      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), $this->_db->getErrorMsg(), 'error');
+      $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), $this->_db->getErrorMsg(), 'error');
 
       return;
     }
 
-    // Redirect to maintenance manager because this task is usually launched there
-    $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=comments'), JText::_('COM_JOOMGALLERY_MAIMAN_CM_MSG_COMMENTS_IPS_DELETED'));
+    $this->setRedirect($this->_ambit->getRedirectUrl($this->redirectURL), JText::_('COM_JOOMGALLERY_MAIMAN_CM_MSG_COMMENTS_IPS_DELETED'));
   }
 }
