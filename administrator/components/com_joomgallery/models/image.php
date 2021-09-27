@@ -103,7 +103,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
     }
 
     JPluginHelper::importPlugin('content');
-    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.image', $row));
+    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.image', &$row));
 
     $this->_data = $row;
 

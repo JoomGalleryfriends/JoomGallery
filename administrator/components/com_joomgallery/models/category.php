@@ -82,7 +82,7 @@ class JoomGalleryModelCategory extends JoomGalleryModel
     }
 
     JPluginHelper::importPlugin('content');
-    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.category', $this->_data));
+    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.category', &$this->_data));
 
     return $this->_data;
   }
