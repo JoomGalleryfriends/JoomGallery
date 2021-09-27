@@ -54,6 +54,8 @@ $published  = $this->state->get('filter.published');
           <div class="controls">
           <label id="batchalias-lbl" for="batchalias" class="control-label">
             <?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_REG'); ?>
+            <span class="icon-info-2 hasPopover" data-original-title="<?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_REG'); ?>"
+                  data-content="<?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_INFO'); ?>" data-placement="top"></span>
           </label>
             <?php
               $default = 0;
