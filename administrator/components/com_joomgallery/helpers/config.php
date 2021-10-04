@@ -326,6 +326,7 @@ class JoomConfig extends JObject
   var $jg_showfavouritesdownload;
   var $jg_showfavouriteseditorlinks;
   var $jg_search;
+  var $jg_searchengine;
   var $jg_searchcols;
   var $jg_searchthumbalign;
   var $jg_searchtextalign;

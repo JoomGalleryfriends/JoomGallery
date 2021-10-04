@@ -7,3 +7,4 @@ ALTER TABLE `#__joomgallery_config` ADD `jg_detailautorot` int(1) NOT NULL DEFAU
 ALTER TABLE `#__joomgallery_config` ADD `jg_thumbautorot` int(1) NOT NULL DEFAULT 0 AFTER `jg_thumbheight`;
 ALTER TABLE `#__joomgallery_config` DROP `jg_upload_exif_rotation`;
 ALTER TABLE `#__joomgallery_config` DROP `jg_dyncropbgcol`;
+ALTER TABLE `#__joomgallery_config` ADD `jg_searchengine` varchar(20) NOT NULL DEFAULT 'joomgallery' AFTER `jg_search`;

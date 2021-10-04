@@ -72,14 +72,24 @@ class JoomGalleryModelSearch extends JoomGalleryModel
       // Create query object
       $query = $this->_db->getQuery(true);
 
-      // Create search part of the query
-      $where = '(u.username       LIKE '.$this->_db->q('%'.$searchstring.'%').'
-              OR a.imgtitle       LIKE '.$this->_db->q('%'.$searchstring.'%').'
-              OR LOWER(a.imgtext) LIKE '.$this->_db->q('%'.$searchstring.'%');
+      if($this->_config->get('jg_searchengine') == 'joomgallery')
+      {
+        // Create search part of the query
+        $where   = '(u.username       LIKE '.$this->_db->q('%'.$searchstring.'%').'
+                  OR a.imgtitle       LIKE '.$this->_db->q('%'.$searchstring.'%').'
+                  OR LOWER(a.imgtext) LIKE '.$this->_db->q('%'.$searchstring.'%');
+        $context = _JOOM_OPTION.'.search';
+      }
+      else
+      {
+        $where   = '(';
+        $context = _JOOM_OPTION.'.'.$this->_config->get('jg_searchengine');
+      }
 
       // Add query parts from plugins
-      $aliases = array('images' => 'a', 'categories' => 'ca');
-      $plugins = $this->_mainframe->triggerEvent('onJoomSearch', array($searchstring, $aliases, _JOOM_OPTION.'.search'));
+      $aliases = array('images' => 'a', 'categories' => 'ca', 'users' => 'u');
+      $plugins = $this->_mainframe->triggerEvent('onJoomSearch', array($searchstring, $aliases, $context));
+
       foreach($plugins as $plugin)
       {
         if(isset($plugin['images.select']))
@@ -104,6 +114,7 @@ class JoomGalleryModelSearch extends JoomGalleryModel
       // Only now the search part can be finalized
       $where .= ')';
 
+
       // General select clause of the query
       $query->select('a.*, '.JoomHelper::getSQLRatingClause('a').' AS rating, u.username, ca.cid, ca.name AS name, ca.allow_download AS allow_download');
 
@@ -122,9 +133,12 @@ class JoomGalleryModelSearch extends JoomGalleryModel
       // Main part of the query
       $query->from(_JOOM_TABLE_IMAGES.' AS a')
             ->innerJoin(_JOOM_TABLE_CATEGORIES.' AS ca ON a.catid = ca.cid')
-            ->leftJoin('#__users AS u ON a.owner = u.id')
-            ->where($where)
-            ->where('a.published = 1')
+            ->leftJoin('#__users AS u ON a.owner = u.id');
+      if($this->_config->get('jg_searchengine') == 'joomgallery')
+      {
+        $query->where($where);
+      }
+      $query->where('a.published = 1')
             ->where('a.approved = 1')
             ->where('a.access IN ('.$authorisedViewLevels.')')
             ->where('ca.published = 1')

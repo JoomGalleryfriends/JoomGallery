@@ -169,6 +169,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
 
   /* --> ### Search ####*/
   /*jg_search*/                     1,
+  /*jg_searchengine*/               'joomgallery',
   /*jg_searchcols*/                 1,
   /*jg_searchthumbalign*/           1,
   /*jg_searchtextalign*/            1,
