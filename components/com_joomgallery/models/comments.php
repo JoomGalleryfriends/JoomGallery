@@ -294,7 +294,7 @@ class JoomGalleryModelComments extends JoomGalleryModel
    */
   public function remove()
   {
-    if(!$this->_user->authorise('core.manage', _JOOM_OPTION))
+    if(!$this->_user->authorise('core.manage', _JOOM_OPTION) || !$this->_user->authorise('core.delete', _JOOM_OPTION))
     {
       JError::raiseError(500, JText::_('COM_JOOMGALLERY_COMMON_PERMISSION_DENIED'));
     }

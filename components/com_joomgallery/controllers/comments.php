@@ -54,15 +54,6 @@ class JoomGalleryControllerComments extends JControllerLegacy
    */
   public function remove()
   {
-    // Check whether we are allowed to delete
-    $canDo = JoomHelper::getActions();
-    if(!$canDo->get('core.delete'))
-    {
-      $this->setRedirect(JRoute::_('index.php?view=detail&id='.$model->getId(), false), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
-
-      return false;
-    }
-
     $model = $this->getModel('comments');
 
     if(!$model->remove())
