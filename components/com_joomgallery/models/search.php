@@ -92,22 +92,31 @@ class JoomGalleryModelSearch extends JoomGalleryModel
 
       foreach($plugins as $plugin)
       {
-        if(isset($plugin['images.select']))
+        $plugin_searchengines = array('joomgallery');
+        if(isset($plugin['searchengines']))
         {
-          $query->select($plugin['images.select']);
+          $plugin_searchengines = $plugin['searchengines'];
         }
-        if(isset($plugin['images.leftjoin']))
-        {
-          $query->leftJoin($plugin['images.leftjoin']);
-        }
-        if(isset($plugin['images.where']))
-        {
-          $query->where($plugin['images.where']);
-        }
-        if(isset($plugin['images.where.or']))
-        {
-          $where .= '
-              OR '.$plugin['images.where.or'];
+
+        if(in_array($this->_config->get('jg_searchengine'), $plugin_searchengines))
+		    {
+          if(isset($plugin['images.select']))
+          {
+            $query->select($plugin['images.select']);
+          }
+          if(isset($plugin['images.leftjoin']))
+          {
+            $query->leftJoin($plugin['images.leftjoin']);
+          }
+          if(isset($plugin['images.where']))
+          {
+            $query->where($plugin['images.where']);
+          }
+          if(isset($plugin['images.where.or']))
+          {
+            $where .= '
+                OR '.$plugin['images.where.or'];
+          }
         }
       }
 
