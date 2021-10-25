@@ -690,6 +690,14 @@ class JoomGalleryModelCategory extends JoomGalleryModel
 
         $table->access = (int) $value;
 
+        // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+        JPluginHelper::importPlugin('content');
+        $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$table, false, array('access'=>$value)));
+        if(in_array(false, $plugins, true))
+        {
+          return false;
+        }
+
         if(!$table->store())
         {
           $this->setError($table->getError());
@@ -798,7 +806,7 @@ class JoomGalleryModelCategory extends JoomGalleryModel
 
       // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
       // $table contains still the old values
-      $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array()));
+      $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array('parent_id'=>$categoryId)));
       if(in_array(false, $plugins, true))
       {
         return false;
@@ -833,6 +841,14 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       {
         $this->setError(JText::_('COM_JOOMGALLERY_CATMAN_MSG_ERROR_INVALID_FOLDERNAME'));
 
+        return false;
+      }
+
+      // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+      JPluginHelper::importPlugin('content');
+      $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$table, false, array('parent_id'=>$categoryId)));
+      if(in_array(false, $plugins, true))
+      {
         return false;
       }
 
