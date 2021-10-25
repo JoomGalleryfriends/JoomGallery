@@ -32,7 +32,7 @@ class JoomGalleryControllerMaintenance extends JoomGalleryController
     // Access check
     if(!JFactory::getUser()->authorise('core.manage', _JOOM_OPTION))
     {
-      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl(''), false), 'You are not allowed to manage this component', 'notice');
+      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl(''), false), JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_TO_CONFIGURE', 'notice'));
       $this->redirect();
     }
 
