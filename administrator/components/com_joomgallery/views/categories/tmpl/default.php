@@ -21,7 +21,7 @@ $listOrder      = $this->escape($this->state->get('list.ordering'));
 $listDirn       = $this->escape($this->state->get('list.direction'));
 $columns        = 11;
 $ordering       = $this->state->get('ordering.array');
-$saveOrder      = (($listOrder == 'c.lft' || !$listOrder) && (strtoupper($listDirn) == 'ASC' || !$listDirn) && !$this->state->get('filter.published') && !$this->state->get('filter.search') && !$this->state->get('filter.owner'));
+$saveOrder      = (($listOrder == 'c.lft' || !$listOrder) && (strtoupper($listDirn) == 'ASC' || !$listDirn) && !$this->state->get('filter.published') && !$this->state->get('filter.search') && !$this->state->get('filter.owner') && ($this->_config->get('jg_adminsorting', 0) == 0));
 $originalOrders = array();
 
 if($saveOrder):
@@ -79,9 +79,11 @@ JFactory::getDocument()->addScriptDeclaration(
           <th width="10%" class="nowrap">
             <?php echo JText::_('COM_JOOMGALLERY_MAIMAN_TAB_IMAGES'); ?>
           </th>
-          <th width="10%" class="hidden-phone">
-            <?php echo JText::_('COM_JOOMGALLERY_CATMAN_ORDERING'); ?>
-          </th>
+          <?php if($this->_config->get('jg_adminsorting', 0) == 1): ?>
+            <th width="10%" class="hidden-phone">
+              <?php echo JText::_('COM_JOOMGALLERY_CATMAN_ORDERING'); ?>
+            </th>
+          <?php endif; ?>
           <th width="10%" class="nowrap hidden-phone">
             <?php echo JHtml::_('searchtools.sort', 'COM_JOOMGALLERY_COMMON_ACCESS', 'access_level', $listDirn, $listOrder); ?>
           </th>
@@ -106,6 +108,7 @@ JFactory::getDocument()->addScriptDeclaration(
           $canEdit    = $this->_user->authorise('core.edit', _JOOM_OPTION.'.category.'.$item->cid);
           $canEditOwn = $this->_user->authorise('core.edit.own', _JOOM_OPTION.'.category.'.$item->cid) && $item->owner == $this->_user->get('id');
           $canChange  = $this->_user->authorise('core.edit.state', _JOOM_OPTION.'.category.'.$item->cid);
+          $useDnD     = ($this->_config->get('jg_adminsorting', 0) == 0) ? true : false;
 
           // Get the parents of item for sorting
           if ($item->level > 1)
@@ -137,7 +140,7 @@ JFactory::getDocument()->addScriptDeclaration(
           <td class="order nowrap center hidden-phone">
             <?php
             $iconClass = '';
-            if (!$canChange)
+            if (!$canChange || !$useDnD)
             {
               $iconClass = ' inactive';
             }
@@ -149,7 +152,7 @@ JFactory::getDocument()->addScriptDeclaration(
             <span class="sortable-handler<?php echo $iconClass ?>">
               <span class="icon-menu"></span>
             </span>
-            <?php if ($canChange && $saveOrder) : ?>
+            <?php if ($canChange && $saveOrder && $useDnD) : ?>
               <input type="text" style="display:none" name="order[]" size="5" value="<?php echo $orderkey + 1; ?>" class="width-20 text-area-order " />
             <?php endif; ?>
           </td>
@@ -188,34 +191,36 @@ JFactory::getDocument()->addScriptDeclaration(
               (0)
             <?php endif; ?>
           </td>
-          <td class="hidden-phone">
-            <?php
-              $position = 'middle';
-              if($orderkey == 0)
-              {
-                $position = 'first';
-              }
-              elseif(($orderkey + 1) == $ordercount)
-              {
-                $position = 'last';
-              }
-            ?>
-            <div class="btn-group">
-              <a class="btn btn-micro <?php if($position != 'first'){echo 'active hasTooltip';}else{echo 'disabled';}; ?>"
-                 href="javascript:void(0);"
-                 <?php if($position != 'first'){echo 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderup\')"';}; ?>
-                 title=""
-                 <?php if($position != 'first'){echo 'data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_UP').'"';}; ?>
-              ><i class="<?php if($position != 'first'){echo 'icon-uparrow';}else{echo 'icon-empty';};?>"></i></a>
+          <?php if($this->_config->get('jg_adminsorting', 0) == 1): ?>
+            <td class="hidden-phone">
+              <?php
+                $position = 'middle';
+                if($orderkey == 0)
+                {
+                  $position = 'first';
+                }
+                elseif(($orderkey + 1) == $ordercount)
+                {
+                  $position = 'last';
+                }
+              ?>
+              <div class="btn-group">
+                <a class="btn btn-micro <?php if($position != 'first'){echo 'active hasTooltip';}else{echo 'disabled';}; ?>"
+                  href="javascript:void(0);"
+                  <?php if($position != 'first'){echo 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderup\')"';}; ?>
+                  title=""
+                  <?php if($position != 'first'){echo 'data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_UP').'"';}; ?>
+                ><i class="<?php if($position != 'first'){echo 'icon-uparrow';}else{echo 'icon-empty';};?>"></i></a>
 
-              <a class="btn btn-micro <?php if($position != 'last'){echo 'active hasTooltip';}else{echo 'disabled';}; ?>"
-                 href="javascript:void(0);"
-                 <?php if($position != 'last'){echo 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderdown\')"';}; ?>
-                 title=""
-                 <?php if($position != 'last'){echo 'data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_DOWN').'"';}; ?>
-              ><i class="<?php if($position != 'last'){echo 'icon-downarrow';}else{echo 'icon-empty';};?>"></i></a>
-            </div>
-          </td>
+                <a class="btn btn-micro <?php if($position != 'last'){echo 'active hasTooltip';}else{echo 'disabled';}; ?>"
+                  href="javascript:void(0);"
+                  <?php if($position != 'last'){echo 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderdown\')"';}; ?>
+                  title=""
+                  <?php if($position != 'last'){echo 'data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_DOWN').'"';}; ?>
+                ><i class="<?php if($position != 'last'){echo 'icon-downarrow';}else{echo 'icon-empty';};?>"></i></a>
+              </div>
+            </td>
+          <?php endif; ?>
           <td class="small hidden-phone">
             <?php echo $this->escape($item->access_level); ?>
           </td>
