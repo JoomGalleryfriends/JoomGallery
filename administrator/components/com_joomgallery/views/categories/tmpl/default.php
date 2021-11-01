@@ -203,20 +203,44 @@ JFactory::getDocument()->addScriptDeclaration(
                 {
                   $position = 'last';
                 }
+
+                $btn1_class = '';
+                $btn1_attr  = '';
+                if($position != 'first' && $canChange)
+                {
+                  $btn1_class .= 'active hasTooltip';
+                  $btn1_attr  .= 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderup\')"';
+                  $btn1_attr  .= ' data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_UP').'"';
+                }
+                else
+                {
+                  $btn1_class .= 'disabled';
+                }
+
+                $btn2_class = '';
+                $btn2_attr  = '';
+                if($position != 'last' && $canChange)
+                {
+                  $btn2_class .= 'active hasTooltip';
+                  $btn2_attr  .= 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderdown\')"';
+                  $btn2_attr  .= ' data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_DOWN').'"';
+                }
+                else
+                {
+                  $btn2_class .= 'disabled';
+                }
               ?>
               <div class="btn-group">
-                <a class="btn btn-micro <?php if($position != 'first'){echo 'active hasTooltip';}else{echo 'disabled';}; ?>"
+                <a class="btn btn-micro <?php echo $btn1_class; ?>"
                   href="javascript:void(0);"
-                  <?php if($position != 'first'){echo 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderup\')"';}; ?>
+                  <?php echo $btn1_attr; ?>
                   title=""
-                  <?php if($position != 'first'){echo 'data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_UP').'"';}; ?>
                 ><i class="<?php if($position != 'first'){echo 'icon-uparrow';}else{echo 'icon-empty';};?>"></i></a>
 
-                <a class="btn btn-micro <?php if($position != 'last'){echo 'active hasTooltip';}else{echo 'disabled';}; ?>"
+                <a class="btn btn-micro <?php echo $btn2_class; ?>"
                   href="javascript:void(0);"
-                  <?php if($position != 'last'){echo 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderdown\')"';}; ?>
+                  <?php echo $btn2_attr; ?>
                   title=""
-                  <?php if($position != 'last'){echo 'data-original-title="'.JText::_('COM_JOOMGALLERY_CATMAN_MOVE_DOWN').'"';}; ?>
                 ><i class="<?php if($position != 'last'){echo 'icon-downarrow';}else{echo 'icon-empty';};?>"></i></a>
               </div>
             </td>
