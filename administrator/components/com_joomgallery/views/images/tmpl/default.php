@@ -209,14 +209,14 @@ JFactory::getDocument()->addScriptDeclaration(
                       $this->loadTemplate('rotate_body')
                      ); ?>
 <?php endif; ?>
-<?php // Load the batch form (modal box). ?>
+<?php // Load the replace form (modal box). ?>
 <?php if ($this->_user->authorise('core.edit', _JOOM_OPTION) || $this->_user->authorise('core.edit.own', _JOOM_OPTION)) :
         echo JHtml::_('bootstrap.renderModal',
-                      'jg-batch-popup',
-                      array('title'  => JText::_('COM_JOOMGALLERY_COMMON_BATCH_OPTIONS'),
-                            'footer' => $this->loadTemplate('batch_footer'),
+                      'jg-replace-popup',
+                      array('title'  => JText::_('COM_JOOMGALLERY_COMMON_REPLACE_OPTIONS'),
+                            'footer' => $this->loadTemplate('replace_footer'),
                            ),
-                      $this->loadTemplate('batch_body')
+                      $this->loadTemplate('replace_body')
                      ); ?>
 <?php endif; ?>
 <?php endif; ?>

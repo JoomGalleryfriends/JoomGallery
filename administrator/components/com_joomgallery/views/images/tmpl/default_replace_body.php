@@ -17,16 +17,6 @@ JHtml::_('formbehavior.chosen', 'select');
 <div class="container-fluid">
   <div class="row-fluid">
 
-    <h4><?php echo JText::_('COM_JOOMGALLERY_IMGMAN_BATCH_EDIT'); ?></h4>
-    <div class="control-group">
-      <div class="controls">
-        <button class="btn button-edit" onclick="if (document.adminForm.boxchecked.value == 0) { alert(Joomla.JText._('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST')); } else { Joomla.submitbutton('edit'); }"><span class="icon-edit"></span> Edit</button>
-      </div>
-    </div>
-
-    <br />
-
-    <h4><?php echo JText::_('COM_JOOMGALLERY_IMGMAN_BATCH_REPLACE_TITLE'); ?></h4>
     <div class="control-group">
       <div class="control-label">
         <label id="batch_search-lbl" class="hasPopover" title="" data-content="<?php echo JText::_('COM_JOOMGALLERY_IMGMAN_BATCH_SEARCH_DESC'); ?>" data-original-title="<?php echo JText::_('COM_JOOMGALLERY_COMMON_SEARCH'); ?>">

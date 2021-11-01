@@ -70,11 +70,12 @@ class JoomGalleryViewImages extends JoomGalleryView
     {
       JToolbarHelper::editList();
 
-      // Instantiate a new JLayoutFile instance and render the batch button
-      $layout = new JLayoutFile('joomgallery.toolbar.batch', JPATH_COMPONENT_ADMINISTRATOR . '/layouts');
-      $dhtml  = $layout->render(array('title' => JText::_('JTOOLBAR_BATCH')));
-      $bar->appendButton('Custom', $dhtml, 'batch');
-      //JToolbarHelper::custom('edit', 'checkbox-partial', 'checkbox-partial', 'JTOOLBAR_BATCH');
+      JToolbarHelper::custom('edit', 'checkbox-partial', 'checkbox-partial', 'JTOOLBAR_BATCH');
+
+      // Instantiate a new JLayoutFile instance and render the replace button
+      $layout = new JLayoutFile('joomgallery.toolbar.replace', JPATH_COMPONENT_ADMINISTRATOR . '/layouts');
+      $dhtml  = $layout->render(array('title' => JText::_('COM_JOOMGALLERY_COMMON_TOOLBAR_REPLACE')));
+      $bar->appendButton('Custom', $dhtml, 'replace');
 
       JToolbarHelper::custom('showmove', 'move.png', 'move.png', 'COM_JOOMGALLERY_COMMON_TOOLBAR_MOVE');
       JToolbarHelper::custom('recreate', 'refresh.png', 'refresh.png', 'COM_JOOMGALLERY_COMMON_TOOLBAR_RECREATE');
