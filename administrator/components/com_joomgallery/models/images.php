@@ -1046,10 +1046,10 @@ class JoomGalleryModelImages extends JoomGalleryModel
   public function replace()
   {
     // get Data
-    $cids       = $this->_mainframe->input->get('cid',array(),'array');
-    $fields     = $this->_mainframe->input->get('batch_fields',array(),'array');
-    $searchVal  = $this->_mainframe->input->get('batch_search','','string');
-    $replaceVal = $this->_mainframe->input->get('batch_replace','','string');
+    $cids       = $this->_mainframe->input->get('cid', array(), 'array');
+    $fields     = $this->_mainframe->input->get('batch_fields', array(), 'array');
+    $searchVal  = $this->_mainframe->input->get('batch_search', '', 'string');
+    $replaceVal = $this->_mainframe->input->get('batch_replace', '', 'string');
 
     $nmb_imgs    = count($cids);  // Number of images to process
     $nmb_rep     = 0;             // Number of performed replacements
@@ -1078,14 +1078,14 @@ class JoomGalleryModelImages extends JoomGalleryModel
       $row->load($id);
 
       $tmp_rep = 0;
-      foreach ($fields as $fieldname)
+      foreach($fields as $fieldname)
       {
         if($fieldname != 'additional')
         {
           $replacements = 0;
 
           // Replace image informations
-          $row->{$fieldname} = str_replace($searchVal,$replaceVal,$row->{$fieldname},$replacements);
+          $row->{$fieldname} = str_replace($searchVal, $replaceVal, $row->{$fieldname}, $replacements);
 
           // count replacements
           $tmp_rep = $tmp_rep + $replacements;
@@ -1095,7 +1095,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       // Make sure the record is valid
       if(!$row->check())
       {
-        $erroroutput .= 'Image (ID:'.$id.'):'.$row->getError().'<br />';
+        $erroroutput .= 'Image (ID:' . $id . '):' . $row->getError() . '<br />';
         $nmb_err      = $nmb_err + 1;
 
         continue;
@@ -1104,7 +1104,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       // Store the entry to the database
       if(!$row->store())
       {
-        $erroroutput .= 'Image (ID:'.$id.'):'.$row->getError().'<br />';
+        $erroroutput .= 'Image (ID:' . $id . '):' . $row->getError() . '<br />';
         $nmb_err      = $nmb_err + 1;
 
         continue;
@@ -1121,7 +1121,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
       }
     }
 
-    return array('stats'=>array($nmb_imgs,$nmb_rep,$nmb_repimgs,$nmb_err),'msg'=>$erroroutput);
+    return array('stats'=>array($nmb_imgs, $nmb_rep, $nmb_repimgs, $nmb_err), 'msg' => $erroroutput);
   }
 
   /**
