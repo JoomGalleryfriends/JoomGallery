@@ -845,7 +845,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
       // trigger Event "onJoomAfterRecreate($files,$orig_exists,$autorot)". Attached is an array with infos about the recreation
       // files: path to the files; orig_exists: true, if original exists; autorot: is there auto rotation for the different image
-      $this->_mainframe->triggerEvent('onJoomAfterRecreate', array(array('original'=>$orig,'detail'=>$img,'thumbnail'=>$thumb), $orig_existent, array('original'=>$autorot_orig,'detail'=>$autorot_det,'thumbnail'=>$autorot_thumb) ));
+      $this->_mainframe->triggerEvent('onJoomAfterRecreate', array(array('original'=>$orig, 'detail'=>$img, 'thumbnail'=>$thumb), $orig_existent, array('original'=>$autorot_orig, 'detail'=>$autorot_det, 'thumbnail'=>$autorot_thumb) ));
 
       unset($cids[$key]);
 
@@ -1051,7 +1051,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
       // trigger Event "onJoomAfterRotate($files,$angle,$imgtypes)". Attached is an array with infos about the rotation
       // files: path to the files; angle: the angle by which the images were rotated; imgtypes: 1(Thumbs and details), 2(All images)
-      $this->_mainframe->triggerEvent('onJoomAfterRotate', array(array('original'=>$orig,'detail'=>$img,'thumbnail'=>$thumb), $rotateImageAngle, $rotateimagetypes));
+      $this->_mainframe->triggerEvent('onJoomAfterRotate', array(array('original'=>$orig, 'detail'=>$img, 'thumbnail'=>$thumb), $rotateImageAngle, $rotateimagetypes));
 
       unset($cids[$key]);
 

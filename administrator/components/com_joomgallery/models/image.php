@@ -374,7 +374,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
 
       // Trigger Event onContentBeforeSave (Returnvalue: true or false)
       JPluginHelper::importPlugin('content');
-		  $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, true, $data));
+      $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, true, $data));
       if(in_array(false, $plugins, true))
       {
         return false;
@@ -730,7 +730,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
 
     // Trigger Event onContentBeforeSave (Returnvalue: true or false)
     JPluginHelper::importPlugin('content');
-		$plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false, $data));
+    $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false, $data));
     if(in_array(false, $plugins, true))
     {
       return false;
