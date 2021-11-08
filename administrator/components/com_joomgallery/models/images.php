@@ -1048,8 +1048,8 @@ class JoomGalleryModelImages extends JoomGalleryModel
     // get Data
     $cids       = $this->_mainframe->input->get('cid',array(),'array');
     $fields     = $this->_mainframe->input->get('batch_fields',array(),'array');
-    $searchVal  = $this->_mainframe->input->get('batch_search','','cmd');
-    $replaceVal = $this->_mainframe->input->get('batch_replace','','cmd');
+    $searchVal  = $this->_mainframe->input->get('batch_search','','string');
+    $replaceVal = $this->_mainframe->input->get('batch_replace','','string');
 
     $nmb_imgs    = count($cids);  // Number of images to process
     $nmb_rep     = 0;             // Number of performed replacements
