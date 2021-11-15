@@ -54,8 +54,8 @@ JHtml::_('formbehavior.chosen', 'select');
             <label class="checkbox"><input type="checkbox" name="batch_fields[]" value="imgauthor"> <?php echo JText::_('COM_JOOMGALLERY_COMMON_AUTHOR'); ?></label>
           </div>
           <div class="span3">
-            <label class="checkbox"><input type="checkbox" name="batch_fields[]" value="imgtitle"> <?php echo JText::_('COM_JOOMGALLERY_COMMON_METADESC_TIP'); ?></label>
-            <label class="checkbox"><input type="checkbox" name="batch_fields[]" value="imgtext"> <?php echo JText::_('COM_JOOMGALLERY_COMMON_METAKEYS_TIP'); ?></label>
+            <label class="checkbox"><input type="checkbox" name="batch_fields[]" value="metadesc"> <?php echo JText::_('COM_JOOMGALLERY_COMMON_METADESC_TIP'); ?></label>
+            <label class="checkbox"><input type="checkbox" name="batch_fields[]" value="metakey"> <?php echo JText::_('COM_JOOMGALLERY_COMMON_METAKEYS_TIP'); ?></label>
             <label class="checkbox"><input type="checkbox" name="batch_fields[]" value="additional"> <?php echo JText::_('COM_JOOMGALLERY_COMMON_ADDITIONALIELDS'); ?></label>
           </div>
         </div>
