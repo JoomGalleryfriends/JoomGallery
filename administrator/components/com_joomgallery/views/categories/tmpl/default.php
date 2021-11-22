@@ -206,7 +206,7 @@ JFactory::getDocument()->addScriptDeclaration(
 
                 $btn1_class = '';
                 $btn1_attr  = '';
-                if($position != 'first' && $canChange)
+                if($position != 'first' && $canChange && $listOrder == 'c.lft' && strtoupper($listDirn) == 'ASC')
                 {
                   $btn1_class .= 'active hasTooltip';
                   $btn1_attr  .= 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderup\')"';
@@ -219,7 +219,7 @@ JFactory::getDocument()->addScriptDeclaration(
 
                 $btn2_class = '';
                 $btn2_attr  = '';
-                if($position != 'last' && $canChange)
+                if($position != 'last' && $canChange && $listOrder == 'c.lft' && strtoupper($listDirn) == 'ASC')
                 {
                   $btn2_class .= 'active hasTooltip';
                   $btn2_attr  .= 'onclick="return Joomla.listItemTask(\'cb'.$i.'\',\'orderdown\')"';
