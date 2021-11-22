@@ -130,7 +130,7 @@ class JoomGalleryModelCategories extends JoomGalleryModel
       $this->setState('ordering.array', $ordering);
 
       // Check whether we aren't displaying all categories in default order
-      if($this->getState('list.ordering') != 'c.lft')
+      if($this->getState('list.ordering') != 'c.lft' || $this->getState('list.direction') != 'ASC')
       {
         $this->_categories = $current_categories;
 
