@@ -7,12 +7,12 @@
     <author>JoomGallery::ProjectTeam</author>
     <authorEmail>team@joomgalleryfriends.net</authorEmail>
     <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-    <version>CVS: 4.0.0</version>
+    <version>4.0.0</version>
     <description>COM_JOOMGALLERY_XML_DESCRIPTION</description>
     <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
-    
+
     <scriptfile>script.php</scriptfile>
-    
+
     <install> <!-- Runs on install -->
         <sql>
             <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
@@ -30,39 +30,37 @@
     </uninstall>
 
     <api>
-		<files folder="webservices">
-			<folder>src</folder>
-		</files>
-	</api>
+      <files folder="webservices">
+        <folder>src</folder>
+      </files>
+    </api>
 
     <files folder="site">
         <folder>src</folder>
         <folder>forms</folder>
         <folder>tmpl</folder>
     </files>
+
     <media destination="com_joomgallery" folder="media">
         <folder>css</folder>
         <folder>js</folder>
         <filename>joomla.asset.json</filename>
     </media>
+
     <languages folder="site/languages">
-        
-			<language tag="en-GB">en-GB/com_joomgallery.ini</language>
+        <language tag="en-GB">en-GB/com_joomgallery.ini</language>
+        <language tag="en-GB">en-GB/com_joomgallery.exif.ini</language>
+        <language tag="en-GB">en-GB/com_joomgallery.iptc.ini</language>
     </languages>
+
     <administration>
         <menu>COM_JOOMGALLERY</menu>
         <submenu>
-            
-			<menu link="option=com_joomgallery&amp;view=images" view="images" alt="Joomgallery/Images">COM_JOOMGALLERY_TITLE_IMAGES</menu>
-
-			<menu link="option=com_joomgallery&amp;view=categories" view="categories" alt="Joomgallery/Categories">COM_JOOMGALLERY_TITLE_CATEGORIES</menu>
-
-			<menu link="option=com_joomgallery&amp;view=configs" view="configs" alt="Joomgallery/Configs">COM_JOOMGALLERY_TITLE_CONFIGS</menu>
-
-			<menu link="option=com_joomgallery&amp;view=faulties" view="faulties" alt="Joomgallery/Faulties">COM_JOOMGALLERY_TITLE_FAULTIES</menu>
-
-			<menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TITLE_TAGS</menu>
-
+            <menu link="option=com_joomgallery&amp;view=images" view="images" alt="Joomgallery/Images">COM_JOOMGALLERY_IMAGE_MANAGER</menu>
+            <menu link="option=com_joomgallery&amp;view=categories" view="categories" alt="Joomgallery/Categories">COM_JOOMGALLERY_CATEGORY_MANAGER</menu>
+            <menu link="option=com_joomgallery&amp;view=configs" view="configs" alt="Joomgallery/Configs">COM_JOOMGALLERY_CONFIGURATION_MANAGER</menu>
+            <menu link="option=com_joomgallery&amp;view=faulties" view="faulties" alt="Joomgallery/Faulties">COM_JOOMGALLERY_TITLE_FAULTIES</menu>
+            <menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TAGS_MANAGER</menu>
         </submenu>
         <files folder="administrator">
             <filename>access.xml</filename>
@@ -75,11 +73,11 @@
             <folder>sql</folder>
         </files>
         <languages folder="administrator/languages">
-            
-			<language tag="en-GB">en-GB/com_joomgallery.ini</language>
-			<language tag="en-GB">en-GB/com_joomgallery.sys.ini</language>
+			      <language tag="en-GB">en-GB/com_joomgallery.ini</language>
+			      <language tag="en-GB">en-GB/com_joomgallery.sys.ini</language>
         </languages>
     </administration>
+
     <config>
         <fields name="params">
             <fieldset name="component">
@@ -87,18 +85,16 @@
             </fieldset>
         </fields>
     </config>
+
     <plugins>
-		<plugin group="finder" plugin="joomgalleryimages"/>
-		<plugin group="privacy" plugin="joomgalleryimages"/>
-		<plugin group="webservices" plugin="joomgallery"/>
-		<plugin group="finder" plugin="joomgallerycategories"/>
-		<plugin group="webservices" plugin="joomgallery"/>
+        <plugin group="finder" plugin="joomgalleryimages"/>
+        <plugin group="privacy" plugin="joomgalleryimages"/>
+        <plugin group="webservices" plugin="joomgallery"/>
+        <plugin group="finder" plugin="joomgallerycategories"/>
+        <plugin group="webservices" plugin="joomgallery"/>
     </plugins>
-    
 
     <updateservers>
-        <server type="extension" priority="1" name="com_joomgallery">https://www.component-creator.com/index.php?task=builder.preupdatecheckhook&amp;option=com_combuilder&amp;component=NzMzOTAtMjAxMTE0</server>
+        <server type="extension" priority="1" name="JoomGallery Update Service">https://www.joomgalleryfriends.net/components/com_newversion/xml/extensions3.xml</server>
     </updateservers>
 </extension>
-<!-- Component built by the Joomla Component Creator -->
-<!-- http://www.component-creator.com/ -->

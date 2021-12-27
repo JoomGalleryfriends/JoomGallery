@@ -47,7 +47,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
 	 * @param   mixed  $parent Object who called this method
 	 *
 	 * @return boolean True if the process should continue, false otherwise
-     * @throws Exception
+   * @throws Exception
 	 */
 	public function preflight($type, $parent)
 	{
@@ -76,6 +76,89 @@ class com_joomgalleryInstallerScript extends InstallerScript
 		$this->installDb($parent);
 		$this->installPlugins($parent);
 		$this->installModules($parent);
+	}
+
+  /**
+	 * Method to update the component
+	 *
+	 * @param   mixed $parent Object who called this method.
+	 *
+	 * @return void
+	 */
+	public function update($parent)
+	{
+		$this->installDb($parent);
+		$this->installPlugins($parent);
+		$this->installModules($parent);
+	}
+
+	/**
+	 * Method to uninstall the component
+	 *
+	 * @param   mixed $parent Object who called this method.
+	 *
+	 * @return void
+	 */
+	public function uninstall($parent)
+	{
+		$this->uninstallPlugins($parent);
+		$this->uninstallModules($parent);
+	}
+
+  /**
+	 * @param   string $type   type
+	 * @param   string $parent parent
+	 *
+	 * @return boolean
+	 * @since Kunena
+	 */
+	public function postflight($type, $parent)
+	{
+		$this->addRootCategory();
+
+
+		return true;
+	}
+
+
+	/**
+	 * Add the root node to an empty table.
+	 *
+	 * @return    mixed  The id of the new root node or false on error.
+	 */
+	public function addRootCategory()
+	{
+	    $db = Factory::getDbo();
+
+	    $checkQuery = $db->getQuery(true);
+	    $checkQuery->select('*');
+	    $checkQuery->from('#__joomgallery_categories');
+	    $checkQuery->where('level = 0');
+
+	    $db->setQuery($checkQuery);
+
+	    if(empty($db->loadAssoc()))
+	    {
+	    	$query = $db->getQuery(true)
+	        ->insert('#__joomgallery_categories')
+	        ->set('parent_id = 0')
+	        ->set('lft = 0')
+	        ->set('rgt = 1')
+	        ->set('level = 0')
+	        ->set('title = ' . $db->quote('Root'))
+	        ->set('alias = ' . $db->quote('root'))
+	        ->set('access = 1')
+	        ->set('path = ' . $db->quote(''));
+		    $db->setQuery($query);
+
+		    if(!$db->execute())
+		    {
+		        return false;
+		    }
+		    return $db->insertid();
+	    }
+
+	    return true;
 	}
 
 	/**
@@ -383,7 +466,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
 				'%s %s NULL %s %s %s', $col_name, $data_type,
 				$default_value, $other_data, $comment_value
 			);
-			
+
 		}
 
 		return false;
@@ -709,7 +792,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
 		{
 			return false;
 		}
-		
+
 		$db = Factory::getDbo();
 
 		$query = Text::sprintf(
@@ -911,33 +994,6 @@ class com_joomgalleryInstallerScript extends InstallerScript
 	}
 
 	/**
-	 * Method to update the component
-	 *
-	 * @param   mixed $parent Object who called this method.
-	 *
-	 * @return void
-	 */
-	public function update($parent)
-	{
-		$this->installDb($parent);
-		$this->installPlugins($parent);
-		$this->installModules($parent);
-	}
-
-	/**
-	 * Method to uninstall the component
-	 *
-	 * @param   mixed $parent Object who called this method.
-	 *
-	 * @return void
-	 */
-	public function uninstall($parent)
-	{
-		$this->uninstallPlugins($parent);
-		$this->uninstallModules($parent);
-	}
-
-	/**
 	 * Uninstalls plugins
 	 *
 	 * @param   mixed $parent Object who called the uninstall method
@@ -1061,61 +1117,5 @@ class com_joomgalleryInstallerScript extends InstallerScript
 				}
 			}
 		}
-	}
-
-	/**
-	 * @param   string $type   type
-	 * @param   string $parent parent
-	 *
-	 * @return boolean
-	 * @since Kunena
-	 */
-	public function postflight($type, $parent)
-	{
-		$this->addRootCategory();
-
-
-		return true;
-	}
-
-	
-	/**
-	 * Add the root node to an empty table.
-	 *
-	 * @return    mixed  The id of the new root node or false on error.
-	 */
-	public function addRootCategory()
-	{
-	    $db = Factory::getDbo();
-
-	    $checkQuery = $db->getQuery(true);
-	    $checkQuery->select('*');
-	    $checkQuery->from('#__joomgallery_categories');
-	    $checkQuery->where('level = 0');
-
-	    $db->setQuery($checkQuery);
-
-	    if(empty($db->loadAssoc()))
-	    {
-	    	$query = $db->getQuery(true)
-	        ->insert('#__joomgallery_categories')
-	        ->set('parent_id = 0')
-	        ->set('lft = 0')
-	        ->set('rgt = 1')
-	        ->set('level = 0')
-	        ->set('title = ' . $db->quote('Root'))
-	        ->set('alias = ' . $db->quote('root'))
-	        ->set('access = 1')
-	        ->set('path = ' . $db->quote(''));
-		    $db->setQuery($query);
-
-		    if(!$db->execute())
-		    {
-		        return false;
-		    }
-		    return $db->insertid();
-	    }
-
-	    return true;
 	}
 }
