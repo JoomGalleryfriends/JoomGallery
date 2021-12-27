@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="4.0" type="plugin" group="finder">
+    <name>plg_finder_joomgallerycategories</name>
+    <author>JoomGallery::ProjectTeam</author>
+    <creationDate>2021-12-27</creationDate>
+    <copyright>2008 - 2022  JoomGallery::ProjectTeam</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <authorEmail>team@joomgalleryfriends.net</authorEmail>
+    <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
+    <version>CVS: 4.0.0</version>
+    <description>PLG_FINDER_COM_JOOMGALLERY_XML_DESCRIPTION</description>
+    <files>
+        <filename plugin="joomgallerycategories">joomgallerycategories.php</filename>
+        <filename>index.html</filename>
+    </files>
+    <languages folder="languages">
+        
+			<language tag="en-GB">en-GB/plg_finder_joomgallerycategories.ini</language>
+			<language tag="en-GB">en-GB/plg_finder_joomgallerycategories.sys.ini</language>
+    </languages>
+    <config>
+    </config>
+    <updateservers>
+        <server type="extension" priority="1" name="com_joomgallery">https://www.component-creator.com/index.php?task=builder.preupdatecheckhook&amp;option=com_combuilder&amp;component=NzMzOTAtMjAxMTE0</server>
+    </updateservers>
+</extension>

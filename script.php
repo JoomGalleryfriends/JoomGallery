@@ -1,428 +1,1121 @@
 <?php
-/****************************************************************************************\
-**   JoomGallery 3                                                                      **
-**   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
-**   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
-**   Released under GNU GPL Public License                                              **
-**   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
-**   at administrator/components/com_joomgallery/LICENSE.TXT                            **
-\****************************************************************************************/
-
-defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
 /**
- * Install method
- * is called by the installer of Joomla!
- *
- * @access  protected
- * @return  void
- * @since   2.0
+ * @package    Com_Joomgallery
+ * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
+ * @copyright  2008 - 2022  JoomGallery::ProjectTeam
+ * @license    GNU General Public License version 2 or later
  */
-class Com_JoomGalleryInstallerScript
+
+define('MODIFIED', 1);
+define('NOT_MODIFIED', 2);
+
+defined('_JEXEC') or die();
+
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Installer\Installer;
+use \Joomla\CMS\Installer\InstallerScript;
+
+/**
+ * Updates the database structure of the component
+ *
+ * @version  Release: 0.2b
+ * @author   Component Creator <support@component-creator.com>
+ * @since    0.1b
+ */
+class com_joomgalleryInstallerScript extends InstallerScript
 {
-  /**
-   * Version string of the current version
-   *
-   * @var string
-   */
-  private $version = '3.5.1';
+	/**
+	 * The title of the component (printed on installation and uninstallation messages)
+	 *
+	 * @var string
+	 */
+	protected $extension = 'JoomGallery';
 
-  /**
-   * Preflight method
-   *
-   * Is called afore installation and update processes
-   *
-   * @param   $type   string  'install', 'discover_install', or 'update'
-   * @return  boolean False if installation or update shall be prevented, true otherwise
-   * @since   2.1
-   */
-  public function preflight($type = 'install')
-  {
-    if(version_compare(JVERSION, '4.0', 'ge') || version_compare(JVERSION, '3.0', 'lt'))
-    {
-      JError::raiseWarning(500, 'JoomGallery 3.x is only compatible to Joomla! 3.x');
+	/**
+	 * The minimum Joomla! version required to install this extension
+	 *
+	 * @var   string
+	 */
+	protected $minimumJoomla = '4.0';
 
-      return false;
-    }
+	/**
+	 * Method called before install/update the component. Note: This method won't be called during uninstall process.
+	 *
+	 * @param   string $type   Type of process [install | update]
+	 * @param   mixed  $parent Object who called this method
+	 *
+	 * @return boolean True if the process should continue, false otherwise
+     * @throws Exception
+	 */
+	public function preflight($type, $parent)
+	{
+		$result = parent::preflight($type, $parent);
 
-    return true;
-  }
+		if (!$result)
+		{
+			return $result;
+		}
 
-  /**
-   * Install method
-   *
-   * @return  boolean True on success, false otherwise
-   * @since   2.0
-   */
-  public function install()
-  {
-    $app = JFactory::getApplication();
-    jimport('joomla.filesystem.file');
+		// logic for preflight before install
+		return $result;
+	}
 
-    // Create image directories
-    require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/helpers/file.php';
-    $thumbpath  = JPATH_ROOT.'/images/joomgallery/thumbnails';
-    $imgpath    = JPATH_ROOT.'/images/joomgallery/details';
-    $origpath   = JPATH_ROOT.'/images/joomgallery/originals';
-    $result     = array();
-    $result[]   = JFolder::create($thumbpath);
-    $result[]   = JoomFile::copyIndexHtml($thumbpath);
-    $result[]   = JFolder::create($imgpath);
-    $result[]   = JoomFile::copyIndexHtml($imgpath);
-    $result[]   = JFolder::create($origpath);
-    $result[]   = JoomFile::copyIndexHtml($origpath);
-    $result[]   = JoomFile::copyIndexHtml(JPATH_ROOT.'/images/joomgallery');
+	/**
+	 * Method to install the component
+	 *
+	 * @param   mixed $parent Object who called this method.
+	 *
+	 * @return void
+	 *
+	 * @since 0.2b
+	 */
+	public function install($parent)
+	{
+		$this->installDb($parent);
+		$this->installPlugins($parent);
+		$this->installModules($parent);
+	}
 
-    if(in_array(false, $result))
-    {
-      $app->enqueueMessage(JText::_('Unable to create image directories!'), 'error');
+	/**
+	 * Method to update the DB of the component
+	 *
+	 * @param   mixed $parent Object who started the upgrading process
+	 *
+	 * @return void
+	 *
+	 * @since 0.2b
+     * @throws Exception
+	 */
+	private function installDb($parent)
+	{
+		$installation_folder = $parent->getParent()->getPath('source');
 
-      return false;
-    }
+		$app = Factory::getApplication();
 
-    // Create news feed module
-    $subdomain = '';
-    $language = JFactory::getLanguage();
-    if(strpos($language->getTag(), 'de-') === false)
-    {
-      $subdomain = 'en.';
-    }
+		if (function_exists('simplexml_load_file') && file_exists($installation_folder . '/installer/structure.xml'))
+		{
+			$component_data = simplexml_load_file($installation_folder . '/installer/structure.xml');
 
-    $row = JTable::getInstance('module');
-    $row->title     = 'JoomGallery News';
-    $row->ordering  = 1;
-    $row->position  = 'joom_cpanel';
-    $row->published = 1;
-    $row->module    = 'mod_feed';
-    $row->access    = $app->getCfg('access');
-    $row->showtitle = 1;
-    $row->params    = 'cache=1
-    cache_time=15
-    moduleclass_sfx=
-    rssurl=https://www.'.$subdomain.'joomgalleryfriends.net/?format=feed&amp;type=rss
-    rssrtl=0
-    rsstitle=1
-    rssdesc=0
-    rssimage=1
-    rssitems=3
-    rssitemdesc=1
-    word_count=200';
-    $row->client_id = 1;
-    $row->language  = '*';
-    if(!$row->store())
-    {
-      $app->enqueueMessage(JText::_('Unable to insert feed module data!'), 'error');
-    }
+			// Check if there are tables to import.
+			foreach ($component_data->children() as $table)
+			{
+				$this->processTable($app, $table);
+			}
+		}
+		else
+		{
+			if (!function_exists('simplexml_load_file'))
+			{
+				$app->enqueueMessage(Text::_('This script needs \'simplexml_load_file\' to update the component'));
+			}
+			else
+			{
+				$app->enqueueMessage(Text::_('Structure file was not found.'));
+			}
+		}
+	}
 
-    $db = JFactory::getDbo();
-    $query = $db->getQuery(true);
-    $query->insert('#__modules_menu');
-    $query->set('moduleid = '.$row->id);
-    $query->set('menuid = 0');
-    $db->setQuery($query);
-    if(!$db->query())
-    {
-      $app->enqueueMessage(JText::_('Unable to assign feed module!'), 'error');
-    }
+	/**
+	 * Process a table
+	 *
+	 * @param   CMSApplication  $app   Application object
+	 * @param   SimpleXMLElement $table Table to process
+	 *
+	 * @return void
+	 *
+	 * @since 0.2b
+	 */
+	private function processTable($app, $table)
+	{
+		$db = Factory::getDbo();
 
-    // joom_settings.css
-    $temp = JPATH_ROOT.'/media/joomgallery/css/joom_settings.temp.css';
-    $dest = JPATH_ROOT.'/media/joomgallery/css/joom_settings.css';
+		$table_added = false;
 
-    if(!JFile::move($temp, $dest))
-    {
-      $app->enqueueMessage(JText::_('Unable to copy joom_settings.css!'), 'error');
+		if (isset($table['action']))
+		{
+			switch ($table['action'])
+			{
+				case 'add':
 
-      return false;
-    }
-?>
-    <div class="hero-unit">
-      <img src="../media/joomgallery/images/joom_logo.png" alt="JoomGallery Logo" />
-      <div class="alert alert-success">
-        <h3>JoomGallery <?php echo $this->version; ?> was installed successfully.</h3>
-      </div>
-      <p>You may now start using JoomGallery or download specific language files afore:</p>
-      <p>
-        <a title="Start" class="btn" onclick="location.href='index.php?option=com_joomgallery'; return false;" href="#">Start now!</a>
-        <a title="Languages" class="btn btn-primary" onclick="location.href='index.php?option=com_joomgallery&controller=help'; return false;" href="#">Languages</a>
-      </p>
-    </div>
-  <?php
-  }
+					// Check if the table exists before create the statement
+					if (!$this->existsTable($table['table_name']))
+					{
+						$create_statement = $this->generateCreateTableStatement($table);
+						$db->setQuery($create_statement);
 
-  /**
-   * Update method
-   *
-   * @return  boolean True on success, false otherwise
-   * @since   2.0
-   */
-  public function update()
-  {
-    jimport('joomla.filesystem.file'); ?>
-    <div class="hero-unit">
-      <img src="../media/joomgallery/images/joom_logo.png" alt="JoomGallery Logo" />
-      <div class="alert alert-info">
-        <h3>Update JoomGallery to version: <?php echo $this->version; ?></h3>
-      </div>
-    </div>
-    <?php
+						try
+						{
+							$db->execute();
+							$app->enqueueMessage(
+								Text::sprintf(
+									'Table `%s` has been successfully created',
+									(string) $table['table_name']
+								)
+							);
+							$table_added = true;
+						} catch (Exception $ex)
+						{
+							$app->enqueueMessage(
+								Text::sprintf(
+									'There was an error creating the table `%s`. Error: %s',
+									(string) $table['table_name'],
+									$ex->getMessage()
+								), 'error'
+							);
+						}
+					}
+					break;
+				case 'change':
 
-    $error = false;
+					// Check if the table exists first to avoid errors.
+					if ($this->existsTable($table['old_name']) && !$this->existsTable($table['new_name']))
+					{
+						try
+						{
+							$db->renameTable($table['old_name'], $table['new_name']);
+							$app->enqueueMessage(
+								Text::sprintf(
+									'Table `%s` was successfully renamed to `%s`',
+									$table['old_name'],
+									$table['new_name']
+								)
+							);
+						} catch (Exception $ex)
+						{
+							$app->enqueueMessage(
+								Text::sprintf(
+									'There was an error renaming the table `%s`. Error: %s',
+									$table['old_name'],
+									$ex->getMessage()
+								), 'error'
+							);
+						}
+					}
+					else
+					{
+						if (!$this->existsTable($table['table_name']))
+						{
+							// If the table does not exists, let's create it.
+							$create_statement = $this->generateCreateTableStatement($table);
+							$db->setQuery($create_statement);
 
-    // Delete temporary joom_settings.temp.css
-    if(JFile::exists(JPATH_ROOT.'/media/joomgallery/css/joom_settings.temp.css'))
-    {
-      if(!JFile::delete(JPATH_ROOT.'/media/joomgallery/css/joom_settings.temp.css'))
-      {
-        JError::raiseWarning(500, JText::_('Unable to delete temporary joom_settings.temp.css!'));
+							try
+							{
+								$db->execute();
+								$app->enqueueMessage(
+									Text::sprintf('Table `%s` has been successfully created', $table['table_name'])
+								);
+								$table_added = true;
+							} catch (Exception $ex)
+							{
+								$app->enqueueMessage(
+									Text::sprintf(
+										'There was an error creating the table `%s`. Error: %s',
+										$table['table_name'],
+										$ex->getMessage()
+									), 'error'
+								);
+							}
+						}
+					}
+					break;
+				case 'remove':
 
-        $error = true;
-      }
-    }
+					try
+					{
+						// We make sure that the table will be removed only if it exists specifying ifExists argument as true.
+						$db->dropTable((string) $table['table_name'], true);
+						$app->enqueueMessage(
+							Text::sprintf('Table `%s` was successfully deleted', $table['table_name'])
+						);
+					} catch (Exception $ex)
+					{
+						$app->enqueueMessage(
+							Text::sprintf(
+								'There was an error deleting Table `%s`. Error: %s',
+								$table['table_name'], $ex->getMessage()
+							), 'error'
+						);
+					}
 
-    //******************* Delete folders/files ************************************
-    echo '<div class="alert alert-info">';
-    echo '<h3>File system</h3>';
+					break;
+			}
+		}
 
-    $delete_folders = array();
+		// If the table wasn't added before, let's process the fields of the table
+		if (!$table_added)
+		{
+			if ($this->existsTable($table['table_name']))
+			{
+				$this->executeFieldsUpdating($app, $table);
+			}
+		}
+	}
 
-    // MooRainbow assets
-    $delete_folders[] = JPATH_ROOT.'/media/joomgallery/js/moorainbow';
-    // Old vote view
-    $delete_folders[] = JPATH_ROOT.'/components/com_joomgallery/views/vote';
+	/**
+	 * Checks if a certain exists on the current database
+	 *
+	 * @param   string $table_name Name of the table
+	 *
+	 * @return boolean True if it exists, false if it does not.
+	 */
+	private function existsTable($table_name)
+	{
+		$db = Factory::getDbo();
 
-    echo '<p>';
-    echo 'Looking for orphaned files and folders from the old installation ';
+		$table_name = str_replace('#__', $db->getPrefix(), (string) $table_name);
 
-    // Unzipped folder of latest auto update with cURL
-    $temp_dir = false;
-    $database = JFactory::getDbo();
-    $query = $database->getQuery(true)
-          ->select('jg_pathtemp')
-          ->from('#__joomgallery_config');
-    $database->setQuery($query);
-    $temp_dir = $database->loadResult();
-    if($temp_dir)
-    {
-      //$delete_folders[] = JPATH_SITE.'/'.$temp_dir.'update';
+		return in_array($table_name, $db->getTableList());
+	}
 
-      for($i = 0; $i <= 100; $i++)
-      {
-        $update_folder = JPATH_SITE.'/'.$temp_dir.'update'.$i;
-        if(JFolder::exists($update_folder))
-        {
-          $delete_folders[] = $update_folder;
-        }
-      }
-    }
+	/**
+	 * Generates a 'CREATE TABLE' statement for the tables passed by argument.
+	 *
+	 * @param   SimpleXMLElement $table Table of the database
+	 *
+	 * @return string 'CREATE TABLE' statement
+	 */
+	private function generateCreateTableStatement($table)
+	{
+		$create_table_statement = '';
 
-    $deleted = false;
+		if (isset($table->field))
+		{
+			$fields = $table->children();
 
-    $jg_delete_error = false;
-    foreach($delete_folders as $delete_folder)
-    {
-      if(JFolder::exists($delete_folder))
-      {
-        echo 'delete folder: '.$delete_folder.' : ';
-        $result = JFolder::delete($delete_folder);
-        if($result == true)
-        {
-          $deleted  = true;
-          echo '<span class="label label-success">ok</span>';
-        }
-        else
-        {
-          $jg_delete_error = true;
-          echo '<span class="label label-important">not ok</span>';
-        }
-        echo '<br />';
-      }
-    }
+			$fields_definitions = array();
+			$indexes            = array();
 
-    // Files
-    $delete_files = array();
+			$db = Factory::getDbo();
 
-    // Cache file of the newsfeed for the update checker JoomGallery < 3.3.5
-    $delete_files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('http://www.joomgallery.net/components/com_newversion/rss/extensions2.rss').'.spc';
-    $delete_files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('http://www.en.joomgallery.net/components/com_newversion/rss/extensions2.rss').'.spc';
-    $delete_files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('http://www.joomgallery.net/components/com_newversion/rss/extensions3.rss').'.spc';
-    $delete_files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('http://www.en.joomgallery.net/components/com_newversion/rss/extensions3.rss').'.spc';
-    // Cache file of the newsfeed for the update checker JoomGallery >= 3.3.5
-    $delete_files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.joomgalleryfriends.net/components/com_newversion/rss/extensions2.rss').'.spc';
-    $delete_files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions2.rss').'.spc';
-    $delete_files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss').'.spc';
-    $delete_files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss').'.spc';
+			foreach ($fields as $field)
+			{
+				$field_definition = $this->generateColumnDeclaration($field);
 
-    // Zip file of latest auto update with cURL
-    $delete_files[] = JPATH_ADMINISTRATOR.'/components/com_joomgallery/temp/update.zip';
-    // Old category form field
-    $delete_files[] = JPATH_ADMINISTRATOR.'/components/com_joomgallery/models/fields/category.php';
-    // JHtml file that is not used anymore
-    $delete_files[] = JPATH_ROOT.'/components/com_joomgallery/helpers/html/joompopup.php';
-    // JFormFields that aren't used anymore
-    $delete_files[] = JPATH_ADMINISTRATOR.'/components/com_joomgallery/models/fields/cbowner.php';
-    $delete_files[] = JPATH_ADMINISTRATOR.'/components/com_joomgallery/models/fields/owner.php';
-    $delete_files[] = JPATH_ADMINISTRATOR.'/components/com_joomgallery/models/fields/color.php';
-    $delete_files[] = JPATH_ROOT.'/components/com_joomgallery/models/fields/thumbnail.php';
-    // Template files that aren't used anymore
-    $delete_files[] = JPATH_ROOT.'/components/com_joomgallery/views/category/tmpl/default_catpagination.php';
-    $delete_files[] = JPATH_ROOT.'/components/com_joomgallery/views/category/tmpl/default_imgpagination.php';
-    $delete_files[] = JPATH_ROOT.'/components/com_joomgallery/views/gallery/tmpl/default_pagination.php';
-    // Old changelog.php
-    $delete_files[] = JPATH_ROOT.'/administrator/components/com_joomgallery/changelog.php';
-    // Old ordering form field
-    $delete_files[] = JPATH_ADMINISTRATOR.'/components/com_joomgallery/models/fields/ordering.php';
-    // Old view file of MiniJoom
-    $delete_files[] = JPATH_ADMINISTRATOR.'/components/com_joomgallery/views/mini/view.html.php';
-    // Unnecessary layout XML files in views which cannot be linked from a menu
-    $delete_files[] = JPATH_ROOT.'/components/com_joomgallery/views/downloadzip/tmpl/default.xml';
-    $delete_files[] = JPATH_ROOT.'/components/com_joomgallery/views/edit/tmpl/default.xml';
-    $delete_files[] = JPATH_ROOT.'/components/com_joomgallery/views/editcategory/tmpl/default.xml';
-    // Old CSS file of MiniJoom
-    $delete_files[] = JPATH_ROOT.'/media/joomgallery/css/mini.css';
-    // Old JavaScript files
-    $delete_files[] = JPATH_ROOT.'/media/joomgallery/js/miniupload.js';
-    $delete_files[] = JPATH_ROOT.'/media/joomgallery/js/thickbox3/js/jquery-latest.pack.js';
-    // Old motion gallery
-    $delete_files[] = JPATH_ROOT.'/media/joomgallery/js/motiongallery.js';
-    // Old raw view for Cooliris
-    $delete_files[] = JPATH_ROOT.'/components/com_joomgallery/views/category/view.raw.php';
-    // HTC script for IE6
-    $delete_files[] = JPATH_ROOT.'/media/joomgallery/js/pngbehavior.htc';
-    // Override function for setting permissions via AJAX
-    $delete_files[] = JPATH_ROOT.'/media/joomgallery/js/permissions.js';
+				if ($field_definition !== false)
+				{
+					$fields_definitions[] = $field_definition;
+				}
 
-    foreach($delete_files as $delete_file)
-    {
-      if(JFile::exists($delete_file))
-      {
-        echo 'delete file: '.$delete_file.' : ';
-        $result = JFile::delete($delete_file);
-        if($result == true)
-        {
-          $deleted  = true;
-          echo '<span class="label label-success">ok</span>';
-        }
-        else
-        {
-          $jg_delete_error = true;
-          echo '<span class="label label-important">not ok</span>';
-        }
-        echo '<br />';
-      }
-    }
-   //******************* END delete folders/files ************************************
+				if ($field['index'] == 'index')
+				{
+					$indexes[] = $field['field_name'];
+				}
+			}
 
-    if($deleted)
-    {
-      if($jg_delete_error)
-      {
-        echo '<span class="label label-important">problems in deletion of files/folders</span>';
-        $error = true;
-      }
-      else
-      {
-        echo '<span class="label label-success">files/folders sucessfully deleted</span>';
-      }
-    }
-    else
-    {
-      echo '<span class="label label-success">nothing to delete</span>';
-    }
+			foreach ($indexes as $index)
+			{
+				$fields_definitions[] = Text::sprintf(
+					'INDEX %s (%s ASC)',
+					$db->quoteName((string) $index), $index
+				);
+			}
 
-    echo '</p>';
-    echo '</div>';
+			// Avoid duplicate PK definition
+            if (strpos(implode(',', $fields_definitions), 'PRIMARY KEY') === false)
+            {
+                $fields_definitions[] = 'PRIMARY KEY (`id`)';
+            }
 
-    //******************* Write joom_settings.css ************************************
-    /*echo '<div class="alert alert-info">';
-    echo '<h3>CSS</h3>';
-    echo '<p>';
-    echo 'Update configuration dependent CSS settings: ';
+			$create_table_statement = Text::sprintf(
+				'CREATE TABLE IF NOT EXISTS %s (%s)',
+				$table['table_name'],
+				implode(',', $fields_definitions)
+			);
 
-    require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/includes/defines.php';
-    JLoader::register('JoomConfig', JPATH_ADMINISTRATOR.'/components/com_joomgallery/helpers/config.php');
-    JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_joomgallery/tables');
+			if(isset($table['storage_engine']) && !empty($table['storage_engine']))
+			{
+				$create_table_statement .= " ENGINE=" . $table['storage_engine'];
+			}
+			if(isset($table['collation']))
+			{
+				$create_table_statement .= " DEFAULT COLLATE=" . $table['collation'];
+			}
+		}
+		return $create_table_statement;
+	}
 
-    $config = JoomConfig::getInstance('admin');
-    if(!$config->save())
-    {
-      $error = true;
-      echo '<span class="label label-important">not ok</span>';
-    }
-    else
-    {
-      echo '<span class="label label-success">ok</span>';
-    }
+	/**
+	 * Generate a column declaration
+	 *
+	 * @param   SimpleXMLElement $field Field data
+	 *
+	 * @return string Column declaration
+	 */
+	private function generateColumnDeclaration($field)
+	{
+		$db        = Factory::getDbo();
+		$col_name  = $db->quoteName((string) $field['field_name']);
+		$data_type = $this->getFieldType($field);
 
-    echo '</p>';
-    echo '</div>';*/
-    //******************* End write joom_settings.css ************************************
+		if ($data_type !== false)
+		{
+			$default_value = (isset($field['default'])) ? 'DEFAULT ' . $field['default'] : '';
 
-    if($error)
-    {
-      echo '<div class="alert alert-error">
-              <h3>Problem with the update to JoomGallery version '.$this->version.'<br />Please read the update infos above</h3>
-            </div>';
-      JFactory::getApplication()->enqueueMessage(JText::_('Problem with the update to JoomGallery version '.$this->version.'. Please read the update infos below'), 'error');
-    }
-    else
-    { ?>
-    <div class="hero-unit">
-      <img src="../media/joomgallery/images/joom_logo.png" alt="JoomGallery Logo" />
-      <div class="alert alert-success">
-        <h3>JoomGallery was updated to version <?php echo $this->version; ?> successfully.</h3>
-        <button class="btn btn-small btn-info" data-toggle="modal" data-target="#jg-changelog-popup"><i class="icon-list"></i> Changelog</button>
-      </div>
-      <p>You may now start using JoomGallery or download specific language files afore:</p>
-      <p>
-        <a title="Start" class="btn" onclick="location.href='index.php?option=com_joomgallery'; return false;" href="#">Go on!</a>
-        <a title="Languages" class="btn btn-primary" onclick="location.href='index.php?option=com_joomgallery&controller=help'; return false;" href="#">Languages</a>
-      </p>
-    </div>
-    <?php JHtml::_('bootstrap.modal', 'jg-changelog-popup'); ?>
-    <div class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="PopupChangelogModalLabel" aria-hidden="true" id="jg-changelog-popup">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3 id="PopupChangelogModalLabel">Changelog</h3>
-      </div>
-      <div id="jg-changelog-popup-container">
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true"><?php echo JText::_('JTOOLBAR_CLOSE'); ?></button>
-      </div>
-    </div>
-    <script type="text/javascript">
-      jQuery('#jg-changelog-popup').modal({backdrop: true, keyboard: true, show: false});
-      jQuery('#jg-changelog-popup').on('show', function ()
-      {
-        document.getElementById('jg-changelog-popup-container').innerHTML = '<div class="modal-body"><iframe class="iframe" frameborder="0" src="<?php echo JRoute::_('index.php?option=com_joomgallery&controller=changelog&tmpl=component'); ?>" height="400px" width="100%"></iframe></div>';
-      });
-    </script>
-<?php
-    }
+			$other_data = '';
 
-    return !$error;
-  }
+			if (isset($field['is_autoincrement']) && $field['is_autoincrement'] == 1)
+			{
+				$other_data .= ' AUTO_INCREMENT PRIMARY KEY';
+			}
 
-  /**
-   * Uninstall method
-   *
-   * @return  boolean True on success, false otherwise
-   * @since   2.0
-   */
-  public function uninstall()
-  {
-    $path = JPATH_ROOT.'/images/joomgallery';
-    if(JFolder::exists($path))
-    {
-      JFolder::delete($path);
-    }
+			$comment_value = (isset($field['description'])) ? 'COMMENT ' . $db->quote((string) $field['description']) : '';
 
-    echo '<div class="alert alert-info">JoomGallery was uninstalled successfully!<br />
-          Please remember to remove your images folders manually
-          if you didn\'t use JoomGallery\'s default directories.</div>';
+			if(strtolower($field['field_type']) == 'datetime' || strtolower($field['field_type']) == 'text')
+			{
+				return Text::sprintf(
+					'%s %s %s %s %s', $col_name, $data_type,
+					$default_value, $other_data, $comment_value
+				);
+			}
 
-    return true;
-  }
+			if((isset($field['required']) && $field['required'] == 1)  || $field['field_name'] == 'id')
+			{
+				return Text::sprintf(
+					'%s %s NOT NULL %s %s %s', $col_name, $data_type,
+					$default_value, $other_data, $comment_value
+				);
+			}
+
+			return Text::sprintf(
+				'%s %s NULL %s %s %s', $col_name, $data_type,
+				$default_value, $other_data, $comment_value
+			);
+			
+		}
+
+		return false;
+	}
+
+	/**
+	 * Generates SQL field type of a field.
+	 *
+	 * @param   SimpleXMLElement $field Field information
+	 *
+	 * @return  mixed SQL string data type, false on failure.
+	 */
+	private function getFieldType($field)
+	{
+		$data_type = (string) $field['field_type'];
+
+		if (isset($field['field_length']) && ($this->allowsLengthField($data_type) || $data_type == 'ENUM'))
+		{
+			$data_type .= '(' . (string) $field['field_length'] . ')';
+		}
+
+		return (!empty($data_type)) ? $data_type : false;
+	}
+
+	/**
+	 * Check if a SQL type allows length values.
+	 *
+	 * @param   string $field_type SQL type
+	 *
+	 * @return boolean True if it allows length values, false if it does not.
+	 */
+	private function allowsLengthField($field_type)
+	{
+		$allow_length = array(
+			'INT',
+			'VARCHAR',
+			'CHAR',
+			'TINYINT',
+			'SMALLINT',
+			'MEDIUMINT',
+			'INTEGER',
+			'BIGINT',
+			'FLOAT',
+			'DOUBLE',
+			'DECIMAL',
+			'NUMERIC'
+		);
+
+		return (in_array((string) $field_type, $allow_length));
+	}
+
+	/**
+	 * Updates all the fields related to a table.
+	 *
+	 * @param   CMSApplication  $app   Application Object
+	 * @param   SimpleXMLElement $table Table information.
+	 *
+	 * @return void
+	 */
+	private function executeFieldsUpdating($app, $table)
+	{
+		if (isset($table->field))
+		{
+			foreach ($table->children() as $field)
+			{
+				$table_name = (string) $table['table_name'];
+
+				$this->processField($app, $table_name, $field);
+			}
+		}
+	}
+
+	/**
+	 * Process a certain field.
+	 *
+	 * @param   CMSApplication  $app        Application object
+	 * @param   string           $table_name The name of the table that contains the field.
+	 * @param   SimpleXMLElement $field      Field Information.
+	 *
+	 * @return void
+	 */
+	private function processField($app, $table_name, $field)
+	{
+		$db = Factory::getDbo();
+
+		if (isset($field['action']))
+		{
+			switch ($field['action'])
+			{
+				case 'add':
+					$result = $this->addField($table_name, $field);
+
+					if ($result === MODIFIED)
+					{
+						$app->enqueueMessage(
+							Text::sprintf('Field `%s` has been successfully added', $field['field_name'])
+						);
+					}
+					else
+					{
+						if ($result !== NOT_MODIFIED)
+						{
+							$app->enqueueMessage(
+								Text::sprintf(
+									'There was an error adding the field `%s`. Error: %s',
+									$field['field_name'], $result
+								), 'error'
+							);
+						}
+					}
+					break;
+				case 'change':
+
+					if (isset($field['old_name']) && isset($field['new_name']))
+					{
+						if ($this->existsField($table_name, $field['old_name']) && !$this->existsField($table_name, $field['new_name']))
+						{
+							$renaming_statement = Text::sprintf(
+								'ALTER TABLE %s CHANGE %s %s %s',
+								$table_name, $db->quoteName($field['old_name']->__toString()),
+								$db->quoteName($field['new_name']->__toString()),
+								$this->getFieldType($field)
+							);
+							$db->setQuery($renaming_statement);
+
+							try
+							{
+								$db->execute();
+								$app->enqueueMessage(
+									Text::sprintf('Field `%s` has been successfully modified', $field['old_name'])
+								);
+							} catch (Exception $ex)
+							{
+								$app->enqueueMessage(
+									Text::sprintf(
+										'There was an error modifying the field `%s`. Error: %s',
+										$field['field_name'],
+										$ex->getMessage()
+									), 'error'
+								);
+							}
+						}
+						else
+						{
+							$result = $this->addField($table_name, $field);
+
+							if ($result === MODIFIED)
+							{
+								$app->enqueueMessage(
+									Text::sprintf('Field `%s` has been successfully modified', $field['field_name'])
+								);
+							}
+							else
+							{
+								if ($result !== NOT_MODIFIED)
+								{
+									$app->enqueueMessage(
+										Text::sprintf(
+											'There was an error modifying the field `%s`. Error: %s',
+											$field['field_name'], $result
+										), 'error'
+									);
+								}
+							}
+						}
+					}
+					else
+					{
+						$result = $this->addField($table_name, $field);
+
+						if ($result === MODIFIED)
+						{
+							$app->enqueueMessage(
+								Text::sprintf('Field `%s` has been successfully modified', $field['field_name'])
+							);
+						}
+						else
+						{
+							if ($result !== NOT_MODIFIED)
+							{
+								$app->enqueueMessage(
+									Text::sprintf(
+										'There was an error modifying the field `%s`. Error: %s',
+										$field['field_name'], $result
+									), 'error'
+								);
+							}
+						}
+					}
+
+					break;
+				case 'remove':
+
+					// Check if the field exists first to prevent issue removing the field
+					if ($this->existsField($table_name, $field['field_name']))
+					{
+						$drop_statement = Text::sprintf(
+							'ALTER TABLE %s DROP COLUMN %s',
+							$table_name, $field['field_name']
+						);
+						$db->setQuery($drop_statement);
+
+						try
+						{
+							$db->execute();
+							$app->enqueueMessage(
+								Text::sprintf('Field `%s` has been successfully deleted', $field['field_name'])
+							);
+						} catch (Exception $ex)
+						{
+							$app->enqueueMessage(
+								Text::sprintf(
+									'There was an error deleting the field `%s`. Error: %s',
+									$field['field_name'],
+									$ex->getMessage()
+								), 'error'
+							);
+						}
+					}
+
+					break;
+			}
+		}
+		else
+		{
+			$result = $this->addField($table_name, $field);
+
+			if ($result === MODIFIED)
+			{
+				$app->enqueueMessage(
+					Text::sprintf('Field `%s` has been successfully added', $field['field_name'])
+				);
+			}
+			else
+			{
+				if ($result !== NOT_MODIFIED)
+				{
+					$app->enqueueMessage(
+						Text::sprintf(
+							'There was an error adding the field `%s`. Error: %s',
+							$field['field_name'], $result
+						), 'error'
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add a field if it does not exists or modify it if it does.
+	 *
+	 * @param   string           $table_name Table name
+	 * @param   SimpleXMLElement $field      Field Information
+	 *
+	 * @return mixed Constant on success(self::$MODIFIED | self::$NOT_MODIFIED), error message if an error occurred
+	 */
+	private function addField($table_name, $field)
+	{
+		$db = Factory::getDbo();
+
+		$query_generated = false;
+
+		// Check if the field exists first to prevent issues adding the field
+		if ($this->existsField($table_name, $field['field_name']))
+		{
+			if ($this->needsToUpdate($table_name, $field))
+			{
+				$change_statement = $this->generateChangeFieldStatement($table_name, $field);
+				$db->setQuery($change_statement);
+				$query_generated = true;
+			}
+		}
+		else
+		{
+			$add_statement = $this->generateAddFieldStatement($table_name, $field);
+			$db->setQuery($add_statement);
+			$query_generated = true;
+		}
+
+		if ($query_generated)
+		{
+			try
+			{
+				$db->execute();
+
+				return MODIFIED;
+			} catch (Exception $ex)
+			{
+				return $ex->getMessage();
+			}
+		}
+
+		return NOT_MODIFIED;
+	}
+
+	/**
+	 * Checks if a field exists on a table
+	 *
+	 * @param   string $table_name Table name
+	 * @param   string $field_name Field name
+	 *
+	 * @return boolean True if exists, false if it do
+	 */
+	private function existsField($table_name, $field_name)
+	{
+		$db = Factory::getDbo();
+
+		return in_array((string) $field_name, array_keys($db->getTableColumns($table_name)));
+	}
+
+	/**
+	 * Check if a field needs to be updated.
+	 *
+	 * @param   string           $table_name Table name
+	 * @param   SimpleXMLElement $field      Field information
+	 *
+	 * @return boolean True if the field has to be updated, false otherwise
+	 */
+	private function needsToUpdate($table_name, $field)
+	{
+
+		if(!isset($field['action']) || $field['field_name'] == 'id')
+		{
+			return false;
+		}
+		
+		$db = Factory::getDbo();
+
+		$query = Text::sprintf(
+			'SHOW FULL COLUMNS FROM `%s` WHERE Field LIKE %s', $table_name, $db->quote((string) $field['field_name'])
+		);
+		$db->setQuery($query);
+
+		$field_info = $db->loadObject();
+
+		if (strripos($field_info->Type, $this->getFieldType($field)) === false)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * Generates an change column statement
+	 *
+	 * @param   string           $table_name Table name
+	 * @param   SimpleXMLElement $field      Field Information
+	 *
+	 * @return string Change column statement
+	 */
+	private function generateChangeFieldStatement($table_name, $field)
+	{
+		$column_declaration = $this->generateColumnDeclaration($field);
+
+		return Text::sprintf('ALTER TABLE %s MODIFY %s', $table_name, $column_declaration);
+	}
+
+	/**
+	 * Generates an add column statement
+	 *
+	 * @param   string           $table_name Table name
+	 * @param   SimpleXMLElement $field      Field Information
+	 *
+	 * @return string Add column statement
+	 */
+	private function generateAddFieldStatement($table_name, $field)
+	{
+		$column_declaration = $this->generateColumnDeclaration($field);
+
+		return Text::sprintf('ALTER TABLE %s ADD %s', $table_name, $column_declaration);
+	}
+
+	/**
+	 * Installs plugins for this component
+	 *
+	 * @param   mixed $parent Object who called the install/update method
+	 *
+	 * @return void
+	 */
+	private function installPlugins($parent)
+	{
+		$installation_folder = $parent->getParent()->getPath('source');
+		$app                 = Factory::getApplication();
+
+		/* @var $plugins SimpleXMLElement */
+		if (method_exists($parent, 'getManifest'))
+		{
+			$plugins = $parent->getManifest()->plugins;
+		}
+		else
+		{
+			$plugins = $parent->get('manifest')->plugins;
+		}
+
+		if (count($plugins->children()))
+		{
+			$db    = Factory::getDbo();
+			$query = $db->getQuery(true);
+
+			foreach ($plugins->children() as $plugin)
+			{
+				$pluginName  = (string) $plugin['plugin'];
+				$pluginGroup = (string) $plugin['group'];
+				$path        = $installation_folder . '/plugins/' . $pluginGroup . '/' . $pluginName;
+				$installer   = new Installer;
+
+				if (!$this->isAlreadyInstalled('plugin', $pluginName, $pluginGroup))
+				{
+					$result = $installer->install($path);
+				}
+				else
+				{
+					$result = $installer->update($path);
+				}
+
+				if ($result)
+				{
+					$app->enqueueMessage('Plugin ' . $pluginName . ' was installed successfully');
+				}
+				else
+				{
+					$app->enqueueMessage('There was an issue installing the plugin ' . $pluginName,
+						'error');
+				}
+
+				$query
+					->clear()
+					->update('#__extensions')
+					->set('enabled = 1')
+					->where(
+						array(
+							'type LIKE ' . $db->quote('plugin'),
+							'element LIKE ' . $db->quote($pluginName),
+							'folder LIKE ' . $db->quote($pluginGroup)
+						)
+					);
+				$db->setQuery($query);
+				$db->execute();
+			}
+		}
+	}
+
+	/**
+	 * Check if an extension is already installed in the system
+	 *
+	 * @param   string $type   Extension type
+	 * @param   string $name   Extension name
+	 * @param   mixed  $folder Extension folder(for plugins)
+	 *
+	 * @return boolean
+	 */
+	private function isAlreadyInstalled($type, $name, $folder = null)
+	{
+		$result = false;
+
+		switch ($type)
+		{
+			case 'plugin':
+				$result = file_exists(JPATH_PLUGINS . '/' . $folder . '/' . $name);
+				break;
+			case 'module':
+				$result = file_exists(JPATH_SITE . '/modules/' . $name);
+				break;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Installs plugins for this component
+	 *
+	 * @param   mixed $parent Object who called the install/update method
+	 *
+	 * @return void
+	 */
+	private function installModules($parent)
+	{
+		$installation_folder = $parent->getParent()->getPath('source');
+		$app                 = Factory::getApplication();
+
+		if (method_exists($parent, 'getManifest'))
+		{
+			$modules = $parent->getManifest()->modules;
+		}
+		else
+		{
+			$modules = $parent->get('manifest')->modules;
+		}
+
+		if (!empty($modules))
+		{
+
+			if (count($modules->children()))
+			{
+				foreach ($modules->children() as $module)
+				{
+					$moduleName = (string) $module['module'];
+					$path       = $installation_folder . '/modules/' . $moduleName;
+					$installer  = new Installer;
+
+					if (!$this->isAlreadyInstalled('module', $moduleName))
+					{
+						$result = $installer->install($path);
+					}
+					else
+					{
+						$result = $installer->update($path);
+					}
+
+					if ($result)
+					{
+						$app->enqueueMessage('Module ' . $moduleName . ' was installed successfully');
+					}
+					else
+					{
+						$app->enqueueMessage('There was an issue installing the module ' . $moduleName,
+							'error');
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Method to update the component
+	 *
+	 * @param   mixed $parent Object who called this method.
+	 *
+	 * @return void
+	 */
+	public function update($parent)
+	{
+		$this->installDb($parent);
+		$this->installPlugins($parent);
+		$this->installModules($parent);
+	}
+
+	/**
+	 * Method to uninstall the component
+	 *
+	 * @param   mixed $parent Object who called this method.
+	 *
+	 * @return void
+	 */
+	public function uninstall($parent)
+	{
+		$this->uninstallPlugins($parent);
+		$this->uninstallModules($parent);
+	}
+
+	/**
+	 * Uninstalls plugins
+	 *
+	 * @param   mixed $parent Object who called the uninstall method
+	 *
+	 * @return void
+	 */
+	private function uninstallPlugins($parent)
+	{
+		$app     = Factory::getApplication();
+
+		if (method_exists($parent, 'getManifest'))
+		{
+			$plugins = $parent->getManifest()->plugins;
+		}
+		else
+		{
+			$plugins = $parent->get('manifest')->plugins;
+		}
+
+		if (count($plugins->children()))
+		{
+			$db    = Factory::getDbo();
+			$query = $db->getQuery(true);
+
+			foreach ($plugins->children() as $plugin)
+			{
+				$pluginName  = (string) $plugin['plugin'];
+				$pluginGroup = (string) $plugin['group'];
+				$query
+					->clear()
+					->select('extension_id')
+					->from('#__extensions')
+					->where(
+						array(
+							'type LIKE ' . $db->quote('plugin'),
+							'element LIKE ' . $db->quote($pluginName),
+							'folder LIKE ' . $db->quote($pluginGroup)
+						)
+					);
+				$db->setQuery($query);
+				$extension = $db->loadResult();
+
+				if (!empty($extension))
+				{
+					$installer = new Installer;
+					$result    = $installer->uninstall('plugin', $extension);
+
+					if ($result)
+					{
+						$app->enqueueMessage('Plugin ' . $pluginName . ' was uninstalled successfully');
+					}
+					else
+					{
+						$app->enqueueMessage('There was an issue uninstalling the plugin ' . $pluginName,
+							'error');
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Uninstalls plugins
+	 *
+	 * @param   mixed $parent Object who called the uninstall method
+	 *
+	 * @return void
+	 */
+	private function uninstallModules($parent)
+	{
+		$app = Factory::getApplication();
+
+		if (method_exists($parent, 'getManifest'))
+		{
+			$modules = $parent->getManifest()->modules;
+		}
+		else
+		{
+			$modules = $parent->get('manifest')->modules;
+		}
+
+		if (!empty($modules))
+		{
+
+			if (count($modules->children()))
+			{
+				$db    = Factory::getDbo();
+				$query = $db->getQuery(true);
+
+				foreach ($modules->children() as $plugin)
+				{
+					$moduleName = (string) $plugin['module'];
+					$query
+						->clear()
+						->select('extension_id')
+						->from('#__extensions')
+						->where(
+							array(
+								'type LIKE ' . $db->quote('module'),
+								'element LIKE ' . $db->quote($moduleName)
+							)
+						);
+					$db->setQuery($query);
+					$extension = $db->loadResult();
+
+					if (!empty($extension))
+					{
+						$installer = new Installer;
+						$result    = $installer->uninstall('module', $extension);
+
+						if ($result)
+						{
+							$app->enqueueMessage('Module ' . $moduleName . ' was uninstalled successfully');
+						}
+						else
+						{
+							$app->enqueueMessage('There was an issue uninstalling the module ' . $moduleName,
+								'error');
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param   string $type   type
+	 * @param   string $parent parent
+	 *
+	 * @return boolean
+	 * @since Kunena
+	 */
+	public function postflight($type, $parent)
+	{
+		$this->addRootCategory();
+
+
+		return true;
+	}
+
+	
+	/**
+	 * Add the root node to an empty table.
+	 *
+	 * @return    mixed  The id of the new root node or false on error.
+	 */
+	public function addRootCategory()
+	{
+	    $db = Factory::getDbo();
+
+	    $checkQuery = $db->getQuery(true);
+	    $checkQuery->select('*');
+	    $checkQuery->from('#__joomgallery_categories');
+	    $checkQuery->where('level = 0');
+
+	    $db->setQuery($checkQuery);
+
+	    if(empty($db->loadAssoc()))
+	    {
+	    	$query = $db->getQuery(true)
+	        ->insert('#__joomgallery_categories')
+	        ->set('parent_id = 0')
+	        ->set('lft = 0')
+	        ->set('rgt = 1')
+	        ->set('level = 0')
+	        ->set('title = ' . $db->quote('Root'))
+	        ->set('alias = ' . $db->quote('root'))
+	        ->set('access = 1')
+	        ->set('path = ' . $db->quote(''));
+		    $db->setQuery($query);
+
+		    if(!$db->execute())
+		    {
+		        return false;
+		    }
+		    return $db->insertid();
+	    }
+
+	    return true;
+	}
 }

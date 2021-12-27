@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Site\Field">
+  <fieldset>
+    <field name="ordering"/>
+    <field name="checked_out" type="hidden" filter="unset"/>
+    <field name="hits" default="0" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_HITS" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_HITS" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_HITS"/>
+    <field name="downloads" default="0" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_DOWNLOADS" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_DOWNLOADS" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_DOWNLOADS"/>
+    <field name="imgvotes" default="0" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGVOTES" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_IMGVOTES" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGVOTES"/>
+    <field name="imgvotesum" default="0" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGVOTESUM" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_IMGVOTESUM" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGVOTESUM"/>
+    <field name="approved" default="0" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_APPROVED" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_APPROVED" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_APPROVED"/>
+    <field name="useruploaded" default="0" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_USERUPLOADED" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_USERUPLOADED" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_USERUPLOADED"/>
+    <field name="imgtitle" maxlength="255" filter="safehtml" type="text" required="true" message="Please enter a title" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGTITLE" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_IMGTITLE" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGTITLE"/>
+    <field name="alias" type="text" class="inputbox" generator="imgtitle" label="JFIELD_ALIAS_LABEL" description="JFIELD_ALIAS_DESC" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_ALIAS"/>
+    <field name="catid" type="foreignkey" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_CATID" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_CATID" default="" input_type="list" table="#__joomgallery_categories" key_field="id" translate="true" value_field="title" required="true" message="Please select a category"/>
+    <field name="published" default="0" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_PUBLISHED" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_PUBLISHED" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_PUBLISHED"/>
+    <field name="imgauthor" maxlength="50" filter="string" type="text" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGAUTHOR" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_IMGAUTHOR" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGAUTHOR"/>
+    <field name="language" client="administrator" type="language" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_LANGUAGE" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_LANGUAGE" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_LANGUAGE"/>
+    <field name="imgtext" rows="250" editor="|" buttons="true" filter="JComponentHelper::filterText" type="editor" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGTEXT" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_IMGTEXT" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGTEXT"/>
+    <field name="access" type="accesslevel" label="JFIELD_ACCESS_LABEL" description="JFIELD_ACCESS_DESC" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_ACCESS"/>
+    <field name="hidden" default="0" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_HIDDEN" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_HIDDEN" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_HIDDEN"/>
+    <field name="featured" default="0" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_FEATURED" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_FEATURED" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_FEATURED"/>
+    <field name="created_time" type="timecreated" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_CREATED_TIME" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_CREATED_TIME" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_CREATED_TIME"/>
+    <field name="modified_time" type="timeupdated" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_MODIFIED_TIME" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_MODIFIED_TIME" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_MODIFIED_TIME"/>
+    <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
+    <field name="metadesc" cols="40" rows="5" filter="safehtml" type="textarea" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_METADESC" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_METADESC" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_METADESC"/>
+    <field name="metakey" cols="40" rows="5" filter="string" type="textarea" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_METAKEY" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_METAKEY" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_METAKEY"/>
+    <field name="robots" default="0" type="list" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_ROBOTS" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_ROBOTS" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_ROBOTS">
+      <option value="0">COM_JOOMGALLERY_IMAGES_ROBOTS_OPTION_0</option>
+      <option value="1">COM_JOOMGALLERY_IMAGES_ROBOTS_OPTION_1</option>
+      <option value="2">COM_JOOMGALLERY_IMAGES_ROBOTS_OPTION_2</option>
+      <option value="3">COM_JOOMGALLERY_IMAGES_ROBOTS_OPTION_3</option>
+      <option value="4">COM_JOOMGALLERY_IMAGES_ROBOTS_OPTION_4</option>
+    </field>
+    <field name="filename" type="imagelist" required="true" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_FILENAME" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_FILENAME" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_FILENAME"/>
+    <field name="imgdate" class="inputbox" format="%Y-%m-%d" timeformat="24" filter="server_utc" translateformat="false" showtime="false" singleheader="false" todaybutton="true" weeknumbers="false" filltable="false" type="calendar" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGDATE" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_IMGDATE" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGDATE"/>
+    <field name="imgmetadata" editor="codemirror|" buttons="false" filter="JComponentHelper::filterText" type="editor" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGMETADATA" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_IMGMETADATA" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_IMGMETADATA"/>
+    <field name="params" formsource="components/com_joomgallery/forms/subform_imageparams.xml" layout="joomla.form.field.subform.default" type="subform" label="COM_JOOMGALLERY_FORM_LBL_IMAGE_PARAMS" description="COM_JOOMGALLERY_FORM_DESC_IMAGE_PARAMS" hint="COM_JOOMGALLERY_FORM_LBL_IMAGE_PARAMS"/>
+    <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL" description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>
+  </fieldset>
+  <fieldset name="accesscontrol">
+    <field name="asset_id" type="hidden" filter="unset"/>
+    <field name="rules" type="rules" label="COM_JOOMGALLERY_ACTION_PERMISSIONS_LABEL" filter="rules" validate="rules" class="inputbox" component="com_joomgallery" section="image"/>
+  </fieldset>
+</form>

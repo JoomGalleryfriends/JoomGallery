@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<component>
+  <table action="add" table_name="#__joomgallery" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="imgtitle" field_type="VARCHAR" field_length="255" description="Title of the image"/>
+    <field action="change" field_name="imgdate" field_type="DATETIME" description="Date when the picture was taken "/>
+    <field field_name="access" field_type="INT" field_length="11" description=""/>
+    <field action="change" old_name="imagefiles" new_name="filename" field_name="filename" field_type="VARCHAR" field_length="255" description="Add image files to the item. At least two images are needed - thumbnail and detailimage."/>
+    <field action="change" field_name="params" field_type="TEXT" description=""/>
+    <field field_name="metadesc" field_type="TEXT" description="Meta description (max 15 words)"/>
+    <field action="change" old_name="metadata" new_name="imgmetadata" field_name="imgmetadata" field_type="TEXT" description="Metdatdata of the image"/>
+    <field action="change" field_name="alias" field_type="VARCHAR(255) COLLATE utf8_bin" description="Alias of the image"/>
+    <field field_name="hidden" field_type="TINYINT" field_length="1" description=""/>
+    <field field_name="metakey" field_type="TEXT" description="meta keywords (comma separated)"/>
+    <field field_name="robots" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="featured" field_type="TINYINT" field_length="1" description=""/>
+    <field action="change" field_name="catid" field_type="INT" default="0" field_length="11" description="Image category"/>
+    <field action="change" old_name="state" new_name="published" field_name="published" field_type="TINYINT" field_length="1" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" index="index" description=""/>
+    <field action="change" old_name="created" new_name="created_time" field_name="created_time" field_type="DATETIME" description=""/>
+    <field field_name="imgauthor" field_type="VARCHAR" field_length="50" description=""/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field action="change" field_name="created_by" field_type="INT" field_length="11" description=""/>
+    <field field_name="modified_time" field_type="DATETIME" description=""/>
+    <field field_name="language" field_type="VARCHAR" field_length="5" description=""/>
+    <field field_name="imgtext" field_type="TEXT" description="Extensive description of the image"/>
+    <field action="change" field_name="modified_by" field_type="INT" field_length="11" description=""/>
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field action="change" field_name="asset_id" field_type="INT" field_length="11" description="FK to the #__assets table."/>
+    <field field_name="hits" field_type="INT" field_length="11" description=""/>
+    <field field_name="downloads" field_type="INT" field_length="11" description=""/>
+    <field field_name="imgvotes" field_type="INT" field_length="11" description=""/>
+    <field field_name="imgvotesum" field_type="INT" field_length="11" description=""/>
+    <field field_name="approved" field_type="TINYINT" field_length="1" description=""/>
+    <field field_name="useruploaded" field_type="TINYINT" field_length="1" description=""/>
+    <field action="remove" field_name="owner"/>
+    <field field_name="asset_id" field_type="int" field_length="11"/>
+  </table>
+  <table action="add" table_name="#__joomgallery_users_ref" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field action="add" field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field action="add" field_name="imgid" field_type="INT" field_length="11" description=""/>
+    <field action="change" old_name="tagid" new_name="userid" field_name="userid" field_type="INT" field_length="11" description=""/>
+  </table>
+  <table action="change" old_name="#__joomgallery_mapping" new_name="#__joomgallery_tags_ref" table_name="#__joomgallery_tags_ref" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field action="change" field_name="imgid" field_type="INT" field_length="11" description=""/>
+    <field field_name="tagid" field_type="INT" field_length="11" description=""/>
+  </table>
+  <table action="change" old_name="#__joomgallery_maintenance" new_name="#__joomgallery_faulties" table_name="#__joomgallery_faulties" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="create_date" field_type="DATETIME" description=""/>
+    <field field_name="refid" field_type="INT" field_length="11" description=""/>
+    <field field_name="type" field_type="TEXT" description=""/>
+    <field field_name="paths" field_type="TEXT" description=""/>
+  </table>
+  <table action="add" table_name="#__joomgallery_tags" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="created_time" field_type="DATETIME" description=""/>
+    <field field_name="title" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" old_name="state" new_name="published" field_name="published" field_type="TINYINT" field_length="1" description=""/>
+    <field action="change" field_name="created_by" field_type="INT" field_length="11" description=""/>
+    <field field_name="modified_time" field_type="DATETIME" description=""/>
+    <field field_name="access" field_type="INT" field_length="11" description="Access level of the tag."/>
+    <field field_name="language" field_type="VARCHAR" field_length="5" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" index="index" description=""/>
+    <field action="change" field_name="modified_by" field_type="INT" field_length="11" description=""/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="description" field_type="TEXT" description="Tags description"/>
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="asset_id" field_type="INT" field_length="11" description="FK to the #__assets table."/>
+  </table>
+  <table action="add" table_name="#__joomgallery_fields" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="created_time" field_type="DATETIME" description=""/>
+    <field field_name="type" field_type="VARCHAR" field_length="7" description=""/>
+    <field field_name="key" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="value" field_type="TEXT" description=""/>
+    <field action="change" field_name="asset_id" field_type="INT" field_length="11" description="FK to the #__assets table."/>
+    <field field_name="created_by" field_type="INT" field_length="11" description=""/>
+    <field field_name="language" field_type="VARCHAR" field_length="5" description=""/>
+  </table>
+  <table action="add" table_name="#__joomgallery_users" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="cmsuser" field_type="INT" field_length="11" description=""/>
+    <field action="change" old_name="time" new_name="created_time" field_name="created_time" field_type="DATETIME" description=""/>
+    <field field_name="zipname" field_type="VARCHAR" field_length="70" description=""/>
+    <field field_name="layout" field_type="INT" field_length="1" description=""/>
+    <field field_name="session_id" field_type="VARCHAR" field_length="200" description=""/>
+    <field action="remove" field_name="imglist"/>
+    <field action="remove" field_name="ip"/>
+  </table>
+  <table action="add" table_name="#__joomgallery_img_types" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="typename" field_type="VARCHAR" field_length="11" description=""/>
+    <field field_name="path" field_type="VARCHAR" field_length="100" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" description=""/>
+  </table>
+  <table action="add" table_name="#__joomgallery_votes" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field action="change" field_name="imgid" field_type="INT" field_length="11" description=""/>
+    <field action="change" field_name="userid" field_type="INT" field_length="11" description=""/>
+    <field action="change" old_name="datevoted" new_name="created_time" field_name="created_time" field_type="DATETIME" description=""/>
+    <field field_name="score" field_type="INT" field_length="11" description=""/>
+    <field action="remove" field_name="userip"/>
+  </table>
+  <table action="change" old_name="#__joomgallery_catg" new_name="#__joomgallery_categories" table_name="#__joomgallery_categories" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="metadesc" field_type="TEXT" description="Meta Description"/>
+    <field action="change" field_name="hidden" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="created_time" field_type="DATETIME" description=""/>
+    <field action="change" field_name="params" field_type="TEXT" description=""/>
+    <field field_name="thumbnail" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" old_name="name" new_name="title" field_name="title" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field action="change" field_name="exclude_toplist" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="metakey" field_type="TEXT" description="Meta Keywords"/>
+    <field action="change" field_name="alias" field_type="VARCHAR(255) COLLATE utf8_bin" description=""/>
+    <field field_name="robots" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" field_name="exclude_search" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="parent_id" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="modified_time" field_type="DATETIME" description=""/>
+    <field action="change" field_name="published" field_type="TINYINT" field_length="1" description=""/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field action="change" field_name="id" field_type="INT" field_length="11" is_autoincrement="1" description=""/>
+    <field action="change" field_name="access" field_type="INT" field_length="11" description=""/>
+    <field field_name="password" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="language" field_type="VARCHAR" field_length="5" description=""/>
+    <field field_name="lft" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="description" field_type="TEXT" description=""/>
+    <field field_name="rgt" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="level" field_type="INT" field_length="10" index="index" description=""/>
+    <field action="change" old_name="catpath" new_name="path" field_name="path" field_type="VARCHAR" field_length="2048" description=""/>
+    <field action="change" field_name="asset_id" field_type="INT" field_length="11" description="FK to the #__assets table."/>
+    <field field_name="in_hidden" field_type="TINYINT" field_length="1" description=""/>
+    <field action="remove" field_name="created_by_copy_1"/>
+    <field action="remove" field_name="allow_download"/>
+    <field action="remove" field_name="allow_watermark_download"/>
+    <field action="remove" field_name="allow_watermark"/>
+    <field action="remove" field_name="allow_rating"/>
+    <field action="remove" field_name="allow_comment"/>
+    <field field_name="asset_id" field_type="int" field_length="11"/>
+  </table>
+  <table action="change" old_name="#__joomgallery_config" new_name="#__joomgallery_configs" table_name="#__joomgallery_configs" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="jg_report_images" field_type="VARCHAR" field_length="255" description="This option has to be enabled if you want to allow your users to send a claim (report) for the images in your gallery. Please note that additionally the corresponding options for that in tab 'General Settings' -&gt; 'Messages' have to enabled, too."/>
+    <field field_name="jg_showrating" field_type="VARCHAR" field_length="255" description="This option displays a rating field in the detail view of the gallery and allows users to rate images."/>
+    <field field_name="jg_download" field_type="VARCHAR" field_length="255" description="This option has to be enabled if you want to offer downloads via the download button in the different views."/>
+    <field field_name="jg_newpiccopyright" field_type="VARCHAR" field_length="255" description="Do you want to display a copyright notice in the upload form that informs the user on the fact that uploaded images need to be free of third party rights? The wording can be customised by editing the frontend constant COM_JOOMGALLERY_UPLOAD_NEW_IMAGE_COPYRIGHT ."/>
+    <field field_name="jg_msg_upload_type" field_type="VARCHAR" field_length="255" description="On which way do you want to send messages about new images?"/>
+    <field action="change" field_name="group_id" field_type="TEXT" description="User group for which this configurtion applies"/>
+    <field action="change" field_name="jg_pathftpupload" field_type="VARCHAR" field_length="100" description="Path to the FTP upload folder."/>
+    <field field_name="jg_filenamewithjs" field_type="VARCHAR" field_length="255" description="Allow special characters in filenames for uploads"/>
+    <field field_name="jg_delete_original" field_type="VARCHAR" field_length="255" description="This option enables you to delete the original image from the corresponding folder right after the upload."/>
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="jg_uploaddefaultcat" field_type="VARCHAR" field_length="255" description="You may select a default upload category that means whether the category field of the upload form is filled with a default value."/>
+    <field field_name="jg_userspace" field_type="VARCHAR" field_length="255" description="The userspace is more or less the administration panel for the frontend user."/>
+    <field field_name="jg_report_hint" field_type="VARCHAR" field_length="255" description="Should users without enough rights be given a hint that reporting is possible with more permissions?"/>
+    <field field_name="jg_maxvoting" field_type="DOUBLE" description="The value you enter is the highest possible value permitted."/>
+    <field field_name="jg_download_hint" field_type="VARCHAR" field_length="255" description="Should users without enough rights be given a hint that downloading images is possible with more permissions?"/>
+    <field field_name="jg_msg_upload_recipients" field_type="VARCHAR" field_length="255" description="Whom do you want to send messages about new images? If you select '- Default Recipients -' here and if sending messages is enabled above all users who have set 'Receive System E-mails' to 'Yes' will get a message."/>
+    <field field_name="jg_imgprocessor" field_type="VARCHAR" field_length="255" description="Choose the software for image processing."/>
+    <field field_name="jg_filenamereplace" field_type="TEXT" description="Please fill in the replacement rules for special characters as 'special character|replace character(s)'and separate them by ','. Example for replacements of &quot;&#xE4;&quot; to &quot;ae&quot; and &quot;&#xF6;&quot; to &quot;oe&quot;: &#x399;ae,&#xF6;&#x399;oe"/>
+    <field field_name="jg_pathtemp" field_type="VARCHAR" field_length="100" description="Path to the Temp folder."/>
+    <field action="change" old_name="state" new_name="published" field_name="published" field_type="TINYINT" field_length="1" description=""/>
+    <field field_name="jg_approve" field_type="VARCHAR" field_length="255" description="Images uploaded by users need to be approved by the administrator before they are displayed in the frontend (Yes). Otherwise they will be approved automatically and published to the frontend right away (No)."/>
+    <field action="change" field_name="jg_msg_download_type" field_type="VARCHAR" field_length="255" description="On which way do you want to send messages about image downloads?"/>
+    <field field_name="jg_ratingcalctype" field_type="VARCHAR" field_length="255" description="If using the standard type the rating will be calculated by building the arithmetical average. If using the weighted type by Thomas Bayes the total number of votes for all images is considered by the calculation."/>
+    <field field_name="jg_downloadfile" field_type="VARCHAR" field_length="255" description="Which image do you want to make available for download?"/>
+    <field field_name="jg_useruploadsingle" field_type="VARCHAR" field_length="255" description="In general for the frontend users there are three possible methods available to upload images: Single Upload, Batch Upload and Java Upload. Enable this option if the frontend users should be able to use the Single Upload."/>
+    <field action="change" field_name="jg_fastgd2creation" field_type="VARCHAR" field_length="255" description="It is possible to define that for creation of thumbnails and optionally downsizing images an optimized function for the upload process shall be used."/>
+    <field field_name="jg_replaceinfo" field_type="TEXT" description="When uploading images, the metadata of the image can be transferred to the desired fields of the database.&#13;&#10;Please note: If the selected meta information does not exist in the image, the default value from the upload form will be maintained."/>
+    <field field_name="jg_wmfile" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" field_name="jg_msg_download_recipients" field_type="VARCHAR" field_length="255" description="Whom do you want to send messages about image downloads? If you select '- Default Recipients -' here and if sending messages is enabled above all users who have set 'Receive System E-mails' to 'Yes' will get a message."/>
+    <field field_name="jg_votingonlyonce" field_type="VARCHAR" field_length="255" description="Should ratings be permitted only once per image?"/>
+    <field field_name="jg_downloadwithwatermark" field_type="VARCHAR" field_length="255" description="Do you want to add a watermark to the downloaded image?"/>
+    <field field_name="jg_maxuploadfields" field_type="DOUBLE" description="Specifies the number of upload fields the user will get to see in Single Upload if the option above is activated."/>
+    <field field_name="jg_maxusercat" field_type="DOUBLE" description="How many categories is each user allowed to create?"/>
+    <field field_name="jg_impath" field_type="VARCHAR" field_length="100" description="The path has been detected automatically. Leave the field blank."/>
+    <field field_name="jg_replaceshowwarning" field_type="VARCHAR" field_length="255" description="Shows a warning during upload, if one of the above selected metadata is not present in the image.&#13;&#10;This setting applies regardless of the debug setting in the upload form.&#13;&#10;With hint: In addition to the warnings a hint will show the user a solution to the problem."/>
+    <field field_name="ordering" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="jg_use_real_paths" field_type="VARCHAR" field_length="255" description="If this option is enabled detail and original images won't be output through the PHP script anymore so that their real paths are send to the browsers."/>
+    <field action="change" field_name="jg_useorigfilename" field_type="VARCHAR" field_length="255" description="Use original filename as image title?"/>
+    <field field_name="jg_msg_zipdownload" field_type="VARCHAR" field_length="255" description="If this option is enabled the recipients for the download messages will also get messages about downloaded zips."/>
+    <field field_name="jg_useruploadajax" field_type="VARCHAR" field_length="255" description="Enable this option if the frontend users should be able to use the Drag'n'Drop AJAX Upload. Please note that Drag'n'Drop file selection resp. AJAX file submission with file chunks is not supported by all browser. In that case the upload falls back to a simple form upload similar to the &quot;Single Upload&quot;."/>
+    <field field_name="jg_maxuserimage" field_type="DOUBLE" description="Frontend users can upload images up to the maximum number specified here. Once the maximum number is reached the user will be notified and the upload will be cancelled."/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field action="change" old_name="jg_pathimages" new_name="jg_staticprocessing" field_name="jg_staticprocessing" field_type="TEXT" description="Path to where the images are saved."/>
+    <field field_name="jg_checkupdate" field_type="VARCHAR" field_length="255" description="Do you want the gallery to check automatically for available updates of itself and its extensions like JoomImages, for example? For this the gallery reads an RSS feed provided on joomgalleryfriends.net."/>
+    <field field_name="jg_uploadorder" field_type="VARCHAR" field_length="255" description="Do you want to assign ordering numbers to the images automatically?"/>
+    <field field_name="jg_dynamicprocessing" field_type="TEXT" description=""/>
+    <field field_name="jg_maxuserimage_timespan" field_type="DOUBLE" description="You may define a period of time in days in which the maximum number of images can be uploaded. If the value for this parameter is 0, then the previous parameter has to be seen as an absolute limit."/>
+    <field field_name="jg_useruploadbatch" field_type="VARCHAR" field_length="255" description="Enable this option if the frontend users should be able to use the Batch Upload.&#13;&#10;Note that there is no security check for zip files. You should only enable this option if it is ensured that the zip files contain only secure image files!"/>
+    <field field_name="jg_listbox_max_items" field_type="DOUBLE" description="Define the maximum number of items up to which user or owner select boxes are presented as listboxes in the user interface. If the this number is exceeded a modal popup selection or a text field is used instead in order to prevent loading too much data at once."/>
+    <field action="change" field_name="jg_msg_comment_type" field_type="VARCHAR" field_length="255" description="On which way do you want to send messages about new comments?"/>
+    <field field_name="jg_maxfilesize" field_type="DOUBLE" description="Maximum file size in bytes permitted for frontend uploads. This setting applies to frontend only and has no impact on backend uploads!"/>
+    <field field_name="jg_special_upload" field_type="VARCHAR" field_length="255" description="Depending on your server configuration, errors may occur during upload for some images. These errors may be caused by several reasons (not enough memory, missing libraries, bugs in the code, misconfigurations,...). With this option a way is offered to the user to upload problematic images anyway. This means that they would not get resized even if the resizing feature is turned on and they would therefore be displayed in their full original size in detail view. A selection box with additional explanation is displayed to the user in the frontend."/>
+    <field action="change" field_name="jg_msg_comment_recipients" field_type="VARCHAR" field_length="255" description="Whom do you want to send messages about new comments? This message will only be sent if it is necessary to approve the comments.&#13;&#10;If you select '- Default Recipients -' here and if sending messages is enabled above all users who have set 'Receive System E-mails' to 'Yes' will get a message.&#13;&#10;You may select '- No User -' here, if you only want to send messages to the image owners. Please check the option below for that."/>
+    <field field_name="jg_filenamenumber" field_type="VARCHAR" field_length="255" description="Should the uploaded images be numbered consecutively?"/>
+    <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="jg_newpicnote" field_type="VARCHAR" field_length="255" description="Do you want to display a notice that informs the user on the maximum size and the maximum number of uploaded images?"/>
+    <field action="change" field_name="jg_msg_comment_toowner" field_type="VARCHAR" field_length="255" description="If this option is enabled the user who ownes the image which is commented will receive a message, too. This message will also be sent if it is not necessary to approve the comments. If they have to be approved the message won't be sent until this is done."/>
+    <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="jg_redirect_after_upload" field_type="VARCHAR" field_length="255" description="Do you want to redirect the user in frontend after he successfully uploaded images?&#13;&#10;If no, the complete information about the upload procedure is displayed together with some links with which the user can go back to the gallery. If yes, the user may optionally show the upload information by checking the corresponding check box.&#13;&#10;In case of upload errors the debug output is always displayed without a redirect."/>
+    <field action="change" field_name="jg_msg_report_type" field_type="VARCHAR" field_length="255" description="On which way do you want to send messages about claims? This option has to be enabled for using the button for image claims."/>
+    <field action="change" field_name="jg_msg_report_recipients" field_type="VARCHAR" field_length="255" description="Whom do you want to send the image claims? If you select '- Default Recipients -' here and if sending messages is enabled above and in category or detail view all users who have set 'Receive System E-mails' to 'Yes' will get a message."/>
+    <field action="change" field_name="jg_msg_report_toowner" field_type="VARCHAR" field_length="255" description="If this option is enabled the user who ownes the image which somebody complains about will receive a message, too."/>
+    <field action="change" field_name="jg_msg_rejectimg_type" field_type="VARCHAR" field_length="255" description="On which way do you want to send messages about reasons for rejecting images? A message will only be send if you fill the respective field while rejecting an image in image manager."/>
+    <field action="change" field_name="jg_msg_global_from" field_type="VARCHAR" field_length="255" description="If this option is enabled only the site e-mail address and name in global configuration of Joomla! will used as the sender of the mails sent by JoomGallery. This way the recipients don't get the e-mail addresses of the people using your site."/>
+    <field field_name="title" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="asset_id" field_type="int" field_length="11"/>
+  </table>
+</component>

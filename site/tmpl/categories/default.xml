@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JOOMGALLERY_TITLE_LIST_VIEW_CATEGORIES" option="View">
+        <message>
+                        <![CDATA[COM_JOOMGALLERY_TITLE_LIST_VIEW_CATEGORIES_DESC]]>
+        </message>
+	</layout>
+	
+</metadata>

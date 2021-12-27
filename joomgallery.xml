@@ -1,99 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="3.0" method="upgrade">
-  <name>JoomGallery</name>
-  <creationDate>2021/05/25</creationDate>
-  <author>JoomGallery::ProjectTeam</author>
-  <copyright>This component is released under the GNU/GPL License</copyright>
-  <license>GNU General Public License version 2 or later</license>
-  <authorEmail>team@joomgalleryfriends.net</authorEmail>
-  <authorUrl>https://www.joomgalleryfriends.net</authorUrl>
-  <version>3.5.1</version>
-  <description>JoomGallery 3 is a native Joomla! 3.x gallery component</description>
-  <files folder="components/com_joomgallery">
-    <folder>controllers</folder>
-    <folder>helpers</folder>
-    <folder>models</folder>
-    <folder>views</folder>
-    <filename>controller.php</filename>
-    <filename>index.html</filename>
-    <filename>interface.php</filename>
-    <filename>joomgallery.php</filename>
-    <filename>model.php</filename>
-    <filename>router.php</filename>
-    <filename>view.php</filename>
-  </files>
-  <media destination="joomgallery" folder="media/joomgallery">
-    <filename>index.html</filename>
-    <folder>css</folder>
-    <folder>images</folder>
-    <folder>js</folder>
-    <folder>java</folder>
-  </media>
-  <languages folder="language">
-    <language tag="en-GB">en-GB/en-GB.com_joomgallery.ini</language>
-    <language tag="en-GB">en-GB/en-GB.com_joomgallery.exif.ini</language>
-    <language tag="en-GB">en-GB/en-GB.com_joomgallery.iptc.ini</language>
-  </languages>
-  <install>
-    <sql>
-      <file charset="utf8" driver="mysql">sql/install.mysql.utf8.sql</file>
-      <file charset="utf8" driver="mysql">sql/setdefault.install.mysql.utf8.sql</file>
-    </sql>
-  </install>
-  <uninstall>
-    <sql>
-      <file charset="utf8" driver="mysql">sql/uninstall.mysql.utf8.sql</file>
-    </sql>
-  </uninstall>
-  <update>
-    <schemas>
-      <schemapath type="mysql">sql/updates/mysql</schemapath>
-    </schemas>
-  </update>
-  <scriptfile>script.php</scriptfile>
-  <administration>
-    <menu img="../media/joomgallery/images/joom_main.png">COM_JOOMGALLERY</menu>
-    <submenu>
-      <menu img="media/joomgallery/images/joom_categories.png" controller="categories">COM_JOOMGALLERY_CATEGORY_MANAGER</menu>
-      <menu img="media/joomgallery/images/joom_pictures.png" controller="images">COM_JOOMGALLERY_IMAGE_MANAGER</menu>
-      <menu img="media/joomgallery/images/joom_comments.png" controller="comments">COM_JOOMGALLERY_COMMENTS_MANAGER</menu>
-      <menu img="media/joomgallery/images/joom_pictureupload.png" controller="upload">COM_JOOMGALLERY_IMAGE_UPLOAD</menu>
-      <menu img="media/joomgallery/images/joom_ajaxupload.png" controller="ajaxupload">COM_JOOMGALLERY_AJAX_UPLOAD</menu>
-      <menu img="media/joomgallery/images/joom_batchupload.png" controller="batchupload">COM_JOOMGALLERY_BATCH_UPLOAD</menu>
-      <menu img="media/joomgallery/images/joom_ftpupload.png" controller="ftpupload">COM_JOOMGALLERY_FTP_UPLOAD</menu>
-      <menu img="media/joomgallery/images/joom_jupload.png" controller="jupload">COM_JOOMGALLERY_JAVA_UPLOAD</menu>
-      <menu img="media/joomgallery/images/joom_config.png" controller="config">COM_JOOMGALLERY_CONFIGURATION_MANAGER</menu>
-      <menu img="media/joomgallery/images/joom_css.png" controller="cssedit">COM_JOOMGALLERY_CUSTOMIZE_CSS</menu>
-      <menu img="media/joomgallery/images/joom_migration.png" controller="migration">COM_JOOMGALLERY_MIGRATION_MANAGER</menu>
-      <menu img="media/joomgallery/images/joom_maintenance.png" controller="maintenance">COM_JOOMGALLERY_MAINTENANCE_MANAGER</menu>
-      <menu img="media/joomgallery/images/joom_information.png" controller="help">COM_JOOMGALLERY_HELP</menu>
-    </submenu>
-    <files folder="administrator/components/com_joomgallery">
-      <folder>controllers</folder>
-      <folder>helpers</folder>
-      <folder>includes</folder>
-      <folder>layouts</folder>
-      <folder>models</folder>
-      <folder>sql</folder>
-      <folder>tables</folder>
-      <folder>temp</folder>
-      <folder>views</folder>
-      <filename>access.xml</filename>
-      <filename>changelog.xml</filename>
-      <filename>config.xml</filename>
-      <filename>controller.php</filename>
-      <filename>index.html</filename>
-      <filename>joomgallery.php</filename>
-      <filename>LICENSE.TXT</filename>
-      <filename>model.php</filename>
-      <filename>view.php</filename>
+<extension type="component" version="4.0" method="upgrade">
+    <name>com_joomgallery</name>
+    <creationDate>2021-12-27</creationDate>
+    <copyright>2008 - 2022  JoomGallery::ProjectTeam</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <author>JoomGallery::ProjectTeam</author>
+    <authorEmail>team@joomgalleryfriends.net</authorEmail>
+    <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
+    <version>CVS: 4.0.0</version>
+    <description>COM_JOOMGALLERY_XML_DESCRIPTION</description>
+    <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
+    
+    <scriptfile>script.php</scriptfile>
+    
+    <install> <!-- Runs on install -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <update> <!-- Runs on update -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/update.mysql.utf8.sql</file>
+        </sql>
+    </update>
+    <uninstall> <!-- Runs on uninstall -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    <api>
+		<files folder="webservices">
+			<folder>src</folder>
+		</files>
+	</api>
+
+    <files folder="site">
+        <folder>src</folder>
+        <folder>forms</folder>
+        <folder>tmpl</folder>
     </files>
-    <languages folder="administrator/language">
-      <language tag="en-GB">en-GB/en-GB.com_joomgallery.ini</language>
-      <language tag="en-GB">en-GB/en-GB.com_joomgallery.sys.ini</language>
+    <media destination="com_joomgallery" folder="media">
+        <folder>css</folder>
+        <folder>js</folder>
+        <filename>joomla.asset.json</filename>
+    </media>
+    <languages folder="site/languages">
+        
+			<language tag="en-GB">en-GB/com_joomgallery.ini</language>
     </languages>
-  </administration>
-  <updateservers>
-    <server type="collection" priority="1" name="JoomGallery Update Service">https://www.joomgalleryfriends.net/components/com_newversion/xml/extensions3.xml</server>
-  </updateservers>
+    <administration>
+        <menu>COM_JOOMGALLERY</menu>
+        <submenu>
+            
+			<menu link="option=com_joomgallery&amp;view=images" view="images" alt="Joomgallery/Images">COM_JOOMGALLERY_TITLE_IMAGES</menu>
+
+			<menu link="option=com_joomgallery&amp;view=categories" view="categories" alt="Joomgallery/Categories">COM_JOOMGALLERY_TITLE_CATEGORIES</menu>
+
+			<menu link="option=com_joomgallery&amp;view=configs" view="configs" alt="Joomgallery/Configs">COM_JOOMGALLERY_TITLE_CONFIGS</menu>
+
+			<menu link="option=com_joomgallery&amp;view=faulties" view="faulties" alt="Joomgallery/Faulties">COM_JOOMGALLERY_TITLE_FAULTIES</menu>
+
+			<menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TITLE_TAGS</menu>
+
+        </submenu>
+        <files folder="administrator">
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <folder>forms</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+            <folder>services</folder>
+            <folder>presets</folder>
+            <folder>sql</folder>
+        </files>
+        <languages folder="administrator/languages">
+            
+			<language tag="en-GB">en-GB/com_joomgallery.ini</language>
+			<language tag="en-GB">en-GB/com_joomgallery.sys.ini</language>
+        </languages>
+    </administration>
+    <config>
+        <fields name="params">
+            <fieldset name="component">
+                <field name="save_history" default="0" />
+            </fieldset>
+        </fields>
+    </config>
+    <plugins>
+		<plugin group="finder" plugin="joomgalleryimages"/>
+		<plugin group="privacy" plugin="joomgalleryimages"/>
+		<plugin group="webservices" plugin="joomgallery"/>
+		<plugin group="finder" plugin="joomgallerycategories"/>
+		<plugin group="webservices" plugin="joomgallery"/>
+    </plugins>
+    
+
+    <updateservers>
+        <server type="extension" priority="1" name="com_joomgallery">https://www.component-creator.com/index.php?task=builder.preupdatecheckhook&amp;option=com_combuilder&amp;component=NzMzOTAtMjAxMTE0</server>
+    </updateservers>
 </extension>
+<!-- Component built by the Joomla Component Creator -->
+<!-- http://www.component-creator.com/ -->
