@@ -7,19 +7,21 @@
     <license>GNU General Public License version 2 or later</license>
     <authorEmail>team@joomgalleryfriends.net</authorEmail>
     <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-    <version>CVS: 4.0.0</version>
+    <version>4.0.0</version>
     <description>PLG_PRIVACY_COM_JOOMGALLERY_XML_DESCRIPTION</description>
     <files>
         <filename plugin="joomgallery">joomgallery.php</filename>
         <filename>index.html</filename>
     </files>
+
     <languages folder="languages">
-        
 			<language tag="en-GB">en-GB/plg_webservices_joomgallery.ini</language>
 			<language tag="en-GB">en-GB/plg_webservices_joomgallery.sys.ini</language>
     </languages>
+
     <config>
     </config>
+
     <updateservers>
         <server type="extension" priority="1" name="com_joomgallery">https://www.component-creator.com/index.php?task=builder.preupdatecheckhook&amp;option=com_combuilder&amp;component=NzMzOTAtMjAxMTE0</server>
     </updateservers>

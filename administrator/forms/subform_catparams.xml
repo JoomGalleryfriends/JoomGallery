@@ -1,2 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form><fieldset><field name="allow_download" groupByFieldset="false" default="-1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_DOWNLOAD" description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_DOWNLOAD" hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_DOWNLOAD"><option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_DOWNLOAD_OPTION_-1</option><option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_DOWNLOAD_OPTION_0</option><option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_DOWNLOAD_OPTION_1</option></field><field name="allow_comment" groupByFieldset="false" default="-1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_COMMENT" description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_COMMENT" hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_COMMENT"><option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_COMMENT_OPTION_-1</option><option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_COMMENT_OPTION_0</option><option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_COMMENT_OPTION_1</option></field><field name="allow_rating" groupByFieldset="false" default="-1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_RATING" description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_RATING" hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_RATING"><option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_RATING_OPTION_-1</option><option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_RATING_OPTION_0</option><option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_RATING_OPTION_1</option></field><field name="allow_watermark" groupByFieldset="false" default="-1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_WATERMARK" description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_WATERMARK" hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_WATERMARK"><option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_OPTION_-1</option><option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_OPTION_0</option><option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_OPTION_1</option></field><field name="allow_watermark_download" groupByFieldset="false" default="-1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD" description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD" hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD"><option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD_OPTION_-1</option><option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD_OPTION_0</option><option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD_OPTION_1</option></field></fieldset></form>
+<form>
+  <fieldset>
+    <field name="allow_download"
+           groupByFieldset="false"
+           default="-1"
+           type="radio"
+           class="btn-group btn-group-yesno"
+           label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_DOWNLOAD"
+           description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_DOWNLOAD"
+           hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_DOWNLOAD" >
+      <option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_DOWNLOAD_OPTION_-1</option>
+      <option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_DOWNLOAD_OPTION_0</option>
+      <option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_DOWNLOAD_OPTION_1</option>
+    </field>
+
+    <field name="allow_comment"
+           groupByFieldset="false"
+           default="-1"
+           type="radio"
+           class="btn-group btn-group-yesno"
+           label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_COMMENT"
+           description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_COMMENT"
+           hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_COMMENT" >
+      <option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_COMMENT_OPTION_-1</option>
+      <option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_COMMENT_OPTION_0</option>
+      <option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_COMMENT_OPTION_1</option>
+    </field>
+
+    <field name="allow_rating"
+           groupByFieldset="false"
+           default="-1"
+           type="radio"
+           class="btn-group btn-group-yesno"
+           label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_RATING"
+           description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_RATING"
+           hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_RATING">
+      <option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_RATING_OPTION_-1</option>
+      <option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_RATING_OPTION_0</option>
+      <option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_RATING_OPTION_1</option>
+    </field>
+
+    <field name="allow_watermark"
+           groupByFieldset="false"
+           default="-1"
+           type="radio"
+           class="btn-group btn-group-yesno"
+           label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_WATERMARK"
+           description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_WATERMARK"
+           hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_WATERMARK" >
+      <option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_OPTION_-1</option>
+      <option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_OPTION_0</option>
+      <option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_OPTION_1</option>
+    </field>
+
+    <field name="allow_watermark_download"
+           groupByFieldset="false"
+           default="-1"
+           type="radio"
+           class="btn-group btn-group-yesno"
+           label="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD"
+           description="COM_JOOMGALLERY_SUBFORM_DESC_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD"
+           hint="COM_JOOMGALLERY_SUBFORM_LBL_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD" >
+      <option value="-1">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD_OPTION_-1</option>
+      <option value="0">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD_OPTION_0</option>
+      <option value="1">COM_JOOMGALLERY_CATPARAMS_ALLOW_WATERMARK_DOWNLOAD_OPTION_1</option>
+    </field>
+  </fieldset>
+</form>
