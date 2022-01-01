@@ -1,2 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form><fieldset><field name="jg_watermarkpos" groupByFieldset="false" default="9" type="list" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGEWATERMARK_JG_WATERMARKPOS" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGEWATERMARK_JG_WATERMARKPOS" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGEWATERMARK_JG_WATERMARKPOS"><option value="1">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKPOS_OPTION_1</option><option value="2">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKPOS_OPTION_2</option><option value="3">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKPOS_OPTION_3</option><option value="4">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKPOS_OPTION_4</option><option value="5">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKPOS_OPTION_5</option><option value="6">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKPOS_OPTION_6</option><option value="7">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKPOS_OPTION_7</option><option value="8">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKPOS_OPTION_8</option><option value="9">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKPOS_OPTION_9</option></field><field name="jg_watermarkzoom" groupByFieldset="false" default="0" type="list" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGEWATERMARK_JG_WATERMARKZOOM" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGEWATERMARK_JG_WATERMARKZOOM" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGEWATERMARK_JG_WATERMARKZOOM"><option value="0">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKZOOM_OPTION_0</option><option value="1">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKZOOM_OPTION_1</option><option value="2">COM_JOOMGALLERY_IMAGEWATERMARK_JG_WATERMARKZOOM_OPTION_2</option></field><field name="jg_watermarksize" groupByFieldset="false" default="15" filter="int" min="1" max="100" step="1" type="number" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGEWATERMARK_JG_WATERMARKSIZE" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGEWATERMARK_JG_WATERMARKSIZE" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGEWATERMARK_JG_WATERMARKSIZE"/></fieldset></form>
+<form>
+  <fieldset>
+    <field name="jg_watermarkpos"
+           type="list"
+           groupByFieldset="false"
+           default="9"
+           label="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARK_POSITION"
+           description="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARK_POSITION_LONG" >
+        <option value="1">COM_JOOMGALLERY_CONFIG_DV_GS_OPTION_TOP_LEFT</option>
+        <option value="2">COM_JOOMGALLERY_CONFIG_DV_GS_OPTION_TOP_CENTER</option>
+        <option value="3">COM_JOOMGALLERY_CONFIG_DV_GS_OPTION_TOP_RIGHT</option>
+        <option value="4">COM_JOOMGALLERY_CONFIG_DV_GS_OPTION_MIDDLE_LEFT</option>
+        <option value="5">COM_JOOMGALLERY_CONFIG_DV_GS_OPTION_MIDDLE_CENTER</option>
+        <option value="6">COM_JOOMGALLERY_CONFIG_DV_GS_OPTION_MIDDLE_RIGHT</option>
+        <option value="7">COM_JOOMGALLERY_CONFIG_DV_GS_OPTION_BOTTOM_LEFT</option>
+        <option value="8">COM_JOOMGALLERY_CONFIG_DV_GS_OPTION_BOTTOM_CENTER</option>
+        <option value="9">COM_JOOMGALLERY_CONFIG_DV_GS_OPTION_BOTTOM_RIGHT</option>
+    </field>
+
+    <field name="jg_watermarkzoom"
+           type="list"
+           groupByFieldset="false"
+           default="0"
+           label="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKZOOM"
+           description="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKZOOM_LONG" >
+        <option value="0">COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKNORESIZE</option>
+        <option value="1">COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKHEIGHT</option>
+        <option value="2">COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKWIDTH</option>
+    </field>
+
+    <field name="jg_watermarksize"
+           type="number"
+           groupByFieldset="false"
+           default="15"
+           filter="int"
+           min="1"
+           max="100"
+           step="1"
+           label="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKSIZE"
+           description="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKSIZE_LONG" />
+  </fieldset>
+</form>

@@ -1,2 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form><fieldset><field name="jg_imgtype" groupByFieldset="false" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPE" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPE" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPE"><option value="0">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPE_OPTION_0</option><option value="1">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPE_OPTION_1</option></field><field name="jg_imgtypename" groupByFieldset="false" maxlength="255" filter="word" type="text" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPENAME" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPENAME" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPENAME"/><field name="jg_imgtypepath" groupByFieldset="false" maxlength="100" filter="string" type="text" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEPATH" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPEPATH" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEPATH"/><field name="jg_imgtyperesize" groupByFieldset="false" default="0" type="list" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPERESIZE" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPERESIZE" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPERESIZE"><option value="0">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPERESIZE_OPTION_0</option><option value="1">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPERESIZE_OPTION_1</option><option value="2">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPERESIZE_OPTION_2</option><option value="3">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPERESIZE_OPTION_3</option><option value="4">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPERESIZE_OPTION_4</option></field><field name="jg_imgtypewidth" groupByFieldset="false" filter="int" min="" max="" step="1" type="number" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEWIDTH" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPEWIDTH" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEWIDTH"/><field name="jg_imgtypeheight" groupByFieldset="false" filter="int" min="" max="" step="1" type="number" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEHEIGHT" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPEHEIGHT" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEHEIGHT"/><field name="jg_cropposition" groupByFieldset="false" default="2" type="list" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_CROPPOSITION" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_CROPPOSITION" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_CROPPOSITION"><option value="0">COM_JOOMGALLERY_IMAGECONVERT_JG_CROPPOSITION_OPTION_0</option><option value="1">COM_JOOMGALLERY_IMAGECONVERT_JG_CROPPOSITION_OPTION_1</option><option value="2">COM_JOOMGALLERY_IMAGECONVERT_JG_CROPPOSITION_OPTION_2</option><option value="3">COM_JOOMGALLERY_IMAGECONVERT_JG_CROPPOSITION_OPTION_3</option><option value="4">COM_JOOMGALLERY_IMAGECONVERT_JG_CROPPOSITION_OPTION_4</option></field><field name="jg_imgtypeorinet" groupByFieldset="false" default="0" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEORINET" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPEORINET" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEORINET"><option value="0">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPEORINET_OPTION_0</option><option value="1">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPEORINET_OPTION_1</option></field><field name="jg_imgtypequality" groupByFieldset="false" default="100" filter="int" min="1" max="100" step="1" type="number" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEQUALITY" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPEQUALITY" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEQUALITY"/><field name="jg_imgtypewatermark" groupByFieldset="false" default="0" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEWATERMARK" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPEWATERMARK" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEWATERMARK"><option value="0">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPEWATERMARK_OPTION_0</option><option value="1">COM_JOOMGALLERY_IMAGECONVERT_JG_IMGTYPEWATERMARK_OPTION_1</option></field><field name="jg_imgtypewtmsettings" groupByFieldset="false" max="1" multiple="true" formsource="administrator/components/com_joomgallery/forms/subform_imagewatermark.xml" layout="joomla.form.field.subform.repeatable" type="subform" label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEWTMSETTINGS" description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPEWTMSETTINGS" hint="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEWTMSETTINGS"/></fieldset></form>
+<form>
+  <fieldset>
+    <field name="jg_imgtype"
+           type="radio"
+           groupByFieldset="false"
+           default="1"
+           class="btn-group"
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_SETIMAGETYPE" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="jg_imgtypename"
+           type="text"
+           groupByFieldset="false"
+           maxlength="255"
+           filter="word"
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPENAME"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPENAME_LONG" />
+
+    <field name="jg_imgtypepath"
+           type="text"
+           groupByFieldset="false"
+           maxlength="100"
+           filter="string"
+           label="COM_JOOMGALLERY_COMMON_IMAGE_PATH"
+           description="COM_JOOMGALLERY_COMMON_IMAGE_PATH_LONG" />
+
+    <field name="jg_imgtyperesize"
+           type="list"
+           groupByFieldset="false"
+           default="0"
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_RESIZING"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_RESIZING_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">COM_JOOMGALLERY_CONFIG_COMMON_SAMEHIGHT</option>
+        <option value="2">COM_JOOMGALLERY_CONFIG_COMMON_SAMEWIDTH</option>
+        <option value="3">COM_JOOMGALLERY_CONFIG_COMMON_FREEHEIGHTWIDTH</option>
+        <option value="4">COM_JOOMGALLERY_CONFIG_COMMON_MAXDIMENSION</option>
+    </field>
+
+    <field name="jg_imgtypewidth"
+           type="number"
+           groupByFieldset="false"
+           filter="int"
+           min=""
+           max=""
+           step="1"
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_MAX_WIDTH"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_MAX_WIDTH_LONG" />
+
+    <field name="jg_imgtypeheight"
+           type="number"
+           groupByFieldset="false"
+           filter="int"
+           min=""
+           max=""
+           step="1"
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_MAX_HEIGHT"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_MAX_HEIGHT_LONG" />
+
+    <field name="jg_cropposition"
+           type="list"
+           groupByFieldset="false"
+           default="2"
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITION"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITION_LONG" >
+        <option value="0">COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITIONLU</option>
+        <option value="1">COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITIONRU</option>
+        <option value="2">COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITIONC</option>
+        <option value="3">COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITIONLL</option>
+        <option value="4">COM_JOOMGALLERY_CONFIG_GS_IP_CROP_POSITIONRL</option>
+    </field>
+
+    <field name="jg_imgtypeorinet"
+           type="radio"
+           groupByFieldset="false"
+           default="0"
+           class="btn-group"
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_AUTOROT"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_AUTOROT_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="jg_imgtypequality"
+           type="number"
+           groupByFieldset="false"
+           default="100"
+           filter="int"
+           min="1"
+           max="100"
+           step="1"
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_QUALITY"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_QUALITY_LONG" />
+
+    <field name="jg_imgtypewatermark"
+           type="radio"
+           groupByFieldset="false"
+           default="0"
+           class="btn-group"
+           label="COM_JOOMGALLERY_CONFIG_DV_GS_ADD_WATERMARK"
+           description="COM_JOOMGALLERY_CONFIG_DV_GS_ADD_WATERMARK_NO" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="jg_imgtypewtmsettings"
+           type="subform"
+           groupByFieldset="false"
+           max="1"
+           multiple="true"
+           formsource="administrator/components/com_joomgallery/forms/subform_imagewatermark.xml"
+           layout="joomla.form.field.subform.repeatable"
+           label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEWTMSETTINGS"
+           description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPEWTMSETTINGS" />
+  </fieldset>
+</form>

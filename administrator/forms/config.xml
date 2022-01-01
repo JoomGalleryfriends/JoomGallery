@@ -1,13 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
 
-  <field name="id" type="text" readonly="true" class="readonly" hidden="true" default="0" description="JGLOBAL_FIELD_ID_DESC" />
-  <field name="published" hidden="true" default="1" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_PUBLISHED" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_PUBLISHED" />
-  <field name="ordering" hidden="true" />
-  <field name="checked_out" type="hidden" filter="unset" hidden="true" />
-  <field name="created_by" type="createdby" default="0" label="JGLOBAL_FIELD_CREATED_BY_LABEL" description="JGLOBAL_FIELD_CREATED_BY_DESC" hidden="true" />
-  <field name="modified_by" type="modifiedby" default="0" label="JGLOBAL_FIELD_MODIFIED_BY_LABEL" description="JGLOBAL_FIELD_MODIFIED_BY_DESC" hidden="true" />
-  
+  <field name="id"
+         type="text"
+         readonly="true"
+         class="readonly"
+         hidden="true"
+         default="0"
+         description="JGLOBAL_FIELD_ID_DESC" />
+
+  <field name="published"
+         hidden="true"
+         default="1"
+         label="COM_JOOMGALLERY_FORM_LBL_CONFIG_PUBLISHED"
+         description="COM_JOOMGALLERY_FORM_DESC_CONFIG_PUBLISHED" />
+
+  <field name="ordering"
+         hidden="true" />
+
+  <field name="checked_out"
+         type="hidden"
+         filter="unset"
+         hidden="true" />
+
+  <field name="created_by"
+         type="createdby"
+         default="0"
+         hidden="true"
+         label="JGLOBAL_FIELD_CREATED_BY_LABEL"
+         description="JGLOBAL_FIELD_CREATED_BY_DESC" />
+
+  <field name="modified_by"
+         type="modifiedby"
+         default="0"
+         hidden="true"
+         label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
+         description="JGLOBAL_FIELD_MODIFIED_BY_DESC" />
+
+  <field name="version_note"
+         type="text"
+         class="inputbox"
+         size="45"
+         labelclass="control-label"
+         label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
+         description="JGLOBAL_FIELD_VERSION_NOTE_DESC" />
+
   <field name="title"
          type="text"
          maxlength="255"
@@ -15,7 +52,7 @@
          required="true"
          label="JGLOBAL_TITLE"
          description="JGLOBAL_FIELD_FIELD_ORDERING_DESC" />
-    
+
   <field name="group_id"
          query="SELECT id, title FROM #__usergroups"
          key_field="id"
@@ -25,7 +62,7 @@
          layout="joomla.form.field.list-fancy-select"
          required="true"
          label="COM_JOOMGALLERY_COMMON_USER_GROUP"
-         description="COM_JOOMGALLERY_CONFIG_USER_GROUP_DESC" /> 
+         description="COM_JOOMGALLERY_CONFIG_USER_GROUP_DESC" />
 
   <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_GENERAL_SETTINGS" note="general">
     <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_GENERAL_SETTINGS" note="general-general">
@@ -36,7 +73,7 @@
              filter="string"
              label="COM_JOOMGALLERY_CONFIG_GS_PD_FTPUPLOAD_PATH"
              description="COM_JOOMGALLERY_CONFIG_GS_PD_PATH_FOR_FTPUPLOAD" />
-      
+
       <field name="jg_pathtemp"
              type="text"
              default="administrator/components/com_joomgallery/temp/"
@@ -44,7 +81,7 @@
              filter="string"
              label="COM_JOOMGALLERY_CONFIG_GS_PD_TEMP_PATH"
              description="COM_JOOMGALLERY_CONFIG_GS_PD_PATH_FOR_TEMP" />
-      
+
       <field name="jg_wmfile"
              type="media"
              directory=""
@@ -52,7 +89,7 @@
              description="COM_JOOMGALLERY_CONFIG_GS_PD_PATH_WATERMARK_STORED" />
 
       <field name="jg_use_real_paths"
-             type="radio" 
+             type="radio"
              default="0"
              class="btn-group"
              label="COM_JOOMGALLERY_CONFIG_GS_PD_USE_REAL_PATHS"
@@ -84,7 +121,7 @@
     <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_UPLOAD_SETTINGS" note="general-upload">
       <field name="jg_filenamewithjs"
              type="radio"
-             default="1" 
+             default="1"
              class="btn-group"
              label="COM_JOOMGALLERY_CONFIG_GS_RP_FILENAME_WITHJS"
              description="COM_JOOMGALLERY_CONFIG_GS_RP_FILENAME_WITHJS_LONG" >
@@ -99,7 +136,7 @@
              label="COM_JOOMGALLERY_CONFIG_GS_RP_FILENAME_REPLACE"
              description="COM_JOOMGALLERY_CONFIG_GS_RP_FILENAME_REPLACE_LONG"
              showon="jg_filenamewithjs:1" />
-      
+
       <field name="jg_replaceinfo"
              type="subform"
              max="6"
@@ -147,7 +184,7 @@
              description="COM_JOOMGALLERY_CONFIG_GS_BU_FILENAMENUMBER_LONG" >
         <option value="0">JNO</option>
         <option value="1">JYES</option>
-      </field> 
+      </field>
     </fieldset>
 
     <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_IMGPROCESS_SETTINGS" note="general-imgprocessing">
@@ -189,7 +226,15 @@
              label="COM_JOOMGALLERY_CONFIG_GS_IP_PATH_TO_IMAGEMAGICK"
              description="COM_JOOMGALLERY_CONFIG_GS_IP_PATH_TO_IMAGEMAGICK_LONG"
              showon="jg_imgprocessor:2" />
-      
+
+      <field name="jg_watermark"
+             type="subform"
+             max="1"
+             multiple="true"
+             formsource="administrator/components/com_joomgallery/forms/subform_imagewatermark.xml"
+             layout="joomla.form.field.subform.repeatable"
+             label="COM_JOOMGALLERY_FORM_LBL_CONFIG_" />
+
       <field name="jg_staticprocessing"
              type="subform"
              min="3"
@@ -367,8 +412,8 @@
              default="10"
              min="1"
              step="1"
-             label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_MAXUSERCAT"
-             description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_MAXUSERCAT" />
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_USERCATS"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_USERCATS_LONG" />
 
       <field name="jg_maxuserimage"
              type="number"
@@ -376,8 +421,8 @@
              filter="int"
              min="1"
              step="1"
-             label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_MAXUSERIMAGE"
-             description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_MAXUSERIMAGE" />
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES_LONG" />
 
       <field name="jg_maxuserimage_timespan"
              type="number"
@@ -385,8 +430,8 @@
              min="0"
              step="1"
              default="0"
-             label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_MAXUSERIMAGE_TIMESPAN"
-             description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_MAXUSERIMAGE_TIMESPAN" />
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES_TIMESPAN"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES_TIMESPAN_LONG" />
 
       <field name="jg_maxfilesize"
              type="number"
@@ -394,20 +439,206 @@
              filter="int"
              min="1"
              step="1"
-             label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_MAXFILESIZE"
-             description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_MAXFILESIZE" />
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_FILESIZE"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_FILESIZE_LONG" />
     </fieldset>
 
     <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_UPLOAD_SETTINGS" note="user-upload">
+      <field name="jg_newpiccopyright"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_COPYRIGHT"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_COPYRIGHT_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_uploaddefaultcat"
+             type="list"
+             default="0"
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_DEFAULT_CAT"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_DEFAULT_CAT_LONG" >
+        <option value="0">JNONE</option>
+        <option value="1">COM_JOOMGALLERY_CONFIG_UR_UU_DEFAULT_CAT_OLDEST_ALL</option>
+        <option value="2">COM_JOOMGALLERY_CONFIG_UR_UU_DEFAULT_CAT_NEWEST_ALL</option>
+        <option value="3">COM_JOOMGALLERY_CONFIG_UR_UU_DEFAULT_CAT_OLDEST_OWN</option>
+        <option value="4">COM_JOOMGALLERY_CONFIG_UR_UU_DEFAULT_CAT_NEWEST_OWN</option>
+      </field>
+
+      <field name="jg_useruploadsingle"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_UPLOAD_SINGLE"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_UPLOAD_SINGLE_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_maxuploadfields"
+             type="number"
+             default="3"
+             filter="int"
+             min="1"
+             step="1"
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_UPLOADFIELDS"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_UPLOADFIELDS_LONG" />
+
+      <field name="jg_useruploadajax"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_UPLOAD_AJAX"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_UPLOAD_AJAX_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_useruploadbatch"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_UPLOAD_BATCH"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_UPLOAD_BATCH_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_special_upload"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_SPECIAL_GIF_UPLOAD"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_SPECIAL_GIF_UPLOAD_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_newpicnote"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_UU_UPLOADNOTE"
+             description="COM_JOOMGALLERY_CONFIG_UR_UU_UPLOADNOTE_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_redirect_after_upload"
+             type="list"
+             default="1"
+             label="COM_JOOMGALLERY_CONFIG_GS_BU_REDIRECT_AFTER_UPLOAD"
+             description="COM_JOOMGALLERY_CONFIG_GS_BU_REDIRECT_AFTER_UPLOAD_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">COM_JOOMGALLERY_CONFIG_GS_BU_REDIRECT_AFTER_UPLOAD_TO_UPLOAD_VIEW</option>
+        <option value="2">COM_JOOMGALLERY_CONFIG_GS_BU_REDIRECT_AFTER_UPLOAD_TO_USERPANEL</option>
+        <option value="3">COM_JOOMGALLERY_CONFIG_GS_BU_REDIRECT_AFTER_UPLOAD_TO_GALLERY_VIEW</option>
+      </field>
     </fieldset>
 
     <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_DOWNLOAD_SETTINGS" note="user-download">
+      <field name="jg_download"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_UD_DOWNLOAD"
+             description="COM_JOOMGALLERY_CONFIG_UR_UD_DOWNLOAD_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_download_hint"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_UD_DOWNLOAD_HINT"
+             description="COM_JOOMGALLERY_CONFIG_UR_UD_DOWNLOAD_HINT_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_downloadfile"
+             type="list"
+             default="2"
+             label="COM_JOOMGALLERY_CONFIG_UR_UD_DOWNLOADFILE"
+             description="COM_JOOMGALLERY_CONFIG_UR_UD_DOWNLOADFILE_LONG" >
+        <option value="0">COM_JOOMGALLERY_CONFIG_UR_UD_DETAIL_ONLY</option>
+        <option value="1">COM_JOOMGALLERY_CONFIG_UR_UD_ORIGINAL_ONLY</option>
+        <option value="2">COM_JOOMGALLERY_CONFIG_UR_UD_DETAIL_IFNO_ORIGINAL</option>
+      </field>
+
+      <field name="jg_downloadwithwatermark"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_UD_DOWNLOADWITHWATERMARK"
+             description="COM_JOOMGALLERY_CONFIG_UR_UD_DOWNLOADWITHWATERMARK_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
     </fieldset>
 
     <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_RATING_SETTINGS" note="user-rating">
+      <field name="jg_showrating"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_RT_RATING"
+             description="COM_JOOMGALLERY_CONFIG_UR_RT_RATING_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_maxvoting"
+             type="number"
+             default="5"
+             filter="int"
+             min="1"
+             step="1"
+             label="COM_JOOMGALLERY_CONFIG_UR_RT_HIGHEST_RATING"
+             description="COM_JOOMGALLERY_CONFIG_UR_RT_HIGHEST_RATING_LONG" />
+
+      <field name="jg_ratingcalctype"
+             type="list"
+             default="0"
+             label="COM_JOOMGALLERY_CONFIG_UR_RT_CALC_TYPE"
+             description="COM_JOOMGALLERY_CONFIG_UR_RT_CALC_TYPE_LONG" >
+        <option value="0">COM_JOOMGALLERY_CONFIG_UR_RT_CALC_TYPE_STANDARD</option>
+        <option value="1">COM_JOOMGALLERY_CONFIG_UR_RT_CALC_TYPE_BAYES1</option>
+      </field>
+
+      <field name="jg_votingonlyonce"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_RT_VOTING_ONLY_ONCE"
+             description="COM_JOOMGALLERY_CONFIG_UR_RT_VOTING_ONLY_ONCE_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
     </fieldset>
 
     <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_REPORT_SETTINGS" note="user-report">
+      <field name="jg_report_images"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_RP_REPORT_IMAGES"
+             description="COM_JOOMGALLERY_CONFIG_UR_RP_REPORT_IMAGES_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
+      <field name="jg_report_hint"
+             type="radio"
+             default="1"
+             class="btn-group"
+             label="COM_JOOMGALLERY_CONFIG_UR_RP_REPORT_HINT"
+             description="COM_JOOMGALLERY_CONFIG_UR_RP_REPORT_HINT_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
     </fieldset>
   </fieldset>
 
@@ -416,90 +647,20 @@
 
   <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_FRONTEND_SETTINGS" note="frontend">
   </fieldset>
-    
-    
-    
-    <field name="jg_newpiccopyright" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_NEWPICCOPYRIGHT" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_NEWPICCOPYRIGHT" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_NEWPICCOPYRIGHT">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_NEWPICCOPYRIGHT_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_NEWPICCOPYRIGHT_OPTION_1</option>
-    </field>
-    <field name="jg_uploaddefaultcat" default="0" type="list" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_UPLOADDEFAULTCAT" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_UPLOADDEFAULTCAT" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_UPLOADDEFAULTCAT">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_UPLOADDEFAULTCAT_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_UPLOADDEFAULTCAT_OPTION_1</option>
-      <option value="2">COM_JOOMGALLERY_CONFIGS_JG_UPLOADDEFAULTCAT_OPTION_2</option>
-      <option value="3">COM_JOOMGALLERY_CONFIGS_JG_UPLOADDEFAULTCAT_OPTION_3</option>
-      <option value="4">COM_JOOMGALLERY_CONFIGS_JG_UPLOADDEFAULTCAT_OPTION_4</option>
-    </field>
-    <field name="jg_useruploadsingle" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_USERUPLOADSINGLE" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_USERUPLOADSINGLE" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_USERUPLOADSINGLE">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_USERUPLOADSINGLE_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_USERUPLOADSINGLE_OPTION_1</option>
-    </field>
-    <field name="jg_maxuploadfields" default="3" filter="int" min="1" step="1" type="number" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_MAXUPLOADFIELDS" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_MAXUPLOADFIELDS" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_MAXUPLOADFIELDS"/>
-    <field name="jg_useruploadajax" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_USERUPLOADAJAX" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_USERUPLOADAJAX" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_USERUPLOADAJAX">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_USERUPLOADAJAX_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_USERUPLOADAJAX_OPTION_1</option>
-    </field>
-    <field name="jg_useruploadbatch" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_USERUPLOADBATCH" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_USERUPLOADBATCH" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_USERUPLOADBATCH">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_USERUPLOADBATCH_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_USERUPLOADBATCH_OPTION_1</option>
-    </field>
-    <field name="jg_special_upload" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_SPECIAL_UPLOAD" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_SPECIAL_UPLOAD" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_SPECIAL_UPLOAD">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_SPECIAL_UPLOAD_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_SPECIAL_UPLOAD_OPTION_1</option>
-    </field>
-    <field name="jg_newpicnote" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_NEWPICNOTE" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_NEWPICNOTE" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_NEWPICNOTE">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_NEWPICNOTE_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_NEWPICNOTE_OPTION_1</option>
-    </field>
-    <field name="jg_redirect_after_upload" default="1" type="list" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_REDIRECT_AFTER_UPLOAD" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_REDIRECT_AFTER_UPLOAD" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_REDIRECT_AFTER_UPLOAD">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_REDIRECT_AFTER_UPLOAD_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_REDIRECT_AFTER_UPLOAD_OPTION_1</option>
-      <option value="2">COM_JOOMGALLERY_CONFIGS_JG_REDIRECT_AFTER_UPLOAD_OPTION_2</option>
-      <option value="3">COM_JOOMGALLERY_CONFIGS_JG_REDIRECT_AFTER_UPLOAD_OPTION_3</option>
-    </field>
-    <field name="jg_download" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_DOWNLOAD" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_DOWNLOAD" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_DOWNLOAD">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_DOWNLOAD_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_DOWNLOAD_OPTION_1</option>
-    </field>
-    <field name="jg_download_hint" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_DOWNLOAD_HINT" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_DOWNLOAD_HINT" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_DOWNLOAD_HINT">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_DOWNLOAD_HINT_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_DOWNLOAD_HINT_OPTION_1</option>
-    </field>
-    <field name="jg_downloadfile" default="2" type="list" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_DOWNLOADFILE" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_DOWNLOADFILE" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_DOWNLOADFILE">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_DOWNLOADFILE_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_DOWNLOADFILE_OPTION_1</option>
-      <option value="2">COM_JOOMGALLERY_CONFIGS_JG_DOWNLOADFILE_OPTION_2</option>
-    </field>
-    <field name="jg_downloadwithwatermark" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_DOWNLOADWITHWATERMARK" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_DOWNLOADWITHWATERMARK" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_DOWNLOADWITHWATERMARK">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_DOWNLOADWITHWATERMARK_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_DOWNLOADWITHWATERMARK_OPTION_1</option>
-    </field>
-    <field name="jg_showrating" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_SHOWRATING" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_SHOWRATING" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_SHOWRATING">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_SHOWRATING_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_SHOWRATING_OPTION_1</option>
-    </field>
-    <field name="jg_maxvoting" default="5" filter="int" min="1" step="1" type="number" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_MAXVOTING" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_MAXVOTING" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_MAXVOTING"/>
-    <field name="jg_ratingcalctype" default="0" type="list" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_RATINGCALCTYPE" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_RATINGCALCTYPE" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_RATINGCALCTYPE">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_RATINGCALCTYPE_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_RATINGCALCTYPE_OPTION_1</option>
-    </field>
-    <field name="jg_votingonlyonce" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_VOTINGONLYONCE" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_VOTINGONLYONCE" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_VOTINGONLYONCE">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_VOTINGONLYONCE_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_VOTINGONLYONCE_OPTION_1</option>
-    </field>
-    <field name="jg_report_images" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_REPORT_IMAGES" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_REPORT_IMAGES" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_REPORT_IMAGES">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_REPORT_IMAGES_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_REPORT_IMAGES_OPTION_1</option>
-    </field>
-    <field name="jg_report_hint" default="1" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_REPORT_HINT" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_REPORT_HINT" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_REPORT_HINT">
-      <option value="0">COM_JOOMGALLERY_CONFIGS_JG_REPORT_HINT_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CONFIGS_JG_REPORT_HINT_OPTION_1</option>
-    </field>
-    <field name="" max="1" multiple="true" formsource="administrator/components/com_joomgallery/forms/subform_imagewatermark.xml" layout="joomla.form.field.subform.repeatable" type="subform" label="COM_JOOMGALLERY_FORM_LBL_CONFIG_" description="COM_JOOMGALLERY_FORM_DESC_CONFIG_" hint="COM_JOOMGALLERY_FORM_LBL_CONFIG_"/>
-    <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL" description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>
-  </fieldset>
+
   <fieldset name="accesscontrol">
-    <field name="asset_id" type="hidden" filter="unset"/>
-    <field name="rules" type="rules" label="JFIELD_RULES_LABEL" translate_label="false" filter="rules" validate="rules" class="inputbox" component="com_joomgallery" section="config"/>
+    <field name="asset_id"
+           type="hidden"
+           filter="unset" />
+
+    <field name="rules"
+           type="rules"
+           label="JFIELD_RULES_LABEL"
+           translate_label="false"
+           filter="rules"
+           validate="rules"
+           class="inputbox"
+           component="com_joomgallery"
+           section="config" />
   </fieldset>
 </form>
