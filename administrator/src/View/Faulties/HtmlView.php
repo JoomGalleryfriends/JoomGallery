@@ -74,7 +74,7 @@ class HtmlView extends BaseHtmlView
 		$state = $this->get('State');
 		$canDo = JoomgalleryHelper::getActions();
 
-		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TITLE_FAULTIES'), "jcc wrench");
+		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_MAINTENANCE_MANAGER'), "wrench");
 
 		$toolbar = Toolbar::getInstance('toolbar');
 

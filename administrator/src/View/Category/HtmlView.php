@@ -81,7 +81,7 @@ class HtmlView extends BaseHtmlView
 
 		$canDo = JoomgalleryHelper::getActions();
 
-		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TITLE_CATEGORY'), "jcc folder-open");
+		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_COMMON_CATEGORY'), "folder-open");
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))

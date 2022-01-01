@@ -74,7 +74,7 @@ class HtmlView extends BaseHtmlView
 		$state = $this->get('State');
 		$canDo = JoomgalleryHelper::getActions();
 
-		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TITLE_CONFIGS'), "jcc sliders-h");
+		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CONFIGURATION_MANAGER'), "sliders-h");
 
 		$toolbar = Toolbar::getInstance('toolbar');
 
@@ -165,10 +165,10 @@ class HtmlView extends BaseHtmlView
 	{
 		return array(
 			'a.`id`' => Text::_('JGRID_HEADING_ID'),
-			'a.`published`' => Text::_('COM_JOOMGALLERY_CONFIGS_PUBLISHED'),
+			'a.`published`' => Text::_('JSTATUS'),
 			'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
-			'a.`title`' => Text::_('COM_JOOMGALLERY_CONFIGS_TITLE'),
-			'a.`group_id`' => Text::_('COM_JOOMGALLERY_CONFIGS_GROUP_ID'),
+			'a.`title`' => Text::_('JGLOBAL_TITLE'),
+			'a.`group_id`' => Text::_('COM_JOOMGALLERY_COMMON_USER_GROUP'),
 		);
 	}
 

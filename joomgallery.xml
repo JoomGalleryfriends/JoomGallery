@@ -59,7 +59,7 @@
             <menu link="option=com_joomgallery&amp;view=images" view="images" alt="Joomgallery/Images">COM_JOOMGALLERY_IMAGE_MANAGER</menu>
             <menu link="option=com_joomgallery&amp;view=categories" view="categories" alt="Joomgallery/Categories">COM_JOOMGALLERY_CATEGORY_MANAGER</menu>
             <menu link="option=com_joomgallery&amp;view=configs" view="configs" alt="Joomgallery/Configs">COM_JOOMGALLERY_CONFIGURATION_MANAGER</menu>
-            <menu link="option=com_joomgallery&amp;view=faulties" view="faulties" alt="Joomgallery/Faulties">COM_JOOMGALLERY_TITLE_FAULTIES</menu>
+            <menu link="option=com_joomgallery&amp;view=faulties" view="faulties" alt="Joomgallery/Maintenance">COM_JOOMGALLERY_MAINTENANCE_MANAGER</menu>
             <menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TAGS_MANAGER</menu>
         </submenu>
         <files folder="administrator">

@@ -31,11 +31,11 @@ HTMLHelper::_('bootstrap.tooltip');
 
 	
 	<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details')); ?>
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('COM_JOOMGALLERY_TAB_DETAILS', true)); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_DETAILS'); ?></legend>
+				<legend><?php echo Text::_('JDETAILS'); ?></legend>
 				<?php echo $this->form->renderField('imgtitle'); ?>
 				<?php echo $this->form->renderField('alias'); ?>
 				<?php echo $this->form->renderField('catid'); ?>
@@ -47,11 +47,11 @@ HTMLHelper::_('bootstrap.tooltip');
 		</div>
 	</div>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('COM_JOOMGALLERY_TAB_PUBLISHING', true)); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING', true)); ?>
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_PUBLISHING'); ?></legend>
+				<legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
 				<?php echo $this->form->renderField('access'); ?>
 				<?php echo $this->form->renderField('hidden'); ?>
 				<?php echo $this->form->renderField('featured'); ?>
@@ -62,7 +62,7 @@ HTMLHelper::_('bootstrap.tooltip');
 				<?php echo $this->form->renderField('id'); ?>
 			</fieldset>
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_METADATA'); ?></legend>
+				<legend><?php echo Text::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'); ?></legend>
 				<?php echo $this->form->renderField('metadesc'); ?>
 				<?php echo $this->form->renderField('metakey'); ?>
 				<?php echo $this->form->renderField('robots'); ?>
@@ -70,26 +70,26 @@ HTMLHelper::_('bootstrap.tooltip');
 		</div>
 	</div>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Images', Text::_('COM_JOOMGALLERY_TAB_IMAGES', true)); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Images', Text::_('COM_JOOMGALLERY_COMMON_IMAGES', true)); ?>
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_IMAGES'); ?></legend>
+				<legend><?php echo Text::_('COM_JOOMGALLERY_COMMON_IMAGES'); ?></legend>
 				<?php echo $this->form->renderField('filename'); ?>
 			</fieldset>
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_METADATA'); ?></legend>
+				<legend><?php echo Text::_('JGLOBAL_FIELDSET_METADATA'); ?></legend>
 				<?php echo $this->form->renderField('imgdate'); ?>
 				<?php echo $this->form->renderField('imgmetadata'); ?>
 			</fieldset>
 		</div>
 	</div>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'DisplayParams', Text::_('COM_JOOMGALLERY_TAB_DISPLAYPARAMS', true)); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'DisplayParams', Text::_('COM_JOOMGALLERY_COMMON_PARAMETERS', true)); ?>
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_PARAMS'); ?></legend>
+				<legend><?php echo Text::_('COM_JOOMGALLERY_COMMON_PARAMETERS'); ?></legend>
 				<?php echo $this->form->renderField('params'); ?>
 				<?php if ($this->state->params->get('save_history', 1)) : ?>
 					<div class="control-group">

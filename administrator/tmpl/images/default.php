@@ -69,37 +69,37 @@ if ($saveOrder)
 							<?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_IMAGES_CATID', 'a.catid', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JCATEGORY', 'a.catid', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_IMAGES_IMGTITLE', 'a.imgtitle', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_TITLE', 'a.imgtitle', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_IMAGES_IMGAUTHOR', 'a.imgauthor', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JAUTHOR', 'a.imgauthor', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_IMAGES_IMGDATE', 'a.imgdate', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JDATE', 'a.imgdate', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_IMAGES_HITS', 'a.hits', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_COMMON_HITS', 'a.hits', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_IMAGES_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_COMMON_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'JFIELD_ACCESS_LABEL', 'a.access', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_IMAGES_PUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_IMAGES_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_COMMON_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
 							<?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_FIELD_CREATED_BY_LABEL', 'a.created_by', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_IMAGES_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
 						</th>
 					</tr>
 					</thead>

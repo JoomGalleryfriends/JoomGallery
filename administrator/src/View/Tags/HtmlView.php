@@ -74,7 +74,7 @@ class HtmlView extends BaseHtmlView
 		$state = $this->get('State');
 		$canDo = JoomgalleryHelper::getActions();
 
-		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TITLE_TAGS'), "jcc tags");
+		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TAGS_MANAGER'), "tags");
 
 		$toolbar = Toolbar::getInstance('toolbar');
 
@@ -165,9 +165,9 @@ class HtmlView extends BaseHtmlView
 	{
 		return array(
 			'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
-			'a.`title`' => Text::_('COM_JOOMGALLERY_TAGS_TITLE'),
-			'a.`published`' => Text::_('COM_JOOMGALLERY_TAGS_PUBLISHED'),
-			'a.`access`' => Text::_('COM_JOOMGALLERY_TAGS_ACCESS'),
+			'a.`title`' => Text::_('JGLOBAL_TITLE'),
+			'a.`published`' => Text::_('JSTATUS'),
+			'a.`access`' => Text::_('JGRID_HEADING_ACCESS'),
 			'a.`language`' => Text::_('JGRID_HEADING_LANGUAGE'),
 			'a.`id`' => Text::_('JGRID_HEADING_ID'),
 		);

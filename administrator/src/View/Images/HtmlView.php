@@ -74,7 +74,7 @@ class HtmlView extends BaseHtmlView
 		$state = $this->get('State');
 		$canDo = JoomgalleryHelper::getActions();
 
-		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TITLE_IMAGES'), "jcc image");
+		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGE_MANAGER'), "image");
 
 		$toolbar = Toolbar::getInstance('toolbar');
 
@@ -165,18 +165,18 @@ class HtmlView extends BaseHtmlView
 	{
 		return array(
 			'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
-			'a.`hits`' => Text::_('COM_JOOMGALLERY_IMAGES_HITS'),
-			'a.`downloads`' => Text::_('COM_JOOMGALLERY_IMAGES_DOWNLOADS'),
-			'a.`approved`' => Text::_('COM_JOOMGALLERY_IMAGES_APPROVED'),
-			'a.`imgtitle`' => Text::_('COM_JOOMGALLERY_IMAGES_IMGTITLE'),
-			'a.`catid`' => Text::_('COM_JOOMGALLERY_IMAGES_CATID'),
-			'a.`published`' => Text::_('COM_JOOMGALLERY_IMAGES_PUBLISHED'),
-			'a.`imgauthor`' => Text::_('COM_JOOMGALLERY_IMAGES_IMGAUTHOR'),
+			'a.`hits`' => Text::_('COM_JOOMGALLERY_COMMON_HITS'),
+			'a.`downloads`' => Text::_('COM_JOOMGALLERY_COMMON_DOWNLOADS'),
+			'a.`approved`' => Text::_('COM_JOOMGALLERY_COMMON_APPROVED'),
+			'a.`imgtitle`' => Text::_('JGLOBAL_TITLE'),
+			'a.`catid`' => Text::_('JCATEGORY'),
+			'a.`published`' => Text::_('JSTATUS'),
+			'a.`imgauthor`' => Text::_('JAUTHOR'),
 			'a.`language`' => Text::_('JGRID_HEADING_LANGUAGE'),
-			'a.`access`' => Text::_('COM_JOOMGALLERY_IMAGES_ACCESS'),
-			'a.`created_by`' => Text::_('COM_JOOMGALLERY_IMAGES_CREATED_BY'),
+			'a.`access`' => Text::_('JGRID_HEADING_ACCESS'),
+			'a.`created_by`' => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
 			'a.`id`' => Text::_('JGRID_HEADING_ID'),
-			'a.`imgdate`' => Text::_('COM_JOOMGALLERY_IMAGES_IMGDATE'),
+			'a.`imgdate`' => Text::_('JDATE'),
 		);
 	}
 

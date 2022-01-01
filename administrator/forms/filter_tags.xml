@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
     <fields name="filter">
-        <field name="search" type="text" description="COM_JOOMGALLERY_SEARCH_FILTER_SUBMIT"
-               label="COM_USERS_FILTER_SEARCH_DESC"
+        <field name="search"
+               type="text"
+               label="COM_JOOMGALLERY_COMMON_SEARCH"
+               hint="COM_JOOMGALLERY_COMMON_SEARCH"
                class="js-stools-search-string" />
 
         <field name="state"
@@ -11,37 +13,37 @@
                description="COM_JOOMGALLERY_FILTER_STATE_DESC"
                onchange="this.form.submit();" >
             <option value="">JOPTION_SELECT_PUBLISHED</option>
+            <option value="1">COM_JOOMGALLERY_COMMON_OPTION_PUBLISHED_ONLY</option>
+            <option value="0">COM_JOOMGALLERY_COMMON_OPTION_NOT_PUBLISHED_ONLY</option>
         </field>
     </fields>
 
     <fields name="list">
         <field name="fullordering"
                type="list"
-               label="COM_JOOMGALLERY_LIST_FULL_ORDERING"
-               description="COM_JOOMGALLERY_LIST_FULL_ORDERING_DESC"
+               label="JGLOBAL_SORT_BY"
                onchange="this.form.submit();"
-               default="a.id DESC" >
+               default="a.ordering DESC" >
             <option value="">JGLOBAL_SORT_BY</option>
-            <option value="a.ordering ASC">COM_JOOMGALLERY_ORDERING_ASC</option>
-            <option value="a.ordering DESC">COM_JOOMGALLERY_ORDERING_DESC</option>
-            <option value="a.title ASC">COM_JOOMGALLERY_TITLE_ASC</option>
-            <option value="a.title DESC">COM_JOOMGALLERY_TITLE_DESC</option>
-            <option value="a.published ASC">COM_JOOMGALLERY_PUBLISHED_ASC</option>
-            <option value="a.published DESC">COM_JOOMGALLERY_PUBLISHED_DESC</option>
-            <option value="a.access ASC">COM_JOOMGALLERY_ACCESS_ASC</option>
-            <option value="a.access DESC">COM_JOOMGALLERY_ACCESS_DESC</option>
-            <option value="a.language ASC">COM_JOOMGALLERY_LANGUAGE_ASC</option>
-            <option value="a.language DESC">COM_JOOMGALLERY_LANGUAGE_DESC</option>
-            <option value="a.id ASC">COM_JOOMGALLERY_ID_ASC</option>
-            <option value="a.id DESC">COM_JOOMGALLERY_ID_DESC</option>
+            <option value="a.ordering ASC">JGRID_HEADING_ORDERING_ASC</option>
+            <option value="a.ordering DESC">JGRID_HEADING_ORDERING_DESC</option>
+            <option value="a.title ASC">JGLOBAL_TITLE_ASC</option>
+            <option value="a.title DESC">JGLOBAL_TITLE_DESC</option>
+            <option value="a.published ASC">JSTATUS_ASC</option>
+            <option value="a.published DESC">JSTATUS_DESC</option>
+            <option value="a.access ASC">JGRID_HEADING_ACCESS_ASC</option>
+            <option value="a.access DESC">JGRID_HEADING_ACCESS_DESC</option>
+            <option value="a.language ASC">JGRID_HEADING_LANGUAGE_ASC</option>
+            <option value="a.language DESC">JGRID_HEADING_LANGUAGE_DESC</option>
+            <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
         </field>
 
        <field name="limit"
-               type="limitbox"
-               label="COM_JOOMGALLERY_LIST_LIMIT"
-               description="COM_JOOMGALLERY_LIST_LIMIT_DESC"
-               class="input-mini"
-               default="25"
-               onchange="this.form.submit();" />
+              type="limitbox"
+              label="COM_JOOMGALLERY_COMMON_SEARCH_LIMIT"
+              class="input-mini"
+              default="20"
+              onchange="this.form.submit();" />
     </fields>
 </form>

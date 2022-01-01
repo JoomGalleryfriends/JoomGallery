@@ -31,7 +31,7 @@ HTMLHelper::_('bootstrap.tooltip');
 
 	
 	<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'category')); ?>
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'category', Text::_('COM_JOOMGALLERY_TAB_CATEGORY', true)); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'category', Text::_('COM_JOOMGALLERY_FIELDSET_CATEGORY', true)); ?>
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<fieldset class="adminform">
@@ -48,11 +48,11 @@ HTMLHelper::_('bootstrap.tooltip');
 		</div>
 	</div>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Options', Text::_('COM_JOOMGALLERY_TAB_OPTIONS', true)); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Options', Text::_('JGLOBAL_FIELDSET_BASIC', true)); ?>
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_DETAILS'); ?></legend>
+				<legend><?php echo Text::_('JDETAILS'); ?></legend>
 				<?php echo $this->form->renderField('hidden'); ?>
 				<?php echo $this->form->renderField('exclude_toplist'); ?>
 				<?php echo $this->form->renderField('exclude_search'); ?>
@@ -64,11 +64,11 @@ HTMLHelper::_('bootstrap.tooltip');
 		</div>
 	</div>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('COM_JOOMGALLERY_TAB_PUBLISHING', true)); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING', true)); ?>
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_PUBLISHING'); ?></legend>
+				<legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
 				<?php echo $this->form->renderField('created_time'); ?>
 				<?php echo $this->form->renderField('created_by'); ?>
 				<?php echo $this->form->renderField('modified_by'); ?>
@@ -76,7 +76,7 @@ HTMLHelper::_('bootstrap.tooltip');
 				<?php echo $this->form->renderField('id'); ?>
 			</fieldset>
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_METADATA'); ?></legend>
+				<legend><?php echo Text::_('JGLOBAL_FIELDSET_METADATA'); ?></legend>
 				<?php echo $this->form->renderField('metadesc'); ?>
 				<?php echo $this->form->renderField('metakey'); ?>
 				<?php echo $this->form->renderField('robots'); ?>
@@ -84,11 +84,11 @@ HTMLHelper::_('bootstrap.tooltip');
 		</div>
 	</div>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Displayparams', Text::_('COM_JOOMGALLERY_TAB_DISPLAYPARAMS', true)); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Displayparams', Text::_('COM_JOOMGALLERY_COMMON_PARAMETERS', true)); ?>
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<fieldset class="adminform">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_FIELDSET_PARAMS'); ?></legend>
+				<legend><?php echo Text::_('COM_JOOMGALLERY_COMMON_PARAMETERS'); ?></legend>
 				<?php echo $this->form->renderField('params'); ?>
 			</fieldset>
 		</div>

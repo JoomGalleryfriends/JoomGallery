@@ -72,13 +72,13 @@ if ($saveOrder)
 							<?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'JFIELD_ACCESS_LABEL', 'a.access', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_TAGS_PUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_TAGS_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
 						</th>
 					</tr>
 					</thead>

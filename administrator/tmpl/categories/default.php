@@ -69,19 +69,19 @@ if ($saveOrder)
 							<?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_CATEGORIES_PARENT_ID', 'a.parent_id', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_COMMON_PARENT_CATEGORY', 'a.parent_id', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
 							<?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'JFIELD_ACCESS_LABEL', 'a.access', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_CATEGORIES_PUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
-							<?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_CATEGORIES_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
 							<?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_FIELD_CREATED_BY_LABEL', 'a.created_by', $listDirn, $listOrder); ?>

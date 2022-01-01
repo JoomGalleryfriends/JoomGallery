@@ -1,19 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <fieldset>
-    <field name="ordering"/>
-    <field name="checked_out" type="hidden" filter="unset"/>
-    <field name="asset_id" type="contenttype" label="COM_JOOMGALLERY_FORM_LBL_TAG_ASSET_ID" description="COM_JOOMGALLERY_FORM_DESC_TAG_ASSET_ID" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_TAG_ASSET_ID"/>
-    <field name="title" maxlength="255" filter="string" type="text" required="true" label="JGLOBAL_TITLE" description="JGLOBAL_FIELD_FIELD_ORDERING_DESC" hint="COM_JOOMGALLERY_FORM_LBL_TAG_TITLE"/>
-    <field name="published" default="1" label="COM_JOOMGALLERY_FORM_LBL_TAG_PUBLISHED" description="COM_JOOMGALLERY_FORM_DESC_TAG_PUBLISHED" hint="COM_JOOMGALLERY_FORM_LBL_TAG_PUBLISHED"/>
-    <field name="access" type="accesslevel" label="JFIELD_ACCESS_LABEL" description="JFIELD_ACCESS_DESC" hint="COM_JOOMGALLERY_FORM_LBL_TAG_ACCESS"/>
-    <field name="language" client="administrator" type="language" label="COM_JOOMGALLERY_FORM_LBL_TAG_LANGUAGE" description="COM_JOOMGALLERY_FORM_DESC_TAG_LANGUAGE" hint="COM_JOOMGALLERY_FORM_LBL_TAG_LANGUAGE"/>
-    <field name="description" editor="|" buttons="false" filter="JComponentHelper::filterText" type="editor" label="COM_JOOMGALLERY_FORM_LBL_TAG_DESCRIPTION" description="COM_JOOMGALLERY_FORM_DESC_TAG_DESCRIPTION" hint="COM_JOOMGALLERY_FORM_LBL_TAG_DESCRIPTION"/>
-    <field name="created_time" type="timecreated" label="COM_JOOMGALLERY_FORM_LBL_TAG_CREATED_TIME" description="COM_JOOMGALLERY_FORM_DESC_TAG_CREATED_TIME" hint="COM_JOOMGALLERY_FORM_LBL_TAG_CREATED_TIME"/>
-    <field name="created_by" type="createdby" label="JGLOBAL_FIELD_CREATED_BY_LABEL" description="JGLOBAL_FIELD_CREATED_BY_DESC" hint="COM_JOOMGALLERY_FORM_LBL_TAG_CREATED_BY"/>
-    <field name="modified_time" type="timeupdated" label="COM_JOOMGALLERY_FORM_LBL_TAG_MODIFIED_TIME" description="COM_JOOMGALLERY_FORM_DESC_TAG_MODIFIED_TIME" hint="COM_JOOMGALLERY_FORM_LBL_TAG_MODIFIED_TIME"/>
-    <field name="modified_by" type="modifiedby" label="JGLOBAL_FIELD_MODIFIED_BY_LABEL" description="JGLOBAL_FIELD_MODIFIED_BY_DESC" hint="COM_JOOMGALLERY_FORM_LBL_TAG_MODIFIED_BY"/>
-    <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
-    <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL" description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>
+    <field name="ordering" />
+
+    <field name="checked_out"
+           type="hidden"
+           filter="unset" />
+
+    <field name="asset_id"
+           type="contenttype"
+           label="COM_JOOMGALLERY_FORM_LBL_TAG_ASSET_ID"
+           description="COM_JOOMGALLERY_FORM_DESC_TAG_ASSET_ID"
+           hidden="true" />
+
+    <field name="title"
+           type="text"
+           maxlength="255"
+           filter="string"           
+           required="true"
+           label="JGLOBAL_TITLE" />
+    
+    <field name="published"
+           type="radio"
+           class="btn-group"
+           default="1"
+           label="COM_JOOMGALLERY_COMMON_PUBLISHED">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="access"
+           type="accesslevel"
+           label="JFIELD_ACCESS_LABEL" />
+
+    <field name="language"
+           type="language"
+           client="administrator"
+           label="JGRID_HEADING_LANGUAGE" />
+
+    <field name="description"
+           type="editor"
+           buttons="true"
+           filter="JComponentHelper::filterText"
+           label="COM_JOOMGALLERY_COMMON_DESCRIPTION" />
+
+    <field name="created_time" 
+           type="timecreated"
+           label="JGLOBAL_CREATED_DATE" />
+
+    <field name="created_by"
+           type="createdby"
+           label="JGLOBAL_FIELD_CREATED_BY_LABEL" />
+
+    <field name="modified_time"
+           type="timeupdated"
+           label="JGLOBAL_FIELD_MODIFIED_LABEL" />
+
+    <field name="modified_by"
+           type="modifiedby"
+           label="JGLOBAL_FIELD_MODIFIED_BY_LABEL" />
+
+    <field name="id"
+           type="text"
+           readonly="true"
+           class="readonly"
+           default="0"
+           label="JGLOBAL_FIELD_ID_LABEL"
+           description="JGLOBAL_FIELD_ID_DESC" />
+
+    <field name="version_note"
+           type="text"
+           label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
+           description="JGLOBAL_FIELD_VERSION_NOTE_DESC"
+           class="inputbox"
+           size="45"
+           labelclass="control-label" />
   </fieldset>
 </form>

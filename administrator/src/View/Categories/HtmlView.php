@@ -74,7 +74,7 @@ class HtmlView extends BaseHtmlView
 		$state = $this->get('State');
 		$canDo = JoomgalleryHelper::getActions();
 
-		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TITLE_CATEGORIES'), "jcc folder-open");
+		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CATEGORY_MANAGER'), "folder-open");
 
 		$toolbar = Toolbar::getInstance('toolbar');
 
@@ -169,12 +169,12 @@ class HtmlView extends BaseHtmlView
 	protected function getSortFields()
 	{
 		return array(
-			'a.`title`' => Text::_('COM_JOOMGALLERY_CATEGORIES_TITLE'),
-			'a.`parent_id`' => Text::_('COM_JOOMGALLERY_CATEGORIES_PARENT_ID'),
-			'a.`published`' => Text::_('COM_JOOMGALLERY_CATEGORIES_PUBLISHED'),
-			'a.`access`' => Text::_('COM_JOOMGALLERY_CATEGORIES_ACCESS'),
+			'a.`title`' => Text::_('JGLOBAL_TITLE'),
+			'a.`parent_id`' => Text::_('COM_JOOMGALLERY_COMMON_PARENT_CATEGORY'),
+			'a.`published`' => Text::_('JSTATUS'),
+			'a.`access`' => Text::_('JGRID_HEADING_ACCESS'),
 			'a.`language`' => Text::_('JGRID_HEADING_LANGUAGE'),
-			'a.`created_by`' => Text::_('COM_JOOMGALLERY_CATEGORIES_CREATED_BY'),
+			'a.`created_by`' => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
 			'a.`id`' => Text::_('JGRID_HEADING_ID'),
 		);
 	}
