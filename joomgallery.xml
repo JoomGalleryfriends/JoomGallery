@@ -8,7 +8,7 @@
     <authorEmail>team@joomgalleryfriends.net</authorEmail>
     <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
     <version>4.0.0</version>
-    <description>COM_JOOMGALLERY_XML_DESCRIPTION</description>
+    <description>JoomGallery 4, a native gallery component for Joomla! 4.x </description>
     <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
 
     <scriptfile>script.php</scriptfile>
@@ -44,6 +44,7 @@
     <media destination="com_joomgallery" folder="media">
         <folder>css</folder>
         <folder>js</folder>
+        <folder>images</folder>
         <filename>joomla.asset.json</filename>
     </media>
 

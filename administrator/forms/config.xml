@@ -316,8 +316,8 @@
       <field name="jg_msg_comment_recipients"
              type="list"
              default="0"
-             label="COM_JOOMGALLERY_CONFIG_GS_MS_DEFAULT_RECIPIENTS"
-             description="COM_JOOMGALLERY_CONFIG_GS_MS_DEFAULT_RECIPIENTS_LONG"
+             label="COM_JOOMGALLERY_CONFIG_GS_MS_COMMENT_RECIPIENTS"
+             description="COM_JOOMGALLERY_CONFIG_GS_MS_COMMENT_RECIPIENTS_LONG"
              showon="jg_msg_comment_type:1,2,3">
         <option value="-1">COM_JOOMGALLERY_CONFIG_GS_MS_DEFAULT_RECIPIENTS</option>
       </field>
@@ -376,8 +376,8 @@
              type="radio"
              default="0"
              class="btn-group"
-             label="COM_JOOMGALLERY_FORM_LBL_CONFIG_JG_MSG_GLOBAL_FROM"
-             description="COM_JOOMGALLERY_FORM_DESC_CONFIG_JG_MSG_GLOBAL_FROM" >
+             label="COM_JOOMGALLERY_CONFIG_GS_MS_UPLOAD_RECIPIENTS"
+             description="COM_JOOMGALLERY_CONFIG_GS_MS_UPLOAD_RECIPIENTS_LONG" >
         <option value="0">JNO</option>
         <option value="1">JYES</option>
       </field>

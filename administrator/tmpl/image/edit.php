@@ -29,7 +29,7 @@ HTMLHelper::_('bootstrap.tooltip');
 	action="<?php echo Route::_('index.php?option=com_joomgallery&layout=edit&id=' . (int) $this->item->id); ?>"
 	method="post" enctype="multipart/form-data" name="adminForm" id="image-form" class="form-validate form-horizontal">
 
-	
+
 	<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details')); ?>
 	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>
 	<div class="row-fluid">
@@ -102,7 +102,7 @@ HTMLHelper::_('bootstrap.tooltip');
 	</div>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 	<input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
-	<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
+	<?php /*<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />*/ ?>
 	<input type="hidden" name="jform[hits]" value="<?php echo $this->item->hits; ?>" />
 	<input type="hidden" name="jform[downloads]" value="<?php echo $this->item->downloads; ?>" />
 	<input type="hidden" name="jform[imgvotes]" value="<?php echo $this->item->imgvotes; ?>" />

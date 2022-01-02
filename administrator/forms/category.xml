@@ -7,7 +7,7 @@
            class="readonly"
            default="0"
            description="COM_JOOMGALLERY_CATMAN_CATEGORY_ID" />
-    
+
     <field name="checked_out"
            type="hidden"
            filter="unset" />
@@ -93,7 +93,7 @@
            type="editor"
            cols="250"
            buttons="true"
-           filter="JComponentHelper::filterText" 
+           filter="JComponentHelper::filterText"
            label="COM_JOOMGALLERY_COMMON_DESCRIPTION"
            hide="pagebreak" />
 
@@ -135,10 +135,7 @@
 
     <field name="created_time"
            type="timecreated"
-           class="readonly"
-           readonly="true"
-           disabled="true"
-           label="COM_JOOMGALLERY_COMMON_DATE" />
+           label="JGLOBAL_FIELD_CREATED_LABEL" />
 
     <field name="created_by"
            type="createdby"
@@ -160,7 +157,7 @@
            type="textarea"
            cols="40"
            rows="5"
-           filter="safehtml"           
+           filter="safehtml"
            label="COM_JOOMGALLERY_COMMON_METADESC"
            description="COM_JOOMGALLERY_COMMON_METADESC_TIP" />
 
@@ -174,7 +171,7 @@
 
     <field name="robots"
            type="list"
-           default="0" 
+           default="0"
            label="JFIELD_METADATA_ROBOTS_LABEL" >
         <option value="0">JGLOBAL_USE_GLOBAL</option>
         <option value="1">index, follow</option>

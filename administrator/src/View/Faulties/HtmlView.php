@@ -85,7 +85,7 @@ class HtmlView extends BaseHtmlView
 		{
 			if ($canDo->get('core.create'))
 			{
-				$toolbar->addNew('faulty.add');
+				//$toolbar->addNew('faulty.add');
 			}
 		}
 
@@ -132,7 +132,7 @@ class HtmlView extends BaseHtmlView
 			}
 		}
 
-		
+
 
 		// Show trash and delete for components that uses the state field
 		if (isset($this->items[0]->state))
@@ -155,11 +155,11 @@ class HtmlView extends BaseHtmlView
 		// Set sidebar action
 		Sidebar::setAction('index.php?option=com_joomgallery&view=faulties');
 	}
-	
+
 	/**
-	 * Method to order fields 
+	 * Method to order fields
 	 *
-	 * @return void 
+	 * @return void
 	 */
 	protected function getSortFields()
 	{

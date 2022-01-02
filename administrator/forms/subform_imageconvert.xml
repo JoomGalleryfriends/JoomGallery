@@ -47,8 +47,8 @@
            min=""
            max=""
            step="1"
-           label="COM_JOOMGALLERY_CONFIG_GS_IP_MAX_WIDTH"
-           description="COM_JOOMGALLERY_CONFIG_GS_IP_MAX_WIDTH_LONG" />
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPE_WIDTH"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPE_WIDTH_LONG" />
 
     <field name="jg_imgtypeheight"
            type="number"
@@ -57,8 +57,8 @@
            min=""
            max=""
            step="1"
-           label="COM_JOOMGALLERY_CONFIG_GS_IP_MAX_HEIGHT"
-           description="COM_JOOMGALLERY_CONFIG_GS_IP_MAX_HEIGHT_LONG" />
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPE_HEIGHT"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPE_HEIGHT_LONG" />
 
     <field name="jg_cropposition"
            type="list"
@@ -78,8 +78,8 @@
            groupByFieldset="false"
            default="0"
            class="btn-group"
-           label="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_AUTOROT"
-           description="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_AUTOROT_LONG" >
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPE_AUTOROT"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPE_AUTOROT_LONG" >
         <option value="0">JNO</option>
         <option value="1">JYES</option>
     </field>
@@ -113,7 +113,7 @@
            multiple="true"
            formsource="administrator/components/com_joomgallery/forms/subform_imagewatermark.xml"
            layout="joomla.form.field.subform.repeatable"
-           label="COM_JOOMGALLERY_SUBFORM_LBL_IMAGECONVERT_JG_IMGTYPEWTMSETTINGS"
-           description="COM_JOOMGALLERY_SUBFORM_DESC_IMAGECONVERT_JG_IMGTYPEWTMSETTINGS" />
+           label="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPENAME_WATERMARK"
+           description="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGETYPENAME_WATERMARK_LONG" />
   </fieldset>
 </form>

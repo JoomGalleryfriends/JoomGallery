@@ -6,30 +6,22 @@
     <field name="id"
            type="text"
            readonly="true"
-           disabled="true"
            class="readonly"
-           size="20"
-           label="COM_JOOMGALLERY_IMGMAN_IMAGE_ID" />    
+           label="COM_JOOMGALLERY_IMGMAN_IMAGE_ID" />
 
     <field name="checked_out"
            type="hidden"
            filter="unset" />
 
     <field name="hits"
-           type="text"
            default="0"
            label="JGLOBAL_HITS"
-           class="readonly"
-           readonly="true"
-           disabled="true" />
+           hidden="true" />
 
     <field name="downloads"
-           type="text"
            default="0"
            label="COM_JOOMGALLERY_COMMON_DOWNLOADS"
-           class="readonly"
-           readonly="true"
-           disabled="true" />
+           hidden="true" />
 
     <field name="imgvotes"
            default="0"
@@ -51,7 +43,7 @@
            label="COM_JOOMGALLERY_FORM_LBL_IMAGE_USERUPLOADED"
            hidden="true" />
 
-    <field name="imgtitle" 
+    <field name="imgtitle"
            type="text"
            maxlength="255"
            filter="safehtml"
@@ -98,14 +90,14 @@
 
     <field name="language"
            type="language"
-           client="administrator" 
+           client="administrator"
            label="JGRID_HEADING_LANGUAGE" />
 
     <field name="imgtext"
            type="editor"
            rows="250"
            buttons="true"
-           filter="JComponentHelper::filterText"           
+           filter="JComponentHelper::filterText"
            label="COM_JOOMGALLERY_COMMON_DESCRIPTION" />
 
     <field name="access"
@@ -137,8 +129,7 @@
            type="timecreated"
            class="readonly"
            readonly="true"
-           disabled="true"
-           label="COM_JOOMGALLERY_COMMON_DATE" />
+           label="JGLOBAL_FIELD_CREATED_LABEL" />
 
     <field name="created_by"
            type="createdby"
@@ -173,7 +164,7 @@
            label="COM_JOOMGALLERY_COMMON_METAKEYS"
            description="COM_JOOMGALLERY_COMMON_METAKEYS_TIP"
     />
-    
+
     <field name="robots"
            type="list"
            default="0"
@@ -191,7 +182,7 @@
            label="COM_JOOMGALLERY_COMMON_IMAGE" />
 
     <field name="imgdate"
-           class="inputbox"
+           type="calendar"
            format="%Y-%m-%d"
            timeformat="24"
            filter="server_utc"
@@ -201,7 +192,7 @@
            todaybutton="true"
            weeknumbers="false"
            filltable="false"
-           type="calendar"
+           default="1900-01-01 00:00:00"
            label="COM_JOOMGALLERY_COMMON_IMGDATE"
            description="COM_JOOMGALLERY_IMGMAN_IMGDATE_DESC" />
 

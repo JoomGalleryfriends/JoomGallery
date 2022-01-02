@@ -9,3 +9,6 @@ DROP TABLE IF EXISTS `#__joomgallery_tags_ref`;
 DROP TABLE IF EXISTS `#__joomgallery_users`;
 DROP TABLE IF EXISTS `#__joomgallery_users_ref`;
 DROP TABLE IF EXISTS `#__joomgallery_votes`;
+
+DELETE FROM `#__assets` WHERE (name LIKE 'com_joomgallery%');
+DELETE FROM `#__content_types` WHERE (type_alias LIKE 'com_joomgallery%');
