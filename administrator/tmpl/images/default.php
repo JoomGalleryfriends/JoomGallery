@@ -41,8 +41,6 @@ if ($saveOrder)
 	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
 	HTMLHelper::_('draggablelist.draggable');
 }
-
-var_dump($this->component->upload->catid);
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post"
