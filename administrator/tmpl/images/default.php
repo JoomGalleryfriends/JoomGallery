@@ -42,6 +42,7 @@ if ($saveOrder)
 	HTMLHelper::_('draggablelist.draggable');
 }
 
+var_dump($this->component->upload->catid);
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post"
@@ -64,7 +65,7 @@ if ($saveOrder)
 							<?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
 						</th>
 						<?php endif; ?>
-						
+
 						<th class='left'>
 							<?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
 						</th>
@@ -144,7 +145,7 @@ if ($saveOrder)
 							<?php endif; ?>
 							</td>
 							<?php endif; ?>
-							
+
 							<td>
 								<?php echo $item->id; ?>
 							</td>

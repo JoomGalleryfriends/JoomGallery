@@ -10,11 +10,11 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Categories\CategoryFactoryInterface;
+//use Joomla\CMS\Categories\CategoryFactoryInterface;
 use Joomla\CMS\Component\Router\RouterFactoryInterface;
 use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
 use Joomla\CMS\Extension\ComponentInterface;
-use Joomla\CMS\Extension\Service\Provider\CategoryFactory;
+//use Joomla\CMS\Extension\Service\Provider\CategoryFactory;
 use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
 use Joomla\CMS\Extension\Service\Provider\MVCFactory;
 use Joomla\CMS\Extension\Service\Provider\RouterFactory;
@@ -44,7 +44,7 @@ return new class implements ServiceProviderInterface
 	public function register(Container $container)
 	{
 
-		$container->registerServiceProvider(new CategoryFactory('\\Joomgallery\\Component\\Joomgallery'));
+		//$container->registerServiceProvider(new CategoryFactory('\\Joomgallery\\Component\\Joomgallery'));
 		$container->registerServiceProvider(new MVCFactory('\\Joomgallery\\Component\\Joomgallery'));
 		$container->registerServiceProvider(new ComponentDispatcherFactory('\\Joomgallery\\Component\\Joomgallery'));
 		$container->registerServiceProvider(new RouterFactory('\\Joomgallery\\Component\\Joomgallery'));
@@ -57,7 +57,7 @@ return new class implements ServiceProviderInterface
 
 				$component->setRegistry($container->get(Registry::class));
 				$component->setMVCFactory($container->get(MVCFactoryInterface::class));
-				$component->setCategoryFactory($container->get(CategoryFactoryInterface::class));
+				//$component->setCategoryFactory($container->get(CategoryFactoryInterface::class));
 				$component->setRouterFactory($container->get(RouterFactoryInterface::class));
 
 				return $component;

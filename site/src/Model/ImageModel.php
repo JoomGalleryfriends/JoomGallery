@@ -19,7 +19,7 @@ use \Joomla\CMS\Table\Table;
 use \Joomla\CMS\MVC\Model\ItemModel;
 use \Joomla\CMS\Helper\TagsHelper;
 use \Joomla\CMS\Object\CMSObject;
-use \Joomgallery\Component\Joomgallery\Site\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Site\Helper\JoomHelper;
 
 /**
  * Joomgallery model.
@@ -30,9 +30,9 @@ class ImageModel extends ItemModel
 {
 	public $_item;
 
-	
 
-	
+
+
 
 	/**
 	 * Method to auto-populate the model state.
@@ -108,7 +108,7 @@ class ImageModel extends ItemModel
 			// Attempt to load the row.
 			if ($table && $table->load($id))
 			{
-				
+
 
 				// Check published state.
 				if ($published = $this->getState('filter.published'))
@@ -123,7 +123,7 @@ class ImageModel extends ItemModel
 				$properties  = $table->getProperties(1);
 				$this->_item = ArrayHelper::toObject($properties, CMSObject::class);
 
-				
+
 			}
 
 			if (empty($this->_item))
@@ -132,7 +132,7 @@ class ImageModel extends ItemModel
 			}
 		}
 
-		
+
 
 		if (isset($this->_item->catid) && $this->_item->catid != '')
 		{
@@ -180,7 +180,7 @@ class ImageModel extends ItemModel
 
 		return $this->_item;
 	}
-	
+
 
 
 	/**
@@ -214,7 +214,7 @@ class ImageModel extends ItemModel
 		{
 			$aliasKey   = $this->getAliasFieldNameByView('image');
 		}
-		
+
 
 		if (key_exists('alias', $properties))
 		{
@@ -226,9 +226,9 @@ class ImageModel extends ItemModel
 			$table->load(array($aliasKey => $alias));
 			$result = $table->id;
 		}
-		
+
 			return $result;
-		
+
 	}
 
 	/**
@@ -244,7 +244,7 @@ class ImageModel extends ItemModel
 	{
 		// Get the id.
 		$id = (!empty($id)) ? $id : (int) $this->getState('image.id');
-				
+
 		if ($id)
 		{
 			// Initialise the table
@@ -261,7 +261,7 @@ class ImageModel extends ItemModel
 		}
 
 		return true;
-		
+
 	}
 
 	/**
@@ -278,7 +278,7 @@ class ImageModel extends ItemModel
 		// Get the user id.
 		$id = (!empty($id)) ? $id : (int) $this->getState('image.id');
 
-				
+
 		if ($id)
 		{
 			// Initialise the table
@@ -298,7 +298,7 @@ class ImageModel extends ItemModel
 		}
 
 		return true;
-				
+
 	}
 
 	/**
@@ -312,12 +312,12 @@ class ImageModel extends ItemModel
 	public function publish($id, $state)
 	{
 		$table = $this->getTable();
-				
+
 		$table->load($id);
 		$table->state = $state;
 
 		return $table->store();
-				
+
 	}
 
 	/**
@@ -331,9 +331,9 @@ class ImageModel extends ItemModel
 	{
 		$table = $this->getTable();
 
-		
+
 			return $table->delete($id);
-		
+
 	}
 
 	public function getAliasFieldNameByView($view)

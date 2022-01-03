@@ -13,7 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Faulties;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\Language\Text;
@@ -72,7 +72,7 @@ class HtmlView extends BaseHtmlView
 	protected function addToolbar()
 	{
 		$state = $this->get('State');
-		$canDo = JoomgalleryHelper::getActions();
+		$canDo = JoomHelper::getActions();
 
 		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_MAINTENANCE_MANAGER'), "wrench");
 

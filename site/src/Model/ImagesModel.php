@@ -20,7 +20,7 @@ use \Joomla\CMS\Helper\TagsHelper;
 use \Joomla\CMS\Layout\FileLayout;
 use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
-use \Joomgallery\Component\Joomgallery\Site\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Site\Helper\JoomHelper;
 
 
 /**
@@ -78,7 +78,7 @@ class ImagesModel extends ListModel
 		parent::__construct($config);
 	}
 
-	
+
 
 	/**
 	 * Method to auto-populate the model state.
@@ -110,7 +110,7 @@ class ImagesModel extends ListModel
 
 		$ordering  = $this->getUserStateFromRequest($this->context .'.filter_order', 'filter_order', 'a.id');
 		$direction = strtoupper($this->getUserStateFromRequest($this->context .'.filter_order_Dir', 'filter_order_Dir', 'ASC'));
-		
+
 		if(!empty($ordering) || !empty($direction))
 		{
 			$list['fullordering'] = $ordering . ' ' . $direction;
@@ -118,7 +118,7 @@ class ImagesModel extends ListModel
 
 		$app->setUserState($this->context . '.list', $list);
 
-		
+
 
 		$context = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
 		$this->setState('filter.search', $context);
@@ -154,7 +154,7 @@ class ImagesModel extends ListModel
 				);
 
 			$query->from('`#__joomgallery` AS a');
-			
+
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS uEditor');
 		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
@@ -167,7 +167,7 @@ class ImagesModel extends ListModel
 
 		// Join over the created by field 'modified_by'
 		$query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
-			
+
 
 			// Filter by search in title
 			$search = $this->getState('filter.search');
@@ -184,7 +184,7 @@ class ImagesModel extends ListModel
 					$query->where('( a.imgtitle LIKE ' . $search . ' )');
 				}
 			}
-			
+
 
 		// Filtering access
 		$filter_access = $this->state->get("filter.access");
@@ -192,8 +192,8 @@ class ImagesModel extends ListModel
 			$query->where("a.access = '".$db->escape($filter_access)."'");
 		}
 
-			
-			
+
+
 			// Add the list ordering clause.
 			$orderCol  = $this->state->get('list.ordering', 'a.id');
 			$orderDirn = $this->state->get('list.direction', 'ASC');
@@ -214,7 +214,7 @@ class ImagesModel extends ListModel
 	public function getItems()
 	{
 		$items = parent::getItems();
-		
+
 		foreach ($items as $item)
 		{
 

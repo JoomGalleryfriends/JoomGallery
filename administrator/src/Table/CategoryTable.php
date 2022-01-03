@@ -22,7 +22,7 @@ use \Joomla\Database\DatabaseDriver;
 use \Joomla\CMS\Filter\OutputFilter;
 use \Joomla\CMS\Filesystem\File;
 use \Joomla\Registry\Registry;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Helper\ContentHelper;
 
 
@@ -98,7 +98,7 @@ class CategoryTable extends Table implements VersionableTableInterface
 	{
 		$date = Factory::getDate();
 		$task = Factory::getApplication()->input->get('task');
-		
+
 
 		// Support for alias field: alias
 		if (empty($array['alias']))
@@ -268,7 +268,7 @@ class CategoryTable extends Table implements VersionableTableInterface
 		{
 			$this->ordering = self::getNextOrder();
 		}
-		
+
 		// Check if alias is unique
 		if (!$this->isUnique('alias'))
 		{
@@ -278,7 +278,7 @@ class CategoryTable extends Table implements VersionableTableInterface
 				$this->alias = $currentAlias . '-' . $count++;
 			}
 		}
-		
+
 
 		// Support for subform field params
 		if (is_array($this->params))
@@ -335,7 +335,7 @@ class CategoryTable extends Table implements VersionableTableInterface
 
 	//XXX_CUSTOM_TABLE_FUNCTION
 
-	
+
     /**
      * Delete a record by id
      *
@@ -346,7 +346,7 @@ class CategoryTable extends Table implements VersionableTableInterface
     public function delete($pk = null, $children = true)
     {
         $result = parent::delete($pk, $children);
-        
+
         return $result;
     }
 
@@ -398,11 +398,11 @@ class CategoryTable extends Table implements VersionableTableInterface
 
     public function getRootId() {
         $rootId = parent::getRootId();
-        // If root is not set then create it 
+        // If root is not set then create it
         if ($rootId === false)
         {
             $rootId = $this->addRoot();
-        } 
-        return $rootId; 
+        }
+        return $rootId;
     }
 }

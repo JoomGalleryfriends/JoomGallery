@@ -19,7 +19,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Helper\TagsHelper;
 use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Methods supporting a list of Faulties records.
@@ -53,11 +53,11 @@ class FaultiesModel extends ListModel
 	}
 
 
-	
 
-	
 
-	
+
+
+
 
 	/**
 	 * Method to auto-populate the model state.
@@ -108,9 +108,9 @@ class FaultiesModel extends ListModel
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.state');
 
-		
+
 		return parent::getStoreId($id);
-		
+
 	}
 
 	/**
@@ -133,8 +133,8 @@ class FaultiesModel extends ListModel
 			)
 		);
 		$query->from('`#__joomgallery_faulties` AS a');
-		
-		
+
+
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -148,10 +148,10 @@ class FaultiesModel extends ListModel
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				
+
 			}
 		}
-		
+
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', 'id');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
@@ -172,7 +172,7 @@ class FaultiesModel extends ListModel
 	public function getItems()
 	{
 		$items = parent::getItems();
-		
+
 
 		return $items;
 	}

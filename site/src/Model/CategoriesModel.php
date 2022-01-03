@@ -20,7 +20,7 @@ use \Joomla\CMS\Helper\TagsHelper;
 use \Joomla\CMS\Layout\FileLayout;
 use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
-use \Joomgallery\Component\Joomgallery\Site\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Site\Helper\JoomHelper;
 
 
 /**
@@ -75,7 +75,7 @@ class CategoriesModel extends ListModel
 		parent::__construct($config);
 	}
 
-	
+
 
 	/**
 	 * Method to auto-populate the model state.
@@ -107,7 +107,7 @@ class CategoriesModel extends ListModel
 
 		$ordering  = $this->getUserStateFromRequest($this->context .'.filter_order', 'filter_order', "a.lft");
 		$direction = strtoupper($this->getUserStateFromRequest($this->context .'.filter_order_Dir', 'filter_order_Dir', "ASC"));
-		
+
 		if(!empty($ordering) || !empty($direction))
 		{
 			$list['fullordering'] = $ordering . ' ' . $direction;
@@ -115,7 +115,7 @@ class CategoriesModel extends ListModel
 
 		$app->setUserState($this->context . '.list', $list);
 
-		
+
 
 		$context = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
 		$this->setState('filter.search', $context);
@@ -151,7 +151,7 @@ class CategoriesModel extends ListModel
 				);
 
 			$query->from('`#__joomgallery_categories` AS a');
-			
+
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS uEditor');
 		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
@@ -162,7 +162,7 @@ class CategoriesModel extends ListModel
 
 		// Join over the created by field 'modified_by'
 		$query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
-			
+
 
 			// Filter by search in title
 			$search = $this->getState('filter.search');
@@ -178,10 +178,10 @@ class CategoriesModel extends ListModel
 					$search = $db->Quote('%' . $db->escape($search, true) . '%');
 				}
 			}
-			
 
-			
-			
+
+
+
 			// Add the list ordering clause.
 			$orderCol  = $this->state->get('list.ordering', "a.lft");
 			$orderDirn = $this->state->get('list.direction', "ASC");
@@ -202,7 +202,7 @@ class CategoriesModel extends ListModel
 	public function getItems()
 	{
 		$items = parent::getItems();
-		
+
 		foreach ($items as $item)
 		{
 				$item->hidden = empty($item->hidden) ? '' : Text::_('COM_JOOMGALLERY_CATEGORIES_HIDDEN_OPTION_' . strtoupper($item->hidden));

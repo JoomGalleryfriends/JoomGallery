@@ -20,9 +20,9 @@ use \Joomla\CMS\MVC\Model\BaseDatabaseModel;
  *
  * @since  4.0.0
  */
-class JoomgalleryHelper
+class JoomHelper
 {
-	
+
 
 	/**
 	 * Gets the files attached to an item

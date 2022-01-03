@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\Factory;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Language\Text;
 
 /**
@@ -79,7 +79,7 @@ class HtmlView extends BaseHtmlView
 			$checkedOut = false;
 		}
 
-		$canDo = JoomgalleryHelper::getActions();
+		$canDo = JoomHelper::getActions();
 
 		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CONFIG_CONFIGURATION_MANAGER').' :: '.Text::_('COM_JOOMGALLERY_COMMON_TOOLBAR_EDIT').' '.Text::_('COM_JOOMGALLERY_COMMON_CONFIG'), "sliders-h");
 

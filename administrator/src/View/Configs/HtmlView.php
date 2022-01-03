@@ -13,7 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Configs;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\Language\Text;
@@ -72,7 +72,7 @@ class HtmlView extends BaseHtmlView
 	protected function addToolbar()
 	{
 		$state = $this->get('State');
-		$canDo = JoomgalleryHelper::getActions();
+		$canDo = JoomHelper::getActions();
 
 		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CONFIGURATION_MANAGER'), "sliders-h");
 
@@ -132,7 +132,7 @@ class HtmlView extends BaseHtmlView
 			}
 		}
 
-		
+
 
 		// Show trash and delete for components that uses the state field
 		if (isset($this->items[0]->state))
@@ -155,11 +155,11 @@ class HtmlView extends BaseHtmlView
 		// Set sidebar action
 		Sidebar::setAction('index.php?option=com_joomgallery&view=configs');
 	}
-	
+
 	/**
-	 * Method to order fields 
+	 * Method to order fields
 	 *
-	 * @return void 
+	 * @return void
 	 */
 	protected function getSortFields()
 	{

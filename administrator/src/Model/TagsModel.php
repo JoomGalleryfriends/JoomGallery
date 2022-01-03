@@ -19,7 +19,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Helper\TagsHelper;
 use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Methods supporting a list of Tags records.
@@ -60,11 +60,11 @@ class TagsModel extends ListModel
 	}
 
 
-	
 
-	
 
-	
+
+
+
 
 	/**
 	 * Method to auto-populate the model state.
@@ -115,9 +115,9 @@ class TagsModel extends ListModel
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.state');
 
-		
+
 		return parent::getStoreId($id);
-		
+
 	}
 
 	/**
@@ -140,7 +140,7 @@ class TagsModel extends ListModel
 			)
 		);
 		$query->from('`#__joomgallery_tags` AS a');
-		
+
 		// Join over the users for the checked out user
 		$query->select("uc.name AS uEditor");
 		$query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
@@ -156,7 +156,7 @@ class TagsModel extends ListModel
 		// Join over the user field 'modified_by'
 		$query->select('`modified_by`.name AS `modified_by`');
 		$query->join('LEFT', '#__users AS `modified_by` ON `modified_by`.id = a.`modified_by`');
-		
+
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -170,10 +170,10 @@ class TagsModel extends ListModel
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				
+
 			}
 		}
-		
+
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', "a.id");
 		$orderDirn = $this->state->get('list.direction', "ASC");
@@ -194,7 +194,7 @@ class TagsModel extends ListModel
 	public function getItems()
 	{
 		$items = parent::getItems();
-		
+
 
 		return $items;
 	}

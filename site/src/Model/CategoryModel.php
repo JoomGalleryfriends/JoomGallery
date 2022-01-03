@@ -19,7 +19,7 @@ use \Joomla\CMS\Table\Table;
 use \Joomla\CMS\MVC\Model\ItemModel;
 use \Joomla\CMS\Helper\TagsHelper;
 use \Joomla\CMS\Object\CMSObject;
-use \Joomgallery\Component\Joomgallery\Site\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Site\Helper\JoomHelper;
 
 /**
  * Joomgallery model.
@@ -30,9 +30,9 @@ class CategoryModel extends ItemModel
 {
 	public $_item;
 
-	
 
-	
+
+
 
 	/**
 	 * Method to auto-populate the model state.
@@ -108,7 +108,7 @@ class CategoryModel extends ItemModel
 			// Attempt to load the row.
 			if ($table && $table->load($id))
 			{
-				
+
 
 				// Check published state.
 				if ($published = $this->getState('filter.published'))
@@ -123,7 +123,7 @@ class CategoryModel extends ItemModel
 				$properties  = $table->getProperties(1);
 				$this->_item = ArrayHelper::toObject($properties, CMSObject::class);
 
-				
+
 			}
 
 			if (empty($this->_item))
@@ -132,7 +132,7 @@ class CategoryModel extends ItemModel
 			}
 		}
 
-		
+
 
 		if (isset($this->_item->created_by))
 		{
@@ -146,7 +146,7 @@ class CategoryModel extends ItemModel
 
 		return $this->_item;
 	}
-	
+
 
 
 	/**
@@ -180,7 +180,7 @@ class CategoryModel extends ItemModel
 		{
 			$aliasKey   = $this->getAliasFieldNameByView('category');
 		}
-		
+
 
 		if (key_exists('alias', $properties))
 		{
@@ -192,9 +192,9 @@ class CategoryModel extends ItemModel
 			$table->load(array($aliasKey => $alias));
 			$result = $table->id;
 		}
-		
+
 			return $result;
-		
+
 	}
 
 	/**
@@ -210,7 +210,7 @@ class CategoryModel extends ItemModel
 	{
 		// Get the id.
 		$id = (!empty($id)) ? $id : (int) $this->getState('category.id');
-				
+
 		if ($id)
 		{
 			// Initialise the table
@@ -227,7 +227,7 @@ class CategoryModel extends ItemModel
 		}
 
 		return true;
-		
+
 	}
 
 	/**
@@ -244,7 +244,7 @@ class CategoryModel extends ItemModel
 		// Get the user id.
 		$id = (!empty($id)) ? $id : (int) $this->getState('category.id');
 
-				
+
 		if ($id)
 		{
 			// Initialise the table
@@ -264,7 +264,7 @@ class CategoryModel extends ItemModel
 		}
 
 		return true;
-				
+
 	}
 
 	/**
@@ -278,12 +278,12 @@ class CategoryModel extends ItemModel
 	public function publish($id, $state)
 	{
 		$table = $this->getTable();
-				
+
 		$table->load($id);
 		$table->state = $state;
 
 		return $table->store();
-				
+
 	}
 
 	/**
@@ -297,9 +297,9 @@ class CategoryModel extends ItemModel
 	{
 		$table = $this->getTable();
 
-		
+
 			return $table->delete($id);
-		
+
 	}
 
 	public function getAliasFieldNameByView($view)

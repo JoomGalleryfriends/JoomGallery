@@ -15,7 +15,7 @@ use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
-use \Joomgallery\Component\Joomgallery\Site\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Site\Helper\JoomHelper;
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
@@ -29,7 +29,7 @@ $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
 $lang->load('joomla', JPATH_ADMINISTRATOR);
 
 $user    = Factory::getUser();
-$canEdit = JoomgalleryHelper::canUserEdit($this->item, $user);
+$canEdit = JoomHelper::canUserEdit($this->item, $user);
 ?>
 
 <div class="category-edit front-end-edit">

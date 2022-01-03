@@ -19,7 +19,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Helper\TagsHelper;
 use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Methods supporting a list of Configs records.
@@ -112,11 +112,11 @@ class ConfigsModel extends ListModel
 	}
 
 
-	
 
-	
 
-	
+
+
+
 
 	/**
 	 * Method to auto-populate the model state.
@@ -167,9 +167,9 @@ class ConfigsModel extends ListModel
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.state');
 
-		
+
 		return parent::getStoreId($id);
-		
+
 	}
 
 	/**
@@ -192,7 +192,7 @@ class ConfigsModel extends ListModel
 			)
 		);
 		$query->from('`#__joomgallery_configs` AS a');
-		
+
 		// Join over the users for the checked out user
 		$query->select("uc.name AS uEditor");
 		$query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
@@ -204,7 +204,7 @@ class ConfigsModel extends ListModel
 		// Join over the user field 'modified_by'
 		$query->select('`modified_by`.name AS `modified_by`');
 		$query->join('LEFT', '#__users AS `modified_by` ON `modified_by`.id = a.`modified_by`');
-		
+
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -218,10 +218,10 @@ class ConfigsModel extends ListModel
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				
+
 			}
 		}
-		
+
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', 'id');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
@@ -242,7 +242,7 @@ class ConfigsModel extends ListModel
 	public function getItems()
 	{
 		$items = parent::getItems();
-		
+
 		foreach ($items as $oneItem)
 		{
 

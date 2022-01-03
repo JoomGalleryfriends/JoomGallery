@@ -22,7 +22,7 @@ use \Joomla\Database\DatabaseDriver;
 use \Joomla\CMS\Filter\OutputFilter;
 use \Joomla\CMS\Filesystem\File;
 use \Joomla\Registry\Registry;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Helper\ContentHelper;
 
 
@@ -67,7 +67,7 @@ class ImageTable extends Table implements VersionableTableInterface
 		$this->typeAlias = 'com_joomgallery.image';
 		parent::__construct('#__joomgallery', 'id', $db);
 		$this->setColumnAlias('published', 'state');
-		
+
 	}
 
 	/**
@@ -98,7 +98,7 @@ class ImageTable extends Table implements VersionableTableInterface
 	{
 		$date = Factory::getDate();
 		$task = Factory::getApplication()->input->get('task');
-		
+
 
 		// Support for alias field: alias
 		if (empty($array['alias']))
@@ -289,7 +289,7 @@ class ImageTable extends Table implements VersionableTableInterface
 		{
 			$this->ordering = self::getNextOrder();
 		}
-		
+
 		// Check if alias is unique
 		if (!$this->isUnique('alias'))
 		{
@@ -299,7 +299,7 @@ class ImageTable extends Table implements VersionableTableInterface
 				$this->alias = $currentAlias . '-' . $count++;
 			}
 		}
-		
+
 
 		// Support for subform field params
 		if (is_array($this->params))
@@ -356,7 +356,7 @@ class ImageTable extends Table implements VersionableTableInterface
 
 	//XXX_CUSTOM_TABLE_FUNCTION
 
-	
+
     /**
      * Delete a record by id
      *
@@ -368,7 +368,7 @@ class ImageTable extends Table implements VersionableTableInterface
     {
         $this->load($pk);
         $result = parent::delete($pk);
-        
+
         return $result;
     }
 }

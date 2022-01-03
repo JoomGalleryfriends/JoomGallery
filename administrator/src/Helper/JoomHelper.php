@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
+
 // No direct access
 defined('_JEXEC') or die;
 
@@ -17,11 +18,11 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Object\CMSObject;
 
 /**
- * Joomgallery helper.
+ * JoomGallery Global Helper for the Backend
  *
  * @since  4.0.0
  */
-class JoomgalleryHelper
+class JoomHelper
 {
 	/**
 	 * Gets the files attached to an item

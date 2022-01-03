@@ -13,13 +13,15 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Images;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\Language\Text;
 use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\HTML\Helpers\Sidebar;
+use \Joomla\CMS\Factory;
+
 /**
  * View class for a list of Images.
  *
@@ -44,6 +46,7 @@ class HtmlView extends BaseHtmlView
 	 */
 	public function display($tpl = null)
 	{
+    $this->component = Factory::getApplication()->bootComponent('com_joomgallery'); //get the JoomgalleryComponent class
 		$this->state = $this->get('State');
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
@@ -72,7 +75,7 @@ class HtmlView extends BaseHtmlView
 	protected function addToolbar()
 	{
 		$state = $this->get('State');
-		$canDo = JoomgalleryHelper::getActions();
+		$canDo = JoomHelper::getActions();
 
 		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGE_MANAGER'), "image");
 
@@ -132,7 +135,7 @@ class HtmlView extends BaseHtmlView
 			}
 		}
 
-		
+
 
 		// Show trash and delete for components that uses the state field
 		if (isset($this->items[0]->state))
@@ -155,11 +158,11 @@ class HtmlView extends BaseHtmlView
 		// Set sidebar action
 		Sidebar::setAction('index.php?option=com_joomgallery&view=images');
 	}
-	
+
 	/**
-	 * Method to order fields 
+	 * Method to order fields
 	 *
-	 * @return void 
+	 * @return void
 	 */
 	protected function getSortFields()
 	{

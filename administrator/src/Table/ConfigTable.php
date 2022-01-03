@@ -22,7 +22,7 @@ use \Joomla\Database\DatabaseDriver;
 use \Joomla\CMS\Filter\OutputFilter;
 use \Joomla\CMS\Filesystem\File;
 use \Joomla\Registry\Registry;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Helper\ContentHelper;
 
 
@@ -33,7 +33,7 @@ use \Joomla\CMS\Helper\ContentHelper;
  */
 class ConfigTable extends Table implements VersionableTableInterface
 {
-	
+
 	/**
 	 * Constructor
 	 *
@@ -44,7 +44,7 @@ class ConfigTable extends Table implements VersionableTableInterface
 		$this->typeAlias = 'com_joomgallery.config';
 		parent::__construct('#__joomgallery_configs', 'id', $db);
 		$this->setColumnAlias('published', 'state');
-		
+
 	}
 
 	/**
@@ -75,7 +75,7 @@ class ConfigTable extends Table implements VersionableTableInterface
 	{
 		$date = Factory::getDate();
 		$task = Factory::getApplication()->input->get('task');
-		
+
 
 		if ($array['id'] == 0 && empty($array['created_by']))
 		{
@@ -592,8 +592,8 @@ class ConfigTable extends Table implements VersionableTableInterface
 		{
 			$this->ordering = self::getNextOrder();
 		}
-		
-		
+
+
 
 		// Support for subform field jg_replaceinfo
 		if (is_array($this->jg_replaceinfo))
@@ -662,7 +662,7 @@ class ConfigTable extends Table implements VersionableTableInterface
 
 	//XXX_CUSTOM_TABLE_FUNCTION
 
-	
+
     /**
      * Delete a record by id
      *
@@ -674,7 +674,7 @@ class ConfigTable extends Table implements VersionableTableInterface
     {
         $this->load($pk);
         $result = parent::delete($pk);
-        
+
         return $result;
     }
 }

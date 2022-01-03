@@ -13,7 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Categories;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\Language\Text;
@@ -72,7 +72,7 @@ class HtmlView extends BaseHtmlView
 	protected function addToolbar()
 	{
 		$state = $this->get('State');
-		$canDo = JoomgalleryHelper::getActions();
+		$canDo = JoomHelper::getActions();
 
 		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CATEGORY_MANAGER'), "folder-open");
 
@@ -160,11 +160,11 @@ class HtmlView extends BaseHtmlView
 		// Set sidebar action
 		Sidebar::setAction('index.php?option=com_joomgallery&view=categories');
 	}
-	
+
 	/**
-	 * Method to order fields 
+	 * Method to order fields
 	 *
-	 * @return void 
+	 * @return void
 	 */
 	protected function getSortFields()
 	{

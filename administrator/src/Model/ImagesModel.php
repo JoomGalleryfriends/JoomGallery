@@ -19,7 +19,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Helper\TagsHelper;
 use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomgalleryHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Methods supporting a list of Images records.
@@ -77,11 +77,11 @@ class ImagesModel extends ListModel
 	}
 
 
-	
 
-	
 
-	
+
+
+
 
 	/**
 	 * Method to auto-populate the model state.
@@ -132,9 +132,9 @@ class ImagesModel extends ListModel
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.state');
 
-		
+
 		return parent::getStoreId($id);
-		
+
 	}
 
 	/**
@@ -157,7 +157,7 @@ class ImagesModel extends ListModel
 			)
 		);
 		$query->from('`#__joomgallery` AS a');
-		
+
 		// Join over the users for the checked out user
 		$query->select("uc.name AS uEditor");
 		$query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
@@ -176,7 +176,7 @@ class ImagesModel extends ListModel
 		// Join over the user field 'modified_by'
 		$query->select('`modified_by`.name AS `modified_by`');
 		$query->join('LEFT', '#__users AS `modified_by` ON `modified_by`.id = a.`modified_by`');
-		
+
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -193,7 +193,7 @@ class ImagesModel extends ListModel
 				$query->where('( a.imgtitle LIKE ' . $search . ' )');
 			}
 		}
-		
+
 
 		// Filtering access
 		$filter_access = $this->state->get("filter.access");
@@ -221,7 +221,7 @@ class ImagesModel extends ListModel
 	public function getItems()
 	{
 		$items = parent::getItems();
-		
+
 		foreach ($items as $oneItem)
 		{
 
