@@ -85,7 +85,7 @@ class HtmlView extends BaseHtmlView
 		}
 		else
 		{
-			$this->params->def('page_heading', Text::_('COM_JOOMGALLERY_DEFAULT_PAGE_TITLE'));
+			$this->params->def('page_heading', Text::_('JoomGallery'));
 		}
 
 		$title = $this->params->get('page_title', '');
@@ -120,15 +120,14 @@ class HtmlView extends BaseHtmlView
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 
-		
-            // Add Breadcrumbs
-            $pathway = $app->getPathway();
-                        $breadcrumbTitle = Text::_('COM_JOOMGALLERY_TITLE_IMAGES');
+    // Add Breadcrumbs
+    $pathway = $app->getPathway();
+    $breadcrumbTitle = Text::_('COM_JOOMGALLERY_USERCATEGORIES_IMAGES');
 
-                        if(!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
-                            $pathway->addItem($breadcrumbTitle);
-                        }
-                
+    if(!in_array($breadcrumbTitle, $pathway->getPathwayNames()))
+    {
+      $pathway->addItem($breadcrumbTitle);
+    }
 	}
 
 	/**

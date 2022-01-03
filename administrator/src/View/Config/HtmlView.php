@@ -81,7 +81,7 @@ class HtmlView extends BaseHtmlView
 
 		$canDo = JoomgalleryHelper::getActions();
 
-		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_COMMON_CONFIG'), "sliders-h");
+		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CONFIG_CONFIGURATION_MANAGER').' :: '.Text::_('COM_JOOMGALLERY_COMMON_TOOLBAR_EDIT').' '.Text::_('COM_JOOMGALLERY_COMMON_CONFIG'), "sliders-h");
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))

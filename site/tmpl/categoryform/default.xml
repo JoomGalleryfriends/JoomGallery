@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-    <layout title="COM_JOOMGALLERY_TITLE_FORM_VIEW_CATEGORY" option="View">
-        <message>
-                        <![CDATA[COM_JOOMGALLERY_TITLE_FORM_VIEW_CATEGORY_DESC]]>
-        </message>
+    <layout title="Category Form View" option="View">
+      <message>
+        <![CDATA[Form to create/add a category]]>
+      </message>
     </layout>
-    <fields name="params">
-        <fieldset 
-            name="basic"
-            label="COM_JOOMGALLERY_FIELDSET_ITEM_ID_SELECT_LABEL">
-            <field
-                name="item_id"
-                query="SELECT 0 as `id` UNION SELECT `id` FROM #__joomgallery_categories ORDER BY `id`"
-                type="sql"
-                key_field="id" 
-                value_field="id"
-                label="COM_JOOMGALLERY_ITEM_ID_SELECT_LABEL_FORM"
-                require="true"
-                description="JGLOBAL_SHOW_TITLE_DESC">
+    <fields name="request">
+        <fieldset name="request" >
+            <field name="item_id"
+                   type="sql"
+                   query="SELECT 0 as `id`, 'New Category' as `title` UNION SELECT `id`,`title` FROM #__joomgallery_categories ORDER BY `id`"
+                   key_field="id"
+                   value_field="title"
+                   label="COM_JOOMGALLERY_COMMON_CATEGORY"
+                   require="true" >
             </field>
         </fieldset>
     </fields>

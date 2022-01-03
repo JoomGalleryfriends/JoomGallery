@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JOOMGALLERY_TITLE_LIST_VIEW_IMAGES" option="View">
+	<layout title="List of Images" option="View">
         <message>
-                        <![CDATA[COM_JOOMGALLERY_TITLE_LIST_VIEW_IMAGES_DESC]]>
+          <![CDATA[Shows a list of images like the Image Manager]]>
         </message>
 	</layout>
-	
+
 </metadata>

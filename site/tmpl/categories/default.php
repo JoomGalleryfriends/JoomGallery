@@ -38,48 +38,28 @@ $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_joomgallery.list');
 ?>
 
-<form action="<?php echo htmlspecialchars(Uri::getInstance()->toString()); ?>" method="post"
-	  name="adminForm" id="adminForm">
-	
+<form action="<?php echo htmlspecialchars(Uri::getInstance()->toString()); ?>" method="post" name="adminForm" id="adminForm">
 	<div class="table-responsive">
 		<table class="table table-striped" id="categoryList">
 			<thead>
 			<tr>
-				
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_CATEGORIES_ID', 'a.id', $listDirn, $listOrder); ?>
+          <th class=''>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_COMMON_CATEGORY', 'a.title', $listDirn, $listOrder); ?>
 					</th>
 
 					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_CATEGORIES_PARENT_ID', 'a.parent_id', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_COMMON_PARENT_CATEGORY', 'a.parent_id', $listDirn, $listOrder); ?>
 					</th>
 
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_CATEGORIES_TITLE', 'a.title', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_CATEGORIES_ACCESS', 'a.access', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_CATEGORIES_PUBLISHED', 'a.published', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_CATEGORIES_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_CATEGORIES_CREATED_BY', 'a.created_by', $listDirn, $listOrder); ?>
-					</th>
-
-						<?php if ($canEdit || $canDelete): ?>
-					<th class="center">
-						<?php echo Text::_('COM_JOOMGALLERY_CATEGORIES_ACTIONS'); ?>
-					</th>
+          <?php if ($canEdit || $canDelete): ?>
+            <th class="center">
+              <?php echo Text::_('COM_JOOMGALLERY_COMMON_ACTION'); ?>
+            </th>
 					<?php endif; ?>
 
+					<th class=''>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_COMMON_PUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+					</th>
 			</tr>
 			</thead>
 			<tfoot>
@@ -97,35 +77,23 @@ $wa->useStyle('com_joomgallery.list');
 				<?php endif; ?>
 
 				<tr class="row<?php echo $i % 2; ?>">
-					
-					<td>
-						<?php echo $item->id; ?>
-					</td>
-					<td>
-						<?php echo $item->parent_id; ?>
-					</td>
-					<td>
+          <td>
 						<?php echo LayoutHelper::render('joomla.html.treeprefix', array('level' => $item->level)); ?>
 						<?php $canCheckin = Factory::getUser()->authorise('core.manage', 'com_joomgallery.' . $item->id) || $item->checked_out == Factory::getUser()->id; ?>
 						<?php if($canCheckin && $item->checked_out > 0) : ?>
 							<a href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.checkin&id=' . $item->id .'&'. Session::getFormToken() .'=1'); ?>">
-							<?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'category.', false); ?></a>
+							  <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'category.', false); ?>
+              </a>
 						<?php endif; ?>
 						<a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.(int) $item->id); ?>">
-							<?php echo $this->escape($item->title); ?></a>
+							<?php echo $this->escape($item->title); ?>
+            </a>
 					</td>
+
 					<td>
-						<?php echo $item->access; ?>
+						<?php echo $item->parent_id; ?>
 					</td>
-					<td>
-						<?php echo $item->published; ?>
-					</td>
-					<td>
-						<?php echo $item->language; ?>
-					</td>
-					<td>
-								<?php echo Factory::getUser($item->created_by)->name; ?>
-					</td>
+
 					<?php if ($canEdit || $canDelete): ?>
 						<td class="center">
 							<?php $canCheckin = Factory::getUser()->authorise('core.manage', 'com_joomgallery.' . $item->id) || $this->item->checked_out == Factory::getUser()->id; ?>
@@ -139,16 +107,18 @@ $wa->useStyle('com_joomgallery.list');
 						</td>
 					<?php endif; ?>
 
+          <td>
+						<?php echo $item->published; ?>
+					</td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>
 		</table>
 	</div>
 	<?php if ($canCreate) : ?>
-		<a href="<?php echo Route::_('index.php?option=com_joomgallery&task=categoryform.edit&id=0', false, 0); ?>"
-		   class="btn btn-success btn-small"><i
-				class="icon-plus"></i>
-			<?php echo Text::_('COM_JOOMGALLERY_ADD_ITEM'); ?></a>
+		<a href="<?php echo Route::_('index.php?option=com_joomgallery&task=categoryform.edit&id=0', false, 0); ?>" class="btn btn-success btn-small">
+      <i class="icon-plus"></i> <?php echo Text::_('COM_JOOMGALLERY_COMMON_NEW_CATEGORY'); ?>
+    </a>
 	<?php endif; ?>
 
 	<input type="hidden" name="task" value=""/>

@@ -1,50 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Site\Field">
   <fieldset>
-    <field name="checked_out" type="hidden" filter="unset"/>
-    <field name="lft" default="0" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_LFT" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_LFT" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_LFT"/>
-    <field name="rgt" default="0" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_RGT" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_RGT" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_RGT"/>
-    <field name="level" default="0" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_LEVEL" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_LEVEL" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_LEVEL"/>
-    <field name="path" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PATH" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_PATH" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PATH"/>
-    <field name="in_hidden" default="0" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_IN_HIDDEN" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_IN_HIDDEN" hidden="true" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_IN_HIDDEN"/>
-    <field name="title" maxlength="255" filter="string" type="text" required="true" label="JGLOBAL_TITLE" description="JGLOBAL_FIELD_FIELD_ORDERING_DESC" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_TITLE"/>
-    <field name="alias" type="text" class="inputbox" generator="title" label="JFIELD_ALIAS_LABEL" description="JFIELD_ALIAS_DESC" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_ALIAS"/>
-    <field name="parent_id" type="nestedparent" default="0" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PARENT_ID" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_PARENT_ID" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PARENT_ID" table="#__joomgallery_categories"/>
-    <field name="published" default="0" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PUBLISHED" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_PUBLISHED" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PUBLISHED"/>
-    <field name="access" type="accesslevel" label="JFIELD_ACCESS_LABEL" description="JFIELD_ACCESS_DESC" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_ACCESS"/>
-    <field name="password" size="100" type="password" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PASSWORD" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_PASSWORD" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PASSWORD"/>
-    <field name="language" client="administrator" type="language" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_LANGUAGE" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_LANGUAGE" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_LANGUAGE"/>
-    <field name="description" cols="250" editor="|" buttons="true" filter="JComponentHelper::filterText" type="editor" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_DESCRIPTION" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_DESCRIPTION" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_DESCRIPTION"/>
-    <field name="hidden" default="0" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_HIDDEN" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_HIDDEN" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_HIDDEN">
-      <option value="0">COM_JOOMGALLERY_CATEGORIES_HIDDEN_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CATEGORIES_HIDDEN_OPTION_1</option>
+    <field name="id"
+           type="text"
+           readonly="true"
+           class="readonly"
+           default="0"
+           description="COM_JOOMGALLERY_CATMAN_CATEGORY_ID" />
+
+    <field name="checked_out"
+           type="hidden"
+           filter="unset" />
+
+    <field name="lft"
+           default="0"
+           label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_LFT"
+           description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_LFT"
+           hidden="true" />
+
+    <field name="rgt"
+           default="0"
+           label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_RGT"
+           description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_RGT"
+           hidden="true" />
+
+    <field name="level"
+           default="0"
+           label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_LEVEL"
+           description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_LEVEL"
+           hidden="true" />
+
+    <field name="path"
+           label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PATH"
+           description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_PATH"
+           hidden="true" />
+
+    <field name="in_hidden"
+           default="0"
+           label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_IN_HIDDEN"
+           description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_IN_HIDDEN"
+           hidden="true" />
+
+    <field name="title"
+           type="text"
+           maxlength="255"
+           filter="string"
+           required="true"
+           autofocus="true"
+           label="COM_JOOMGALLERY_COMMON_TITLE"
+           description="COM_JOOMGALLERY_EDITCATEGORY_TITLE_TIP"
+           message="COM_JOOMGALLERY_CATMAN_ALERT_CATEGORY_MUST_HAVE_TITLE" />
+
+    <field name="alias"
+           type="text"
+           maxlength="255"
+           generator="title"
+           label="COM_JOOMGALLERY_COMMON_ALIAS"
+           description="COM_JOOMGALLERY_EDITCATEGORY_ALIAS_TIP" />
+
+    <field name="parent_id"
+           type="nestedparent"
+           default="0"
+           label="COM_JOOMGALLERY_COMMON_PARENT_CATEGORY"
+           description="COM_JOOMGALLERY_EDITCATEGORY_PARENT_CATEGORY_TIP"
+           table="#__joomgallery_categories" />
+
+    <field name="published"
+           type="radio"
+           class="btn-group"
+           default="0"
+           label="COM_JOOMGALLERY_COMMON_PUBLISHED"
+           description="COM_JOOMGALLERY_EDITCATEGORY_PUBLISHED_TIP" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
     </field>
-    <field name="exclude_toplist" default="0" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_EXCLUDE_TOPLIST" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_EXCLUDE_TOPLIST" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_EXCLUDE_TOPLIST">
-      <option value="0">COM_JOOMGALLERY_CATEGORIES_EXCLUDE_TOPLIST_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CATEGORIES_EXCLUDE_TOPLIST_OPTION_1</option>
+
+    <field name="access"
+           type="accesslevel"
+           label="COM_JOOMGALLERY_COMMON_ACCESS"
+           description="COM_JOOMGALLERY_EDITCATEGORY_ACCESS_TIP"
+           size="1" />
+
+    <field name="password"
+           type="password"
+           size="100"
+           label="COM_JOOMGALLERY_CATMAN_PASSWORD"
+           description="COM_JOOMGALLERY_CATMAN_PASSWORD_TIP" />
+
+    <field name="language"
+           type="language"
+           client="administrator"
+           label="JGRID_HEADING_LANGUAGE" />
+
+    <field name="description"
+           type="editor"
+           cols="250"
+           buttons="true"
+           filter="JComponentHelper::filterText"
+           label="COM_JOOMGALLERY_COMMON_DESCRIPTION"
+           hide="pagebreak" />
+
+    <field name="hidden"
+           type="radio"
+           default="0"
+           class="btn-group"
+           label="COM_JOOMGALLERY_CATMAN_HIDDEN"
+           description="COM_JOOMGALLERY_CATMAN_HIDDEN_TIP" >
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
     </field>
-    <field name="exclude_search" default="0" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_EXCLUDE_SEARCH" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_EXCLUDE_SEARCH" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_EXCLUDE_SEARCH">
-      <option value="0">COM_JOOMGALLERY_CATEGORIES_EXCLUDE_SEARCH_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CATEGORIES_EXCLUDE_SEARCH_OPTION_1</option>
+
+    <field name="exclude_toplist"
+           type="radio"
+           default="0"
+           class="btn-group"
+           label="COM_JOOMGALLERY_CATMAN_EXCLUDE_FROM_TOPLISTS"
+           description="COM_JOOMGALLERY_CATMAN_EXCLUDE_FROM_TOPLISTS_TIP" >
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
     </field>
-    <field name="thumbnail" directory="/images/joomgallery/" type="media" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_THUMBNAIL" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_THUMBNAIL" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_THUMBNAIL"/>
-    <field name="created_time" type="timecreated" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_CREATED_TIME" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_CREATED_TIME" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_CREATED_TIME"/>
-    <field name="modified_time" type="timeupdated" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_MODIFIED_TIME" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_MODIFIED_TIME" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_MODIFIED_TIME"/>
-    <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
-    <field name="metadesc" cols="40" rows="5" filter="safehtml" type="textarea" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_METADESC" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_METADESC" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_METADESC"/>
-    <field name="metakey" cols="40" rows="5" filter="safehtml" type="textarea" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_METAKEY" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_METAKEY" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_METAKEY"/>
-    <field name="robots" default="0" type="list" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_ROBOTS" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_ROBOTS" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_ROBOTS">
-      <option value="0">COM_JOOMGALLERY_CATEGORIES_ROBOTS_OPTION_0</option>
-      <option value="1">COM_JOOMGALLERY_CATEGORIES_ROBOTS_OPTION_1</option>
-      <option value="2">COM_JOOMGALLERY_CATEGORIES_ROBOTS_OPTION_2</option>
-      <option value="3">COM_JOOMGALLERY_CATEGORIES_ROBOTS_OPTION_3</option>
-      <option value="4">COM_JOOMGALLERY_CATEGORIES_ROBOTS_OPTION_4</option>
+
+    <field name="exclude_search"
+           type="radio"
+           default="0"
+           class="btn-group"
+           label="COM_JOOMGALLERY_CATMAN_EXCLUDE_FROM_SEARCH"
+           description="COM_JOOMGALLERY_CATMAN_EXCLUDE_FROM_SEARCH_TIP" >
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
     </field>
-    <field name="params" formsource="components/com_joomgallery/forms/subform_catparams.xml" layout="joomla.form.field.subform.default" type="subform" label="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PARAMS" description="COM_JOOMGALLERY_FORM_DESC_CATEGORY_PARAMS" hint="COM_JOOMGALLERY_FORM_LBL_CATEGORY_PARAMS"/>
-    <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL" description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>
+
+    <field name="thumbnail"
+           type="media"
+           directory="/images/joomgallery/"
+           label="COM_JOOMGALLERY_COMMON_THUMBNAIL"
+           description="COM_JOOMGALLERY_CATMAN_THUMBNAIL_TIP" />
+
+    <field name="created_time"
+           type="timecreated"
+           label="JGLOBAL_FIELD_CREATED_LABEL" />
+
+    <field name="modified_time"
+           type="timeupdated"
+           label="JGLOBAL_FIELD_MODIFIED_LABEL" />
+
+    <field name="metadesc"
+           type="textarea"
+           cols="40"
+           rows="5"
+           filter="safehtml"
+           label="COM_JOOMGALLERY_COMMON_METADESC"
+           description="COM_JOOMGALLERY_COMMON_METADESC_TIP" />
+
+    <field name="metakey"
+           type="textarea"
+           cols="40"
+           rows="5"
+           filter="string"
+           label="COM_JOOMGALLERY_COMMON_METAKEYS"
+           description="COM_JOOMGALLERY_COMMON_METAKEYS_TIP" />
+
+    <field name="robots"
+           type="list"
+           default="0"
+           label="JFIELD_METADATA_ROBOTS_LABEL" >
+        <option value="0">JGLOBAL_USE_GLOBAL</option>
+        <option value="1">index, follow</option>
+        <option value="2">noindex, follow</option>
+        <option value="3">index, nofollow</option>
+        <option value="4">noindex, nofollow</option>
+    </field>
+
+    <field name="params"
+           type="subform"
+           formsource="components/com_joomgallery/forms/subform_catparams.xml"
+           layout="joomla.form.field.subform.default"
+           label="COM_JOOMGALLERY_COMMON_PARAMETERS" />
+
+    <field name="version_note"
+           type="text"
+           label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
+           description="JGLOBAL_FIELD_VERSION_NOTE_DESC"
+           class="inputbox"
+           size="45"
+           labelclass="control-label" />
   </fieldset>
+
   <fieldset name="accesscontrol">
-    <field name="asset_id" type="hidden" filter="unset"/>
-    <field name="rules" type="rules" label="COM_JOOMGALLERY_ACTION_PERMISSIONS_LABEL" filter="rules" validate="rules" class="inputbox" component="com_joomgallery" section="category"/>
+    <field name="asset_id"
+           type="hidden"
+           filter="unset" />
+
+    <field name="rules"
+           type="rules"
+           label="JFIELD_RULES_LABEL"
+           filter="rules"
+           validate="rules"
+           class="inputbox"
+           component="com_joomgallery"
+           section="category" />
   </fieldset>
 </form>

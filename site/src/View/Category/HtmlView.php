@@ -64,7 +64,7 @@ class HtmlView extends BaseHtmlView
 		if(!in_array($this->item->access, $user->getAuthorisedViewLevels())){
                 throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
             }
-        
+
 
 		if ($this->_layout == 'edit')
 		{
@@ -104,7 +104,7 @@ class HtmlView extends BaseHtmlView
 		}
 		else
 		{
-			$this->params->def('page_heading', Text::_('COM_JOOMGALLERY_DEFAULT_PAGE_TITLE'));
+			$this->params->def('page_heading', Text::_('JoomGallery'));
 		}
 
 		$title = $this->params->get('page_title', '');
@@ -139,19 +139,21 @@ class HtmlView extends BaseHtmlView
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 
-		
-            // Add Breadcrumbs
-            $pathway = $app->getPathway();
-                        $breadcrumbList = Text::_('COM_JOOMGALLERY_TITLE_CATEGORIES');
-            
-                        if(!in_array($breadcrumbList, $pathway->getPathwayNames())) {
-                            $pathway->addItem($breadcrumbList, "index.php?option=com_joomgallery&view=categories");
-                        }
-                        $breadcrumbTitle = Text::_('COM_JOOMGALLERY_TITLE_CATEGORY');
-            
-                        if(!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
-                            $pathway->addItem($breadcrumbTitle);    
-                        }
-                
+
+    // Add Breadcrumbs
+    $pathway = $app->getPathway();
+    $breadcrumbList = Text::_('COM_JOOMGALLERY_COMMON_CATEGORIES');
+
+    if(!in_array($breadcrumbList, $pathway->getPathwayNames()))
+    {
+      $pathway->addItem($breadcrumbList, "index.php?option=com_joomgallery&view=categories");
+    }
+
+    $breadcrumbTitle = Text::_('COM_JOOMGALLERY_COMMON_CATEGORY');
+
+    if(!in_array($breadcrumbTitle, $pathway->getPathwayNames()))
+    {
+      $pathway->addItem($breadcrumbTitle);
+    }
 	}
 }

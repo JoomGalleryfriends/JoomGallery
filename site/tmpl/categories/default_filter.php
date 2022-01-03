@@ -88,14 +88,11 @@ HTMLHelper::_('searchtools.form', $formSelector, $data['options']);
 							<i class="icon-search"></i>
 						</button>
 						<?php if ($filters): ?>
-						<button type="button" class="btn hasTooltip btn-outline-info dropdown-toggle js-stools-btn-filter" title=""
-							data-original-title="<?php echo Text::_('JSEARCH_TOOLS_DESC'); ?>">
+						<button type="button" class="btn hasTooltip btn-outline-info dropdown-toggle js-stools-btn-filter" title=""	data-original-title="<?php echo Text::_('JSEARCH_TOOLS_DESC'); ?>">
 							<?php echo Text::_('JSEARCH_TOOLS'); ?>
 						</button>
 						<?php endif; ?>
-						<button type="button" class="btn btn-outline-primary hasTooltip js-stools-btn-clear" title=""
-							data-original-title="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>"
-							onclick="jQuery(this).closest('form').find('input').val('');">
+						<button type="button" class="btn btn-outline-primary hasTooltip js-stools-btn-clear" title="" data-original-title="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>" onclick="jQuery(this).closest('form').find('input').val('');">
 							<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
 						</button>
 					</div>

@@ -21,13 +21,6 @@
             <option value="5">COM_JOOMGALLERY_COMMON_OPTION_REJECTED_ONLY</option>
         </field>
 
-        <field name="category"
-               type="joomcategory"
-               label="COM_JOOMGALLERY_COMMON_ALL"
-               onchange="this.form.submit();"
-               task="filter"
-            />
-
         <field name="access"
                type="accesslevel"
                label="JOPTION_FILTER_ACCESS"

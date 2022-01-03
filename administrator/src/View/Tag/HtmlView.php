@@ -81,7 +81,7 @@ class HtmlView extends BaseHtmlView
 
 		$canDo = JoomgalleryHelper::getActions();
 
-		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_COMMON_TAG'), "tag");
+		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TAGS_MANAGER').' :: '.Text::_('COM_JOOMGALLERY_COMMON_TOOLBAR_EDIT').' '.Text::_('COM_JOOMGALLERY_COMMON_TAG'), "tag");
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
@@ -101,7 +101,7 @@ class HtmlView extends BaseHtmlView
 			ToolbarHelper::custom('tag.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 		}
 
-		
+
 
 		if (empty($this->item->id))
 		{

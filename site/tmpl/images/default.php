@@ -38,68 +38,41 @@ $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_joomgallery.list');
 ?>
 
-<form action="<?php echo htmlspecialchars(Uri::getInstance()->toString()); ?>" method="post"
-	  name="adminForm" id="adminForm">
+<form action="<?php echo htmlspecialchars(Uri::getInstance()->toString()); ?>" method="post" name="adminForm" id="adminForm">
 	<?php if(!empty($this->filterForm)) { echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); } ?>
 	<div class="table-responsive">
 		<table class="table table-striped" id="imageList">
 			<thead>
 			<tr>
-				
 					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_ID', 'a.id', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_COMMON_ID', 'a.id', $listDirn, $listOrder); ?>
 					</th>
 
 					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_CATID', 'a.catid', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_COMMON_IMAGE_NAME', 'a.imgtitle', $listDirn, $listOrder); ?>
 					</th>
 
 					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_IMGTITLE', 'a.imgtitle', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_COMMON_HITS', 'a.hits', $listDirn, $listOrder); ?>
 					</th>
 
 					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_IMGAUTHOR', 'a.imgauthor', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_COMMON_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
 					</th>
 
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_IMGDATE', 'a.imgdate', $listDirn, $listOrder); ?>
+          <th class=''>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_COMMON_CATEGORY', 'a.catid', $listDirn, $listOrder); ?>
 					</th>
 
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_HITS', 'a.hits', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_ACCESS', 'a.access', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_PUBLISHED', 'a.published', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_CREATED_BY', 'a.created_by', $listDirn, $listOrder); ?>
-					</th>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
-					</th>
-
-						<?php if ($canEdit || $canDelete): ?>
-					<th class="center">
-						<?php echo Text::_('COM_JOOMGALLERY_IMAGES_ACTIONS'); ?>
-					</th>
+          <?php if ($canEdit || $canDelete): ?>
+            <th class="center">
+              <?php echo Text::_('COM_JOOMGALLERY_COMMON_ACTION'); ?>
+            </th>
 					<?php endif; ?>
 
+					<th class=''>
+						<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_COMMON_PUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+					</th>
 			</tr>
 			</thead>
 			<tfoot>
@@ -117,12 +90,9 @@ $wa->useStyle('com_joomgallery.list');
 				<?php endif; ?>
 
 				<tr class="row<?php echo $i % 2; ?>">
-					
+
 					<td>
 						<?php echo $item->id; ?>
-					</td>
-					<td>
-						<?php echo $item->catid; ?>
 					</td>
 					<td>
 						<?php $canCheckin = Factory::getUser()->authorise('core.manage', 'com_joomgallery.' . $item->id) || $item->checked_out == Factory::getUser()->id; ?>
@@ -134,36 +104,15 @@ $wa->useStyle('com_joomgallery.list');
 							<?php echo $this->escape($item->imgtitle); ?></a>
 					</td>
 					<td>
-						<?php echo $item->imgauthor; ?>
-					</td>
-					<td>
-						<?php
-						$date = $item->imgdate;
-						echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
-						?>
-					</td>
-					<td>
 						<?php echo $item->hits; ?>
 					</td>
 					<td>
 						<?php echo $item->downloads; ?>
 					</td>
-					<td>
-						<?php echo $item->access; ?>
+          <td>
+						<?php echo $item->catid; ?>
 					</td>
-					<td>
-						<?php echo $item->published; ?>
-					</td>
-					<td>
-						<?php echo $item->approved; ?>
-					</td>
-					<td>
-								<?php echo Factory::getUser($item->created_by)->name; ?>
-					</td>
-					<td>
-						<?php echo $item->language; ?>
-					</td>
-					<?php if ($canEdit || $canDelete): ?>
+          <?php if ($canEdit || $canDelete): ?>
 						<td class="center">
 							<?php $canCheckin = Factory::getUser()->authorise('core.manage', 'com_joomgallery.' . $item->id) || $this->item->checked_out == Factory::getUser()->id; ?>
 
@@ -175,17 +124,21 @@ $wa->useStyle('com_joomgallery.list');
 							<?php endif; ?>
 						</td>
 					<?php endif; ?>
-
+					<td>
+						<?php echo $item->published; ?>
+					</td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>
 		</table>
 	</div>
+  <p></p>
+
 	<?php if ($canCreate) : ?>
-		<a href="<?php echo Route::_('index.php?option=com_joomgallery&task=imageform.edit&id=0', false, 0); ?>"
-		   class="btn btn-success btn-small"><i
-				class="icon-plus"></i>
-			<?php echo Text::_('COM_JOOMGALLERY_ADD_ITEM'); ?></a>
+		<a href="<?php echo Route::_('index.php?option=com_joomgallery&task=imageform.edit&id=0', false, 0); ?>" class="btn btn-success btn-small">
+      <i class="icon-plus"></i>
+			<?php echo Text::_('COM_JOOMGALLERY_COMMON_UPLOAD_NEW_IMAGE'); ?>
+    </a>
 	<?php endif; ?>
 
 	<input type="hidden" name="task" value=""/>

@@ -49,7 +49,7 @@ class HtmlView extends BaseHtmlView
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
 		$this->params = $app->getParams('com_joomgallery');
-		
+
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -84,7 +84,7 @@ class HtmlView extends BaseHtmlView
 		}
 		else
 		{
-			$this->params->def('page_heading', Text::_('COM_JOOMGALLERY_DEFAULT_PAGE_TITLE'));
+			$this->params->def('page_heading', Text::_('JoomGallery'));
 		}
 
 		$title = $this->params->get('page_title', '');
@@ -119,15 +119,15 @@ class HtmlView extends BaseHtmlView
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 
-		
-            // Add Breadcrumbs
-            $pathway = $app->getPathway();
-                        $breadcrumbTitle = Text::_('COM_JOOMGALLERY_TITLE_CATEGORIES');
 
-                        if(!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
-                            $pathway->addItem($breadcrumbTitle);
-                        }
-                
+    // Add Breadcrumbs
+    $pathway = $app->getPathway();
+    $breadcrumbTitle = Text::_('COM_JOOMGALLERY_COMMON_CATEGORIES');
+
+    if(!in_array($breadcrumbTitle, $pathway->getPathwayNames()))
+    {
+      $pathway->addItem($breadcrumbTitle);
+    }
 	}
 
 	/**

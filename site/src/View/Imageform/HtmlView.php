@@ -63,7 +63,7 @@ class HtmlView extends BaseHtmlView
 		if(!empty($this->item->access) && !in_array($this->item->access, $user->getAuthorisedViewLevels())){
                 throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
             }
-        
+
 
 		$this->_prepareDocument();
 
@@ -93,7 +93,7 @@ class HtmlView extends BaseHtmlView
 		}
 		else
 		{
-			$this->params->def('page_heading', Text::_('COM_JOOMGALLERY_DEFAULT_PAGE_TITLE'));
+			$this->params->def('page_heading', Text::_('JoomGallery'));
 		}
 
 		$title = $this->params->get('page_title', '');
@@ -128,18 +128,21 @@ class HtmlView extends BaseHtmlView
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 
-		
-            // Add Breadcrumbs
-            $pathway = $app->getPathway();
-                        $breadcrumbList = Text::_('COM_JOOMGALLERY_TITLE_IMAGES');
-                        if(!in_array($breadcrumbList, $pathway->getPathwayNames())) {
-                            $pathway->addItem($breadcrumbList, "index.php?option=com_joomgallery&view=images");
-                        }
-                        $breadcrumbTitle = isset($this->item->id) ? Text::_("JGLOBAL_EDIT") : Text::_("JGLOBAL_FIELD_ADD");
 
-                        if(!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
-                            $pathway->addItem($breadcrumbTitle);    
-                        }
-                
+    // Add Breadcrumbs
+    $pathway = $app->getPathway();
+    $breadcrumbList = Text::_('COM_JOOMGALLERY_COMMON_IMAGES');
+
+    if(!in_array($breadcrumbList, $pathway->getPathwayNames()))
+    {
+      $pathway->addItem($breadcrumbList, "index.php?option=com_joomgallery&view=images");
+    }
+
+    $breadcrumbTitle = isset($this->item->id) ? Text::_("JGLOBAL_EDIT") : Text::_("JGLOBAL_FIELD_ADD");
+
+    if(!in_array($breadcrumbTitle, $pathway->getPathwayNames()))
+    {
+      $pathway->addItem($breadcrumbTitle);
+    }
 	}
 }
