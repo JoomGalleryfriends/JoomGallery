@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_uploadorder` TINYINT(1) NOT NULL DEFAULT 2,
 `jg_filenamenumber` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_delete_original` TINYINT(1) NOT NULL DEFAULT 0,
-`jg_imgprocessor` TINYINT(1) NOT NULL DEFAULT 1,
+`jg_imgprocessor` VARCHAR(5) NOT NULL DEFAULT "gd",
 `jg_fastgd2creation` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_impath` VARCHAR(100) NOT NULL DEFAULT "",
 `jg_staticprocessing` TEXT NOT NULL,

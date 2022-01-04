@@ -200,11 +200,11 @@
 
       <field name="jg_imgprocessor"
              type="list"
-             default="1"
+             default="gd"
              label="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_CREATOR"
              description="COM_JOOMGALLERY_CONFIG_GS_IP_IMAGE_CREATOR_LONG" >
-        <option value="1">COM_JOOMGALLERY_CONFIG_GS_IP_GDLIB</option>
-        <option value="2">COM_JOOMGALLERY_CONFIG_GS_IP_IMAGEMAGICK</option>
+        <option value="gd">COM_JOOMGALLERY_CONFIG_GS_IP_GDLIB</option>
+        <option value="im">COM_JOOMGALLERY_CONFIG_GS_IP_IMAGEMAGICK</option>
       </field>
 
       <field name="jg_fastgd2creation"

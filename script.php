@@ -373,6 +373,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $data["jg_staticprocessing"] = '{"jg_staticprocessing0":{"jg_imgtype":"1","jg_imgtypename":"original","jg_imgtypepath":"/images/joomgallery/originals","jg_imgtyperesize":"0","jg_imgtypewidth":"","jg_imgtypeheight":"","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypequality":100,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":[]},"jg_staticprocessing1":{"jg_imgtype":"1","jg_imgtypename":"detail","jg_imgtypepath":"/images/joomgallery/details","jg_imgtyperesize":"4","jg_imgtypewidth":1000,"jg_imgtypeheight":1000,"jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypequality":80,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":[]},"jg_staticprocessing2":{"jg_imgtype":"1","jg_imgtypename":"thumbnail","jg_imgtypepath":"/images/joomgallery/thumbnails","jg_imgtyperesize":"3","jg_imgtypewidth":250,"jg_imgtypeheight":250,"jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypequality":60,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":[]}}';
     $data["jg_dynamicprocessing"] = '[]';
     $data["jg_listbox_max_items"] = 25;
+    $data["jg_imgprocessor"] = 'gd';
     $data["jg_maxusercat"] = 10;
     $data["jg_maxuserimage"] = 500;
     $data["jg_maxuserimage_timespan"] = 0;

@@ -62,7 +62,6 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
       require_once JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/defines.php';
     }
 
-    $this->upload = new Upload;
     $this->config = new Config;
   }
 }

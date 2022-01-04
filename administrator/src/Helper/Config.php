@@ -71,7 +71,7 @@ class Config
 
     if($glob_params == false || empty($glob_params))
     {
-      Factory::getApplication()->enqueueMessage(Text::_('Error loading config data'), 'error');
+      Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_COMMON_ERROR_LOAD_CONFIG'), 'error');
 
       return;
     }
