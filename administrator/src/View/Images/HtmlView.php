@@ -12,22 +12,22 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Images;
 // No direct access
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\Language\Text;
-use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\HTML\Helpers\Sidebar;
 use \Joomla\CMS\Factory;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
+use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a list of Images.
  *
  * @since  4.0.0
  */
-class HtmlView extends BaseHtmlView
+class HtmlView extends JoomGalleryView
 {
 	protected $items;
 
@@ -46,7 +46,7 @@ class HtmlView extends BaseHtmlView
 	 */
 	public function display($tpl = null)
 	{
-    $this->component = Factory::getApplication()->bootComponent('com_joomgallery'); //get the JoomgalleryComponent class
+    //$this->component = Factory::getApplication()->bootComponent('com_joomgallery'); //get the JoomgalleryComponent class
 		$this->state = $this->get('State');
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');

@@ -12,20 +12,21 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Categories;
 // No direct access
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\Language\Text;
-use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\HTML\Helpers\Sidebar;
+use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+
 /**
  * View class for a list of Categories.
  *
  * @since  4.0.0
  */
-class HtmlView extends BaseHtmlView
+class HtmlView extends JoomGalleryView
 {
 	protected $items;
 

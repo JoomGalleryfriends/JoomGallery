@@ -18,7 +18,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Object\CMSObject;
 
 /**
- * JoomGallery Global Helper for the Backend
+ * JoomGallery Helper for the Backend
  *
  * @since  4.0.0
  */

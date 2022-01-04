@@ -21,7 +21,7 @@ defined('_JEXEC') or die;
  * - FTP upload
  * - Ajax upload
  *
- * @since   4.0.0
+ * @since   1.0.0
  */
 class Upload
 {

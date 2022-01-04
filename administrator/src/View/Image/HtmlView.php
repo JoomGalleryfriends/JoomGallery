@@ -12,18 +12,18 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\Factory;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Language\Text;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a single Image.
  *
  * @since  4.0.0
  */
-class HtmlView extends BaseHtmlView
+class HtmlView extends JoomGalleryView
 {
 	protected $state;
 
