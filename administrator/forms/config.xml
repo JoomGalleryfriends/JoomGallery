@@ -64,8 +64,8 @@
          label="COM_JOOMGALLERY_COMMON_USER_GROUP"
          description="COM_JOOMGALLERY_CONFIG_USER_GROUP_DESC" />
 
-  <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_GENERAL_SETTINGS" note="general">
-    <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_GENERAL_SETTINGS" note="general-general">
+  <fieldset type="tab" name="general" label="COM_JOOMGALLERY_CONFIG_COMMON_TAB_GENERAL_SETTINGS">
+    <fieldset type="tab" name="general-general" label="COM_JOOMGALLERY_CONFIG_COMMON_TAB_GENERAL_SETTINGS">
       <field name="jg_pathftpupload"
              type="text"
              default="administrator/components/com_joomgallery/temp/ftp_upload/"
@@ -118,7 +118,7 @@
              description="COM_JOOMGALLERY_CONFIG_GS_GS_LISTBOXMAXCOUNT_LONG" />
     </fieldset>
 
-    <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_UPLOAD_SETTINGS" note="general-upload">
+    <fieldset type="tab" name="general-upload" label="COM_JOOMGALLERY_ACTION_UPLOAD">
       <field name="jg_filenamewithjs"
              type="radio"
              default="1"
@@ -187,7 +187,7 @@
       </field>
     </fieldset>
 
-    <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_IMGPROCESS_SETTINGS" note="general-imgprocessing">
+    <fieldset type="tab" name="general-imgprocessing" label="COM_JOOMGALLERY_CONFIG_GS_TAB_IMAGE_PROCESSING">
       <field name="jg_delete_original"
              type="list"
              default="0"
@@ -213,7 +213,7 @@
              class="btn-group"
              label="COM_JOOMGALLERY_CONFIG_GS_IP_FAST_GD2_THUMBCREATION"
              description="COM_JOOMGALLERY_CONFIG_GS_IP_FAST_GD2_THUMBCREATION_LONG"
-             showon="jg_imgprocessor:1" >
+             showon="jg_imgprocessor:gd" >
         <option value="0">JNO</option>
         <option value="1">JYES</option>
       </field>
@@ -225,15 +225,7 @@
              filter="string"
              label="COM_JOOMGALLERY_CONFIG_GS_IP_PATH_TO_IMAGEMAGICK"
              description="COM_JOOMGALLERY_CONFIG_GS_IP_PATH_TO_IMAGEMAGICK_LONG"
-             showon="jg_imgprocessor:2" />
-
-      <field name="jg_watermark"
-             type="subform"
-             max="1"
-             multiple="true"
-             formsource="administrator/components/com_joomgallery/forms/subform_imagewatermark.xml"
-             layout="joomla.form.field.subform.repeatable"
-             label="COM_JOOMGALLERY_FORM_LBL_CONFIG_" />
+             showon="jg_imgprocessor:im" />
 
       <field name="jg_staticprocessing"
              type="subform"
@@ -251,7 +243,7 @@
              label="COM_JOOMGALLERY_CONFIG_GS_IP_DYNAMICPROCESSING" />
     </fieldset>
 
-    <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_MESSAGES_SETTINGS" note="general-messages">
+    <fieldset type="tab" name="general-messages" label="COM_JOOMGALLERY_CONFIG_GS_TAB_MESSAGES_SETTINGS">
       <field name="jg_msg_upload_type"
              type="list"
              default="2"
@@ -384,66 +376,66 @@
     </fieldset>
   </fieldset>
 
-  <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_USER_SETTINGS" note="user">
-    <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_GENERAL_SETTINGS" note="user-general">
-      <field name="jg_userspace"
-             type="radio"
-             default="1"
-             class="btn-group"
-             label="COM_JOOMGALLERY_CONFIG_UR_UU_USERSPACE"
-             description="COM_JOOMGALLERY_CONFIG_UR_UU_USERSPACE_LONG" >
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
-      </field>
+  <fieldset type="tab" name="user" label="COM_JOOMGALLERY_CONFIG_COMMON_TAB_USER_SETTINGS">
+    <fieldset type="tab" name="user-general" label="COM_JOOMGALLERY_CONFIG_COMMON_TAB_GENERAL_SETTINGS">
+        <field name="jg_userspace"
+              type="radio"
+              default="1"
+              class="btn-group"
+              label="COM_JOOMGALLERY_CONFIG_UR_UU_USERSPACE"
+              description="COM_JOOMGALLERY_CONFIG_UR_UU_USERSPACE_LONG" >
+          <option value="0">JNO</option>
+          <option value="1">JYES</option>
+        </field>
 
-      <field name="jg_approve"
-             type="radio"
-             default="0"
-             class="btn-group"
-             label="COM_JOOMGALLERY_CONFIG_UR_UU_APPROVAL_NEEDED"
-             description="COM_JOOMGALLERY_CONFIG_UR_UU_APPROVAL_NEEDED_LONG" >
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
-      </field>
+        <field name="jg_approve"
+              type="radio"
+              default="0"
+              class="btn-group"
+              label="COM_JOOMGALLERY_CONFIG_UR_UU_APPROVAL_NEEDED"
+              description="COM_JOOMGALLERY_CONFIG_UR_UU_APPROVAL_NEEDED_LONG" >
+          <option value="0">JNO</option>
+          <option value="1">JYES</option>
+        </field>
 
-      <field name="jg_maxusercat"
-             type="number"
-             filter="int"
-             default="10"
-             min="1"
-             step="1"
-             label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_USERCATS"
-             description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_USERCATS_LONG" />
+        <field name="jg_maxusercat"
+              type="number"
+              filter="int"
+              default="10"
+              min="1"
+              step="1"
+              label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_USERCATS"
+              description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_USERCATS_LONG" />
 
-      <field name="jg_maxuserimage"
-             type="number"
-             default="500"
-             filter="int"
-             min="1"
-             step="1"
-             label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES"
-             description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES_LONG" />
+        <field name="jg_maxuserimage"
+              type="number"
+              default="500"
+              filter="int"
+              min="1"
+              step="1"
+              label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES"
+              description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES_LONG" />
 
-      <field name="jg_maxuserimage_timespan"
-             type="number"
-             filter="int"
-             min="0"
-             step="1"
-             default="0"
-             label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES_TIMESPAN"
-             description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES_TIMESPAN_LONG" />
+        <field name="jg_maxuserimage_timespan"
+              type="number"
+              filter="int"
+              min="0"
+              step="1"
+              default="0"
+              label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES_TIMESPAN"
+              description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_IMAGES_TIMESPAN_LONG" />
 
-      <field name="jg_maxfilesize"
-             type="number"
-             default="2000000"
-             filter="int"
-             min="1"
-             step="1"
-             label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_FILESIZE"
-             description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_FILESIZE_LONG" />
+        <field name="jg_maxfilesize"
+              type="number"
+              default="2000000"
+              filter="int"
+              min="1"
+              step="1"
+              label="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_FILESIZE"
+              description="COM_JOOMGALLERY_CONFIG_UR_UU_MAX_FILESIZE_LONG" />
     </fieldset>
 
-    <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_UPLOAD_SETTINGS" note="user-upload">
+    <fieldset type="tab" name="user-upload" label="COM_JOOMGALLERY_ACTION_UPLOAD">
       <field name="jg_newpiccopyright"
              type="radio"
              default="1"
@@ -537,7 +529,7 @@
       </field>
     </fieldset>
 
-    <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_DOWNLOAD_SETTINGS" note="user-download">
+    <fieldset type="tab" name="user-download" label="COM_JOOMGALLERY_CONFIG_UR_UD_USER_DOWNLOAD_SETTINGS">
       <field name="jg_download"
              type="radio"
              default="1"
@@ -579,7 +571,7 @@
       </field>
     </fieldset>
 
-    <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_RATING_SETTINGS" note="user-rating">
+    <fieldset type="tab" name="user-ratings" label="COM_JOOMGALLERY_CONFIG_UR_TAB_RATING_SETTINGS">
       <field name="jg_showrating"
              type="radio"
              default="1"
@@ -619,7 +611,7 @@
       </field>
     </fieldset>
 
-    <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_REPORT_SETTINGS" note="user-report">
+    <fieldset type="tab" name="user-reports" label="COM_JOOMGALLERY_CONFIG_UR_RP_REPORTS_SETTINGS">
       <field name="jg_report_images"
              type="radio"
              default="1"
@@ -642,25 +634,23 @@
     </fieldset>
   </fieldset>
 
-  <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_BACKEND_SETTINGS" note="backend">
+  <fieldset type="tab" name="backend" label="COM_JOOMGALLERY_CONFIG_BACKEND_TAB" note="backend">
   </fieldset>
 
-  <fieldset type="tab" label="COM_JOOMGALLERY_CONFIG_TAB_FRONTEND_SETTINGS" note="frontend">
+  <fieldset type="tab" name="frontend" label="COM_JOOMGALLERY_CONFIG_FRONTEND_TAB" note="frontend">
   </fieldset>
 
-  <fieldset name="accesscontrol">
-    <field name="asset_id"
-           type="hidden"
-           filter="unset" />
+  <field name="asset_id"
+          type="hidden"
+          filter="unset" />
 
-    <field name="rules"
-           type="rules"
-           label="JFIELD_RULES_LABEL"
-           translate_label="false"
-           filter="rules"
-           validate="rules"
-           class="inputbox"
-           component="com_joomgallery"
-           section="config" />
-  </fieldset>
+  <field name="rules"
+          type="rules"
+          label="JFIELD_RULES_LABEL"
+          translate_label="false"
+          filter="rules"
+          validate="rules"
+          class="inputbox"
+          component="com_joomgallery"
+          section="config" />
 </form>

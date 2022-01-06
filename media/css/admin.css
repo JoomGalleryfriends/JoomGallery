@@ -1,11 +1,16 @@
 .jcc-color-box {
-    float: left;
-    width: 15px;
-    height: 15px;
-    margin-right: 5px;
-    border: 1px solid rgba(0, 0, 0, .2);
+  float: left;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  border: 1px solid rgba(0, 0, 0, .2);
 }
-
 .other-filters{
-    padding: 0 14px;
+  padding: 0 14px;
+}
+.jg.jg-config joomla-tab > joomla-tab-element {
+  padding: 0;
+}
+.jg.jg-config joomla-tab > joomla-tab-element .row-fluid {
+  padding: 30px;
 }

@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Form\FormHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
@@ -42,9 +43,22 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		$this->state = $this->get('State');
-		$this->item  = $this->get('Item');
-		$this->form  = $this->get('Form');
+		$this->state     = $this->get('State');
+		$this->item      = $this->get('Item');
+		$this->form      = $this->get('Form');
+    $this->fieldsets = array();
+
+    // fill fieldset array
+    foreach ($this->form->getFieldsets() as $key => $fieldset)
+    {
+      $parts = \explode('-',$key);
+      $level = \count($parts);
+
+      $fieldset->level = $level;
+      $fieldset->title = \end($parts);
+
+      $this->setFieldset($key, array('this'=>$fieldset));
+    }
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -112,4 +126,137 @@ class HtmlView extends JoomGalleryView
 			ToolbarHelper::cancel('config.cancel', 'JTOOLBAR_CLOSE');
 		}
 	}
+
+  /**
+	 * Add a fieldset to the fieldset array.
+   * source: https://stackoverflow.com/questions/13308968/create-infinitely-deep-multidimensional-array-from-string-in-php
+   *
+   * @param  string  $key    path for the value in the array
+   * @param  string  $value  the value to be placed at the defined path
+	 *
+	 * @return void
+	 *
+	 */
+	protected function setFieldset($key, $value)
+	{
+    if (false === ($levels = explode('-',$key)))
+    {
+      return;
+    }
+
+    $pointer = &$this->fieldsets;
+    for ($i=0; $i < sizeof($levels); $i++)
+    {
+      if (!isset($pointer[$levels[$i]]))
+      {
+        $pointer[$levels[$i]] = array();
+      }
+
+      $pointer = &$pointer[$levels[$i]];
+    }
+
+    $pointer = $value;
+  }
+
+  /**
+	 * Method to get an array of JFormField objects in a given fieldset by name.
+   *
+   * @param    string  $name   name of the fieldset
+	 *
+	 * @return   array   Array with field names
+	 *
+	 */
+  public function getFieldset($name)
+	{
+    $xml = null;
+
+    // Attempt to load the XML file.
+    $filename = JPATH_COMPONENT_ADMINISTRATOR.DIRECTORY_SEPARATOR.'forms'.DIRECTORY_SEPARATOR.'config.xml';
+    if (file_exists($filename))
+    {
+      $xml = simplexml_load_file($filename);
+    }
+
+    // Initialise fields array
+    $fields = array();
+
+    // Make sure there is a valid Form XML document.
+		if (!($xml instanceof \SimpleXMLElement))
+		{
+			throw new \UnexpectedValueException('XML is not an instance of SimpleXMLElement');
+		}
+
+    /*
+		 * Get an array of <field /> elements that are underneath a <fieldset /> element
+		 * with the appropriate name attribute, and also any <field /> elements with
+		 * the appropriate fieldset attribute. To allow repeatable elements only fields
+		 * which are not descendants of other fields are selected.
+		 */
+    $elements = $xml->xpath('(//fieldset[@name="' . $name . '"]/field | //field[@fieldset="' . $name . '"])[not(ancestor::field)]');
+
+    // If no field elements were found return empty.
+		if (empty($elements))
+		{
+			return $fields;
+		}
+
+    // Build the result array from the found field elements.
+		foreach ($elements as $element)
+		{
+			// Get the field groups for the element.
+			$attrs = $element->xpath('ancestor::fields[@name]/@name');
+			$groups = array_map('strval', $attrs ? $attrs : array());
+			$group = implode('.', $groups);
+
+			// If the field is successfully loaded add it to the result array.
+      // Get the field type.
+      $type = $element['type'] ? (string) $element['type'] : 'text';
+
+      // Load the FormField object for the field.
+      $field = FormHelper::loadFieldType($type);
+
+      // If the object could not be loaded, get a text field object.
+      if ($field === false)
+      {
+        $field = FormHelper::loadFieldType('text');
+      }
+
+      /*
+      * Get the value for the form field if not set.
+      * Default to the translated version of the 'default' attribute
+      * if 'translate_default' attribute if set to 'true' or '1'
+      * else the value of the 'default' attribute for the field.
+      */
+      $default = (string) ($element['default'] ? $element['default'] : $element->default);
+
+      if (($translate = $element['translate_default']) && ((string) $translate === 'true' || (string) $translate === '1'))
+      {
+        $lang = Factory::getLanguage();
+
+        if ($lang->hasKey($default))
+        {
+          $debug = $lang->setDebug(false);
+          $default = Text::_($default);
+          $lang->setDebug($debug);
+        }
+        else
+        {
+          $default = Text::_($default);
+        }
+      }
+
+      $value = $this->form->getValue((string) $element['name'], $group, $default);
+
+      // Setup the FormField object.
+      $field->setForm($this->form);
+      $field->setup($element, $value, $group);
+
+			if ($field)
+			{
+				$fields[$field->id] = $field;
+			}
+		}
+
+		return $fields;
+  }
 }
