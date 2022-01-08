@@ -26,7 +26,7 @@ use \Joomla\CMS\Language\Text;
 class JoomGalleryView extends BaseHtmlView
 {
   /**
-   * JApplication object
+   * Joomla\CMS\Application\AdministratorApplication
    *
    * @access  protected
    * @var     object
@@ -34,20 +34,12 @@ class JoomGalleryView extends BaseHtmlView
   var $app;
 
   /**
-   * JoomConfig object
+   * Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
    *
    * @access  protected
    * @var     object
    */
-  var $config;
-
-  /**
-   * JoomAmbit object
-   *
-   * @access  protected
-   * @var     object
-   */
-  var $ambit;
+  var $component;
 
   /**
    * JUser object, holds the current user data
@@ -77,49 +69,8 @@ class JoomGalleryView extends BaseHtmlView
     parent::__construct($config);
 
     $this->app       = Factory::getApplication('administrator');
-    //$this->_ambit    = JoomAmbit::getInstance();
-    //$this->ambit     = $this->app->bootComponent('com_joomgallery')->ambit;
-    $this->config    = $this->app->bootComponent(_JOOM_OPTION)->config;
+    $this->component = $this->app->bootComponent(_JOOM_OPTION);
     $this->user      = Factory::getUser();
     $this->document  = Factory::getDocument();
-
-    //$this->document->addStyleSheet($this->_ambit->getStyleSheet('admin.joomgallery.css'));
-
-    //JHtmlBehavior::framework();
-    //$this->_doc->addScript($this->_ambit->getScript('admin.js'));
-
-    //JoomHelper::addSubmenu();
-
-    //JHTML::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-    //--> use services instead (https://blog.astrid-guenther.de/joomla-dependency-injection/)
-
-    // Check for available updates
-    // $controller = JRequest::getCmd('controller');
-    // if(!$checked = $this->app->getUserState('joom.update.checked'))
-    // {
-    //   if($this->config->get('jg_checkupdate') && $controller && $controller != 'control')
-    //   {
-    //     $dated_extensions = JoomExtensions::checkUpdate();
-    //     if(count($dated_extensions))
-    //     {
-    //       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ADMENU_SYSTEM_NOT_UPTODATE'), 'warning');
-    //       $this->app->setUserState('joom.update.checked', -1);
-    //     }
-    //     else
-    //     {
-    //       $this->app->setUserState('joom.update.checked', 1);
-    //     }
-    //   }
-    // }
-    // else
-    // {
-    //   if($checked == -1)
-    //   {
-    //     if($controller && $controller != 'control')
-    //     {
-    //       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ADMENU_SYSTEM_NOT_UPTODATE'), 'warning');
-    //     }
-    //   }
-    // }
   }
 }

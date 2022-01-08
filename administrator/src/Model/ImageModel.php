@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 
@@ -47,8 +48,8 @@ class ImageModel extends AdminModel
 	 */
 	protected $item = null;
 
-	
-	
+
+
 
 	/**
 	 * Returns a reference to the a Table object, always creating it.
@@ -83,15 +84,15 @@ class ImageModel extends AdminModel
 
 		// Get the form.
 		$form = $this->loadForm(
-								'com_joomgallery.image', 
+								'com_joomgallery.image',
 								'image',
 								array(
 									'control' => 'jform',
-									'load_data' => $loadData 
+									'load_data' => $loadData
 								)
 							);
 
-		
+
 
 		if (empty($form))
 		{
@@ -101,7 +102,7 @@ class ImageModel extends AdminModel
 		return $form;
 	}
 
-	
+
 
 	/**
 	 * Method to get the data that should be injected in the form.
@@ -123,7 +124,7 @@ class ImageModel extends AdminModel
 			}
 
 			$data = $this->item;
-			
+
 
 			// Support for multiple or not foreign key field: robots
 			$array = array();
@@ -155,19 +156,19 @@ class ImageModel extends AdminModel
 	 */
 	public function getItem($pk = null)
 	{
-		
+
 			if ($item = parent::getItem($pk))
 			{
 				if (isset($item->params))
 				{
 					$item->params = json_encode($item->params);
 				}
-				
+
 				// Do any procesing on fields here if needed
 			}
 
 			return $item;
-		
+
 	}
 
 	/**
@@ -199,7 +200,7 @@ class ImageModel extends AdminModel
 
 		foreach ($pks as $pk)
 		{
-			
+
 				if ($table->load($pk, true))
 				{
 					// Reset the id to create a new record.
@@ -209,7 +210,7 @@ class ImageModel extends AdminModel
 					{
 						throw new \Exception($table->getError());
 					}
-					
+
 				if (!empty($table->catid))
 				{
 					if (is_array($table->catid))
@@ -238,7 +239,7 @@ class ImageModel extends AdminModel
 				{
 					throw new \Exception($table->getError());
 				}
-			
+
 		}
 
 		// Clean cache

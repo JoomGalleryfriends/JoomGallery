@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 

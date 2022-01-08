@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <fieldset label="COM_JOOMGALLERY" name="joomgallery">
-        <field name="extended_config" default="0" type="radio" class="btn-group btn-group-yesno" label="COM_JOOMGALLERY_FORM_LBL_EXTENDED_CONFIG" description="COM_JOOMGALLERY_FORM_DESC_EXTENDED_CONFIG" hint="COM_JOOMGALLERY_FORM_LBL_EXTENDED_CONFIG">
+        <field name="extended_config"
+               type="radio"
+               default="0"
+               class="btn-group btn-group-yesno"
+               label="COM_JOOMGALLERY_ADMENU_EXTENDED_CONFIG_LABEL"
+               description="COM_JOOMGALLERY_ADMENU_EXTENDED_CONFIG_DESC" >
           <option value="0">JNO</option>
           <option value="1">JYES</option>
+        </field>
+
+        <field name="inheritance_config"
+               type="list"
+               default="default"
+               label="COM_JOOMGALLERY_ADMENU_INHERITANCE_CONFIG_LABEL"
+               description="COM_JOOMGALLERY_ADMENU_INHERITANCE_CONFIG_DESC" >
+          <option value="default">JDEFAULT</option>
         </field>
     </fieldset>
 
     <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
-        <field name="rules" type="rules" component="com_joomgallery" class="inputbox" filter="rules" validate="rules" label="JCONFIG_PERMISSIONS_LABEL" section="component" />
+        <field name="rules"
+               type="rules"
+               component="com_joomgallery"
+               class="inputbox"
+               filter="rules"
+               validate="rules"
+               label="JCONFIG_PERMISSIONS_LABEL"
+               section="component" />
 	  </fieldset>
 
     <fieldset name="component">

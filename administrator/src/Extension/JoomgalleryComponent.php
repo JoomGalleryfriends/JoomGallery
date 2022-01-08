@@ -23,8 +23,10 @@ use Joomla\CMS\Extension\MVCComponent;
 use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
 use Joomla\CMS\Tag\TagServiceTrait;
 use Psr\Container\ContainerInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\Upload;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\Config;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Upload\UploadServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Upload\UploadServiceTrait;
 
 /**
  * Component class for Joomgallery
@@ -41,6 +43,19 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
 		CategoryServiceTrait::getTableNameForSection insteadof TagServiceTrait;
 		CategoryServiceTrait::getStateColumnForSection insteadof TagServiceTrait;
 	}
+
+  /**
+   * JoomGallery services
+   *
+   * How to:
+   * --------
+   * $component = $app->bootComponent(_JOOM_OPTION); // boot JoomGallery component
+   * $component->create<SERVICENAME>('<VARIANT>');   // instantiate new class with specified variant of the service
+   * $component->get<SERVICENAME>()-><METHOD>();     // execute method of service class
+   *
+   */
+  use ConfigServiceTrait;
+  use UploadServiceTrait;
 
   /**
 	 * Booting the extension. This is the function to set up the environment of the extension like
@@ -61,7 +76,5 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
     {
       require_once JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/defines.php';
     }
-
-    $this->config = new Config;
   }
 }
