@@ -8,55 +8,55 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 
 \defined('JPATH_PLATFORM') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\Config;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\LocalFilesystem;
 
 /**
-* Trait to implement ConfigServiceInterface
+* Trait to implement FilesystemServiceInterface
 *
 * @since  4.0.0
 */
-trait ConfigServiceTrait
+trait FilesystemServiceTrait
 {
   /**
-	 * Storage for the config helper class.
+	 * Storage for the filesystem helper class.
 	 *
-	 * @var ConfigInterface
+	 * @var FilesystemInterface
 	 *
 	 * @since  4.0.0
 	 */
-	private $config = null;
+	private $filesystem = null;
 
   /**
-	 * Returns the config helper class.
+	 * Returns the filesystem helper class.
 	 *
-	 * @return  ConfigInterface
+	 * @return  FilesystemInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function getConfig(): ConfigInterface
+	public function getStorage(): FilesystemInterface
 	{
-		return $this->config;
+		return $this->storage;
 	}
 
   /**
-	 * Creates the config helper class
+	 * Creates the filesystem helper class
    *
-   * @param   string  $inheritance  Inheritance method to be used
+   * @param   string  $filesystem  Name of the filesystem to be used
 	 *
    * @return  void
    *
 	 * @since  4.0.0
 	 */
-	public function createConfig($inheritance = 'default'): void
+	public function createStorage($filesystem = 'localhost'): void
 	{
-    switch ($inheritance)
+    switch ($filesystem)
     {
       default:
-      $this->config = new Config;
+      $this->filesystem = new LocalFilesystem;
         break;
     }
 

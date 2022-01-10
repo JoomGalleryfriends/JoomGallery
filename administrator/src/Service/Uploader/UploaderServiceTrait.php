@@ -8,45 +8,45 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Upload;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 \defined('JPATH_PLATFORM') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\SingleUpload;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\AjaxUpload;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\BatchUpload;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\FTPUpload;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\SingleUploader;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\AjaxUploader;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\BatchUploader;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\FTPUploader;
 
 /**
-* Trait to implement UploadServiceInterface
+* Trait to implement UploaderServiceInterface
 *
 * @since  4.0.0
 */
-trait UploadServiceTrait
+trait UploaderServiceTrait
 {
   /**
-	 * The upload class.
+	 * Storage for the Uploader class.
 	 *
-	 * @var UploadInterface
+	 * @var UploaderInterface
 	 *
 	 * @since  4.0.0
 	 */
-	private $upload = null;
+	private $uploader = null;
 
   /**
-	 * Returns the upload helper class.
+	 * Returns the Uploader helper class.
 	 *
-	 * @return  UploadInterface
+	 * @return  UploaderInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function getUpload(): UploadInterface
+	public function getUploader(): UploaderInterface
 	{
-		return $this->upload;
+		return $this->uploader;
 	}
 
   /**
-	 * Creates the upload helper class based on the selected upload method
+	 * Creates the Uploader helper class based on the selected upload method
 	 *
    * @param   string  $uploadMethod  Name of the upload method to be used
 	 *
@@ -54,25 +54,25 @@ trait UploadServiceTrait
    *
 	 * @since  4.0.0
 	 */
-	public function createUpload($uploadMethod): void
+	public function createUploader($uploadMethod): void
 	{
     switch ($uploadMethod)
     {
       case 'ajax':
-        $this->upload = new AjaxUpload;
+        $this->uploader = new AjaxUpload;
         break;
 
       case 'batch':
-        $this->upload = new BatchUpload;
+        $this->uploader = new BatchUpload;
         break;
 
       case 'FTP':
       case 'ftp':
-        $this->upload = new FTPUpload;
+        $this->uploader = new FTPUpload;
         break;
 
       default:
-        $this->upload = new SingleUpload;
+        $this->uploader = new SingleUpload;
         break;
     }
 

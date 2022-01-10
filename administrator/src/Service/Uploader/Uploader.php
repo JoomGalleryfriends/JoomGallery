@@ -8,20 +8,34 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Upload;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 \defined('_JEXEC') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\UploadInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\Upload as BaseUpload;
+use \Joomla\CMS\Factory;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 
 /**
-* Upload helper class (Ajax Upload)
+* Base class for the Uploader helper classes
 *
 * @since  4.0.0
 */
-class AjaxUpload extends BaseUpload implements UploadInterface
+class Uploader implements UploaderInterface
 {
+  /**
+	 * Method to get the direction for a given item.
+	 *
+	 * @return  void
+	 *
+	 * @since  4.0.0
+	 */
+	public function debugoutput(): void
+  {
+    Factory::getApplication()->enqueueMessage('These are debug information of the upload.', 'message');
+
+    return;
+  }
+
 	/**
 	 * Method to upload a new image.
 	 *
@@ -31,6 +45,6 @@ class AjaxUpload extends BaseUpload implements UploadInterface
 	 */
 	public function upload(): string
   {
-    return 'Ajax upload successfully!';
+    return 'Error: Please choose an upload method!';
   }
 }

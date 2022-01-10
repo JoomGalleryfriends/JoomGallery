@@ -8,16 +8,16 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Storage;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 
 \defined('JPATH_PLATFORM') or die;
 
 /**
-* Storage Interface for the Configuration Helper
+* Filesystem Interface for the Configuration Helper
 *
 * @since  4.0.0
 */
-interface StorageInterface
+interface FilesystemInterface
 {
 	/**
    * Constructor enables the connection to the filesystem

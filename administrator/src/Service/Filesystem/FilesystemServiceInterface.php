@@ -8,39 +8,43 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 
-// No direct access
-defined('_JEXEC') or die;
+\defined('JPATH_PLATFORM') or die;
 
 /**
- * Upload Helper
- *
- * - Batch (Zip) upload
- * - Single upload
- * - FTP upload
- * - Ajax upload
- *
- * @since   1.0.0
- */
-class Upload
+* The Filesystem service
+*
+* @since  4.0.0
+*/
+interface FilesystemServiceInterface
 {
   /**
-   * The ID of the category in which
-   * the images shall be uploaded
-   *
-   * @var int
-   */
-  public $catid = 0;
+	 * Storage for the filesystem helper class.
+	 *
+	 * @var FilesystemInterface
+	 *
+	 * @since  4.0.0
+	 */
+	private $filesystem;
 
   /**
-   * Constructor
+	 * Creates the filesystem helper class
    *
+   * @param   string  $filesystem  Name of the filesystem to be used
+	 *
    * @return  void
-   * @since   4.0.0
-   */
-  public function __construct()
-  {
-    $this->catid = 99;
-  }
+   *
+	 * @since  4.0.0
+	 */
+	public function createFilesystem($filesystem): void;
+
+	/**
+	 * Returns the filesystem helper class.
+	 *
+	 * @return  FilesystemInterface
+	 *
+	 * @since  4.0.0
+	 */
+	public function getStorage(): FilesystemInterface;
 }

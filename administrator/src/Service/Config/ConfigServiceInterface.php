@@ -20,6 +20,15 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 interface ConfigServiceInterface
 {
   /**
+	 * Storage for the config helper class.
+	 *
+	 * @var ConfigInterface
+	 *
+	 * @since  4.0.0
+	 */
+	private $config;
+
+  /**
 	 * Creates the config helper class
    *
    * @param   string  $inheritance  Inheritance method to be used

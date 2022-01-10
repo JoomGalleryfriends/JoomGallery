@@ -73,6 +73,7 @@
             <folder>presets</folder>
             <folder>sql</folder>
             <folder>includes</folder>
+            <folder>layouts</folder>
         </files>
         <languages folder="administrator/languages">
 			      <language tag="en-GB">en-GB/com_joomgallery.ini</language>

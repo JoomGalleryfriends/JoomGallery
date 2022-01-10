@@ -25,10 +25,12 @@ use Joomla\CMS\Tag\TagServiceTrait;
 use Psr\Container\ContainerInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceTrait;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Upload\UploadServiceInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Upload\UploadServiceTrait;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Storage\StorageServiceInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Storage\StorageServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\FilesystemServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\FilesystemServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherServiceTrait;
 
 /**
  * Component class for Joomgallery
@@ -57,8 +59,9 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
    *
    */
   use ConfigServiceTrait;
-  use UploadServiceTrait;
-  use StorageServiceTrait;
+  use UploaderServiceTrait;
+  use FilesystemServiceTrait;
+  use RefresherServiceTrait;
 
   /**
 	 * Booting the extension. This is the function to set up the environment of the extension like

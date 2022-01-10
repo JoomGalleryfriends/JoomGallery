@@ -8,34 +8,51 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Upload;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Refresher;
 
 \defined('JPATH_PLATFORM') or die;
 
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\Refresher;
+
 /**
-* The Upload service
+* Trait to implement RefresherServiceInterface
 *
 * @since  4.0.0
 */
-interface UploadServiceInterface
+trait RefresherServiceTrait
 {
   /**
-	 * Creates the upload helper class based on the selected upload method
+	 * Storage for the refresher class.
 	 *
-   * @param   string  $uploadMethod  Name of the upload method to be used
+	 * @var RefresherInterface
+	 *
+	 * @since  4.0.0
+	 */
+	private $refresher = null;
+
+  /**
+	 * Returns the refresher helper class.
+	 *
+	 * @return  RefresherInterface
+	 *
+	 * @since  4.0.0
+	 */
+	public function getRefresher(): RefresherInterface
+	{
+		return $this->refresher;
+	}
+
+  /**
+	 * Creates the refresher helper class
 	 *
    * @return  void
    *
 	 * @since  4.0.0
 	 */
-	public function createUpload($uploadMethod): void;
+	public function createRefresher(): void
+	{
+    $this->refresher = new Refresher;
 
-	/**
-	 * Returns the upload helper class.
-	 *
-	 * @return  UploadInterface
-	 *
-	 * @since  4.0.0
-	 */
-	public function getUpload(): UploadInterface;
+    return;
+	}
 }

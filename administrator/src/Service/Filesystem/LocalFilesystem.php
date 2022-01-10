@@ -8,7 +8,7 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Storage;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 
 // No direct access
 \defined('_JEXEC') or die;
@@ -19,17 +19,17 @@ use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\User\UserHelper;
 use \Joomla\CMS\Filesystem\File as JFile;
 use \Joomla\CMS\Filesystem\Folder as JFolder;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Storage\StorageInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\FilesystemInterface;
 
 /**
- * JoomGallery Storage Helper
+ * JoomGallery Filesystem Helper
  *
  * Provides handling with the filesystem where the image files are stored
  *
  * @package JoomGallery
  * @since   4.0.0
  */
-class LocalStorage implements StorageInterface
+class LocalFilesystem implements FilesystemInterface
 {
   /**
    * Root folder of the local storage system

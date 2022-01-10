@@ -8,19 +8,19 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Upload;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 \defined('_JEXEC') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\UploadInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\Upload as BaseUpload;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
 
 /**
-* Upload helper class (FTP Upload)
+* Uploader helper class (Ajax Upload)
 *
 * @since  4.0.0
 */
-class FTPUpload extends BaseUpload implements UploadInterface
+class AjaxUploader extends BaseUploader implements UploaderInterface
 {
 	/**
 	 * Method to upload a new image.
@@ -31,6 +31,6 @@ class FTPUpload extends BaseUpload implements UploadInterface
 	 */
 	public function upload(): string
   {
-    return 'FTP upload successfully!';
+    return 'Ajax upload successfully!';
   }
 }

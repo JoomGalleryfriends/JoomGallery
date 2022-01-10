@@ -8,34 +8,43 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Storage;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 \defined('JPATH_PLATFORM') or die;
 
 /**
-* The Storage service
+* The Uploader service
 *
 * @since  4.0.0
 */
-interface StorageServiceInterface
+interface UploaderServiceInterface
 {
   /**
-	 * Creates the storage helper class
-   *
-   * @param   string  $filesystem  Name of the filesystem to be used
+	 * Storage for the Uploader class.
+	 *
+	 * @var UploaderInterface
+	 *
+	 * @since  4.0.0
+	 */
+	private $uploader;
+
+  /**
+	 * Creates the Uploader helper class based on the selected upload method
+	 *
+   * @param   string  $uploadMethod  Name of the upload method to be used
 	 *
    * @return  void
    *
 	 * @since  4.0.0
 	 */
-	public function createStorage($filesystem): void;
+	public function createUploader($uploadMethod): void;
 
 	/**
-	 * Returns the storage helper class.
+	 * Returns the Uploader helper class.
 	 *
-	 * @return  StorageInterface
+	 * @return  UploadInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function getStorage(): StorageInterface;
+	public function getUploader(): UploadInterface;
 }

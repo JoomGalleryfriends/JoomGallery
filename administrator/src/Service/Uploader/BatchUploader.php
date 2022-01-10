@@ -8,19 +8,19 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Upload;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 \defined('_JEXEC') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\UploadInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Upload\Upload as BaseUpload;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
 
 /**
-* Upload helper class (Single Upload)
+* Uploader helper class (Batch Upload)
 *
 * @since  4.0.0
 */
-class SingleUpload extends BaseUpload implements UploadInterface
+class BatchUploader extends BaseUploader implements UploaderInterface
 {
 	/**
 	 * Method to upload a new image.
@@ -31,6 +31,6 @@ class SingleUpload extends BaseUpload implements UploadInterface
 	 */
 	public function upload(): string
   {
-    return 'Single upload successfully!';
+    return 'Batch upload successfully!';
   }
 }
