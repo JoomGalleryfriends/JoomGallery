@@ -167,7 +167,6 @@ class Config implements ConfigInterface
       $this->table = Table::getInstance('ConfigTable', '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\');
     }
 
-    $app    = Factory::getApplication();
     $id     = intval($id);
 
     $this->table->load($id);

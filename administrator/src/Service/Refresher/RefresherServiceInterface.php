@@ -13,14 +13,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Refresher;
 \defined('JPATH_PLATFORM') or die;
 
 /**
-* The Storage service
+* The Refresher service
 *
 * @since  4.0.0
 */
-interface StorageServiceInterface
+interface RefresherServiceInterface
 {
   /**
-	 * Storage for the refresher class.
+	 * Refresher for the refresher class.
 	 *
 	 * @var RefresherInterface
 	 *
@@ -29,20 +29,20 @@ interface StorageServiceInterface
 	private $refresher;
 
   /**
-	 * Creates the storage helper class
+	 * Creates the Refresher helper class
 	 *
    * @return  void
    *
 	 * @since  4.0.0
 	 */
-	public function createStorage(): void;
+	public function createRefresher(): void;
 
 	/**
-	 * Returns the storage helper class.
+	 * Returns the Refresher helper class.
 	 *
-	 * @return  StorageInterface
+	 * @return  RefresherInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function getStorage(): StorageInterface;
+	public function getStorage(): RefresherInterface;
 }

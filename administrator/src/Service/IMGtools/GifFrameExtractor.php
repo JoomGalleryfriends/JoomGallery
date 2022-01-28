@@ -8,7 +8,7 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // No direct access
 defined('_JEXEC') or die;
@@ -133,7 +133,7 @@ class GifFrameExtractor
    */
   public function extract($filename, $originalFrames = false)
   {
-      if (!self::isAnimatedGif($filename))
+      if (!$this->isAnimatedGif($filename))
       {
           return array(false);
           //throw new \Exception('The GIF image you are trying to explode is not animated !');
@@ -232,7 +232,7 @@ class GifFrameExtractor
    *
    * @param string $filename GIF path
    */
-  public static function isAnimatedGif($filename)
+  public function isAnimatedGif($filename)
   {
     if(!($fh = @fopen($filename, 'rb')))
     {

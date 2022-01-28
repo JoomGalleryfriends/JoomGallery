@@ -8,7 +8,7 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // No direct access
 defined('_JEXEC') or die;

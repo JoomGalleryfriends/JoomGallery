@@ -31,6 +31,8 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Filesyste
 use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\FilesystemServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsServiceTrait;
 
 /**
  * Component class for Joomgallery
@@ -62,6 +64,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
   use UploaderServiceTrait;
   use FilesystemServiceTrait;
   use RefresherServiceTrait;
+  use IMGtoolsServiceTrait;
 
   /**
 	 * Booting the extension. This is the function to set up the environment of the extension like

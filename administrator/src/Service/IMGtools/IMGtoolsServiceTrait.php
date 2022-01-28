@@ -1,0 +1,68 @@
+<?php
+/**
+******************************************************************************************
+**   @version    4.0.0                                                                  **
+**   @package    com_joomgallery                                                        **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2022  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 2 or later                          **
+*****************************************************************************************/
+
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
+
+\defined('JPATH_PLATFORM') or die;
+
+use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMtools;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GDtools;
+
+/**
+* Trait to implement IMGtoolsServiceInterface
+*
+* @since  4.0.0
+*/
+trait IMGtoolsServiceTrait
+{
+  /**
+	 * Storage for the IMGtools class.
+	 *
+	 * @var IMGtoolsInterface
+	 *
+	 * @since  4.0.0
+	 */
+	private $IMGtools = null;
+
+  /**
+	 * Returns the IMGtools class.
+	 *
+	 * @return  IMGtoolsInterface
+	 *
+	 * @since  4.0.0
+	 */
+	public function getIMGtools(): IMGtoolsInterface
+	{
+		return $this->IMGtools;
+	}
+
+  /**
+	 * Creates the IMGtools class
+	 *
+   * @return  void
+   *
+	 * @since  4.0.0
+	 */
+	public function createIMGtools($processor, $debugoutput = '', $keep_metadata = false, $keep_anim = false): void
+	{
+    switch ($processor)
+    {
+      case 'im':
+        $this->IMGtools = new IMtools($debugoutput, $keep_metadata, $keep_anim);
+        break;
+
+      default:
+        $this->IMGtools = new GDtools($debugoutput, $keep_metadata, $keep_anim);
+        break;
+    }
+
+    return;
+	}
+}

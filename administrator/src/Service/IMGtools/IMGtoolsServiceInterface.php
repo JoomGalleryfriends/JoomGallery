@@ -8,31 +8,43 @@
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
-\defined('_JEXEC') or die;
-
-use \Joomla\CMS\Factory;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+\defined('JPATH_PLATFORM') or die;
 
 /**
-* Base class for the Uploader helper classes
+* The IMGtools service
 *
 * @since  4.0.0
 */
-abstract class Uploader implements UploaderInterface
+interface IMGtoolsServiceInterface
 {
   /**
-	 * Method to get the direction for a given item.
+	 * Storage for the IMGtools class.
 	 *
-	 * @return  void
+	 * @var IMGtoolsInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function debugoutput(): void
-  {
-    Factory::getApplication()->enqueueMessage('These are debug information of the upload.', 'message');
+	private $IMGtools;
 
-    return;
-  }
+  /**
+	 * Creates the IMGtools class
+   *
+   * @param   string  $processor  Name of the image processor to be used
+	 *
+   * @return  void
+   *
+	 * @since  4.0.0
+	 */
+	public function createIMGtools($processor, $debugoutput = '', $keep_metadata = false, $keep_anim = false): void;
+
+	/**
+	 * Returns the IMGtools class.
+	 *
+	 * @return  IMGtoolsInterface
+	 *
+	 * @since  4.0.0
+	 */
+	public function getIMGtools(): IMGtoolsInterface;
 }
