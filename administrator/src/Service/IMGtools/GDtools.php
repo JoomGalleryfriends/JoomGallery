@@ -57,7 +57,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @var array
    */
-  protected $supported_types = array('JPG', 'JPEG', 'GIF', 'PNG');
+  protected $supported_types = array('JPG', 'JPEG', 'JFIF', 'GIF', 'PNG');
 
   /**
    * Holds the working GD-Objects (image) and its duration (hundredths of a second) of each frame

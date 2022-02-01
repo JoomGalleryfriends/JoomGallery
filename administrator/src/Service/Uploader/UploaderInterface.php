@@ -19,12 +19,23 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 */
 interface UploaderInterface
 {
+  /**
+   * Constructor
+   *
+   * @return  void
+   *
+   * @since   1.0.0
+   */
+  public function __construct();
+
 	/**
 	 * Method to upload a new image.
 	 *
+   * @param   array    $data    form data
+   *
 	 * @return  string   Message
 	 *
 	 * @since  4.0.0
 	 */
-	public function upload(): string;
+	public function upload($data): string;
 }

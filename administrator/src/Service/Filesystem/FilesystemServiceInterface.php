@@ -46,5 +46,5 @@ interface FilesystemServiceInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function getStorage(): FilesystemInterface;
+	public function getFilesystem(): FilesystemInterface;
 }

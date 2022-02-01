@@ -37,9 +37,9 @@ trait FilesystemServiceTrait
 	 *
 	 * @since  4.0.0
 	 */
-	public function getStorage(): FilesystemInterface
+	public function getFilesystem(): FilesystemInterface
 	{
-		return $this->storage;
+		return $this->filesystem;
 	}
 
   /**
@@ -51,7 +51,7 @@ trait FilesystemServiceTrait
    *
 	 * @since  4.0.0
 	 */
-	public function createStorage($filesystem = 'localhost'): void
+	public function createFilesystem($filesystem = 'localhost'): void
 	{
     switch ($filesystem)
     {

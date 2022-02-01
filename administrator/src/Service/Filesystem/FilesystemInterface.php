@@ -36,11 +36,11 @@ interface FilesystemInterface
    * @param   string  $src   File name at local folder
    * @param   string  $dest  File name at destination storage filesystem
    *
-   * @return  mixed    true on success, false otherwise
+   * @return  bool    true on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function uploadFile($src, $dest): mixed;
+  public function uploadFile($src, $dest): bool;
 
   /**
    * Moves a file from the storage to a local folder
@@ -48,11 +48,11 @@ interface FilesystemInterface
    * @param   string  $src   File name at destination storage filesystem
    * @param   string  $dest  File name at local folder
    *
-   * @return  mixed    true on success, false otherwise
+   * @return  bool    true on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function downloadFile($src, $dest): mixed;
+  public function downloadFile($src, $dest): bool;
 
   /**
    * Moves a file at the storage filesystem
@@ -61,22 +61,22 @@ interface FilesystemInterface
    * @param   string  $dest  Destination file name
    * @param   bool    $copy  True, if you want to copy the file (default: false)
    *
-   * @return  mixed    true on success, false otherwise
+   * @return  bool    true on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function moveFile($src, $dest, $copy = false): mixed;
+  public function moveFile($src, $dest, $copy = false): bool;
 
   /**
    * Delete a file or array of files
    *
    * @param   mixed  $file   The file name or an array of file names
    *
-   * @return  mixed   true on success, false otherwise
+   * @return  bool   true on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function deleteFile($file): mixed;
+  public function deleteFile($file): bool;
 
   /**
    * Checks a file for existence, validity and size
@@ -90,15 +90,43 @@ interface FilesystemInterface
   public function checkFile($file): mixed;
 
   /**
+   * Check filename if it's valid for the filesystem
+   *
+   * @param   string    $nameb          filename before any processing
+   * @param   string    $namea          filename after processing in e.g. fixFilename
+   * @param   bool      $checkspecial   True if the filename shall be checked for special characters only
+   *
+   * @return  bool      True if the filename is valid, false otherwise
+   *
+   * @since   2.0.0
+  */
+  public function checkFilename($nameb, $namea = '', $checkspecial = false): bool;
+
+  /**
+   * Cleaning of file/category name
+   * optionally replace extension if present
+   * replace special chars defined in the configuration
+   *
+   * @param   string    $file            The file name
+   * @param   bool      $strip_ext       True for stripping the extension
+   * @param   string    $replace_chars   Characters to be replaced
+   *
+   * @return  mixed     cleaned name on success, false otherwise
+   *
+   * @since   1.0.0
+   */
+  public function cleanFilename($file, $strip_ext=false, $replace_chars=''): mixed;
+
+  /**
    * Create a folder and all necessary parent folders.
    *
    * @param   string  $path   A path to create from the base path.
    *
-   * @return  mixed    true on success, false otherwise
+   * @return  bool    true on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function createFolder($path): mixed;
+  public function createFolder($path): bool;
 
   /**
    * Moves a folder including all all files and subfolders
@@ -107,22 +135,22 @@ interface FilesystemInterface
    * @param   string  $dest   The path to the destination folder.
    * @param   bool    $copy   True, if you want to copy the folder (default: false)
    *
-   * @return  mixed    true on success, false otherwise
+   * @return  bool    true on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function moveFolder($src, $dest, $copy = false): mixed;
+  public function moveFolder($src, $dest, $copy = false): bool;
 
   /**
    * Delete a folder including all all files and subfolders
    *
    * @param   string  $path   The path to the folder to delete.
    *
-   * @return  mixed    true on success, false otherwise
+   * @return  bool    true on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function deleteFolder($path): mixed;
+  public function deleteFolder($path): bool;
 
   /**
    * Checks a folder for existence.
@@ -137,4 +165,17 @@ interface FilesystemInterface
    * @since   4.0.0
    */
   public function checkFolder($path, $files = false, $folders = false, $maxLevel = 3): mixed;
+
+  /**
+   * Sets the permission of a given file or folder recursively.
+   *
+   * @param   string  $path      The path to the file/folder
+   * @param   string  $val       The octal representation of the value to change file/folder mode
+   * @param   bool    $mode      True to use file mode. False to use folder mode. (default: true)
+   *
+   * @return  bool    True if successful [one fail means the whole operation failed].
+   *
+   * @since   4.0.0
+   */
+  public function chmod($path, $val, $mode=true): bool;
 }

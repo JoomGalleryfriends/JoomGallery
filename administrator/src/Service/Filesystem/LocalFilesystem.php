@@ -19,7 +19,10 @@ use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\User\UserHelper;
 use \Joomla\CMS\Filesystem\File as JFile;
 use \Joomla\CMS\Filesystem\Folder as JFolder;
+use \Joomla\CMS\Filesystem\Path as JPath;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\FilesystemInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Filesystem as BaseFilesystem;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * JoomGallery Filesystem Helper
@@ -29,14 +32,14 @@ use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Filesyst
  * @package JoomGallery
  * @since   4.0.0
  */
-class LocalFilesystem implements FilesystemInterface
+class LocalFilesystem extends BaseFilesystem implements FilesystemInterface
 {
   /**
    * Root folder of the local storage system
    *
    * @var string
    */
-  protected $root = '';
+  protected $root = JPATH_ROOT;
 
   /**
    * Constructor enables the connection to the filesystem
@@ -61,7 +64,7 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function uploadFile($src, $dest)
+  public function uploadFile($src, $dest): bool
   {
     return JFile::upload($src, $dest);
   }
@@ -76,7 +79,7 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function downloadFile($src, $dest)
+  public function downloadFile($src, $dest): bool
   {
     return JFile::copy($src, $dest);
   }
@@ -92,7 +95,7 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function moveFile($src, $dest, $copy = false)
+  public function moveFile($src, $dest, $copy = false): bool
   {
     if($copy)
     {
@@ -113,7 +116,7 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function deleteFile($file)
+  public function deleteFile($file): bool
   {
     return JFile::delete($file);
   }
@@ -123,11 +126,11 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @param   string  $file  The file name
    *
-   * @return  mixed   file info array on success, false otherwise
+   * @return  mixed   file size on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function checkFile($file)
+  public function checkFile($file): mixed
   {
     if (file_exists($file))
     {
@@ -168,7 +171,7 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function createFolder($path)
+  public function createFolder($path): bool
   {
     return JFolder::create($path);
   }
@@ -184,7 +187,7 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function moveFolder($src, $dest, $copy = false)
+  public function moveFolder($src, $dest, $copy = false): bool
   {
     if($copy)
     {
@@ -205,7 +208,7 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function deleteFolder($path)
+  public function deleteFolder($path): bool
   {
     return JFolder::delete($path);
   }
@@ -222,7 +225,7 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function checkFolder($path, $files = false, $folders = false, $maxLevel = 3)
+  public function checkFolder($path, $files = false, $folders = false, $maxLevel = 3): mixed
   {
     if (file_exists($path))
     {
@@ -249,6 +252,29 @@ class LocalFilesystem implements FilesystemInterface
   }
 
   /**
+   * Sets the permission of a given file or folder recursively.
+   *
+   * @param   string  $path      The path to the file/folder
+   * @param   string  $val       The octal representation of the value to change file/folder mode
+   * @param   bool    $mode      True to use file mode. False to use folder mode. (default: true)
+   *
+   * @return  bool    True if successful [one fail means the whole operation failed].
+   *
+   * @since   4.0.0
+   */
+  public function chmod($path, $val, $mode=true): bool
+  {
+    if($mode)
+    {
+      return Path::setPermissions(Path::clean($path), $val, null);
+    }
+    else
+    {
+      return Path::setPermissions(Path::clean($path), null, $val);
+    }
+  }
+
+  /**
    * Lists files and folders in format suitable for tree display.
    *
    * @param   string  $path      The path of the folder to read.
@@ -261,7 +287,7 @@ class LocalFilesystem implements FilesystemInterface
    *
    * @since   4.0.0
    */
-  private function listFolderTree($path, $filter, $maxLevel, $level = 0, $parent = 0)
+  private function listFolderTree($path, $filter, $maxLevel, $level = 0, $parent = 0): mixed
 	{
     $dirs = array();
 
