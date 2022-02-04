@@ -256,6 +256,10 @@ JHTML::_('joomconfig.start', 'page6');
     JHTML::_('joomconfig.row', 'jg_ajaxcategoryselection', 'yesno', 'COM_JOOMGALLERY_CONFIG_GS_PS_AJAXCATEGORYSELECTION', $this->_config->get('jg_ajaxcategoryselection'));
     JHTML::_('joomconfig.row', 'jg_disableunrequiredchecks', 'yesno', 'COM_JOOMGALLERY_CONFIG_GS_PS_DISABLEUNREQUIREDCHECKS', $this->_config->get('jg_disableunrequiredchecks'));
     JHTML::_('joomconfig.row', 'jg_use_listbox_max_user_count', 'text', 'COM_JOOMGALLERY_CONFIG_GS_PS_USELISTBOXMAXUSERCOUNT', $this->_config->get('jg_use_listbox_max_user_count'));
+    $adminsorting[] = JHTML::_('select.option','0', JText::_('COM_JOOMGALLERY_CONFIG_GS_PS_ADMINSORTING_DND'));
+    $adminsorting[] = JHTML::_('select.option','1', JText::_('COM_JOOMGALLERY_CONFIG_GS_PS_ADMINSORTING_BTN'));
+    $mc_jg_adminsorting = JHTML::_('select.genericlist', $adminsorting, 'jg_adminsorting', 'class="inputbox" size="2"', 'value', 'text', $this->_config->jg_adminsorting);
+    JHTML::_('joomconfig.row', 'jg_adminsorting', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_PS_ADMINSORTING', $mc_jg_adminsorting);
 JHTML::_('joomconfig.end');
 
 echo JHtml::_('tabs.end');

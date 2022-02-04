@@ -84,6 +84,7 @@ class JoomConfig extends JObject
   var $jg_ajaxcategoryselection;
   var $jg_disableunrequiredchecks;
   var $jg_use_listbox_max_user_count;
+  var $jg_adminsorting;
   var $jg_userspace;
   var $jg_useruploaddefaultcat;
   var $jg_approve;

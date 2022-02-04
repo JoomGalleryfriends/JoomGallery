@@ -142,6 +142,25 @@ Joomla.submitbutton = function(task)
           <?php echo $this->form->getInput('cleardownloads'); ?>
         </div>
       </div>
+
+      <?php // add additional fields provided by plugins
+      foreach($this->form->getFieldsets() as $name => $fieldSet):
+        if($name != ''): ?>
+          <br />
+          <h4><?php echo $name; ?></h4>
+          <?php foreach($this->form->getFieldset($name) as $field): ?>
+            <div class="control-group">
+              <div class="control-label">
+                <?php echo $field->label; ?>
+              </div>
+              <div class="controls">
+                <?php echo $field->input; ?>
+              </div>
+            </div>
+          <?php endforeach;
+        endif;
+      endforeach; ?>
+
     </div>
   </div>
   <div>

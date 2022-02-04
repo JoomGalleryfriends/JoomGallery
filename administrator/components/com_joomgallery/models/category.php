@@ -598,6 +598,16 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       $done = true;
     }
 
+    if($commands['alias'] == 'gen')
+    {
+      if(!$this->batchAliasGen($pks))
+      {
+        return false;
+      }
+
+      $done = true;
+    }
+
     if(!empty($commands['assetgroup_id']))
     {
       if(!$this->batchAccess($commands['assetgroup_id'], $pks))
@@ -1308,5 +1318,42 @@ class JoomGalleryModelCategory extends JoomGalleryModel
     }
 
     return array($title, $alias);
+  }
+
+  /**
+   * Batch regeneration of aliases
+   *
+   * @param   array    $pks       An array of row IDs
+   * @return  boolean  True on success, false otherwise
+   * @since   3.6
+   */
+  protected function batchAliasGen($pks)
+  {
+    $table = $this->getTable('joomgallerycategories');
+
+    foreach($pks as $pk)
+    {
+      $table->reset();
+      $table->load($pk);
+
+      $table->alias = '';
+
+      // Regeneration of alias during check method
+      if(!$table->check())
+      {
+        $this->setError($row->getError());
+        return false;
+      }
+
+      // Store the category back to the database
+      if(!$table->store())
+      {
+        $this->setError($table->getError());
+
+        return false;
+      }
+    }
+
+    return true;
   }
 }

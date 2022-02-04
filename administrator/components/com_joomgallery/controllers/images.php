@@ -860,4 +860,30 @@ class JoomGalleryControllerImages extends JoomGalleryController
   {
     $this->setRedirect($this->_ambit->getRedirectUrl());
   }
+
+  /**
+   * Performs a search and replace on all image fields
+   *
+   * @return  void
+   * @since   3.6.0
+   */
+  public function replace()
+  {
+    if(!JSession::checkToken())
+    {
+      // invalid from token
+      $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('JINVALID_TOKEN'), 'error');
+    }
+
+    $model  = $this->getModel('images');
+    $result = $model->replace();
+
+    if($result['stats'][3] != 0 && $result['msg'] != '')
+    {
+      // show errors
+      $this->_mainframe->enqueueMessage($result['msg'], 'error');
+    }
+
+    $this->setRedirect($this->_ambit->getRedirectUrl(),JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_IMAGES_REPLACED',$result['stats'][1],$result['stats'][2]));
+  }
 }
