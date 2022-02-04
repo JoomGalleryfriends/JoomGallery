@@ -605,6 +605,7 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
       }
       else
       {
+        JPluginHelper::importPlugin('content');
         $this->_mainframe->triggerEvent('onContentAfterDelete', array(_JOOM_OPTION.'.image', $row));
       }
 
@@ -806,6 +807,7 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
       }
       else
       {
+        JPluginHelper::importPlugin('content');
         $this->_mainframe->triggerEvent('onContentAfterDelete', array(_JOOM_OPTION.'.category', $row));
       }
 

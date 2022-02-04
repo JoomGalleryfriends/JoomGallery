@@ -526,6 +526,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
         throw new RuntimeException(JText::sprintf('COM_JOOMGALLERY_MAIMAN_MSG_NOT_DELETE_IMAGE_DATA', $cid));
       }
 
+      JPluginHelper::importPlugin('content');
       $this->_mainframe->triggerEvent('onContentAfterDelete', array(_JOOM_OPTION.'.image', $row));
 
       // Image successfully deleted
@@ -591,6 +592,44 @@ class JoomGalleryModelImages extends JoomGalleryModel
         $count--;
       }
     }
+
+    // Convert tasks and states
+    switch($task)
+    {
+      case 'approve':
+        if($publish == 1)
+        {
+          // approved
+          $state = 4;
+        }
+        else
+        {
+          // not approved
+          $state = 3;
+        }
+        break;
+
+      case 'feature':
+        if($publish == 1)
+        {
+          // featured
+          $state = 6;
+        }
+        else
+        {
+          // not featured
+          $state = 5;
+        }
+        break;
+
+      default:
+        // publish
+        $state = $publish;
+        break;
+    }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.image', $cid, $state));
 
     return $count;
   }
@@ -805,6 +844,10 @@ class JoomGalleryModelImages extends JoomGalleryModel
         $img_count++;
       }
 
+      // trigger Event "onJoomAfterRecreate($files,$orig_exists,$autorot)". Attached is an array with infos about the recreation
+      // files: path to the files; orig_exists: true, if original exists; autorot: is there auto rotation for the different image
+      $this->_mainframe->triggerEvent('onJoomAfterRecreate', array(array('original'=>$orig, 'detail'=>$img, 'thumbnail'=>$thumb), $orig_existent, array('original'=>$autorot_orig, 'detail'=>$autorot_det, 'thumbnail'=>$autorot_thumb) ));
+
       unset($cids[$key]);
 
       // Check remaining time
@@ -1006,6 +1049,10 @@ class JoomGalleryModelImages extends JoomGalleryModel
           $err          = true;
         }
       }
+
+      // trigger Event "onJoomAfterRotate($files,$angle,$imgtypes)". Attached is an array with infos about the rotation
+      // files: path to the files; angle: the angle by which the images were rotated; imgtypes: 1(Thumbs and details), 2(All images)
+      $this->_mainframe->triggerEvent('onJoomAfterRotate', array(array('original'=>$orig, 'detail'=>$img, 'thumbnail'=>$thumb), $rotateImageAngle, $rotateimagetypes));
 
       unset($cids[$key]);
 

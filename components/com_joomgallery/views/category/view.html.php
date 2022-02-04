@@ -669,6 +669,11 @@ class JoomGalleryViewCategory extends JoomGalleryView
 
       $categories[$key]->event  = new stdClass();
 
+      // Additional data added by plugins
+      // Important Note: Please push the additional data into $category->additionalData['pluginName']
+      $category->additionalData = array();
+      $this->_mainframe->triggerEvent('onJoomAfterPrepareDisplayHTML', array('category.subcategory', $category->cid, &$category->additionalData));
+
       // Additional HTML added by plugins
       $results  = $this->_mainframe->triggerEvent('onJoomAfterDisplayCatThumb', array($category->cid));
       $categories[$key]->event->afterDisplayCatThumb  = trim(implode('', $results));
@@ -880,6 +885,11 @@ class JoomGalleryViewCategory extends JoomGalleryView
       {
         $images[$key]->show_elems = true;
       }
+
+      // Get additional image data
+      // Important Note: Please push the additional data into $image->additionalData['pluginName']
+      $images[$key]->additionalData = array();
+      $this->_mainframe->triggerEvent('onJoomAfterPrepareDisplayHTML', array('category.image', $images[$key]->id, &$images[$key]->additionalData));
     }
 
     if($this->_config->get('jg_usercatorder') && count($images))
@@ -901,6 +911,11 @@ class JoomGalleryViewCategory extends JoomGalleryView
       $this->assignRef('order_by',  $orderby);
       $this->assignRef('order_dir', $orderdir);
     }
+
+    // Get additional view data
+    // Important Note: Please push the additional data into $cat->additionalData['pluginName']
+    $cat->additionalData = array();
+    $this->_mainframe->triggerEvent('onJoomAfterPrepareDisplayHTML', array('category.category', $cat->cid, &$cat->additionalData));
 
     // Set redirect url used in editor links to redirect back to favourites view after edit/delete
     $redirect = '&redirect='.base64_encode(JFactory::getURI()->toString());

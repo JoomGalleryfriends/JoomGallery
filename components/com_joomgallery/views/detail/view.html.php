@@ -1108,6 +1108,11 @@ class JoomGalleryViewDetail extends JoomGalleryView
       }
     }
 
+    // Get additional view data
+    // Important Note: Please push the additional data into $image->additionalData['pluginName']
+    $image->additionalData = array();
+    $this->_mainframe->triggerEvent('onJoomAfterPrepareDisplayHTML', array('detail.image', $image->id, &$image->additionalData));
+
     $icons        = $this->_mainframe->triggerEvent('onJoomDisplayIcons', array('detail.image', $image));
     $event->icons = implode('', $icons);
     $afterDisplay = $this->_mainframe->triggerEvent('onJoomAfterDisplayDetailImage', array($image));

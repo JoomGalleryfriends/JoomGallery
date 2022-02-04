@@ -214,6 +214,11 @@ class JoomGalleryViewConfig extends JoomGalleryView
 
     JText::script('COM_JOOMGALLERY_CONFIG_GS_PD_ALERT_THUMBNAIL_PATH_SUPPORT');
 
+    // Additional Tabs added by plugins
+    $this->event  = new stdClass();
+    $addTabs  = $this->_mainframe->triggerEvent('onJoomAfterDisplayTabs', array(_JOOM_OPTION.'.config',''));
+    $this->event->afterDisplayTabs = trim(implode('', $addTabs));
+
     $this->assignRef('display',                   $display);
     $this->assignRef('cssfilemsg',                $cssfilemsg);
     $this->assignRef('exifmsg',                   $exifmsg);

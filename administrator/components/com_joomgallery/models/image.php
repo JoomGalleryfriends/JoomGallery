@@ -102,7 +102,8 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $row->copy_original = $this->_mainframe->getUserStateFromRequest('joom.image.copy_original',  'copy_original', 0, 'int');
     }
 
-    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.image', $row));
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.image', &$row));
 
     $this->_data = $row;
 
@@ -282,6 +283,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $isNew = true;
     }
 
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    //$row contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, $isNew, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // Bind the form fields to the image table
     if(!$row->bind($data))
     {
@@ -360,6 +369,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
       {
         $this->setError($row->getError());
 
+        return false;
+      }
+
+      // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+      JPluginHelper::importPlugin('content');
+      $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, true, $data));
+      if(in_array(false, $plugins, true))
+      {
         return false;
       }
 
@@ -708,6 +725,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
           $this->_mainframe->enqueueMessage(JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_STORE_IMAGE_IN_CATEGORY'), 'notice');
         }
       }
+    }
+
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+    JPluginHelper::importPlugin('content');
+    $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
     }
 
     // Move the image if necessary (the data is stored in function moveImage because
@@ -1151,6 +1176,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
       }
     }
 
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    // $item contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $item, false, array('catid'=>$catid_new)));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // If all folder operations for the image were successful
     // modify the database entry
     $item->catid    = $catid_new;
@@ -1161,6 +1194,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
     {
       JError::raiseWarning($item->getError());
 
+      return false;
+    }
+
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+    JPluginHelper::importPlugin('content');
+		$plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$item, false));
+    if(in_array(false, $plugins, true))
+    {
       return false;
     }
 

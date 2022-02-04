@@ -81,7 +81,8 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       }
     }
 
-    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.category', $this->_data));
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.category', &$this->_data));
 
     return $this->_data;
   }
@@ -254,6 +255,14 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       $data['password'] = $crypt.':'.$salt;
     }
 
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    // $row contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $row, $isNew, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // Bind the form fields to the category table
     if(!$row->bind($data))
     {
@@ -401,6 +410,14 @@ class JoomGalleryModelCategory extends JoomGalleryModel
           return false;
         }
 
+        // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+        JPluginHelper::importPlugin('content');
+        $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, true, $data));
+        if(in_array(false, $plugins, true))
+        {
+          return false;
+        }
+
         // Store the entry to the database
         if(!$row->store())
         {
@@ -531,6 +548,14 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       return false;
     }
 
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+    JPluginHelper::importPlugin('content');
+    $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // Store the entry to the database
     if(!$row->store())
     {
@@ -539,7 +564,7 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       return false;
     }
 
-    $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$row, true));
+    $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$row, false));
 
     return $row->cid;
   }
@@ -664,7 +689,24 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         )
       {
         $table->load($pk);
+
+        // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+        // $table contains still the old values
+        $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array('access'=>$value)));
+        if(in_array(false, $plugins, true))
+        {
+          return false;
+        }
+
         $table->access = (int) $value;
+
+        // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+        JPluginHelper::importPlugin('content');
+        $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$table, false, array('access'=>$value)));
+        if(in_array(false, $plugins, true))
+        {
+          return false;
+        }
 
         if(!$table->store())
         {
@@ -679,6 +721,9 @@ class JoomGalleryModelCategory extends JoomGalleryModel
 
         return false;
       }
+
+      JPluginHelper::importPlugin('content');
+      $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$table, false));
     }
 
     return true;
@@ -769,6 +814,14 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         }
       }
 
+      // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+      // $table contains still the old values
+      $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array('parent_id'=>$categoryId)));
+      if(in_array(false, $plugins, true))
+      {
+        return false;
+      }
+
       // Reset the ID and the alias (resetting catpath is
       // necessary for that, too) because we are making a copy
       $table->cid = 0;
@@ -798,6 +851,14 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       {
         $this->setError(JText::_('COM_JOOMGALLERY_CATMAN_MSG_ERROR_INVALID_FOLDERNAME'));
 
+        return false;
+      }
+
+      // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+      JPluginHelper::importPlugin('content');
+      $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$table, false, array('parent_id'=>$categoryId)));
+      if(in_array(false, $plugins, true))
+      {
         return false;
       }
 
@@ -851,6 +912,7 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         return false;
       }
 
+      JPluginHelper::importPlugin('content');
       $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$table, true));
 
       // Get the new category ID
@@ -958,6 +1020,14 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         return false;
       }
 
+      // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+      // $table contains still the old values
+      $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $table, false, array('parent_id'=>$categoryId)));
+      if(in_array(false, $plugins, true))
+      {
+        return false;
+      }
+
       // New parent category ID
       $table->parent_id = $categoryId;
 
@@ -1017,6 +1087,9 @@ class JoomGalleryModelCategory extends JoomGalleryModel
 
         return false;
       }
+
+      JPluginHelper::importPlugin('content');
+      $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.category', &$table, false));
     }
 
     return true;
