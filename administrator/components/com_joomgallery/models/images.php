@@ -414,14 +414,15 @@ class JoomGalleryModelImages extends JoomGalleryModel
     // Loop through selected images
     foreach($ids as $cid)
     {
-      if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$cid))
+      $row->load($cid);
+
+      if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$cid)
+        && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$cid) || !$row->owner || $row->owner != $this->_user->get('id')))
       {
         JLog::add(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_DELETE_NOT_PERMITTED', 1), JLog::ERROR, 'jerror');
 
         continue;
       }
-
-      $row->load($cid);
 
       // Database query to check if there are other images which this
       // thumbnail is assigned to and how many of them exist

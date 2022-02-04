@@ -61,7 +61,7 @@ class JoomGalleryViewImages extends JoomGalleryView
 
     JToolBarHelper::title(JText::_('COM_JOOMGALLERY_IMGMAN_IMAGE_MANAGER'), 'images');
 
-    if(($this->_config->get('jg_disableunrequiredchecks') || $canDo->get('joom.upload') || count(JoomHelper::getAuthorisedCategories('joom.upload'))) && $this->pagination->total)
+    if($this->_config->get('jg_disableunrequiredchecks') || $canDo->get('joom.upload') || count(JoomHelper::getAuthorisedCategories('joom.upload')))
     {
       JToolbarHelper::addNew('new');
     }
@@ -96,11 +96,10 @@ class JoomGalleryViewImages extends JoomGalleryView
       JToolbarHelper::divider();
     }
 
-    //if($canDo->get('core.delete'))
-    //{
-      JToolbarHelper::deleteList('', 'remove');
-    //}
-
+    if($this->pagination->total)
+    {
+      JToolbarHelper::deleteList('COM_JOOMGALLERY_IMGMAN_CONFIRM_DELETE_IMAGES', 'remove');
+    }
   }
 
   /**
