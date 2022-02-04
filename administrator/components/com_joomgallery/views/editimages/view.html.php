@@ -2,7 +2,7 @@
 /******************************************************************************\
 **   JoomGallery 3                                                            **
 **   By: JoomGallery::ProjectTeam                                             **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                      **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                      **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                  **
 **   Released under GNU GPL Public License                                    **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look             **
@@ -37,6 +37,21 @@ class JoomGalleryViewEditimages extends JoomGalleryView
     // Get the form and fill the fields
     $form = $this->get('Form');
 
+    // Add checkbox to additional fields
+    foreach($form->getFieldsets() as $name => $fieldSet)
+    {
+      if($name != '')
+      {
+        foreach($form->getFieldset($name) as $fieldalias => $field)
+        {
+          $form->setFieldAttribute($field->getAttribute('name'),'cbname','change[]',(string) $field->group);
+          $form->setFieldAttribute($field->getAttribute('name'),'cbvalue',(string) $field->getAttribute('name'),(string) $field->group);
+          $form->setFieldAttribute($field->getAttribute('name'),'type','cb'.(string) $field->getAttribute('type'),(string) $field->group);
+        }
+      }
+    }
+
+
     // Set maximum allowed user count to switch from listbox to modal popup selection
     $form->setFieldAttribute('owner', 'useListboxMaxUserCount', $this->_config->get('jg_use_listbox_max_user_count'));
 
@@ -47,6 +62,7 @@ class JoomGalleryViewEditimages extends JoomGalleryView
     $form->setValue('txtclearhits', null, JText::_('COM_JOOMGALLERY_IMGMAN_CLEAR_HITS_FOR_ALL_IMAGES'));
     $form->setValue('txtclearvotes', null, JText::_('COM_JOOMGALLERY_IMGMAN_CLEAR_VOTES_FOR_ALL_IMAGES'));
     $form->setValue('txtcleardownloads', null, JText::_('COM_JOOMGALLERY_IMGMAN_CLEAR_DOWNLOADS_FOR_ALL_IMAGES'));
+
 
     $this->assignRef('items', $items);
     $this->assignRef('cids',  $cids);

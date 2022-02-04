@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -202,7 +202,7 @@ class JoomGalleryModelCategory extends JoomGalleryModel
 
     // Creating a main category means creating
     // a category in ROOT category
-    if($data['parent_id'] == 0)
+    if($data['parent_id'] == 0 || $data['parent_id'] == "")
     {
       $data['parent_id'] = 1;
     }
@@ -618,6 +618,16 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         {
           return false;
         }
+      }
+
+      $done = true;
+    }
+
+    if($commands['alias'] == 'gen')
+    {
+      if(!$this->batchAliasGen($pks))
+      {
+        return false;
       }
 
       $done = true;
@@ -1381,5 +1391,42 @@ class JoomGalleryModelCategory extends JoomGalleryModel
     }
 
     return array($title, $alias);
+  }
+
+  /**
+   * Batch regeneration of aliases
+   *
+   * @param   array    $pks       An array of row IDs
+   * @return  boolean  True on success, false otherwise
+   * @since   3.6
+   */
+  protected function batchAliasGen($pks)
+  {
+    $table = $this->getTable('joomgallerycategories');
+
+    foreach($pks as $pk)
+    {
+      $table->reset();
+      $table->load($pk);
+
+      $table->alias = '';
+
+      // Regeneration of alias during check method
+      if(!$table->check())
+      {
+        $this->setError($row->getError());
+        return false;
+      }
+
+      // Store the category back to the database
+      if(!$table->store())
+      {
+        $this->setError($table->getError());
+
+        return false;
+      }
+    }
+
+    return true;
   }
 }

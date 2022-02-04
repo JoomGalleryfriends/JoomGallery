@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -46,7 +46,7 @@ class JoomGalleryControllerBatchupload extends JoomGalleryController
     // Access check
     if(!$this->_config->get('jg_disableunrequiredchecks') && !count(JoomHelper::getAuthorisedCategories('joom.upload')))
     {
-      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl('categories'), false), JText::_('No categories found into which you are allowed to upload'), 'notice');
+      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl('categories'), false), JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_FOUND_ALLOWED_TO_UPLOAD'), 'notice');
 
       return;
     }

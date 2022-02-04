@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -294,7 +294,7 @@ class JoomGalleryModelComments extends JoomGalleryModel
    */
   public function remove()
   {
-    if(!$this->_user->authorise('core.manage', _JOOM_OPTION))
+    if(!$this->_user->authorise('core.manage', _JOOM_OPTION) || !$this->_user->authorise('core.delete', _JOOM_OPTION))
     {
       JError::raiseError(500, JText::_('COM_JOOMGALLERY_COMMON_PERMISSION_DENIED'));
     }

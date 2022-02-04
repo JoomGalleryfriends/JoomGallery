@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -159,7 +159,7 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       // Unset the data of fields which we aren't allowed to change
       $form->setFieldAttribute('published', 'filter', 'unset');
     }
-
+    
     if(!$this->_config->get('jg_edit_metadata'))
     {
       $form->setFieldAttribute('metakey', 'disabled', 'true');
@@ -421,7 +421,6 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       $row->reorder('catid = '.$catid_old);
     }
 
-    // Trigger the after save event.
     $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image', &$row, false));
 
     return $row->id;
@@ -498,7 +497,7 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       throw new RuntimeException($row->getError());
     }
 
-    // Trigger the after save event.
+    // Successfully stored image
     $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image.quick', &$row, false));
 
     return true;
@@ -519,7 +518,8 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     $row->load($this->_id);
 
     // Check whether we are allowed to delete this image
-    if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id))
+    if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id)
+      && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$row->id) || !$row->owner || $row->owner != $this->_user->get('id')))
     {
       throw new RuntimeException(JText::_('COM_JOOMGALLERY_IMAGE_MSG_DELETE_NOT_PERMITTED'));
     }

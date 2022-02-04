@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -414,14 +414,15 @@ class JoomGalleryModelImages extends JoomGalleryModel
     // Loop through selected images
     foreach($ids as $cid)
     {
-      if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$cid))
+      $row->load($cid);
+
+      if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$cid)
+        && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$cid) || !$row->owner || $row->owner != $this->_user->get('id')))
       {
         JLog::add(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_DELETE_NOT_PERMITTED', 1), JLog::ERROR, 'jerror');
 
         continue;
       }
-
-      $row->load($cid);
 
       // Database query to check if there are other images which this
       // thumbnail is assigned to and how many of them exist
@@ -1081,6 +1082,94 @@ class JoomGalleryModelImages extends JoomGalleryModel
     $this->_mainframe->setUserState('joom.rotate.firstloop', null);
 
     return array($thumb_count, $img_count, $orig_count, $debugoutput);
+  }
+
+  /**
+   * Search and replace information in selected images
+   *
+   * @return  mixed   Result information
+   *
+   * @since   3.6
+   */
+  public function replace()
+  {
+    // get Data
+    $cids       = $this->_mainframe->input->get('cid', array(), 'array');
+    $fields     = $this->_mainframe->input->get('batch_fields', array(), 'array');
+    $searchVal  = $this->_mainframe->input->get('batch_search', '', 'string');
+    $replaceVal = $this->_mainframe->input->get('batch_replace', '', 'string');
+
+    $nmb_imgs    = count($cids);  // Number of images to process
+    $nmb_rep     = 0;             // Number of performed replacements
+    $nmb_repimgs = 0;             // Number of images with performed replacements
+    $nmb_err     = 0;             // Number of error images
+    $erroroutput = '';
+    $firstLoop   = true;
+
+    // Before first loop check for selected images
+    if($firstLoop && !count($cids))
+    {
+      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
+
+      return false;
+    }
+
+    $row = $this->getTable('joomgalleryimages');
+
+    // Loop through selected images
+    foreach($cids as $i => $id)
+    {
+      // Reset JTable class
+      $row->reset();
+
+      // Read image from database
+      $row->load($id);
+
+      $tmp_rep = 0;
+      foreach($fields as $fieldname)
+      {
+        if($fieldname != 'additional')
+        {
+          $replacements = 0;
+
+          // Replace image informations
+          $row->{$fieldname} = str_replace($searchVal, $replaceVal, $row->{$fieldname}, $replacements);
+
+          // count replacements
+          $tmp_rep = $tmp_rep + $replacements;
+        }
+      }
+
+      // Make sure the record is valid
+      if(!$row->check())
+      {
+        $erroroutput .= 'Image (ID:' . $id . '):' . $row->getError() . '<br />';
+        $nmb_err      = $nmb_err + 1;
+
+        continue;
+      }
+
+      // Store the entry to the database
+      if(!$row->store())
+      {
+        $erroroutput .= 'Image (ID:' . $id . '):' . $row->getError() . '<br />';
+        $nmb_err      = $nmb_err + 1;
+
+        continue;
+      }
+
+      // Plugin event onJoomAfterSearchReplace
+      $this->_mainframe->triggerEvent('onJoomAfterSearchReplace', array($id, $searchVal, $replaceVal, $fields, &$tmp_rep));
+
+      // count image if there was a replacement
+      if($tmp_rep > 0)
+      {
+        $nmb_rep     = $nmb_rep + $tmp_rep;
+        $nmb_repimgs = $nmb_repimgs + 1;
+      }
+    }
+
+    return array('stats'=>array($nmb_imgs, $nmb_rep, $nmb_repimgs, $nmb_err), 'msg' => $erroroutput);
   }
 
   /**

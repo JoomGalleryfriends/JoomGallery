@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -129,7 +129,8 @@ class JoomGalleryViewFavourites extends JoomGalleryView
           $row->show_edit_icon = true;
         }
 
-        if($this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id))
+        if(   $this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id)
+          || ($this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$row->id) && $row->imgowner == $this->_user->get('id')))
         {
           $row->show_delete_icon = true;
         }

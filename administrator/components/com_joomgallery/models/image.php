@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -391,7 +391,6 @@ class JoomGalleryModelImage extends JoomGalleryModel
       // Successfully stored new image
       $row->reorder('catid = '.$row->catid);
 
-      // Trigger the after save event.
       $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image', &$row, true));
 
       return $row->id;
@@ -770,7 +769,6 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $row->reorder('catid = '.$catid_old);
     }
 
-    // Trigger the after save event.
     $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false));
 
     return $row->id;
@@ -1214,9 +1212,6 @@ class JoomGalleryModelImage extends JoomGalleryModel
 
       return false;
     }
-
-    // Trigger the after save event.
-    $this->_mainframe->triggerEvent('onContentAfterSave', array(_JOOM_OPTION.'.image', &$item, false));
 
     return true;
   }

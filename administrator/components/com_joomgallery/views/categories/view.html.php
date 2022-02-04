@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -82,7 +82,7 @@ class JoomGalleryViewCategories extends JoomGalleryView
       JToolbarHelper::divider();
     }
 
-    if(($this->_config->get('jg_disableunrequiredchecks') || $canDo->get('core.delete') || count(JoomHelper::getAuthorisedCategories('core.delete'))) && $this->pagination->total)
+    if(($this->_config->get('jg_disableunrequiredchecks') || $canDo->get('core.delete') || $canDo->get('joom.delete.own') || count(JoomHelper::getAuthorisedCategories('core.delete'))) && $this->pagination->total)
     {
       JToolbarHelper::deleteList('','remove');
       JToolbarHelper::divider();

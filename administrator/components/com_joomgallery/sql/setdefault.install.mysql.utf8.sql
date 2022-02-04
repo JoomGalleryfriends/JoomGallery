@@ -76,6 +76,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_ajaxcategoryselection*/      0,
   /*jg_disableunrequiredchecks*/    0,
   /*jg_use_listbox_max_user_count*/ 25,
+  /*jg_adminsorting*/               0,
 
   /* ### User Access rights->User upload ####*/
   /*jg_userspace*/                1,
@@ -333,7 +334,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /* ### Detail View->Exif data ####*/
   /*jg_showexifdata*/   0,
   /*jg_showgeotagging*/ 0,
-  /*jg_geotaggingkey*/  '',  
+  /*jg_geotaggingkey*/  '',
   /*jg_subifdtags*/     '',
   /*jg_ifdotags*/       '',
   /*jg_gpstags*/        '',

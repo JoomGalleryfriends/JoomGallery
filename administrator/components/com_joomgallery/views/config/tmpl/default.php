@@ -1,4 +1,16 @@
-<?php defined('_JEXEC') or die('Direct Access to this location is not allowed.'); ?>
+<?php
+/****************************************************************************************\
+**   JoomGallery 3                                                                      **
+**   By: JoomGallery::ProjectTeam                                                       **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
+**   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
+**   Released under GNU GPL Public License                                              **
+**   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
+**   at administrator/components/com_joomgallery/LICENSE.TXT                            **
+\****************************************************************************************/
+
+defined('_JEXEC') or die('Direct Access to this location is not allowed.'); ?>
+
 <form action="index.php" method="post" id="adminForm" name="adminForm" class="form-inline">
 <?php if(!empty($this->sidebar)): ?>
   <div id="j-sidebar-container" class="span2">
@@ -244,6 +256,10 @@ JHTML::_('joomconfig.start', 'page6');
     JHTML::_('joomconfig.row', 'jg_ajaxcategoryselection', 'yesno', 'COM_JOOMGALLERY_CONFIG_GS_PS_AJAXCATEGORYSELECTION', $this->_config->get('jg_ajaxcategoryselection'));
     JHTML::_('joomconfig.row', 'jg_disableunrequiredchecks', 'yesno', 'COM_JOOMGALLERY_CONFIG_GS_PS_DISABLEUNREQUIREDCHECKS', $this->_config->get('jg_disableunrequiredchecks'));
     JHTML::_('joomconfig.row', 'jg_use_listbox_max_user_count', 'text', 'COM_JOOMGALLERY_CONFIG_GS_PS_USELISTBOXMAXUSERCOUNT', $this->_config->get('jg_use_listbox_max_user_count'));
+    $adminsorting[] = JHTML::_('select.option','0', JText::_('COM_JOOMGALLERY_CONFIG_GS_PS_ADMINSORTING_DND'));
+    $adminsorting[] = JHTML::_('select.option','1', JText::_('COM_JOOMGALLERY_CONFIG_GS_PS_ADMINSORTING_BTN'));
+    $mc_jg_adminsorting = JHTML::_('select.genericlist', $adminsorting, 'jg_adminsorting', 'class="inputbox" size="2"', 'value', 'text', $this->_config->jg_adminsorting);
+    JHTML::_('joomconfig.row', 'jg_adminsorting', 'custom', 'COM_JOOMGALLERY_CONFIG_GS_PS_ADMINSORTING', $mc_jg_adminsorting);
 JHTML::_('joomconfig.end');
 
 echo JHtml::_('tabs.end');
@@ -612,7 +628,11 @@ JHTML::_('joomconfig.end');
 echo JHtml::_('tabs.panel', JText::_('COM_JOOMGALLERY_CONFIG_CV_TAB_SUBCAT_SETTINGS'), 'nested-eighteen');
 
 JHTML::_('joomconfig.start', 'page17');
-    JHTML::_('joomconfig.row', 'jg_showsubcathead', 'yesno', 'COM_JOOMGALLERY_CONFIG_CV_SC_SUBCATEGORYHEADER', $this->_config->jg_showsubcathead);
+    $showsubcatheadsubs[] = JHTML::_('select.option', '0', JText::_('JNO'));
+    $showsubcatheadsubs[] = JHTML::_('select.option', '1', JText::_('JYES'));
+    $showsubcatheadsubs[] = JHTML::_('select.option', '2', JText::_('COM_JOOMGALLERY_CONFIG_CV_SC_OPTION_SHOW_PARENT_INFO'));
+    $mc_jg_showsubcatheadsubs = JHTML::_('select.genericlist', $showsubcatheadsubs, 'jg_showsubcathead', 'class="inputbox" size="3"', 'value', 'text', $this->_config->jg_showsubcathead);
+    JHTML::_('joomconfig.row', 'jg_showsubcathead', 'custom', 'COM_JOOMGALLERY_CONFIG_CV_SC_SUBCATEGORYHEADER', $mc_jg_showsubcatheadsubs);
     JHTML::_('joomconfig.row', 'jg_showsubcatcount', 'yesno', 'COM_JOOMGALLERY_CONFIG_CV_SC_NUMB_SUBCATEGORIES', $this->_config->jg_showsubcatcount);
     JHTML::_('joomconfig.row', 'jg_colsubcat', 'text', 'COM_JOOMGALLERY_CONFIG_CV_SC_NUMB_COLUMN', $this->_config->jg_colsubcat);
     JHTML::_('joomconfig.row', 'jg_subperpage', 'text', 'COM_JOOMGALLERY_CONFIG_CV_SC_SUBCATS_PER_PAGE', $this->_config->jg_subperpage);

@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -27,6 +27,15 @@ class JoomGalleryControllerVotes extends JoomGalleryController
    */
   public function reset()
   {
+    // Check whether we are allowed to delete
+    $canDo = JoomHelper::getActions();
+    if(!$canDo->get('core.delete'))
+    {
+      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=votes'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+
+      return false;
+    }
+
     $this->_db->truncateTable(_JOOM_TABLE_VOTES);
 
     if($this->_db->getErrorMsg())
@@ -111,6 +120,15 @@ class JoomGalleryControllerVotes extends JoomGalleryController
    */
   public function deleteip()
   {
+    // Check whether we are allowed to delete
+    $canDo = JoomHelper::getActions();
+    if(!$canDo->get('core.delete'))
+    {
+      $this->setRedirect($this->_ambit->getRedirectUrl('maintenance&tab=votes'), JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+
+      return false;
+    }
+
     $query = $this->_db->getQuery(true)
           ->update(_JOOM_TABLE_VOTES)
           ->set('userip='."''");

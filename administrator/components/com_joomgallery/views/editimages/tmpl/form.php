@@ -1,4 +1,15 @@
-<?php defined('_JEXEC') or die('Restricted access');
+<?php
+/****************************************************************************************\
+**   JoomGallery 3                                                                      **
+**   By: JoomGallery::ProjectTeam                                                       **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
+**   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
+**   Released under GNU GPL Public License                                              **
+**   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
+**   at administrator/components/com_joomgallery/LICENSE.TXT                            **
+\****************************************************************************************/
+
+defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
 JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.formvalidation');
@@ -131,6 +142,25 @@ Joomla.submitbutton = function(task)
           <?php echo $this->form->getInput('cleardownloads'); ?>
         </div>
       </div>
+
+      <?php // add additional fields provided by plugins
+      foreach($this->form->getFieldsets() as $name => $fieldSet):
+        if($name != ''): ?>
+          <br />
+          <h4><?php echo $name; ?></h4>
+          <?php foreach($this->form->getFieldset($name) as $field): ?>
+            <div class="control-group">
+              <div class="control-label">
+                <?php echo $field->label; ?>
+              </div>
+              <div class="controls">
+                <?php echo $field->input; ?>
+              </div>
+            </div>
+          <?php endforeach;
+        endif;
+      endforeach; ?>
+
     </div>
   </div>
   <div>

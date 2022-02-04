@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -34,6 +34,20 @@ class JoomGalleryModelCategories extends JoomGalleryModel
   protected $_total = null;
 
   /**
+   * Category filter
+   *
+   * @var array
+   */
+  protected $_catfilter = array();
+
+  /**
+   * Category root
+   *
+   * @var int
+   */
+  protected $_root = 0;
+
+  /**
    * Constructor
    *
    * @param   array An optional associative array of configuration settings
@@ -46,6 +60,8 @@ class JoomGalleryModelCategories extends JoomGalleryModel
 
     $this->filter_fields = array(
         'cid', 'c.cid',
+        'category',
+        'max_level',
         'name', 'c.name',
         'alias', 'c.alias',
         'parent_id', 'c.parent_id',
@@ -70,6 +86,13 @@ class JoomGalleryModelCategories extends JoomGalleryModel
     // Let's load the data if it doesn't already exist
     if(empty($this->_categories))
     {
+      // Get category and all sub-categories of the category selected in the filter
+      if($this->getState('filter.category') && $this->getState('filter.category') > 0)
+      {
+        $this->_catfilter = JoomHelper::getAllSubCategories($this->getState('filter.category'),true,true,true,false);
+        $this->_root      = $this->_ambit->getCatObject($this->getState('filter.category'))->level;
+      }
+
       // Get the data of the categories which will actually be displayed
       $query = $this->_buildQuery();
       $this->_db->setQuery($query, $this->getStart(), $this->getState('list.limit'));
@@ -78,6 +101,15 @@ class JoomGalleryModelCategories extends JoomGalleryModel
       // Get the complete category structure (containing only
       // the categories which we are allowed to display)
       $categories = $this->_ambit->getCategoryStructure();
+
+      // Add number of images in that category
+      foreach($current_categories as $key => $cat)
+      {
+        if($key > 1)
+        {
+          $current_categories[$key]->img_count = (string)$categories[$key]->piccount;
+        }
+      }
 
       $levels             = array();
       $ordering           = array();
@@ -98,7 +130,7 @@ class JoomGalleryModelCategories extends JoomGalleryModel
       $this->setState('ordering.array', $ordering);
 
       // Check whether we aren't displaying all categories in default order
-      if($this->getState('list.ordering') != 'c.lft')
+      if($this->getState('list.ordering') != 'c.lft' || $this->getState('list.direction') != 'ASC')
       {
         $this->_categories = $current_categories;
 
@@ -418,6 +450,27 @@ class JoomGalleryModelCategories extends JoomGalleryModel
     // ROOT category shouldn't be selected
     $query->where('parent_id > 0');
 
+    // Filter by category
+    if(count($this->_catfilter) > 0)
+    {
+      $andWhere = array();
+      foreach($this->_catfilter as $key => $cid)
+      {
+        array_push($andWhere,'c.cid = '.(int) $cid);
+      }
+
+      if(count($andWhere) > 0)
+      {
+        $query->andWhere($andWhere, 'OR');
+      }
+    }
+
+    // Filter by subcategory level
+    if($this->getState('filter.max_level') != null && $this->getState('filter.max_level') != -1)
+    {
+      $query->where('c.level <= '.((int) $this->_root + (int) $this->getState('filter.max_level')));
+    }
+
     // Filter by allowed access levels
     if(!$this->_user->authorise('core.admin'))
     {
@@ -526,8 +579,11 @@ class JoomGalleryModelCategories extends JoomGalleryModel
     // Loop through selected categories
     foreach($ids as $cid)
     {
+      $row->load($cid);
+
       // Check whether we are allowed to delete this category
-      if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$cid))
+      if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$cid)
+        && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.category.'.$cid) || !$row->owner || $row->owner != $this->_user->get('id')))
       {
         JLog::add(JText::sprintf('COM_JOOMGALLERY_CATMAN_ERROR_DELETE_NOT_PERMITTED', $cid), JLog::ERROR, 'jerror');
 
@@ -585,7 +641,6 @@ class JoomGalleryModelCategories extends JoomGalleryModel
           JLog::add(JText::_('COM_JOOMGALLERY_CATMAN_MSG_ERROR_DELETING_DIRECTORIES'), JLog::WARNING, 'jerror');
         }
 
-        $row->load($cid);
         if(!$row->delete())
         {
           throw new RuntimeException($row->getError());
@@ -631,8 +686,11 @@ class JoomGalleryModelCategories extends JoomGalleryModel
         }
       }
       $msg .= '<br /><br />'.JText::_('COM_JOOMGALLERY_CATMAN_MSG_DELETECOMPLETELY_NOTE').'<p/>
-      <form action="index.php?option='._JOOM_OPTION.'&amp;controller=categories&amp;task=deletecompletely" method="post" onsubmit="if(!this.security_check.checked){return false;}">
-        <span><input type="checkbox" name="security_check" value="1" /> <button class="btn">'.JText::_('COM_JOOMGALLERY_CATMAN_MSG_DELETECOMPLETELY_BUTTON_LABEL').'</button></span>
+      <form method="post">
+        <span><button class="btn">'.JText::_('COM_JOOMGALLERY_CATMAN_MSG_DELETECOMPLETELY_BUTTON_LABEL').'</button></span>
+        <input type="hidden" name="option" value="'._JOOM_OPTION.'" />
+        <input type="hidden" name="controller" value="categories" />
+        <input type="hidden" name="task" value="deletecompletely" />
       </form><p/>';
       $this->_mainframe->enqueueMessage($msg, 'notice');
     }

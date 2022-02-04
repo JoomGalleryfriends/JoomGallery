@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -232,13 +232,17 @@ class JoomGalleryControllerImages extends JoomGalleryController
   public function remove()
   {
     $model = $this->getModel('images');
-
-    $cid  = JRequest::getVar('cid', array(), 'post', 'array');
+    $user  = JFactory::getUser();
+    $row   = JTable::getInstance('joomgalleryimages', 'Table');
+    $cid   = JRequest::getVar('cid', array(), 'post', 'array');
     $unaffected_images = 0;
     foreach($cid as $key => $id)
     {
+      $row->load((int)$id);
+
       // Prune images which we aren't allowed to delete
-      if(!JFactory::getUser()->authorise('core.delete', _JOOM_OPTION.'.image.'.$id))
+      if(   !$user->authorise('core.delete', _JOOM_OPTION.'.image.'.$id)
+        && (!$user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$id) || !$row->owner || $row->owner != $user->get('id')))
       {
         unset($cid[$key]);
         $unaffected_images++;
@@ -598,14 +602,41 @@ class JoomGalleryControllerImages extends JoomGalleryController
       $this->redirect();
     }
 
+    // Load category information for permission checks
+    $query = $this->_db->getQuery(true)
+          ->select('cid, owner')
+          ->from(_JOOM_TABLE_CATEGORIES)
+          ->where('cid = '.$catid);
+    $this->_db->setQuery($query);
+    $category = $this->_db->loadObject();
+
     $user = JFactory::getUser();
+
+    // Instantiate and load an image table
+    $row = JTable::getInstance('joomgalleryimages', 'Table');
 
     $count = 0;
     $unaffected_images = 0;
     $model = $this->getModel('image');
     foreach($cid as $id)
     {
-      if(!$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid))
+      $row->load($id);
+
+      // Check whether we are allowed to move to target category
+      if(  (   !$user->authorise('joom.upload', _JOOM_OPTION.'.category.'.$catid)
+            && (   !$user->authorise('joom.upload.inown', _JOOM_OPTION.'.category.'.$catid)
+                || !$category->owner
+                || $category->owner != $user->get('id')
+               )
+           )
+         // Check whether we are allowed to move the image
+         || (   !$user->authorise('core.edit', _JOOM_OPTION.'.image.'.$id)
+             && (   !$user->authorise('core.edit.own', _JOOM_OPTION.'.image.'.$id)
+                 || !$row->owner
+                 || $row->owner != $user->get('id')
+                )
+           )
+        )
       {
         $unaffected_images++;
         continue;
@@ -619,7 +650,7 @@ class JoomGalleryControllerImages extends JoomGalleryController
 
     if($unaffected_images)
     {
-      JError::raiseNotice(403, JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_MOVE_NOT_PERMITTED', $unaffected_images));
+      JFactory::getApplication()->enqueueMessage(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_MOVE_NOT_PERMITTED', $unaffected_images), 'warning');
     }
 
     if($count)
@@ -828,5 +859,31 @@ class JoomGalleryControllerImages extends JoomGalleryController
   public function cancel()
   {
     $this->setRedirect($this->_ambit->getRedirectUrl());
+  }
+
+  /**
+   * Performs a search and replace on all image fields
+   *
+   * @return  void
+   * @since   3.6.0
+   */
+  public function replace()
+  {
+    if(!JSession::checkToken())
+    {
+      // invalid from token
+      $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('JINVALID_TOKEN'), 'error');
+    }
+
+    $model  = $this->getModel('images');
+    $result = $model->replace();
+
+    if($result['stats'][3] != 0 && $result['msg'] != '')
+    {
+      // show errors
+      $this->_mainframe->enqueueMessage($result['msg'], 'error');
+    }
+
+    $this->setRedirect($this->_ambit->getRedirectUrl(),JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_IMAGES_REPLACED',$result['stats'][1],$result['stats'][2]));
   }
 }

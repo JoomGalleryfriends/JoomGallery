@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -266,7 +266,7 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
 
     // Creating a main category means creating
     // a category in ROOT category
-    if($data['parent_id'] == 0)
+    if($data['parent_id'] == 0 || $data['parent_id'] == "")
     {
       $data['parent_id'] = 1;
     }
@@ -619,7 +619,8 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
     $row->load($this->_id);
 
     // Check whether we are allowed to delete this category
-    if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$this->_id))
+    if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$this->_id) 
+      && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.category.'.$this->_id) || !$row->owner || $row->owner != $this->_user->get('id')))
     {
       throw new RuntimeException(JText::_('COM_JOOMGALLERY_CATEGORY_MSG_DELETE_NOT_PERMITTED'));
     }

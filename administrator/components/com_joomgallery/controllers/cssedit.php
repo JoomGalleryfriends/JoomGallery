@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -41,7 +41,7 @@ class JoomGalleryControllerCssedit extends JoomGalleryController
     // Access check
     if(!JFactory::getUser()->authorise('core.admin', _JOOM_OPTION))
     {
-      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl(''), false), 'You are not allowed to configure this component', 'notice');
+      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl(''), false), JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_TO_CONFIGURE'), 'notice');
       $this->redirect();
     }
 

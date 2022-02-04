@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -84,6 +84,7 @@ class JoomConfig extends JObject
   var $jg_ajaxcategoryselection;
   var $jg_disableunrequiredchecks;
   var $jg_use_listbox_max_user_count;
+  var $jg_adminsorting;
   var $jg_userspace;
   var $jg_useruploaddefaultcat;
   var $jg_approve;

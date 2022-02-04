@@ -2,7 +2,7 @@
 /****************************************************************************************\
 **   JoomGallery 3                                                                      **
 **   By: JoomGallery::ProjectTeam                                                       **
-**   Copyright (C) 2008 - 2020  JoomGallery::ProjectTeam                                **
+**   Copyright (C) 2008 - 2021  JoomGallery::ProjectTeam                                **
 **   Based on: JoomGallery 1.0.0 by JoomGallery::ProjectTeam                            **
 **   Released under GNU GPL Public License                                              **
 **   License: http://www.gnu.org/copyleft/gpl.html or have a look                       **
@@ -496,7 +496,7 @@ class JoomGalleryControllerCategories extends JoomGalleryController
   public function batch()
   {
     JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-  
+
     $vars = $this->input->post->get('batch', array(), 'array');
     $cid  = $this->input->post->get('cid', array(), 'array');
 
