@@ -35,20 +35,20 @@
       </files>
     </api>
 
-    <files folder="site">
+    <files folder="site/com_joomgallery">
         <folder>src</folder>
         <folder>forms</folder>
         <folder>tmpl</folder>
     </files>
 
-    <media destination="com_joomgallery" folder="media">
+    <media destination="com_joomgallery" folder="media/com_joomgallery">
         <folder>css</folder>
         <folder>js</folder>
         <folder>images</folder>
         <filename>joomla.asset.json</filename>
     </media>
 
-    <languages folder="site/languages">
+    <languages folder="site/com_joomgallery/languages">
         <language tag="en-GB">en-GB/com_joomgallery.ini</language>
         <language tag="en-GB">en-GB/com_joomgallery.exif.ini</language>
         <language tag="en-GB">en-GB/com_joomgallery.iptc.ini</language>
@@ -63,7 +63,7 @@
             <menu link="option=com_joomgallery&amp;view=faulties" view="faulties" alt="Joomgallery/Maintenance">COM_JOOMGALLERY_MAINTENANCE_MANAGER</menu>
             <menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TAGS_MANAGER</menu>
         </submenu>
-        <files folder="administrator">
+        <files folder="administrator/com_joomgallery">
             <filename>access.xml</filename>
             <filename>config.xml</filename>
             <folder>forms</folder>
@@ -75,7 +75,7 @@
             <folder>includes</folder>
             <folder>layouts</folder>
         </files>
-        <languages folder="administrator/languages">
+        <languages folder="administrator/com_joomgallery/languages">
 			      <language tag="en-GB">en-GB/com_joomgallery.ini</language>
 			      <language tag="en-GB">en-GB/com_joomgallery.sys.ini</language>
         </languages>
