@@ -209,6 +209,9 @@ class JoomGalleryViewImage extends JoomGalleryView
       case 3:
         $mime = 'image/png';
         break;
+      case 18:
+        $mime = 'image/webp';
+        break;
       default:
         return $this->displayError(JText::sprintf('COM_JOOMGALLERY_COMMON_MSG_MIME_NOT_ALLOWED', $info[2]));
     }
@@ -262,6 +265,10 @@ class JoomGalleryViewImage extends JoomGalleryView
           case 'image/jpeg':
             $quali = JRequest::getInt('quali', 95);
             imagejpeg($img_resource, null, $quali);
+            break;
+          case 'image/webp':
+            $quali = JRequest::getInt('quali', 95);
+            imagewebp($img_resource, null, $quali);
             break;
           default:
             return $this->displayError(JText::sprintf('COM_JOOMGALLERY_COMMON_MSG_MIME_NOT_ALLOWED', $mime));

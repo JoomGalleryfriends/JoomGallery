@@ -76,7 +76,7 @@ class JoomIMGtools
 
   /**
    * Resize image with GD or ImageMagick
-   * Supported image-types: JPG ,PNG, GIF
+   * Supported image-types: JPG, PNG, GIF, WEBP
    *
    * Animated gif support according to ImageWorkshop
    * 'Manage animated GIF with ImageWorkshop'
@@ -126,10 +126,11 @@ class JoomIMGtools
       self::$src_imginfo['frames'] = 1;
     }
 
-    // GD can only handle JPG, PNG and GIF images
+    // GD can only handle JPG, PNG, GIF and WEBP images
     if(    self::$src_imginfo['type'] != 'JPG'
        &&  self::$src_imginfo['type'] != 'PNG'
        &&  self::$src_imginfo['type'] != 'GIF'
+       &&  self::$src_imginfo['type'] != 'WEBP'
        &&  ($method == 'gd1' || $method == 'gd2')
       )
     {
@@ -309,7 +310,7 @@ class JoomIMGtools
         }
 
         // Create empty image of specified size
-        if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
+        if($anim && self::$src_imginfo['animation'] && (self::$src_imginfo['type'] == 'GIF' || self::$src_imginfo['type'] == 'WEBP'))
         {
           // Animated GIF image (image with more than one frame)
           // Create GD-Objects from gif-file
@@ -423,7 +424,7 @@ class JoomIMGtools
         }
 
         // Write resized image to file
-        if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
+        if($anim && self::$src_imginfo['animation'] && (self::$src_imginfo['type'] == 'GIF' || self::$src_imginfo['type'] == 'WEBP'))
         {
           // Animated GIF image (image with more than one frame)
           JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
@@ -444,7 +445,7 @@ class JoomIMGtools
           JoomFile::chmod($dir, '0777', true);
 
           // Write resized image to file
-          if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
+          if($anim && self::$src_imginfo['animation'] && (self::$src_imginfo['type'] == 'GIF' || self::$src_imginfo['type'] == 'WEBP'))
           {
             // Animated GIF image (image with more than one frame)
             JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
@@ -599,7 +600,7 @@ class JoomIMGtools
         }
         else
         {
-          if(self::$src_imginfo['animation']  && $anim && self::$src_imginfo['type'] == 'GIF')
+          if(self::$src_imginfo['animation']  && $anim && (self::$src_imginfo['type'] == 'GIF' || self::$src_imginfo['type'] == 'WEBP'))
           {
             // If resizing an animation, use coalesce for better results
             $commands .= ' -coalesce';
@@ -724,7 +725,7 @@ class JoomIMGtools
 
   /**
    * Rotate image with GD or ImageMagick
-   * Supported image-types: JPG ,PNG, GIF
+   * Supported image-types: JPG, PNG, GIF, WEBP
    *
    * @param   &string $debugoutput            Debug information
    * @param   string  $src_file               Path to source file
@@ -766,10 +767,11 @@ class JoomIMGtools
       return false;
     }
 
-    // GD can only handle JPG, PNG and GIF images
+    // GD can only handle JPG, PNG, GIF and WEBP images
     if(    self::$src_imginfo['type'] != 'JPG'
        &&  self::$src_imginfo['type'] != 'PNG'
        &&  self::$src_imginfo['type'] != 'GIF'
+       &&  self::$src_imginfo['type'] != 'WEBP'
        &&  ($method == 'gd1' || $method == 'gd2')
       )
     {
@@ -859,7 +861,7 @@ class JoomIMGtools
         }
 
         // Create empty image of specified size
-        if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
+        if($anim && self::$src_imginfo['animation'] && (self::$src_imginfo['type'] == 'GIF' || self::$src_imginfo['type'] == 'WEBP'))
         {
           // Animated GIF image (image with more than one frame)
           // Create GD-Objects from gif-file
@@ -947,7 +949,7 @@ class JoomIMGtools
         }
 
         // Write rotated image to file
-        if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
+        if($anim && self::$src_imginfo['animation'] && (self::$src_imginfo['type'] == 'GIF' || self::$src_imginfo['type'] == 'WEBP'))
         {
           // Animated GIF image (image with more than one frame)
           JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
@@ -968,7 +970,7 @@ class JoomIMGtools
           JoomFile::chmod($dir, '0777', true);
 
           // Write resized image to file
-          if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
+          if($anim && self::$src_imginfo['animation'] && (self::$src_imginfo['type'] == 'GIF' || self::$src_imginfo['type'] == 'WEBP'))
           {
             // Animated GIF image (image with more than one frame)
             JLoader::register('GifCreator', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifcreator.php');
@@ -1122,7 +1124,7 @@ class JoomIMGtools
         }
         else
         {
-          if(self::$src_imginfo['animation']  && $anim && self::$src_imginfo['type'] == 'GIF')
+          if(self::$src_imginfo['animation']  && $anim && (self::$src_imginfo['type'] == 'GIF' || self::$src_imginfo['type'] == 'WEBP'))
           {
             // If resizing an animation, use coalesce for better results
             $commands .= ' -coalesce';
@@ -1322,7 +1324,7 @@ class JoomIMGtools
     $imagetype = array(0=>'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
                        5 => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
                        10 => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
-                       15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
+                       15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'WEBP', 19=>'COUNT');
 
     $imginfo['type'] = $imagetype[$info[2]];
 
@@ -1353,6 +1355,22 @@ class JoomIMGtools
       {
         $imginfo['transparency'] = true;
       }
+    }
+
+    // Detect, if image is a transparent webp image
+    if($imginfo['type'] == 'WEBP')
+    {
+      // Detect, if webp has transparency
+// Todo
+      $imginfo['transparency'] = true;
+
+/*      $pngtype = ord(@file_get_contents($img, NULL, NULL, 25, 1));
+
+      if($pngtype == 4 || $pngtype == 6)
+      {
+        $imginfo['transparency'] = true;
+      }
+*/
     }
 
     if($imginfo['type'] == 'GIF')
@@ -1676,6 +1694,30 @@ class JoomIMGtools
         // PNG has always 3 channels (RGB)
         $channels = 3;
         break;
+      case 'WEBP':
+// Todo
+        switch($method)
+        {
+          case 'resize':
+            // Tweakfactor dependent on number of pixels (~2.5)
+            $m = -0.000000007157;
+            $c = 2.70193;
+            break;
+          case 'rotate':
+            // Tweakfactor dependent on number of pixels (~3.3)
+            $m = -0.000000011928;
+            $c = 3.50322;
+            break;
+          default:
+            // Constant tweakfactor of 2.5
+            $m = 0;
+            $c = 2.5;
+            break;
+        }
+
+        // WEBP has always ??
+        $channels = 3;
+        break;
     }
 
     // Pixel calculation for source and destination GD-Frame
@@ -1795,9 +1837,16 @@ class JoomIMGtools
         }
         else
         {
-          self::$dst_imginfo['type'] = 'UNKNOWN';
+          if($imgtype == 'webp')
+          {
+            self::$dst_imginfo['type'] = 'WEBP';
+          }
+          else
+          {
+            self::$dst_imginfo['type'] = 'UNKNOWN';
 
-          return false;
+            return false;
+          }
         }
       }
     }
@@ -2035,7 +2084,7 @@ class JoomIMGtools
 
   /**
    * Creates GD image objects from different file types with one frame
-   * Supported: JPG, PNG, GIF
+   * Supported: JPG, PNG, GIF, WEBP
    *
    * @param   string  $src_file     Path to source file
    * @param   array   $imginfo      array with source image informations
@@ -2056,6 +2105,9 @@ class JoomIMGtools
         break;
       case 'JPG':
         $src_frame[0]['image'] = imagecreatefromjpeg($src_file);
+        break;
+      case 'WEBP':
+        $src_frame[0]['image'] = imagecreatefromwebp($src_file);
         break;
       default:
         return false;
@@ -2129,10 +2181,19 @@ class JoomIMGtools
             imagefill($src_frame, 0, 0, $trnprt_color);
           }
           break;
-          default:
-            $src_frame = false;
+        case 'WEBP':
+          if(function_exists('imagecolorallocatealpha'))
+          {
+            // Needs at least php v4.3.2
+            imagealphablending($src_frame, false);
+            $trnprt_color = imagecolorallocatealpha($src_frame, 0, 0, 0, 127);
+            imagefill($src_frame, 0, 0, $trnprt_color);
+          }
+          break;
+        default:
+          $src_frame = false;
 
-            return $src_frame;
+          return $src_frame;
           break;
       }
     }
@@ -2147,7 +2208,7 @@ class JoomIMGtools
 
   /**
    * Output GD image object to file from different file types with one frame
-   * Supported: JPG, PNG, GIF
+   * Supported: JPG, PNG, GIF, WEBP
    *
    * @param   string  $dst_file     Path to destination file
    * @param   array   $dst_frame    array with one GD object for one frame ; array(array('duration'=>0, 'image'=>GDobject))
@@ -2185,6 +2246,14 @@ class JoomIMGtools
 
         // Write file
         $success = imagejpeg($dst_frame[0]['image'], $dst_file, $dst_imginfo['quality']);
+        break;
+      case 'WEBP':
+        // Save transparency -- needs at least php v4.3.2
+        imagealphablending($dst_frame[0]['image'], false);
+        imagesavealpha($dst_frame[0]['image'], true);
+
+        // Write file
+        $success = imagewebp($dst_frame[0]['image'], $dst_file, $dst_imginfo['quality']);
         break;
       default:
         $success = false;
@@ -2294,6 +2363,14 @@ class JoomIMGtools
       {
         case 'PNG':
           // Special threatment for png files
+          if(function_exists('imagealphablending'))
+          {
+            imagealphablending($new_img, false);
+            imagesavealpha($new_img, true);
+          }
+          break;
+        case 'WEBP':
+          // Special threatment for webp files
           if(function_exists('imagealphablending'))
           {
             imagealphablending($new_img, false);

@@ -642,6 +642,9 @@ class JoomGalleryModelFavourites extends JoomGalleryModel
           case 3:
             imagepng($imgres);
             break;
+          case 18:
+            imagewebp($imgres);
+            break;
           default:
             JError::raiseError(404, JText::sprintf('COM_JOOMGALLERY_COMMON_MSG_MIME_NOT_ALLOWED', $mime));
             break;

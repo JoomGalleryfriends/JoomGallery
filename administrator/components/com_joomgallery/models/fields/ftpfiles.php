@@ -41,7 +41,7 @@ class JFormFieldFtpFiles extends JFormField
     {
       $directory = JPATH_ROOT.'/'.$directory;
     }
-    $files = JFolder::files($directory, '\.bmp$|\.gif$|\.jpg$|\.png$|\.jpeg$|\.jpe$|\.BMP$|\.GIF$|\.JPG$|\.PNG$|\.JPEG$|\.JPE$');
+    $files = JFolder::files($directory, '\.bmp$|\.gif$|\.jpg$|\.png$|\.jpeg$|\.jpe$|\.webp$|\.BMP$|\.GIF$|\.JPG$|\.PNG$|\.JPEG$|\.JPE$|\.WEBP$');
     if(!$files)
     {
       $files = array();
