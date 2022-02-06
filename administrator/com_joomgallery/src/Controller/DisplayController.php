@@ -20,7 +20,8 @@ use Joomla\CMS\Router\Route;
 /**
  * Joomgallery master display controller.
  *
- * @since  4.0.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class DisplayController extends BaseController
 {

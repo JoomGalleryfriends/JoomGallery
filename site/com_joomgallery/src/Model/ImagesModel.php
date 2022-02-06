@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 
@@ -22,11 +23,11 @@ use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
 use \Joomgallery\Component\Joomgallery\Site\Helper\JoomHelper;
 
-
 /**
  * Methods supporting a list of Joomgallery records.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ImagesModel extends ListModel
 {
@@ -40,7 +41,7 @@ class ImagesModel extends ListModel
 	 */
 	public function __construct($config = array())
 	{
-		if (empty($config['filter_fields']))
+		if(empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
 				'ordering', 'a.ordering',
@@ -77,8 +78,6 @@ class ImagesModel extends ListModel
 
 		parent::__construct($config);
 	}
-
-
 
 	/**
 	 * Method to auto-populate the model state.
@@ -118,15 +117,13 @@ class ImagesModel extends ListModel
 
 		$app->setUserState($this->context . '.list', $list);
 
-
-
 		$context = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
 		$this->setState('filter.search', $context);
 
 		// Split context into component and optional section
 		$parts = FieldsHelper::extract($context);
 
-		if ($parts)
+		if($parts)
 		{
 			$this->setState('filter.component', $parts[0]);
 			$this->setState('filter.section', $parts[1]);
@@ -142,18 +139,13 @@ class ImagesModel extends ListModel
 	 */
 	protected function getListQuery()
 	{
-			// Create a new query object.
-			$db    = $this->getDbo();
-			$query = $db->getQuery(true);
+    // Create a new query object.
+    $db    = $this->getDbo();
+    $query = $db->getQuery(true);
 
-			// Select the required fields from the table.
-			$query->select(
-						$this->getState(
-								'list.select', 'DISTINCT a.*'
-						)
-				);
-
-			$query->from('`#__joomgallery` AS a');
+    // Select the required fields from the table.
+    $query->select($this->getState('list.select', 'DISTINCT a.*'));
+    $query->from('`#__joomgallery` AS a');
 
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS uEditor');
@@ -168,42 +160,40 @@ class ImagesModel extends ListModel
 		// Join over the created by field 'modified_by'
 		$query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
+    // Filter by search in title
+    $search = $this->getState('filter.search');
 
-			// Filter by search in title
-			$search = $this->getState('filter.search');
-
-			if (!empty($search))
-			{
-				if (stripos($search, 'id:') === 0)
-				{
-					$query->where('a.id = ' . (int) substr($search, 3));
-				}
-				else
-				{
-					$search = $db->Quote('%' . $db->escape($search, true) . '%');
-					$query->where('( a.imgtitle LIKE ' . $search . ' )');
-				}
-			}
-
+    if(!empty($search))
+    {
+      if(stripos($search, 'id:') === 0)
+      {
+        $query->where('a.id = ' . (int) substr($search, 3));
+      }
+      else
+      {
+        $search = $db->Quote('%' . $db->escape($search, true) . '%');
+        $query->where('( a.imgtitle LIKE ' . $search . ' )');
+      }
+    }
 
 		// Filtering access
 		$filter_access = $this->state->get("filter.access");
-		if ($filter_access != '') {
+
+		if($filter_access != '')
+    {
 			$query->where("a.access = '".$db->escape($filter_access)."'");
 		}
 
+    // Add the list ordering clause.
+    $orderCol  = $this->state->get('list.ordering', 'a.id');
+    $orderDirn = $this->state->get('list.direction', 'ASC');
 
+    if($orderCol && $orderDirn)
+    {
+      $query->order($db->escape($orderCol . ' ' . $orderDirn));
+    }
 
-			// Add the list ordering clause.
-			$orderCol  = $this->state->get('list.ordering', 'a.id');
-			$orderDirn = $this->state->get('list.direction', 'ASC');
-
-			if ($orderCol && $orderDirn)
-			{
-				$query->order($db->escape($orderCol . ' ' . $orderDirn));
-			}
-
-			return $query;
+    return $query;
 	}
 
 	/**
@@ -215,16 +205,14 @@ class ImagesModel extends ListModel
 	{
 		$items = parent::getItems();
 
-		foreach ($items as $item)
+		foreach($items as $item)
 		{
-
-			if (isset($item->catid))
+			if(isset($item->catid))
 			{
-
 				$values    = explode(',', $item->catid);
 				$textValue = array();
 
-				foreach ($values as $value)
+				foreach($values as $value)
 				{
 					$db    = Factory::getDbo();
 					$query = $db->getQuery(true);
@@ -236,7 +224,7 @@ class ImagesModel extends ListModel
 					$db->setQuery($query);
 					$results = $db->loadObject();
 
-					if ($results)
+					if($results)
 					{
 						$textValue[] = $results->title;
 					}
@@ -245,11 +233,10 @@ class ImagesModel extends ListModel
 				$item->catid = !empty($textValue) ? implode(', ', $textValue) : $item->catid;
 			}
 
-
-				if (!empty($item->robots))
-					{
-						$item->robots = Text::_('COM_JOOMGALLERY_IMAGES_ROBOTS_OPTION_' . strtoupper($item->robots));
-					}
+      if(!empty($item->robots))
+      {
+        $item->robots = Text::_('COM_JOOMGALLERY_IMAGES_ROBOTS_OPTION_' . strtoupper($item->robots));
+      }
 		}
 
 		return $items;
@@ -267,16 +254,16 @@ class ImagesModel extends ListModel
 		$filters          = $app->getUserState($this->context . '.filter', array());
 		$error_dateformat = false;
 
-		foreach ($filters as $key => $value)
+		foreach($filters as $key => $value)
 		{
-			if (strpos($key, '_dateformat') && !empty($value) && $this->isValidDate($value) == null)
+			if(strpos($key, '_dateformat') && !empty($value) && $this->isValidDate($value) == null)
 			{
 				$filters[$key]    = '';
 				$error_dateformat = true;
 			}
 		}
 
-		if ($error_dateformat)
+		if($error_dateformat)
 		{
 			$app->enqueueMessage(Text::_("COM_JOOMGALLERY_SEARCH_FILTER_DATE_FORMAT"), "warning");
 			$app->setUserState($this->context . '.filter', $filters);
@@ -295,6 +282,7 @@ class ImagesModel extends ListModel
 	private function isValidDate($date)
 	{
 		$date = str_replace('/', '-', $date);
+    
 		return (date_create($date)) ? Factory::getDate($date)->format("Y-m-d") : null;
 	}
 }

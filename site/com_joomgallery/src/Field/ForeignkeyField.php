@@ -20,8 +20,9 @@ use \Joomla\CMS\Form\Field\ListField;
 
 /**
  * Supports a value from an external table
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ForeignKeyField extends ListField
 {
@@ -112,7 +113,7 @@ class ForeignKeyField extends ListField
 		$query = $db->getQuery(true);
 
 		// Support for multiple fields on fk_values
-		if ($this->value_multiple == 1)
+		if($this->value_multiple == 1)
 		{
 			// Get the fields for multiple value
 			$this->value_fields = (string) $this->getAttribute('value_field_multiple');
@@ -134,21 +135,15 @@ class ForeignKeyField extends ListField
 			$fk_value = $db->quoteName($this->value_field);
 		}
 
-		$query
-			->select(
-				array(
-					$db->quoteName($this->key_field),
-					$fk_value
-				)
-			)
-			->from($this->table);
+		$query->select(array($db->quoteName($this->key_field), $fk_value))
+			    ->from($this->table);
 
-		if ($this->hideTrashed)
+		if($this->hideTrashed)
 		{
 			$query->where($db->quoteName('state') . ' != -2');
 		}
 
-		if ($this->ordering)
+		if($this->ordering)
 		{
 			$query->order('ordering ASC');
 		}
@@ -156,9 +151,7 @@ class ForeignKeyField extends ListField
 		if($this->condition)
 		{
 			$query->where($this->condition);
-		}
-
-		
+		}	
 
 		return $query;
 	}
@@ -174,21 +167,21 @@ class ForeignKeyField extends ListField
 	{
 		$data = $this->getLayoutData();
 
-		if (!\is_array($this->value) && !empty($this->value))
+		if(!\is_array($this->value) && !empty($this->value))
 		{
-			if (\is_object($this->value))
+			if(\is_object($this->value))
 			{
 				$this->value = get_object_vars($this->value);
 			}
 
 			// String in format 2,5,4
-			if (\is_string($this->value))
+			if(\is_string($this->value))
 			{
 				$this->value = explode(',', $this->value);
 			}
 
 			// Integer is given
-			if (\is_int($this->value))
+			if(\is_int($this->value))
 			{
 				$this->value = array($this->value);
 			}
@@ -212,6 +205,7 @@ class ForeignKeyField extends ListField
 	{
 		$options = array();
 		$db      = Factory::getDbo();
+    
 		try
 		{
 			$db->setQuery($this->processQuery());
@@ -223,7 +217,7 @@ class ForeignKeyField extends ListField
 		}
 
 		// Add header.
-		if (!empty($this->header))
+		if(!empty($this->header))
 		{
 			$options[] = (object) ["value" => '', "text" => Text::_($this->header)];
 		}
@@ -234,7 +228,7 @@ class ForeignKeyField extends ListField
 		}
 
 		// Build the field options.
-		if (!empty($results))
+		if(!empty($results))
 		{
 			foreach ($results as $item)
 			{
@@ -261,7 +255,7 @@ class ForeignKeyField extends ListField
 	 */
 	public function getAttribute($attr_name, $default = null)
 	{
-		if (!empty($this->element[$attr_name]))
+		if(!empty($this->element[$attr_name]))
 		{
 			return $this->element[$attr_name];
 		}

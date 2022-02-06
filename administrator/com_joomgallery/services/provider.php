@@ -30,6 +30,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\FormFactory;
 /**
  * The Joomgallery service provider.
  *
+ * @package JoomGallery
  * @since  4.0.0
  */
 return new class implements ServiceProviderInterface

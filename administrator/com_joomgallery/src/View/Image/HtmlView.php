@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
+
 // No direct access
 defined('_JEXEC') or die;
 
@@ -20,8 +21,9 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a single Image.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class HtmlView extends JoomGalleryView
 {
@@ -47,7 +49,7 @@ class HtmlView extends JoomGalleryView
 		$this->form  = $this->get('Form');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors')))
+		if(count($errors = $this->get('Errors')))
 		{
 			throw new \Exception(implode("\n", $errors));
 		}
@@ -70,7 +72,7 @@ class HtmlView extends JoomGalleryView
 		$user  = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 
-		if (isset($this->item->checked_out))
+		if(isset($this->item->checked_out))
 		{
 			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		}
@@ -84,29 +86,29 @@ class HtmlView extends JoomGalleryView
 		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMGMAN_IMAGE_MANAGER').' :: '.Text::_('COM_JOOMGALLERY_IMGMAN_IMAGE_EDIT'), "image");
 
 		// If not checked out, can save the item.
-		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
+		if(!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
 			ToolbarHelper::apply('image.apply', 'JTOOLBAR_APPLY');
 			ToolbarHelper::save('image.save', 'JTOOLBAR_SAVE');
 		}
 
-		if (!$checkedOut && ($canDo->get('core.create')))
+		if(!$checkedOut && ($canDo->get('core.create')))
 		{
 			ToolbarHelper::custom('image.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 		}
 
 		// If an existing item, can save to a copy.
-		if (!$isNew && $canDo->get('core.create'))
+		if(!$isNew && $canDo->get('core.create'))
 		{
 			ToolbarHelper::custom('image.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 		}
 
 		// Button for version control
-		if ($this->state->params->get('save_history', 1) && $user->authorise('core.edit')) {
+		if($this->state->params->get('save_history', 1) && $user->authorise('core.edit')) {
 			ToolbarHelper::versions('com_joomgallery.image', $this->item->id);
 		}
 
-		if (empty($this->item->id))
+		if(empty($this->item->id))
 		{
 			ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CANCEL');
 		}

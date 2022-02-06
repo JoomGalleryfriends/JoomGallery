@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
+
 // No direct access
 defined('_JEXEC') or die;
 
@@ -25,11 +26,11 @@ use \Joomla\Registry\Registry;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Helper\ContentHelper;
 
-
 /**
  * Category table
  *
- * @since 4.0.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class CategoryTable extends Table implements VersionableTableInterface
 {
@@ -99,11 +100,10 @@ class CategoryTable extends Table implements VersionableTableInterface
 		$date = Factory::getDate();
 		$task = Factory::getApplication()->input->get('task');
 
-
 		// Support for alias field: alias
-		if (empty($array['alias']))
+		if(empty($array['alias']))
 		{
-			if (empty($array['title']))
+			if(empty($array['title']))
 			{
 				$array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
 			}
@@ -121,43 +121,43 @@ class CategoryTable extends Table implements VersionableTableInterface
 		}
 
 
-		if ($array['id'] == 0)
+		if($array['id'] == 0)
 		{
 			$array['created_time'] = $date->toSql();
 		}
 
-		if ($array['id'] == 0 && empty($array['created_by']))
+		if($array['id'] == 0 && empty($array['created_by']))
 		{
 			$array['created_by'] = Factory::getUser()->id;
 		}
 
-		if ($array['id'] == 0 && empty($array['modified_by']))
+		if($array['id'] == 0 && empty($array['modified_by']))
 		{
 			$array['modified_by'] = Factory::getUser()->id;
 		}
 
-		if ($task == 'apply' || $task == 'save')
+		if($task == 'apply' || $task == 'save')
 		{
 			$array['modified_by'] = Factory::getUser()->id;
 		}
 
-		if ($task == 'apply' || $task == 'save')
+		if($task == 'apply' || $task == 'save')
 		{
 			$array['modified_time'] = $date->toSql();
 		}
 
 		// Support for multiple field: robots
-		if (isset($array['robots']))
+		if(isset($array['robots']))
 		{
-			if (is_array($array['robots']))
+			if(is_array($array['robots']))
 			{
 				$array['robots'] = implode(',',$array['robots']);
 			}
-			elseif (strpos($array['robots'], ',') != false)
+			elseif(strpos($array['robots'], ',') != false)
 			{
 				$array['robots'] = explode(',',$array['robots']);
 			}
-			elseif (strlen($array['robots']) == 0)
+			elseif(strlen($array['robots']) == 0)
 			{
 				$array['robots'] = '';
 			}
@@ -167,21 +167,21 @@ class CategoryTable extends Table implements VersionableTableInterface
 			$array['robots'] = '';
 		}
 
-		if (isset($array['params']) && is_array($array['params']))
+		if(isset($array['params']) && is_array($array['params']))
 		{
 			$registry = new Registry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
-		if (isset($array['metadata']) && is_array($array['metadata']))
+		if(isset($array['metadata']) && is_array($array['metadata']))
 		{
 			$registry = new Registry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
 
-		if (!Factory::getUser()->authorise('core.admin', 'com_joomgallery.category.' . $array['id']))
+		if(!Factory::getUser()->authorise('core.admin', 'com_joomgallery.category.' . $array['id']))
 		{
 			$actions         = Access::getActionsFromFile(
 				JPATH_ADMINISTRATOR . '/components/com_joomgallery/access.xml',
@@ -190,7 +190,7 @@ class CategoryTable extends Table implements VersionableTableInterface
 			$default_actions = Access::getAssetRules('com_joomgallery.category.' . $array['id'])->getData();
 			$array_jaccess   = array();
 
-			foreach ($actions as $action)
+			foreach($actions as $action)
 			{
 				if (key_exists($action->name, $default_actions))
 				{
@@ -202,7 +202,7 @@ class CategoryTable extends Table implements VersionableTableInterface
 		}
 
 		// Bind the rules for ACL where supported.
-		if (isset($array['rules']) && is_array($array['rules']))
+		if(isset($array['rules']) && is_array($array['rules']))
 		{
 			$this->setRules($array['rules']);
 		}
@@ -238,13 +238,13 @@ class CategoryTable extends Table implements VersionableTableInterface
 	{
 		$rules = array();
 
-		foreach ($jaccessrules as $action => $jaccess)
+		foreach($jaccessrules as $action => $jaccess)
 		{
 			$actions = array();
 
-			if ($jaccess)
+			if($jaccess)
 			{
-				foreach ($jaccess->getData() as $group => $allow)
+				foreach($jaccess->getData() as $group => $allow)
 				{
 					$actions[$group] = ((bool)$allow);
 				}
@@ -264,24 +264,25 @@ class CategoryTable extends Table implements VersionableTableInterface
 	public function check()
 	{
 		// If there is an ordering column and this is a new row then get the next ordering value
-		if (property_exists($this, 'ordering') && $this->id == 0)
+		if(property_exists($this, 'ordering') && $this->id == 0)
 		{
 			$this->ordering = self::getNextOrder();
 		}
 
 		// Check if alias is unique
-		if (!$this->isUnique('alias'))
+		if(!$this->isUnique('alias'))
 		{
 			$count = 0;
 			$currentAlias =  $this->alias;
-			while(!$this->isUnique('alias')){
+
+			while(!$this->isUnique('alias'))
+      {
 				$this->alias = $currentAlias . '-' . $count++;
 			}
 		}
 
-
 		// Support for subform field params
-		if (is_array($this->params))
+		if(is_array($this->params))
 		{
 			$this->params = json_encode($this->params, JSON_UNESCAPED_UNICODE);
 		}
@@ -325,7 +326,7 @@ class CategoryTable extends Table implements VersionableTableInterface
 		$assetParent->loadByName('com_joomgallery');
 
 		// Return the found asset-parent-id
-		if ($assetParent->id)
+		if($assetParent->id)
 		{
 			$assetParentId = $assetParent->id;
 		}
@@ -333,76 +334,76 @@ class CategoryTable extends Table implements VersionableTableInterface
 		return $assetParentId;
 	}
 
-	//XXX_CUSTOM_TABLE_FUNCTION
+  /**
+   * Delete a record by id
+   *
+   * @param  mixed   $pk  Primary key value to delete. Optional
+   * @param  boolean  $children  True to delete child nodes, false to move them up a level.
+   * @return bool
+   */
+  public function delete($pk = null, $children = true)
+  {
+    $result = parent::delete($pk, $children);
 
+    return $result;
+  }
 
-    /**
-     * Delete a record by id
-     *
-     * @param  mixed   $pk  Primary key value to delete. Optional
-     * @param  boolean  $children  True to delete child nodes, false to move them up a level.
-     * @return bool
-     */
-    public function delete($pk = null, $children = true)
+  /**
+   * Add the root node to an empty table.
+   *
+   * @return    mixed  The id of the new root node or false on error.
+   */
+  public function addRoot()
+  {
+    $db = Factory::getDbo();
+
+    $checkQuery = $db->getQuery(true);
+    $checkQuery->select('*');
+    $checkQuery->from('#__joomgallery_categories');
+    $checkQuery->where('level = 0');
+
+    $db->setQuery($checkQuery);
+
+    if(empty($db->loadAssoc()))
     {
-        $result = parent::delete($pk, $children);
+      $query = $db->getQuery(true)
+      ->insert('#__joomgallery_categories')
+      ->set('parent_id = 0')
+      ->set('lft = 0')
+      ->set('rgt = 1')
+      ->set('level = 0')
+      ->set('title = ' . $db->quote('Root'))
+      ->set('alias = ' . $db->quote('root'))
+      ->set('access = 1')
+      ->set('path = ' . $db->quote(''));
+      $db->setQuery($query);
 
-        return $result;
+      if(!$db->execute())
+      {
+        return false;
+      }
+      
+      return $db->insertid();
     }
 
-    /**
-     * Add the root node to an empty table.
-     *
-     * @return    mixed  The id of the new root node or false on error.
-     */
-    public function addRoot()
+    return true;
+  }
+
+  /**
+   * Get root node id
+   *
+   * @return    int  The id of the root node.
+   */
+  public function getRootId()
+  {
+    $rootId = parent::getRootId();
+
+    // If root is not set then create it
+    if($rootId === false)
     {
-        $db = Factory::getDbo();
-
-        $checkQuery = $db->getQuery(true);
-        $checkQuery->select('*');
-        $checkQuery->from('#__joomgallery_categories');
-        $checkQuery->where('level = 0');
-
-        $db->setQuery($checkQuery);
-
-        if(empty($db->loadAssoc()))
-        {
-            $query = $db->getQuery(true)
-            ->insert('#__joomgallery_categories')
-            ->set('parent_id = 0')
-            ->set('lft = 0')
-            ->set('rgt = 1')
-            ->set('level = 0')
-            ->set('title = ' . $db->quote('Root'))
-            ->set('alias = ' . $db->quote('root'))
-            ->set('access = 1')
-            ->set('path = ' . $db->quote(''));
-            $db->setQuery($query);
-
-            if(!$db->execute())
-            {
-                return false;
-            }
-            return $db->insertid();
-        }
-
-        return true;
+      $rootId = $this->addRoot();
     }
 
-    /**
-     * Get root node id
-     *
-     * @return    int  The id of the root node.
-     */
-
-    public function getRootId() {
-        $rootId = parent::getRootId();
-        // If root is not set then create it
-        if ($rootId === false)
-        {
-            $rootId = $this->addRoot();
-        }
-        return $rootId;
-    }
+    return $rootId;
+  }
 }

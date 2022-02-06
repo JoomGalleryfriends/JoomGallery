@@ -37,7 +37,8 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsSer
 /**
  * Component class for Joomgallery
  *
- * @since  4.0.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface
 {

@@ -18,8 +18,9 @@ use Joomla\CMS\Form\Field\ListField;
 
 /**
  * Supports an HTML select list of categories
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class NestedparentField extends ListField
 {
@@ -50,10 +51,10 @@ class NestedparentField extends ListField
 
 
 		// Prevent parenting to children of this item.
-		if ($id = $this->form->getValue('id'))
+		if($id = $this->form->getValue('id'))
 		{
 			$query->join('LEFT', $db->quoteName($table) . ' AS p ON p.id = ' . (int) $id)
-				->where('NOT(a.lft >= p.lft AND a.rgt <= p.rgt)');
+				    ->where('NOT(a.lft >= p.lft AND a.rgt <= p.rgt)');
 		}
 
 		$query->order('a.lft ASC');
@@ -71,9 +72,9 @@ class NestedparentField extends ListField
 		}
 
 		// Pad the option text with spaces using depth level as a multiplier.
-		for ($i = 0, $n = count($options); $i < $n; $i++)
+		for($i = 0, $n = count($options); $i < $n; $i++)
 		{
-				$options[$i]->text = str_repeat('- ', $options[$i]->level) . $options[$i]->text;
+			$options[$i]->text = str_repeat('- ', $options[$i]->level) . $options[$i]->text;
 		}
 
 		// Merge any additional options in the XML definition.

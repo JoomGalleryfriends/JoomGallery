@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Config;
+
 // No direct access
 defined('_JEXEC') or die;
 
@@ -21,8 +22,8 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a single Config.
- *
- * @since  4.0.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class HtmlView extends JoomGalleryView
 {
@@ -49,7 +50,7 @@ class HtmlView extends JoomGalleryView
     $this->fieldsets = array();
 
     // fill fieldset array
-    foreach ($this->form->getFieldsets() as $key => $fieldset)
+    foreach($this->form->getFieldsets() as $key => $fieldset)
     {
       $parts = \explode('-',$key);
       $level = \count($parts);
@@ -61,7 +62,7 @@ class HtmlView extends JoomGalleryView
     }
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors')))
+		if(count($errors = $this->get('Errors')))
 		{
 			throw new \Exception(implode("\n", $errors));
 		}
@@ -84,7 +85,7 @@ class HtmlView extends JoomGalleryView
 		$user  = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 
-		if (isset($this->item->checked_out))
+		if(isset($this->item->checked_out))
 		{
 			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		}
@@ -98,26 +99,24 @@ class HtmlView extends JoomGalleryView
 		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CONFIG_CONFIGURATION_MANAGER').' :: '.Text::_('COM_JOOMGALLERY_COMMON_TOOLBAR_EDIT').' '.Text::_('COM_JOOMGALLERY_COMMON_CONFIG'), "sliders-h");
 
 		// If not checked out, can save the item.
-		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
+		if(!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
 			ToolbarHelper::apply('config.apply', 'JTOOLBAR_APPLY');
 			ToolbarHelper::save('config.save', 'JTOOLBAR_SAVE');
 		}
 
-		if (!$checkedOut && ($canDo->get('core.create')))
+		if(!$checkedOut && ($canDo->get('core.create')))
 		{
 			ToolbarHelper::custom('config.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 		}
 
 		// If an existing item, can save to a copy.
-		if (!$isNew && $canDo->get('core.create'))
+		if(!$isNew && $canDo->get('core.create'))
 		{
 			ToolbarHelper::custom('config.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 		}
 
-
-
-		if (empty($this->item->id))
+		if(empty($this->item->id))
 		{
 			ToolbarHelper::cancel('config.cancel', 'JTOOLBAR_CANCEL');
 		}
@@ -139,7 +138,7 @@ class HtmlView extends JoomGalleryView
 	 */
 	protected function setFieldset($key, $value)
 	{
-    if (false === ($levels = explode('-',$key)))
+    if(false === ($levels = explode('-',$key)))
     {
       return;
     }
@@ -147,7 +146,7 @@ class HtmlView extends JoomGalleryView
     $pointer = &$this->fieldsets;
     for ($i=0; $i < sizeof($levels); $i++)
     {
-      if (!isset($pointer[$levels[$i]]))
+      if(!isset($pointer[$levels[$i]]))
       {
         $pointer[$levels[$i]] = array();
       }
@@ -172,7 +171,7 @@ class HtmlView extends JoomGalleryView
 
     // Attempt to load the XML file.
     $filename = JPATH_COMPONENT_ADMINISTRATOR.DIRECTORY_SEPARATOR.'forms'.DIRECTORY_SEPARATOR.'config.xml';
-    if (file_exists($filename))
+    if(file_exists($filename))
     {
       $xml = simplexml_load_file($filename);
     }
@@ -181,7 +180,7 @@ class HtmlView extends JoomGalleryView
     $fields = array();
 
     // Make sure there is a valid Form XML document.
-		if (!($xml instanceof \SimpleXMLElement))
+		if(!($xml instanceof \SimpleXMLElement))
 		{
 			throw new \UnexpectedValueException('XML is not an instance of SimpleXMLElement');
 		}
@@ -195,13 +194,13 @@ class HtmlView extends JoomGalleryView
     $elements = $xml->xpath('(//fieldset[@name="' . $name . '"]/field | //field[@fieldset="' . $name . '"])[not(ancestor::field)]');
 
     // If no field elements were found return empty.
-		if (empty($elements))
+		if(empty($elements))
 		{
 			return $fields;
 		}
 
     // Build the result array from the found field elements.
-		foreach ($elements as $element)
+		foreach($elements as $element)
 		{
 			// Get the field groups for the element.
 			$attrs = $element->xpath('ancestor::fields[@name]/@name');
@@ -216,7 +215,7 @@ class HtmlView extends JoomGalleryView
       $field = FormHelper::loadFieldType($type);
 
       // If the object could not be loaded, get a text field object.
-      if ($field === false)
+      if($field === false)
       {
         $field = FormHelper::loadFieldType('text');
       }
@@ -229,11 +228,11 @@ class HtmlView extends JoomGalleryView
       */
       $default = (string) ($element['default'] ? $element['default'] : $element->default);
 
-      if (($translate = $element['translate_default']) && ((string) $translate === 'true' || (string) $translate === '1'))
+      if(($translate = $element['translate_default']) && ((string) $translate === 'true' || (string) $translate === '1'))
       {
         $lang = Factory::getLanguage();
 
-        if ($lang->hasKey($default))
+        if($lang->hasKey($default))
         {
           $debug = $lang->setDebug(false);
           $default = Text::_($default);
@@ -251,7 +250,7 @@ class HtmlView extends JoomGalleryView
       $field->setForm($this->form);
       $field->setup($element, $value, $group);
 
-			if ($field)
+			if($field)
 			{
 				$fields[$field->id] = $field;
 			}

@@ -483,7 +483,7 @@ abstract class IMGtools implements IMGtoolsInterface
    * Website: http://nashruddin.com/Resize_Image_to_Different_Aspect_Ratio_on_the_fly
    *
    *
-   * @param   string  $dst_img          Path of destination image file
+   * @param   string  imgtype           Path of destination image file
    * @param   int     $method           Resize to 0:noresize,1:height,2:width,3:proportional,4:crop
    * @param   int     $new_width        Width to resize
    * @param   int     $new_height       Height to resize
@@ -620,7 +620,8 @@ abstract class IMGtools implements IMGtoolsInterface
   }
 
   /**
-   * Collect informations for the watermarking (informations: dimensions, type, position)
+   * Collect informations for the watermarking
+   * (informations: dimensions, type, position)
    *
    * @param   array   $imginfo        array with image informations of the background image
    * @param   int     $position       Positioning of the watermark
@@ -631,7 +632,7 @@ abstract class IMGtools implements IMGtoolsInterface
    *
    * @since   3.6.0
    */
-  protected function getWatermarkingInfo($imginfo, $position, $resize, $new_size)
+  protected function getWatermarkingInfo($imginfo, $position, $resize, $new_size): array
   {
     // generate information about the new width and height
     if($resize)

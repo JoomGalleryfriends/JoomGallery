@@ -23,8 +23,9 @@ use Joomla\Utilities\ArrayHelper;
 
 /**
  * Categories class.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class CategoriesController extends FormController
 {

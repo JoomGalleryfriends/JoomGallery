@@ -1,13 +1,15 @@
 <?php
 /**
- * @package    Com_Joomgallery
- * @subpackage Privacy.image
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
- * @copyright  2008 - 2022  JoomGallery::ProjectTeam
- * @license    GNU General Public License version 2 or later
- */
+******************************************************************************************
+**   @version    4.0.0                                                                  **
+**   @package    com_joomgallery                                                        **
+**   @subpackage plg_privacyjoomgalleryimages                                           **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2022  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 2 or later                          **
+*****************************************************************************************/
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\User\User;
 use Joomla\Component\Privacy\Administrator\Plugin\PrivacyPlugin;
@@ -15,8 +17,9 @@ use Joomla\Component\Privacy\Administrator\Table\RequestTable;
 
 /**
  * Privacy plugin managing Joomla user image data
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class PlgPrivacyJoomgalleryimages extends PrivacyPlugin
 {

@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
+
 // No direct access
 defined('_JEXEC') or die;
 
@@ -25,15 +26,14 @@ use \Joomla\Registry\Registry;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Helper\ContentHelper;
 
-
 /**
  * Config table
  *
- * @since 4.0.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ConfigTable extends Table implements VersionableTableInterface
 {
-
 	/**
 	 * Constructor
 	 *
@@ -44,7 +44,6 @@ class ConfigTable extends Table implements VersionableTableInterface
 		$this->typeAlias = 'com_joomgallery.config';
 		parent::__construct('#__joomgallery_configs', 'id', $db);
 		$this->setColumnAlias('published', 'state');
-
 	}
 
 	/**
@@ -76,18 +75,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		$date = Factory::getDate();
 		$task = Factory::getApplication()->input->get('task');
 
-
-		if ($array['id'] == 0 && empty($array['created_by']))
+		if($array['id'] == 0 && empty($array['created_by']))
 		{
 			$array['created_by'] = Factory::getUser()->id;
 		}
 
-		if ($array['id'] == 0 && empty($array['modified_by']))
+		if($array['id'] == 0 && empty($array['modified_by']))
 		{
 			$array['modified_by'] = Factory::getUser()->id;
 		}
 
-		if ($task == 'apply' || $task == 'save')
+		if($task == 'apply' || $task == 'save')
 		{
 			$array['modified_by'] = Factory::getUser()->id;
 		}
@@ -99,17 +97,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_uploadorder
-		if (isset($array['jg_uploadorder']))
+		if(isset($array['jg_uploadorder']))
 		{
-			if (is_array($array['jg_uploadorder']))
+			if(is_array($array['jg_uploadorder']))
 			{
 				$array['jg_uploadorder'] = implode(',',$array['jg_uploadorder']);
 			}
-			elseif (strpos($array['jg_uploadorder'], ',') != false)
+			elseif(strpos($array['jg_uploadorder'], ',') != false)
 			{
 				$array['jg_uploadorder'] = explode(',',$array['jg_uploadorder']);
 			}
-			elseif (strlen($array['jg_uploadorder']) == 0)
+			elseif(strlen($array['jg_uploadorder']) == 0)
 			{
 				$array['jg_uploadorder'] = '';
 			}
@@ -120,17 +118,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_delete_original
-		if (isset($array['jg_delete_original']))
+		if(isset($array['jg_delete_original']))
 		{
-			if (is_array($array['jg_delete_original']))
+			if(is_array($array['jg_delete_original']))
 			{
 				$array['jg_delete_original'] = implode(',',$array['jg_delete_original']);
 			}
-			elseif (strpos($array['jg_delete_original'], ',') != false)
+			elseif(strpos($array['jg_delete_original'], ',') != false)
 			{
 				$array['jg_delete_original'] = explode(',',$array['jg_delete_original']);
 			}
-			elseif (strlen($array['jg_delete_original']) == 0)
+			elseif(strlen($array['jg_delete_original']) == 0)
 			{
 				$array['jg_delete_original'] = '';
 			}
@@ -141,17 +139,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_imgprocessor
-		if (isset($array['jg_imgprocessor']))
+		if(isset($array['jg_imgprocessor']))
 		{
-			if (is_array($array['jg_imgprocessor']))
+			if(is_array($array['jg_imgprocessor']))
 			{
 				$array['jg_imgprocessor'] = implode(',',$array['jg_imgprocessor']);
 			}
-			elseif (strpos($array['jg_imgprocessor'], ',') != false)
+			elseif(strpos($array['jg_imgprocessor'], ',') != false)
 			{
 				$array['jg_imgprocessor'] = explode(',',$array['jg_imgprocessor']);
 			}
-			elseif (strlen($array['jg_imgprocessor']) == 0)
+			elseif(strlen($array['jg_imgprocessor']) == 0)
 			{
 				$array['jg_imgprocessor'] = '';
 			}
@@ -162,17 +160,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_msg_upload_type
-		if (isset($array['jg_msg_upload_type']))
+		if(isset($array['jg_msg_upload_type']))
 		{
-			if (is_array($array['jg_msg_upload_type']))
+			if(is_array($array['jg_msg_upload_type']))
 			{
 				$array['jg_msg_upload_type'] = implode(',',$array['jg_msg_upload_type']);
 			}
-			elseif (strpos($array['jg_msg_upload_type'], ',') != false)
+			elseif(strpos($array['jg_msg_upload_type'], ',') != false)
 			{
 				$array['jg_msg_upload_type'] = explode(',',$array['jg_msg_upload_type']);
 			}
-			elseif (strlen($array['jg_msg_upload_type']) == 0)
+			elseif(strlen($array['jg_msg_upload_type']) == 0)
 			{
 				$array['jg_msg_upload_type'] = '';
 			}
@@ -183,17 +181,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_msg_upload_recipients
-		if (isset($array['jg_msg_upload_recipients']))
+		if(isset($array['jg_msg_upload_recipients']))
 		{
-			if (is_array($array['jg_msg_upload_recipients']))
+			if(is_array($array['jg_msg_upload_recipients']))
 			{
 				$array['jg_msg_upload_recipients'] = implode(',',$array['jg_msg_upload_recipients']);
 			}
-			elseif (strpos($array['jg_msg_upload_recipients'], ',') != false)
+			elseif(strpos($array['jg_msg_upload_recipients'], ',') != false)
 			{
 				$array['jg_msg_upload_recipients'] = explode(',',$array['jg_msg_upload_recipients']);
 			}
-			elseif (strlen($array['jg_msg_upload_recipients']) == 0)
+			elseif(strlen($array['jg_msg_upload_recipients']) == 0)
 			{
 				$array['jg_msg_upload_recipients'] = '';
 			}
@@ -204,17 +202,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_msg_download_type
-		if (isset($array['jg_msg_download_type']))
+		if(isset($array['jg_msg_download_type']))
 		{
-			if (is_array($array['jg_msg_download_type']))
+			if(is_array($array['jg_msg_download_type']))
 			{
 				$array['jg_msg_download_type'] = implode(',',$array['jg_msg_download_type']);
 			}
-			elseif (strpos($array['jg_msg_download_type'], ',') != false)
+			elseif(strpos($array['jg_msg_download_type'], ',') != false)
 			{
 				$array['jg_msg_download_type'] = explode(',',$array['jg_msg_download_type']);
 			}
-			elseif (strlen($array['jg_msg_download_type']) == 0)
+			elseif(strlen($array['jg_msg_download_type']) == 0)
 			{
 				$array['jg_msg_download_type'] = '';
 			}
@@ -225,17 +223,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_msg_download_recipients
-		if (isset($array['jg_msg_download_recipients']))
+		if(isset($array['jg_msg_download_recipients']))
 		{
-			if (is_array($array['jg_msg_download_recipients']))
+			if(is_array($array['jg_msg_download_recipients']))
 			{
 				$array['jg_msg_download_recipients'] = implode(',',$array['jg_msg_download_recipients']);
 			}
-			elseif (strpos($array['jg_msg_download_recipients'], ',') != false)
+			elseif(strpos($array['jg_msg_download_recipients'], ',') != false)
 			{
 				$array['jg_msg_download_recipients'] = explode(',',$array['jg_msg_download_recipients']);
 			}
-			elseif (strlen($array['jg_msg_download_recipients']) == 0)
+			elseif(strlen($array['jg_msg_download_recipients']) == 0)
 			{
 				$array['jg_msg_download_recipients'] = '';
 			}
@@ -246,17 +244,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_msg_comment_type
-		if (isset($array['jg_msg_comment_type']))
+		if(isset($array['jg_msg_comment_type']))
 		{
-			if (is_array($array['jg_msg_comment_type']))
+			if(is_array($array['jg_msg_comment_type']))
 			{
 				$array['jg_msg_comment_type'] = implode(',',$array['jg_msg_comment_type']);
 			}
-			elseif (strpos($array['jg_msg_comment_type'], ',') != false)
+			elseif(strpos($array['jg_msg_comment_type'], ',') != false)
 			{
 				$array['jg_msg_comment_type'] = explode(',',$array['jg_msg_comment_type']);
 			}
-			elseif (strlen($array['jg_msg_comment_type']) == 0)
+			elseif(strlen($array['jg_msg_comment_type']) == 0)
 			{
 				$array['jg_msg_comment_type'] = '';
 			}
@@ -267,17 +265,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_msg_comment_recipients
-		if (isset($array['jg_msg_comment_recipients']))
+		if(isset($array['jg_msg_comment_recipients']))
 		{
-			if (is_array($array['jg_msg_comment_recipients']))
+			if(is_array($array['jg_msg_comment_recipients']))
 			{
 				$array['jg_msg_comment_recipients'] = implode(',',$array['jg_msg_comment_recipients']);
 			}
-			elseif (strpos($array['jg_msg_comment_recipients'], ',') != false)
+			elseif(strpos($array['jg_msg_comment_recipients'], ',') != false)
 			{
 				$array['jg_msg_comment_recipients'] = explode(',',$array['jg_msg_comment_recipients']);
 			}
-			elseif (strlen($array['jg_msg_comment_recipients']) == 0)
+			elseif(strlen($array['jg_msg_comment_recipients']) == 0)
 			{
 				$array['jg_msg_comment_recipients'] = '';
 			}
@@ -288,17 +286,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_msg_report_type
-		if (isset($array['jg_msg_report_type']))
+		if(isset($array['jg_msg_report_type']))
 		{
-			if (is_array($array['jg_msg_report_type']))
+			if(is_array($array['jg_msg_report_type']))
 			{
 				$array['jg_msg_report_type'] = implode(',',$array['jg_msg_report_type']);
 			}
-			elseif (strpos($array['jg_msg_report_type'], ',') != false)
+			elseif(strpos($array['jg_msg_report_type'], ',') != false)
 			{
 				$array['jg_msg_report_type'] = explode(',',$array['jg_msg_report_type']);
 			}
-			elseif (strlen($array['jg_msg_report_type']) == 0)
+			elseif(strlen($array['jg_msg_report_type']) == 0)
 			{
 				$array['jg_msg_report_type'] = '';
 			}
@@ -309,17 +307,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_msg_report_recipients
-		if (isset($array['jg_msg_report_recipients']))
+		if(isset($array['jg_msg_report_recipients']))
 		{
-			if (is_array($array['jg_msg_report_recipients']))
+			if(is_array($array['jg_msg_report_recipients']))
 			{
 				$array['jg_msg_report_recipients'] = implode(',',$array['jg_msg_report_recipients']);
 			}
-			elseif (strpos($array['jg_msg_report_recipients'], ',') != false)
+			elseif(strpos($array['jg_msg_report_recipients'], ',') != false)
 			{
 				$array['jg_msg_report_recipients'] = explode(',',$array['jg_msg_report_recipients']);
 			}
-			elseif (strlen($array['jg_msg_report_recipients']) == 0)
+			elseif(strlen($array['jg_msg_report_recipients']) == 0)
 			{
 				$array['jg_msg_report_recipients'] = '';
 			}
@@ -330,17 +328,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_msg_rejectimg_type
-		if (isset($array['jg_msg_rejectimg_type']))
+		if(isset($array['jg_msg_rejectimg_type']))
 		{
-			if (is_array($array['jg_msg_rejectimg_type']))
+			if(is_array($array['jg_msg_rejectimg_type']))
 			{
 				$array['jg_msg_rejectimg_type'] = implode(',',$array['jg_msg_rejectimg_type']);
 			}
-			elseif (strpos($array['jg_msg_rejectimg_type'], ',') != false)
+			elseif(strpos($array['jg_msg_rejectimg_type'], ',') != false)
 			{
 				$array['jg_msg_rejectimg_type'] = explode(',',$array['jg_msg_rejectimg_type']);
 			}
-			elseif (strlen($array['jg_msg_rejectimg_type']) == 0)
+			elseif(strlen($array['jg_msg_rejectimg_type']) == 0)
 			{
 				$array['jg_msg_rejectimg_type'] = '';
 			}
@@ -351,17 +349,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: group_id
-		if (isset($array['group_id']))
+		if(isset($array['group_id']))
 		{
-			if (is_array($array['group_id']))
+			if(is_array($array['group_id']))
 			{
 				$array['group_id'] = implode(',',$array['group_id']);
 			}
-			elseif (strpos($array['group_id'], ',') != false)
+			elseif(strpos($array['group_id'], ',') != false)
 			{
 				$array['group_id'] = explode(',',$array['group_id']);
 			}
-			elseif (strlen($array['group_id']) == 0)
+			elseif(strlen($array['group_id']) == 0)
 			{
 				$array['group_id'] = '';
 			}
@@ -396,17 +394,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_uploaddefaultcat
-		if (isset($array['jg_uploaddefaultcat']))
+		if(isset($array['jg_uploaddefaultcat']))
 		{
-			if (is_array($array['jg_uploaddefaultcat']))
+			if(is_array($array['jg_uploaddefaultcat']))
 			{
 				$array['jg_uploaddefaultcat'] = implode(',',$array['jg_uploaddefaultcat']);
 			}
-			elseif (strpos($array['jg_uploaddefaultcat'], ',') != false)
+			elseif(strpos($array['jg_uploaddefaultcat'], ',') != false)
 			{
 				$array['jg_uploaddefaultcat'] = explode(',',$array['jg_uploaddefaultcat']);
 			}
-			elseif (strlen($array['jg_uploaddefaultcat']) == 0)
+			elseif(strlen($array['jg_uploaddefaultcat']) == 0)
 			{
 				$array['jg_uploaddefaultcat'] = '';
 			}
@@ -423,17 +421,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_redirect_after_upload
-		if (isset($array['jg_redirect_after_upload']))
+		if(isset($array['jg_redirect_after_upload']))
 		{
-			if (is_array($array['jg_redirect_after_upload']))
+			if(is_array($array['jg_redirect_after_upload']))
 			{
 				$array['jg_redirect_after_upload'] = implode(',',$array['jg_redirect_after_upload']);
 			}
-			elseif (strpos($array['jg_redirect_after_upload'], ',') != false)
+			elseif(strpos($array['jg_redirect_after_upload'], ',') != false)
 			{
 				$array['jg_redirect_after_upload'] = explode(',',$array['jg_redirect_after_upload']);
 			}
-			elseif (strlen($array['jg_redirect_after_upload']) == 0)
+			elseif(strlen($array['jg_redirect_after_upload']) == 0)
 			{
 				$array['jg_redirect_after_upload'] = '';
 			}
@@ -444,17 +442,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_downloadfile
-		if (isset($array['jg_downloadfile']))
+		if(isset($array['jg_downloadfile']))
 		{
-			if (is_array($array['jg_downloadfile']))
+			if(is_array($array['jg_downloadfile']))
 			{
 				$array['jg_downloadfile'] = implode(',',$array['jg_downloadfile']);
 			}
-			elseif (strpos($array['jg_downloadfile'], ',') != false)
+			elseif(strpos($array['jg_downloadfile'], ',') != false)
 			{
 				$array['jg_downloadfile'] = explode(',',$array['jg_downloadfile']);
 			}
-			elseif (strlen($array['jg_downloadfile']) == 0)
+			elseif(strlen($array['jg_downloadfile']) == 0)
 			{
 				$array['jg_downloadfile'] = '';
 			}
@@ -471,17 +469,17 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Support for multiple field: jg_ratingcalctype
-		if (isset($array['jg_ratingcalctype']))
+		if(isset($array['jg_ratingcalctype']))
 		{
-			if (is_array($array['jg_ratingcalctype']))
+			if(is_array($array['jg_ratingcalctype']))
 			{
 				$array['jg_ratingcalctype'] = implode(',',$array['jg_ratingcalctype']);
 			}
-			elseif (strpos($array['jg_ratingcalctype'], ',') != false)
+			elseif(strpos($array['jg_ratingcalctype'], ',') != false)
 			{
 				$array['jg_ratingcalctype'] = explode(',',$array['jg_ratingcalctype']);
 			}
-			elseif (strlen($array['jg_ratingcalctype']) == 0)
+			elseif(strlen($array['jg_ratingcalctype']) == 0)
 			{
 				$array['jg_ratingcalctype'] = '';
 			}
@@ -491,21 +489,21 @@ class ConfigTable extends Table implements VersionableTableInterface
 			$array['jg_ratingcalctype'] = '';
 		}
 
-		if (isset($array['params']) && is_array($array['params']))
+		if(isset($array['params']) && is_array($array['params']))
 		{
 			$registry = new Registry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
-		if (isset($array['metadata']) && is_array($array['metadata']))
+		if(isset($array['metadata']) && is_array($array['metadata']))
 		{
 			$registry = new Registry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
 
-		if (!Factory::getUser()->authorise('core.admin', 'com_joomgallery.config.' . $array['id']))
+		if(!Factory::getUser()->authorise('core.admin', 'com_joomgallery.config.' . $array['id']))
 		{
 			$actions         = Access::getActionsFromFile(
 				JPATH_ADMINISTRATOR . '/components/com_joomgallery/access.xml',
@@ -514,9 +512,9 @@ class ConfigTable extends Table implements VersionableTableInterface
 			$default_actions = Access::getAssetRules('com_joomgallery.config.' . $array['id'])->getData();
 			$array_jaccess   = array();
 
-			foreach ($actions as $action)
+			foreach($actions as $action)
 			{
-				if (key_exists($action->name, $default_actions))
+				if(key_exists($action->name, $default_actions))
 				{
 					$array_jaccess[$action->name] = $default_actions[$action->name];
 				}
@@ -526,7 +524,7 @@ class ConfigTable extends Table implements VersionableTableInterface
 		}
 
 		// Bind the rules for ACL where supported.
-		if (isset($array['rules']) && is_array($array['rules']))
+		if(isset($array['rules']) && is_array($array['rules']))
 		{
 			$this->setRules($array['rules']);
 		}
@@ -562,13 +560,13 @@ class ConfigTable extends Table implements VersionableTableInterface
 	{
 		$rules = array();
 
-		foreach ($jaccessrules as $action => $jaccess)
+		foreach($jaccessrules as $action => $jaccess)
 		{
 			$actions = array();
 
-			if ($jaccess)
+			if($jaccess)
 			{
-				foreach ($jaccess->getData() as $group => $allow)
+				foreach($jaccess->getData() as $group => $allow)
 				{
 					$actions[$group] = ((bool)$allow);
 				}
@@ -588,27 +586,25 @@ class ConfigTable extends Table implements VersionableTableInterface
 	public function check()
 	{
 		// If there is an ordering column and this is a new row then get the next ordering value
-		if (property_exists($this, 'ordering') && $this->id == 0)
+		if(property_exists($this, 'ordering') && $this->id == 0)
 		{
 			$this->ordering = self::getNextOrder();
 		}
 
-
-
 		// Support for subform field jg_replaceinfo
-		if (is_array($this->jg_replaceinfo))
+		if(is_array($this->jg_replaceinfo))
 		{
 			$this->jg_replaceinfo = json_encode($this->jg_replaceinfo, JSON_UNESCAPED_UNICODE);
 		}
 
 		// Support for subform field jg_staticprocessing
-		if (is_array($this->jg_staticprocessing))
+		if(is_array($this->jg_staticprocessing))
 		{
 			$this->jg_staticprocessing = json_encode($this->jg_staticprocessing, JSON_UNESCAPED_UNICODE);
 		}
 
 		// Support for subform field jg_dynamicprocessing
-		if (is_array($this->jg_dynamicprocessing))
+		if(is_array($this->jg_dynamicprocessing))
 		{
 			$this->jg_dynamicprocessing = json_encode($this->jg_dynamicprocessing, JSON_UNESCAPED_UNICODE);
 		}
@@ -652,7 +648,7 @@ class ConfigTable extends Table implements VersionableTableInterface
 		$assetParent->loadByName('com_joomgallery');
 
 		// Return the found asset-parent-id
-		if ($assetParent->id)
+		if($assetParent->id)
 		{
 			$assetParentId = $assetParent->id;
 		}
@@ -660,21 +656,18 @@ class ConfigTable extends Table implements VersionableTableInterface
 		return $assetParentId;
 	}
 
-	//XXX_CUSTOM_TABLE_FUNCTION
+  /**
+   * Delete a record by id
+   *
+   * @param   mixed  $pk  Primary key value to delete. Optional
+   *
+   * @return bool
+   */
+  public function delete($pk = null)
+  {
+    $this->load($pk);
+    $result = parent::delete($pk);
 
-
-    /**
-     * Delete a record by id
-     *
-     * @param   mixed  $pk  Primary key value to delete. Optional
-     *
-     * @return bool
-     */
-    public function delete($pk = null)
-    {
-        $this->load($pk);
-        $result = parent::delete($pk);
-
-        return $result;
-    }
+    return $result;
+  }
 }

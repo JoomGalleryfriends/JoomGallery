@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 
@@ -23,8 +24,9 @@ use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Methods supporting a list of Images records.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ImagesModel extends ListModel
 {
@@ -76,13 +78,6 @@ class ImagesModel extends ListModel
 		parent::__construct($config);
 	}
 
-
-
-
-
-
-
-
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -106,7 +101,7 @@ class ImagesModel extends ListModel
 		// Split context into component and optional section
 		$parts = FieldsHelper::extract($context);
 
-		if ($parts)
+		if($parts)
 		{
 			$this->setState('filter.component', $parts[0]);
 			$this->setState('filter.section', $parts[1]);
@@ -132,9 +127,7 @@ class ImagesModel extends ListModel
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.state');
 
-
 		return parent::getStoreId($id);
-
 	}
 
 	/**
@@ -151,11 +144,7 @@ class ImagesModel extends ListModel
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'DISTINCT a.*'
-			)
-		);
+		$query->select($this->getState('list.select', 'DISTINCT a.*'));
 		$query->from('`#__joomgallery` AS a');
 
 		// Join over the users for the checked out user
@@ -181,9 +170,9 @@ class ImagesModel extends ListModel
 		// Filter by search in title
 		$search = $this->getState('filter.search');
 
-		if (!empty($search))
+		if(!empty($search))
 		{
-			if (stripos($search, 'id:') === 0)
+			if(stripos($search, 'id:') === 0)
 			{
 				$query->where('a.id = ' . (int) substr($search, 3));
 			}
@@ -194,18 +183,18 @@ class ImagesModel extends ListModel
 			}
 		}
 
-
 		// Filtering access
 		$filter_access = $this->state->get("filter.access");
-		if ($filter_access !== null && !empty($filter_access))
+		if($filter_access !== null && !empty($filter_access))
 		{
 			$query->where("a.`access` = '".$db->escape($filter_access)."'");
 		}
+
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', 'id');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
 
-		if ($orderCol && $orderDirn)
+		if($orderCol && $orderDirn)
 		{
 			$query->order($db->escape($orderCol . ' ' . $orderDirn));
 		}
@@ -222,15 +211,14 @@ class ImagesModel extends ListModel
 	{
 		$items = parent::getItems();
 
-		foreach ($items as $oneItem)
+		foreach($items as $oneItem)
 		{
-
-			if (isset($oneItem->catid))
+			if(isset($oneItem->catid))
 			{
 				$values    = explode(',', $oneItem->catid);
 				$textValue = array();
 
-				foreach ($values as $value)
+				foreach($values as $value)
 				{
 					$db    = Factory::getDbo();
 					$query = $db->getQuery(true);
@@ -242,7 +230,7 @@ class ImagesModel extends ListModel
 					$db->setQuery($query);
 					$results = $db->loadObject();
 
-					if ($results)
+					if($results)
 					{
 						$textValue[] = $results->title;
 					}

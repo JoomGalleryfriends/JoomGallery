@@ -23,8 +23,9 @@ use Joomla\Utilities\ArrayHelper;
 
 /**
  * Image class.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ImageformController extends FormController
 {
@@ -52,13 +53,13 @@ class ImageformController extends FormController
 		$model = $this->getModel('Imageform', 'Site');
 
 		// Check out the item
-		if ($editId)
+		if($editId)
 		{
 			$model->checkout($editId);
 		}
 
 		// Check in the previous user.
-		if ($previousId)
+		if($previousId)
 		{
 			$model->checkin($previousId);
 		}
@@ -90,7 +91,7 @@ class ImageformController extends FormController
 		// Validate the posted data.
 		$form = $model->getForm();
 
-		if (!$form)
+		if(!$form)
 		{
 			throw new \Exception($model->getError(), 500);
 		}
@@ -99,15 +100,15 @@ class ImageformController extends FormController
 		$data = $model->validate($form, $data);
 
 		// Check for errors.
-		if ($data === false)
+		if($data === false)
 		{
 			// Get the validation messages.
 			$errors = $model->getErrors();
 
 			// Push up to three validation messages out to the user.
-			for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
+			for($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
 			{
-				if ($errors[$i] instanceof \Exception)
+				if($errors[$i] instanceof \Exception)
 				{
 					$app->enqueueMessage($errors[$i]->getMessage(), 'warning');
 				}
@@ -134,7 +135,7 @@ class ImageformController extends FormController
 		$return = $model->save($data);
 
 		// Check for errors.
-		if ($return === false)
+		if($return === false)
 		{
 			// Save the data in the session.
 			$app->setUserState('com_joomgallery.edit.image.data', $data);
@@ -146,7 +147,7 @@ class ImageformController extends FormController
 		}
 
 		// Check in the profile.
-		if ($return)
+		if($return)
 		{
 			$model->checkin($return);
 		}
@@ -183,7 +184,7 @@ class ImageformController extends FormController
 		$model = $this->getModel('Imageform', 'Site');
 
 		// Check in the item
-		if ($editId)
+		if($editId)
 		{
 			$model->checkin($editId);
 		}

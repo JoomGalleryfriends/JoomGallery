@@ -22,8 +22,9 @@ use \Joomla\CMS\Helper\TagsHelper;
 
 /**
  * Image model.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ImageModel extends AdminModel
 {
@@ -47,9 +48,6 @@ class ImageModel extends AdminModel
 	 * @since  4.0.0
 	 */
 	protected $item = null;
-
-
-
 
 	/**
 	 * Returns a reference to the a Table object, always creating it.
@@ -83,26 +81,15 @@ class ImageModel extends AdminModel
 		$app = Factory::getApplication();
 
 		// Get the form.
-		$form = $this->loadForm(
-								'com_joomgallery.image',
-								'image',
-								array(
-									'control' => 'jform',
-									'load_data' => $loadData
-								)
-							);
+		$form = $this->loadForm('com_joomgallery.image', 'image',	array('control' => 'jform',	'load_data' => $loadData));
 
-
-
-		if (empty($form))
+		if(empty($form))
 		{
 			return false;
 		}
 
 		return $form;
 	}
-
-
 
 	/**
 	 * Method to get the data that should be injected in the form.
@@ -116,29 +103,29 @@ class ImageModel extends AdminModel
 		// Check the session for previously entered form data.
 		$data = Factory::getApplication()->getUserState('com_joomgallery.edit.image.data', array());
 
-		if (empty($data))
+		if(empty($data))
 		{
-			if ($this->item === null)
+			if($this->item === null)
 			{
 				$this->item = $this->getItem();
 			}
 
 			$data = $this->item;
 
-
 			// Support for multiple or not foreign key field: robots
 			$array = array();
 
-			foreach ((array) $data->robots as $value)
+			foreach((array) $data->robots as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->robots = $array;
+			if(!empty($array))
+      {
+			  $data->robots = $array;
 			}
 		}
 
@@ -156,19 +143,17 @@ class ImageModel extends AdminModel
 	 */
 	public function getItem($pk = null)
 	{
+    if($item = parent::getItem($pk))
+    {
+      if(isset($item->params))
+      {
+        $item->params = json_encode($item->params);
+      }
 
-			if ($item = parent::getItem($pk))
-			{
-				if (isset($item->params))
-				{
-					$item->params = json_encode($item->params);
-				}
+      // Do any procesing on fields here if needed
+    }
 
-				// Do any procesing on fields here if needed
-			}
-
-			return $item;
-
+    return $item;
 	}
 
 	/**
@@ -182,64 +167,61 @@ class ImageModel extends AdminModel
 	 */
 	public function duplicate(&$pks)
 	{
-		$app = Factory::getApplication();
+		$app  = Factory::getApplication();
 		$user = Factory::getUser();
 
 		// Access checks.
-		if (!$user->authorise('core.create', 'com_joomgallery'))
+		if(!$user->authorise('core.create', 'com_joomgallery'))
 		{
 			throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
 		}
 
-		$context    = $this->option . '.' . $this->name;
+		$context = $this->option . '.' . $this->name;
 
 		// Include the plugins for the save events.
 		PluginHelper::importPlugin($this->events_map['save']);
 
 		$table = $this->getTable();
 
-		foreach ($pks as $pk)
+		foreach($pks as $pk)
 		{
+      if($table->load($pk, true))
+      {
+        // Reset the id to create a new record.
+        $table->id = 0;
 
-				if ($table->load($pk, true))
-				{
-					// Reset the id to create a new record.
-					$table->id = 0;
+        if(!$table->check())
+        {
+          throw new \Exception($table->getError());
+        }
 
-					if (!$table->check())
-					{
-						throw new \Exception($table->getError());
-					}
+        if(!empty($table->catid))
+        {
+          if(is_array($table->catid))
+          {
+            $table->catid = implode(',', $table->catid);
+          }
+        }
+        else
+        {
+          $table->catid = '';
+        }
 
-				if (!empty($table->catid))
-				{
-					if (is_array($table->catid))
-					{
-						$table->catid = implode(',', $table->catid);
-					}
-				}
-				else
-				{
-					$table->catid = '';
-				}
+        // Trigger the before save event.
+        $result = $app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
 
+        if (in_array(false, $result, true) || !$table->store())
+        {
+          throw new \Exception($table->getError());
+        }
 
-					// Trigger the before save event.
-					$result = $app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
-
-					if (in_array(false, $result, true) || !$table->store())
-					{
-						throw new \Exception($table->getError());
-					}
-
-					// Trigger the after save event.
-					$app->triggerEvent($this->event_after_save, array($context, &$table, true));
-				}
-				else
-				{
-					throw new \Exception($table->getError());
-				}
-
+        // Trigger the after save event.
+        $app->triggerEvent($this->event_after_save, array($context, &$table, true));
+      }
+      else
+      {
+        throw new \Exception($table->getError());
+      }
 		}
 
 		// Clean cache
@@ -261,13 +243,14 @@ class ImageModel extends AdminModel
 	{
 		jimport('joomla.filter.output');
 
-		if (empty($table->id))
+		if(empty($table->id))
 		{
 			// Set ordering to the last item if not set
-			if (@$table->ordering === '')
+			if(@$table->ordering === '')
 			{
 				$db = Factory::getDbo();
 				$db->setQuery('SELECT MAX(ordering) FROM #__joomgallery');
+        
 				$max             = $db->loadResult();
 				$table->ordering = $max + 1;
 			}

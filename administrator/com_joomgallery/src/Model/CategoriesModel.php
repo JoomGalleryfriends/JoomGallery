@@ -24,8 +24,9 @@ use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Methods supporting a list of Categories records.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class CategoriesModel extends ListModel
 {
@@ -74,13 +75,6 @@ class CategoriesModel extends ListModel
 		parent::__construct($config);
 	}
 
-
-
-
-
-
-
-
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -104,7 +98,7 @@ class CategoriesModel extends ListModel
 		// Split context into component and optional section
 		$parts = FieldsHelper::extract($context);
 
-		if ($parts)
+		if($parts)
 		{
 			$this->setState('filter.component', $parts[0]);
 			$this->setState('filter.section', $parts[1]);
@@ -130,9 +124,7 @@ class CategoriesModel extends ListModel
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.state');
 
-
 		return parent::getStoreId($id);
-
 	}
 
 	/**
@@ -149,17 +141,13 @@ class CategoriesModel extends ListModel
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'DISTINCT a.*'
-			)
-		);
+		$query->select($this->getState('list.select', 'DISTINCT a.*'));
 		$query->from('`#__joomgallery_categories` AS a');
 
 		// Join over the users for the checked out user
 		$query->select("uc.name AS uEditor");
 		$query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
-			$query->where("a.level <> 0");
+		$query->where("a.level <> 0");
 
 		// Join over the access level field 'access'
 		$query->select('`access`.title AS `access`');
@@ -177,16 +165,15 @@ class CategoriesModel extends ListModel
 		// Filter by search in title
 		$search = $this->getState('filter.search');
 
-		if (!empty($search))
+		if(!empty($search))
 		{
-			if (stripos($search, 'id:') === 0)
+			if(stripos($search, 'id:') === 0)
 			{
 				$query->where('a.id = ' . (int) substr($search, 3));
 			}
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-
 			}
 		}
 
@@ -194,7 +181,7 @@ class CategoriesModel extends ListModel
 		$orderCol  = $this->state->get('list.ordering', "a.lft");
 		$orderDirn = $this->state->get('list.direction', "ASC");
 
-		if ($orderCol && $orderDirn)
+		if($orderCol && $orderDirn)
 		{
 			$query->order($db->escape($orderCol . ' ' . $orderDirn));
 		}
@@ -210,7 +197,6 @@ class CategoriesModel extends ListModel
 	public function getItems()
 	{
 		$items = parent::getItems();
-
 
 		return $items;
 	}

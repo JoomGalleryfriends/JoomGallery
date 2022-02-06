@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 
@@ -22,16 +23,13 @@ use \Joomla\CMS\Helper\TagsHelper;
 
 /**
  * Joomgallery model.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class CategoryformModel extends FormModel
 {
-	private $item = null;
-
-	
-
-	
+	private $item = null;	
 
 	/**
 	 * Method to auto-populate the model state.
@@ -49,7 +47,7 @@ class CategoryformModel extends FormModel
 		$app = Factory::getApplication('com_joomgallery');
 
 		// Load state from the request userState on edit or from the passed variable on default
-		if (Factory::getApplication()->input->get('layout') == 'edit')
+		if(Factory::getApplication()->input->get('layout') == 'edit')
 		{
 			$id = Factory::getApplication()->getUserState('com_joomgallery.edit.category.id');
 		}
@@ -65,9 +63,9 @@ class CategoryformModel extends FormModel
 		$params       = $app->getParams();
 		$params_array = $params->toArray();
 
-		if (isset($params_array['item_id']))
+		if(isset($params_array['item_id']))
 		{
-				$this->setState('category.id', $params_array['item_id']);
+			$this->setState('category.id', $params_array['item_id']);
 		}
 
 		$this->setState('params', $params);
@@ -84,11 +82,11 @@ class CategoryformModel extends FormModel
 	 */
 	public function getItem($id = null)
 	{
-		if ($this->item === null)
+		if($this->item === null)
 		{
 			$this->item = false;
 
-			if (empty($id))
+			if(empty($id))
 			{
 				$id = $this->getState('category.id');
 			}
@@ -98,14 +96,12 @@ class CategoryformModel extends FormModel
 			$properties = $table->getProperties();
 			$this->item = ArrayHelper::toObject($properties, CMSObject::class);
 
-			if ($table !== false && $table->load($id) && !empty($table->id))
+			if($table !== false && $table->load($id) && !empty($table->id))
 			{
 				$user = Factory::getUser();
 				$id   = $table->id;
 				
-
-				
-				if ($id)
+				if($id)
 				{
 					$canEdit = $user->authorise('core.edit', 'com_joomgallery.category.' . $id) || $user->authorise('core.create', 'com_joomgallery.category.' . $id);
 				}
@@ -114,20 +110,20 @@ class CategoryformModel extends FormModel
 					$canEdit = $user->authorise('core.edit', 'com_joomgallery') || $user->authorise('core.create', 'com_joomgallery');
 				}
 
-				if (!$canEdit && $user->authorise('core.edit.own', 'com_joomgallery.category.' . $id))
+				if(!$canEdit && $user->authorise('core.edit.own', 'com_joomgallery.category.' . $id))
 				{
 					$canEdit = $user->id == $table->created_by;
 				}
 
-				if (!$canEdit)
+				if(!$canEdit)
 				{
 					throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 				}
 
 				// Check published state.
-				if ($published = $this->getState('filter.published'))
+				if($published = $this->getState('filter.published'))
 				{
-					if (isset($table->state) && $table->state != $published)
+					if(isset($table->state) && $table->state != $published)
 					{
 						return $this->item;
 					}
@@ -135,10 +131,7 @@ class CategoryformModel extends FormModel
 
 				// Convert the Table to a clean CMSObject.
 				$properties = $table->getProperties(1);
-				$this->item = ArrayHelper::toObject($properties, CMSObject::class);
-				
-
-				
+				$this->item = ArrayHelper::toObject($properties, CMSObject::class);	
 			}
 		}
 
@@ -171,17 +164,15 @@ class CategoryformModel extends FormModel
 		$table      = $this->getTable();
 		$properties = $table->getProperties();
 
-		if (!in_array('alias', $properties))
+		if(!in_array('alias', $properties))
 		{
-				return null;
+			return null;
 		}
 
 		$table->load(array('alias' => $alias));
 		$id = $table->id;
-
 		
-			return $id;
-		
+		return $id;		
 	}
 
 	/**
@@ -198,23 +189,22 @@ class CategoryformModel extends FormModel
 		// Get the id.
 		$id = (!empty($id)) ? $id : (int) $this->getState('category.id');
 		
-		if ($id)
+		if($id)
 		{
 			// Initialise the table
 			$table = $this->getTable();
 
 			// Attempt to check the row in.
-			if (method_exists($table, 'checkin'))
+			if(method_exists($table, 'checkin'))
 			{
-				if (!$table->checkin($id))
+				if(!$table->checkin($id))
 				{
 					return false;
 				}
 			}
 		}
 
-		return true;
-		
+		return true;		
 	}
 
 	/**
@@ -231,7 +221,7 @@ class CategoryformModel extends FormModel
 		// Get the user id.
 		$id = (!empty($id)) ? $id : (int) $this->getState('category.id');
 		
-		if ($id)
+		if($id)
 		{
 			// Initialise the table
 			$table = $this->getTable();
@@ -240,17 +230,16 @@ class CategoryformModel extends FormModel
 			$user = Factory::getUser();
 
 			// Attempt to check the row out.
-			if (method_exists($table, 'checkout'))
+			if(method_exists($table, 'checkout'))
 			{
-				if (!$table->checkout($user->get('id'), $id))
+				if(!$table->checkout($user->get('id'), $id))
 				{
 					return false;
 				}
 			}
 		}
 
-		return true;
-		
+		return true;		
 	}
 
 	/**
@@ -268,15 +257,11 @@ class CategoryformModel extends FormModel
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Get the form.
-		$form = $this->loadForm('com_joomgallery.category', 'categoryform', array(
-						'control'   => 'jform',
-						'load_data' => $loadData
-				)
-		);
+		$form = $this->loadForm('com_joomgallery.category', 'categoryform', array('control'   => 'jform',	'load_data' => $loadData));
 
-		if (empty($form))
+		if(empty($form))
 		{
-				return false;
+			return false;
 		}
 
 		return $form;
@@ -292,28 +277,28 @@ class CategoryformModel extends FormModel
 	{
 		$data = Factory::getApplication()->getUserState('com_joomgallery.edit.category.data', array());
 
-		if (empty($data))
+		if(empty($data))
 		{
 			$data = $this->getItem();
 		}
 
-		if ($data)
-		{
-			
-		// Support for multiple or not foreign key field: robots
-		$array = array();
+		if($data)
+		{			
+      // Support for multiple or not foreign key field: robots
+      $array = array();
 
-		foreach ((array) $data->robots as $value)
-		{
-			if (!is_array($value))
-			{
-				$array[] = $value;
-			}
-		}
-		if(!empty($array)){
+      foreach((array) $data->robots as $value)
+      {
+        if(!is_array($value))
+        {
+          $array[] = $value;
+        }
+      }
 
-		$data->robots = $array;
-		}
+      if(!empty($array)
+      {
+        $data->robots = $array;
+      }
 
 			return $data;
 		}
@@ -336,9 +321,8 @@ class CategoryformModel extends FormModel
 		$id    = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('category.id');
 		$state = (!empty($data['state'])) ? 1 : 0;
 		$user  = Factory::getUser();
-
 		
-		if ($id)
+		if($id)
 		{
 			// Check the user can edit this item
 			$authorised = $user->authorise('core.edit', 'com_joomgallery.category.' . $id) || $authorised = $user->authorise('core.edit.own', 'com_joomgallery.category.' . $id);
@@ -349,24 +333,21 @@ class CategoryformModel extends FormModel
 			$authorised = $user->authorise('core.create', 'com_joomgallery');
 		}
 
-		if ($authorised !== true)
+		if($authorised !== true)
 		{
 			throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 		}
 
-		$table = $this->getTable();
+		$table = $this->getTable();	
 
-		
-
-		if ($table->save($data) === true)
+		if($table->save($data) === true)
 		{
 			return $table->id;
 		}
 		else
 		{
 			return false;
-		}
-		
+		}		
 	}
 
 	/**
@@ -383,32 +364,30 @@ class CategoryformModel extends FormModel
 	public function delete($id)
 	{
 		$user = Factory::getUser();
-
 		
-		if (empty($id))
+		if(empty($id))
 		{
 			$id = (int) $this->getState('category.id');
 		}
 
-		if ($id == 0 || $this->getItem($id) == null)
+		if($id == 0 || $this->getItem($id) == null)
 		{
-				throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_DOESNT_EXIST'), 404);
+			throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_DOESNT_EXIST'), 404);
 		}
 
-		if ($user->authorise('core.delete', 'com_joomgallery.category.' . $id) !== true)
+		if($user->authorise('core.delete', 'com_joomgallery.category.' . $id) !== true)
 		{
-				throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+			throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 		}
 
 		$table = $this->getTable();
 
-		if ($table->delete($id) !== true)
+		if($table->delete($id) !== true)
 		{
-				throw new \Exception(Text::_('JERROR_FAILED'), 501);
+			throw new \Exception(Text::_('JERROR_FAILED'), 501);
 		}
 
-		return $id;
-		
+		return $id;		
 	}
 
 	/**
@@ -422,6 +401,14 @@ class CategoryformModel extends FormModel
 
 		return $table !== false;
 	}
+
+  /**
+	 * Get alias based on view name
+   * 
+   * @param  string  $view  view name
+	 *
+	 * @return string
+	 */
 	public function getAliasFieldNameByView($view)
 	{
 		switch ($view)

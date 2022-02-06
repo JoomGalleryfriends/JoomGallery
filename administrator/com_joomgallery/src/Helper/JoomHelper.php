@@ -25,7 +25,9 @@ use \Joomla\CMS\Router\Route;
 /**
  * JoomGallery Helper for the Backend
  *
- * @since  4.0.0
+ * @static
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class JoomHelper
 {

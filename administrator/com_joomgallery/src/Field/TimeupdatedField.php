@@ -19,8 +19,9 @@ use \Joomla\CMS\Date\Date;
 
 /**
  * Supports an HTML select list of categories
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class TimeupdatedField extends FormField
 {

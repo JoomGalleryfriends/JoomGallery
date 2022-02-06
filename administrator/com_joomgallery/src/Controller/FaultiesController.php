@@ -24,7 +24,8 @@ use Joomla\Utilities\ArrayHelper;
 /**
  * Faulties list controller class.
  *
- * @since  4.0.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class FaultiesController extends AdminController
 {
@@ -45,7 +46,7 @@ class FaultiesController extends AdminController
 
 		try
 		{
-			if (empty($pks))
+			if(empty($pks))
 			{
 				throw new \Exception(Text::_('COM_JOOMGALLERY_NO_ELEMENT_SELECTED'));
 			}
@@ -77,9 +78,7 @@ class FaultiesController extends AdminController
 	public function getModel($name = 'Faulty', $prefix = 'Administrator', $config = array())
 	{
 		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}
-
-	
+	}	
 
 	/**
 	 * Method to save the submitted ordering values for records via AJAX.
@@ -107,7 +106,7 @@ class FaultiesController extends AdminController
 		// Save the ordering
 		$return = $model->saveorder($pks, $order);
 
-		if ($return)
+		if($return)
 		{
 			echo "1";
 		}

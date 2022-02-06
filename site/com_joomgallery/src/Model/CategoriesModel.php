@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 
@@ -22,11 +23,11 @@ use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
 use \Joomgallery\Component\Joomgallery\Site\Helper\JoomHelper;
 
-
 /**
  * Methods supporting a list of Joomgallery records.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class CategoriesModel extends ListModel
 {
@@ -40,7 +41,7 @@ class CategoriesModel extends ListModel
 	 */
 	public function __construct($config = array())
 	{
-		if (empty($config['filter_fields']))
+		if(empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
 				'lft', 'a.lft',
@@ -74,8 +75,6 @@ class CategoriesModel extends ListModel
 
 		parent::__construct($config);
 	}
-
-
 
 	/**
 	 * Method to auto-populate the model state.
@@ -115,15 +114,13 @@ class CategoriesModel extends ListModel
 
 		$app->setUserState($this->context . '.list', $list);
 
-
-
 		$context = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
 		$this->setState('filter.search', $context);
 
 		// Split context into component and optional section
 		$parts = FieldsHelper::extract($context);
 
-		if ($parts)
+		if($parts)
 		{
 			$this->setState('filter.component', $parts[0]);
 			$this->setState('filter.section', $parts[1]);
@@ -139,23 +136,19 @@ class CategoriesModel extends ListModel
 	 */
 	protected function getListQuery()
 	{
-			// Create a new query object.
-			$db    = $this->getDbo();
-			$query = $db->getQuery(true);
+    // Create a new query object.
+    $db    = $this->getDbo();
+    $query = $db->getQuery(true);
 
-			// Select the required fields from the table.
-			$query->select(
-						$this->getState(
-								'list.select', 'DISTINCT a.*'
-						)
-				);
+    // Select the required fields from the table.
+    $query->select($this->getState('list.select', 'DISTINCT a.*'));
 
-			$query->from('`#__joomgallery_categories` AS a');
+    $query->from('`#__joomgallery_categories` AS a');
 
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS uEditor');
 		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
-			$query->where("a.level <> 0");
+		$query->where("a.level <> 0");
 
 		// Join over the created by field 'created_by'
 		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
@@ -163,35 +156,31 @@ class CategoriesModel extends ListModel
 		// Join over the created by field 'modified_by'
 		$query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
+    // Filter by search in title
+    $search = $this->getState('filter.search');
 
-			// Filter by search in title
-			$search = $this->getState('filter.search');
+    if(!empty($search))
+    {
+      if(stripos($search, 'id:') === 0)
+      {
+        $query->where('a.id = ' . (int) substr($search, 3));
+      }
+      else
+      {
+        $search = $db->Quote('%' . $db->escape($search, true) . '%');
+      }
+    }
 
-			if (!empty($search))
-			{
-				if (stripos($search, 'id:') === 0)
-				{
-					$query->where('a.id = ' . (int) substr($search, 3));
-				}
-				else
-				{
-					$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				}
-			}
+    // Add the list ordering clause.
+    $orderCol  = $this->state->get('list.ordering', "a.lft");
+    $orderDirn = $this->state->get('list.direction', "ASC");
 
+    if($orderCol && $orderDirn)
+    {
+      $query->order($db->escape($orderCol . ' ' . $orderDirn));
+    }
 
-
-
-			// Add the list ordering clause.
-			$orderCol  = $this->state->get('list.ordering', "a.lft");
-			$orderDirn = $this->state->get('list.direction', "ASC");
-
-			if ($orderCol && $orderDirn)
-			{
-				$query->order($db->escape($orderCol . ' ' . $orderDirn));
-			}
-
-			return $query;
+    return $query;
 	}
 
 	/**
@@ -203,16 +192,16 @@ class CategoriesModel extends ListModel
 	{
 		$items = parent::getItems();
 
-		foreach ($items as $item)
+		foreach($items as $item)
 		{
-				$item->hidden = empty($item->hidden) ? '' : Text::_('COM_JOOMGALLERY_CATEGORIES_HIDDEN_OPTION_' . strtoupper($item->hidden));
-				$item->exclude_toplist = empty($item->exclude_toplist) ? '' : Text::_('COM_JOOMGALLERY_CATEGORIES_EXCLUDE_TOPLIST_OPTION_' . strtoupper($item->exclude_toplist));
-				$item->exclude_search = empty($item->exclude_search) ? '' : Text::_('COM_JOOMGALLERY_CATEGORIES_EXCLUDE_SEARCH_OPTION_' . strtoupper($item->exclude_search));
+      $item->hidden = empty($item->hidden) ? '' : Text::_('COM_JOOMGALLERY_CATEGORIES_HIDDEN_OPTION_' . strtoupper($item->hidden));
+      $item->exclude_toplist = empty($item->exclude_toplist) ? '' : Text::_('COM_JOOMGALLERY_CATEGORIES_EXCLUDE_TOPLIST_OPTION_' . strtoupper($item->exclude_toplist));
+      $item->exclude_search = empty($item->exclude_search) ? '' : Text::_('COM_JOOMGALLERY_CATEGORIES_EXCLUDE_SEARCH_OPTION_' . strtoupper($item->exclude_search));
 
-				if (!empty($item->robots))
-					{
-						$item->robots = Text::_('COM_JOOMGALLERY_CATEGORIES_ROBOTS_OPTION_' . strtoupper($item->robots));
-					}
+      if(!empty($item->robots))
+        {
+          $item->robots = Text::_('COM_JOOMGALLERY_CATEGORIES_ROBOTS_OPTION_' . strtoupper($item->robots));
+        }
 		}
 
 		return $items;
@@ -230,16 +219,16 @@ class CategoriesModel extends ListModel
 		$filters          = $app->getUserState($this->context . '.filter', array());
 		$error_dateformat = false;
 
-		foreach ($filters as $key => $value)
+		foreach($filters as $key => $value)
 		{
-			if (strpos($key, '_dateformat') && !empty($value) && $this->isValidDate($value) == null)
+			if(strpos($key, '_dateformat') && !empty($value) && $this->isValidDate($value) == null)
 			{
 				$filters[$key]    = '';
 				$error_dateformat = true;
 			}
 		}
 
-		if ($error_dateformat)
+		if($error_dateformat)
 		{
 			$app->enqueueMessage(Text::_("COM_JOOMGALLERY_SEARCH_FILTER_DATE_FORMAT"), "warning");
 			$app->setUserState($this->context . '.filter', $filters);

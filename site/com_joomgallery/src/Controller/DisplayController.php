@@ -19,8 +19,9 @@ use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 
 /**
  * Display Component Controller
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class DisplayController extends \Joomla\CMS\MVC\Controller\BaseController
 {
@@ -53,12 +54,11 @@ class DisplayController extends \Joomla\CMS\MVC\Controller\BaseController
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-
 		$view = $this->input->getCmd('view', 'images');
 		$this->input->set('view', $view);
-		
-
+    
 		parent::display($cachable, $urlparams);
+
 		return $this;
 	}
 }

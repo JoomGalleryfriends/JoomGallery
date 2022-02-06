@@ -17,7 +17,8 @@ use Joomla\CMS\MVC\Controller\FormController;
 /**
  * Image controller class.
  *
- * @since  4.0.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ImageController extends FormController
 {

@@ -17,8 +17,9 @@ use \Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Methods supporting a list of Image types records.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ImagetypesModel extends ListModel
 {

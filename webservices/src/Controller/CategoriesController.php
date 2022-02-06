@@ -7,6 +7,7 @@
 **   @copyright  2008 - 2022  JoomGallery::ProjectTeam                                  **
 **   @license    GNU General Public License version 2 or later                          **
 *****************************************************************************************/
+
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
 \defined('_JEXEC') or die;
@@ -15,8 +16,9 @@ use Joomla\CMS\MVC\Controller\ApiController;
 
 /**
  * The Categories controller
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class CategoriesController extends ApiController 
 {

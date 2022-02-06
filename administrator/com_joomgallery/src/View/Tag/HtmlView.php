@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Tag;
+
 // No direct access
 defined('_JEXEC') or die;
 
@@ -20,8 +21,9 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a single Tag.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class HtmlView extends JoomGalleryView
 {
@@ -47,7 +49,7 @@ class HtmlView extends JoomGalleryView
 		$this->form  = $this->get('Form');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors')))
+		if(count($errors = $this->get('Errors')))
 		{
 			throw new \Exception(implode("\n", $errors));
 		}
@@ -70,7 +72,7 @@ class HtmlView extends JoomGalleryView
 		$user  = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 
-		if (isset($this->item->checked_out))
+		if(isset($this->item->checked_out))
 		{
 			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		}
@@ -84,26 +86,24 @@ class HtmlView extends JoomGalleryView
 		ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TAGS_MANAGER').' :: '.Text::_('COM_JOOMGALLERY_COMMON_TOOLBAR_EDIT').' '.Text::_('COM_JOOMGALLERY_COMMON_TAG'), "tag");
 
 		// If not checked out, can save the item.
-		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
+		if(!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
 			ToolbarHelper::apply('tag.apply', 'JTOOLBAR_APPLY');
 			ToolbarHelper::save('tag.save', 'JTOOLBAR_SAVE');
 		}
 
-		if (!$checkedOut && ($canDo->get('core.create')))
+		if(!$checkedOut && ($canDo->get('core.create')))
 		{
 			ToolbarHelper::custom('tag.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 		}
 
 		// If an existing item, can save to a copy.
-		if (!$isNew && $canDo->get('core.create'))
+		if(!$isNew && $canDo->get('core.create'))
 		{
 			ToolbarHelper::custom('tag.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 		}
 
-
-
-		if (empty($this->item->id))
+		if(empty($this->item->id))
 		{
 			ToolbarHelper::cancel('tag.cancel', 'JTOOLBAR_CANCEL');
 		}

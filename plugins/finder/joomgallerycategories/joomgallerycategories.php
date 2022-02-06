@@ -1,13 +1,15 @@
 <?php
-
 /**
- * @package     Joomla.Plugin
- * @subpackage  Finder.category
- *
- * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- */
-defined('_JEXEC') or die;
+******************************************************************************************
+**   @version    4.0.0                                                                  **
+**   @package    com_joomgallery                                                        **
+**   @subpackage plg_finderjoomgallerycategories                                        **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2022  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 2 or later                          **
+*****************************************************************************************/
+
+\defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Component\ComponentHelper;
@@ -21,7 +23,7 @@ use \Joomla\Registry\Registry;
 use \Joomla\CMS\Router\Route;
 
 /**
- * category finder plugin.
+ * Category finder plugin.
  *
  * @package  Joomla.Plugin
  * @since    4.0.0
@@ -201,8 +203,8 @@ class PlgFinderJoomgallerycategories extends Adapter
 		$query = $query instanceof DatabaseQuery ? $query : $db->getQuery(true)
 		->select('a.id, a.path AS title, a.path AS summary, 1 AS state, a.access AS access');
 
-
 		$query->from($this->table . ' as a');
+    
 		return $query;
 	}
 }

@@ -17,8 +17,9 @@ use \Joomla\CMS\Form\FormField;
 
 /**
  * Supports an HTML select list of categories
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ModifiedbyField extends FormField
 {
@@ -44,7 +45,7 @@ class ModifiedbyField extends FormField
 		$user   = Factory::getUser();
 		$html[] = '<input type="hidden" name="' . $this->name . '" value="' . $user->id . '" />';
 
-		if (!$this->hidden)
+		if(!$this->hidden)
 		{
 			$html[] = "<div>" . $user->name . " (" . $user->username . ")</div>";
 		}

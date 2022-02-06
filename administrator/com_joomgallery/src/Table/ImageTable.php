@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
+
 // No direct access
 defined('_JEXEC') or die;
 
@@ -25,11 +26,11 @@ use \Joomla\Registry\Registry;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Helper\ContentHelper;
 
-
 /**
  * Image table
  *
- * @since 4.0.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ImageTable extends Table implements VersionableTableInterface
 {
@@ -101,9 +102,9 @@ class ImageTable extends Table implements VersionableTableInterface
 
 
 		// Support for alias field: alias
-		if (empty($array['alias']))
+		if(empty($array['alias']))
 		{
-			if (empty($array['imgtitle']))
+			if(empty($array['imgtitle']))
 			{
 				$array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
 			}
@@ -120,58 +121,60 @@ class ImageTable extends Table implements VersionableTableInterface
 			}
 		}
 
-
 		// Support for multiple or not foreign key field: catid
 			if(!empty($array['catid']))
 			{
-				if(is_array($array['catid'])){
+				if(is_array($array['catid']))
+        {
 					$array['catid'] = implode(',',$array['catid']);
 				}
-				else if(strrpos($array['catid'], ',') != false){
+				else if(strrpos($array['catid'], ',') != false)
+        {
 					$array['catid'] = explode(',',$array['catid']);
 				}
 			}
-			else {
+			else
+      {
 				$array['catid'] = 0;
 			}
 
-		if ($array['id'] == 0)
+		if($array['id'] == 0)
 		{
 			$array['created_time'] = $date->toSql();
 		}
 
-		if ($array['id'] == 0 && empty($array['created_by']))
+		if($array['id'] == 0 && empty($array['created_by']))
 		{
 			$array['created_by'] = Factory::getUser()->id;
 		}
 
-		if ($task == 'apply' || $task == 'save')
+		if($task == 'apply' || $task == 'save')
 		{
 			$array['modified_time'] = $date->toSql();
 		}
 
-		if ($array['id'] == 0 && empty($array['modified_by']))
+		if($array['id'] == 0 && empty($array['modified_by']))
 		{
 			$array['modified_by'] = Factory::getUser()->id;
 		}
 
-		if ($task == 'apply' || $task == 'save')
+		if($task == 'apply' || $task == 'save')
 		{
 			$array['modified_by'] = Factory::getUser()->id;
 		}
 
 		// Support for multiple field: robots
-		if (isset($array['robots']))
+		if(isset($array['robots']))
 		{
-			if (is_array($array['robots']))
+			if(is_array($array['robots']))
 			{
 				$array['robots'] = implode(',',$array['robots']);
 			}
-			elseif (strpos($array['robots'], ',') != false)
+			elseif(strpos($array['robots'], ',') != false)
 			{
 				$array['robots'] = explode(',',$array['robots']);
 			}
-			elseif (strlen($array['robots']) == 0)
+			elseif(strlen($array['robots']) == 0)
 			{
 				$array['robots'] = '';
 			}
@@ -188,32 +191,29 @@ class ImageTable extends Table implements VersionableTableInterface
 			$this->imgdate = NULL;
 		}
 
-		if (isset($array['params']) && is_array($array['params']))
+		if(isset($array['params']) && is_array($array['params']))
 		{
 			$registry = new Registry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
-		if (isset($array['metadata']) && is_array($array['metadata']))
+		if(isset($array['metadata']) && is_array($array['metadata']))
 		{
 			$registry = new Registry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
 
-		if (!Factory::getUser()->authorise('core.admin', 'com_joomgallery.image.' . $array['id']))
+		if(!Factory::getUser()->authorise('core.admin', 'com_joomgallery.image.' . $array['id']))
 		{
-			$actions         = Access::getActionsFromFile(
-				JPATH_ADMINISTRATOR . '/components/com_joomgallery/access.xml',
-				"/access/section[@name='image']/"
-			);
+			$actions         = Access::getActionsFromFile(JPATH_ADMINISTRATOR . '/components/com_joomgallery/access.xml', "/access/section[@name='image']/");
 			$default_actions = Access::getAssetRules('com_joomgallery.image.' . $array['id'])->getData();
 			$array_jaccess   = array();
 
-			foreach ($actions as $action)
+			foreach($actions as $action)
 			{
-				if (key_exists($action->name, $default_actions))
+				if(key_exists($action->name, $default_actions))
 				{
 					$array_jaccess[$action->name] = $default_actions[$action->name];
 				}
@@ -223,7 +223,7 @@ class ImageTable extends Table implements VersionableTableInterface
 		}
 
 		// Bind the rules for ACL where supported.
-		if (isset($array['rules']) && is_array($array['rules']))
+		if(isset($array['rules']) && is_array($array['rules']))
 		{
 			$this->setRules($array['rules']);
 		}
@@ -259,13 +259,13 @@ class ImageTable extends Table implements VersionableTableInterface
 	{
 		$rules = array();
 
-		foreach ($jaccessrules as $action => $jaccess)
+		foreach($jaccessrules as $action => $jaccess)
 		{
 			$actions = array();
 
-			if ($jaccess)
+			if($jaccess)
 			{
-				foreach ($jaccess->getData() as $group => $allow)
+				foreach($jaccess->getData() as $group => $allow)
 				{
 					$actions[$group] = ((bool)$allow);
 				}
@@ -285,24 +285,25 @@ class ImageTable extends Table implements VersionableTableInterface
 	public function check()
 	{
 		// If there is an ordering column and this is a new row then get the next ordering value
-		if (property_exists($this, 'ordering') && $this->id == 0)
+		if(property_exists($this, 'ordering') && $this->id == 0)
 		{
 			$this->ordering = self::getNextOrder();
 		}
 
 		// Check if alias is unique
-		if (!$this->isUnique('alias'))
+		if(!$this->isUnique('alias'))
 		{
 			$count = 0;
 			$currentAlias =  $this->alias;
-			while(!$this->isUnique('alias')){
+
+			while(!$this->isUnique('alias'))
+      {
 				$this->alias = $currentAlias . '-' . $count++;
 			}
 		}
 
-
 		// Support for subform field params
-		if (is_array($this->params))
+		if(is_array($this->params))
 		{
 			$this->params = json_encode($this->params, JSON_UNESCAPED_UNICODE);
 		}
@@ -346,7 +347,7 @@ class ImageTable extends Table implements VersionableTableInterface
 		$assetParent->loadByName('com_joomgallery');
 
 		// Return the found asset-parent-id
-		if ($assetParent->id)
+		if($assetParent->id)
 		{
 			$assetParentId = $assetParent->id;
 		}
@@ -354,21 +355,19 @@ class ImageTable extends Table implements VersionableTableInterface
 		return $assetParentId;
 	}
 
-	//XXX_CUSTOM_TABLE_FUNCTION
 
+  /**
+   * Delete a record by id
+   *
+   * @param   mixed  $pk  Primary key value to delete. Optional
+   *
+   * @return bool
+   */
+  public function delete($pk = null)
+  {
+    $this->load($pk);
+    $result = parent::delete($pk);
 
-    /**
-     * Delete a record by id
-     *
-     * @param   mixed  $pk  Primary key value to delete. Optional
-     *
-     * @return bool
-     */
-    public function delete($pk = null)
-    {
-        $this->load($pk);
-        $result = parent::delete($pk);
-
-        return $result;
-    }
+    return $result;
+  }
 }

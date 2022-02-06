@@ -24,7 +24,8 @@ use Joomla\Utilities\ArrayHelper;
 /**
  * Categories list controller class.
  *
- * @since  4.0.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class CategoriesController extends AdminController
 {
@@ -45,7 +46,7 @@ class CategoriesController extends AdminController
 
 		try
 		{
-			if (empty($pks))
+			if(empty($pks))
 			{
 				throw new \Exception(Text::_('COM_JOOMGALLERY_NO_ELEMENT_SELECTED'));
 			}
@@ -77,29 +78,28 @@ class CategoriesController extends AdminController
 	public function getModel($name = 'Category', $prefix = 'Administrator', $config = array())
 	{
 		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}
-
-	
+	}	
 
 	/**
 	 * Rebuild the nested set tree.
 	 * @return  boolean  False on failure or error, true on success.
 	 * @since   1.6
 	 */
-
 	public function rebuild()
 	{
 		$this->checkToken();
 		$this->setRedirect(Route::_('index.php?option=com_joomgallery&view=categories', false));
 		$model = $this->getModel();
 
-		if ($model->rebuild())
+		if($model->rebuild())
 		{
 			$this->setMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_SUCCESS'));
+
 			return true;
 		}
 
 		$this->setMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_FAILURE'));
+    
 		return false;
 	}
 
@@ -129,7 +129,7 @@ class CategoriesController extends AdminController
 		// Save the ordering
 		$return = $model->saveorder($pks, $order);
 
-		if ($return)
+		if($return)
 		{
 			echo "1";
 		}

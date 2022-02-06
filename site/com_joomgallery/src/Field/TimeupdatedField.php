@@ -19,8 +19,9 @@ use \Joomla\CMS\Date\Date;
 
 /**
  * Supports an HTML select list of categories
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class TimeupdatedField extends FormField
 {
@@ -47,9 +48,9 @@ class TimeupdatedField extends FormField
 		$old_time_updated = $this->value;
 		$hidden           = (boolean) $this->element['hidden'];
 
-		if ($hidden == null || !$hidden)
+		if($hidden == null || !$hidden)
 		{
-			if (!strtotime($old_time_updated))
+			if(!strtotime($old_time_updated))
 			{
 				$html[] = '-';
 			}

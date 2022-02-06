@@ -16,8 +16,9 @@ use \Joomla\CMS\Form\FormField;
 
 /**
  * Supports an HTML select list of categories
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class FileMultipleField extends FormField
 {

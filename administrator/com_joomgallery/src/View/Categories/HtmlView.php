@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Categories;
+
 // No direct access
 defined('_JEXEC') or die;
 
@@ -23,8 +24,9 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a list of Categories.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class HtmlView extends JoomGalleryView
 {
@@ -52,7 +54,7 @@ class HtmlView extends JoomGalleryView
 		$this->activeFilters = $this->get('ActiveFilters');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors')))
+		if(count($errors = $this->get('Errors')))
 		{
 			throw new \Exception(implode("\n", $errors));
 		}
@@ -82,15 +84,15 @@ class HtmlView extends JoomGalleryView
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Categories';
 
-		if (file_exists($formPath))
+		if(file_exists($formPath))
 		{
-			if ($canDo->get('core.create'))
+			if($canDo->get('core.create'))
 			{
 				$toolbar->addNew('category.add');
 			}
 		}
 
-		if ($canDo->get('core.edit.state')  || count($this->transitions))
+		if($canDo->get('core.edit.state')  || count($this->transitions))
 		{
 			$dropdown = $toolbar->dropdownButton('status-group')
 				->text('JTOOLBAR_CHANGE_STATUS')
@@ -101,13 +103,13 @@ class HtmlView extends JoomGalleryView
 
 			$childBar = $dropdown->getChildToolbar();
 
-			if (isset($this->items[0]->state))
+			if(isset($this->items[0]->state))
 			{
 				$childBar->publish('categories.publish')->listCheck(true);
 				$childBar->unpublish('categories.unpublish')->listCheck(true);
 				$childBar->archive('categories.archive')->listCheck(true);
 			}
-			elseif (isset($this->items[0]))
+			elseif(isset($this->items[0]))
 			{
 				// If this component does not use state then show a direct delete button as we can not trash
 				$toolbar->delete('categories.delete')
@@ -122,18 +124,18 @@ class HtmlView extends JoomGalleryView
 				->task('categories.duplicate')
 				->listCheck(true);
 
-			if (isset($this->items[0]->checked_out))
+			if(isset($this->items[0]->checked_out))
 			{
 				$childBar->checkin('categories.checkin')->listCheck(true);
 			}
 
-			if (isset($this->items[0]->state))
+			if(isset($this->items[0]->state))
 			{
 				$childBar->trash('categories.trash')->listCheck(true);
 			}
 		}
 
-		if ($canDo->get('core.admin'))
+		if($canDo->get('core.admin'))
 		{
 			$toolbar->standardButton('refresh')
 				->text('JTOOLBAR_REBUILD')
@@ -141,10 +143,9 @@ class HtmlView extends JoomGalleryView
 		}
 
 		// Show trash and delete for components that uses the state field
-		if (isset($this->items[0]->state))
+		if(isset($this->items[0]->state))
 		{
-
-			if ($this->state->get('filter.state') == ContentComponent::CONDITION_TRASHED && $canDo->get('core.delete'))
+			if($this->state->get('filter.state') == ContentComponent::CONDITION_TRASHED && $canDo->get('core.delete'))
 			{
 				$toolbar->delete('categories.delete')
 					->text('JTOOLBAR_EMPTY_TRASH')
@@ -153,7 +154,7 @@ class HtmlView extends JoomGalleryView
 			}
 		}
 
-		if ($canDo->get('core.admin'))
+		if($canDo->get('core.admin'))
 		{
 			$toolbar->preferences('com_joomgallery');
 		}

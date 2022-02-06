@@ -21,8 +21,9 @@ use \Joomla\CMS\Helper\TagsHelper;
 
 /**
  * Config model.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ConfigModel extends AdminModel
 {
@@ -45,10 +46,7 @@ class ConfigModel extends AdminModel
 	 *
 	 * @since  4.0.0
 	 */
-	protected $item = null;
-
-	
-	
+	protected $item = null;	
 
 	/**
 	 * Returns a reference to the a Table object, always creating it.
@@ -82,26 +80,15 @@ class ConfigModel extends AdminModel
 		$app = Factory::getApplication();
 
 		// Get the form.
-		$form = $this->loadForm(
-								'com_joomgallery.config', 
-								'config',
-								array(
-									'control' => 'jform',
-									'load_data' => $loadData 
-								)
-							);
+		$form = $this->loadForm('com_joomgallery.config', 'config', array('control' => 'jform', 'load_data' => $loadData));
 
-		
-
-		if (empty($form))
+		if(empty($form))
 		{
 			return false;
 		}
 
 		return $form;
-	}
-
-	
+	}	
 
 	/**
 	 * Method to get the data that should be injected in the form.
@@ -115,269 +102,285 @@ class ConfigModel extends AdminModel
 		// Check the session for previously entered form data.
 		$data = Factory::getApplication()->getUserState('com_joomgallery.edit.config.data', array());
 
-		if (empty($data))
+		if(empty($data))
 		{
-			if ($this->item === null)
+			if($this->item === null)
 			{
 				$this->item = $this->getItem();
 			}
 
-			$data = $this->item;
-			
+			$data = $this->item;			
 
 			// Support for multiple or not foreign key field: jg_uploadorder
 			$array = array();
 
-			foreach ((array) $data->jg_uploadorder as $value)
+			foreach((array) $data->jg_uploadorder as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_uploadorder = $array;
+			if(!empty($array))
+      {
+		    $data->jg_uploadorder = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_delete_original
 			$array = array();
 
-			foreach ((array) $data->jg_delete_original as $value)
+			foreach((array) $data->jg_delete_original as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_delete_original = $array;
+			if(!empty($array))
+      {
+			  $data->jg_delete_original = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_imgprocessor
 			$array = array();
 
-			foreach ((array) $data->jg_imgprocessor as $value)
+			foreach((array) $data->jg_imgprocessor as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_imgprocessor = $array;
+			if(!empty($array))
+      {
+			  $data->jg_imgprocessor = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_msg_upload_type
 			$array = array();
 
-			foreach ((array) $data->jg_msg_upload_type as $value)
+			foreach((array) $data->jg_msg_upload_type as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_msg_upload_type = $array;
+			if(!empty($array))
+      {
+			  $data->jg_msg_upload_type = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_msg_upload_recipients
 			$array = array();
 
-			foreach ((array) $data->jg_msg_upload_recipients as $value)
+			foreach((array) $data->jg_msg_upload_recipients as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_msg_upload_recipients = $array;
+			if(!empty($array))
+      {
+			  $data->jg_msg_upload_recipients = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_msg_download_type
 			$array = array();
 
-			foreach ((array) $data->jg_msg_download_type as $value)
+			foreach((array) $data->jg_msg_download_type as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_msg_download_type = $array;
+			if(!empty($array))
+      {
+			  $data->jg_msg_download_type = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_msg_download_recipients
 			$array = array();
 
-			foreach ((array) $data->jg_msg_download_recipients as $value)
+			foreach((array) $data->jg_msg_download_recipients as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_msg_download_recipients = $array;
+			if(!empty($array))
+      {
+			  $data->jg_msg_download_recipients = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_msg_comment_type
 			$array = array();
 
-			foreach ((array) $data->jg_msg_comment_type as $value)
+			foreach((array) $data->jg_msg_comment_type as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_msg_comment_type = $array;
+			if(!empty($array))
+      {
+			  $data->jg_msg_comment_type = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_msg_comment_recipients
 			$array = array();
 
-			foreach ((array) $data->jg_msg_comment_recipients as $value)
+			foreach((array) $data->jg_msg_comment_recipients as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_msg_comment_recipients = $array;
+			if(!empty($array))
+      {
+			  $data->jg_msg_comment_recipients = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_msg_report_type
 			$array = array();
 
-			foreach ((array) $data->jg_msg_report_type as $value)
+			foreach((array) $data->jg_msg_report_type as $value)
 			{
 				if (!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_msg_report_type = $array;
+			if(!empty($array))
+      {
+			  $data->jg_msg_report_type = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_msg_report_recipients
 			$array = array();
 
-			foreach ((array) $data->jg_msg_report_recipients as $value)
+			foreach((array) $data->jg_msg_report_recipients as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_msg_report_recipients = $array;
+			if(!empty($array))
+      {
+			  $data->jg_msg_report_recipients = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_msg_rejectimg_type
 			$array = array();
 
-			foreach ((array) $data->jg_msg_rejectimg_type as $value)
+			foreach((array) $data->jg_msg_rejectimg_type as $value)
 			{
 				if (!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_msg_rejectimg_type = $array;
+			if(!empty($array))
+      {
+			  $data->jg_msg_rejectimg_type = $array;
 			}
 
 			// Support for multiple or not foreign key field: group_id
 			$array = array();
 
-			foreach ((array) $data->group_id as $value)
+			foreach((array) $data->group_id as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->group_id = $array;
+			if(!empty($array))
+      {
+			  $data->group_id = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_uploaddefaultcat
 			$array = array();
 
-			foreach ((array) $data->jg_uploaddefaultcat as $value)
+			foreach((array) $data->jg_uploaddefaultcat as $value)
 			{
 				if (!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_uploaddefaultcat = $array;
+			if(!empty($array))
+      {
+			  $data->jg_uploaddefaultcat = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_redirect_after_upload
 			$array = array();
 
-			foreach ((array) $data->jg_redirect_after_upload as $value)
+			foreach((array) $data->jg_redirect_after_upload as $value)
 			{
 				if (!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_redirect_after_upload = $array;
+			if(!empty($array))
+      {
+			  $data->jg_redirect_after_upload = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_downloadfile
 			$array = array();
 
-			foreach ((array) $data->jg_downloadfile as $value)
+			foreach((array) $data->jg_downloadfile as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_downloadfile = $array;
+			if(!empty($array))
+      {
+			  $data->jg_downloadfile = $array;
 			}
 
 			// Support for multiple or not foreign key field: jg_ratingcalctype
 			$array = array();
 
-			foreach ((array) $data->jg_ratingcalctype as $value)
+			foreach((array) $data->jg_ratingcalctype as $value)
 			{
-				if (!is_array($value))
+				if(!is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
-			if(!empty($array)){
 
-			$data->jg_ratingcalctype = $array;
+			if(!empty($array))
+      {
+			  $data->jg_ratingcalctype = $array;
 			}
 		}
 
@@ -394,20 +397,18 @@ class ConfigModel extends AdminModel
 	 * @since   4.0.0
 	 */
 	public function getItem($pk = null)
-	{
-		
-			if ($item = parent::getItem($pk))
-			{
-				if (isset($item->params))
-				{
-					$item->params = json_encode($item->params);
-				}
-				
-				// Do any procesing on fields here if needed
-			}
+	{		
+    if($item = parent::getItem($pk))
+    {
+      if(isset($item->params))
+      {
+        $item->params = json_encode($item->params);
+      }
+      
+      // Do any procesing on fields here if needed
+    }
 
-			return $item;
-		
+    return $item;		
 	}
 
 	/**
@@ -421,52 +422,49 @@ class ConfigModel extends AdminModel
 	 */
 	public function duplicate(&$pks)
 	{
-		$app = Factory::getApplication();
+		$app  = Factory::getApplication();
 		$user = Factory::getUser();
 
 		// Access checks.
-		if (!$user->authorise('core.create', 'com_joomgallery'))
+		if(!$user->authorise('core.create', 'com_joomgallery'))
 		{
 			throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
 		}
 
-		$context    = $this->option . '.' . $this->name;
+		$context = $this->option . '.' . $this->name;
 
 		// Include the plugins for the save events.
 		PluginHelper::importPlugin($this->events_map['save']);
 
 		$table = $this->getTable();
 
-		foreach ($pks as $pk)
-		{
-			
-				if ($table->load($pk, true))
-				{
-					// Reset the id to create a new record.
-					$table->id = 0;
+		foreach($pks as $pk)
+		{			
+      if($table->load($pk, true))
+      {
+        // Reset the id to create a new record.
+        $table->id = 0;
 
-					if (!$table->check())
-					{
-						throw new \Exception($table->getError());
-					}
-					
+        if(!$table->check())
+        {
+          throw new \Exception($table->getError());
+        }        
 
-					// Trigger the before save event.
-					$result = $app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
+        // Trigger the before save event.
+        $result = $app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
 
-					if (in_array(false, $result, true) || !$table->store())
-					{
-						throw new \Exception($table->getError());
-					}
+        if(in_array(false, $result, true) || !$table->store())
+        {
+          throw new \Exception($table->getError());
+        }
 
-					// Trigger the after save event.
-					$app->triggerEvent($this->event_after_save, array($context, &$table, true));
-				}
-				else
-				{
-					throw new \Exception($table->getError());
-				}
-			
+        // Trigger the after save event.
+        $app->triggerEvent($this->event_after_save, array($context, &$table, true));
+      }
+      else
+      {
+        throw new \Exception($table->getError());
+      }			
 		}
 
 		// Clean cache
@@ -488,13 +486,14 @@ class ConfigModel extends AdminModel
 	{
 		jimport('joomla.filter.output');
 
-		if (empty($table->id))
+		if(empty($table->id))
 		{
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
 				$db = Factory::getDbo();
 				$db->setQuery('SELECT MAX(ordering) FROM #__joomgallery_configs');
+        
 				$max             = $db->loadResult();
 				$table->ordering = $max + 1;
 			}

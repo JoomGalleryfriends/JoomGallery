@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 
@@ -21,8 +22,9 @@ use \Joomla\CMS\Helper\TagsHelper;
 
 /**
  * Tag model.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class TagModel extends AdminModel
 {
@@ -45,10 +47,7 @@ class TagModel extends AdminModel
 	 *
 	 * @since  4.0.0
 	 */
-	protected $item = null;
-
-	
-	
+	protected $item = null;	
 
 	/**
 	 * Returns a reference to the a Table object, always creating it.
@@ -82,26 +81,15 @@ class TagModel extends AdminModel
 		$app = Factory::getApplication();
 
 		// Get the form.
-		$form = $this->loadForm(
-								'com_joomgallery.tag', 
-								'tag',
-								array(
-									'control' => 'jform',
-									'load_data' => $loadData 
-								)
-							);
+		$form = $this->loadForm('com_joomgallery.tag', 'tag', array('control' => 'jform', 'load_data' => $loadData));
 
-		
-
-		if (empty($form))
+		if(empty($form))
 		{
 			return false;
 		}
 
 		return $form;
-	}
-
-	
+	}	
 
 	/**
 	 * Method to get the data that should be injected in the form.
@@ -115,15 +103,14 @@ class TagModel extends AdminModel
 		// Check the session for previously entered form data.
 		$data = Factory::getApplication()->getUserState('com_joomgallery.edit.tag.data', array());
 
-		if (empty($data))
+		if(empty($data))
 		{
-			if ($this->item === null)
+			if($this->item === null)
 			{
 				$this->item = $this->getItem();
 			}
 
-			$data = $this->item;
-			
+			$data = $this->item;			
 		}
 
 		return $data;
@@ -139,20 +126,18 @@ class TagModel extends AdminModel
 	 * @since   4.0.0
 	 */
 	public function getItem($pk = null)
-	{
-		
-			if ($item = parent::getItem($pk))
-			{
-				if (isset($item->params))
-				{
-					$item->params = json_encode($item->params);
-				}
-				
-				// Do any procesing on fields here if needed
-			}
+	{		
+    if($item = parent::getItem($pk))
+    {
+      if(isset($item->params))
+      {
+        $item->params = json_encode($item->params);
+      }
+      
+      // Do any procesing on fields here if needed
+    }
 
-			return $item;
-		
+    return $item;		
 	}
 
 	/**
@@ -166,52 +151,49 @@ class TagModel extends AdminModel
 	 */
 	public function duplicate(&$pks)
 	{
-		$app = Factory::getApplication();
+		$app  = Factory::getApplication();
 		$user = Factory::getUser();
 
 		// Access checks.
-		if (!$user->authorise('core.create', 'com_joomgallery'))
+		if(!$user->authorise('core.create', 'com_joomgallery'))
 		{
 			throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
 		}
 
-		$context    = $this->option . '.' . $this->name;
+		$context = $this->option . '.' . $this->name;
 
 		// Include the plugins for the save events.
 		PluginHelper::importPlugin($this->events_map['save']);
 
 		$table = $this->getTable();
 
-		foreach ($pks as $pk)
-		{
-			
-				if ($table->load($pk, true))
-				{
-					// Reset the id to create a new record.
-					$table->id = 0;
+		foreach($pks as $pk)
+		{			
+      if($table->load($pk, true))
+      {
+        // Reset the id to create a new record.
+        $table->id = 0;
 
-					if (!$table->check())
-					{
-						throw new \Exception($table->getError());
-					}
-					
+        if(!$table->check())
+        {
+          throw new \Exception($table->getError());
+        }        
 
-					// Trigger the before save event.
-					$result = $app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
+        // Trigger the before save event.
+        $result = $app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
 
-					if (in_array(false, $result, true) || !$table->store())
-					{
-						throw new \Exception($table->getError());
-					}
+        if (in_array(false, $result, true) || !$table->store())
+        {
+          throw new \Exception($table->getError());
+        }
 
-					// Trigger the after save event.
-					$app->triggerEvent($this->event_after_save, array($context, &$table, true));
-				}
-				else
-				{
-					throw new \Exception($table->getError());
-				}
-			
+        // Trigger the after save event.
+        $app->triggerEvent($this->event_after_save, array($context, &$table, true));
+      }
+      else
+      {
+        throw new \Exception($table->getError());
+      }			
 		}
 
 		// Clean cache
@@ -233,13 +215,14 @@ class TagModel extends AdminModel
 	{
 		jimport('joomla.filter.output');
 
-		if (empty($table->id))
+		if(empty($table->id))
 		{
 			// Set ordering to the last item if not set
-			if (@$table->ordering === '')
+			if(@$table->ordering === '')
 			{
 				$db = Factory::getDbo();
 				$db->setQuery('SELECT MAX(ordering) FROM #__joomgallery_tags');
+        
 				$max             = $db->loadResult();
 				$table->ordering = $max + 1;
 			}

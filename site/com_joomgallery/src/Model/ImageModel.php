@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 
@@ -23,16 +24,13 @@ use \Joomgallery\Component\Joomgallery\Site\Helper\JoomHelper;
 
 /**
  * Joomgallery model.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ImageModel extends ItemModel
 {
 	public $_item;
-
-
-
-
 
 	/**
 	 * Method to auto-populate the model state.
@@ -51,14 +49,14 @@ class ImageModel extends ItemModel
 		$user = Factory::getUser();
 
 		// Check published state
-		if ((!$user->authorise('core.edit.state', 'com_joomgallery')) && (!$user->authorise('core.edit', 'com_joomgallery')))
+		if((!$user->authorise('core.edit.state', 'com_joomgallery')) && (!$user->authorise('core.edit', 'com_joomgallery')))
 		{
 			$this->setState('filter.published', 1);
 			$this->setState('filter.archived', 2);
 		}
 
 		// Load state from the request userState on edit or from the passed variable on default
-		if (Factory::getApplication()->input->get('layout') == 'edit')
+		if(Factory::getApplication()->input->get('layout') == 'edit')
 		{
 			$id = Factory::getApplication()->getUserState('com_joomgallery.edit.image.id');
 		}
@@ -74,7 +72,7 @@ class ImageModel extends ItemModel
 		$params       = $app->getParams();
 		$params_array = $params->toArray();
 
-		if (isset($params_array['item_id']))
+		if(isset($params_array['item_id']))
 		{
 			$this->setState('image.id', $params_array['item_id']);
 		}
@@ -93,11 +91,11 @@ class ImageModel extends ItemModel
 	 */
 	public function getItem($id = null)
 	{
-		if ($this->_item === null)
+		if($this->_item === null)
 		{
 			$this->_item = false;
 
-			if (empty($id))
+			if(empty($id))
 			{
 				$id = $this->getState('image.id');
 			}
@@ -106,14 +104,12 @@ class ImageModel extends ItemModel
 			$table = $this->getTable();
 
 			// Attempt to load the row.
-			if ($table && $table->load($id))
+			if($table && $table->load($id))
 			{
-
-
 				// Check published state.
-				if ($published = $this->getState('filter.published'))
+				if($published = $this->getState('filter.published'))
 				{
-					if (isset($table->state) && $table->state != $published)
+					if(isset($table->state) && $table->state != $published)
 					{
 						throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 403);
 					}
@@ -122,30 +118,25 @@ class ImageModel extends ItemModel
 				// Convert the Table to a clean CMSObject.
 				$properties  = $table->getProperties(1);
 				$this->_item = ArrayHelper::toObject($properties, CMSObject::class);
-
-
 			}
 
-			if (empty($this->_item))
+			if(empty($this->_item))
 			{
 				throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 404);
 			}
 		}
 
-
-
-		if (isset($this->_item->catid) && $this->_item->catid != '')
+		if(isset($this->_item->catid) && $this->_item->catid != '')
 		{
-			if (is_object($this->_item->catid))
+			if(is_object($this->_item->catid))
 			{
 				$this->_item->catid = ArrayHelper::fromObject($this->_item->catid);
 			}
 
-			$values = (is_array($this->_item->catid)) ? $this->_item->catid : explode(',',$this->_item->catid);
-
+			$values    = (is_array($this->_item->catid)) ? $this->_item->catid : explode(',',$this->_item->catid);
 			$textValue = array();
 
-			foreach ($values as $value)
+			foreach($values as $value)
 			{
 				$db    = Factory::getDbo();
 				$query = $db->getQuery(true);
@@ -158,30 +149,27 @@ class ImageModel extends ItemModel
 				$db->setQuery($query);
 				$results = $db->loadObject();
 
-				if ($results)
+				if($results)
 				{
 					$textValue[] = $results->title;
 				}
 			}
 
 			$this->_item->catid = !empty($textValue) ? implode(', ', $textValue) : $this->_item->catid;
-
 		}
 
-		if (isset($this->_item->created_by))
+		if(isset($this->_item->created_by))
 		{
 			$this->_item->created_by_name = Factory::getUser($this->_item->created_by)->name;
 		}
 
-		if (isset($this->_item->modified_by))
+		if(isset($this->_item->modified_by))
 		{
 			$this->_item->modified_by_name = Factory::getUser($this->_item->modified_by)->name;
 		}
 
 		return $this->_item;
 	}
-
-
 
 	/**
 	 * Get an instance of Table class
@@ -210,25 +198,24 @@ class ImageModel extends ItemModel
 		$properties = $table->getProperties();
 		$result     = null;
 		$aliasKey   = null;
-		if (method_exists($this, 'getAliasFieldNameByView'))
+
+		if(method_exists($this, 'getAliasFieldNameByView'))
 		{
 			$aliasKey   = $this->getAliasFieldNameByView('image');
 		}
 
-
-		if (key_exists('alias', $properties))
+		if(key_exists('alias', $properties))
 		{
 			$table->load(array('alias' => $alias));
 			$result = $table->id;
 		}
-		elseif (isset($aliasKey) && key_exists($aliasKey, $properties))
+		elseif(isset($aliasKey) && key_exists($aliasKey, $properties))
 		{
 			$table->load(array($aliasKey => $alias));
 			$result = $table->id;
 		}
 
-			return $result;
-
+		return $result;
 	}
 
 	/**
@@ -245,15 +232,15 @@ class ImageModel extends ItemModel
 		// Get the id.
 		$id = (!empty($id)) ? $id : (int) $this->getState('image.id');
 
-		if ($id)
+		if($id)
 		{
 			// Initialise the table
 			$table = $this->getTable();
 
 			// Attempt to check the row in.
-			if (method_exists($table, 'checkin'))
+			if(method_exists($table, 'checkin'))
 			{
-				if (!$table->checkin($id))
+				if(!$table->checkin($id))
 				{
 					return false;
 				}
@@ -261,7 +248,6 @@ class ImageModel extends ItemModel
 		}
 
 		return true;
-
 	}
 
 	/**
@@ -278,8 +264,7 @@ class ImageModel extends ItemModel
 		// Get the user id.
 		$id = (!empty($id)) ? $id : (int) $this->getState('image.id');
 
-
-		if ($id)
+		if($id)
 		{
 			// Initialise the table
 			$table = $this->getTable();
@@ -288,9 +273,9 @@ class ImageModel extends ItemModel
 			$user = Factory::getUser();
 
 			// Attempt to check the row out.
-			if (method_exists($table, 'checkout'))
+			if(method_exists($table, 'checkout'))
 			{
-				if (!$table->checkout($user->get('id'), $id))
+				if(!$table->checkout($user->get('id'), $id))
 				{
 					return false;
 				}
@@ -298,7 +283,6 @@ class ImageModel extends ItemModel
 		}
 
 		return true;
-
 	}
 
 	/**
@@ -317,7 +301,6 @@ class ImageModel extends ItemModel
 		$table->state = $state;
 
 		return $table->store();
-
 	}
 
 	/**
@@ -331,11 +314,16 @@ class ImageModel extends ItemModel
 	{
 		$table = $this->getTable();
 
-
-			return $table->delete($id);
-
+		return $table->delete($id);
 	}
 
+  /**
+	 * Get alias based on view name
+   * 
+   * @param  string  $view  view name
+	 *
+	 * @return string
+	 */
 	public function getAliasFieldNameByView($view)
 	{
 		switch ($view)

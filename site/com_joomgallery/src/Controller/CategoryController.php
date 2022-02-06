@@ -24,7 +24,8 @@ use \Joomla\Utilities\ArrayHelper;
 /**
  * Category class.
  *
- * @since  1.6.0
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class CategoryController extends BaseController
 {
@@ -52,13 +53,13 @@ class CategoryController extends BaseController
 		$model = $this->getModel('Category', 'Site');
 
 		// Check out the item
-		if ($editId)
+		if($editId)
 		{
 			$model->checkout($editId);
 		}
 
 		// Check in the previous user.
-		if ($previousId && $previousId !== $editId)
+		if($previousId && $previousId !== $editId)
 		{
 			$model->checkin($previousId);
 		}
@@ -83,7 +84,7 @@ class CategoryController extends BaseController
 		// Checking if the user can remove object
 		$user = Factory::getUser();
 
-		if ($user->authorise('core.edit', 'com_joomgallery') || $user->authorise('core.edit.state', 'com_joomgallery'))
+		if($user->authorise('core.edit', 'com_joomgallery') || $user->authorise('core.edit.state', 'com_joomgallery'))
 		{
 			$model = $this->getModel('Category', 'Site');
 
@@ -95,7 +96,7 @@ class CategoryController extends BaseController
 			$return = $model->publish($id, $state);
 
 			// Check for errors.
-			if ($return === false)
+			if($return === false)
 			{
 				$this->setMessage(Text::sprintf('Save failed: %s', $model->getError()), 'warning');
 			}
@@ -111,7 +112,7 @@ class CategoryController extends BaseController
 			$menu = Factory::getApplication()->getMenu();
 			$item = $menu->getActive();
 
-			if (!$item)
+			if(!$item)
 			{
 				// If there isn't any menu item active, redirect to list view
 				$this->setRedirect(Route::_('index.php?option=com_joomgallery&view=categories', false));
@@ -142,14 +143,14 @@ class CategoryController extends BaseController
 		// Checking if the user can remove object
 		$user = Factory::getUser();
 
-		if ($user->authorise('core.manage', 'com_joomgallery')) { 
+		if($user->authorise('core.manage', 'com_joomgallery')) { 
 
 			$id = $this->input->post->get('id', int, 0);
 			
 			$model = $this->getModel();
 			$return = $model->checkin($id);
 
-			if ($return === false)
+			if($return === false)
 			{
 				// Checkin failed.
 				$message = Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError());
@@ -185,7 +186,7 @@ class CategoryController extends BaseController
 		// Checking if the user can remove object
 		$user = Factory::getUser();
 
-		if ($user->authorise('core.delete', 'com_joomgallery'))
+		if($user->authorise('core.delete', 'com_joomgallery'))
 		{
 			$model = $this->getModel('Category', 'Site');
 
@@ -196,14 +197,14 @@ class CategoryController extends BaseController
 			$return = $model->delete($id);
 
 			// Check for errors.
-			if ($return === false)
+			if($return === false)
 			{
 				$this->setMessage(Text::sprintf('Delete failed', $model->getError()), 'warning');
 			}
 			else
 			{
 				// Check in the profile.
-				if ($return)
+				if($return)
 				{
 					$model->checkin($return);
 				}

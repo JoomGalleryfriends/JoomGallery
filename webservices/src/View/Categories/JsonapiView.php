@@ -16,8 +16,9 @@ use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
 
 /**
  * The Categories view
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class JsonApiView extends BaseApiView
 {

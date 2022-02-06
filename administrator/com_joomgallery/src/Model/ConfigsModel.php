@@ -9,6 +9,7 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 
@@ -23,8 +24,9 @@ use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Methods supporting a list of Configs records.
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ConfigsModel extends ListModel
 {
@@ -111,13 +113,6 @@ class ConfigsModel extends ListModel
 		parent::__construct($config);
 	}
 
-
-
-
-
-
-
-
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -141,7 +136,7 @@ class ConfigsModel extends ListModel
 		// Split context into component and optional section
 		$parts = FieldsHelper::extract($context);
 
-		if ($parts)
+		if($parts)
 		{
 			$this->setState('filter.component', $parts[0]);
 			$this->setState('filter.section', $parts[1]);
@@ -167,9 +162,7 @@ class ConfigsModel extends ListModel
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.state');
 
-
 		return parent::getStoreId($id);
-
 	}
 
 	/**
@@ -186,11 +179,7 @@ class ConfigsModel extends ListModel
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'DISTINCT a.*'
-			)
-		);
+		$query->select($this->getState('list.select', 'DISTINCT a.*'));
 		$query->from('`#__joomgallery_configs` AS a');
 
 		// Join over the users for the checked out user
@@ -209,16 +198,15 @@ class ConfigsModel extends ListModel
 		// Filter by search in title
 		$search = $this->getState('filter.search');
 
-		if (!empty($search))
+		if(!empty($search))
 		{
-			if (stripos($search, 'id:') === 0)
+			if(stripos($search, 'id:') === 0)
 			{
 				$query->where('a.id = ' . (int) substr($search, 3));
 			}
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-
 			}
 		}
 
@@ -226,7 +214,7 @@ class ConfigsModel extends ListModel
 		$orderCol  = $this->state->get('list.ordering', 'id');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
 
-		if ($orderCol && $orderDirn)
+		if($orderCol && $orderDirn)
 		{
 			$query->order($db->escape($orderCol . ' ' . $orderDirn));
 		}
@@ -243,24 +231,23 @@ class ConfigsModel extends ListModel
 	{
 		$items = parent::getItems();
 
-		foreach ($items as $oneItem)
+		foreach($items as $oneItem)
 		{
-
-			if (isset($oneItem->group_id))
+			if(isset($oneItem->group_id))
 			{
 				$values    = explode(',', $oneItem->group_id);
 				$textValue = array();
 
-				foreach ($values as $value)
+				foreach($values as $value)
 				{
-					if (!empty($value))
+					if(!empty($value))
 					{
 						$db = Factory::getDbo();
 						$query = "SELECT id, title FROM #__usergroups HAVING id LIKE '" . $value . "'";
 						$db->setQuery($query);
 						$results = $db->loadObject();
 
-						if ($results)
+						if($results)
 						{
 							$textValue[] = $results->title;
 						}

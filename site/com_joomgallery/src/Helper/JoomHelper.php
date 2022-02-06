@@ -16,14 +16,14 @@ use \Joomla\CMS\Factory;
 use \Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
- * Class JoomgalleryFrontendHelper
- *
- * @since  4.0.0
+ * JoomGallery Helper for the Frontend
+ * 
+ * @static
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class JoomHelper
 {
-
-
 	/**
 	 * Gets the files attached to an item
 	 *
@@ -62,15 +62,15 @@ class JoomHelper
 		$permission = false;
 		$user       = Factory::getUser();
 
-		if ($user->authorise('core.edit', 'com_joomgallery'))
+		if($user->authorise('core.edit', 'com_joomgallery'))
 		{
 			$permission = true;
 		}
 		else
 		{
-			if (isset($item->created_by))
+			if(isset($item->created_by))
 			{
-				if ($user->authorise('core.edit.own', 'com_joomgallery') && $item->created_by == $user->id)
+				if($user->authorise('core.edit.own', 'com_joomgallery') && $item->created_by == $user->id)
 				{
 					$permission = true;
 				}

@@ -20,8 +20,9 @@ use \Joomla\CMS\Form\Field\ListField;
 
 /**
  * Supports a value from an external table
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 class ForeignKeyField extends ListField
 {

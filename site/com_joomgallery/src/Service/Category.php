@@ -10,13 +10,15 @@
 *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Service;
+
 // No direct access
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Categories\Categories;
 /**
  * Content Component Category Tree
- *
- * @since  4.0.0
+ * 
+ * @package JoomGallery
+ * @since   4.0.0
  */
 
