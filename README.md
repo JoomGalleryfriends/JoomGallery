@@ -1,6 +1,6 @@
 # JoomGallery v4.x (Development)
 
-Development branch of JoomGallery for Joomla!4.
+Development branch of the JoomGallery component for Joomla! 4.
 
 **Project-Website:**
 https://www.en.joomgalleryfriends.net/
@@ -12,12 +12,13 @@ https://www.forum.joomgalleryfriends.net
 
 JoomGallery is an OpenSource project and is developed by users for users. So if you are using JoomGallery feel free to contribute to the project...
 
-## Development
+## Setup development environment
 
 https://docs.joomla.org/Setting_up_your_workstation_for_Joomla_development
 
 **Webserver recommendation:**
 - https://wampserver.aviatechno.net/ (Windows only)
+- https://www.apachefriends.org/index.html (Windows, Linux and macOS)
 
 **IDE/Editor recommendation:**
 - https://www.jetbrains.com/phpstorm/ (Windows, Linux and macOS)
@@ -40,10 +41,10 @@ https://docs.joomla.org/Setting_up_your_workstation_for_Joomla_development
 4. Create symbolic links from those folders to the corresponding folders within the checked out copy of your component
 5. Remove the installed component language files within your Joomla installation
    - administrator/language/en-GB/com_joomgallery.ini
+   - administrator/language/en-GB/com_joomgallery.exif.ini
+   - administrator/language/en-GB/com_joomgallery.iptc.ini
    - administrator/language/en-GB/com_joomgallery.sys.ini
    - language/en-GB/com_joomgallery.ini
-   - language/en-GB/com_joomgallery.exif.ini
-   - language/en-GB/com_joomgallery.iptc.ini
 6. Create symbolic links from those files to the corresponding files within the checked out copy of your component
 7. The referenced copy of your component can be properly versioned using Git
 
