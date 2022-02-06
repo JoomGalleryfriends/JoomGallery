@@ -12,11 +12,11 @@ https://www.forum.joomgalleryfriends.net
 
 JoomGallery is an OpenSource project and is developed by users for users. So if you are using JoomGallery feel free to contribute to the project...
 
-## Codestyle guide
+## Code development
+### Codestyle guide
 PHP: [Codestyle guide for PHP](docs/Codestyleguide.md)
 
-## Setup development environment
-
+### Setup development environment
 https://docs.joomla.org/Setting_up_your_workstation_for_Joomla_development
 
 **Webserver recommendation:**
@@ -54,7 +54,7 @@ https://docs.joomla.org/Setting_up_your_workstation_for_Joomla_development
 **Symbolic link generator tool for windows:**
 https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html
 
-## Task areas during development
+### Task areas during development
 
 | Taks area | Description |
 | ----------- | ----------- |
@@ -64,3 +64,24 @@ https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html
 | Language Manager | Setting up, structuring and managing the language files for frontend and backend. |
 | Documentation | Writing instructions for the support section of the website. |
 | Testing | Testing the new code before merging them into the main project. |
+
+## Testing
+1. Open the Pull request you want to test
+2. Change to the branch where the code of the PR is coming from
+3. Button "Code"->"Download ZIP"
+4. Install the zip file in your Joomla
+5. Perform tests where the Pull request changes anything
+6. If you find a bug or unexpected behaviour, post a comment in the pull request with the following content:
+
+#### Steps to reproduce the issue
+List the steps to perfom in order to reproduce the issue you found
+#### Expected result
+What yould you have expected to happen?
+#### Actual result
+What did really happen?
+#### System information
+- PHP-Version
+- Database type and version
+- (ImageMagick version)
+#### Additional comments
+Anything else that you think is important for the developer to fix the issue
