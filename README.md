@@ -12,6 +12,9 @@ https://www.forum.joomgalleryfriends.net
 
 JoomGallery is an OpenSource project and is developed by users for users. So if you are using JoomGallery feel free to contribute to the project...
 
+## Codestyle guide
+PHP: [a relative link](docs/codestyleguide.md)
+
 ## Setup development environment
 
 https://docs.joomla.org/Setting_up_your_workstation_for_Joomla_development
