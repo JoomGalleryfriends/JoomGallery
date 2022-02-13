@@ -353,7 +353,7 @@ class JoomConfig extends JObject
    *
    * @var array
    */
-  private static $_validImageSortingOrderByClauses = array('ordering ASC', 'ordering DESC', 'imgdate ASC', 'imgdate DESC', 'imgtitle ASC', 'imgtitle DESC');
+  private static $_validImageSortingOrderByClauses = array('ordering ASC', 'ordering DESC', 'imgdate ASC', 'imgdate DESC', 'imgtitle ASC', 'imgtitle DESC', 'hits ASC', 'hits DESC');
 
   /**
    * Constructor
