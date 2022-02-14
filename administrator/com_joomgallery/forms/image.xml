@@ -176,10 +176,20 @@
         <option value="4">noindex, nofollow</option>
     </field>
 
-    <field name="filename"
-           type="imagelist"
-           required="true"
+    <field name="image"
+           type="file"
+           accept="image/*"
+           size="10485760"
            label="COM_JOOMGALLERY_COMMON_IMAGE" />
+
+    <field name="MAX_FILE_SIZE"
+           type="hidden"
+           default="10485760"
+        />
+
+    <field name="filename"
+           type="hidden"
+           filter="stirng" />
 
     <field name="imgdate"
            type="calendar"

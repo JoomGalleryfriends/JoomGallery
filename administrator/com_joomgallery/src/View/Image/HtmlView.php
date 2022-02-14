@@ -44,9 +44,16 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		$this->state = $this->get('State');
-		$this->item  = $this->get('Item');
-		$this->form  = $this->get('Form');
+		$this->state      = $this->get('State');
+		$this->item       = $this->get('Item');
+		$this->form       = $this->get('Form');
+    $this->imagetypes = JoomHelper::getRecords('imagetypes');
+
+    if($this->item->id == 0)
+    {
+      // create a new image record
+      $this->form->setFieldAttribute('image', 'required', true);
+    }
 
 		// Check for errors.
 		if(count($errors = $this->get('Errors')))

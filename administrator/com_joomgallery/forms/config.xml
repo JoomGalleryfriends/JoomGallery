@@ -107,15 +107,6 @@
           <option value="0">JNO</option>
           <option value="1">JYES</option>
       </field>
-
-      <field name="jg_listbox_max_items"
-             type="number"
-             default="25"
-             filter="int"
-             min="1"
-             step="1"
-             label="COM_JOOMGALLERY_CONFIG_GS_GS_LISTBOXMAXCOUNT"
-             description="COM_JOOMGALLERY_CONFIG_GS_GS_LISTBOXMAXCOUNT_LONG" />
     </fieldset>
 
     <fieldset type="tab" name="general-upload" label="COM_JOOMGALLERY_ACTION_UPLOAD">
@@ -188,16 +179,6 @@
     </fieldset>
 
     <fieldset type="tab" name="general-imgprocessing" label="COM_JOOMGALLERY_CONFIG_GS_TAB_IMAGE_PROCESSING">
-      <field name="jg_delete_original"
-             type="list"
-             default="0"
-             label="COM_JOOMGALLERY_CONFIG_GS_BU_DELETE_ORIGINAL"
-             description="COM_JOOMGALLERY_CONFIG_GS_BU_DELETE_ORIGINAL_LONG" >
-        <option value="0">JNO</option>
-        <option value="1">COM_JOOMGALLERY_CONFIG_GS_BU_DELETE_ALL_ORIGINALS</option>
-        <option value="2">COM_JOOMGALLERY_CONFIG_GS_BU_DELETE_ORIGINAL_CHECKBOX</option>
-      </field>
-
       <field name="jg_imgprocessor"
              type="list"
              default="gd"

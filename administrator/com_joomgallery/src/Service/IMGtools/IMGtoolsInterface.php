@@ -129,7 +129,7 @@ interface IMGtoolsInterface
    * Auto orientation of the image based on EXIF meta data
    * Supported image-types: JPG
    *
-   * @return  bool    True on success, false otherwise (false, if no flipping is needed)
+   * @return  bool    True on success, false otherwise (true, if no orientation is needed)
    *
    * @since   4.0.0
    */
@@ -154,7 +154,7 @@ interface IMGtoolsInterface
   public function watermark($wtm_file, $wtm_pos, $wtm_resize, $wtm_newSize, $opacity): bool;
 
   /**
-   * Copy image metadata depending on file type (Supported: JPG,PNG / EXIF,IPTC)
+   * Read meta data from given image (Supported: JPG,PNG / EXIF,IPTC)
    *
    * @param   string  $img             Path to the image file
    *

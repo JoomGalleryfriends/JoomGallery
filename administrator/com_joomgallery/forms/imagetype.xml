@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fieldset>
+    <field name="ordering" />
+
+    <field name="id"
+           type="text"
+           readonly="true"
+           class="readonly"
+           default="0"
+           label="JGLOBAL_FIELD_ID_LABEL"
+           description="JGLOBAL_FIELD_ID_DESC" />
+
+    <field name="typename"
+           type="text"
+           maxlength="50"
+           filter="string"           
+           required="true"
+           label="JGLOBAL_TITLE" />
+
+    <field name="type_alias"
+           type="text"
+           class="inputbox"
+           generator="typename"
+           label="JGLOBAL_FIELD_ALIAS_LABEL"
+           maxlength="25" />
+
+    <field name="path"
+           type="text"
+           maxlength="100"
+           filter="cmd"
+           required="true"
+           label="Path" />
+
+    <field name="params"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_imagetypeparams.xml"
+           layout="joomla.form.field.subform.default"
+           label="COM_JOOMGALLERY_COMMON_PARAMETERS" />
+  </fieldset>
+</form>

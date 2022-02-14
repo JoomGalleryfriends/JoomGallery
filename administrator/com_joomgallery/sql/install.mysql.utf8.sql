@@ -112,7 +112,6 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_wmfile` VARCHAR(50) NOT NULL DEFAULT "media/joomgallery/images/watermark.png",
 `jg_use_real_paths` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_checkupdate` TINYINT(1) NOT NULL DEFAULT 1,
-`jg_listbox_max_items` DOUBLE NOT NULL DEFAULT 25,
 `jg_filenamewithjs` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_filenamereplace` TEXT NOT NULL,
 `jg_replaceinfo` TEXT NOT NULL,
@@ -120,7 +119,6 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_useorigfilename` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_uploadorder` TINYINT(1) NOT NULL DEFAULT 2,
 `jg_filenamenumber` TINYINT(1) NOT NULL DEFAULT 1,
-`jg_delete_original` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_imgprocessor` VARCHAR(5) NOT NULL DEFAULT "gd",
 `jg_fastgd2creation` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_impath` VARCHAR(100) NOT NULL DEFAULT "",
@@ -216,6 +214,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_img_types` (
 `typename` VARCHAR(50) NOT NULL DEFAULT "",
 `type_alias` VARCHAR(25) NOT NULL DEFAULT "",
 `path` VARCHAR(100) NOT NULL DEFAULT "",
+`params` TEXT NOT NULL,
 `ordering` INT(11) NOT NULL DEFAULT 0,
 PRIMARY KEY (`id`),
 KEY `idx_typename` (`typename`)

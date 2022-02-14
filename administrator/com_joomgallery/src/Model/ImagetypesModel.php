@@ -54,7 +54,9 @@ class ImagetypesModel extends ListModel
 		$query->from($db->quoteName('#__joomgallery_img_types', 'a'));
 
 		// Add the list ordering clause.
-		$query->order($db->escape("ordering" . ' ' . "ASC"));
+    $orderDirn = $this->state->get('list.direction', 'ASC');
+
+		$query->order($db->escape("ordering" . ' ' . $orderDirn));
 
 		return $query;
 	}
@@ -67,6 +69,14 @@ class ImagetypesModel extends ListModel
 	public function getItems()
 	{
 		$items = parent::getItems();
+
+    foreach ($items as $key => $item)
+    {
+      if(property_exists($item, 'params')) 
+		  {
+        $items[$key]->params = json_decode($item->params);
+      }
+    }
 
 		return $items;
 	}

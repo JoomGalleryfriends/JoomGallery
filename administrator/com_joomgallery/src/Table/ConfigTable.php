@@ -90,12 +90,6 @@ class ConfigTable extends Table implements VersionableTableInterface
 			$array['modified_by'] = Factory::getUser()->id;
 		}
 
-		if($array['jg_listbox_max_items'] === '')
-		{
-			$array['jg_listbox_max_items'] = NULL;
-			$this->jg_listbox_max_items = NULL;
-		}
-
 		// Support for multiple field: jg_uploadorder
 		if(isset($array['jg_uploadorder']))
 		{

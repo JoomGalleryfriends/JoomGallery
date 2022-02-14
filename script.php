@@ -370,9 +370,8 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $data["modified_by"] = 0;
     $data["jg_filenamereplace"] = 'Š|S, Œ|O, Ž|Z, š|s, œ|oe, ž|z, Ÿ|Y, ¥|Y, µ|u, À|A, Á|A, Â|A, Ã|A, Ä|AE, Å|A, Æ|A, Ç|C, È|E, É|E, Ê|E, Ë|E, Ì|I, Í|I, Î|I, Ï|I, Ð|D, Ñ|N, Ò|O, Ó|O, Ô|O, Õ|O, Ö|OE, Ø|O, Ù|U, Ú|U, Û|U, Ü|UE, Ý|Y, à|a, á|a, â|a, ã|a, ä|ae, å|a, æ|a, ç|c, è|e, é|e, ê|e, ë|e';
     $data["jg_replaceinfo"] = '[]';
-    $data["jg_staticprocessing"] = '{"jg_staticprocessing0":{"jg_imgtype":"1","jg_imgtypename":"original","jg_imgtypepath":"/images/joomgallery/originals","jg_imgtyperesize":"0","jg_imgtypewidth":"","jg_imgtypeheight":"","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypequality":100,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":[]},"jg_staticprocessing1":{"jg_imgtype":"1","jg_imgtypename":"detail","jg_imgtypepath":"/images/joomgallery/details","jg_imgtyperesize":"4","jg_imgtypewidth":1000,"jg_imgtypeheight":1000,"jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypequality":80,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":[]},"jg_staticprocessing2":{"jg_imgtype":"1","jg_imgtypename":"thumbnail","jg_imgtypepath":"/images/joomgallery/thumbnails","jg_imgtyperesize":"3","jg_imgtypewidth":250,"jg_imgtypeheight":250,"jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypequality":60,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":[]}}';
+    $data["jg_staticprocessing"] = '{"jg_staticprocessing0":{"jg_imgtype":"1","jg_imgtypename":"original","jg_imgtypepath":"/images/joomgallery/originals","jg_imgtyperesize":"0","jg_imgtypewidth":"","jg_imgtypeheight":"","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"1","jg_imgtypesharpen":"0","jg_imgtypequality":100,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":[]},"jg_staticprocessing1":{"jg_imgtype":"1","jg_imgtypename":"detail","jg_imgtypepath":"/images/joomgallery/details","jg_imgtyperesize":"3","jg_imgtypewidth":1000,"jg_imgtypeheight":1000,"jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":80,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":[]},"jg_staticprocessing2":{"jg_imgtype":"1","jg_imgtypename":"thumbnail","jg_imgtypepath":"/images/joomgallery/thumbnails","jg_imgtyperesize":"4","jg_imgtypewidth":250,"jg_imgtypeheight":250,"jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"1","jg_imgtypequality":60,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":[]}}';
     $data["jg_dynamicprocessing"] = '[]';
-    $data["jg_listbox_max_items"] = 25;
     $data["jg_imgprocessor"] = 'gd';
     $data["jg_maxusercat"] = 10;
     $data["jg_maxuserimage"] = 500;
@@ -410,10 +409,26 @@ class com_joomgalleryInstallerScript extends InstallerScript
 	{
     $db = Factory::getDbo();
 
+    switch($type)
+    {
+      case 'detail':
+        $params = '{"jg_imgtype":"1","jg_imgtyperesize":"3","jg_imgtypewidth":"1000","jg_imgtypeheight":"1000","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":"80","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"[]"}';
+        break;
+
+      case 'thumbnail':
+        $params = '{"jg_imgtype":"1","jg_imgtyperesize":"4","jg_imgtypewidth":"250","jg_imgtypeheight":"250","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"1","jg_imgtypequality":"60","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"[]"}';
+        break;
+      
+      default:
+        $params = '{"jg_imgtype":"1","jg_imgtyperesize":"0","jg_imgtypewidth":"","jg_imgtypeheight":"","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"1","jg_imgtypesharpen":"0","jg_imgtypequality":"100","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"[]"}';
+        break;
+    }
+
     $record = new stdClass();
     $record->typename = $type;
     $record->type_alias = $alias;
     $record->path = $path;
+    $record->params = $params;
     $record->ordering = $this->count;
 
     // Insert the object into the user profile table.

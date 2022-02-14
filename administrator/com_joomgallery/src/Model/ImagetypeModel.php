@@ -13,22 +13,22 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // No direct access.
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Table\Table;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Object\CMSObject;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
-use \Joomla\CMS\Helper\TagsHelper;
 
 /**
- * Tag model.
+ * Imagetype model.
  * 
  * @package JoomGallery
  * @since   4.0.0
  */
-class TagModel extends JoomAdminModel
+class ImagetypeModel extends JoomAdminModel
 {
-	/**
+  /**
 	 * @var    string  The prefix to use with controller messages.
 	 *
 	 * @since  4.0.0
@@ -40,16 +40,16 @@ class TagModel extends JoomAdminModel
 	 *
 	 * @since  4.0.0
 	 */
-	public $typeAlias = 'com_joomgallery.tag';
+	public $typeAlias = 'com_joomgallery.imagetype';
 
 	/**
 	 * @var    null  Item data
 	 *
 	 * @since  4.0.0
 	 */
-	protected $item = null;	
+	protected $item = null;
 
-	/**
+  /**
 	 * Returns a reference to the a Table object, always creating it.
 	 *
 	 * @param   string  $type    The table type to instantiate
@@ -60,12 +60,12 @@ class TagModel extends JoomAdminModel
 	 *
 	 * @since   4.0.0
 	 */
-	public function getTable($type = 'Tag', $prefix = 'Administrator', $config = array())
+	public function getTable($type = 'Imagetype', $prefix = 'Administrator', $config = array())
 	{
 		return parent::getTable($type, $prefix, $config);
 	}
 
-	/**
+  /**
 	 * Method to get the record form.
 	 *
 	 * @param   array    $data      An optional array of data for the form to interogate.
@@ -77,8 +77,8 @@ class TagModel extends JoomAdminModel
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Get the form.
-		$form = $this->loadForm('com_joomgallery.tag', 'tag', array('control' => 'jform', 'load_data' => $loadData));
+    // Get the form.
+		$form = $this->loadForm('com_joomgallery.imagetype', 'imagetype', array('control' => 'jform', 'load_data' => $loadData));
 
 		if(empty($form))
 		{
@@ -86,9 +86,9 @@ class TagModel extends JoomAdminModel
 		}
 
 		return $form;
-	}	
+  }
 
-	/**
+  /**
 	 * Method to get the data that should be injected in the form.
 	 *
 	 * @return  mixed  The data for the form.
@@ -97,106 +97,70 @@ class TagModel extends JoomAdminModel
 	 */
 	protected function loadFormData()
 	{
-		// Check the session for previously entered form data.
-		$data = $this->app->getUserState('com_joomgallery.edit.tag.data', array());
+    if($this->item === null)
+    {
+      $this->item = $this->getItem();
+    }
 
-		if(empty($data))
-		{
-			if($this->item === null)
-			{
-				$this->item = $this->getItem();
-			}
-
-			$data = $this->item;			
-		}
-
-		return $data;
+		return $this->item;
 	}
 
-	/**
+  /**
 	 * Method to get a single record.
 	 *
-	 * @param   integer  $pk  The id of the primary key.
+	 * @param   integer|array  $pk  The id of the primary key or array(fieldname => value)
 	 *
 	 * @return  mixed    Object on success, false on failure.
 	 *
 	 * @since   4.0.0
 	 */
 	public function getItem($pk = null)
-	{		
-    if($item = parent::getItem($pk))
-    {
-      if(isset($item->params))
-      {
-        $item->params = json_encode($item->params);
-      }
-      
-      // Do any procesing on fields here if needed
-    }
-
-    return $item;		
-	}
-
-	/**
-	 * Method to duplicate an Tag
-	 *
-	 * @param   array  &$pks  An array of primary key IDs.
-	 *
-	 * @return  boolean  True if successful.
-	 *
-	 * @throws  Exception
-	 */
-	public function duplicate(&$pks)
 	{
-		// Access checks.
-		if(!$this->user->authorise('core.create', 'com_joomgallery'))
-		{
-			throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
-		}
-
-		$context = $this->option . '.' . $this->name;
-
-		// Include the plugins for the save events.
-		PluginHelper::importPlugin($this->events_map['save']);
-
+    $pk = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
 		$table = $this->getTable();
 
-		foreach($pks as $pk)
-		{			
-      if($table->load($pk, true))
-      {
-        // Reset the id to create a new record.
-        $table->id = 0;
+		if ($pk > 0 || \is_array($pk))
+		{
+			// Attempt to load the row.
+			$return = $table->load($pk);
 
-        if(!$table->check())
-        {
-          throw new \Exception($table->getError());
-        }        
+			// Check for a table object error.
+			if ($return === false)
+			{
+				// If there was no underlying error, then the false means there simply was not a row in the db for this $pk.
+				if (!$table->getError())
+				{
+					// Create new row
+          $table->load(0);
+				}
+				else
+				{
+					$this->setError($table->getError());
 
-        // Trigger the before save event.
-        $result = $this->app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
-
-        if (in_array(false, $result, true) || !$table->store())
-        {
-          throw new \Exception($table->getError());
-        }
-
-        // Trigger the after save event.
-        $this->app->triggerEvent($this->event_after_save, array($context, &$table, true));
-      }
-      else
-      {
-        throw new \Exception($table->getError());
-      }			
+          return false;
+				}
+			}
 		}
 
-		// Clean cache
-		$this->cleanCache();
+		// Convert to the CMSObject before adding other data.
+		$properties = $table->getProperties(1);
+		$item = ArrayHelper::toObject($properties, CMSObject::class);
 
-		return true;
+    if(property_exists($item, 'params')) 
+		{
+			$registry = new Registry($item->params);
+			$item->params = $registry->toArray();
+		}
+
+    if(isset($item->params))
+    {
+      $item->params = json_encode($item->params);
+    }
+
+		return $item;	
 	}
 
-	/**
+  /**
 	 * Prepare and sanitise the table prior to saving.
 	 *
 	 * @param   Table  $table  Table Object
@@ -215,7 +179,7 @@ class TagModel extends JoomAdminModel
 			if(@$table->ordering === '')
 			{
 				$db = Factory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__joomgallery_tags');
+				$db->setQuery('SELECT MAX(ordering) FROM #__joomgallery_img_types');
         
 				$max             = $db->loadResult();
 				$table->ordering = $max + 1;

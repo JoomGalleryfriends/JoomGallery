@@ -11,6 +11,7 @@
 // No direct access
 defined('_JEXEC') or die;
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\HTML\HTMLHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
@@ -28,7 +29,6 @@ HTMLHelper::_('bootstrap.tooltip');
 <form
 	action="<?php echo Route::_('index.php?option=com_joomgallery&layout=edit&id=' . (int) $this->item->id); ?>"
 	method="post" enctype="multipart/form-data" name="adminForm" id="image-form" class="form-validate form-horizontal">
-
 
 	<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details')); ?>
 	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>
@@ -75,7 +75,39 @@ HTMLHelper::_('bootstrap.tooltip');
 		<div class="span10 form-horizontal">
 			<fieldset class="adminform">
 				<legend><?php echo Text::_('COM_JOOMGALLERY_COMMON_IMAGES'); ?></legend>
+        <?php echo $this->form->renderField('image'); ?>
 				<?php echo $this->form->renderField('filename'); ?>
+        <div class="control-group">
+          <div class="control-label">
+            <label><?php echo Text::_('COM_JOOMGALLERY_COMMON_IMAGETYPE'); ?></label>
+          </div>
+          <div class="controls">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col" style="width:30%"></th>
+                    <?php foreach($this->imagetypes as $key => $imagetype) : ?>
+                      <th scope="col"><?php echo Text::_('COM_JOOMGALLERY_MAIMAN_TYPE_'.strtoupper($imagetype->type_alias)); ?></th>
+                    <?php endforeach; ?>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img style="max-width:150px;" src="<?php echo JoomHelper::getImg($this->item, 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_MAIMAN_TYPE_'.strtoupper($imagetype->typename)); ?>">
+                    </td>
+                    <?php foreach($this->imagetypes as $key => $imagetype) : ?>
+                      <td data-column="<?php echo Text::_('COM_JOOMGALLERY_MAIMAN_TYPE_'.strtoupper($imagetype->type_alias)); ?>">
+                        <a style="cursor:pointer;" onclick="openModal('<?php echo $imagetype->typename; ?>')"><?php echo Text::_('COM_JOOMGALLERY_COMMON_SHOWIMAGE'); ?></a>
+                      </td>
+                    <?php endforeach; ?>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 			</fieldset>
 			<fieldset class="adminform">
 				<legend><?php echo Text::_('JGLOBAL_FIELDSET_METADATA'); ?></legend>
@@ -121,3 +153,47 @@ HTMLHelper::_('bootstrap.tooltip');
 	<?php echo HTMLHelper::_('form.token'); ?>
 
 </form>
+
+<?php
+$options = array('modal-dialog-scrollable' => true,
+                  'title'  => 'Test Title',
+                  'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
+                );
+
+echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
+?>
+
+<script>
+  function openModal(typename)
+	{
+    let modal = document.getElementById('image-modal-box');
+
+    let modalTitle = modal.querySelector('.modal-title');
+    let modalBody  = modal.querySelector('.modal-body');
+
+    <?php
+      $imgURL   = '{';
+      $imgTitle = '{';
+
+      foreach($this->imagetypes as $key => $imagetype)
+      {
+        $imgURL   .= $imagetype->typename.':"'.JoomHelper::getImg($this->item, $imagetype->typename).'",';
+        $imgTitle .= $imagetype->typename.':"'.Text::_('COM_JOOMGALLERY_MAIMAN_TYPE_'.strtoupper($imagetype->typename)).'",';
+      }
+
+      $imgURL .= '}';
+      $imgTitle .= '}';
+    ?>
+    let imgURL   = <?php echo $imgURL; ?>;
+    let imgTitle = <?php echo $imgTitle; ?>;
+
+    modalTitle.innerHTML = imgTitle[typename];
+    modalBody.innerHTML = '<img style="max-width:100%" src="' + imgURL[typename] + '" alt="' + imgTitle[typename] + '">';
+
+    let bsmodal = new bootstrap.Modal(document.getElementById('image-modal-box'), {keyboard: false});
+    bsmodal.show();
+
+
+		console.log(typename);
+	};
+</script>

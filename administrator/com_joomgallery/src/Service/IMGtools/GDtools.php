@@ -281,18 +281,21 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // write successful
-    $success = false;
+    $success  = false;
+    $bak_file = '';
 
     // Create backup file, if source and destination are the same
     if($this->src_file == $file)
     {
-      $success = File::copy($this->src_file, $this->src_file.'bak');
+      $bak_file = $this->src_file.'bak';
+      $success  = File::copy($this->src_file, $bak_file);
     }
     else
     {
       if(File::exists($file))
       {
-        $success = File::copy($file, $file.'bak');
+        $bak_file = $file.'bak';
+        $success  = File::copy($file, $bak_file);
       }
       else
       {
@@ -324,13 +327,15 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       // Create backup file, if source and destination are the same
       if($this->src_file == $file)
       {
-        $success = File::copy($this->src_file, $this->src_file.'bak');
+        $bak_file = $this->src_file.'bak';
+        $success  = File::copy($this->src_file, $bak_file);
       }
       else
       {
         if(File::exists($file))
         {
-          $success = File::copy($file, $file.'bak');
+          $bak_file = $file.'bak';
+          $success  = File::copy($file, $bak_file);
         }
         else
         {
@@ -436,6 +441,9 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // Clean up working area (frames and imginfo)
     $this->deleteFrames_GD(array('src_frames', 'dst_frames', 'res_frames'));
     $this->clearVariables();
+
+    // Delete backup files
+    File::delete($bak_file);
 
     return true;
   }
@@ -978,7 +986,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    * Auto orientation of the image based on EXIF meta data
    * Supported image-types: jpg
    *
-   * @return  bool    True on success, false otherwise (false, if no flipping is needed)
+   * @return  bool    True on success, false otherwise (true, if no orientation is needed)
    *
    * @since   4.0.0
    */
@@ -1542,7 +1550,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    */
   protected function isImage_GD($frame)
   {
-    if (is_resource($frame) && 'gd' === get_resource_type($frame) || is_object($frame) && $frame instanceof GdImage)
+    if(is_resource($frame) && 'gd' === get_resource_type($frame) || \is_object($frame) && $frame instanceof \GdImage)
     {
       return true;
     }

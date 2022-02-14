@@ -31,28 +31,38 @@ interface FilesystemInterface
   public function __construct();
 
   /**
+   * Function to strip additional / or \ in a path name.
+   *
+   * @param   string  $path   The path to clean
+   * @param   string  $ds     Directory separator (optional)
+   *
+   * @return  string  The cleaned path
+   *
+   * @since   4.0.0
+   */
+  public function cleanPath($path, $ds=\DIRECTORY_SEPARATOR): string;
+
+  /**
    * Moves a file from local folder to storage
    *
    * @param   string  $src   File name at local folder
-   * @param   string  $dest  File name at destination storage filesystem
    *
    * @return  bool    true on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function uploadFile($src, $dest): bool;
+  public function uploadFile($src): bool;
 
   /**
    * Moves a file from the storage to a local folder
    *
-   * @param   string  $src   File name at destination storage filesystem
    * @param   string  $dest  File name at local folder
    *
    * @return  bool    true on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function downloadFile($src, $dest): bool;
+  public function downloadFile($dest): bool;
 
   /**
    * Moves a file at the storage filesystem

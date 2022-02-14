@@ -105,9 +105,9 @@ class JoomHelper
   /**
 	 * Returns a database record
    *
-   * @param   string   $name      The name of the record (available: category,image,tag)
-   * @param   int      $id        The id of the primary key
-   * @param   Object   $com_obj   JoomgalleryComponent object if available
+   * @param   string          $name      The name of the record (available: category,image,tag)
+   * @param   int             $id        The id of the primary key
+   * @param   Object          $com_obj   JoomgalleryComponent object if available
 	 *
 	 * @return  CMSObject|bool  Object on success, false on failure.
 	 *
@@ -115,7 +115,7 @@ class JoomHelper
 	 */
   public static function getRecord($name, $id, $com_obj=null)
   {
-    $availables = array('category', 'image', 'tag');
+    $availables = array('category', 'image', 'tag', 'imagetype');
 
     if(!\in_array($name, $availables))
     {
@@ -124,9 +124,12 @@ class JoomHelper
       return false;
     }
 
-    $id = intval($id);
+    if($name != 'imagetype' || !\is_array($id))
+    {
+      $id = intval($id);
+    }
 
-    if(!empty($id) && $id > 0)
+    if(!empty($id) && ($id > 0 || \is_array($id)))
     {
       // get the JoomgalleryComponent object if needed
       if(!isset($com_obj) || !\strpos('JoomgalleryComponent', \get_class($com_obj)) === false)
@@ -157,10 +160,10 @@ class JoomHelper
   /**
 	 * Returns a list of database records
    *
-   * @param   string   $name      The name of the record (available: categories,images,tags,imagetypes)
-   * @param   Object   $com_obj   JoomgalleryComponent object if available
+   * @param   string      $name      The name of the record (available: categories,images,tags,imagetypes)
+   * @param   Object      $com_obj   JoomgalleryComponent object if available
 	 *
-	 * @return  CMSObject|boolean  Object on success, false on failure.
+	 * @return  array|bool  Array on success, false on failure.
 	 *
 	 * @since   4.0.0
 	 */
@@ -249,7 +252,7 @@ class JoomHelper
    *
    * @param   string/object/int $img    Filename, database object or ID of the image
    * @param   string            $type   The image type
-   * @param   bool              $url   True: image url, false: image path (default: true)
+   * @param   bool              $url    True: image url, false: image path (default: true)
    *
    * @return  mixed             URL or path to the image on success, false otherwise
    *
@@ -257,26 +260,12 @@ class JoomHelper
    */
   public static function getImg($img, $type, $url=true)
   {
-    // load config service
-    $jg = self::getComponent();
-    $jg->createConfig();
-
     // get imagetypes
-    $imagetypes = self::getRecords('imagetypes');
-
-    // check $type for against the existing imagetypes
-    $imagetype = false;
-    foreach ($imagetypes as $key => $img_type)
-    {
-      if($img_type->typename == $type)
-      {
-        $imagetype = $img_type;
-      }
-    }
+    $imagetype = self::getRecord('imagetype', array('typename' => $type));
 
     if($imagetype === false)
     {
-      Factory::getApplication()->enqueueMessage();
+      Factory::getApplication()->enqueueMessage('Imagetype not found!', 'error');
 
       return false;
     }
@@ -285,19 +274,20 @@ class JoomHelper
     {
       if(is_numeric($img))
       {
+        // get image based on ID
         $img = self::getRecord('image', $img);
       }
       else
       {
         // get image id based on filename
-
+        $img = self::getRecord('image', array('filename' => $img));
       }
     }
 
     if(!is_object($img))
     {
       // image object not found
-      Factory::getApplication()->enqueueMessage();
+      Factory::getApplication()->enqueueMessage('Image not available!', 'error');
 
       return false;
     }

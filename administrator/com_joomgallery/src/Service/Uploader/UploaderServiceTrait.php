@@ -59,20 +59,20 @@ trait UploaderServiceTrait
     switch ($uploadMethod)
     {
       case 'ajax':
-        $this->uploader = new AjaxUploader;
+        $this->uploader = new AjaxUploader();
         break;
 
       case 'batch':
-        $this->uploader = new BatchUploader;
+        $this->uploader = new BatchUploader();
         break;
 
       case 'FTP':
       case 'ftp':
-        $this->uploader = new FTPUploader;
+        $this->uploader = new FTPUploader();
         break;
 
       default:
-        $this->uploader = new HTMLUploader;
+        $this->uploader = new HTMLUploader();
         break;
     }
 

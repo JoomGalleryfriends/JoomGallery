@@ -65,4 +65,18 @@ trait IMGtoolsServiceTrait
 
     return;
 	}
+
+  /**
+	 * Destroys the IMGtools class
+	 *
+   * @return  void
+   *
+	 * @since  4.0.0
+	 */
+	public function delIMGtools(): void
+	{
+    unset($this->IMGtools);
+
+    return;
+	}
 }

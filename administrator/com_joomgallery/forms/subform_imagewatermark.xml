@@ -39,5 +39,16 @@
            step="1"
            label="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKSIZE"
            description="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKSIZE_LONG" />
+
+    <field name="jg_watermarkopacity"
+           type="number"
+           groupByFieldset="false"
+           default="80"
+           filter="int"
+           min="1"
+           max="100"
+           step="1"
+           label="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKOPACITY"
+           description="COM_JOOMGALLERY_CONFIG_DV_GS_WATERMARKOPACITY_LONG" />
   </fieldset>
 </form>

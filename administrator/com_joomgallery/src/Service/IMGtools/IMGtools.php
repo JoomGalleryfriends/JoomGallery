@@ -308,7 +308,7 @@ abstract class IMGtools implements IMGtoolsInterface
   }
 
   /**
-   * Copy image metadata depending on file type (Supported: JPG,PNG / EXIF,IPTC)
+   * Read meta data from given image (Supported: JPG,PNG / EXIF,IPTC)
    *
    * @param   string  $img             Path to the image file
    *

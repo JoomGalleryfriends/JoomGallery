@@ -15,9 +15,13 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Table\Table;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 use \Joomla\CMS\Plugin\PluginHelper;
-use \Joomla\CMS\MVC\Model\AdminModel;
 use \Joomla\CMS\Helper\TagsHelper;
+use \Joomla\CMS\Form\Form;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
+use stdClass;
 
 /**
  * Config model.
@@ -25,7 +29,7 @@ use \Joomla\CMS\Helper\TagsHelper;
  * @package JoomGallery
  * @since   4.0.0
  */
-class ConfigModel extends AdminModel
+class ConfigModel extends JoomAdminModel
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.
@@ -76,9 +80,6 @@ class ConfigModel extends AdminModel
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app = Factory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm('com_joomgallery.config', 'config', array('control' => 'jform', 'load_data' => $loadData));
 
@@ -88,7 +89,7 @@ class ConfigModel extends AdminModel
 		}
 
 		return $form;
-	}	
+	}
 
 	/**
 	 * Method to get the data that should be injected in the form.
@@ -100,7 +101,7 @@ class ConfigModel extends AdminModel
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = Factory::getApplication()->getUserState('com_joomgallery.edit.config.data', array());
+		$data = $this->app->getUserState('com_joomgallery.edit.config.data', array());
 
 		if(empty($data))
 		{
@@ -109,279 +110,73 @@ class ConfigModel extends AdminModel
 				$this->item = $this->getItem();
 			}
 
-			$data = $this->item;			
+			$data = $this->item;
 
-			// Support for multiple or not foreign key field: jg_uploadorder
-			$array = array();
+      // Load imagetypes from database
+      $old_staticprocessing = \json_decode($data->jg_staticprocessing);
+      $new_staticprocessing = array();
+      $imagetypes           = JoomHelper::getRecords('imagetypes');
 
-			foreach((array) $data->jg_uploadorder as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
+      // Replace jg_staticprocessing based on imagetypes
+      foreach($imagetypes as $key => $imagetype)
       {
-		    $data->jg_uploadorder = $array;
-			}
+        // Search the corresponding entry in the old config values
+        $i = \null;
+        foreach ($old_staticprocessing as $c => $staticp)
+        {
+          if($staticp->jg_imgtypename == $imagetype->typename)
+          {
+            $i = $c;
+          }
+        }
 
-			// Support for multiple or not foreign key field: jg_delete_original
-			$array = array();
+        if(isset($old_staticprocessing->{$i}))
+        {
+          // Transfer old staticprocessing data 
+          $new_staticprocessing['jg_staticprocessing'.$key] = $old_staticprocessing->{$i};
+        }
+        else
+        {
+          // Initialize new staticprocessing data
+          $new_staticprocessing['jg_staticprocessing'.$key] = $this->newStaticprocessing();
+        }
+        
+        // Replace values
+        $new_staticprocessing['jg_staticprocessing'.$key]->jg_imgtypename = $imagetype->typename;
+        $new_staticprocessing['jg_staticprocessing'.$key]->jg_imgtypepath = $imagetype->path;
 
-			foreach((array) $data->jg_delete_original as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
+        foreach($imagetype->params as $k => $param)
+        {
+          $new_staticprocessing['jg_staticprocessing'.$key]->{$k} = $param;
+        }
+      }
 
-			if(!empty($array))
-      {
-			  $data->jg_delete_original = $array;
-			}
+      // Set replaced jg_staticprocessing data
+      $data->jg_staticprocessing = \json_encode((object) $new_staticprocessing);
 
-			// Support for multiple or not foreign key field: jg_imgprocessor
-			$array = array();
+			// // Support for multiple or not foreign key fields
+      // $form   = Form::getInstance('com_joomgallery.config', JPATH_COMPONENT_ADMINISTRATOR . '/forms/config.xml');
+      // $fields = $form->getXml()->xpath("//field[@type='list']");
 
-			foreach((array) $data->jg_imgprocessor as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
+      // foreach ($fields as $key => $field)
+      // {
+      //   $fieldname = (string) $field->attributes()->{'name'};
+        
+      //   $array = array();
 
-			if(!empty($array))
-      {
-			  $data->jg_imgprocessor = $array;
-			}
+      //   foreach((array) $data->{$fieldname} as $value)
+      //   {
+      //     if(!is_array($value))
+      //     {
+      //       $array[] = $value;
+      //     }
+      //   }
 
-			// Support for multiple or not foreign key field: jg_msg_upload_type
-			$array = array();
-
-			foreach((array) $data->jg_msg_upload_type as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_msg_upload_type = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_msg_upload_recipients
-			$array = array();
-
-			foreach((array) $data->jg_msg_upload_recipients as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_msg_upload_recipients = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_msg_download_type
-			$array = array();
-
-			foreach((array) $data->jg_msg_download_type as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_msg_download_type = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_msg_download_recipients
-			$array = array();
-
-			foreach((array) $data->jg_msg_download_recipients as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_msg_download_recipients = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_msg_comment_type
-			$array = array();
-
-			foreach((array) $data->jg_msg_comment_type as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_msg_comment_type = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_msg_comment_recipients
-			$array = array();
-
-			foreach((array) $data->jg_msg_comment_recipients as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_msg_comment_recipients = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_msg_report_type
-			$array = array();
-
-			foreach((array) $data->jg_msg_report_type as $value)
-			{
-				if (!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_msg_report_type = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_msg_report_recipients
-			$array = array();
-
-			foreach((array) $data->jg_msg_report_recipients as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_msg_report_recipients = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_msg_rejectimg_type
-			$array = array();
-
-			foreach((array) $data->jg_msg_rejectimg_type as $value)
-			{
-				if (!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_msg_rejectimg_type = $array;
-			}
-
-			// Support for multiple or not foreign key field: group_id
-			$array = array();
-
-			foreach((array) $data->group_id as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->group_id = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_uploaddefaultcat
-			$array = array();
-
-			foreach((array) $data->jg_uploaddefaultcat as $value)
-			{
-				if (!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_uploaddefaultcat = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_redirect_after_upload
-			$array = array();
-
-			foreach((array) $data->jg_redirect_after_upload as $value)
-			{
-				if (!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_redirect_after_upload = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_downloadfile
-			$array = array();
-
-			foreach((array) $data->jg_downloadfile as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_downloadfile = $array;
-			}
-
-			// Support for multiple or not foreign key field: jg_ratingcalctype
-			$array = array();
-
-			foreach((array) $data->jg_ratingcalctype as $value)
-			{
-				if(!is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
-
-			if(!empty($array))
-      {
-			  $data->jg_ratingcalctype = $array;
-			}
+      //   if(!empty($array))
+      //   {
+      //     $data->{$fieldname} = $array;
+      //   }
+      // }
 		}
 
 		return $data;
@@ -404,8 +199,6 @@ class ConfigModel extends AdminModel
       {
         $item->params = json_encode($item->params);
       }
-      
-      // Do any procesing on fields here if needed
     }
 
     return $item;		
@@ -422,11 +215,8 @@ class ConfigModel extends AdminModel
 	 */
 	public function duplicate(&$pks)
 	{
-		$app  = Factory::getApplication();
-		$user = Factory::getUser();
-
 		// Access checks.
-		if(!$user->authorise('core.create', 'com_joomgallery'))
+		if(!$this->user->authorise('core.create', 'com_joomgallery'))
 		{
 			throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
 		}
@@ -451,7 +241,7 @@ class ConfigModel extends AdminModel
         }        
 
         // Trigger the before save event.
-        $result = $app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
+        $result = $this->app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
 
         if(in_array(false, $result, true) || !$table->store())
         {
@@ -459,7 +249,7 @@ class ConfigModel extends AdminModel
         }
 
         // Trigger the after save event.
-        $app->triggerEvent($this->event_after_save, array($context, &$table, true));
+        $this->app->triggerEvent($this->event_after_save, array($context, &$table, true));
       }
       else
       {
@@ -472,6 +262,82 @@ class ConfigModel extends AdminModel
 
 		return true;
 	}
+
+  /**
+	 * Method to save the form data.
+	 *
+	 * @param   array  $data  The form data.
+	 *
+	 * @return  boolean  True on success, False on error.
+	 *
+	 * @since   1.6
+	 */
+	public function save($data)
+	{  
+    $mod_items = $this->component->getMVCFactory()->createModel('imagetypes');
+    $model     = $this->component->getMVCFactory()->createModel('imagetype');
+
+    // get all existing imagetypes    
+    $imagetypes_arr = $mod_items->getItems();
+
+    // update/add used imagetypes
+    foreach ($data['jg_staticprocessing'] as $staticprocessing)
+    {      
+      // load data
+      $imagetype_data = $model->getItem(array('typename' => $staticprocessing['jg_imgtypename']));
+
+      // check if forbidden imagetypes gets unabled
+      $forbidden = array('detail', 'thumbnail');
+      if(\in_array($staticprocessing['jg_imgtypename'], $forbidden) && $staticprocessing['jg_imgtype'] != '1')
+      {
+        // not allowed to unset this imagetype
+        $this->app->enqueueMessage('It is not allowed to unset the "'.$staticprocessing['jg_imgtypename'].'" imagetype. Imagetype "'.$staticprocessing['jg_imgtypename'].'" re-enabled.');
+
+        $staticprocessing['jg_imgtype'] = 1;
+      }
+      
+      // update data
+      $imagetype_data->typename = $staticprocessing['jg_imgtypename'];
+      $imagetype_data->path     = $staticprocessing['jg_imgtypepath'];
+      $imagetype_data->params   = $this->encodeParams($staticprocessing);
+
+      if(\is_null($imagetype_data->id))
+      {
+        // prepare data to create new imagetype row
+        $imagetype_data->id       = 0;
+        $imagetype_data->ordering = '';
+      }
+
+      // save data
+      $model->save((array) $imagetype_data);
+
+      // unset this used imagetypes from array
+      foreach ($imagetypes_arr as $key => $imagetype)
+      {
+        if ($imagetype->typename == $staticprocessing['jg_imgtypename'])
+        {
+          unset($imagetypes_arr[$key]);
+        }
+      }
+    }
+
+    // delete unused imagetypes
+    $forbidden = array('original', 'detail', 'thumbnail');
+    foreach ($imagetypes_arr as $imagetype)
+    {
+      if(\in_array($imagetype->typename, $forbidden))
+      {
+        // not allowed to delete this imagetype
+        $this->app->enqueueMessage('It is not allowed to delete this imagetype. Imagetype restored.');
+      }
+      else
+      {
+        $model->delete($imagetype->id);
+      }
+    }
+
+    return parent::save($data);
+  }
 
 	/**
 	 * Prepare and sanitise the table prior to saving.
@@ -499,4 +365,106 @@ class ConfigModel extends AdminModel
 			}
 		}
 	}
+
+  /**
+	 * Initialize new stdObject with default config params of jg_staticprocessing.
+	 *
+   * @param   string     $type    Imagetype (default:original)
+   * 
+	 * @return  stdClass   Default config params of jg_staticprocessing
+	 *
+	 * @since   4.0.0
+	 */
+  protected function newStaticprocessing($type='original')
+  {
+    $obj = array();
+
+    $obj['jg_imgtype']            = '1';
+    $obj['jg_imgtypename']        = '';
+    $obj['jg_imgtypepath']        = '';
+    $obj['jg_imgtyperesize']      = '0';
+    $obj['jg_imgtypewidth']       = '';
+    $obj['jg_imgtypeheight']      = '';
+    $obj['jg_cropposition']       = '2';
+    $obj['jg_imgtypeorinet']      = '1';
+    $obj['jg_imgtypeanim']        = '0';
+    $obj['jg_imgtypesharpen']     = '0';
+    $obj['jg_imgtypequality']     = 100;
+    $obj['jg_imgtypewatermark']   = '0';
+    $obj['jg_imgtypewtmsettings'] = [];
+
+    return (object) $obj;
+  }
+
+  /**
+	 * Initialize new stdObject with default config params of jg_staticprocessing.
+	 *
+   * @param   string     $type    Imagetype (default:original)
+   * 
+	 * @return  string   Params json string
+	 *
+	 * @since   4.0.0
+	 */
+  protected function newImagetypeParams($type='original')
+  {
+    switch($type)
+    {
+      case 'detail':
+        $params = '{"jg_imgtype":"1","jg_imgtyperesize":"3","jg_imgtypewidth":"1000","jg_imgtypeheight":"1000","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":"80","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"[]"}';
+        break;
+
+      case 'thumbnail':
+        $params = '{"jg_imgtype":"1","jg_imgtyperesize":"4","jg_imgtypewidth":"250","jg_imgtypeheight":"250","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"1","jg_imgtypequality":"60","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"[]"}';
+        break;
+      
+      default:
+        $params = '{"jg_imgtype":"1","jg_imgtyperesize":"0","jg_imgtypewidth":"","jg_imgtypeheight":"","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"1","jg_imgtypesharpen":"0","jg_imgtypequality":"100","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"[]"}';
+        break;
+    }
+  }
+
+  /**
+	 * Decode params string.
+	 *
+   * @param   string      $params     Json string with params
+   * 
+	 * @return  CMSObject   Params object
+	 *
+	 * @since   4.0.0
+	 */
+  protected function decodeParams($params)
+  {
+    $params = (string) $params;
+
+    if(isset($params))
+    {
+      $params = json_decode($params);
+    }
+
+    return $params;
+  }
+
+  /**
+	 * Encode params string.
+	 *
+   * @param   array    $data     Form data
+   * 
+	 * @return  string   Params json string
+	 *
+	 * @since   4.0.0
+	 */
+  protected function encodeParams($data)
+  {
+    if(\array_key_exists('jg_imgtypename', $data))
+    {
+      unset($data['jg_imgtypename']);
+    }
+
+    if(\array_key_exists('jg_imgtypepath', $data))
+    {
+      unset($data['jg_imgtypepath']);
+    }
+
+    return json_encode($data);
+  }
 }

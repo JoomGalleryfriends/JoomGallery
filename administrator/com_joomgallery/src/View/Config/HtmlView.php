@@ -48,8 +48,11 @@ class HtmlView extends JoomGalleryView
 		$this->item      = $this->get('Item');
 		$this->form      = $this->get('Form');
     $this->fieldsets = array();
+    
+    // Add options to the replaceinfo field
+    $this->addReplaceinfoOptions();
 
-    // fill fieldset array
+    // Fill fieldset array
     foreach($this->form->getFieldsets() as $key => $fieldset)
     {
       $parts = \explode('-',$key);
@@ -257,5 +260,43 @@ class HtmlView extends JoomGalleryView
 		}
 
 		return $fields;
+  }
+
+  /**
+	 * Method to add options to the jg_replaceinfo->source field
+   * based on its attributes
+	 *
+	 * @return   void
+	 *
+	 */
+  protected function addReplaceinfoOptions()
+  {
+    require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/iptcarray.php';
+    require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/exifarray.php';
+    $lang = Factory::getLanguage();
+    $lang->load(_JOOM_OPTION.'.exif', JPATH_ADMINISTRATOR);
+    $lang->load(_JOOM_OPTION.'.iptc', JPATH_ADMINISTRATOR);
+
+    // create dropdown list of metadata sources
+    $exif_options = $this->form->getField('jg_replaceinfo')->loadSubForm()->getField('source')->getAttribute('EXIF');
+    $iptc_options = $this->form->getField('jg_replaceinfo')->loadSubForm()->getField('source')->getAttribute('IPTC');
+    $exif_options = \json_decode(\str_replace('\'', '"', $exif_options));
+    $iptc_options = \json_decode(\str_replace('\'', '"', $iptc_options));
+
+    foreach ($exif_options as $key => $exif_option)
+    {
+      // add all defined exif options
+      $text  = $exif_config_array[$exif_option[0]][$exif_option[1]]['Name'];
+      $value = $exif_option[0] . '-' . $exif_option[1];
+      $this->form->getField('jg_replaceinfo')->loadSubForm()->getField('source')->addOption($text, array('value'=>$value));
+    }
+
+    foreach ($iptc_options as $key => $iptc_option)
+    {
+      // add all defined iptc options
+      $text  = $iptc_config_array[$iptc_option[0]][$iptc_option[1]]['Name'];
+      $value = $iptc_option[0] . '-' . $iptc_option[1];
+      $this->form->getField('jg_replaceinfo')->loadSubForm()->getField('source')->addOption($text, array('value'=>$value));
+    }
   }
 }

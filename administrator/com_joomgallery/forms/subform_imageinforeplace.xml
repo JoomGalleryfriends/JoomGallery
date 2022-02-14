@@ -1,21 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?> 
 <form>
   <fieldset>
-    <field name="replacement_target"
+    <field name="target"
            type="list"
            groupByFieldset="false"
            default="1"
            label="COM_JOOMGALLERY_CONFIG_GS_IP_REPLACEMENT_TARGET"
            description="COM_JOOMGALLERY_CONFIG_GS_IP_REPLACEMENT_TARGET_LONG" >
-        <option value="1">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_IMGTITLE</option>
-        <option value="2">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_IMGTEXT</option>
-        <option value="3">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_IMGDATE</option>
-        <option value="4">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_IMGAUTHOR</option>
-        <option value="5">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_METADESC</option>
-        <option value="6">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_METAKEY</option>
+        <option value="imgtitle">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_IMGTITLE</option>
+        <option value="imgtext">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_IMGTEXT</option>
+        <option value="imgdate">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_IMGDATE</option>
+        <option value="imgauthor">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_IMGAUTHOR</option>
+        <option value="tags">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_TAGS</option>
+        <option value="metadesc">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_METADESC</option>
+        <option value="metakey">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_METAKEY</option>
     </field>
 
-    <field name="replacement_source"
+    <field name="source"
            type="list"
            groupByFieldset="false"
            default="0"
@@ -24,6 +25,7 @@
            EXIF="[['IFD0','270'],['EXIF','37510'],['IFD0','315'],['IFD0','33432'],['IFD0','306'],['EXIF','36867'],['EXIF','36868']]"
            IPTC="[['IPTC','205'],['IPTC','2105'],['IPTC','2120'],['IPTC','240'],['IPTC','285'],['IPTC','280'],['IPTC','225'],['IPTC','2116'],['IPTC','2110'],['IPTC','2115'],['IPTC','2122'],['IPTC','255'],['IPTC','292']]">
         <option value="0">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_NONE</option>
+        <option value="COMMENT">COM_JOOMGALLERY_CONFIG_GS_TAB_BACKEND_REPLACEVALUE_COMMENT</option>
     </field>
   </fieldset>
 </form>

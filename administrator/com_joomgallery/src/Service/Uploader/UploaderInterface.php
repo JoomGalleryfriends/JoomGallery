@@ -31,11 +31,41 @@ interface UploaderInterface
 	/**
 	 * Method to upload a new image.
 	 *
-   * @param   array    $data    form data
+   * @param   array    $data    form data (as reference)
+   * @param   array    $output  output data in the form array('debug'=>'','msg'=>'')
    *
-	 * @return  string   Message
+	 * @return  bool     True on success, false otherwise
 	 *
 	 * @since  4.0.0
 	 */
-	public function upload($data): string;
+	public function upload(&$data, $output): string;
+
+  /**
+	 * Method to get the debug output string.
+	 *
+	 * @return  void
+	 *
+	 * @since  4.0.0
+	 */
+	public function getDebug(): string;
+
+  /**
+	 * Method to get the warning output string.
+	 *
+	 * @return  void
+	 *
+	 * @since  4.0.0
+	 */
+	public function getWarning(): string;
+
+  /**
+   * Rollback an erroneous upload
+   *
+   * @param   string  $filename    Filename of the image
+   * 
+   * @return  void
+   * 
+   * @since   1.0.0
+   */
+  public function rollback($filename);
 }

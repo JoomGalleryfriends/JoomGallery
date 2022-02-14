@@ -39,6 +39,15 @@ interface IMGtoolsServiceInterface
 	 */
 	public function createIMGtools($processor, $debugoutput = '', $keep_metadata = false, $keep_anim = false): void;
 
+  /**
+	 * Destroys the IMGtools class
+	 *
+   * @return  void
+   *
+	 * @since  4.0.0
+	 */
+	public function delIMGtools(): void;
+
 	/**
 	 * Returns the IMGtools class.
 	 *
