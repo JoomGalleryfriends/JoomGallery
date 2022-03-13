@@ -332,6 +332,11 @@ class JHTMLJoomConfig
         <?php if($detail_exist || $thumb_exist): ?>
           <div class="modal hide fade jviewport-width80 in" id="modalCompare" tabindex="-1" aria-labelledby="modalCompare_title" aria-hidden="true">
             <div class="modal-header">
+              <div class="center resize-form">
+                <input id="modalImg_width" type="number" min="1" value="400">
+                <span> px </span>
+                <button id="modalImg_btn" class="btn btn-primary" onclick="setIMGwidth(event);"><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_COMPAREBOX_APPLY'); ?></button>
+              </div>
               <button type="button" class="close novalidate" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -365,11 +370,6 @@ class JHTMLJoomConfig
               <?php endif; ?>
             </div>
             <div class="modal-footer">
-              <div class="pull-left">
-                <input id="modalImg_width" type="number" min="1" value="400">
-                <span> px </span>
-                <button id="modalImg_btn" class="btn btn-primary" onclick="setIMGwidth(event);"><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_COMPAREBOX_APPLY'); ?></button>
-              </div>
               <div class="pull-right">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo JText::_('JCANCEL'); ?></button>
               </div>

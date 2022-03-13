@@ -406,6 +406,15 @@ dl.tabs dt h3 a:link {
   line-height: initial;
   padding: 5px;
 }
+.jg_configtest .modal .modal-header {
+  position: relative;
+}
+.jg_configtest .modal .modal-header .resize-form {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  line-height: 50px;
+}
 .jg_configtest .modal .modal-body {
   padding: 15px 0;
 }
