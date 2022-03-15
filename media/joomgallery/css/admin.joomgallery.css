@@ -442,17 +442,17 @@ dl.tabs dt h3 a:link {
   max-width: 100%;
   overflow: hidden;
   resize: horizontal;
-  border-right: 2px solid rgb(0, 0, 0);
+  border-right: 4px solid rgb(0, 0, 0);
 }
 .image-slider > div:before {
   content: '';
   display: block;
-  width: 13px;
-  height: 13px;
+  width: 20px;
+  height: 20px;
   overflow: hidden;
   position: absolute;
   resize: horizontal;
-  right: 2px; bottom: 2px;
+  right: 0px; bottom: 0px;
   background-clip: content-box;
   background: linear-gradient(-45deg, black 50%, transparent 0);
   -webkit-filter: drop-shadow(0 0 2px black);
