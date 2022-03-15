@@ -11,6 +11,8 @@
 
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
+use \Joomla\CMS\Factory;
+
 /**
  * Configuration model
  *
@@ -131,10 +133,12 @@ class JoomGalleryModelConfig extends JoomGalleryModel
    * @since   3.6
    */
   public function resizeImage($src,$type,$side)
-  {
+  { 
+    $input       = Factory::getApplication()->input;
+
     $debugoutput = '';
     $dst_path    = $this->_ambit->get('temp_path').'configtestimg_'.$type.$side.'.'.JFile::getExt($src);
-    $json_path   = $this->_ambit->get('temp_path').'configtestimg.json';
+    $json_path   = $this->_ambit->get('temp_path').'configtestimg.json';    
 
     // resize image
     $timeStart = microtime(true);
@@ -161,6 +165,7 @@ class JoomGalleryModelConfig extends JoomGalleryModel
         {
           return false;
         }
+        $quality = $input->get('jg_picturequality','','STRING');
 
         break;
 
@@ -185,6 +190,7 @@ class JoomGalleryModelConfig extends JoomGalleryModel
         {
           return false;
         }
+        $quality = $input->get('jg_thumbquality','','STRING');
 
         break;
 
@@ -202,7 +208,7 @@ class JoomGalleryModelConfig extends JoomGalleryModel
 
     // get image infos
     $img_info = JoomIMGtools::analyseImage($dst_path);
-    $info_obj = array('path' => $dst_path, 'href' => $href_path, 'filesize' => filesize($dst_path), 'filetype' => $img_info['type'], 'frames' => $img_info['frames'], 'dimension' => $img_info['width'].'x'.$img_info['height'], 'processing_time' => $execTime, 'used_memory' => $memoryMax);
+    $info_obj = array('path' => $dst_path, 'href' => $href_path, 'filesize' => filesize($dst_path), 'filetype' => $img_info['type'], 'frames' => $img_info['frames'], 'dimension' => $img_info['width'].'x'.$img_info['height'], 'processing_time' => $execTime, 'used_memory' => $memoryMax, 'quality' => $quality);
     $info_obj = (object) $info_obj;
     $this->writeInfoToJson($json_path, array($type.$side => $info_obj));
 
