@@ -623,50 +623,35 @@ class JoomGalleryModelFavourites extends JoomGalleryModel
 
       if($include_watermark)
       {
-        // create tmp file
-        $tmp_folder = JFactory::getApplication()->get('tmp_path');
-        $img_output   = $tmp_folder.'/tmp_'.basename($img);
-        if(!JFile::copy($image, $img_output))
-        {
-          $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_IMAGE_NOT_EXIST'));
+        // Get the image resource of watermarked image
+        $imgres = $imageModel->includeWatermark($image);
 
-          return false;
+        // Start output buffering
+        ob_start();
+
+        // According to mime type output the watermarked image resource to file
+        $info = getimagesize($image);
+        switch($info[2])
+        {
+          case 1:
+            imagegif($imgres);
+            break;
+          case 2:
+            imagejpeg($imgres);
+            break;
+          case 3:
+            imagepng($imgres);
+            break;
+          default:
+            JError::raiseError(404, JText::sprintf('COM_JOOMGALLERY_COMMON_MSG_MIME_NOT_ALLOWED', $mime));
+            break;
         }
 
-        // add watermark
-        $wtm_file      = JPath::clean($this->_ambit->get('wtm_path').$this->_config->get('jg_wmfile'));
-        $method        = $this->_config->get('jg_thumbcreation');
-        $position      = $this->_config->get('jg_watermarkpos');
-        $watermarkzoom = $this->_config->get('jg_watermarkzoom');
-        $watermarksize = $this->_config->get('jg_watermarksize');
-        $opacity       = 70;
-        $debugoutput   = '';
+        // Read the content from output buffer and fill the array element
+        $files[$row->id]['data'] = ob_get_contents();
 
-        // Checks if watermark file is existent
-        if(!JFile::exists($wtm_file))
-        {
-          $this->setError(JText::_('COM_JOOMGALLERY_COMMON_ERROR_WATERMARK_NOT_EXIST'));
-
-          return false;
-        }
-
-        $success = JoomIMGtools::watermarkImage($debugoutput,$image,$img_output,$wtm_file,$method,$position,$watermarkzoom,$watermarksize,$opacity,false,false);
-
-        if (!$success)
-        {
-          $this->setError(JText::_('COM_JOOMGALLERY_FAVOURITES_ERROR_CREATEZIP'));
-
-          return false;
-        }
-
-        // output image
-        $files[$row->id]['data'] = JFile::read($img_output);
-
-        // delete tmp file
-        if(JFile::exists($img_output))
-        {
-          JFile::delete($img_output);
-        }
+        // Delete the output buffer
+        ob_end_clean();
       }
       else
       {

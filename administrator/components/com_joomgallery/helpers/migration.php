@@ -1631,6 +1631,32 @@ abstract class JoomMigration
       $neworigimage = $this->_ambit->getImg('orig_path', $row);
     }
 
+    // Check if auto-rotation is enabled
+    $angle = 0;
+    switch($this->_config->get('jg_upload_exif_rotation'))
+    {
+      case 0:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+      case 1:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = false;
+        break;
+      case 2:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = true;
+        break;
+      default:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+    }
+
     if(!$img_exists)
     {
       // If it doesn't already exists with another name try to copy or move from source directory or create a new one
@@ -1642,17 +1668,16 @@ abstract class JoomMigration
         $result['detail'] = JoomIMGtools::resizeImage($debugoutput,
                                                       $neworigimage,
                                                       $newdetailimage,
-                                                      $this->_config->get('jg_resizetomaxwidth'),
+                                                      3,
                                                       $this->_config->get('jg_maxwidth'),
-                                                      $this->_config->get('jg_maxheight'), 
+                                                      $this->_config->get('jg_maxwidth'),
                                                       $this->_config->get('jg_thumbcreation'),
                                                       $this->_config->get('jg_picturequality'),
                                                       false,
                                                       $angle,
-                                                      $this->_config->get('jg_detailautorot'),
+                                                      $autorot_det,
                                                       false,
-                                                      true,
-                                                      false
+                                                      true
                                                       );
         if(!$result['detail'])
         {
@@ -1710,10 +1735,9 @@ abstract class JoomMigration
                                                       $this->_config->get('jg_thumbquality'),
                                                       $this->_config->get('jg_cropposition'),
                                                       $angle,
-                                                      $this->_config->get('jg_thumbautorot'),
+                                                      $autorot_thumb,
                                                       false,
-                                                      false,
-                                                      true
+                                                      false
                                                     );
 
         if(!$result['thumb'])
@@ -1773,7 +1797,7 @@ abstract class JoomMigration
                                                $this->_config->get('jg_thumbcreation'),
                                                $this->_config->get('jg_originalquality'),
                                                $angle,
-                                               $this->_config->get('jg_origautorot'),
+                                               $autorot_orig,
                                                true,
                                                true
                                               );

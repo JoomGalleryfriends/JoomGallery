@@ -486,6 +486,31 @@ class JoomGalleryModelImage extends JoomGalleryModel
 
     $angle = 0;
 
+    // Check if auto-rotation is enabled
+    switch($this->_config->get('jg_upload_exif_rotation'))
+    {
+      case 0:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+      case 1:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = false;
+        break;
+      case 2:
+        $autorot_thumb = true;
+        $autorot_det   = true;
+        $autorot_orig  = true;
+        break;
+      default:
+        $autorot_thumb = false;
+        $autorot_det   = false;
+        $autorot_orig  = false;
+        break;
+    }
+
     // Upload and handle new image files
     $types = array('thumb', 'img', 'orig');
 
@@ -553,10 +578,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                 $this->_config->get('jg_thumbquality'),
                                                 $this->_config->get('jg_cropposition'),
                                                 $angle,
-                                                $this->_config->get('jg_thumbautorot'),
+                                                $autorot_thumb,
                                                 false,
-                                                false,
-                                                true
+                                                false
                                                );
             if(!$return)
             {
@@ -577,17 +601,16 @@ class JoomGalleryModelImage extends JoomGalleryModel
             $return = JoomIMGtools::resizeImage($debugoutput,
                                                 $new_tmp,
                                                 $new_path,
-                                                $this->_config->get('jg_resizetomaxwidth'),
+                                                3,
                                                 $this->_config->get('jg_maxwidth'),
-                                                $this->_config->get('jg_maxheight'),
+                                                $this->_config->get('jg_maxwidth'),
                                                 $this->_config->get('jg_thumbcreation'),
                                                 $this->_config->get('jg_picturequality'),
                                                 false,
                                                 $angle,
-                                                $this->_config->get('jg_detailautorot'),
+                                                $autorot_det,
                                                 false,
-                                                true,
-                                                false
+                                                true
                                                );
             if(!$return)
             {
@@ -616,7 +639,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                   $this->_config->get('jg_thumbcreation'),
                                                   $this->_config->get('jg_originalquality'),
                                                   0,
-                                                  $this->_config->get('jg_origautorot'),
+                                                  $autorot_orig,
                                                   true,
                                                   true
                                                  );
