@@ -19,7 +19,7 @@ function joom_selectnewuser(id)
     var task = 'setuser';
   }
 
-  document.id('newuser_chzn').inject('correctuser' + id);
+  document.id('newuser').inject('correctuser' + id);
   document.id('filesave').inject('correctuser' + id);
   document.id('filesave').removeEvents();
   document.id('filesave').addEvent('click', function(){
@@ -31,13 +31,13 @@ function joom_selectbatchjob(job)
 {
   if(job == 'setuser')
   {
-    document.id('newuser_chzn').inject('batchjobs');
+    document.id('newuser').inject('batchjobs');
     document.id('usertip').inject('batchjobs');
     document.id('filesave').inject('garage');
   }
   else
   {
-    document.id('newuser_chzn').inject('garage');
+    document.id('newuser').inject('garage');
     document.id('usertip').inject('garage');
     document.id('filesave').inject('garage');
   }
