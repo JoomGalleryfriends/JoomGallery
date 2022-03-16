@@ -26,21 +26,7 @@ class Com_JoomGalleryInstallerScript
    *
    * @var string
    */
-  private $version = '3.6.0';
-
-  /**
-   * Version string of the current installed version
-   *
-   * @var string
-   */
-  private $act_version = '';
-
-  /**
-   * Settings that are set in the current installation, but will be removed/changed in a newer version
-   *
-   * @var array  array('id1_value'=>array('id'=>value,'config-key'=>old_value),'id2_value'=>array(),...)
-   */
-  private $old_settings = array();
+  private $version = '3.5.1';
 
   /**
    * Preflight method
@@ -59,79 +45,6 @@ class Com_JoomGalleryInstallerScript
 
       return false;
     }
-
-    //************* Get actual installed JoomGallery version ************
-    $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
-    if(isset($xml->version))
-    {
-      $this->act_version = $xml->version;
-    }
-    //************* End et actual installed JoomGallery version ************
-
-    //************* Read old settings that will be changed/removed *************
-    if($type == 'update')
-    {
-      // Define global constant _JOOM_TABLE_CONFIG
-      define('_JOOM_TABLE_CONFIG', '#__joomgallery_config');
-
-      // Register Config-Table
-      include_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/tables/joomgalleryconfig.php';
-
-      // Load JoomGallery configuration
-      $config      = JTable::getInstance('joomgalleryconfig', 'Table');
-      $config_keys = $config->getFields();
-
-      $db = JFactory::getDbo();
-      $query = $db
-          ->getQuery(true)
-          ->select('id')
-          ->from($db->quoteName(_JOOM_TABLE_CONFIG));
-      $db->setQuery($query);
-      $config_ids = $db->loadColumn();
-
-      // Bring versions to a machine readable form
-      $act_version = explode('.',$this->act_version);
-      $new_version = explode('.',$this->version);
-
-      // create $old_settings with all available config rows
-      foreach($config_ids as $key => $id)
-      {
-        $this->old_settings[$id] = array('id'=>$id);
-      }
-
-      // if jg_thumbcreation still exists
-      if(array_key_exists('jg_thumbcreation', $config_keys))
-      {
-        foreach($this->old_settings as $key => $row)
-        {
-          $config->load($row['id']);
-          $this->old_settings[$key]['jg_thumbcreation'] = $config->jg_thumbcreation;
-        }
-      }
-
-      // if jg_upload_exif_rotation still exists
-      if(array_key_exists('jg_upload_exif_rotation', $config_keys))
-      {
-        foreach($this->old_settings as $key => $row)
-        {
-          $config->load($row['id']);
-          $this->old_settings[$key]['jg_upload_exif_rotation'] = $config->jg_upload_exif_rotation;
-        }
-      }
-
-      // act_version <= 3.5.x and new_version >= 3.6.x
-      if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
-      {
-        foreach($this->old_settings as $key => $row)
-        {
-          $config->load($row['id']);
-          $this->old_settings[$key]['jg_maxwidth'] = $config->jg_maxwidth;
-          $this->old_settings[$key]['jg_resizetomaxwidth'] = $config->jg_resizetomaxwidth;
-          $this->old_settings[$key]['jg_useforresizedirection'] = $config->jg_useforresizedirection;
-        }
-      }
-    }
-    //*********************** End read old settings ***********************
 
     return true;
   }
@@ -445,105 +358,6 @@ class Com_JoomGalleryInstallerScript
     echo '</p>';
     echo '</div>';*/
     //******************* End write joom_settings.css ************************************
-
-
-    //************* Set new settings in config manager based on old settings *************
-    // Bring versions to a machine readable form
-    $act_version = explode('.',$this->act_version);
-    $new_version = explode('.',$this->version);
-
-    foreach($this->old_settings as $key => $old_setting)
-    {
-      $new_configs = new stdClass();
-      $new_configs->id = $key;
-
-      foreach ($old_setting as $key => $old)
-      {
-        switch ($key)
-        {
-          case 'jg_thumbcreation':
-            if ($old == 'gd1' || $old == 'gd2')
-            {
-              $new_configs->jg_thumbcreation = 'gd2';
-            }
-            else
-            {
-              $new_configs->jg_thumbcreation = 'im';
-            }
-            break;
-
-          case 'jg_upload_exif_rotation':
-            switch ($old)
-            {
-              case 0:
-                $new_thumbautorot  = 0;
-                $new_detailautorot = 0;
-                $new_origautorot   = 0;
-                break;
-
-              case 1:
-                $new_thumbautorot  = 1;
-                $new_detailautorot = 1;
-                $new_origautorot   = 0;
-                break;
-
-              case 2:
-                $new_thumbautorot  = 1;
-                $new_detailautorot = 1;
-                $new_origautorot   = 1;
-                break;
-
-              default:
-                $new_thumbautorot  = 0;
-                $new_detailautorot = 0;
-                $new_origautorot   = 0;
-                break;
-            }
-            $new_configs->jg_origautorot   = $new_origautorot;
-            $new_configs->jg_detailautorot = $new_detailautorot;
-            $new_configs->jg_thumbautorot  = $new_thumbautorot;
-            break;
-
-          case 'jg_useforresizedirection':
-            // act_version <= 3.5.x and new_version >= 3.6.x
-            if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
-            {
-              $new_configs->jg_useforresizedirection = $old + 1;
-            }
-            break;
-
-          case 'jg_resizetomaxwidth':
-            // act_version <= 3.5.x and new_version >= 3.6.x and resize was yes
-            if( ($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6) && $old == 1 )
-            {
-              $new_configs->jg_resizetomaxwidth = 4;
-            }
-            break;
-
-          case 'jg_maxwidth':
-            // act_version <= 3.5.x and new_version >= 3.6.x
-            if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
-            {
-              // set jg_maxheight = jg_maxwidth
-              $new_configs->jg_maxheight = $old;
-            }
-            break;
-
-          default:
-            // Nothing to update
-            break;
-        }
-      }
-
-      // Store new configs
-      $store = JFactory::getDbo()->updateObject(_JOOM_TABLE_CONFIG, $new_configs, 'id');
-      if( !$store )
-      {
-        echo '<span class="label label-important">Updating old setting-values with new configuration structure failed.</span>';
-        $error = true;
-      }
-    }
-    //********************** End set new settings in config manager **********************
 
     if($error)
     {

@@ -7,7 +7,7 @@
   <license>GNU General Public License version 2 or later</license>
   <authorEmail>team@joomgalleryfriends.net</authorEmail>
   <authorUrl>https://www.joomgalleryfriends.net</authorUrl>
-  <version>3.6.0</version>
+  <version>3.5.1</version>
   <description>JoomGallery 3 is a native Joomla! 3.x gallery component</description>
   <files folder="components/com_joomgallery">
     <folder>controllers</folder>
