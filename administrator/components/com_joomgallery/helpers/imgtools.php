@@ -1890,6 +1890,9 @@ class JoomIMGtools
 
       if($count > 1 && $tmp_trans == -1)
       {
+        // Load GifFrameExtractor-Class
+        JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifframeextractor.php');
+
         $imginfo['animation'] = true;
 
         $gfe = new GifFrameExtractor();
@@ -1900,6 +1903,9 @@ class JoomIMGtools
       {
         if($count > 1 && $tmp_trans >= 0)
         {
+          // Load GifFrameExtractor-Class
+          JLoader::register('GifFrameExtractor', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/gifframeextractor.php');
+
           $imginfo['animation']    = true;
           $imginfo['transparency'] = true;
 

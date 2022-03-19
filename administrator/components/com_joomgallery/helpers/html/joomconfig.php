@@ -168,9 +168,9 @@ class JHTMLJoomConfig
           // check which images are already generated
           $thumb_exist     = false;
           $detail_exist    = false;
-          $compare_detail = false;
-          $compare_thumb  = false;
-          $compare        = false;
+          $compare_detail  = false;
+          $compare_thumb   = false;
+          $compare         = false;
           if(!empty($info->detailL) || !empty($info->detailR))
           {
             $detail_exist = true;
@@ -204,7 +204,7 @@ class JHTMLJoomConfig
               <div class="accordion-inner">
                 <?php if(!empty($info->orig)): ?>
                   <div class="row-fluid">
-                    <div class="span6">
+                    <div class="span4">
                       <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL');?>:</strong> <?php echo round(($info->orig->filesize) / 1024, 0);?> kB</p>
                       <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL');?>:</strong> <?php echo $info->orig->filetype;?></p>
                       <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL');?>:</strong> <?php echo $info->orig->dimension;?></p>
@@ -212,7 +212,7 @@ class JHTMLJoomConfig
                       <br />
                       <button id="button" class="btn btn-danger" onclick="submitDelete(event)"><?php echo JText::_('COM_JOOMGALLERY_MAIMAN_OPTION_REMOVE_IMAGES'); ?></button>
                     </div>
-                    <div class="span6 center">
+                    <div class="span8 center">
                       <a href="<?php echo JUri::root().$info->orig->href;?>" target="popup" rel="noopener noreferrer" onclick="window.open('<?php echo JUri::root().$info->orig->href;?>','popup','width=600,height=600'); return false;">
                         <img src="<?php echo JUri::root().$info->orig->href;?>" style="max-width: 200px;">
                       </a>
@@ -242,13 +242,22 @@ class JHTMLJoomConfig
                         <button id="button" class="btn" type="detail" side="L" onclick="submitGenerate(event)"><?php echo JText::_('COM_JOOMGALLERY_COMMON_TOOLBAR_RECREATE'); ?></button>
                         <br /><br />
                         <?php if(!empty($info->detailL)): ?>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL');?>:</strong> <?php echo round(($info->detailL->filesize) / 1024, 0);?> kB</p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL');?>:</strong> <?php echo $info->detailL->filetype;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL');?>:</strong> <?php echo $info->detailL->dimension;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL');?>:</strong> <?php echo $info->detailL->frames;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL');?>:</strong> <?php echo $info->detailL->quality;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL');?>:</strong> <?php echo round($info->detailL->processing_time,3);?> sec</p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL');?>:</strong> <?php echo round(($info->detailL->used_memory) / pow(1000,2),2);?> MB</p>
+                          <div class="row-fluid">
+                            <div class="span4">
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL');?>:</strong> <?php echo round(($info->detailL->filesize) / 1024, 0);?> kB</p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL');?>:</strong> <?php echo $info->detailL->filetype;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL');?>:</strong> <?php echo $info->detailL->dimension;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL');?>:</strong> <?php echo $info->detailL->frames;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL');?>:</strong> <?php echo $info->detailL->quality;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL');?>:</strong> <?php echo round($info->detailL->processing_time,3);?> sec</p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL');?>:</strong> <?php echo round(($info->detailL->used_memory) / pow(1000,2),2);?> MB</p>
+                            </div>
+                            <div class="span8 center">
+                              <a href="<?php echo JUri::root().$info->detailL->href;?>" target="popup" rel="noopener noreferrer" onclick="window.open('<?php echo JUri::root().$info->detailL->href;?>','popup','width=600,height=600'); return false;">
+                                <img src="<?php echo JUri::root().$info->detailL->href;?>" style="max-width: 200px;">
+                              </a>
+                            </div>
+                          </div>
                         <?php else: ?>
                           <p><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_IMGMISSING'); ?></p>
                         <?php endif; ?>
@@ -257,13 +266,22 @@ class JHTMLJoomConfig
                         <button id="button" class="btn" type="detail" side="R" onclick="submitGenerate(event)"><?php echo JText::_('COM_JOOMGALLERY_COMMON_TOOLBAR_RECREATE'); ?></button>
                         <br /><br />
                         <?php if(!empty($info->detailR)): ?>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL');?>:</strong> <?php echo round(($info->detailR->filesize) / 1024, 0);?> kB</p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL');?>:</strong> <?php echo $info->detailR->filetype;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL');?>:</strong> <?php echo $info->detailR->dimension;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL');?>:</strong> <?php echo $info->detailR->frames;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL');?>:</strong> <?php echo $info->detailR->quality;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL');?>:</strong> <?php echo round($info->detailR->processing_time,3);?> sec</p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL');?>:</strong> <?php echo round(($info->detailR->used_memory) / pow(1000,2),2);?> MB</p>
+                          <div class="row-fluid">
+                            <div class="span4">
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL');?>:</strong> <?php echo round(($info->detailR->filesize) / 1024, 0);?> kB</p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL');?>:</strong> <?php echo $info->detailR->filetype;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL');?>:</strong> <?php echo $info->detailR->dimension;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL');?>:</strong> <?php echo $info->detailR->frames;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL');?>:</strong> <?php echo $info->detailR->quality;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL');?>:</strong> <?php echo round($info->detailR->processing_time,3);?> sec</p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL');?>:</strong> <?php echo round(($info->detailR->used_memory) / pow(1000,2),2);?> MB</p>
+                            </div>
+                            <div class="span8 center">
+                              <a href="<?php echo JUri::root().$info->detailR->href;?>" target="popup" rel="noopener noreferrer" onclick="window.open('<?php echo JUri::root().$info->detailR->href;?>','popup','width=600,height=600'); return false;">
+                               <img src="<?php echo JUri::root().$info->detailR->href;?>" style="max-width: 200px;">
+                              </a>
+                            </div>
+                          </div>
                         <?php else: ?>
                           <p><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_IMGMISSING'); ?></p>
                         <?php endif; ?>
@@ -271,7 +289,7 @@ class JHTMLJoomConfig
                     </tr>
                     <tr>
                       <td colspan="3" class="center">
-                      <button id="btnModal_detail" class="btn btn-primary" onclick="openModal(event)" <?php if($detail_exist) {echo '';} else {echo 'disabled';}?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_COMPAREBOX_BTN'); ?></button>
+                      <button id="btnModal_detail" class="btn btn-primary" onclick="openModal(event)" <?php if($compare_detail) {echo '';} else {echo 'disabled';}?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_COMPAREBOX_BTN'); ?></button>
                       </td>
                     </tr>
                   </tbody>
@@ -294,13 +312,22 @@ class JHTMLJoomConfig
                         <button id="button" class="btn" type="thumb" side="L" onclick="submitGenerate(event)"><?php echo JText::_('COM_JOOMGALLERY_COMMON_TOOLBAR_RECREATE'); ?></button>
                         <br /><br />
                         <?php if(!empty($info->thumbL)): ?>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL');?>:</strong> <?php echo round(($info->thumbL->filesize) / 1024, 0);?> kB</p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL');?>:</strong> <?php echo $info->thumbL->filetype;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL');?>:</strong> <?php echo $info->thumbL->dimension;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL');?>:</strong> <?php echo $info->thumbL->frames;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL');?>:</strong> <?php echo $info->thumbL->quality;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL');?>:</strong> <?php echo round($info->thumbL->processing_time,3);?> sec</p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL');?>:</strong> <?php echo round(($info->thumbL->used_memory) / pow(1000,2),2);?> MB</p>
+                          <div class="row-fluid">
+                            <div class="span4">
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL');?>:</strong> <?php echo round(($info->thumbL->filesize) / 1024, 0);?> kB</p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL');?>:</strong> <?php echo $info->thumbL->filetype;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL');?>:</strong> <?php echo $info->thumbL->dimension;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL');?>:</strong> <?php echo $info->thumbL->frames;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL');?>:</strong> <?php echo $info->thumbL->quality;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL');?>:</strong> <?php echo round($info->thumbL->processing_time,3);?> sec</p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL');?>:</strong> <?php echo round(($info->thumbL->used_memory) / pow(1000,2),2);?> MB</p>
+                            </div>
+                            <div class="span8 center">
+                              <a href="<?php echo JUri::root().$info->thumbL->href;?>" target="popup" rel="noopener noreferrer" onclick="window.open('<?php echo JUri::root().$info->thumbL->href;?>','popup','width=600,height=600'); return false;">
+                               <img src="<?php echo JUri::root().$info->thumbL->href;?>" style="max-width: 200px;">
+                              </a>
+                            </div>
+                          </div>
                         <?php else: ?>
                           <p><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_IMGMISSING'); ?></p>
                         <?php endif; ?>
@@ -309,13 +336,22 @@ class JHTMLJoomConfig
                         <button id="button" class="btn" type="thumb" side="R" onclick="submitGenerate(event)"><?php echo JText::_('COM_JOOMGALLERY_COMMON_TOOLBAR_RECREATE'); ?></button>
                         <br /><br />
                         <?php if(!empty($info->thumbR)): ?>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL');?>:</strong> <?php echo round(($info->thumbR->filesize) / 1024, 0);?> kB</p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL');?>:</strong> <?php echo $info->thumbR->filetype;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL');?>:</strong> <?php echo $info->thumbR->dimension;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL');?>:</strong> <?php echo $info->thumbR->frames;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL');?>:</strong> <?php echo $info->thumbR->quality;?></p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL');?>:</strong> <?php echo round($info->thumbR->processing_time,3);?> sec</p>
-                          <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL');?>:</strong> <?php echo round(($info->thumbR->used_memory) / pow(1000,2),2);?> MB</p>
+                          <div class="row-fluid">
+                            <div class="span4">
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILESIZE_LBL');?>:</strong> <?php echo round(($info->thumbR->filesize) / 1024, 0);?> kB</p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FILETYPE_LBL');?>:</strong> <?php echo $info->thumbR->filetype;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_DIMENSION_LBL');?>:</strong> <?php echo $info->thumbR->dimension;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_FRAMES_LBL');?>:</strong> <?php echo $info->thumbR->frames;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_QUALITY_LBL');?>:</strong> <?php echo $info->thumbR->quality;?></p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENTIME_LBL');?>:</strong> <?php echo round($info->thumbR->processing_time,3);?> sec</p>
+                              <p><strong <?php echo JHTML::_('joomgallery.tip', JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_TXT'), JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL'), true); ?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_GENMEMORY_LBL');?>:</strong> <?php echo round(($info->thumbR->used_memory) / pow(1000,2),2);?> MB</p>
+                            </div>
+                            <div class="span8 center">
+                              <a href="<?php echo JUri::root().$info->thumbR->href;?>" target="popup" rel="noopener noreferrer" onclick="window.open('<?php echo JUri::root().$info->thumbR->href;?>','popup','width=600,height=600'); return false;">
+                               <img src="<?php echo JUri::root().$info->thumbR->href;?>" style="max-width: 200px;">
+                              </a>
+                            </div>
+                          </div>
                         <?php else: ?>
                           <p><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_IMGMISSING'); ?></p>
                         <?php endif; ?>
@@ -323,7 +359,7 @@ class JHTMLJoomConfig
                     </tr>
                     <tr>
                       <td colspan="3" class="center">
-                      <button id="btnModal_thumb" class="btn btn-primary" onclick="openModal(event)" <?php if($thumb_exist) {echo '';} else {echo 'disabled';}?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_COMPAREBOX_BTN'); ?></button>
+                      <button id="btnModal_thumb" class="btn btn-primary" onclick="openModal(event)" <?php if($compare_thumb) {echo '';} else {echo 'disabled';}?>><?php echo JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_TEST_COMPAREBOX_BTN'); ?></button>
                       </td>
                     </tr>
                   </tbody>
