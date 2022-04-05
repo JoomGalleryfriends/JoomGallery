@@ -1357,20 +1357,23 @@ class JoomIMGtools
       }
     }
 
-    // Detect, if image is a transparent webp image
+    // Detect, if image is a animated webp image
     if($imginfo['type'] == 'WEBP')
     {
-      // Detect, if webp has transparency
-// Todo
-      $imginfo['transparency'] = true;
-
-/*      $pngtype = ord(@file_get_contents($img, NULL, NULL, 25, 1));
-
-      if($pngtype == 4 || $pngtype == 6)
+      // Detect, if WebP is animated
+      $webptype = file_get_contents($img);
+      $included = strpos($webptype, "ANMF");
+      if($included !== FALSE)
       {
-        $imginfo['transparency'] = true;
+        // animated WebP is not supported by gdlib
+        // $imginfo['animation'] = true;
+
+        return false;
       }
-*/
+      else
+      {
+        $imginfo['animation'] = false;
+      }
     }
 
     if($imginfo['type'] == 'GIF')
@@ -2107,7 +2110,15 @@ class JoomIMGtools
         $src_frame[0]['image'] = imagecreatefromjpeg($src_file);
         break;
       case 'WEBP':
-        $src_frame[0]['image'] = imagecreatefromwebp($src_file);
+        if($src_imginfo['animation'] == true)
+        {
+          // not supported by gdlib
+          return false;
+        }
+        else
+        {
+          $src_frame[0]['image'] = imagecreatefromwebp($src_file);
+        }
         break;
       default:
         return false;
