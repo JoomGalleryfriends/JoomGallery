@@ -60,17 +60,17 @@ class Com_JoomGalleryInstallerScript
       return false;
     }
 
-    //************* Get actual installed JoomGallery version ************
-    $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
-    if(isset($xml->version))
-    {
-      $this->act_version = $xml->version;
-    }
-    //************* End et actual installed JoomGallery version ************
-
     //************* Read old settings that will be changed/removed *************
     if($type == 'update')
     {
+      //************* Get actual installed JoomGallery version ************
+      $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
+      if(isset($xml->version))
+      {
+        $this->act_version = $xml->version;
+      }
+      //************* End et actual installed JoomGallery version ************
+
       // Define global constant _JOOM_TABLE_CONFIG
       define('_JOOM_TABLE_CONFIG', '#__joomgallery_config');
 
