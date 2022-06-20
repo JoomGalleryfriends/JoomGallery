@@ -46,7 +46,7 @@ class Com_JoomGalleryInstallerScript
                                     'folder'=>'',
                                     'client_id'=>'1',
                                     'install_type'=>'url',
-                                    'install_source'=>'https://www.joomgalleryfriends.net/files/Unkategorisiert/mod_joomgithub_feed.zip'));
+                                    'install_source'=>'https://www.joomgalleryfriends.net/files/Unkategorisiert/mod_joomgithub.zip'));
 
 
   /**
