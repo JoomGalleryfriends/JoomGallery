@@ -42,7 +42,7 @@ class Com_JoomGalleryInstallerScript
    */
   private $extensions = array(array('name'=>'GitHub Feed',
                                     'type'=>'module',
-                                    'element'=>'mod_github',
+                                    'element'=>'mod_joomgithub',
                                     'folder'=>'',
                                     'client_id'=>'1',
                                     'install_type'=>'url',
@@ -150,7 +150,7 @@ class Com_JoomGalleryInstallerScript
                          'DivSize'=>'0',
                          'DateFormat'=>'d.F Y');
     $bounty_params = json_encode($bounty_params);
-    $this->createModule('JoomGallery Open Bounties','joom_cpanel','mod_github',2,$app->getCfg('access'),1,$bounty_params,1,'*');
+    $this->createModule('JoomGallery Open Bounties','joom_cpanel','mod_joomgithub',2,$app->getCfg('access'),1,$bounty_params,1,'*');
 
     // joom_settings.css
     $temp = JPATH_ROOT.'/media/joomgallery/css/joom_settings.temp.css';
@@ -257,7 +257,7 @@ class Com_JoomGalleryInstallerScript
                          'DivSize'=>'0',
                          'DateFormat'=>'d.F Y');
     $bounty_params = json_encode($bounty_params);
-    $this->createModule('JoomGallery Open Bounties','joom_cpanel','mod_github',2,$app->getCfg('access'),1,$bounty_params,1,'*');
+    $this->createModule('JoomGallery Open Bounties','joom_cpanel','mod_joomgithub',2,$app->getCfg('access'),1,$bounty_params,1,'*');
 
     //******************* Delete folders/files ************************************
     echo '<div class="alert alert-info">';
