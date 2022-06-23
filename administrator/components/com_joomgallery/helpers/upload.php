@@ -1170,7 +1170,7 @@ class JoomUpload extends JObject
         $autorotate = false;
 
         // Check if auto-rotation is enabled
-        if ($this->_config->get('jg_upload_exif_rotation') > 0)
+        if ($this->_config->get('jg_thumbautorot') == 1)
         {
           $autorotate = true;
         }
@@ -1188,7 +1188,8 @@ class JoomUpload extends JObject
                                             $angle,
                                             $autorotate,
                                             false,
-                                            false
+                                            false,
+                                            true
                                            );
         if(!$return)
         {
@@ -2097,31 +2098,6 @@ class JoomUpload extends JObject
   {
     $angle = 0;
 
-    // Check if auto-rotation is enabled
-    switch($this->_config->get('jg_upload_exif_rotation'))
-    {
-      case 0:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-      case 1:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = false;
-        break;
-      case 2:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = true;
-        break;
-      default:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-    }
-
     // Create thumb
     $return = JoomIMGtools::resizeImage($this->_debugoutput,
                                         $source,
@@ -2133,9 +2109,10 @@ class JoomUpload extends JObject
                                         $this->_config->get('jg_thumbquality'),
                                         $this->_config->get('jg_cropposition'),
                                         $angle,
-                                        $autorot_thumb,
+                                        $this->_config->get('jg_thumbautorot'),
                                         false,
-                                        false
+                                        false,
+                                        true
                                        );
     if(!$return)
     {
@@ -2151,25 +2128,24 @@ class JoomUpload extends JObject
     // Optionally create detail image
     $detail_image_created = false;
     if(
-        $this->_config->get('jg_resizetomaxwidth')
-      &&
-        !$this->_mainframe->getUserStateFromRequest('joom.upload.create_special_gif', 'create_special_gif', false, 'bool')
+      !$this->_mainframe->getUserStateFromRequest('joom.upload.create_special_gif', 'create_special_gif', false, 'bool')
       )
     {
       // Create new detail image
       $return = JoomIMGtools::resizeImage($this->_debugoutput,
                                           $source,
                                           $this->_ambit->getImg('img_path', $filename, null, $this->catid),
-                                          3,
+                                          $this->_config->get('jg_resizetomaxwidth'),
                                           $this->_config->get('jg_maxwidth'),
-                                          $this->_config->get('jg_maxwidth'),
+                                          $this->_config->get('jg_maxheight'),
                                           $this->_config->get('jg_thumbcreation'),
                                           $this->_config->get('jg_picturequality'),
                                           false,
                                           $angle,
-                                          $autorot_det,
+                                          $this->_config->get('jg_detailautorot'),
                                           false,
-                                          true
+                                          true,
+                                          false
                                          );
       if(!$return)
       {
@@ -2297,7 +2273,7 @@ class JoomUpload extends JObject
     }
 
     // Rotate original image if needed
-    if(!$delete_original && $autorot_orig)
+    if(!$delete_original && $this->_config->get('jg_origautorot'))
     {
       $return = JoomIMGtools::rotateImage($this->_debugoutput,
                                           $this->_ambit->getImg('orig_path', $filename, null, $this->catid),
@@ -2305,7 +2281,7 @@ class JoomUpload extends JObject
                                           $this->_config->get('jg_thumbcreation'),
                                           $this->_config->get('jg_originalquality'),
                                           $angle,
-                                          $autorot_orig,
+                                          $this->_config->get('jg_origautorot'),
                                           true,
                                           true
                                          );

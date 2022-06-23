@@ -230,6 +230,8 @@ class JoomGalleryModelImage extends JoomGalleryModel
   }
 
   /**
+   * Method not used anymore (since 3.6.0)
+   *
    * Method to include the watermark selected in
    * the configuration manager into a given image
    *
@@ -465,6 +467,8 @@ class JoomGalleryModelImage extends JoomGalleryModel
   }
 
   /**
+   * Method not used anymore (since 3.6.0)
+   *
    * Method to crop a image
    *
    * @param   string    $img        Path to image

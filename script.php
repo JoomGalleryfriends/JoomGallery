@@ -11,6 +11,10 @@
 
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Filesystem\File;
+
 /**
  * Install method
  * is called by the installer of Joomla!
@@ -26,7 +30,38 @@ class Com_JoomGalleryInstallerScript
    *
    * @var string
    */
-  private $version = '3.5.1';
+  private $version = '3.6.0';
+
+  /**
+   * Version string of the current installed version
+   *
+   * @var string
+   */
+  private $act_version = '';
+
+  /**
+   * Settings that are set in the current installation, but will be removed/changed in a newer version
+   *
+   * @var array  array('id1_value'=>array('id'=>value,'config-key'=>old_value),'id2_value'=>array(),...)
+   */
+  private $old_settings = array();
+
+  /**
+   * Extenions that have to be installed/updated or uninstalled
+   * name,type,element,folder,client_id (string, columns of table #__extension)
+   * install_type (string, folder or url)
+   * install_source (string, source of zip file. depends on install_type. folder: path, url: external url)
+   *
+   * @var array
+   */
+  private $extensions = array(array('name'=>'GitHub Feed',
+                                    'type'=>'module',
+                                    'element'=>'mod_joomgithub',
+                                    'folder'=>'',
+                                    'client_id'=>'1',
+                                    'install_type'=>'url',
+                                    'install_source'=>'https://www.joomgalleryfriends.net/files/Unkategorisiert/mod_joomgithub.zip'));
+
 
   /**
    * Preflight method
@@ -45,6 +80,79 @@ class Com_JoomGalleryInstallerScript
 
       return false;
     }
+
+    //************* Get actual installed JoomGallery version ************
+    $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
+    if(isset($xml->version))
+    {
+      $this->act_version = $xml->version;
+    }
+    //************* End et actual installed JoomGallery version ************
+
+    //************* Read old settings that will be changed/removed *************
+    if($type == 'update')
+    {
+      // Define global constant _JOOM_TABLE_CONFIG
+      define('_JOOM_TABLE_CONFIG', '#__joomgallery_config');
+
+      // Register Config-Table
+      include_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/tables/joomgalleryconfig.php';
+
+      // Load JoomGallery configuration
+      $config      = JTable::getInstance('joomgalleryconfig', 'Table');
+      $config_keys = $config->getFields();
+
+      $db = JFactory::getDbo();
+      $query = $db
+          ->getQuery(true)
+          ->select('id')
+          ->from($db->quoteName(_JOOM_TABLE_CONFIG));
+      $db->setQuery($query);
+      $config_ids = $db->loadColumn();
+
+      // Bring versions to a machine readable form
+      $act_version = explode('.',$this->act_version);
+      $new_version = explode('.',$this->version);
+
+      // create $old_settings with all available config rows
+      foreach($config_ids as $key => $id)
+      {
+        $this->old_settings[$id] = array('id'=>$id);
+      }
+
+      // if jg_thumbcreation still exists
+      if(array_key_exists('jg_thumbcreation', $config_keys))
+      {
+        foreach($this->old_settings as $key => $row)
+        {
+          $config->load($row['id']);
+          $this->old_settings[$key]['jg_thumbcreation'] = $config->jg_thumbcreation;
+        }
+      }
+
+      // if jg_upload_exif_rotation still exists
+      if(array_key_exists('jg_upload_exif_rotation', $config_keys))
+      {
+        foreach($this->old_settings as $key => $row)
+        {
+          $config->load($row['id']);
+          $this->old_settings[$key]['jg_upload_exif_rotation'] = $config->jg_upload_exif_rotation;
+        }
+      }
+
+      // act_version <= 3.5.x and new_version >= 3.6.x
+      if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
+      {
+        foreach($this->old_settings as $key => $row)
+        {
+          $config->load($row['id']);
+          $this->old_settings[$key]['jg_maxwidth'] = $config->jg_maxwidth;
+          $this->old_settings[$key]['jg_resizetomaxwidth'] = $config->jg_resizetomaxwidth;
+          $this->old_settings[$key]['jg_useforresizedirection'] = $config->jg_useforresizedirection;
+        }
+      }
+    }
+    //*********************** End read old settings ***********************
 
     return true;
   }
@@ -81,6 +189,16 @@ class Com_JoomGalleryInstallerScript
       return false;
     }
 
+    // Install extensions that are not already installed
+    $install_response = $this->installExtensions();
+    if($install_response !== true)
+    {
+      foreach ($install_response as $codes)
+      {
+        $app->enqueueMessage(JText::_('Unable to install additional extension! Error-Code of installation: '.$codes), 'error');
+      }
+    }
+
     // Create news feed module
     $subdomain = '';
     $language = JFactory::getLanguage();
@@ -88,43 +206,38 @@ class Com_JoomGalleryInstallerScript
     {
       $subdomain = 'en.';
     }
+    $feed_params = array('cache'=>1,
+                         'cache_time'=>15,
+                         'moduleclass_sfx'=>'',
+                         'rssurl'=>'https://www.'.$subdomain.'joomgalleryfriends.net/?format=feed&amp;type=rss',
+                         'rssrtl'=>0,
+                         'rsstitle'=>1,
+                         'rssdesc'=>0,
+                         'rssimage'=>1,
+                         'rssitems'=>3,
+                         'rssitemdesc'=>1,
+                         'word_count'=>200);
+    $feed_params = json_encode($feed_params);
+    $this->createModule('JoomGallery News','joom_cpanel','mod_feed',1,$app->getCfg('access'),1,$feed_params,1,'*');
 
-    $row = JTable::getInstance('module');
-    $row->title     = 'JoomGallery News';
-    $row->ordering  = 1;
-    $row->position  = 'joom_cpanel';
-    $row->published = 1;
-    $row->module    = 'mod_feed';
-    $row->access    = $app->getCfg('access');
-    $row->showtitle = 1;
-    $row->params    = 'cache=1
-    cache_time=15
-    moduleclass_sfx=
-    rssurl=https://www.'.$subdomain.'joomgalleryfriends.net/?format=feed&amp;type=rss
-    rssrtl=0
-    rsstitle=1
-    rssdesc=0
-    rssimage=1
-    rssitems=3
-    rssitemdesc=1
-    word_count=200';
-    $row->client_id = 1;
-    $row->language  = '*';
-    if(!$row->store())
-    {
-      $app->enqueueMessage(JText::_('Unable to insert feed module data!'), 'error');
-    }
-
-    $db = JFactory::getDbo();
-    $query = $db->getQuery(true);
-    $query->insert('#__modules_menu');
-    $query->set('moduleid = '.$row->id);
-    $query->set('menuid = 0');
-    $db->setQuery($query);
-    if(!$db->query())
-    {
-      $app->enqueueMessage(JText::_('Unable to assign feed module!'), 'error');
-    }
+    // Create bounty feed module
+    $bounty_params = array('CachingEnabled'=>1,
+                         'shortcache'=>15,
+                         'moduleclass_sfx'=>'',
+                         'layout'=>'_:Issues',
+                         'Owner'=>'JoomGalleryfriends',
+                         'repo'=>'JoomGallery',
+                         'CommitImg'=>0,
+                         'DispCommitter'=>0,
+                         'DispRecords'=>5,
+                         'IssueLabels'=>'bounty',
+                         'IssueStatus'=>'open',
+                         'IssueSort'=>'updated',
+                         'IssueOrder'=>'desc',
+                         'DivSize'=>'0',
+                         'DateFormat'=>'d.F Y');
+    $bounty_params = json_encode($bounty_params);
+    $this->createModule('JoomGallery Open Bounties','joom_cpanel','mod_joomgithub',2,$app->getCfg('access'),1,$bounty_params,1,'*');
 
     // joom_settings.css
     $temp = JPATH_ROOT.'/media/joomgallery/css/joom_settings.temp.css';
@@ -159,7 +272,9 @@ class Com_JoomGalleryInstallerScript
    */
   public function update()
   {
+    $app = JFactory::getApplication();
     jimport('joomla.filesystem.file'); ?>
+
     <div class="hero-unit">
       <img src="../media/joomgallery/images/joom_logo.png" alt="JoomGallery Logo" />
       <div class="alert alert-info">
@@ -180,6 +295,56 @@ class Com_JoomGalleryInstallerScript
         $error = true;
       }
     }
+
+    // Install extensions that are not already installed
+    $install_response = $this->installExtensions();
+    if($install_response !== true)
+    {
+      foreach ($install_response as $codes)
+      {
+        $app->enqueueMessage(JText::_('Unable to install additional extension! Error-Code of installation: '.$codes), 'error');
+      }
+    }
+
+    // Create news feed module
+    $subdomain = '';
+    $language = JFactory::getLanguage();
+    if(strpos($language->getTag(), 'de-') === false)
+    {
+      $subdomain = 'en.';
+    }
+    $feed_params = array('cache'=>1,
+                         'cache_time'=>15,
+                         'moduleclass_sfx'=>'',
+                         'rssurl'=>'https://www.'.$subdomain.'joomgalleryfriends.net/?format=feed&amp;type=rss',
+                         'rssrtl'=>0,
+                         'rsstitle'=>1,
+                         'rssdesc'=>0,
+                         'rssimage'=>1,
+                         'rssitems'=>3,
+                         'rssitemdesc'=>1,
+                         'word_count'=>200);
+    $feed_params = json_encode($feed_params);
+    $this->createModule('JoomGallery News','joom_cpanel','mod_feed',1,$app->getCfg('access'),1,$feed_params,1,'*');
+
+    // Create bounty feed module
+    $bounty_params = array('CachingEnabled'=>1,
+                         'shortcache'=>15,
+                         'moduleclass_sfx'=>'',
+                         'layout'=>'_:Issues',
+                         'Owner'=>'JoomGalleryfriends',
+                         'repo'=>'JoomGallery',
+                         'CommitImg'=>0,
+                         'DispCommitter'=>0,
+                         'DispRecords'=>5,
+                         'IssueLabels'=>'bounty',
+                         'IssueStatus'=>'open',
+                         'IssueSort'=>'updated',
+                         'IssueOrder'=>'desc',
+                         'DivSize'=>'0',
+                         'DateFormat'=>'d.F Y');
+    $bounty_params = json_encode($bounty_params);
+    $this->createModule('JoomGallery Open Bounties','joom_cpanel','mod_joomgithub',2,$app->getCfg('access'),1,$bounty_params,1,'*');
 
     //******************* Delete folders/files ************************************
     echo '<div class="alert alert-info">';
@@ -359,6 +524,105 @@ class Com_JoomGalleryInstallerScript
     echo '</div>';*/
     //******************* End write joom_settings.css ************************************
 
+
+    //************* Set new settings in config manager based on old settings *************
+    // Bring versions to a machine readable form
+    $act_version = explode('.',$this->act_version);
+    $new_version = explode('.',$this->version);
+
+    foreach($this->old_settings as $key => $old_setting)
+    {
+      $new_configs = new stdClass();
+      $new_configs->id = $key;
+
+      foreach ($old_setting as $key => $old)
+      {
+        switch ($key)
+        {
+          case 'jg_thumbcreation':
+            if ($old == 'gd1' || $old == 'gd2')
+            {
+              $new_configs->jg_thumbcreation = 'gd2';
+            }
+            else
+            {
+              $new_configs->jg_thumbcreation = 'im';
+            }
+            break;
+
+          case 'jg_upload_exif_rotation':
+            switch ($old)
+            {
+              case 0:
+                $new_thumbautorot  = 0;
+                $new_detailautorot = 0;
+                $new_origautorot   = 0;
+                break;
+
+              case 1:
+                $new_thumbautorot  = 1;
+                $new_detailautorot = 1;
+                $new_origautorot   = 0;
+                break;
+
+              case 2:
+                $new_thumbautorot  = 1;
+                $new_detailautorot = 1;
+                $new_origautorot   = 1;
+                break;
+
+              default:
+                $new_thumbautorot  = 0;
+                $new_detailautorot = 0;
+                $new_origautorot   = 0;
+                break;
+            }
+            $new_configs->jg_origautorot   = $new_origautorot;
+            $new_configs->jg_detailautorot = $new_detailautorot;
+            $new_configs->jg_thumbautorot  = $new_thumbautorot;
+            break;
+
+          case 'jg_useforresizedirection':
+            // act_version <= 3.5.x and new_version >= 3.6.x
+            if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
+            {
+              $new_configs->jg_useforresizedirection = $old + 1;
+            }
+            break;
+
+          case 'jg_resizetomaxwidth':
+            // act_version <= 3.5.x and new_version >= 3.6.x and resize was yes
+            if( ($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6) && $old == 1 )
+            {
+              $new_configs->jg_resizetomaxwidth = 4;
+            }
+            break;
+
+          case 'jg_maxwidth':
+            // act_version <= 3.5.x and new_version >= 3.6.x
+            if($act_version[0] <= 3 && $act_version[1] <= 5 && $new_version[0] >= 3 && $new_version[1] >= 6)
+            {
+              // set jg_maxheight = jg_maxwidth
+              $new_configs->jg_maxheight = $old;
+            }
+            break;
+
+          default:
+            // Nothing to update
+            break;
+        }
+      }
+
+      // Store new configs
+      $store = JFactory::getDbo()->updateObject(_JOOM_TABLE_CONFIG, $new_configs, 'id');
+      if( !$store )
+      {
+        echo '<span class="label label-important">Updating old setting-values with new configuration structure failed.</span>';
+        $error = true;
+      }
+    }
+    //********************** End set new settings in config manager **********************
+
     if($error)
     {
       echo '<div class="alert alert-error">
@@ -419,9 +683,217 @@ class Com_JoomGalleryInstallerScript
       JFolder::delete($path);
     }
 
+    // uninstall extension
+    $install_response = $this->uninstallExtensions();
+    if($install_response !== true)
+    {
+      foreach ($install_response as $codes)
+      {
+        $app->enqueueMessage(JText::_('Unable to uninstall additional extension! Error-Code of uninstallation: '.$codes), 'error');
+      }
+    }
+
     echo '<div class="alert alert-info">JoomGallery was uninstalled successfully!<br />
           Please remember to remove your images folders manually
           if you didn\'t use JoomGallery\'s default directories.</div>';
+
+    return true;
+  }
+
+  /**
+   * Uninstalls all extensions defined in $this->extensions.
+   *
+   * @return  boolean True on success, array of error codes otherwise
+   */
+  private function uninstallExtensions()
+  {
+    $error = false;
+    $httpcodes = array();
+
+    foreach ($this->extensions as $extension)
+    {
+      // check if extension is installed
+      $db = Factory::getDbo();
+      $query = $db->getQuery(true)
+                  ->select('extension_id')
+                  ->from($db->quoteName('#__extensions'))
+                  ->where($db->quoteName('name').' = '.$db->quote($extension['name']))
+                  ->where($db->quoteName('type').' = '.$db->quote($extension['type']))
+                  ->where($db->quoteName('element').' = '.$db->quote($extension['element']))
+                  ->where($db->quoteName('folder').' = '.$db->quote($extension['folder']));
+      $db->setQuery($query);
+      $extension_id = $db->loadResult();
+
+      // uninstall extension if it is installed
+      if (!empty($extension_id))
+      {
+        //uninstall extension
+        $post_data = array(
+          'boxchecked' => '1',
+          'cid[]' => $extension_id,
+          'task' => 'manage.remove',
+          JSession::getFormToken() => '1',
+        );
+        $session = Factory::getSession();
+        $url = JUri::base()."index.php?option=com_installer&view=manage";
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Cookie: '.$session->getName().'='.$session->getId()));
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        // check if installation was successful
+        $error_codes = array(400,401,402,403,404,405,408,500,501,502,503,504,505);
+        if(in_array($httpcode,$error_codes) || !empty($response))
+        {
+          $error = true;
+          array_push($httpcodes,$httpcode);
+        }
+      }
+    }
+
+    if(!$error)
+    {
+      return true;
+    }
+    else
+    {
+      return $httpcodes;
+    }
+  }
+
+  /**
+   * Installs all extensions defined in $this->extensions.
+   *
+   * @return  boolean True on success, array of error codes otherwise
+   */
+  private function installExtensions()
+  {
+    $error = false;
+    $httpcodes = array();
+
+    foreach ($this->extensions as $extension)
+    {
+      // check if extension is already installed
+      $db = Factory::getDbo();
+      $query = $db->getQuery(true)
+                  ->select('extension_id')
+                  ->from($db->quoteName('#__extensions'))
+                  ->where($db->quoteName('name').' = '.$db->quote($extension['name']))
+                  ->where($db->quoteName('type').' = '.$db->quote($extension['type']))
+                  ->where($db->quoteName('element').' = '.$db->quote($extension['element']))
+                  ->where($db->quoteName('folder').' = '.$db->quote($extension['folder']));
+      $db->setQuery($query);
+      $extension_id = $db->loadResult();
+
+      // install extension if it is not yet installed
+      if (empty($extension_id))
+      {
+        //install extension
+        $post_data = array(
+          'installtype' => $extension['install_type'],
+          'install_url' => $extension['install_source'],
+          'task' => 'install.install',
+          JSession::getFormToken() => '1',
+          'return' => JSession::getFormToken(),
+        );
+        $session = Factory::getSession();
+        $url = JUri::base()."index.php?option=com_installer&view=install";
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Cookie: '.$session->getName().'='.$session->getId()));
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        // check if installation was successful
+        $error_codes = array(400,401,402,403,404,405,408,500,501,502,503,504,505);
+        if(in_array($httpcode,$error_codes) || !empty($response))
+        {
+          $error = true;
+          array_push($httpcodes,$httpcode);
+        }
+      }
+    }
+
+    if(!$error)
+    {
+      return true;
+    }
+    else
+    {
+      return $httpcodes;
+    }
+  }
+
+  /**
+   * Creates and publishes a module (extension need to be installed)
+   *
+   * @param   string   $title      title of the module
+   * @param   string   $position   position fo the module to be placed
+   * @param   string   $module     installation name of the module extension
+   * @param   integer  $ordering   number of the sort order
+   * @param   integer  $access     id of the access level
+   * @param   integer  $showTitle  show or hide module title (0: hide, 1: show)
+   * @param   string   $params     module params (json)
+   * @param   integer  $client_id  module of which client (0: client, 1: admin)
+   * @param   string   $lang       langage tag (language filter / *: all languages)
+   *
+   * @return  boolean True on success, false otherwise
+   */
+  private function createModule($title,$position,$module,$ordering,$access,$showTitle,$params,$client_id,$lang)
+  {
+    // check if the module already exists
+    $db = Factory::getDbo();
+    $query = $db->getQuery(true)
+                ->select('id')
+                ->from($db->quoteName('#__modules'))
+                ->where($db->quoteName('position').' = '.$db->quote($position))
+                ->where($db->quoteName('module').' = '.$db->quote($module));
+    $db->setQuery($query);
+    $module_id = $db->loadResult();
+
+    // create module if it is not yet created
+    if (empty($module_id))
+    {
+      $row = JTable::getInstance('module');
+      $row->title     = $title;
+      $row->ordering  = $ordering;
+      $row->position  = $position;
+      $row->published = 1;
+      $row->module    = $module;
+      $row->access    = $access;
+      $row->showtitle = $showTitle;
+      $row->params    = $params;
+      $row->client_id = $client_id;
+      $row->language  = $lang;
+      if(!$row->store())
+      {
+        $app->enqueueMessage(JText::_('Unable to create "'.$title.'" module!'), 'error');
+
+        return false;
+      }
+
+      $db = JFactory::getDbo();
+      $query = $db->getQuery(true);
+      $query->insert('#__modules_menu');
+      $query->set('moduleid = '.$row->id);
+      $query->set('menuid = 0');
+      $db->setQuery($query);
+      if(!$db->query())
+      {
+        $app->enqueueMessage(JText::_('Unable to assign "'.$title.'" module!'), 'error');
+
+        return false;
+      }
+    }
 
     return true;
   }
