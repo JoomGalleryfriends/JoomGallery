@@ -493,6 +493,8 @@ JHTML::_('joomconfig.start', 'page16');
     $picorder[] = JHTML::_('select.option', JoomConfig::getValidImageSortingOrderByClauses(3), JText::_('COM_JOOMGALLERY_COMMON_OPTION_ORDERBY_UPLOADTIME_DESC'));
     $picorder[] = JHTML::_('select.option', JoomConfig::getValidImageSortingOrderByClauses(4), JText::_('COM_JOOMGALLERY_COMMON_OPTION_ORDERBY_IMGTITLE_ASC'));
     $picorder[] = JHTML::_('select.option', JoomConfig::getValidImageSortingOrderByClauses(5), JText::_('COM_JOOMGALLERY_COMMON_OPTION_ORDERBY_IMGTITLE_DESC'));
+    $picorder[] = JHTML::_('select.option', JoomConfig::getValidImageSortingOrderByClauses(6), JText::_('COM_JOOMGALLERY_COMMON_OPTION_ORDERBY_HITS_ASC'));
+    $picorder[] = JHTML::_('select.option', JoomConfig::getValidImageSortingOrderByClauses(7), JText::_('COM_JOOMGALLERY_COMMON_OPTION_ORDERBY_HITS_DESC'));
     $mc_jg_firstorder = JHTML::_('select.genericlist',$picorder, 'jg_firstorder', 'class="inputbox" size="1"', 'value', 'text', $this->_config->jg_firstorder);
     JHTML::_('joomconfig.row', 'jg_firstorder', 'custom', 'COM_JOOMGALLERY_CONFIG_FS_IO_FIRST', $mc_jg_firstorder);
     array_unshift($picorder, JHTML::_('select.option','', JText::_('COM_JOOMGALLERY_CONFIG_FS_IO_EMPTY')));
