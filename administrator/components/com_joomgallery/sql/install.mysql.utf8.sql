@@ -222,6 +222,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_config` (
   `jg_showpathway` int(1) NOT NULL,
   `jg_completebreadcrumbs` int(1) NOT NULL,
   `jg_search` int(1) NOT NULL,
+  `jg_searchengine` varchar(20) NOT NULL DEFAULT 'joomgallery',
   `jg_searchcols` int(1) NOT NULL,
   `jg_searchthumbalign` int(1) NOT NULL,
   `jg_searchtextalign` int(1) NOT NULL,
