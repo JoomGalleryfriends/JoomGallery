@@ -223,6 +223,30 @@ class Com_JoomGalleryInstallerScript
 
       return false;
     }
+
+    // copy layouts to frontend
+    $layouts      = JPATH_ROOT.'/layouts/joomgallery/';
+    $layout_files = array('index.html','seotext.php');
+
+    if(!JFolder::exists($layouts))
+    {
+      if(!JFolder::create($layouts))
+      {
+        $app->enqueueMessage(JText::_('Unable to create layouts folder for JoomGallery!'), 'error');
+
+      return false;
+      }
+    }
+
+    foreach($layout_files as $file)
+    {
+      if(!JFile::copy(JPATH_ADMINISTRATOR.'/components/com_joomgallery/layouts/joomgallery/'.$file, $layouts.$file))
+      {
+        $app->enqueueMessage(JText::_('Unable to copy file "'.$file.'"!'), 'error');
+
+        return false;
+      }
+    }
 ?>
     <div class="hero-unit">
       <img src="../media/joomgallery/images/joom_logo.png" alt="JoomGallery Logo" />
@@ -544,6 +568,32 @@ class Com_JoomGalleryInstallerScript
       }
     }
     //********************** End set new settings in config manager **********************
+
+    //************************** Create folders/files ************************************
+    // copy layouts to frontend
+    $layouts      = JPATH_ROOT.'/layouts/joomgallery/';
+    $layout_files = array('index.html','seotext.php');
+
+    if(!JFolder::exists($layouts))
+    {
+      if(!JFolder::create($layouts))
+      {
+        $app->enqueueMessage(JText::_('Unable to create layouts folder for JoomGallery!'), 'error');
+
+      return false;
+      }
+    }
+
+    foreach($layout_files as $file)
+    {
+      if(!JFile::copy(JPATH_ADMINISTRATOR.'/components/com_joomgallery/layouts/joomgallery/'.$file, $layouts.$file))
+      {
+        $app->enqueueMessage(JText::_('Unable to copy file "'.$file.'"!'), 'error');
+
+        return false;
+      }
+    }
+    //************************* END Create folders/files *********************************
 
     if($error)
     {
