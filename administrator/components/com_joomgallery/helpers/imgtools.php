@@ -304,6 +304,14 @@ class JoomIMGtools
           return false;
         }
 
+        if(self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'WEBP')
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_ANIMATED_WEBP').'<br />';
+          self::rollback($src_file, $dst_file);
+
+          return false;
+        }
+
         // Create empty image of specified size
         if($anim && self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'GIF')
         {
@@ -1881,9 +1889,7 @@ class JoomIMGtools
       if($included !== FALSE)
       {
         // animated WebP is not supported by gdlib
-        // $imginfo['animation'] = true;
-
-        return false;
+        $imginfo['animation'] = true;
       }
       else
       {
