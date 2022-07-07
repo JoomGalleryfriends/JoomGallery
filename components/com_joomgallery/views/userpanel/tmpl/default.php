@@ -279,7 +279,7 @@ echo $this->loadTemplate('header');
                       <input type="text" value="<?php echo $item->imgtitle; ?>" name="imgtitle" id="imgtitle_<?php echo $item->id; ?>" class="span12 required" required="required" onkeyup="count_<?php echo $item->id; ?>(this)"/>
                     </div>
                     <div class="span2">
-                      <label>(<span id="<?php echo $item->id; ?>_charcount">0</span> <?php echo JText::_('COM_JOOMGALLERY_COMMON_CHARACTERS'); ?>)</label>
+                      <label>(<span id="<?php echo $item->id; ?>_charcount_imgtitle">0</span> <?php echo JText::_('COM_JOOMGALLERY_COMMON_CHARACTERS'); ?>)</label>
                     </div>
                   </div>
                   <div class="row-fluid">
@@ -295,8 +295,11 @@ echo $this->loadTemplate('header');
                     <div class="span3">
                       <label for="metadesc_<?php echo $item->id; ?>"><?php echo JText::_('COM_JOOMGALLERY_USERPANEL_METADESC'); ?></label>
                     </div>
-                    <div class="span9">
-                      <input type="text" value="<?php echo $item->metadesc; ?>" name="metadesc" id="metadesc_<?php echo $item->id; ?>" class="span12" />
+                    <div class="span7">
+                      <input type="text" value="<?php echo $item->metadesc; ?>" name="metadesc" id="metadesc_<?php echo $item->id; ?>" class="span12" onkeyup="count_<?php echo $item->id; ?>(this)"/>
+                    </div>
+                    <div class="span2">
+                      <label>(<span id="<?php echo $item->id; ?>_charcount_metadesc">0</span> <?php echo JText::_('COM_JOOMGALLERY_COMMON_CHARACTERS'); ?>)</label>
                     </div>
                   </div>
                   <?php endif; ?>
@@ -313,12 +316,13 @@ echo $this->loadTemplate('header');
           <script>
             function count_<?php echo $item->id; ?>(obj)
             {
-              document.getElementById("<?php echo $item->id; ?>_charcount").innerHTML = obj.value.length;
+              document.getElementById("<?php echo $item->id; ?>_charcount_"+obj.name).innerHTML = obj.value.length;
             }
 
             jQuery(document).ready(function(){
               // document ready function;
-              document.getElementById("<?php echo $item->id; ?>_charcount").innerHTML = document.getElementById("imgtitle_<?php echo $item->id; ?>").value.length
+              document.getElementById("<?php echo $item->id; ?>_charcount_imgtitle").innerHTML = document.getElementById("imgtitle_<?php echo $item->id; ?>").value.length;
+              document.getElementById("<?php echo $item->id; ?>_charcount_metadesc").innerHTML = document.getElementById("metadesc_<?php echo $item->id; ?>").value.length;
             });
           </script>
 <?php   endforeach; ?>

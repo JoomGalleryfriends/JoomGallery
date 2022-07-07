@@ -572,7 +572,7 @@ class Com_JoomGalleryInstallerScript
     //************************** Create folders/files ************************************
     // copy layouts to frontend
     $layouts      = JPATH_ROOT.'/layouts/joomgallery/';
-    $layout_files = array('index.html','seotext.php');
+    $layout_files = array('index.html','seotext.php','seotextarea.php');
 
     if(!JFolder::exists($layouts))
     {
