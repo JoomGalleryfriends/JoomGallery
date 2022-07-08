@@ -81,17 +81,17 @@ class Com_JoomGalleryInstallerScript
       return false;
     }
 
-    //************* Get actual installed JoomGallery version ************
-    $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
-    if(isset($xml->version))
-    {
-      $this->act_version = $xml->version;
-    }
-    //************* End et actual installed JoomGallery version ************
-
     //************* Read old settings that will be changed/removed *************
     if($type == 'update')
     {
+      //************* Get actual installed JoomGallery version ************
+      $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
+      if(isset($xml->version))
+      {
+        $this->act_version = $xml->version;
+      }
+      //************* End et actual installed JoomGallery version ************
+
       // Define global constant _JOOM_TABLE_CONFIG
       define('_JOOM_TABLE_CONFIG', '#__joomgallery_config');
 
@@ -248,6 +248,30 @@ class Com_JoomGalleryInstallerScript
       $app->enqueueMessage(JText::_('Unable to copy joom_settings.css!'), 'error');
 
       return false;
+    }
+
+    // copy layouts to frontend
+    $layouts      = JPATH_ROOT.'/layouts/joomgallery/';
+    $layout_files = array('index.html','seotext.php');
+
+    if(!JFolder::exists($layouts))
+    {
+      if(!JFolder::create($layouts))
+      {
+        $app->enqueueMessage(JText::_('Unable to create layouts folder for JoomGallery!'), 'error');
+
+      return false;
+      }
+    }
+
+    foreach($layout_files as $file)
+    {
+      if(!JFile::copy(JPATH_ADMINISTRATOR.'/components/com_joomgallery/layouts/joomgallery/'.$file, $layouts.$file))
+      {
+        $app->enqueueMessage(JText::_('Unable to copy file "'.$file.'"!'), 'error');
+
+        return false;
+      }
     }
 ?>
     <div class="hero-unit">
@@ -622,6 +646,32 @@ class Com_JoomGalleryInstallerScript
       }
     }
     //********************** End set new settings in config manager **********************
+
+    //************************** Create folders/files ************************************
+    // copy layouts to frontend
+    $layouts      = JPATH_ROOT.'/layouts/joomgallery/';
+    $layout_files = array('index.html','seotext.php','seotextarea.php');
+
+    if(!JFolder::exists($layouts))
+    {
+      if(!JFolder::create($layouts))
+      {
+        $app->enqueueMessage(JText::_('Unable to create layouts folder for JoomGallery!'), 'error');
+
+      return false;
+      }
+    }
+
+    foreach($layout_files as $file)
+    {
+      if(!JFile::copy(JPATH_ADMINISTRATOR.'/components/com_joomgallery/layouts/joomgallery/'.$file, $layouts.$file))
+      {
+        $app->enqueueMessage(JText::_('Unable to copy file "'.$file.'"!'), 'error');
+
+        return false;
+      }
+    }
+    //************************* END Create folders/files *********************************
 
     if($error)
     {

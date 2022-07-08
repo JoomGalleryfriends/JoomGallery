@@ -28,6 +28,7 @@
       size="50"
       required="true"
       autofocus="true"
+      layout="joomgallery.seotext"
       message="COM_JOOMGALLERY_COMMON_ALERT_CATEGORY_MUST_HAVE_TITLE"
     />
     <field

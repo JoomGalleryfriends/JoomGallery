@@ -1087,6 +1087,8 @@ echo JHtml::_('tabs.start', 'NestedPaneTen', array('useCookie' => 1));
 echo JHtml::_('tabs.panel', JText::_('COM_JOOMGALLERY_CONFIG_COMMON_TAB_GENERAL_SETTINGS'), 'nested-thirtythree');
 
 JHTML::_('joomconfig.start', 'page33');
+    $mc_jg_searchengine = JHtml::_('joomselect.searchEngine', 'jg_searchengine', $this->_config->get('jg_searchengine'));
+    JHTML::_('joomconfig.row', 'jg_searchengine', 'custom', 'COM_JOOMGALLERY_CONFIG_SS_GS_SEARCHENGINE', $mc_jg_searchengine);
     $search[] = JHTML::_('select.option','0', JText::_('COM_JOOMGALLERY_CONFIG_COMMON_OPTION_NO_DISPLAY'));
     $search[] = JHTML::_('select.option','1', JText::_('COM_JOOMGALLERY_CONFIG_COMMON_OPTION_IN_HEADER'));
     $search[] = JHTML::_('select.option','2', JText::_('COM_JOOMGALLERY_CONFIG_COMMON_OPTION_IN_FOOTER'));
