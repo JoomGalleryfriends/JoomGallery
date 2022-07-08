@@ -23,6 +23,7 @@
       maxLength="255"
       required="true"
       autofocus="true"
+      layout="joomgallery.seotext"
       message="COM_JOOMGALLERY_CATMAN_ALERT_CATEGORY_MUST_HAVE_TITLE"
     />
     <field
@@ -272,6 +273,7 @@
       rows="5"
       cols="40"
       default=""
+      layout="joomgallery.seotextarea"
       label="COM_JOOMGALLERY_COMMON_METADESC"
       description="COM_JOOMGALLERY_COMMON_METADESC_TIP"
     />
@@ -281,6 +283,7 @@
       rows="5"
       cols="40"
       default=""
+      layout="joomgallery.seotextarea"
       label="COM_JOOMGALLERY_COMMON_METAKEYS"
       description="COM_JOOMGALLERY_COMMON_METAKEYS_TIP"
     />
