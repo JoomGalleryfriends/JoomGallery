@@ -1316,7 +1316,7 @@ class JoomIMGtools
 
   /**
    * Add watermark to image using GD or ImageMagick
-   * Supported image-types: JPG, PNG, GIF
+   * Supported image-types: JPG, PNG, GIF, WEBP
    *
    * @param   string  $src_file               Path to source file
    * @param   string  $dst_file               Path to destination file
@@ -1377,9 +1377,9 @@ class JoomIMGtools
       $imginfo['frames'] = 1;
     }
 
-    // GD can only handle JPG, PNG and GIF images
-    if(   ($imginfo['type'] != 'JPG' && $imginfo['type'] != 'PNG' && $imginfo['type'] != 'GIF')
-       || (self::$src_imginfo['type'] != 'JPG' &&  self::$src_imginfo['type'] != 'PNG' &&  self::$src_imginfo['type'] != 'GIF')
+    // GD can only handle JPG, PNG, GIF and WEBP images
+    if(   ($imginfo['type'] != 'JPG' && $imginfo['type'] != 'PNG' && $imginfo['type'] != 'GIF' && $imginfo['type'] != 'WEBP')
+       || (self::$src_imginfo['type'] != 'JPG' && self::$src_imginfo['type'] != 'PNG' && self::$src_imginfo['type'] != 'GIF' && self::$src_imginfo['type'] != 'WEBP')
        &&  ($method == 'gd1' || $method == 'gd2')
       )
     {
