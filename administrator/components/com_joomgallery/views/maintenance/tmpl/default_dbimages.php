@@ -239,7 +239,7 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
       <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
       <?php echo JHtml::_('form.token'); ?>
       <?php echo JHTML::_('list.users', 'newuser', 0, true, null, 'name', false); ?>
-      <a href="#correctUser" id="filesave" class="saveorder" title="<?php echo JText::_('COM_JOOMGALLERY_MAIMAN_APPLY'); ?>"></a>
+      <a href="#correctUser" id="filesave" class="btn btn-primary btn-mini"><?php echo JText::_('COM_JOOMGALLERY_MAIMAN_APPLY'); ?></a>
       <span id="usertip"> <?php echo JHTML::_('tooltip', JText::_('COM_JOOMGALLERY_MAIMAN_NOTE_USER_FILTER'), JText::_('COM_JOOMGALLERY_MAIMAN_NOTE')); ?></span>
     </div>
 </form>
