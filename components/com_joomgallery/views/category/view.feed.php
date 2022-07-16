@@ -31,13 +31,13 @@ class JoomGalleryViewCategory extends JoomGalleryView
   function display($tpl = null)
   {
     $params     = $this->_mainframe->getParams();
-    $feedEmail  = ($this->_mainframe->getCfg('feed_email')) ? $this->_mainframe->getCfg('feed_email') : 'author';
+    $feedEmail  = $this->_mainframe->getCfg('feed_email');
     $siteEmail  = $this->_mainframe->getCfg('mailfrom');
 
     // Get the images data from the model
     JRequest::setVar('limit', $this->_config->get('jg_category_rss'));
     $category  = $this->get('Category');
-    $rows     = $this->get('AllImages');
+    $rows      = $this->get('AllImages');
 
     $this->_doc->link = JRoute::_('index.php?view=category&catid='.$category->cid);
 
@@ -59,7 +59,7 @@ class JoomGalleryViewCategory extends JoomGalleryView
 
       // Strip HTML from feed item description text
       $description  = $this->escape(strip_tags($row->imgtext));
-      $author      = $row->imgauthor ? $row->imgauthor : $row->owner;
+      $author       = $row->imgauthor ? $row->imgauthor : $row->owner;
 
       // Load individual item creator class
       $item = new JFeedItem();
@@ -69,17 +69,19 @@ class JoomGalleryViewCategory extends JoomGalleryView
       $item->date         = $row->imgdate;
       $item->category     = $row->catid;
       $item->author       = $author;
-      if($feedEmail == 'site')
-      {
-        $item->authorEmail = $siteEmail;
-      }
-      else
+
+      // Set Author email accordingly to global configuration
+      if($feedEmail == 'author')
       {
         if($userid = $row->owner)
         {
           $user = JFactory::getUser($userid);
           $item->authorEmail = $user->get('email');
         }
+      }
+      elseif($feedEmail == 'site')
+      {
+        $item->authorEmail = $siteEmail;
       }
 
       // Load item info into RSS array

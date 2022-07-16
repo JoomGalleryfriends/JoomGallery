@@ -414,14 +414,15 @@ class JoomGalleryModelImages extends JoomGalleryModel
     // Loop through selected images
     foreach($ids as $cid)
     {
-      if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$cid))
+      $row->load($cid);
+
+      if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$cid)
+        && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$cid) || !$row->owner || $row->owner != $this->_user->get('id')))
       {
         JLog::add(JText::plural('COM_JOOMGALLERY_IMGMAN_ERROR_DELETE_NOT_PERMITTED', 1), JLog::ERROR, 'jerror');
 
         continue;
       }
-
-      $row->load($cid);
 
       // Database query to check if there are other images which this
       // thumbnail is assigned to and how many of them exist
@@ -525,6 +526,7 @@ class JoomGalleryModelImages extends JoomGalleryModel
         throw new RuntimeException(JText::sprintf('COM_JOOMGALLERY_MAIMAN_MSG_NOT_DELETE_IMAGE_DATA', $cid));
       }
 
+      JPluginHelper::importPlugin('content');
       $this->_mainframe->triggerEvent('onContentAfterDelete', array(_JOOM_OPTION.'.image', $row));
 
       // Image successfully deleted
@@ -590,6 +592,44 @@ class JoomGalleryModelImages extends JoomGalleryModel
         $count--;
       }
     }
+
+    // Convert tasks and states
+    switch($task)
+    {
+      case 'approve':
+        if($publish == 1)
+        {
+          // approved
+          $state = 4;
+        }
+        else
+        {
+          // not approved
+          $state = 3;
+        }
+        break;
+
+      case 'feature':
+        if($publish == 1)
+        {
+          // featured
+          $state = 6;
+        }
+        else
+        {
+          // not featured
+          $state = 5;
+        }
+        break;
+
+      default:
+        // publish
+        $state = $publish;
+        break;
+    }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.image', $cid, $state));
 
     return $count;
   }
@@ -667,31 +707,6 @@ class JoomGalleryModelImages extends JoomGalleryModel
 
     $angle = 0;
 
-    // Check if auto-rotation is enabled
-    switch($this->_config->get('jg_upload_exif_rotation'))
-    {
-      case 0:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-      case 1:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = false;
-        break;
-      case 2:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = true;
-        break;
-      default:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-    }
-
     // Loop through selected images
     foreach($cids as $key => $cid)
     {
@@ -743,9 +758,10 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                             $this->_config->get('jg_thumbquality'),
                                             $this->_config->get('jg_cropposition'),
                                             $angle,
-                                            $autorot_thumb,
+                                            $this->_config->get('jg_thumbautorot'),
                                             false,
-                                            false
+                                            false,
+                                            true
                                            );
 
         if(!$return)
@@ -776,16 +792,17 @@ class JoomGalleryModelImages extends JoomGalleryModel
         $return = JoomIMGtools::resizeImage($debugoutput,
                                             $orig,
                                             $img,
-                                            3,
+                                            $this->_config->get('jg_resizetomaxwidth'),
                                             $this->_config->get('jg_maxwidth'),
-                                            $this->_config->get('jg_maxwidth'),
+                                            $this->_config->get('jg_maxheight'),
                                             $this->_config->get('jg_thumbcreation'),
                                             $this->_config->get('jg_picturequality'),
                                             false,
                                             $angle,
-                                            $autorot_det,
+                                            $this->_config->get('jg_detailautorot'),
                                             false,
-                                            true
+                                            true,
+                                            false
                                            );
 
         if(!$return)
@@ -803,6 +820,10 @@ class JoomGalleryModelImages extends JoomGalleryModel
         $recreated[$cid][] = 'img';
         $img_count++;
       }
+
+      // trigger Event "onJoomAfterRecreate($files,$orig_exists,$autorot)". Attached is an array with infos about the recreation
+      // files: path to the files; orig_exists: true, if original exists; autorot: is there auto rotation for the different image
+      $this->_mainframe->triggerEvent('onJoomAfterRecreate', array(array('original'=>$orig, 'detail'=>$img, 'thumbnail'=>$thumb), $orig_existent, array('original'=>$autorot_orig, 'detail'=>$autorot_det, 'thumbnail'=>$autorot_thumb) ));
 
       unset($cids[$key]);
 
@@ -923,16 +944,17 @@ class JoomGalleryModelImages extends JoomGalleryModel
           if(JoomIMGtools::resizeImage($debugoutput,
                                        $orig,
                                        $img,
-                                       3,
+                                       $this->_config->get('jg_resizetomaxwidth'),
                                        $this->_config->get('jg_maxwidth'),
-                                       $this->_config->get('jg_maxwidth'),
+                                       $this->_config->get('jg_maxheight'),
                                        $this->_config->get('jg_thumbcreation'),
                                        $this->_config->get('jg_picturequality'),
                                        false,
                                        0,
                                        false,
                                        false,
-                                       true
+                                       true,
+                                       false
                                       )
             )
           {
@@ -991,7 +1013,8 @@ class JoomGalleryModelImages extends JoomGalleryModel
                                          0,
                                          false,
                                          false,
-                                         false
+                                         false,
+                                         true
                                         );
 
         if($ret)
@@ -1005,6 +1028,10 @@ class JoomGalleryModelImages extends JoomGalleryModel
           $err          = true;
         }
       }
+
+      // trigger Event "onJoomAfterRotate($files,$angle,$imgtypes)". Attached is an array with infos about the rotation
+      // files: path to the files; angle: the angle by which the images were rotated; imgtypes: 1(Thumbs and details), 2(All images)
+      $this->_mainframe->triggerEvent('onJoomAfterRotate', array(array('original'=>$orig, 'detail'=>$img, 'thumbnail'=>$thumb), $rotateImageAngle, $rotateimagetypes));
 
       unset($cids[$key]);
 
@@ -1034,6 +1061,94 @@ class JoomGalleryModelImages extends JoomGalleryModel
     $this->_mainframe->setUserState('joom.rotate.firstloop', null);
 
     return array($thumb_count, $img_count, $orig_count, $debugoutput);
+  }
+
+  /**
+   * Search and replace information in selected images
+   *
+   * @return  mixed   Result information
+   *
+   * @since   3.6
+   */
+  public function replace()
+  {
+    // get Data
+    $cids       = $this->_mainframe->input->get('cid', array(), 'array');
+    $fields     = $this->_mainframe->input->get('batch_fields', array(), 'array');
+    $searchVal  = $this->_mainframe->input->get('batch_search', '', 'string');
+    $replaceVal = $this->_mainframe->input->get('batch_replace', '', 'string');
+
+    $nmb_imgs    = count($cids);  // Number of images to process
+    $nmb_rep     = 0;             // Number of performed replacements
+    $nmb_repimgs = 0;             // Number of images with performed replacements
+    $nmb_err     = 0;             // Number of error images
+    $erroroutput = '';
+    $firstLoop   = true;
+
+    // Before first loop check for selected images
+    if($firstLoop && !count($cids))
+    {
+      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
+
+      return false;
+    }
+
+    $row = $this->getTable('joomgalleryimages');
+
+    // Loop through selected images
+    foreach($cids as $i => $id)
+    {
+      // Reset JTable class
+      $row->reset();
+
+      // Read image from database
+      $row->load($id);
+
+      $tmp_rep = 0;
+      foreach($fields as $fieldname)
+      {
+        if($fieldname != 'additional')
+        {
+          $replacements = 0;
+
+          // Replace image informations
+          $row->{$fieldname} = str_replace($searchVal, $replaceVal, $row->{$fieldname}, $replacements);
+
+          // count replacements
+          $tmp_rep = $tmp_rep + $replacements;
+        }
+      }
+
+      // Make sure the record is valid
+      if(!$row->check())
+      {
+        $erroroutput .= 'Image (ID:' . $id . '):' . $row->getError() . '<br />';
+        $nmb_err      = $nmb_err + 1;
+
+        continue;
+      }
+
+      // Store the entry to the database
+      if(!$row->store())
+      {
+        $erroroutput .= 'Image (ID:' . $id . '):' . $row->getError() . '<br />';
+        $nmb_err      = $nmb_err + 1;
+
+        continue;
+      }
+
+      // Plugin event onJoomAfterSearchReplace
+      $this->_mainframe->triggerEvent('onJoomAfterSearchReplace', array($id, $searchVal, $replaceVal, $fields, &$tmp_rep));
+
+      // count image if there was a replacement
+      if($tmp_rep > 0)
+      {
+        $nmb_rep     = $nmb_rep + $tmp_rep;
+        $nmb_repimgs = $nmb_repimgs + 1;
+      }
+    }
+
+    return array('stats'=>array($nmb_imgs, $nmb_rep, $nmb_repimgs, $nmb_err), 'msg' => $erroroutput);
   }
 
   /**

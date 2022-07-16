@@ -163,7 +163,7 @@ JFactory::getDocument()->addScriptDeclaration(
             <?php echo JHTML::_('joomgallery.approved', $approved_states, $item->approved, $i, '', $canChange, $item->id, $item->owner); ?>
           </td>
           <td class="small hidden-phone">
-            <?php echo $this->escape($item->category_name); ?>
+            <a href="<?php echo JRoute::_('index.php?option='._JOOM_OPTION.'&controller=categories&filter[max_level]=&filter[category]='.$item->catid);?>"><?php echo $this->escape($item->category_name); ?></a>
           </td>
           <td class="small hidden-phone">
             <?php echo $this->escape($item->access_level); ?>
@@ -199,14 +199,24 @@ JFactory::getDocument()->addScriptDeclaration(
         </tr>
       </tfoot>
     </table>
-<?php // Load the batch processing form. ?>
+<?php // Load the rotate form (modal box). ?>
 <?php if ($this->_user->authorise('core.edit', _JOOM_OPTION) || $this->_user->authorise('core.edit.own', _JOOM_OPTION)) :
         echo JHtml::_('bootstrap.renderModal',
-                      'collapseModal',
+                      'jg-rotate-popup',
                       array('title'  => JText::_('COM_JOOMGALLERY_COMMON_ROTATE_OPTIONS'),
                             'footer' => $this->loadTemplate('rotate_footer'),
                            ),
                       $this->loadTemplate('rotate_body')
+                     ); ?>
+<?php endif; ?>
+<?php // Load the replace form (modal box). ?>
+<?php if ($this->_user->authorise('core.edit', _JOOM_OPTION) || $this->_user->authorise('core.edit.own', _JOOM_OPTION)) :
+        echo JHtml::_('bootstrap.renderModal',
+                      'jg-replace-popup',
+                      array('title'  => JText::_('COM_JOOMGALLERY_COMMON_REPLACE_OPTIONS'),
+                            'footer' => $this->loadTemplate('replace_footer'),
+                           ),
+                      $this->loadTemplate('replace_body')
                      ); ?>
 <?php endif; ?>
 <?php endif; ?>
@@ -222,4 +232,5 @@ JFactory::getDocument()->addScriptDeclaration(
     <?php JHTML::_('joomgallery.credits'); ?>
   </div>
 </form>
+<?php // Load the reject form (modal box). ?>
 <?php echo $this->loadTemplate('reject');

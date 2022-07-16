@@ -11,6 +11,8 @@
 
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
+use \Joomla\CMS\Factory;
+
 /**
  * JoomGallery Configuration Controller
  *
@@ -32,7 +34,7 @@ class JoomGalleryControllerConfig extends JoomGalleryController
     // Access check
     if(!JFactory::getUser()->authorise('core.admin', _JOOM_OPTION))
     {
-      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl(''), false), 'You are not allowed to configure this component', 'notice');
+      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl(''), false), JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_TO_CONFIGURE'), 'notice');
       $this->redirect();
     }
 
@@ -363,5 +365,167 @@ class JoomGalleryControllerConfig extends JoomGalleryController
     {
       $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('COM_JOOMGALLERY_CONFIG_MSG_RESETCONFIG_NOT_SUCCESSFUL'), 'error');
     }
+  }
+
+  /**
+   * Upload an image to test image manipulation settings
+   *
+   * @return  void
+   * @since   3.6.0
+   */
+  public function upload()
+  {
+    $input = Factory::getApplication()->input;
+    $img_file = $input->files->get('imageupload');
+
+    $msg = '';
+
+    // Check for upload errors
+    if($img_file['error'] > 0)
+    {
+      // Common PHP errors
+      $uploadErrors = array(
+        1 => JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_PHP_MAXFILESIZE'),
+        2 => JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_HTML_MAXFILESIZE'),
+        3 => JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_FILE_PARTLY_UPLOADED'),
+        4 => JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_FILE_NOT_UPLOADED')
+      );
+
+      if(in_array($img_file['error'], $uploadErrors))
+      {
+        $msg = JText::sprintf('COM_JOOMGALLERY_UPLOAD_ERROR_CODE', $uploadErrors[$img_file['error']]);
+      }
+      else
+      {
+        $msg =  JText::sprintf('COM_JOOMGALLERY_UPLOAD_ERROR_CODE', JText::_('COM_JOOMGALLERY_UPLOAD_ERROR_UNKNOWN'));
+      }
+
+      $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+      return;
+    }
+
+    // Get file extension
+    $imgname = JFile::makeSafe($img_file['name']);
+    $tag     = strtolower(JFile::getExt($img_file['name']));
+
+    // Check for right format
+    if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png'))
+    || strlen($img_file['tmp_name']) == 0
+    || $img_file['tmp_name'] == 'none'
+    )
+    {
+      $msg  = JText::_('COM_JOOMGALLERY_UPLOAD_OUTPUT_INVALID_IMAGE_TYPE');
+
+      $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+      return;
+    }
+
+    // create path to store uploaded image
+    $dst_path  = $this->_ambit->get('temp_path') . 'configtestimg_orig.' . $tag;
+    $href_path = str_replace(JPATH_ROOT,'',$dst_path);
+    $href_path = str_replace('\\','/',$href_path);
+
+    // upload image to tmp folder
+    $return = JFile::upload($img_file['tmp_name'], $dst_path);
+
+    if(!$return)
+    {
+      $msg = JText::sprintf('COM_JOOMGALLERY_UPLOAD_ERROR_UPLOADING', $imgname);
+
+      $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+      return;
+    }
+
+    // Write json infos
+    $img_info  = JoomIMGtools::analyseImage($dst_path);
+    $info_obj  = array('path' => $dst_path, 'href' => $href_path, 'filesize' => filesize($dst_path), 'filetype' => $img_info['type'], 'frames' => $img_info['frames'], 'dimension' => $img_info['width'].'x'.$img_info['height']);
+    $info_obj  = (object) $info_obj;
+    $json_path = $this->_ambit->get('temp_path').'configtestimg.json';
+    $model = $this->getModel('config');
+    $success = $model->writeInfoToJson($json_path, array('orig' => $info_obj));
+
+    if(!$success)
+    {
+      $msg = JText::sprintf('COM_JOOMGALLERY_UPLOAD_ERROR_JSON', $imgname);
+
+      $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+      return;
+    }
+
+    $msg = JText::_('COM_JOOMGALLERY_UPLOAD_MSG_SUCCESSFULL').': '.$imgname;
+
+    $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+  }
+
+  /**
+   * Recreate an image (detail or thumb) to visualize manipulation settings
+   *
+   * @return  void
+   * @since   3.6.0
+   */
+  public function recreate()
+  {
+    $input = Factory::getApplication()->input;
+    $type = $input->get('gen_type','','STRING');
+    $side = $input->get('gen_side','','STRING');
+
+    $msg = '';
+
+    $model = $this->getModel('config');
+    $info = $model->readInfoFromJson($this->_ambit->get('temp_path').'configtestimg.json');
+
+    if(!$info)
+    {
+      $msg = JText::_('COM_JOOMGALLERY_CONFIG_FS_IP_JSON_INEXISTENT');
+
+      $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+      return;
+    }
+
+    $success = $model->resizeImage($info->orig->path,$type,$side);
+
+    if(!$success)
+    {
+      $msg = JText::_('COM_JOOMGALLERY_CONFIG_FS_IP_GENERATION_ERROR');
+
+      $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+      return;
+    }
+
+    $msg = JText::_('COM_JOOMGALLERY_CONFIG_FS_IP_GENERATION_SUCCESSFULL');
+
+    $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+  }
+
+  /**
+   * Delete images to test image manipulation settings
+   *
+   * @return  void
+   * @since   3.6.0
+   */
+  public function delete()
+  {
+    // files to delete
+    $files = array('configtestimg_orig.jpg','configtestimg.json','configtestimg_detailL.jpg','configtestimg_detailR.jpg','configtestimg_thumbL.jpg','configtestimg_thumbR.jpg');
+
+    foreach ($files as $file)
+    {
+      $file = $this->_ambit->get('temp_path').$file;
+
+      if(file_exists($file))
+      {
+        if(!JFile::delete($file))
+        {
+          $msg = JText::_('COM_JOOMGALLERY_CONFIG_FS_IP_DELETE_ERROR');
+
+          $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
+          return;
+        }
+      }
+    }
+
+    $msg = JText::_('COM_JOOMGALLERY_CONFIG_FS_IP_DELETE_SUCCESSFULL');
+
+    $this->setRedirect($this->_ambit->getRedirectUrl(), $msg);
   }
 }

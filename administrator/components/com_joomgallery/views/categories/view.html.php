@@ -82,7 +82,7 @@ class JoomGalleryViewCategories extends JoomGalleryView
       JToolbarHelper::divider();
     }
 
-    if(($this->_config->get('jg_disableunrequiredchecks') || $canDo->get('core.delete') || count(JoomHelper::getAuthorisedCategories('core.delete'))) && $this->pagination->total)
+    if(($this->_config->get('jg_disableunrequiredchecks') || $canDo->get('core.delete') || $canDo->get('joom.delete.own') || count(JoomHelper::getAuthorisedCategories('core.delete'))) && $this->pagination->total)
     {
       JToolbarHelper::deleteList('','remove');
       JToolbarHelper::divider();

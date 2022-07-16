@@ -459,46 +459,12 @@ class JoomInterface
       $router->setVar('option', _JOOM_OPTION);
       $router->setVar('Itemid', $this->getJoomId(false));
 
-      if($div)
-      {
-        $output .= '<div class="'.$div.'">';
-      }
+      // Load layout
+      $args = array('linked' => $linked, 'class' => $class, 'div' => $div, 'extra' => $extra, 'type' => $type);
+      $data = array('interface' => $this, '_config' => $this->_config, 'thumb_url' => $this->_ambit->getImg('thumb_url', $obj), 'group' => $this->getConfig('group'), 'args' => $args, 'obj' => $obj);
+      $layout = new JLayoutFile('interface.thumb', null, array('component' => 'com_joomgallery', 'client' => 1));
+      $output .= $layout->render($data);
 
-      if($linked)
-      {
-        // Check for link to category
-        if(isset($this->_config['catlink']) && $this->_config['catlink'] == 1)
-        {
-          $link = JRoute::_('index.php?&view=category&catid='.$obj->catid);
-        }
-        else
-        {
-          $link = JHTML::_('joomgallery.openimage', $this->_config['openimage'], $obj, $type, $this->getConfig('group'));
-          if($title = JHtml::_('joomgallery.getTitleforATag', $obj, false))
-          {
-            $link .= '" title="'.$title;
-          }
-        }
-
-        $output .= '  <a href="'.$link.'" class="jg_catelem_photo">';
-      }
-      if($class)
-      {
-        $class = ' '.$class;
-      }
-      if($extra)
-      {
-        $extra = ' '.$extra;
-      }
-      $output   .= '    <img src="'.$this->_ambit->getImg('thumb_url', $obj).'" class="jg_photo'.$class.'" alt="'.$obj->imgtitle.'"'.$extra.' />';
-      if($linked)
-      {
-        $output .= '  </a>';
-      }
-      if($div)
-      {
-        $output .= '</div>';
-      }
       $routervars = $router->getVars();
       if(is_null($option))
       {
@@ -523,6 +489,8 @@ class JoomInterface
     {
       $output .= "    &nbsp;\n";
     }
+
+    $output = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $output);
 
     return $output;
   }
@@ -554,45 +522,12 @@ class JoomInterface
       $router->setVar('option', _JOOM_OPTION);
       $router->setVar('Itemid', $this->getJoomId(false));
 
-      if($div)
-      {
-        $output .= '<div class="'.$div.'">';
-      }
-      if($linked)
-      {
-        // Check for link to category
-        if(isset($this->_config['catlink']) && $this->_config['catlink'] == 1)
-        {
-          $link = JRoute::_('index.php?&view=category&catid='.$obj->catid);
-        }
-        else
-        {
-          $link = JHTML::_('joomgallery.openimage', $this->_config['openimage'], $obj, $type, $this->getConfig('group'));
-          if($title = JHtml::_('joomgallery.getTitleforATag', $obj, false))
-          {
-            $link .= '" title="'.$title;
-          }
-        }
+      // Load layout
+      $args = array('linked' => $linked, 'class' => $class, 'div' => $div, 'extra' => $extra, 'type' => $type);
+      $data = array('interface' => $this, '_config' => $this->_config, 'img_url' => $this->_ambit->getImg('img_url', $obj), 'group' => $this->getConfig('group'), 'args' => $args, 'obj' => $obj);
+      $layout = new JLayoutFile('interface.detail', null, array('component' => 'com_joomgallery', 'client' => 1));
+      $output .= $layout->render($data);
 
-        $output .= '  <a href="'.$link.'" class="jg_catelem_photo">';
-      }
-      if($class)
-      {
-        $class = ' '.$class;
-      }
-      if($extra)
-      {
-        $extra = ' '.$extra;
-      }
-      $output   .= '    <img src="'.$this->_ambit->getImg('img_url', $obj).'" class="jg_photo'.$class.'" alt="'.$obj->imgtitle.'"'.$extra.' />';
-      if($linked)
-      {
-        $output .= '  </a>';
-      }
-      if($div)
-      {
-        $output .= '</div>';
-      }
       $routervars = $router->getVars();
       if(is_null($option))
       {
@@ -617,6 +552,8 @@ class JoomInterface
     {
       $output .= "    &nbsp;\n";
     }
+
+    $output = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $output);
 
     return $output;
   }
@@ -646,111 +583,10 @@ class JoomInterface
     $router->setVar('option', _JOOM_OPTION);
     $router->setVar('Itemid', $this->getJoomId(false));
 
-    $output = "<ul>\n";
-
-    if($this->getConfig('showtitle') || $this->getConfig('showpicasnew'))
-    {
-      $output .= "  <li>";
-      if($this->getConfig('showtitle'))
-      {
-        $output .= '<b>'.$obj->imgtitle.'</b>';
-      }
-      if($this->getConfig('showpicasnew'))
-      {
-        $output.= JoomHelper::checkNew($obj->imgdate, $this->_jg_config->get('jg_daysnew'));;
-      }
-      $output .= "  </li>\n";
-    }
-
-    if($this->getConfig('showauthor'))
-    {
-      if($obj->imgauthor)
-      {
-        $authorowner = $obj->imgauthor;
-      }
-      else
-      {
-        $authorowner = JHTML::_('joomgallery.displayname', $obj->owner);
-      }
-
-      $output .= "  <li>".JText::sprintf('COM_JOOMGALLERY_COMMON_AUTHOR_VAR', $authorowner);
-      $output .= "</li>\n";
-    }
-
-    if($this->getConfig('showcategory'))
-    {
-      $catpath =
-      $output .= "  <li>";
-
-      if($this->getConfig('showcatlink'))
-      {
-        $catlink = '<a href="'.JRoute::_('index.php?view=category&catid='.$obj->catid)
-                   .'">'.$obj->cattitle
-                   .'</a>';
-        $output .= JText::sprintf('COM_JOOMGALLERY_COMMON_CATEGORY_VAR',$catlink);
-      }
-      else
-      {
-        $output .= JText::sprintf('COM_JOOMGALLERY_COMMON_CATEGORY_VAR',$obj->cattitle);
-      }
-      $output .= "  </li>";
-    }
-
-    if($this->getConfig('showhits'))
-    {
-      $output .= "  <li>".JText::sprintf('COM_JOOMGALLERY_COMMON_HITS_VAR', $obj->hits)."</li>";
-    }
-    if($this->getConfig('showdownloads'))
-    {
-      $output .= "  <li>".JText::sprintf('COM_JOOMGALLERY_COMMON_DOWNLOADS_VAR', $obj->downloads)."</li>";
-    }
-    if($this->getConfig('showrate'))
-    {
-      $output .= '  <li>'.JHTML::_('joomgallery.rating', $obj, false, 'jg_starrating_cat').'</li>';
-    }
-    if ($this->getConfig('showimgdate'))
-    {
-      $output .= '<li>'.JText::sprintf('COM_JOOMGALLERY_COMMON_UPLOAD_DATE', JHTML::_('date', $obj->imgdate, JText::_($this->getConfig('dateformat')))).'</li>';
-    }
-    if($this->getConfig('shownumcomments'))
-    {
-      $output .='  <li>'. JText::sprintf('COM_JOOMGALLERY_COMMON_COMMENTS_VAR', $obj->cmtcount).'</li>';
-    }
-    if($this->getConfig('showdescription')  && $obj->imgtext)
-    {
-      if($this->getConfig('showdescriptionintrotext') == 1)
-      {
-        $output .= '  <li>'.JText::sprintf('COM_JOOMGALLERY_COMMON_DESCRIPTION_VAR', JoomHelper::getIntrotext($obj->imgtext)).'</li>';
-      }
-      else
-      {
-        $output .= '  <li>'.JText::sprintf('COM_JOOMGALLERY_COMMON_DESCRIPTION_VAR', JoomHelper::getFulltext($obj->imgtext)).'</li>';
-      }
-    }
-    if($this->getConfig('showcmtdate') == 1 && !is_null($obj->cmtdate))
-    {
-      $output .= '<li>'.JText::sprintf('COM_JOOMGALLERY_COMMON_COMMENTS_LASTDATE', JHTML::_('date', $obj->cmtdate, JText::_($this->getConfig('dateformat')))).'</li>';
-    }
-    if($this->getConfig('showcmttext') == 1 && !is_null($obj->cmtdate))
-    {
-      // Comment username
-      if($obj->cmtuserid != 0)
-      {
-        $cmtname = JHTML::_('joomgallery.displayname', $obj->cmtuserid);
-      }
-      else
-      {
-        $cmtname = $obj->cmtname;
-      }
-
-      // Comment text
-      $output .= '<li>'.JText::sprintf('COM_JOOMGALLERY_COMMON_COMMENT_WITH_AUTHOR', $cmtname, $obj->cmttext).'</li>';
-    }
-
-    $results  = $this->_mainframe->triggerEvent('onJoomAfterDisplayThumb', array($obj->id));
-    $output  .= trim(implode('', $results));
-
-    $output .= '</ul>';
+    // Load layout
+    $data = array('interface' => $this, '_jg_config' => $this->_jg_config, '_mainframe' => $this->_mainframe, 'obj' => $obj);
+    $layout = new JLayoutFile('interface.desc', null, array('component' => 'com_joomgallery', 'client' => 1));
+    $output = $layout->render($data);
 
     $routervars = $router->getVars();
     if(is_null($option))
@@ -772,6 +608,8 @@ class JoomInterface
     }
     $router->setVars($routervars, false);
 
+    $output = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $output);
+
     return $output;
   }
 
@@ -789,63 +627,12 @@ class JoomInterface
       return '';
     }
 
-    $numcols = $this->getConfig('columns');
-    if(!$numcols)
-    {
-      $numcols = $this->getConfig('default_columns');
-      if(!$numcols)
-      {
-        $numcols = 2;
-      }
-    }
+    // Load layout
+    $data = array('interface' => $this, '_ambit' => $this->_ambit, 'rows' => $rows);
+    $layout = new JLayoutFile('interface.thumbs', null, array('component' => 'com_joomgallery', 'client' => 1));
+    $return = $layout->render($data);
 
-    $elem_width =  floor(99 / $numcols);
-
-    $return     = '';
-    //$return    .= "\n".'<div class="gallerytab">'."\n";
-    $return    .= '<div class="jg_row jg_row1">';
-    $rowcount   = 1;
-    $itemcount  = 0;
-
-    foreach($rows as $row)
-    {
-      if(($itemcount % $numcols == 0) && ($itemcount != 0))
-      {
-          $return .='</div><div class="jg_row jg_row'.($rowcount % 2 + 1).'">'."\n";
-          $rowcount++;
-      }
-
-      $return .= '<div class="jg_element_cat" style="width:'.$elem_width.'%">'."\n";
-      $type = 'img';
-      if(   (!is_numeric($this->getConfig('openimage')) || $this->getConfig('openimage') > 0)
-        &&  ($this->getJConfig('jg_lightboxbigpic') || $this->getConfig('type') == 'img' || $this->getConfig('type') == 'orig')
-        &&  file_exists($this->_ambit->getImg('orig_path', $row))
-        )
-      {
-        $type = 'orig';
-      }
-      if($this->getConfig('type') == 'img' || $this->getConfig('type') == 'orig')
-      {
-        $return .= '  '.$this->displayDetail($row, true, null, 'jg_imgalign_catimgs', null, $type);
-      }
-      else
-      {
-        $return .= '  '.$this->displayThumb($row, true, null, 'jg_imgalign_catimgs', null, $type);
-      }
-
-      if(!$this->getConfig('disable_infos'))
-      {
-        $return .= '  <div class ="jg_catelem_txt">'."\n";
-        $return .= '    '.$this->displayDesc($row);
-        $return .= '  </div>'."\n";
-      }
-
-      $return .= '</div>'."\n";
-
-      $itemcount++;
-    }
-
-    $return.= '</div>'."\n";//.'</div>';
+    $return = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $return);
 
     return $return;
   }

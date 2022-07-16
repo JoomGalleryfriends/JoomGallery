@@ -31,22 +31,25 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_thumbcreation*/          'gd2',
   /*jg_fastgd2thumbcreation*/   1,
   /*jg_impath*/                 '',
-  /*jg_resizetomaxwidth*/       1,
+  /*jg_delete_original*/        0,
+  /*jg_origautorot*/            0,
+  /*jg_originalquality*/        100,
+  /*jg_resizetomaxwidth*/       4,
   /*jg_maxwidth*/               400,
+  /*jg_maxheight*/              400,
+  /*jg_detailautorot*/          0,
   /*jg_picturequality*/         100,
-  /*jg_useforresizedirection*/  0,
+  /*jg_useforresizedirection*/  1,
   /*jg_cropposition*/           2,
   /*jg_thumbwidth*/             133,
   /*jg_thumbheight*/            100,
+  /*jg_thumbautorot*/           0,
   /*jg_thumbquality*/           100,
-  /*jg_upload_exif_rotation*/   0,
-  /*jg_originalquality*/        100,
 
   /* ### General settings->Backend Upload ####*/
   /*jg_uploadorder*/        2,
   /*jg_useorigfilename*/    0,
   /*jg_filenamenumber*/     1,
-  /*jg_delete_original*/    0,
 
   /* ### General settings->Messages ####*/
   /*jg_msg_upload_type*/          2,
@@ -76,6 +79,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_ajaxcategoryselection*/      0,
   /*jg_disableunrequiredchecks*/    0,
   /*jg_use_listbox_max_user_count*/ 25,
+  /*jg_adminsorting*/               0,
 
   /* ### User Access rights->User upload ####*/
   /*jg_userspace*/                1,
@@ -143,7 +147,6 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /*jg_dyncropposition*/    2,
   /*jg_dyncropwidth*/       100,
   /*jg_dyncropheight*/      100,
-  /*jg_dyncropbgcol*/       '#ffffff',
   /*jg_hideemptycats*/      0,
   /*jg_skipcatview*/        0,
   /*jg_imgalign*/           0,
@@ -166,6 +169,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
 
   /* --> ### Search ####*/
   /*jg_search*/                     1,
+  /*jg_searchengine*/               'joomgallery',
   /*jg_searchcols*/                 1,
   /*jg_searchthumbalign*/           1,
   /*jg_searchtextalign*/            1,
@@ -333,7 +337,7 @@ INSERT IGNORE INTO `#__joomgallery_config`
   /* ### Detail View->Exif data ####*/
   /*jg_showexifdata*/   0,
   /*jg_showgeotagging*/ 0,
-  /*jg_geotaggingkey*/  '',  
+  /*jg_geotaggingkey*/  '',
   /*jg_subifdtags*/     '',
   /*jg_ifdotags*/       '',
   /*jg_gpstags*/        '',

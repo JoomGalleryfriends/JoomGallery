@@ -773,7 +773,8 @@ class JoomGalleryViewDetail extends JoomGalleryView
           $params->set('show_edit_icon', 1);
         }
 
-        if($this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$image->id))
+        if(   $this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$image->id)
+          || ($this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$image->id) && $image->imgowner && $image->imgowner == $this->_user->get('id')))
         {
           $params->set('show_delete_icon', 1);
         }
@@ -1106,6 +1107,11 @@ class JoomGalleryViewDetail extends JoomGalleryView
         }
       }
     }
+
+    // Get additional view data
+    // Important Note: Please push the additional data into $image->additionalData['pluginName']
+    $image->additionalData = array();
+    $this->_mainframe->triggerEvent('onJoomAfterPrepareDisplayHTML', array('detail.image', $image->id, &$image->additionalData));
 
     $icons        = $this->_mainframe->triggerEvent('onJoomDisplayIcons', array('detail.image', $image));
     $event->icons = implode('', $icons);

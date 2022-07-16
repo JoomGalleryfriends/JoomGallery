@@ -61,7 +61,7 @@ class JoomGalleryViewImages extends JoomGalleryView
 
     JToolBarHelper::title(JText::_('COM_JOOMGALLERY_IMGMAN_IMAGE_MANAGER'), 'images');
 
-    if(($this->_config->get('jg_disableunrequiredchecks') || $canDo->get('joom.upload') || count(JoomHelper::getAuthorisedCategories('joom.upload'))) && $this->pagination->total)
+    if($this->_config->get('jg_disableunrequiredchecks') || $canDo->get('joom.upload') || count(JoomHelper::getAuthorisedCategories('joom.upload')))
     {
       JToolbarHelper::addNew('new');
     }
@@ -69,7 +69,14 @@ class JoomGalleryViewImages extends JoomGalleryView
     if(($canDo->get('core.edit') || $canDo->get('core.edit.own')) && $this->pagination->total)
     {
       JToolbarHelper::editList();
+
       JToolbarHelper::custom('edit', 'checkbox-partial', 'checkbox-partial', 'JTOOLBAR_BATCH');
+
+      // Instantiate a new JLayoutFile instance and render the replace button
+      $layout = new JLayoutFile('joomgallery.toolbar.replace', JPATH_COMPONENT_ADMINISTRATOR . '/layouts');
+      $dhtml  = $layout->render(array('title' => JText::_('COM_JOOMGALLERY_COMMON_TOOLBAR_REPLACE')));
+      $bar->appendButton('Custom', $dhtml, 'replace');
+
       JToolbarHelper::custom('showmove', 'move.png', 'move.png', 'COM_JOOMGALLERY_COMMON_TOOLBAR_MOVE');
       JToolbarHelper::custom('recreate', 'refresh.png', 'refresh.png', 'COM_JOOMGALLERY_COMMON_TOOLBAR_RECREATE');
 
@@ -89,11 +96,10 @@ class JoomGalleryViewImages extends JoomGalleryView
       JToolbarHelper::divider();
     }
 
-    //if($canDo->get('core.delete'))
-    //{
-      JToolbarHelper::deleteList('', 'remove');
-    //}
-
+    if($this->pagination->total)
+    {
+      JToolbarHelper::deleteList('COM_JOOMGALLERY_IMGMAN_CONFIRM_DELETE_IMAGES', 'remove');
+    }
   }
 
   /**

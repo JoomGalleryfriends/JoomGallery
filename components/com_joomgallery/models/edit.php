@@ -321,6 +321,14 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       $this->_mainframe->redirect(JRoute::_('index.php?option=com_joomgallery&view=gallery', false), JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_TO_EDIT_IMAGE'), 'notice');
     }
 
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    // $row contains still the old values)
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // Read old category ID
     $catid_old  = $row->catid;
 
@@ -371,6 +379,14 @@ class JoomGalleryModelEdit extends JoomGalleryModel
           $this->_mainframe->enqueueMessage(JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_STORE_IMAGE_IN_CATEGORY'), 'notice');
         }
       }
+    }
+
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+    JPluginHelper::importPlugin('content');
+    $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
     }
 
     if($move && !$this->moveImage($row, $row->catid, $catid_old))
@@ -447,6 +463,14 @@ class JoomGalleryModelEdit extends JoomGalleryModel
       throw new RuntimeException(JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_TO_EDIT_IMAGE'));
     }
 
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    // $row contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // Bind the form fields to the images table
     if(!$row->bind($data))
     {
@@ -457,6 +481,14 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     if(!$row->check())
     {
       throw new RuntimeException($row->getError());
+    }
+
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+    JPluginHelper::importPlugin('content');
+    $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image.quick', &$row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
     }
 
     // Store the entry to the database
@@ -486,7 +518,8 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     $row->load($this->_id);
 
     // Check whether we are allowed to delete this image
-    if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id))
+    if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$row->id)
+      && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$row->id) || !$row->owner || $row->owner != $this->_user->get('id')))
     {
       throw new RuntimeException(JText::_('COM_JOOMGALLERY_IMAGE_MSG_DELETE_NOT_PERMITTED'));
     }
@@ -870,6 +903,9 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     {
       return false;
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentChangeState', array(_JOOM_OPTION.'.image', $row->id, $row->published));
 
     return true;
   }

@@ -315,6 +315,14 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
       }
     }
 
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    // $row contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.category', $row, $isNew, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // Bind the form fields to the category table
     if(!$row->bind($data))
     {
@@ -438,6 +446,14 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
         if(!$row->check())
         {
           $this->setError($row->getError());
+          return false;
+        }
+
+        // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+        JPluginHelper::importPlugin('content');
+        $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, true, $data));
+        if(in_array(false, $plugins, true))
+        {
           return false;
         }
 
@@ -570,6 +586,14 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
       return false;
     }
 
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+    JPluginHelper::importPlugin('content');
+    $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.category', &$row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // Store the entry to the database
     if(!$row->store())
     {
@@ -595,7 +619,8 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
     $row->load($this->_id);
 
     // Check whether we are allowed to delete this category
-    if(!$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$this->_id))
+    if(   !$this->_user->authorise('core.delete', _JOOM_OPTION.'.category.'.$this->_id) 
+      && (!$this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.category.'.$this->_id) || !$row->owner || $row->owner != $this->_user->get('id')))
     {
       throw new RuntimeException(JText::_('COM_JOOMGALLERY_CATEGORY_MSG_DELETE_NOT_PERMITTED'));
     }
@@ -954,6 +979,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
     {
       return false;
     }
+
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onCategoryChangeState', array(_JOOM_OPTION.'.category', $row->cid, $row->published));
 
     return true;
   }
