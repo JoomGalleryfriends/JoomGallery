@@ -85,6 +85,8 @@ class JoomGalleryViewControl extends JoomGalleryView
       $this->params->set('dated_extensions', 0);
     }
 
+    JFactory::getApplication()->enqueueMessage(JText::_('COM_JOOMGALLERY_JOOMGALLERY4_INFO'), 'info');
+
     parent::display($tpl);
   }
 }
