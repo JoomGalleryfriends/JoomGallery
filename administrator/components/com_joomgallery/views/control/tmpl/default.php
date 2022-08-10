@@ -33,8 +33,16 @@ JHtml::_('bootstrap.tooltip');
     </div>
     <div class="<?php echo $this->params->get('show_available_extensions') ? 'span6' : 'span8'; ?>">
       <div class="row-fluid">
-        <!-- Begin News -->
         <div class="span12">
+          <div class="well well-small">
+            <div class="module-title nav-header">
+              <?php echo JText::_('COM_JOOMGALLERY_JOOMGALLERY4_UPGRADE'); ?>
+            </div>
+            <div class="alert alert-info">
+              <?php echo JText::_('COM_JOOMGALLERY_JOOMGALLERY4_INFO'); ?>
+            </div>
+          </div>
+          <!-- Begin News -->        
 <?php     foreach ($this->modules as $module)
           {
             $output = JModuleHelper::renderModule($module, array('style' => 'well well-small'));
