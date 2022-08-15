@@ -232,13 +232,17 @@ class JoomGalleryControllerImages extends JoomGalleryController
   public function remove()
   {
     $model = $this->getModel('images');
-
-    $cid  = JRequest::getVar('cid', array(), 'post', 'array');
+    $user  = JFactory::getUser();
+    $row   = JTable::getInstance('joomgalleryimages', 'Table');
+    $cid   = JRequest::getVar('cid', array(), 'post', 'array');
     $unaffected_images = 0;
     foreach($cid as $key => $id)
     {
+      $row->load((int)$id);
+
       // Prune images which we aren't allowed to delete
-      if(!JFactory::getUser()->authorise('core.delete', _JOOM_OPTION.'.image.'.$id))
+      if(   !$user->authorise('core.delete', _JOOM_OPTION.'.image.'.$id)
+        && (!$user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$id) || !$row->owner || $row->owner != $user->get('id')))
       {
         unset($cid[$key]);
         $unaffected_images++;
@@ -855,5 +859,31 @@ class JoomGalleryControllerImages extends JoomGalleryController
   public function cancel()
   {
     $this->setRedirect($this->_ambit->getRedirectUrl());
+  }
+
+  /**
+   * Performs a search and replace on all image fields
+   *
+   * @return  void
+   * @since   3.6.0
+   */
+  public function replace()
+  {
+    if(!JSession::checkToken())
+    {
+      // invalid from token
+      $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('JINVALID_TOKEN'), 'error');
+    }
+
+    $model  = $this->getModel('images');
+    $result = $model->replace();
+
+    if($result['stats'][3] != 0 && $result['msg'] != '')
+    {
+      // show errors
+      $this->_mainframe->enqueueMessage($result['msg'], 'error');
+    }
+
+    $this->setRedirect($this->_ambit->getRedirectUrl(),JText::sprintf('COM_JOOMGALLERY_IMGMAN_MSG_IMAGES_REPLACED',$result['stats'][1],$result['stats'][2]));
   }
 }

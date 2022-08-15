@@ -132,7 +132,8 @@ class JoomGalleryViewSearch extends JoomGalleryView
           $rows[$key]->show_edit_icon = true;
         }
 
-        if($this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$rows[$key]->id))
+        if(   $this->_user->authorise('core.delete', _JOOM_OPTION.'.image.'.$rows[$key]->id)
+          || ($this->_user->authorise('joom.delete.own', _JOOM_OPTION.'.image.'.$rows[$key]->id) && $rows[$key]->owner == $this->_user->get('id')))
         {
           $rows[$key]->show_delete_icon = true;
         }

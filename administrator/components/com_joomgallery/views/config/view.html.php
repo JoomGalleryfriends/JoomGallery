@@ -53,7 +53,7 @@ class JoomGalleryViewConfig extends JoomGalleryView
     // to be installed but not verified
     if($gdver > 0)
     {
-      $gdmsg = JText::sprintf('COM_JOOMGALLERY_CONFIG_GS_IP_GDLIB_INSTALLED', $gdver);
+      $gdmsg = JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_GDLIB_INSTALLED');
     }
     else
     {
@@ -80,7 +80,7 @@ class JoomGalleryViewConfig extends JoomGalleryView
       // Returns version, 0 if not installed or path not properly configured
       if($imver)
       {
-        $immsg = JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_IMAGIC_INSTALLED') .  $imver;
+        $immsg = JText::_('COM_JOOMGALLERY_CONFIG_GS_IP_IMAGIC_INSTALLED') . '<br />' . $imver;
         // Add the information that IM was detected automatically if path is empty
         if(!$this->_config->get('jg_impath'))
         {
@@ -209,10 +209,19 @@ class JoomGalleryViewConfig extends JoomGalleryView
     1 => array ('TAG' => 'IPTC', 'JG' => $iptctags, 'NAME' => 'jg_iptctags[]', 'HEAD' => JText::_('COM_JOOMGALLERY_IPTCTAGS')),
     );
 
+    // Config test infos
+    $model = $this->getModel();
+    $this->configtest_info = $model->readInfoFromJson($this->_ambit->get('temp_path').'configtestimg.json');
+
     // Include javascript for form validation, cleaning and submitting
     $this->_doc->addScript($this->_ambit->getScript('config.js'));
 
     JText::script('COM_JOOMGALLERY_CONFIG_GS_PD_ALERT_THUMBNAIL_PATH_SUPPORT');
+
+    // Additional Tabs added by plugins
+    $this->event  = new stdClass();
+    $addTabs  = $this->_mainframe->triggerEvent('onJoomAfterDisplayTabs', array(_JOOM_OPTION.'.config',''));
+    $this->event->afterDisplayTabs = trim(implode('', $addTabs));
 
     $this->assignRef('display',                   $display);
     $this->assignRef('cssfilemsg',                $cssfilemsg);

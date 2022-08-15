@@ -115,7 +115,7 @@ class JFormFieldFineuploader extends JFormField
           note: 'qq-upload-note'
       },
       validation: {
-        allowedExtensions: ['jpg', 'jpeg', 'jpe', 'gif', 'png'],
+        allowedExtensions: ['jpg', 'jpeg', 'jpe', 'gif', 'png', 'webp'],
         acceptFiles: 'image/*',
         sizeLimit: <?php echo $fileSizeLimit; ?>
       },

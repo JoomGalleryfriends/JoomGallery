@@ -403,4 +403,39 @@ abstract class JHtmlJoomSelect
 
     return JHtml::_('select.genericlist', $options, $name, $attr, 'value', 'text', $selected);
   }
+
+  /**
+   * Creates a HMTL select list of SearchEngine options
+   *
+   * @param   string  $name         Name of the field
+   * @param   string  $selected     Option that should be preselected.
+   * @param   string  $attr         Optional attributes for the HTML element
+   * @param   array   $extra        Array of additional options for the select list
+   * @return  string  The HTML select list of SearchEngine options
+   * @since   3.0
+   */
+  public static function searchEngine($name, $selected = null, $attr = null, $extra = array())
+  {
+    // Additional options are placed first in the list
+    $options = $extra;
+
+    // Default option
+    $options[] = JHtml::_('select.option', 'joomgallery', JText::_('COM_JOOMGALLERY'));
+
+    // Load plugins in order to search for additional SearchEngine plugins
+    JPluginHelper::importPlugin('joomgallery');
+    $plugins = JDispatcher::getInstance()->trigger('onJoomSearchEngineGetName');
+
+    foreach($plugins as $plugin)
+    {
+      $options[] = JHtml::_('select.option', $plugin);
+    }
+
+    if(!$attr)
+    {
+      $attr = 'class="inputbox" size="'.max(count($options),2).'"';
+    }
+
+    return JHtml::_('select.genericlist', $options, $name, $attr, 'value', 'text', $selected);
+  }
 }

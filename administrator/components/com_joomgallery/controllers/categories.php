@@ -496,7 +496,7 @@ class JoomGalleryControllerCategories extends JoomGalleryController
   public function batch()
   {
     JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-  
+
     $vars = $this->input->post->get('batch', array(), 'array');
     $cid  = $this->input->post->get('cid', array(), 'array');
 

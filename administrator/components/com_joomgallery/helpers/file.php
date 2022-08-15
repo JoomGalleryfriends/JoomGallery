@@ -132,7 +132,7 @@ class JoomFile
     }
 
     // Checks for extension
-    $extensions = array('.jpeg','.jpg','.jpe','.gif','.png');
+    $extensions = array('.jpeg','.jpg','.jpe','.gif','.png','.webp');
     $extension  = false;
     for($i = 0; $i < count($extensions); $i++)
     {

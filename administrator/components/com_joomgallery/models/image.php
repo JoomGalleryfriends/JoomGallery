@@ -102,7 +102,8 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $row->copy_original = $this->_mainframe->getUserStateFromRequest('joom.image.copy_original',  'copy_original', 0, 'int');
     }
 
-    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.image', $row));
+    JPluginHelper::importPlugin('content');
+    $this->_mainframe->triggerEvent('onContentPrepareData', array(_JOOM_OPTION.'.image', &$row));
 
     $this->_data = $row;
 
@@ -282,6 +283,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
       $isNew = true;
     }
 
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    //$row contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $row, $isNew, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // Bind the form fields to the image table
     if(!$row->bind($data))
     {
@@ -360,6 +369,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
       {
         $this->setError($row->getError());
 
+        return false;
+      }
+
+      // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+      JPluginHelper::importPlugin('content');
+      $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$row, true, $data));
+      if(in_array(false, $plugins, true))
+      {
         return false;
       }
 
@@ -469,31 +486,6 @@ class JoomGalleryModelImage extends JoomGalleryModel
 
     $angle = 0;
 
-    // Check if auto-rotation is enabled
-    switch($this->_config->get('jg_upload_exif_rotation'))
-    {
-      case 0:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-      case 1:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = false;
-        break;
-      case 2:
-        $autorot_thumb = true;
-        $autorot_det   = true;
-        $autorot_orig  = true;
-        break;
-      default:
-        $autorot_thumb = false;
-        $autorot_det   = false;
-        $autorot_orig  = false;
-        break;
-    }
-
     // Upload and handle new image files
     $types = array('thumb', 'img', 'orig');
 
@@ -561,9 +553,10 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                 $this->_config->get('jg_thumbquality'),
                                                 $this->_config->get('jg_cropposition'),
                                                 $angle,
-                                                $autorot_thumb,
+                                                $this->_config->get('jg_thumbautorot'),
                                                 false,
-                                                false
+                                                false,
+                                                true
                                                );
             if(!$return)
             {
@@ -584,16 +577,17 @@ class JoomGalleryModelImage extends JoomGalleryModel
             $return = JoomIMGtools::resizeImage($debugoutput,
                                                 $new_tmp,
                                                 $new_path,
-                                                3,
+                                                $this->_config->get('jg_resizetomaxwidth'),
                                                 $this->_config->get('jg_maxwidth'),
-                                                $this->_config->get('jg_maxwidth'),
+                                                $this->_config->get('jg_maxheight'),
                                                 $this->_config->get('jg_thumbcreation'),
                                                 $this->_config->get('jg_picturequality'),
                                                 false,
                                                 $angle,
-                                                $autorot_det,
+                                                $this->_config->get('jg_detailautorot'),
                                                 false,
-                                                true
+                                                true,
+                                                false
                                                );
             if(!$return)
             {
@@ -622,7 +616,7 @@ class JoomGalleryModelImage extends JoomGalleryModel
                                                   $this->_config->get('jg_thumbcreation'),
                                                   $this->_config->get('jg_originalquality'),
                                                   0,
-                                                  $autorot_orig,
+                                                  $this->_config->get('jg_origautorot'),
                                                   true,
                                                   true
                                                  );
@@ -708,6 +702,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
           $this->_mainframe->enqueueMessage(JText::_('COM_JOOMGALLERY_COMMON_MSG_NOT_ALLOWED_STORE_IMAGE_IN_CATEGORY'), 'notice');
         }
       }
+    }
+
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+    JPluginHelper::importPlugin('content');
+    $plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image'.(!$validate ? '.batch' : ''), &$row, false, $data));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
     }
 
     // Move the image if necessary (the data is stored in function moveImage because
@@ -1151,6 +1153,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
       }
     }
 
+    // Trigger Event onJoomBeforeSave (Returnvalue: true or false)
+    // $item contains still the old values
+    $plugins = $this->_mainframe->triggerEvent('onJoomBeforeSave', array(_JOOM_OPTION.'.image', $item, false, array('catid'=>$catid_new)));
+    if(in_array(false, $plugins, true))
+    {
+      return false;
+    }
+
     // If all folder operations for the image were successful
     // modify the database entry
     $item->catid    = $catid_new;
@@ -1161,6 +1171,14 @@ class JoomGalleryModelImage extends JoomGalleryModel
     {
       JError::raiseWarning($item->getError());
 
+      return false;
+    }
+
+    // Trigger Event onContentBeforeSave (Returnvalue: true or false)
+    JPluginHelper::importPlugin('content');
+		$plugins = $this->_mainframe->triggerEvent('onContentBeforeSave', array(_JOOM_OPTION.'.image', &$item, false));
+    if(in_array(false, $plugins, true))
+    {
       return false;
     }
 

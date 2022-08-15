@@ -26,30 +26,45 @@ $published  = $this->state->get('filter.published');
     <h3><?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_OPTIONS'); ?></h3>
   </div>
   <div class="modal-body">
-    <p><?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_TIP'); ?></p>
-    <div class="control-group">
-      <div class="controls">
-        <?php echo JHtml::_('batch.access'); ?>
-      </div>
-    </div>
-    <!--<div class="control-group">
-      <div class="controls">
-        <?php echo JHtml::_('batch.language'); ?>
-      </div>
-    </div>-->
-    <?php if($published >= 0): ?>
+    <div class="container-fluid">
+      <p><?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_TIP'); ?></p>
       <div class="control-group">
-        <label id="batch-choose-action-lbl" for="batch-category-id" class="control-label">
-          <?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_CATEGORY_LABEL'); ?>
-        </label>
-        <div id="batch-choose-action" class="combo controls">
-          <?php echo JHtml::_('joomselect.categorylist', 0, 'batch[category_id]', null, null, '- ', 'filter', '', 'batch_category_id'); ?>
+        <div class="controls">
+          <?php echo JHtml::_('batch.access'); ?>
         </div>
       </div>
-      <div class="control-group radio">
-        <?php echo JHtml::_('select.radiolist', $options, 'batch[move_copy]', '', 'value', 'text', ''); ?>
-      </div>
-    <?php endif; ?>
+      <!--<div class="control-group">
+        <div class="controls">
+          <?php echo JHtml::_('batch.language'); ?>
+        </div>
+      </div>-->
+      <?php if($published >= 0): ?>
+        <div class="control-group">
+          <label id="batch-choose-action-lbl" for="batch-category-id" class="control-label">
+            <?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_CATEGORY_LABEL'); ?>
+          </label>
+          <div id="batch-choose-action" class="combo controls">
+            <?php echo JHtml::_('joomselect.categorylist', 0, 'batch[category_id]', null, null, '- ', 'filter', '', 'batch_category_id'); ?>
+          </div>
+        </div>
+        <div class="control-group radio">
+          <?php echo JHtml::_('select.radiolist', $options, 'batch[move_copy]', '', 'value', 'text', ''); ?>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+          <label id="batchalias-lbl" for="batchalias" class="control-label">
+            <?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_REG'); ?>
+            <span class="icon-info-2 hasPopover" data-original-title="<?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_REG'); ?>"
+                  data-content="<?php echo JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_INFO'); ?>" data-placement="top"></span>
+          </label>
+            <?php
+              $default = 0;
+              $options = array(JHTML::_('select.option', '', JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_KEEP')),JHTML::_('select.option', 'gen', JText::_('COM_JOOMGALLERY_CATMAN_BATCH_ALIAS_REG')));
+              echo JHtml::_('select.genericlist',$options,'batch[alias]','class="inputbox"','value','text',$default); ?>
+          </div>
+        </div>
+      <?php endif; ?>
+    </div>
   </div>
   <div class="modal-footer">
     <button class="btn" type="button" onclick="document.id('batch_category_id').value='';document.id('batch-access').value='';/*document.id('batch-language-id').value=''*/" data-dismiss="modal">

@@ -43,6 +43,7 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.'); ?>
     </div>
     <input type="hidden" name="option" value="<?php echo _JOOM_OPTION; ?>" />
     <input type="hidden" name="controller" value="comments" />
+    <input type="hidden" name="source" value="maintenance" />
     <input type="hidden" name="task" value="" />
   </div>
 </form>

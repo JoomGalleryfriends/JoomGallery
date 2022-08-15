@@ -46,7 +46,7 @@ class JoomGalleryControllerJupload extends JoomGalleryController
     // Access check
     if(!$this->_config->get('jg_disableunrequiredchecks') && !count(JoomHelper::getAuthorisedCategories('joom.upload')))
     {
-      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl('categories'), false), JText::_('No categories found into which you are allowed to upload'), 'notice');
+      $this->setRedirect(JRoute::_($this->_ambit->getRedirectUrl('categories'), false), JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_FOUND_ALLOWED_TO_UPLOAD'), 'notice');
 
       return;
     }

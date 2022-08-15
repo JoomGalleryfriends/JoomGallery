@@ -25,6 +25,7 @@
       size="40"
       maxLength="255"
       required="true"
+      layout="joomgallery.seotext"
       message="COM_JOOMGALLERY_COMMON_ALERT_IMAGE_MUST_HAVE_TITLE"
     />
     <field
@@ -113,6 +114,7 @@
       label="JFIELD_META_KEYWORDS_LABEL"
       description="JFIELD_META_KEYWORDS_DESC"
       class="inputbox"
+      layout="joomgallery.seotextarea"
       rows="5"
       cols="50"
     />
@@ -123,6 +125,7 @@
       label="JFIELD_META_DESCRIPTION_LABEL"
       description="JFIELD_META_DESCRIPTION_DESC"
       class="inputbox"
+      layout="joomgallery.seotextarea"
       rows="5"
       cols="50"
     />

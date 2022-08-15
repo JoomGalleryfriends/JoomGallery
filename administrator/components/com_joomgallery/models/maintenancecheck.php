@@ -107,7 +107,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
     $types  = $this->_mainframe->getUserState('joom.maintenance.check.types');
     $index  = $this->_mainframe->getUserState('joom.maintenance.check.index');
 
-    $img_types = array('gif', 'jpg', 'png', 'jpeg', 'jpe');
+    $img_types = array('gif', 'jpg', 'png', 'jpeg', 'jpe', 'webp');
 
     // Create a list for all found folders and files
     $continue = true;
@@ -331,6 +331,9 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
           $table->check();
           $table->store();
         }
+
+        // Trigger the after check image event.
+        $this->_mainframe->triggerEvent('onJoomAfterCheckImage', array($image, $corrupt, $table->id));
       }
 
       if(!$refresher->check())
@@ -461,6 +464,9 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
           $table->check();
           $table->store();
         }
+
+        // Trigger the after check category event.
+        $this->_mainframe->triggerEvent('onJoomAfterCheckCategory', array($category, $corrupt, $table->id));
       }
 
       if(!$refresher->check())
