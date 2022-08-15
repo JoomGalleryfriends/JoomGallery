@@ -279,6 +279,10 @@ class JoomGalleryModelImage extends JoomGalleryModel
         $watermark  = imagecreatefrompng($watermark);
         $mime_wat   = 'image/png';
         break;
+      case 18:
+        $watermark  = imagecreatefromwebp($watermark);
+        $mime_wat   = 'image/webp';
+        break;
       default:
         $this->setError(JText::sprintf('COM_JOOMGALLERY_COMMON_MSG_MIME_NOT_ALLOWED', $info_wat[2]));
 
@@ -384,6 +388,10 @@ class JoomGalleryModelImage extends JoomGalleryModel
         case 3:
           $src_img  = imagecreatefrompng($file);
           $mime_img = 'image/png';
+          break;
+        case 18:
+          $src_img  = imagecreatefromwebp($file);
+          $mime_img = 'image/webp';
           break;
         default:
           $this->setError(JText::sprintf('COM_JOOMGALLERY_COMMON_MSG_MIME_NOT_ALLOWED', $info_img[2]));
@@ -530,6 +538,10 @@ class JoomGalleryModelImage extends JoomGalleryModel
       // PNG
       case 3:
         $src_img = imagecreatefrompng($img);
+        break;
+      // WEBP
+      case 18:
+        $src_img = imagecreatefromwebp($img);
         break;
       default:
         $src_img = imagecreatefromjpeg($img);

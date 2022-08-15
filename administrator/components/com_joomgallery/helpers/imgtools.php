@@ -81,7 +81,7 @@ class JoomIMGtools
 
   /**
    * Resize image with GD or ImageMagick
-   * Supported image-types: JPG, PNG, GIF
+   * Supported image-types: JPG, PNG, GIF, WEBP
    *
    * @param   &string $debugoutput            Debug information
    * @param   string  $src_file               Path to source file
@@ -128,10 +128,11 @@ class JoomIMGtools
       self::$src_imginfo['frames'] = 1;
     }
 
-    // GD can only handle JPG, PNG and GIF images
+    // GD can only handle JPG, PNG, GIF and WEBP images
     if(    self::$src_imginfo['type'] != 'JPG'
        &&  self::$src_imginfo['type'] != 'PNG'
        &&  self::$src_imginfo['type'] != 'GIF'
+       &&  self::$src_imginfo['type'] != 'WEBP'
        &&  ($method == 'gd1' || $method == 'gd2')
       )
     {
@@ -298,6 +299,14 @@ class JoomIMGtools
         if(!function_exists('imagecreate'))
         {
           $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_GD_LIBARY_NOT_INSTALLED').'<br />';
+          self::rollback($src_file, $dst_file);
+
+          return false;
+        }
+
+        if(self::$src_imginfo['animation'] && self::$src_imginfo['type'] == 'WEBP')
+        {
+          $debugoutput .= JText::_('COM_JOOMGALLERY_UPLOAD_ANIMATED_WEBP').'<br />';
           self::rollback($src_file, $dst_file);
 
           return false;
@@ -743,7 +752,7 @@ class JoomIMGtools
 
   /**
    * Rotate image with GD or ImageMagick
-   * Supported image-types: JPG, PNG, GIF
+   * Supported image-types: JPG, PNG, GIF, WEBP
    *
    * @param   &string $debugoutput            Debug information
    * @param   string  $src_file               Path to source file
@@ -785,10 +794,11 @@ class JoomIMGtools
       return false;
     }
 
-    // GD can only handle JPG, PNG and GIF images
+    // GD can only handle JPG, PNG, GIF and WEBP images
     if(    self::$src_imginfo['type'] != 'JPG'
        &&  self::$src_imginfo['type'] != 'PNG'
        &&  self::$src_imginfo['type'] != 'GIF'
+       &&  self::$src_imginfo['type'] != 'WEBP'
        &&  ($method == 'gd1' || $method == 'gd2')
       )
     {
@@ -1306,7 +1316,7 @@ class JoomIMGtools
 
   /**
    * Add watermark to image using GD or ImageMagick
-   * Supported image-types: JPG, PNG, GIF
+   * Supported image-types: JPG, PNG, GIF, WEBP
    *
    * @param   string  $src_file               Path to source file
    * @param   string  $dst_file               Path to destination file
@@ -1367,9 +1377,9 @@ class JoomIMGtools
       $imginfo['frames'] = 1;
     }
 
-    // GD can only handle JPG, PNG and GIF images
-    if(   ($imginfo['type'] != 'JPG' && $imginfo['type'] != 'PNG' && $imginfo['type'] != 'GIF')
-       || (self::$src_imginfo['type'] != 'JPG' &&  self::$src_imginfo['type'] != 'PNG' &&  self::$src_imginfo['type'] != 'GIF')
+    // GD can only handle JPG, PNG, GIF and WEBP images
+    if(   ($imginfo['type'] != 'JPG' && $imginfo['type'] != 'PNG' && $imginfo['type'] != 'GIF' && $imginfo['type'] != 'WEBP')
+       || (self::$src_imginfo['type'] != 'JPG' && self::$src_imginfo['type'] != 'PNG' && self::$src_imginfo['type'] != 'GIF' && self::$src_imginfo['type'] != 'WEBP')
        &&  ($method == 'gd1' || $method == 'gd2')
       )
     {
@@ -1837,7 +1847,7 @@ class JoomIMGtools
     $imagetype = array(0=>'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
                        5 => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
                        10 => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
-                       15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
+                       15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'WEBP', 19=>'COUNT');
 
     $imginfo['type'] = $imagetype[$info[2]];
 
@@ -1867,6 +1877,38 @@ class JoomIMGtools
       if($pngtype == 4 || $pngtype == 6)
       {
         $imginfo['transparency'] = true;
+      }
+    }
+
+    // Detect, if image is a animated or transparency webp image
+    if($imginfo['type'] == 'WEBP')
+    {
+      // Detect, if WebP is animated
+      $webptype = file_get_contents($img);
+      $included = strpos($webptype, "ANMF");
+      if($included !== FALSE)
+      {
+        // animated WebP is not supported by gdlib
+        $imginfo['animation'] = true;
+      }
+      else
+      {
+        $imginfo['animation'] = false;
+
+        // Detect, if webp has transparency
+        $included = strpos($webptype, "ALPH");
+        if($included !== FALSE)
+        {
+          $imginfo['transparency'] = true;
+        }
+        else
+        {
+          $included = strpos($webptype, "VP8L");
+          if($included !== FALSE)
+          {
+            $imginfo['transparency'] = true;
+          }
+        }
       }
     }
 
@@ -1997,7 +2039,7 @@ class JoomIMGtools
   {
     self::$src_imginfo  = array('width' => 0,'height' => 0,'type' => '','orientation' => '','exif' => array('IFD0' => array(),'EXIF' => array()),
                                 'iptc' => array(),'comment' => '','transparency' => false,'animation' => false, 'frames' => 1);
-    self::$dst_imginfo = array('width' => 0,'height' => 0,'type' => '','orientation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
+    self::$dst_imginfo  = array('width' => 0,'height' => 0,'type' => '','orientation' => '', 'offset_x' => 0,'offset_y' => 0,'angle' => 0,
                                 'flip' => 'none','quality' => 100,'src' => array('width' => 0,'height' => 0));
     self::$src_frames   = array(array('duration' => 0,'image' => null));
     self::$dst_frames   = array(array('duration' => 0,'image' => null));
@@ -2197,6 +2239,30 @@ class JoomIMGtools
         // PNG has always 3 channels (RGB)
         $channels = 3;
         break;
+      case 'WEBP':
+// Todo
+        switch($method)
+        {
+          case 'resize':
+            // Tweakfactor dependent on number of pixels (~2.5)
+            $m = -0.000000007157;
+            $c = 2.70193;
+            break;
+          case 'rotate':
+            // Tweakfactor dependent on number of pixels (~3.3)
+            $m = -0.000000011928;
+            $c = 3.50322;
+            break;
+          default:
+            // Constant tweakfactor of 2.5
+            $m = 0;
+            $c = 2.5;
+            break;
+        }
+
+        // WEBP has always ??
+        $channels = 3;
+        break;
     }
 
     // Pixel calculation for source and destination GD-Frame
@@ -2316,9 +2382,16 @@ class JoomIMGtools
         }
         else
         {
-          self::$dst_imginfo['type'] = 'UNKNOWN';
+          if($imgtype == 'webp')
+          {
+            self::$dst_imginfo['type'] = 'WEBP';
+          }
+          else
+          {
+            self::$dst_imginfo['type'] = 'UNKNOWN';
 
-          return false;
+            return false;
+          }
         }
       }
     }
@@ -2643,7 +2716,7 @@ class JoomIMGtools
 
   /**
    * Creates GD image objects from different file types with one frame
-   * Supported: JPG, PNG, GIF
+   * Supported: JPG, PNG, GIF, WEBP
    *
    * @param   string  $src_file     Path to source file
    * @param   array   $imginfo      array with source image informations
@@ -2664,6 +2737,17 @@ class JoomIMGtools
         break;
       case 'JPG':
         $src_frame[0]['image'] = imagecreatefromjpeg($src_file);
+        break;
+      case 'WEBP':
+        if($src_imginfo['animation'] == true)
+        {
+          // not supported by gdlib
+          return false;
+        }
+        else
+        {
+          $src_frame[0]['image'] = imagecreatefromwebp($src_file);
+        }
         break;
       default:
         return false;
@@ -2703,7 +2787,7 @@ class JoomIMGtools
 
     if($transparency)
     {
-      // Set transparent backgraound
+      // Set transparent background
       switch ($dst_imginfo['type'])
       {
         case 'GIF':
@@ -2736,6 +2820,15 @@ class JoomIMGtools
             $trnprt_color = imagecolorallocatealpha($src_frame, 0, 0, 0, 127);
             imagefill($src_frame, 0, 0, $trnprt_color);
           }
+          break;
+        case 'WEBP':
+          if(function_exists('imagecolorallocatealpha'))
+          {
+            // Needs at least php v4.3.2
+            imagealphablending($src_frame, false);
+            $trnprt_color = imagecolorallocatealpha($src_frame, 0, 0, 0, 127);
+            imagefill($src_frame, 0, 0, $trnprt_color);
+          }
         break;
         default:
           $src_frame = false;
@@ -2755,7 +2848,7 @@ class JoomIMGtools
 
   /**
    * Output GD image object to file from different file types with one frame
-   * Supported: JPG, PNG, GIF
+   * Supported: JPG, PNG, GIF, WEBP
    *
    * @param   string  $dst_file     Path to destination file
    * @param   array   $dst_frame    array with one GD object for one frame ; array(array('duration'=>0, 'image'=>GDobject))
@@ -2793,6 +2886,14 @@ class JoomIMGtools
 
         // Write file
         $success = imagejpeg($dst_frame[0]['image'], $dst_file, $dst_imginfo['quality']);
+        break;
+      case 'WEBP':
+        // Save transparency -- needs at least php v4.3.2
+        imagealphablending($dst_frame[0]['image'], false);
+        imagesavealpha($dst_frame[0]['image'], true);
+
+        // Write file
+        $success = imagewebp($dst_frame[0]['image'], $dst_file, $dst_imginfo['quality']);
         break;
       default:
         $success = false;
@@ -2902,6 +3003,14 @@ class JoomIMGtools
       {
         case 'PNG':
           // Special threatment for png files
+          if(function_exists('imagealphablending'))
+          {
+            imagealphablending($new_img, false);
+            imagesavealpha($new_img, true);
+          }
+          break;
+        case 'WEBP':
+          // Special threatment for webp files
           if(function_exists('imagealphablending'))
           {
             imagealphablending($new_img, false);
@@ -3324,6 +3433,14 @@ class JoomIMGtools
         imagesavealpha($img, true);
 
         $src = 'image/png';
+        imagepng($img);
+        break;
+      case 'WEBP':
+        // Save transparency -- needs at least php v4.3.2
+        imagealphablending($img, false);
+        imagesavealpha($img, true);
+
+        $src = 'image/webp';
         imagepng($img);
         break;
       case 'GIF':

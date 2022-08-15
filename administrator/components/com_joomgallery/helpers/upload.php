@@ -398,7 +398,7 @@ class JoomUpload extends JObject
       }
 
       // Check for right format
-      if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png'))
+      if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png') && ($tag != 'webp'))
           || strlen($screenshot) == 0
           || $screenshot == 'none'
         )
@@ -664,7 +664,7 @@ class JoomUpload extends JObject
 
       // Get all files from extraction directory with the allowed
       // extension, recursively, with full path
-      $inclusions = '.jpg$|.JPG$|.jpeg$|.JPEG$|.jpe$|.JPE$|.png$|.PNG$|.gif$|.GIF$';
+      $inclusions = '.jpg$|.JPG$|.jpeg$|.JPEG$|.jpe$|.JPE$|.png$|.PNG$|.gif$|.GIF$|.webp$|.WEBP$';
       $ziplist    = JFolder::files($extractdir, $inclusions, true, true);
 
       // Set back temp path permissions if they were changed before
@@ -757,7 +757,7 @@ class JoomUpload extends JObject
       }
 
       // Check for right format
-      if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png'))
+      if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png') && ($tag != 'webp'))
           || strlen($file) == 0
           || $file == 'none'
         )
@@ -1089,7 +1089,7 @@ class JoomUpload extends JObject
       }
 
       // Check for right format
-      if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png'))
+      if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png') && ($tag != 'webp'))
           || strlen($screenshot) == 0
           || $screenshot == 'none'
         )
@@ -1372,7 +1372,7 @@ class JoomUpload extends JObject
       }*/
 
       // Check for right format
-      if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png'))
+      if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png') && ($tag != 'webp'))
           || strlen($origfilename) == 0
         )
       {
@@ -1653,7 +1653,7 @@ class JoomUpload extends JObject
     $tag = strtolower(JFile::getExt($origfilename));
 
     // Check for right format
-    if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png'))
+    if(   (($tag != 'jpeg') && ($tag != 'jpg') && ($tag != 'jpe') && ($tag != 'gif') && ($tag != 'png') && ($tag != 'webp'))
             || strlen($screenshot) == 0
             || $screenshot == 'none'
     )
@@ -1959,6 +1959,11 @@ class JoomUpload extends JObject
           break;
         case 'PNG':
           // No channel for png
+          $channel = 3;
+          break;
+        case 'WEBP':
+// Todo
+          // No channel for Webp ??
           $channel = 3;
           break;
       }

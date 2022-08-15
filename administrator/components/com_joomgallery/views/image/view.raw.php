@@ -51,6 +51,9 @@ class JoomGalleryViewImage extends JoomGalleryView
       case 3:
         $mime = 'image/png';
         break;
+      case 18:
+        $mime = 'image/webp';
+        break;
       default:
         JError::raiseError(404, JText::sprintf('COM_JOOMGALLERY_COMMON_MSG_MIME_NOT_ALLOWED', $info[2]));
         break;

@@ -10,6 +10,11 @@
 * Repository: git://github.com/Widen/fine-uploader.git
 *
 * Licensed under GNU GPL v3, see LICENSE
+*
+*
+* Modified to support Webp Images in JoomGallery
+* by JoomGallery::ProjectTeam
+*
 */ 
 
 
@@ -8145,6 +8150,8 @@ qq.ImageGenerator = function(log) {
             case "tiff":
             case "tif":
                 return "image/tiff";
+            case "webp":
+                return "image/webp";
         }
     }
 
@@ -8710,11 +8717,15 @@ qq.Identify = function(fileOrBlob, log) {
     });
 };
 
+/* Todo:
+    "image/webp": "",
+*/
 qq.Identify.prototype.PREVIEWABLE_MIME_TYPES = {
     "image/jpeg": "ffd8ff",
     "image/gif": "474946",
     "image/png": "89504e",
     "image/bmp": "424d",
+    "image/webp": "",
     "image/tiff": ["49492a00", "4d4d002a"]
 };
 

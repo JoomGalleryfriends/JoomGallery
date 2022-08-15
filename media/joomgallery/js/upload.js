@@ -64,16 +64,16 @@ function joomOnSubmit()
   var searchextension = new Array();
 
   // You have to define this RegExp for each item
-  searchextension[0] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
-  searchextension[1] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
-  searchextension[2] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
-  searchextension[3] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
-  searchextension[4] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
-  searchextension[5] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
-  searchextension[6] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
-  searchextension[7] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
-  searchextension[8] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
-  searchextension[9] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$','ig');
+  searchextension[0] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
+  searchextension[1] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
+  searchextension[2] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
+  searchextension[3] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
+  searchextension[4] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
+  searchextension[5] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
+  searchextension[6] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
+  searchextension[7] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
+  searchextension[8] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
+  searchextension[9] = new RegExp('\.jpg$|\.jpeg$|\.jpe$|\.gif$|\.png$|\.webp$','ig');
   for(i = 0; i < fullfields.length; i++)
   {
     searchextensiontest = searchextension[i].test(screenshotfieldvalue[fullfields[i]]);

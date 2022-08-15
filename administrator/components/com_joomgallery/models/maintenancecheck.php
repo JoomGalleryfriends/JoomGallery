@@ -107,7 +107,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
     $types  = $this->_mainframe->getUserState('joom.maintenance.check.types');
     $index  = $this->_mainframe->getUserState('joom.maintenance.check.index');
 
-    $img_types = array('gif', 'jpg', 'png', 'jpeg', 'jpe');
+    $img_types = array('gif', 'jpg', 'png', 'jpeg', 'jpe', 'webp');
 
     // Create a list for all found folders and files
     $continue = true;
