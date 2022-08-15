@@ -1,5 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+  <release version="3.6.0" published="20220815">
+    <entries date="20220815">
+      <logentry type="+">Add support for basic WebP images</logentry>
+    </entries>
+    <entries date="20220810">
+      <logentry type="+">Add upgrade info to dashboard</logentry>
+    </entries>
+    <entries date="20220700">
+      <logentry type="+">Add a text counter for better SEO</logentry>
+    </entries>
+    <entries date="20220629">
+      <logentry type="+">External search engines integration</logentry>
+    </entries>
+    <entries date="20220623">
+      <logentry type="#">Fix Email in Category Feed</logentry>
+      <logentry type="#">Fix warning during installation</logentry>
+    </entries>
+    <entries date="20220622">
+      <logentry type="+">Add Bounties module to JoomGallery dashboard</logentry>
+    </entries>
+    <entries date="20220329">
+      <logentry type="+">Add Sorting by hits for images in category view</logentry>
+    </entries>
+    <entries date="20220322">
+      <logentry type="^">Adapt image processing settings to JoomIMGtools</logentry>
+    </entries>
+    <entries date="20220204">
+      <logentry type="+">More plugin events</logentry>
+      <logentry type="+">Add a templating system for JoomInterface</logentry>
+      <logentry type="+">Improved content administration for images and categories)</logentry>
+    </entries>
+    <entries date="20211026">
+      <logentry type="#">Change wrong URL in language file</logentry>
+      <logentry type="^">Change needed access rule for maintenance view</logentry>
+    </entries>
+    <entries date="20211015">
+      <logentry type="#">Assigning a valid user to an image or category in maintenance manager</logentry>
+      <logentry type="+">Add new language constants</logentry>
+      <logentry type="^">Improve description for paths in config</logentry>
+      <logentry type="+">New security question in image manager when deleting images</logentry>
+    </entries>
+    <entries date="20210726">
+      <logentry type="^">Show category description even if no image exist</logentry>
+    </entries>
+    <entries date="20210716">
+      <logentry type="+">Add 'delete own' permission</logentry>
+    </entries>
+  </release>
   <release version="3.5.1" published="20210525">
     <entries date="20210525">
       <logentry type="#">Fix deletion of non-empty categories in the backend</logentry>
