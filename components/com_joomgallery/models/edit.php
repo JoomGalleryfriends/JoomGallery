@@ -846,7 +846,7 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     // Make sure the record is valid
     if(!$item->check())
     {
-      JError::raiseWarning($item->getError());
+      JError::raiseWarning(100, $item->getError());
 
       return false;
     }
@@ -854,7 +854,7 @@ class JoomGalleryModelEdit extends JoomGalleryModel
     // Store the entry to the database
     if(!$item->store())
     {
-      JError::raiseWarning($item->getError());
+      JError::raiseWarning(100, $item->getError());
 
       return false;
     }
