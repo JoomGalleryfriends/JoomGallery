@@ -2323,13 +2323,13 @@ class JoomIMGtools
 
       // Get memory limit in bytes
       $memory_limit = @ini_get('memory_limit');
-      if(!empty($memory_limit) && $memory_limit != 0)
+      if(!empty($memory_limit) && $memory_limit > 1)
       {
         $val          = substr($memory_limit, -1);
         $memory_limit = substr($memory_limit, 0, -1) * $byte_values[$val];
       }
 
-      if($memory_limit != 0 && $memoryNeeded > $memory_limit)
+      if($memory_limit > 1 && $memoryNeeded > $memory_limit)
       {
         $memoryNeededMB = round($memoryNeeded / $byte_values['M'], 0);
         $memoryLimitMB  = round($memory_limit / $byte_values['M'], 0);
