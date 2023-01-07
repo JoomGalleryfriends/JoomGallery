@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+  <release version="3.6.1" published="20230107">
+    <entries date="20230107">
+      <logentry type="#">Fix Error when memory_limit = -1 in php.ini</logentry>
+    </entries>
+    <entries date="20220929">
+      <logentry type="+">Add error code to JError::raiseWarning method</logentry>
+    </entries>
+  </release>
   <release version="3.6.0" published="20220815">
     <entries date="20220815">
       <logentry type="+">Add support for basic WebP images</logentry>
