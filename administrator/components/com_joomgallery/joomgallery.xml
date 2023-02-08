@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.0" method="upgrade">
   <name>JoomGallery</name>
-  <creationDate>2023/01/07</creationDate>
+  <creationDate>2023/02/08</creationDate>
   <author>JoomGallery::ProjectTeam</author>
   <copyright>This component is released under the GNU/GPL License</copyright>
   <license>GNU General Public License version 2 or later</license>

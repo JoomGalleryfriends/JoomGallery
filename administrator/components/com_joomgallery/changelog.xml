@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-  <release version="3.6.1" published="20230107">
-    <entries date="20230107">
+  <release version="3.6.1" published="20230208">
+    <entries date="20230207">
       <logentry type="#">Fix Error when memory_limit = -1 in php.ini</logentry>
     </entries>
     <entries date="20220929">
