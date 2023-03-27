@@ -459,6 +459,9 @@ class JoomGalleryModelComments extends JoomGalleryModel
   {
     $cids = JRequest::getVar('cid', array(0), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     $row = $this->getTable('joomgallerycomments');
 
     if(count($cids))

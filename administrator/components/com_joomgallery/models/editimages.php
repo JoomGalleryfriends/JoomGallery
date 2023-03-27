@@ -38,6 +38,9 @@ class JoomGalleryModelEditimages extends JoomGalleryModel
   {
     $cid = JRequest::getVar('cid', array(), '', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     $query = $this->_db->getQuery(true)
           ->select('a.*, c.cid AS category_id, c.name AS category_name, g.title AS groupname')
           ->from(_JOOM_TABLE_IMAGES.' AS a')

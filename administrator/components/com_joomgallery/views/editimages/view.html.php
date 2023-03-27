@@ -32,6 +32,10 @@ class JoomGalleryViewEditimages extends JoomGalleryView
     $items = $this->get('Images');
 
     $cids = JRequest::getVar('cid', array(), '', 'array');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+    
     $cids = implode(',', $cids);
 
     // Get the form and fill the fields

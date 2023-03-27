@@ -508,6 +508,9 @@ class JoomGalleryControllerMaintenance extends JoomGalleryController
     // Load the necessary image IDs
     $cids = JRequest::getVar('cid', array(), '', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     if(!count($cids))
     {
       $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'), 'error');

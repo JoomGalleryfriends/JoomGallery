@@ -66,6 +66,9 @@ class JoomGalleryControllerComments extends JoomGalleryController
     $task     = JRequest::getCmd('task');
     $publish  = ($task == 'publish');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     if(empty($cid))
     {
       $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('COM_JOOMGALLERY_COMMAN_MSG_NO_COMMENTS_SELECTED'));
@@ -101,6 +104,9 @@ class JoomGalleryControllerComments extends JoomGalleryController
     $cid      = JRequest::getVar('cid', array(), 'post', 'array');
     $task     = JRequest::getCmd('task');
     $publish  = ($task == 'approve');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
 
     if(empty($cid))
     {

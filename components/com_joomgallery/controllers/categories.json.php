@@ -57,6 +57,10 @@ class JoomGalleryControllerCategories extends JControllerLegacy
     $order          = JRequest::getVar('order',	null, 'post', 'array');
     $originalOrder  = explode(',', JRequest::getString('original_order_values'));
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($pks, array($pks));
+    JArrayHelper::toInteger($order, array($order));
+
     // Make sure something has changed
     if($order !== $originalOrder)
     {

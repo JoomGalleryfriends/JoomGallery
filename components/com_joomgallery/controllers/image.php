@@ -31,6 +31,9 @@ class JoomGalleryControllerImage extends JControllerLegacy
 
     $array = JRequest::getVar('id',  0, '', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($array, array($array));
+
     $model->setId((int)$array[0]);
 
     /*$data = JRequest::get('post');
@@ -122,6 +125,9 @@ class JoomGalleryControllerImage extends JControllerLegacy
 
     $array = JRequest::getVar('id',  0, '', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($array, array($array));
+
     $model->setId((int)$array[0]);
 
     // Get limitstart from request to set the correct limitstart (page) for redirect url
@@ -168,6 +174,9 @@ class JoomGalleryControllerImage extends JControllerLegacy
     $model = $this->getModel('edit');
 
     $array = JRequest::getVar('id',  0, '', 'array');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($array, array($array));
 
     $model->setId((int)$array[0]);
 

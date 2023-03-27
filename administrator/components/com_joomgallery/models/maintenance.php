@@ -465,14 +465,15 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     if(!count($cids))
     {
       $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
 
       return false;
     }
-
-    JArrayHelper::toInteger($cids);
 
     $query = $this->_db->getQuery(true);
 
@@ -647,14 +648,15 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     if(!count($cids))
     {
       $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_SELECTED'));
 
       return false;
     }
-
-    JArrayHelper::toInteger($cids);
 
     if(!$recursion_level)
     {
@@ -1053,6 +1055,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     $user = JRequest::getInt('newuser', 0);
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     if(!count($cids))
     {
       $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
@@ -1060,7 +1065,6 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
       return false;
     }
 
-    JArrayHelper::toInteger($cids);
     $cid_string = implode(',', $cids);
 
     // Get selected image IDs
@@ -1149,6 +1153,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     $user = JRequest::getInt('newuser', 0);
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     if(!count($cids))
     {
       $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_SELECTED'));
@@ -1156,7 +1163,6 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
       return false;
     }
 
-    JArrayHelper::toInteger($cids);
     $cid_string = implode(',', $cids);
 
     // Get selected category IDs
@@ -1254,6 +1260,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $orphans = JRequest::getVar('cid', array(), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($orphans, array($orphans));
+
     if(!count($orphans))
     {
       $this->setError(JText::_('COM_JOOMGALLERY_MAIMAN_MSG_NO_FILES_SELECTED'));
@@ -1326,6 +1335,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     }
 
     $folders = JRequest::getVar('cid', array(), 'post', 'array');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($folders, array($folders));
 
     if(!count($folders))
     {
@@ -1401,6 +1413,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $cids = JRequest::getVar('cid', array(), '', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     if(!count($cids))
     {
       $this->setError(JText::_('COM_JOOMGALLERY_MAIMAN_MSG_NO_FILES_SELECTED'));
@@ -1463,6 +1478,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     }
 
     $cids = JRequest::getVar('cid', array(), '', 'array');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
 
     if(!count($cids))
     {
@@ -1586,6 +1604,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $cids = JRequest::getVar('cid', array(), '', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     if(!count($cids))
     {
       $this->setError(JText::_('COM_JOOMGALLERY_MAIMAN_OF_MSG_NO_FOLDERS_SELECTED'));
@@ -1647,6 +1668,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     }
 
     $cids = JRequest::getVar('cid', array(), '', 'array');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
 
     if(!count($cids))
     {
@@ -1760,6 +1784,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
   {
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     if(!count($cids))
     {
       $this->setError(JText::_('COM_JOOMGALLERY_MAIMAN_MSG_NO_FILES_SELECTED'));
@@ -1828,6 +1855,9 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
   {
     $cids = JRequest::getVar('cid', array(), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     if(!count($cids))
     {
       $this->setError(JText::_('COM_JOOMGALLERY_MAIMAN_OF_MSG_NO_FOLDERS_SELECTED'));
@@ -1894,6 +1924,14 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
   {
     $cids   = JRequest::getVar('cid', array(), '', 'array');
     $types  = JRequest::getVar('type', array('thumb', 'img', 'orig'), '', 'array');
+
+    // Sanitize request inputs
+    $filter = InputFilter::getInstance();
+    JArrayHelper::toInteger($cids, array($cids));
+    foreach ($types as $key => $type)
+    {
+      $types[$key] = $filter->clean($type, 'cmd');
+    }
 
     if(!count($cids))
     {

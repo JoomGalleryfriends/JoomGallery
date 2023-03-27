@@ -237,6 +237,9 @@ class JoomGalleryModelImage extends JoomGalleryModel
     if(is_null($params))
     {
       $params = JRequest::getVar('params', array(), 'post', 'array');
+
+      // Sanitize request inputs
+      JArrayHelper::toInteger($params, array($params));
     }
 
     // Check for validation errors

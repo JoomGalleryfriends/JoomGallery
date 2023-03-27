@@ -83,6 +83,10 @@ class JoomGalleryViewEdit extends JoomGalleryView
 
     $model = $this->getModel();
     $array = JRequest::getVar('id',  0, '', 'array');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($array, array($array));
+
     $model->setId((int)$array[0]);
     $image = $model->getImage();
 

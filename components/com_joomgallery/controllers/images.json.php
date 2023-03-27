@@ -37,6 +37,10 @@ class JoomGalleryControllerImages extends JControllerLegacy
     $order = JRequest::getVar('order', array(), 'post', 'array');
     $user  = JFactory::getUser();
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+    JArrayHelper::toInteger($order, array($order));
+
     $row = JTable::getInstance('joomgalleryimages', 'Table');
 
     // Update the ordering for items in the cid array
