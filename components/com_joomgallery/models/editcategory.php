@@ -53,6 +53,9 @@ class JoomGalleryModelEditcategory extends JoomGalleryModel
 
     $array = JRequest::getVar('catid',  0, '', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($array, array($array));
+
     $this->setId($array[0]);
   }
 

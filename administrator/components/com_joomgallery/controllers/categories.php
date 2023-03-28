@@ -61,6 +61,9 @@ class JoomGalleryControllerCategories extends JoomGalleryController
     $task     = JRequest::getCmd('task');
     $publish  = (int)($task == 'publish');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     if(empty($cid))
     {
       $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_SELECTED'));
@@ -117,6 +120,9 @@ class JoomGalleryControllerCategories extends JoomGalleryController
     $task     = JRequest::getCmd('task');
     $publish  = ($task == 'approve');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     if(empty($cid))
     {
       $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_SELECTED'));
@@ -169,6 +175,9 @@ class JoomGalleryControllerCategories extends JoomGalleryController
   function remove()
   {
     $ids = JRequest::getVar('cid', array(), '', 'array');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($ids, array($ids));
 
     $model = $this->getModel('categories');
     try
@@ -422,6 +431,9 @@ class JoomGalleryControllerCategories extends JoomGalleryController
   {
     $cid = JRequest::getVar('cid', array(), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($ids, array($ids));
+
     // Direction
     $dir  = 1;
     $task = JRequest::getCmd('task');
@@ -463,6 +475,10 @@ class JoomGalleryControllerCategories extends JoomGalleryController
     $pks            = JRequest::getVar('cid',  null,  'post',  'array');
     $order          = JRequest::getVar('order',  null, 'post', 'array');
     $originalOrder  = explode(',', JRequest::getString('original_order_values'));
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($pks, array($pks));
+    JArrayHelper::toInteger($order, array($order));
 
     // Make sure something has changed
     if($order !== $originalOrder)

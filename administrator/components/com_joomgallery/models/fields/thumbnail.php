@@ -51,6 +51,9 @@ class JFormFieldThumbnail extends JFormField
       // Get category id from request
       $cids   = JRequest::getVar('cid', array(), '', 'array');
 
+      // Sanitize request inputs
+      JArrayHelper::toInteger($cids, array($cids));
+
       if(isset($cids[0]))
       {
         $catid = intval($cids[0]);

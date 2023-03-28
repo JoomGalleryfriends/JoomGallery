@@ -43,6 +43,9 @@ class JoomGalleryModelMove extends JoomGalleryModel
   {
     $cids = JRequest::getVar('cid', array(0), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
     $query = $this->_db->getQuery(true)
           ->select('*')
           ->from(_JOOM_TABLE_IMAGES)

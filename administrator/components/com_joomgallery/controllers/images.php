@@ -60,6 +60,9 @@ class JoomGalleryControllerImages extends JoomGalleryController
     $task     = JRequest::getCmd('task');
     $publish  = (int)($task == 'publish');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     if(empty($cid))
     {
       $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
@@ -115,6 +118,9 @@ class JoomGalleryControllerImages extends JoomGalleryController
     $task     = JRequest::getCmd('task');
     $feature  = (int)($task == 'feature');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     if(empty($cid))
     {
       $this->setRedirect($this->_ambit->getRedirectUrl(), JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_IMAGES_SELECTED'));
@@ -169,6 +175,10 @@ class JoomGalleryControllerImages extends JoomGalleryController
     $cid      = JRequest::getVar('cid', array(), 'post', 'array');
     $task     = JRequest::getCmd('task');
     $publish  = -1;
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     if($task == 'approve')
     {
       $publish = 1;
@@ -236,6 +246,10 @@ class JoomGalleryControllerImages extends JoomGalleryController
     $row   = JTable::getInstance('joomgalleryimages', 'Table');
     $cid   = JRequest::getVar('cid', array(), 'post', 'array');
     $unaffected_images = 0;
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     foreach($cid as $key => $id)
     {
       $row->load((int)$id);
@@ -294,6 +308,10 @@ class JoomGalleryControllerImages extends JoomGalleryController
   public function edit()
   {
     $cid = JRequest::getVar('cid', array(), '', 'array');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     if(count($cid) <= 1)
     {
       if(count($cid))
@@ -491,6 +509,9 @@ class JoomGalleryControllerImages extends JoomGalleryController
   {
     $cid = JRequest::getVar('cid', array(), 'post', 'array');
 
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+
     // Direction
     $dir  = 1;
     $task = JRequest::getCmd('task');
@@ -529,6 +550,10 @@ class JoomGalleryControllerImages extends JoomGalleryController
     $cid    = JRequest::getVar('cid', array(), 'post', 'array');
     $order  = JRequest::getVar('order', array (0), 'post', 'array');
     $user   = JFactory::getUser();
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
+    JArrayHelper::toInteger($order, array($order));
 
     // Create and load the images table object
     $row = JTable::getInstance('joomgalleryimages', 'Table');
@@ -590,6 +615,9 @@ class JoomGalleryControllerImages extends JoomGalleryController
   {
     $cid    = JRequest::getVar('cid', array(), 'post', 'array');
     $catid  = JRequest::getInt('catid');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cid, array($cid));
 
     if(!count($cid))
     {
