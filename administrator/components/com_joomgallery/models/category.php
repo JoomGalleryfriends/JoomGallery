@@ -234,6 +234,8 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       $catname_old  = $row->name;
       // Read old parent assignment
       $parent_old   = $row->parent_id;
+      // Read old alias
+      $alias_old = $row->alias;
     }
     else
     {
@@ -354,6 +356,8 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         }
       }
 
+      JFilterOutput::objectHTMLSafe($row->name);
+
       // Make sure the record is valid
       if(!$row->check())
       {
@@ -361,12 +365,10 @@ class JoomGalleryModelCategory extends JoomGalleryModel
         return false;
       }
 
-      JFilterOutput::objectHTMLSafe($row->name);
-
       // Check if special characters of catname can be replaced for a valid catpath
       // if resulting string is invalid set an error
-      $catpath = JoomFile::fixFilename($row->name);
-      if(JoomFile::checkValidFilename($row->name, $catpath) == false)
+      $catpath = JoomFile::fixFilename(basename($row->alias));
+      if(JoomFile::checkValidFilename(basename($row->alias), $catpath) == false)
       {
         $this->setError(JText::_('COM_JOOMGALLERY_CATMAN_MSG_ERROR_INVALID_FOLDERNAME'));
 
@@ -433,8 +435,8 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       return $row->cid;
     }
 
-    // Move the category folder, if parent assignment or category name changed
-    if($parent_old != $row->parent_id || $catname_old != $row->name)
+    // Move the category folder, if parent assignment, category name or alias changed
+    if($parent_old != $row->parent_id || $catname_old != $row->name || $alias_old != $row->alias)
     {
       // Check whether the user is allowed to move the category into the specified parent category
       if(!$valid_parent)
@@ -480,13 +482,20 @@ class JoomGalleryModelCategory extends JoomGalleryModel
       }
 
       // Save old path
-      $catpath_old    = $row->catpath;
+      $catpath_old = $row->catpath;
 
       JFilterOutput::objectHTMLSafe($row->name);
 
+      // Make sure the record is valid
+      if(!$row->check())
+      {
+        $this->setError($row->getError());
+        return false;
+      }
+
       // Check if special characters of catname can be replaced for a valid catpath
       // if resulting string is invalid set an error
-      $catpath = JoomFile::fixFilename($row->name);
+      $catpath = JoomFile::fixFilename(basename($row->alias));
       if(JoomFile::checkValidFilename($catpath_old, $catpath) == false)
       {
         $this->setError(JText::_('COM_JOOMGALLERY_CATMAN_MSG_ERROR_INVALID_FOLDERNAME'));

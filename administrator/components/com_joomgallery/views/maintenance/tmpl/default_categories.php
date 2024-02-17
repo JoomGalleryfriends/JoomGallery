@@ -57,20 +57,26 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
           <th>
             <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_MAIMAN_CT_CATNAME', 'a.title', $listDirn, $listOrder); ?>
           </th>
-          <th width="15%" class="center hidden-phone">
+          <th width="10%" class="center hidden-phone">
             <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_MAIMAN_CT_THUMBNAIL_FOLDER', 'a.thumb', $listDirn, $listOrder); ?>
           </th>
-          <th width="15%" class="center hidden-phone">
+          <th width="10%" class="center hidden-phone">
             <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_MAIMAN_CT_IMAGE_FOLDER', 'a.img', $listDirn, $listOrder); ?>
           </th>
-          <th width="15%" class="center hidden-phone">
+          <th width="10%" class="center hidden-phone">
             <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_MAIMAN_CT_ORIGINAL_FOLDER', 'a.orig', $listDirn, $listOrder); ?>
           </th>
-          <th width="15%" class="nowrap center hidden-phone">
+          <th width="10%" class="nowrap center hidden-phone">
             <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_COMMON_OWNER', 'user', $listDirn, $listOrder); ?>
           </th>
           <th width="15%" class="hidden-phone">
             <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_COMMON_PARENT_CATEGORY', 'category', $listDirn, $listOrder); ?>
+          </th>
+          <th width="10%" class="hidden-phone">
+            <?php echo JText::_('COM_JOOMGALLERY_MAIMAN_CT_ALIAS'); ?>
+          </th>
+          <th width="10%" class="hidden-phone">
+            <?php echo JText::_('COM_JOOMGALLERY_MAIMAN_CT_CATPATH'); ?>
           </th>
           <th width="1%" class="nowrap hidden-phone">
             <?php echo JHtml::_('grid.sort', 'COM_JOOMGALLERY_COMMON_ID', 'a.id', $listDirn, $listOrder); ?>
@@ -78,16 +84,22 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
         </tr>
       </thead>
       <tfoot>
-<?php   if($this->checked):
-          if($n = count($this->items)): ?>
+<?php   if($this->checked): ?>
+<?php     if($n = count($this->items)): ?>
         <tr>
-          <td colspan="8">
+          <td colspan="12">
+            <?php if($this->inc_alias_catpath) : ?>
+              <br />
+              <div class="alert alert-info">
+                <?php echo JText::_('COM_JOOMGALLERY_MAIMAN_MSG_INC_ALIAS_CATPATH'); ?>
+              </div>
+            <?php endif; ?>
             <?php echo $this->pagination->getListFooter(); ?>
-          </td>
+          </td>          
         </tr>
 <?php     endif; ?>
         <tr>
-          <td colspan="8">
+          <td colspan="12">
 <?php     if(!$n): ?>
             <div class="alert alert-success">
                <?php echo JText::_('COM_JOOMGALLERY_MAIMAN_CT_MSG_NO_CORRUPT_CATEGORIES_FOUND'); ?>
@@ -100,7 +112,7 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
         </tr>
 <?php   else: ?>
         <tr>
-          <td colspan="8">
+          <td colspan="12">
             <div class="alert alert-info">
               <?php echo JText::_('COM_JOOMGALLERY_MAIMAN_PLEASE_CHECK'); ?>
             </div>
@@ -170,6 +182,12 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 <?php       else: ?>
             <?php echo $this->cross(); ?>
 <?php       endif; ?>
+          </td>
+          <td class="hidden-phone">
+            <?php if($row->alias > 0) { echo $this->cross(); } else { echo $this->tick(); }; ?>
+          </td>
+          <td class="hidden-phone">
+            <?php if($row->catpath > 0) { echo $this->cross(); } else { echo $this->tick(); }; ?>
           </td>
           <td class="hidden-phone">
             <?php echo $row->refid; ?>

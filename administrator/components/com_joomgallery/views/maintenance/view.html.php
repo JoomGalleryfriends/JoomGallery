@@ -87,6 +87,17 @@ class JoomGalleryViewMaintenance extends JoomGalleryView
         {
           // Get data from the model
           $items  = $this->get('Categories');
+
+          // Check if there are inconsistent alias or catpath
+          $inc_alias_catpath = false;
+          foreach($items as $cat)
+          {
+            if($cat->alias > 0 || $cat->catpath > 0)
+            {
+              $inc_alias_catpath = true;
+              break;
+            }
+          }
         }
         break;
       case 'orphans':
@@ -193,6 +204,7 @@ class JoomGalleryViewMaintenance extends JoomGalleryView
     if(!is_null($checked))
     {
       $this->items = $items;
+      $this->inc_alias_catpath = $inc_alias_catpath;
       $this->pagination = $this->get('Pagination');
 
       if($state->get('filter.inuse') && !$this->get('Total'))

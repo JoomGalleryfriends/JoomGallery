@@ -2221,7 +2221,7 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
           ->leftJoin(_JOOM_TABLE_CATEGORIES.' AS c ON a.catid = c.cid')
           ->leftJoin('#__users AS u ON a.owner = u.id')
           ->where('type != 0')
-          ->where("(a.thumb = '' OR a.img = '' OR a.orig = '' OR a.owner = -1 OR a.catid = -1)");
+          ->where("(a.thumb = '' OR a.img = '' OR a.orig = '' OR a.owner = -1 OR a.catid = -1 OR a.alias > 0 OR a.catpath > 0)");
 
     // Filter by category
     if($category = $this->getState('filter.category'))
