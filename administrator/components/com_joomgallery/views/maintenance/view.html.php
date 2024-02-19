@@ -67,6 +67,7 @@ class JoomGalleryViewMaintenance extends JoomGalleryView
         $b_options[]            = JHTML::_('select.option', 'setuser',            JText::_('COM_JOOMGALLERY_MAIMAN_OPTION_SET_NEW_USER'));
         $b_options[]            = JHTML::_('select.option', 'addorphanedfolders', JText::_('COM_JOOMGALLERY_MAIMAN_OPTION_ADD_ORPHANED_FOLDERS'));
         $b_options[]            = JHTML::_('select.option', 'create',             JText::_('COM_JOOMGALLERY_MAIMAN_OPTION_CREATE_FOLDERS'));
+        $b_options[]            = JHTML::_('select.option', 'recreatecatalias',   JText::_('COM_JOOMGALLERY_MAIMAN_CT_OPTION_RECREATE_CAT_ALIAS'));
         $b_options[]            = JHTML::_('select.option', 'removecategory',     JText::_('COM_JOOMGALLERY_MAIMAN_CT_OPTION_REMOVE_CATEGORIES'));
         $lists['cat_jobs']      = JHTML::_( 'select.genericlist', $b_options, 'job',
                                             'class="inputbox" size="1" onchange="joom_selectbatchjob(this.value);"',

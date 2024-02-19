@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * Maintenance model
@@ -886,6 +887,104 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     }
 
     return $count;
+  }
+
+  /**
+   * Method to recreate alias and catpath for one or more categories
+   *
+   * @return  int   Number of successfully recreated categories, boolean false if an error occured
+   * @since   3.7.0
+   */
+  public function recreateCatAlias()
+  {
+    $cids = JRequest::getVar('cid', array(), 'post', 'array');
+
+    // Sanitize request inputs
+    JArrayHelper::toInteger($cids, array($cids));
+
+    if(!count($cids))
+    {
+      $this->setError(JText::_('COM_JOOMGALLERY_COMMON_MSG_NO_CATEGORIES_SELECTED'));
+
+      return false;
+    }
+
+    $cid_string = implode(',', $cids);
+
+    // Get selected category IDs
+    $query = $this->_db->getQuery(true)
+          ->select('refid')
+          ->from($this->_db->qn(_JOOM_TABLE_MAINTENANCE))
+          ->where('id IN ('.$cid_string.')')
+          ->where('type = 1');
+    $this->_db->setQuery($query);
+    if(!$ids = $this->_db->loadColumn())
+    {
+      $this->setError($this->_db->getErrorMsg());
+
+      return false;
+    }
+
+    $edit_ids = array();
+    foreach ($ids as $id)
+    {
+      $table = $this->getTable('joomgallerycategories');
+      $table->load($id);
+
+      // Create data array
+      $data = array();
+      $data['cid'] = $table->cid;
+      $data['name'] = $table->name;
+      $data['parent_id'] = $table->parent_id;
+      $data['alias'] = '';
+
+      // Set table values to request variables
+      $post = JRequest::get('post');
+      JRequest::set($data, 'post', true);
+
+      // Loading the model
+		  /** @var JoomGalleryModelCategory $model */
+      $model = BaseDatabaseModel::getInstance('Category', 'JoomGalleryModel', array('ignore_request' => true));
+
+      // Store category data
+      if(!$model->store())
+      {
+        $this->setError($model->getError());
+        continue;
+      }
+
+      // Reset request data
+      $empty = array();
+      $empty['cid'] = null;
+      $empty['name'] = null;
+      $empty['parent_id'] = null;
+      $empty['alias'] = null;
+      JRequest::set($empty, 'post', true);
+
+      // Add successful categories to edit_ids array
+      array_push($edit_ids, $id);
+    }
+
+    if(empty($edit_ids))
+    {
+      return false;
+    }
+
+    // Update maintenance table
+    $query->clear()
+          ->update($this->_db->qn(_JOOM_TABLE_MAINTENANCE))
+          ->set(array('alias = 0', 'catpath = 0'))
+          ->where('id IN ('.$cid_string.')')
+          ->where('type = 1');
+    $this->_db->setQuery($query);
+    if(!$this->_db->query())
+    {
+      $this->setError($this->_db->getErrorMsg());
+
+      return false;
+    }
+
+    return count($edit_ids);
   }
 
   /**
@@ -2116,7 +2215,7 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
 
     $query->clear('where')
           ->where('type != 0')
-          ->where("(thumb = '' OR img = '' OR orig = '' OR owner = -1 OR catid = -1)");
+          ->where("(thumb = '' OR img = '' OR orig = '' OR owner = -1 OR catid = -1 OR alias > 0 OR catpath > 0)");
     $this->_db->setQuery($query, 0, 1);
     $this->_information['categories'] = $this->_db->loadResult();
 
@@ -2491,5 +2590,61 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
     }
 
     return $new_state;
+  }
+
+  /**
+   * Moves folders of an existing category
+   * Same as JoomGalleryModelCategory::_moveFolders()
+   *
+   * @param   string  $src  The source category path
+   * @param   string  $dest The destination category path
+   * @return  boolean True on success, false otherwise
+   * 
+   * @since   3.7.0
+   */
+  protected function _moveFolders($src, $dest)
+  {
+    $orig_src   = JPath::clean($this->_ambit->get('orig_path').$src);
+    $orig_dest  = JPath::clean($this->_ambit->get('orig_path').$dest);
+    $img_src    = JPath::clean($this->_ambit->get('img_path').$src);
+    $img_dest   = JPath::clean($this->_ambit->get('img_path').$dest);
+    $thumb_src  = JPath::clean($this->_ambit->get('thumb_path').$src);
+    $thumb_dest = JPath::clean($this->_ambit->get('thumb_path').$dest);
+
+    // Move the folder of the category for the original images
+    $return = JFolder::move($orig_src, $orig_dest);
+    if($return !== true)
+    {
+      // If not successfull
+      JError::raiseWarning(100, $return);
+      return false;
+    }
+    else
+    {
+      // Move the folder of the category for the detail images
+      $return = JFolder::move($img_src, $img_dest);
+      if($return !== true)
+      {
+        // If not successful
+        JFolder::move($orig_dest, $orig_src);
+        JError::raiseWarning(100, $return);
+        return false;
+      }
+      else
+      {
+        // Move the folder of the category for the thumbnails
+        $return = JFolder::move($thumb_src, $thumb_dest);
+        if($return !== true)
+        {
+          // If not successful
+          JFolder::move($orig_dest, $orig_src);
+          JFolder::move($img_dest, $img_src);
+          JError::raiseWarning(100, $return);
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 }

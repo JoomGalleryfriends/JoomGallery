@@ -110,6 +110,37 @@ class JoomGalleryControllerMaintenance extends JoomGalleryController
   }
 
   /**
+   * Recreate the alias of one or more categories
+   *
+   * @return  void
+   * @since   3.7.0
+   */
+  public function recreateCatAlias()
+  {
+    $model = $this->getModel('maintenance');
+    if(!$count = $model->recreateCatAlias())
+    {
+      $msg  = $model->getError();
+      $type = 'error';
+    }
+    else
+    {
+      $type = 'message';
+      if($count == 1)
+      {
+        $msg  = JText::_('COM_JOOMGALLERY_MAIMAN_MSG_CATEGORY_RECREATED');
+      }
+      else
+      {
+        $msg  = JText::sprintf('COM_JOOMGALLERY_MAIMAN_MSG_CATEGORIES_RECREATED', $count);
+      }
+    }
+
+    // Some messages are enqueued by the model
+    $this->setRedirect($this->_ambit->getRedirectUrl().'&tab=categories', $msg, $type);
+  }
+
+  /**
    * Removes one or more categories even though there
    * are still images or sub-categories in them.
    *
