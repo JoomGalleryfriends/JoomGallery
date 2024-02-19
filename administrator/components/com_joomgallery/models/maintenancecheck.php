@@ -438,10 +438,12 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
         $alias_clc        = basename($category->alias);
         $parent_alias_clc = (string) substr($category->alias, 0, -1 * strlen('/'.$alias_clc));
         $parent_alias     = $categories[$cat_map[$category->parent_id]]->alias;
+        $title_clc        = JApplication::stringURLSafe(trim($category->name));
 
-        // Check if alias fits parent alias
+        // Check if alias fits parent alias and title
         if( ($parent_alias == 'root' && $parent_alias_clc !== '') ||
-            ($parent_alias != 'root' && $parent_alias_clc !== $parent_alias)
+            ($parent_alias != 'root' && $parent_alias_clc !== $parent_alias) ||
+            ($alias_clc !== $title_clc)
           )
         {
           $corrupt       = true;
