@@ -909,27 +909,43 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
       return false;
     }
 
+    // Get queue of selected category IDs from #__joomgallery_maintenance
     $cid_string = implode(',', $cids);
-
-    // Get selected category IDs
     $query = $this->_db->getQuery(true)
-          ->select('refid')
+          ->select($this->_db->qn(array('id', 'refid')))
           ->from($this->_db->qn(_JOOM_TABLE_MAINTENANCE))
-          ->where('id IN ('.$cid_string.')')
-          ->where('type = 1');
+          ->where($this->_db->qn('id') . ' IN ('.$cid_string.')')
+          ->where($this->_db->qn('type') . ' = 1');
     $this->_db->setQuery($query);
-    if(!$ids = $this->_db->loadColumn())
+    if(!$ids = $this->_db->loadAssocList('refid'))
     {
       $this->setError($this->_db->getErrorMsg());
 
       return false;
     }
 
+    // Get queue of selected category IDs from #__joomgallery_catg
+    $refid_string = implode(',', array_keys($ids));
+    $query = $this->_db->getQuery(true)
+          ->select($this->_db->qn('cid'))
+          ->from($this->_db->qn(_JOOM_TABLE_CATEGORIES))
+          ->where($this->_db->qn('cid') . ' IN ('.$refid_string.')')
+          ->where($this->_db->qn('lft') . ' > 0')
+          ->order('lft ASC');
+    $this->_db->setQuery($query);
+    if(!$catids = $this->_db->loadColumn())
+    {
+      $this->setError($this->_db->getErrorMsg());
+
+      return false;
+    }
+
+    $edit_cids = array();
     $edit_ids = array();
-    foreach ($ids as $id)
+    foreach ($catids as $refid)
     {
       $table = $this->getTable('joomgallerycategories');
-      $table->load($id);
+      $table->load($refid);
 
       // Create data array
       $data = array();
@@ -962,22 +978,23 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
       JRequest::set($empty, 'post', true);
 
       // Add successful categories to edit_ids array
-      array_push($edit_ids, $id);
+      array_push($edit_cids, $ids[$refid]['refid']);  // list of category ids
+      array_push($edit_ids, $ids[$refid]['id']);      // list of maintenance ids
     }
 
-    if(empty($edit_ids))
+    if(empty($edit_cids))
     {
       return false;
     }
 
-    $cid_edited_string = implode(',', $edit_ids);
+    $edited_ids_string = implode(',', $edit_ids);
 
     // Update maintenance table
     $query->clear()
           ->update($this->_db->qn(_JOOM_TABLE_MAINTENANCE))
-          ->set(array('alias = 0', 'catpath = 0'))
-          ->where('id IN ('.$cid_edited_string.')')
-          ->where('type = 1');
+          ->set(array($this->_db->qn('alias') . ' = 0', $this->_db->qn('catpath') .' = 0'))
+          ->where($this->_db->qn('id') . ' IN ('.$edited_ids_string.')')
+          ->where($this->_db->qn('type') . ' = 1');
     $this->_db->setQuery($query);
     if(!$this->_db->query())
     {
@@ -986,7 +1003,7 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
       return false;
     }
 
-    return count($edit_ids);
+    return count($edit_cids);
   }
 
   /**
