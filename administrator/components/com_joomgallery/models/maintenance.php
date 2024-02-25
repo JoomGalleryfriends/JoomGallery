@@ -970,11 +970,13 @@ class JoomGalleryModelMaintenance extends JoomGalleryModel
       return false;
     }
 
+    $cid_edited_string = implode(',', $edit_ids);
+
     // Update maintenance table
     $query->clear()
           ->update($this->_db->qn(_JOOM_TABLE_MAINTENANCE))
           ->set(array('alias = 0', 'catpath = 0'))
-          ->where('id IN ('.$cid_string.')')
+          ->where('id IN ('.$cid_edited_string.')')
           ->where('type = 1');
     $this->_db->setQuery($query);
     if(!$this->_db->query())
