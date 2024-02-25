@@ -205,7 +205,7 @@ class JoomGalleryViewMaintenance extends JoomGalleryView
     if(!is_null($checked))
     {
       $this->items = $items;
-      $this->inc_alias_catpath = $inc_alias_catpath;
+      $this->inc_alias_catpath = isset($inc_alias_catpath) ? $inc_alias_catpath : false;
       $this->pagination = $this->get('Pagination');
 
       if($state->get('filter.inuse') && !$this->get('Total'))
