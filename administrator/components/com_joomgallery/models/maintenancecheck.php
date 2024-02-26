@@ -388,7 +388,7 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
                                   );
 
     $query->clear('select')
-          ->select('c.cid, c.parent_id, c.name, c.owner, c.alias, p.cid AS parent_category, u.id AS user')
+          ->select('c.cid, c.parent_id, c.name, c.owner, c.alias, c.catpath, p.cid AS parent_category, u.id AS user')
           ->leftJoin(_JOOM_TABLE_CATEGORIES.' AS p ON c.parent_id = p.cid')
           ->leftJoin('#__users AS u ON c.owner = u.id');
 
@@ -402,6 +402,12 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
     {
       $categories = $this->_getList($query, $limitstart, $this->limit);
 
+      $cat_map = array();
+      foreach($categories as $key => $category)
+      {
+        $cat_map[$category->cid] = $key;
+      }
+
       foreach($categories as $category)
       {
         // Skip ROOT category
@@ -410,7 +416,9 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
           continue;
         }
 
-        $corrupt = false;
+        $corrupt         = false;
+        $corrupt_alias   = 0;
+        $corrupt_catpath = 0;
 
         // Check for valid parent category
         if(!$category->parent_category)
@@ -424,6 +432,49 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
         {
           $category->owner = -1;
           $corrupt = true;
+        }
+
+        // Load Parent category
+        $parent_query = $this->_db->getQuery(true)
+          ->select($this->_db->qn(array('cid', 'alias', 'catpath')))
+          ->from($this->_db->qn(_JOOM_TABLE_CATEGORIES))
+          ->where($this->_db->qn('cid') . ' = '.$category->parent_id);
+        $this->_db->setQuery($parent_query);
+        $parent_cat = $this->_db->loadObject();
+
+        // Check for valid alias
+        $alias_clc        = basename($category->alias);
+        $parent_alias_clc = (string) substr($category->alias, 0, -1 * strlen('/'.$alias_clc));
+        $parent_alias     = $parent_cat->alias;
+        $title_clc        = JApplication::stringURLSafe(trim($category->name));
+
+        // Check if alias fits parent alias and title
+        if( ($parent_alias == 'root' && $parent_alias_clc !== '') ||
+            ($parent_alias != 'root' && $parent_alias_clc !== $parent_alias) ||
+            ($alias_clc !== $title_clc)
+          )
+        {
+          $corrupt       = true;
+          $corrupt_alias = 1;
+        }
+
+        // Check for valid catpath
+        $catpath_clc        = basename($category->catpath);
+        $parent_catpath_clc = (string) substr($category->catpath, 0, -1 * \strlen('/'.$catpath_clc));
+        $parent_catpath     = $parent_cat->catpath;
+
+        // Check if catpath == alias_cid
+        if($catpath_clc !== $alias_clc.'_'.$category->cid)
+        {
+          $corrupt         = true;
+          $corrupt_catpath = 2;
+        }
+
+        // Check if catpath fits parent catpath
+        if($parent_catpath_clc !== $parent_catpath)
+        {
+          $corrupt         = true;
+          $corrupt_catpath = 1;
         }
 
         // Look for folders
@@ -456,11 +507,13 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
           // If yes, store the gathered information in the database
           $table->reset();
           $table->bind($category);
-          $table->id    = 0;
-          $table->refid = $category->cid;
-          $table->title = $category->name;
-          $table->catid = $category->parent_id;
-          $table->type  = 1;
+          $table->id      = 0;
+          $table->refid   = $category->cid;
+          $table->title   = $category->name;
+          $table->catid   = $category->parent_id;
+          $table->type    = 1;
+          $table->alias   = $corrupt_alias;
+          $table->catpath = $corrupt_catpath;
           $table->check();
           $table->store();
         }

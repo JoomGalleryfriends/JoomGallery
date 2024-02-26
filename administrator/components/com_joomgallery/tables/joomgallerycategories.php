@@ -148,7 +148,7 @@ class TableJoomgalleryCategories extends JTableNested
     // For the the next two checks get published
     // state and hidden state of parent category
     $query = $this->_db->getQuery(true)
-          ->select('published, hidden, in_hidden')
+          ->select('alias, published, hidden, in_hidden')
           ->from(_JOOM_TABLE_CATEGORIES)
           ->where('cid = '.(int) $this->parent_id);
     $this->_db->setQuery($query);
@@ -186,28 +186,25 @@ class TableJoomgalleryCategories extends JTableNested
     // Trim slashes from catpath
     $this->catpath = trim($this->catpath, '/');
 
+    // Get parent alias
+    $parent_alias = ($parent->alias != 'root') ? trim($parent->alias) : '';
     if(empty($this->alias))
     {
-      if(!empty($this->catpath))
-      {
-        $catpath  = explode('/', trim($this->catpath, '/'));
-        $segments = array();
-        foreach($catpath as $segment)
-        {
-          $segment = str_replace('_', ' ', rtrim(rtrim($segment, '0123456789'), '_'));
-          $segment = JApplication::stringURLSafe($segment);
-          if($segment)
-          {
-            $segments[] = $segment;
-          }
-          else
-          {
-            $datenow = JFactory::getDate();
-            $segments[] = $datenow->format('Y-m-d-H-i-s');
-          }
-        }
-        $this->alias = implode('/', $segments);
-      }
+      if(empty($this->name))
+			{
+				$this->alias = $parent_alias.'/'.JApplication::stringURLSafe(date('Y-m-d H:i:s'));
+			}
+			else
+			{
+				if(JFactory::getConfig()->get('unicodeslugs', 0) == 1)
+				{
+					$this->alias = $parent_alias.'/'.JApplication::stringURLUnicodeSlug(trim($this->name));
+				}
+				else
+				{
+					$this->alias = $parent_alias.'/'.JApplication::stringURLSafe(trim($this->name));
+				}
+			}
     }
     else
     {

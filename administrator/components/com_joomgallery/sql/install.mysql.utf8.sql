@@ -431,6 +431,8 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_maintenance` (
   `imgorphan` int(11) NOT NULL,
   `origorphan` int(11) NOT NULL,
   `type` tinyint(1) NOT NULL,
+  `alias` tinyint(1) NOT NULL default '0',
+  `catpath` tinyint(1) NOT NULL default '0',
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
