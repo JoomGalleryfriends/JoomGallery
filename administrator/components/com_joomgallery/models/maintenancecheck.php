@@ -435,11 +435,11 @@ class JoomGalleryModelMaintenancecheck extends JoomGalleryModel
         }
 
         // Load Parent category
-        $query = $this->_db->getQuery(true)
+        $parent_query = $this->_db->getQuery(true)
           ->select($this->_db->qn(array('cid', 'alias', 'catpath')))
           ->from($this->_db->qn(_JOOM_TABLE_CATEGORIES))
           ->where($this->_db->qn('cid') . ' = '.$category->parent_id);
-        $this->_db->setQuery($query);
+        $this->_db->setQuery($parent_query);
         $parent_cat = $this->_db->loadObject();
 
         // Check for valid alias
