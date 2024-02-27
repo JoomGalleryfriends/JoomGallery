@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+  <release version="3.7.0-rc1" published="20240227">
+    <entries date="20240226">
+      <logentry type="+">Check and fix alias and catpath</logentry>
+    </entries>
+  </release>
   <release version="3.6.2" published="20230328">
     <entries date="20230328">
       <logentry type="*">Fix vulnerability type SQL Injection</logentry>
