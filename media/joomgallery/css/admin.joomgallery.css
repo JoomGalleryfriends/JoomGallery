@@ -458,6 +458,12 @@ dl.tabs dt h3 a:link {
   -webkit-filter: drop-shadow(0 0 2px black);
   filter: drop-shadow(0 0 2px black);
 }
+.alert-info a {
+  color: #0034ff;
+}
+.alert-info a:hover, .alert-info a:focus {
+  color: #0709aa;
+}
 
 /* Editor height in form views */
 [id*="form"] .CodeMirror:not(.CodeMirror-fullscreen),
