@@ -117,5 +117,16 @@ class JoomGalleryView extends JViewLegacy
         }
       }
     }
+
+    $xml_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml';
+    if(JFile::exists($xml_path))
+    {
+      $xml = simplexml_load_file($xml_path);
+      if(\strpos($xml->version, '-dev') || \strpos($xml->version, '-alpha') || \strpos($xml->version, '-beta') || \strpos($xml->version, '-rc'))
+      {
+        // We are dealing with a development version (alpha, beta or rc)
+        $this->_mainframe->enqueueMessage(JText::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION'), 'warning');
+      }
+    }    
   }
 }
