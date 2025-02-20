@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-  <release version="3.7.0-rc1" published="20240227">
+  <release version="3.7.0" published="20250220">
     <entries date="20240226">
       <logentry type="+">Check and fix alias and catpath</logentry>
     </entries>
