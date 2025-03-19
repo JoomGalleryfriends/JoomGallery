@@ -3,7 +3,7 @@ var Migrator;
 /******/ 	"use strict";
 /******/ 	// The require scope
 /******/ 	var __webpack_require__ = {};
-/******/
+/******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -16,12 +16,12 @@ var Migrator;
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/
+/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/
+/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -32,7 +32,7 @@ var Migrator;
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/
+/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 /*!**********************!*\
@@ -61,7 +61,7 @@ let refresh      = false;
 var migrateablesList = {};
 
 /**
- * Counter of how many times the same migration was tried to perfrom
+ * Counter of how many times the same migration was tried to perform
  * @var {Integer}  tryCounter
  */
 var tryCounter = 0;
@@ -179,7 +179,7 @@ let submitTask = function(event, element) {
       // Handle any errors here
       addLog(error, type, 'error');
 
-      // Set the migration state to ture
+      // Set the migration state to true
       migrationActive = false;
     });
 };
@@ -603,7 +603,7 @@ let updateMigrateables = function(type, res) {
 
   // Update migrateable input field
   let field = form.querySelector('[name="migrateable"]');
-  field.value = btoa(JSON.stringify(res.data));
+  field.value = utf8_to_b64(JSON.stringify(res.data));
 
   // Update badges
   queueBadge.innerHTML = parseInt(queueBadge.innerHTML) - 1;
@@ -865,6 +865,12 @@ let updateStep4Btn = function() {
     btn.classList.remove('disabled');
     btn.removeAttribute('disabled');
   }
+}
+
+let utf8_to_b64 = function(str) {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+      return String.fromCharCode('0x' + p1);
+  }));
 }
 
 Migrator = __webpack_exports__;

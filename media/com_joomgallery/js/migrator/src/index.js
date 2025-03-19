@@ -556,7 +556,7 @@ let updateMigrateables = function(type, res) {
 
   // Update migrateable input field
   let field = form.querySelector('[name="migrateable"]');
-  field.value = btoa(JSON.stringify(res.data));
+  field.value = utf8_to_b64(JSON.stringify(res.data));
 
   // Update badges
   queueBadge.innerHTML = parseInt(queueBadge.innerHTML) - 1;
@@ -818,4 +818,10 @@ let updateStep4Btn = function() {
     btn.classList.remove('disabled');
     btn.removeAttribute('disabled');
   }
+}
+
+let utf8_to_b64 = function(str) {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+      return String.fromCharCode('0x' + p1);
+  }));
 }

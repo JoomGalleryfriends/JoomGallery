@@ -825,6 +825,16 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $id    = $this->app->getInput()->get('id', '', 'cmd');
     $json  = \json_decode(\base64_decode($this->app->getInput()->get('migrateable', '', 'string')), true);
 
+    // Check if json was decoded properly
+    if($json === null)
+    {
+      $response = $this->createRespond(null, false, Text::_('JSON decoding error!'));
+      $this->component->addLog('Error decoding JSON: ' . json_last_error_msg(), 'error', 'jerror');
+      $this->ajaxRespond($response, $format);
+
+      return false;
+    }
+
     // Check if a record id to be migrated is given
     if(empty($id) || $id == 0)
     {
