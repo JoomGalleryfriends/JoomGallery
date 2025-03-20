@@ -234,9 +234,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     }
 
     $context = $form->getName();
-    if(!\in_array($context, $this->allowedFormContext))
+    if(!\in_array($context, $this->allowedFormContext) || !$this->getApplication()->isClient('administrator'))
     {
-      // Modify only forms that have the correct context
+      // Modify only forms in the backend that have the correct context
       $this->setResult($event, true);
 
       return;
@@ -276,9 +276,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $data    = $event->getData();
     }
 
-    if(!\in_array($context, $this->allowedFormContext))
+    if(!\in_array($context, $this->allowedFormContext) || !$this->getApplication()->isClient('administrator'))
     {
-      // Modify only forms that have the correct context
+      // Modify only forms in the backend that have the correct context
       $this->setResult($event, true);
 
       return;
