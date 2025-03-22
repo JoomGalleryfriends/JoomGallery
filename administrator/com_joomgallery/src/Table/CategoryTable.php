@@ -367,10 +367,19 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     $this->path = $manager->getCatPath(0, false, $this->parent_id, $this->alias, false, false);
     $this->path = $filesystem->cleanPath($this->path, '/');
 
-    // Create static_path if compatibility mode is activated
-    if($this->getComponent()->getConfig()->get('jg_compatibility_mode', 0))
+    // Create static_path if compatibility mode is activated and we are not in migration
+    if(!$this->is_migration && $this->getComponent()->getConfig()->get('jg_compatibility_mode', 0))
     {
-      $this->static_path = $manager->getCatPath(0, false, $this->parent_id, $this->alias, false, true);
+      $alias = $this->alias;
+      $static_name = \basename($this->static_path);
+      if(\preg_match('/_([0-9]+)$/', $static_name))
+      {
+        // We found a numeric value at the end of the folder name: e.g alias_6
+        // Therefore we use the static folder name instead
+        $alias = $static_name;
+      }
+
+      $this->static_path = $manager->getCatPath(0, false, $this->parent_id, $alias, false, true);
       $this->static_path = $filesystem->cleanPath($this->static_path, '/');
     }
 
@@ -422,7 +431,10 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
    */
   public function setLocation($referenceId, $position = 'after')
   {
-    parent::setLocation($referenceId, $position);
+    if(!empty($position))
+    {
+      parent::setLocation($referenceId, $position);
+    }
 
     if($referenceId !== 0 && !empty($this->id))
     {

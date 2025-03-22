@@ -487,9 +487,14 @@ class CategoryModel extends JoomAdminModel
           $old_table = clone $table;
         }
 
-        if($table->parent_id != $data['parent_id'] || $data['id'] == 0)
+        if($catMoved || $isNew)
         {
           $table->setLocation($data['parent_id'], 'last-child');
+        }
+        elseif($aliasChanged)
+        {
+          // Make sure paths get updated correctly when alias is changed
+          $table->setLocation($data['parent_id'], '');
         }
 
         // Create file manager service

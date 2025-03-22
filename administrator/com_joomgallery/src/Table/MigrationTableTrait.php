@@ -19,6 +19,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 trait MigrationTableTrait
 {
   /**
+   * True if the table is used during migration
+   *
+   * @var bool
+  */
+  public $is_migration = false;
+  
+  /**
    * True to insert the provided value of the primary key
    * Needed if you want to create a new record with a given ID
    *

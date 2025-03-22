@@ -1310,6 +1310,9 @@ class MigrationModel extends JoomAdminModel
       }
     }
 
+    // Set property to inform we are in migration
+    $table->is_migration = true;
+
     // Change language to 'All' if multilanguage is not enabled
     if($isNew && !Multilanguage::isEnabled())
 		{
