@@ -80,7 +80,7 @@ var callback = function() {
     const imgs = document.querySelectorAll('.' + window.joomGrid.gridclass + ' img');
     const options = {
       idealHeight: window.joomGrid.justified.height,
-      maxRowImgs: Math.ceil(num_images * 1.2),
+      maxRowImgs: Math.ceil(window.joomGrid.num_images * 1.2),
       rowGap: window.joomGrid.justified.gap,
       columnGap: window.joomGrid.justified.gap,
     };
