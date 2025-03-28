@@ -182,8 +182,7 @@ abstract class Uploader implements UploaderInterface
       // Create filename, title and alias
       if($this->component->getConfig()->get('jg_useorigfilename'))
       {
-        $data['title'] = $this->src_name;
-        $newfilename   = $this->component->getFilesystem()->cleanFilename($this->src_name, 0);
+        $data['title'] = \pathinfo($this->src_name, PATHINFO_FILENAME);
       }
       else
       {
@@ -191,9 +190,8 @@ abstract class Uploader implements UploaderInterface
         {
           $data['title'] = $data['title'].'-'.$filecounter;
         }
-
-        $newfilename = $this->component->getFilesystem()->cleanFilename($data['title'], 0);
       }
+      $newfilename = $this->component->getFilesystem()->cleanFilename($data['title'], 0);
 
       // Generate image filename
       $this->component->createFileManager($data['catid']);
