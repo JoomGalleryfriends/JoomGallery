@@ -4,6 +4,7 @@ const defaults = {
         pagination: 1,
         layout: 'masonry',
         num_columns: 3,
+        num_images: 12,
         lightbox: false,
         thumbnails: false,
         lightboxes: {},
@@ -79,7 +80,7 @@ var callback = function() {
     const imgs = document.querySelectorAll('.' + window.joomGrid.gridclass + ' img');
     const options = {
       idealHeight: window.joomGrid.justified.height,
-      maxRowImgs: 16,
+      maxRowImgs: Math.ceil(window.joomGrid.num_images * 1.2),
       rowGap: window.joomGrid.justified.gap,
       columnGap: window.joomGrid.justified.gap,
     };

@@ -101,6 +101,7 @@ $iniJS .= '  itemid: ' . $this->item->id . ',';
 $iniJS .= '  pagination: ' . $use_pagination . ',';
 $iniJS .= '  layout: "' . $category_class . '",';
 $iniJS .= '  num_columns: ' . $num_columns . ',';
+$iniJS .= '  num_images: ' . $numb_images . ',';
 $iniJS .= '  lightbox: ' . ($lightbox ? 'true' : 'false') . ',';
 $iniJS .= '  thumbnails: ' . ($thumbnails ? 'true' : 'false') . ',';
 $iniJS .= '  justified: {height: '.$justified_height.', gap: '.$justified_gap.'}';
