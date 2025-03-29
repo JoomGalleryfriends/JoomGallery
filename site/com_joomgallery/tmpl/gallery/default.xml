@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JOOMGALLERY_VIEW_GALLERY_TITLE" option="JDEFAULT">
+    <layout title="COM_JOOMGALLERY_VIEW_GALLERY_TITLE" option="JDEFAULT">
     <message>
       <![CDATA[COM_JOOMGALLERY_VIEW_GALLERY_DESC]]>
     </message>
-	</layout>
+    </layout>
+    <fields name="params">
+        <fieldset name="advanced" label="COM_JOOMGALLERY_MENU_GALLERY_VIEW_OPTIONS">
+        <field
+            name="jg_gallery_view_description"
+            type="editor"
+            label="JGLOBAL_DESCRIPTION"
+            filter="\Joomla\CMS\Component\ComponentHelper::filterText"
+            buttons="true"
+            hide="readmore,pagebreak"
+        />
+        </fieldset>
+    </fields>
 </metadata>
