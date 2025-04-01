@@ -65,6 +65,10 @@ class GalleryModel extends JoomItemModel
       $this->item->id = 1;
 		}
 
+    // Get Gallery description
+    $params = $this->getParams();
+    $this->item->description = $params['configs']->get('jg_gallery_view_description','', 'STRING');
+
 		return $this->item;
 	}
 

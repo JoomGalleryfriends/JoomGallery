@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 
 // Image params
@@ -71,6 +72,10 @@ $wa->useScript('com_joomgallery.joomgrid');
       <h1> <?php echo $this->escape($this->params['menu']->get('page_heading')); ?> </h1>
     </div>
   <?php endif; ?>
+
+  <div class="gallery-header">
+    <?php echo HTMLHelper::_('content.prepare', $this->item->description); ?>
+  </div>
 
   <?php // Link to category overview ?>
   <?php if($browse_categories_link == '1') : ?>
