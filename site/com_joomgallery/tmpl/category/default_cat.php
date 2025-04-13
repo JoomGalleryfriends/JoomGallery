@@ -43,6 +43,7 @@ $image_link       = $this->params['configs']->get('jg_category_view_image_link',
 $title_link       = $this->params['configs']->get('jg_category_view_title_link', 'defaultview', 'STRING');
 $lightbox_image   = $this->params['configs']->get('jg_category_view_lightbox_image', 'detail', 'STRING');
 $thumbnails       = $this->params['configs']->get('jg_category_view_lightbox_thumbnails', 0, 'INT');
+$zoom             = $this->params['configs']->get('jg_category_view_lightbox_zoom', 0, 'INT');
 $show_description = $this->params['configs']->get('jg_category_view_show_description', 0, 'INT');
 $show_imgdate     = $this->params['configs']->get('jg_category_view_show_imgdate', 0, 'INT');
 $show_imgauthor   = $this->params['configs']->get('jg_category_view_show_imgauthor', 0, 'INT');
@@ -87,6 +88,7 @@ if($image_link == 'lightgallery' || $title_link == 'lightgallery')
 
   $wa->useScript('com_joomgallery.lightgallery');
   $wa->useScript('com_joomgallery.lg-thumbnail');
+  $wa->useScript('com_joomgallery.lg-zoom');
   $wa->useStyle('com_joomgallery.lightgallery-bundle');
 }
 
@@ -103,6 +105,7 @@ $iniJS .= '  layout: "' . $category_class . '",';
 $iniJS .= '  num_columns: ' . $num_columns . ',';
 $iniJS .= '  lightbox: ' . ($lightbox ? 'true' : 'false') . ',';
 $iniJS .= '  thumbnails: ' . ($thumbnails ? 'true' : 'false') . ',';
+$iniJS .= '  zoom: ' . ($zoom ? 'true' : 'false') . ',';
 $iniJS .= '  justified: {height: '.$justified_height.', gap: '.$justified_gap.'}';
 $iniJS .= '};';
 
