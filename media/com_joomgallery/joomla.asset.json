@@ -128,7 +128,7 @@
     {
       "name": "com_joomgallery.justified",
       "type": "script",
-      "uri": "com_joomgallery/imgjust.min.js",
+      "uri": "com_joomgallery/imgjust/imgjust.min.js",
       "attributes": {
         "defer": true
       }

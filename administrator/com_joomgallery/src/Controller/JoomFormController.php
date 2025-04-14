@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 use \Joomla\Input\Input;
 use \Joomla\CMS\User\CurrentUserInterface;
 use \Joomla\CMS\Application\CMSApplication;
+use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use \Joomla\CMS\MVC\Controller\FormController as BaseFormController;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
@@ -68,7 +69,7 @@ class JoomFormController extends BaseFormController
    *
    * @since   4.0.0
    */
-  public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null, FormFactoryInterface $formFactory = null)
+  public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null, ?FormFactoryInterface $formFactory = null)
   {
     parent::__construct($config, $factory, $app, $input, $formFactory);
 

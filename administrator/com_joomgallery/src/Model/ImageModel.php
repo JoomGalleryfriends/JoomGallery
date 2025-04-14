@@ -66,7 +66,7 @@ class ImageModel extends JoomAdminModel
    * @since   4.0.0
    * @throws  \Exception
    */
-  public function __construct($config = [], MVCFactoryInterface $factory = null, FormFactoryInterface $formFactory = null)
+  public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?FormFactoryInterface $formFactory = null)
   {
     parent::__construct($config, $factory, $formFactory);
 

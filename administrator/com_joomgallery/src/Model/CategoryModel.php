@@ -606,8 +606,21 @@ class CategoryModel extends JoomAdminModel
           // Get path back from old location temporarily
           $table->setPathWithLocation(true);
 
+          // Get new folder name
+          $folder_name = $table->alias;
+          if($this->component->getConfig()->get('jg_compatibility_mode', 0))
+          {
+            $static_name = \basename($table->static_path);
+            if(\preg_match('/_([0-9]+)$/', $static_name))
+            {
+              // We found a numeric value at the end of the folder name: e.g alias_6
+              // Therefore we use the static folder name instead
+              $folder_name = $static_name;
+            }
+          }
+
           // Rename folder
-          if(!$manager->renameCategory($old_table, $table->alias))
+          if(!$manager->renameCategory($old_table, $folder_name))
           {
             $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_ERROR_RENAME_CATEGORY', $manager->paths['src'], $manager->paths['dest']));
             $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_RENAME_CATEGORY', $manager->paths['src'], $manager->paths['dest']), 'error', 'jerror');

@@ -64,7 +64,7 @@ class DisplayController extends BaseController
    *
    * @since   4.0.0
    */
-  public function __construct($config = array(), MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
+  public function __construct($config = array(), ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
   {
     parent::__construct($config, $factory, $app, $input);
 

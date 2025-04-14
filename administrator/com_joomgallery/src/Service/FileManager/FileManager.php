@@ -1116,6 +1116,12 @@ class FileManager implements FileManagerInterface
       // Create renamed category foldername
       $folder_new  = \substr($folder_orig, 0, strrpos($folder_orig, \basename($folder_orig))) . $foldername;
 
+      if($folder_new == $folder_orig)
+      {
+        // No renaming of folders needed
+        continue;
+      }
+
       // Rename folder
       try
       {

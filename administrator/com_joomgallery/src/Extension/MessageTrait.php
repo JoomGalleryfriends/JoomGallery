@@ -140,7 +140,7 @@ trait MessageTrait
    *
    * @since   4.0.0
   */
-  protected function addLogger(string $name = null)
+  protected function addLogger(?string $name = null)
   {
     if(!$this->log)
     {
@@ -166,7 +166,7 @@ trait MessageTrait
    *
    * @since   4.0.0
   */
-  public function setLogger(string $name = null)
+  public function setLogger(?string $name = null)
   {
     $this->addLogger($name);
     $this->logName = $name;
@@ -182,7 +182,7 @@ trait MessageTrait
    *
    * @since   4.0.0
   */
-  public function addLog(string $txt, $priority = 8, string $name = null)
+  public function addLog(string $txt, $priority = 8, ?string $name = null)
   {
     $this->addLogger($name);
 
@@ -218,7 +218,7 @@ trait MessageTrait
    *
    * @since   4.0.0
   */
-  public function setLog(string $txt, $priority = 8, string $name = null)
+  public function setLog(string $txt, $priority = 8, ?string $name = null)
   {
     return $this->addLog($txt, $priority, $name);
   }
