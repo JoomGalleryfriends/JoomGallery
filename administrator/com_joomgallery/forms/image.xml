@@ -232,12 +232,11 @@
     <field name="metadesc"
            type="textarea"
            filter="safehtml"
-           rows="5"
-           cols="40"
            default=""
-           label="JGLOBAL_DESCRIPTION"
-           description="JFIELD_META_DESCRIPTION_LABEL"
-           maxlength="160"
+           label="JFIELD_META_DESCRIPTION_LABEL"
+           rows="3"
+           cols="30"
+           maxlength="300"
            charcounter="true"
     />
 
