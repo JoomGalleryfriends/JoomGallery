@@ -151,7 +151,7 @@ class JoomAdminController extends BaseAdminController
     if(!$this->component->isRawTask($this->context))
     {
       // Print messages from session
-      if(!$this->component->msgWithhold && $res->component->error)
+      if(!$this->component->msgWithhold && isset($res->component->error) && $res->component->error)
       {
         $this->component->printError();
       }

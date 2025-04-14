@@ -142,7 +142,7 @@ class JoomFormController extends BaseFormController
     if(!$this->component->isRawTask($this->context))
     {
       // Print messages from session
-      if(!$this->component->msgWithhold && $res->component->error)
+      if(!$this->component->msgWithhold && isset($res->component->error) && $res->component->error)
       {
         $this->component->printError();
       }
@@ -203,6 +203,11 @@ class JoomFormController extends BaseFormController
     if(\strpos($parts[0], 'com_') !== false)
     {
       $key = 1;
+    }
+
+    if(!isset($data['id']))
+    {
+      $data['id'] = null;
     }
 
     switch($parts[$key])

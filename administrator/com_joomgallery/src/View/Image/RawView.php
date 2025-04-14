@@ -62,7 +62,14 @@ class RawView extends JoomGalleryView
     }
     
     // Get image path
-    $img_obj ? $img = $img_obj : $img = $id;
+    if(isset($img_obj))
+    {
+      $img = $img_obj;
+    }
+    else
+    {
+      $img = $id;
+    }
     $img_path = JoomHelper::getImg($img, $type, false, false);
 
     // Create filesystem service    

@@ -26,6 +26,11 @@ use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader a
 */
 class TUSUploader extends BaseUploader implements UploaderInterface
 {
+  protected $src_name;
+  protected $src_size;
+  protected $src_tmp;
+  protected $src_file;
+
 	/**
    * Constructor
    * 
