@@ -19,13 +19,14 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // Subcategory params
-$subcategory_class          = $this->params['configs']->get('jg_category_view_subcategory_class', 'masonry', 'STRING');
-$subcategory_num_columns    = $this->params['configs']->get('jg_category_view_subcategory_num_columns', 3, 'INT');
-$subcategory_image_class    = $this->params['configs']->get('jg_category_view_subcategory_image_class', 0, 'INT');
-$subcategory_image_type     = $this->params['configs']->get('jg_category_view_subcategory_type_images', 'thumbnail', 'STRING');
-$numb_subcategories         = $this->params['configs']->get('jg_category_view_numb_subcategories', 12, 'INT');
-$subcategories_pagination   = $this->params['configs']->get('jg_category_view_subcategories_pagination', 0, 'INT');
-$subcategories_random_image = $this->params['configs']->get('jg_category_view_subcategories_random_image', 1, 'INT');
+$subcategory_class           = $this->params['configs']->get('jg_category_view_subcategory_class', 'masonry', 'STRING');
+$subcategory_num_columns     = $this->params['configs']->get('jg_category_view_subcategory_num_columns', 3, 'INT');
+$subcategory_image_class     = $this->params['configs']->get('jg_category_view_subcategory_image_class', 0, 'INT');
+$subcategory_image_type      = $this->params['configs']->get('jg_category_view_subcategory_type_images', 'thumbnail', 'STRING');
+$numb_subcategories          = $this->params['configs']->get('jg_category_view_numb_subcategories', 12, 'INT');
+$subcategories_pagination    = $this->params['configs']->get('jg_category_view_subcategories_pagination', 0, 'INT');
+$subcategories_caption_align = $this->params['configs']->get('jg_category_view_subcategories_caption_align', 'left', 'STRING');
+$subcategories_random_image  = $this->params['configs']->get('jg_category_view_subcategories_random_image', 1, 'INT');
 
 // Image params
 $category_class   = $this->params['configs']->get('jg_category_view_class', 'masonry', 'STRING');
@@ -199,8 +200,8 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php endif; ?>
 
   <?php // Display data array for layout
-    $subcatData = [ 'layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns,
-                    'image_type' => $subcategory_image_type, 'image_class' => $subcategory_image_class, 'random_image' => (bool) $subcategories_random_image
+    $subcatData = [ 'layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns, 'image_type' => $subcategory_image_type,
+                    'caption_align' => $subcategories_caption_align, 'image_class' => $subcategory_image_class, 'random_image' => (bool) $subcategories_random_image
                   ];
   ?>
 

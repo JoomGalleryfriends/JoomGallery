@@ -155,6 +155,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_category_view_numb_subcategories` INT NOT NULL DEFAULT 12,
 `jg_category_view_subcategory_type_images` VARCHAR(25) NOT NULL DEFAULT "thumbnail",
 `jg_category_view_subcategories_pagination` TINYINT(1) NOT NULL DEFAULT 0,
+`jg_category_view_subcategories_caption_align` VARCHAR(25) NOT NULL DEFAULT "left",
 `jg_category_view_subcategories_random_image` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_subcategories_random_subimages` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_class` VARCHAR(25) NOT NULL DEFAULT "columns",

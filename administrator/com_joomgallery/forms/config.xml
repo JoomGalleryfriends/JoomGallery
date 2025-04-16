@@ -917,6 +917,17 @@
             <option value="1">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT1</option>
             <option value="2">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT2</option>
         </field>
+        <field name="jg_category_view_subcategories_caption_align"
+            type="list"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_CAPTION_ALIGNMENT"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_CAPTION_ALIGNMENT_DESC"
+            default="left"
+            validate="options"
+            >
+            <option value="left">JGLOBAL_LEFT</option>
+            <option value="center">JGLOBAL_CENTER</option>
+            <option value="right">JGLOBAL_RIGHT</option>
+        </field>
         <field name="jg_category_view_subcategories_random_image"
             type="radio"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_IMAGES"
