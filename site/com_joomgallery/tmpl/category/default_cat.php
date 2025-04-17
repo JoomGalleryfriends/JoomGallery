@@ -96,18 +96,19 @@ if(!empty($use_pagination))
 }
 
 // Add and initialize the grid script
-$iniJS  = 'window.joomGrid = {';
-$iniJS .= '  itemid: ' . $this->item->id . ',';
+$iniJS  = 'window.joomGrid["1-'.$this->item->id.'"] = {';
+$iniJS .= '  itemid: "1-' . $this->item->id . '",';
 $iniJS .= '  pagination: ' . $use_pagination . ',';
 $iniJS .= '  layout: "' . $category_class . '",';
 $iniJS .= '  num_columns: ' . $num_columns . ',';
 $iniJS .= '  lightbox: ' . ($lightbox ? 'true' : 'false') . ',';
+$iniJS .= '  lightbox_params: {container: "lightgallery-1-'.$this->item->id.'", selector: ".lightgallery-item"},';
 $iniJS .= '  thumbnails: ' . ($thumbnails ? 'true' : 'false') . ',';
 $iniJS .= '  justified: {height: '.$justified_height.', gap: '.$justified_gap.'}';
 $iniJS .= '};';
 
-$wa->addInlineScript($iniJS, ['position' => 'before'], [], ['com_joomgallery.joomgrid']);
 $wa->useScript('com_joomgallery.joomgrid');
+$wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joomgrid']);
 
 // Permission checks
 $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $this->item->id);
@@ -235,7 +236,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php endif; ?>
 
   <?php // Display data array for layout
-    $imgsData = [ 'id' => (int) $this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
+    $imgsData = [ 'id' => '1-'.$this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
                   'caption_align' => $caption_align, 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
                   'image_title' => (bool) $show_title, 'title_link' => $title_link, 'image_desc' => (bool) $show_description, 'image_date' => (bool) $show_imgdate,
                   'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags
