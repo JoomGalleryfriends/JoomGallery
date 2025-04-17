@@ -1,164 +1,175 @@
 // Initialisation
 const defaults = {
-        itemid : 1,
+        itemid : '0-0',
         pagination: 1,
         layout: 'masonry',
         num_columns: 3,
         lightbox: false,
         thumbnails: false,
-        lightboxes: {},
+        lightbox_obj: {},
+        lightbox_params: {container: 'lightgallery-0-0', selector: '.lightgallery-item'},
         imgboxclass: 'jg-image',
         imgclass: 'jg-image-thumb',
         gridclass: 'jg-category',
         infscrollclass: 'infinite-scroll',
         loadmoreid: 'loadMore',
         loaderclass: 'jg-loader',
-        justifieds: {},
+        justified_obj: {},
         justified: {height: 320, gap: 5}
 };
 
 // Ensure window.joomGrid exists
-window.joomGrid = window.joomGrid || {};
-
-// Loop through defaults and check against window.joomGrid
-for(const [key, value] of Object.entries(defaults)) {
-  if(!window.joomGrid.hasOwnProperty(key) || window.joomGrid[key] === undefined || window.joomGrid[key] === null) {
-    window.joomGrid[key] = value;
-  }
+if(!window.joomGrid) {
+  window.joomGrid = {};
+  window.joomGrid['0-0'] = defaults;
 }
 
 var callback = function() {
-  // Get the grid container
-  const grid = document.querySelector('.' + window.joomGrid.gridclass);
+  // Loop through all available joomGrids
+  for(const [itemid, settings] of Object.entries(window.joomGrid)) {
+    if(itemid === '0-0') {
+      continue;
+    }
 
-  // Initialize lightGallery
-  if(window.joomGrid.lightbox) {
-    const lightbox = document.getElementById('lightgallery-' + window.joomGrid.itemid);
+    // Loop through defaults and check against provided settings
+    for(const [key, value] of Object.entries(window.joomGrid['0-0'])) {
+      if(!settings.hasOwnProperty(key) || settings[key] === undefined || settings[key] === null) {
+        settings[key] = value;
+      }
+    }
 
-    window.joomGrid.lightboxes[window.joomGrid.itemid] = lightGallery(lightbox, {
-      selector: '.lightgallery-item',
-      exThumbImage: 'data-thumb',
-      // allowMediaOverlap: true,
-      thumbHeight: '50px',
-      thumbMargin: 5,
-      thumbWidth: 75,
-      thumbnail: window.joomGrid.thumbnails,
-      toggleThumb: true,
-      speed: 500,
-      plugins: [lgThumbnail],
-      preload: 1,
-      loop: false,
-      slideEndAnimation: false,
-      hideControlOnEnd: true,
-      counter: true,
-      download: false,
-      mobileSettings: {
-        controls: false,
-        showCloseIcon: true,
+    // Get the grid container
+    const grid = document.querySelector('.' + settings.gridclass);
+
+    // Initialize lightGallery
+    if(settings.lightbox) {
+      const lightbox = document.getElementById(settings.lightbox_params.container);
+
+      window.joomGrid[itemid].lightbox_obj = lightGallery(lightbox, {
+        selector: settings.lightbox_params.selector,
+        exThumbImage: 'data-thumb',
+        // allowMediaOverlap: true,
+        thumbHeight: '50px',
+        thumbMargin: 5,
+        thumbWidth: 75,
+        thumbnail: settings.thumbnails,
+        toggleThumb: true,
+        speed: 500,
+        plugins: [lgThumbnail],
+        preload: 1,
+        loop: false,
+        slideEndAnimation: false,
+        hideControlOnEnd: true,
+        counter: true,
         download: false,
-      },
-      licenseKey: '1111-1111-111-1111',
-    });
-    
-    if(lightbox) {
-      window.joomGrid.lightboxes[window.joomGrid.itemid].outer.on('click', (e) => {
-        const $item = window.joomGrid.lightboxes[window.joomGrid.itemid].outer.find('.lg-current .lg-image');
-        if (
-          e.target.classList.contains('lg-image') ||
-          $item.get().contains(e.target)
-        ) {
-          window.joomGrid.lightboxes[window.joomGrid.itemid].goToNextSlide();
+        mobileSettings: {
+          controls: false,
+          showCloseIcon: true,
+          download: false,
+        },
+        licenseKey: '1111-1111-111-1111',
+      });
+      
+      if(lightbox) {
+        window.joomGrid[itemid].lightbox_obj.outer.on('click', (e) => {
+          const $item = window.joomGrid[itemid].lightbox_obj.outer.find('.lg-current .lg-image');
+          if (
+            e.target.classList.contains('lg-image') ||
+            $item.get().contains(e.target)
+          ) {
+            window.joomGrid[itemid].lightbox_obj.goToNextSlide();
+          }
+        });
+      }
+    }
+
+    // Load justified for grid selected by gridclass (category images)
+    if(settings.layout == 'justified' && document.querySelectorAll('.justified').length > 0) {
+      addEventListener('load', _ => {
+      const imgs = document.querySelectorAll('.' + settings.gridclass + ' img');
+      const options = {
+        idealHeight: settings.justified.height,
+        maxRowImgs: 16,
+        rowGap: settings.justified.gap,
+        columnGap: settings.justified.gap,
+      };
+      window.joomGrid[itemid].justified_obj = new ImgJust(grid, imgs, options);
+      });
+    }
+
+    // Infinity scroll or load more
+    if(settings.pagination == 1 && grid || settings.pagination == 2 && grid)
+    {
+      const items        = Array.from(grid.getElementsByClassName(settings.imgboxclass));
+      const maxImages    = settings.num_columns * 2;
+      const loadImages   = settings.num_columns * 3;
+      const hiddenClass  = 'hidden-' + settings.imgboxclass;
+      const hiddenImages = Array.from(document.getElementsByClassName(hiddenClass));
+
+      items.forEach(function (item, index) {
+        if (index > maxImages - 1) {
+          item.classList.add(hiddenClass);
         }
       });
+
+      if(settings.pagination == 1) {
+        // Infinity scroll
+        const observerOptions = {
+          root: null,
+          rootMargin: '200px',
+          threshold: 0
+        };
+        
+        function observerCallback(entries, observer) {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              [].forEach.call(document.querySelectorAll('.' + hiddenClass), function (
+                item,
+                index
+              ) {
+                if (index < loadImages) {
+                  item.classList.remove(hiddenClass);
+                }
+                if (document.querySelectorAll('.' + hiddenClass).length === 0) {
+                  noMore.classList.remove('hidden');
+                }
+              });
+            }
+          });
+        }
+        
+        const fadeElms = document.querySelectorAll('.' + settings.infscrollclass);
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        fadeElms.forEach(el => observer.observe(el));
+      } else if(settings.pagination == 2) {
+        // Load more button
+        const loadMore = document.getElementById(settings.loadmoreid);
+    
+        loadMore.addEventListener('click', function () {
+          [].forEach.call(document.querySelectorAll('.' + hiddenClass), function (
+            item,
+            index
+          ) {
+            if (index < loadImages) {
+              item.classList.remove(hiddenClass);
+            }
+            if (document.querySelectorAll('.' + hiddenClass).length === 0) {
+              loadMore.style.display = 'none';
+              noMore.classList.remove('hidden');
+            }
+          });
+        });
+      }
     }
-  }
 
-  // Load justified for grid selected by gridclass (category images)
-  if(window.joomGrid.layout == 'justified' && document.querySelectorAll('.justified').length > 0) {
-    addEventListener('load', _ => {
-    const imgs = document.querySelectorAll('.' + window.joomGrid.gridclass + ' img');
-    const options = {
-      idealHeight: window.joomGrid.justified.height,
-      maxRowImgs: 16,
-      rowGap: window.joomGrid.justified.gap,
-      columnGap: window.joomGrid.justified.gap,
-    };
-    window.joomGrid.justifieds[window.joomGrid.itemid] = new ImgJust(grid, imgs, options);
-    });
-  }
+    // Hide loader
+    if(document.getElementsByClassName(settings.loaderclass)) {
+      const loaders = document.getElementsByClassName(settings.loaderclass);
 
-  // Infinity scroll or load more
-  if(window.joomGrid.pagination == 1 && grid || window.joomGrid.pagination == 2 && grid)
-  {
-    const items        = Array.from(grid.getElementsByClassName(window.joomGrid.imgboxclass));
-    const maxImages    = window.joomGrid.num_columns * 2;
-    const loadImages   = window.joomGrid.num_columns * 3;
-    const hiddenClass  = 'hidden-' + window.joomGrid.imgboxclass;
-    const hiddenImages = Array.from(document.getElementsByClassName(hiddenClass));
-
-    items.forEach(function (item, index) {
-      if (index > maxImages - 1) {
-        item.classList.add(hiddenClass);
-      }
-    });
-
-    if(window.joomGrid.pagination == 1) {
-      // Infinity scroll
-      const observerOptions = {
-        root: null,
-        rootMargin: '200px',
-        threshold: 0
-      };
-      
-      function observerCallback(entries, observer) {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            [].forEach.call(document.querySelectorAll('.' + hiddenClass), function (
-              item,
-              index
-            ) {
-              if (index < loadImages) {
-                item.classList.remove(hiddenClass);
-              }
-              if (document.querySelectorAll('.' + hiddenClass).length === 0) {
-                noMore.classList.remove('hidden');
-              }
-            });
-          }
-        });
-      }
-      
-      const fadeElms = document.querySelectorAll('.' + window.joomGrid.infscrollclass);
-      const observer = new IntersectionObserver(observerCallback, observerOptions);
-      fadeElms.forEach(el => observer.observe(el));
-    } else if(window.joomGrid.pagination == 2) {
-      // Load more button
-      const loadMore = document.getElementById(window.joomGrid.loadmoreid);
-  
-      loadMore.addEventListener('click', function () {
-        [].forEach.call(document.querySelectorAll('.' + hiddenClass), function (
-          item,
-          index
-        ) {
-          if (index < loadImages) {
-            item.classList.remove(hiddenClass);
-          }
-          if (document.querySelectorAll('.' + hiddenClass).length === 0) {
-            loadMore.style.display = 'none';
-            noMore.classList.remove('hidden');
-          }
-        });
+      Array.from(loaders).forEach(loader => {
+        loader.classList.add('hidden');
       });
     }
-  }
-
-  // Hide loader
-  if(document.getElementsByClassName(window.joomGrid.loaderclass)) {
-    const loaders = document.getElementsByClassName(window.joomGrid.loaderclass);
-
-    Array.from(loaders).forEach(loader => {
-      loader.classList.add('hidden');
-    });
   }
 }; //end callback
 
