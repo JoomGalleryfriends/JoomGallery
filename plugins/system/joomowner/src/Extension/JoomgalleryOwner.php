@@ -191,7 +191,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     $typeAlias = isset($table->typeAlias) ? $table->typeAlias : $context;
     if(!$ownerField = $this->guessType($typeAlias))
     {
-      // We couldnt guess the type of content we are dealing with
+      // We couldn't guess the type of content we are dealing with
       $this->setResult($event, true);
 
       return;
@@ -217,6 +217,9 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    */
   public function onContentBeforeSave(Event $event)
   {
+		$test = "";
+		echo "ajax ?";
+
     if(\version_compare(JVERSION, '5.0.0', '<'))
     {
       // Joomla 4
@@ -232,28 +235,28 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     if($context == 'com_plugins.plugin' && $table->name == 'plg_system_joomowner')
     {
       $newParams             = new Registry($table->params);
-      $userIdToChangeManualy = $newParams->get('userIdToChangeManualy', '');
+      $userIdToChangeManually = $newParams->get('userIdToChangeManualy', '');
 
       // Reset the fields
       $newParams->set('userIdToChangeManualy', '');
       $table->params = (string) $newParams;
 
-      if(empty($userIdToChangeManualy))
+      if(empty($userIdToChangeManually))
       {
         return;
       }
 
-      if($this->isUserExists($userIdToChangeManualy))
+      if($this->isUserExists($userIdToChangeManually))
       {
-        $this->app->enqueueMessage(Text::sprintf('PLG_SYSTEM_JOOMOWNER_ERROR_USER_ID_TO_CHANGE_MANUALY_EXISTS', $userIdToChangeManualy), 'error');
+        $this->app->enqueueMessage(Text::sprintf('PLG_SYSTEM_JOOMOWNER_ERROR_USER_ID_TO_CHANGE_MANUALLY_EXISTS', $userIdToChangeManually), 'error');
 
         return;
       }
 
-      if(!empty($userIdToChangeManualy))
+      if(!empty($userIdToChangeManually))
       {
         $this->params = $newParams;
-        $user = array('id' => $userIdToChangeManualy);
+        $user = array('id' => $userIdToChangeManually);
 
         $this->changeUser($user);
       }
@@ -271,7 +274,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     $typeAlias = isset($table->typeAlias) ? $table->typeAlias : $context;
     if(!$ownerField = $this->guessType($typeAlias))
     {
-      // We couldnt get the owner field. It probably does not exist.
+      // We couldn't get the owner field. It probably does not exist.
 		  $this->setResult($event, true);
 
       return;
