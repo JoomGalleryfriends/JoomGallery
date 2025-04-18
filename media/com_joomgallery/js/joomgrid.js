@@ -62,7 +62,7 @@ var callback = function() {
       licenseKey: '1111-1111-111-1111',
     });
     
-    if(lightbox) {
+    if(lightbox && window.joomGrid.zoom === false) {
       window.joomGrid.lightboxes[window.joomGrid.itemid].outer.on('click', (e) => {
         const $item = window.joomGrid.lightboxes[window.joomGrid.itemid].outer.find('.lg-current .lg-image');
         if (
