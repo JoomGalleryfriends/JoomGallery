@@ -4,6 +4,8 @@ const defaults = {
         pagination: 1,
         layout: 'masonry',
         num_columns: 3,
+        numb_images: 12,
+        reloaded_images: 3,
         lightbox: false,
         thumbnails: false,
         lightboxes: {},
@@ -89,9 +91,18 @@ var callback = function() {
   // Infinity scroll or load more
   if(window.joomGrid.pagination == 1 && grid || window.joomGrid.pagination == 2 && grid)
   {
+    let maxImages;
+    let loadImages;
+    if(window.joomGrid.pagination == 1) {
+        maxImages  = window.joomGrid.num_columns * 2;
+        loadImages = window.joomGrid.num_columns * 3;
+    }
+    if(window.joomGrid.pagination == 2) {
+        maxImages  = window.joomGrid.numb_images;
+        loadImages = window.joomGrid.reloaded_images;
+    }
+
     const items        = Array.from(grid.getElementsByClassName(window.joomGrid.imgboxclass));
-    const maxImages    = window.joomGrid.num_columns * 2;
-    const loadImages   = window.joomGrid.num_columns * 3;
     const hiddenClass  = 'hidden-' + window.joomGrid.imgboxclass;
     const hiddenImages = Array.from(document.getElementsByClassName(hiddenClass));
 
@@ -108,7 +119,7 @@ var callback = function() {
         rootMargin: '200px',
         threshold: 0
       };
-      
+
       function observerCallback(entries, observer) {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -132,22 +143,24 @@ var callback = function() {
       fadeElms.forEach(el => observer.observe(el));
     } else if(window.joomGrid.pagination == 2) {
       // Load more button
-      const loadMore = document.getElementById(window.joomGrid.loadmoreid);
-  
-      loadMore.addEventListener('click', function () {
-        [].forEach.call(document.querySelectorAll('.' + hiddenClass), function (
-          item,
-          index
-        ) {
-          if (index < loadImages) {
-            item.classList.remove(hiddenClass);
-          }
-          if (document.querySelectorAll('.' + hiddenClass).length === 0) {
-            loadMore.style.display = 'none';
-            noMore.classList.remove('hidden');
-          }
+      if(document.getElementById(window.joomGrid.loadmoreid)) {
+        const loadMore = document.getElementById(window.joomGrid.loadmoreid);
+
+        loadMore.addEventListener('click', function () {
+          [].forEach.call(document.querySelectorAll('.' + hiddenClass), function (
+            item,
+            index
+          ) {
+            if (index < loadImages) {
+              item.classList.remove(hiddenClass);
+            }
+            if (document.querySelectorAll('.' + hiddenClass).length === 0) {
+              loadMore.style.display = 'none';
+              noMore.classList.remove('hidden');
+            }
+          });
         });
-      });
+      }
     }
   }
 
