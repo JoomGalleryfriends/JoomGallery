@@ -1,6 +1,4 @@
 :root {
-  --jg-color-link: #000000;
-  --jg-color-hover: #000000;
   --jg-gray-100: #f9fafb;
   --jg-gray-200: #eaedf0;
   --jg-gray-300: #dfe3e7;
@@ -224,12 +222,10 @@ table.itemList th.sort-cell .form-check-input {
   font-family: revert;
 }
 a.jg-link:not(.btn) {
-  color: var(--jg-color-link);
   text-decoration: none;
   word-break: break-all;
 }
 a.jg-link:not(.btn):hover, a.jg-link:not(.btn):focus {
-  color: var(--jg-color-hover);
   text-decoration: underline 2px;
 }
 .load-more-container {

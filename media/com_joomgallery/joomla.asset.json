@@ -110,6 +110,14 @@
       }
     },
     {
+      "name": "com_joomgallery.lg-zoom",
+      "type": "script",
+      "uri": "com_joomgallery/lg-zoom.min.js",
+      "attributes": {
+        "defer": false
+      }
+    },
+    {
       "name": "com_joomgallery.masonry",
       "type": "script",
       "uri": "com_joomgallery/masonry.min.js",
@@ -128,7 +136,7 @@
     {
       "name": "com_joomgallery.justified",
       "type": "script",
-      "uri": "com_joomgallery/imgjust.min.js",
+      "uri": "com_joomgallery/imgjust/imgjust.min.js",
       "attributes": {
         "defer": true
       }
