@@ -452,12 +452,12 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_nameshields` (
 
 CREATE TABLE IF NOT EXISTS `#__joomgallery_orphans` (
   `id` int(11) NOT NULL auto_increment,
-  `fullpath` varchar(255) NOT NULL,
+  `fullpath` varchar(500) NOT NULL,
   `type` varchar(7) NOT NULL,
   `refid` int(11) NOT NULL,
   `title` text NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fullpath` (`fullpath`(255))
+  KEY `fullpath` (`fullpath`(500))
 ) DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__joomgallery_users` (
