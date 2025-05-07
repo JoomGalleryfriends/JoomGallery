@@ -31,8 +31,8 @@
                     class="validate-numeric"
                     maxlength="5"
                     default=""
-                    label="PLG_SYSTEM_JOOMOWNER_ID_TO_CHANGE_MANUALY_LABEL"
-                    description="PLG_SYSTEM_JOOMOWNER_ID_TO_CHANGE_MANUALY_DESC"
+                    label="PLG_SYSTEM_JOOMOWNER_ID_TO_CHANGE_MANUALLY_LABEL"
+                    description="PLG_SYSTEM_JOOMOWNER_ID_TO_CHANGE_MANUALLY_DESC"
                     filter="INT"
                 />
             </fieldset>
