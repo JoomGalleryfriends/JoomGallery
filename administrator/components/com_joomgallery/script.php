@@ -30,7 +30,7 @@ class Com_JoomGalleryInstallerScript
    *
    * @var string
    */
-  private $version = '3.7.0';
+  private $version = '3.7.1';
 
   /**
    * Version string of the current installed version
