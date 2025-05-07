@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+  <release version="3.7.1" published="20250507">
+    <entries date="20250506">
+      <logentry type="#">Fix Error in maintenance manager</logentry>
+    </entries>
+  </release>
   <release version="3.7.0" published="20250220">
     <entries date="20240226">
       <logentry type="+">Check and fix alias and catpath</logentry>
