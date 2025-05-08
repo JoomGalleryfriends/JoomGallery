@@ -135,7 +135,7 @@ class Access implements AccessInterface
     $this->user = $this->component->getMVCFactory()->getIdentity();
 
     // Set acl map for components with advanced rules
-    $mapPath = JPATH_ADMINISTRATOR.'/components/'.$this->option.'/includes/rules.php';
+    $mapPath = _JOOM_PATH_ADMIN.'/includes/rules.php';
     if(\file_exists($mapPath))
     {
       require $mapPath;
@@ -234,7 +234,7 @@ class Access implements AccessInterface
 
     // More preparations
     $acl_rule_array = \explode('.', $acl_rule);
-    $appuser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->user->get('id'));
+    $appuser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->user->id);
 
     // Special case: super user
     if($appuser->get('isRoot') === true)
@@ -274,7 +274,7 @@ class Access implements AccessInterface
         // }
 
         // Only do the check, if it the pk is known
-        $this->allowed['own'] = AccessOwn::checkOwn($this->user->get('id'), $acl_rule, $asset, true, $own_pk);
+        $this->allowed['own'] = AccessOwn::checkOwn($this->user->id, $acl_rule, $asset, true, $own_pk);
       }
 
       // 3. Permission check if adding assets with media items (uploads)
@@ -288,11 +288,11 @@ class Access implements AccessInterface
 
         // Check for the category in general
         $this->tocheck['upload']     = true;
-        $this->allowed['upload']     = AccessBase::check($this->user->get('id'), $parent_action, $parent_asset);
+        $this->allowed['upload']     = AccessBase::check($this->user->id, $parent_action, $parent_asset);
 
         // Check also against parent ownership
         $this->tocheck['upload-own'] = true;
-        $this->allowed['upload-own'] = AccessOwn::checkOwn($this->user->get('id'), $parent_action.'.'.$this->aclMap[$action]['own'], $parent_asset, true, $parent_pk);
+        $this->allowed['upload-own'] = AccessOwn::checkOwn($this->user->id, $parent_action.'.'.$this->aclMap[$action]['own'], $parent_asset, true, $parent_pk);
       }
     }
     else
@@ -301,7 +301,7 @@ class Access implements AccessInterface
       if(!empty($this->aclMap) && $this->aclMap[$action]['own'] !== false && \in_array('.'.$asset_type, $this->aclMap[$action]['own-assets']))
       {
         $this->tocheck['own'] = true;
-        $this->allowed['own'] = AccessBase::check($this->user->get('id'), $acl_rule, $asset);
+        $this->allowed['own'] = AccessBase::check($this->user->id, $acl_rule, $asset);
       }
     }
 

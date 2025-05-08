@@ -17,6 +17,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\Utilities\ArrayHelper;
 use \Joomla\CMS\Plugin\PluginHelper;
 use \Joomla\CMS\Language\Multilanguage;
+use \Joomla\CMS\User\UserFactoryInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
@@ -765,7 +766,7 @@ class CategoryModel extends JoomAdminModel
 	public function duplicate(&$pks)
 	{
 		$app  = Factory::getApplication();
-		$user = Factory::getUser();
+		$user = Factory::getContainer()->get(UserFactoryInterface::class);
     $task = $app->input->get('task');
 
 		// Access checks.
@@ -834,14 +835,14 @@ class CategoryModel extends JoomAdminModel
 	 *
 	 * @return  boolean  True if successful.
 	 *
-	 * @throws  Exception
+	 * @throws  \Exception
 	 */
   public function fixChildrenPath($table, $old_table)
   {
     if(\is_null($table) || empty($table->id))
     {
       $this->component->addLog('To fix child category paths, table has to be loaded.', 'error', 'jerror');
-      throw new Exception('To fix child category paths, table has to be loaded.');
+      throw new \Exception('To fix child category paths, table has to be loaded.');
     }
 
     // Get a list of children ids

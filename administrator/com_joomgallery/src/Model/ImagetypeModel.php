@@ -87,9 +87,9 @@ class ImagetypeModel extends JoomAdminModel
 			}
 		}
 
-		// Convert to the CMSObject before adding other data.
-		$properties = $table->getProperties(1);
-		$item = ArrayHelper::toObject($properties, CMSObject::class);
+		// Convert to \stdClass before adding other data
+		$properties = get_object_vars($table);
+		$item       = ArrayHelper::toObject($properties);
 
     if(property_exists($item, 'params')) 
 		{

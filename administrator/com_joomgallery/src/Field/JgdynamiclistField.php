@@ -13,7 +13,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Event\AbstractEvent;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
 

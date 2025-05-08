@@ -35,7 +35,7 @@ final class JoomgalleryPrivacy extends PrivacyPlugin
 	 *
 	 * @since   4.0.0
 	 */
-	public function onPrivacyExportRequest(RequestTable $request, User $user = null)
+	public function onPrivacyExportRequest(RequestTable $request, ?User $user = null)
 	{
 		if (!$user)
 		{
@@ -46,12 +46,13 @@ final class JoomgalleryPrivacy extends PrivacyPlugin
 		$domain    = $this->createDomain('user_image', 'joomla_user_image_data');
 		$domains[] = $domain;
 
-		$query = $this->db->getQuery(true)
+		$db = $this->getDatabase();
+		$query = $db->getQuery(true)
 			->select('*')
-			->from($this->db->quoteName('#__joomgallery'))
-			->where($this->db->quoteName('created_by') . ' = ' . (int) $user->id);
+			->from($db->quoteName('#__joomgallery'))
+			->where($db->quoteName('created_by') . ' = ' . (int) $user->id);
 
-		$items = $this->db->setQuery($query)->loadObjectList();
+		$items = $db->setQuery($query)->loadObjectList();
 
 		foreach ($items as $item)
 		{
@@ -75,7 +76,7 @@ final class JoomgalleryPrivacy extends PrivacyPlugin
 	 *
 	 * @since   4.0.0
 	 */
-	public function onPrivacyRemoveData(RequestTable $request, User $user = null)
+	public function onPrivacyRemoveData(RequestTable $request, ?User $user = null)
 	{
 		// This plugin only processes data for registered user accounts
 		if (!$user)
@@ -83,15 +84,15 @@ final class JoomgalleryPrivacy extends PrivacyPlugin
 			return;
 		}
 
-		$db = $this->db;
+		$db = $this->getDatabase();
 
 		$query = $db->getQuery(true);
 
 		$query->clear()
 			->delete($db->quoteName('#__joomgallery'))
-			->where($this->db->quoteName('created_by') . ' = ' . (int) $user->id);
+			->where($db->quoteName('created_by') . ' = ' . (int) $user->id);
 
 		$db->setQuery($query)
-			->execute();
+			 ->execute();
 	}
 }

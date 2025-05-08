@@ -610,7 +610,7 @@ class CategoryModel extends JoomItemModel
    * @since   4.0.0
    * @throws Exception
    */
-  public function getUnpublishedParents(int $pk = null, bool $approved = false): array
+  public function getUnpublishedParents(?int $pk = null, bool $approved = false): array
   {
     if(\is_null($pk) && !\is_null($this->item) && isset($this->item->id))
     {
@@ -627,7 +627,7 @@ class CategoryModel extends JoomItemModel
     }
 
     // Create a new query object.
-		$db    = $this->getDbo();
+		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
@@ -675,7 +675,7 @@ class CategoryModel extends JoomItemModel
    *
    * @since   4.0.0
    */
-  public function getProtectedParents(int $pk = null): array
+  public function getProtectedParents(?int $pk = null): array
   {
     if(\is_null($pk) && !\is_null($this->item) && isset($this->item->id))
     {
@@ -692,7 +692,7 @@ class CategoryModel extends JoomItemModel
     }
 
     // Create a new query object.
-		$db    = $this->getDbo();
+		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
@@ -732,7 +732,7 @@ class CategoryModel extends JoomItemModel
    *
    * @since   4.0.0
    */
-  public function getAccessibleParents(int $pk = null): array
+  public function getAccessibleParents(?int $pk = null): array
   {
     if(\is_null($pk) && !\is_null($this->item) && isset($this->item->id))
     {
@@ -752,7 +752,7 @@ class CategoryModel extends JoomItemModel
     $user  = $this->app->getIdentity();
 
     // Create a new query object.
-		$db    = $this->getDbo();
+		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));

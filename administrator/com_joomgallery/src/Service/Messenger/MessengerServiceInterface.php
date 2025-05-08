@@ -19,15 +19,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 interface MessengerServiceInterface
 {
   /**
-	 * Storage for the messenger service class.
-	 *
-	 * @var MessengerInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $messenger;
-
-  /**
 	 * Creates the messenger service class
    * 
    * @param   string  $msgMethod   Name of the messager to be used

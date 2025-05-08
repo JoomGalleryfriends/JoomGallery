@@ -29,7 +29,7 @@ class ConfigsController extends JoomAdminController
 	 *
 	 * @return  void
 	 *
-	 * @throws  Exception
+	 * @throws  \Exception
 	 */
 	public function duplicate()
 	{

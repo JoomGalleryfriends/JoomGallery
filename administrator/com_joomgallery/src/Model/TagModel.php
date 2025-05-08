@@ -68,7 +68,7 @@ class TagModel extends JoomAdminModel
 	 */
   protected function getItemID($string)
   {
-    $db = Factory::getDbo();
+    $db = $this->getDatabase();
     $query = $db->getQuery(true);
 
     $query->select($db->quoteName('id'));
@@ -158,7 +158,7 @@ class TagModel extends JoomAdminModel
 	 *
 	 * @return  boolean  True if successful.
 	 *
-	 * @throws  Exception
+	 * @throws  \Exception
 	 */
 	public function duplicate(&$pks)
 	{
@@ -226,7 +226,7 @@ class TagModel extends JoomAdminModel
    */
   public function addMapping($tag_id, $img_id)
   {
-    $db = Factory::getDbo();
+    $db = $this->getDatabase();
 
     $mapping = new \stdClass();
     $mapping->imgid = (int) $img_id;
@@ -262,7 +262,7 @@ class TagModel extends JoomAdminModel
     $tag_id = (int) $tag_id;
     $img_id = (int) $img_id;
 
-    $db = Factory::getDbo();
+    $db = $this->getDatabase();
     $query = $db->getQuery(true);
 
     $conditions = array($db->quoteName('tagid') . ' = ' . $db->quote($tag_id));

@@ -472,7 +472,7 @@ class Jg3ToJg4 extends Migration implements MigrationInterface
    *
    * @since   4.0.0
    */
-  public function getQueue(string $type, object $migrateable=null): array
+  public function getQueue(string $type, ?object $migrateable = null): array
   {
     if(\is_null($migrateable))
     {
@@ -1273,7 +1273,7 @@ class Jg3ToJg4 extends Migration implements MigrationInterface
             foreach($titles as $id => $title)
             {
 
-              if(Factory::getConfig()->get('unicodeslugs') == 1)
+              if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
               {
                 $titles[$id] = OutputFilter::stringURLUnicodeSlug(trim($title));
               }

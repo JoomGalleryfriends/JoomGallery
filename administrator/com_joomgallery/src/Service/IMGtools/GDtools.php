@@ -12,8 +12,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 // No direct access
 \defined('_JEXEC') or die;
 
-use \Joomla\CMS\Filesystem\File;
-use \Joomla\CMS\Filesystem\Path;
+use \Joomla\Filesystem\File;
+use \Joomla\Filesystem\Path;
 use \Joomla\CMS\Language\Text;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifFrameExtractor;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifCreator;
@@ -337,7 +337,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     }
     else
     {
-      if(File::exists($file))
+      if(\is_file(Path::clean($file)))
       {
         $bak_file = $file.'bak';
         $success  = File::copy($file, $bak_file);
@@ -377,7 +377,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       }
       else
       {
-        if(File::exists($file))
+        if(\is_file(Path::clean($file)))
         {
           $bak_file = $file.'bak';
           $success  = File::copy($file, $bak_file);

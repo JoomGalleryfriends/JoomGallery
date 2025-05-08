@@ -9,7 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
-\defined('JPATH_PLATFORM') or die;
+\defined('_JEXEC') or die;
 
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMtools;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GDtools;

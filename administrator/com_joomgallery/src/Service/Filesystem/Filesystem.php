@@ -17,8 +17,8 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Object\CMSObject;
 use \Joomla\CMS\Plugin\PluginHelper;
 use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Filesystem\File as JFile;
-use \Joomla\CMS\Filesystem\Path as JPath;
+use \Joomla\Filesystem\File as JFile;
+use \Joomla\Filesystem\Path as JPath;
 
 use \Joomla\Component\Media\Administrator\Adapter\AdapterInterface;
 use \Joomla\Component\Media\Administrator\Event\FetchMediaItemEvent;
@@ -102,7 +102,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
     }
 
     // Load language of com_media
-    Factory::getLanguage()->load('com_media', JPATH_ADMINISTRATOR);
+    Factory::getApplication()->getLanguage()->load('com_media', JPATH_ADMINISTRATOR);
   }
 
   /**
@@ -148,7 +148,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
       $filename = $file;
     }
 
-    if(Factory::getConfig()->get('unicodeslugs') == 1)
+    if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
     {
       $filename = OutputFilter::stringURLUnicodeSlug(trim($filename));
     }

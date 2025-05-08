@@ -182,8 +182,11 @@ class RawView extends AdminRawView
     $loaded = true;
     $access = true;
 
+    /** @var ImageModel $model */
+    $model = $this->getModel();
+
 		try {
-			$this->item = $this->get('Item');
+			$this->item = $model->getItem();
 		}
 		catch (\Exception $e)
 		{
@@ -191,19 +194,19 @@ class RawView extends AdminRawView
 		}
 
     // Check if category is protected?
-		if($loaded && $this->get('CategoryProtected'))
+		if($loaded && $model->getCategoryProtected())
 		{
       $access = false;
 		}
 
     // Check published state
-		if(!$loaded || !$this->get('CategoryPublished') || $this->item->published !== 1 || $this->item->approved !== 1)
+		if(!$loaded || !$model->getCategoryPublished() || $this->item->published !== 1 || $this->item->approved !== 1)
 		{
 			$access = false;
 		}
 
     // Check access view level
-		if(!$this->get('CategoryAccess') || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
+		if(!$model->getCategoryAccess() || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
     {
       $access = false;
     }

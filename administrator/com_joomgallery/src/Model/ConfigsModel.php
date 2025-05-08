@@ -12,7 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // No direct access.
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Factory;
+use \Joomla\Database\ParameterType;
 
 /**
  * Methods supporting a list of Configs records.
@@ -134,7 +134,7 @@ class ConfigsModel extends JoomListModel
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -276,7 +276,7 @@ class ConfigsModel extends JoomListModel
 				{
 					if(!empty($value))
 					{
-						$db = Factory::getDbo();
+						$db = $this->getDatabase();
 						$query = "SELECT id, title FROM #__usergroups HAVING id LIKE '" . $value . "'";
 						$db->setQuery($query);
 						$results = $db->loadObject();

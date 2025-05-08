@@ -13,6 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Router\Route;
+use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
@@ -46,6 +47,9 @@ class RawView extends JoomGalleryView
       $this->app->redirect(Route::_('index.php', false), 403);
     }
 
+    /** @var ImageModel $model */
+    $model = $this->getModel();
+
     // Choose the filesystem adapter
     $adapter = '';
     if($id === 0 || $id === 'null')
@@ -57,7 +61,7 @@ class RawView extends JoomGalleryView
     else
     {
       // Take the adapter from the image object
-      $img_obj = $this->get('Item');
+      $img_obj = $model->getItem();
       $adapter = $img_obj->filesystem;
     }
     

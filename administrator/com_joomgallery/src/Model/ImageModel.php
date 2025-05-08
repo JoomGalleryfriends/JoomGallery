@@ -16,8 +16,10 @@ use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Language\Text;
 use \Joomla\Utilities\ArrayHelper;
+use \Joomla\Database\ParameterType;
 use \Joomla\CMS\Plugin\PluginHelper;
 use \Joomla\CMS\Language\Multilanguage;
+use \Joomla\CMS\User\UserFactoryInterface;
 use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
@@ -66,7 +68,7 @@ class ImageModel extends JoomAdminModel
    * @since   4.0.0
    * @throws  \Exception
    */
-  public function __construct($config = [], MVCFactoryInterface $factory = null, FormFactoryInterface $formFactory = null)
+  public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?FormFactoryInterface $formFactory = null)
   {
     parent::__construct($config, $factory, $formFactory);
 
@@ -249,7 +251,7 @@ class ImageModel extends JoomAdminModel
 	public function duplicate(&$pks)
 	{
 		$app  = Factory::getApplication();
-		$user = Factory::getUser();
+		$user = Factory::getContainer()->get(UserFactoryInterface::class);
 
 		// Access checks.
 		if(!$user->authorise('core.create', _JOOM_OPTION))
@@ -772,7 +774,7 @@ class ImageModel extends JoomAdminModel
 					// Multilanguage: if associated, delete the item in the _associations table
 					if($this->associationsContext && Associations::isEnabled())
 					{
-						$db = $this->getDbo();
+						$db = $this->getDatabase();
 						$query = $db->getQuery(true)
 							->select(
 								[
@@ -888,7 +890,7 @@ class ImageModel extends JoomAdminModel
 	 */
 	public function changeSate(&$pks, $type='publish', $value = 1)
 	{
-		$user    = Factory::getUser();
+		$user    = Factory::getContainer()->get(UserFactoryInterface::class);
 		$table   = $this->getTable();
 		$pks     = (array) $pks;
 		$context = $this->option . '.' . $this->name . '.' . $type;
@@ -1218,6 +1220,6 @@ class ImageModel extends JoomAdminModel
    */
   protected function canRecreate($record)
   {
-    return Factory::getUser()->authorise('core.edit', $this->typeAlias);
+    return Factory::getContainer()->get(UserFactoryInterface::class)->authorise('core.edit', $this->typeAlias);
   }
 }

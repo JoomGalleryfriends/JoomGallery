@@ -57,7 +57,7 @@ class MVCFactory extends MVCFactoryBase
    *
    * @since   4.0.0
    */
-  public function loadIdentity(User $identity = null)
+  public function loadIdentity(?User $identity = null)
   {
     if(\is_null($identity))
     {
