@@ -6,6 +6,7 @@ const defaults = {
         num_columns: 3,
         lightbox: false,
         thumbnails: false,
+        zoom: false,
         lightbox_obj: {},
         lightbox_params: {container: 'lightgallery-0-0', selector: '.lightgallery-item'},
         gridclass: 'jg-category',
@@ -51,9 +52,10 @@ var callback = function() {
         thumbMargin: 5,
         thumbWidth: 75,
         thumbnail: settings.thumbnails,
+        zoom: settings.zoom,
         toggleThumb: true,
         speed: 500,
-        plugins: [lgThumbnail],
+        plugins: [lgThumbnail,lgZoom],
         preload: 1,
         loop: false,
         slideEndAnimation: false,
@@ -68,7 +70,7 @@ var callback = function() {
         licenseKey: '1111-1111-111-1111',
       });
       
-      if(lightbox) {
+      if(lightbox && settings.zoom === false) {
         window.joomGrid[itemid].lightbox_obj.outer.on('click', (e) => {
           const $item = window.joomGrid[itemid].lightbox_obj.outer.find('.lg-current .lg-image');
           if (
