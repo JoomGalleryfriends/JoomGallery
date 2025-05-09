@@ -50,6 +50,8 @@ class HtmlView extends JoomGalleryView
     $this->imagetypes = JoomHelper::getRecords('imagetypes');
     $rating           = JoomHelper::getRating($this->item->id);
     $this->form->setvalue('rating', '', $rating);
+	$this->app->getLanguage()->load('com_joomgallery.exif', _JOOM_PATH_ADMIN);
+	$this->app->getLanguage()->load('com_joomgallery.iptc', _JOOM_PATH_ADMIN);
 
     if($this->item->id == 0)
     {
@@ -164,6 +166,11 @@ class HtmlView extends JoomGalleryView
 		else
 		{
 			ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CLOSE');
+		}
+
+		if (!empty($this->item->id))
+		{
+			ToolbarHelper::custom('image.savemetadata', 'save', '', 'Save metadata to file', false);
 		}
 	}
 

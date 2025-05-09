@@ -253,6 +253,14 @@
              description="COM_JOOMGALLERY_CONFIG_PATH_IMAGEMAGICK_LONG"
              showon="jg_imgprocessor:im" />
 
+       <field name="jg_metaprocessor"
+             type="list"
+             default="php"
+             label="COM_JOOMGALLERY_CONFIG_METAPROCESSOR"
+             description="COM_JOOMGALLERY_CONFIG_METAPROCESSOR_LONG" >
+         <option value="php">PHP</option>
+       </field>
+
       <field name="jg_wmfile"
              type="media"
              default="images/joomgallery/watermark.png"

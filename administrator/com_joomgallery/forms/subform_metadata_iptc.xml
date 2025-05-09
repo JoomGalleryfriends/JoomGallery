@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <field name="2#090"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_CITYLEGACY"
+         description="COM_JOOMGALLERY_IPTC_CITYLEGACY_DEFINITION" />
+
+  <field name="2#118"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_CONTACT"
+         description="COM_JOOMGALLERY_IPTC_CONTACT_DEFINITION" />
+
+  <field name="2#116"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_COPYRIGHTNOTICE"
+         description="COM_JOOMGALLERY_IPTC_COPYRIGHTNOTICE_DEFINITION" />
+
+  <field name="2#100"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_COUNTRYCODELEGACY"
+         description="COM_JOOMGALLERY_IPTC_COUNTRYCODELEGACY_DEFINITION" />
+
+  <field name="2#101"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_COUNTRYLEGACY"
+         description="COM_JOOMGALLERY_IPTC_COUNTRYLEGACY_DEFINITION" />
+
+  <field name="2#080"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_CREATOR" />
+
+  <field name="2#085"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_CREATORSJOBTITLE"
+         description="COM_JOOMGALLERY_IPTC_CREATORSJOBTITLE_DEFINITION" />
+
+  <field name="2#110"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_CREDITLINE"
+         description="COM_JOOMGALLERY_IPTC_CREDITLINE_DEFINITION" />
+
+  <field name="2#055"
+         type="calendar"
+         translateformat="true"
+         showtime="true"
+         size="22"
+         filter="user_utc"
+         label="COM_JOOMGALLERY_IPTC_DATECREATED"
+         description="COM_JOOMGALLERY_IPTC_DATECREATED_DEFINITION" />
+
+  <field name="2#120"
+         type="textarea"
+         filter="string"
+         rows="5"
+         cols="40"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_DESCRIPTION"
+         descritpion="COM_JOOMGALLERY_IPTC_DESCRIPTION_DEFINITION" />
+
+  <field name="2#122"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_DESCRIPTIONWRITER"
+         description="COM_JOOMGALLERY_IPTC_DESCRIPTIONWRITER_DEFINITION" />
+
+  <field name="2#105"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_HEADLINE"
+         description="COM_JOOMGALLERY_IPTC_HEADLINE_DEFINITION" />
+
+  <field name="2#040"
+         type="textarea"
+         filter="string"
+         rows="5"
+         cols="40"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_INSTRUCTIONS"
+         description="COM_JOOMGALLERY_IPTC_INSTRUCTIONS_DEFINITION" />
+
+  <field name="2#025"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_KEYWORDS"
+         description="COM_JOOMGALLERY_IPTC_KEYWORDS_DEFINITION" />
+
+  <field name="2#095"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_PROVINCEORSTATELEGACY"
+         description="COM_JOOMGALLERY_IPTC_PROVINCEORSTATELEGACY_DEFINITION" />
+
+  <field name="2#115"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_SOURCE"
+         description="COM_JOOMGALLERY_IPTC_SOURCE_DEFINITION" />
+
+  <field name="2#092"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_SUBLOCATIONLEGACY"
+         description="COM_JOOMGALLERY_IPTC_SUBLOCATIONLEGACY_DEFINITION" />
+
+  <field name="2#005"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         label="COM_JOOMGALLERY_IPTC_TITLE"
+         description="COM_JOOMGALLERY_IPTC_TITLE_DEFINITION" />
+</form>

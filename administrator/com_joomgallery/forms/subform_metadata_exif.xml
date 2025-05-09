@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fieldset name="general">
+    <field name="IFD0"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_metadata_exif_ifd0.xml"
+           layout="joomla.form.field.subform.default" />
+
+    <field name="EXIF"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_metadata_exif_exif.xml"
+           layout="joomla.form.field.subform.default" />
+  </fieldset>
+</form>

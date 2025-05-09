@@ -244,8 +244,11 @@ abstract class Uploader implements UploaderInterface
     // Create the IMGtools service
     $this->component->createIMGtools($this->component->getConfig()->get('jg_imgprocessor'));
 
+    // Create the Metadata service
+    $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
+
     // Get image metadata (source)
-    $metadata = $this->component->getIMGtools()->readMetadata($this->src_file);
+    $metadata = $this->component->getMetadata()->readMetadata($this->src_file);
 
     // Add image metadata to data
     $data['imgmetadata'] = \json_encode($metadata);
