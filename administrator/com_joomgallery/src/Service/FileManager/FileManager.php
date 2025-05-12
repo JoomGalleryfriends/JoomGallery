@@ -1181,7 +1181,7 @@ class FileManager implements FileManagerInterface
    * Returns the path to an image
    *
    * @param   object|int|string         $img       Image object, image ID or image alias (new images: ID=0)
-   * @param   string                    $type      Imagetype
+   * @param   string                    $type      Imagetype (default: thumbnail)
    * @param   object|int|string|bool    $catid     Category object, category ID, category alias or category path (default: false)
    * @param   string|bool               $filename  The filename (default: false)
    * @param   boolean                   $root      True to add the system root to the path
@@ -1191,7 +1191,7 @@ class FileManager implements FileManagerInterface
    * 
    * @since   4.0.0
    */
-  public function getImgPath($img, $type, $catid=false, $filename=false, $root=false, $logfile='jerror')
+  public function getImgPath($img, $type='thumbnail', $catid=false, $filename=false, $root=false, $logfile='jerror')
   {
     if($catid === false || $filename === false)
     {
@@ -1250,7 +1250,12 @@ class FileManager implements FileManagerInterface
     }
 
     // Create the path of the image
-    $path = $this->imagetypes[$this->imagetypes_dict[$type]]->path.\DIRECTORY_SEPARATOR.$catpath.\DIRECTORY_SEPARATOR.$filename;
+    $type_path = $this->imagetypes[$this->imagetypes_dict[$type]]->path;
+    if(!$type_path)
+    {
+      $type_path = '/images/joomgallery/thumbnails';
+    }
+    $path = $type_path.\DIRECTORY_SEPARATOR.$catpath.\DIRECTORY_SEPARATOR.$filename;
 
     // add root to path if needed
     if($root)
