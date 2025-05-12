@@ -89,13 +89,16 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_categories` (
 `metakey` TEXT NOT NULL,
 `robots` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 PRIMARY KEY (`id`),
+KEY `idx_left_right` (`lft`,`rgt`),
+KEY `idx_parent_id` (`parent_id`),
+KEY `idx_language` (`language`),
 KEY `idx_access` (`access`),
 KEY `idx_checkout` (`checked_out`),
-KEY `idx_path` (`path`(100)),
-KEY `idx_left_right` (`lft`,`rgt`),
-KEY `idx_alias` (`alias`(100)),
-KEY `idx_language` (`language`),
-INDEX `idx_list_subcategories` (`published`, `access`, `hidden`, `id`)
+KEY `idx_created_by` (`created_by`),
+KEY `idx_alias` (`alias`(191)),
+KEY `idx_title` (`title`(191)),
+KEY `idx_path` (`path`(191)),
+KEY `idx_list_subcategories` (`published`, `access`, `hidden`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -138,6 +141,9 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_dynamic_watermark` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_record_hits` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_record_hits_select` VARCHAR(25) NOT NULL DEFAULT "detail",
+`jg_lightbox_image` VARCHAR(25) NOT NULL DEFAULT "detail",
+`jg_lightbox_thumbnails` TINYINT(1) NOT NULL DEFAULT 0,
+`jg_lightbox_zoom` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_gallery_view_browse_categories_link` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_gallery_view_class` VARCHAR(25) NOT NULL DEFAULT "columns",
 `jg_gallery_view_num_columns` TINYINT(1) NOT NULL DEFAULT 3,
@@ -155,6 +161,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_category_view_numb_subcategories` INT NOT NULL DEFAULT 12,
 `jg_category_view_subcategory_type_images` VARCHAR(25) NOT NULL DEFAULT "thumbnail",
 `jg_category_view_subcategories_pagination` TINYINT(1) NOT NULL DEFAULT 0,
+`jg_category_view_subcategories_caption_align` VARCHAR(25) NOT NULL DEFAULT "left",
 `jg_category_view_subcategories_random_image` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_subcategories_random_subimages` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_class` VARCHAR(25) NOT NULL DEFAULT "columns",
@@ -171,8 +178,6 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_category_view_caption_align` VARCHAR(25) NOT NULL DEFAULT "center",
 `jg_category_view_images_show_title` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_title_link` VARCHAR(25) NOT NULL DEFAULT "defaultview",
-`jg_category_view_lightbox_image` VARCHAR(25) NOT NULL DEFAULT "detail",
-`jg_category_view_lightbox_thumbnails` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_show_description` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_show_imgdate` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_show_imgauthor` TINYINT(1) NOT NULL DEFAULT 0,
