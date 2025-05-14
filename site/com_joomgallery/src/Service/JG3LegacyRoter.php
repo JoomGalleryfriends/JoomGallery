@@ -464,7 +464,7 @@ class JG3LegacyRouter implements RouterInterface
   
     $vars = array();
   
-    $language = Factory::getLanguage();
+    $language = Factory::getApplication()->getLanguage();
     $language->load('com_joomgallery');
   
     $segment = str_replace(':', '-', $segments[0]);

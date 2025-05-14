@@ -9,7 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
-\defined('JPATH_PLATFORM') or die;
+\defined('_JEXEC') or die;
 
 use Psr\Http\Message\ResponseInterface;
 
@@ -49,7 +49,7 @@ interface ServerInterface
    * 
    * @return  bool    True on success, false otherwise
    */
-  public function loadUpload(string $uuid=null): bool;
+  public function loadUpload(?string $uuid = null): bool;
 
   /**
    * Sets upload size limit

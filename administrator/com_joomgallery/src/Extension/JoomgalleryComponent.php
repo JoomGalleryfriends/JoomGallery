@@ -13,7 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 \defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Filesystem\Path;
+use \Joomla\Filesystem\Path;
 use \Joomla\CMS\Menu\AbstractMenu;
 use \Psr\Container\ContainerInterface;
 use \Joomla\CMS\Extension\MVCComponent;

@@ -125,7 +125,7 @@ if(!$readonly)
 		)
 	);
 
-	Factory::getDocument()->getWebAssetManager()
+	Factory::getApplication()->getDocument()->getWebAssetManager()
 		->useScript('com_joomgallery.field-image');
 }
 ?>

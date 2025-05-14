@@ -123,7 +123,7 @@ class ImgProcessorListField extends ListField
       else
       {
         $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_PLUGIN_ERROR_RETURN_VALUE', 'onJoomImgProcessorGetName',  'array',  'value, text, desc'), 'error', 'jerror');
-        throw new Exception(Text::sprintf('COM_JOOMGALLERY_PLUGIN_ERROR_RETURN_VALUE', 'onJoomImgProcessorGetName',  'array',  'value, text, desc'));
+        throw new \Exception(Text::sprintf('COM_JOOMGALLERY_PLUGIN_ERROR_RETURN_VALUE', 'onJoomImgProcessorGetName',  'array',  'value, text, desc'));
       }
     }
 

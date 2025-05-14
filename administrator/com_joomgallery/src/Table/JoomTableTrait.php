@@ -167,7 +167,7 @@ trait JoomTableTrait
         }
         else
         {
-          if(Factory::getConfig()->get('unicodeslugs') == 1)
+          if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
           {
             $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
           }
@@ -179,7 +179,7 @@ trait JoomTableTrait
       }
       else
       {
-        if(Factory::getConfig()->get('unicodeslugs') == 1)
+        if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
         {
           $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['alias']));
         }
@@ -235,9 +235,9 @@ trait JoomTableTrait
 	 */
   public function getFieldsValues($exclude = array())
   {
-    // Convert to the CMSObject before adding other data.
+    // Convert to \stdClass before adding other data
 		$properties = $this->getProperties(1);
-		$item = ArrayHelper::toObject($properties, CMSObject::class);
+		$item       = ArrayHelper::toObject($properties);
 
 		if(\property_exists($item, 'params'))
 		{
@@ -465,14 +465,14 @@ trait JoomTableTrait
   protected function loadForm($form)
   {
     // Get xml file path
-    if(\file_exists(JPATH_COMPONENT_ADMINISTRATOR . '/forms/'.$form.'.xml'))
+    if(\file_exists(_JOOM_PATH_ADMIN . '/forms/'.$form.'.xml'))
     {
-      $xml_file  = JPATH_COMPONENT_ADMINISTRATOR . '/forms/'.$form.'.xml';
+      $xml_file  = _JOOM_PATH_ADMIN . '/forms/'.$form.'.xml';
       $form_name = $form;
     }
-    elseif(\file_exists(JPATH_COMPONENT_ADMINISTRATOR . '/forms/'.$form))
+    elseif(\file_exists(_JOOM_PATH_ADMIN . '/forms/'.$form))
     {
-      $xml_file  = JPATH_COMPONENT_ADMINISTRATOR . '/forms/'.$form;
+      $xml_file  = _JOOM_PATH_ADMIN . '/forms/'.$form;
       $form_name = \str_replace('.xml', '', $form);
     }
 

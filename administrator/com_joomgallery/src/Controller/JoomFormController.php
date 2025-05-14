@@ -68,7 +68,7 @@ class JoomFormController extends BaseFormController
    *
    * @since   4.0.0
    */
-  public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null, FormFactoryInterface $formFactory = null)
+  public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null, ?FormFactoryInterface $formFactory = null)
   {
     parent::__construct($config, $factory, $app, $input, $formFactory);
 

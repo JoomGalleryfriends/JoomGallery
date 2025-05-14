@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Filesystem\File;
+use \Joomla\Filesystem\File;
 use \Joomla\CMS\Plugin\PluginHelper;
 use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Form\FormFactory;
@@ -636,7 +636,7 @@ class ConfigModel extends JoomAdminModel
 	public function resetData($data)
 	{
 		// Load config form
-		$xmlfile = JPATH_COMPONENT_ADMINISTRATOR . '/forms/config.xml';
+		$xmlfile = _JOOM_PATH_ADMIN . '/forms/config.xml';
 		$cform = new Form('configForm');
 		$cform->loadFile($xmlfile);
 
@@ -655,7 +655,7 @@ class ConfigModel extends JoomAdminModel
 				else if($key == 'jg_staticprocessing')
 				{
 					// Load imageconvert subform
-					$xmlfile_subform = JPATH_COMPONENT_ADMINISTRATOR . '/forms/subform_imageconvert.xml';
+					$xmlfile_subform = _JOOM_PATH_ADMIN . '/forms/subform_imageconvert.xml';
 					$subform = new Form('imageconvertSubform');
 					$subform->loadFile($xmlfile_subform);
 
@@ -669,7 +669,7 @@ class ConfigModel extends JoomAdminModel
 								if($subformkey == 'jg_imgtypewtmsettings')
 								{
 									// Load imagewatermark subform
-									$xmlfile_wtmsubform = JPATH_COMPONENT_ADMINISTRATOR . '/forms/subform_imagewatermark.xml';
+									$xmlfile_wtmsubform = _JOOM_PATH_ADMIN . '/forms/subform_imagewatermark.xml';
 									$wtm_subform = new Form('imagewatermarkSubform');
 									$wtm_subform->loadFile($xmlfile_wtmsubform);
 
@@ -752,7 +752,7 @@ class ConfigModel extends JoomAdminModel
 	public function getJSONfile($file, $fieldname)
 	{
 		// Get form field
-		$xml = JPATH_COMPONENT_ADMINISTRATOR . '/forms/config.xml';
+		$xml = _JOOM_PATH_ADMIN . '/forms/config.xml';
 		$form = new Form('configForm');
 		$form->loadFile($xml);
 		$field = $form->getField($fieldname);
@@ -784,7 +784,8 @@ class ConfigModel extends JoomAdminModel
 		}
 
 		// Check file extension
-		if(strtolower(File::getExt($file['name'])) != 'json')
+		$filesystem = JoomHelper::getService('Filesystem');
+		if(strtolower($filesystem->getExt($file['name'])) != 'json')
 		{
 			// Invalid file extension
 			$this->setError(Text::sprintf('COM_JOOMGALLERY_ERROR_INVALID_FILE_EXTENSION', 'json', $file['name']), 'error');

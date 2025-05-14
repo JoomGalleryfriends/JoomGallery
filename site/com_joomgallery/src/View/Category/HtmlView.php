@@ -59,14 +59,16 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-    // Current category item
-		$this->state  = $this->get('State');
-		$this->params = $this->get('Params');
+		/** @var CategoryModel $model */
+    $model = $this->getModel();
+
+    $this->state  = $model->getState();
+		$this->params = $model->getParams();
     $this->menu   = $this->app->getMenu()->getActive();
 
 		$loaded = true;
 		try {
-			$this->item = $this->get('Item');
+			$this->item = $model->getItem();
 		}
 		catch (\Exception $e)
 		{
@@ -91,25 +93,25 @@ class HtmlView extends JoomGalleryView
 		if(!$this->item->pw_protected)
 		{
 			// Load parent category
-			$this->item->parent = $this->get('Parent');
+			$this->item->parent = $model->getParent();
 
 			// Load subcategories
 			$this->item->children = new \stdClass();
-			$this->item->children->items         = $this->get('Children');
-			$this->item->children->pagination    = $this->get('ChildrenPagination');
+			$this->item->children->items         = $model->getChildren();
+			$this->item->children->pagination    = $model->getChildrenPagination();
 
 			// Load images
 			$this->item->images = new \stdClass();
-			$this->item->images->items         = $this->get('Images');
-			$this->item->images->pagination    = $this->get('ImagesPagination');
-			$this->item->images->filterForm    = $this->get('ImagesFilterForm');
-			$this->item->images->activeFilters = $this->get('ImagesActiveFilters');
+			$this->item->images->items         = $model->getImages();
+			$this->item->images->pagination    = $model->getImagesPagination();
+			$this->item->images->filterForm    = $model->getImagesFilterForm();
+			$this->item->images->activeFilters = $model->getImagesActiveFilters();
 		}
 
     // Check for errors.
-		if(\count($errors = $this->get('Errors')))
+		if(count($errors = $model->getErrors()))
 		{
-			throw new GenericDataException(\implode("\n", $errors), 500);
+			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
 		$this->_prepareDocument();

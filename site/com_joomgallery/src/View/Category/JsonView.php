@@ -39,12 +39,14 @@ class JsonView extends JoomGalleryJsonView
 	 */
 	public function display($tpl = null)
 	{
-    // Current category item
-		$this->state  = $this->get('State');
+    /** @var CategoryModel $model */
+    $model = $this->getModel();
+
+    $this->state  = $model->getState();
 
     $loaded = true;
 		try {
-			$this->item = $this->get('Item');
+			$this->item = $model->getItem();
 		}
 		catch (\Exception $e)
 		{
@@ -66,18 +68,18 @@ class JsonView extends JoomGalleryJsonView
     }
 
     // Load parent category
-    $this->item->parent = $this->get('Parent');
+    $this->item->parent = $model->getParent();
 
     // Load subcategories
     $this->item->children = new \stdClass();
-    $this->item->children->items = $this->get('Children');
+    $this->item->children->items = $model->getChildren();
 
     // Load images
     $this->item->images = new \stdClass();
-    $this->item->images->items = $this->get('Images');
+    $this->item->images->items = $model->getImages();
 
     // Check for errors.
-		if(\count($errors = $this->get('Errors')))
+		if(\count($errors = $model->getErrors()))
 		{
       $this->error = true;
       $this->output($errors);

@@ -186,7 +186,7 @@ class CategoriesModel extends JoomListModel
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -580,7 +580,7 @@ class CategoriesModel extends JoomListModel
 	 */
   protected function categoriesFilterQuery(&$query, $categoryId, $level=false, $exclude=false)
   {
-    $db = $this->getDbo();
+    $db = $this->getDatabase();
 
     $categoryId = ArrayHelper::toInteger($categoryId);
     $categoryTable = $this->getMVCFactory()->createTable('Category', 'administrator');

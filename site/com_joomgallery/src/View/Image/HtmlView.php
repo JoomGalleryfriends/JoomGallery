@@ -53,49 +53,52 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		$this->state  = $this->get('State');
-		$this->params = $this->get('Params');
+		/** @var ImageModel $model */
+    $model = $this->getModel();
+
+    $this->state  = $model->getState();
+		$this->params = $model->getParams();
 
 		$loaded = true;
 		try {
-			$this->item = $this->get('Item');
+			$this->item = $model->getItem();
 		}
 		catch (\Exception $e)
 		{
 			$loaded = false;
 		}
 
-		$temp = $this->get('CategoryProtected');
+		$temp = $model->getCategoryProtected();
 
 		// Check if category is protected?
-		if($loaded && $this->get('CategoryProtected'))
+		if($loaded && $model->getCategoryProtected())
 		{
 			$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_IMAGE_CAT_PROTECTED'), 'error');
 			$this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=category&id='.$this->item->protectedParents[0]));
 		}
 
-		$temp = $this->get('CategoryPublished');
+		$temp = $model->getCategoryPublished();
 
 		// Check published and approved state
-		if(!$loaded || !$this->get('CategoryPublished') ||$this->item->published !== 1 || $this->item->approved !== 1)
+		if(!$loaded || !$model->getCategoryPublished() ||$this->item->published !== 1 || $this->item->approved !== 1)
 		{
 			$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
 			return;
 		}
 
-		$temp = $this->get('CategoryAccess');
+		$temp = $model->getCategoryAccess();
 
     // Check access view level
-		if(!$this->get('CategoryAccess') || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
+		if(!$model->getCategoryAccess() || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
     {
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
 			return;
     }
 
 		// Check for errors.
-		if(\count($errors = $this->get('Errors')))
+		if(count($errors = $model->getErrors()))
 		{
-			throw new GenericDataException(\implode("\n", $errors), 500);
+			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
 		// Load additional information

@@ -27,6 +27,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\MultipleAssetsT
 class MultipleAssetsTable extends Table
 {
   use MultipleAssetsTableTrait;
+  use LegacyDatabaseTrait;
 
   /**
    * The rules associated with this record.
@@ -127,8 +128,7 @@ class MultipleAssetsTable extends Table
         $name     = $this->_getAssetName($key);
         $title    = $this->_getAssetTitle($key);
 
-        /** @var Asset $asset */
-        $asset = self::getInstance('Asset', 'JTable', ['dbo' => $this->getDbo()]);
+        $asset = new Asset($this->getDatabase(), $this->getDispatcher());
         $asset->loadByName($name);
 
         // Get asset id property name
@@ -175,11 +175,11 @@ class MultipleAssetsTable extends Table
                     // Update the asset_id field in this table.
                     $this->{$assetIdName} = (int) $asset->id;
 
-                    $query = $this->_db->getQuery(true)
-                        ->update($this->_db->quoteName($this->_tbl))
+                    $query = $this->getDatabase()->getQuery(true)
+                        ->update($this->getDatabase()->quoteName($this->_tbl))
                         ->set($assetIdName . ' = ' . (int) $this->{$assetIdName});
                     $this->appendPrimaryKeys($query);
-                    $this->_db->setQuery($query)->execute();
+                    $this->getDatabase()->setQuery($query)->execute();
                 }
             }
         }
@@ -231,8 +231,7 @@ class MultipleAssetsTable extends Table
           //Get the asset name
           $name  = $this->_getAssetName($itemtype);
 
-          /** @var Asset $asset */
-          $asset = Table::getInstance('Asset', 'JTable', ['dbo' => $this->getDbo()]);
+          $asset = new Asset($this->getDatabase(), $this->getDispatcher());
 
           if ($asset->loadByName($name)) {
             // Delete the node in assets table.

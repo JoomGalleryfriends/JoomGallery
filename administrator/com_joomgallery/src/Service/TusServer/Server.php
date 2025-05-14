@@ -10,7 +10,7 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 // No direct access
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
 use \Psr\Http\Message\ResponseInterface;
@@ -295,7 +295,7 @@ class Server implements ServerInterface
      *
      * @return  bool    True on success, false otherwise
      */
-    public function loadUpload(string $uuid=null): bool
+    public function loadUpload(?string $uuid = null): bool
     {
       $this->uuid = $uuid;
       $this->getUserUuid();

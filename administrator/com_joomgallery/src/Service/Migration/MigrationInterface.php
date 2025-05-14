@@ -169,7 +169,7 @@ interface MigrationInterface
    *
    * @since   4.0.0
    */
-  public function getQueue(string $type, object $migrateable=null): array;
+  public function getQueue(string $type, ?object $migrateable = null): array;
 
   /**
    * Returns an associative array containing the record data from source.

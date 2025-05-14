@@ -9,7 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
-\defined('JPATH_PLATFORM') or die;
+\defined('_JEXEC') or die;
 
 /**
 * The IMGtools service
@@ -18,15 +18,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 */
 interface IMGtoolsServiceInterface
 {
-  /**
-	 * Storage for the IMGtools class.
-	 *
-	 * @var IMGtoolsInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $IMGtools;
-
   /**
 	 * Creates the IMGtools class
    *

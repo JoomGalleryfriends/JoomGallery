@@ -75,15 +75,17 @@ class HtmlView extends JoomGalleryView
 		{
 			return;
 		}
-		
-		// Load state and params
-		$this->state  = $this->get('State');
-		$this->params = $this->get('Params');
-		$this->item   = $this->get('Item');
-		$this->form		= $this->get('Form');
+
+		/** @var CategoryfromModel $model */
+    $model = $this->getModel();
+
+    $this->state  = $model->getState();
+		$this->params = $model->getParams();
+		$this->item   = $model->getItem();
+		$this->form   = $model->getForm();
 
     // Get return page
-    $this->return_page = $this->get('ReturnPage');		
+    $this->return_page = $model->getReturnPage();		
 
     // Check access view level
 		if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
@@ -93,9 +95,9 @@ class HtmlView extends JoomGalleryView
     }
 		
 		// Check for errors.
-		if(\count($errors = $this->get('Errors')))
+		if(count($errors = $model->getErrors()))
 		{
-			throw new GenericDataException(\implode("\n", $errors), 500);
+			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
 		$this->_prepareDocument();

@@ -19,15 +19,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\FileManager;
 interface FileManagerServiceInterface
 {
   /**
-	 * Storage for the file manager class.
-	 *
-	 * @var FileManagerInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $fileManager;
-
-  /**
 	 * Creates the file manager helper class
    *
    * @param   int          $catid       Id of the category for which the filesystem is chosen

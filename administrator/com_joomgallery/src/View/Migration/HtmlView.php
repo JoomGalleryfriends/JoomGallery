@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
+use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
@@ -37,8 +38,11 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-    $this->script  = $this->get('Script');
-    $this->scripts = $this->get('Scripts');    
+    /** @var MigrationModel $model */
+    $model = $this->getModel();
+
+    $this->script  = $model->getScript();
+    $this->scripts = $model->getScripts();
     $this->layout  = $this->app->input->get('layout', 'default', 'cmd');
     $this->error   = array();
 
@@ -60,7 +64,7 @@ class HtmlView extends JoomGalleryView
       else
       {
         // Try to load the migration params
-        $this->params = $this->get('Params');
+        $this->params = $model->getParams();
 
         // Check if migration params exist
         if(\is_null($this->params) && $this->layout != 'step1')
@@ -74,7 +78,7 @@ class HtmlView extends JoomGalleryView
       {
         case 'step1':
           // Load migration form
-          $this->form = $this->get('Form');
+          $this->form = $model->getForm();
           break;
 
         case 'step2':
@@ -86,19 +90,19 @@ class HtmlView extends JoomGalleryView
         case 'step3':
           // Data for the migration view
           $this->precheck     = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step2.success', false);
-          $this->migrateables = $this->get('Migrateables');
+          $this->migrateables = $model->getMigrateables();
           $this->migration    = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step3.results', array());
-          $this->dependencies = $this->get('Dependencies');
-          $this->completed    = $this->get('Completed');
+          $this->dependencies = $model->getDependencies();
+          $this->completed    = $model->getCompleted();
           break;
 
         case 'step4':
           // Load postcheck results
           $this->postcheck      = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step4.results', array());
           $this->success        = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step4.success', false);
-          $this->sourceDeletion = $this->get('sourceDeletion');
+          $this->sourceDeletion = $model->getSourceDeletion();
 
-          $this->openMigrations = $this->get('IdList');
+          $this->openMigrations = $model->getIdList();
           if(!empty($this->openMigrations) && \key_exists($this->script->name, $this->openMigrations))
           {
             $this->openMigrations = $this->openMigrations[$this->script->name];
@@ -122,13 +126,13 @@ class HtmlView extends JoomGalleryView
       }
 
       // ID list of open migrations
-      $this->openMigrations = $this->get('IdList');
+      $this->openMigrations = $model->getIdList();
     }
 
 		// Check for errors.
-		if(\count($errors = $this->get('Errors')))
+		if(count($errors = $model->getErrors()))
 		{
-			throw new \Exception(implode("\n", $errors));
+			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
 		parent::display($tpl);

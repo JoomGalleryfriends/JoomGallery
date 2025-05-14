@@ -38,20 +38,23 @@ class HtmlView extends JoomGalleryView
   {
     ToolBarHelper::title(Text::_('COM_JOOMGALLERY_CONTROL_PANEL') , 'home');
 
+    /** @var ControlModel $model */
+    $model = $this->getModel();
+
     // get module positions in cpanel
     $this->modules = ModuleHelper::getModules('joom_cpanel');
 
     // get statistic data
-    $this->statisticdata = $this->get('StatisticData');
+    $this->statisticdata = $model->getStatisticData();
 
     // get gallery info data
-    $this->galleryinfodata = $this->get('GalleryInfoData');
+    $this->galleryinfodata = $model->getGalleryInfoData();
 
     // get official extensions data
-    $this->galleryofficialextensionsdata = $this->get('OfficialExtensionsData');
+    $this->galleryofficialextensionsdata = $model->getOfficialExtensionsData();
 
     // get installed extensions data
-    $this->galleryinstalledextensionsdata = $this->get('InstalledExtensionsData');
+    $this->galleryinstalledextensionsdata = $model->getInstalledExtensionsData();
 
     // get php system info
     $this->php_settings = [
@@ -82,7 +85,8 @@ class HtmlView extends JoomGalleryView
    */
   protected function addToolbar()
   {
-    $toolbar = Toolbar::getInstance('toolbar');
+    /** @var Toolbar $model */
+    $toolbar = $this->getToolbar();
 
     // Images button
     $html = '<a href="index.php?option=com_joomgallery&amp;view=images" class="btn btn-primary"><span class="icon-images" title="'.Text::_('COM_JOOMGALLERY_IMAGES').'"></span> '.Text::_('COM_JOOMGALLERY_IMAGES').'</a>';

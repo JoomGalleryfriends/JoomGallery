@@ -76,18 +76,21 @@ class HtmlView extends JoomGalleryView
 			return;
 		}
 
-		$this->state  = $this->get('State');
-		$this->params = $this->get('Params');
-		$this->item   = $this->get('Item');
-		$this->form		= $this->get('Form');
+		/** @var ImagefromModel $model */
+    $model = $this->getModel();
+
+    $this->state  = $model->getState();
+		$this->params = $model->getParams();
+		$this->item   = $model->getItem();
+		$this->form   = $model->getForm();
 
     // Get return page
-    $this->return_page = $this->get('ReturnPage');
+    $this->return_page = $model->getReturnPage();
 
 		// Check for errors.
-		if(\count($errors = $this->get('Errors')))
+		if(count($errors = $model->getErrors()))
 		{
-			throw new GenericDataException(\implode("\n", $errors), 500);
+			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
     // Check access view level

@@ -123,7 +123,7 @@ else
   $canAddImg  = true;
 }
 $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $this->item->id);
-$canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $this->item->id) || $this->item->checked_out == Factory::getUser()->id;
+$canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $this->item->id) || $this->item->checked_out == $this->getCurrentUser()->id;
 $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id, $this->item->parent_id, $this->item->language, $this->getLayout()));
 ?>
 

@@ -16,6 +16,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\HTML\Helpers\Sidebar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
+use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
@@ -43,19 +44,22 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-    $this->state         = $this->get('State');
-		$this->items         = $this->get('Items');    
-		$this->pagination    = $this->get('Pagination');
-		$this->filterForm    = $this->get('FilterForm');
-		$this->activeFilters = $this->get('ActiveFilters');
+    /** @var ImagesModel $model */
+    $model = $this->getModel();
+
+    $this->state         = $model->getState();
+    $this->items         = $model->getItems();		
+		$this->pagination    = $model->getPagination();
+		$this->filterForm    = $model->getFilterForm();
+		$this->activeFilters = $model->getActiveFilters();
     
 		// Check if filesystem plugins are available
 		JoomHelper::checkFilesystems();
 
 		// Check for errors.
-		if(\count($errors = $this->get('Errors')))
+		if(count($errors = $model->getErrors()))
 		{
-			throw new \Exception(implode("\n", $errors));
+			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
 		$this->addToolbar();
@@ -75,10 +79,11 @@ class HtmlView extends JoomGalleryView
   {
     ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES'), "image");
 
-    $toolbar = Toolbar::getInstance('toolbar');
+    /** @var Toolbar $model */
+    $toolbar = $this->getToolbar();
 
     // Check if the form exists before showing the add/edit buttons
-    $formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Images';
+    $formPath = _JOOM_PATH_ADMIN . '/src/View/Images';
 
     // Show button back to control panel
     $html = '<a href="index.php?option=com_joomgallery&amp;view=control" class="btn btn-primary"><span class="icon-arrow-left-4" title="'.Text::_('COM_JOOMGALLERY_CONTROL_PANEL').'"></span> '.Text::_('COM_JOOMGALLERY_CONTROL_PANEL').'</a>';

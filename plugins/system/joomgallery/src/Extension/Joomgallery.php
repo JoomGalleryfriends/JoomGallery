@@ -17,7 +17,9 @@ use Joomla\Event\Priority;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\EventInterface;
 use Joomla\Event\SubscriberInterface;
+use Joomla\Event\DispatcherAwareTrait;
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\Event\DispatcherAwareInterface;
 use Joomla\CMS\Event\Model\AfterCleanCacheEvent;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
@@ -28,8 +30,10 @@ use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
  * @package JoomGallery
  * @since   4.0.0
  */
-final class Joomgallery extends CMSPlugin implements SubscriberInterface
+final class Joomgallery extends CMSPlugin implements SubscriberInterface, DispatcherAwareInterface
 {
+  use DispatcherAwareTrait;
+
   /**
    * Global database object
    *

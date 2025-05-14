@@ -30,6 +30,7 @@ class TagTable extends Table
 {
   use JoomTableTrait;
   use GlobalAssetTableTrait;
+  use LegacyDatabaseTrait;
 
   /**
    * List of images connected to this tag
@@ -92,7 +93,7 @@ class TagTable extends Table
 			}
 			else
 			{
-				if(Factory::getConfig()->get('unicodeslugs') == 1)
+				if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
 				{
 					$array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
 				}
@@ -104,7 +105,7 @@ class TagTable extends Table
 		}
     else
     {
-      if(Factory::getConfig()->get('unicodeslugs') == 1)
+      if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
       {
         $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['alias']));
       }
@@ -251,7 +252,7 @@ class TagTable extends Table
     }
 
     // Load db driver
-    $db = $this->getDbo();
+    $db = $this->getDatabase();
 
     foreach($img_id as $key => $iid)
     {
@@ -300,7 +301,7 @@ class TagTable extends Table
     }
 
     // Load db driver
-    $db    = $this->getDbo();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true);
 
     // Create where conditions
