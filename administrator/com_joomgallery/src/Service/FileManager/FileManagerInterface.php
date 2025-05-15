@@ -192,7 +192,7 @@ interface FileManagerInterface
    * Returns the path to an image
    *
    * @param   object|int|string         $img       Image object, image ID or image alias (new images: ID=0)
-   * @param   string                    $type      Imagetype
+   * @param   string                    $type      Imagetype (default: thumbnail)
    * @param   object|int|string|bool    $catid     Category object, category ID, category alias or category path (default: false)
    * @param   string|bool               $filename  The filename (default: false)
    * @param   boolean                   $root      True to add the system root to the path
@@ -202,7 +202,7 @@ interface FileManagerInterface
    * 
    * @since   4.0.0
    */
-  public function getImgPath($img, $type, $catid=false, $filename=false, $root=false, $logfile='jerror');
+  public function getImgPath($img, $type='thumbnail', $catid=false, $filename=false, $root=false, $logfile='jerror');
 
   /**
    * Returns the path to a category without root path.
