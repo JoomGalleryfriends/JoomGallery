@@ -95,17 +95,21 @@ class RawView extends JoomGalleryView
       $this->app->redirect(Route::_('index.php', false), 404);
     }    
 
-    // Set mime encoding
+    // Set mime encoding to document
     $this->getDocument()->setMimeEncoding($file_info->mime_type);
 
     // Set header to specify the file name
+    $this->app->setHeader('Content-Type', $file_info->mime_type);
+    $this->app->setHeader('Content-Disposition','inline; filename='.\basename($img_path));
+    $this->app->setHeader('Content-Length',\strval($file_info->size));
     $this->app->setHeader('Cache-Control','no-cache, must-revalidate');
     $this->app->setHeader('Pragma','no-cache');
-    $this->app->setHeader('Content-disposition','inline; filename='.\basename($img_path));
-    $this->app->setHeader('Content-Length',\strval($file_info->size));
 
-    \ob_end_clean(); //required here or large files will not work
+    // Required for large files to work properly
+    if(\ob_get_level() > 0) \ob_end_clean();
+
     \fpassthru($resource);
+    \fclose($resource);
   }
 
   /**
