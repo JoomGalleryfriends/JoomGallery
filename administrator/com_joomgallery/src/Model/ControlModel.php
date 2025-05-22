@@ -53,7 +53,7 @@ class ControlModel extends BaseDatabaseModel
   {
     $statisticdata = array();
 
-    $db = Factory::getContainer()->get(DatabaseInterface::class);
+    $db = $this->getDatabase();
 
     $query = $db->getQuery(true)
       ->select($db->quoteName('id'))
@@ -114,7 +114,7 @@ class ControlModel extends BaseDatabaseModel
   {
     $galleryinfodata = array();
 
-    $db = Factory::getContainer()->get(DatabaseInterface::class);
+    $db = $this->getDatabase();
 
     $query = $db->getQuery(true)
                 ->select($db->quoteName('manifest_cache'))
@@ -198,7 +198,10 @@ class ControlModel extends BaseDatabaseModel
       try
       {
         $info_extension    = $this->getBestUpdate(JoomHelper::fetchXML($url));
-        $extensions[$name] = \json_decode(\json_encode($info_extension), true);
+        if($info_extension)
+        {
+          $extensions[$name] = \json_decode(\json_encode($info_extension), true);
+        }        
       }
       catch (\Exception $e)
       {
@@ -222,7 +225,7 @@ class ControlModel extends BaseDatabaseModel
   {
     $InstalledExtensionsData = array();
 
-    $db = Factory::getContainer()->get(DatabaseInterface::class);
+    $db = $this->getDatabase();
 
     $query = $db->getQuery(true)
                 ->select($db->quoteName(array('extension_id', 'enabled', 'manifest_cache')))

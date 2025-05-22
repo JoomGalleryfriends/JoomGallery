@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 use \Joomla\CMS\Factory;
 use \Joomla\Input\Input;
-use \Joomla\CMS\Filesystem\Path;
+use \Joomla\Filesystem\Path;
 use \Joomla\CMS\Application\CMSApplication;
 use \Joomla\CMS\MVC\Controller\BaseController;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
@@ -64,7 +64,7 @@ class DisplayController extends BaseController
    *
    * @since   4.0.0
    */
-  public function __construct($config = array(), MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
+  public function __construct($config = array(), ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
   {
     parent::__construct($config, $factory, $app, $input);
 

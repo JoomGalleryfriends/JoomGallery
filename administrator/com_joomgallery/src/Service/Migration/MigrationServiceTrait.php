@@ -13,8 +13,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 
 use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Filesystem\Folder;
-use \Joomla\CMS\Filesystem\Path;
+use \Joomla\Filesystem\Folder;
+use \Joomla\Filesystem\Path;
 
 /**
 * Trait to implement MigrationServiceInterface

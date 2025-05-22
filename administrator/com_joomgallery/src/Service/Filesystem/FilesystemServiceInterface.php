@@ -19,15 +19,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 interface FilesystemServiceInterface
 {
   /**
-	 * Storage for the filesystem helper class.
-	 *
-	 * @var FilesystemInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $filesystem;
-
-  /**
 	 * Creates the filesystem helper class
    *
    * @param   string  $filesystem  Name of the filesystem adapter to be used

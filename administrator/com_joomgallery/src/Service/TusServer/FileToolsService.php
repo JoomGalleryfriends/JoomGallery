@@ -10,7 +10,7 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 // No direct access
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\FileNotFoundException;
 
@@ -72,7 +72,7 @@ class FileToolsService
             header('Content-Type: ' . $mime);
         }
 
-        if (strstr(filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING), "MSIE") != false) {
+        if (strstr(filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_UNSAFE_RAW), "MSIE") != false) {
             header("Content-Disposition: ".$openMode."; filename=" . urlencode($fileName) . '; modification-date="' . date('r', $mtime) . '";');
         }
         else {

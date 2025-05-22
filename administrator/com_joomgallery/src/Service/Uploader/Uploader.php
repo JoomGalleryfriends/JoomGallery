@@ -229,8 +229,11 @@ abstract class Uploader implements UploaderInterface
    */
   public function overrideData(&$data): bool
   {
+    // Create filesystem service
+    $this->component->createFilesystem();
+
     // Get image extension
-    $tag = strtolower(JFile::getExt($this->src_file));
+    $tag = $this->component->getFilesystem()->getExt($this->src_file);
 
     if(!($tag == 'jpg' || $tag == 'jpeg' || $tag == 'jpe' || $tag == 'jfif'))
     {

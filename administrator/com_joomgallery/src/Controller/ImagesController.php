@@ -41,7 +41,7 @@ class ImagesController extends JoomAdminController
 	 *
 	 * @since   4.0.0
 	 */
-	public function __construct($config = array(), MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
+	public function __construct($config = array(), ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
 	{
     parent::__construct($config, $factory, $app, $input);
 
@@ -126,7 +126,7 @@ class ImagesController extends JoomAdminController
         $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'), 'info', 'jerror');
       }
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->component->addLog($e->getMessage(), 'warning', 'jerror');
 

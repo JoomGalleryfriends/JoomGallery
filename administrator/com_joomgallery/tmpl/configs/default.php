@@ -25,7 +25,7 @@ $wa->useStyle('com_joomgallery.admin')
 HTMLHelper::_('bootstrap.tooltip');
 
 $user      = $this->app->getIdentity();
-$userId    = $user->get('id');
+$userId    = $user->id;
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery');

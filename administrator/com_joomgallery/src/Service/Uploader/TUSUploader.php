@@ -82,11 +82,11 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     }
 
     // Get number of uploaded images of the current user
-    $counter = $this->getImageNumber($user->get('id'));
+    $counter = $this->getImageNumber($user->id);
     $is_site = $this->app->isClient('site');
 
     // Check if user already exceeds its upload limit
-    if($is_site && $counter > ($this->component->getConfig()->get('jg_maxuserimage') - 1) && $user->get('id'))
+    if($is_site && $counter > ($this->component->getConfig()->get('jg_maxuserimage') - 1) && $user->id)
     {
       $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
       $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_MAY_ADD_MAX_OF', $this->component->getConfig()->get('jg_maxuserimage'), $timespan > 0 ? Text::plural('COM_JOOMGALLERY_UPLOAD_NEW_IMAGE_MAXCOUNT_TIMESPAN', $timespan) : ''));

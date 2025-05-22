@@ -16,6 +16,7 @@ use \Joomla\Uri\Uri;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Menu\MenuItem;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
 
@@ -137,6 +138,27 @@ class JoomGalleryView extends BaseHtmlView
 	{
 		return isset($this->state->{$state}) ? $this->state->{$state} : false;
 	}
+
+  /**
+	 * Returns the toolbar
+	 *
+	 * @return Toolbar
+	 */
+  public function getToolbar(): Toolbar
+  {
+    try
+    {
+      // Try it the new/modern way
+      $toolbar = $this->getDocument()->getToolbar();
+    }
+    catch(\Throwable $th)
+    {
+      // Try it the old way
+      $toolbar = Toolbar::getInstance('toolbar');
+    }
+
+    return $toolbar;
+  }
 
   
   /**

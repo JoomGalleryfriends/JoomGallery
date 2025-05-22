@@ -210,7 +210,7 @@ abstract class JoomItemModel extends ItemModel
 			// Attempt to check the row out.
 			if(\method_exists($table, 'checkout'))
 			{
-				if(!$table->checkout($user->get('id'), $id))
+				if(!$table->checkout($user->id, $id))
 				{
 					return false;
 				}

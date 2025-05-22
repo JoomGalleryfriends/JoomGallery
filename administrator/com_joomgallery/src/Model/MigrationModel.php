@@ -18,8 +18,8 @@ use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Event\Model;
 use \Joomla\CMS\Language\Text;
 use \Joomla\Registry\Registry;
-use \Joomla\CMS\Filesystem\Path;
-use \Joomla\CMS\Filesystem\Folder;
+use \Joomla\Filesystem\Path;
+use \Joomla\Filesystem\Folder;
 use \Joomla\Database\DatabaseFactory;
 use \Joomla\CMS\Language\Multilanguage;
 use \Joomla\CMS\Form\FormFactoryInterface;
@@ -118,7 +118,7 @@ class MigrationModel extends JoomAdminModel
     if(!$params || empty($params))
     {
       // Load params from db if there are migrateables in database
-      $db    = $this->getDbo();
+      $db    = $this->getDatabase();
       $query = $db->getQuery(true);
 
       // Select the required fields from the table.
@@ -426,7 +426,7 @@ class MigrationModel extends JoomAdminModel
     // Get available types from db
     try
     {
-      $db    = $this->getDbo();
+      $db    = $this->getDatabase();
       $query = $this->getListQuery();
 
       if(\is_string($query))
@@ -574,7 +574,7 @@ class MigrationModel extends JoomAdminModel
     // Create a new query object.
     try
     {
-      $db    = $this->getDbo();
+      $db    = $this->getDatabase();
       $query = $db->getQuery(true);
 
       // Select the required fields from the table.
@@ -1236,7 +1236,7 @@ class MigrationModel extends JoomAdminModel
     }
 
     // Create a new query object.
-		$db    = $this->getDbo();
+		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
 
     // Select the required fields from the table.

@@ -19,15 +19,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 interface MigrationServiceInterface
 {
   /**
-	 * Storage for the migration service class.
-	 *
-	 * @var MigrationInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $migration;
-
-  /**
 	 * Creates the migration service class
    * 
    * @param   string  $script   Name of the migration script to be used

@@ -19,15 +19,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Refresher;
 interface RefresherServiceInterface
 {
   /**
-	 * Refresher for the refresher class.
-	 *
-	 * @var RefresherInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $refresher;
-
-  /**
 	 * Creates the refresher helper class
    * 
    * @param   array  $params   An array with optional parameters

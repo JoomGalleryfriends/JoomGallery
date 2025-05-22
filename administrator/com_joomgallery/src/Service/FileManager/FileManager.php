@@ -12,7 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\FileManager;
 \defined('_JEXEC') or die;
 
 use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Filesystem\Path;
+use \Joomla\Filesystem\Path;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerInterface;

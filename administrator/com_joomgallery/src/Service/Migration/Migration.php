@@ -239,7 +239,7 @@ abstract class Migration implements MigrationInterface
    *
    * @since   4.0.0
    */
-  public function getQueue(string $type, object $migrateable=null): array
+  public function getQueue(string $type, ?object $migrateable = null): array
   {
     if(\is_null($migrateable))
     {
@@ -1466,7 +1466,7 @@ abstract class Migration implements MigrationInterface
     // Get a list of used ids from destination database
     $destQuery = $db->getQuery(true);
     $destQuery->select($db->quoteName('id'))
-        ->from($db->quoteName($tablename));
+              ->from($db->quoteName($tablename));
     $destQuery_string = \trim($destQuery->__toString());
 
     if($this->params->get('same_db', 1))
@@ -1474,7 +1474,7 @@ abstract class Migration implements MigrationInterface
       // Get list of used ids from source database
       $srcQuery = $db->getQuery(true);
       $srcQuery->select($db->quoteName($migrateable->get('src_pk'), 'id'))
-          ->from($db->quoteName($migrateable->get('src_table')));
+               ->from($db->quoteName($migrateable->get('src_table')));
       $srcQuery_string = \trim($srcQuery->__toString());
 
       // Get a list of ids used in both source and destination
@@ -1492,7 +1492,7 @@ abstract class Migration implements MigrationInterface
       // Get list of used ids from the source database
       $query = $src_db->getQuery(true);
       $query->select($db->quoteName($migrateable->get('src_pk'), 'id'))
-          ->from($db->quoteName($migrateable->get('src_table')));
+            ->from($db->quoteName($migrateable->get('src_table')));
       $src_db->setQuery($query);
 
       // Load list from source database

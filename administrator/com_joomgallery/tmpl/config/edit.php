@@ -26,7 +26,7 @@ HTMLHelper::_('bootstrap.tooltip');
 // Import modal
 $importModal = array(
   'selector' => 'import_modal',
-  'params'   => array('title'  => $this->item->get('title').': '.Text::_($this->form->getField('import_json')->getAttribute('title')),
+  'params'   => array('title'  => $this->item->title.': '.Text::_($this->form->getField('import_json')->getAttribute('title')),
                       'footer' => '<button class="btn btn-primary" onclick="submitImport(this, event)" aria-label="'.Text::_('COM_JOOMGALLERY_IMPORT').'">'.Text::_('COM_JOOMGALLERY_IMPORT').'</button>'
                      ),
   'body'     => $this->form->renderField('import_json'),
@@ -39,7 +39,7 @@ $js .= '};';
 // Note modal
 $noteModal = array(
   'selector' => 'note_modal',
-  'params'   => array('title'  => $this->item->get('title').': '.Text::_($this->form->getField('note')->getAttribute('title')),
+  'params'   => array('title'  => $this->item->title.': '.Text::_($this->form->getField('note')->getAttribute('title')),
                       'footer' => '<button class="btn btn-primary" data-bs-dismiss="modal" onclick="event.preventDefault()" aria-label="'.Text::_('JCLOSE').'">'.Text::_('JCLOSE').'</button>'
                     ),
   'body'     => $this->form->renderField('note'),

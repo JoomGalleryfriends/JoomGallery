@@ -17,8 +17,8 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Object\CMSObject;
 use \Joomla\CMS\Plugin\PluginHelper;
 use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Filesystem\File as JFile;
-use \Joomla\CMS\Filesystem\Path as JPath;
+use \Joomla\Filesystem\File as JFile;
+use \Joomla\Filesystem\Path as JPath;
 
 use \Joomla\Component\Media\Administrator\Adapter\AdapterInterface;
 use \Joomla\Component\Media\Administrator\Event\FetchMediaItemEvent;
@@ -102,7 +102,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
     }
 
     // Load language of com_media
-    Factory::getLanguage()->load('com_media', JPATH_ADMINISTRATOR);
+    Factory::getApplication()->getLanguage()->load('com_media', JPATH_ADMINISTRATOR);
   }
 
   /**
@@ -148,7 +148,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
       $filename = $file;
     }
 
-    if(Factory::getConfig()->get('unicodeslugs') == 1)
+    if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
     {
       $filename = OutputFilter::stringURLUnicodeSlug(trim($filename));
     }
@@ -261,7 +261,16 @@ class Filesystem implements AdapterInterface, FilesystemInterface
    */
   public function getExt(string $file): string
   {
-    $ext = JFile::getExt($file);
+    try
+    {
+      // Joomla 5+
+      $ext = JFile::getExt($file);
+    }
+    catch(\Throwable $th)
+    {
+      // Joomla 4-
+      $ext = \Joomla\CMS\Filesystem\File::getExt($file);
+    }    
 
     // Check if it is a valid extension
     $valid_rex = !\boolval(\preg_match('/[^a-zA-Z]/', $ext));  // File extension has to be only letters
@@ -582,7 +591,16 @@ class Filesystem implements AdapterInterface, FilesystemInterface
     $object->name      = $name;
     $object->path      = $path;
     $object->data      = $data;
-    $object->extension = strtolower(JFile::getExt($name));
+    try
+    {
+      // Joomla 5+
+      $object->extension = strtolower(JFile::getExt($name));
+    }
+    catch(\Throwable $th)
+    {
+      // Joomla 4-
+      $object->extension = strtolower(\Joomla\CMS\Filesystem\File::getExt($name));
+    }    
 
     PluginHelper::importPlugin('content');
 
@@ -634,7 +652,16 @@ class Filesystem implements AdapterInterface, FilesystemInterface
     $object->name      = $name;
     $object->path      = $path;
     $object->data      = $data;
-    $object->extension = strtolower(JFile::getExt($name));
+    try
+    {
+      // Joomla 5+
+      $object->extension = strtolower(JFile::getExt($name));
+    }
+    catch(\Throwable $th)
+    {
+      // Joomla 4-
+      $object->extension = strtolower(\Joomla\CMS\Filesystem\File::getExt($name));
+    }
 
     PluginHelper::importPlugin('content');
 

@@ -235,7 +235,6 @@ class ConfigForm extends Form
    * @return  ConfigForm  Form instance.
    *
    * @since   4.0.0
-   * @deprecated  5.0 Use the FormFactory service from the container
    * @throws  \InvalidArgumentException if no data provided.
    * @throws  \RuntimeException if the form could not be loaded.
    */

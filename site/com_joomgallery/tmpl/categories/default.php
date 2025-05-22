@@ -110,7 +110,7 @@ if($saveOrder && !empty($this->items))
                   $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
                   $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
                   $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
-									$canCheckin = $canChange || $item->checked_out == Factory::getUser()->id;
+									$canCheckin = $canChange || $item->checked_out == $this->getCurrentUser()->id;
 									$disabled   = ($item->checked_out > 0) ? 'disabled' : '';
                 
 									// Get the parents of item for sorting

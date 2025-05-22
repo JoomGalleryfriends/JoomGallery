@@ -16,6 +16,7 @@ use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
+use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
@@ -43,9 +44,12 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		$this->state      = $this->get('State');
-		$this->item       = $this->get('Item');
-		$this->form       = $this->get('Form');
+		/** @var ImageModel $model */
+    $model = $this->getModel();
+
+		$this->state      = $model->getState();
+		$this->item       = $model->getItem();
+		$this->form       = $model->getForm();
     $this->config     = JoomHelper::getService('config');
     $this->imagetypes = JoomHelper::getRecords('imagetypes');
     $rating           = JoomHelper::getRating($this->item->id);
@@ -58,9 +62,9 @@ class HtmlView extends JoomGalleryView
     }
 
 		// Check for errors.
-		if(\count($errors = $this->get('Errors')))
+		if(count($errors = $model->getErrors()))
 		{
-			throw new \Exception(implode("\n", $errors));
+			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
     if($this->_layout == 'upload')
@@ -111,14 +115,15 @@ class HtmlView extends JoomGalleryView
 	{
 		Factory::getApplication()->input->set('hidemainmenu', true);
 
-		$toolbar = Toolbar::getInstance('toolbar');
+		/** @var Toolbar $model */
+    $toolbar = $this->getToolbar();
 
 		$user  = Factory::getApplication()->getIdentity();
 		$isNew = ($this->item->id == 0);
 
 		if(isset($this->item->checked_out))
 		{
-			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
 		}
 		else
 		{

@@ -10,10 +10,11 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // No direct access
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
+use \Joomla\Filesystem\File;
+use \Joomla\Filesystem\Path;
 use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Filesystem\File;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifFrameExtractor;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsInterface;
@@ -534,7 +535,7 @@ abstract class IMGtools implements IMGtoolsInterface
   protected function checkValidImage($img)
   {
     // Path must point to an existing file
-    if(!(File::exists($img)))
+    if(!(\is_file(Path::clean($img))))
     {
       $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING'));
       $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING'), 'error', 'jerror');
@@ -975,7 +976,7 @@ abstract class IMGtools implements IMGtoolsInterface
     // Restore src from backup file or delete corrupt dst file
     if($src_file == $dst_file && $src_file != '')
     {
-      if(File::exists($src_file.'bak'))
+      if(\is_file(Path::clean($src_file.'bak')))
       {
         File::copy($src_file.'bak',$src_file);
         File::delete($src_file.'bak');
@@ -983,14 +984,14 @@ abstract class IMGtools implements IMGtoolsInterface
     }
     elseif($dst_file != '')
     {
-      if(File::exists($dst_file.'bak'))
+      if(\is_file(Path::clean($dst_file.'bak')))
       {
         File::copy($dst_file.'bak',$dst_file);
         File::delete($dst_file.'bak');
       }
       else
       {
-        if(File::exists($dst_file))
+        if(\is_file(Path::clean($dst_file)))
         {
           File::delete($dst_file);
         }

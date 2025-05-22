@@ -18,7 +18,7 @@ use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\Registry\Registry;
 use \Joomla\CMS\Access\Access;
-use \Joomla\CMS\Filesystem\Path;
+use \Joomla\Filesystem\Path;
 use \Joomla\CMS\Http\HttpFactory;
 use \Joomla\CMS\Language\Multilanguage;
 use \Joomla\Database\DatabaseInterface;
@@ -1120,7 +1120,7 @@ class JoomHelper
       if(!$adapter)
       {
         // Plugin is not installed, not enabled or not correctly configured. Show warning message.
-        $lang = Factory::getLanguage();
+        $lang = Factory::getApplication()->getLanguage();
 
         if(!$lang->getPaths($plugin_fullname))
         {

@@ -605,6 +605,12 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     require_once $multipleassetstabletrait_path;
 
+    // Load LegacyDatabaseTrait
+    $legacydatabasetrait_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'LegacyDatabaseTrait.php';
+    $legacydatabasetraitClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\LegacyDatabaseTrait';
+
+    require_once $legacydatabasetrait_path;
+
     // Load MultipleAssetsTable
     $multipleassetstable_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'MultipleAssetsTable.php';
     $multipleassetstableClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\MultipleAssetsTable';

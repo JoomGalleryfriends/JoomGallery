@@ -385,7 +385,16 @@ abstract class Config extends \stdClass implements ConfigInterface
     $id   = intval($id);
     $item = $model->getItem($id);
 
-    return $item->getProperties();
+    if(\method_exists($item, 'getProperties'))
+    {
+      $properties = $item->getProperties();
+    }
+    else
+    {
+      $properties = \get_object_vars($item);
+    }
+
+    return $properties;
   }
 
   /**
@@ -456,7 +465,7 @@ abstract class Config extends \stdClass implements ConfigInterface
     }
 
     $userGroups  = \array_values($user->get('groups'));
-    $configGroup = $this->getUserSetting($user->get('id'));
+    $configGroup = $this->getUserSetting($user->id);
     
     if(\in_array($configGroup, $userGroups))
     {

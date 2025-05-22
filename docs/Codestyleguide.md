@@ -176,7 +176,7 @@ foreach ($array as $key=>$integer)
 if(  (  (   ($this->_config->get('jg_showdetailfavourite') == 0 && $this->_user->get('aid') < 1)
           || ($this->_config->get('jg_showdetailfavourite') == 1 && $this->_user->get('aid') < 2)
         )
-      ^ ($this->_config->get('jg_usefavouritesforpubliczip') == 1 && $this->_user->get('id') < 1)
+      ^ ($this->_config->get('jg_usefavouritesforpubliczip') == 1 && $this->_user->id < 1)
       )
     || $this->_config->get('jg_favourites') == 0
   )

@@ -114,7 +114,7 @@ if($saveOrder && !empty($this->items))
                   $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canCheckin = $canChange || $item->checked_out == Factory::getUser()->id;
+                  $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser()->id;
                   $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
                 ?>
 

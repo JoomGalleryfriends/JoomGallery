@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Gallery;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
@@ -51,20 +52,23 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		$this->state  = $this->get('State');
-		$this->params = $this->get('Params');
-		$this->item   = $this->get('Item');
+		/** @var GalleryModel $model */
+    $model = $this->getModel();
+
+    $this->state  = $model->getState();
+		$this->params = $model->getParams();
+		$this->item   = $model->getItem();
 
     // Load images
     $this->item->images = new \stdClass();
-    $this->item->images->items      = $this->get('Images');
-    $this->item->images->pagination = $this->get('ImagesPagination');
+    $this->item->images->items      = $model->getImages();
+    $this->item->images->pagination = $model->getImagesPagination();
 
     // Check for errors.
-    if(\count($errors = $this->get('Errors')))
-    {
-      throw new GenericDataException(\implode("\n", $errors), 500);
-    }
+		if(count($errors = $model->getErrors()))
+		{
+			throw new GenericDataException(implode("\n", $errors), 500);
+		}
 
     $this->_prepareDocument();
 

@@ -64,7 +64,7 @@ class CategoriesController extends JoomAdminController
         $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'));
       }
     }
-    catch (Exception $e)
+    catch (\Exception $e)
     {
       $this->component->addLog($e->getMessage(), 'warning', 'jerror');
 
