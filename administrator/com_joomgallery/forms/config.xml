@@ -972,6 +972,7 @@
             label="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES"
             description="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES_DESC"
             filter="int"
+            showon="jg_category_view_pagination:0[OR]jg_category_view_pagination:2"
         />
         <field name="jg_category_view_ord_images"
                type="list" 
