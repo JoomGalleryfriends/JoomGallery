@@ -28,7 +28,6 @@
       <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
     </sql>
   </uninstall>
-
   <files folder="site/com_joomgallery">
     <folder>forms</folder>
     <folder>language</folder>
@@ -36,7 +35,6 @@
     <folder>src</folder>
     <folder>tmpl</folder>
   </files>
-
   <media destination="com_joomgallery" folder="media/com_joomgallery">
     <folder>css</folder>
     <folder>fonts</folder>
@@ -44,7 +42,6 @@
     <folder>images</folder>
     <filename>joomla.asset.json</filename>
   </media>
-
   <administration>
     <menu>COM_JOOMGALLERY</menu>
     <submenu>
