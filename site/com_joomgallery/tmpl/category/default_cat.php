@@ -102,6 +102,8 @@ $iniJS .= '  itemid: "1-' . $this->item->id . '",';
 $iniJS .= '  pagination: ' . $use_pagination . ',';
 $iniJS .= '  layout: "' . $category_class . '",';
 $iniJS .= '  num_columns: ' . $num_columns . ',';
+$iniJS .= '  numb_images: ' . $numb_images . ',';
+$iniJS .= '  reloaded_images: ' . $reloaded_images . ',';
 $iniJS .= '  lightbox: ' . ($lightbox ? 'true' : 'false') . ',';
 $iniJS .= '  lightbox_params: {container: "lightgallery-1-'.$this->item->id.'", selector: ".lightgallery-item"},';
 $iniJS .= '  thumbnails: ' . ($thumbnails ? 'true' : 'false') . ',';
@@ -253,7 +255,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
     <div class="infinite-scroll"></div>
     <div id="noMore" class="btn btn-outline-primary no-more-images hidden"><?php echo Text::_('COM_JOOMGALLERY_NO_MORE_IMAGES') ?></div>
   </div>
-  <?php elseif($use_pagination == 2) : ?>
+  <?php elseif($use_pagination == 2 && count($this->item->images->items) > $numb_images) : ?>
     <div class="load-more-container">
       <div id="loadMore" class="btn btn-outline-primary load-more"><span><?php echo Text::_('COM_JOOMGALLERY_LOAD_MORE') ?></span><i class="jg-icon-expand-more"></i></div>
       <div id="noMore" class="btn btn-outline-primary no-more-images hidden"><?php echo Text::_('COM_JOOMGALLERY_NO_MORE_IMAGES') ?></div>

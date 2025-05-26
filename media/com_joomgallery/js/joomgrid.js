@@ -4,6 +4,8 @@ const defaults = {
         pagination: 1,
         layout: 'masonry',
         num_columns: 3,
+        numb_images: 12,
+        reloaded_images: 3,
         lightbox: false,
         thumbnails: false,
         lightbox_obj: {},
@@ -97,9 +99,18 @@ var callback = function() {
     // Infinity scroll or load more
     if(settings.pagination == 1 && grid || settings.pagination == 2 && grid)
     {
+      let maxImages;
+      let loadImages;
+      if(settings.pagination == 1) {
+          maxImages  = settings.num_columns * 2;
+          loadImages = settings.num_columns * 3;
+      }
+      if(settings.pagination == 2) {
+          maxImages  = settings.numb_images;
+          loadImages = settings.reloaded_images;
+      }
+
       const items        = Array.from(grid.getElementsByClassName('jg-image'));
-      const maxImages    = settings.num_columns * 2;
-      const loadImages   = settings.num_columns * 3;
       const hiddenClass  = 'hidden-jg-image';
       const hiddenImages = Array.from(document.getElementsByClassName(hiddenClass));
 
@@ -116,7 +127,7 @@ var callback = function() {
           rootMargin: '200px',
           threshold: 0
         };
-        
+
         function observerCallback(entries, observer) {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -140,22 +151,24 @@ var callback = function() {
         fadeElms.forEach(el => observer.observe(el));
       } else if(settings.pagination == 2) {
         // Load more button
-        const loadMore = document.getElementById(settings.loadmoreid);
-    
-        loadMore.addEventListener('click', function () {
-          [].forEach.call(document.querySelectorAll('.' + hiddenClass), function (
-            item,
-            index
-          ) {
-            if (index < loadImages) {
-              item.classList.remove(hiddenClass);
-            }
-            if (document.querySelectorAll('.' + hiddenClass).length === 0) {
-              loadMore.style.display = 'none';
-              noMore.classList.remove('hidden');
-            }
+        if(document.getElementById(settings.loadmoreid)) {
+          const loadMore = document.getElementById(settings.loadmoreid);
+
+          loadMore.addEventListener('click', function () {
+            [].forEach.call(document.querySelectorAll('.' + hiddenClass), function (
+              item,
+              index
+            ) {
+              if (index < loadImages) {
+                item.classList.remove(hiddenClass);
+              }
+              if (document.querySelectorAll('.' + hiddenClass).length === 0) {
+                loadMore.style.display = 'none';
+                noMore.classList.remove('hidden');
+              }
+            });
           });
-        });
+        }
       }
     }
 
