@@ -29,26 +29,27 @@ $subcategories_caption_align = $this->params['configs']->get('jg_category_view_s
 $subcategories_random_image  = $this->params['configs']->get('jg_category_view_subcategories_random_image', 1, 'INT');
 
 // Image params
-$category_class   = $this->params['configs']->get('jg_category_view_class', 'masonry', 'STRING');
-$num_columns      = $this->params['configs']->get('jg_category_view_num_columns', 6, 'INT');
-$image_type       = $this->params['configs']->get('jg_category_view_type_images', 'thumbnail', 'STRING');
-$caption_align    = $this->params['configs']->get('jg_category_view_caption_align', 'right', 'STRING');
-$image_class      = $this->params['configs']->get('jg_category_view_image_class', 0, 'INT');
-$justified_height = $this->params['configs']->get('jg_category_view_justified_height', 320, 'INT');
-$justified_gap    = $this->params['configs']->get('jg_category_view_justified_gap', 5, 'INT');
-$show_title       = $this->params['configs']->get('jg_category_view_images_show_title', 0, 'INT');
-$numb_images      = $this->params['configs']->get('jg_category_view_numb_images', 12, 'INT');
-$use_pagination   = $this->params['configs']->get('jg_category_view_pagination', 0, 'INT');
-$reloaded_images  = $this->params['configs']->get('jg_category_view_number_of_reloaded_images', 3, 'INT');
-$image_link       = $this->params['configs']->get('jg_category_view_image_link', 'defaultview', 'STRING');
-$title_link       = $this->params['configs']->get('jg_category_view_title_link', 'defaultview', 'STRING');
-$lightbox_image   = $this->params['configs']->get('jg_category_view_lightbox_image', 'detail', 'STRING');
-$thumbnails       = $this->params['configs']->get('jg_category_view_lightbox_thumbnails', 0, 'INT');
-$show_description = $this->params['configs']->get('jg_category_view_show_description', 0, 'INT');
-$show_imgdate     = $this->params['configs']->get('jg_category_view_show_imgdate', 0, 'INT');
-$show_imgauthor   = $this->params['configs']->get('jg_category_view_show_imgauthor', 0, 'INT');
-$show_tags        = $this->params['configs']->get('jg_category_view_show_tags', 0, 'INT');
+$category_class      = $this->params['configs']->get('jg_category_view_class', 'masonry', 'STRING');
+$num_columns         = $this->params['configs']->get('jg_category_view_num_columns', 6, 'INT');
+$image_type          = $this->params['configs']->get('jg_category_view_type_images', 'thumbnail', 'STRING');
+$caption_align       = $this->params['configs']->get('jg_category_view_caption_align', 'right', 'STRING');
+$image_class         = $this->params['configs']->get('jg_category_view_image_class', 0, 'INT');
+$justified_height    = $this->params['configs']->get('jg_category_view_justified_height', 320, 'INT');
+$justified_gap       = $this->params['configs']->get('jg_category_view_justified_gap', 5, 'INT');
+$show_title          = $this->params['configs']->get('jg_category_view_images_show_title', 0, 'INT');
+$numb_images         = $this->params['configs']->get('jg_category_view_numb_images', 12, 'INT');
+$use_pagination      = $this->params['configs']->get('jg_category_view_pagination', 0, 'INT');
+$reloaded_images     = $this->params['configs']->get('jg_category_view_number_of_reloaded_images', 3, 'INT');
+$image_link          = $this->params['configs']->get('jg_category_view_image_link', 'defaultview', 'STRING');
+$title_link          = $this->params['configs']->get('jg_category_view_title_link', 'defaultview', 'STRING');
+$show_description    = $this->params['configs']->get('jg_category_view_show_description', 0, 'INT');
+$show_imgdate        = $this->params['configs']->get('jg_category_view_show_imgdate', 0, 'INT');
+$show_imgauthor      = $this->params['configs']->get('jg_category_view_show_imgauthor', 0, 'INT');
+$show_tags           = $this->params['configs']->get('jg_category_view_show_tags', 0, 'INT');
 $browse_images_link  = $this->params['configs']->get('jg_category_view_browse_images_link', 1, 'INT');
+$lightbox_image      = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
+$lightbox_thumbnails = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
+$lightbox_zoom       = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -88,6 +89,7 @@ if($image_link == 'lightgallery' || $title_link == 'lightgallery')
 
   $wa->useScript('com_joomgallery.lightgallery');
   $wa->useScript('com_joomgallery.lg-thumbnail');
+  $wa->useScript('com_joomgallery.lg-zoom');
   $wa->useStyle('com_joomgallery.lightgallery-bundle');
 }
 
@@ -104,7 +106,8 @@ $iniJS .= '  layout: "' . $category_class . '",';
 $iniJS .= '  num_columns: ' . $num_columns . ',';
 $iniJS .= '  lightbox: ' . ($lightbox ? 'true' : 'false') . ',';
 $iniJS .= '  lightbox_params: {container: "lightgallery-1-'.$this->item->id.'", selector: ".lightgallery-item"},';
-$iniJS .= '  thumbnails: ' . ($thumbnails ? 'true' : 'false') . ',';
+$iniJS .= '  thumbnails: ' . ($lightbox_thumbnails ? 'true' : 'false') . ',';
+$iniJS .= '  zoom: ' . ($lightbox_zoom ? 'true' : 'false') . ',';
 $iniJS .= '  justified: {height: '.$justified_height.', gap: '.$justified_gap.'}';
 $iniJS .= '};';
 

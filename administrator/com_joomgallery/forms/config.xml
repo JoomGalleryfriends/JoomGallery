@@ -721,7 +721,6 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
-
         <field name="jg_record_hits_select"
            type="jgimagetype"
            multiple="true"
@@ -730,6 +729,37 @@
            showon="jg_record_hits:1"
            label="COM_JOOMGALLERY_CONFIG_RECORD_HITS_SELECT_LABEL"
            description="COM_JOOMGALLERY_CONFIG_RECORD_HITS_SELECT_LONG" />
+        <field
+            name="jg_lightbox_image"
+            type="jgimagetype"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_IMAGE"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_IMAGE_DESC"
+            default="detail"
+            validate="options" />
+        <field
+            name="jg_lightbox_thumbnails"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_THUMBNAILS"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_THUMBNAILS_DESC"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="jg_lightbox_zoom"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_ZOOM"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_ZOOM_DESC"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
     </fieldset>
 
     <fieldset type="tab" name="frontend-galleryview" label="COM_JOOMGALLERY_CONFIG_TAB_GALLERY_VIEW">
@@ -1117,27 +1147,6 @@
             <option value="none">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_NONE</option>
             <option value="defaultview">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_DETAILVIEW</option>
             <option value="lightgallery">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_LIGHTGALLERY</option>
-        </field>
-        <field
-            name="jg_category_view_lightbox_image"
-            type="jgimagetype"
-            label="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_IMAGE"
-            description="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_IMAGE_DESC"
-            default="detail"
-            validate="options"
-            showon="jg_category_view_image_link:lightgallery[OR]jg_category_view_title_link:lightgallery" />
-        <field
-            name="jg_category_view_lightbox_thumbnails"
-            type="radio"
-            label="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_THUMBNAILS"
-            description="COM_JOOMGALLERY_CONFIG_CATEGORY_LIGHTBOX_THUMBNAILS_DESC"
-            default="0"
-            layout="joomla.form.field.radio.switcher"
-            validate="options"
-            showon="jg_category_view_image_link:lightgallery[OR]jg_category_view_title_link:lightgallery"
-            >
-            <option value="0">JNO</option>
-            <option value="1">JYES</option>
         </field>
         <field name="spacer3"
             label="COM_JOOMGALLERY_CONFIG_IMAGE_INFORMATION"
