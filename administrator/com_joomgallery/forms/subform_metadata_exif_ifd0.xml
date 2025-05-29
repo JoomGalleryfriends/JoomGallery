@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <field name="ImageDescription"
+         type="text"
+         pattern="^[\x20-\x7E]*$"
+         label="COM_JOOMGALLERY_IFD0_IMAGEDESCRIPTION"
+         message="COM_JOOMGALLERY_IFD0_IMAGEDESCRIPTION_DESCRIPTION" />
+
+  <field name="Make"
+         type="text"
+         pattern="^[\x20-\x7E]*$"
+         label="COM_JOOMGALLERY_IFD0_MAKE"
+         message="COM_JOOMGALLERY_IFD0_MAKE_DESCRIPTION" />
+
+  <field name="Model"
+         type="text"
+         pattern="^[\x20-\x7E]*$"
+         label="COM_JOOMGALLERY_IFD0_MODEL"
+         message="COM_JOOMGALLERY_IFD0_MODEL_DESCRIPTION" />
+
+  <field name="Orientation"
+         type="list"
+         default="1"
+         label="COM_JOOMGALLERY_IFD0_ORIENTATION"
+         description="COM_JOOMGALLERY_IFD0_ORIENTATION_DESCRIPTION">
+      <option value="1">COM_JOOMGALLERY_IFD0_ORIENTATION_1</option>
+      <option value="2">COM_JOOMGALLERY_IFD0_ORIENTATION_2</option>
+      <option value="3">COM_JOOMGALLERY_IFD0_ORIENTATION_3</option>
+      <option value="4">COM_JOOMGALLERY_IFD0_ORIENTATION_4</option>
+      <option value="5">COM_JOOMGALLERY_IFD0_ORIENTATION_5</option>
+      <option value="6">COM_JOOMGALLERY_IFD0_ORIENTATION_6</option>
+      <option value="7">COM_JOOMGALLERY_IFD0_ORIENTATION_7</option>
+      <option value="8">COM_JOOMGALLERY_IFD0_ORIENTATION_8</option>
+  </field>
+
+  <field name="XResolution"
+         type="text"
+         pattern="^\d+\/\d+$"
+         label="COM_JOOMGALLERY_IFD0_XRESOLUTION"
+         message="COM_JOOMGALLERY_IFD0_XRESOLUTION_DESCRIPTION" />
+
+  <field name="YResolution"
+         type="text"
+         pattern="^\d+\/\d+$"
+         label="COM_JOOMGALLERY_IFD0_YRESOLUTION"
+         message="COM_JOOMGALLERY_IFD0_YRESOLUTION_DESCRIPTION" />
+
+  <field name="ResolutionUnit"
+         type="list"
+         default="1"
+         label="COM_JOOMGALLERY_IFD0_RESOLUTIONUNIT"
+         description="COM_JOOMGALLERY_IFD0_RESOLUTIONUNIT_DESCRIPTION">
+      <option value="1">COM_JOOMGALLERY_IFD0_RESOLUTIONUNIT_1</option>
+      <option value="2">COM_JOOMGALLERY_IFD0_RESOLUTIONUNIT_2</option>
+      <option value="3">COM_JOOMGALLERY_IFD0_RESOLUTIONUNIT_3</option>
+      <option value="4">COM_JOOMGALLERY_IFD0_RESOLUTIONUNIT_4</option>
+      <option value="5">COM_JOOMGALLERY_IFD0_RESOLUTIONUNIT_5</option>
+  </field>
+
+  <field name="Software"
+         type="text"
+         pattern="^[\x20-\x7E]*$"
+         label="COM_JOOMGALLERY_IFD0_SOFTWARE"
+         message="COM_JOOMGALLERY_IFD0_SOFTWARE_DESCRIPTION" />
+
+  <field name="DateTime"
+         type="calendar"
+         format="%Y:%m:%d %H:%M:%S"
+         label="COM_JOOMGALLERY_IFD0_DATETIME"
+         message="COM_JOOMGALLERY_IFD0_DATETIME_DESCRIPTION" />
+
+  <field name="Artist"
+         type="text"
+         pattern="^[\x20-\x7E]*$"
+         label="COM_JOOMGALLERY_IFD0_ARTIST"
+         message="COM_JOOMGALLERY_IFD0_ARTIST_DESCRIPTION" />
+
+  <field name="WhitePoint"
+         type="text"
+         pattern="^\d+\/\d+$"
+         label="COM_JOOMGALLERY_IFD0_WHITEPOINT"
+         message="COM_JOOMGALLERY_IFD0_WHITEPOINT_DESCRIPTION" />
+
+  <field name="PrimaryChromaticities"
+         type="text"
+         pattern="^\d+\/\d+$"
+         label="COM_JOOMGALLERY_IFD0_PRIMARYCHROMATICITIES"
+         message="COM_JOOMGALLERY_IFD0_PRIMARYCHROMATICITIES_DESCRIPTION" />
+
+  <field name="YCbCrCoefficients"
+         type="text"
+         pattern="^\d+\/\d+$"
+         label="COM_JOOMGALLERY_IFD0_YCBCRCOEFFICIENTS"
+         message="COM_JOOMGALLERY_IFD0_YCBCRCOEFFICIENTS_DESCRIPTION" />
+
+  <field name="YCbCrPositioning"
+         type="list"
+         default="1"
+         label="COM_JOOMGALLERY_IFD0_YCBCRPOSITIONING"
+         description="COM_JOOMGALLERY_IFD0_YCBCRPOSITIONING_DESCRIPTION">
+      <option value="1">COM_JOOMGALLERY_IFD0_RESOLUTIONUNIT_1</option>
+      <option value="2">COM_JOOMGALLERY_IFD0_RESOLUTIONUNIT_2</option>
+  </field>
+
+  <field name="ReferenceBlackWhite"
+         type="text"
+         pattern="^\d+\/\d+$"
+         label="COM_JOOMGALLERY_IFD0_REFERENCEBLACKWHITE"
+         message="COM_JOOMGALLERY_IFD0_REFERENCEBLACKWHITE_DESCRIPTION" />
+
+  <field name="Copyright"
+         type="text"
+         pattern="^[\x20-\x7E]*$"
+         label="COM_JOOMGALLERY_IFD0_COPYRIGHT"
+         message="COM_JOOMGALLERY_IFD0_COPYRIGHT_DESCRIPTION" />
+</form>

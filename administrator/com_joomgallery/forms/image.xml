@@ -309,13 +309,10 @@
            description="COM_JOOMGALLERY_DATE_DESC" />
 
     <field name="imgmetadata"
-           type="editor"
-           editor="codemirror"
-           buttons="false"
-           default=""
-           filter="\Joomla\CMS\Component\ComponentHelper::filterText"
-           label="COM_JOOMGALLERY_IMGMETADATA"
-           description="COM_JOOMGALLERY_IMGMETADATA_DESC" />
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_imageimgmetadata.xml"
+           layout="joomla.form.field.subform.default"
+           label="COM_JOOMGALLERY_IMGMETADATA" />
 
     <field name="params"
            type="subform"

@@ -434,7 +434,10 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
           $quelle = $this->src_file;
         }
 
-        $meta_success = $this->copyMetadata($quelle, $file, $this->src_type, $this->dst_type, $new_orient, false);
+        // Create the Metadata service
+        $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
+
+        $meta_success = $this->component->getMetadata()->copyMetadata($quelle, $file, $this->src_type, $this->dst_type, $new_orient, false);
 
         if(!$meta_success)
         {
@@ -465,7 +468,10 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
           }
         }
 
-        $meta_success = $this->copyMetadata($file, $file, $this->src_type, $this->dst_type, $new_orient, false);
+        // Create the Metadata service
+        $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
+
+        $meta_success = $this->component->getMetadata()->copyMetadata($file, $file, $this->src_type, $this->dst_type, $new_orient, false);
 
         if(!$meta_success)
         {
