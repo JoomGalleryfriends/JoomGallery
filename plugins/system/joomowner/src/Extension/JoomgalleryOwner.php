@@ -11,6 +11,7 @@ namespace Joomgallery\Plugin\System\Joomowner\Extension;
 
 \defined('_JEXEC') or die;
 
+use Joomla\Event\DispatcherInterface;
 use Joomla\Event\Event;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -23,6 +24,7 @@ use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\Registry\Registry;
 
 /**
  * System plugin managing ownership of JoomGallery content
@@ -167,17 +169,8 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    */
   public function onMigrationBeforeSave(Event $event)
   {
-    if(\version_compare(JVERSION, '5.0.0', '<'))
-    {
-      // Joomla 4
-      [$context, &$table] = $event->getArguments();
-    }
-    else
-    {
-      // Joomla 5 or newer
-      extract($event->getArguments());
-      $table = &$event->getItem();
-    }
+    // J4x and J5x (5x: $context = getContext (); $table = $event->getArgument ('subject');
+    [$context, $table] = array_values($event->getArguments());
 
     if(\strpos($context, 'com_joomgallery') !== 0)
     {
@@ -187,11 +180,15 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
       return;
     }
 
+//    // debug event
+//    $logJson = json_encode($event->getArguments()) . "\r\n";
+//    file_put_contents(__DIR__ . '/logMigrationSave.txt', $logJson.PHP_EOL , FILE_APPEND | LOCK_EX);
+
     // Guess the type of content
     $typeAlias = isset($table->typeAlias) ? $table->typeAlias : $context;
     if(!$ownerField = $this->guessType($typeAlias))
     {
-      // We couldnt guess the type of content we are dealing with
+      // We couldn't guess the type of content we are dealing with
       $this->setResult($event, true);
 
       return;
@@ -217,43 +214,44 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    */
   public function onContentBeforeSave(Event $event)
   {
-    if(\version_compare(JVERSION, '5.0.0', '<'))
+    // J4x and J5x (5x: $context = getContext (); $table = $event->getArgument ('subject');
+    [$context, $table, $isNew, $data] = array_values($event->getArguments());
+
+    // fast exit: expect context string as 'com_plugins.plugin' or containing 'com_joomgallery'
+    if($context != 'com_plugins.plugin' && \strpos($context, 'com_joomgallery') === false)
     {
-      // Joomla 4
-      [$context, &$table, $isNew, $data] = $event->getArguments();
-    }
-    else
-    {
-      // Joomla 5 or newer
-      extract($event->getArguments());
-      $table = &$event->getItem(); 
+      return;
     }
 
+//    // debug event
+//    $logJson = json_encode($event->getArguments()) . "\r\n";
+//    file_put_contents(__DIR__ . '/logContentSave.txt', $logJson.PHP_EOL , FILE_APPEND | LOCK_EX);
+//
     if($context == 'com_plugins.plugin' && $table->name == 'plg_system_joomowner')
     {
       $newParams             = new Registry($table->params);
-      $userIdToChangeManualy = $newParams->get('userIdToChangeManualy', '');
+      $userIdToChangeManually = $newParams->get('userIdToChangeManualy', '');
 
       // Reset the fields
       $newParams->set('userIdToChangeManualy', '');
       $table->params = (string) $newParams;
 
-      if(empty($userIdToChangeManualy))
+      if(empty($userIdToChangeManually))
       {
         return;
       }
 
-      if($this->isUserExists($userIdToChangeManualy))
+      if($this->isUserExists($userIdToChangeManually))
       {
-        $this->app->enqueueMessage(Text::sprintf('PLG_SYSTEM_JOOMOWNER_ERROR_USER_ID_TO_CHANGE_MANUALY_EXISTS', $userIdToChangeManualy), 'error');
+        $this->app->enqueueMessage(Text::sprintf('PLG_SYSTEM_JOOMOWNER_ERROR_USER_ID_TO_CHANGE_MANUALLY_EXISTS', $userIdToChangeManually), 'error');
 
         return;
       }
 
-      if(!empty($userIdToChangeManualy))
+      if(!empty($userIdToChangeManually))
       {
         $this->params = $newParams;
-        $user = array('id' => $userIdToChangeManualy);
+        $user = array('id' => $userIdToChangeManually);
 
         $this->changeUser($user);
       }
@@ -271,7 +269,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     $typeAlias = isset($table->typeAlias) ? $table->typeAlias : $context;
     if(!$ownerField = $this->guessType($typeAlias))
     {
-      // We couldnt get the owner field. It probably does not exist.
+      // We could not get the owner field. It probably does not exist.
 		  $this->setResult($event, true);
 
       return;
@@ -299,16 +297,12 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    */
   public function onUserBeforeDelete(Event $event)
   {
-    if(\version_compare(JVERSION, '5.0.0', '<'))
-    {
-      // Joomla 4
-      [$user] = $event->getArguments();
-    }
-    else
-    {
-      // Joomla 5 or newer
-      $user = $event->getUser(); 
-    }
+//    // debug event
+//    $logJson = json_encode($event->getArguments()) . "\r\n";
+//    file_put_contents(__DIR__ . '/logUserDelete.txt', $logJson.PHP_EOL , FILE_APPEND | LOCK_EX);
+
+    // J4x and J5x (5x: $context = getContext (); $table = $event->getArgument ('subject');
+    [$user] = array_values($event->getArguments());
 
     $fallbackUser = $this->params->get('fallbackUser');
 
