@@ -23,8 +23,10 @@ $image_class             = $this->params['configs']->get('jg_gallery_view_image_
 $justified_height        = $this->params['configs']->get('jg_gallery_view_justified_height', 200, 'INT');
 $justified_gap           = $this->params['configs']->get('jg_gallery_view_justified_gap', 5, 'INT');
 $image_link              = $this->params['configs']->get('jg_gallery_view_image_link', 'defaultview', 'STRING');
-$lightbox_image          = $this->params['configs']->get('jg_category_view_lightbox_image', 'detail', 'STRING'); // Same as category view
 $browse_categories_link  = $this->params['configs']->get('jg_gallery_view_browse_categories_link', 1, 'INT');
+$lightbox_image          = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
+$lightbox_thumbnails     = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
+$lightbox_zoom           = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -49,6 +51,7 @@ if($image_link == 'lightgallery')
 
   $wa->useScript('com_joomgallery.lightgallery');
   $wa->useScript('com_joomgallery.lg-thumbnail');
+  $wa->useScript('com_joomgallery.lg-zoom');
   $wa->useStyle('com_joomgallery.lightgallery-bundle');
 }
 
@@ -60,6 +63,8 @@ $iniJS .= '  layout: "' . $gallery_class . '",';
 $iniJS .= '  num_columns: ' . $num_columns . ',';
 $iniJS .= '  lightbox: ' . ($lightbox ? 'true' : 'false') . ',';
 $iniJS .= '  lightbox_params: {container: "lightgallery-1-'.$this->item->id.'", selector: ".lightgallery-item"},';
+$iniJS .= '  thumbnails: ' . ($lightbox_thumbnails ? 'true' : 'false') . ',';
+$iniJS .= '  zoom: ' . ($lightbox_zoom ? 'true' : 'false') . ',';
 $iniJS .= '  justified: {height: '.$justified_height.', gap: '.$justified_gap.'}';
 $iniJS .= '};';
 
