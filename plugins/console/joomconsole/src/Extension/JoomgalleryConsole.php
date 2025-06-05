@@ -12,9 +12,11 @@ namespace JoomGallery\Plugin\Console\Joomconsole\Extension;
 \defined('_JEXEC') or die;
 // \defined('JPATH_PLATFORM') or die;
 
-//use Joomgallery\Component\JoomGallery\Administrator\Clicommand\Categorieslist;
-use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoriesList;
-use Joomgallery\Component\Joomgallery\Administrator\CliCommand\AddCategory;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Category;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryList;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Image;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ImageList;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Add;
 use Joomla\Application\ApplicationEvents;
 use Joomla\Application\Event\ApplicationEvent;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
@@ -39,8 +41,11 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
   // administrator\components\com_joomgallery\src\CliCommand
   // administrator\components\com_joomgallery\src\CliCommand
   private static $commands = [
-    CategoriesList::class,
-    AddCategory::class,
+    CategoryList::class,
+    Category::class,
+    ImageList::class,
+    Image::class,
+    Add::class,
   ];
 
   protected $autoloadLanguage = true;
