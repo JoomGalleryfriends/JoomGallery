@@ -192,6 +192,5 @@ class ImageList extends AbstractCommand
 
     return $images;
   }
-
 }
 
