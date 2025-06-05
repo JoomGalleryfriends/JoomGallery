@@ -19,7 +19,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class AddCategory extends AbstractCommand
+class Add extends AbstractCommand
 {
   use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
@@ -58,7 +58,7 @@ class AddCategory extends AbstractCommand
     // Configure the Symfony output helper
     $this->configureSymfonyIO($input, $output);
 //    $this->ioStyle->title(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-    $this->ioStyle->title('JoomGallery add category');
+    $this->ioStyle->title('WIP, not finished: JoomGallery add category');
 
     //--- assign option ----------------------------
 
@@ -316,9 +316,9 @@ class AddCategory extends AbstractCommand
     $this->addOption('parent_id', 'p', InputOption::VALUE_OPTIONAL, 'parent id (1=no parent)');
 
     $help = "<info>%command.name%</info> will add a joomgallery category
-		    \nUsage: <info>php %command.full_name%</info>";
+	Usage: <info>php %command.full_name%</info>";
 
-    $this->setDescription(Text::_('Add joomgallery category'));
+    $this->setDescription(Text::_('WIP, not finished: Add joomgallery category'));
     $this->setHelp($help);
 
   }

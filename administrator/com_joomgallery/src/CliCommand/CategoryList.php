@@ -193,5 +193,4 @@ class CategoryList extends AbstractCommand
 
     return $categories;
   }
-
 }
