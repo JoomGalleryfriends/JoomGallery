@@ -189,5 +189,4 @@ class ImageParams extends AbstractCommand
 
     return $items;
   }
-
 }
