@@ -6,6 +6,8 @@ defined('_JEXEC') or die;
 use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Response\JsonResponse;
+
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -15,7 +17,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class Category extends AbstractCommand
+class CategoryParams extends AbstractCommand
 {
 //  use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
@@ -25,7 +27,7 @@ class Category extends AbstractCommand
    *
    * @var    string
    */
-  protected static $defaultName = 'joomgallery:category';
+  protected static $defaultName = 'joomgallery:category:parameters';
 
   /**
    * @var   SymfonyStyle
@@ -85,12 +87,11 @@ class Category extends AbstractCommand
     // ToDo: Full with all items automatically
 
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'category ID');
-    $this->addOption('max_line_length', null, InputOption::VALUE_OPTIONAL, 'trim lenght of variable for item keeps in one line');
 
-    $help = "<info>%command.name%</info> lists variables of one category
+    $help = "<info>%command.name%</info> displays parameters of one category
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the category with the <info>--id<info> option. Otherwise, it will be requested
-    * You may restrict the value sting length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
+
   "
     ;
     $this->setDescription(Text::_('List all variables of a joomgallery category'));
@@ -105,10 +106,9 @@ class Category extends AbstractCommand
   {
     // Configure the Symfony output helper
     $this->configureIO($input, $output);
-    $this->ioStyle->title('JoomGallery Category');
+    $this->ioStyle->title('JoomGallery Category Parameters');
 
     $categoryId = $input->getOption('id') ?? '';
-    $max_line_length = $input->getOption('max_line_length') ?? null;
 
     if (empty ($categoryId)){
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid (empty) !");
@@ -116,40 +116,22 @@ class Category extends AbstractCommand
       return Command::FAILURE;
     }
 
-    $categoryAssoc = $this->getItemAssocFromDB($categoryId);
+    $jsonParams = $this->getParamsAsJsonFromDB($categoryId);
 
-    // If no categorys are found show a warning and set the exit code to 1.
-    if (empty($categoryAssoc))
-    {
-      $this->ioStyle->error("The category id '" . $categoryId . "' is invalid, No category found matching your criteria!");
+    // If no params returned  show a warning and set the exit code to 1.
+    if ( empty ($jsonParams)) {
+
+      $this->ioStyle->error("The category id '" . $categoryId . "' is invalid or parameters are empty !");
 
       return Command::FAILURE;
     }
 
-//    echo 'categoryAssoc' . json_encode($categoryAssoc, JSON_UNESCAPED_SLASHES);
-//    echo 'categoryAssoc count: ' . count($categoryAssoc) . "\n\n";
-//    echo '---------------------------' . "\n";
+    // pretty print json data
 
-    $strCategoryAssoc = $this->assoc2DefinitionList($categoryAssoc, $max_line_length);
+    $encoded = json_decode($jsonParams);
+    $jsonParams = json_encode($encoded, JSON_PRETTY_PRINT);
 
-//    echo 'strCategoryAssoc: ' . json_encode($strCategoryAssoc, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
-
-    // ToDo: Use horizontal table again ;-)
-    foreach ($strCategoryAssoc as $value) {
-//      if (\is_string($value)) {
-//        $headers[] = new TableCell($value, ['colspan' => 2]);
-//        $row[] = null;
-//        continue;
-//      }
-      if (!\is_array($value)) {
-        throw new InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
-      }
-
-      $headers[] = key($value);
-      $row[] = current($value);
-    }
-
-    $this->ioStyle->horizontalTable($headers, [$row]);
+    $this->ioStyle->writeln($jsonParams);
 
     return Command::SUCCESS;
   }
@@ -161,19 +143,20 @@ class Category extends AbstractCommand
    *
    * @since 4.0.0
    */
-  private function getItemAssocFromDB(string $categoryId): array
+  private function getParamsAsJsonFromDB(string $categoryId): string
   {
+    $sParams = '';
     $db    = $this->getDatabase();
     $query = $db->getQuery(true);
     $query
-      ->select('*')
+      ->select('params')
       ->from('#__joomgallery_categories')
       ->where($db->quoteName('id') . ' = ' . (int) $categoryId);
 
     $db->setQuery($query);
-    $categoryAssoc = $db->loadAssoc();
+    $sParams = $db->loadResult();
 
-    return $categoryAssoc;
+    return $sParams;
   }
 
   private function assoc2DefinitionList(array $categoryAssoc, $max_len = 70)

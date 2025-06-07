@@ -91,7 +91,7 @@ class Image extends AbstractCommand
 
     $help = "<info>%command.name%</info> lists variables of one image
   Usage: <info>php %command.full_name%</info>
-    * You need to give a id of image using the <info>--id</info> option. Otherwisi ti will be requested
+    * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
     * You may restrict the value sting length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
   "
     ;

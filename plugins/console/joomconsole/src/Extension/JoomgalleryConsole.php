@@ -14,8 +14,11 @@ namespace JoomGallery\Plugin\Console\Joomconsole\Extension;
 
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Category;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryList;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryParams;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Image;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ImageList;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ImageMetadata;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ImageParams;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Add;
 use Joomla\Application\ApplicationEvents;
 use Joomla\Application\Event\ApplicationEvent;
@@ -41,11 +44,14 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
   // administrator\components\com_joomgallery\src\CliCommand
   // administrator\components\com_joomgallery\src\CliCommand
   private static $commands = [
-    CategoryList::class,
     Category::class,
-    ImageList::class,
+    CategoryList::class,
+    CategoryParams::class,
     Image::class,
-    Add::class,
+    ImageList::class,
+    ImageMetadata::class,
+    ImageParams::class,
+    // CategoryAdd::class,
   ];
 
   protected $autoloadLanguage = true;
