@@ -6,6 +6,8 @@ defined('_JEXEC') or die;
 use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Response\JsonResponse;
+
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -15,7 +17,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class Category extends AbstractCommand
+class ImageParams extends AbstractCommand
 {
 //  use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
@@ -25,7 +27,7 @@ class Category extends AbstractCommand
    *
    * @var    string
    */
-  protected static $defaultName = 'joomgallery:category';
+  protected static $defaultName = 'joomgallery:image:parameters';
 
   /**
    * @var   SymfonyStyle
@@ -84,16 +86,14 @@ class Category extends AbstractCommand
 
     // ToDo: Full with all items automatically
 
-    $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'category ID');
-    $this->addOption('max_line_length', null, InputOption::VALUE_OPTIONAL, 'trim lenght of variable for item keeps in one line');
+    $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'image ID');
 
-    $help = "<info>%command.name%</info> lists variables of one category
+    $help = "<info>%command.name%</info> displays parameters of one image
   Usage: <info>php %command.full_name%</info>
-    * You must specify an ID of the category with the <info>--id<info> option. Otherwise, it will be requested
-    * You may restrict the value sting length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
+    * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
   "
     ;
-    $this->setDescription(Text::_('List all variables of a joomgallery category'));
+    $this->setDescription(Text::_('List all variables of a joomgallery image'));
     $this->setHelp($help);
   }
 
@@ -105,51 +105,32 @@ class Category extends AbstractCommand
   {
     // Configure the Symfony output helper
     $this->configureIO($input, $output);
-    $this->ioStyle->title('JoomGallery Category');
+    $this->ioStyle->title('JoomGallery Image Parameters');
 
-    $categoryId = $input->getOption('id') ?? '';
-    $max_line_length = $input->getOption('max_line_length') ?? null;
+    $imageId = $input->getOption('id') ?? '';
 
-    if (empty ($categoryId)){
-      $this->ioStyle->error("The category id '" . $categoryId . "' is invalid (empty) !");
-
-      return Command::FAILURE;
-    }
-
-    $categoryAssoc = $this->getItemAssocFromDB($categoryId);
-
-    // If no categorys are found show a warning and set the exit code to 1.
-    if (empty($categoryAssoc))
-    {
-      $this->ioStyle->error("The category id '" . $categoryId . "' is invalid, No category found matching your criteria!");
+    if (empty ($imageId)){
+      $this->ioStyle->error("The image id '" . $imageId . "' is invalid (empty) !");
 
       return Command::FAILURE;
     }
 
-//    echo 'categoryAssoc' . json_encode($categoryAssoc, JSON_UNESCAPED_SLASHES);
-//    echo 'categoryAssoc count: ' . count($categoryAssoc) . "\n\n";
-//    echo '---------------------------' . "\n";
+    $jsonParams = $this->getParamsAsJsonFromDB($imageId);
 
-    $strCategoryAssoc = $this->assoc2DefinitionList($categoryAssoc, $max_line_length);
+    // If no params returned  show a warning and set the exit code to 1.
+    if ( empty ($jsonParams)) {
 
-//    echo 'strCategoryAssoc: ' . json_encode($strCategoryAssoc, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
+      $this->ioStyle->error("The image id '" . $imageId . "' is invalid or parameters are empty !");
 
-    // ToDo: Use horizontal table again ;-)
-    foreach ($strCategoryAssoc as $value) {
-//      if (\is_string($value)) {
-//        $headers[] = new TableCell($value, ['colspan' => 2]);
-//        $row[] = null;
-//        continue;
-//      }
-      if (!\is_array($value)) {
-        throw new InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
-      }
-
-      $headers[] = key($value);
-      $row[] = current($value);
+      return Command::FAILURE;
     }
 
-    $this->ioStyle->horizontalTable($headers, [$row]);
+    // pretty print json data
+
+    $encoded = json_decode($jsonParams);
+    $jsonParams = json_encode($encoded, JSON_PRETTY_PRINT);
+
+    $this->ioStyle->writeln($jsonParams);
 
     return Command::SUCCESS;
   }
@@ -161,22 +142,23 @@ class Category extends AbstractCommand
    *
    * @since 4.0.0
    */
-  private function getItemAssocFromDB(string $categoryId): array
+  private function getParamsAsJsonFromDB(string $imageId): string
   {
+    $sParams = '';
     $db    = $this->getDatabase();
     $query = $db->getQuery(true);
     $query
-      ->select('*')
-      ->from('#__joomgallery_categories')
-      ->where($db->quoteName('id') . ' = ' . (int) $categoryId);
+      ->select('params')
+      ->from('#__joomgallery')
+      ->where($db->quoteName('id') . ' = ' . (int) $imageId);
 
     $db->setQuery($query);
-    $categoryAssoc = $db->loadAssoc();
+    $sParams = $db->loadResult();
 
-    return $categoryAssoc;
+    return $sParams;
   }
 
-  private function assoc2DefinitionList(array $categoryAssoc, $max_len = 70)
+  private function assoc2DefinitionList(array $imageAssoc, $max_len = 70)
   {
     $items = [];
 
@@ -185,7 +167,7 @@ class Category extends AbstractCommand
     }
 
 //    $count = 0;
-    foreach ($categoryAssoc as $key => $value) {
+    foreach ($imageAssoc as $key => $value) {
 //      $count++;
 //      if ($count > 8) {
 //        break;
