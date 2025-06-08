@@ -168,9 +168,8 @@ class Image extends AbstractCommand
     $query = $db->getQuery(true);
     $query
       ->select('*')
-      ->from('#__joomgallery');
-
-      $query->where($db->quoteName('id') . ' = ' . (int) $imageId);
+      ->from('#__joomgallery')
+      ->where($db->quoteName('id') . ' = ' . (int) $imageId);
 
     $db->setQuery($query);
     $imageAssoc = $db->loadAssoc();
