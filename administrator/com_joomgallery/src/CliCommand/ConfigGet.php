@@ -192,7 +192,4 @@ class ConfigGet extends AbstractCommand
 
     return $value;
   }
-
-
 }
-
