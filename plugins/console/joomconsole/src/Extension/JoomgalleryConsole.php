@@ -15,6 +15,10 @@ namespace JoomGallery\Plugin\Console\Joomconsole\Extension;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Category;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryList;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryParams;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Config;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ConfigGet;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ConfigList;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ConfigSet;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Image;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ImageList;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ImageMetadata;
@@ -47,6 +51,11 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
     Category::class,
     CategoryList::class,
     CategoryParams::class,
+    Config::class,
+    ConfigDynprocessing::class,
+    ConfigGet::class,
+    ConfigList::class,
+    ConfigSet::class,
     Image::class,
     ImageList::class,
     ImageMetadata::class,
