@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fieldset name="general">
+    <field name="ExposureTime"
+           type="text"
+           pattern="^\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_EXPOSURETIME"
+           message="COM_JOOMGALLERY_SUBIFD_EXPOSURETIME_DESCRIPTION" />
+    
+    <field name="FNumber"
+           type="text"
+           pattern="^\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_FNUMBER"
+           message="COM_JOOMGALLERY_SUBIFD_FNUMBER_DESCRIPTION" />
+    
+    <field name="ExposureProgram"
+           type="list"
+           default="1"
+           label="COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM"
+           description="COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_DESCRIPTION">
+        <option value="0">COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_0</option>
+        <option value="1">COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_1</option>
+        <option value="2">COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_2</option>
+        <option value="3">COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_3</option>
+        <option value="4">COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_4</option>
+        <option value="5">COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_5</option>
+        <option value="6">COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_6</option>
+        <option value="7">COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_7</option>
+        <option value="8">COM_JOOMGALLERY_SUBIFD_EXPOSUREPROGRAM_8</option>
+    </field>
+    
+    <field name="ISOSpeedRatings"
+           type="number"
+           min="0"
+           max="65535"
+           step="1"
+           label="COM_JOOMGALLERY_SUBIFD_ISOSPEEDRATINGS"
+           description="COM_JOOMGALLERY_SUBIFD_ISOSPEEDRATINGS_DESCRIPTION" />
+    
+    <field name="ExifVersion"
+           type="text"
+           label="COM_JOOMGALLERY_SUBIFD_EXIFVERSION"
+           message="COM_JOOMGALLERY_SUBIFD_EXIFVERSION_DESCRIPTION" />
+    
+    <field name="DateTimeOriginal"
+           type="calendar"
+           format="%Y:%m:%d %H:%M:%S"
+           label="COM_JOOMGALLERY_SUBIFD_DATETIMEORIGINAL"
+           message="COM_JOOMGALLERY_SUBIFD_DATETIMEORIGINAL_DESCRIPTION" />
+    
+    <field name="DateTimeDigitized"
+           type="calendar"
+           format="%Y:%m:%d %H:%M:%S"
+           label="COM_JOOMGALLERY_SUBIFD_DATETIMEDIGITIZED"
+           message="COM_JOOMGALLERY_SUBIFD_DATETIMEDIGITIZED_DESCRIPTION" />
+    
+        <!-- ComponentConfiguration -->
+    
+    <field name="CompressedBitsPerPixel"
+           type="text"
+           pattern="^\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_COMPRESSEDBITSPERPIXEL"
+           message="COM_JOOMGALLERY_SUBIFD_COMPRESSEDBITSPERPIXEL_DESCRIPTION" />
+    
+    <field name="ShutterSpeedValue"
+           type="text"
+           pattern="^[+-]?\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_SHUTTERSPEEDVALUE"
+           message="COM_JOOMGALLERY_SUBIFD_SHUTTERSPEEDVALUE_DESCRIPTION" />
+    
+    <field name="ApertureValue"
+           type="text"
+           pattern="^\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_APERTUREVALUE"
+           message="COM_JOOMGALLERY_SUBIFD_APERTUREVALUE_DESCRIPTION" />
+    
+    <field name="BrightnessValue"
+           type="text"
+           pattern="^[+-]?\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_BRIGHTNESSVALUE"
+           message="COM_JOOMGALLERY_SUBIFD_BRIGHTNESSVALUE_DESCRIPTION" />
+    
+    <field name="ExposureBiasValue"
+           type="text"
+           pattern="^[+-]?\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_EXPOSUREBIASVALUE"
+           message="COM_JOOMGALLERY_SUBIFD_EXPOSUREBIASVALUE_DESCRIPTION" />
+    
+    <field name="MaxApertureValue"
+           type="text"
+           pattern="^\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_MAXAPERTUREVALUE"
+           message="COM_JOOMGALLERY_SUBIFD_MAXAPERTUREVALUE_DESCRIPTION" />
+    
+    <field name="SubjectDistance"
+           type="text"
+           pattern="^[+-]?\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_SUBJECTDISTANCE"
+           message="COM_JOOMGALLERY_SUBIFD_SUBJECTDISTANCE_DESCRIPTION" />
+    
+    <field name="MeteringMode"
+           type="list"
+           default="1"
+           label="COM_JOOMGALLERY_SUBIFD_METERINGMODE"
+           description="COM_JOOMGALLERY_SUBIFD_METERINGMODE_DESCRIPTION">
+        <option value="0">COM_JOOMGALLERY_SUBIFD_METERINGMODE_0</option>
+        <option value="1">COM_JOOMGALLERY_SUBIFD_METERINGMODE_1</option>
+        <option value="2">COM_JOOMGALLERY_SUBIFD_METERINGMODE_2</option>
+        <option value="3">COM_JOOMGALLERY_SUBIFD_METERINGMODE_3</option>
+        <option value="4">COM_JOOMGALLERY_SUBIFD_METERINGMODE_4</option>
+        <option value="5">COM_JOOMGALLERY_SUBIFD_METERINGMODE_5</option>
+        <option value="6">COM_JOOMGALLERY_SUBIFD_METERINGMODE_6</option>
+        <option value="255">COM_JOOMGALLERY_SUBIFD_METERINGMODE_255</option>
+    </field>
+    
+    <field name="LightSource"
+           type="list"
+           default="1"
+           label="COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE"
+           description="COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_DESCRIPTION">
+        <option value="0">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_0</option>
+        <option value="1">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_1</option>
+        <option value="2">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_2</option>
+        <option value="3">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_3</option>
+        <option value="4">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_4</option>
+        <option value="9">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_9</option>
+        <option value="10">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_10</option>
+        <option value="11">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_11</option>
+        <option value="12">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_12</option>
+        <option value="13">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_13</option>
+        <option value="14">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_14</option>
+        <option value="15">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_15</option>
+        <option value="17">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_17</option>
+        <option value="18">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_18</option>
+        <option value="19">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_19</option>
+        <option value="20">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_20</option>
+        <option value="21">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_21</option>
+        <option value="22">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_22</option>
+        <option value="23">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_23</option>
+        <option value="24">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_24</option>
+        <option value="255">COM_JOOMGALLERY_SUBIFD_LIGHTSOURCE_255</option>
+    </field>
+    
+    <field name="Flash"
+           type="list"
+           default="1"
+           label="COM_JOOMGALLERY_SUBIFD_FLASH"
+           description="COM_JOOMGALLERY_SUBIFD_FLASH_DESCRIPTION">
+        <option value="0">COM_JOOMGALLERY_SUBIFD_FLASH_0</option>
+        <option value="1">COM_JOOMGALLERY_SUBIFD_FLASH_1</option>
+        <option value="5">COM_JOOMGALLERY_SUBIFD_FLASH_5</option>
+        <option value="7">COM_JOOMGALLERY_SUBIFD_FLASH_7</option>
+        <option value="8">COM_JOOMGALLERY_SUBIFD_FLASH_8</option>
+        <option value="9">COM_JOOMGALLERY_SUBIFD_FLASH_9</option>
+        <option value="13">COM_JOOMGALLERY_SUBIFD_FLASH_13</option>
+        <option value="15">COM_JOOMGALLERY_SUBIFD_FLASH_15</option>
+        <option value="16">COM_JOOMGALLERY_SUBIFD_FLASH_16</option>
+        <option value="20">COM_JOOMGALLERY_SUBIFD_FLASH_20</option>
+        <option value="24">COM_JOOMGALLERY_SUBIFD_FLASH_24</option>
+        <option value="25">COM_JOOMGALLERY_SUBIFD_FLASH_25</option>
+        <option value="29">COM_JOOMGALLERY_SUBIFD_FLASH_29</option>
+        <option value="31">COM_JOOMGALLERY_SUBIFD_FLASH_31</option>
+        <option value="32">COM_JOOMGALLERY_SUBIFD_FLASH_32</option>
+        <option value="48">COM_JOOMGALLERY_SUBIFD_FLASH_48</option>
+        <option value="65">COM_JOOMGALLERY_SUBIFD_FLASH_65</option>
+        <option value="69">COM_JOOMGALLERY_SUBIFD_FLASH_69</option>
+        <option value="71">COM_JOOMGALLERY_SUBIFD_FLASH_71</option>
+        <option value="73">COM_JOOMGALLERY_SUBIFD_FLASH_73</option>
+        <option value="77">COM_JOOMGALLERY_SUBIFD_FLASH_77</option>
+        <option value="79">COM_JOOMGALLERY_SUBIFD_FLASH_79</option>
+        <option value="80">COM_JOOMGALLERY_SUBIFD_FLASH_80</option>
+        <option value="71">COM_JOOMGALLERY_SUBIFD_FLASH_71</option>
+        <option value="88">COM_JOOMGALLERY_SUBIFD_FLASH_88</option>
+        <option value="89">COM_JOOMGALLERY_SUBIFD_FLASH_89</option>
+        <option value="93">COM_JOOMGALLERY_SUBIFD_FLASH_93</option>
+        <option value="95">COM_JOOMGALLERY_SUBIFD_FLASH_95</option>
+    </field>
+    
+    <field name="FocalLength"
+           type="text"
+           pattern="^\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_FOCALLENGTH"
+           message="COM_JOOMGALLERY_SUBIFD_FOCALLENGTH_DESCRIPTION" />
+    
+    <field name="UserComment"
+           type="exifusercomment"
+           label="COM_JOOMGALLERY_SUBIFD_USERCOMMENT"
+           message="COM_JOOMGALLERY_SUBIFD_USERCOMMENT_DESCRIPTION" />
+    
+    <field name="ExifImageWidth"
+           type="number"
+           min="0"
+           max="4294967295"
+           step="1"
+           label="COM_JOOMGALLERY_SUBIFD_EXIFIMAGEWIDTH"
+           description="COM_JOOMGALLERY_SUBIFD_EXIFIMAGEWIDTH_DESCRIPTION" />
+    
+    <field name="ExifImageLength"
+           type="number"
+           min="0"
+           max="4294967295"
+           step="1"
+           label="COM_JOOMGALLERY_SUBIFD_EXIFIMAGELENGTH"
+           description="COM_JOOMGALLERY_SUBIFD_EXIFIMAGELENGTH_DESCRIPTION" />
+    
+    <field name="FocalPlaneXResolution"
+           type="text"
+           pattern="^\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_FOCALPLANEXRESOLUTION"
+           message="COM_JOOMGALLERY_SUBIFD_FOCALPLANEXRESOLUTION_DESCRIPTION" />
+    
+    <field name="FocalPlaneYResolution"
+           type="text"
+           pattern="^\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_FOCALPLANEYRESOLUTION"
+           message="COM_JOOMGALLERY_SUBIFD_FOCALPLANEYRESOLUTION_DESCRIPTION" />
+    
+    <field name="FocalPlaneResolutionUnit"
+           type="list"
+           default="1"
+           label="COM_JOOMGALLERY_SUBIFD_FOCALPLANERESOLUTIONUNIT"
+           description="COM_JOOMGALLERY_SUBIFD_FOCALPLANERESOLUTIONUNIT_DESCRIPTION">
+        <option value="1">COM_JOOMGALLERY_SUBIFD_FOCALPLANERESOLUTIONUNIT_1</option>
+        <option value="2">COM_JOOMGALLERY_SUBIFD_FOCALPLANERESOLUTIONUNIT_2</option>
+        <option value="3">COM_JOOMGALLERY_SUBIFD_FOCALPLANERESOLUTIONUNIT_3</option>
+    </field>
+    
+    <field name="ExposureIndex"
+           type="text"
+           pattern="^\d+\/\d+$"
+           label="COM_JOOMGALLERY_SUBIFD_EXPOSUREINDEX"
+           message="COM_JOOMGALLERY_SUBIFD_EXPOSUREINDEX_DESCRIPTION" />
+    
+    <field name="SensingMethod"
+           type="list"
+           default="1"
+           label="COM_JOOMGALLERY_SUBIFD_SENSINGMETHOD"
+           description="COM_JOOMGALLERY_SUBIFD_SENSINGMETHOD_DESCRIPTION">
+        <option value="1">COM_JOOMGALLERY_SUBIFD_SENSINGMETHOD_1</option>
+        <option value="2">COM_JOOMGALLERY_SUBIFD_SENSINGMETHOD_2</option>
+        <option value="3">COM_JOOMGALLERY_SUBIFD_SENSINGMETHOD_3</option>
+        <option value="4">COM_JOOMGALLERY_SUBIFD_SENSINGMETHOD_4</option>
+        <option value="5">COM_JOOMGALLERY_SUBIFD_SENSINGMETHOD_5</option>
+        <option value="7">COM_JOOMGALLERY_SUBIFD_SENSINGMETHOD_7</option>
+        <option value="8">COM_JOOMGALLERY_SUBIFD_SENSINGMETHOD_8</option>
+    </field>
+  </fieldset>
+</form>

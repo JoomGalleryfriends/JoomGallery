@@ -262,10 +262,18 @@ class ImageTable extends Table implements VersionableTableInterface
 			$array['params'] = (string) $registry;
 		}
 
-		if(isset($array['metadata']) && \is_array($array['metadata']))
+		if(isset($array['imgmetadata']) && \is_array($array['imgmetadata']))
 		{
-			$registry = new Registry($array['metadata']);
-			$array['metadata'] = (string) $registry;
+			$registry = new Registry($array['imgmetadata']);
+			// Insert user comment format
+			// Although this technically isn't needed with PEL, we keep the format to support images saved before PEL.
+			$exif = $registry->get('exif');
+			if (isset($exif->EXIF->UserComment)) {
+				$exif->EXIF->UserComment = str_pad('ASCII', 8, chr(0)) . $exif->EXIF->UserComment;
+				$registry->set('exif', $exif);
+			}
+
+			$array['imgmetadata'] = (string) $registry;
 		}
 
     // Support for tags
