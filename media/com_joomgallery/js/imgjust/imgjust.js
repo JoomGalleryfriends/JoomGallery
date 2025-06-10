@@ -107,10 +107,12 @@ class ImgJust {
 			imgs[range.end].style.width = containerWidth - newRowWidth + "px";
 			imgs[range.end].style.height = newHeight + "px";
 			imgs[range.end].style.marginRight = "0";
+			imgs[range.end].classList.add("end");
 		}
 		const lastRange = rowRanges[rowRanges.length - 1];
 		for (var i = lastRange.start; i <= lastRange.end; i++)
-			imgs[i].style.marginBottom = "0";
+			imgs[i].style.marginBottom = "0",
+			imgs[i].classList.add("last");
 
 		// All done. Now make visible.
 		for (const img of imgs)
