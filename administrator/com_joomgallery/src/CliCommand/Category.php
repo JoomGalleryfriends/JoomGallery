@@ -1,5 +1,4 @@
 <?php
-
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;

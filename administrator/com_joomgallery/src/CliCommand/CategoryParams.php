@@ -89,7 +89,6 @@ class CategoryParams extends AbstractCommand
     $help = "<info>%command.name%</info> displays parameters of one category
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the category with the <info>--id<info> option. Otherwise, it will be requested
-
   ";
     $this->setDescription(Text::_('List all variables of a joomgallery category'));
     $this->setHelp($help);
