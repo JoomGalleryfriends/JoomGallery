@@ -1,13 +1,11 @@
 <?php
+
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
-use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Response\JsonResponse;
-
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -44,7 +42,7 @@ class ImageMetadata extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
 //  public function __construct(DatabaseInterface $db)
   public function __construct()
@@ -75,7 +73,7 @@ class ImageMetadata extends AbstractCommand
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function configure(): void
   {
@@ -91,8 +89,7 @@ class ImageMetadata extends AbstractCommand
     $help = "<info>%command.name%</info> displays parameters of one image
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
-  "
-    ;
+  ";
     $this->setDescription(Text::_('List all variables of a joomgallery image'));
     $this->setHelp($help);
   }
@@ -109,7 +106,8 @@ class ImageMetadata extends AbstractCommand
 
     $imageId = $input->getOption('id') ?? '';
 
-    if (empty ($imageId)){
+    if (empty ($imageId))
+    {
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid (empty) !");
 
       return Command::FAILURE;
@@ -118,7 +116,8 @@ class ImageMetadata extends AbstractCommand
     $jsonParams = $this->getParamsAsJsonFromDB($imageId);
 
     // If no params returned  show a warning and set the exit code to 1.
-    if ( empty ($jsonParams)) {
+    if (empty ($jsonParams))
+    {
 
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid or parameters are empty !");
 
@@ -127,7 +126,7 @@ class ImageMetadata extends AbstractCommand
 
     // pretty print json data
 
-    $encoded = json_decode($jsonParams);
+    $encoded    = json_decode($jsonParams);
     $jsonParams = json_encode($encoded, JSON_PRETTY_PRINT);
 
     $this->ioStyle->writeln($jsonParams);
@@ -140,13 +139,13 @@ class ImageMetadata extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
   private function getParamsAsJsonFromDB(string $imageId): string
   {
     $sParams = '';
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $db      = $this->getDatabase();
+    $query   = $db->getQuery(true);
     $query
       ->select('imgmetadata')
       ->from('#__joomgallery')
@@ -162,12 +161,14 @@ class ImageMetadata extends AbstractCommand
   {
     $items = [];
 
-    if(empty($max_len)){
+    if (empty($max_len))
+    {
       $max_len = 70;
     }
 
 //    $count = 0;
-    foreach ($imageAssoc as $key => $value) {
+    foreach ($imageAssoc as $key => $value)
+    {
 //      $count++;
 //      if ($count > 8) {
 //        break;
@@ -179,7 +180,7 @@ class ImageMetadata extends AbstractCommand
 //      echo '[' . $count . '] ' . "key: " . $key . " value: " . $value . "\n";
 //      $items[$key] = (string) $value;
       //$items[] = $key => (string) $value;
-      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len,'...')];
+      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
       //$items[] = [[$key => (string) $value]];
     }
 

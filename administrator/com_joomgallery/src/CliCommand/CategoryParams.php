@@ -1,13 +1,11 @@
 <?php
+
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
-use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Response\JsonResponse;
-
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -44,7 +42,7 @@ class CategoryParams extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
 //  public function __construct(DatabaseInterface $db)
   public function __construct()
@@ -75,7 +73,7 @@ class CategoryParams extends AbstractCommand
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function configure(): void
   {
@@ -92,8 +90,7 @@ class CategoryParams extends AbstractCommand
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the category with the <info>--id<info> option. Otherwise, it will be requested
 
-  "
-    ;
+  ";
     $this->setDescription(Text::_('List all variables of a joomgallery category'));
     $this->setHelp($help);
   }
@@ -110,7 +107,8 @@ class CategoryParams extends AbstractCommand
 
     $categoryId = $input->getOption('id') ?? '';
 
-    if (empty ($categoryId)){
+    if (empty ($categoryId))
+    {
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid (empty) !");
 
       return Command::FAILURE;
@@ -119,7 +117,8 @@ class CategoryParams extends AbstractCommand
     $jsonParams = $this->getParamsAsJsonFromDB($categoryId);
 
     // If no params returned  show a warning and set the exit code to 1.
-    if ( empty ($jsonParams)) {
+    if (empty ($jsonParams))
+    {
 
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid or parameters are empty !");
 
@@ -128,7 +127,7 @@ class CategoryParams extends AbstractCommand
 
     // pretty print json data
 
-    $encoded = json_decode($jsonParams);
+    $encoded    = json_decode($jsonParams);
     $jsonParams = json_encode($encoded, JSON_PRETTY_PRINT);
 
     $this->ioStyle->writeln($jsonParams);
@@ -141,13 +140,13 @@ class CategoryParams extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
   private function getParamsAsJsonFromDB(string $categoryId): string
   {
     $sParams = '';
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $db      = $this->getDatabase();
+    $query   = $db->getQuery(true);
     $query
       ->select('params')
       ->from('#__joomgallery_categories')
@@ -163,12 +162,14 @@ class CategoryParams extends AbstractCommand
   {
     $items = [];
 
-    if(empty($max_len)){
+    if (empty($max_len))
+    {
       $max_len = 70;
     }
 
 //    $count = 0;
-    foreach ($categoryAssoc as $key => $value) {
+    foreach ($categoryAssoc as $key => $value)
+    {
 //      $count++;
 //      if ($count > 8) {
 //        break;
@@ -180,7 +181,7 @@ class CategoryParams extends AbstractCommand
 //      echo '[' . $count . '] ' . "key: " . $key . " value: " . $value . "\n";
 //      $items[$key] = (string) $value;
       //$items[] = $key => (string) $value;
-      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len,'...')];
+      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
       //$items[] = [[$key => (string) $value]];
     }
 

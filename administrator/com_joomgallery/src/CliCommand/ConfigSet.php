@@ -1,12 +1,11 @@
 <?php
+
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
-use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -16,6 +15,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+
+//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 
 class ConfigSet extends AbstractCommand
 {
@@ -44,7 +45,7 @@ class ConfigSet extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
 //  public function __construct(DatabaseInterface $db)
   public function __construct()
@@ -75,7 +76,7 @@ class ConfigSet extends AbstractCommand
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function configure(): void
   {
@@ -93,7 +94,7 @@ class ConfigSet extends AbstractCommand
   Usage: <info>php %command.full_name%</info> <option> <value>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
     * You may verify the written value with <info>--veryfy=true<info> option. This compares the given option with the resulting table value
-		"		;
+		";
 
     $this->setDescription('Set a value for a configuration option');
     $this->setHelp($help);
@@ -109,8 +110,8 @@ class ConfigSet extends AbstractCommand
     $this->configureIO($input, $output);
     $this->ioStyle->title("Current option in JoomGallery Configuration (table)");
 
-    $option = $this->cliInput->getArgument('option');
-    $value = $this->cliInput->getArgument('value');
+    $option   = $this->cliInput->getArgument('option');
+    $value    = $this->cliInput->getArgument('value');
     $configId = $input->getOption('id') ?? '1';
     $veryfyIn = $input->getOption('verify') ?? 'false';
 
@@ -125,13 +126,15 @@ class ConfigSet extends AbstractCommand
 
     $configurationAssoc = $this->getItemAssocFromDB($configId);
 
-    if (empty ($configurationAssoc)){
+    if (empty ($configurationAssoc))
+    {
       $this->ioStyle->error("The configuration id '" . $configId . "' is invalid, No configuration found matching your criteria!");
 
       return Command::FAILURE;
     }
 
-    if( ! \array_key_exists($option, $configurationAssoc) ){
+    if (!\array_key_exists($option, $configurationAssoc))
+    {
       $this->ioStyle->error("Can't find option *$option* in configuration list");
 
       return Command::FAILURE;
@@ -142,12 +145,15 @@ class ConfigSet extends AbstractCommand
 //    echo 'sanitizeValue: "' . $sanitizeValue . '"' . "\n";
 
 
-    $isUpdated = $this->writeOptionToDB ($configId, $option, $sanitizeValue);
+    $isUpdated = $this->writeOptionToDB($configId, $option, $sanitizeValue);
     if ($isUpdated)
     {
       $this->ioStyle->success("Configuration set for option: '" . $option . "' value: '" . $value . "'");
-    } else {
+    }
+    else
+    {
       $this->ioStyle->error("Can't update configuration option: '" . $option . "' for value: '" . $value . "'");
+
       return Command::FAILURE;
     }
 
@@ -160,7 +166,9 @@ class ConfigSet extends AbstractCommand
 
         $this->ioStyle->error("Configuration set for "
           . "option: '" . $option . "' in value: '" . $value . "'" . " results in table value: '" . $verifiedValue . "'");
-      } else {
+      }
+      else
+      {
         $this->ioStyle->note('Written value confirmed');
       }
     }
@@ -174,9 +182,9 @@ class ConfigSet extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
-  private function getItemAssocFromDB(string $configId): array | null
+  private function getItemAssocFromDB(string $configId): array|null
   {
     $db    = $this->getDatabase();
     $query = $db->getQuery(true);
@@ -199,14 +207,21 @@ class ConfigSet extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
   public function sanitizeValue($value)
   {
-    switch ($value) {
-      case $value === 'false': $value = false; break;
-      case $value === 'true': $value = true; break;
-      case $value === 'null': $value = null; break;
+    switch ($value)
+    {
+      case $value === 'false':
+        $value = false;
+        break;
+      case $value === 'true':
+        $value = true;
+        break;
+      case $value === 'null':
+        $value = null;
+        break;
 
     }
 
@@ -273,7 +288,7 @@ class ConfigSet extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
   private function getOptionFromDB(string $configId, string $option)
   {
@@ -307,13 +322,16 @@ class ConfigSet extends AbstractCommand
   {
     $isDoVerify = false;
 
-    if (! empty ($veryfyIn)){
+    if (!empty ($veryfyIn))
+    {
 
-      if (strtolower($veryfyIn) == 'true'){
+      if (strtolower($veryfyIn) == 'true')
+      {
         $isDoVerify = true;
       }
 
-      if ($veryfyIn == '1'){
+      if ($veryfyIn == '1')
+      {
         $isDoVerify = true;
       }
     }

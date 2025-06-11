@@ -1,11 +1,11 @@
 <?php
+
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -14,6 +14,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+
+//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 
 class CategoryList extends AbstractCommand
 {
@@ -42,7 +44,7 @@ class CategoryList extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
 //  public function __construct(DatabaseInterface $db)
   public function __construct()
@@ -73,7 +75,7 @@ class CategoryList extends AbstractCommand
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function configure(): void
   {
@@ -98,8 +100,7 @@ class CategoryList extends AbstractCommand
     * You may filter on the user id of category using the <info>--owner</info> option.
     * You may filter on created_by of category using the <info>--created</info> option.
     * You may filter on the parent id of category using the <info>--parent_id</info> option.
-    Example: <info>php %command.full_name% --created_by=291</info>"
-    ;
+    Example: <info>php %command.full_name% --created_by=291</info>";
     $this->setDescription(Text::_('List all joomgallery categories'));
     $this->setHelp($help);
   }
@@ -152,7 +153,7 @@ class CategoryList extends AbstractCommand
 //    $categories = $categoriesModel->getItems();
 
     $created_by_id = $input->getOption('created') ?? '';
-    if ( empty ($created_by_id) )
+    if (empty ($created_by_id))
     {
       $created_by_id = $input->getOption('owner') ?? '';
     }
@@ -172,8 +173,7 @@ class CategoryList extends AbstractCommand
 
     // Reshape the categories into something humans can read.
     $categories = array_map(
-      function (object $item): array
-      {
+      function (object $item): array {
         return [
           $item->id,
           $item->title,
@@ -197,7 +197,7 @@ class CategoryList extends AbstractCommand
     // Display the categories in a table and set the exit code to 0
     $this->ioStyle->table(
       [
-        'ID', 'Title', 'Published', 'Hidden', 'Created/Owner','Created','Modified by','Modified','Parent',
+        'ID', 'Title', 'Published', 'Hidden', 'Created/Owner', 'Created', 'Modified by', 'Modified', 'Parent',
       ],
       $categories
     );
@@ -210,7 +210,7 @@ class CategoryList extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
   private function getItemsFromDB(string $userId, string $parent_id): array
   {
@@ -220,12 +220,12 @@ class CategoryList extends AbstractCommand
       ->select('*')
       ->from('#__joomgallery_categories');
 
-    if ( ! empty ($userId) )
+    if (!empty ($userId))
     {
       $query->where($db->quoteName('created_by') . ' = ' . (int) $userId);
     }
 
-    if ( ! empty ($parent_id) )
+    if (!empty ($parent_id))
     {
       $query->where($db->quoteName('parent_id') . ' = ' . (int) $parent_id);
     }
@@ -236,8 +236,6 @@ class CategoryList extends AbstractCommand
 
     return $categories;
   }
-
-
 
 
 }
