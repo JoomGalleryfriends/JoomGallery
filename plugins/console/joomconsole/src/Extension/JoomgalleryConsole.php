@@ -15,9 +15,11 @@ namespace JoomGallery\Plugin\Console\Joomconsole\Extension;
 \defined('_JEXEC') or die;
 
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Category;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryAdd;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryList;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryParams;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Config;
+use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ConfigDynprocessing;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ConfigGet;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ConfigList;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\ConfigSet;
@@ -50,6 +52,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
    */
   private static $commands = [
     Category::class,
+//    CategoryAdd::class, // test ???
     CategoryList::class,
     CategoryParams::class,
     Config::class,
