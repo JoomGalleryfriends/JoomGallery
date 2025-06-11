@@ -1,96 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="4.0" method="upgrade">
-    <name>com_joomgallery</name>
-    <creationDate>2025-04-03</creationDate>
-    <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
-    <license>GNU General Public License version 3 or later</license>
-    <author>JoomGallery::ProjectTeam</author>
-    <authorEmail>team@joomgalleryfriends.net</authorEmail>
-    <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-    <version>4.0.1</version>
-    <description>JoomGallery 4, a native gallery component for Joomla! 4.x and 5.x</description>
-    <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
-
-    <scriptfile>script.php</scriptfile>
-
-    <install> <!-- Runs on install -->
-        <sql>
-            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
-        </sql>
-    </install>
-    <update> <!-- Runs on update -->
-      <schemas>
-        <schemapath type="mysql">sql/updates/mysql</schemapath>
-      </schemas>
-    </update>
-    <uninstall> <!-- Runs on uninstall -->
-        <sql>
-            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
-        </sql>
-    </uninstall>
-
-    <files folder="site/com_joomgallery">
-        <folder>forms</folder>
-        <folder>language</folder>
-        <folder>layouts</folder>
-        <folder>src</folder>
-        <folder>tmpl</folder>
+  <name>com_joomgallery</name>
+  <creationDate>2025-04-03</creationDate>
+  <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
+  <license>GNU General Public License version 3 or later</license>
+  <author>JoomGallery::ProjectTeam</author>
+  <authorEmail>team@joomgalleryfriends.net</authorEmail>
+  <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
+  <version>4.0.1</version>
+  <description>JoomGallery 4, a native gallery component for Joomla! 4.x and 5.x</description>
+  <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
+  <scriptfile>script.php</scriptfile>
+  <install>
+    <!-- Runs on install -->
+    <sql>
+      <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+    </sql>
+  </install>
+  <update>
+    <!-- Runs on update -->
+    <schemas>
+      <schemapath type="mysql">sql/updates/mysql</schemapath>
+    </schemas>
+  </update>
+  <uninstall>
+    <!-- Runs on uninstall -->
+    <sql>
+      <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+    </sql>
+  </uninstall>
+  <files folder="site/com_joomgallery">
+    <folder>forms</folder>
+    <folder>language</folder>
+    <folder>layouts</folder>
+    <folder>src</folder>
+    <folder>tmpl</folder>
+  </files>
+  <media destination="com_joomgallery" folder="media/com_joomgallery">
+    <folder>css</folder>
+    <folder>fonts</folder>
+    <folder>js</folder>
+    <folder>images</folder>
+    <filename>joomla.asset.json</filename>
+  </media>
+  <administration>
+    <menu>COM_JOOMGALLERY</menu>
+    <submenu>
+      <menu link="option=com_joomgallery&amp;view=control" view="control" img="class:home">COM_JOOMGALLERY_CONTROL_PANEL</menu>
+      <menu link="option=com_joomgallery&amp;view=images" view="images" alt="Joomgallery/Images">COM_JOOMGALLERY_IMAGES</menu>
+      <menu link="option=com_joomgallery&amp;view=categories" view="categories" alt="Joomgallery/Categories">JCATEGORIES</menu>
+      <menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TAGS</menu>
+      <menu link="option=com_joomgallery&amp;view=configs" view="configs" alt="Joomgallery/Configs">COM_JOOMGALLERY_CONFIG_SETS</menu>
+      <menu link="option=com_joomgallery&amp;view=migration" view="migration" alt="Joomgallery/Migration">COM_JOOMGALLERY_MIGRATIONS</menu>
+      <menu type="separator" hidden="true">Separator1</menu>
+      <menu link="option=com_fields&amp;context=com_joomgallery.image">JGLOBAL_FIELDS</menu>
+      <menu link="option=com_fields&amp;view=groups;&amp;context=com_joomgallery.image">JGLOBAL_FIELD_GROUPS</menu>
+      <menu type="separator" hidden="true">Separator2</menu>
+    </submenu>
+    <files folder="administrator/com_joomgallery">
+      <filename>access.xml</filename>
+      <filename>config.xml</filename>
+      <folder>forms</folder>
+      <folder>includes</folder>
+      <folder>language</folder>
+      <folder>layouts</folder>
+      <folder>services</folder>
+      <folder>sql</folder>
+      <folder>src</folder>
+      <folder>tmpl</folder>
     </files>
-
-    <media destination="com_joomgallery" folder="media/com_joomgallery">
-        <folder>css</folder>
-        <folder>fonts</folder>
-        <folder>js</folder>
-        <folder>images</folder>
-        <filename>joomla.asset.json</filename>
-    </media>
-
-    <administration>
-        <menu>COM_JOOMGALLERY</menu>
-        <submenu>
-            <menu link="option=com_joomgallery&amp;view=control" view="control" img="class:home">COM_JOOMGALLERY_CONTROL_PANEL</menu>
-            <menu link="option=com_joomgallery&amp;view=images" view="images" alt="Joomgallery/Images">COM_JOOMGALLERY_IMAGES</menu>
-            <menu link="option=com_joomgallery&amp;view=categories" view="categories" alt="Joomgallery/Categories">JCATEGORIES</menu>
-            <menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TAGS</menu>
-            <menu link="option=com_joomgallery&amp;view=configs" view="configs" alt="Joomgallery/Configs">COM_JOOMGALLERY_CONFIG_SETS</menu>
-            <menu link="option=com_joomgallery&amp;view=migration" view="migration" alt="Joomgallery/Migration">COM_JOOMGALLERY_MIGRATIONS</menu>
-            <menu type="separator" hidden="true">Separator1</menu>
-            <menu link="option=com_fields&amp;context=com_joomgallery.image">JGLOBAL_FIELDS</menu>
-            <menu link="option=com_fields&amp;view=groups;&amp;context=com_joomgallery.image">JGLOBAL_FIELD_GROUPS</menu>
-            <menu type="separator" hidden="true">Separator2</menu>
-        </submenu>
-        <files folder="administrator/com_joomgallery">
-            <filename>access.xml</filename>
-            <filename>config.xml</filename>
-            <folder>forms</folder>
-            <folder>includes</folder>
-            <folder>language</folder>
-            <folder>layouts</folder>
-            <folder>services</folder>
-            <folder>sql</folder>
-            <folder>src</folder>
-            <folder>tmpl</folder>
-        </files>
-    </administration>
-
-    <config>
-        <fields name="params">
-            <fieldset name="component">
-                <field name="save_history" default="0" />
-            </fieldset>
-        </fields>
-    </config>
-
-    <plugins>
-        <plugin group="system" plugin="joomgallery"/>
-        <plugin group="system" plugin="joomowner"/>
-        <plugin group="privacy" plugin="joomgallery"/>
-    </plugins>
-
-    <changelogurl>https://www.joomgalleryfriends.net/updates/changelog.xml</changelogurl>
-
-    <updateservers>
-        <server type="extension" priority="1" name="JoomGallery: Component Updater">https://www.joomgalleryfriends.net/updates/joomgallery4/joomgallery.xml</server>
-        <server type="collection" priority="2" name="JoomGallery: Official Extensions Updater">https://www.joomgalleryfriends.net/updates/extensions4.xml</server>
-    </updateservers>
+  </administration>
+  <config>
+    <fields name="params">
+      <fieldset name="component">
+        <field name="save_history" default="0"/>
+      </fieldset>
+    </fields>
+  </config>
+  <plugins>
+    <plugin group="system" plugin="joomgallery"/>
+    <plugin group="system" plugin="joomowner"/>
+    <plugin group="privacy" plugin="joomgallery"/>
+    <plugin group="console" plugin="joomconsole"/>
+  </plugins>
+  <changelogurl>https://www.joomgalleryfriends.net/updates/changelog.xml</changelogurl>
+  <updateservers>
+    <server type="extension" priority="1" name="JoomGallery: Component Updater">https://www.joomgalleryfriends.net/updates/joomgallery4/joomgallery.xml</server>
+    <server type="collection" priority="2" name="JoomGallery: Official Extensions Updater">https://www.joomgalleryfriends.net/updates/extensions4.xml</server>
+  </updateservers>
 </extension>
