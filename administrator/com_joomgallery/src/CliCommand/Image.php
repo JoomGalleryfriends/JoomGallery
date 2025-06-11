@@ -1,4 +1,5 @@
 <?php
+
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
@@ -6,7 +7,6 @@ defined('_JEXEC') or die;
 use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -15,6 +15,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+
+//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 
 class Image extends AbstractCommand
 {
@@ -43,7 +45,7 @@ class Image extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
 //  public function __construct(DatabaseInterface $db)
   public function __construct()
@@ -74,7 +76,7 @@ class Image extends AbstractCommand
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function configure(): void
   {
@@ -92,9 +94,8 @@ class Image extends AbstractCommand
     $help = "<info>%command.name%</info> lists variables of one image
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
-    * You may restrict the value sting length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
-  "
-    ;
+    * You may restrict the value string length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
+  ";
     $this->setDescription(Text::_('List all variables of a joomgallery image'));
     $this->setHelp($help);
   }
@@ -110,10 +111,11 @@ class Image extends AbstractCommand
 //    $this->ioStyle->title(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
     $this->ioStyle->title('JoomGallery Image');
 
-    $imageId = $input->getOption('id') ?? '';
+    $imageId         = $input->getOption('id') ?? '';
     $max_line_length = $input->getOption('max_line_length') ?? null;
 
-    if (empty ($imageId)){
+    if (empty ($imageId))
+    {
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid (empty) !");
 
       return Command::FAILURE;
@@ -121,7 +123,8 @@ class Image extends AbstractCommand
 
     $imageAssoc = $this->getItemAssocFromDB($imageId);
 
-    if (empty ($imageAssoc)){
+    if (empty ($imageAssoc))
+    {
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid, No image found matching your criteria!");
 
       return Command::FAILURE;
@@ -136,18 +139,20 @@ class Image extends AbstractCommand
 //    echo 'strImageAssoc: ' . json_encode($strImageAssoc, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
 
     // ToDo: Use horizontal table again ;-)
-    foreach ($strImageAssoc as $value) {
+    foreach ($strImageAssoc as $value)
+    {
 //      if (\is_string($value)) {
 //        $headers[] = new TableCell($value, ['colspan' => 2]);
 //        $row[] = null;
 //        continue;
 //      }
-      if (!\is_array($value)) {
+      if (!\is_array($value))
+      {
         throw new InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
       }
 
       $headers[] = key($value);
-      $row[] = current($value);
+      $row[]     = current($value);
     }
 
     $this->ioStyle->horizontalTable($headers, [$row]);
@@ -160,9 +165,9 @@ class Image extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
-  private function getItemAssocFromDB(string $imageId): array | null
+  private function getItemAssocFromDB(string $imageId): array|null
   {
     $db    = $this->getDatabase();
     $query = $db->getQuery(true);
@@ -182,12 +187,14 @@ class Image extends AbstractCommand
   {
     $items = [];
 
-    if(empty($max_len)){
+    if (empty($max_len))
+    {
       $max_len = 70;
     }
 
 //    $count = 0;
-    foreach ($imageAssoc as $key => $value) {
+    foreach ($imageAssoc as $key => $value)
+    {
 //      $count++;
 //      if ($count > 8) {
 //        break;
@@ -199,7 +206,7 @@ class Image extends AbstractCommand
 //      echo '[' . $count . '] ' . "key: " . $key . " value: " . $value . "\n";
 //      $items[$key] = (string) $value;
       //$items[] = $key => (string) $value;
-      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len,'...')];
+      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
       //$items[] = [[$key => (string) $value]];
     }
 

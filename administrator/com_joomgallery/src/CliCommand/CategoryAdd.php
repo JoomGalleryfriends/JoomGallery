@@ -1,8 +1,10 @@
 <?php
+
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
@@ -10,16 +12,13 @@ use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Filter\InputFilter;
-
-use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class Add extends AbstractCommand
+class CategoryAdd extends AbstractCommand
 {
   use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
@@ -51,12 +50,66 @@ class Add extends AbstractCommand
   private $parent_id;
 
   /**
+   * Instantiate the command.
+   *
+   * @since  4.0.X
+   */
+  public function __construct()
+  {
+    parent::__construct();
+  }
+
+  /**
+   * Configure the IO.
+   *
+   * @param   InputInterface   $input   The input to inject into the command.
+   * @param   OutputInterface  $output  The output to inject into the command.
+   *
+   * @return  void
+   */
+  private function configureIO(InputInterface $input, OutputInterface $output)
+  {
+    $this->cliInput = $input;
+    $this->ioStyle  = new SymfonyStyle($input, $output);
+  }
+
+  /**
+   * Configure the command.
+   *
+   * @return  void
+   */
+  protected function configure(): void
+  {
+//    $this->setDescription(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
+//    $this->setHelp(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_HELP'));
+//
+//    $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
+
+    // ToDo: $this->addArgument('title', 't', InputOption::VALUE_REQUIRED, 'Title');
+    $this->addOption('title', 't', InputOption::VALUE_REQUIRED, 'Title');
+    $this->addOption('published', null, InputOption::VALUE_OPTIONAL, 'Published (yes/no)');
+    $this->addOption('created_time', null, InputOption::VALUE_OPTIONAL, 'Created time');
+    $this->addOption('created_by', 'c', InputOption::VALUE_REQUIRED, 'Created by (owner)');
+    $this->addOption('modified_time', null, InputOption::VALUE_OPTIONAL, 'Modified time');
+    $this->addOption('modified_by', 'm', InputOption::VALUE_OPTIONAL, 'Modified by');
+//    $this->addOption('parent_title', 'p', InputOption::VALUE_OPTIONAL, 'parent title');
+    $this->addOption('parent_id', 'p', InputOption::VALUE_OPTIONAL, 'parent id (1=no parent)');
+
+    $help = "<info>%command.name%</info> will add a joomgallery category
+	Usage: <info>php %command.full_name%</info>";
+
+    $this->setDescription(Text::_('WIP, not finished: Add joomgallery category'));
+    $this->setHelp($help);
+
+  }
+
+  /**
    * @inheritDoc
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
     // Configure the Symfony output helper
-    $this->configureSymfonyIO($input, $output);
+    $this->configureIO($input, $output);
 //    $this->ioStyle->title(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
     $this->ioStyle->title('WIP, not finished: JoomGallery add category');
 
@@ -66,75 +119,88 @@ class Add extends AbstractCommand
     $filter = new InputFilter();
 
     // create/update time fallback
-    $date = Factory::getDate();
+    $date       = Factory::getDate();
     $actualTime = $date->toSql();
+
+    echo "actualTime: $actualTime\n";
 
     //--- title -----------------------
 
-    $this->title = $filter->clean($this->getStringFromOption(
-      'title', 'Please enter a category title'));
+    $this->title = $filter->clean($this->getStringFromOption('title', 'Please enter a category title'));
 
     //--- created_by -----------------------
 
     $this->created_by = $filter->clean($this->getStringFromOption(
       'created_by', 'Please enter a username (owner)'));
-    $created_by_Id = $this->getUserId($this->created_by);
+    $created_by_Id    = $this->getUserId($this->created_by);
 
-    if (empty($created_by_Id)) {
+    if (empty($created_by_Id))
+    {
       $this->ioStyle->error("The user (owner)" . $this->created_by . " does not exist!");
 
       return Command::FAILURE;
     }
+
+    $this->published     = $filter->clean($input->getOption('published') ?? '0');
+    $this->created_time  = $filter->clean($input->getOption('created_time') ?? $actualTime);
+    $this->modified_time = $filter->clean($input->getOption('modified_time') ?? $actualTime);
+//    $this->parent_title  = $filter->clean($input->getOption('parent_title')  ?? 'root');
+    $this->parent_id = $filter->clean($input->getOption('parent_id') ?? '1');
 
     //--- modified_by -----------------------
 
     $this->modified_by = $filter->clean($input->getOption('modified_by')) ?? null;
 
     // not given by input use created by
-    if (empty($this->modified_by)) {
+    if (empty($this->modified_by))
+    {
       $this->modified_by = $this->created_by;
-      $this->modified_time = $created_by_Id;
-    } else {
+    }
+    else
+    {
 
       $this->modified_by_Id = $this->getUserId($this->modified_by);
 
-      if (empty($modified_by_Id)) {
+      if (empty($this->modified_by_Id))
+      {
         $this->ioStyle->error("The user (author)" . $this->modified_by . " does not exist!");
 
         return Command::FAILURE;
       }
     }
 
-    $this->published     = $filter->clean($input->getOption('published') ?? '0');
-    $this->created_time  = $filter->clean($input->getOption('created_time')  ?? $actualTime);
-    $this->modified_time = $filter->clean($input->getOption('modified_time') ?? $actualTime);
-//    $this->parent_title  = $filter->clean($input->getOption('parent_title')  ?? 'root');
-    $this->parent_id  = $filter->clean($input->getOption('parent_id')  ?? '1');
 
     //--- validate -----------------------------------
 
-    if (!is_numeric($this->published)) {
+    if (!is_numeric($this->published))
+    {
       $this->ioStyle->error('Invalid published value passed! (0/1) ? ');
+
       return Command::FAILURE;
     }
 
 
     $category = [
-      'title' => $filter->clean($this->title, 'STRING'),
-      'published' => $filter->clean($this->published, 'INT'),
-      'created_by' => $filter->clean($this->created_by, 'STRING'),
-      'created_time' => $filter->clean($this->title, 'STRING'),
-      'modified_by' => $filter->clean($this->modified_by, 'STRING'),
+      'title'         => $filter->clean($this->title, 'STRING'),
+      'published'     => $filter->clean($this->published, 'INT'),
+      'created_by'    => $filter->clean($this->created_by, 'STRING'),
+      'created_time'  => $filter->clean($this->created_time, 'STRING'),
+      'modified_by'   => $filter->clean($this->modified_time, 'STRING'),
       'modified_time' => $filter->clean($this->title, 'STRING'),
 //      'parent_title' => $filter->clean($this->parent_title, 'STRING'),
-      'parent_id' => $filter->clean($this->parent_id, 'INT'),
+      'parent_id'     => $filter->clean($this->parent_id, 'INT'),
     ];
 
+    echo json_encode($category, JSON_PRETTY_PRINT) . "\n";
+
     // Save the category, using the backend model
-    /** @var Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel; $categoriesModel */
+    /** @var  CategoryModel $categoryModel */
     $categoryModel = $this->getMVCFactory()->createModel('Category', 'Administrator');
 
-    if (!$categoryModel->save($category)) {
+    echo "add:save 01" . "\n";
+
+    if (!$categoryModel->save($category))
+    {
 //      switch ($categoryModel->getError()) {
 //        case "JLIB_DATABASE_ERROR_USERNAME_INUSE":
 //          $this->ioStyle->error("The username already exists!");
@@ -146,15 +212,18 @@ class Add extends AbstractCommand
 //          $this->ioStyle->error("The email address is invalid!");
 //          break;
 //      }
+      echo "add:save error 02" . "\n";
+
       $this->ioStyle->error($categoryModel->getError());
 
       return Command::FAILURE;
     }
 
+    echo "add:after save 01" . "\n";
+
     $this->ioStyle->success("User created!");
 
     return Command::SUCCESS;
-
 
 
 //    yyyy
@@ -258,13 +327,14 @@ class Add extends AbstractCommand
    *
    * @return  string
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function getStringFromOption($option, $question): string
   {
     $answer = (string) $this->getApplication()->getConsoleInput()->getOption($option);
 
-    while (!$answer) {
+    while (!$answer)
+    {
       $answer = (string) $this->ioStyle->ask($question);
     }
 
@@ -278,12 +348,12 @@ class Add extends AbstractCommand
    *
    * @return  object
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function getUserId($username)
   {
     // $db    = $this->getDatabase();
-    $db = Factory::getContainer()->get(DatabaseInterface::class);
+    $db    = Factory::getContainer()->get(DatabaseInterface::class);
     $query = $db->getQuery(true)
       ->select($db->quoteName('id'))
       ->from($db->quoteName('#__users'))
@@ -294,48 +364,6 @@ class Add extends AbstractCommand
     return $db->loadResult();
   }
 
-  /**
-   * Configure the command.
-   *
-   * @return  void
-   */
-  protected function configure(): void
-  {
-//    $this->setDescription(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-//    $this->setHelp(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_HELP'));
-//
-//    $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
 
-    $this->addOption('title', 't', InputOption::VALUE_REQUIRED, 'Title');
-    $this->addOption('published', null, InputOption::VALUE_OPTIONAL, 'Published (yes/no)');
-    $this->addOption('created_time', null, InputOption::VALUE_OPTIONAL, 'Created time');
-    $this->addOption('created_by', 'c', InputOption::VALUE_REQUIRED, 'Created by (owner)');
-    $this->addOption('modified_time', null, InputOption::VALUE_OPTIONAL, 'Modified time');
-    $this->addOption('modified_by', 'm', InputOption::VALUE_OPTIONAL, 'Modified by');
-//    $this->addOption('parent_title', 'p', InputOption::VALUE_OPTIONAL, 'parent title');
-    $this->addOption('parent_id', 'p', InputOption::VALUE_OPTIONAL, 'parent id (1=no parent)');
-
-    $help = "<info>%command.name%</info> will add a joomgallery category
-	Usage: <info>php %command.full_name%</info>";
-
-    $this->setDescription(Text::_('WIP, not finished: Add joomgallery category'));
-    $this->setHelp($help);
-
-  }
-
-  /**
-   * Configure the IO.
-   *
-   * @param   InputInterface   $input   The input to inject into the command.
-   * @param   OutputInterface  $output  The output to inject into the command.
-   *
-   * @return  void
-   */
-  private function configureSymfonyIO(InputInterface $input, OutputInterface $output)
-  {
-    $this->cliInput = $input;
-    $this->ioStyle  = new SymfonyStyle($input, $output);
-  }
-
-}
+} // class
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
@@ -6,7 +7,6 @@ defined('_JEXEC') or die;
 use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -15,6 +15,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+
+//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 
 class Config extends AbstractCommand
 {
@@ -43,7 +45,7 @@ class Config extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
 //  public function __construct(DatabaseInterface $db)
   public function __construct()
@@ -74,7 +76,7 @@ class Config extends AbstractCommand
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function configure(): void
   {
@@ -92,9 +94,8 @@ class Config extends AbstractCommand
     $help = "<info>%command.name%</info> lists variables of one configuration
   Usage: <info>php %command.full_name% </info>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
-    * You may restrict the value sting length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
-  "
-    ;
+    * You may restrict the value string length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
+  ";
     $this->setDescription(Text::_('List all variables of a joomgallery configuration'));
     $this->setHelp($help);
   }
@@ -110,7 +111,7 @@ class Config extends AbstractCommand
 //    $this->ioStyle->title(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
     $this->ioStyle->title('JoomGallery Configuration');
 
-    $configId = $input->getOption('id') ?? '1';
+    $configId        = $input->getOption('id') ?? '1';
     $max_line_length = $input->getOption('max_line_length') ?? null;
 
 //    if (empty ($configId)){
@@ -121,7 +122,8 @@ class Config extends AbstractCommand
 
     $configurationAssoc = $this->getItemAssocFromDB($configId);
 
-    if (empty ($configurationAssoc)){
+    if (empty ($configurationAssoc))
+    {
       $this->ioStyle->error("The configuration id '" . $configId . "' is invalid, No configuration found matching your criteria!");
 
       return Command::FAILURE;
@@ -136,18 +138,20 @@ class Config extends AbstractCommand
 //    echo 'strConfigurationAssoc: ' . json_encode($strConfigurationAssoc, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
 
     // ToDo: Use horizontal table again ;-)
-    foreach ($strConfigurationAssoc as $value) {
+    foreach ($strConfigurationAssoc as $value)
+    {
 //      if (\is_string($value)) {
 //        $headers[] = new TableCell($value, ['colspan' => 2]);
 //        $row[] = null;
 //        continue;
 //      }
-      if (!\is_array($value)) {
+      if (!\is_array($value))
+      {
         throw new InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
       }
 
       $headers[] = key($value);
-      $row[] = current($value);
+      $row[]     = current($value);
     }
 
     $this->ioStyle->horizontalTable($headers, [$row]);
@@ -160,9 +164,9 @@ class Config extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
-  private function getItemAssocFromDB(string $configId): array | null
+  private function getItemAssocFromDB(string $configId): array|null
   {
     $db    = $this->getDatabase();
     $query = $db->getQuery(true);
@@ -182,12 +186,14 @@ class Config extends AbstractCommand
   {
     $items = [];
 
-    if(empty($max_len)){
+    if (empty($max_len))
+    {
       $max_len = 70;
     }
 
 //    $count = 0;
-    foreach ($configurationAssoc as $key => $value) {
+    foreach ($configurationAssoc as $key => $value)
+    {
 //      $count++;
 //      if ($count > 8) {
 //        break;
@@ -199,7 +205,7 @@ class Config extends AbstractCommand
 //      echo '[' . $count . '] ' . "key: " . $key . " value: " . $value . "\n";
 //      $items[$key] = (string) $value;
       //$items[] = $key => (string) $value;
-      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len,'...')];
+      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
       //$items[] = [[$key => (string) $value]];
     }
 

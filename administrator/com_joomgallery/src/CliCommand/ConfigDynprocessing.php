@@ -1,13 +1,11 @@
 <?php
+
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
-use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Response\JsonResponse;
-
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -44,7 +42,7 @@ class ConfigDynprocessing extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
 //  public function __construct(DatabaseInterface $db)
   public function __construct()
@@ -75,7 +73,7 @@ class ConfigDynprocessing extends AbstractCommand
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function configure(): void
   {
@@ -86,13 +84,12 @@ class ConfigDynprocessing extends AbstractCommand
 
     // ToDo: Full with all items automatically
 
-    $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'config ID');
+    $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration ID');
 
-    $help = "<info>%command.name%</info> displays parameters of one config
+    $help = "<info>%command.name%</info> displays config:Dynprocessing value as it is shortened otherwise
   Usage: <info>php %command.full_name%</info>
-    * You must specify an ID of the config with the <info>--id<info> option. Otherwise, it will be requested
-  "
-    ;
+    * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
+  ";
     $this->setDescription(Text::_('List all variables of a joomgallery config'));
     $this->setHelp($help);
   }
@@ -107,18 +104,13 @@ class ConfigDynprocessing extends AbstractCommand
     $this->configureIO($input, $output);
     $this->ioStyle->title('JoomGallery dynamicprocessing Data');
 
-    $configId = $input->getOption('id') ?? '';
-
-    if (empty ($configId)){
-      $this->ioStyle->error("The config id '" . $configId . "' is invalid (empty) !");
-
-      return Command::FAILURE;
-    }
+    $configId = $input->getOption('id') ?? '1';
 
     $jsonParams = $this->getParamsAsJsonFromDB($configId);
 
     // If no params returned  show a warning and set the exit code to 1.
-    if ( empty ($jsonParams)) {
+    if (empty ($jsonParams))
+    {
 
       $this->ioStyle->error("The config id '" . $configId . "' is invalid or parameters are empty !");
 
@@ -127,7 +119,7 @@ class ConfigDynprocessing extends AbstractCommand
 
     // pretty print json data
 
-    $encoded = json_decode($jsonParams);
+    $encoded    = json_decode($jsonParams);
     $jsonParams = json_encode($encoded, JSON_PRETTY_PRINT);
 
     $this->ioStyle->writeln($jsonParams);
@@ -140,17 +132,17 @@ class ConfigDynprocessing extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
-  private function getParamsAsJsonFromDB(string $dynamicprocessing): string
+  private function getParamsAsJsonFromDB(string $configId): string
   {
     $sParams = '';
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $db      = $this->getDatabase();
+    $query   = $db->getQuery(true);
     $query
       ->select('jg_dynamicprocessing')
-      ->from('#__joomgallery')
-      ->where($db->quoteName('id') . ' = ' . (int) $dynamicprocessing);
+      ->from('#__joomgallery_configs')
+      ->where($db->quoteName('id') . ' = ' . (int) $configId);
 
     $db->setQuery($query);
     $sParams = $db->loadResult();
@@ -162,12 +154,14 @@ class ConfigDynprocessing extends AbstractCommand
   {
     $items = [];
 
-    if(empty($max_len)){
+    if (empty($max_len))
+    {
       $max_len = 70;
     }
 
 //    $count = 0;
-    foreach ($configAssoc as $key => $value) {
+    foreach ($configAssoc as $key => $value)
+    {
 //      $count++;
 //      if ($count > 8) {
 //        break;
@@ -179,7 +173,7 @@ class ConfigDynprocessing extends AbstractCommand
 //      echo '[' . $count . '] ' . "key: " . $key . " value: " . $value . "\n";
 //      $items[$key] = (string) $value;
       //$items[] = $key => (string) $value;
-      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len,'...')];
+      $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
       //$items[] = [[$key => (string) $value]];
     }
 

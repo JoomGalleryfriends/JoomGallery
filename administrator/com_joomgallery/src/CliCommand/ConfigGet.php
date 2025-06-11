@@ -1,12 +1,10 @@
 <?php
+
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
-use InvalidArgumentException;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\Console\Command\AbstractCommand;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -16,6 +14,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+
+//use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 
 class ConfigGet extends AbstractCommand
 {
@@ -42,11 +42,8 @@ class ConfigGet extends AbstractCommand
   /**
    * Instantiate the command.
    *
-   * @param   DatabaseInterface  $db  Database connector
-   *
-   * @since   4.0.0
+   * @since  4.0.X
    */
-//  public function __construct(DatabaseInterface $db)
   public function __construct()
   {
     parent::__construct();
@@ -75,7 +72,7 @@ class ConfigGet extends AbstractCommand
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since  4.0.X
    */
   protected function configure(): void
   {
@@ -90,7 +87,7 @@ class ConfigGet extends AbstractCommand
     $help = "<info>%command.name%</info> displays the current value of JoomGallery configuration option (Table)
   Usage: <info>php %command.full_name%</info> <option>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
-		"		;
+		";
 
     $this->setDescription('Display the current value of a configuration option');
     $this->setHelp($help);
@@ -106,7 +103,7 @@ class ConfigGet extends AbstractCommand
     $this->configureIO($input, $output);
     $this->ioStyle->title("Current option in JoomGallery Configuration (table)");
 
-    $option = $this->cliInput->getArgument('option');
+    $option   = $this->cliInput->getArgument('option');
     $configId = $input->getOption('id') ?? '1';
 
 //    if (empty ($configId)){
@@ -117,13 +114,15 @@ class ConfigGet extends AbstractCommand
 
     $configurationAssoc = $this->getItemAssocFromDB($configId);
 
-    if (empty ($configurationAssoc)){
+    if (empty ($configurationAssoc))
+    {
       $this->ioStyle->error("The configuration id '" . $configId . "' is invalid, No configuration found matching your criteria!");
 
       return Command::FAILURE;
     }
 
-    if( ! \array_key_exists($option, $configurationAssoc) ){
+    if (!\array_key_exists($option, $configurationAssoc))
+    {
       $this->ioStyle->error("Can't find option *$option* in configuration list");
 
       return Command::FAILURE;
@@ -142,9 +141,9 @@ class ConfigGet extends AbstractCommand
    *
    * @return array
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
-  private function getItemAssocFromDB(string $configId): array | null
+  private function getItemAssocFromDB(string $configId): array|null
   {
     $db    = $this->getDatabase();
     $query = $db->getQuery(true);
@@ -167,40 +166,37 @@ class ConfigGet extends AbstractCommand
    *
    * @return string
    *
-   * @since 4.0.0
+   * @since  4.0.X
    */
   protected function formatConfigValue($value): string
   {
-    if ($value === false) {
+    if ($value === false)
+    {
       return 'false';
     }
 
-    if ($value === true) {
+    if ($value === true)
+    {
       return 'true';
     }
 
-    if ($value === null) {
+    if ($value === null)
+    {
       return 'Not Set';
     }
 
-    if (\is_array($value)) {
+    if (\is_array($value))
+    {
       return json_encode($value);
     }
 
-    if (\is_object($value)) {
+    if (\is_object($value))
+    {
       return json_encode(get_object_vars($value));
     }
 
     return $value;
   }
-
-
-
-
-
-
-
-
 
 
 }
