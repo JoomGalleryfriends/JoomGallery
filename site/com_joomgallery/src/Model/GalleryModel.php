@@ -201,7 +201,7 @@ class GalleryModel extends JoomItemModel
     {
       // Get query variables sent by the images form
       $imgform_list = $this->app->input->get('list', array());
-      $imgform_limitstart = $this->app->getInput()->get('limitstart', 0, 'int');
+      $imgform_limitstart = $this->app->getUserStateFromRequest('joom.galleryview.limitstart', 'limitstart', 0, 'uint');
     }
 
     // Load the number of images defined in the configuration

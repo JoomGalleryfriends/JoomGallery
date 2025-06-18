@@ -472,12 +472,12 @@ class CategoryModel extends JoomItemModel
     }
 
     $imgform_list = array();
-    $imgform_limitstart = $this->app->getUserState('joom.categoryview.image.limitstart', 0);
+    $imgform_limitstart = $this->app->getUserState('joom.categoryview.'.$this->item->id.'.image.limitstart', 0);
     if($this->app->input->get('contenttype', '') == 'image')
     {
       // Get query variables sent by the images form
       $imgform_list = $this->app->input->get('list', array());
-      $imgform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.image.limitstart', 'limitstart', 0, 'uint');
+      $imgform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.'.$this->item->id.'.image.limitstart', 'limitstart', 0, 'uint');
     }
 
     // Override number of images being loaded
@@ -542,12 +542,12 @@ class CategoryModel extends JoomItemModel
     }
 
     $catform_list = array();
-    $catform_limitstart = $this->app->getUserState('joom.categoryview.category.limitstart', 0);
+    $catform_limitstart = $this->app->getUserState('joom.categoryview.'.$this->item->id.'.category.limitstart', 0);
     if($this->app->input->get('contenttype', '') == 'category')
     {
       // Get query variables sent by the subcategories form
       $catform_list = $this->app->input->get('list', array());
-      $catform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.category.limitstart', 'limitstart', 0, 'uint');
+      $catform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.'.$this->item->id.'.category.limitstart', 'limitstart', 0, 'uint');
     }
 
     // Override number of subcategories being loaded
