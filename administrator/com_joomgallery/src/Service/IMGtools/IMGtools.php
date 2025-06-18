@@ -257,7 +257,15 @@ abstract class IMGtools implements IMGtoolsInterface
     if($this->src_type == 'PNG')
     {
       // Detect if png is based on palettes
-      $included = \strpos(\file_get_contents($img), "PLTE");
+      if($is_stream)
+      {
+        $included = \strpos($string_stream, "PLTE");
+      }
+      else
+      {
+        $included = \strpos(\file_get_contents($img), "PLTE");
+      }
+
       if($included !== false)
       {
         $this->res_imginfo['truecolor'] = false;

@@ -453,11 +453,11 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Temporary remove '[0]' from src_file
     $first_frame_only = false;
-    if(\strpos($this->src_file, '[0]') !== false)
+    if(\is_string($this->src_file) && \strpos($this->src_file, '[0]') !== false)
     {
       $this->src_file = \str_replace('[0]','',$this->src_file);
       $first_frame_only = true;
-    }    
+    }
 
     // Define temporary image file to be created
     $tmp_folder   = $this->app->get('tmp_path');
