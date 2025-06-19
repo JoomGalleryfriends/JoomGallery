@@ -40,6 +40,7 @@ class HtmlView extends JoomGalleryView
   protected $memoryLimit;
   protected $maxSize;
   protected $mediaSize;
+  protected $configSize;
 
   /**
 	 * Display the view
@@ -96,8 +97,7 @@ class HtmlView extends JoomGalleryView
 
       $this->js_vars = $js_vars;
 
-      //--- Limits php.ini, config ----------------------------------------------------------------
-
+      //--- Limits php.ini, config -----
       $this->limitsPhpConfig($this->config);
     }
     elseif($this->_layout == 'replace')
