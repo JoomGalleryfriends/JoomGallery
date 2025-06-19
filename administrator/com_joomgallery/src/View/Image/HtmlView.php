@@ -13,6 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
@@ -33,7 +34,13 @@ class HtmlView extends JoomGalleryView
   protected $config;
   protected $imagetypes;
 
-	/**
+  protected $uploadLimit;
+  protected $postMaxSize;
+  protected $memoryLimit;
+  protected $maxSize;
+  protected $configSize;
+
+  /**
 	 * Display the view
 	 *
 	 * @param   string  $tpl  Template name
@@ -87,6 +94,20 @@ class HtmlView extends JoomGalleryView
       $js_vars->semaTokens   = 100;                                           // Prealloc space for 100 tokens
 
       $this->js_vars = $js_vars;
+
+      //--- Limits --------------------------------------------------------------------
+
+      $mediaHelper = new MediaHelper;
+
+      // Maximum allowed size in MB
+      $this->uploadLimit = round($mediaHelper->toBytes(ini_get('upload_max_filesize')) / (1024 * 1024));
+      $this->postMaxSize = round($mediaHelper->toBytes(ini_get('post_max_size')) / (1024 * 1024));
+      $this->memoryLimit = round($mediaHelper->toBytes(ini_get('memory_limit')) / (1024 * 1024));
+
+      $this->configSize = round($this->config->get('jg_maxfilesize') / (1024 * 1024));
+
+      // Max size calculated (previously defined by joomla function)
+      $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $this->memoryLimit, $this->configSize);
     }
     elseif($this->_layout == 'replace')
     {
