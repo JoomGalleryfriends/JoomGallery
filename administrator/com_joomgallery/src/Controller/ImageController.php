@@ -267,4 +267,56 @@ class ImageController extends JoomFormController
         );
       }
     }
+    
+  /**
+   * Method to save metadata to an image file
+   *
+   * @return  boolean  True if metada was saved successfully, false otherwise.
+   *
+   * @since   4.1.0
+   */
+  public function savemetadata()
+  {
+    // Check for request forgeries.
+    $this->checkToken();
+
+    $model   = $this->getModel();
+    $data    = $this->input->post->get('jform', [], 'array');
+
+    // Access check.
+    if (!$this->allowSave($data, 'id')) {
+      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error');
+      $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=' . $this->view_list . $this->getRedirectToListAppend(), false));
+
+      return false;
+    }
+
+    // Define redirect url
+    $url = 'index.php?option=' . _JOOM_OPTION . '&view=image&layout=edit&id=' . $data['id'];
+
+    // Check if there is an imagetype given with the request
+    $imagetype = $this->input->get('imagetype', 'original', 'word');
+
+    // Attempt to save the metadata.
+    if (!$model->savemetadata((int) $data['id'], $imagetype)) {
+      // Redirect back to the image edit screen.
+      $this->setMessage(Text::_('COM_JOOMGALLERY_ERROR_SAVE_METADATA_TO_FILE', $model->getError()), 'error');
+      $this->setRedirect(Route::_($url, false));
+
+      return false;
+    }
+
+    // Set message
+    $this->setMessage(Text::_('COM_JOOMGALLERY_SUCCESS_SAVE_METADATA_TO_FILE'));
+
+    // Check if there is a return value
+    $return = $this->input->get('return', null, 'base64');
+
+    if (!\is_null($return) && Uri::isInternal(\base64_decode($return))) {
+      $url = \base64_decode($return);
+    }
+
+    // Redirect to the list screen.
+    $this->setRedirect(Route::_($url, false));
+  }
 }

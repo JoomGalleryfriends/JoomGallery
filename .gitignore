@@ -19,3 +19,6 @@
 Thumbs.db
 node_modules
 joomgallery_old.xml
+/administrator/com_joomgallery/vendor
+/.vscode
+composer.lock

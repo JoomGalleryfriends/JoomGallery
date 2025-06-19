@@ -22,6 +22,7 @@ use \Joomla\CMS\Language\Multilanguage;
 use \Joomla\CMS\User\UserFactoryInterface;
 use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use \Joomla\Registry\Registry;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
@@ -1205,6 +1206,60 @@ class ImageModel extends JoomAdminModel
       }
     }    
 	}
+
+  /**
+   * Method to save metadata to an image file
+   *
+   * @param   int     $pk    The record primary key.
+   * @param   string  $type  The imagetype to which file the metadata gets stored to.
+   *
+   * @return  boolean  True if successful, false if an error occurs.
+   *
+   * @since   4.0
+   */
+  public function savemetadata(int $pk, $type='original'): bool
+  {
+    $table = $this->getTable();
+
+    if($table->load($pk))
+    {
+      // Create config service
+      $this->component->createConfig();
+
+	  // Create filemanager service
+	  $this->component->createFileManager($table->catid);
+	  $path = $this->component->getFileManager()->getImgPath($table, $type);
+
+	  // Get registry to be used in writeMetadata
+	  $registry = new Registry($table->imgmetadata);
+
+      // Create the metadata service
+      $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
+
+	  $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
+
+	  // Perform the save using the metadata/filesystem service
+	  if ($filesystem != 'local-images')
+	  {
+		$data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
+	  } else
+	  {
+		$data = $this->component->getMetadata()->writeMetadata($path, $registry);
+	  }
+	  $this->component->getFilesystem()->createFile(basename($path), dirname($path), $data);
+    }
+    else
+    {
+      $this->setError($table->getError());
+
+      return false;
+    }
+
+    // Clear the component's cache
+    $this->cleanCache();
+
+    return true;
+  }
 
   /**
    * Method to test whether a record can be recreated.

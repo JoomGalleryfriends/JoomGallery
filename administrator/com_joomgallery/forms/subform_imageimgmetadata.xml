@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fieldset name="general">
+    <field name="comment"
+           type="metadatacomment"
+           default=""
+           label="COM_JOOMGALLERY_COMMENT_COMMENT"
+           message="COM_JOOMGALLERY_COMMENT_COMMENT_DESCRIPTION" />
+
+    <field name="iptc"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_metadata_iptc.xml"
+           layout="joomla.form.field.subform.default"
+           label="IPTC" />
+
+    <field name="exif"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_metadata_exif.xml"
+           layout="joomla.form.field.subform.exif"
+           label="EXIF" />
+  </fieldset>
+</form>

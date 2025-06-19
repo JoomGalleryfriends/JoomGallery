@@ -1,0 +1,11 @@
+{
+    "require": {
+        "fileeye/pel": "^0.10.0"
+    },
+    "config": {
+        "vendor-dir": "administrator/com_joomgallery/vendor",
+        "platform": {
+            "php": "7.4.0"
+        }
+    }
+}
