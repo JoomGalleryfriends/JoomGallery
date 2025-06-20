@@ -95,19 +95,9 @@ class HtmlView extends JoomGalleryView
 
       $this->js_vars = $js_vars;
 
-      //--- Limits --------------------------------------------------------------------
+      //--- Limits php.ini, config ----------------------------------------------------------------
 
-      $mediaHelper = new MediaHelper;
-
-      // Maximum allowed size in MB
-      $this->uploadLimit = round($mediaHelper->toBytes(ini_get('upload_max_filesize')) / (1024 * 1024));
-      $this->postMaxSize = round($mediaHelper->toBytes(ini_get('post_max_size')) / (1024 * 1024));
-      $this->memoryLimit = round($mediaHelper->toBytes(ini_get('memory_limit')) / (1024 * 1024));
-
-      $this->configSize = round($this->config->get('jg_maxfilesize') / (1024 * 1024));
-
-      // Max size calculated (previously defined by joomla function)
-      $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $this->memoryLimit, $this->configSize);
+      $this->limitsPhpConfig($this->config);
     }
     elseif($this->_layout == 'replace')
     {
@@ -309,4 +299,30 @@ class HtmlView extends JoomGalleryView
 
     $this->form->setFieldAttribute('replacetype', 'default', $this->app->input->get('type', 'original', 'string'));
   }
+
+  /**
+   * Reads php.ini values to determine the minimum size for upload
+   * The memory_limit for the php script was not reliable (0 on some sytems)
+   * so it is just shown
+   *
+   * @param   mixed  $joomGaleryConfig config of joom gallery
+   *
+   *
+   * @since version 4.1
+   */
+  public function limitsPhpConfig(mixed $joomGaleryConfig): void
+  {
+    $mediaHelper = new MediaHelper;
+
+    // Maximum allowed size in MB
+    $this->uploadLimit = round($mediaHelper->toBytes(ini_get('upload_max_filesize')) / (1024 * 1024));
+    $this->postMaxSize = round($mediaHelper->toBytes(ini_get('post_max_size')) / (1024 * 1024));
+    $this->memoryLimit = round($mediaHelper->toBytes(ini_get('memory_limit')) / (1024 * 1024));
+
+    $this->configSize = round($joomGaleryConfig->get('jg_maxfilesize') / (1024 * 1024));
+
+    // Max size to be used (previously defined by joomla function but ...)
+    $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $this->configSize);
+  }
+
 }
