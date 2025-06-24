@@ -1,11 +1,13 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later            ToDo: Format  **
+ *****************************************************************************************/
+
+// WIP: in development, but can not be called from caommand line (plugin)
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -47,13 +49,46 @@ class CategoryAdd extends AbstractCommand
    */
   private $cliInput;
 
+  /**
+   * category title from user input
+   * @var string
+   */
   private $title;
+
+  /**
+   * category published from user input, yes/no true/false
+   * @var string
+   */
   private $published;
+
+  /**
+   * category created by from user input
+   * @var string
+   */
   private $created_by;
+
+  /**
+   * category created time from user input
+   * @var string
+   */
   private $created_time;
+
+  /**
+   * category modified by from user input
+   * @var string
+   */
   private $modified_by;
+
+  /**
+   * category modified time from user input
+   * @var string
+   */
   private $modified_time;
-  // ToDo: private $parent_title;
+
+  /**
+   * category parent id from user input
+   * @var string
+   */
   private $parent_id;
 
   /**
@@ -87,12 +122,8 @@ class CategoryAdd extends AbstractCommand
    */
   protected function configure(): void
   {
-//    $this->setDescription(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-//    $this->setHelp(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_HELP'));
-//
-//    $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
 
-    // ToDo: $this->addArgument('title', 't', InputOption::VALUE_REQUIRED, 'Title');
+    // ToDo: title as argument ? $this->addArgument('title', 't', InputOption::VALUE_REQUIRED, 'Title');
     $this->addOption('title', 't', InputOption::VALUE_REQUIRED, 'Title');
     $this->addOption('published', null, InputOption::VALUE_OPTIONAL, 'Published (yes/no)');
     $this->addOption('created_time', null, InputOption::VALUE_OPTIONAL, 'Created time');
@@ -111,13 +142,19 @@ class CategoryAdd extends AbstractCommand
   }
 
   /**
-   * @inheritDoc
+   * Internal function to execute the command.
+   *
+   * @param   InputInterface   $input   The input to inject into the command.
+   * @param   OutputInterface  $output  The output to inject into the command.
+   *
+   * @return  integer  The command exit code
+   *
+   * @since   4.0.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
     // Configure the Symfony output helper
     $this->configureIO($input, $output);
-//    $this->ioStyle->title(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
     $this->ioStyle->title('WIP, not finished: JoomGallery add category');
 
     //--- assign option ----------------------------
@@ -151,8 +188,7 @@ class CategoryAdd extends AbstractCommand
     $this->published     = $filter->clean($input->getOption('published') ?? '0');
     $this->created_time  = $filter->clean($input->getOption('created_time') ?? $actualTime);
     $this->modified_time = $filter->clean($input->getOption('modified_time') ?? $actualTime);
-//    $this->parent_title  = $filter->clean($input->getOption('parent_title')  ?? 'root');
-    $this->parent_id = $filter->clean($input->getOption('parent_id') ?? '1');
+    $this->parent_id     = $filter->clean($input->getOption('parent_id') ?? '1');
 
     //--- modified_by -----------------------
 
@@ -166,16 +202,15 @@ class CategoryAdd extends AbstractCommand
     else
     {
 
-      $this->modified_by_Id = $this->getUserId($this->modified_by);
+      $modified_by_Id = $this->getUserId($this->modified_by);
 
-      if (empty($this->modified_by_Id))
+      if (empty($modified_by_Id))
       {
         $this->ioStyle->error("The user (author)" . $this->modified_by . " does not exist!");
 
         return Command::FAILURE;
       }
     }
-
 
     //--- validate -----------------------------------
 
@@ -194,7 +229,6 @@ class CategoryAdd extends AbstractCommand
       'created_time'  => $filter->clean($this->created_time, 'STRING'),
       'modified_by'   => $filter->clean($this->modified_time, 'STRING'),
       'modified_time' => $filter->clean($this->title, 'STRING'),
-//      'parent_title' => $filter->clean($this->parent_title, 'STRING'),
       'parent_id'     => $filter->clean($this->parent_id, 'INT'),
     ];
 

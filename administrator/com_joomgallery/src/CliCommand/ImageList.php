@@ -1,11 +1,11 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -24,7 +24,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ImageList extends AbstractCommand
 {
-//  use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
 
   /**
@@ -51,7 +50,6 @@ class ImageList extends AbstractCommand
    *
    * @since  4.0.X
    */
-//  public function __construct(DatabaseInterface $db)
   public function __construct()
   {
     parent::__construct();
@@ -84,21 +82,9 @@ class ImageList extends AbstractCommand
    */
   protected function configure(): void
   {
-//    $this->setDescription(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-//    $this->setHelp(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_HELP'));
-//
-//    $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
-
-    // ToDo: Full with all items automatically
-
     $this->addOption('owner', null, InputOption::VALUE_OPTIONAL, 'user ID (created_by)');
     $this->addOption('created', null, InputOption::VALUE_OPTIONAL, 'created_by');
     $this->addOption('category', null, InputOption::VALUE_OPTIONAL, 'category id');
-
-//    // ToDo: option to limit by user (owner), ?parent ...
-//    $this->addOption('owner', null, InputOption::VALUE_OPTIONAL, 'username (created_by)');
-//     		\nYou may filter on the user of category using the <info>--owner</info> option:
-    // $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
 
     $help = "<info>%command.name%</info>will list all joomgallery images
   Usage: <info>php %command.full_name%</info>
@@ -110,17 +96,22 @@ class ImageList extends AbstractCommand
     $this->setHelp($help);
   }
 
-
   /**
-   * @inheritDoc
+   * Internal function to execute the command.
+   *
+   * @param   InputInterface   $input   The input to inject into the command.
+   * @param   OutputInterface  $output  The output to inject into the command.
+   *
+   * @return  integer  The command exit code
+   *
+   * @since   4.0.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
     // Configure the Symfony output helper
     $this->configureIO($input, $output);
-//    $this->ioStyle->title(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-    $this->ioStyle->title('JoomGallery Image list');
 
+    $this->ioStyle->title('JoomGallery Image list');
 
     $created_by_id = $input->getOption('created') ?? '';
     if (empty ($created_by_id))
@@ -131,7 +122,6 @@ class ImageList extends AbstractCommand
     $cat_id = $input->getOption('category') ?? '';
 
     $images = $this->getItemsFromDB($created_by_id, $cat_id);
-
 
     // If no images are found show a warning and set the exit code to 1.
     if (empty($images))
@@ -198,12 +188,10 @@ class ImageList extends AbstractCommand
     }
 
     $db->setQuery($query);
-//    $images = $db->loadAssocList('id');
     $images = $db->loadObjectList();
 
     return $images;
   }
-
 
 }
 

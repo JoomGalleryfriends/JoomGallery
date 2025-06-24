@@ -24,7 +24,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ImageParams extends AbstractCommand
 {
-//  use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
 
   /**
@@ -51,7 +50,6 @@ class ImageParams extends AbstractCommand
    *
    * @since  4.0.X
    */
-//  public function __construct(DatabaseInterface $db)
   public function __construct()
   {
     parent::__construct();
@@ -84,11 +82,6 @@ class ImageParams extends AbstractCommand
    */
   protected function configure(): void
   {
-//    $this->setDescription(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-//    $this->setHelp(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_HELP'));
-//
-//    $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
-
     // ToDo: Full with all items automatically
 
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'image ID');
@@ -101,9 +94,15 @@ class ImageParams extends AbstractCommand
     $this->setHelp($help);
   }
 
-
   /**
-   * @inheritDoc
+   * Internal function to execute the command.
+   *
+   * @param   InputInterface   $input   The input to inject into the command.
+   * @param   OutputInterface  $output  The output to inject into the command.
+   *
+   * @return  integer  The command exit code
+   *
+   * @since   4.0.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -164,6 +163,16 @@ class ImageParams extends AbstractCommand
     return $sParams;
   }
 
+  /**
+   * Trim length of each value in array $imageAssoc to max_len
+   *
+   * @param   array  $imageAssoc  in data as association key => val
+   * @param          $max_len
+   *
+   * @return array
+   *
+   * @since version
+   */
   private function assoc2DefinitionList(array $imageAssoc, $max_len = 70)
   {
     $items = [];
@@ -173,26 +182,12 @@ class ImageParams extends AbstractCommand
       $max_len = 70;
     }
 
-//    $count = 0;
     foreach ($imageAssoc as $key => $value)
     {
-//      $count++;
-//      if ($count > 8) {
-//        break;
-//      }
-
-//      echo '$key: ' . json_encode($key, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
-//      echo '$value: ' . json_encode($key, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
-
-//      echo '[' . $count . '] ' . "key: " . $key . " value: " . $value . "\n";
-//      $items[$key] = (string) $value;
-      //$items[] = $key => (string) $value;
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
-      //$items[] = [[$key => (string) $value]];
     }
 
     return $items;
   }
 
 }
-
