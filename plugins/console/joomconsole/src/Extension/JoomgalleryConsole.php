@@ -52,7 +52,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
    */
   private static $commands = [
     Category::class,
-//    CategoryAdd::class, // test ???
+//    CategoryAdd::class, // WIP: in development,
     CategoryList::class,
     CategoryParams::class,
     Config::class,

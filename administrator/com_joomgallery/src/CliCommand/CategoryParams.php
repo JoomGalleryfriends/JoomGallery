@@ -1,11 +1,11 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -22,9 +22,14 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ * Display category params as they can not be displayed in one line
+ * @package     Joomgallery\Component\Joomgallery\Administrator\CliCommand
+ *
+ * @since       version
+ */
 class CategoryParams extends AbstractCommand
 {
-//  use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
 
   /**
@@ -51,7 +56,6 @@ class CategoryParams extends AbstractCommand
    *
    * @since  4.0.X
    */
-//  public function __construct(DatabaseInterface $db)
   public function __construct()
   {
     parent::__construct();
@@ -84,13 +88,6 @@ class CategoryParams extends AbstractCommand
    */
   protected function configure(): void
   {
-//    $this->setDescription(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-//    $this->setHelp(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_HELP'));
-//
-//    $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
-
-    // ToDo: Full with all items automatically
-
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'category ID');
 
     $help = "<info>%command.name%</info> displays parameters of one category
@@ -103,7 +100,14 @@ class CategoryParams extends AbstractCommand
 
 
   /**
-   * @inheritDoc
+   * Internal function to execute the command.
+   *
+   * @param   InputInterface   $input   The input to inject into the command.
+   * @param   OutputInterface  $output  The output to inject into the command.
+   *
+   * @return  integer  The command exit code
+   *
+   * @since   4.0.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -132,7 +136,6 @@ class CategoryParams extends AbstractCommand
     }
 
     // pretty print json data
-
     $encoded    = json_decode($jsonParams);
     $jsonParams = json_encode($encoded, JSON_PRETTY_PRINT);
 
@@ -151,19 +154,41 @@ class CategoryParams extends AbstractCommand
   private function getParamsAsJsonFromDB(string $categoryId): string
   {
     $sParams = '';
-    $db      = $this->getDatabase();
-    $query   = $db->getQuery(true);
-    $query
-      ->select('params')
-      ->from('#__joomgallery_categories')
-      ->where($db->quoteName('id') . ' = ' . (int) $categoryId);
+    try
+    {
+      $db    = $this->getDatabase();
+      $query = $db->getQuery(true);
+      $query
+        ->select('params')
+        ->from('#__joomgallery_categories')
+        ->where($db->quoteName('id') . ' = ' . (int) $categoryId);
 
-    $db->setQuery($query);
-    $sParams = $db->loadResult();
+      $db->setQuery($query);
+      $sParams = $db->loadResult();
+    }
+    catch (\Exception $e)
+    {
+      $this->ioStyle->error(
+        Text::sprintf(
+          'Retrieving params from DB failed for ID: "' . $categoryId . '\n%s',
+          $e->getMessage()
+        )
+      );
+    }
 
     return $sParams;
   }
 
+  /**
+   * Trim length of each value in array $categoryAssoc to max_len
+   *
+   * @param   array  $categoryAssoc  in data as association key => val
+   * @param          $max_len
+   *
+   * @return array
+   *
+   * @since version
+   */
   private function assoc2DefinitionList(array $categoryAssoc, $max_len = 70)
   {
     $items = [];
@@ -173,22 +198,9 @@ class CategoryParams extends AbstractCommand
       $max_len = 70;
     }
 
-//    $count = 0;
     foreach ($categoryAssoc as $key => $value)
     {
-//      $count++;
-//      if ($count > 8) {
-//        break;
-//      }
-
-//      echo '$key: ' . json_encode($key, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
-//      echo '$value: ' . json_encode($key, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
-
-//      echo '[' . $count . '] ' . "key: " . $key . " value: " . $value . "\n";
-//      $items[$key] = (string) $value;
-      //$items[] = $key => (string) $value;
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
-      //$items[] = [[$key => (string) $value]];
     }
 
     return $items;

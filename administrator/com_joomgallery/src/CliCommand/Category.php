@@ -1,11 +1,11 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -25,7 +25,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Category extends AbstractCommand
 {
-//  use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
 
   /**
@@ -52,12 +51,10 @@ class Category extends AbstractCommand
    *
    * @since  4.0.X
    */
-//  public function __construct(DatabaseInterface $db)
   public function __construct()
   {
     parent::__construct();
 
-    // $db = $this->getDatabase();
     $db = Factory::getContainer()->get(DatabaseInterface::class);
     $this->setDatabase($db);
   }
@@ -85,12 +82,7 @@ class Category extends AbstractCommand
    */
   protected function configure(): void
   {
-//    $this->setDescription(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-//    $this->setHelp(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_HELP'));
-//
-//    $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
-
-    // ToDo: Full with all items automatically
+    // ToDo: Option Full with all items automatically
 
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'category ID');
     $this->addOption('max_line_length', null, InputOption::VALUE_OPTIONAL, 'trim lenght of variable for item keeps in one line');
@@ -104,9 +96,15 @@ class Category extends AbstractCommand
     $this->setHelp($help);
   }
 
-
   /**
-   * @inheritDoc
+   * Internal function to execute the command.
+   *
+   * @param   InputInterface   $input   The input to inject into the command.
+   * @param   OutputInterface  $output  The output to inject into the command.
+   *
+   * @return  integer  The command exit code
+   *
+   * @since   4.0.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -126,7 +124,7 @@ class Category extends AbstractCommand
 
     $categoryAssoc = $this->getItemAssocFromDB($categoryId);
 
-    // If no categorys are found show a warning and set the exit code to 1.
+    // If no categories are found show a warning and set the exit code to 1.
     if (empty($categoryAssoc))
     {
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid, No category found matching your criteria!");
@@ -134,22 +132,11 @@ class Category extends AbstractCommand
       return Command::FAILURE;
     }
 
-//    echo 'categoryAssoc' . json_encode($categoryAssoc, JSON_UNESCAPED_SLASHES);
-//    echo 'categoryAssoc count: ' . count($categoryAssoc) . "\n\n";
-//    echo '---------------------------' . "\n";
-
     $strCategoryAssoc = $this->assoc2DefinitionList($categoryAssoc, $max_line_length);
-
-//    echo 'strCategoryAssoc: ' . json_encode($strCategoryAssoc, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
 
     // ToDo: Use horizontal table again ;-)
     foreach ($strCategoryAssoc as $value)
     {
-//      if (\is_string($value)) {
-//        $headers[] = new TableCell($value, ['colspan' => 2]);
-//        $row[] = null;
-//        continue;
-//      }
       if (!\is_array($value))
       {
         throw new InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
@@ -186,6 +173,16 @@ class Category extends AbstractCommand
     return $categoryAssoc;
   }
 
+  /**
+   * Trim length of each value in array $categoryAssoc to max_len
+   *
+   * @param   array  $categoryAssoc  in data as association key => val
+   * @param          $max_len
+   *
+   * @return array
+   *
+   * @since version
+   */
   private function assoc2DefinitionList(array $categoryAssoc, $max_len = 70)
   {
     $items = [];
@@ -195,22 +192,9 @@ class Category extends AbstractCommand
       $max_len = 70;
     }
 
-//    $count = 0;
     foreach ($categoryAssoc as $key => $value)
     {
-//      $count++;
-//      if ($count > 8) {
-//        break;
-//      }
-
-//      echo '$key: ' . json_encode($key, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
-//      echo '$value: ' . json_encode($key, JSON_UNESCAPED_SLASHES) . "\n" . "\n";
-
-//      echo '[' . $count . '] ' . "key: " . $key . " value: " . $value . "\n";
-//      $items[$key] = (string) $value;
-      //$items[] = $key => (string) $value;
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
-      //$items[] = [[$key => (string) $value]];
     }
 
     return $items;

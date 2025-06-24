@@ -1,11 +1,11 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -24,7 +24,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConfigGet extends AbstractCommand
 {
-//  use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
 
   /**
@@ -81,11 +80,6 @@ class ConfigGet extends AbstractCommand
    */
   protected function configure(): void
   {
-//    $this->setDescription(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-//    $this->setHelp(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_HELP'));
-//
-//    $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
-
     $this->addArgument('option', InputArgument::REQUIRED, 'Name of the option');
     $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration ID');
 
@@ -99,9 +93,15 @@ class ConfigGet extends AbstractCommand
 
   }
 
-
   /**
-   * @inheritDoc
+   * Internal function to execute the command.
+   *
+   * @param   InputInterface   $input   The input to inject into the command.
+   * @param   OutputInterface  $output  The output to inject into the command.
+   *
+   * @return  integer  The command exit code
+   *
+   * @since   4.0.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -110,12 +110,6 @@ class ConfigGet extends AbstractCommand
 
     $option   = $this->cliInput->getArgument('option');
     $configId = $input->getOption('id') ?? '1';
-
-//    if (empty ($configId)){
-//      $this->ioStyle->error("The configuration id '" . $configId . "' is invalid (empty) !");
-//
-//      return Command::FAILURE;
-//    }
 
     $configurationAssoc = $this->getItemAssocFromDB($configId);
 
@@ -140,7 +134,6 @@ class ConfigGet extends AbstractCommand
     return Command::SUCCESS;
   }
 
-
   /**
    * Retrieves extension list from DB
    *
@@ -162,7 +155,6 @@ class ConfigGet extends AbstractCommand
 
     return $configurationAssoc;
   }
-
 
   /**
    * Formats the Configuration value

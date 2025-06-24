@@ -1,11 +1,11 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -25,7 +25,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConfigSet extends AbstractCommand
 {
-//  use MVCFactoryAwareTrait;
   use DatabaseAwareTrait;
 
   /**
@@ -52,7 +51,6 @@ class ConfigSet extends AbstractCommand
    *
    * @since  4.0.X
    */
-//  public function __construct(DatabaseInterface $db)
   public function __construct()
   {
     parent::__construct();
@@ -85,11 +83,6 @@ class ConfigSet extends AbstractCommand
    */
   protected function configure(): void
   {
-//    $this->setDescription(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_DESC'));
-//    $this->setHelp(Text::_('COM_JOOMGALLERY_CLI_ITEMS_LIST_HELP'));
-//
-//    $this->addOption('search', 's', InputOption::VALUE_OPTIONAL, Text::_('COM_JOOMGALLERY_CLI_CONFIG_SEARCH'));
-
     $this->addArgument('option', InputArgument::REQUIRED, 'Name of the option');
     $this->addArgument('value', null, 'Value of the option');
     $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration ID', 1);
@@ -103,12 +96,18 @@ class ConfigSet extends AbstractCommand
 
     $this->setDescription('Set a value for a configuration option');
     $this->setHelp($help);
-
   }
 
 
   /**
-   * @inheritDoc
+   * Internal function to execute the command.
+   *
+   * @param   InputInterface   $input   The input to inject into the command.
+   * @param   OutputInterface  $output  The output to inject into the command.
+   *
+   * @return  integer  The command exit code
+   *
+   * @since   4.0.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -119,12 +118,6 @@ class ConfigSet extends AbstractCommand
     $value    = $this->cliInput->getArgument('value');
     $configId = $input->getOption('id') ?? '1';
     $veryfyIn = $input->getOption('verify') ?? 'false';
-
-//    if (empty ($configId)){
-//      $this->ioStyle->error("The configuration id '" . $configId . "' is invalid (empty) !");
-//
-//      return Command::FAILURE;
-//    }
 
     // $isDoVerify = true/false, 0/1;
     $isDoVerify = $this->isTrue($veryfyIn);
@@ -145,10 +138,7 @@ class ConfigSet extends AbstractCommand
       return Command::FAILURE;
     }
 
-//    echo 'value: "' . $value . '"' . "\n";
     $sanitizeValue = $this->sanitizeValue($value);
-//    echo 'sanitizeValue: "' . $sanitizeValue . '"' . "\n";
-
 
     $isUpdated = $this->writeOptionToDB($configId, $option, $sanitizeValue);
     if ($isUpdated)
@@ -214,7 +204,7 @@ class ConfigSet extends AbstractCommand
    *
    * @since  4.0.X
    */
-  public function sanitizeValue($value)
+  private function sanitizeValue($value)
   {
     switch ($value)
     {
@@ -227,50 +217,40 @@ class ConfigSet extends AbstractCommand
       case $value === 'null':
         $value = null;
         break;
-
     }
 
     return $value;
   }
 
+  /**
+   * Write given configuration value to DB set
+   *
+   * @param   mixed   $configId
+   * @param   string  $option
+   * @param           $value
+   *
+   * @return bool
+   *
+   * @since version
+   */
   private function writeOptionToDB(mixed $configId, string $option, $value): bool
   {
     $isUpdated = false;
-
-//    echo 'writeOptionToDB:value: "' . $value . '"' . "\n";
-//    echo 'writeOptionToDB:option: "' . $value . '"' . "\n";
 
     try
     {
       $db    = $this->getDatabase();
       $query = $db->getQuery(true);
 
-//      $query->update($db->quoteName('#__finder_logging'))
-//        ->set('hits = (hits + 1)')
-//        ->where($db->quoteName('md5sum') . ' = ' . $db->quote($entry->md5sum));
-//      $db->setQuery($query);
-//      $db->execute();
-
       $query
         ->update($db->quoteName('#__joomgallery_configs'))
         ->set($db->quoteName($option) . ' = ' . $db->quote($value))
-        //->set($db->quote($option) . ' = ' . $db->quote($value))
-        //->set($db->quote('note')  . ' = ' .  'xxxxx')
         ->where($db->quoteName('id') . ' = ' . (int) $configId);
-//        ->where($db->quoteName('id') . ' = ' . $db->quote((int) $configId));
-
-//      echo 'writeOptionToDB: 1' . "\n";
-//      echo '---------------------------' . "\n";
-//      echo($query->__toString()) . "\n";
-//      echo '---------------------------' . "\n";
-//      echo 'writeOptionToDB: 1B' . "\n";
 
       $db->setQuery($query);
 
-//      echo 'writeOptionToDB: 2';
       $db->execute();
 
-//      echo 'writeOptionToDB: 3';
       $isUpdated = true;
     }
     catch (\Exception $e)
@@ -289,7 +269,7 @@ class ConfigSet extends AbstractCommand
   }
 
   /**
-   *
+   * read value from database for verifying the set process
    *
    * @return array
    *
@@ -304,44 +284,47 @@ class ConfigSet extends AbstractCommand
       ->select($db->quoteName($option))
       ->from('#__joomgallery_configs')
       ->where($db->quoteName('id') . ' = ' . (int) $configId);
-
-//    echo "\n";
-//    echo '---------------------------' . "\n";
-//    echo($query->__toString()) . "\n";
-//    echo '---------------------------' . "\n";
-//
-//    echo 'getOptionFromDB: 1' . "\n";
     $db->setQuery($query);
 
-//    echo 'getOptionFromDB: 2' . "\n";
     $value = $db->loadResult();
-
-//    echo 'getOptionFromDB  3: "' . $option . "' value: '" . (string) json_encode($value) . "'" . "\n";
-//    echo 'getOptionFromDB  4: "' . $option . "' value: '" . (string) $value . "'" . "\n";
 
     return $value;
   }
 
-  // $isDoVerify = true/false, 0/1
+  /**
+   * Check string input for true (1)
+   *
+   * @param   mixed  $veryfyIn
+   *
+   * @return bool
+   *
+   * @since version
+   */
   private function isTrue(mixed $veryfyIn)
   {
-    $isDoVerify = false;
+    $isTrue = false;
 
     if (!empty ($veryfyIn))
     {
 
       if (strtolower($veryfyIn) == 'true')
       {
-        $isDoVerify = true;
+        $isTrue = true;
       }
 
+      if (strtolower($veryfyIn) == 'on')
+      {
+        $isTrue = true;
+      }
+
+      // ToDo: positive ?
       if ($veryfyIn == '1')
       {
-        $isDoVerify = true;
+        $isTrue = true;
       }
     }
 
-    return $veryfyIn;
+    return $isTrue;
   }
 
 
