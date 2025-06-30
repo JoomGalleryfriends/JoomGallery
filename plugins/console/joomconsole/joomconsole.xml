@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="console" version="4.0" method="upgrade">
+  <name>PLG_CONSOLE_JOOMCONSOLE</name>
+  <creationDate>2025-05-13</creationDate>
+  <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
+  <license>GNU General Public License version 3 or later</license>
+  <author>JoomGallery::ProjectTeam</author>
+  <authorEmail>team@joomgalleryfriends.net</authorEmail>
+  <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
+  <version>4.0.0</version>
+  <description>PLG_CONSOLE_JOOMCONSOLE_XML_DESCRIPTION</description>
+  <namespace path="src">Joomgallery\Plugin\Console\Joomconsole</namespace>
+  <files>
+    <folder>language</folder>
+    <folder>services</folder>
+    <folder plugin="joomconsole">src</folder>
+  </files>
+</extension>
