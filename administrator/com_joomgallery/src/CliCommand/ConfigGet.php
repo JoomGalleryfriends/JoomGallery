@@ -83,14 +83,12 @@ class ConfigGet extends AbstractCommand
     $this->addArgument('option', InputArgument::REQUIRED, 'Name of the option');
     $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration ID');
 
-    $help = "<info>%command.name%</info> displays the current value of JoomGallery configuration option (Table)
+    $help = "<info>%command.name%</info> display one field value in configuration (Table)
   Usage: <info>php %command.full_name%</info> <option>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
 		";
-
     $this->setDescription('Display the current value of a configuration option');
     $this->setHelp($help);
-
   }
 
   /**
@@ -106,7 +104,7 @@ class ConfigGet extends AbstractCommand
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
     $this->configureIO($input, $output);
-    $this->ioStyle->title("Current option in JoomGallery Configuration (table)");
+    $this->ioStyle->title("JoomGallery Configuration Value (table)");
 
     $option   = $this->cliInput->getArgument('option');
     $configId = $input->getOption('id') ?? '1';
@@ -122,7 +120,7 @@ class ConfigGet extends AbstractCommand
 
     if (!\array_key_exists($option, $configurationAssoc))
     {
-      $this->ioStyle->error("Can't find option *$option* in configuration list");
+      $this->ioStyle->error("Can't find option '$option' in configuration list");
 
       return Command::FAILURE;
     }

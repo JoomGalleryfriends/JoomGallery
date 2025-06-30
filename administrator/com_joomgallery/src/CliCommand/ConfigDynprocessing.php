@@ -90,11 +90,11 @@ class ConfigDynprocessing extends AbstractCommand
   {
     $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration ID');
 
-    $help = "<info>%command.name%</info> displays config:Dynprocessing value as it is shortened otherwise
+    $help = "<info>%command.name%</info> display config:Dynprocessing value as it is shortened otherwise
   Usage: <info>php %command.full_name%</info>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
   ";
-    $this->setDescription(Text::_('List all variables of a joomgallery config'));
+	  $this->setDescription(Text::_('List all variables in jg_dynamicprocessing field of selected joomgallery configuration'));
     $this->setHelp($help);
   }
 

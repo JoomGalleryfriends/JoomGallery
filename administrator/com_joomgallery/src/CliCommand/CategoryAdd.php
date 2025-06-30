@@ -133,10 +133,10 @@ class CategoryAdd extends AbstractCommand
 //    $this->addOption('parent_title', 'p', InputOption::VALUE_OPTIONAL, 'parent title');
     $this->addOption('parent_id', 'p', InputOption::VALUE_OPTIONAL, 'parent id (1=no parent)');
 
-    $help = "<info>%command.name%</info> will add a joomgallery category
+    $help = "<info>%command.name%</info> add a category
 	Usage: <info>php %command.full_name%</info>";
 
-    $this->setDescription(Text::_('WIP, not finished: Add joomgallery category'));
+    $this->setDescription(Text::_('WIP, not finished: Add category'));
     $this->setHelp($help);
 
   }

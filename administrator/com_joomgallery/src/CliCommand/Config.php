@@ -11,7 +11,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
-use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Console\Command\AbstractCommand;
@@ -86,12 +85,12 @@ class Config extends AbstractCommand
     $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration ID');
     $this->addOption('max_line_length', null, InputOption::VALUE_OPTIONAL, 'trim lenght of variable for item keeps in one line');
 
-    $help = "<info>%command.name%</info> lists variables of one configuration
+    $help = "<info>%command.name%</info> list variables of one configuration
   Usage: <info>php %command.full_name% </info>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
     * You may restrict the value string length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
   ";
-    $this->setDescription(Text::_('List all variables of a joomgallery configuration'));
+    $this->setDescription(Text::_('List all variables of selected joomgallery configuration'));
     $this->setHelp($help);
   }
 
@@ -130,7 +129,7 @@ class Config extends AbstractCommand
     {
       if (!\is_array($value))
       {
-        throw new InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
+        throw new \InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
       }
 
       $headers[] = key($value);

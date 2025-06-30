@@ -84,11 +84,11 @@ class ImageMetadata extends AbstractCommand
   {
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'image ID');
 
-    $help = "<info>%command.name%</info> displays parameters of one image
+    $help = "<info>%command.name%</info> display parameters of one image
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
   ";
-    $this->setDescription(Text::_('List all variables of a joomgallery image'));
+    $this->setDescription(Text::_('List all variables in imgmetadata field of selected joomgallery configuration'));
     $this->setHelp($help);
   }
 
