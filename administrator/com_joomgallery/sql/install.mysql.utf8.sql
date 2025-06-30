@@ -475,6 +475,32 @@ PRIMARY KEY (`id`)
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `#__joomgallery_tasks`
+--
+
+CREATE TABLE IF NOT EXISTS `#__joomgallery_tasks` (
+`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`task` VARCHAR(50) NOT NULL DEFAULT "",
+`type` VARCHAR(50) NOT NULL DEFAULT "instant",
+`queue` LONGTEXT NOT NULL,
+`successful` LONGTEXT NOT NULL,
+`failed` LONGTEXT NOT NULL,
+`counter` LONGTEXT NOT NULL,
+`last` VARCHAR(25) NOT NULL DEFAULT "0",
+`params` TEXT NOT NULL,
+`completed` TINYINT(1) NOT NULL DEFAULT 0,
+`published` TINYINT(1) NOT NULL DEFAULT 1,
+`ordering` INT(11) NOT NULL DEFAULT 0,
+`created_time` DATETIME NOT NULL,
+`checked_out` INT(11) UNSIGNED NOT NULL DEFAULT 0,
+`checked_out_time` DATETIME DEFAULT NULL,
+PRIMARY KEY (`id`),
+KEY `idx_type` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Dumping data for table `#__content_types`
 --
 

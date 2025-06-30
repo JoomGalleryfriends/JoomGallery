@@ -47,6 +47,7 @@ class JoomHelper
                                           'image'     => _JOOM_TABLE_IMAGES,
                                           'imagetype' => _JOOM_TABLE_IMG_TYPES,
                                           'tag'       => _JOOM_TABLE_TAGS,
+                                          'task'      => _JOOM_TABLE_TASKS,
                                           'user'      => _JOOM_TABLE_USERS,
                                           'vote'      => _JOOM_TABLE_VOTES
                                         );
