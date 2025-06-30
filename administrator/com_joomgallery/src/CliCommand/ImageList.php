@@ -86,13 +86,13 @@ class ImageList extends AbstractCommand
     $this->addOption('created', null, InputOption::VALUE_OPTIONAL, 'created_by');
     $this->addOption('category', null, InputOption::VALUE_OPTIONAL, 'category id');
 
-    $help = "<info>%command.name%</info>will list all joomgallery images
+    $help = "<info>%command.name%</info> list all joomgallery images
   Usage: <info>php %command.full_name%</info>
     * You may filter on the user id of image using the <info>--owner</info> option.
     * You may filter on created_by of image using the <info>--created</info> option.
     * You may filter on the category id of image using the <info>--category</info> option.
     Example: <info>php %command.full_name% --created_by=14</info>";
-    $this->setDescription(Text::_('List all joomgallery images'));
+    $this->setDescription(Text::_('List all images'));
     $this->setHelp($help);
   }
 

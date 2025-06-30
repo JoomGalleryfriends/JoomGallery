@@ -87,12 +87,12 @@ class Category extends AbstractCommand
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'category ID');
     $this->addOption('max_line_length', null, InputOption::VALUE_OPTIONAL, 'trim lenght of variable for item keeps in one line');
 
-    $help = "<info>%command.name%</info> lists variables of one category
+    $help = "<info>%command.name%</info> list variables of one category
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the category with the <info>--id<info> option. Otherwise, it will be requested
     * You may restrict the value string length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
   ";
-    $this->setDescription(Text::_('List all variables of a joomgallery category'));
+    $this->setDescription(Text::_('List all variables of a category'));
     $this->setHelp($help);
   }
 

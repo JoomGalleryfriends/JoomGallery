@@ -88,12 +88,11 @@ class ConfigSet extends AbstractCommand
     $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration ID', 1);
     $this->addOption('verify', null, InputOption::VALUE_OPTIONAL, 'configuration ID', false);
 
-    $help = "<info>%command.name%</info> sets the value for a JoomGallery configuration option (Table)
+    $help = "<info>%command.name%</info> set the value for a JoomGallery configuration option (Table)
   Usage: <info>php %command.full_name%</info> <option> <value>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
     * You may verify the written value with <info>--veryfy=true<info> option. This compares the given option with the resulting table value
 		";
-
     $this->setDescription('Set a value for a configuration option');
     $this->setHelp($help);
   }
@@ -112,7 +111,7 @@ class ConfigSet extends AbstractCommand
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
     $this->configureIO($input, $output);
-    $this->ioStyle->title("Current option in JoomGallery Configuration (table)");
+    $this->ioStyle->title("Set JoomGallery Configuration option (table)");
 
     $option   = $this->cliInput->getArgument('option');
     $value    = $this->cliInput->getArgument('value');
@@ -133,11 +132,12 @@ class ConfigSet extends AbstractCommand
 
     if (!\array_key_exists($option, $configurationAssoc))
     {
-      $this->ioStyle->error("Can't find option *$option* in configuration list");
+      $this->ioStyle->error("Can't find option '$option' in configuration list");
 
       return Command::FAILURE;
     }
 
+	// ToDo: Make it sql save ....
     $sanitizeValue = $this->sanitizeValue($value);
 
     $isUpdated = $this->writeOptionToDB($configId, $option, $sanitizeValue);
@@ -206,7 +206,7 @@ class ConfigSet extends AbstractCommand
    */
   private function sanitizeValue($value)
   {
-    switch ($value)
+    switch (strtolower($value))
     {
       case $value === 'false':
         $value = false;

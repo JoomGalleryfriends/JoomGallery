@@ -84,7 +84,7 @@ class ConfigList extends AbstractCommand
   {
     $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration set id');
 
-    $help = "<info>%command.name%</info>will list all joomgallery configurations (joomgallery table)
+    $help = "<info>%command.name%</info> list all joomgallery configurations (table)
   Usage: <info>php %command.full_name%</info>
     * You may filter on the configuration id  using the <info>--id</info> option.
     Example: <info>php %command.full_name% --created_by=14</info>";

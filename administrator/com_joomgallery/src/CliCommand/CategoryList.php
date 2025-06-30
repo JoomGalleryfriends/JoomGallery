@@ -88,13 +88,13 @@ class CategoryList extends AbstractCommand
 
     // ToDo: option to limit by user (owner), ?parent ...
 
-    $help = "<info>%command.name%</info>will list all joomgallery categories
+    $help = "<info>%command.name%</info> list all categories
   Usage: <info>php %command.full_name%</info>
     * You may filter on the user id of category using the <info>--owner</info> option.
     * You may filter on created_by of category using the <info>--created</info> option.
     * You may filter on the parent id of category using the <info>--parent_id</info> option.
     Example: <info>php %command.full_name% --created_by=291</info>";
-    $this->setDescription(Text::_('List all joomgallery categories'));
+    $this->setDescription(Text::_('List all categories'));
     $this->setHelp($help);
   }
 

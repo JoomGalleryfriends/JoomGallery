@@ -90,11 +90,11 @@ class CategoryParams extends AbstractCommand
   {
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'category ID');
 
-    $help = "<info>%command.name%</info> displays parameters of one category
+    $help = "<info>%command.name%</info> display parameters of params field from table of selected category
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the category with the <info>--id<info> option. Otherwise, it will be requested
   ";
-    $this->setDescription(Text::_('List all variables of a joomgallery category'));
+    $this->setDescription(Text::_('List all variables in params field of selected category'));
     $this->setHelp($help);
   }
 
@@ -113,7 +113,7 @@ class CategoryParams extends AbstractCommand
   {
     // Configure the Symfony output helper
     $this->configureIO($input, $output);
-    $this->ioStyle->title('JoomGallery Category Parameters');
+    $this->ioStyle->title('JoomGallery Category Parameter Field');
 
     $categoryId = $input->getOption('id') ?? '';
 
@@ -129,7 +129,6 @@ class CategoryParams extends AbstractCommand
     // If no params returned  show a warning and set the exit code to 1.
     if (empty ($jsonParams))
     {
-
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid or parameters are empty !");
 
       return Command::FAILURE;
