@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 // No direct access
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\CMS\Language\Text;
@@ -302,15 +303,14 @@ class HtmlView extends JoomGalleryView
 
   /**
    * Reads php.ini values to determine the minimum size for upload
-   * The memory_limit for the php script was not reliable (0 on some sytems)
+   * The memory_limit for the php script was not reliable (0 on some systems)
    * so it is just shown
    *
-   * @param   mixed  $joomGaleryConfig config of joom gallery
-   *
+   * On UploadMaxsize = 0 (from com_media) the php.ini limits are used
    *
    * @since version 4.1
    */
-  public function limitsPhpConfig(mixed $joomGaleryConfig): void
+  public function limitsPhpConfig(): void
   {
     $mediaHelper = new MediaHelper;
 
@@ -319,10 +319,18 @@ class HtmlView extends JoomGalleryView
     $this->postMaxSize = round($mediaHelper->toBytes(ini_get('post_max_size')) / (1024 * 1024));
     $this->memoryLimit = round($mediaHelper->toBytes(ini_get('memory_limit')) / (1024 * 1024));
 
-    $this->configSize = round($joomGaleryConfig->get('jg_maxfilesize') / (1024 * 1024));
+    $mediaParams        = ComponentHelper::getParams('com_media');
+    $mediaUploadMaxsize = $mediaParams->get('upload_maxsize', 0);
+    $this->configSize   = $mediaUploadMaxsize;
 
-    // Max size to be used (previously defined by joomla function but ...)
-    $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $this->configSize);
+    //--- Max size to be used (previously defined by joomla function but ...) -------------------------
+
+    // $uploadMaxSize=0 for no limit
+    if (empty($mediaUploadMaxsize)) {
+      $this->maxSize = min($this->uploadLimit, $this->postMaxSize);
+    } else {
+      $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $mediaUploadMaxsize);
+    }
   }
 
 }

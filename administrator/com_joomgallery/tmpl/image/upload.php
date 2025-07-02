@@ -170,7 +170,7 @@ function DisplaySystemSettings($UploadLimit, $PostMaxSize, $MemoryLimit, $config
                     <?php echo Text::sprintf('COM_JOOMGALLERY_UPLOAD_UPLOAD_LIMIT_IS', $UploadLimit); ?>
                   </td>
                   <td class="d-md-table-cell">
-                    <strong><?php echo $UploadLimit; ?></strong>&nbsp;MB ('upload_max_filesize')"
+                    <strong><?php echo $UploadLimit; ?></strong>&nbsp;MB ('upload_max_filesize')
                   </td>
                 </tr>
                 <tr>
@@ -191,7 +191,7 @@ function DisplaySystemSettings($UploadLimit, $PostMaxSize, $MemoryLimit, $config
                 </tr>
                 <tr>
                   <td class="d-md-table-cell">
-                    <?php echo Text::sprintf('COM_JOOMGALLERY_UPLOAD_CONFIG_LIMIT_IS', $configSize); ?>
+                    <?php echo Text::sprintf('COM_JOOMGALLERY_UPLOAD_MEDIA_LIMIT_IS', $configSize); ?>
                   </td>
                   <td class="d-md-table-cell">
                     <strong><?php echo $configSize; ?></strong>&nbsp;MB
