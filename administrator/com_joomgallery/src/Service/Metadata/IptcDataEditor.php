@@ -20,8 +20,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
  * @since 4.1.0
  */
 class IptcDataEditor
-{
-    
+{    
     /**
      * @var array
      */
@@ -62,31 +61,43 @@ class IptcDataEditor
     /**
      * Validates input and creates the octet structure to be saved with iptcembed.
      * 
-     * @param   string $tag  The record & dataset tags in a 0#000 format
-     * @param   mixed  $data The data to be stored
+     * @param   string  $tag  The record & dataset tags in a 0#000 format
+     * @param   mixed   $data The data to be stored
      * 
-     * @return  mixed       Octet structure that complies to IPTC's specification
+     * @return  mixed         Octet structure that complies to IPTC's specification
      * 
      * @since   4.1.0
      */
     public function createEdit(string $tag, mixed $data): mixed
     {
-        if ((isset($this->iptcStringArray) && $tag != "2#025" && $this->iptcStringArray[$tag][0] <= strlen($data) && strlen($data) <= $this->iptcStringArray[$tag][1]) ||
-            (isset($this->iptcDigitsArray) && $this->iptcDigitsArray[$tag] >= $data)) {
-            $explode = explode("#", $tag);
-            $octetStruct = self::makeTag(intval($explode[0]), intval($explode[1]), $data);
+        if( ( isset($this->iptcStringArray) && $tag != '2#025' &&
+              $this->iptcStringArray[$tag][0] <= \strlen($data) && \strlen($data) <= $this->iptcStringArray[$tag][1]
+            ) || (isset($this->iptcDigitsArray) && $this->iptcDigitsArray[$tag] >= $data)
+          )
+        {
+            $explode     = \explode('#', $tag);
+            $octetStruct = self::makeTag(\intval($explode[0]), intval($explode[1]), $data);
+
             return $octetStruct;
-        } elseif (isset($this->iptcStringArray) && $tag == "2#025") {
+        }
+        elseif(isset($this->iptcStringArray) && $tag == '2#025')
+        {
             // Special case for keywords array
-            $octetStruct = "";
-            foreach ($data as $keyword) {
-                $keyword = trim($keyword);
-                if (strlen($keyword) > 0 && $this->iptcStringArray[$tag][0] <= strlen($keyword) && strlen($keyword) <= $this->iptcStringArray[$tag][1]) {
+            $octetStruct = '';
+            foreach($data as $keyword)
+            {
+                $keyword = \trim($keyword);
+                if( \strlen($keyword) > 0 && $this->iptcStringArray[$tag][0] <= \strlen($keyword) &&
+                    \strlen($keyword) <= $this->iptcStringArray[$tag][1]
+                  )
+                {
                     $octetStruct .= self::makeTag(2, 25, $keyword);
                 }
             }
+
             return $octetStruct;
         }
+
         return false;
     }
 
@@ -104,24 +115,30 @@ class IptcDataEditor
      */
     private function makeTag(int $rec, int $data, mixed $value): string
     {
-        $length = strlen($value);
-        // First 3 octets (Tag Marker, Record Number, DataSet Number).
-        $retval = chr(0x1C) . chr($rec) . chr($data);
+        $length = \strlen($value);
 
-        if ($length < 0x8000) {
+        // First 3 octets (Tag Marker, Record Number, DataSet Number).
+        $retval = \chr(0x1C) . \chr($rec) . \chr($data);
+
+        if($length < 0x8000)
+        {
             // 4th and 5th octet (total amount of octets that the value contains). Standard DataSet Tag
             // Maximum total of octets is 32767.
             $retval .= chr($length >> 8) .  chr($length & 0xFF);
-        } else {
+        }
+        else
+        {
             // 4th to nth octet. Extended DataSet Tag
-            // Most significant bit of octet 4 is always 1 (Flag for Extended format), remaining bits in octet 4 and 5 describe the length of the Data Field (in this instance predefined to 4).
+            // Most significant bit of octet 4 is always 1 (Flag for Extended format),
+            // remaining bits in octet 4 and 5 describe the length of the Data Field
+            // (in this instance predefined to 4).
             // 6th to 9th octet describe the total amount of octets that the value contains.
-            $retval .= chr(0x80) .
-                chr(0x04) .
-                chr(($length >> 24) & 0xFF) .
-                chr(($length >> 16) & 0xFF) .
-                chr(($length >> 8) & 0xFF) .
-                chr($length & 0xFF);
+            $retval .= \chr(0x80) .
+                       \chr(0x04) .
+                       \chr(($length >> 24) & 0xFF) .
+                       \chr(($length >> 16) & 0xFF) .
+                       \chr(($length >> 8) & 0xFF) .
+                       \chr($length & 0xFF);
         }
 
         return $retval . $value;
@@ -138,11 +155,13 @@ class IptcDataEditor
      */
     public function convertIptcToString(array $app13): string
     {
-        $retval = "";
-        foreach ($app13 as $tag => $value) {
-            $explode = explode("#", $tag);
-            $retval .= self::makeTag(intval($explode[0]), intval($explode[1]), $value[0]);
+        $retval = '';
+        foreach($app13 as $tag => $value)
+        {
+            $explode = \explode('#', $tag);
+            $retval .= self::makeTag(\intval($explode[0]), \intval($explode[1]), $value[0]);
         }
+
         return $retval;
     }
 }

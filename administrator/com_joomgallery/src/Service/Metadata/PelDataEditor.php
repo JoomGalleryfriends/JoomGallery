@@ -29,7 +29,8 @@ use \lsolesen\pel\PelTag;
  * @package JoomGallery
  * @since 4.1.0
  */
-class PelDataEditor {
+class PelDataEditor
+{
 
     /**
      * @var array
@@ -51,21 +52,27 @@ class PelDataEditor {
     {
         // Datetime, Copyright and UserComment entries all have specific ways that they need to be handled.
         $entry = $ifd->getEntry($tag);
-        if (in_array($tag, self::$timeTags)) {
+
+        if(in_array($tag, self::$timeTags))
+        {
             if ($entry == null) {
                 $entry = new PelEntryTime($tag, $data, PelEntryTime::EXIF_STRING);
                 $ifd->addEntry($entry);
             } else {
                 $entry->setValue($data, PelEntryTime::EXIF_STRING);
             }
-        } else if ($tag == PelTag::COPYRIGHT) {
+        }
+        elseif ($tag == PelTag::COPYRIGHT)
+        {
             if ($entry == null) {
                 $entry = new PelEntryCopyright($data[0], $data[1]);
                 $ifd->addEntry($entry);
             } else {
                 $entry->setValue($data[0], $data[1]);
             }
-        } else if ($tag == PelTag::USER_COMMENT) {
+        }
+        elseif($tag == PelTag::USER_COMMENT)
+        {
             // We need to strip the first 8 characters to comply with UserComments saved before PEL.
             if ($entry == null) {
                 $entry = new PelEntryUserComment(substr($data, 8));
@@ -73,8 +80,9 @@ class PelDataEditor {
             } else {
                 $entry->setValue($data);
             }
-        } else {
-            $entryClass = "\lsolesen\pel\PelEntry" . PelFormat::getName($format);
+        }
+        else {
+            $entryClass = '\lsolesen\pel\PelEntry' . PelFormat::getName($format);
             if ($entry == null) {
                 $entry = new $entryClass($tag, $data);
                 $ifd->addEntry($entry);

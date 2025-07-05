@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="system" version="4.0" method="upgrade">
     <name>plg_system_joomgallery</name>
-    <creationDate>2025-07-03</creationDate>
+    <creationDate>2025-07-04</creationDate>
     <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
     <license>GNU General Public License version 3 or later</license>
     <author>JoomGallery::ProjectTeam</author>

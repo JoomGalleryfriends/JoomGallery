@@ -13,8 +13,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 // No direct access
 \defined('_JEXEC') or die;
 
-use \Joomla\CMS\Factory;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 
 /**
