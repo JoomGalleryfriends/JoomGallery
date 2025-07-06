@@ -13,7 +13,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
+use \Joomla\Registry\Registry;
+use \Joomla\CMS\MVC\Model\ListModel;
 use \Joomla\Database\ParameterType;
+use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 
 /**
  * Methods supporting a list of Tasks records.
@@ -56,6 +59,111 @@ class TasksModel extends JoomListModel
 		parent::__construct($config);
 	}
 
+  /**
+	 * Method to get the scheduler tasks to be viewed in the tasks view.
+	 *
+	 * @return  array|false    Array of tasks on success, false on failure.
+	 *
+	 * @throws Exception
+	 */
+  public function getScheduledTasks()
+  {
+    // Load scheduler tasks model
+    $listModel = $this->app->bootComponent('com_scheduler')->getMVCFactory()->createModel('tasks', 'administrator', ['ignore_request' => true]);
+    $listModel->getState();
+
+    // Select fields to load
+    $fields = array('id', 'title', 'type', 'safeTypeTitle', 'state', 'last_exit_code', 'last_execution', 'times_executed', 'locked', 'params', 'note');
+    $fields = $this->addColumnPrefix('a', $fields);
+
+    // Apply preselected filters and fields selection for images
+    $this->setTasksModelState($listModel, $fields);
+
+    // Get images
+    $items = $listModel->getItems();
+
+    if(!empty($listModel->getError()))
+    {
+      $this->setError($listModel->getError());
+    }
+
+    // Apply type filter
+    try
+    {
+      $filteredItems = \array_filter($items, function($obj)
+      {
+        return isset($obj->type) && \stripos($obj->type, 'joomgallery') !== false;
+      });
+    }
+    catch(\Exception $e)
+    {
+      return false;
+    }
+
+    return $filteredItems;
+  }
+
+  /**
+   * Method to get an array of data items.
+   *
+   * @return  mixed  An array of data items on success, false on failure.
+   *
+   * @since   4.2
+   */
+  public function getItems()
+  {
+    $std_items = parent::getItems();
+
+    if($std_items)
+    {
+      // Initialize
+      $items = [];
+      $table = $this->component->getMVCFactory()->createTable('Task', 'Administrator');
+
+      // Turn items to table objects
+      foreach($std_items as $item)
+      {
+        $table->reset();
+
+        if(\is_object($item))
+        {
+          $table->bind(get_object_vars($item));
+        }
+        else
+        {
+          $table->bind($item);
+        }
+
+        $table->check();
+        $table->clcProgress(); 
+        
+        \array_push($items, $table);
+      }
+
+      return $items;
+    }
+
+    return false;    
+  }
+
+  /**
+   * Function to set the scheduler tasks list model state for the pre defined filter and fields selection
+   * 
+   * @param   ListModel   $listModel    Scheduler tasks list model
+   * @param   array       $fields       List of field names to be loaded (default: array())
+   *
+   * @return  void
+   */
+  protected function setTasksModelState(ListModel &$listModel, array $fields = array())
+  {
+    // Apply filters
+    $listModel->setState('filter.state', 1);
+
+    // Apply limit & ordering
+    $listModel->setState('list.limit', 20);
+    $listModel->setState('list.ordering', 'a.ordering');
+  }
+
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -90,33 +198,6 @@ class TasksModel extends JoomListModel
 		$this->setState('filter.failed', $failed);
     $completed = $this->getUserStateFromRequest($this->context . '.filter.completed', 'filter_completed', '');
 		$this->setState('filter.completed', $completed);
-	}
-
-  /**
-	 * Get an array of data items
-	 *
-	 * @return mixed Array of data items on success, false on failure.
-   * 
-   * @since   4.2.0
-	 */
-	public function getItems()
-	{
-		$items_arr = parent::getItems();
-    $items = ['instant' => [], 'planned' => []];
-
-    foreach($items_arr as $item)
-    {
-      // Add type if missing
-      if(!\array_key_exists($item->type, $items))
-      {
-        $items[$item->type] = [];
-      }
-
-      // Add item to the corresponding type
-      \array_push($items[$item->type], $item);
-    }
-
-		return $items;
 	}
 
 	/**
@@ -344,4 +425,27 @@ class TasksModel extends JoomListModel
 
 		return $query;
 	}
+
+  /**
+	 * Method to add a prefix to a list of field names
+	 *
+	 * @param   string  $prefix   The prefix to apply
+   * @param   array   $fields   List of fields
+	 *
+	 * @return  array   List of fields with applied prefix
+	 */
+  protected function addColumnPrefix(string $prefix, array $fields): array
+  {
+    foreach($fields as $key => $field)
+    {
+      $field = (string) $field;
+
+      if(\strpos($field, $prefix.'.') === false)
+      {
+        $fields[$key] = $prefix . '.' . $field;
+      }
+    }
+
+    return $fields;
+  }
 }
