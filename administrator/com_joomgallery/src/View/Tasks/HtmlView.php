@@ -44,10 +44,11 @@ class HtmlView extends JoomGalleryView
     /** @var TasksModel $model */
     $model = $this->getModel();
 
-    $this->state         = $model->getState();
-    $this->items         = $model->getItems();
-		$this->filterForm    = $model->getFilterForm();
-		$this->activeFilters = $model->getActiveFilters();
+    $this->state          = $model->getState();
+    $this->items          = $model->getItems();
+		$this->filterForm     = $model->getFilterForm();
+		$this->activeFilters  = $model->getActiveFilters();
+    $this->scheduledTasks = $model->getScheduledTasks();
 
 		// Check for errors.
 		if(count($errors = $model->getErrors()))
@@ -59,7 +60,7 @@ class HtmlView extends JoomGalleryView
 
 		$this->sidebar = Sidebar::render();
 		parent::display($tpl);
-	} 
+	}
 
   /**
    * Add the page title and toolbar.
@@ -70,7 +71,7 @@ class HtmlView extends JoomGalleryView
    */
   protected function addToolbar()
   {
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TASKS_MANAGER'), "tasks");
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TASKS_MANAGER'), "play-circle");
 
     /** @var Toolbar $model */
     $toolbar = $this->getToolbar();
@@ -87,7 +88,10 @@ class HtmlView extends JoomGalleryView
     {
       if($this->getAcl()->checkACL('add', 'task'))
       {
-        $toolbar->addNew('task.add');
+        $toolbar->linkButton('new', 'JTOOLBAR_NEW')
+                ->url('index.php?option=com_joomgallery&view=task&layout=select')
+                ->buttonClass('btn btn-success')
+                ->icon('icon-new');
       }
     }
 
