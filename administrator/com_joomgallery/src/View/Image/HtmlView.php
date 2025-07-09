@@ -39,7 +39,7 @@ class HtmlView extends JoomGalleryView
   protected $postMaxSize;
   protected $memoryLimit;
   protected $maxSize;
-  protected $configSize;
+  protected $mediaSize;
 
   /**
 	 * Display the view
@@ -321,7 +321,7 @@ class HtmlView extends JoomGalleryView
 
     $mediaParams        = ComponentHelper::getParams('com_media');
     $mediaUploadMaxsize = $mediaParams->get('upload_maxsize', 0);
-    $this->configSize   = $mediaUploadMaxsize;
+    $this->mediaSize    = $mediaUploadMaxsize;
 
     //--- Max size to be used (previously defined by joomla function but ...) -------------------------
 
