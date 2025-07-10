@@ -27,6 +27,11 @@ jobs:
         run: |
           rm -rf crowdin.yml composer.json composer.lock docs tests .github .editorconfig
 
+      - name: Cleanup pel directory
+        run: |
+          PEL_DIR="administrator/com_joomgallery/vendor/fileeye/pel"
+          find "$PEL_DIR" -mindepth 1 -maxdepth 1 ! -name 'src' ! -name 'autoload.php' ! -name 'composer.json' -exec rm -rf {} +
+
       - name: Get tag name
         id: get_tag
         run: echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
