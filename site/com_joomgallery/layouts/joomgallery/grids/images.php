@@ -19,21 +19,22 @@ extract($displayData);
 /**
  * Layout variables
  * -----------------
- * @var   int      $id              Layout id
- * @var   string   $layout          Layout selection (columns, masonry, justified)
- * @var   array    $items           List of objects that are displayed in a grid layout (id, catid, title, description, date, author)
- * @var   int      $num_columns     Number of columns of this layout
- * @var   string   $caption_align   Alignment class for the caption
- * @var   string   $image_class     Class to be added to the image box
- * @var   string   $image_type      The imagetype used for the grid
- * @var   string   $lightbox_type   The imagetype used for the lightbox
- * @var   string   $image_link      Type of link to be added to the image
- * @var   bool     $image_title     True to display the image title
- * @var   string   $title_link      Type of link to be added to the image title
- * @var   bool     $image_desc      True to display the image description
- * @var   bool     $image_date      True to display the image date
- * @var   bool     $image_author    True to display the image author
- * @var   bool     $image_tags      True to display the image tags
+ * @var   int      $id                Layout id
+ * @var   string   $layout            Layout selection (columns, masonry, justified)
+ * @var   array    $items             List of objects that are displayed in a grid layout (id, catid, title, description, date, author)
+ * @var   int      $num_columns       Number of columns of this layout
+ * @var   string   $caption_align     Alignment class for the caption
+ * @var   string   $image_class       Class to be added to the image box
+ * @var   string   $image_type        The imagetype used for the grid
+ * @var   string   $lightbox_type     The imagetype used for the lightbox
+ * @var   string   $image_link        Type of link to be added to the image
+ * @var   bool     $image_title       True to display the image title
+ * @var   string   $title_link        Type of link to be added to the image title
+ * @var   bool     $image_desc        True to display the image description
+ * @var   bool     $image_desc_label  True to display the image description label
+ * @var   bool     $image_date        True to display the image date
+ * @var   bool     $image_author      True to display the image author
+ * @var   bool     $image_tags        True to display the image tags
  */
 ?>
 
@@ -118,7 +119,12 @@ extract($displayData);
             <?php endif; ?>
 
             <?php if($image_desc) : ?>
-              <div><?php echo Text::_('JGLOBAL_DESCRIPTION') . ': ' . $item->description; ?></div>
+              <div>
+              <?php if($image_desc_label) : ?>
+                <?php echo Text::_('JGLOBAL_DESCRIPTION') . ': '; ?>
+              <?php endif; ?>
+              <?php echo $item->description; ?>
+              </div>
             <?php endif; ?>
             <?php if($image_date) : ?>
               <div><?php echo Text::_('COM_JOOMGALLERY_DATE') . ': ' . HTMLHelper::_('date', $item->date, Text::_('DATE_FORMAT_LC4')); ?></div>
