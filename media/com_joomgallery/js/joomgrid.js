@@ -40,7 +40,7 @@ var callback = function() {
     }
 
     // Get the grid container
-    const grid = document.querySelector('.' + settings.gridclass);
+    const grid = document.getElementById(settings.lightbox_params.container);
 
     // Initialize lightGallery
     if(settings.lightbox) {
