@@ -12,7 +12,6 @@ defined('_JEXEC') or die();
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Log\Log;
-use \Joomla\CMS\Table\Table;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Router\Route;
 use \Joomla\Filesystem\File;
@@ -1559,7 +1558,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     // create module if it is not yet created
     if (empty($module_id))
     {
-      $row            = Table::getInstance('module');
+      $row            = Factory::getApplication()->bootComponent('com_modules')->getMVCFactory()->createTable('module');
       $row->title     = $title;
       $row->ordering  = $ordering;
       $row->position  = $position;
