@@ -496,15 +496,15 @@
 
         <field name="jg_maxfilesize"
               type="number"
-              default="2000000"
-              min="1"
-              step="1"
+              default="2"
+              min="0"
+              step="0.1"
               validate="number"
-              filter="integer"
-              showon="jg_userspace:1"
+              filter="float"
               class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE"
-              description="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE_LONG" />
+              description="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE_LONG"
+              showon="jg_userspace:1" />
     </fieldset>
 
     <fieldset type="tab" name="user-upload" label="COM_JOOMGALLERY_UPLOADS">

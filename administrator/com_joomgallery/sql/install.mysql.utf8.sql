@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_maxusercat` DOUBLE NOT NULL DEFAULT 10,
 `jg_maxuserimage` DOUBLE NOT NULL DEFAULT 500,
 `jg_maxuserimage_timespan` DOUBLE NOT NULL DEFAULT 0,
-`jg_maxfilesize` DOUBLE NOT NULL DEFAULT 2000000,
+`jg_maxfilesize` DOUBLE NOT NULL DEFAULT 2,
 `jg_userupload` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_newpiccopyright` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_uploaddefaultcat` TINYINT(1) NOT NULL DEFAULT 0,
