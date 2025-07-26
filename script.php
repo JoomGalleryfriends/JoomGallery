@@ -14,6 +14,7 @@ use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Log\Log;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Router\Route;
+use \Joomla\Filesystem\Path;
 use \Joomla\Filesystem\File;
 use \Joomla\Filesystem\Folder;
 use \Joomla\CMS\Installer\Installer;
