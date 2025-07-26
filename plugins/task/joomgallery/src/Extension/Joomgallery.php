@@ -89,15 +89,17 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     {
       // There are ids submitted to the task with a request
       // We use this instead
-      $ids     = $ids_val;
-      $webcron = true;
+      $ids        = $ids_val;
+      $webcron    = true;
+      $willResume = false;
     }
     if($type_val = $app->input->get('type', null, 'string'))
     {
       // There is a catid submitted to the task with a request
       // We use this instead
-      $type    = $type_val;
-      $webcron = true;
+      $type       = $type_val;
+      $webcron    = true;
+      $willResume = false;
     }
 
     // If we retrieve just a zero (0), all images have to be recreated
@@ -122,6 +124,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     if($lastStatus === Status::WILL_RESUME)
     {
       $this->logTask(\sprintf('Resuming recreation of images as task %d', $task->get('id')));
+      $willResume = true;
     }
     else
     {
