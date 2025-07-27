@@ -250,7 +250,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         }
 
         // Add id to executed ids array
-        array_push($executed_ids, $id);
+        \array_push($executed_ids, $id);
       }
       else
       {
