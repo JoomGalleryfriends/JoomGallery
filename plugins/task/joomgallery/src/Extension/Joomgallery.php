@@ -75,7 +75,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     $task         = $event->getArgument('subject');
     $params       = $event->getArgument('params');
     $lastStatus   = $task->get('last_exit_code', Status::OK);
-    $willResume   = true;
+    $willResume   = (bool) $params->resume;
     $webcron      = false;
     $app          = Factrory::getApplication();
 
