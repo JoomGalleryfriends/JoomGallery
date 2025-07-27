@@ -75,7 +75,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     $task         = $event->getArgument('subject');
     $params       = $event->getArgument('params');
     $lastStatus   = $task->get('last_exit_code', Status::OK);
-    $max_time     = (int) \ini_get('max_execution_time');
     $willResume   = true;
     $webcron      = false;
     $app          = Factrory::getApplication();
@@ -108,7 +107,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     {
       $this->logTask('Attempt to recreate all available images...');
 
-      //ToDo: get list of all possible image ids
+      $listModel = $app->bootComponent('com_joomgallery')->getMVCFactory()->createModel('images', 'administrator');
+      $ids       = \array_map(function($item) { return $item->id;}, $listModel->getIDs());
     }
 
     // Load the model to perform the task
@@ -131,49 +131,10 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $this->logTask(\sprintf('Starting recreation of %s images as task %d', \count($ids), $task->get('id')));
     }
 
-    $assumed_duration = 1;
-    $executed_ids = \array_map('trim', \explode(',', $params->successful));
-    foreach($ids as $id)
-    {
-      // Skip the already executed ids
-      if(in_array($id, $executed_ids))
-      {
-        continue;
-      }
-
-      // Check if we can still continue executing the task
-      $execute_task = true;
-      if($max_time !== 0)
-      {
-        $remaining = $max_time - (\microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']);
-        if($assumed_duration > $remaining)
-        {
-          $execute_task = false;
-        }
-      }
-
-      if($execute_task)
-      {
-        // Continue execution
-        $start   = \microtime(true);
-        $success = $model->recreate($id, $type);
-        $assumed_duration = \microtime(true) - $start;
-
-        if(!$success)
-        {
-          // We log failed recreations.
-          $this->logTask(\sprintf('Recreation of images failed. Failed image: %s', $id));
-        }
-
-        // Add id to executed ids array
-        array_push($executed_ids, $id);
-      }
-      else
-      {
-        // Stop execution
-        break;
-      }
-    }
+    // Actually performing the task using the model and a specific method
+    $task_def     = ['model' => $model, 'method' => 'recreate', 'options' => [$type]];
+    $error_msg    = 'Recreation of images failed. Failed image: %s';
+    $executed_ids = $this->performTask($ids, $task_def, $params, $error_msg);
 
     // Check if we are finished
     if(\count($ids) == \count($executed_ids))
@@ -199,6 +160,94 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     }
 
     return $willResume ? Status::WILL_RESUME : Status::OK;
+  }
+
+  /**
+   * Performs the actual task with the model defined in the 
+   * 
+   * @param   array   $ids         The id of the task
+   * @param   array   $task_def    Task definition array in the form
+   *                               ['model' => (object) Model, 'method' => (string) method-name, 'options' => (array) method-arguments]
+   * @param   object  $params      The params object
+   * @param   string  $error_msg   The message to be logged on error
+   * 
+   * @return  array   List of ecexuted ids
+   * 
+   * @since   4.2.0
+   */
+  private function performTask(array $ids, array $task_def, object $params, string $error_msg = ''): array
+  {
+    $max_time = (int) \ini_get('max_execution_time');
+
+    // Check if model exists and is an instance of BaseModel
+    if(!isset($task_def['model']) || !$task_def['model'] instanceof Joomla\CMS\MVC\Model\BaseModel)
+    {
+      throw new \InvalidArgumentException('Invalid model given. Must be an instance of Joomla\CMS\MVC\Model\BaseModel');
+    }
+
+    // Check if method exists in the model
+    if(!isset($task_def['method']) || !\method_exists($task_def['model'], $task_def['method']))
+    {
+      throw new \InvalidArgumentException('Invalid method given. Method does not exist on the provided model');
+    }
+
+    // Check if options is an array
+    if(!isset($task_def['options']) || !\is_array($task_def['options']))
+    {
+      throw new \InvalidArgumentException('Invalid options given: Options must be an array');
+    }
+
+    // Check that $task_def is correctly given
+    $model    = $task_def['model'];
+    $method   = $task_def['method'];
+    $options  = $task_def['options'];
+
+    $assumed_duration = 1;
+    $successful   = \is_string($params->successful) ? $params->successful : '';
+    $executed_ids = \array_map('trim', \explode(',', $successful));
+    foreach($ids as $id)
+    {
+      // Skip the already executed ids
+      if(in_array($id, $executed_ids))
+      {
+        continue;
+      }
+
+      // Check if we can still continue executing the task
+      $execute_task = true;
+      if($max_time !== 0)
+      {
+        $remaining = $max_time - (\microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']);
+        if($assumed_duration > $remaining)
+        {
+          $execute_task = false;
+        }
+      }
+
+      if($execute_task)
+      {
+        // Continue execution
+        $start   = \microtime(true);
+        $success = $model->{$method}($id, ...$options);
+        $assumed_duration = \microtime(true) - $start;
+
+        if(!$success && $error_msg)
+        {
+          // We log failed recreations.
+          $this->logTask(\sprintf($error_msg, $id));
+        }
+
+        // Add id to executed ids array
+        array_push($executed_ids, $id);
+      }
+      else
+      {
+        // Stop execution
+        break;
+      }
+    }
+
+    return $executed_ids;
   }
 
   /**
