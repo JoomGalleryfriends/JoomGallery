@@ -12,7 +12,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // No direct access.
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Form\Form;
+use \Joomla\CMS\Form\Form;
+use \Joomla\Registry\Registry;
 use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 use \Joomla\Component\Scheduler\Administrator\Task\TaskOption;
 
@@ -99,30 +100,58 @@ class TaskModel extends JoomAdminModel
 			$data = $this->item;			
 		}
 
+    // Add support for queue
+    $data->queue = \implode(',', $data->queue);
+
 		return $data;
 	}
 
-	/**
-	 * Method to get a single record.
-	 *
-	 * @param   int|string  $pk  The id alias or title of the item
-	 *
-	 * @return  mixed    Object on success, false on failure.
-	 *
-	 * @since   4.2.0
-	 */
-	public function getItem($pk = null)
-	{
-    if($item = parent::getItem($pk))
+  /**
+   * Method to get a migrateable record by id.
+   *
+   * @param   integer  $pk         The id of the primary key.
+   * @param   bool     $withQueue  True to load the queue if empty.
+   *
+   * @return  object|boolean  Object on success, false on failure.
+   *
+   * @since   4.2.0
+   */
+  public function getItem($pk = null, $withQueue = true)
+  {
+    $item = parent::getItem($pk);
+
+    if(!$item)
     {
-      if(isset($item->params))
-      {
-        $item->params = json_encode($item->params);
-      }
+      $item = parent::getItem(null);
+    }
+
+    // Support for queue field
+    if(isset($item->queue))
+    {
+      $registry    = new Registry($item->queue);
+      $item->queue = $registry->toArray();
+    }
+
+    // Support for successful field
+    if(isset($item->successful))
+    {
+      $item->successful = new Registry($item->successful);
+    }
+
+    // Support for failed field
+    if(isset($item->failed))
+    {
+      $item->failed = new Registry($item->failed);
+    }
+
+    // Support for params field
+    if(isset($item->params))
+    {
+      $item->params = new Registry($item->params);
     }
 
     return $item;
-	}
+  }
 
   /**
    * @param   array  $data  The form data

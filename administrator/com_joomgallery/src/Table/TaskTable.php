@@ -206,7 +206,12 @@ class TaskTable extends Table
     {
       if(\is_string($this->queue))
       {
-        $this->queue = \json_decode($this->queue);
+        if(!$queue = \json_decode($this->queue))
+        {
+          // json_decode did not work. Lets try explode()
+          $queue = \array_map('trim', \explode(',', $this->queue)) ?? [];
+        }
+        $this->queue = $queue;
       }
       elseif(\is_object($this->queue))
       {
