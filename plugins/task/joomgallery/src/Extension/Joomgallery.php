@@ -161,8 +161,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     {
       // Write params with successful executed ids to database
       $params->successful = \implode(',', $executed_ids);
-      $this->setParams($task->get('id'), $params);
-
       $this->logTask(\sprintf('Recreation of images (Task %d) will resume', $task->get('id')));
     }
     else
@@ -170,6 +168,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $this->logTask(\sprintf('Recreation of images (Task %d) is now complete', $task->get('id')));
       $willResume = false;
     }
+
+    // Update params
+    $this->setParams($task->get('id'), $params);
 
     return $willResume ? Status::WILL_RESUME : Status::OK;
   }
