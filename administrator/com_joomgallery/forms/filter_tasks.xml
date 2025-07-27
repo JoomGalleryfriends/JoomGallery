@@ -19,20 +19,20 @@
 
         <field name="failed"
                type="list"
-               label="JOPTION_SELECT_FAILED"
+               label="COM_JOOMGALLERY_TASKS_SELECT_FAILED_LABEL"
                onchange="this.form.submit();" >
-            <option value="*">JOPTION_SELECT_FAILED</option>
-            <option value="1">FAILED</option>
-            <option value="0">NO_FAILED</option>
+            <option value="*">COM_JOOMGALLERY_TASKS_SELECT_FAILED_LABEL</option>
+            <option value="1">COM_JOOMGALLERY_FAILED</option>
+            <option value="0">COM_JOOMGALLERY_NO_FAILED</option>
         </field>
 
         <field name="completed"
                type="list"
-               label="JOPTION_SELECT_COMPLETED"
+               label="COM_JOOMGALLERY_TASKS_SELECT_COMPLETED_LABEL"
                onchange="this.form.submit();" >
-            <option value="*">JOPTION_SELECT_COMPLETED</option>
-            <option value="1">COMPLETED</option>
-            <option value="0">NOT_COMPLETED</option>
+            <option value="*">COM_JOOMGALLERY_TASKS_SELECT_FAILED_LABEL</option>
+            <option value="1">COM_JOOMGALLERY_COMPLETED</option>
+            <option value="0">COM_JOOMGALLERY_NOT_COMPLETED</option>
         </field>
     </fields>
 
@@ -48,8 +48,8 @@
             <option value="a.ordering DESC">JGRID_HEADING_ORDERING_DESC</option>
             <option value="a.published ASC">JSTATUS_ASC</option>
             <option value="a.published DESC">JSTATUS_DESC</option>
-            <option value="a.completed ASC">JSTATUS_COMPLETED_ASC</option>
-            <option value="a.completed DESC">JSTATUS_COMPLETED_DESC</option>
+            <option value="a.completed ASC">COM_JOOMGALLERY_TASKS_STATUS_COMPLETED_ASC</option>
+            <option value="a.completed DESC">COM_JOOMGALLERY_TASKS_STATUS_COMPLETED_DESC</option>
         </field>
 
        <field name="limit"

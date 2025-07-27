@@ -75,12 +75,16 @@ if($saveOrder && !empty($this->items))
             <div class="row align-items-start">
               <div class="col-md-12">
                 <div class="card">
-                  <h3 class="card-header"><?php echo  $this->escape($item->title) . ' (' . $item->type . ')'; ?></h3>
+                  <div class="card-header flex-column">
+                    <h3><?php echo  $this->escape($item->title); ?></h3>
+                    <h4 class="small"><?php echo  '(' . $item->type . ')'; ?></h4>
+                  </div>
                   <div class="card-body d-flex flex-row">
                     <div class="p-2 align-self-center">
                       <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                     </div>
                     <div class="p-2 flex-grow-1">
+                      <a class="btn btn-sm btn-primary mb-2" href="<?php echo Route::_('index.php?option=com_joomgallery&view=task&layout=edit&id='.$item->id); ?>"><span class="fa fa-edit fa-sm me-2"></span> <?php echo Text::_('JACTION_EDIT'); ?></a>
                       <button type="button" class="btn btn-sm btn-warning mb-2" <?php echo $item->published < 0 ? 'disabled' : ''; ?> data-id="<?php echo (int) $item->id; ?>" data-title="<?php echo htmlspecialchars($item->title); ?>">
                         <span class="fa fa-play fa-sm me-2"></span><?php echo Text::_('COM_JOOMGALLERY_TASK_START'); ?>
                       </button>
