@@ -23,6 +23,10 @@
         <option value="1">JYES</option>
         <option value="0">JNO</option>
       </field>
+      <field name="user"
+        type="user"
+        label="PLG_TASK_JOOMGALLERY_TASK_RECREATEIMAGE_USER_LABEL"
+        description="PLG_TASK_JOOMGALLERY_TASK_RECREATEIMAGE_USER_DESC" />
       <field name="successful"
         type="text"
         readonly="true"
