@@ -1179,7 +1179,6 @@ class ImageModel extends JoomAdminModel
       else
       {
         // Prune items that you can't change.
-        unset($pks[$i]);
         $error = $this->getError();
 
         if($error)
