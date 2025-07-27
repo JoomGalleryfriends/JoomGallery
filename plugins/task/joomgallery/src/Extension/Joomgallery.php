@@ -14,6 +14,7 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Database\ParameterType;
 use Joomla\Event\SubscriberInterface;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Component\Scheduler\Administrator\Task\Task;
 use Joomla\Component\Scheduler\Administrator\Task\Status;
 use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
@@ -84,23 +85,43 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   private function recreate(ExecuteTaskEvent $event): int
   {
     /** @var Task $task */
-    $task         = $event->getArgument('subject');
-    $params       = $event->getArgument('params');
-    $lastStatus   = $task->get('last_exit_code', Status::OK);
-    $willResume   = (bool) $params->resume;
-    $webcron      = false;
-    $app          = Factory::getApplication();
+    $task       = $event->getArgument('subject');
+    $params     = $event->getArgument('params');
+    $lastStatus = $task->get('last_exit_code', Status::OK);
+    $willResume = (bool) $params->resume;
+    $webcron    = false;
+    $app        = Factory::getApplication();
+    $user       = $app->getIdentity();
+
+    // Some applications like CLI or WebCron do not support users
+    // We might have to inject a default user to the application
+    if(!$user->id)
+    {
+      $user_id = (int) $params->user;
+      $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($user_id);
+      $app->loadIdentity($user);
+    }
 
     // Retreiving param values
     $ids  = \array_map('trim', \explode(',', $params->cid)) ?? [];
     $type = \strval($params->type) ?? 'thumbnail';
 
     // Only when using WebCron requests
-    if($ids_val = (array) $app->input->get('cid', [], 'int'))
+    $ids_str = $app->input->get('cid', null, 'string');
+    $ids_arr = (array) $app->input->get('cid', [], 'int');
+    if($ids_str || $ids_arr)
     {
       // There are ids submitted to the task with a request
       // We use this instead
-      $ids        = $ids_val;
+      if($ids_str)
+      {
+        $ids = \array_map('trim', \explode(',', $ids_str));
+      }
+      else
+      {
+        $ids = $ids_arr;
+      }
+
       $webcron    = true;
       $willResume = false;
     }
@@ -153,7 +174,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     {
       // We finished the job
       $willResume = false;
-      $params->successful = [];
+      $params->successful = '';
     }
 
     // Log our intention to resume or not and return the appropriate exit code.
