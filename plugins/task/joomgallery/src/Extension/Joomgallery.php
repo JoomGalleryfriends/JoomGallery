@@ -9,7 +9,10 @@
 *****************************************************************************************/
 namespace Joomgallery\Plugin\Task\Joomgallery\Extension;
 
+use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Database\ParameterType;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Component\Scheduler\Administrator\Task\Task;
 use Joomla\Component\Scheduler\Administrator\Task\Status;
@@ -25,6 +28,15 @@ use Joomla\Component\Scheduler\Administrator\Traits\TaskPluginTrait;
 final class Joomgallery extends CMSPlugin implements SubscriberInterface
 {
   use TaskPluginTrait;
+
+  /**
+   * Global database object
+   *
+   * @var    \JDatabaseDriver
+   *
+   * @since  4.2.0
+   */
+  protected $db = null;
 
   /**
    * @var string[]
@@ -77,10 +89,10 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     $lastStatus   = $task->get('last_exit_code', Status::OK);
     $willResume   = (bool) $params->resume;
     $webcron      = false;
-    $app          = Factrory::getApplication();
+    $app          = Factory::getApplication();
 
     // Retreiving param values
-    $ids  = \array_map('trim', \explode(',', $params->ids)) ?? [];
+    $ids  = \array_map('trim', \explode(',', $params->cid)) ?? [];
     $type = \strval($params->type) ?? 'thumbnail';
 
     // Only when using WebCron requests
@@ -180,7 +192,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     $max_time = (int) \ini_get('max_execution_time');
 
     // Check if model exists and is an instance of BaseModel
-    if(!isset($task_def['model']) || !$task_def['model'] instanceof Joomla\CMS\MVC\Model\BaseModel)
+    if(!isset($task_def['model']) || !$task_def['model'] instanceof \Joomla\CMS\MVC\Model\BaseModel)
     {
       throw new \InvalidArgumentException('Invalid model given. Must be an instance of Joomla\CMS\MVC\Model\BaseModel');
     }
@@ -204,7 +216,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
 
     $assumed_duration = 1;
     $successful   = \is_string($params->successful) ? $params->successful : '';
-    $executed_ids = \array_map('trim', \explode(',', $successful));
+    $executed_ids = $successful !== '' ? \array_map('trim', \explode(',', $successful)) : [];
     foreach($ids as $id)
     {
       // Skip the already executed ids
