@@ -15,6 +15,8 @@ use Joomla\CMS\Language\Text;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->getRegistry()->addRegistryFile('media/com_scheduler/joomla.asset.json');
+$wa->useStyle('com_scheduler.admin-view-select-task-css');
+$wa->useScript('com_scheduler.admin-view-select-task-search');
 
 // Load scheduler language file
 $this->app->getLanguage()->load('com_scheduler', JPATH_ADMINISTRATOR);

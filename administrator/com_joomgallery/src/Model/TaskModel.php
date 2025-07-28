@@ -174,6 +174,19 @@ class TaskModel extends JoomAdminModel
    */
   public function getTasks(): array
   {
-    return SchedulerHelper::getTaskOptions()->options;
+    $tasks = SchedulerHelper::getTaskOptions()->options;
+
+    // Filter for JoomGallery Tasks
+    $jg_tasks = [];
+    foreach($tasks as $key => $task)
+    {
+      if(\strpos(\strtolower($task->id), 'joomgallery') !== false)
+      {
+        // Its a JoomGallery task
+        \array_push($jg_tasks, $task);
+      }
+    }
+
+    return $jg_tasks;
   }
 }
