@@ -481,7 +481,8 @@ PRIMARY KEY (`id`)
 CREATE TABLE IF NOT EXISTS `#__joomgallery_tasks` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `title` VARCHAR(255) NOT NULL DEFAULT "",
-`type` VARCHAR(128) NOT NULL DEFAULT "" COMMENT "unique identifier for job defined by plugin",
+`taskid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
+`type` VARCHAR(128) NOT NULL DEFAULT "",
 `queue` LONGTEXT NOT NULL,
 `successful` LONGTEXT NOT NULL,
 `failed` LONGTEXT NOT NULL,

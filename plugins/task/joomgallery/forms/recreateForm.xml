@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
   <fields name="params">
-    <fieldset name="task_params">
+    <fieldset name="task_params" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
       <field name="cid"
         type="text"
         default="0"
         label="PLG_TASK_JOOMGALLERY_TASK_RECREATEIMAGE_CID_LABEL"
         description="PLG_TASK_JOOMGALLERY_TASK_RECREATEIMAGE_CID_DESC" />
       <field name="type"
-        type="text"
+        type="jgimagetype"
         default="thumbnail"
         label="PLG_TASK_JOOMGALLERY_TASK_RECREATEIMAGE_TYPE_LABEL"
         description="PLG_TASK_JOOMGALLERY_TASK_RECREATEIMAGE_TYPE_DESC" />

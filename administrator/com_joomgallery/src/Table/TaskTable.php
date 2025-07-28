@@ -27,6 +27,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTabl
  */
 class TaskTable extends Table
 {
+  use LegacyDatabaseTrait;
   use GlobalAssetTableTrait;
 
   /**
@@ -143,6 +144,16 @@ class TaskTable extends Table
 	public function bind($array, $ignore = '')
 	{
     $date = Factory::getDate();
+
+    // Support for title field: title
+    if(\array_key_exists('title', $array))
+    {
+      $array['title'] = \trim($array['title']);
+      if(empty($array['title']))
+      {
+        $array['title'] = $this->getSchedulerTask((int) $array['taskid'])->title;
+      }
+    }
 
     // Support for queue field
     if(isset($array['queue']) && \is_array($array['queue']))
@@ -272,6 +283,12 @@ class TaskTable extends Table
       $this->completed = \intval($this->completed);
     }
 
+    // Support for last_execution field
+    if(isset($this->last_execution) && empty($this->last_execution))
+    {
+      $this->last_execution = null;
+    }
+
     return parent::check();
   }
 
@@ -326,5 +343,34 @@ class TaskTable extends Table
     {
       $this->completed = true;
     }
+  }
+
+  /**
+	 * Method to get a task object by id
+   * 
+   * @param   int  $id  Task type
+	 *
+	 * @return  object    The task object.
+	 *
+	 * @since   4.2.0
+	 */
+	protected function getSchedulerTask(int $id)
+	{
+    // Get a db connection.
+		$db = $this->getDatabase();
+
+		// Create a new query object.
+		$query = $db->getQuery(true);
+
+		// Select all records from the scheduler tasks table where type is matching.
+		$query->select('*');
+		$query->from($db->quoteName('#__scheduler_tasks'));
+    $query->where(($db->quoteName('id')) .'='. $db->quote($id));
+
+		// Reset the query using our newly populated query object.
+		$db->setQuery($query);
+
+		// Load the result as a stdClass object.
+		return $db->loadObject();
   }
 }

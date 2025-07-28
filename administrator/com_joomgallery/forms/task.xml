@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomla\Component\Scheduler\Administrator\Field">
-  <fieldset name="general">
+  <fieldset name="general" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
     <field name="id"
            type="text"
            readonly="true"
@@ -10,8 +10,7 @@
     <field name="title"
            type="text"
            maxlength="255"
-           filter="safehtml"           
-           required="true"
+           filter="safehtml"
            label="JGLOBAL_TITLE"
            message="COM_JOOMGALLERY_ERROR_NEEDS_TITLE" />
 
@@ -22,10 +21,17 @@
 				   readonly="true"
 				   maxlength="1024" />
 
+    <field name="taskid"
+           type="jgtask"
+           required="true"
+           label="COM_JOOMGALLERY_TASK_TASKID_LABEL"
+           description="COM_JOOMGALLERY_TASK_TASKID_DESC" />
+
     <field name="queue"
            type="text"
            required="true"
-           label="COM_JOOMGALLERY_TASK_QUEUE"
+           default="0"
+           label="COM_JOOMGALLERY_TASK_QUEUE_LABEL"
            description="COM_JOOMGALLERY_TASK_QUEUE_DESC" />
 
     <field name="note"
