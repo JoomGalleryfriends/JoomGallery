@@ -58,4 +58,20 @@ class TasksController extends JoomAdminController
 		// Close the application
 		Factory::getApplication()->close();
 	}
+
+  /**
+	 * Proxy for getModel.
+	 *
+	 * @param   string  $name    Optional. Model name
+	 * @param   string  $prefix  Optional. Class prefix
+	 * @param   array   $config  Optional. Configuration array for model
+	 *
+	 * @return  object	The Model
+	 *
+	 * @since   4.2.0
+	 */
+	public function getModel($name = 'Task', $prefix = 'Administrator', $config = array())
+	{
+		return parent::getModel($name, $prefix, array('ignore_request' => true));
+	}
 }

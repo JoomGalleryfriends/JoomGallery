@@ -115,10 +115,12 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       // We use this instead
       if($ids_str)
       {
+        // ids were submitted as a comma separated string
         $ids = \array_map('trim', \explode(',', $ids_str));
       }
       else
       {
+        // ids were submitted as form array
         $ids = $ids_arr;
       }
 
@@ -143,6 +145,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $listModel = $app->bootComponent('com_joomgallery')->getMVCFactory()->createModel('images', 'administrator');
       $ids       = \array_map(function($item) { return $item->id;}, $listModel->getIDs());
     }
+
+    // Remove zero ids from list
+    $ids = \array_filter($ids);
 
     // Load the model to perform the task
     $model = $app->bootComponent('com_joomgallery')->getMVCFactory()->createModel('image', 'administrator');
