@@ -77,7 +77,7 @@ https://docs.joomla.org/Setting_up_your_workstation_for_Joomla_development
    - plugins/finder/joomgalleryimages
    - plugins/privacy/joomgalleryimages
    - plugins/webservices/joomgallery
-4. Create symbolic links from those folders to the corresponding folders within the checked out copy of your component
+4. Create symbolic links from those folders to the corresponding folders within the checked out copy of the repository
 5. The referenced copy of your component can be properly versioned using Git
 
 **Symbolic link generator tool for windows:**
@@ -89,12 +89,18 @@ https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html
 
 Testing is an integrate part of the development process and can be done even without coding skills. Just look at the tab `Pull requests` to see which code changes need testing. If you want to test a code change, this is how to do it:
 
-1. Open the Pull request you want to test
-2. Change to the branch where the code of the PR is coming from
-3. Button "Code" -> "Download ZIP"
-4. Install the zip file in your Joomla!
-5. Perform tests where the Pull request changes anything
-6. If you find a bug or unexpected behaviour, post a comment in the pull request with the following content:
+<video class="ratio ratio-16x9" control="controls"><source src="https://www.joomgalleryfriends.net/images/videos/install-a-pr.mp4" type="video/mp4">Your browser does not support the video tag</video>
+
+1. Open the Pull request (PR) you want to test
+2. Scroll down the comments feed of the PR all the way to the bottom
+3. Open the accordion **All checks have passed**
+4. Open the link **PR Build Artifact / build-pr-zip**
+5. Change on the left navigation to **Summary**
+6. Click the link in the **Artifacts** section which has the name "JoomGallery-PRname"
+7. A zip file of the PR gets created and downloaded
+8. Install the zip file in your Joomla!
+9. Perform tests where the PR changes anything
+10. If you find a bug or unexpected behaviour, post a comment in the pull request with the following content:
 
 ### Issue reporting
 
