@@ -97,7 +97,11 @@ class HtmlView extends JoomGalleryView
     {
       // Select view
       ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TASKS').' :: '.Text::_('COM_JOOMGALLERY_TASK_SELECT'), 'play-circle');
-      ToolbarHelper::cancel('task.cancel', 'JTOOLBAR_CANCEL');
+      $toolbar->linkButton('cancel')
+            ->url('index.php?option=com_joomgallery&view=tasks')
+            ->buttonClass('btn btn-danger')
+            ->icon('icon-times')
+            ->text('JCANCEL');
     }
     else
     {
