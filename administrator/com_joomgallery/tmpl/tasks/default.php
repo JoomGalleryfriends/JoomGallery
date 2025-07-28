@@ -17,6 +17,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\Component\Scheduler\Administrator\Task\Status;
 
+// Load scheduler language file
+$this->app->getLanguage()->load('com_scheduler', JPATH_ADMINISTRATOR);
+
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->getRegistry()->addRegistryFile('media/com_scheduler/joomla.asset.json');
@@ -24,9 +27,33 @@ $wa->useStyle('com_joomgallery.admin')
    ->useScript('com_joomgallery.admin')
    ->useScript('table.columns')
    ->useScript('multiselect')
-   ->useScript('com_scheduler.test-task')
    ->useStyle('com_scheduler.admin-view-tasks-css');
 
+// Add modified test-task script
+$jsPathES5 = JPATH_ROOT . '/media/com_scheduler/js/admin-view-run-test-task-es5.min.js';
+$jsPath    = JPATH_ROOT . '/media/com_scheduler/js/admin-view-run-test-task.min.js';
+
+if(!$jsContent = file_get_contents($jsPathES5))
+{
+  $jsContent = file_get_contents($jsPath);
+}
+
+if($jsContent !== false)
+{
+  $jsContent = str_replace(
+      '?option=com_scheduler&view=tasks',
+      '?option=com_joomgallery&view=tasks',
+      $jsContent
+  );
+
+  $wa->addInlineScript($jsContent, ['name' => 'com_scheduler.test-task']);
+}
+else
+{
+  $wa->useScript('com_scheduler.test-task');
+}
+
+// Add language strings to JS
 Text::script('COM_SCHEDULER_TEST_RUN_TITLE');
 Text::script('COM_SCHEDULER_TEST_RUN_TASK');
 Text::script('COM_SCHEDULER_TEST_RUN_DURATION');
@@ -56,7 +83,7 @@ if($saveOrder && !empty($this->items))
 
 <div class="row">
   <div class="col-md-12">
-    <h2>Ajax Tasks</h2>
+    <h2><?php echo Text::_('COM_JOOMGALLERY_TASKS_INSTANT_TASKS'); ?></h2>
     <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=tasks'); ?>" method="post" name="adminForm" id="adminForm">
       <div id="ajax-tasks-container" class="j-main-container">
         <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
@@ -65,7 +92,7 @@ if($saveOrder && !empty($this->items))
         <?php if (empty($this->items)) : ?>
           <div class="alert alert-info">
             <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
-            <?php echo Text::_('No ajax Tasks'); ?>
+            <?php echo Text::_('COM_JOOMGALLERY_TASKS_EMPTYSTATE_TITLE'); ?>
           </div>
         <?php else : ?>
           <div class="ms-4 mb-2">
@@ -120,12 +147,12 @@ if($saveOrder && !empty($this->items))
 
     <br><hr><br>
 
-    <h2>Scheduled Tasks</h2>
+    <h2><?php echo Text::_('COM_SCHEDULER'); ?></h2>
     <div id="scheduler-tasks-container" class="j-main-container">
       <?php if (empty($this->scheduledTasks)) : ?>
         <div class="alert alert-info">
           <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
-          <?php echo Text::_('No scheduled Tasks'); ?>
+          <?php echo Text::_('COM_SCHEDULER_EMPTYSTATE_TITLE'); ?>
         </div>
       <?php else : ?>
         <!-- Tasks table starts here -->
@@ -155,7 +182,7 @@ if($saveOrder && !empty($this->items))
             </th>
             <!-- Run task -->
             <th scope="col" class="d-none d-md-table-cell">
-              <?php echo Text::_('COM_JOOMGALLERY_TASK_START'); ?>
+              <?php echo Text::_('COM_JOOMGALLERY_TASK_START_MANUALLY'); ?>
             </th>
             <!-- Nmbr of executions -->
             <th scope="col" class="d-none d-lg-table-cell">
@@ -220,7 +247,7 @@ if($saveOrder && !empty($this->items))
               <td class="small d-none d-md-table-cell">
                 <button type="button" class="btn btn-sm btn-warning" <?php echo $item->state < 0 ? 'disabled' : ''; ?> data-id="<?php echo (int) $item->id; ?>" data-title="<?php echo htmlspecialchars($item->title); ?>" data-bs-toggle="modal" data-bs-backdrop="static" data-bs-target="#scheduler-test-modal">
                   <span class="fa fa-play fa-sm me-2"></span>
-                  <?php echo Text::_('COM_JOOMGALLERY_TASK_START'); ?>
+                  <?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>
                 </button>
               </td>
 
