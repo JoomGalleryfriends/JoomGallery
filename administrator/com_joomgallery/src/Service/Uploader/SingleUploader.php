@@ -13,8 +13,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Filesystem\File as JFile;
-use \Joomla\CMS\Filesystem\Path as JPath;
+use \Joomla\Filesystem\File as JFile;
+use \Joomla\Filesystem\Path as JPath;
 use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
