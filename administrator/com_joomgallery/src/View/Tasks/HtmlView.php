@@ -98,7 +98,7 @@ class HtmlView extends JoomGalleryView
     // Delete button
     if($this->getAcl()->checkACL('delete', 'task'))
     {
-      $toolbar->delete('task.delete')
+      $toolbar->delete('tasks.delete')
         ->text('JTOOLBAR_DELETE')
         ->message(Text::_('COM_JOOMGALLERY_CONFIRM_DELETE_TASKS'))
         ->listCheck(true);
