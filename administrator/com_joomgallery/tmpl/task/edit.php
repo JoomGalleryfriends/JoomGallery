@@ -51,14 +51,8 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     <div class="row">
       <div class="col-lg-8">
         <fieldset class="adminform">
-          <div class="control-group"> 
-            <?php echo $this->form->getLabel('note'); ?>
-            <?php echo $this->form->getInput('note'); ?>
-          </div>
-          <div class="control-group">
-            <?php echo $this->form->getLabel('queue'); ?>
-            <?php echo $this->form->getInput('queue'); ?>
-          </div>
+          <?php echo $this->form->renderField('taskid'); ?>
+          <?php echo $this->form->renderField('queue'); ?>
         </fieldset>
       </div>
       <div class="col-lg-4">
@@ -66,6 +60,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
           <legend class="visually-hidden"><?php echo Text::_('JGLOBAL_FIELDSET_GLOBAL'); ?></legend>
           <?php echo $this->form->renderField('published'); ?>
           <?php echo $this->form->renderField('times_executed'); ?>
+          <?php echo $this->form->renderField('note'); ?>
         </fieldset>
       </div>
     </div>

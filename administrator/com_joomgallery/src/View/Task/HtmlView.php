@@ -67,6 +67,9 @@ class HtmlView extends JoomGalleryView
       // Form view
       $this->item   = $model->getItem();
 		  $this->form   = $model->getForm();
+
+      // Apply tasktype to taskid field
+      $this->form->setFieldAttribute('taskid', 'tasktype', $this->form->getValue('type'));
     }
 
 		// Check for errors.
