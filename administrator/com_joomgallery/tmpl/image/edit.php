@@ -188,6 +188,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
 	<input type="hidden" name="task" value=""/>
+  <input type="hidden" id="mediaManagerPath" name="mediapath" value=""/>
   <input type="hidden" name="jform[uploader]" value="html" />
   <?php /* <input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
 	<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
@@ -198,10 +199,10 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 </form>
 
 <?php
-$mediaManagerBtn = '<a id="mediaManagerBtn" class="btn disabled" href="" disabled>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</a>';
+$mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
 if(in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
 {
-  $mediaManagerBtn = '<a id="mediaManagerBtn" class="btn" href="">'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</a>';
+  $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn">'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
 }
 
 // Image preview modal
@@ -221,7 +222,7 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
     let modalTitle = modal.querySelector('.modal-title');
     let modalBody  = modal.querySelector('.modal-body');
     let replaceBtn = document.getElementById('replaceBtn');
-    let mediaBtn   = document.getElementById('mediaManagerBtn');
+    let mediaInput = document.getElementById('mediaManagerPath');
 
     <?php
       $imgURL   = '{';
@@ -240,7 +241,7 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
           $img_path = str_replace('/images/', '/', $img_path);
         }
 
-        $mediaURL .= $imagetype->typename.':"index.php?option=com_media&view=file&path='.$this->item->filesystem.':'.$img_path.'",';
+        $mediaURL .= $imagetype->typename.':"index.php?option=com_joomgallery&path='.$this->item->filesystem.':'.$img_path.'",';
       }
 
       $imgURL   .= '}';
@@ -258,8 +259,8 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
     body      = body + '</div>';
     modalBody.innerHTML  = body;
 
-    replaceBtn.href = replaceBtn.href + '&type=' + typename;
-    mediaBtn.href   = mediaURL[typename];
+    replaceBtn.href  = replaceBtn.href + '&type=' + typename;
+    mediaInput.value = mediaURL[typename];
 
     let bsmodal = new bootstrap.Modal(document.getElementById('image-modal-box'), {keyboard: false});
     bsmodal.show();
