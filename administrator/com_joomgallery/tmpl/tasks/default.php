@@ -104,7 +104,7 @@ if($saveOrder && !empty($this->items))
                 <div class="card">
                   <div class="card-header flex-column">
                     <h3><?php echo  $this->escape($item->title); ?></h3>
-                    <h4 class="small"><?php echo  '(' . $item->type . ')'; ?></h4>
+                    <h4 class="small"><?php echo  '(' . $item->type . '.' . $item->taskid . ')'; ?></h4>
                   </div>
                   <div class="card-body d-flex flex-row">
                     <div class="p-2 align-self-center">
