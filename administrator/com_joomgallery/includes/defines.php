@@ -29,6 +29,7 @@ define('_JOOM_TABLE_TYPES',          '#__joomgallery_img_types');
 define('_JOOM_TABLE_MIGRATION',      '#__joomgallery_migration');
 define('_JOOM_TABLE_TAGS',           '#__joomgallery_tags');
 define('_JOOM_TABLE_TAGS_REF',       '#__joomgallery_tags_ref');
+define('_JOOM_TABLE_TASKS',          '#__joomgallery_tasks');
 define('_JOOM_TABLE_USERS',          '#__joomgallery_users');
 define('_JOOM_TABLE_VOTES',          '#__joomgallery_votes');
 define('_JOOM_WEBSITE_UPDATES_XML',  'https://www.joomgalleryfriends.net/updates');
