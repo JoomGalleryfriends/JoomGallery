@@ -142,9 +142,9 @@ class ConfigList extends AbstractCommand
     );
 
     // Display the configs in a table and set the exit code to 0
-    $this->ioStyle->table(
+    $this->ioStyle->horizontalTable(
       [
-        'ID', 'Title', 'Published', 'Note', 'Group ID', 'Created by', 'Modified by', 'Modified', 'Filesystem', 'iagetypes', 'pathftpupload',
+        'ID', 'Title', 'Published', 'Note', 'Group ID', 'Created by', 'Modified by', 'Filesystem', 'imagetypes', 'pathftpupload',
       ],
       $configs
     );

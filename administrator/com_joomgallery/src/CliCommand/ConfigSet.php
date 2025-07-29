@@ -1,11 +1,11 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+******************************************************************************************
+**   @package    com_joomgallery                                                        **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 3 or later                          **
+*****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -86,7 +86,7 @@ class ConfigSet extends AbstractCommand
     $this->addArgument('option', InputArgument::REQUIRED, 'Name of the option');
     $this->addArgument('value', null, 'Value of the option');
     $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration ID', 1);
-    $this->addOption('verify', null, InputOption::VALUE_OPTIONAL, 'configuration ID', false);
+    $this->addOption('verify', null, InputOption::VALUE_OPTIONAL, 'check result from DB with requested', false);
 
     $help = "<info>%command.name%</info> set the value for a JoomGallery configuration option (Table)
   Usage: <info>php %command.full_name%</info> <option> <value>
@@ -116,11 +116,12 @@ class ConfigSet extends AbstractCommand
     $option   = $this->cliInput->getArgument('option');
     $value    = $this->cliInput->getArgument('value');
     $configId = $input->getOption('id') ?? '1';
-    $veryfyIn = $input->getOption('verify') ?? 'false';
+    $verifyIn = $input->getOption('verify') ?? 'false';
 
     // $isDoVerify = true/false, 0/1;
-    $isDoVerify = $this->isTrue($veryfyIn);
+    $isDoVerify = $this->isTrue($verifyIn);
 
+    // list of parameter with values
     $configurationAssoc = $this->getItemAssocFromDB($configId);
 
     if (empty ($configurationAssoc))
@@ -130,6 +131,7 @@ class ConfigSet extends AbstractCommand
       return Command::FAILURE;
     }
 
+    // validate option for existence
     if (!\array_key_exists($option, $configurationAssoc))
     {
       $this->ioStyle->error("Can't find option '$option' in configuration list");
@@ -138,7 +140,11 @@ class ConfigSet extends AbstractCommand
     }
 
 	// ToDo: Make it sql save ....
+
+    // Sanitize for boolean. Boolean result is either '1' or '0'
     $sanitizeValue = $this->sanitizeValue($value);
+
+    echo "\$sanitizeValue: '{$sanitizeValue}'" . "\r\n";
 
     $isUpdated = $this->writeOptionToDB($configId, $option, $sanitizeValue);
     if ($isUpdated)
@@ -152,6 +158,7 @@ class ConfigSet extends AbstractCommand
       return Command::FAILURE;
     }
 
+    $this->ioStyle->note('\$isDoVerify: ' . $isDoVerify);
     if ($isDoVerify)
     {
       $verifiedValue = $this->getOptionFromDB($configId, $option);
@@ -196,7 +203,7 @@ class ConfigSet extends AbstractCommand
 
 
   /**
-   * Sanitize the options array for boolean
+   * Sanitize the value for boolean. Boolean result is either '1' or '0'
    *
    * @param   array  $option  Options array
    *
@@ -206,18 +213,14 @@ class ConfigSet extends AbstractCommand
    */
   private function sanitizeValue($value)
   {
-    switch (strtolower($value))
-    {
-      case $value === 'false':
-        $value = false;
-        break;
-      case $value === 'true':
-        $value = true;
-        break;
-      case $value === 'null':
-        $value = null;
-        break;
-    }
+    echo "value in: '{$value}'" . "\r\n";
+
+    $value = $value === 'false' ? 0 : $value;
+    $value = $value === 'true' ? 1 : $value;
+    // $value = $value === 'null' ? null : $value;
+
+    echo "value out: '" . json_encode($value) . "'" . "\r\n";
+    echo "value out: '" . $value. "'" . "\r\n";
 
     return $value;
   }
@@ -294,31 +297,31 @@ class ConfigSet extends AbstractCommand
   /**
    * Check string input for true (1)
    *
-   * @param   mixed  $veryfyIn
+   * @param   mixed  $value
    *
    * @return bool
    *
    * @since version
    */
-  private function isTrue(mixed $veryfyIn)
+  private function isTrue(mixed $value)
   {
     $isTrue = false;
 
-    if (!empty ($veryfyIn))
+    if (!empty ($value))
     {
 
-      if (strtolower($veryfyIn) == 'true')
+      if (strtolower($value) == 'true')
       {
         $isTrue = true;
       }
 
-      if (strtolower($veryfyIn) == 'on')
+      if (strtolower($value) == 'on')
       {
         $isTrue = true;
       }
 
       // ToDo: positive ?
-      if ($veryfyIn == '1')
+      if ($value == '1')
       {
         $isTrue = true;
       }
