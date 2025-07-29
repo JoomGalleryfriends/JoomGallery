@@ -83,6 +83,7 @@
     <plugin group="system" plugin="joomgallery"/>
     <plugin group="system" plugin="joomowner"/>
     <plugin group="privacy" plugin="joomgallery"/>
+    <plugin group="task" plugin="joomgallery"/>
     <plugin group="console" plugin="joomconsole"/>
   </plugins>
 
