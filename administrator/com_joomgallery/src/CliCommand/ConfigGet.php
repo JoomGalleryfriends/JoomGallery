@@ -46,7 +46,7 @@ class ConfigGet extends AbstractCommand
   /**
    * Instantiate the command.
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   public function __construct()
   {
@@ -76,7 +76,7 @@ class ConfigGet extends AbstractCommand
    *
    * @return  void
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   protected function configure(): void
   {
@@ -99,7 +99,7 @@ class ConfigGet extends AbstractCommand
    *
    * @return  integer  The command exit code
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -137,7 +137,7 @@ class ConfigGet extends AbstractCommand
    *
    * @return array
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   private function getItemAssocFromDB(string $configId): array|null
   {
@@ -161,7 +161,7 @@ class ConfigGet extends AbstractCommand
    *
    * @return string
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   protected function formatConfigValue($value): string
   {

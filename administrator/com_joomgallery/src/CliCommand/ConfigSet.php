@@ -49,7 +49,7 @@ class ConfigSet extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   public function __construct()
   {
@@ -79,7 +79,7 @@ class ConfigSet extends AbstractCommand
    *
    * @return  void
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   protected function configure(): void
   {
@@ -106,7 +106,7 @@ class ConfigSet extends AbstractCommand
    *
    * @return  integer  The command exit code
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -184,7 +184,7 @@ class ConfigSet extends AbstractCommand
    *
    * @return array
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   private function getItemAssocFromDB(string $configId): array|null
   {
@@ -209,7 +209,7 @@ class ConfigSet extends AbstractCommand
    *
    * @return array
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   private function sanitizeValue($value)
   {
@@ -234,7 +234,7 @@ class ConfigSet extends AbstractCommand
    *
    * @return bool
    *
-   * @since version
+   * @since   4.2.0
    */
   private function writeOptionToDB(mixed $configId, string $option, $value): bool
   {
@@ -276,7 +276,7 @@ class ConfigSet extends AbstractCommand
    *
    * @return array
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   private function getOptionFromDB(string $configId, string $option)
   {
@@ -301,7 +301,7 @@ class ConfigSet extends AbstractCommand
    *
    * @return bool
    *
-   * @since version
+   * @since   4.2.0
    */
   private function isTrue(mixed $value)
   {

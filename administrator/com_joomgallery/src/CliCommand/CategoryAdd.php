@@ -94,7 +94,7 @@ class CategoryAdd extends AbstractCommand
   /**
    * Instantiate the command.
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   public function __construct()
   {
@@ -149,7 +149,7 @@ class CategoryAdd extends AbstractCommand
    *
    * @return  integer  The command exit code
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -368,7 +368,7 @@ class CategoryAdd extends AbstractCommand
    *
    * @return  string
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   protected function getStringFromOption($option, $question): string
   {
@@ -389,7 +389,7 @@ class CategoryAdd extends AbstractCommand
    *
    * @return  object
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   protected function getUserId($username)
   {
