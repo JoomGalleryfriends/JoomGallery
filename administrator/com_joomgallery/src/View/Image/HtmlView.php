@@ -12,7 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Component\ComponentHelper;
+use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\CMS\Language\Text;
@@ -21,6 +21,7 @@ use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 
 /**
  * View class for a single Image.
@@ -49,7 +50,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function display($tpl = null)
 	{
@@ -63,8 +64,8 @@ class HtmlView extends JoomGalleryView
     $this->imagetypes = JoomHelper::getRecords('imagetypes');
     $rating           = JoomHelper::getRating($this->item->id);
     $this->form->setvalue('rating', '', $rating);
-	$this->app->getLanguage()->load('com_joomgallery.exif', _JOOM_PATH_ADMIN);
-	$this->app->getLanguage()->load('com_joomgallery.iptc', _JOOM_PATH_ADMIN);
+    $this->app->getLanguage()->load('com_joomgallery.exif', _JOOM_PATH_ADMIN);
+    $this->app->getLanguage()->load('com_joomgallery.iptc', _JOOM_PATH_ADMIN);
 
     if($this->item->id == 0)
     {
@@ -98,7 +99,7 @@ class HtmlView extends JoomGalleryView
       $this->js_vars = $js_vars;
 
       //--- Limits php.ini, config -----
-      $this->limitsPhpConfig($this->config);
+      $this->limitsPhpConfig();
     }
     elseif($this->_layout == 'replace')
     {
@@ -123,7 +124,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function addToolbarEdit()
 	{
@@ -196,7 +197,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function addToolbarUpload()
 	{
@@ -256,7 +257,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function addToolbarReplace()
 	{
@@ -308,7 +309,7 @@ class HtmlView extends JoomGalleryView
    *
    * On UploadMaxsize = 0 (from com_media) the php.ini limits are used
    *
-   * @since version 4.1
+   * @since version 4.2
    */
   public function limitsPhpConfig(): void
   {
