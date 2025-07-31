@@ -48,7 +48,7 @@ class CategoryList extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   public function __construct()
   {
@@ -78,7 +78,7 @@ class CategoryList extends AbstractCommand
    *
    * @return  void
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   protected function configure(): void
   {
@@ -107,7 +107,7 @@ class CategoryList extends AbstractCommand
    *
    * @return  integer  The command exit code
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -168,7 +168,7 @@ class CategoryList extends AbstractCommand
    *
    * @return array
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   private function getItemsFromDB(string $userId, string $parent_id): array
   {

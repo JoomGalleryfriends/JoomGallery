@@ -49,7 +49,7 @@ class Image extends AbstractCommand
    *
    * @param   DatabaseInterface  $db  Database connector
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   public function __construct()
   {
@@ -79,7 +79,7 @@ class Image extends AbstractCommand
    *
    * @return  void
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   protected function configure(): void
   {
@@ -106,7 +106,7 @@ class Image extends AbstractCommand
    *
    * @return  integer  The command exit code
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
@@ -157,7 +157,7 @@ class Image extends AbstractCommand
    *
    * @return array
    *
-   * @since  4.0.X
+   * @since   4.2.0
    */
   private function getItemAssocFromDB(string $imageId): array|null
   {
@@ -182,7 +182,7 @@ class Image extends AbstractCommand
    *
    * @return array
    *
-   * @since version
+   * @since   4.2.0
    */
   private function assoc2DefinitionList(array $imageAssoc, $max_len = 70)
   {

@@ -37,7 +37,7 @@ use Joomla\Event\SubscriberInterface;
  * System plugin integrating JoomGallery commands to use from the console
  *
  * @package JoomGallery
- * @since   4.1.0
+ * @since   4.2.0
  */
 class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
 {
@@ -48,7 +48,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
    *
    * @var array of comman d class definition
    *
-   * @since   4.1.0
+   * @since   4.2.0
    */
   private static $commands = [
     Category::class,
@@ -72,7 +72,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
    *
    * @var    boolean
    *
-   * @since 4.1.0
+   * @since   4.2.0
    */
   protected $autoloadLanguage = true;
 
@@ -81,7 +81,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
    *
    * @var    boolean
    *
-   * @since  4.1.0
+   * @since   4.2.0
    */
   public function init(): void
   {
@@ -93,7 +93,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
    *
    * @return array
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public static function getSubscribedEvents(): array
   {
@@ -107,7 +107,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
    *
    * @return void
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function registerCLICommands(ApplicationEvent $event): void
   {
