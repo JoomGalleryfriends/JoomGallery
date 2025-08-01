@@ -22,3 +22,21 @@ files:
   - source: /administrator/com_joomgallery/language/en-GB/com_joomgallery.migration.Jg3ToJg4.ini
     translation: /administrator/com_joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
+  - source: /plugins/privacy/joomgallery/language/en-GB/plg_privacy_joomgallery.ini
+    translation: /plugins/privacy/joomgallery/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /plugins/privacy/joomgallery/language/en-GB/plg_privacy_joomgallery.sys.ini
+    translation: /plugins/privacy/joomgallery/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /plugins/system/joomgallery/language/en-GB/plg_system_joomgallery.ini
+    translation: /plugins/system/joomgallery/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /plugins/system/joomgallery/language/en-GB/plg_system_joomgallery.sys.ini
+    translation: /plugins/system/joomgallery/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /plugins/system/joomowner/language/en-GB/plg_system_joomowner.ini
+    translation: /plugins/system/joomowner/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /plugins/system/joomowner/language/en-GB/plg_system_joomowner.sys.ini
+    translation: /plugins/system/joomowner/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved

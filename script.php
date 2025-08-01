@@ -339,9 +339,12 @@ class com_joomgalleryInstallerScript extends InstallerScript
                      'width'      => '800px',
                      'height'     => 'fit-content',
                     ];
-    /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-    $wa->useScript('joomla.dialog-autocreate');
+    if(version_compare(JVERSION, '5.1.0', '>'))
+    {
+      /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+      $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+      $wa->useScript('joomla.dialog-autocreate');
+    }
     ?>
 
     <div class="text-center">

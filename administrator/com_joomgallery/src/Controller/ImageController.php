@@ -247,26 +247,24 @@ class ImageController extends JoomFormController
   }
 
   /**
-     * Method to cancel an edit.
-     *
-     * @param   string  $key  The name of the primary key of the URL variable.
-     *
-     * @return  boolean  True if access level checks pass, false otherwise.
-     *
-     * @since   4.0.0
-     */
-    public function cancel($key = null)
-    {
-      parent::cancel($key);
+   * Method to cancel an edit.
+   *
+   * @param   string  $key  The name of the primary key of the URL variable.
+   *
+   * @return  boolean  True if access level checks pass, false otherwise.
+   *
+   * @since   4.0.0
+   */
+  public function cancel($key = null)
+  {
+    parent::cancel($key);
 
-      if($this->input->get('layout', 'edit', 'cmd') == 'replace')
-      {
-        // Redirect to the edit screen.
-        $this->setRedirect(
-          Route::_('index.php?option=' . $this->option . '&view=image&layout=edit&id=' . $this->input->getInt('id'), false)
-        );
-      }
+    if($this->input->get('layout', 'edit', 'cmd') == 'replace')
+    {
+      // Redirect to the edit screen.
+      $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=image&layout=edit&id=' . $this->input->getInt('id'), false));
     }
+  }
     
   /**
    * Method to save metadata to an image file
@@ -284,7 +282,8 @@ class ImageController extends JoomFormController
     $data    = $this->input->post->get('jform', [], 'array');
 
     // Access check.
-    if (!$this->allowSave($data, 'id')) {
+    if(!$this->allowSave($data, 'id'))
+    {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error');
       $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=' . $this->view_list . $this->getRedirectToListAppend(), false));
 
@@ -298,7 +297,8 @@ class ImageController extends JoomFormController
     $imagetype = $this->input->get('imagetype', 'original', 'word');
 
     // Attempt to save the metadata.
-    if (!$model->savemetadata((int) $data['id'], $imagetype)) {
+    if(!$model->savemetadata((int) $data['id'], $imagetype))
+    {
       // Redirect back to the image edit screen.
       $this->setMessage(Text::_('COM_JOOMGALLERY_ERROR_SAVE_METADATA_TO_FILE', $model->getError()), 'error');
       $this->setRedirect(Route::_($url, false));
@@ -312,11 +312,29 @@ class ImageController extends JoomFormController
     // Check if there is a return value
     $return = $this->input->get('return', null, 'base64');
 
-    if (!\is_null($return) && Uri::isInternal(\base64_decode($return))) {
+    if(!\is_null($return) && Uri::isInternal(\base64_decode($return)))
+    {
       $url = \base64_decode($return);
     }
 
     // Redirect to the list screen.
     $this->setRedirect(Route::_($url, false));
+  }
+
+  /**
+   * Method to open an image in the media manager
+   *
+   * @return  boolean  True if metada was saved successfully, false otherwise.
+   *
+   * @since   4.2.0
+   */
+  public function openmedia()
+  {
+    $this->cancel();
+
+    $path = $this->input->get('mediapath', '', 'string');
+
+    // Redirect to media manager
+    $this->setRedirect(Route::_('index.php?option=com_media&view=file&path=' . $path, false));
   }
 }

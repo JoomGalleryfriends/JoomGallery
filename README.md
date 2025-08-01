@@ -16,6 +16,12 @@ https://www.forum.joomgalleryfriends.net/forum/index.php?thread/483-unverbindlic
 **Project Presentation (DE):**
 https://docs.google.com/presentation/d/1kXGfGRrHswU0M3yh0zUvOwW1fYqB07cksHzNxzcEyxI
 
+## Translation
+
+<a href="https://joomla.crowdin.com/joomgallery" rel="nofollow"><img style="width:140;height:40px" src="https://badges.crowdin.net/badge/dark/crowdin-on-light@2x.png" alt="Translated with Crowdin" /></a>
+
+[![Crowdin](https://badges.crowdin.net/e/a74b79c0af70ca6f1c1e610704f1c44c/localized.svg)](https://joomla.crowdin.com/joomgallery)
+
 ## Want to donate?
 
 JoomGallery is an OpenSource project and is developed by users for users. So if you are using JoomGallery feel free to contribute to the project...

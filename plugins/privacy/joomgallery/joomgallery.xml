@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="privacy" version="4.0" method="upgrade">
     <name>plg_privacy_joomgallery</name>
-    <creationDate>2025-07-04</creationDate>
+    <creationDate>2025-07-10</creationDate>
     <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
     <license>GNU General Public License version 3 or later</license>
     <author>JoomGallery::ProjectTeam</author>
     <authorEmail>team@joomgalleryfriends.net</authorEmail>
     <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-    <version>4.1.0</version>
+    <version>4.1.1</version>
     <description>PLG_PRIVACY_JOOMGALLERY_XML_DESCRIPTION</description>
     <namespace path="src">Joomgallery\Plugin\Privacy\Joomgallery</namespace>
     

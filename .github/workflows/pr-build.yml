@@ -28,6 +28,11 @@ jobs:
         run: |
           rm -rf crowdin.yml composer.json composer.lock docs tests .github .editorconfig
 
+      - name: Cleanup pel directory
+        run: |
+          PEL_DIR="administrator/com_joomgallery/vendor/fileeye/pel"
+          find "$PEL_DIR" -mindepth 1 -maxdepth 1 ! -name 'src' ! -name 'autoload.php' ! -name 'composer.json' -exec rm -rf {} +
+
       - name: Sanitize PR title for filename
         id: pr
         run: |
