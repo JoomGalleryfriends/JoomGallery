@@ -45,17 +45,6 @@ class HtmlView extends JoomGalleryView
     ToolBarHelper::title('Testing View' , 'wrench');
     
     // Place here yout code to test:
-    $listModel = $this->component->getMVCFactory()->createModel('images', 'administrator');
-    $listModel->getState();
-
-    // Filter tags
-    $tag_ids = [2];
-    $listModel->setState('filter.tag', $tag_ids);
-    $listModel->setState('filter.and', 1);
-    
-    // Get images
-    $items = $listModel->getItems();
-    dump($items);
 
     parent::display($tpl);
   }
