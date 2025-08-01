@@ -12,7 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // No direct access
 \defined('_JEXEC') or die;
 
-use \Joomla\CMS\MVC\Controller\FormController;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
 
 /**
  * Images list controller class.
@@ -20,7 +20,7 @@ use \Joomla\CMS\MVC\Controller\FormController;
  * @package JoomGallery
  * @since   4.0.0
  */
-class ImagesController extends FormController
+class ImagesController extends JoomAdminController
 {
 	/**
 	 * Proxy for getModel.
