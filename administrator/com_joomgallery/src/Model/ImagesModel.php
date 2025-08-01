@@ -133,6 +133,8 @@ class ImagesModel extends JoomListModel
     $this->setState('filter.category', $category);
     $tag = $this->getUserStateFromRequest($this->context . '.filter.tag', 'filter_tag', array());
     $this->setState('filter.tag', $tag);
+    $and = $this->getUserStateFromRequest($this->context . '.filter.and', 'filter_and', false);
+    $this->setState('filter.and', $and);
 
 		// Force a language
 		if (!empty($forcedLanguage))
@@ -166,9 +168,10 @@ class ImagesModel extends JoomListModel
     $id .= ':' . serialize($this->getState('filter.access'));
     $id .= ':' . serialize($this->getState('filter.created_by'));
     $id .= ':' . serialize($this->getState('filter.category'));
-		//$id .= ':' . serialize($this->getState('filter.tag'));
+    $id .= ':' . serialize($this->getState('filter.tag'));
+    $id .= ':' . serialize($this->getState('filter.and'));
 
-		return parent::getStoreId($id);
+    return parent::getStoreId($id);
 	}
 
 	/**
@@ -184,9 +187,61 @@ class ImagesModel extends JoomListModel
 		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
 
-		// Select the required fields from the table.
-		$query->select($this->getState('list.select', 'a.*'));
-    $query->from($db->quoteName('#__joomgallery', 'a'));
+    // Check if logic and is active
+    $logicAnd = (bool) ($this->getState('filter.and') > 0);
+
+    // Check if filtering by tags
+    $tag = $this->getState('filter.tag');
+
+    // Sanitise tags array
+    if(isset($tag))
+    {
+      if(!\is_array($tag))
+      {
+        $tag = (string) \preg_replace('/[^0-9,]/', '', $tag);
+        $tag = \strpos($tag, ',') !== false ? \explode(',', $tag) : [$tag];
+      }
+
+      $tag = ArrayHelper::toInteger((array) $tag);
+      $tag = \array_filter($tag);
+    }
+
+    // With less than two tags, we dont need the AND logic
+    if(\count($tag) < 2)
+    {
+      $logicAnd = false;
+    }
+
+    // Select the required fields from the table.
+    if(!empty($tag) && \count($tag) > 1 && !$logicAnd)
+    {
+      // Add DISTINCT when filtering with multiple tags
+      $query->select('DISTINCT ' . $this->getState('list.select', 'a.*'));
+    }
+    else
+    {
+      $query->select($this->getState('list.select', 'a.*'));
+    }
+
+    // Select table
+    if(!empty($tag) && $logicAnd)
+    {
+      // With tags applied (AND logic)
+      $subquery = $db->getQuery(true);
+      $subquery->select($db->quoteName('tr.imgid'))
+               ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
+               ->where($db->quoteName('tr.tagid') . ' IN (' . \implode(',', \array_map('intval', $tag)) . ')')
+               ->group($db->quoteName('tr.imgid'))
+               ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
+      
+      // Join the image table to the subquery
+      $query->from('(' . \trim($subquery->__toString()) . ') AS imgs');
+      $query->join('INNER', $db->quoteName('#__joomgallery', 'a') . ' ON ' . $db->quoteName('a.id') . ' = ' . $db->quoteName('imgs.imgid'));
+    }
+    else
+    {
+      $query->from($db->quoteName('#__joomgallery', 'a'));
+    }
 
 		// Join over the users for the checked out user
     $query->select($db->quoteName('uc.name', 'uEditor'));
@@ -211,6 +266,13 @@ class ImagesModel extends JoomListModel
 		// Join over the language fields 'language_title' and 'language_image'
 		$query->select(array($db->quoteName('l.title', 'language_title'), $db->quoteName('l.image', 'language_image')));
 		$query->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'));
+
+    if(!empty($tag) && !$logicAnd)
+    {
+      // Join with the tags and reference table to get tag IDs
+      $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
+      $query->join('INNER', $db->quoteName('#__joomgallery_tags', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('tr.tagid'));
+    }
 	
     // Filter by access level.
 		$filter_access = $this->state->get("filter.access");
@@ -338,12 +400,12 @@ class ImagesModel extends JoomListModel
 		}
 
     // Filter by categories
-    $catId = $this->getState("filter.category");
+    $catId = $this->getState('filter.category');
 
     // Convert to array
     if(isset($catId) && !\is_array($catId))
     {
-      $catId = (string) preg_replace('/[^0-9\,]/i', '', $catId);
+      $catId = (string) \preg_replace('/[^0-9\,]/i', '', $catId);
       if(\strpos($catId, ',') !== false)
       {
         $catId = \explode(',', $catId);
@@ -352,16 +414,30 @@ class ImagesModel extends JoomListModel
 
     if(!empty($catId))
     {
-      if(is_numeric($catId))
+      if(\is_numeric($catId))
       {
         $catId = (int) $catId;
         $query->where($db->quoteName('a.catid') . ' = :catId')
           ->bind(':catId', $catId, ParameterType::INTEGER);
       }
-      elseif(is_array($catId))
+      elseif(\is_array($catId))
       {
         $catId = ArrayHelper::toInteger($catId);
         $query->whereIn($db->quoteName('a.catid'), $catId);
+      }
+    }
+
+    // Filter by tags (OR logic)
+    if(!empty($tag) && !$logicAnd)
+    {
+      if(\count($tag) === 1)
+      {
+        $query->where($db->quoteName('t.id') . ' = :tag')
+          ->bind(':tag', $tag[0], ParameterType::INTEGER);
+      }
+      else
+      {
+        $query->whereIn($db->quoteName('t.id'), $tag);
       }
     }
 
@@ -420,9 +496,68 @@ class ImagesModel extends JoomListModel
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
+    // Check if logic and is active
+    $logicAnd = (bool) $this->getState('filter.and');
+
+    // Check if filtering by tags
+    $tag = $this->getState('filter.tag');
+
+    // Sanitise tags array
+    if(isset($tag))
+    {
+      if(!\is_array($tag))
+      {
+        $tag = (string) \preg_replace('/[^0-9,]/', '', $tag);
+        $tag = \strpos($tag, ',') !== false ? \explode(',', $tag) : [$tag];
+      }
+
+      $tag = ArrayHelper::toInteger((array) $tag);
+      $tag = \array_filter($tag);
+    }
+
+    // With less than two tags, we dont need the AND logic
+    if(\count($tag) < 2)
+    {
+      $logicAnd = false;
+    }
+
 		// Select the required fields from the table.
-		$query->select('COUNT(*)');
-    $query->from($db->quoteName('#__joomgallery', 'a'));
+    if(!empty($tag) && \count($tag) > 1 && !$logicAnd)
+    {
+      // Add DISTINCT when filtering with multiple tags
+      $query->select('COUNT(DISTINCT a.id)');
+    }
+    else
+    {
+      $query->select('COUNT(*)');
+    }
+
+    // Select table
+    if(!empty($tag) && $logicAnd)
+    {
+      // With tags applied (AND logic)
+      $subquery = $db->getQuery(true);
+      $subquery->select($db->quoteName('tr.imgid'))
+               ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
+               ->where($db->quoteName('tr.tagid') . ' IN (' . \implode(',', \array_map('intval', $tag)) . ')')
+               ->group($db->quoteName('tr.imgid'))
+               ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
+      
+      // Join the image table to the subquery
+      $query->from('(' . \trim($subquery->__toString()) . ') AS imgs');
+      $query->join('INNER', $db->quoteName('#__joomgallery', 'a') . ' ON ' . $db->quoteName('a.id') . ' = ' . $db->quoteName('imgs.imgid'));
+    }
+    else
+    {
+      $query->from($db->quoteName('#__joomgallery', 'a'));
+    }
+
+    if(!empty($tag) && !$logicAnd)
+    {
+      // Join with the tags and reference table to get tag IDs
+      $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
+      $query->join('INNER', $db->quoteName('#__joomgallery_tags', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('tr.tagid'));
+    }
 	
     // Filter by access level.
 		$filter_access = $this->state->get("filter.access");
@@ -574,6 +709,20 @@ class ImagesModel extends JoomListModel
       {
         $catId = ArrayHelper::toInteger($catId);
         $query->whereIn($db->quoteName('a.catid'), $catId);
+      }
+    }
+
+    // Filter by tags (OR logic)
+    if(!empty($tag) && !$logicAnd)
+    {
+      if(\count($tag) === 1)
+      {
+        $query->where($db->quoteName('t.id') . ' = :tag')
+          ->bind(':tag', $tag[0], ParameterType::INTEGER);
+      }
+      else
+      {
+        $query->whereIn($db->quoteName('t.id'), $tag);
       }
     }
 

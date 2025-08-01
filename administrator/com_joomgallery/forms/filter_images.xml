@@ -34,6 +34,27 @@
               message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY"
               task="filter" />
 
+        <field name="tag"
+               type="jgtag"
+               label="JTAG"
+               description="COM_JOOMGALLERY_FIELDS_TAG_DESC"
+               onchange="this.form.submit();"
+               class="inputbox span12 small"
+               default=""
+               custom="deny"
+               hint="JOPTION_SELECT_TAG"
+               multiple="true" />
+
+        <field name="and"
+               type="list"
+               label="COM_JOOMGALLERY_SELECT_LOG_OPERATOR"
+               default="-1"
+               onchange="this.form.submit();">
+            <option value="-1">COM_JOOMGALLERY_SELECT_LOG_OPERATOR</option>
+            <option value="0">COM_JOOMGALLERY_OR</option>
+            <option value="1">COM_JOOMGALLERY_AND</option>
+        </field>
+
         <field name="access"
                type="accesslevel"
                label="JOPTION_FILTER_ACCESS"
