@@ -188,7 +188,7 @@ class ImagesModel extends JoomListModel
 		$query = $db->getQuery(true);
 
     // Check if logic and is active
-    $logicAnd = (bool) $this->getState('filter.and');
+    $logicAnd = (bool) ($this->getState('filter.and') > 0);
 
     // Check if filtering by tags
     $tag = $this->getState('filter.tag');
