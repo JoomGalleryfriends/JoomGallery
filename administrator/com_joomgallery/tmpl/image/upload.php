@@ -74,6 +74,9 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''. json_encode($this->js_va
           <div class="card-body">
             <?php echo $this->form->renderField('debug'); ?>
           </div>
+          <div>
+            <?php DisplaySystemSettings($this->uploadLimit, $this->postMaxSize, $this->memoryLimit, $this->mediaSize, $this->maxSize); ?>
+          </div>
         </div>
       </div>
       <div class="col card">
@@ -123,3 +126,95 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''. json_encode($this->js_va
   </form>
   <div id="popup-area"></div>
 </div>
+
+<?php
+/**
+ * Display system settings as collapsed
+ *
+ * Parameter: limits in megabytes, created in viewhtml.php
+ *
+ * @param   int  $UploadLimit  php setting 'upload_max_filesize'
+ * @param   int  $PostMaxSize  php setting 'post_max_size'
+ * @param   int  $MemoryLimit  php setting 'memory_limit'
+ * @param   int  $mediaSize    upload limit by joomgallery / joomla media configuration
+ * @param   int  $maxSize      Min of above
+ *
+ * @since 4.1.0
+ */
+function DisplaySystemSettings($UploadLimit, $PostMaxSize, $MemoryLimit, $mediaSize, $maxSize)
+{
+  $title  = Text::sprintf('COM_JOOMGALLERY_UPLOAD_LIMIT_CALCULATED', $maxSize);
+  $id     = 127000;
+  $itemId = 127001;
+  ?>
+
+  <div class="card">
+    <div class="accordion" id="<?php echo $id; ?>">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="<?php echo $itemId; ?>Header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#<?php echo $itemId; ?>" aria-expanded="false" aria-controls="<?php echo $itemId; ?>">
+            <?php echo Text::_($title); ?>
+          </button>
+        </h2>
+        <div id="<?php echo $itemId; ?>" class="accordion-collapse collapse"
+             aria-labelledby="<?php echo $itemId; ?>Header" data-bs-parent="#<?php echo $id; ?>">
+          <div class="accordion-body">
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <td class="d-md-table-cell">
+                    <?php echo Text::sprintf('COM_JOOMGALLERY_UPLOAD_UPLOAD_LIMIT_IS'); ?>
+                  </td>
+                  <td class="d-md-table-cell px-0 text-end">
+                    <strong><?php echo $UploadLimit; ?></strong>
+                  </td>
+                  <td class="d-md-table-cell ps-1  text-start">
+                    MB (PHP 'upload_max_filesize')
+                  </td>
+                </tr>
+                <tr>
+                  <td class="d-md-table-cell">
+                    <?php echo Text::sprintf('COM_JOOMGALLERY_UPLOAD_POST_MAX_SIZE_IS'); ?>
+                  </td>
+                  <td class="d-md-table-cell px-0 text-end">
+                    <strong><?php echo $PostMaxSize; ?></strong>
+                  </td>
+                  <td class="d-md-table-cell ps-1 text-start">
+                    MB (PHP 'post_max_size')
+                  </td>
+                </tr>
+                <tr>
+                  <td class="d-md-table-cell">
+                    <?php echo Text::sprintf('COM_JOOMGALLERY_UPLOAD_POST_MEMORY_LIMIT_IS'); ?>
+                  </td>
+                  <td class="d-md-table-cell px-0 text-end">
+                    <strong><?php echo $MemoryLimit; ?></strong>
+                  </td>
+                  <td class="d-md-table-cell ps-1  text-start">
+                    MB (PHP 'memory_limit')
+                  </td>
+                </tr>
+                <tr>
+                  <td class="d-md-table-cell">
+                    <?php echo Text::sprintf('COM_JOOMGALLERY_UPLOAD_MEDIA_LIMIT_IS', $mediaSize); ?>
+                  </td>
+                  <td class="d-md-table-cell px-0 text-end">
+                    <strong><?php echo $mediaSize; ?></strong>
+                  </td>
+                  <td class="d-md-table-cell ps-1 text-start">
+                    MB
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <?php return;
+}
+?>
