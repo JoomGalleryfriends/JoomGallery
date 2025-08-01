@@ -2,7 +2,8 @@
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <fieldset name="general">
     <field name="id"
-           type="text"
+           type="number"
+           default="0"
            readonly="true"
            class="readonly"
            label="JGLOBAL_FIELD_ID_LABEL" />

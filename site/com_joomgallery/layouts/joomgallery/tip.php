@@ -30,11 +30,6 @@ extract($displayData);
     $tip         = $desc_arr[1];
   }
 
-  if(!isset($class))
-  {
-    $class = null;
-  }
-
   $tag = 'div';
   if(!empty($small) && $small === true)
   {

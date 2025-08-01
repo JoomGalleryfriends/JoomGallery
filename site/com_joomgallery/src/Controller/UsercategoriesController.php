@@ -12,28 +12,57 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // No direct access
 \defined('_JEXEC') or die;
 
-use \Joomla\CMS\MVC\Controller\FormController;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
 
 /**
- * Categories list controller class.
- * 
+ * Category controller class.
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
-class CategoriesController extends FormController
+//class UsercategoriesController extends JoomBaseController
+class UsercategoriesController extends CategoriesController
 {
+
+  /**
+   * Constructor.
+   *
+   * @param   array    $config   An optional associative array of configuration settings.
+   * @param   object   $factory  The factory.
+   * @param   object   $app      The Application for the dispatcher
+   * @param   object   $input    Input
+   *
+   * @since   4.0.0
+   */
+  public function __construct($config = [], $factory = null, $app = null, $input = null)
+  {
+    parent::__construct($config, $factory, $app, $input);
+
+    //
+    $this->default_view = 'usercategories';
+
+//    // JoomGallery extension class
+//    $this->component = $this->app->bootComponent(_JOOM_OPTION);
+//
+//    // Access service class
+//    $this->component->createAccess();
+//    $this->acl = $this->component->getAccess();
+  }
+
+
 	/**
-	 * Proxy for getModel.
+	 * Method to get a model object, loading it if required.
 	 *
 	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional
-	 * @param   array   $config  Configuration array for model. Optional
+	 * @param   string  $prefix  The class prefix. Optional.
+	 * @param   array   $config  Configuration array for model. Optional.
 	 *
-	 * @return  object	The model
+	 * @return  \Joomla\CMS\MVC\Model\BaseDatabaseModel  The model.
 	 *
-	 * @since   4.0.0
+	 * @since   1.6.4
 	 */
-  public function getModel($name = 'Categories', $prefix = 'Site', $config = ['ignore_request' => true])
+  public function getModel($name = 'Form', $prefix = 'Site', $config = ['ignore_request' => true])
   {
     return parent::getModel($name, $prefix, $config);
   }
@@ -65,7 +94,7 @@ class CategoriesController extends FormController
     }
 
     // Get the model
-    $model = $this->getModel('Categoryform', 'Site');
+    $model = $this->getModel('usercategory', 'Site');
 
     // Save the ordering
     $return = $model->saveorder($pks, $order);

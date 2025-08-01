@@ -34,7 +34,7 @@ $returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->g
 
 if($saveOrder && !empty($this->items))
 {
-	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+	$saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
 	HTMLHelper::_('draggablelist.draggable');
 }
 ?>
@@ -46,7 +46,6 @@ if($saveOrder && !empty($this->items))
 <?php endif; ?>
 
 <form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post" name="adminForm" id="adminForm">
-	<?php if(!empty($this->filterForm)) { echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); } ?>
   <div class="row">
 		<div class="col-md-12">
 
@@ -56,7 +55,13 @@ if($saveOrder && !empty($this->items))
           <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
         </div>
       <?php else : ?>
+
+        <?php if(!empty($this->filterForm)) {
+          echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+        } ?>
+
         <div class="clearfix"></div>
+
         <div class="table-responsive">
           <table class="table table-striped itemList" id="imageList">
             <caption class="visually-hidden">

@@ -15,14 +15,42 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 use \Joomla\CMS\MVC\Controller\FormController;
 
 /**
- * Categories list controller class.
+ * User images list controller class.
  * 
  * @package JoomGallery
  * @since   4.0.0
  */
-class CategoriesController extends FormController
+class UserimagesController extends FormController
 {
-	/**
+
+  /**
+   * Constructor.
+   *
+   * @param   array    $config   An optional associative array of configuration settings.
+   * @param   object   $factory  The factory.
+   * @param   object   $app      The Application for the dispatcher
+   * @param   object   $input    Input
+   *
+   * @since   4.0.0
+   */
+  public function __construct($config = [], $factory = null, $app = null, $input = null)
+  {
+    parent::__construct($config, $factory, $app, $input);
+
+    // parent view
+    $this->default_view = 'userimages';
+
+//    // JoomGallery extension class
+//    $this->component = $this->app->bootComponent(_JOOM_OPTION);
+//
+//    // Access service class
+//    $this->component->createAccess();
+//    $this->acl = $this->component->getAccess();
+  }
+
+
+
+  /**
 	 * Proxy for getModel.
 	 *
 	 * @param   string  $name    The model name. Optional.
@@ -33,7 +61,7 @@ class CategoriesController extends FormController
 	 *
 	 * @since   4.0.0
 	 */
-  public function getModel($name = 'Categories', $prefix = 'Site', $config = ['ignore_request' => true])
+  public function getModel($name = 'Form', $prefix = 'Site', $config = ['ignore_request' => true])
   {
     return parent::getModel($name, $prefix, $config);
   }
@@ -65,7 +93,7 @@ class CategoriesController extends FormController
     }
 
     // Get the model
-    $model = $this->getModel('Categoryform', 'Site');
+    $model = $this->getModel('userimage', 'Site');
 
     // Save the ordering
     $return = $model->saveorder($pks, $order);

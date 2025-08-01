@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 // No direct access
 defined('_JEXEC') or die;
 
+//use Joomgallery\Component\Joomgallery\Site\Service\DefaultRouter;
 use \Joomla\CMS\Menu\AbstractMenu;
 use \Joomla\Database\ParameterType;
 use \Joomla\Database\DatabaseInterface;
@@ -84,8 +85,6 @@ class JG3ModernRouter extends DefaultRouter
 
 	public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db)
 	{
-    parent::__construct($app, $menu, $categoryFactory, $db, true);
-
     // Get router config value
     $this->noIDs = (bool) $app->bootComponent('com_joomgallery')->getConfig()->get('jg_router_ids', '0');
     $this->db    = $db;
@@ -117,7 +116,31 @@ class JG3ModernRouter extends DefaultRouter
     $imageform->setKey('id')->setParent($gallery);
     $this->registerView($imageform);
 
-		$this->attachRule(new MenuRules($this));
+    $userpanel = new RouterViewConfiguration('userpanel');
+    $this->registerView($userpanel);
+
+    $userupload = new RouterViewConfiguration('userupload');
+    //$userupload->setKey('id');
+    $this->registerView($userupload);
+
+    $usercategories = new RouterViewConfiguration('usercategories');
+    $this->registerView($usercategories);
+
+    $usercategory = new RouterViewConfiguration('usercategory');
+    $usercategory->setKey('id');
+    $this->registerView($usercategory);
+
+    $userimages = new RouterViewConfiguration('userimages');
+//    $userimages->setParent($usercategory);
+    $this->registerView($userimages);
+
+    $userimage = new RouterViewConfiguration('userimage');
+    $userimage->setKey('id');
+    $this->registerView($userimage);
+
+    parent::__construct($app, $menu, $categoryFactory, $db, true);
+
+    $this->attachRule(new MenuRules($this));
 		$this->attachRule(new StandardRules($this));
 		$this->attachRule(new NomenuRules($this));
 	}

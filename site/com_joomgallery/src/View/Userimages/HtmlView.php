@@ -1,4 +1,5 @@
 <?php
+
 /**
 ******************************************************************************************
 **   @package    com_joomgallery                                                        **
@@ -7,7 +8,7 @@
 **   @license    GNU General Public License version 3 or later                          **
 *****************************************************************************************/
 
-namespace Joomgallery\Component\Joomgallery\Site\View\Categories;
+namespace Joomgallery\Component\Joomgallery\Site\View\Userimages;
 
 // No direct access
 defined('_JEXEC') or die;
@@ -15,6 +16,7 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
@@ -29,7 +31,13 @@ class HtmlView extends JoomGalleryView
 
 	protected $pagination;
 
-	/**
+  /**
+   * @var    \Joomla\Registry\Registry
+   * @since  4.0.0
+   */
+  protected $state;
+
+  /**
 	 * The page parameters
 	 *
 	 * @var    array
@@ -38,7 +46,24 @@ class HtmlView extends JoomGalleryView
 	 */
 	protected $params = array();
 
-	/**
+  /**
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $isUserLoggedIn = false;
+  /**
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $isUserHasCategory = false;
+
+  protected $isUserCoreManager = false;
+  protected $isDevelopSite = false;
+
+  protected $userId = 0;
+
+
+  /**
 	 * Display the view
 	 *
 	 * @param   string  $tpl  Template name
@@ -49,21 +74,48 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		/** @var CategoriesModel $model */
+    $user = $this->getCurrentUser();
+
+    // Get model data
     $model = $this->getModel();
 
-    $this->state         = $model->getState();
-		$this->params        = $model->getParams();
-    $this->items         = $model->getItems();		
-		$this->pagination    = $model->getPagination();
-		$this->filterForm    = $model->getFilterForm();
-		$this->activeFilters = $model->getActiveFilters();
+    $this->state  = $model->getState();
+    $this->params = $model->getParams();
 
-		// Check for errors.
-		if(\count($errors = $model->getErrors()))
+    $this->items         = $model->getItems();
+    $this->pagination    = $model->getPagination();
+    $this->filterForm    = $model->getFilterForm();
+    $this->activeFilters = $model->getActiveFilters();
+
+    $this->isDevelopSite = boolval($this->params['configs']->get('isDebugSite'))
+      || $this->app->input->getBool('isDevelop');
+
+    // Check for errors.
+		if(\count($errors = $this->get('Errors')))
 		{
-			throw new GenericDataException(implode("\n", $errors), 500);
+			throw new GenericDataException(\implode("\n", $errors), 500);
 		}
+
+    //	user must be logged in and have one 'master/base' category
+    $this->isUserLoggedIn = true;
+    if ($user->guest)
+    {
+      $this->isUserLoggedIn = false;
+    }
+
+    // at least one category is needed for upload view
+    $this->isUserHasCategory = $model->getUserHasACategory($user);
+
+    $this->userId = $user->id;
+
+    // Get access service
+    $this->component->createAccess();
+    $this->acl = $this->component->getAccess();
+    // $acl       = $this->component->getAccess();
+
+    // Needed for JgcategoryField
+    // $this->isUserCoreManager = $acl->checkACL('core.manage', 'com_joomgallery');
+    $this->isUserCoreManager = $this->acl->checkACL('core.manage', 'com_joomgallery');
 
     // Check if is userspace is enabled
     // Check access permission (ACL)
@@ -71,20 +123,14 @@ class HtmlView extends JoomGalleryView
     {
       if($this->params['configs']->get('jg_userspace', 1, 'int') == 0)
       {
-        $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_VIEW_NO_ACCESS'), 'message');
+        $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_IMAGES_VIEW_NO_ACCESS'), 'message');
       }
 
-      // Redirect to category view
-      $this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=category&id=1'));
+      // Redirect to gallery view
+      $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
       
       return false;
     }
-
-		// Preprocess the list of items to find ordering divisions.
-		foreach($this->items as &$item)
-		{
-			$this->ordering[$item->parent_id][] = $item->id;
-		}
 
 		$this->_prepareDocument();
 
@@ -124,11 +170,11 @@ class HtmlView extends JoomGalleryView
 		}
 		elseif($this->app->get('sitename_pagetitles', 0) == 1)
 		{
-			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+			$title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
 		}
 		elseif($this->app->get('sitename_pagetitles', 0) == 2)
 		{
-			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
+			$title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
 		}
 
 		$this->document->setTitle($title);
@@ -152,7 +198,7 @@ class HtmlView extends JoomGalleryView
 		{
 			// Add Breadcrumbs
 			$pathway = $this->app->getPathway();
-			$breadcrumbTitle = Text::_('COM_JOOMGALLERY_CATEGORIES');
+			$breadcrumbTitle = Text::_('COM_JOOMGALLERY_USER_IMAGES');
 
 			if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
 			{
@@ -160,4 +206,5 @@ class HtmlView extends JoomGalleryView
 			}
 		}
 	}
+
 }

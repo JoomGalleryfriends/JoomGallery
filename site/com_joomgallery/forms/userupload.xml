@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
-  <fieldset name="general">
+  <fieldset  name="general">
     <field name="ordering"/>
 
     <field name="id"
@@ -12,6 +12,24 @@
     <field name="checked_out"
            type="hidden"
            filter="unset" />
+
+    <field name="uploader"
+           default="html"
+           type="hidden" />
+
+    <field name="multiple"
+           default="0"
+           type="hidden" />
+
+    <field name="uuid"
+           type="hidden" />
+
+    <field name="filesystem"
+           type="text"
+           readonly="true"
+           default="local-images"
+           class="readonly"
+           label="COM_JOOMGALLERY_CONFIG_FILESYSTEM" />
 
     <field name="hits"
            type="text"
@@ -71,6 +89,20 @@
            label="JGLOBAL_TITLE"
            message="COM_JOOMGALLERY_COMMON_ALERT_IMAGE_MUST_HAVE_TITLE" />
 
+    <field name="filecounter"
+           type="number"
+           default="1"
+           min="1"
+           step="1" />
+
+    <field name="nmb_start"
+           type="number"
+           default="1"
+           min="1"
+           step="1"
+           label="COM_JOOMGALLERY_FIELDS_NUMBERING_START"
+           description="COM_JOOMGALLERY_FIELDS_NUMBERING_START_DESC" />
+
     <field name="alias"
            type="text"
            class="inputbox"
@@ -120,6 +152,17 @@
            <option value="*">JALL</option>
 		</field>
 
+    <field name="debug"
+           type="radio"
+           class="btn-group"
+           default="0"
+           size="1"
+           label="COM_JOOMGALLERY_DEBUG_MODE"
+           description="COM_JOOMGALLERY_FIELDS_DEBUG_MODE_DESC">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
     <field name="description"
            type="editor"
            rows="250"
@@ -162,6 +205,12 @@
            filter="user_utc"
            label="JGLOBAL_FIELD_CREATED_LABEL" />
 
+    <field name="created_by"
+           type="user"
+           label="COM_JOOMGALLERY_OWNER"
+           description="COM_JOOMGALLERY_FIELDS_OWNER_DESC"
+           validate="UserId" />
+
     <field name="modified_time"
            type="calendar"
            class="form-control"
@@ -172,14 +221,24 @@
            filter="user_utc"
            label="JGLOBAL_FIELD_MODIFIED_LABEL" />
 
+    <field name="modified_by"
+           type="user"
+           class="readonly"
+           readonly="true"
+           filter="unset"
+           validate="UserId"
+           label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
+           description="JGLOBAL_FIELD_MODIFIED_BY_DESC" />
+
     <field name="metadesc"
            type="textarea"
            filter="safehtml"
+           rows="5"
+           cols="40"
            default=""
-           label="JFIELD_META_DESCRIPTION_LABEL"
-           rows="3"
-           cols="30"
-           maxlength="300"
+           label="JGLOBAL_DESCRIPTION"
+           description="JFIELD_META_DESCRIPTION_LABEL"
+           maxlength="160"
            charcounter="true"
     />
 
@@ -204,12 +263,43 @@
         <option value="4">noindex, nofollow</option>
     </field>
 
+    <field name="image"
+           type="file"
+           accept="image/*"
+           size="10485760"
+           label="COM_JOOMGALLERY_IMG_UPLOAD_IMAGE" />
+
+    <field name="MAX_FILE_SIZE"
+           type="hidden"
+           default="10485760"
+        />
+
+    <field name="filename"
+           type="hidden"
+           filter="string" />
+
+    <field name="replacetype"
+           type="jgimagetype"
+           label="COM_JOOMGALLERY_IMAGETYPE"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_DESC" />
+
+    <field name="replaceprocess"
+           type="radio"
+           default="0"
+           class="btn-group"
+           layout="joomla.form.field.radio.switcher"
+           label="COM_JOOMGALLERY_CONFIG_TAB_IMAGE_PROCESSING"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_PROCESS_DESC">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
     <field name="date"
            type="calendar"
            format="%Y-%m-%d"
            timeformat="24"
            filter="server_utc"
-           translateformat="false"
+           translateformat="true"
            showtime="false"
            singleheader="false"
            todaybutton="true"
@@ -241,20 +331,5 @@
            class="inputbox"
            size="45"
            labelclass="control-label" />
-  </fieldset>
-  <fieldset name="accesscontrol">
-    <field name="asset_id"
-           type="hidden"
-           filter="unset" />
-
-    <field name="rules"
-           type="rules"
-           label="JFIELD_RULES_LABEL"
-           translate_label="false"
-           filter="rules"
-           validate="rules"
-           class="inputbox"
-           component="com_joomgallery"
-           section="image" />
   </fieldset>
 </form>
