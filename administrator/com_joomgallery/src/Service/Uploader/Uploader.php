@@ -11,6 +11,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 \defined('_JEXEC') or die;
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Filesystem\File as JFile;

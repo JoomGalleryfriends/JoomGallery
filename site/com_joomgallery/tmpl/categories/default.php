@@ -35,7 +35,7 @@ $returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->g
 
 if($saveOrder && !empty($this->items))
 {
-	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+	$saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
 	HTMLHelper::_('draggablelist.draggable');
 }
 ?>
@@ -80,11 +80,11 @@ if($saveOrder && !empty($this->items))
 									</th>
 
 									<th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES', 'a.img_count', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES', 'img_count', $listDirn, $listOrder); ?>
                   </th>
 
 									<th scope="col" style="min-width:180px" class="w-3 d-none d-lg-table-cell text-center">
-										<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_PARENT_CATEGORY', 'a.parent_title', $listDirn, $listOrder); ?>
+										<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_PARENT_CATEGORY', 'parent_title', $listDirn, $listOrder); ?>
 									</th>
 
 									<th scope="col" class="w-3 d-none d-lg-table-cell text-center">
@@ -160,9 +160,11 @@ if($saveOrder && !empty($this->items))
                       <?php if($canChange && $saveOrder) : ?>
                         <span class="sortable-handler<?php echo $iconClass ?>">
                           <span class="icon-ellipsis-v"></span>
-                        </span>											
-												<input type="text" name="order[]" size="5" value="<?php echo $item->lft; ?>" class="hidden">
-											<?php endif; ?>
+                        </span>
+                        <label>
+                          <input type="text" name="order[]" size="5" value="<?php echo $item->lft; ?>" class="hidden">
+                        </label>
+                      <?php endif; ?>
 
                       <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                     </td>

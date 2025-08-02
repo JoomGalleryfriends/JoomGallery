@@ -148,7 +148,7 @@ class GalleryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load categories list model
+    // Load images list model
     $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
     $listModel->getState();
 

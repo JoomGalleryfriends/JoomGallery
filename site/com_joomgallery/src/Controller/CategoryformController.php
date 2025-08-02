@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // No direct access
 \defined('_JEXEC') or die;
 
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Router\Route;
@@ -23,7 +24,7 @@ use \Joomla\CMS\MVC\Controller\FormController;
  * @package JoomGallery
  * @since   4.0.0
  */
-class CategoryformController extends FormController
+class CategoryformController extends JoomFormController // FormController
 {
   use RoutingTrait;
 
@@ -79,6 +80,8 @@ class CategoryformController extends FormController
 	{
 		// Check for request forgeries.
 		$this->checkToken();
+
+    $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
 		// Get the user data.
 		$data = $this->input->post->get('jform', [], 'array');
