@@ -267,7 +267,7 @@ function DisplaySystemSettings($UploadLimit, $PostMaxSize, $MemoryLimit, $mediaS
                   <strong><?php echo $UploadLimit; ?></strong>
                 </td>
                 <td class="d-md-table-cell ps-1  text-start">
-                  MB (PHP 'upload_max_filesize')"
+                  MB (PHP 'upload_max_filesize')
                 </td>
               </tr>
 
