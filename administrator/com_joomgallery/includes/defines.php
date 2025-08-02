@@ -23,7 +23,6 @@ define('_JOOM_TABLE_CONFIGS',        '#__joomgallery_configs');
 define('_JOOM_TABLE_FAULTIES',       '#__joomgallery_faulties');
 define('_JOOM_TABLE_MAINTENANCE',    '#__joomgallery_faulties');
 define('_JOOM_TABLE_ORPHANS',        '#__joomgallery_faulties');
-define('_JOOM_TABLE_FIELDS',         '#__joomgallery_fields');
 define('_JOOM_TABLE_IMG_TYPES',      '#__joomgallery_img_types');
 define('_JOOM_TABLE_TYPES',          '#__joomgallery_img_types');
 define('_JOOM_TABLE_MIGRATION',      '#__joomgallery_migration');
