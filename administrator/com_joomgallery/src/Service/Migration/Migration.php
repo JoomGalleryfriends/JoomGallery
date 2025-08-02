@@ -680,8 +680,8 @@ abstract class Migration implements MigrationInterface
     if($target === 'destination' || $this->params->get('same_db', 1))
     {
       // Get database driver of the current joomla application
-      $db        = Factory::getContainer()->get(DatabaseInterface::class);
-      $dbPrefix  = $this->app->get('dbprefix');
+      $db       = Factory::getContainer()->get(DatabaseInterface::class);
+      $dbPrefix = \strtolower($this->app->get('dbprefix'));
     }
     else
     {
@@ -693,7 +693,7 @@ abstract class Migration implements MigrationInterface
         $this->src_db = $dbFactory->getDriver($this->params->get('dbtype'), $options);
       }
 
-      $dbPrefix = $this->params->get('dbprefix');
+      $dbPrefix = \strtolower($this->params->get('dbprefix'));
       $db       = $this->src_db;
     }
 
