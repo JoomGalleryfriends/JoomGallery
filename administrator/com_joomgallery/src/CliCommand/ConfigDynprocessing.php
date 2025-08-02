@@ -1,11 +1,11 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -22,7 +22,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImageParams extends AbstractCommand
+/**
+ * Display config:dynamicprocessing as it can not be displayed in one line
+ * @package     Joomgallery\Component\Joomgallery\Administrator\CliCommand
+ *
+ * @since   4.2.0
+ */
+class ConfigDynprocessing extends AbstractCommand
 {
   use DatabaseAwareTrait;
 
@@ -31,7 +37,7 @@ class ImageParams extends AbstractCommand
    *
    * @var    string
    */
-  protected static $defaultName = 'joomgallery:image:parameters';
+  protected static $defaultName = 'joomgallery:config:dynamicprocessing';
 
   /**
    * @var   SymfonyStyle
@@ -82,15 +88,13 @@ class ImageParams extends AbstractCommand
    */
   protected function configure(): void
   {
-    // ToDo: Full with all items automatically
+    $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration ID');
 
-    $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'image ID');
-
-    $help = "<info>%command.name%</info> display parameters of params field from table of selected image  
+    $help = "<info>%command.name%</info> display config:Dynprocessing value as it is shortened otherwise
   Usage: <info>php %command.full_name%</info>
-    * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
+    * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
   ";
-    $this->setDescription(Text::_('List all variables in params field of selected image'));
+	  $this->setDescription(Text::_('List all variables in jg_dynamicprocessing field of selected joomgallery configuration'));
     $this->setHelp($help);
   }
 
@@ -108,24 +112,17 @@ class ImageParams extends AbstractCommand
   {
     // Configure the Symfony output helper
     $this->configureIO($input, $output);
-    $this->ioStyle->title('JoomGallery Image Parameters');
+    $this->ioStyle->title('JoomGallery dynamicprocessing Data');
 
-    $imageId = $input->getOption('id') ?? '';
+    $configId = $input->getOption('id') ?? '1';
 
-    if (empty ($imageId))
-    {
-      $this->ioStyle->error("The image id '" . $imageId . "' is invalid (empty) !");
-
-      return Command::FAILURE;
-    }
-
-    $jsonParams = $this->getParamsAsJsonFromDB($imageId);
+    $jsonParams = $this->getParamsAsJsonFromDB($configId);
 
     // If no params returned  show a warning and set the exit code to 1.
     if (empty ($jsonParams))
     {
 
-      $this->ioStyle->error("The image id '" . $imageId . "' is invalid or parameters are empty !");
+      $this->ioStyle->error("The config id '" . $configId . "' is invalid or parameters are empty !");
 
       return Command::FAILURE;
     }
@@ -147,15 +144,15 @@ class ImageParams extends AbstractCommand
    *
    * @since   4.2.0
    */
-  private function getParamsAsJsonFromDB(string $imageId): string
+  private function getParamsAsJsonFromDB(string $configId): string
   {
     $sParams = '';
     $db      = $this->getDatabase();
     $query   = $db->getQuery(true);
     $query
-      ->select('params')
-      ->from('#__joomgallery')
-      ->where($db->quoteName('id') . ' = ' . (int) $imageId);
+      ->select('jg_dynamicprocessing')
+      ->from('#__joomgallery_configs')
+      ->where($db->quoteName('id') . ' = ' . (int) $configId);
 
     $db->setQuery($query);
     $sParams = $db->loadResult();
@@ -164,16 +161,16 @@ class ImageParams extends AbstractCommand
   }
 
   /**
-   * Trim length of each value in array $imageAssoc to max_len
+   * Trim length of each value in array $configAssoc to max_len
    *
-   * @param   array  $imageAssoc  in data as association key => val
+   * @param   array  $configAssoc  in data as association key => val
    * @param          $max_len
    *
    * @return array
    *
    * @since   4.2.0
    */
-  private function assoc2DefinitionList(array $imageAssoc, $max_len = 70)
+  private function assoc2DefinitionList(array $configAssoc, $max_len = 70)
   {
     $items = [];
 
@@ -182,11 +179,12 @@ class ImageParams extends AbstractCommand
       $max_len = 70;
     }
 
-    foreach ($imageAssoc as $key => $value)
+    foreach ($configAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }
 
     return $items;
   }
+
 }

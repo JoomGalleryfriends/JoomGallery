@@ -1,11 +1,11 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -22,7 +22,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImageParams extends AbstractCommand
+class ImageMetadata extends AbstractCommand
 {
   use DatabaseAwareTrait;
 
@@ -31,7 +31,7 @@ class ImageParams extends AbstractCommand
    *
    * @var    string
    */
-  protected static $defaultName = 'joomgallery:image:parameters';
+  protected static $defaultName = 'joomgallery:image:metadata';
 
   /**
    * @var   SymfonyStyle
@@ -82,15 +82,13 @@ class ImageParams extends AbstractCommand
    */
   protected function configure(): void
   {
-    // ToDo: Full with all items automatically
-
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'image ID');
 
-    $help = "<info>%command.name%</info> display parameters of params field from table of selected image  
+    $help = "<info>%command.name%</info> display parameters of one image
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
   ";
-    $this->setDescription(Text::_('List all variables in params field of selected image'));
+    $this->setDescription(Text::_('List all variables in imgmetadata field of selected joomgallery configuration'));
     $this->setHelp($help);
   }
 
@@ -108,7 +106,7 @@ class ImageParams extends AbstractCommand
   {
     // Configure the Symfony output helper
     $this->configureIO($input, $output);
-    $this->ioStyle->title('JoomGallery Image Parameters');
+    $this->ioStyle->title('JoomGallery Image Meta Data');
 
     $imageId = $input->getOption('id') ?? '';
 
@@ -153,7 +151,7 @@ class ImageParams extends AbstractCommand
     $db      = $this->getDatabase();
     $query   = $db->getQuery(true);
     $query
-      ->select('params')
+      ->select('imgmetadata')
       ->from('#__joomgallery')
       ->where($db->quoteName('id') . ' = ' . (int) $imageId);
 
@@ -189,4 +187,6 @@ class ImageParams extends AbstractCommand
 
     return $items;
   }
+
 }
+

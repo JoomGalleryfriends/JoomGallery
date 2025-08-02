@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
+use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Console\Command\AbstractCommand;
@@ -22,7 +23,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImageParams extends AbstractCommand
+class Image extends AbstractCommand
 {
   use DatabaseAwareTrait;
 
@@ -31,7 +32,7 @@ class ImageParams extends AbstractCommand
    *
    * @var    string
    */
-  protected static $defaultName = 'joomgallery:image:parameters';
+  protected static $defaultName = 'joomgallery:image';
 
   /**
    * @var   SymfonyStyle
@@ -85,14 +86,17 @@ class ImageParams extends AbstractCommand
     // ToDo: Full with all items automatically
 
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'image ID');
+    $this->addOption('max_line_length', null, InputOption::VALUE_OPTIONAL, 'trim lenght of variable for item keeps in one line');
 
-    $help = "<info>%command.name%</info> display parameters of params field from table of selected image  
+    $help = "<info>%command.name%</info> list variables of one image
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
+    * You may restrict the value string length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
   ";
-    $this->setDescription(Text::_('List all variables in params field of selected image'));
+    $this->setDescription(Text::_('List all variables of a image'));
     $this->setHelp($help);
   }
+
 
   /**
    * Internal function to execute the command.
@@ -108,9 +112,10 @@ class ImageParams extends AbstractCommand
   {
     // Configure the Symfony output helper
     $this->configureIO($input, $output);
-    $this->ioStyle->title('JoomGallery Image Parameters');
+    $this->ioStyle->title('JoomGallery Image');
 
-    $imageId = $input->getOption('id') ?? '';
+    $imageId         = $input->getOption('id') ?? '';
+    $max_line_length = $input->getOption('max_line_length') ?? null;
 
     if (empty ($imageId))
     {
@@ -119,23 +124,30 @@ class ImageParams extends AbstractCommand
       return Command::FAILURE;
     }
 
-    $jsonParams = $this->getParamsAsJsonFromDB($imageId);
+    $imageAssoc = $this->getItemAssocFromDB($imageId);
 
-    // If no params returned  show a warning and set the exit code to 1.
-    if (empty ($jsonParams))
+    if (empty ($imageAssoc))
     {
-
-      $this->ioStyle->error("The image id '" . $imageId . "' is invalid or parameters are empty !");
+      $this->ioStyle->error("The image id '" . $imageId . "' is invalid, No image found matching your criteria!");
 
       return Command::FAILURE;
     }
 
-    // pretty print json data
+    $strImageAssoc = $this->assoc2DefinitionList($imageAssoc, $max_line_length);
 
-    $encoded    = json_decode($jsonParams);
-    $jsonParams = json_encode($encoded, JSON_PRETTY_PRINT);
+    // ToDo: Use horizontal table again ;-)
+    foreach ($strImageAssoc as $value)
+    {
+      if (!\is_array($value))
+      {
+        throw new InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
+      }
 
-    $this->ioStyle->writeln($jsonParams);
+      $headers[] = key($value);
+      $row[]     = current($value);
+    }
+
+    $this->ioStyle->horizontalTable($headers, [$row]);
 
     return Command::SUCCESS;
   }
@@ -147,20 +159,19 @@ class ImageParams extends AbstractCommand
    *
    * @since   4.2.0
    */
-  private function getParamsAsJsonFromDB(string $imageId): string
+  private function getItemAssocFromDB(string $imageId): array|null
   {
-    $sParams = '';
-    $db      = $this->getDatabase();
-    $query   = $db->getQuery(true);
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true);
     $query
-      ->select('params')
+      ->select('*')
       ->from('#__joomgallery')
       ->where($db->quoteName('id') . ' = ' . (int) $imageId);
 
     $db->setQuery($query);
-    $sParams = $db->loadResult();
+    $imageAssoc = $db->loadAssoc();
 
-    return $sParams;
+    return $imageAssoc;
   }
 
   /**
@@ -189,4 +200,6 @@ class ImageParams extends AbstractCommand
 
     return $items;
   }
+
 }
+

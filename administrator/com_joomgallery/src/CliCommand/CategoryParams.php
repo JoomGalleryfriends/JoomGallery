@@ -1,11 +1,11 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
@@ -22,7 +22,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImageParams extends AbstractCommand
+/**
+ * Display category params as they can not be displayed in one line
+ * @package     Joomgallery\Component\Joomgallery\Administrator\CliCommand
+ *
+ * @since   4.2.0
+ */
+class CategoryParams extends AbstractCommand
 {
   use DatabaseAwareTrait;
 
@@ -31,7 +37,7 @@ class ImageParams extends AbstractCommand
    *
    * @var    string
    */
-  protected static $defaultName = 'joomgallery:image:parameters';
+  protected static $defaultName = 'joomgallery:category:parameters';
 
   /**
    * @var   SymfonyStyle
@@ -82,17 +88,16 @@ class ImageParams extends AbstractCommand
    */
   protected function configure(): void
   {
-    // ToDo: Full with all items automatically
+    $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'category ID');
 
-    $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'image ID');
-
-    $help = "<info>%command.name%</info> display parameters of params field from table of selected image  
+    $help = "<info>%command.name%</info> display parameters of params field from table of selected category
   Usage: <info>php %command.full_name%</info>
-    * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
+    * You must specify an ID of the category with the <info>--id<info> option. Otherwise, it will be requested
   ";
-    $this->setDescription(Text::_('List all variables in params field of selected image'));
+    $this->setDescription(Text::_('List all variables in params field of selected category'));
     $this->setHelp($help);
   }
+
 
   /**
    * Internal function to execute the command.
@@ -108,30 +113,28 @@ class ImageParams extends AbstractCommand
   {
     // Configure the Symfony output helper
     $this->configureIO($input, $output);
-    $this->ioStyle->title('JoomGallery Image Parameters');
+    $this->ioStyle->title('JoomGallery Category Parameter Field');
 
-    $imageId = $input->getOption('id') ?? '';
+    $categoryId = $input->getOption('id') ?? '';
 
-    if (empty ($imageId))
+    if (empty ($categoryId))
     {
-      $this->ioStyle->error("The image id '" . $imageId . "' is invalid (empty) !");
+      $this->ioStyle->error("The category id '" . $categoryId . "' is invalid (empty) !");
 
       return Command::FAILURE;
     }
 
-    $jsonParams = $this->getParamsAsJsonFromDB($imageId);
+    $jsonParams = $this->getParamsAsJsonFromDB($categoryId);
 
     // If no params returned  show a warning and set the exit code to 1.
     if (empty ($jsonParams))
     {
-
-      $this->ioStyle->error("The image id '" . $imageId . "' is invalid or parameters are empty !");
+      $this->ioStyle->error("The category id '" . $categoryId . "' is invalid or parameters are empty !");
 
       return Command::FAILURE;
     }
 
     // pretty print json data
-
     $encoded    = json_decode($jsonParams);
     $jsonParams = json_encode($encoded, JSON_PRETTY_PRINT);
 
@@ -147,33 +150,45 @@ class ImageParams extends AbstractCommand
    *
    * @since   4.2.0
    */
-  private function getParamsAsJsonFromDB(string $imageId): string
+  private function getParamsAsJsonFromDB(string $categoryId): string
   {
     $sParams = '';
-    $db      = $this->getDatabase();
-    $query   = $db->getQuery(true);
-    $query
-      ->select('params')
-      ->from('#__joomgallery')
-      ->where($db->quoteName('id') . ' = ' . (int) $imageId);
+    try
+    {
+      $db    = $this->getDatabase();
+      $query = $db->getQuery(true);
+      $query
+        ->select('params')
+        ->from('#__joomgallery_categories')
+        ->where($db->quoteName('id') . ' = ' . (int) $categoryId);
 
-    $db->setQuery($query);
-    $sParams = $db->loadResult();
+      $db->setQuery($query);
+      $sParams = $db->loadResult();
+    }
+    catch (\Exception $e)
+    {
+      $this->ioStyle->error(
+        Text::sprintf(
+          'Retrieving params from DB failed for ID: "' . $categoryId . '\n%s',
+          $e->getMessage()
+        )
+      );
+    }
 
     return $sParams;
   }
 
   /**
-   * Trim length of each value in array $imageAssoc to max_len
+   * Trim length of each value in array $categoryAssoc to max_len
    *
-   * @param   array  $imageAssoc  in data as association key => val
+   * @param   array  $categoryAssoc  in data as association key => val
    * @param          $max_len
    *
    * @return array
    *
    * @since   4.2.0
    */
-  private function assoc2DefinitionList(array $imageAssoc, $max_len = 70)
+  private function assoc2DefinitionList(array $categoryAssoc, $max_len = 70)
   {
     $items = [];
 
@@ -182,11 +197,13 @@ class ImageParams extends AbstractCommand
       $max_len = 70;
     }
 
-    foreach ($imageAssoc as $key => $value)
+    foreach ($categoryAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }
 
     return $items;
   }
+
 }
+

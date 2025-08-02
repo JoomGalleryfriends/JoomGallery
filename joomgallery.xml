@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="4.0" method="upgrade">
-  <name>com_joomgallery</name>
-  <creationDate>2025-07-10</creationDate>
-  <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
-  <license>GNU General Public License version 3 or later</license>
-  <author>JoomGallery::ProjectTeam</author>
-  <authorEmail>team@joomgalleryfriends.net</authorEmail>
-  <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
+    <name>com_joomgallery</name>
+    <creationDate>2025-07-10</creationDate>
+    <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
+    <license>GNU General Public License version 3 or later</license>
+    <author>JoomGallery::ProjectTeam</author>
+    <authorEmail>team@joomgalleryfriends.net</authorEmail>
+    <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
   <version>4.2.0.3</version>
-  <description>JoomGallery 4, a native gallery component for Joomla! 4.x, 5.x and 6.x</description>
-  <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
+    <description>JoomGallery 4, a native gallery component for Joomla! 4.x, 5.x and 6.x</description>
+    <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
+
   <scriptfile>script.php</scriptfile>
-  <install>
-    <!-- Runs on install -->
+
+  <install> <!-- Runs on install -->
     <sql>
       <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
     </sql>
   </install>
-  <update>
-    <!-- Runs on update -->
+  <update> <!-- Runs on update -->
     <schemas>
       <schemapath type="mysql">sql/updates/mysql</schemapath>
     </schemas>
   </update>
-  <uninstall>
-    <!-- Runs on uninstall -->
+  <uninstall> <!-- Runs on uninstall -->
     <sql>
       <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
     </sql>
@@ -71,19 +70,24 @@
       <folder>vendor</folder>
     </files>
   </administration>
+
   <config>
     <fields name="params">
       <fieldset name="component">
-        <field name="save_history" default="0"/>
+        <field name="save_history" default="0" />
       </fieldset>
     </fields>
   </config>
+
   <plugins>
     <plugin group="system" plugin="joomgallery"/>
     <plugin group="system" plugin="joomowner"/>
     <plugin group="privacy" plugin="joomgallery"/>
+    <plugin group="console" plugin="joomconsole"/>
   </plugins>
+
   <changelogurl>https://www.joomgalleryfriends.net/updates/changelog.xml</changelogurl>
+
   <updateservers>
     <server type="extension" priority="1" name="JoomGallery: Component Updater">https://www.joomgalleryfriends.net/updates/joomgallery4/joomgallery.xml</server>
     <server type="collection" priority="2" name="JoomGallery: Official Extensions Updater">https://www.joomgalleryfriends.net/updates/extensions4.xml</server>
