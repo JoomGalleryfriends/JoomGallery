@@ -1365,7 +1365,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     {
       $db     = Factory::getContainer()->get(DatabaseInterface::class);
       $tables = $db->getTableList();
-      $prefix = Factory::getApplication()->get('dbprefix');
+      $prefix = strtolower(Factory::getApplication()->get('dbprefix'));
 
       if(empty($tables))
       {
