@@ -81,7 +81,6 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
                             'collection' => array('pl_name' => 'collections'),
                             'comment'    => array('pl_name' => 'comments'),
                             'config'     => array('pl_name' => 'configs'),
-                            'field'      => array('pl_name' => 'fields'),
                             'image'      => array('pl_name' => 'images'),
                             'tag'        => array('pl_name' => 'tags'),
                             'user'       => array('pl_name' => 'users')
