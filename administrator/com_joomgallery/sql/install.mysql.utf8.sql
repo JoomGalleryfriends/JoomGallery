@@ -335,7 +335,10 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_tags_ref` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `imgid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `tagid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX `idx_imgid` (`imgid`),
+INDEX `idx_tagid` (`tagid`),
+INDEX `idx_tag_img` (`tagid`, `imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -383,7 +386,10 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_collections_ref` (
 `collectionid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `imgid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `approved` TINYINT(1) NOT NULL DEFAULT 0,
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX `idx_imgid` (`imgid`),
+INDEX `idx_collectionid` (`collectionid`),
+INDEX `idx_col_img` (`collectionid`, `imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
