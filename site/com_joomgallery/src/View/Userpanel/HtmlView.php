@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package         Joomla.Site
- * @subpackage      com_contact
- *
- * @copyright   (C) 2020 Open Source Matters, Inc. <https://www.joomla.org>
- * @license         GNU General Public License version 2 or later; see LICENSE.txt
- */
+******************************************************************************************
+**   @package    com_joomgallery                                                        **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 3 or later                          **
+*****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userpanel;
 
