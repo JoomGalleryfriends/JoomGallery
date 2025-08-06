@@ -19,6 +19,7 @@ use Joomla\Component\Scheduler\Administrator\Task\Task;
 use Joomla\Component\Scheduler\Administrator\Task\Status;
 use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
 use Joomla\Component\Scheduler\Administrator\Traits\TaskPluginTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * A task plugin. Offers task routines for JoomGallery {@see TaskPluginTrait},
@@ -150,7 +151,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     $ids = \array_filter($ids);
 
     // Load the model to perform the task
-    $model = $app->bootComponent('com_joomgallery')->getMVCFactory()->createModel('image', 'administrator');
+    $component = $app->bootComponent('com_joomgallery');
+    $model     = $component->getMVCFactory()->createModel('image', 'administrator');
 
     if(\is_null($model))
     {
@@ -169,8 +171,12 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $this->logTask(\sprintf('Starting recreation of %s images as task %d', \count($ids), $task->get('id')));
     }
 
+    // Create list of imagetypes to be skipped
+    $skip = \array_map(fn($obj) => $obj->typename, JoomHelper::getRecords('imagetypes', $component));
+    $skip = \array_filter($skip, fn($typename) => $typename !== $type);
+
     // Actually performing the task using the model and a specific method
-    $task_def     = ['model' => $model, 'method' => 'recreate', 'options' => [$type]];
+    $task_def     = ['model' => $model, 'method' => 'recreate', 'options' => ['original', $skip]];
     $error_msg    = 'Recreation of images failed. Failed image: %s';
     $executed_ids = $this->performTask($ids, $task_def, $params, $error_msg);
 
