@@ -23,7 +23,7 @@ $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
 	 ->useScript('form.validate')
    ->useStyle('com_joomgallery.admin');
-HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('bootstrap.tooltip', '.hasTip');
 
 $app = Factory::getApplication();
 $form      = $this->getForm();
@@ -188,6 +188,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
 	<input type="hidden" name="task" value=""/>
+  <input type="hidden" id="mediaManagerPath" name="mediapath" value=""/>
   <input type="hidden" name="jform[uploader]" value="html" />
   <?php /* <input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
 	<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
@@ -198,10 +199,16 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 </form>
 
 <?php
+$mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
+if(in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
+{
+  $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP').'">'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
+}
+
 // Image preview modal
 $options = array('modal-dialog-scrollable' => true,
                   'title'  => 'Test Title',
-                  'footer' => '<a id="replaceBtn" class="btn" href="'.Route::_('index.php?option=com_joomgallery&view=image&layout=replace&id='.(int) $this->item->id).'">'.Text::_('COM_JOOMGALLERY_REPLACE').'</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
+                  'footer' => $mediaManagerBtn.'<a id="replaceBtn" class="btn hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP').'" href="'.Route::_('index.php?option=com_joomgallery&view=image&layout=replace&id='.(int) $this->item->id).'">'.Text::_('COM_JOOMGALLERY_REPLACE').'</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
                 );
 
 echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
@@ -214,23 +221,36 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
 
     let modalTitle = modal.querySelector('.modal-title');
     let modalBody  = modal.querySelector('.modal-body');
-    let modalBtn   = document.getElementById('replaceBtn');
+    let replaceBtn = document.getElementById('replaceBtn');
+    let mediaInput = document.getElementById('mediaManagerPath');
 
     <?php
       $imgURL   = '{';
-      $title = '{';
+      $title    = '{';
+      $mediaURL = '{';
 
       foreach($this->imagetypes as $key => $imagetype)
       {
         $imgURL   .= $imagetype->typename.':"'.JoomHelper::getImg($this->item, $imagetype->typename).'",';
-        $title .= $imagetype->typename.':"'.Text::_('COM_JOOMGALLERY_'.strtoupper($imagetype->typename)).'",';
+        $title    .= $imagetype->typename.':"'.Text::_('COM_JOOMGALLERY_'.strtoupper($imagetype->typename)).'",';
+
+        $img_path = str_replace('\\', '/', JoomHelper::getImg($this->item, $imagetype->typename, false, false));
+        if($this->item->filesystem == 'local-images')
+        {
+          // Adjust for local file adapter
+          $img_path = str_replace('/images/', '/', $img_path);
+        }
+
+        $mediaURL .= $imagetype->typename.':"index.php?option=com_joomgallery&path='.$this->item->filesystem.':'.$img_path.'",';
       }
 
-      $imgURL .= '}';
-      $title .= '}';
+      $imgURL   .= '}';
+      $title    .= '}';
+      $mediaURL .= '}';
     ?>
     let imgURL   = <?php echo $imgURL; ?>;
-    let title = <?php echo $title; ?>;
+    let title    = <?php echo $title; ?>;
+    let mediaURL = <?php echo $mediaURL; ?>;
 
     modalTitle.innerHTML = title[typename];
     let body  = '<div class="joom-image center">'
@@ -239,7 +259,8 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
     body      = body + '</div>';
     modalBody.innerHTML  = body;
 
-    modalBtn.href = modalBtn.href + '&type=' + typename;
+    replaceBtn.href  = replaceBtn.href + '&type=' + typename;
+    mediaInput.value = mediaURL[typename];
 
     let bsmodal = new bootstrap.Modal(document.getElementById('image-modal-box'), {keyboard: false});
     bsmodal.show();
