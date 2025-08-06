@@ -5160,6 +5160,7 @@ class jgDashboard extends _uppy_dashboard_lib_Dashboard_js__WEBPACK_IMPORTED_MOD
 }
 jgDashboard.VERSION = packageJson.version;
 
+
 /***/ }),
 
 /***/ "./src/jgDashboard/components/Dashboard.js":
@@ -5368,6 +5369,7 @@ function Dashboard(props) {
   })))));
   return dashboard;
 }
+
 
 /***/ }),
 
@@ -5629,6 +5631,7 @@ class FileItem extends _uppy_dashboard_lib_components_FileItem_index_js__WEBPACK
   }
 }
 
+
 /***/ }),
 
 /***/ "./src/jgDashboard/components/FileList.js":
@@ -5766,6 +5769,7 @@ function chunks(list, size) {
   });
 });
 
+
 /***/ }),
 
 /***/ "./src/jgDashboard/index.js":
@@ -5780,6 +5784,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* reexport safe */ _Dashboard_js__WEBPACK_IMPORTED_MODULE_0__["default"])
 /* harmony export */ });
 /* harmony import */ var _Dashboard_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Dashboard.js */ "./src/jgDashboard/Dashboard.js");
+
 
 
 /***/ }),
@@ -6130,11 +6135,14 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
         // PHP fatal error occurred
         res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: res}};
       } else {
-        // Response is not of type json --> probably some php warnings/notices
-        let split = res.split('\n{"');
-        let temp  = JSON.parse('{"'+split[1]);
-        let data  = JSON.parse(temp.data);
-        res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
+        // error by php detected: json part with ...{"success":.... expected
+        if (res.startsWith('<br />')) {
+          // Response is not of type json --> probably some php warnings/notices
+          let split = res.split('\n{"');
+          let temp = JSON.parse('{"'+split[1]);
+          let data = JSON.parse(temp.data);
+          res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
+        }
       }
 
     } finally {

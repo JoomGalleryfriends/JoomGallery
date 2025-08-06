@@ -330,11 +330,14 @@ export default class jgProcessor extends BasePlugin {
         // PHP fatal error occurred
         res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: res}};
       } else {
-        // Response is not of type json --> probably some php warnings/notices
-        let split = res.split('\n{"');
-        let temp  = JSON.parse('{"'+split[1]);
-        let data  = JSON.parse(temp.data);
-        res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
+        // error by php detected: json part with ...{"success":.... expected
+        if (res.startsWith('<br />')) {
+          // Response is not of type json --> probably some php warnings/notices
+          let split = res.split('\n{"');
+          let temp = JSON.parse('{"'+split[1]);
+          let data = JSON.parse(temp.data);
+          res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
+        }
       }
 
     } finally {
