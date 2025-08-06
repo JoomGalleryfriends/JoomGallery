@@ -262,27 +262,6 @@ KEY `idx_type` (`type`)
 -- --------------------------------------------------------
 
 --
--- Table structure for table `#__joomgallery_fields`
---
-
-CREATE TABLE IF NOT EXISTS `#__joomgallery_fields` (
-`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-`asset_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT "FK to the #__assets table.",
-`type` VARCHAR(50) NOT NULL DEFAULT "",
-`key` VARCHAR(255) NOT NULL DEFAULT "",
-`value` TEXT NOT NULL,
-`ordering` INT(11) NOT NULL DEFAULT 0,
-`created_time` DATETIME NOT NULL,
-`created_by` INT(11)  NULL  DEFAULT 0,
-`language` CHAR(7) NOT NULL DEFAULT "*" COMMENT "The language code.",
-PRIMARY KEY (`id`),
-KEY `idx_type` (`type`),
-INDEX `idx_list_types` (`type`, `language`, `ordering`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `#__joomgallery_img_types`
 --
 
