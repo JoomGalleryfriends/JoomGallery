@@ -12,13 +12,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 // No direct access
 defined('_JEXEC') or die;
 
+use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
 use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 
 /**
  * View class for a single Image.
@@ -33,14 +36,21 @@ class HtmlView extends JoomGalleryView
   protected $config;
   protected $imagetypes;
 
-	/**
+  protected $uploadLimit;
+  protected $postMaxSize;
+  protected $memoryLimit;
+  protected $maxSize;
+  protected $mediaSize;
+  protected $configSize;
+
+  /**
 	 * Display the view
 	 *
 	 * @param   string  $tpl  Template name
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function display($tpl = null)
 	{
@@ -54,8 +64,8 @@ class HtmlView extends JoomGalleryView
     $this->imagetypes = JoomHelper::getRecords('imagetypes');
     $rating           = JoomHelper::getRating($this->item->id);
     $this->form->setvalue('rating', '', $rating);
-	$this->app->getLanguage()->load('com_joomgallery.exif', _JOOM_PATH_ADMIN);
-	$this->app->getLanguage()->load('com_joomgallery.iptc', _JOOM_PATH_ADMIN);
+    $this->app->getLanguage()->load('com_joomgallery.exif', _JOOM_PATH_ADMIN);
+    $this->app->getLanguage()->load('com_joomgallery.iptc', _JOOM_PATH_ADMIN);
 
     if($this->item->id == 0)
     {
@@ -87,6 +97,9 @@ class HtmlView extends JoomGalleryView
       $js_vars->semaTokens   = 100;                                           // Prealloc space for 100 tokens
 
       $this->js_vars = $js_vars;
+
+      //--- Limits php.ini, config -----
+      $this->limitsPhpConfig();
     }
     elseif($this->_layout == 'replace')
     {
@@ -111,7 +124,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function addToolbarEdit()
 	{
@@ -184,7 +197,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function addToolbarUpload()
 	{
@@ -244,7 +257,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function addToolbarReplace()
 	{
@@ -288,4 +301,37 @@ class HtmlView extends JoomGalleryView
 
     $this->form->setFieldAttribute('replacetype', 'default', $this->app->input->get('type', 'original', 'string'));
   }
+
+  /**
+   * Reads php.ini values to determine the minimum size for upload
+   * The memory_limit for the php script was not reliable (0 on some systems)
+   * so it is just shown
+   *
+   * On UploadMaxsize = 0 (from com_media) the php.ini limits are used
+   *
+   * @since version 4.2
+   */
+  public function limitsPhpConfig(): void
+  {
+    $mediaHelper = new MediaHelper;
+
+    // Maximum allowed size in MB
+    $this->uploadLimit = round($mediaHelper->toBytes(ini_get('upload_max_filesize')) / (1024 * 1024));
+    $this->postMaxSize = round($mediaHelper->toBytes(ini_get('post_max_size')) / (1024 * 1024));
+    $this->memoryLimit = round($mediaHelper->toBytes(ini_get('memory_limit')) / (1024 * 1024));
+
+    $mediaParams        = ComponentHelper::getParams('com_media');
+    $mediaUploadMaxsize = $mediaParams->get('upload_maxsize', 0);
+    $this->mediaSize    = $mediaUploadMaxsize;
+
+    //--- Max size to be used (previously defined by joomla function but ...) -------------------------
+
+    // $uploadMaxSize=0 for no limit
+    if (empty($mediaUploadMaxsize)) {
+      $this->maxSize = min($this->uploadLimit, $this->postMaxSize);
+    } else {
+      $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $mediaUploadMaxsize);
+    }
+  }
+
 }

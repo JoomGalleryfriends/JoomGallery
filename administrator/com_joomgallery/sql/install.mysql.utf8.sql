@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_maxusercat` DOUBLE NOT NULL DEFAULT 10,
 `jg_maxuserimage` DOUBLE NOT NULL DEFAULT 500,
 `jg_maxuserimage_timespan` DOUBLE NOT NULL DEFAULT 0,
-`jg_maxfilesize` DOUBLE NOT NULL DEFAULT 2000000,
+`jg_maxfilesize` DOUBLE NOT NULL DEFAULT 2,
 `jg_userupload` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_newpiccopyright` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_uploaddefaultcat` TINYINT(1) NOT NULL DEFAULT 0,
@@ -314,7 +314,10 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_tags_ref` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `imgid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `tagid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX `idx_imgid` (`imgid`),
+INDEX `idx_tagid` (`tagid`),
+INDEX `idx_tag_img` (`tagid`, `imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -362,7 +365,10 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_collections_ref` (
 `collectionid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `imgid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `approved` TINYINT(1) NOT NULL DEFAULT 0,
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX `idx_imgid` (`imgid`),
+INDEX `idx_collectionid` (`collectionid`),
+INDEX `idx_col_img` (`collectionid`, `imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
