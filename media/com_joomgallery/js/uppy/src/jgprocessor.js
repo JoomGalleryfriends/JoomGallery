@@ -337,7 +337,9 @@ export default class jgProcessor extends BasePlugin {
           let temp = JSON.parse('{"'+split[1]);
           let data = JSON.parse(temp.data);
           res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
-        }
+        } else {
+			res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: res}};
+		}
       }
 
     } finally {
