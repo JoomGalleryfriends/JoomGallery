@@ -16,6 +16,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\Filesystem\File as JFile;
 use \Joomla\CMS\Filter\InputFilter;
 use \Joomla\CMS\Filter\OutputFilter;
+use \Joomla\Database\DatabaseInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 
