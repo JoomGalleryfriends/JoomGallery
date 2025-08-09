@@ -33,14 +33,19 @@ $wa->useStyle('com_joomgallery.admin')
 $jsPathES5 = JPATH_ROOT . '/media/com_scheduler/js/admin-view-run-test-task-es5.min.js';
 $jsPath    = JPATH_ROOT . '/media/com_scheduler/js/admin-view-run-test-task.min.js';
 
-if(!$jsContent = file_get_contents($jsPathES5))
+// Prefer the ES5 build, fall back to the modern build
+if(\is_file($jsPathES5) && \is_readable($jsPathES5))
 {
-  $jsContent = file_get_contents($jsPath);
+  $jsContent = \file_get_contents($jsPathES5);
+}
+elseif(\is_file($jsPath) && \is_readable($jsPath))
+{
+  $jsContent = \file_get_contents($jsPath);
 }
 
-if($jsContent !== false)
+if($jsContent !== false && $jsContent !== '')
 {
-  $jsContent = str_replace(
+  $jsContent = \str_replace(
       '?option=com_scheduler&view=tasks',
       '?option=com_joomgallery&view=tasks',
       $jsContent
@@ -196,6 +201,10 @@ if($saveOrder && !empty($this->items))
           </thead>
           <tbody>
           <?php foreach ($this->scheduledTasks as $i => $item) :?>
+            <?php
+              $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || is_null($item->checked_out);
+              $canChange  = $user->authorise('core.edit.state', 'com_scheduler') && $canCheckin;
+            ?>
             <tr class="row<?php echo $i % 2; ?>">
               <!-- Item State -->
               <td class="text-center">
