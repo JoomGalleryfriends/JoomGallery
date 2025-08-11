@@ -13,10 +13,10 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Usercategories;
 //use Joomla\CMS\Factory;
 //use Joomla\CMS\Helper\TagsHelper;
 //use Joomla\CMS\Language\Multilanguage;
-use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
-use Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 //use Joomla\Component\Contact\Administrator\Helper\ContactHelper;
 
@@ -59,7 +59,7 @@ class HtmlView extends JoomGalleryView
   /**
    * Execute and display a template script.
    *
-   * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+   * @param   string   $tpl  The name of the template file to parse; automatically searches through the template paths.
    *
    * @return  void|boolean
    *
@@ -85,14 +85,14 @@ class HtmlView extends JoomGalleryView
       || $this->app->input->getBool('isDevelop');
 
     // Check for errors.
-    if (\count($errors = $this->get('Errors')))
+    if(\count($errors = $this->get('Errors')))
     {
       throw new GenericDataException(\implode("\n", $errors), 500);
     }
 
     //	user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
-    if ($user->guest)
+    if($user->guest)
     {
       $this->isUserLoggedIn = false;
     }
@@ -197,7 +197,7 @@ class HtmlView extends JoomGalleryView
     if(!$this->isMenuCurrentView($menu))
     {
       // Add Breadcrumbs
-      $pathway = $this->app->getPathway();
+      $pathway         = $this->app->getPathway();
       $breadcrumbTitle = Text::_('COM_JOOMGALLERY_USER_CATEGORIES');
 
       if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))

@@ -9,69 +9,68 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-// No direct access.
+.
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\Database\DatabaseInterface;
-
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
 
 /**
  * Model to get a list of category records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
 class UsercategoriesModel extends AdminCategoriesModel
 {
-	/**
+  /**
    * Constructor
    *
-   * @param   array  $config  An optional associative array of configuration settings.
+   * @param   array   $config  An optional associative array of configuration settings.
    *
    * @return  void
    * @since   4.0.0
    */
   function __construct($config = array())
-	{
-		if(empty($config['filter_fields']))
-		{
-			$config['filter_fields'] = array(
-				'lft', 'a.lft',
-				'rgt', 'a.rgt',
-				'level', 'a.level',
-				'path', 'a.path',
-				'in_hidden', 'a.in_hidden',
-				'title', 'a.title',
-				'alias', 'a.alias',
-				'parent_id', 'a.parent_id',
-				'parent_title', 'a.parent_title',
-				'published', 'a.published',
-				'access', 'a.access',
-				'language', 'a.language',
-				'description', 'a.description',
-				'hidden', 'a.hidden',
-				'created_time', 'a.created_time',
-				'created_by', 'a.created_by',
-				'modified_by', 'a.modified_by',
-				'modified_time', 'a.modified_time',
-				'id', 'a.id',
-				'img_count', 'a.img_count',
-				'child_count', 'a.child_count'
-			);
-		}
+  {
+    if(empty($config['filter_fields']))
+    {
+      $config['filter_fields'] = array(
+        'lft', 'a.lft',
+        'rgt', 'a.rgt',
+        'level', 'a.level',
+        'path', 'a.path',
+        'in_hidden', 'a.in_hidden',
+        'title', 'a.title',
+        'alias', 'a.alias',
+        'parent_id', 'a.parent_id',
+        'parent_title', 'a.parent_title',
+        'published', 'a.published',
+        'access', 'a.access',
+        'language', 'a.language',
+        'description', 'a.description',
+        'hidden', 'a.hidden',
+        'created_time', 'a.created_time',
+        'created_by', 'a.created_by',
+        'modified_by', 'a.modified_by',
+        'modified_time', 'a.modified_time',
+        'id', 'a.id',
+        'img_count', 'a.img_count',
+        'child_count', 'a.child_count'
+      );
+    }
 
-		parent::__construct($config);
-	}
+    parent::__construct($config);
+  }
 
   /**
    * Method to auto-populate the model state.
    *
    * Note. Calling getState in this method will result in recursion.
    *
-   * @param   string  $ordering   Elements order
-   * @param   string  $direction  Order direction
+   * @param   string   $ordering   Elements order
+   * @param   string   $direction  Order direction
    *
    * @return  void
    *
@@ -92,38 +91,38 @@ class UsercategoriesModel extends AdminCategoriesModel
     $this->loadComponentParams();
   }
 
-	/**
-	 * Build an SQL query to load the list data.
-	 *
-	 * @return  DatabaseQuery
-	 *
-	 * @since   4.0.0
-	 */
-	protected function getListQuery()
-	{
+  /**
+   * Build an SQL query to load the list data.
+   *
+   * @return  DatabaseQuery
+   *
+   * @since   4.0.0
+   */
+  protected function getListQuery()
+  {
     $query = parent::getListQuery();
 
     return $query;
-	}
+  }
 
-	/**
-	 * Method to get an array of data items
-	 *
-	 * @return  mixed An array of data on success, false on failure.
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
+  /**
+   * Method to get an array of data items
+   *
+   * @return  mixed An array of data on success, false on failure.
+   */
+  public function getItems()
+  {
+    $items = parent::getItems();
 
-		return $items;
-	}
+    return $items;
+  }
 
 
   /**
    * Method to check if user owns at least one category. Without
    * only a matching request message will be displayed
    *
-   * @param   \Joomla\CMS\User\User $user ToDO: Id would suffice
+   * @param   \Joomla\CMS\User\User   $user  ToDO: Id would suffice
    *
    * @return  bool true wnhen user owns a
    *
@@ -137,27 +136,24 @@ class UsercategoriesModel extends AdminCategoriesModel
 
     // try {
 
-    $db = Factory::getContainer()->get(DatabaseInterface::class);		// ToDo: Count categories of user
+    $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
 
     // Check number of records in tables
     $query = $db->getQuery(true)
       ->select('COUNT(*)')
       ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-      ->where($db->quoteName('created_by') . ' = ' . (int) $user->id);
+      ->where($db->quoteName('created_by').' = '.(int) $user->id);
 
     $db->setQuery($query);
     $count = $db->loadResult();
 
-    if(empty ($count)) {
+    if(empty ($count))
+    {
       $isUserHasACategory = false;
     }
 
     return $isUserHasACategory;
   }
-
-
-
-
 
 
 }

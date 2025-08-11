@@ -13,9 +13,6 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') or die;
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
-use Joomla\CMS\Response\JsonResponse;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
 
 /**
  * Upload controller class.
@@ -52,21 +49,20 @@ class UseruploadController extends JoomFormController
   }
 
   /**
-	 * Method to get a model object, loading it if required.
-	 *
-	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  object  The model
-	 *
-	 * @since   1.6.4
-	 */
-	public function getModel($name = 'UserUpload', $prefix = 'Site', $config = ['ignore_request' => true])
+   * Method to get a model object, loading it if required.
+   *
+   * @param   string   $name    The model name. Optional.
+   * @param   string   $prefix  The class prefix. Optional.
+   * @param   array    $config  Configuration array for model. Optional.
+   *
+   * @return  object  The model
+   *
+   * @since   1.6.4
+   */
+  public function getModel($name = 'UserUpload', $prefix = 'Site', $config = ['ignore_request' => true])
   {
     return parent::getModel($name, $prefix, $config);
   }
-
 
 
 } // class

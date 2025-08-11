@@ -13,23 +13,23 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Userimages;
 // No direct access
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a list of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
 class HtmlView extends JoomGalleryView
 {
-	protected $items;
+  protected $items;
 
-	protected $pagination;
+  protected $pagination;
 
   /**
    * @var    \Joomla\Registry\Registry
@@ -38,13 +38,13 @@ class HtmlView extends JoomGalleryView
   protected $state;
 
   /**
-	 * The page parameters
-	 *
-	 * @var    array
-	 *
-	 * @since  4.0.0
-	 */
-	protected $params = array();
+   * The page parameters
+   *
+   * @var    array
+   *
+   * @since  4.0.0
+   */
+  protected $params = array();
 
   /**
    * @var    bool
@@ -64,16 +64,16 @@ class HtmlView extends JoomGalleryView
 
 
   /**
-	 * Display the view
-	 *
-	 * @param   string  $tpl  Template name
-	 *
-	 * @return void
-	 *
-	 * @throws \Exception
-	 */
-	public function display($tpl = null)
-	{
+   * Display the view
+   *
+   * @param   string   $tpl  Template name
+   *
+   * @return void
+   *
+   * @throws \Exception
+   */
+  public function display($tpl = null)
+  {
     $user = $this->getCurrentUser();
 
     // Get model data
@@ -91,14 +91,14 @@ class HtmlView extends JoomGalleryView
       || $this->app->input->getBool('isDevelop');
 
     // Check for errors.
-		if(\count($errors = $this->get('Errors')))
-		{
-			throw new GenericDataException(\implode("\n", $errors), 500);
-		}
+    if(\count($errors = $this->get('Errors')))
+    {
+      throw new GenericDataException(\implode("\n", $errors), 500);
+    }
 
     //	user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
-    if ($user->guest)
+    if($user->guest)
     {
       $this->isUserLoggedIn = false;
     }
@@ -128,83 +128,83 @@ class HtmlView extends JoomGalleryView
 
       // Redirect to gallery view
       $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
-      
+
       return false;
     }
 
-		$this->_prepareDocument();
+    $this->_prepareDocument();
 
-		parent::display($tpl);
-	}
+    parent::display($tpl);
+  }
 
-	/**
-	 * Prepares the document
-	 *
-	 * @return void
-	 *
-	 * @throws \Exception
-	 */
-	protected function _prepareDocument()
-	{
-		$menus = $this->app->getMenu();
-		$title = null;
+  /**
+   * Prepares the document
+   *
+   * @return void
+   *
+   * @throws \Exception
+   */
+  protected function _prepareDocument()
+  {
+    $menus = $this->app->getMenu();
+    $title = null;
 
-		// Because the application sets a default page title,
-		// we need to get it from the menu item itself
-		$menu = $menus->getActive();
+    // Because the application sets a default page title,
+    // we need to get it from the menu item itself
+    $menu = $menus->getActive();
 
-		if($menu)
-		{
-			$this->params['menu']->def('page_heading', $this->params['menu']->get('page_title', $menu->title));
-		}
-		else
-		{
-			$this->params['menu']->def('page_heading', Text::_('JoomGallery'));
-		}
+    if($menu)
+    {
+      $this->params['menu']->def('page_heading', $this->params['menu']->get('page_title', $menu->title));
+    }
+    else
+    {
+      $this->params['menu']->def('page_heading', Text::_('JoomGallery'));
+    }
 
-		$title = $this->params['menu']->get('page_title', '');
+    $title = $this->params['menu']->get('page_title', '');
 
-		if(empty($title))
-		{
-			$title = $this->app->get('sitename');
-		}
-		elseif($this->app->get('sitename_pagetitles', 0) == 1)
-		{
-			$title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
-		}
-		elseif($this->app->get('sitename_pagetitles', 0) == 2)
-		{
-			$title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
-		}
+    if(empty($title))
+    {
+      $title = $this->app->get('sitename');
+    }
+    elseif($this->app->get('sitename_pagetitles', 0) == 1)
+    {
+      $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
+    }
+    elseif($this->app->get('sitename_pagetitles', 0) == 2)
+    {
+      $title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
+    }
 
-		$this->document->setTitle($title);
+    $this->document->setTitle($title);
 
-		if($this->params['menu']->get('menu-meta_description'))
-		{
-			$this->document->setDescription($this->params['menu']->get('menu-meta_description'));
-		}
+    if($this->params['menu']->get('menu-meta_description'))
+    {
+      $this->document->setDescription($this->params['menu']->get('menu-meta_description'));
+    }
 
-		if($this->params['menu']->get('menu-meta_keywords'))
-		{
-			$this->document->setMetadata('keywords', $this->params['menu']->get('menu-meta_keywords'));
-		}
+    if($this->params['menu']->get('menu-meta_keywords'))
+    {
+      $this->document->setMetadata('keywords', $this->params['menu']->get('menu-meta_keywords'));
+    }
 
-		if($this->params['menu']->get('robots'))
-		{
-			$this->document->setMetadata('robots', $this->params['menu']->get('robots'));
-		}
+    if($this->params['menu']->get('robots'))
+    {
+      $this->document->setMetadata('robots', $this->params['menu']->get('robots'));
+    }
 
-		if(!$this->isMenuCurrentView($menu))
-		{
-			// Add Breadcrumbs
-			$pathway = $this->app->getPathway();
-			$breadcrumbTitle = Text::_('COM_JOOMGALLERY_USER_IMAGES');
+    if(!$this->isMenuCurrentView($menu))
+    {
+      // Add Breadcrumbs
+      $pathway         = $this->app->getPathway();
+      $breadcrumbTitle = Text::_('COM_JOOMGALLERY_USER_IMAGES');
 
-			if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
-			{
-				$pathway->addItem($breadcrumbTitle, '');
-			}
-		}
-	}
+      if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
+      {
+        $pathway->addItem($breadcrumbTitle, '');
+      }
+    }
+  }
 
 }

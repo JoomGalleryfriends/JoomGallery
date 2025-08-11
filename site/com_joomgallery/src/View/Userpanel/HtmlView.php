@@ -13,13 +13,10 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Userpanel;
 //use Joomla\CMS\Factory;
 //use Joomla\CMS\Helper\TagsHelper;
 //use Joomla\CMS\Language\Multilanguage;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 //use Joomla\Component\Contact\Administrator\Helper\ContactHelper;
 
@@ -90,7 +87,7 @@ class HtmlView extends JoomGalleryView
   /**
    * Execute and display a template script.
    *
-   * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+   * @param   string   $tpl  The name of the template file to parse; automatically searches through the template paths.
    *
    * @return  void|boolean
    *
@@ -111,7 +108,7 @@ class HtmlView extends JoomGalleryView
     $modImages = $this->getModel('Userpanel');
     // $modCategories = $this->getModel('Usercategories');
 
-    $this->state = $modImages->getState();
+    $this->state  = $modImages->getState();
     $this->params = $modImages->getParams();
 
     $this->items         = $modImages->getItems();
@@ -132,7 +129,7 @@ class HtmlView extends JoomGalleryView
 
     //	user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
-    if ($user->guest)
+    if($user->guest)
     {
       $this->isUserLoggedIn = false;
     }
@@ -231,7 +228,7 @@ class HtmlView extends JoomGalleryView
     if(!$this->isMenuCurrentView($menu))
     {
       // Add Breadcrumbs
-      $pathway = $this->app->getPathway();
+      $pathway         = $this->app->getPathway();
       $breadcrumbTitle = Text::_('COM_JOOMGALLERY_USER_PANEL');
 
       if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))

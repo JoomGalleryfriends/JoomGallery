@@ -9,12 +9,12 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-// No direct access.
+.
 defined('_JEXEC') or die;
 
-use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
 use Joomla\CMS\Factory;
 use Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
 
 /**
  * Model to handle a user category form.
@@ -48,7 +48,7 @@ class UsercategoryModel extends AdminCategoryModel
   {
     // Load state from the request userState on edit or from the passed variable on default
     $id = $this->app->input->getInt('id', null);
-    if (!empty($id))
+    if(!empty($id))
     {
       $this->app->setUserState('com_joomgallery.edit.category.id', $id);
     }
@@ -64,7 +64,7 @@ class UsercategoryModel extends AdminCategoryModel
       $this->app->setUserState('com_joomgallery.edit.category.data', null);
     }
 
-    if (is_null($id))
+    if(is_null($id))
     {
       throw new \Exception('No ID provided to the model!', 500);
     }
@@ -80,7 +80,7 @@ class UsercategoryModel extends AdminCategoryModel
   /**
    * Method to get a single record.
    *
-   * @param   integer  $pk  The id of the primary key.
+   * @param   integer   $pk  The id of the primary key.
    *
    * @return  Object|boolean Object on success, false on failure.
    *
@@ -94,7 +94,7 @@ class UsercategoryModel extends AdminCategoryModel
   /**
    * Method to get a single record.
    *
-   * @param   integer  $pk  The id of the primary key.
+   * @param   integer   $pk  The id of the primary key.
    *
    * @return  Object|boolean Object on success, false on failure.
    *
@@ -112,12 +112,12 @@ class UsercategoryModel extends AdminCategoryModel
     $query = $db->getQuery(true)
       ->select('id, parent_id')
       ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-      ->where($db->quoteName('id') . ' = ' . (int) $id);
+      ->where($db->quoteName('id').' = '.(int) $id);
 
     $db->setQuery($query);
     $item = $db->loadObject();
 
-    if ((!empty($item->id)) && $item->parent_id == 1)
+    if((!empty($item->id)) && $item->parent_id == 1)
     {
       $isUserRootCategory = true;
     }
@@ -130,8 +130,8 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * The base form is loaded from XML
    *
-   * @param   array    $data      An optional array of data for the form to interogate.
-   * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+   * @param   array     $data      An optional array of data for the form to interogate.
+   * @param   boolean   $loadData  True if the form is to load its own data (default case), false if not.
    *
    * @return  Form    A Form object on success, false on failure
    *
@@ -145,7 +145,7 @@ class UsercategoryModel extends AdminCategoryModel
     // Apply filter to exclude child categories
     $children = $form->getFieldAttribute('parent_id', 'children', 'true');
     $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
-    if (!$children)
+    if(!$children)
     {
       $form->setFieldAttribute('parent_id', 'exclude', $this->item->id);
     }
@@ -153,7 +153,7 @@ class UsercategoryModel extends AdminCategoryModel
     // Apply filter for current category on thumbnail field
     $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
 
-    if (empty($form))
+    if(empty($form))
     {
       return false;
     }

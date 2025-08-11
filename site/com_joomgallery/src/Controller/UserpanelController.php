@@ -13,8 +13,6 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\FormController;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
 
 /**
  * Category controller class.
@@ -52,11 +50,11 @@ class UserpanelController extends FormController //JoomBaseController
   /**
    * Proxy for getModel.
    *
-   * @param   string  $name    The model name. Optional.
-   * @param   string  $prefix  The class prefix. Optional
-   * @param   array   $config  Configuration array for model. Optional
+   * @param   string   $name    The model name. Optional.
+   * @param   string   $prefix  The class prefix. Optional
+   * @param   array    $config  Configuration array for model. Optional
    *
-   * @return  object	The model
+   * @return  object  The model
    *
    * @since   4.0.0
    */

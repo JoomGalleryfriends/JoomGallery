@@ -12,13 +12,10 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Userupload;
 //use Joomla\CMS\Factory;
 //use Joomla\CMS\Helper\TagsHelper;
 //use Joomla\CMS\Language\Multilanguage;
-use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\MediaHelper;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\Database\DatabaseInterface;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 // use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 //use Joomla\Component\Contact\Administrator\Helper\ContactHelper;
@@ -34,41 +31,41 @@ use Joomla\Database\DatabaseInterface;
  */
 class HtmlView extends JoomGalleryView // BaseHtmlView
 {
-    /**
-     * @var    \Joomla\CMS\Form\Form
-     * @since  4.0.0
-     */
-    protected $form;
+  /**
+   * @var    \Joomla\CMS\Form\Form
+   * @since  4.0.0
+   */
+  protected $form;
 
-    /**
-     * @var    object
-     * @since  4.0.0
-     */
-    protected $item;
+  /**
+   * @var    object
+   * @since  4.0.0
+   */
+  protected $item;
 
-    /**
-     * @var    string
-     * @since  4.0.0
-     */
-    protected $return_page;
+  /**
+   * @var    string
+   * @since  4.0.0
+   */
+  protected $return_page;
 
-    /**
-     * @var    string
-     * @since  4.0.0
-     */
-    protected $pageclass_sfx;
+  /**
+   * @var    string
+   * @since  4.0.0
+   */
+  protected $pageclass_sfx;
 
-    /**
-     * @var    \Joomla\Registry\Registry
-     * @since  4.0.0
-     */
-    protected $state;
+  /**
+   * @var    \Joomla\Registry\Registry
+   * @since  4.0.0
+   */
+  protected $state;
 
-    /**
-     * @var    \Joomla\Registry\Registry
-     * @since  4.0.0
-     */
-    protected $params;
+  /**
+   * @var    \Joomla\Registry\Registry
+   * @since  4.0.0
+   */
+  protected $params;
 
 //    /**
 //     * @var    \Joomla\Registry\Registry
@@ -76,19 +73,19 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
 //     */
 //    protected $config;
 
-	/**
-	 * @var    bool
-	 * @since  4.0.0
-	 */
-	protected $isUserLoggedIn = false;
-	/**
-	 * @var    bool
-	 * @since  4.0.0
-	 */
-	protected $isUserHasCategory = false;
+  /**
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $isUserLoggedIn = false;
+  /**
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $isUserHasCategory = false;
 
-	protected $isUserCoreManager = false;
-	protected $userId = 0;
+  protected $isUserCoreManager = false;
+  protected $userId = 0;
 
   protected $uploadLimit;
   protected $postMaxSize;
@@ -98,68 +95,69 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
   protected $configSize;
 
   /**
-     * Execute and display a template script.
-     *
-     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
-     *
-     * @return  void|boolean
-     *
-     * @throws \Exception
-     * @since  4.0.0
-     */
-    public function display($tpl = null)
-    {
-        $user = $this->getCurrentUser();
-        $app  = Factory::getApplication();
+   * Execute and display a template script.
+   *
+   * @param   string   $tpl  The name of the template file to parse; automatically searches through the template paths.
+   *
+   * @return  void|boolean
+   *
+   * @throws \Exception
+   * @since  4.0.0
+   */
+  public function display($tpl = null)
+  {
+    $user = $this->getCurrentUser();
+    $app  = Factory::getApplication();
 
-        // Get model data
-	    $model             = $this->getModel();
-	    $this->state       = $model->getState();
-        $this->form        = $model->getForm();
-        $this->params      = $model->getParams();
+    // Get model data
+    $model        = $this->getModel();
+    $this->state  = $model->getState();
+    $this->form   = $model->getForm();
+    $this->params = $model->getParams();
 //      $this->return_page = $this->getReturnPage();
 
-	    $config     = $this->params['configs'];
+    $config = $this->params['configs'];
 
-		//	user must be logged in and have one 'master/base' category
-	    $this->isUserLoggedIn = true;
-		if ($user->guest) {
-			$this->isUserLoggedIn = false;
-		}
+    //	user must be logged in and have one 'master/base' category
+    $this->isUserLoggedIn = true;
+    if($user->guest)
+    {
+      $this->isUserLoggedIn = false;
+    }
 
-		// at least one category is needed for upload view
-		$this->isUserHasCategory = $model->getUserHasACategory($user);
+    // at least one category is needed for upload view
+    $this->isUserHasCategory = $model->getUserHasACategory($user);
 
-		$this->userId = $user->id;
+    $this->userId = $user->id;
 
-	    // Get access service
-	    $this->component->createAccess();
-	    $this->acl = $this->component->getAccess();
-	    $acl       = $this->component->getAccess();
+    // Get access service
+    $this->component->createAccess();
+    $this->acl = $this->component->getAccess();
+    $acl       = $this->component->getAccess();
 
-  		// Needed for JgcategoryField
-	    // $this->isUserCoreManager = $acl->checkACL('core.manage', 'com_joomgallery');
-	    $this->isUserCoreManager = $acl->checkACL('core.manage', 'com_joomgallery');
+    // Needed for JgcategoryField
+    // $this->isUserCoreManager = $acl->checkACL('core.manage', 'com_joomgallery');
+    $this->isUserCoreManager = $acl->checkACL('core.manage', 'com_joomgallery');
 
-	    // Add variables to JavaScript
-	    $js_vars               = new \stdClass();
-	    $js_vars->maxFileSize  = (100 * 1073741824); // 100GB
-	    $js_vars->TUSlocation  = $this->getTusLocation (); // $this->item->tus_location;
+    // Add variables to JavaScript
+    $js_vars              = new \stdClass();
+    $js_vars->maxFileSize = (100 * 1073741824); // 100GB
+    $js_vars->TUSlocation = $this->getTusLocation(); // $this->item->tus_location;
 
-	    $js_vars->allowedTypes = $this->getAllowedTypes();
+    $js_vars->allowedTypes = $this->getAllowedTypes();
 
-	    $js_vars->uppyTarget   = '#drag-drop-area';          // Id of the DOM element to apply the uppy form
-	    $js_vars->uppyLimit    = 5;                          // Number of concurrent tus uploads (only file upload)
-	    $js_vars->uppyDelays   = array(0, 1000, 3000, 5000); // Delay in ms between upload retries
+    $js_vars->uppyTarget = '#drag-drop-area';          // Id of the DOM element to apply the uppy form
+    $js_vars->uppyLimit  = 5;                          // Number of concurrent tus uploads (only file upload)
+    $js_vars->uppyDelays = array(0, 1000, 3000, 5000); // Delay in ms between upload retries
 
-	    $js_vars->semaCalls    = $config->get('jg_parallelprocesses', 1); // Number of concurrent async calls to save the record to DB (including image processing)
-	    $js_vars->semaTokens   = 100;                                           // Pre alloc space for 100 tokens
+    $js_vars->semaCalls  = $config->get('jg_parallelprocesses', 1); // Number of concurrent async calls to save the record to DB (including image processing)
+    $js_vars->semaTokens = 100;                                           // Pre alloc space for 100 tokens
 
-	    $this->js_vars = $js_vars;
+    $this->js_vars = $js_vars;
 
-      //--- Limits php.ini, config ----------------------------------------------------------------
+    //--- Limits php.ini, config ----------------------------------------------------------------
 
-      $this->limitsPhpConfig($config);
+    $this->limitsPhpConfig($config);
 
 
 //
@@ -206,8 +204,8 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
 //
 //        $this->_prepareDocument();
 
-        parent::display($tpl);
-    }
+    parent::display($tpl);
+  }
 
 //    /**
 //     * Prepares the document
@@ -252,64 +250,64 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
 //        }
 //    }
 
-	/**
-	 * Get array of all allowed filetypes based on the config parameter jg_imagetypes.
-	 *
-	 * @return  array  List with all allowed filetypes
-	 *
-	 */
-	protected function getAllowedTypes()
-	{
-		$config     = $this->params['configs'];
-		$types = \explode(',', $config->get('jg_imagetypes'));
+  /**
+   * Get array of all allowed filetypes based on the config parameter jg_imagetypes.
+   *
+   * @return  array  List with all allowed filetypes
+   *
+   */
+  protected function getAllowedTypes()
+  {
+    $config = $this->params['configs'];
+    $types  = \explode(',', $config->get('jg_imagetypes'));
 
-		// add different types of jpg files
-		$jpg_array = array('jpg', 'jpeg', 'jpe', 'jfif');
-		if (\in_array('jpg', $types) || \in_array('jpeg', $types) || \in_array('jpe', $types) || \in_array('jfif', $types))
-		{
-			foreach ($jpg_array as $jpg)
-			{
-				if(!\in_array($jpg, $types))
-				{
-					\array_push($types, $jpg);
-				}
-			}
-		}
+    // add different types of jpg files
+    $jpg_array = array('jpg', 'jpeg', 'jpe', 'jfif');
+    if(\in_array('jpg', $types) || \in_array('jpeg', $types) || \in_array('jpe', $types) || \in_array('jfif', $types))
+    {
+      foreach($jpg_array as $jpg)
+      {
+        if(!\in_array($jpg, $types))
+        {
+          \array_push($types, $jpg);
+        }
+      }
+    }
 
-		// add point to types
-		foreach ($types as $key => $type)
-		{
-			if(\substr($type, 0, 1) !== '.')
-			{
-				$types[$key] = '.'. \strtolower($type);
-			}
-			else
-			{
-				$types[$key] = \strtolower($type);
-			}
-		}
+    // add point to types
+    foreach($types as $key => $type)
+    {
+      if(\substr($type, 0, 1) !== '.')
+      {
+        $types[$key] = '.'.\strtolower($type);
+      }
+      else
+      {
+        $types[$key] = \strtolower($type);
+      }
+    }
 
-		return $types;
-	}
+    return $types;
+  }
 
-	private function getTusLocation()
-	{
+  private function getTusLocation()
+  {
 
-		// Create tus server
-		$this->component->createTusServer();
-		$server = $this->component->getTusServer();
+    // Create tus server
+    $this->component->createTusServer();
+    $server = $this->component->getTusServer();
 
-		$tus_location = $server->getLocation();
+    $tus_location = $server->getLocation();
 
-		return $tus_location;
-	}
+    return $tus_location;
+  }
 
   /**
    * Reads php.ini values to determine the minimum size for upload
    * The memory_limit for the php script was not reliable (0 on some sytems)
    * so it is just shown
    *
-   * @param   mixed  $joomGalleryConfig config of joom gallery
+   * @param   mixed   $joomGalleryConfig  config of joom gallery
    *
    *
    * @since version 4.1
@@ -332,9 +330,12 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
     //--- Max size to be used (previously defined by joomla function but ...) -------------------------
 
     // $uploadMaxSize=0 for no limit
-    if (empty($mediaUploadMaxsize)) {
+    if(empty($mediaUploadMaxsize))
+    {
       $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $this->configSize);
-    } else {
+    }
+    else
+    {
       $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $this->configSize, $mediaUploadMaxsize);
     }
   }
