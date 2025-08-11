@@ -284,7 +284,7 @@ class Server implements ServerInterface
         $this->app->sendHeaders();
 		    echo $this->app->getBody();
 
-        // The process must only sent the HTTP headers and content: kill request after send
+        // The process only needs to send the HTTP headers and content: kill request after send
         exit;
     }
 

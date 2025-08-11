@@ -22,7 +22,34 @@ use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminControll
  */
 class ImagesController extends JoomAdminController
 {
-	/**
+
+  /**
+   * Constructor.
+   *
+   * @param   array    $config   An optional associative array of configuration settings.
+   * @param   object   $factory  The factory.
+   * @param   object   $app      The Application for the dispatcher
+   * @param   object   $input    Input
+   *
+   * @since   4.0.0
+   */
+  public function __construct($config = [], $factory = null, $app = null, $input = null)
+  {
+    parent::__construct($config, $factory, $app, $input);
+
+    //
+    $this->default_view = 'userimages';
+
+//    // JoomGallery extension class
+//    $this->component = $this->app->bootComponent(_JOOM_OPTION);
+//
+//    // Access service class
+//    $this->component->createAccess();
+//    $this->acl = $this->component->getAccess();
+  }
+
+
+  /**
 	 * Proxy for getModel.
 	 *
 	 * @param   string  $name    The model name. Optional.

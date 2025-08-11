@@ -67,7 +67,7 @@ trait TusServiceTrait
       if (factory::getapplication()->isclient('site'))
       {
         $location = uri::root(true) . '/index.php?option=com_joomgallery&task=images.tusupload';
-	  } else {
+	    } else {
         $location = uri::root(true) . '/administrator/index.php?option=com_joomgallery&task=images.tusupload';
       }
     }

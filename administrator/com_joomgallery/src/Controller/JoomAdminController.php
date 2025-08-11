@@ -12,6 +12,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 // No direct access
 \defined('_JEXEC') or die;
 
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\View\ViewInterface;
 use \Joomla\Input\Input;
 use \Joomla\CMS\User\CurrentUserInterface;
 use \Joomla\CMS\Application\CMSApplication;
@@ -99,7 +101,7 @@ class JoomAdminController extends BaseAdminController
    *
    * @return  mixed   The value returned by the called Method.
    *
-   * @throws  Exception
+   * @throws  \Exception
    * @since   4.0.0
    */
   public function execute($task)
