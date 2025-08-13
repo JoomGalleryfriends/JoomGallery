@@ -12,9 +12,9 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 .
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
+use \Joomla\CMS\Factory;
+use \Joomla\Database\DatabaseInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
 
 /**
  * Model to get a list of category records.

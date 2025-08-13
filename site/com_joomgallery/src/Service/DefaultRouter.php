@@ -12,17 +12,17 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Menu\AbstractMenu;
-use Joomla\Database\ParameterType;
-use Joomla\Database\DatabaseInterface;
-use Joomla\CMS\Application\SiteApplication;
-use Joomla\CMS\Component\Router\RouterView;
-use Joomla\CMS\Component\Router\Rules\MenuRules;
-use Joomla\CMS\Component\Router\Rules\NomenuRules;
-use Joomla\CMS\Categories\CategoryFactoryInterface;
-use Joomla\CMS\Component\Router\Rules\StandardRules;
-use Joomla\CMS\Component\Router\RouterViewConfiguration;
-use Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use \Joomla\CMS\Menu\AbstractMenu;
+use \Joomla\Database\ParameterType;
+use \Joomla\Database\DatabaseInterface;
+use \Joomla\CMS\Application\SiteApplication;
+use \Joomla\CMS\Component\Router\RouterView;
+use \Joomla\CMS\Component\Router\Rules\MenuRules;
+use \Joomla\CMS\Component\Router\Rules\NomenuRules;
+use \Joomla\CMS\Categories\CategoryFactoryInterface;
+use \Joomla\CMS\Component\Router\Rules\StandardRules;
+use \Joomla\CMS\Component\Router\RouterViewConfiguration;
+use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
 
 /**
  * Joomgallery Router class

@@ -12,17 +12,10 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Userupload;
 //use Joomla\CMS\Factory;
 //use Joomla\CMS\Helper\TagsHelper;
 //use Joomla\CMS\Language\Multilanguage;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Helper\MediaHelper;
-use Joomla\CMS\Component\ComponentHelper;
-use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-
-// use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-//use Joomla\Component\Contact\Administrator\Helper\ContactHelper;
-
-// phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Helper\MediaHelper;
+use \Joomla\CMS\Component\ComponentHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * HTML Contact View class for the Contact component

@@ -14,10 +14,10 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\User\UserHelper;
 use \Joomla\CMS\MVC\Model\ListModel;
 use \Joomla\CMS\Language\Multilanguage;
 use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\CMS\User\UserHelper;
 
 /**
  * Model to get a category record.

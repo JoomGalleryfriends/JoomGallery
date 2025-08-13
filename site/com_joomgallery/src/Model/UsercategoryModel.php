@@ -12,9 +12,9 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 .
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
+use \Joomla\CMS\Factory;
+use \Joomla\Database\DatabaseInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
 
 /**
  * Model to handle a user category form.

@@ -12,7 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // No direct access
 \defined('_JEXEC') or die;
 
-use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
 
 /**
  * Images list controller class.

@@ -12,8 +12,8 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 .
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseInterface;
+use \Joomla\CMS\Factory;
+use \Joomla\Database\DatabaseInterface;
 
 /**
  * Model to get a list of category records.
