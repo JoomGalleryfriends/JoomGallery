@@ -1,7 +1,7 @@
 /.gitignore
 /.idea/.gitignore
 /.idea/deployment.xml
-/.idea/JG4-dev.iml
+/.idea/*.iml
 /.idea/jsLibraryMappings.xml
 /.idea/modules.xml
 /.idea/php.xml
