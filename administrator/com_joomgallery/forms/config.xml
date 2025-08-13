@@ -466,6 +466,7 @@
               validate="number"
               filter="integer"
               showon="jg_userspace:1"
+              class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_USERCATS"
               description="COM_JOOMGALLERY_CONFIG_MAX_USERCATS_LONG" />
 
@@ -477,6 +478,7 @@
               validate="number"
               filter="integer"
               showon="jg_userspace:1"
+              class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_USERIMGS"
               description="COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG" />
 
@@ -488,6 +490,7 @@
               filter="integer"
               default="0"
               showon="jg_userspace:1"
+              class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_TIMESPAN"
               description="COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_TIMESPAN_LONG" />
 
@@ -498,6 +501,7 @@
               step="0.1"
               validate="number"
               filter="float"
+              class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE"
               description="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE_LONG"
               showon="jg_userspace:1" />
