@@ -10,10 +10,10 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Layout\LayoutHelper;
 
 // Image params
 $image_type              = $this->params['configs']->get('jg_gallery_view_type_image', 'thumbnail', 'STRING');

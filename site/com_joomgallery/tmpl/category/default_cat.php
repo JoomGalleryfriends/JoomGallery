@@ -10,13 +10,13 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Session\Session;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // Subcategory params
 $subcategory_class           = $this->params['configs']->get('jg_category_view_subcategory_class', 'masonry', 'STRING');

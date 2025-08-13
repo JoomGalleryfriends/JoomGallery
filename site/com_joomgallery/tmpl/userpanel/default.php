@@ -10,13 +10,13 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Session\Session;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();

@@ -9,8 +9,8 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Router\Route;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 extract($displayData);
 

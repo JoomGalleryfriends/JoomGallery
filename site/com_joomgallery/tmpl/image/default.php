@@ -10,15 +10,15 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\FileLayout;
-use Joomla\CMS\User\UserFactoryInterface;
-use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Session\Session;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Layout\FileLayout;
+use \Joomla\CMS\User\UserFactoryInterface;
+use \Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // image params
 $image_type        = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
