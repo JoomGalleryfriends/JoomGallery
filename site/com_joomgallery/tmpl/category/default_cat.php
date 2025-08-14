@@ -142,7 +142,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php endif; ?>
 
 <?php // Back to parent category ?>
-<?php if($this->item->parent_id > 0) : ?>
+<?php if($this->item->parent_id > 1) : ?>
   <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.(int) $this->item->parent_id); ?>">
     <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?></span>
   </a>
