@@ -9,7 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-.
+// No direct access
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
