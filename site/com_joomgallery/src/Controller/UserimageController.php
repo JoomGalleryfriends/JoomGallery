@@ -303,16 +303,6 @@ class UserimageController extends FormController
       return false;
     }
 
-    // Attempt to check-in the current record.
-    if($model->checkin($removeId) === false)
-    {
-      // Check-in failed, go back to the record and display a notice.
-      $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('userimages').'&'.$this->getItemAppend($removeId), false));
-
-      return false;
-    }
-
     // Clear the profile id from the session.
     $this->app->setUserState('com_joomgallery.edit.image.id', null);
     $this->app->setUserState('com_joomgallery.edit.image.data', null);
