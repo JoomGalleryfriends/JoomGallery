@@ -9,7 +9,5 @@
 
 defined('_JEXEC') or die;
 
-
 $path = _JOOM_PATH_ADMIN . '/layouts/joomgallery/tip.php';
-//                            \layouts\joomgallery\tip.php 
 require $path;
