@@ -33,7 +33,7 @@ class CategoryController extends JoomBaseController
 	 *
 	 * @throws  \Exception
 	 */
-	public function edit()
+	public function edit(): bool
 	{
 		// Get the previous edit id (if any) and the current edit id.
 		$previousId = (int) $this->app->getUserState(_JOOM_OPTION.'.edit.category.id');
@@ -100,7 +100,7 @@ class CategoryController extends JoomBaseController
 	 *
 	 * @since   4.0.0
 	 */
-	public function add()
+	public function add() : bool
 	{
 		// Get the previous edit id (if any) and the current edit id.
 		$previousId = (int) $this->app->getUserState(_JOOM_OPTION.'.add.category.id');
