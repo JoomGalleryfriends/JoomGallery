@@ -16,23 +16,23 @@ use \Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Categories list controller class.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
 class CategoriesController extends FormController
 {
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional
-	 * @param   array   $config  Configuration array for model. Optional
-	 *
-	 * @return  object	The model
-	 *
-	 * @since   4.0.0
-	 */
+  /**
+   * Proxy for getModel.
+   *
+   * @param   string   $name    The model name. Optional.
+   * @param   string   $prefix  The class prefix. Optional
+   * @param   array    $config  Configuration array for model. Optional
+   *
+   * @return  object  The model
+   *
+   * @since   4.0.0
+   */
   public function getModel($name = 'Categories', $prefix = 'Site', $config = ['ignore_request' => true])
   {
     return parent::getModel($name, $prefix, $config);
