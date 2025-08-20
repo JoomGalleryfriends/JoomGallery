@@ -480,7 +480,7 @@ class UsercategoryController extends FormController
   }
 
   /**
-   * Checkin a checked-out category.
+   * Check in a checked out category.
    *
    * @return  bool
    *
@@ -554,6 +554,7 @@ class UsercategoryController extends FormController
    * @return  void
    *
    * @throws \Exception
+   *
    * @since   4.2.0
    */
   public function publish(): bool

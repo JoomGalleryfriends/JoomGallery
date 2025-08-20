@@ -33,6 +33,7 @@ class UserimageController extends FormController
    *
    * @access  protected
    * @var     object
+   * @since   4.2.0
    */
   protected $component;
 
@@ -41,6 +42,7 @@ class UserimageController extends FormController
    *
    * @access  protected
    * @var     object
+   * @since   4.2.0
    */
   protected $acl;
 
@@ -52,6 +54,7 @@ class UserimageController extends FormController
    * @param   object   $app      The Application for the dispatcher
    * @param   object   $input    Input
    *
+   * @throws \Exception
    * @since   4.2.0
    */
   public function __construct($config = [], $factory = null, $app = null, $input = null)
@@ -69,7 +72,18 @@ class UserimageController extends FormController
     $this->acl = $this->component->getAccess();
   }
 
-  public function saveAndClose($key = null, $urlVar = null)
+  /**
+   * Save the image and return to calling by calling cancel additionally
+   *
+   * @param $key
+   * @param $urlVar
+   *
+   * @return bool
+   *
+   * @throws \Exception
+   * @since   4.2.0
+   */
+  public function saveAndClose($key = null, $urlVar = null): bool
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -82,12 +96,16 @@ class UserimageController extends FormController
       return false;
     }
 
+    return true;
   }
 
   /**
    * Method to save data.
    *
-   * @return  void
+   * @param $key
+   * @param $urlVar
+   *
+   * @return  bool
    *
    * @throws  \Exception
    * @since   4.2.0
@@ -210,13 +228,17 @@ class UserimageController extends FormController
   }
 
   /**
-   * Method to abort current operation
+   * Method to abort current operation and return to calling page
    *
-   * @return void
+   * @param $key
+   *
+   * @return bool
    *
    * @throws \Exception
+   *
+   * @since   4.2.0
    */
-  public function cancel($key = null)
+  public function cancel($key = null): bool
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -227,7 +249,7 @@ class UserimageController extends FormController
     // Get the model.
     $model = $this->getModel('Userimage', 'Site');
 
-    // Attempt to check-in the current record.
+    // Attempt to check in the current record.
     if($recordId && $model->checkin($recordId) === false)
     {
       // Check-in failed, go back to the record and display a notice.
@@ -242,18 +264,21 @@ class UserimageController extends FormController
     $this->app->setUserState('com_joomgallery.edit.image.data', null);
 
     // Redirect to the list screen.
-    $tmp = $this->getReturnPage('userimages').'&'.$this->getItemAppend($recordId);
     $this->setRedirect(Route::_($this->getReturnPage('userimages').'&'.$this->getItemAppend($recordId), false));
+
+    return true;
   }
 
   /**
-   * Remove data
+   * Method to remove data
    *
-   * @return void
+   * @return  bool
    *
-   * @throws \Exception
+   * @throws  \Exception
+   *
+   * @since   4.2.0
    */
-  public function remove()
+  public function remove(): bool
   {
     // Check for request forgeries
     $this->checkToken();
@@ -310,14 +335,23 @@ class UserimageController extends FormController
     // Redirect to the list screen.
     $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_DELETE_SUCCESSFUL'), 'success');
     $this->app->redirect(Route::_($this->getReturnPage('userimages').'&'.$this->getItemAppend($removeId), false));
+
+    return true;
   }
 
   /**
    * Method to edit an existing record.
    *
+   * @param $key
+   * @param $urlVar
+   *
+   * @return  bool
+   *
    * @throws \Exception
+   *
+   * @since   4.2.0
    */
-  public function edit($key = null, $urlVar = null)
+  public function edit($key = null, $urlVar = null): bool
   {
     // Get the previous edit id (if any) and the current edit id.
     $previousId = (int) $this->app->getUserState(_JOOM_OPTION.'.edit.image.id');
@@ -375,16 +409,19 @@ class UserimageController extends FormController
 
     // Redirect to the form screen.
     $this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=userimage&layout=editImg&id='.$editId.$this->getItemAppend()), false);
+
+    return true;
   }
 
   /**
-   * Checkin a checke out image.
+   * Check in a checked out image.
    *
-   * @return  void
+   * @return  bool
    *
+   * @throws \Exception
    * @since   4.2.0
    */
-  public function checkin()
+  public function checkin(): bool
   {
     // Check for request forgeries
     $this->checkToken();
@@ -442,16 +479,20 @@ class UserimageController extends FormController
     // Redirect to the list screen.
     $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_CHECKIN_SUCCESSFUL'), 'success');
     $this->app->redirect(Route::_($this->getReturnPage('userimages').'&'.$this->getItemAppend($id), false));
+
+    return true;
   }
 
   /**
    * Method to publish an image
    *
-   * @return  void
+   * @return  bool
+   *
+   * @throws \Exception
    *
    * @since   4.2.0
    */
-  public function publish()
+  public function publish(): bool
   {
     // Check for request forgeries
     $this->checkToken();
@@ -512,6 +553,8 @@ class UserimageController extends FormController
     // Redirect to the list screen.
     $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_'.\strtoupper($task).'_SUCCESSFUL'), 'success');
     $this->app->redirect(Route::_($this->getReturnPage('userimages').'&'.$this->getItemAppend($id), false));
+
+    return true;
   }
 
   /**
@@ -519,9 +562,11 @@ class UserimageController extends FormController
    *
    * @return  void
    *
+   * @throws \Exception
+   *
    * @since   4.2.0
    */
-  public function unpublish()
+  public function unpublish():void
   {
     $this->publish();
   }
@@ -532,8 +577,10 @@ class UserimageController extends FormController
    * @param   object   $model  The model of the component being processed.
    *
    * @throws \Exception
+   *
+   * @since   4.2.0
    */
-  public function batch($model)
+  public function batch($model):void
   {
     throw new \Exception('Batch operations are not available in the frontend.', 503);
   }
@@ -545,8 +592,10 @@ class UserimageController extends FormController
    * @param   string   $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
    *
    * @throws \Exception
+   *
+   * @since   4.2.0
    */
-  public function reload($key = null, $urlVar = null)
+  public function reload($key = null, $urlVar = null):void
   {
     throw new \Exception('Reload operation not available.', 503);
   }
