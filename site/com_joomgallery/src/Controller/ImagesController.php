@@ -16,54 +16,27 @@ use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminControl
 
 /**
  * Images list controller class.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
 class ImagesController extends JoomAdminController
 {
-
   /**
-   * Constructor.
+   * Proxy for getModel.
    *
-   * @param   array    $config   An optional associative array of configuration settings.
-   * @param   object   $factory  The factory.
-   * @param   object   $app      The Application for the dispatcher
-   * @param   object   $input    Input
+   * @param   string   $name    The model name. Optional.
+   * @param   string   $prefix  The class prefix. Optional
+   * @param   array    $config  Configuration array for model. Optional
+   *
+   * @return  object  The model
    *
    * @since   4.0.0
    */
-  public function __construct($config = [], $factory = null, $app = null, $input = null)
+  public function getModel($name = 'Images', $prefix = 'Site', $config = array())
   {
-    parent::__construct($config, $factory, $app, $input);
-
-    //
-    $this->default_view = 'userimages';
-
-//    // JoomGallery extension class
-//    $this->component = $this->app->bootComponent(_JOOM_OPTION);
-//
-//    // Access service class
-//    $this->component->createAccess();
-//    $this->acl = $this->component->getAccess();
+    return parent::getModel($name, $prefix, array('ignore_request' => true));
   }
-
-
-  /**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional
-	 * @param   array   $config  Configuration array for model. Optional
-	 *
-	 * @return  object	The model
-	 *
-	 * @since   4.0.0
-	 */
-	public function getModel($name = 'Images', $prefix = 'Site', $config = array())
-	{
-		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}
 
   /**
    * Method to save the submitted ordering values for records via AJAX.
@@ -72,7 +45,7 @@ class ImagesController extends JoomAdminController
    *
    * @since   4.0.0
    */
-  public function saveOrderAjax()
+  public function saveOrderAjax(): void
   {
     // Check for request forgeries.
     $this->checkToken();
