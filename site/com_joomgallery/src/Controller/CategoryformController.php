@@ -24,7 +24,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormControll
  * @package JoomGallery
  * @since   4.0.0
  */
-class CategoryformController extends JoomFormController // FormController
+class CategoryformController extends JoomFormController
 {
   use RoutingTrait;
 
