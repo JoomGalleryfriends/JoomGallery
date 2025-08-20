@@ -21,7 +21,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
  * View class for a list of Joomgallery.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class HtmlView extends JoomGalleryView
 {
@@ -44,7 +44,7 @@ class HtmlView extends JoomGalleryView
    *
    * @var    array
    *
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $params = array();
 
@@ -53,7 +53,7 @@ class HtmlView extends JoomGalleryView
    *
    * @var  string
    *
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $return_page = '';
 

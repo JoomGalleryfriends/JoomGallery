@@ -21,7 +21,7 @@ use \Joomla\CMS\MVC\Controller\FormController;
  * User category controller class.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UsercategoryController extends FormController // ? JoomFormController
 {
@@ -51,7 +51,7 @@ class UsercategoryController extends FormController // ? JoomFormController
    * @param   object   $app      The Application for the dispatcher
    * @param   object   $input    Input
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function __construct($config = [], $factory = null, $app = null, $input = null)
   {
@@ -120,7 +120,7 @@ class UsercategoryController extends FormController // ? JoomFormController
    * @return  void
    *
    * @throws  \Exception
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function save($key = null, $urlVar = null)
   {
@@ -300,7 +300,7 @@ class UsercategoryController extends FormController // ? JoomFormController
    *
    * @throws  Exception
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function remove()
   {
@@ -448,7 +448,7 @@ class UsercategoryController extends FormController // ? JoomFormController
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function checkin()
   {
@@ -515,7 +515,7 @@ class UsercategoryController extends FormController // ? JoomFormController
    *
    * @return  void
    *
-   * @since   4.0
+   * @since   4.2.0
    */
   public function publish()
   {
@@ -585,7 +585,7 @@ class UsercategoryController extends FormController // ? JoomFormController
    *
    * @return  void
    *
-   * @since   4.0
+   * @since   4.2.0
    */
   public function unpublish()
   {

@@ -19,7 +19,7 @@ use \Joomla\Database\DatabaseInterface;
  * Model to get a list of image records.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UserimagesModel extends ImagesModel
 {
@@ -29,7 +29,7 @@ class UserimagesModel extends ImagesModel
 //   * @param   array  $config  An optional associative array of configuration settings.
 //   *
 //   * @return  void
-//   * @since   4.0.0
+//   * @since   4.2.0
 //   */
 //  function __construct($config = array())
 //	{
@@ -76,7 +76,7 @@ class UserimagesModel extends ImagesModel
    *
    * @throws  \Exception
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function populateState($ordering = 'a.ordering', $direction = 'ASC')
   {
@@ -96,7 +96,7 @@ class UserimagesModel extends ImagesModel
 ////	 *
 ////	 * @return  DatabaseQuery
 ////	 *
-////	 * @since   4.0.0
+////	 * @since   4.2.0
 ////	 */
 ////	protected function getListQuery()
 ////	{
@@ -128,7 +128,7 @@ class UserimagesModel extends ImagesModel
    *
    * @throws  \Exception
    *
-   * @since   4.0.1
+   * @since   4.2.0
    */
   public function getUserHasACategory(\Joomla\CMS\User\User $user)
   {

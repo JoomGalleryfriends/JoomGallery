@@ -23,7 +23,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
  * View class for a list of Joomgallery.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class HtmlView extends JoomGalleryView
 {
@@ -33,7 +33,7 @@ class HtmlView extends JoomGalleryView
 
   /**
    * @var    \Joomla\Registry\Registry
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $state;
 
@@ -42,18 +42,18 @@ class HtmlView extends JoomGalleryView
    *
    * @var    array
    *
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $params = array();
 
   /**
    * @var    bool
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $isUserLoggedIn = false;
   /**
    * @var    bool
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $isUserHasCategory = false;
 

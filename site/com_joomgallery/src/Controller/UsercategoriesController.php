@@ -18,7 +18,6 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
  * @package JoomGallery
  * @since   4.0.0
  */
-//class UsercategoriesController extends JoomBaseController
 class UsercategoriesController extends CategoriesController
 {
 
@@ -30,21 +29,15 @@ class UsercategoriesController extends CategoriesController
    * @param   object   $app      The Application for the dispatcher
    * @param   object   $input    Input
    *
-   * @since   4.0.0
+   * @since   4.2.0
+   *
+   * @throws  \Exception
    */
   public function __construct($config = [], $factory = null, $app = null, $input = null)
   {
     parent::__construct($config, $factory, $app, $input);
 
-    //
     $this->default_view = 'usercategories';
-
-//    // JoomGallery extension class
-//    $this->component = $this->app->bootComponent(_JOOM_OPTION);
-//
-//    // Access service class
-//    $this->component->createAccess();
-//    $this->acl = $this->component->getAccess();
   }
 
 
@@ -55,7 +48,7 @@ class UsercategoriesController extends CategoriesController
    * @param   string   $prefix  The class prefix. Optional.
    * @param   array    $config  Configuration array for model. Optional.
    *
-   * @return  \Joomla\CMS\MVC\Model\BaseDatabaseModel  The model.
+   * @return  object  The model.
    *
    * @since   1.6.4
    */

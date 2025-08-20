@@ -23,7 +23,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterf
  * Model to get a list of category records.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 //class UseruploadModel extends AdminCategoriesModel
 class UseruploadModel extends JoomAdminModel
@@ -61,7 +61,7 @@ class UseruploadModel extends JoomAdminModel
    * @param   MVCFactoryInterface   $factory  The factory.
    *
    * @throws  \Exception
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function __construct($config = [], $factory = null)
   {
@@ -84,7 +84,7 @@ class UseruploadModel extends JoomAdminModel
    *
    * @throws  \Exception
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function populateState($ordering = 'a.lft', $direction = 'ASC')
   {
@@ -102,7 +102,7 @@ class UseruploadModel extends JoomAdminModel
 //	 *
 //	 * @return  DatabaseQuery
 //	 *
-//	 * @since   4.0.0
+//	 * @since   4.2.0
 //	 */
 //	protected function getListQuery()
 //	{
@@ -131,7 +131,7 @@ class UseruploadModel extends JoomAdminModel
    *
    * @return  Form|boolean  A \JForm object on success, false on failure
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getForm($data = array(), $loadData = true)
   {
@@ -154,7 +154,7 @@ class UseruploadModel extends JoomAdminModel
    * @param   int   $id  ID of the content if needed (default: 0)
    *
    * @return  void
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function loadComponentParams(int $id = 0)
   {
@@ -184,7 +184,7 @@ class UseruploadModel extends JoomAdminModel
    * Method to get parameters from model state.
    *
    * @return  Registry[]   List of parameters
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getParams(): array
   {
@@ -204,7 +204,7 @@ class UseruploadModel extends JoomAdminModel
    * @param   string   $type      The parameter type. Optional. Default='configs'
    *
    * @return  void
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function setParam(string $property, string $value, $type = 'configs')
   {
@@ -222,7 +222,7 @@ class UseruploadModel extends JoomAdminModel
    * Method to get the access service class.
    *
    * @return  AccessInterface   Object on success, false on failure.
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getAcl(): AccessInterface
   {
@@ -246,7 +246,7 @@ class UseruploadModel extends JoomAdminModel
    *
    * @throws  \Exception
    *
-   * @since   4.0.1
+   * @since   4.2.0
    */
   public function getUserHasACategory(\Joomla\CMS\User\User $user)
   {

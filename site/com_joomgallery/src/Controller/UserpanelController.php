@@ -18,7 +18,7 @@ use \Joomla\CMS\MVC\Controller\FormController;
  * Category controller class.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UserpanelController extends FormController //JoomBaseController
 {
@@ -30,7 +30,7 @@ class UserpanelController extends FormController //JoomBaseController
    * @param   object   $app      The Application for the dispatcher
    * @param   object   $input    Input
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function __construct($config = [], $factory = null, $app = null, $input = null)
   {
@@ -56,7 +56,7 @@ class UserpanelController extends FormController //JoomBaseController
    *
    * @return  object  The model
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getModel($name = 'Form', $prefix = 'Site', $config = ['ignore_request' => true])
   {
@@ -69,7 +69,7 @@ class UserpanelController extends FormController //JoomBaseController
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function saveOrderAjax()
   {

@@ -19,7 +19,7 @@ use \Joomla\Database\DatabaseInterface;
  * Model to get a list of category records.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 //class UserpanelModel extends AdminCategoriesModel
 // class UserpanelModel extends ImagesModel  orientieren an category model hat
@@ -35,7 +35,7 @@ class UserpanelModel extends ImagesModel
 //   * @param   array  $config  An optional associative array of configuration settings.
 //   *
 //   * @return  void
-//   * @since   4.0.0
+//   * @since   4.2.0
 //   */
 //  function __construct($config = array())
 //	{
@@ -81,7 +81,7 @@ class UserpanelModel extends ImagesModel
    *
    * @throws  \Exception
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
 // see
 //	protected function populateState($ordering = 'a.lft', $direction = 'DESC')
@@ -132,7 +132,7 @@ class UserpanelModel extends ImagesModel
    *
    * @throws  \Exception
    *
-   * @since   4.0.1
+   * @since   4.2.0
    */
   public function getUserHasACategory(\Joomla\CMS\User\User $user)
   {

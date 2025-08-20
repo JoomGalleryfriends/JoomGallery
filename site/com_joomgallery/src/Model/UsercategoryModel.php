@@ -20,7 +20,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as Admi
  * Model to handle a user category form.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UsercategoryModel extends AdminCategoryModel
 {
@@ -41,7 +41,7 @@ class UsercategoryModel extends AdminCategoryModel
    * @return  void
    *
    * @throws  Exception
-   * @since   4.0.0
+   * @since   4.2.0
    *
    */
   protected function populateState()
@@ -84,7 +84,7 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @return  Object|boolean Object on success, false on failure.
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getItem($id = null)
   {
@@ -98,7 +98,7 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @return  Object|boolean Object on success, false on failure.
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function isUserRootCategory($id)
   {
@@ -135,7 +135,7 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @return  Form    A Form object on success, false on failure
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getForm($data = array(), $loadData = true)
   {
@@ -166,7 +166,7 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @return  array  The default data is an empty array.
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function loadFormData()
   {
@@ -178,7 +178,7 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @return  string  The return URL.
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getReturnPage()
   {

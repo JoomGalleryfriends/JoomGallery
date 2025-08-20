@@ -21,7 +21,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 /**
  * HTML Contact View class for the Contact component
  *
- * @since  4.0.0
+ * @since   4.2.0
  */
 class HtmlView extends JoomGalleryView
 {
@@ -31,18 +31,18 @@ class HtmlView extends JoomGalleryView
 
   /**
    * @var    \Joomla\Registry\Registry
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $params;
 
   /**
    * @var    bool
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $isUserLoggedIn = false;
   /**
    * @var    bool
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $isUserHasCategory = false;
 
@@ -58,7 +58,7 @@ class HtmlView extends JoomGalleryView
    * @return  void|boolean
    *
    * @throws \Exception
-   * @since  4.0.0
+   * @since   4.2.0
    */
   public function display($tpl = null)
   {

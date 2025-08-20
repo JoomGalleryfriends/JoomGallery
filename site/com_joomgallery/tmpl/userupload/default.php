@@ -237,7 +237,7 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_v
  * @param   int  $configSize  upload limit by joomgallery configuraion
  * @param   int  $maxSize  Min of above
  *
- * @since 4.0.0
+ * @since   4.2.0
  */
 function DisplaySystemSettings($UploadLimit, $PostMaxSize, $MemoryLimit, $mediaSize, $configSize, $maxSize)
 {

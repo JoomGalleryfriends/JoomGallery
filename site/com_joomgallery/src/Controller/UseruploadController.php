@@ -18,7 +18,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormControll
  * Upload controller class.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UseruploadController extends JoomFormController
 {
@@ -31,7 +31,7 @@ class UseruploadController extends JoomFormController
    * @param   object   $app      The Application for the dispatcher
    * @param   object   $input    Input
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function __construct($config = [], $factory = null, $app = null, $input = null)
   {
@@ -57,7 +57,7 @@ class UseruploadController extends JoomFormController
    *
    * @return  object  The model
    *
-   * @since   1.6.4
+   * @since   4.2.0
    */
   public function getModel($name = 'UserUpload', $prefix = 'Site', $config = ['ignore_request' => true])
   {

@@ -18,7 +18,7 @@ use \Joomla\CMS\MVC\Controller\FormController;
  * User images list controller class.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UserimagesController extends FormController
 {
@@ -31,7 +31,7 @@ class UserimagesController extends FormController
    * @param   object   $app      The Application for the dispatcher
    * @param   object   $input    Input
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function __construct($config = [], $factory = null, $app = null, $input = null)
   {
@@ -58,7 +58,7 @@ class UserimagesController extends FormController
    *
    * @return  object  The model
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getModel($name = 'Form', $prefix = 'Site', $config = ['ignore_request' => true])
   {
@@ -70,7 +70,7 @@ class UserimagesController extends FormController
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function saveOrderAjax()
   {

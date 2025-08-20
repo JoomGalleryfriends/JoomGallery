@@ -22,7 +22,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
  * Image class.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UserimageController extends FormController
 {
@@ -52,7 +52,7 @@ class UserimageController extends FormController
    * @param   object   $app      The Application for the dispatcher
    * @param   object   $input    Input
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function __construct($config = [], $factory = null, $app = null, $input = null)
   {
@@ -90,7 +90,7 @@ class UserimageController extends FormController
    * @return  void
    *
    * @throws  \Exception
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function save($key = null, $urlVar = null): bool
   {
@@ -382,7 +382,7 @@ class UserimageController extends FormController
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function checkin()
   {
@@ -449,7 +449,7 @@ class UserimageController extends FormController
    *
    * @return  void
    *
-   * @since   4.0
+   * @since   4.2.0
    */
   public function publish()
   {
@@ -519,7 +519,7 @@ class UserimageController extends FormController
    *
    * @return  void
    *
-   * @since   4.0
+   * @since   4.2.0
    */
   public function unpublish()
   {

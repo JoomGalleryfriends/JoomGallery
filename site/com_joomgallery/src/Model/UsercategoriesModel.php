@@ -20,7 +20,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as Ad
  * Model to get a list of category records.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UsercategoriesModel extends AdminCategoriesModel
 {
@@ -30,7 +30,7 @@ class UsercategoriesModel extends AdminCategoriesModel
    * @param   array   $config  An optional associative array of configuration settings.
    *
    * @return  void
-   * @since   4.0.0
+   * @since   4.2.0
    */
   function __construct($config = array())
   {
@@ -76,7 +76,7 @@ class UsercategoriesModel extends AdminCategoriesModel
    *
    * @throws  \Exception
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function populateState($ordering = 'a.lft', $direction = 'asc')
   {
@@ -96,7 +96,7 @@ class UsercategoriesModel extends AdminCategoriesModel
    *
    * @return  DatabaseQuery
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function getListQuery()
   {
@@ -128,7 +128,7 @@ class UsercategoriesModel extends AdminCategoriesModel
    *
    * @throws  \Exception
    *
-   * @since   4.0.1
+   * @since   4.2.0
    */
   public function getUserHasACategory(\Joomla\CMS\User\User $user)
   {

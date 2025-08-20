@@ -20,60 +20,60 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 /**
  * HTML Contact View class for the Contact component
  *
- * @since  4.0.0
+ * @since   4.2.0
  */
 class HtmlView extends JoomGalleryView // BaseHtmlView
 {
   /**
    * @var    \Joomla\CMS\Form\Form
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $form;
 
   /**
    * @var    object
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $item;
 
   /**
    * @var    string
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $return_page;
 
   /**
    * @var    string
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $pageclass_sfx;
 
   /**
    * @var    \Joomla\Registry\Registry
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $state;
 
   /**
    * @var    \Joomla\Registry\Registry
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $params;
 
 //    /**
 //     * @var    \Joomla\Registry\Registry
-//     * @since  4.0.0
+//     * @since   4.2.0
 //     */
 //    protected $config;
 
   /**
    * @var    bool
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $isUserLoggedIn = false;
   /**
    * @var    bool
-   * @since  4.0.0
+   * @since   4.2.0
    */
   protected $isUserHasCategory = false;
 
@@ -95,7 +95,7 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
    * @return  void|boolean
    *
    * @throws \Exception
-   * @since  4.0.0
+   * @since   4.2.0
    */
   public function display($tpl = null)
   {
@@ -207,7 +207,7 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
 //     *
 //     * @throws \Exception
 //     *
-//     * @since  4.0.0
+//     * @since   4.2.0
 //     */
 //    protected function _prepareDocument()
 //    {
@@ -303,7 +303,7 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
    * @param   mixed   $joomGalleryConfig  config of joom gallery
    *
    *
-   * @since version 4.1
+   * @since   4.2.0
    */
   public function limitsPhpConfig(mixed $joomGalleryConfig): void
   {

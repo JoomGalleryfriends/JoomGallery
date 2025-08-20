@@ -18,7 +18,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminIm
  * Model to handle an image form.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UserimageModel extends AdminImageModel
 {
@@ -38,7 +38,7 @@ class UserimageModel extends AdminImageModel
    * @return  void
    *
    * @throws  \Exception
-   * @since   4.0.0
+   * @since   4.2.0
    *
    */
   protected function populateState()
@@ -91,7 +91,7 @@ class UserimageModel extends AdminImageModel
    *
    * @return  Form    A Form object on success, false on failure
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getForm($data = array(), $loadData = true)
   {
@@ -111,7 +111,7 @@ class UserimageModel extends AdminImageModel
    *
    * @return  array  The default data is an empty array.
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   protected function loadFormData()
   {
@@ -123,7 +123,7 @@ class UserimageModel extends AdminImageModel
    *
    * @return  string  The return URL.
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function getReturnPage()
   {
