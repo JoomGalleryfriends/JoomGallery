@@ -9,8 +9,8 @@
 
 defined('_JEXEC') or die;
 
-use \Joomla\Registry\Registry;
 use \Joomla\CMS\Language\Text;
+use \Joomla\Registry\Registry;
 
 $exifData = new Registry($displayData);
 $i = 0;
