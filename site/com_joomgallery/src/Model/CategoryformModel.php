@@ -98,6 +98,11 @@ class CategoryformModel extends AdminCategoryModel
 		// Get the form.
 		$form = $this->loadForm($this->typeAlias, 'categoryform', array('control'   => 'jform',	'load_data' => $loadData));
 
+    if(empty($form))
+    {
+      return false;
+    }
+
     // Apply filter to exclude child categories
     $children = $form->getFieldAttribute('parent_id', 'children', 'true');
     $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
@@ -108,11 +113,6 @@ class CategoryformModel extends AdminCategoryModel
 
 		// Apply filter for current category on thumbnail field
     $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
-
-		if(empty($form))
-		{
-			return false;
-		}
 
 		return $form;
 	}

@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // No direct access
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Form\Form;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
 
 /**
@@ -27,6 +28,7 @@ class UserimageModel extends AdminImageModel
    *
    * @access  protected
    * @var     string
+   * @since   4.2.0
    */
   protected $type = 'image';
 
@@ -72,11 +74,13 @@ class UserimageModel extends AdminImageModel
    *
    * @param   integer   $id  The id of the object to get.
    *
-   * @return  Object|boolean Object on success, false on failure.
+   * @return  object|boolean Object on success, false on failure.
+   *
+   * @since   4.2.0
    *
    * @throws  \Exception
    */
-  public function getItem($id = null)
+  public function getItem($id = null): object|boolean
   {
     return parent::getItem($id);
   }
@@ -91,12 +95,15 @@ class UserimageModel extends AdminImageModel
    *
    * @return  Form    A Form object on success, false on failure
    *
+   * @throws \Exception
    * @since   4.2.0
    */
-  public function getForm($data = array(), $loadData = true)
+  public function getForm($data = array(), $loadData = true): Form|bool
   {
     // Get the form.
-    $form = $this->loadForm($this->typeAlias, 'userimage', array('control' => 'jform', 'load_data' => $loadData));
+    $form = $this->loadForm($this->typeAlias, 'userimage',
+      array('control' => 'jform', 'load_data' => $loadData));
+
 
     if(empty($form))
     {
@@ -113,7 +120,7 @@ class UserimageModel extends AdminImageModel
    *
    * @since   4.2.0
    */
-  protected function loadFormData()
+  protected function loadFormData(): array
   {
     return parent::loadFormData();
   }
@@ -125,7 +132,7 @@ class UserimageModel extends AdminImageModel
    *
    * @since   4.2.0
    */
-  public function getReturnPage()
+  public function getReturnPage(): string
   {
     return \base64_encode($this->getState('return_page', ''));
   }

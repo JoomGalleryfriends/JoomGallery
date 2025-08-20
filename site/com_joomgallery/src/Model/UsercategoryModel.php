@@ -1,20 +1,21 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
 
 /**
  * Model to handle a user category form.
@@ -29,6 +30,8 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @access  protected
    * @var     string
+   *
+   * @since   4.2.0
    */
 //  protected $type = 'usercategory';
   protected $type = 'category';
@@ -40,11 +43,11 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @return  void
    *
-   * @throws  Exception
+   * @throws  \Exception
    * @since   4.2.0
    *
    */
-  protected function populateState()
+  protected function populateState(): void
   {
     // Load state from the request userState on edit or from the passed variable on default
     $id = $this->app->input->getInt('id', null);
@@ -80,13 +83,13 @@ class UsercategoryModel extends AdminCategoryModel
   /**
    * Method to get a single record.
    *
-   * @param   integer   $pk  The id of the primary key.
+   * @param   integer   $id  The id of the primary key.
    *
    * @return  Object|boolean Object on success, false on failure.
    *
    * @since   4.2.0
    */
-  public function getItem($id = null)
+  public function getItem($id = null): object|bool
   {
     return parent::getItem($id);
   }
@@ -94,32 +97,40 @@ class UsercategoryModel extends AdminCategoryModel
   /**
    * Method to get a single record.
    *
-   * @param   integer   $pk  The id of the primary key.
+   * @param   integer   $id  The id of the primary key.
    *
-   * @return  Object|boolean Object on success, false on failure.
+   * @return  boolean when root category is matching id
    *
+   * @throws \Exception
    * @since   4.2.0
    */
-  public function isUserRootCategory($id)
+  public function isUserRootCategory(int $id): bool
   {
     $isUserRootCategory = false;
 
-    // try {
-
-    $db = Factory::getContainer()->get(DatabaseInterface::class);
-
-    // Check number of records in tables
-    $query = $db->getQuery(true)
-      ->select('id, parent_id')
-      ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-      ->where($db->quoteName('id').' = '.(int) $id);
-
-    $db->setQuery($query);
-    $item = $db->loadObject();
-
-    if((!empty($item->id)) && $item->parent_id == 1)
+    try
     {
-      $isUserRootCategory = true;
+      $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+      // Check number of records in tables
+      $query = $db->getQuery(true)
+        ->select('id, parent_id')
+        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
+        ->where($db->quoteName('id').' = '.(int) $id);
+
+      $db->setQuery($query);
+      $item = $db->loadObject();
+
+      if((!empty($item->id)) && $item->parent_id == 1)
+      {
+        $isUserRootCategory = true;
+      }
+    }
+    catch(\RuntimeException $e)
+    {
+      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: '.$e->getMessage(), 'error');
+
+      return false;
     }
 
     return $isUserRootCategory;
@@ -135,12 +146,18 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @return  Form    A Form object on success, false on failure
    *
+   * @throws \Exception
    * @since   4.2.0
    */
-  public function getForm($data = array(), $loadData = true)
+  public function getForm($data = array(), $loadData = true): Form|bool
   {
     // Get the form.
     $form = $this->loadForm($this->typeAlias, 'usercategory', array('control' => 'jform', 'load_data' => $loadData));
+
+    if(empty($form))
+    {
+      return false;
+    }
 
     // Apply filter to exclude child categories
     $children = $form->getFieldAttribute('parent_id', 'children', 'true');
@@ -153,11 +170,6 @@ class UsercategoryModel extends AdminCategoryModel
     // Apply filter for current category on thumbnail field
     $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
 
-    if(empty($form))
-    {
-      return false;
-    }
-
     return $form;
   }
 
@@ -168,7 +180,7 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @since   4.2.0
    */
-  protected function loadFormData()
+  protected function loadFormData(): array
   {
     return parent::loadFormData();
   }
@@ -180,7 +192,7 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @since   4.2.0
    */
-  public function getReturnPage()
+  public function getReturnPage(): string
   {
     return \base64_encode($this->getState('return_page', ''));
   }

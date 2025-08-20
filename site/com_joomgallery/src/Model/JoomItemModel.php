@@ -15,6 +15,8 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Factory;
 use \Joomla\Registry\Registry;
 use \Joomla\CMS\MVC\Model\ItemModel;
+use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
 
 /**
@@ -29,7 +31,7 @@ abstract class JoomItemModel extends ItemModel
    * Joomla application class
    *
    * @access  protected
-   * @var     Joomla\CMS\Application\AdministratorApplication
+   * @var     CMSApplicationInterface
    */
   protected $app;
 
@@ -37,7 +39,7 @@ abstract class JoomItemModel extends ItemModel
    * JoomGallery extension class
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
+   * @var     JoomgalleryComponent
    */
   protected $component;
 
@@ -78,7 +80,7 @@ abstract class JoomItemModel extends ItemModel
   {
     parent::__construct($config, $factory);
 
-    $this->app       = Factory::getApplication('site');
+    $this->app       = Factory::getApplication();
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
   }
 

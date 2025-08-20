@@ -1,20 +1,21 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
+use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseQuery;
+use Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
 
 /**
  * Model to get a list of category records.
@@ -65,7 +66,7 @@ class UsercategoriesModel extends AdminCategoriesModel
   }
 
   /**
-   * Method to auto-populate the model state.
+   * Method to autopopulate the model state.
    *
    * Note. Calling getState in this method will result in recursion.
    *
@@ -78,7 +79,7 @@ class UsercategoriesModel extends AdminCategoriesModel
    *
    * @since   4.2.0
    */
-  protected function populateState($ordering = 'a.lft', $direction = 'asc')
+  protected function populateState($ordering = 'a.lft', $direction = 'asc'): void
   {
     // List state information.
     parent::populateState($ordering, $direction);
@@ -94,21 +95,24 @@ class UsercategoriesModel extends AdminCategoriesModel
   /**
    * Build an SQL query to load the list data.
    *
-   * @return  DatabaseQuery
+   * @return  DatabaseQuery  ToDo: should be similar to QueryInterface if you follow the parents
    *
    * @since   4.2.0
    */
-  protected function getListQuery()
+  protected function getListQuery(): DatabaseQuery
   {
     $query = parent::getListQuery();
 
     return $query;
   }
 
+
   /**
    * Method to get an array of data items
    *
    * @return  mixed An array of data on success, false on failure.
+   *
+   * @since   4.2.0
    */
   public function getItems()
   {
@@ -124,32 +128,40 @@ class UsercategoriesModel extends AdminCategoriesModel
    *
    * @param   \Joomla\CMS\User\User   $user  ToDO: Id would suffice
    *
-   * @return  bool true wnhen user owns a
+   * @return  bool true when user owns at least one category
    *
    * @throws  \Exception
    *
    * @since   4.2.0
    */
-  public function getUserHasACategory(\Joomla\CMS\User\User $user)
+  public function getUserHasACategory(\Joomla\CMS\User\User $user): bool
   {
     $isUserHasACategory = true;
 
-    // try {
-
-    $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
-
-    // Check number of records in tables
-    $query = $db->getQuery(true)
-      ->select('COUNT(*)')
-      ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-      ->where($db->quoteName('created_by').' = '.(int) $user->id);
-
-    $db->setQuery($query);
-    $count = $db->loadResult();
-
-    if(empty ($count))
+    try
     {
-      $isUserHasACategory = false;
+      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+
+      // Check number of records in tables
+      $query = $db->getQuery(true)
+        ->select('COUNT(*)')
+        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
+        ->where($db->quoteName('created_by').' = '.(int) $user->id);
+
+      $db->setQuery($query);
+      $count = $db->loadResult();
+
+      if(empty ($count))
+      {
+        $isUserHasACategory = false;
+      }
+
+    }
+    catch(\RuntimeException $e)
+    {
+      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: ' . $e->getMessage(), 'error');
+
+      return false;
     }
 
     return $isUserHasACategory;

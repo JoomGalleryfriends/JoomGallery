@@ -1,23 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\Registry\Registry;
-use \Joomla\Database\DatabaseInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\Registry\Registry;
+use Joomla\Database\DatabaseInterface;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
 
 /**
  * Model to get a list of category records.
@@ -25,14 +28,14 @@ use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterf
  * @package JoomGallery
  * @since   4.2.0
  */
-//class UseruploadModel extends AdminCategoriesModel
 class UseruploadModel extends JoomAdminModel
 {
   /**
    * Joomla application class
    *
    * @access  protected
-   * @var     Joomla\CMS\Application\AdministratorApplication
+   * @var     CMSApplicationInterface
+   * @since   4.2.0
    */
   protected $app;
 
@@ -40,7 +43,8 @@ class UseruploadModel extends JoomAdminModel
    * JoomGallery extension class
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
+   * @var     JoomgalleryComponent
+   * @since   4.2.0
    */
   protected $component;
 
@@ -50,9 +54,9 @@ class UseruploadModel extends JoomAdminModel
    *
    * @access  protected
    * @var     string
+   * @since   4.2.0
    */
   public $typeAlias = 'com_joomgallery.userupload';
-//	protected $typeAlias = '';
 
   /**
    * Constructor
@@ -67,18 +71,15 @@ class UseruploadModel extends JoomAdminModel
   {
     parent::__construct($config, $factory);
 
-    $this->app       = Factory::getApplication('site');
+    $this->app       = Factory::getApplication();
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
   }
 
 
   /**
-   * Method to auto-populate the model state.
+   * Method to autopopulate the model state.
    *
    * Note. Calling getState in this method will result in recursion.
-   *
-   * @param   string   $ordering   Elements order
-   * @param   string   $direction  Order direction
    *
    * @return  void
    *
@@ -86,42 +87,13 @@ class UseruploadModel extends JoomAdminModel
    *
    * @since   4.2.0
    */
-  protected function populateState($ordering = 'a.lft', $direction = 'ASC')
+  protected function populateState():void
   {
     // List state information.
-    parent::populateState($ordering, $direction);
-
-    // Set filters based on how the view is used.
-    // e.g. user list of categories: $this->setState('filter.created_by', Factory::getApplication()->getIdentity());
+    parent::populateState();
 
     $this->loadComponentParams();
   }
-
-//	/**
-//	 * Build an SQL query to load the list data.
-//	 *
-//	 * @return  DatabaseQuery
-//	 *
-//	 * @since   4.2.0
-//	 */
-//	protected function getListQuery()
-//	{
-//    $query = parent::getListQuery();
-//
-//    return $query;
-//	}
-//
-//	/**
-//	 * Method to get an array of data items
-//	 *
-//	 * @return  mixed An array of data on success, false on failure.
-//	 */
-//	public function getItems()
-//	{
-//		$items = parent::getItems();
-//
-//		return $items;
-//	}
 
   /**
    * Method to get the record form.
@@ -131,12 +103,12 @@ class UseruploadModel extends JoomAdminModel
    *
    * @return  Form|boolean  A \JForm object on success, false on failure
    *
+   * @throws \Exception
    * @since   4.2.0
    */
-  public function getForm($data = array(), $loadData = true)
+  public function getForm($data = array(), $loadData = true): Form|bool
   {
     // Get the form.
-    //$form = $this->loadForm($this->typeAlias, 'userupload',
     $form = $this->loadForm($this->typeAlias, 'userupload',
       array('control' => 'jform', 'load_data' => $loadData));
 
@@ -154,12 +126,13 @@ class UseruploadModel extends JoomAdminModel
    * @param   int   $id  ID of the content if needed (default: 0)
    *
    * @return  void
+   * @throws \Exception
    * @since   4.2.0
    */
-  protected function loadComponentParams(int $id = 0)
+  protected function loadComponentParams(int $id = 0): void
   {
     // Load the parameters.
-    $params       = Factory::getApplication('com_joomgallery')->getParams();
+    $params       = Factory::getApplication()->getParams();
     $params_array = $params->toArray();
 
     if(isset($params_array['item_id']))
@@ -206,7 +179,7 @@ class UseruploadModel extends JoomAdminModel
    * @return  void
    * @since   4.2.0
    */
-  public function setParam(string $property, string $value, $type = 'configs')
+  public function setParam(string $property, string $value, string $type = 'configs'): void
   {
     // Get params
     $params = $this->getState('parameters.'.$type);
@@ -242,36 +215,43 @@ class UseruploadModel extends JoomAdminModel
    *
    * @param   \Joomla\CMS\User\User   $user  ToDO: Id would suffice
    *
-   * @return  bool true wnhen user owns a
+   * @return  bool true when user owns at least one category
    *
    * @throws  \Exception
    *
    * @since   4.2.0
    */
-  public function getUserHasACategory(\Joomla\CMS\User\User $user)
+  public function getUserHasACategory(\Joomla\CMS\User\User $user): bool
   {
     $isUserHasACategory = true;
 
-    // try {
-
-    $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
-
-    // Check number of records in tables
-    $query = $db->getQuery(true)
-      ->select('COUNT(*)')
-      ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-      ->where($db->quoteName('created_by').' = '.(int) $user->id);
-
-    $db->setQuery($query);
-    $count = $db->loadResult();
-
-    if(empty ($count))
+    try
     {
-      $isUserHasACategory = false;
+      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+
+      // Check number of records in tables
+      $query = $db->getQuery(true)
+        ->select('COUNT(*)')
+        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
+        ->where($db->quoteName('created_by').' = '.(int) $user->id);
+
+      $db->setQuery($query);
+      $count = $db->loadResult();
+
+      if(empty ($count))
+      {
+        $isUserHasACategory = false;
+      }
+
+    }
+    catch(\RuntimeException $e)
+    {
+      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: '.$e->getMessage(), 'error');
+
+      return false;
     }
 
     return $isUserHasACategory;
   }
-
 
 }
