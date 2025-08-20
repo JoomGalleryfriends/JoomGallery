@@ -68,12 +68,7 @@ class CategoriesController extends FormController
     $model = $this->getModel('Categoryform', 'Site');
 
     // Save the ordering
-    $return = $model->saveorder($pks, $order);
-
-    if($return)
-    {
-      echo '1';
-    }
+    $model->saveorder($pks, $order);
 
     // Close the application
     $this->app->close();

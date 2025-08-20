@@ -18,6 +18,7 @@ use \Joomla\CMS\MVC\Controller\FormController;
  * User images list controller class.
  *
  * @package JoomGallery
+ *
  * @since   4.2.0
  */
 class UserimagesController extends FormController
@@ -31,6 +32,7 @@ class UserimagesController extends FormController
    * @param   object   $app      The Application for the dispatcher
    * @param   object   $input    Input
    *
+   * @throws \Exception
    * @since   4.2.0
    */
   public function __construct($config = [], $factory = null, $app = null, $input = null)
@@ -39,13 +41,6 @@ class UserimagesController extends FormController
 
     // parent view
     $this->default_view = 'userimages';
-
-//    // JoomGallery extension class
-//    $this->component = $this->app->bootComponent(_JOOM_OPTION);
-//
-//    // Access service class
-//    $this->component->createAccess();
-//    $this->acl = $this->component->getAccess();
   }
 
 
@@ -70,9 +65,10 @@ class UserimagesController extends FormController
    *
    * @return  void
    *
+   * @throws \Exception
    * @since   4.2.0
    */
-  public function saveOrderAjax()
+  public function saveOrderAjax(): void
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -95,12 +91,7 @@ class UserimagesController extends FormController
     $model = $this->getModel('userimage', 'Site');
 
     // Save the ordering
-    $return = $model->saveorder($pks, $order);
-
-    if($return)
-    {
-      echo '1';
-    }
+    $model->saveorder($pks, $order);
 
     // Close the application
     $this->app->close();

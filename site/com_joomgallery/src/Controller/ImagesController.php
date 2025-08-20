@@ -68,12 +68,7 @@ class ImagesController extends JoomAdminController
     $model = $this->getModel('Imageform', 'Site');
 
     // Save the ordering
-    $return = $model->saveorder($pks, $order);
-
-    if($return)
-    {
-      echo '1';
-    }
+    $model->saveorder($pks, $order);
 
     // Close the application
     $this->app->close();

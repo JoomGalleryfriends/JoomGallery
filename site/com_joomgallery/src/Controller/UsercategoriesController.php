@@ -16,7 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
  * Category controller class.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class UsercategoriesController extends CategoriesController
 {
@@ -50,8 +50,8 @@ class UsercategoriesController extends CategoriesController
    *
    * @return  object  The model.
    *
-   * @since   1.6.4
-   */
+   * @since   4.2.0
+ */
   public function getModel($name = 'Form', $prefix = 'Site', $config = ['ignore_request' => true])
   {
     return parent::getModel($name, $prefix, $config);
@@ -62,7 +62,8 @@ class UsercategoriesController extends CategoriesController
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @throws \Exception
+   * @since   4.2.0
    */
   public function saveOrderAjax()
   {
@@ -87,12 +88,7 @@ class UsercategoriesController extends CategoriesController
     $model = $this->getModel('usercategory', 'Site');
 
     // Save the ordering
-    $return = $model->saveorder($pks, $order);
-
-    if($return)
-    {
-      echo '1';
-    }
+    $model->saveorder($pks, $order);
 
     // Close the application
     $this->app->close();

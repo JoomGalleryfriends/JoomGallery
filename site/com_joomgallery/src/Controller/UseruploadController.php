@@ -37,15 +37,7 @@ class UseruploadController extends JoomFormController
   {
     parent::__construct($config, $factory, $app, $input);
 
-    //
     $this->default_view = 'userupload';
-
-//    // JoomGallery extension class
-//    $this->component = $this->app->bootComponent(_JOOM_OPTION);
-//
-//    // Access service class
-//    $this->component->createAccess();
-//    $this->acl = $this->component->getAccess();
   }
 
   /**
@@ -64,5 +56,4 @@ class UseruploadController extends JoomFormController
     return parent::getModel($name, $prefix, $config);
   }
 
-
-} // class
+}
