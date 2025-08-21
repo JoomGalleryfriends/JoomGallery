@@ -114,7 +114,7 @@ class HtmlView extends JoomGalleryView
       || $this->app->input->getBool('isDevelop');
 
     // Check for errors.
-    if(\count($errors = $this->get('Errors')))
+    if(\count($errors = $modImages->getErrors()))
     {
       throw new GenericDataException(\implode("\n", $errors), 500);
     }

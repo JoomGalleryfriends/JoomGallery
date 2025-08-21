@@ -153,50 +153,6 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
     $this->limitsPhpConfig($config);
 
 
-//
-//        if (empty($this->item->id)) {
-//            $authorised = $user->authorise('core.create', 'com_contact') || count($user->getAuthorisedCategories('com_contact', 'core.create'));
-//        } else {
-//            // Since we don't track these assets at the item level, use the category id.
-//            $canDo      = ContactHelper::getActions('com_contact', 'category', $this->item->catid);
-//            $authorised = $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by === $user->id);
-//        }
-//
-//        if ($authorised !== true) {
-//            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-//            $app->setHeader('status', 403, true);
-//
-//            return false;
-//        }
-//
-//        $this->item->tags = new TagsHelper();
-//
-//        if (!empty($this->item->id)) {
-//            $this->item->tags->getItemTags('com_contact.contact', $this->item->id);
-//        }
-//
-//        // Check for errors.
-//        if (count($errors = $this->get('Errors'))) {
-//            $app->enqueueMessage(implode("\n", $errors), 'error');
-//
-//            return false;
-//        }
-//
-
-//        // Escape strings for HTML output
-//        $this->pageclass_sfx = htmlspecialchars($this->params->get('pageclass_sfx', ''));
-//
-//        // Override global params with contact specific params
-//        $this->params->merge($this->item->params);
-//
-//        // Propose current language as default when creating new contact
-//        if (empty($this->item->id) && Multilanguage::isEnabled()) {
-//            $lang = $this->getLanguage()->getTag();
-//            $this->form->setFieldAttribute('language', 'default', $lang);
-//        }
-//
-//        $this->_prepareDocument();
-
     parent::display($tpl);
   }
 

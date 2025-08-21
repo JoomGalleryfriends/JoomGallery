@@ -156,7 +156,7 @@ class UseruploadModel extends JoomAdminModel
   /**
    * Method to get parameters from model state.
    *
-   * @return  Registry[]   List of parameters
+   * @return  array   List of parameters
    * @since   4.2.0
    */
   public function getParams(): array

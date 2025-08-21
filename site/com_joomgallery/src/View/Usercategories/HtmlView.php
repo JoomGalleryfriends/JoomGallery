@@ -17,7 +17,7 @@ use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-
+use Joomla\CMS\Pagination\Pagination;
 /**
  * HTML Contact View class for the Contact component
  *
@@ -25,30 +25,47 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
  */
 class HtmlView extends JoomGalleryView
 {
-  protected $items;
-
-  protected $pagination;
+  protected array $items;
 
   /**
-   * @var    \Joomla\Registry\Registry
+   * @var Pagination
    * @since   4.2.0
    */
-  protected $params;
+  protected Pagination $pagination;
+
+  /**
+   * @var    array
+   * @since   4.2.0
+   */
+  protected array $params;
 
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected $isUserLoggedIn = false;
+  protected bool $isUserLoggedIn = false;
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected $isUserHasCategory = false;
+  protected bool $isUserHasCategory = false;
 
-  protected $isUserCoreManager = false;
-  protected $userId = 0;
-  protected $isDevelopSite = false;
+  /**
+   * @var bool
+   * @since version
+   */
+  protected bool $isUserCoreManager = false;
+  /**
+   * @var bool
+   * @since version
+   */
+  protected bool $isDevelopSite = false;
+
+  /**
+   * @var int
+   * @since version
+   */
+  protected int $userId = 0;
 
   /**
    * Execute and display a template script.
@@ -79,7 +96,7 @@ class HtmlView extends JoomGalleryView
       || $this->app->input->getBool('isDevelop');
 
     // Check for errors.
-    if(\count($errors = $this->get('Errors')))
+    if(\count($errors = $model->getErrors()))
     {
       throw new GenericDataException(\implode("\n", $errors), 500);
     }
@@ -137,6 +154,7 @@ class HtmlView extends JoomGalleryView
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
   protected function _prepareDocument()
   {

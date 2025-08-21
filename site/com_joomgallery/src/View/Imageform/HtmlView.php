@@ -88,7 +88,7 @@ class HtmlView extends JoomGalleryView
     $this->return_page = $model->getReturnPage();
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}

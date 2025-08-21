@@ -264,6 +264,7 @@ function DisplaySystemSettings($UploadLimit, $PostMaxSize, $MemoryLimit, $mediaS
                 <td class="d-md-table-cell">
                   <?php echo Text::sprintf('COM_JOOMGALLERY_UPLOAD_UPLOAD_LIMIT_IS'); ?>
                 </td>
+
                 <td class="d-md-table-cell px-0 text-end">
                   <strong><?php echo $UploadLimit; ?></strong>
                 </td>

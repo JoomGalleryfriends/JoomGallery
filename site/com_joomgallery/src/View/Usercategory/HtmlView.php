@@ -70,15 +70,15 @@ class HtmlView extends JoomGalleryView
    */
   public function display($tpl = null)
   {
-//		if(!$this->app->input->get('preview', 0))
-//		{
-//			return;
-//		}
-//
-    // Load state and params
-    $this->state  = $this->get('State');
-    $this->params = $this->get('Params');
-    $this->item   = $this->get('Item');
+    // Get model data
+    $model = $this->getModel();
+
+    $this->state  = $model->getState();
+    $this->params = $model->getParams();
+
+    $this->item    = $model->getItem();
+    $this->form   = $this->getForm();
+
 
     // ToDo: fix for empty Id: item->id=null
     if(empty($this->item->id))
@@ -108,7 +108,7 @@ class HtmlView extends JoomGalleryView
     }
 
     // Check for errors.
-    if(\count($errors = $this->get('Errors')))
+    if(\count($errors = $model->getErrors()))
     {
       throw new GenericDataException(\implode("\n", $errors), 500);
     }

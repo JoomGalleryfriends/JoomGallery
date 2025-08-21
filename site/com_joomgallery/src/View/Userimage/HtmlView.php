@@ -69,22 +69,20 @@ class HtmlView extends JoomGalleryView
    */
   public function display($tpl = null)
   {
+    // Get model data
+    $model = $this->getModel();
 
-//		if(!$this->app->input->get('preview', 0))
-//		{
-//			return;
-//		}
+    $this->state  = $model->getState();
+    $this->params = $model->getParams();
 
-    $this->state  = $this->get('State');
-    $this->params = $this->get('Params');
-    $this->item   = $this->get('Item');
-    $this->form   = $this->get('Form');
+    $this->item  = $model->getItem();
+    $this->form   = $this->getForm();
 
     // Get return page
     $this->return_page = $this->get('ReturnPage');
 
     // Check for errors.
-    if(\count($errors = $this->get('Errors')))
+    if(\count($errors = $model->getErrors()))
     {
       throw new GenericDataException(\implode("\n", $errors), 500);
     }
