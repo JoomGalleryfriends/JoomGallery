@@ -27,6 +27,9 @@ use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
 /**
  * Joomgallery Router class
  *
+ * @package     Joomgallery\Component\Joomgallery\Site\Service
+ *
+ * @since  4.0.0
  */
 class DefaultRouter extends RouterView
 {
@@ -38,7 +41,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  public static $displayName = 'COM_JOOMGALLERY_DEFAULT_ROUTER';
+  public static string $displayName = 'COM_JOOMGALLERY_DEFAULT_ROUTER';
 
   /**
    * Type of the router
@@ -47,7 +50,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  public static $type = 'modern';
+  public static string $type = 'modern';
 
   /**
    * ID of the parent of the image view. Empty if none.
@@ -56,7 +59,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  public static $image_parentID = '';
+  public static string $image_parentID = '';
 
   /**
    * Param to use ids in URLs
@@ -65,7 +68,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  private $noIDs;
+  private bool $noIDs;
 
   /**
    * Database object
@@ -83,7 +86,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  private $categoryCache = [];
+  private array $categoryCache = [];
 
   public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db, $skipSelf = false)
   {
@@ -158,8 +161,9 @@ class DefaultRouter extends RouterView
    * @param   array    $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
+   * @since   4.2.0
    */
-  public function getGallerySegment($id, $query)
+  public function getGallerySegment(string $id, array $query): array|string
   {
     return array('');
   }
@@ -172,7 +176,7 @@ class DefaultRouter extends RouterView
    *
    * @return  array|string  The segments of this item
    */
-  public function getImageSegment($id, $query)
+  public function getImageSegment(string $id, $query)
   {
     if(!\strpos($id, ':'))
     {
