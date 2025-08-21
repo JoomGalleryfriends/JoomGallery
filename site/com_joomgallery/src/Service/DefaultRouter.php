@@ -88,6 +88,9 @@ class DefaultRouter extends RouterView
    */
   private array $categoryCache = [];
 
+  // ToDo: Fith/Manuel: Get...Id should return 'int|bool' see com_content router. Why do we have array ?
+  // ToDo: Fith/Manuel: Get...Segment should return 'array|string' see com_content router. Why do we have array ?
+
   public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db, $skipSelf = false)
   {
     // Get router config value
@@ -175,8 +178,10 @@ class DefaultRouter extends RouterView
    * @param   array    $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
+   *
+   * @since   4.2.0
    */
-  public function getImageSegment(string $id, $query)
+  public function getImageSegment(string $id, $query) : array|string
   {
     if(!\strpos($id, ':'))
     {
@@ -206,8 +211,10 @@ class DefaultRouter extends RouterView
    * @param   array    $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
+   *
+   * @since   4.2.0
    */
-  public function getImageformSegment($id, $query)
+  public function getImageformSegment($id, $query): array|string
   {
     if(!strpos($id, ':'))
     {
@@ -236,8 +243,10 @@ class DefaultRouter extends RouterView
    * @param   array    $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
+   *
+   * @since   4.2.0
    */
-  public function getImagesSegment($id, $query)
+  public function getImagesSegment($id, $query): array|string
   {
     if(!strpos($id, ':'))
     {
@@ -268,9 +277,11 @@ class DefaultRouter extends RouterView
    *                           array(id = id:alias, parentid: parentid:parentalias)
    *
    * @return  array|string  The segments of this item
+   *
+   * @since   4.2.0
    */
-  // ToDo: fith may need a parent in above definition categoryForm
-  public function getCategorySegment($id, $query)
+  // ToDo: fith/Manuel may need a parent in above definition categoryForm
+  public function getCategorySegment($id, $query): array|string
   {
     if(!strpos($id, ':'))
     {
@@ -313,9 +324,11 @@ class DefaultRouter extends RouterView
    * @param   array    $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
+   *
+   * @since   4.2.0
    */
-  // ToDo: fith may need a parent in above definition categoryForm
-  public function getCategoryformSegment($id, $query)
+  // ToDo: fith/Manuel may need a parent in above definition categoryForm
+  public function getCategoryformSegment($id, $query): array|string
   {
     if(!strpos($id, ':'))
     {
@@ -343,8 +356,10 @@ class DefaultRouter extends RouterView
    * @param   array    $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
+   *
+   * @since   4.2.0
    */
-  public function getUsercategorySegment($id, $query)
+  public function getUsercategorySegment($id, $query): array|string
   {
     $alias = "";
 
@@ -380,8 +395,10 @@ class DefaultRouter extends RouterView
    * @param   array    $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
+   *
+   * @since   4.2.0
    */
-  public function getUserimageSegment($id, $query)
+  public function getUserimageSegment($id, $query): array|string
   {
     if(!strpos($id, ':'))
     {
@@ -411,8 +428,10 @@ class DefaultRouter extends RouterView
    * @param   array    $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
+   *
+   * @since   4.2.0
    */
-  public function getCategoriesSegment($id, $query)
+  public function getCategoriesSegment($id, $query): array|string
   {
     if(!$id)
     {
@@ -428,11 +447,13 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the image to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getGalleryId($segment, $query)
+  public function getGalleryId($segment, $query): int|false
   {
-    return 0;
+    return (int) $segment;
   }
 
   /**
@@ -441,9 +462,11 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the image to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getImageId($segment, $query)
+  public function getImageId($segment, $query): int|false
   {
     if($this->noIDs)
     {
@@ -451,7 +474,9 @@ class DefaultRouter extends RouterView
       if($segment == '0-' || $segment == 'noimage' || $segment == '0-noimage')
       {
         // Special case: No image with id=0
-        return 'null';
+        // return 'null'; wrong
+        // return false;    // ToDo: FiTh/Manuel Discussion => int or false ... ?
+        return 0;
       }
 
       $img_id = $this->getImageIdDb($segment, $query);
@@ -468,9 +493,11 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the imageform to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getImageformId($segment, $query)
+  public function getImageformId($segment, $query): int|false
   {
     if($this->noIDs)
     {
@@ -486,9 +513,11 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the image to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getImagesId($segment, $query)
+  public function getImagesId($segment, $query): int|false
   {
     if($this->noIDs)
     {
@@ -504,9 +533,11 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the category to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getCategoryId($segment, $query)
+  public function getCategoryId($segment, $query): int|false
   {
     if($this->noIDs)
     {
@@ -561,9 +592,11 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the categoryform to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getCategoryformId($segment, $query)
+  public function getCategoryformId($segment, $query): int|false
   {
     if($this->noIDs)
     {
@@ -579,11 +612,13 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the usercategory to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getUsercategoryId($segment, $query)
+  public function getUsercategoryId($segment, $query): int|false
   {
-    // ToDo: same alis but differnt parent  jBsp. Paris mit jahrnamen -> url hat jahr
+    // ToDo: same alias but different parent.  Bsp. Paris mit jahrnamen -> url hat jahr
 
     if($this->noIDs)
     {
@@ -618,9 +653,11 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the userimage to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getUserimageId($segment, $query)
+  public function getUserimageId($segment, $query): int|false
   {
     if($this->noIDs)
     {
@@ -636,9 +673,11 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the category to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getCategoriesId($segment, $query)
+  public function getCategoriesId($segment, $query): int|false
   {
     if($this->noIDs)
     {
@@ -696,14 +735,16 @@ class DefaultRouter extends RouterView
   }
 
   /**
-   * @param   string   $id
+   * Fetches alias of image by image ID
+   * @param   string   $id image ID
    *
-   * @return string
+   * @return string alias
    *
-   * @since version
+   * * @since   4.2.0
    */
   public function getImageAliasDb(string $id): string
   {
+    $alias = '';
     $dbquery = $this->db->getQuery(true);
 
     $dbquery->select($this->db->quoteName('alias'))
@@ -713,9 +754,9 @@ class DefaultRouter extends RouterView
     $this->db->setQuery($dbquery);
 
     // To create a segment in the form: id-alias
-    $id = $this->db->loadResult();
+    $alias = (string) $this->db->loadResult();
 
-    return $id;
+    return $alias;
   }
 
   /**
@@ -765,11 +806,24 @@ class DefaultRouter extends RouterView
     return $this->categoryCache[$id];
   }
 
-  public function getImageIdDb($segment, $query)
+  /**
+   * if image id from segment 'xx-image-alias' is lower than '1' then
+   * the id is taken from the database matching the alias. The query on
+   * db regards category id from input or from function argument query
+   * variable
+   *
+   * @param $segment
+   * @param $query
+   *
+   * @return int|false
+   *
+   * @since version
+   */
+  public function getImageIdDb($segment, $query): int|false
   {
-
-
     $img_id = 0;
+
+    // ToDo: FiTh/Manuel where else do i need to distinguish with '-' ? documentation
     if(\is_numeric(\explode('-', $segment, 2)[0]))
     {
       // For a segment in the form: id-alias
@@ -806,6 +860,5 @@ class DefaultRouter extends RouterView
 
     return $img_id;
   }
-
 
 }

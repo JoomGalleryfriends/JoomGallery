@@ -36,7 +36,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  public static $displayName = 'COM_JOOMGALLERY_JG3_ROUTER';
+  public static string $displayName = 'COM_JOOMGALLERY_JG3_ROUTER';
 
   /**
    * Type of the router
@@ -45,7 +45,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  public static $type = 'modern';
+  public static string $type = 'modern';
 
   /**
    * ID of the parent of the image view. Empty if none.
@@ -54,7 +54,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  public static $image_parentID = 'catid';
+  public static string $image_parentID = 'catid';
 
   /**
    * Param to use ids in URLs
