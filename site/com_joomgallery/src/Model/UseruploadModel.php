@@ -1,26 +1,26 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+******************************************************************************************
+**   @package    com_joomgallery                                                        **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 3 or later                          **
+*****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Form\Form;
-use Joomla\Registry\Registry;
-use Joomla\Database\DatabaseInterface;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\Application\CMSApplicationInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Form\Form;
+use \Joomla\Registry\Registry;
+use \Joomla\Database\DatabaseInterface;
+use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use \Joomla\CMS\Application\CMSApplicationInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
 
 /**
  * Model to get a list of category records.

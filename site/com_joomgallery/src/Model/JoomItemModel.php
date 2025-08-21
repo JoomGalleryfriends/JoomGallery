@@ -15,8 +15,8 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Factory;
 use \Joomla\Registry\Registry;
 use \Joomla\CMS\MVC\Model\ItemModel;
-use Joomla\CMS\Application\CMSApplicationInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use \Joomla\CMS\Application\CMSApplicationInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
 
 /**
