@@ -157,13 +157,14 @@ class HtmlView extends JoomGalleryView
 //      return false;
 //    }
 
+    // Prepares the document breadcrumbs
     $this->_prepareDocument();
 
     parent::display($tpl);
   }
 
   /**
-   * Prepares the document
+   * Prepares the document breadcrumbs
    *
    * @return void
    *

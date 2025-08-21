@@ -18,7 +18,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
- * View class for a list of Joomgallery.
+ * View class for a category
  *
  * @package JoomGallery
  * @since   4.2.0
@@ -29,13 +29,15 @@ class HtmlView extends JoomGalleryView
    * The category object
    *
    * @var  \stdClass
+   * @since   4.2.0
    */
-  protected $item;
+  protected \stdClass $item;
 
   /**
    * The form object
    *
    * @var  \Joomla\CMS\Form\Form;
+   * @since   4.2.0
    */
   protected $form;
 
@@ -46,7 +48,8 @@ class HtmlView extends JoomGalleryView
    *
    * @since   4.2.0
    */
-  protected $params = array();
+  // ToDo: check all htmlview.php / model for getparams -> params being array or registry :-(
+  protected array $params = array();
 
   /**
    * The page to return to after the article is submitted
@@ -55,9 +58,13 @@ class HtmlView extends JoomGalleryView
    *
    * @since   4.2.0
    */
-  protected $return_page = '';
+  protected string $return_page = '';
 
-  protected $isUserRootCategory = false;
+  /**
+   * @var bool
+   * @since version
+   */
+  protected bool $isUserRootCategory = false;
 
   /**
    * Display the view
@@ -67,8 +74,9 @@ class HtmlView extends JoomGalleryView
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
-  public function display($tpl = null)
+  public function display($tpl = null): void
   {
     // Get model data
     $model = $this->getModel();
@@ -76,9 +84,8 @@ class HtmlView extends JoomGalleryView
     $this->state  = $model->getState();
     $this->params = $model->getParams();
 
-    $this->item    = $model->getItem();
+    $this->item   = $model->getItem();
     $this->form   = $this->getForm();
-
 
     // ToDo: fix for empty Id: item->id=null
     if(empty($this->item->id))
@@ -91,13 +98,9 @@ class HtmlView extends JoomGalleryView
       $this->isUserRootCategory = true;
     }
 
-    $this->form = $this->get('Form');
-
-//    // Get return page
-//    $return_page = $this->state->get('return_page');
-//    $this->return_page = base64_encode($return_page); // base64 encoded
+    // ToDo: if this works then the model is addresed and i am derived from model
     // Get return page
-    $this->return_page = $this->get('ReturnPage');
+    $this->return_page = $this->getReturnPage();
 
     // Check access view level
     if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
@@ -113,22 +116,23 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(\implode("\n", $errors), 500);
     }
 
+    // Prepares the document breadcrumbs
     $this->_prepareDocument();
 
     parent::display($tpl);
   }
 
   /**
-   * Prepares the document
+   * Prepares the document breadcrumbs
    *
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
-  protected function _prepareDocument()
+  protected function _prepareDocument(): void
   {
     $menus = $this->app->getMenu();
-    $title = null;
 
     // Because the application sets a default page title,
     // we need to get it from the menu item itself

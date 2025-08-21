@@ -79,7 +79,7 @@ class HtmlView extends JoomGalleryView
     $this->form   = $this->getForm();
 
     // Get return page
-    $this->return_page = $this->get('ReturnPage');
+    $this->return_page = $this->getReturnPage();
 
     // Check for errors.
     if(\count($errors = $model->getErrors()))
@@ -99,7 +99,7 @@ class HtmlView extends JoomGalleryView
   }
 
   /**
-   * Prepares the document
+   * Prepares the document breadcrumbs
    *
    * @return void
    *

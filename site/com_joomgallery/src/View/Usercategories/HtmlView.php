@@ -1,26 +1,28 @@
 <?php
 
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Usercategories;
 
 //use Joomla\CMS\Factory;
 //use Joomla\CMS\Helper\TagsHelper;
 //use Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+
 /**
- * HTML Contact View class for the Contact component
+ * View class for a list of categories.
  *
+ * @package JoomGallery
  * @since   4.2.0
  */
 class HtmlView extends JoomGalleryView
@@ -68,6 +70,12 @@ class HtmlView extends JoomGalleryView
   protected int $userId = 0;
 
   /**
+   * @var array
+   * @since version
+   */
+  protected array $ordering = [];
+
+  /**
    * Execute and display a template script.
    *
    * @param   string   $tpl  The name of the template file to parse; automatically searches through the template paths.
@@ -92,7 +100,7 @@ class HtmlView extends JoomGalleryView
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
 
-    $this->isDevelopSite = boolval($this->params['configs']->get('isDebugSite'))
+    $this->isDevelopSite = ($this->params['configs']->get('isDebugSite'))
       || $this->app->input->getBool('isDevelop');
 
     // Check for errors.
@@ -116,14 +124,11 @@ class HtmlView extends JoomGalleryView
     // Get access service
     $this->component->createAccess();
     $this->acl = $this->component->getAccess();
-    // $acl       = $this->component->getAccess();
 
     // Needed for JgcategoryField
-    // $this->isUserCoreManager = $acl->checkACL('core.manage', 'com_joomgallery');
     $this->isUserCoreManager = $this->acl->checkACL('core.manage', 'com_joomgallery');
 
-    // Check if is userspace is enabled
-    // Check access permission (ACL)
+    // Check access permission (ACL) if userspace is enabled
     if($this->params['configs']->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
     {
       if($this->params['configs']->get('jg_userspace', 1, 'int') == 0)
@@ -138,28 +143,30 @@ class HtmlView extends JoomGalleryView
     }
 
     // Preprocess the list of items to find ordering divisions.
-    foreach($this->items as &$item)
+    foreach($this->items as $item)
     {
       $this->ordering[$item->parent_id][] = $item->id;
     }
 
+    // Prepares the document breadcrumbs
     $this->_prepareDocument();
 
     parent::display($tpl);
   }
 
+  // Todo: FiTh/Manuel use trait    ??? breadcrumbs/ router/sef ???
+
   /**
-   * Prepares the document
+   * Prepares the document breadcrumbs
    *
    * @return void
    *
    * @throws \Exception
    * @since   4.2.0
    */
-  protected function _prepareDocument()
+  protected function _prepareDocument(): void
   {
     $menus = $this->app->getMenu();
-    $title = null;
 
     // Because the application sets a default page title,
     // we need to get it from the menu item itself

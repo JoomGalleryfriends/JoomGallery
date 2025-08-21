@@ -136,7 +136,7 @@ class CategoryformModel extends AdminCategoryModel
    *
    * @since   4.0.0
    */
-  public function getReturnPage()
+  public function getReturnPage(): string
   {
     return \base64_encode($this->getState('return_page', ''));
   }

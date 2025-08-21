@@ -70,6 +70,7 @@ class HtmlView extends JoomGalleryView
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
+    // Prepares the document breadcrumbs
     $this->_prepareDocument();
 
     parent::display($tpl);

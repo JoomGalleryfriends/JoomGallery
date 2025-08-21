@@ -39,7 +39,7 @@ trait RoutingTrait
 	 *
 	 * @since   4.0.0
 	 */
-	protected function getReturnPage(string $default='')
+	protected function getReturnPage(string $default=''): string
 	{
 		$return = $this->input->get('return', null, 'base64');
 
