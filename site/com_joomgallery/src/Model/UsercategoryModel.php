@@ -176,11 +176,11 @@ class UsercategoryModel extends AdminCategoryModel
   /**
    * Method to get the data that should be injected in the form.
    *
-   * @return  array  The default data is an empty array.
+   * @return  \Joomla\CMS\Object\CMSObject|\stdClass  The default data is an empty array.
    *
    * @since   4.2.0
    */
-  protected function loadFormData(): array
+  protected function loadFormData(): \Joomla\CMS\Object\CMSObject|\stdClass
   {
     return parent::loadFormData();
   }

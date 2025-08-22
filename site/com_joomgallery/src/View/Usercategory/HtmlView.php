@@ -85,7 +85,10 @@ class HtmlView extends JoomGalleryView
     $this->params = $model->getParams();
 
     $this->item   = $model->getItem();
-    $this->form   = $this->getForm();
+    $this->form   = $model->getForm();
+
+    // Get return page
+    $this->return_page = $model->getReturnPage();
 
     // ToDo: fix for empty Id: item->id=null
     if(empty($this->item->id))
@@ -97,10 +100,6 @@ class HtmlView extends JoomGalleryView
     {
       $this->isUserRootCategory = true;
     }
-
-    // ToDo: if this works then the model is addresed and i am derived from model
-    // Get return page
-    $this->return_page = $this->getReturnPage();
 
     // Check access view level
     if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))

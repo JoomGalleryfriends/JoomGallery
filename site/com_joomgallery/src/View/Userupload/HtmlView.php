@@ -107,7 +107,9 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
     $this->state  = $model->getState();
     $this->form   = $model->getForm();
     $this->params = $model->getParams();
-//      $this->return_page = $this->getReturnPage();
+
+//     // Get return page
+//    $this->return_page = $model->getReturnPage();
 
     $config = $this->params['configs'];
 
