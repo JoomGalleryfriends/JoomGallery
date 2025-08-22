@@ -79,7 +79,7 @@ class HtmlView extends JoomGalleryView
       // Redirect to gallery view
       $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
       
-      return false;
+      return;
     }
 
 		$this->_prepareDocument();

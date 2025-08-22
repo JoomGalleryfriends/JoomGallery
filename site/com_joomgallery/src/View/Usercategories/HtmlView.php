@@ -1,23 +1,19 @@
 <?php
-
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+******************************************************************************************
+**   @package    com_joomgallery                                                        **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 3 or later                          **
+*****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Usercategories;
 
-//use Joomla\CMS\Factory;
-//use Joomla\CMS\Helper\TagsHelper;
-//use Joomla\CMS\Language\Multilanguage;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Pagination\Pagination;
-use Joomla\CMS\MVC\View\GenericDataException;
-use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Pagination\Pagination;
+use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a list of categories.
@@ -27,6 +23,10 @@ use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
  */
 class HtmlView extends JoomGalleryView
 {
+  /**
+   * @var array
+   * @since   4.2.0
+   */
   protected array $items;
 
   /**
@@ -80,12 +80,12 @@ class HtmlView extends JoomGalleryView
    *
    * @param   string   $tpl  The name of the template file to parse; automatically searches through the template paths.
    *
-   * @return  void|boolean
+   * @return  void
    *
    * @throws \Exception
    * @since   4.2.0
    */
-  public function display($tpl = null)
+  public function display($tpl = null): void
   {
     $user = $this->getCurrentUser();
 
@@ -136,10 +136,10 @@ class HtmlView extends JoomGalleryView
         $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_VIEW_NO_ACCESS'), 'message');
       }
 
-      // Redirect to category view
-      $this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=category&id=1'));
+      // Redirect to user panel view
+      $this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=userpanel'));
 
-      return false;
+      return;
     }
 
     // Preprocess the list of items to find ordering divisions.

@@ -99,9 +99,9 @@ class UseruploadModel extends JoomAdminModel
    * Method to get the record form.
    *
    * @param   array     $data      An optional array of data for the form to interogate.
-   * @param   boolean   $loadData  True if the form is to load its own data (default case), false if not.
+   * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
    *
-   * @return  Form|boolean  A \JForm object on success, false on failure
+   * @return  Form|bool  A \JForm object on success, false on failure
    *
    * @throws \Exception
    * @since   4.2.0

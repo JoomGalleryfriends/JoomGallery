@@ -1,5 +1,4 @@
 <?php
-
 /**
 ******************************************************************************************
 **   @package    com_joomgallery                                                        **
@@ -15,8 +14,8 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Pagination\Pagination;
 use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
@@ -27,9 +26,23 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
  */
 class HtmlView extends JoomGalleryView
 {
-  protected $items;
+  /**
+   * @var array
+   * @since   4.2.0
+   */
+  protected array $items;
 
-  protected $pagination;
+  /**
+   * @var Pagination
+   * @since   4.2.0
+   */
+  protected Pagination $pagination;
+
+  /**
+   * @var    array
+   * @since   4.2.0
+   */
+  protected array $params;
 
   /**
    * @var    \Joomla\Registry\Registry
@@ -38,30 +51,34 @@ class HtmlView extends JoomGalleryView
   protected $state;
 
   /**
-   * The page parameters
-   *
-   * @var    array
-   *
+   * @var    bool
    * @since   4.2.0
    */
-  protected $params = array();
+  protected bool $isUserLoggedIn = false;
 
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected $isUserLoggedIn = false;
+  protected bool $isUserHasCategory = false;
+
   /**
-   * @var    bool
-   * @since   4.2.0
+   * @var bool
+   * @since version
    */
-  protected $isUserHasCategory = false;
+  protected bool $isUserCoreManager = false;
 
-  protected $isUserCoreManager = false;
-  protected $isDevelopSite = false;
+  /**
+   * @var bool
+   * @since version
+   */
+  protected bool $isDevelopSite = false;
 
-  protected $userId = 0;
-
+  /**
+   * @var int
+   * @since version
+   */
+  protected int $userId = 0;
 
   /**
    * Display the view
@@ -71,8 +88,9 @@ class HtmlView extends JoomGalleryView
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
-  public function display($tpl = null)
+  public function display($tpl = null): void
   {
     $user = $this->getCurrentUser();
 
@@ -111,13 +129,10 @@ class HtmlView extends JoomGalleryView
     // Get access service
     $this->component->createAccess();
     $this->acl = $this->component->getAccess();
-    // $acl       = $this->component->getAccess();
 
     // Needed for JgcategoryField
-    // $this->isUserCoreManager = $acl->checkACL('core.manage', 'com_joomgallery');
     $this->isUserCoreManager = $this->acl->checkACL('core.manage', 'com_joomgallery');
 
-    // Check if is userspace is enabled
     // Check access permission (ACL)
     if($this->params['configs']->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
     {
@@ -126,10 +141,10 @@ class HtmlView extends JoomGalleryView
         $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_IMAGES_VIEW_NO_ACCESS'), 'message');
       }
 
-      // Redirect to gallery view
-      $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
+      // Redirect to user panel view
+      $this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=userpanel'));
 
-      return false;
+      return;
     }
 
     // Prepares the document breadcrumbs
@@ -144,11 +159,11 @@ class HtmlView extends JoomGalleryView
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
   protected function _prepareDocument()
   {
     $menus = $this->app->getMenu();
-    $title = null;
 
     // Because the application sets a default page title,
     // we need to get it from the menu item itself

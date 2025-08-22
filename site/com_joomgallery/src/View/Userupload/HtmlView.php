@@ -92,12 +92,12 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
    *
    * @param   string   $tpl  The name of the template file to parse; automatically searches through the template paths.
    *
-   * @return  void|boolean
+   * @return  void
    *
    * @throws \Exception
    * @since   4.2.0
    */
-  public function display($tpl = null)
+  public function display($tpl = null): void
   {
     $user = $this->getCurrentUser();
     $app  = Factory::getApplication();

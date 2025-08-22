@@ -39,7 +39,7 @@ class HtmlView extends JoomGalleryView
    * @var  \Joomla\CMS\Form\Form;
    * @since   4.2.0
    */
-  protected $form;
+  protected \Joomla\CMS\Form\Form $form;
 
   /**
    * The page parameters

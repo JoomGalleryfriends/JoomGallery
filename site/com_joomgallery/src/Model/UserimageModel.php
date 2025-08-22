@@ -74,7 +74,7 @@ class UserimageModel extends AdminImageModel
    *
    * @param   integer   $id  The id of the object to get.
    *
-   * @return  object|boolean Object on success, false on failure.
+   * @return  object|bool Object on success, false on failure.
    *
    * @since   4.2.0
    *
@@ -91,7 +91,7 @@ class UserimageModel extends AdminImageModel
    * The base form is loaded from XML
    *
    * @param   array     $data      An optional array of data for the form to interogate.
-   * @param   boolean   $loadData  True if the form is to load its own data (default case), false if not.
+   * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
    *
    * @return  Form    A Form object on success, false on failure
    *

@@ -1,5 +1,4 @@
 <?php
-
 /**
 ******************************************************************************************
 **   @package    com_joomgallery                                                        **
@@ -10,9 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userpanel;
 
-//use Joomla\CMS\Factory;
-//use Joomla\CMS\Helper\TagsHelper;
-//use Joomla\CMS\Language\Multilanguage;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
@@ -21,6 +17,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 /**
  * HTML Contact View class for the Contact component
  *
+ * @package JoomGallery
  * @since   4.2.0
  */
 class HtmlView extends JoomGalleryView
@@ -83,12 +80,12 @@ class HtmlView extends JoomGalleryView
    *
    * @param   string   $tpl  The name of the template file to parse; automatically searches through the template paths.
    *
-   * @return  void|boolean
+   * @return  void
    *
    * @throws \Exception
    * @since   4.2.0
    */
-  public function display($tpl = null)
+  public function display($tpl = null): void
   {
     $user = $this->getCurrentUser();
     $app  = Factory::getApplication();
@@ -154,7 +151,7 @@ class HtmlView extends JoomGalleryView
 //      // Redirect to gallery view
 //      $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
 //
-//      return false;
+//      return;
 //    }
 
     // Prepares the document breadcrumbs
@@ -169,6 +166,7 @@ class HtmlView extends JoomGalleryView
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
   protected function _prepareDocument()
   {

@@ -1,5 +1,4 @@
 <?php
-
 /**
 ******************************************************************************************
 **   @package    com_joomgallery                                                        **
@@ -30,15 +29,17 @@ class HtmlView extends JoomGalleryView
    * The category object
    *
    * @var  \stdClass
+   * @since   4.2.0
    */
-  protected $item;
+  protected \stdClass $item;
 
   /**
    * The form object
    *
    * @var  \Joomla\CMS\Form\Form;
+   * @since   4.2.0
    */
-  protected $form;
+  protected \Joomla\CMS\Form\Form $form;
 
   /**
    * The page parameters
@@ -47,7 +48,7 @@ class HtmlView extends JoomGalleryView
    *
    * @since   4.2.0
    */
-  protected $params = array();
+  protected array $params = array();
 
   /**
    * The page to return to after the article is submitted
@@ -56,7 +57,7 @@ class HtmlView extends JoomGalleryView
    *
    * @since   4.2.0
    */
-  protected $return_page = '';
+  protected string $return_page = '';
 
   /**
    * Display the view
@@ -66,8 +67,9 @@ class HtmlView extends JoomGalleryView
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
-  public function display($tpl = null)
+  public function display($tpl = null): void
   {
     // Get model data
     $model = $this->getModel();
@@ -75,8 +77,8 @@ class HtmlView extends JoomGalleryView
     $this->state  = $model->getState();
     $this->params = $model->getParams();
 
-    $this->item  = $model->getItem();
-    $this->form  = $model->getForm();
+    $this->item = $model->getItem();
+    $this->form = $model->getForm();
 
     // Get return page
     $this->return_page = $model->getReturnPage();
@@ -104,11 +106,11 @@ class HtmlView extends JoomGalleryView
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
-  protected function _prepareDocument()
+  protected function _prepareDocument(): void
   {
     $menus = $this->app->getMenu();
-    $title = null;
 
     // Because the application sets a default page title,
     // we need to get it from the menu item itself

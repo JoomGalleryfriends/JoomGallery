@@ -85,7 +85,7 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @param   integer   $id  The id of the primary key.
    *
-   * @return  Object|boolean Object on success, false on failure.
+   * @return  Object|bool Object on success, false on failure.
    *
    * @since   4.2.0
    */
@@ -99,7 +99,7 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @param   integer   $id  The id of the primary key.
    *
-   * @return  boolean when root category is matching id
+   * @return  bool when root category is matching id
    *
    * @throws \Exception
    * @since   4.2.0
@@ -142,7 +142,7 @@ class UsercategoryModel extends AdminCategoryModel
    * The base form is loaded from XML
    *
    * @param   array     $data      An optional array of data for the form to interogate.
-   * @param   boolean   $loadData  True if the form is to load its own data (default case), false if not.
+   * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
    *
    * @return  Form    A Form object on success, false on failure
    *
