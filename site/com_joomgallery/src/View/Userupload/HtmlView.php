@@ -9,83 +9,99 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userupload;
 
-//use Joomla\CMS\Factory;
-//use Joomla\CMS\Helper\TagsHelper;
-//use Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Factory;
+use \Joomla\CMS\Form\Form;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\HTML\Registry;
 use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\CMS\Component\ComponentHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
 
 /**
  * HTML Contact View class for the Contact component
  *
  * @since   4.2.0
  */
-class HtmlView extends JoomGalleryView // BaseHtmlView
+class HtmlView extends JoomGalleryView
 {
   /**
-   * @var    \Joomla\CMS\Form\Form
+   * @var    Form
    * @since   4.2.0
    */
   protected $form;
 
   /**
-   * @var    object
-   * @since   4.2.0
-   */
-  protected $item;
-
-  /**
    * @var    string
    * @since   4.2.0
    */
-  protected $return_page;
+  protected string $return_page;
 
   /**
-   * @var    string
-   * @since   4.2.0
-   */
-  protected $pageclass_sfx;
-
-  /**
-   * @var    \Joomla\Registry\Registry
+   * @var    Registry
    * @since   4.2.0
    */
   protected $state;
 
   /**
-   * @var    \Joomla\Registry\Registry
+   * @var    array
    * @since   4.2.0
    */
-  protected $params;
-
-//    /**
-//     * @var    \Joomla\Registry\Registry
-//     * @since   4.2.0
-//     */
-//    protected $config;
+  protected array $params;
 
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected $isUserLoggedIn = false;
+  protected bool $isUserLoggedIn = false;
+
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected $isUserHasCategory = false;
+  protected bool $isUserHasCategory = false;
 
-  protected $isUserCoreManager = false;
-  protected $userId = 0;
+  /**
+   * @var    bool
+   * @since   4.2.0
+   */
+  protected bool $isUserCoreManager = false;
 
-  protected $uploadLimit;
-  protected $postMaxSize;
-  protected $memoryLimit;
-  protected $maxSize;
-  protected $mediaSize;
-  protected $configSize;
+  /**
+   * @var int
+   * @since   4.2.0
+   */
+  protected int $userId = 0;
+
+  /**
+   * @var int
+   * @since   4.2.0
+   */
+  protected int $uploadLimit;
+  /**
+   * @var int
+   * @since   4.2.0
+   */
+  protected int $postMaxSize;
+  /**
+   * @var int
+   * @since   4.2.0
+   */
+  protected int $memoryLimit;
+  /**
+   * @var int
+   * @since   4.2.0
+   */
+  protected int $maxSize;
+  /**
+   * @var int
+   * @since   4.2.0
+   */
+  protected int $mediaSize;
+  /**
+   * @var int
+   * @since   4.2.0
+   */
+  protected int $configSize;
 
   /**
    * Execute and display a template script.
@@ -100,7 +116,6 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
   public function display($tpl = null): void
   {
     $user = $this->getCurrentUser();
-    $app  = Factory::getApplication();
 
     // Get model data
     $model        = $this->getModel();
@@ -154,63 +169,96 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
 
     $this->limitsPhpConfig($config);
 
+    // Prepares the document breadcrumbs
+    $this->_prepareDocument();
 
     parent::display($tpl);
   }
 
-//    /**
-//     * Prepares the document
-//     *
-//     * @return  void
-//     *
-//     * @throws \Exception
-//     *
-//     * @since   4.2.0
-//     */
-//    protected function _prepareDocument()
-//    {
-//        $app = Factory::getApplication();
-//
-//        // Because the application sets a default page title,
-//        // we need to get it from the menu item itself
-//        $menu = $app->getMenu()->getActive();
-//
-//        if ($menu) {
-//            $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
-//        } else {
-//            $this->params->def('page_heading', Text::_('COM_CONTACT_FORM_EDIT_CONTACT'));
-//        }
-//
-//        $title = $this->params->def('page_title', Text::_('COM_CONTACT_FORM_EDIT_CONTACT'));
-//
-//        $this->setDocumentTitle($title);
-//
-//        $pathway = $app->getPathWay();
-//        $pathway->addItem($title, '');
-//
-//        if ($this->params->get('menu-meta_description')) {
-//            $this->getDocument()->setDescription($this->params->get('menu-meta_description'));
-//        }
-//
-//        if ($this->params->get('menu-meta_keywords')) {
-//            $this->getDocument()->setMetaData('keywords', $this->params->get('menu-meta_keywords'));
-//        }
-//
-//        if ($this->params->get('robots')) {
-//            $this->getDocument()->setMetaData('robots', $this->params->get('robots'));
-//        }
-//    }
+  /**
+   * Prepares the document
+   *
+   * @return  void
+   *
+   * @throws \Exception
+   *
+   * @since   4.2.0
+   */
+  protected function _prepareDocument(): void
+  {
+    $menus = $this->app->getMenu();
+
+    // Because the application sets a default page title,
+    // we need to get it from the menu item itself
+    $menu = $menus->getActive();
+
+    if($menu)
+    {
+      $this->params['menu']->def('page_heading', $this->params['menu']->get('page_title', $menu->title));
+    }
+    else
+    {
+      $this->params['menu']->def('page_heading', Text::_('JoomGallery'));
+    }
+
+    $title = $this->params['menu']->get('page_title', '');
+
+    if(empty($title))
+    {
+      $title = $this->app->get('sitename');
+    }
+    elseif($this->app->get('sitename_pagetitles', 0) == 1)
+    {
+      $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
+    }
+    elseif($this->app->get('sitename_pagetitles', 0) == 2)
+    {
+      $title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
+    }
+
+    $this->document->setTitle($title);
+
+    if($this->params['menu']->get('menu-meta_description'))
+    {
+      $this->document->setDescription($this->params['menu']->get('menu-meta_description'));
+    }
+
+    if($this->params['menu']->get('menu-meta_keywords'))
+    {
+      $this->document->setMetadata('keywords', $this->params['menu']->get('menu-meta_keywords'));
+    }
+
+    if($this->params['menu']->get('robots'))
+    {
+      $this->document->setMetadata('robots', $this->params['menu']->get('robots'));
+    }
+
+    if(!$this->isMenuCurrentView($menu))
+    {
+      // Add Breadcrumbs
+      $pathway         = $this->app->getPathway();
+      $breadcrumbTitle = Text::_('COM_JOOMGALLERY_USER_UPLOAD');
+
+      if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
+      {
+        $pathway->addItem($breadcrumbTitle, '');
+      }
+    }
+  }
 
   /**
    * Get array of all allowed filetypes based on the config parameter jg_imagetypes.
    *
    * @return  array  List with all allowed filetypes
+   * @since   4.2.0
    *
    */
-  protected function getAllowedTypes()
+  protected function getAllowedTypes(): array
   {
     $config = $this->params['configs'];
-    $types  = \explode(',', $config->get('jg_imagetypes'));
+
+    /** @var array $types */
+    $types = \explode(',', $config->get('jg_imagetypes'));
 
     // add different types of jpg files
     $jpg_array = array('jpg', 'jpeg', 'jpe', 'jfif');
@@ -241,11 +289,19 @@ class HtmlView extends JoomGalleryView // BaseHtmlView
     return $types;
   }
 
-  private function getTusLocation()
+  /**
+   * Create the tus server and return the (uri) location of the TUS server
+   * @return string
+   *
+   * @since   4.2.0
+   */
+  private function getTusLocation(): string
   {
 
     // Create tus server
     $this->component->createTusServer();
+
+    /** @var Server $server */
     $server = $this->component->getTusServer();
 
     $tus_location = $server->getLocation();

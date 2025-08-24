@@ -9,8 +9,8 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userpanel;
 
-use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Pagination\Pagination;
 use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
@@ -23,30 +23,22 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 class HtmlView extends JoomGalleryView
 {
   /**
-   * @var    \Joomla\CMS\Form\Form
+   * @var    array
    * @since   4.2.0
    */
-  protected $form;
+  protected array $items;
 
   /**
-   * @var    object
+   * @var Pagination
    * @since   4.2.0
    */
-  protected $items;
-
-  protected $pagination;
+  protected Pagination $pagination;
 
   /**
    * @var    string
    * @since   4.2.0
    */
-  protected $return_page;
-
-  /**
-   * @var    string
-   * @since   4.2.0
-   */
-  protected $pageclass_sfx;
+  protected string $return_page;
 
   /**
    * @var    \Joomla\Registry\Registry
@@ -55,25 +47,40 @@ class HtmlView extends JoomGalleryView
   protected $state;
 
   /**
-   * @var    \Joomla\Registry\Registry
+   * @var    array
    * @since   4.2.0
    */
-  protected $params;
+  protected array $params;
 
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected $isUserLoggedIn = false;
+  protected bool $isUserLoggedIn = false;
+
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected $isUserHasCategory = false;
+  protected bool $isUserHasCategory = false;
 
-  protected $isUserCoreManager = false;
-  protected $userId = 0;
-  protected $isDevelopSite = false;
+  /**
+   * @var    bool
+   * @since   4.2.0
+   */
+  protected bool $isUserCoreManager = false;
+
+  /**
+   * @var    bool
+   * @since   4.2.0
+   */
+  protected bool $isDevelopSite = false;
+
+  /**
+   * @var int
+   * @since   4.2.0
+   */
+  protected int $userId = 0;
 
   /**
    * Execute and display a template script.
@@ -88,16 +95,17 @@ class HtmlView extends JoomGalleryView
   public function display($tpl = null): void
   {
     $user = $this->getCurrentUser();
-    $app  = Factory::getApplication();
+//    $app  = Factory::getApplication();
 
-    //--- include both views -----------------------------
+//    // ToDo: in next version include both image and category views
+//    //--- include both image and category views -----------------------------
+//
+//    //  https://joomla.stackexchange.com/questions/33248/how-to-load-and-render-a-view-of-a-component-from-anothers-component-template-f
+//    // $modCategories = $this->getModel('Usercategories');
 
-    // https://joomla.stackexchange.com/questions/33248/how-to-load-and-render-a-view-of-a-component-from-anothers-component-template-f
-    // below
 
     // Get modImages data
     $modImages = $this->getModel('Userpanel');
-    // $modCategories = $this->getModel('Usercategories');
 
     $this->state  = $modImages->getState();
     $this->params = $modImages->getParams();
@@ -116,8 +124,6 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(\implode("\n", $errors), 500);
     }
 
-    // $config = $this->params['configs'];
-
     //	user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
     if($user->guest)
@@ -133,26 +139,9 @@ class HtmlView extends JoomGalleryView
     // Get access service
     $this->component->createAccess();
     $this->acl = $this->component->getAccess();
-    // $acl       = $this->component->getAccess();
 
     // Needed for JgcategoryField
-    // $this->isUserCoreManager = $acl->checkACL('core.manage', 'com_joomgallery');
     $this->isUserCoreManager = $this->acl->checkACL('core.manage', 'com_joomgallery');
-
-//    // Check if is userspace is enabled
-//    // Check access permission (ACL)
-//    if($this->params['configs']->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
-//    {
-//      if($this->params['configs']->get('jg_userspace', 1, 'int') == 0)
-//      {
-//        $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_IMAGES_VIEW_NO_ACCESS'), 'message');
-//      }
-//
-//      // Redirect to gallery view
-//      $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
-//
-//      return;
-//    }
 
     // Prepares the document breadcrumbs
     $this->_prepareDocument();
@@ -168,10 +157,9 @@ class HtmlView extends JoomGalleryView
    * @throws \Exception
    * @since   4.2.0
    */
-  protected function _prepareDocument()
+  protected function _prepareDocument(): void
   {
     $menus = $this->app->getMenu();
-    $title = null;
 
     // Because the application sets a default page title,
     // we need to get it from the menu item itself

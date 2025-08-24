@@ -105,7 +105,7 @@ class HtmlView extends JoomGalleryView
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
 
-    $this->isDevelopSite = boolval($this->params['configs']->get('isDebugSite'))
+    $this->isDevelopSite = (bool) ($this->params['configs']->get('isDebugSite'))
       || $this->app->input->getBool('isDevelop');
 
     // Check for errors.
@@ -161,7 +161,7 @@ class HtmlView extends JoomGalleryView
    * @throws \Exception
    * @since   4.2.0
    */
-  protected function _prepareDocument()
+  protected function _prepareDocument(): void
   {
     $menus = $this->app->getMenu();
 
