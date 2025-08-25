@@ -58,10 +58,9 @@ if($saveOrder && !empty($this->items))
         </div>
       <?php else : ?>
 
-        <?php if(!empty($this->filterForm))
-        {
-          echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
-        } ?>
+        <?php if(!empty($this->filterForm)) : ?>
+          <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+        <?php endif; ?>
 
         <div class="clearfix"></div>
 

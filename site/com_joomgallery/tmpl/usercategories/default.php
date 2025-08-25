@@ -104,9 +104,9 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
       <div class="form-group">
 
         <div class="mb-4">
-          <a class="btn btn-primary" href="<?php echo $uploadView; ?>" role="button">
-            <span class="icon-upload"></span>
-            <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD'); ?>
+          <a class="btn btn-info" href="<?php echo $imagesView; ?>" role="button">
+            <span class="icon-images"></span>
+            <?php echo Text::_('COM_JOOMGALLERY_USER_IMAGES'); ?>
           </a>
 
           <a class="btn btn-success" href="<?php echo $newCategoryView; ?>" role="button">
@@ -114,9 +114,9 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
             <?php echo Text::_('COM_JOOMGALLERY_USER_NEW_CATEGORY'); ?>
           </a>
 
-          <a class="btn btn-info" href="<?php echo $imagesView; ?>" role="button">
-            <span class="icon-images"></span>
-            <?php echo Text::_('COM_JOOMGALLERY_USER_IMAGES'); ?>
+          <a class="btn btn-primary" href="<?php echo $uploadView; ?>" role="button">
+            <span class="icon-upload"></span>
+            <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD'); ?>
           </a>
 
           <a class="btn btn-primary" href="<?php echo $panelView; ?>" role="button">
@@ -130,8 +130,8 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
       <div class="card ">
         <div class="card-body">
 
-          <?php if(!empty($this->filterForm)): ?>
-            echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+          <?php if(!empty($this->filterForm)) : ?>
+            <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
           <?php endif; ?>
 
           <?php if(empty($this->items)) : ?>

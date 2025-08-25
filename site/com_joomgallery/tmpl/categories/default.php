@@ -48,9 +48,11 @@ if($saveOrder && !empty($this->items))
 
 <form class="jg-categories" action="<?php echo Route::_('index.php?option=com_joomgallery&view=categories'); ?>"
       method="post" name="adminForm" id="adminForm">
-  <?php if(!empty($this->filterForm)) {
-    echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
-  } ?>
+
+  <?php if(!empty($this->filterForm)) : ?>
+    <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+  <?php endif; ?>
+
   <div class="row">
     <div class="col-md-12">
 

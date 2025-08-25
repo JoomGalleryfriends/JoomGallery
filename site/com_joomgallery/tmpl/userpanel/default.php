@@ -14,6 +14,7 @@ use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
 use \Joomla\CMS\Session\Session;
+use Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // Import CSS & JS
@@ -131,7 +132,7 @@ $baseLink_ImageEdit = 'index.php?option=com_joomgallery&view=userimage&layout=ed
             <h5 class="card-title"><?php echo Text::_('COM_JOOMGALLERY_USER_PANEL_USER_IMAGES'); ?></h5>
 
             <?php if(!empty($this->filterForm)) : ?>
-              echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+              <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
             <?php endif; ?>
 
             <?php if(empty($this->items)) : ?>

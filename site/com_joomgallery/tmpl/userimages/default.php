@@ -15,6 +15,7 @@ use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
 use \Joomla\CMS\Session\Session;
+use Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // Import CSS & JS
@@ -132,8 +133,8 @@ $canDelete = false;
       <div class="card ">
         <div class="card-body">
 
-          <?php if(!empty($this->filterForm)): ?>
-            echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+          <?php if(!empty($this->filterForm)) : ?>
+            <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
           <?php endif; ?>
 
           <?php if(empty($this->items)) : ?>
