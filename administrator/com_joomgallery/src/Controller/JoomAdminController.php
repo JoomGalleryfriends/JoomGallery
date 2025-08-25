@@ -12,10 +12,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 // No direct access
 \defined('_JEXEC') or die;
 
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\MVC\View\ViewInterface;
 use \Joomla\Input\Input;
+use \Joomla\CMS\MVC\View\ViewInterface;
 use \Joomla\CMS\User\CurrentUserInterface;
+use \Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use \Joomla\CMS\Application\CMSApplication;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use \Joomla\CMS\MVC\Controller\AdminController as BaseAdminController;
