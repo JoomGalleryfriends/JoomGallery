@@ -1,380 +1,381 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-    <layout title="COM_JOOMGALLERY_VIEW_CATEGORY_TITLE" option="JDEFAULT">
-      <message>
-        <![CDATA[COM_JOOMGALLERY_VIEW_CATEGORY_DESC]]>
-      </message>
-    </layout>
-    <fields name="request">
-        <fieldset name="request" >
-            <field name="id"
-                   type="sql"
-                   query="SELECT `id`, `title` FROM #__joomgallery_categories ORDER BY `id`"
-                   key_field="id"
-                   value_field="title"
-                   label="COM_JOOMGALLERY_FILTER_BY_CATEGORY"
-                   require="true" >
-            </field>
+  <layout title="COM_JOOMGALLERY_VIEW_CATEGORY_TITLE" option="JDEFAULT">
+    <message>
+      <![CDATA[COM_JOOMGALLERY_VIEW_CATEGORY_DESC]]>
+    </message>
+  </layout>
+  <fields name="request">
+    <fieldset name="request">
+      <field name="id"
+             type="sql"
+             query="SELECT `id`, `title` FROM #__joomgallery_categories ORDER BY `id`"
+             key_field="id"
+             value_field="title"
+             label="COM_JOOMGALLERY_FILTER_BY_CATEGORY"
+             require="true">
+      </field>
 
-            <field name="tag"
-                   type="sql"
-                   query="SELECT `id`, `title` FROM #__joomgallery_tags ORDER BY `id`"
-                   key_field="id"
-                   value_field="title"
-                   multiple="true"
-                   label="COM_JOOMGALLERY_FILTER_BY_TAGS"
-                   require="true" >
-            </field>
-        </fieldset>
-    </fields>
-    <fields name="params">
-        <fieldset name="advanced" label="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_OPTIONS" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
-            <field
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_SUBCATEGORIES"
-                type="spacer"
-                name="spacer1"
-                hr="false"
-                >
-            </field>
-            <field
-                name="jg_category_view_subcategory_class"
-                type="jglist"
-                useglobal="true"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_CLASS"
-                description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_CLASS_NOTE_DESC"
-                parentclass="span-3"
-                validate="options"
-                >
-                <option value="columns">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_GRID</option>
-                <option value="masonry">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_MASONRY</option>
-            </field>
-            <field
-                name="jg_category_view_subcategory_num_columns"
-                type="jglist"
-                useglobal="true"
-                label="COM_JOOMGALLERY_MENU_NUM_COLUMNS_LABEL"
-                description="COM_JOOMGALLERY_MENU_NUM_COLUMNS_DESC"
-                parentclass="span-3"
-                validate="options"
-                >
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </field>
-            <field
-                name="jg_category_view_subcategory_image_class"
-                type="jgradio"
-                useglobal="true"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGE_CLASS"
-                parentclass="span-3"
-                class="btn-group btn-group-yesno"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_category_view_numb_subcategories"
-                type="jgnumber"
-                useglobal="true"
-                parentclass="span-3"
-                min="0"
-                step="1"
-                validate="number"
-                filter="integer"
-                label="COM_JOOMGALLERY_CONFIG_NUMB_SUBCATEGORIES"
-                description="COM_JOOMGALLERY_CONFIG_NUMB_SUBCATEGORIES_DESC"
-            />
-            <field
-                name="jg_category_view_subcategories_pagination"
-                readonly="true"
-                type="jglist"
-                useglobal="true"
-                parentclass="span-3"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_PAGINATION"
-                description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_PAGINATION_DESC"
-                validate="options"
-                >
-                <option value="0">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_PAGINATION</option>
-                <option value="1">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LOADMORE</option>
-                <option value="2">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_INFINITY</option>
-            </field>
-            <field
-                name="jg_category_view_subcategories_category_description"
-                type="jgradio"
-                useglobal="true"
-                parentclass="span-3"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_DESCRIPTION"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_category_view_subcategories_random_image"
-                type="jgradio"
-                useglobal="true"
-                parentclass="span-3"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_IMAGES"
-                description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_IMAGES_DESC"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_category_view_subcategories_random_subimages"
-                type="jgradio"
-                useglobal="true"
-                parentclass="span-3"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_SUBIMAGES"
-                description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_SUBIMAGES_DESC"
-                validate="options"
-                showon="jg_category_view_subcategories_random_image!:0"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES"
-                type="spacer"
-                name="spacer2"
-                hr="false"
-                >
-            </field>
-            <field
-                name="jg_category_view_class"
-                type="jglist"
-                useglobal="true"
-                parentclass="span-3"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES_CLASS"
-                description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES_CLASS_DESC"
-                validate="options"
-                >
-                <option value="columns">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_GRID</option>
-                <option value="masonry">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_MASONRY</option>
-                <option value="justified">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_JUSTIFIED</option>
-            </field>
-            <field
-                name="jg_category_view_num_columns"
-                type="jglist"
-                useglobal="true"
-                parentclass="span-3"
-                label="COM_JOOMGALLERY_CONFIG_NUM_COLUMNS_LABEL"
-                description="COM_JOOMGALLERY_CONFIG_NUM_COLUMNS_DESC"
-                validate="options"
-                showon="jg_category_view_class!:justified"
-                >
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </field>
-            <field
-                name="jg_category_view_justified_height"
-                type="jgnumber"
-                useglobal="true"
-                min="1"
-                step="1"
-                validate="number"
-                filter="integer"
-                parentclass="span-3"
-                label="COM_JOOMGALLERY_MENU_JUSTIFIED_HEIGHT"
-                description="COM_JOOMGALLERY_MENU_JUSTIFIED_HEIGHT_NOTE_DESC"
-                showon="jg_category_view_class!:columns[AND]jg_category_view_class!:masonry"
-            />
-            <field
-                name="jg_category_view_justified_gap"
-                type="jgnumber"
-                useglobal="true"
-                min="0"
-                step="1"
-                validate="number"
-                filter="integer"
-                parentclass="span-3"
-                label="COM_JOOMGALLERY_MENU_JUSTIFIED_GAP"
-                description="COM_JOOMGALLERY_MENU_JUSTIFIED_GAP_NOTE_DESC"
-                showon="jg_category_view_class!:columns[AND]jg_category_view_class!:masonry"
-            />
-            <field
-                name="jg_category_view_image_class"
-                type="jgradio"
-                useglobal="true"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGE_CLASS"
-                parentclass="span-3"
-                class="btn-group btn-group-yesno"
-                validate="options"
-                showon="jg_category_view_class!:justified"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_category_view_numb_images"
-                type="jgnumber"
-                useglobal="true"
-                parentclass="span-3"
-                min="1"
-                step="1"
-                validate="number"
-                filter="integer"
-                label="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES"
-                description="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES_DESC"
-                showon="jg_category_view_pagination!:1"
-            />
-            <field
-                name="jg_category_view_pagination"
-                type="jglist"
-                useglobal="true"
-                parentclass="span-3"
-                label="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_LABEL"
-                description="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_DESC"
-                validate="options"
-                >
-                <option value="0">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT0</option>
-                <option value="1">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT1</option>
-                <option value="2">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT2</option>
-            </field>
-            <field
-                name="jg_category_view_number_of_reloaded_images"
-                type="jgnumber"
-                useglobal="true"
-                parentclass="span-3"
-                min="1"
-                step="1"
-                validate="number"
-                filter="integer"
-                label="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_NUMBER_OF_RELOADED_IMAGES_LABEL"
-                description="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_NUMBER_OF_RELOADED_IMAGES_DESC"
-                showon="jg_category_view_pagination:2"
-            />
-            <field
-                name="jg_category_view_image_link"
-                type="jglist"
-                useglobal="true"
-                parentclass="span-3"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGES_LINK"
-                description="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGES_LINK_DESC"
-                validate="options"
-                >
-                <option value="none">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_NONE</option>
-                <option value="defaultview">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_DETAILVIEW</option>
-                <option value="lightgallery">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_LIGHTGALLERY</option>
-            </field>
-            <field
-                name="jg_category_view_caption_align"
-                type="jglist"
-                useglobal="true"
-                parentclass="span-3"
-                label="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_ALIGNMENT"
-                description="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_ALIGNMENT_NOTE_DESC"
-                validate="options"
-                >
-                <option value="left">JGLOBAL_LEFT</option>
-                <option value="center">JGLOBAL_CENTER</option>
-                <option value="right">JGLOBAL_RIGHT</option>
-            </field>
-            <field
-                name="jg_category_view_images_show_title"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                parentclass="span-3"
-                label="JGLOBAL_TITLE"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_category_view_title_link"
-                type="jglist"
-                useglobal="true"
-                parentclass="span-3"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_TITLE_LINK"
-                description="COM_JOOMGALLERY_CONFIG_CATEGORY_TITLE_LINK_DESC"
-                validate="options"
-                showon="jg_category_view_class!:justified[AND]jg_category_view_images_show_title!:0"
-                >
-                <option value="none">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_NONE</option>
-                <option value="defaultview">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_DETAILVIEW</option>
-                <option value="lightgallery">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_LIGHTGALLERY</option>
-            </field>
+      <field name="tag"
+             type="sql"
+             query="SELECT `id`, `title` FROM #__joomgallery_tags ORDER BY `id`"
+             key_field="id"
+             value_field="title"
+             multiple="true"
+             label="COM_JOOMGALLERY_FILTER_BY_TAGS"
+             require="true">
+      </field>
+    </fieldset>
+  </fields>
+  <fields name="params">
+    <fieldset name="advanced" label="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_OPTIONS"
+              addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+      <field
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_SUBCATEGORIES"
+        type="spacer"
+        name="spacer1"
+        hr="false"
+      >
+      </field>
+      <field
+        name="jg_category_view_subcategory_class"
+        type="jglist"
+        useglobal="true"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_CLASS"
+        description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_CLASS_NOTE_DESC"
+        parentclass="span-3"
+        validate="options"
+      >
+        <option value="columns">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_GRID</option>
+        <option value="masonry">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_MASONRY</option>
+      </field>
+      <field
+        name="jg_category_view_subcategory_num_columns"
+        type="jglist"
+        useglobal="true"
+        label="COM_JOOMGALLERY_MENU_NUM_COLUMNS_LABEL"
+        description="COM_JOOMGALLERY_MENU_NUM_COLUMNS_DESC"
+        parentclass="span-3"
+        validate="options"
+      >
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+      </field>
+      <field
+        name="jg_category_view_subcategory_image_class"
+        type="jgradio"
+        useglobal="true"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGE_CLASS"
+        parentclass="span-3"
+        class="btn-group btn-group-yesno"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_category_view_numb_subcategories"
+        type="jgnumber"
+        useglobal="true"
+        parentclass="span-3"
+        min="0"
+        step="1"
+        validate="number"
+        filter="integer"
+        label="COM_JOOMGALLERY_CONFIG_NUMB_SUBCATEGORIES"
+        description="COM_JOOMGALLERY_CONFIG_NUMB_SUBCATEGORIES_DESC"
+      />
+      <field
+        name="jg_category_view_subcategories_pagination"
+        readonly="true"
+        type="jglist"
+        useglobal="true"
+        parentclass="span-3"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_PAGINATION"
+        description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_PAGINATION_DESC"
+        validate="options"
+      >
+        <option value="0">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_PAGINATION</option>
+        <option value="1">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LOADMORE</option>
+        <option value="2">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_INFINITY</option>
+      </field>
+      <field
+        name="jg_category_view_subcategories_category_description"
+        type="jgradio"
+        useglobal="true"
+        parentclass="span-3"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_DESCRIPTION"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_category_view_subcategories_random_image"
+        type="jgradio"
+        useglobal="true"
+        parentclass="span-3"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_IMAGES"
+        description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_IMAGES_DESC"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_category_view_subcategories_random_subimages"
+        type="jgradio"
+        useglobal="true"
+        parentclass="span-3"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_SUBIMAGES"
+        description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_SUBIMAGES_DESC"
+        validate="options"
+        showon="jg_category_view_subcategories_random_image!:0"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES"
+        type="spacer"
+        name="spacer2"
+        hr="false"
+      >
+      </field>
+      <field
+        name="jg_category_view_class"
+        type="jglist"
+        useglobal="true"
+        parentclass="span-3"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES_CLASS"
+        description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES_CLASS_DESC"
+        validate="options"
+      >
+        <option value="columns">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_GRID</option>
+        <option value="masonry">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_MASONRY</option>
+        <option value="justified">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_JUSTIFIED</option>
+      </field>
+      <field
+        name="jg_category_view_num_columns"
+        type="jglist"
+        useglobal="true"
+        parentclass="span-3"
+        label="COM_JOOMGALLERY_CONFIG_NUM_COLUMNS_LABEL"
+        description="COM_JOOMGALLERY_CONFIG_NUM_COLUMNS_DESC"
+        validate="options"
+        showon="jg_category_view_class!:justified"
+      >
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+      </field>
+      <field
+        name="jg_category_view_justified_height"
+        type="jgnumber"
+        useglobal="true"
+        min="1"
+        step="1"
+        validate="number"
+        filter="integer"
+        parentclass="span-3"
+        label="COM_JOOMGALLERY_MENU_JUSTIFIED_HEIGHT"
+        description="COM_JOOMGALLERY_MENU_JUSTIFIED_HEIGHT_NOTE_DESC"
+        showon="jg_category_view_class!:columns[AND]jg_category_view_class!:masonry"
+      />
+      <field
+        name="jg_category_view_justified_gap"
+        type="jgnumber"
+        useglobal="true"
+        min="0"
+        step="1"
+        validate="number"
+        filter="integer"
+        parentclass="span-3"
+        label="COM_JOOMGALLERY_MENU_JUSTIFIED_GAP"
+        description="COM_JOOMGALLERY_MENU_JUSTIFIED_GAP_NOTE_DESC"
+        showon="jg_category_view_class!:columns[AND]jg_category_view_class!:masonry"
+      />
+      <field
+        name="jg_category_view_image_class"
+        type="jgradio"
+        useglobal="true"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGE_CLASS"
+        parentclass="span-3"
+        class="btn-group btn-group-yesno"
+        validate="options"
+        showon="jg_category_view_class!:justified"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_category_view_numb_images"
+        type="jgnumber"
+        useglobal="true"
+        parentclass="span-3"
+        min="1"
+        step="1"
+        validate="number"
+        filter="integer"
+        label="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES"
+        description="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES_DESC"
+        showon="jg_category_view_pagination!:1"
+      />
+      <field
+        name="jg_category_view_pagination"
+        type="jglist"
+        useglobal="true"
+        parentclass="span-3"
+        label="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_LABEL"
+        description="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_DESC"
+        validate="options"
+      >
+        <option value="0">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT0</option>
+        <option value="1">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT1</option>
+        <option value="2">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT2</option>
+      </field>
+      <field
+        name="jg_category_view_number_of_reloaded_images"
+        type="jgnumber"
+        useglobal="true"
+        parentclass="span-3"
+        min="1"
+        step="1"
+        validate="number"
+        filter="integer"
+        label="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_NUMBER_OF_RELOADED_IMAGES_LABEL"
+        description="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_NUMBER_OF_RELOADED_IMAGES_DESC"
+        showon="jg_category_view_pagination:2"
+      />
+      <field
+        name="jg_category_view_image_link"
+        type="jglist"
+        useglobal="true"
+        parentclass="span-3"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGES_LINK"
+        description="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGES_LINK_DESC"
+        validate="options"
+      >
+        <option value="none">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_NONE</option>
+        <option value="defaultview">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_DETAILVIEW</option>
+        <option value="lightgallery">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_LIGHTGALLERY</option>
+      </field>
+      <field
+        name="jg_category_view_caption_align"
+        type="jglist"
+        useglobal="true"
+        parentclass="span-3"
+        label="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_ALIGNMENT"
+        description="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_ALIGNMENT_NOTE_DESC"
+        validate="options"
+      >
+        <option value="left">JGLOBAL_LEFT</option>
+        <option value="center">JGLOBAL_CENTER</option>
+        <option value="right">JGLOBAL_RIGHT</option>
+      </field>
+      <field
+        name="jg_category_view_images_show_title"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        parentclass="span-3"
+        label="JGLOBAL_TITLE"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_category_view_title_link"
+        type="jglist"
+        useglobal="true"
+        parentclass="span-3"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_TITLE_LINK"
+        description="COM_JOOMGALLERY_CONFIG_CATEGORY_TITLE_LINK_DESC"
+        validate="options"
+        showon="jg_category_view_class!:justified[AND]jg_category_view_images_show_title!:0"
+      >
+        <option value="none">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_NONE</option>
+        <option value="defaultview">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_DETAILVIEW</option>
+        <option value="lightgallery">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_LIGHTGALLERY</option>
+      </field>
 
-            <field
-                label="COM_JOOMGALLERY_CONFIG_IMAGE_INFORMATION"
-                type="spacer"
-                name="spacer3"
-                hr="false"
-                >
-            </field>
-            <field
-                name="jg_category_view_show_description"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="JGLOBAL_DESCRIPTION"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_category_view_show_description_label"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_DESCRIPTION_LABEL"
-                description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_DESCRIPTION_LABEL_DESC"
-                validate="options"
-                showon="jg_category_view_show_description!:0"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_category_view_show_imgdate"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_DATE"
-                description="COM_JOOMGALLERY_DATE_DESC"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_category_view_show_imgauthor"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="JAUTHOR"
-                description="COM_JOOMGALLERY_FIELDS_AUTHOR_DESC"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_category_view_show_tags"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_TAGS"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-        </fieldset>
-    </fields>
+      <field
+        label="COM_JOOMGALLERY_CONFIG_IMAGE_INFORMATION"
+        type="spacer"
+        name="spacer3"
+        hr="false"
+      >
+      </field>
+      <field
+        name="jg_category_view_show_description"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="JGLOBAL_DESCRIPTION"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_category_view_show_description_label"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_DESCRIPTION_LABEL"
+        description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_DESCRIPTION_LABEL_DESC"
+        validate="options"
+        showon="jg_category_view_show_description!:0"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_category_view_show_imgdate"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_DATE"
+        description="COM_JOOMGALLERY_DATE_DESC"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_category_view_show_imgauthor"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="JAUTHOR"
+        description="COM_JOOMGALLERY_FIELDS_AUTHOR_DESC"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_category_view_show_tags"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_TAGS"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+    </fieldset>
+  </fields>
 </metadata>

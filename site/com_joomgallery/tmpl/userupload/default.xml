@@ -1,44 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JOOMGALLERY_MENU_VIEW_USER_UPLOAD_TITLE" option="JDEFAULT">
-        <message>
-          <![CDATA[COM_JOOMGALLERY_MENU_VIEW_USER_UPLOAD_DESC]]>
-        </message>
-	</layout>
+  <layout title="COM_JOOMGALLERY_MENU_VIEW_USER_UPLOAD_TITLE" option="JDEFAULT">
+    <message>
+      <![CDATA[COM_JOOMGALLERY_MENU_VIEW_USER_UPLOAD_DESC]]>
+    </message>
+  </layout>
 
-    <fields name="request">
-        <fieldset name="request"
-        >
-          <field
-            name="userNeedsSettings"
-            type="note"
-            label="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO"
-            description="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO_DESC"
-            readonly="true"
-            class="alert alert-info"
-          />
-        </fieldset>
-    </fields>
-    <fields name="params">
-        <fieldset name="basic">
-            <field name="showTitle"
-                   type="radio"
-                   default="1"
-                   label="COM_JOOMGALLERY_MENU_SHOW_TITLE"
-                   description="COM_JOOMGALLERY_MENU_SHOW_TITLE_DESC"
-                   class="btn-group btn-group-yesno">
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-
-<!--            <field-->
-<!--                    label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_SUBCATEGORIES"-->
-<!--                    type="spacer"-->
-<!--                    name="spacer1"-->
-<!--                    hr="false"-->
-<!--            >-->
-<!--            </field>-->
-        </fieldset>
-    </fields>
+  <fields name="request">
+    <fieldset name="request"
+    >
+      <field
+        name="userNeedsSettings"
+        type="note"
+        label="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO"
+        description="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO_DESC"
+        readonly="true"
+        class="alert alert-info"
+      />
+    </fieldset>
+  </fields>
+  <fields name="params">
+    <fieldset name="basic">
+      <field name="showTitle"
+             type="radio"
+             default="1"
+             label="COM_JOOMGALLERY_MENU_SHOW_TITLE"
+             description="COM_JOOMGALLERY_MENU_SHOW_TITLE_DESC"
+             class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="0">JNO</option>
+      </field>
+    </fieldset>
+  </fields>
 
 </metadata>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JOOMGALLERY_MENU_VIEW_USER_IMAGES_TITLE" option="JDEFAULT">
-        <message>
-          <![CDATA[COM_JOOMGALLERY_MENU_VIEW_USER_IMAGES_DESC]]>
-        </message>
-	</layout>
+  <layout title="COM_JOOMGALLERY_MENU_VIEW_USER_IMAGES_TITLE" option="JDEFAULT">
+    <message>
+      <![CDATA[COM_JOOMGALLERY_MENU_VIEW_USER_IMAGES_DESC]]>
+    </message>
+  </layout>
   <fields name="request">
     <fieldset name="request"
     >
