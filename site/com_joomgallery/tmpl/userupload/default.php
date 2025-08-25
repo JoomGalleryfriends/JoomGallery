@@ -16,10 +16,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
 use \Joomla\CMS\Layout\FileLayout;
 
-//$wa = $this->document->getWebAssetManager();
-//$wa->
-
-/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+// Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
   ->useScript('form.validate')
@@ -39,7 +36,7 @@ $imagesView     = Route::_('index.php?option=com_joomgallery&view=userimages');
 
 // return to userPanel;
 $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userupload');
-$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return=' . $returnURL);
+$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return='.$returnURL);
 
 $config    = $this->params['configs'];
 $menuParam = $this->params['menu'];
@@ -82,7 +79,7 @@ Text::script('COM_JOOMGALLERY_ERROR_UPPY_FORM');
 Text::script('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD');
 Text::script('COM_JOOMGALLERY_ERROR_FILL_REQUIRED_FIELDS');
 
-$wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_vars) . '\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
+$wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_vars).'\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
 
 ?>
 
@@ -92,47 +89,45 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_v
         method="post" enctype="multipart/form-data" name="adminForm" id="adminForm" class="needs-validation"
         novalidate aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGES_UPLOAD', true); ?>">
 
-    <?php if ($isShowTitle): ?>
+    <?php if($isShowTitle): ?>
       <h3><?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD'); ?></h3>
       <hr>
     <?php endif; ?>
 
-    <?php if (empty($isHasAccess)): ?>
+    <?php if(empty($isHasAccess)): ?>
       <div>
-        <?php if (!$this->isUserLoggedIn): ?>
+        <?php if(!$this->isUserLoggedIn): ?>
+
           <div class="mb-2">
             <div class="alert alert-warning" role="alert">
               <span class="icon-key"></span>
               <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_PLEASE_LOGIN'); ?>
             </div>
           </div>
-        <?php else: ?>
-          <!--  <div class="mb-2">-->
-          <!--      <a class="btn btn-primary" href="--><?php //echo $panelView; ?><!--" role="button">-->
-          <!--          <span class="icon-home"></span>-->
-          <!--          --><?php //echo Text::_('COM_JOOMGALLERY_USER_PANEL'); ?>
-          <!--      </a>-->
-          <!--  </div>-->
 
-          <?php if (!$this->isUserHasCategory): ?>
+        <?php else: ?>
+
+          <?php if(!$this->isUserHasCategory): ?>
             <div class="alert alert-warning" role="alert">
               <span class="icon-images"></span>
               <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
               <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
             </div>
           <?php endif; ?>
-          <?php if (!$this->isUserCoreManager): ?>
+          <?php if(!$this->isUserCoreManager): ?>
             <div class="alert alert-warning" role="alert">
               <span class="icon-lamp"></span>
               <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_RIGHTS'); ?>
               <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
             </div>
           <?php endif; ?>
+
         <?php endif; ?>
       </div>
-    <?php else: ?>
-      <div class="form-group">
 
+    <?php else: ?>
+
+      <div class="form-group">
         <div class="mb-2">
           <a class="btn btn-info" href="<?php echo $imagesView; ?>" role="button">
             <span class="icon-images"></span>
@@ -154,8 +149,8 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_v
             <?php echo Text::_('COM_JOOMGALLERY_USER_PANEL'); ?>
           </a>
         </div>
-
       </div>
+
       <div class="form-group">
         <div class="row align-items-start">
           <div class="col-md-6 mb">
@@ -185,10 +180,9 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_v
                 <?php echo $rendererTip->render($displayTipData); ?>
               </p>
               <?php echo $this->form->renderField('catid'); ?>
-              <!--                            --><?php //echo $this->form->renderField('catid', $this->userId); ?>
-              <?php if (!$isUseOrigFilename): ?>
+              <?php if(!$isUseOrigFilename): ?>
                 <?php echo $this->form->renderField('title'); ?>
-                <?php if ($isUseFilenameNumber): ?>
+                <?php if($isUseFilenameNumber): ?>
                   <?php echo $this->form->renderField('nmb_start'); ?>
                 <?php endif; ?>
               <?php endif; ?>
@@ -212,7 +206,7 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_v
     <input type="hidden" name="task" value="image.ajaxsave"/>
     <input type="hidden" name="jform[uploader]" value="tus"/>
     <input type="hidden" name="jform[multiple]" value="1"/>
-    <?php if ($config->get('jg_useorigfilename')): ?>
+    <?php if($config->get('jg_useorigfilename')): ?>
       <input type="hidden" name="jform[title]" value="title"/>
     <?php endif; ?>
     <input type="hidden" name="id" value="0"/>
@@ -221,6 +215,7 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_v
     <?php echo HTMLHelper::_('form.token'); ?>
 
   </form>
+
   <div id="popup-area"></div>
 
 </div>
@@ -230,16 +225,18 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_v
  * Display system limits as collapsed
  *
  * Parameter: limits in megabytes, created in viewhtml.php
- * @param   int  $UploadLimit  php setting 'upload_max_filesize'
- * @param   int  $PostMaxSize  php setting 'post_max_size'
- * @param   int  $MemoryLimit  php setting 'memory_limit'
- * @param   int  $mediaSize  upload limit by joomgallery / joomla media configuration
- * @param   int  $configSize  upload limit by joomgallery configuraion
- * @param   int  $maxSize  Min of above
+ *
+ * @param   int   $UploadLimit  php setting 'upload_max_filesize'
+ * @param   int   $PostMaxSize  php setting 'post_max_size'
+ * @param   int   $MemoryLimit  php setting 'memory_limit'
+ * @param   int   $mediaSize    upload limit by joomgallery / joomla media configuration
+ * @param   int   $configSize   upload limit by joomgallery configuraion
+ * @param   int   $maxSize      Min of above
  *
  * @since   4.2.0
  */
-function DisplaySystemSettings($UploadLimit, $PostMaxSize, $MemoryLimit, $mediaSize, $configSize, $maxSize)
+function DisplaySystemSettings(int $UploadLimit, int $PostMaxSize, int $MemoryLimit,
+                               int $mediaSize, int $configSize, int $maxSize): void
 {
   $title  = Text::sprintf('COM_JOOMGALLERY_UPLOAD_LIMIT_CALCULATED', $maxSize);
   $id     = 127000;

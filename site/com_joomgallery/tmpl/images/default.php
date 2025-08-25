@@ -32,6 +32,7 @@ $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', 0, 
 $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 $returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->getLayout()));
 
+$saveOrderingUrl = '';
 if($saveOrder && !empty($this->items))
 {
 	$saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');

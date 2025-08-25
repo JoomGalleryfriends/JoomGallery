@@ -15,7 +15,6 @@ use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
 use \Joomla\CMS\Session\Session;
-use \Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // Import CSS & JS
@@ -38,9 +37,10 @@ $menuParam = $this->params['menu'];
 
 $isShowTitle = $menuParam->get('showTitle') ?? true;
 
-if ($saveOrder && !empty($this->items))
+$saveOrderingUrl = '';
+if($saveOrder && !empty($this->items))
 {
-  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=userimages.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
+  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=userimages.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
   HTMLHelper::_('draggablelist.draggable');
 }
 
@@ -51,21 +51,12 @@ $categoriesView = Route::_('index.php?option=com_joomgallery&view=usercategories
 
 // return to userImages;
 $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userimages');
-$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return=' . $returnURL);
+$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return='.$returnURL);
 
-//$baseLink_ImageEdit = 'index.php?option=com_joomgallery&view=userimage&layout=editImg&id=';
 $baseLink_ImageEdit = 'index.php?option=com_joomgallery&task=userimage.edit&id=';
 
-//$baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=images&filter_image=';
-
 $canDelete = false;
-/**
- * <?php if ($this->params['menu']->get('show_page_heading')) : ?>
- * <div class="page-header page-title">
- * <h1> <?php echo $this->escape($this->params['menu']->get('page_heading')); ?> </h1>
- * </div>
- * <?php endif; ?>
- **/
+
 ?>
 
 <div class="jg jg-user-images ">
@@ -74,14 +65,14 @@ $canDelete = false;
         method="post" name="adminForm" id="adminForm"
         novalidate aria-label="<?php echo Text::_('COM_JOOMGALLERY_USER_PANEL', true); ?>">
 
-    <?php if ($isShowTitle): ?>
+    <?php if($isShowTitle): ?>
       <h3><?php echo Text::_('COM_JOOMGALLERY_USER_IMAGES'); ?></h3>
       <hr>
     <?php endif; ?>
 
-    <?php if (empty($isHasAccess)): ?>
+    <?php if(empty($isHasAccess)): ?>
       <div>
-        <?php if (!$this->isUserLoggedIn): ?>
+        <?php if(!$this->isUserLoggedIn): ?>
           <div class="mb-2">
             <div class="alert alert-warning" role="alert">
               <span class="icon-key"></span>
@@ -91,18 +82,20 @@ $canDelete = false;
 
         <?php else: ?>
 
-          <?php if (!$this->isUserHasCategory): ?>
+          <?php if(!$this->isUserHasCategory): ?>
             <div class="alert alert-warning" role="alert">
               <span class="icon-images"></span>
               <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
+              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
             </div>
           <?php endif; ?>
-          <?php if (!$this->isUserCoreManager): ?>
+          <?php if(!$this->isUserCoreManager): ?>
             <div class="alert alert-warning" role="alert">
               <span class="icon-lamp"></span>
               <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_RIGHTS'); ?>
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
+              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
             </div>
           <?php endif; ?>
         <?php endif; ?>
@@ -139,12 +132,11 @@ $canDelete = false;
       <div class="card ">
         <div class="card-body">
 
-          <?php if (!empty($this->filterForm))
-          {
+          <?php if(!empty($this->filterForm)): ?>
             echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
-          } ?>
+          <?php endif; ?>
 
-          <?php if (empty($this->items)) : ?>
+          <?php if(empty($this->items)) : ?>
             <div class="alert alert-info">
               <span class="icon-info-circle" aria-hidden="true"></span><span
                 class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
@@ -164,7 +156,7 @@ $canDelete = false;
                 </caption>
                 <thead>
                 <tr>
-                  <?php if ($canOrder && $saveOrder && isset($this->items[0]->ordering)): ?>
+                  <?php if($canOrder && $saveOrder && isset($this->items[0]->ordering)): ?>
                     <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                       <?php echo HTMLHelper::_('grid.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
                     </th>
@@ -206,32 +198,33 @@ $canDelete = false;
                   </td>
                 </tr>
                 </tfoot>
-                <tbody <?php if ($saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
-                <?php foreach ($this->items as $i => $item) :
+                <tbody <?php if($saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
+                <?php foreach($this->items as $i => $item) :
+                  // Access check
                   $ordering = ($listOrder == 'a.ordering');
                   $canEdit = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canDelete = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canChange = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canCheckin = $canChange || $item->checked_out == Factory::getUser()->id;
+                  $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser->id;
                   $disabled = ($item->checked_out > 0) ? 'disabled' : '';
                   ?>
 
                   <tr class="row<?php echo $i % 2; ?>">
 
-                    <?php if (isset($this->items[0]->ordering)) : ?>
+                    <?php if(isset($this->items[0]->ordering)) : ?>
                       <td class="text-center d-none d-md-table-cell sort-cell">
                         <?php
                         $iconClass = '';
-                        if (!$canChange)
+                        if(!$canChange)
                         {
                           $iconClass = ' inactive';
                         }
-                        elseif (!$saveOrder)
+                        elseif(!$saveOrder)
                         {
-                          $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
+                          $iconClass = ' inactive" title="'.Text::_('JORDERINGDISABLED');
                         }
                         ?>
-                        <?php if ($canChange && $saveOrder) : ?>
+                        <?php if($canChange && $saveOrder) : ?>
                           <span class="sortable-handler<?php echo $iconClass ?>">
                           <span class="icon-ellipsis-v" aria-hidden="true"></span>
                         </span>
@@ -248,33 +241,26 @@ $canDelete = false;
                            alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                     </td>
 
-                    <td scope="row" class="has-context title-cell">
-                      <?php if ($canCheckin && $item->checked_out > 0) : ?>
+                    <th scope="row" class="has-context title-cell">
+                      <?php if($canCheckin && $item->checked_out > 0) : ?>
                         <button class="js-grid-item-action tbody-icon" data-item-id="cb<?php echo $i; ?>"
                                 data-item-task="userimage.checkin">
                           <span class="icon-checkedout" aria-hidden="true"></span>
                         </button>
                       <?php endif; ?>
-                      <!--                      <a href="-->
-                      <?php //echo Route::_(JoomHelper::getViewRoute('image', (int) $item->id, (int) $item->catid));
-                      ?><!--">-->
-                      <!--                        --><?php //echo $this->escape($item->title);
-                      ?><!-- (--><?php //echo $this->escape($item->id);
-                      ?><!--)</a>-->
-                      <!--                      </a>-->
                       <?php
-                      $route = Route::_($baseLink_ImageEdit . (int) $item->id);
+                      $route = Route::_($baseLink_ImageEdit.(int) $item->id);
                       ?>
                       <a href="<?php echo $route; ?>">
                         <?php echo $this->escape($item->title); ?>
                         <?php
-                        if ($this->isDevelopSite)
+                        if($this->isDevelopSite)
                         {
-                          echo '&nbsp;(' . $this->escape($item->id) . ')';
+                          echo '&nbsp;('.$this->escape($item->id).')';
                         }
                         ?>
                       </a>
-                    </td>
+                    </th>
 
                     <td class="d-none d-lg-table-cell text-center">
                     <span class="badge bg-info">
@@ -293,19 +279,15 @@ $canDelete = false;
                     </td>
 
                     <td class="d-none d-lg-table-cell text-center">
-                      <?php if ($canEdit || $canDelete): ?>
-                        <?php if ($canEdit): ?>
-                          <!--button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
-                            data-item-id="cb<?php echo $i; ?>"
-								            data-item-task="userimage.edit" <?php echo $disabled; ?>>
-                          <span class="icon-edit" aria-hidden="true"></span>
-                        </button-->
+                      <?php if($canEdit || $canDelete): ?>
+                        <?php if($canEdit): ?>
+
                           <?php
                           // ToDo: canEdit
                           $itemId    = $item->id;
                           $title     = $this->escape($item->title);
-                          $baseRoute = $baseLink_ImageEdit . (int) $item->id;
-                          $route     = Route::_($baseLink_ImageEdit . (int) $item->id);
+                          $baseRoute = $baseLink_ImageEdit.(int) $item->id;
+                          $route     = Route::_($baseLink_ImageEdit.(int) $item->id);
                           $test      = $route;
                           ?>
                           <a href="<?php echo $route; ?>">
@@ -313,7 +295,7 @@ $canDelete = false;
                           </a>
                         <?php endif; ?>
 
-                        <?php if ($canDelete): ?>
+                        <?php if($canDelete): ?>
                           <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
                                   data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
                                   data-item-id="cb<?php echo $i; ?>"
@@ -325,7 +307,7 @@ $canDelete = false;
                     </td>
 
                     <td class="d-none d-lg-table-cell text-center">
-                      <?php if ($canChange): ?>
+                      <?php if($canChange): ?>
                         <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                         <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                 data-item-id="cb<?php echo $i; ?>"

@@ -33,6 +33,7 @@ $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category');
 $saveOrder = ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 $returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->getLayout()));
 
+$saveOrderingUrl = '';
 if($saveOrder && !empty($this->items))
 {
 	$saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
@@ -114,9 +115,10 @@ if($saveOrder && !empty($this->items))
 									$disabled   = ($item->checked_out > 0) ? 'disabled' : '';
                 
 									// Get the parents of item for sorting
-									if ($item->level > 1)
+                  $parentsStr = '';
+
+                  if ($item->level > 1)
 									{
-										$parentsStr = '';
 										$_currentParentId = $item->parent_id;
 										$parentsStr = ' ' . $_currentParentId;
 										for ($i2 = 0; $i2 < $item->level; $i2++)
@@ -133,10 +135,6 @@ if($saveOrder && !empty($this->items))
 												}
 											}
 										}
-									}
-									else
-									{
-										$parentsStr = '';
 									}
 								?>
 

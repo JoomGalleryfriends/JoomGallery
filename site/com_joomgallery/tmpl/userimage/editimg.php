@@ -24,35 +24,27 @@ $wa->useScript('keepalive')
    ->useStyle('com_joomgallery.site');
 
 // Load admin language file
-$lang = Factory::getLanguage();
+$lang = Factory::getApplication()->getLanguage();
 $lang->load('com_joomgallery', JPATH_SITE);
 $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
 $lang->load('joomla', JPATH_ADMINISTRATOR);
 
-//// ToDo: activate again
-//if($this->item->catid)
-//{
-//  // ID given -> edit
-//  $canEdit  = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
-//}
-//else
-//{
-//  // ID = null -> add
-//  $canEdit  = true;
-//}
-//$canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
+if($this->item->catid)
+{
+  // ID given -> edit
+  $canEdit  = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
+}
+else
+{
+  // ID = null -> add
+  $canEdit  = true;
+}
+$canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
 
 $config    = $this->params['configs'];
 $menuParam = $this->params['menu'];
 
 $isShowTitle = $menuParam->get('showTitle') ?? true;
-
-$canEdit  = true;
-$canAdmin = true;
-
-// ToDo: may backfire for close, cancel usw ? save ?
-// return to userImage;
-//$returnURL = base64_encode('index.php?option=com_joomgallery&view=userimage&layout=editImg&id='.$this->item->id);
 
 ?>
 
@@ -83,9 +75,6 @@ $canAdmin = true;
         </div>
 
       </div>
-
-
-
 
       <fieldset>
         <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details')); ?>
@@ -136,14 +125,14 @@ $canAdmin = true;
           <?php echo HTMLHelper::_('uitab.endTab'); ?>
         <?php endif; ?>
 
-        <input type="hidden" name="jform[ordering]" value="<?php echo isset($this->item->ordering) ? $this->item->ordering : ''; ?>" />
-        <input type="hidden" name="jform[checked_out]" value="<?php echo isset($this->item->checked_out) ? $this->item->checked_out : ''; ?>" />
-        <input type="hidden" name="jform[hits]" value="<?php echo isset($this->item->hits) ? $this->item->hits : ''; ?>" />
-        <input type="hidden" name="jform[downloads]" value="<?php echo isset($this->item->downloads) ? $this->item->downloads : ''; ?>" />
-        <input type="hidden" name="jform[votes]" value="<?php echo isset($this->item->votes) ? $this->item->votes : ''; ?>" />
-        <input type="hidden" name="jform[votesum]" value="<?php echo isset($this->item->votesum) ? $this->item->votesum : ''; ?>" />
-        <input type="hidden" name="jform[approved]" value="<?php echo isset($this->item->approved) ? $this->item->approved : ''; ?>" />
-        <input type="hidden" name="jform[useruploaded]" value="<?php echo isset($this->item->useruploaded) ? $this->item->useruploaded : ''; ?>" />
+        <input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering ?? ''; ?>" />
+        <input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out ?? ''; ?>" />
+        <input type="hidden" name="jform[hits]" value="<?php echo $this->item->hits ?? ''; ?>" />
+        <input type="hidden" name="jform[downloads]" value="<?php echo $this->item->downloads ?? ''; ?>" />
+        <input type="hidden" name="jform[votes]" value="<?php echo $this->item->votes ?? ''; ?>" />
+        <input type="hidden" name="jform[votesum]" value="<?php echo $this->item->votesum ?? ''; ?>" />
+        <input type="hidden" name="jform[approved]" value="<?php echo $this->item->approved ?? ''; ?>" />
+        <input type="hidden" name="jform[useruploaded]" value="<?php echo $this->item->useruploaded ?? ''; ?>" />
         
         <input type="hidden" name="type" id ="itemType" value="userimage"/>
         <input type="hidden" name="return" value="<?php echo $this->return_page; ?>"/>
