@@ -104,6 +104,11 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
       <div class="form-group">
 
         <div class="mb-4">
+          <a class="btn btn-primary" href="<?php echo $panelView; ?>" role="button">
+            <span class="icon-home"></span>
+            <?php echo Text::_('COM_JOOMGALLERY_USER_PANEL'); ?>
+          </a>
+
           <a class="btn btn-info" href="<?php echo $imagesView; ?>" role="button">
             <span class="icon-images"></span>
             <?php echo Text::_('COM_JOOMGALLERY_USER_IMAGES'); ?>
@@ -117,11 +122,6 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
           <a class="btn btn-primary" href="<?php echo $uploadView; ?>" role="button">
             <span class="icon-upload"></span>
             <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD'); ?>
-          </a>
-
-          <a class="btn btn-primary" href="<?php echo $panelView; ?>" role="button">
-            <span class="icon-home"></span>
-            <?php echo Text::_('COM_JOOMGALLERY_USER_PANEL'); ?>
           </a>
         </div>
 

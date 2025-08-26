@@ -107,6 +107,11 @@ $canDelete = false;
       <div class="form-group">
 
         <div class="mb-4">
+          <a class="btn btn-primary" href="<?php echo $panelView; ?>" role="button">
+            <span class="icon-home"></span>
+            <?php echo Text::_('COM_JOOMGALLERY_USER_PANEL'); ?>
+          </a>
+
           <a class="btn btn-info" href="<?php echo $categoriesView; ?>" role="button">
             <span class="icon-folder"></span>
             <?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORIES'); ?>
@@ -120,11 +125,6 @@ $canDelete = false;
           <a class="btn btn-primary" href="<?php echo $uploadView; ?>" role="button">
             <span class="icon-upload"></span>
             <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD'); ?>
-          </a>
-
-          <a class="btn btn-primary" href="<?php echo $panelView; ?>" role="button">
-            <span class="icon-home"></span>
-            <?php echo Text::_('COM_JOOMGALLERY_USER_PANEL'); ?>
           </a>
         </div>
 
