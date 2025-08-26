@@ -15,10 +15,13 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
 use \Joomla\Registry\Registry;
+use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\Database\DatabaseInterface;
+use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use \Joomla\CMS\Application\CMSApplicationInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
 
@@ -253,5 +256,116 @@ class UseruploadModel extends JoomAdminModel
 
     return $isUserHasACategory;
   }
+
+  /**
+   * Get array of all allowed filetypes based on the config parameter jg_imagetypes.
+   *
+   * @return  array  List with all allowed filetypes
+   * @since   4.2.0
+   *
+   */
+  public function getAllowedTypes($config): array
+  {
+//    $config = $this->params['configs'];
+
+    /** @var array $types */
+    $types = \explode(',', $config->get('jg_imagetypes'));
+
+    // add different types of jpg files
+    $jpg_array = array('jpg', 'jpeg', 'jpe', 'jfif');
+    if(\in_array('jpg', $types) || \in_array('jpeg', $types) || \in_array('jpe', $types) || \in_array('jfif', $types))
+    {
+      foreach($jpg_array as $jpg)
+      {
+        if(!\in_array($jpg, $types))
+        {
+          \array_push($types, $jpg);
+        }
+      }
+    }
+
+    // add point to types
+    foreach($types as $key => $type)
+    {
+      if(\substr($type, 0, 1) !== '.')
+      {
+        $types[$key] = '.'.\strtolower($type);
+      }
+      else
+      {
+        $types[$key] = \strtolower($type);
+      }
+    }
+
+    return $types;
+  }
+
+  /**
+   * Create the tus server and return the (uri) location of the TUS server
+   *
+   * @param   JoomgalleryComponent   $component
+   *
+   * @return string
+   *
+   * @since   4.2.0
+   */
+  public function createTusServer(JoomgalleryComponent $component): string
+  {
+    // Create tus server
+    $component->createTusServer();
+
+    /** @var Server $server */
+    $server = $component->getTusServer();
+
+    $tus_location = $server->getLocation();
+
+    return $tus_location;
+  }
+
+  /**
+   * Reads php.ini values to determine the minimum size for upload
+   * The memory_limit for the php script was not reliable (0 on some sytems)
+   * so it is just shown
+   *
+   * @param   mixed   $joomGalleryConfig  config of joom gallery
+   *
+   *
+   * @since   4.2.0
+   */
+  public function limitsPhpConfig(mixed $joomGalleryConfig): array
+  {
+    $mediaHelper = new MediaHelper;
+
+    // Maximum allowed size in MB
+    $uploadLimit = round($mediaHelper->toBytes(ini_get('upload_max_filesize')) / (1024 * 1024));
+    $postMaxSize = round($mediaHelper->toBytes(ini_get('post_max_size')) / (1024 * 1024));
+    $memoryLimit = round($mediaHelper->toBytes(ini_get('memory_limit')) / (1024 * 1024));
+
+    $mediaParams        = ComponentHelper::getParams('com_media');
+    $mediaUploadMaxsize = $mediaParams->get('upload_maxsize', 0);
+    $mediaSize          = $mediaUploadMaxsize;
+
+    $configSize = round($joomGalleryConfig->get('jg_maxfilesize'));
+
+    //--- Max size to be used (previously defined by joomla function but ...) -------------------------
+
+    // $uploadMaxSize=0 for no limit
+    if(empty($mediaUploadMaxsize))
+    {
+      $maxSize = min($uploadLimit, $postMaxSize, $configSize);
+    }
+    else
+    {
+      $maxSize = min($uploadLimit, $postMaxSize, $configSize, $mediaUploadMaxsize);
+    }
+
+    return [$uploadLimit,
+      $postMaxSize,
+      $memoryLimit,
+      $mediaSize,
+      $maxSize,
+      $configSize];
+  }
+
 
 }

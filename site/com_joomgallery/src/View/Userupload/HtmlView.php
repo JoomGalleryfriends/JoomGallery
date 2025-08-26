@@ -12,10 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Userupload;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\Registry;
-use \Joomla\CMS\Helper\MediaHelper;
-use \Joomla\CMS\Component\ComponentHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
 
 /**
  * HTML Contact View class for the Contact component
@@ -152,9 +149,9 @@ class HtmlView extends JoomGalleryView
     // Add variables to JavaScript
     $js_vars              = new \stdClass();
     $js_vars->maxFileSize = (100 * 1073741824); // 100GB
-    $js_vars->TUSlocation = $this->getTusLocation(); // $this->item->tus_location;
+    $js_vars->TUSlocation = $model->createTusServer($this->component); // $this->item->tus_location;
 
-    $js_vars->allowedTypes = $this->getAllowedTypes();
+    $js_vars->allowedTypes = $model->getAllowedTypes($this->params['configs']);
 
     $js_vars->uppyTarget = '#drag-drop-area';          // Id of the DOM element to apply the uppy form
     $js_vars->uppyLimit  = 5;                          // Number of concurrent tus uploads (only file upload)
@@ -167,7 +164,13 @@ class HtmlView extends JoomGalleryView
 
     //--- Limits php.ini, config ----------------------------------------------------------------
 
-    $this->limitsPhpConfig($config);
+    [$this->uploadLimit,
+      $this->postMaxSize,
+      $this->memoryLimit,
+      $this->mediaSize,
+      $this->maxSize,
+      $this->configSize]
+      = $model->limitsPhpConfig($config);
 
     // Prepares the document breadcrumbs
     $this->_prepareDocument();
@@ -243,107 +246,6 @@ class HtmlView extends JoomGalleryView
       {
         $pathway->addItem($breadcrumbTitle, '');
       }
-    }
-  }
-
-  /**
-   * Get array of all allowed filetypes based on the config parameter jg_imagetypes.
-   *
-   * @return  array  List with all allowed filetypes
-   * @since   4.2.0
-   *
-   */
-  protected function getAllowedTypes(): array
-  {
-    $config = $this->params['configs'];
-
-    /** @var array $types */
-    $types = \explode(',', $config->get('jg_imagetypes'));
-
-    // add different types of jpg files
-    $jpg_array = array('jpg', 'jpeg', 'jpe', 'jfif');
-    if(\in_array('jpg', $types) || \in_array('jpeg', $types) || \in_array('jpe', $types) || \in_array('jfif', $types))
-    {
-      foreach($jpg_array as $jpg)
-      {
-        if(!\in_array($jpg, $types))
-        {
-          \array_push($types, $jpg);
-        }
-      }
-    }
-
-    // add point to types
-    foreach($types as $key => $type)
-    {
-      if(\substr($type, 0, 1) !== '.')
-      {
-        $types[$key] = '.'.\strtolower($type);
-      }
-      else
-      {
-        $types[$key] = \strtolower($type);
-      }
-    }
-
-    return $types;
-  }
-
-  /**
-   * Create the tus server and return the (uri) location of the TUS server
-   * @return string
-   *
-   * @since   4.2.0
-   */
-  private function getTusLocation(): string
-  {
-
-    // Create tus server
-    $this->component->createTusServer();
-
-    /** @var Server $server */
-    $server = $this->component->getTusServer();
-
-    $tus_location = $server->getLocation();
-
-    return $tus_location;
-  }
-
-  /**
-   * Reads php.ini values to determine the minimum size for upload
-   * The memory_limit for the php script was not reliable (0 on some sytems)
-   * so it is just shown
-   *
-   * @param   mixed   $joomGalleryConfig  config of joom gallery
-   *
-   *
-   * @since   4.2.0
-   */
-  public function limitsPhpConfig(mixed $joomGalleryConfig): void
-  {
-    $mediaHelper = new MediaHelper;
-
-    // Maximum allowed size in MB
-    $this->uploadLimit = round($mediaHelper->toBytes(ini_get('upload_max_filesize')) / (1024 * 1024));
-    $this->postMaxSize = round($mediaHelper->toBytes(ini_get('post_max_size')) / (1024 * 1024));
-    $this->memoryLimit = round($mediaHelper->toBytes(ini_get('memory_limit')) / (1024 * 1024));
-
-    $mediaParams        = ComponentHelper::getParams('com_media');
-    $mediaUploadMaxsize = $mediaParams->get('upload_maxsize', 0);
-    $this->mediaSize    = $mediaUploadMaxsize;
-
-    $this->configSize = round($joomGalleryConfig->get('jg_maxfilesize') / (1024 * 1024));
-
-    //--- Max size to be used (previously defined by joomla function but ...) -------------------------
-
-    // $uploadMaxSize=0 for no limit
-    if(empty($mediaUploadMaxsize))
-    {
-      $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $this->configSize);
-    }
-    else
-    {
-      $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $this->configSize, $mediaUploadMaxsize);
     }
   }
 
