@@ -12,7 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // No direct access
 \defined('_JEXEC') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
 
 /**
  * Upload controller class.
@@ -20,7 +20,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormControll
  * @package JoomGallery
  * @since   4.2.0
  */
-class UseruploadController extends JoomFormController
+class UseruploadController extends JoomAdminController
 {
 
   /**

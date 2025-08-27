@@ -397,7 +397,7 @@ class Server implements ServerInterface
             return;
         }
 
-        // if file in storage does not exists
+        // if file in storage does not exist
         if (!file_exists($this->directory . $this->getFilename()))
         {
             // allow new upload
