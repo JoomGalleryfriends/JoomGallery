@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 use \Joomla\Input\Input;
 use \Joomla\CMS\MVC\View\ViewInterface;
 use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use \Joomla\CMS\Application\CMSApplication;
+use \Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use \Joomla\CMS\MVC\Controller\AdminController as BaseAdminController;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
@@ -44,7 +44,7 @@ class JoomAdminController extends BaseAdminController
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
