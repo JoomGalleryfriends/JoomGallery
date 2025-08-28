@@ -13,8 +13,8 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseQuery;
 use \Joomla\Database\DatabaseInterface;
+use \Joomla\Database\Mysqli\MysqliQuery;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
 
 /**
@@ -95,17 +95,16 @@ class UsercategoriesModel extends AdminCategoriesModel
   /**
    * Build an SQL query to load the list data.
    *
-   * @return  DatabaseQuery  ToDo: should be similar to QueryInterface if you follow the parents
+   * @return  MysqliQuery
    *
    * @since   4.2.0
    */
-  protected function getListQuery(): DatabaseQuery
+  protected function getListQuery(): MysqliQuery
   {
     $query = parent::getListQuery();
 
     return $query;
   }
-
 
   /**
    * Method to get an array of data items
@@ -126,7 +125,7 @@ class UsercategoriesModel extends AdminCategoriesModel
    * Method to check if user owns at least one category. Without
    * only a matching request message will be displayed
    *
-   * @param   \Joomla\CMS\User\User   $user  ToDO: Id would suffice
+   * @param   int   $userId  ToDO: Id would suffice
    *
    * @return  bool true when user owns at least one category
    *
@@ -134,7 +133,7 @@ class UsercategoriesModel extends AdminCategoriesModel
    *
    * @since   4.2.0
    */
-  public function getUserHasACategory(\Joomla\CMS\User\User $user): bool
+  public function getUserHasACategory(int $userId): bool
   {
     $isUserHasACategory = true;
 
@@ -146,7 +145,7 @@ class UsercategoriesModel extends AdminCategoriesModel
       $query = $db->getQuery(true)
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('created_by').' = '.(int) $user->id);
+        ->where($db->quoteName('created_by').' = '.(int) $userId);
 
       $db->setQuery($query);
       $count = $db->loadResult();
@@ -159,13 +158,12 @@ class UsercategoriesModel extends AdminCategoriesModel
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: ' . $e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: '.$e->getMessage(), 'error');
 
       return false;
     }
 
     return $isUserHasACategory;
   }
-
 
 }

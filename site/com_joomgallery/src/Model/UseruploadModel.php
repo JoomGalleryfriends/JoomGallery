@@ -216,7 +216,7 @@ class UseruploadModel extends JoomAdminModel
    * Method to check if user owns at least one category. Without
    * only a matching request message will be displayed
    *
-   * @param   \Joomla\CMS\User\User   $user  ToDO: Id would suffice
+   * @param   int   $userId  ToDO: Id would suffice
    *
    * @return  bool true when user owns at least one category
    *
@@ -224,7 +224,7 @@ class UseruploadModel extends JoomAdminModel
    *
    * @since   4.2.0
    */
-  public function getUserHasACategory(\Joomla\CMS\User\User $user): bool
+  public function getUserHasACategory(int $userId): bool
   {
     $isUserHasACategory = true;
 
@@ -236,7 +236,7 @@ class UseruploadModel extends JoomAdminModel
       $query = $db->getQuery(true)
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('created_by').' = '.(int) $user->id);
+        ->where($db->quoteName('created_by').' = '.(int) $userId);
 
       $db->setQuery($query);
       $count = $db->loadResult();

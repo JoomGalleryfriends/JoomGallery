@@ -128,7 +128,7 @@ class UsercategoryModel extends AdminCategoryModel
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('isUserRootCategory-Error: '.$e->getMessage(), 'error');
 
       return false;
     }
