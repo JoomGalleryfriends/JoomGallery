@@ -19,20 +19,18 @@ use \Joomla\CMS\Plugin\PluginHelper;
 use \Joomla\CMS\Filter\OutputFilter;
 use \Joomla\Filesystem\File as JFile;
 use \Joomla\Filesystem\Path as JPath;
-
 use \Joomla\Component\Media\Administrator\Adapter\AdapterInterface;
 use \Joomla\Component\Media\Administrator\Event\FetchMediaItemEvent;
 use \Joomla\Component\Media\Administrator\Event\FetchMediaItemsEvent;
 use \Joomla\Component\Media\Administrator\Event\FetchMediaItemUrlEvent;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\Component\Media\Administrator\Exception\FileExistsException;
-use \Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
 use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
+use \Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
+use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use \Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
-
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\FilesystemInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Exception\AdapterNotFoundException;
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
 * Filesystem Base Class

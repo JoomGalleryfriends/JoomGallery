@@ -14,15 +14,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 use \Joomla\CMS\Factory;
 use \Psr\Http\Message\ResponseInterface;
-
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Request;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
 
 /**
  * Tus-Server v1.0.0 implementation

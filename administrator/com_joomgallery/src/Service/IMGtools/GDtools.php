@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 use \Joomla\Filesystem\File;
 use \Joomla\Filesystem\Path;
 use \Joomla\CMS\Language\Text;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifFrameExtractor;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifCreator;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifFrameExtractor;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtools as BaseIMGtools;
 

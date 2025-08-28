@@ -10,7 +10,7 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\HTML\HTMLHelper;
 
 extract($displayData);
 

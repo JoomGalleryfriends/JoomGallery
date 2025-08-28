@@ -10,20 +10,20 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\DI\Container;
-use Joomla\CMS\HTML\Registry;
-use Joomla\Database\DatabaseInterface;
-use Joomla\DI\ServiceProviderInterface;
-use Joomla\CMS\User\UserFactoryInterface;
-use Joomla\CMS\Extension\ComponentInterface;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\Component\Router\RouterFactoryInterface;
-use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
-use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
-use Joomgallery\Component\Joomgallery\Administrator\User\UserFactory;
-use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
-use Joomgallery\Component\Joomgallery\Administrator\MVC\MVCFactoryProvider as MVCFactory;
-use Joomgallery\Component\Joomgallery\Administrator\Router\RouterFactoryProvider as RouterFactory;
+use \Joomla\DI\Container;
+use \Joomla\CMS\HTML\Registry;
+use \Joomla\Database\DatabaseInterface;
+use \Joomla\DI\ServiceProviderInterface;
+use \Joomla\CMS\User\UserFactoryInterface;
+use \Joomla\CMS\Extension\ComponentInterface;
+use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use \Joomla\CMS\Component\Router\RouterFactoryInterface;
+use \Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
+use \Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
+use \Joomgallery\Component\Joomgallery\Administrator\User\UserFactory;
+use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use \Joomgallery\Component\Joomgallery\Administrator\MVC\MVCFactoryProvider as MVCFactory;
+use \Joomgallery\Component\Joomgallery\Administrator\Router\RouterFactoryProvider as RouterFactory;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

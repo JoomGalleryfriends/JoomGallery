@@ -12,16 +12,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 // No direct access
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Toolbar\Toolbar;
+use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
+use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 
 /**
  * View class for a single Image.

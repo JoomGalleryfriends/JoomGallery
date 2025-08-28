@@ -18,6 +18,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
  * @since   4.0.0
  */
 class JoomCache
-{
-  use ServiceTrait;
+  use \ServiceTrait;
+
 }

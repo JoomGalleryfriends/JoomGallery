@@ -11,8 +11,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 
 \defined('_JEXEC') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MailMessenger;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\PmMessenger;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MailMessenger;
 
 /**
 * Trait to implement MessengerServiceInterface

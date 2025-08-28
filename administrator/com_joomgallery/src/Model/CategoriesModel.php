@@ -13,8 +13,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
-use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
+use \Joomla\Database\ParameterType;
 
 /**
  * Methods supporting a list of Categories records.

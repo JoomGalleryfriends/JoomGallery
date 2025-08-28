@@ -14,8 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Mail\Exception\MailDisabledException;
 use \Joomla\CMS\Mail\MailTemplate;
+use \Joomla\CMS\Mail\Exception\MailDisabledException;
 use \PHPMailer\PHPMailer\Exception as phpMailerException;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;

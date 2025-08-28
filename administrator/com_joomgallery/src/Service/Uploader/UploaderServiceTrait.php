@@ -11,10 +11,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 \defined('JPATH_PLATFORM') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\HTMLUploader;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\TUSUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\SingleUploader;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\FTPUploader;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\HTMLUploader;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\SingleUploader;
 
 /**
 * Trait to implement UploaderServiceInterface

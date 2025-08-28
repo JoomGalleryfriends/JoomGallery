@@ -11,16 +11,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\Console\Command\AbstractCommand;
-use Joomla\Database\DatabaseAwareTrait;
-use Joomla\Database\DatabaseInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Language\Text;
+use \Joomla\Database\DatabaseInterface;
+use \Joomla\Database\DatabaseAwareTrait;
+use \Joomla\Console\Command\AbstractCommand;
+use \Symfony\Component\Console\Command\Command;
+use \Symfony\Component\Console\Input\InputOption;
+use \Symfony\Component\Console\Style\SymfonyStyle;
+use \Symfony\Component\Console\Input\InputInterface;
+use \Symfony\Component\Console\Output\OutputInterface;
 
 class ImageParams extends AbstractCommand
 {

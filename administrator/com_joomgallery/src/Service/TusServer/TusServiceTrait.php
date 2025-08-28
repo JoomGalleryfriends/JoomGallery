@@ -13,8 +13,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
 
 /**
 * Trait to implement TusServerInterface

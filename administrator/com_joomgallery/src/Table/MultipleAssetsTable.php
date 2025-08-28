@@ -13,9 +13,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Table\Asset;
-use \Joomla\CMS\Table\Nested as Table;
 use \Joomla\CMS\Access\Rules;
 use \Joomla\String\StringHelper;
+use \Joomla\CMS\Table\Nested as Table;
 use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\MultipleAssetsTableTrait;
 
 /**

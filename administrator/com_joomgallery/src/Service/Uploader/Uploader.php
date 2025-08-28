@@ -11,18 +11,17 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 \defined('_JEXEC') or die;
 
-use Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Filesystem\File as JFile;
-use \Joomla\CMS\Filesystem\Path as JPath;
+use \Joomla\CMS\Object\CMSObject;
 use \Joomla\CMS\Filter\InputFilter;
 use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Object\CMSObject;
-
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use \Joomla\CMS\Filesystem\File as JFile;
+use \Joomla\CMS\Filesystem\Path as JPath;
+use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 
 /**
 * Base class for the Uploader helper classes

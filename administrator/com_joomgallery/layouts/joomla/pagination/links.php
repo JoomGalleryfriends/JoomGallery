@@ -10,9 +10,9 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
-use Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\Registry\Registry;
+use \Joomla\CMS\Layout\LayoutHelper;
 
 $list  = $displayData['list'];
 $pages = $list['pages'];
