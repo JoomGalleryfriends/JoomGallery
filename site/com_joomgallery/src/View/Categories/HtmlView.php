@@ -29,7 +29,13 @@ class HtmlView extends JoomGalleryView
 
 	protected $pagination;
 
-	/**
+  /**
+   * @var array
+   * @since version
+   */
+  protected array $ordering = [];
+
+  /**
 	 * The page parameters
 	 *
 	 * @var    array
@@ -124,11 +130,11 @@ class HtmlView extends JoomGalleryView
 		}
 		elseif($this->app->get('sitename_pagetitles', 0) == 1)
 		{
-			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+			$title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
 		}
 		elseif($this->app->get('sitename_pagetitles', 0) == 2)
 		{
-			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
+			$title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
 		}
 
 		$this->document->setTitle($title);

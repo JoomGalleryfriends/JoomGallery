@@ -612,11 +612,11 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the usercategory to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  int|false   The id of this item or false
+   * @return  int   The id of this item or false
    *
    * @since   4.2.0
    */
-  public function getUsercategoryId($segment, $query): int|false
+  public function getUsercategoryId($segment, $query): int
   {
     // ToDo: same alias but different parent.  Bsp. Paris mit jahrnamen -> url hat jahr
 
@@ -625,6 +625,7 @@ class DefaultRouter extends RouterView
       // ToDo: manuel why is this used in other functions
 //    $id = (int) $query['id'];
 //    $id = (int) $segment;
+      $id = 0;
 
       if(!empty($segment))
       {

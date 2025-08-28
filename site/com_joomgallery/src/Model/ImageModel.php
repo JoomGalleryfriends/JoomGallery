@@ -17,6 +17,7 @@ use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Access\Access;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Plugin\PluginHelper;
+use \Joomla\CMS\Language\Associations;
 use \Joomla\CMS\Language\Multilanguage;
 use \Joomla\CMS\User\UserFactoryInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
@@ -388,8 +389,11 @@ class ImageModel extends JoomAdminModel
     $isAjax       = false;
     $aliasChanged = false;
 
+    $old_alias    = '';
+
     $key = $table->getKeyName();
     $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
+
 
     // Are we going to copy the image record?
     if(\strpos($app->input->get('task'), 'save2copy') !== false)
@@ -451,14 +455,16 @@ class ImageModel extends JoomAdminModel
 
       // Detect uploader service
       $upload_service  = 'html';
-      if(isset($data['uploader']) && !empty($data['uploader']))
+      // if(isset($data['uploader']) && !empty($data['uploader']))
+      if(!empty($data['uploader']))
       {
         $upload_service = $data['uploader'];
       }
 
       // Detect multiple upload service
       $upload_multiple  = false;
-      if(isset($data['multiple']) && !empty($data['multiple']))
+      //if(isset($data['multiple']) && !empty($data['multiple']))
+      if(!empty($data['multiple']))
       {
         $upload_multiple = \boolval($data['multiple']);
       }

@@ -13,6 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Form\Form;
+use \Joomla\CMS\User\CurrentUserInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
 
 /**
@@ -93,12 +94,12 @@ class UserimageModel extends AdminImageModel
    * @param   array     $data      An optional array of data for the form to interogate.
    * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
    *
-   * @return  Form    A Form object on success, false on failure
+   * @return  Form|CurrentUserInterface|false    A Form object on success, false on failure
    *
    * @throws \Exception
    * @since   4.2.0
    */
-  public function getForm($data = array(), $loadData = true): Form|bool
+  public function getForm($data = array(), $loadData = true): Form|CurrentUserInterface|false
   {
     // Get the form.
     $form = $this->loadForm($this->typeAlias, 'userimage',

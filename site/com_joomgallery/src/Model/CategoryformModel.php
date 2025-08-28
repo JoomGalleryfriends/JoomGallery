@@ -12,6 +12,8 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // No direct access.
 defined('_JEXEC') or die;
 
+use \Joomla\CMS\Form\Form;
+use \Joomla\CMS\User\CurrentUserInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
 
 /**
@@ -39,7 +41,7 @@ class CategoryformModel extends AdminCategoryModel
 	 *
 	 * @since   4.0.0
 	 *
-	 * @throws  Exception
+	 * @throws  \Exception
 	 */
 	protected function populateState()
 	{
@@ -70,7 +72,7 @@ class CategoryformModel extends AdminCategoryModel
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param   integer  $pk  The id of the primary key.
+	 * @param   integer  $id  The id of the primary key.
 	 *
 	 * @return  Object|boolean Object on success, false on failure.
 	 *
@@ -89,11 +91,11 @@ class CategoryformModel extends AdminCategoryModel
 	 * @param   array   $data     An optional array of data for the form to interogate.
 	 * @param   boolean $loadData True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  Form    A Form object on success, false on failure
+	 * @return  Form|CurrentUserInterface|false    A Form object on success, false on failure
 	 *
 	 * @since   4.0.0
 	 */
-	public function getForm($data = array(), $loadData = true)
+	public function getForm($data = array(), $loadData = true): Form|CurrentUserInterface|false
 	{
 		// Get the form.
 		$form = $this->loadForm($this->typeAlias, 'categoryform', array('control'   => 'jform',	'load_data' => $loadData));

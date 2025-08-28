@@ -230,7 +230,7 @@ class CategoryformController extends JoomFormController
 	 *
 	 * @return  void
 	 *
-	 * @throws  Exception
+	 * @throws  \Exception
 	 *
 	 * @since   4.0.0
 	 */

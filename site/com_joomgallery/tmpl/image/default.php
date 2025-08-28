@@ -68,8 +68,8 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
     class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_IMAGE_BACK_TO_CATEGORY').' '.$this->item->cattitle; ?></span>
 </a>
 
-</br />
-</br />
+</br>
+</br>
 
 <?php if($canEdit || $canCheckin || $canDelete): ?>
   <div class="mb-3">

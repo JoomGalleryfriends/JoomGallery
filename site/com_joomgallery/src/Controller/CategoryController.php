@@ -27,7 +27,7 @@ class CategoryController extends JoomBaseController
 	 * Edit a category
 	 * Checkout and redirect to from view
 	 *
-	 * @return  void
+	 * @return  void|false
 	 *
 	 * @since   4.0.0
 	 *

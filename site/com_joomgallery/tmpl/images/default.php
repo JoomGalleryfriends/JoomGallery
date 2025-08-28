@@ -37,6 +37,9 @@ if($saveOrder && !empty($this->items))
   $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
   HTMLHelper::_('draggablelist.draggable');
 }
+
+$canDeleteFound = false;
+
 ?>
 
 <?php if($this->params['menu']->get('show_page_heading')) : ?>
@@ -120,6 +123,7 @@ if($saveOrder && !empty($this->items))
               $ordering = ($listOrder == 'a.ordering');
               $canEdit = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
               $canDelete = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
+              $canDeleteFound |= $canDelete;
               $canChange = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
               $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser()->id;
               $disabled = ($item->checked_out > 0) ? 'disabled' : '';
@@ -238,7 +242,9 @@ if($saveOrder && !empty($this->items))
 </form>
 
 <?php
-if($canDelete)
+
+// Manuel: Do we need it
+if($canDeleteFound)
 {
   $wa->addInlineScript("
 			jQuery(document).ready(function () {

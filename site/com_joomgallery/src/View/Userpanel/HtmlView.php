@@ -115,7 +115,7 @@ class HtmlView extends JoomGalleryView
     $this->filterForm    = $modImages->getFilterForm();
     $this->activeFilters = $modImages->getActiveFilters();
 
-    $this->isDevelopSite = boolval($this->params['configs']->get('isDebugSite'))
+    $this->isDevelopSite = (bool) ($this->params['configs']->get('isDebugSite'))
       || $this->app->input->getBool('isDevelop');
 
     // Check for errors.

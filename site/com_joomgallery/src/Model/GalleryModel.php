@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\Model\ListModel;
+use \Joomla\CMS\Pagination\Pagination;
 use \Joomla\CMS\Language\Multilanguage;
 
 /**
@@ -53,11 +54,11 @@ class GalleryModel extends JoomItemModel
 	 *
 	 * @param   integer $id The id of the object to get.
 	 *
-	 * @return  mixed    Object on success, false on failure.
+	 * @return  object    Object on success, false on failure.
 	 *
 	 * @throws \Exception
 	 */
-	public function getItem($id = null)
+	public function getItem($id = null): object
 	{
 		if($this->item === null)
 		{
@@ -105,7 +106,7 @@ class GalleryModel extends JoomItemModel
 	 *
 	 * @return  array|false    Array of images on success, false on failure.
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
   public function getImages()
   {

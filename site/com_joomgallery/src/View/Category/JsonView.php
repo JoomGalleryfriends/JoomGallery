@@ -13,6 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Language\Text;
+use \Joomgallery\Component\Joomgallery\Site\Model\CategoryModel;
 use \Joomgallery\Component\Joomgallery\Site\View\JoomGalleryJsonView;
 
 /**
