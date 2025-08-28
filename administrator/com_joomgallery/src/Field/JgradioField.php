@@ -18,7 +18,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
  * @since  4.0.0
  */
 class JgradioField extends JglistField
-  use \JgMenuitemTrait;
+{
+  use JgMenuitemTrait;
 
   /**
    * The form field type.
