@@ -55,6 +55,12 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
 $baseLink_ImageEdit = 'index.php?option=com_joomgallery&view=userimage&layout=editImg&id=';
 
+
+$userDataComment = [];
+$userDataComment['userCatCount'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERCATS_LONG);
+$userDataComment['userImgCount'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG);
+$userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_TIMESPAN_LONG);
+
 ?>
 
 <div class="jg jg-user-panel ">
@@ -68,7 +74,8 @@ $baseLink_ImageEdit = 'index.php?option=com_joomgallery&view=userimage&layout=ed
       <hr>
     <?php endif; ?>
 
-    <?php if(empty($isHasAccess)): ?>
+    <?php
+    if(empty($isHasAccess)): ?>
       <div>
         <?php if(!$this->isUserLoggedIn): ?>
           <div class="mb-2">
@@ -124,6 +131,8 @@ $baseLink_ImageEdit = 'index.php?option=com_joomgallery&view=userimage&layout=ed
         </div>
 
       </div>
+          <?php displayUserPanelInfo($this->config, $this->userData, $userDataComment); ?>
+      </div">
 
       <div class="form-group">
 
@@ -338,3 +347,109 @@ $baseLink_ImageEdit = 'index.php?option=com_joomgallery&view=userimage&layout=ed
   </form>
 
 </div>
+
+<?php
+function displayUserPanelInfo($config, array $userData, array $userDataComment)
+{
+  $usrUserCat = (string) $userData['userCatCount'];
+  $cfgMaxUserCat = (string) ($config->get('jg_maxusercat') ?? '%' );
+  $usrUserCatComment = (string) $userDataComment['userCatCount'];
+
+  $usrUserImgCount = (string) $userData['userImgCount'];
+  $cfgMaxUserImg = (string) ($config->get('jg_maxuserimage') ?? '%' );
+  $usrUserImgCountComment = (string) $userDataComment['userImgCount'];
+
+  $usrUserImgTimespan = (string) $userData['userImgTimeSpan'];
+  $cfgMaxUserImgTimespan = (string) ($config->get('jg_maxuserimage_timespan') ?? '%' );
+  $usrUserImgTimespanComment = (string) $userDataComment['userImgTimeSpan'];
+
+
+  $classDangerValue = 'table-danger';
+
+  $classDangerValueUserCat = ($usrUserCat > $cfgMaxUserCat) ? ' ' . $classDangerValue :  '';
+  $classDangerValueUserImgCount = ($usrUserImgCount > $cfgMaxUserImg) ? ' ' . $classDangerValue :  '';
+  // $classDangerValueUserUserImgTimespan = ($usrUserImgTimespan > $cfgMaxUserImgTimespan) ? ' ' . $classDangerValue :  '';
+  $classDangerValueUserUserImgTimespan = ($usrUserImgTimespan > $cfgMaxUserImg) ? ' ' . $classDangerValue :  '';
+
+
+  ?>
+
+  <div class="col-md-6 mb">
+
+    <div class="card">
+      <div class="card-header">
+        <h5><?php echo Text::_('COM_JOOMGALLERY_INFORMATION'); ?></h5>
+      </div>
+      <div class="card-body">
+<!--        <div class="table-responsive">-->
+          <table class="table table-striped table-bordered table-responsive" w-auto">
+            <thead>
+              <tr>
+                <td class="text-center"></td>
+                <td class="text-center"><?php echo Text::_('COM_JOOMGALLERY_ACTUAL_VAULUE'); ?></td>
+                <td class="text-center"><?php echo Text::_('COM_JOOMGALLERY_MAXIMUM_VALUE'); ?></td>
+                <td><?php echo Text::_('COM_JOOMGALLERY_COMMENT'); ?></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORIES'); ?>
+                </td>
+                <td class="text-center <?php echo $classDangerValueUserCat; ?>">
+                  <b><?php echo $usrUserCat; ?></b>
+                </td>
+                <td class="text-center">
+                  <?php echo $cfgMaxUserCat; ?>
+                </td>
+                <td>
+                  <?php echo $usrUserCatComment; ?>
+                </td>
+              </tr>
+
+              <?php if($cfgMaxUserImgTimespan == '0'): ?>
+                <tr>
+                  <td>
+                    <?php echo Text::_('COM_JOOMGALLERY_USER_IMAGES'); ?>
+                  </td>
+                  <td class="text-center <?php echo $classDangerValueUserImgCount; ?>">
+                    <b><?php echo $usrUserImgCount; ?></b>
+                  </td>
+                  <td class="text-center">
+                    <?php echo $cfgMaxUserImg; ?>
+                  </td>
+                  <td>
+                    <?php echo $usrUserImgCountComment; ?>
+                  </td>
+                </tr>
+              <?php endif; ?>
+
+              <?php if($cfgMaxUserImgTimespan != '0'): ?>
+                <tr>
+                  <td>
+                    <?php echo Text::sprintf('COM_JOOMGALLERY_USER_IMAGES_IN_N_DAYS', $cfgMaxUserImgTimespan); ?>
+                  </td>
+                  <td class="text-center <?php echo $classDangerValueUserUserImgTimespan; ?>">
+                    <b><?php echo $usrUserImgTimespan; ?></b>
+                  </td>
+                  <td class="text-center">
+  <!--                  --><?php //echo $cfgMaxUserImgTimespan; ?>
+                    <?php echo $cfgMaxUserImg; ?>
+                  </td>
+                  <td>
+                    <?php echo $usrUserImgTimespanComment; ?>
+                  </td>
+                </tr>
+              <?php endif; ?>
+
+            </tbody>
+          </table>
+<!--        </div>-->
+      </div>
+    </div>
+  </div>
+
+  <?php return;
+}
+
+?>

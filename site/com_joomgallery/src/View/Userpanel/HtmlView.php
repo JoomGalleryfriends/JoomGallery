@@ -9,6 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userpanel;
 
+use \Joomla\Registry\Registry;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Pagination\Pagination;
 use \Joomla\CMS\MVC\View\GenericDataException;
@@ -22,6 +23,19 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
  */
 class HtmlView extends JoomGalleryView
 {
+
+  /**
+   * @var    array
+   * @since   4.2.0
+   */
+  protected array $userData;
+
+  /**
+   * @var Registry
+   * @since version
+   */
+  protected Registry $config;
+
   /**
    * @var    array
    * @since   4.2.0
@@ -104,22 +118,25 @@ class HtmlView extends JoomGalleryView
 //    // $modCategories = $this->getModel('Usercategories');
 
 
-    // Get modImages data
-    $modImages = $this->getModel('Userpanel');
+    // Get modUserPanel data
+    $modUserPanel = $this->getModel('Userpanel');
 
-    $this->state  = $modImages->getState();
-    $this->params = $modImages->getParams();
+    $this->state  = $modUserPanel->getState();
+    $this->params = $modUserPanel->getParams();
 
-    $this->items         = $modImages->getItems();
-    $this->pagination    = $modImages->getPagination();
-    $this->filterForm    = $modImages->getFilterForm();
-    $this->activeFilters = $modImages->getActiveFilters();
+    $this->items         = $modUserPanel->getItems();
+    $this->pagination    = $modUserPanel->getPagination();
+    $this->filterForm    = $modUserPanel->getFilterForm();
+    $this->activeFilters = $modUserPanel->getActiveFilters();
 
     $this->isDevelopSite = (bool) ($this->params['configs']->get('isDebugSite'))
       || $this->app->input->getBool('isDevelop');
 
+    $this->config = $this->params['configs'];
+
+
     // Check for errors.
-    if(\count($errors = $modImages->getErrors()))
+    if(\count($errors = $modUserPanel->getErrors()))
     {
       throw new GenericDataException(\implode("\n", $errors), 500);
     }
@@ -132,7 +149,7 @@ class HtmlView extends JoomGalleryView
     }
 
     // at least one category is needed for upload view
-    $this->isUserHasCategory = $modImages->getUserHasACategory($user->id);
+    $this->isUserHasCategory = $modUserPanel->getUserHasACategory($user->id);
 
     $this->userId = $user->id;
 
@@ -142,6 +159,14 @@ class HtmlView extends JoomGalleryView
 
     // Needed for JgcategoryField
     $this->isUserCoreManager = $this->acl->checkACL('core.manage', 'com_joomgallery');
+
+
+    $this->userData = [];
+    $modUserPanel->assignUserData ($this->userData, $this->userId);
+
+
+
+
 
     // Prepares the document breadcrumbs
     $this->_prepareDocument();

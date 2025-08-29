@@ -95,4 +95,137 @@ class UserpanelModel extends ImagesModel
     return $isUserHasACategory;
   }
 
+  public function assignUserData(array &$userData, int $userId): void
+  {
+
+    $userData['userCatCount'] = $this->dbUserCategoryCount ($userId); // COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG
+    $userData['userImgCount'] = $this->dbUserImageCount ($userId);
+    $userData['userImgTimeSpan'] = $this->dbUserImgTimeSpan ($userId);
+
+  }
+
+  private function dbUserCategoryCount(int $userId)
+  {
+    $categoryCount = 0;
+
+    try
+    {
+      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+
+      // Check number of records in tables
+      $query = $db->getQuery(true)
+        ->select('COUNT(*)')
+        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
+        ->where($db->quoteName('created_by').' = '.(int) $userId);
+
+      $db->setQuery($query);
+      $count = $db->loadResult();
+
+      if(!empty ($count))
+      {
+        $categoryCount = $count;
+      }
+
+    }
+    catch(\RuntimeException $e)
+    {
+      Factory::getApplication()->enqueueMessage('dbUserCategoryCount-Error: '.$e->getMessage(), 'error');
+
+      return false;
+    }
+
+    return $categoryCount;
+  }
+
+  private function dbUserImageCount(int $userId)
+  {
+    $imageCount = 0;
+
+    try
+    {
+      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+
+      // Check number of records in tables
+      $query = $db->getQuery(true)
+        ->select('COUNT(*)')
+        ->from($db->quoteName(_JOOM_TABLE_IMAGES))
+        ->where($db->quoteName('created_by').' = '.(int) $userId);
+
+      $db->setQuery($query);
+      $count = $db->loadResult();
+
+      if(!empty ($count))
+      {
+        $imageCount = $count;
+      }
+
+    }
+    catch(\RuntimeException $e)
+    {
+      Factory::getApplication()->enqueueMessage('dbUserImageCount-Error: '.$e->getMessage(), 'error');
+
+      return false;
+    }
+
+    return $imageCount;
+  }
+
+  private function dbUserImgTimeSpan(int $userId)
+  {
+    $imageCount = 0;
+
+    try
+    {
+      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+
+      // Check number of records in tables
+      $query = $db->getQuery(true)
+        ->select('COUNT(id)')
+        ->from($db->quoteName(_JOOM_TABLE_IMAGES))
+        ->where($db->quoteName('created_by').' = '.(int) $userId);
+
+      $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
+      if($timespan > 0)
+      {
+        $query->where('created_time > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
+      }
+
+      $db->setQuery($query);
+      $count = $db->loadResult();
+
+      if(!empty ($count))
+      {
+        $imageCount = $count;
+      }
+
+    }
+    catch(\RuntimeException $e)
+    {
+      Factory::getApplication()->enqueueMessage('dbUserImageCount-Error: '.$e->getMessage(), 'error');
+
+      return false;
+    }
+
+    return $imageCount;
+  }
+
+  private function dbUserImgTimeMin(int $userId)
+  {
+    return 88;
+
+
+
+
+  }
+
+  private function dbUserImgTimeMax(int $userId)
+  {
+    return 88;
+
+    // select * from users where order_date > now() - INTERVAL 15 day
+
+
+  }
+
+
 }

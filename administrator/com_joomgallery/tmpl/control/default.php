@@ -267,7 +267,7 @@ function DisplayGalleryStatistic($statisticdata)
 function DisplayGalleryInfo($manifest)
 {
   ?>
-  <h3 class="card-header"><?php echo Text::_('INfo'); ?></h3>
+  <h3 class="card-header"><?php echo Text::_('COM_JOOMGALLERY_INFORMATION'); ?></h3>
   <div class="table-responsive">
     <table class="table w-auto">
       <tbody>

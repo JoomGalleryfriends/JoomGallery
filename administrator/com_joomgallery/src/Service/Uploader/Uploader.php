@@ -612,7 +612,9 @@ abstract class Uploader implements UploaderInterface
     $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
     if($timespan > 0)
     {
-      $query->where('date > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
+      // image 'date' may be manipulated, use created time instead
+      // $query->where('date > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
+      $query->where('created_time > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
     }
 
     $db->setQuery($query);
