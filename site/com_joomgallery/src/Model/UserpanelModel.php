@@ -13,7 +13,6 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseInterface;
 
 /**
  * Model to get a list of category records.
@@ -68,7 +67,7 @@ class UserpanelModel extends ImagesModel
 
     try
     {
-      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+      $db = $this->getDatabase();
 
       // Check number of records in tables
       $query = $db->getQuery(true)
@@ -98,9 +97,9 @@ class UserpanelModel extends ImagesModel
   public function assignUserData(array &$userData, int $userId): void
   {
 
-    $userData['userCatCount'] = $this->dbUserCategoryCount ($userId); // COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG
-    $userData['userImgCount'] = $this->dbUserImageCount ($userId);
-    $userData['userImgTimeSpan'] = $this->dbUserImgTimeSpan ($userId);
+    $userData['userCatCount']    = $this->dbUserCategoryCount($userId); // COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG
+    $userData['userImgCount']    = $this->dbUserImageCount($userId);
+    $userData['userImgTimeSpan'] = $this->dbUserImgTimeSpan($userId);
 
   }
 
@@ -110,7 +109,7 @@ class UserpanelModel extends ImagesModel
 
     try
     {
-      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+      $db = $this->getDatabase();
 
       // Check number of records in tables
       $query = $db->getQuery(true)
@@ -143,7 +142,7 @@ class UserpanelModel extends ImagesModel
 
     try
     {
-      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+      $db = $this->getDatabase();
 
       // Check number of records in tables
       $query = $db->getQuery(true)
@@ -176,7 +175,7 @@ class UserpanelModel extends ImagesModel
 
     try
     {
-      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+      $db = $this->getDatabase();
 
       // Check number of records in tables
       $query = $db->getQuery(true)
@@ -187,7 +186,7 @@ class UserpanelModel extends ImagesModel
       $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
       if($timespan > 0)
       {
-        $query->where('created_time > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
+        $query->where('created_time > (UTC_TIMESTAMP() - INTERVAL '.$timespan.' DAY)');
       }
 
       $db->setQuery($query);
@@ -209,22 +208,76 @@ class UserpanelModel extends ImagesModel
     return $imageCount;
   }
 
-  private function dbUserImgTimeMin(int $userId)
+//=================================================================================
+
+  public function dbLatestUserCategories(int $userId, int $limit)
   {
-    return 88;
+    $categories = [];
 
+    try
+    {
+      $db = $this->getDatabase();
 
+      // Check number of records in tables
+      $query = $db->getQuery(true)
+        ->select('*')
+        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
+        ->where($db->quoteName('created_by').' = '.(int) $userId)
+        ->order($db->quoteName('lft').' DESC')
+        ->setLimit($limit);
 
+      $db->setQuery($query);
+      $dbCategories = $db->loadObjectList();
 
+      if(!empty ($dbCategories))
+      {
+        $categories = $dbCategories;
+      }
+
+    }
+    catch(\RuntimeException $e)
+    {
+      Factory::getApplication()->enqueueMessage('dbUserCategoryCount-Error: '.$e->getMessage(), 'error');
+
+      return [];
+    }
+
+    return $categories;
   }
 
-  private function dbUserImgTimeMax(int $userId)
+  public function dbLatestUserImages(int $userId, int $limit)
   {
-    return 88;
+    $images = [];
 
-    // select * from users where order_date > now() - INTERVAL 15 day
+    try
+    {
+      $db = $this->getDatabase();
 
+      // Check number of records in tables
+      $query = $db->getQuery(true)
+        ->select('*')
+        ->from($db->quoteName(_JOOM_TABLE_IMAGES))
+        ->where($db->quoteName('created_by').' = '.(int) $userId)
+        ->order($db->quoteName('ordering').' DESC')
+        ->setLimit($limit);
 
+      $db->setQuery($query);
+      $dbImages = $db->loadObjectList();
+
+      if(!empty ($dbImages))
+      {
+        $images = $dbImages;
+      }
+
+    }
+    catch(\RuntimeException $e)
+    {
+      Factory::getApplication()->enqueueMessage('dbUserImageCount-Error: '.$e->getMessage(), 'error');
+
+      return [];
+    }
+
+    return $images;
   }
 
 

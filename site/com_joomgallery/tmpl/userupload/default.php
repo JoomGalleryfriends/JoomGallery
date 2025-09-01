@@ -34,7 +34,7 @@ $uploadView     = Route::_('index.php?option=com_joomgallery&view=userupload');
 $categoriesView = Route::_('index.php?option=com_joomgallery&view=usercategories');
 $imagesView     = Route::_('index.php?option=com_joomgallery&view=userimages');
 
-// return to userPanel;
+// return to userupload;
 $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userupload');
 $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return='.$returnURL);
 

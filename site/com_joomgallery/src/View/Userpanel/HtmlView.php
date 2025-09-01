@@ -40,13 +40,25 @@ class HtmlView extends JoomGalleryView
    * @var    array
    * @since   4.2.0
    */
-  protected array $items;
+  public array $items;
+
+  /**
+   * @var    array
+   * @since   4.2.0
+   */
+  public array $latestCategories;
+
+  /**
+   * @var    array
+   * @since   4.2.0
+   */
+  public array $latestImages;
 
   /**
    * @var Pagination
    * @since   4.2.0
    */
-  protected Pagination $pagination;
+  public Pagination $pagination;
 
   /**
    * @var    string
@@ -58,7 +70,7 @@ class HtmlView extends JoomGalleryView
    * @var    \Joomla\Registry\Registry
    * @since   4.2.0
    */
-  protected $state;
+  public $state;
 
   /**
    * @var    array
@@ -88,7 +100,7 @@ class HtmlView extends JoomGalleryView
    * @var    bool
    * @since   4.2.0
    */
-  protected bool $isDevelopSite = false;
+  public bool $isDevelopSite = false;
 
   /**
    * @var int
@@ -111,7 +123,7 @@ class HtmlView extends JoomGalleryView
     $user = $this->getCurrentUser();
 //    $app  = Factory::getApplication();
 
-//    // ToDo: in next version include both image and category views
+//    // ToDo: in next version include both latest image and latest category views
 //    //--- include both image and category views -----------------------------
 //
 //    //  https://joomla.stackexchange.com/questions/33248/how-to-load-and-render-a-view-of-a-component-from-anothers-component-template-f
@@ -124,6 +136,11 @@ class HtmlView extends JoomGalleryView
     $this->state  = $modUserPanel->getState();
     $this->params = $modUserPanel->getParams();
 
+    $menuParam = $this->params['menu'];
+    $isShowLatestCategoryList = $menuParam->get('showLatestCategoryList') ?? true;
+    $isShowLatestImagesList   = $menuParam->get('showLatestImagesList') ?? false;
+    $isShowManageableImages   = $menuParam->get('showManageableImages') ?? false;
+
     $this->items         = $modUserPanel->getItems();
     $this->pagination    = $modUserPanel->getPagination();
     $this->filterForm    = $modUserPanel->getFilterForm();
@@ -134,6 +151,15 @@ class HtmlView extends JoomGalleryView
 
     $this->config = $this->params['configs'];
 
+    if ($isShowLatestCategoryList) {
+      $limitLatestCategories = (int) $menuParam->get('latestCategoryListCount', 11);
+      $this->latestCategories = $modUserPanel->dbLatestUserCategories($user->id, $limitLatestCategories);
+    }
+
+    if ($isShowLatestImagesList) {
+      $limitLatestImages = (int) $menuParam->get('latestImagesListCount', 22);
+      $this->latestImages = $modUserPanel->dbLatestUserImages($user->id, $limitLatestImages);
+    }
 
     // Check for errors.
     if(\count($errors = $modUserPanel->getErrors()))

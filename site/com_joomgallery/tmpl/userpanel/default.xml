@@ -30,11 +30,67 @@
         <option value="0">JNO</option>
       </field>
 
-      <field name="userPanelShowUserImages"
+      <field name="showUserLimits"
              type="radio"
              default="1"
-             label="COM_JOOMGALLERY_MENU_SHOW_USER_IMAGES"
-             description="COM_JOOMGALLERY_MENU_SHOW_USER_IMAGES_DESC"
+             label="COM_JOOMGALLERY_MENU_SHOW_USER_LIMITS"
+             description="COM_JOOMGALLERY_MENU_SHOW_USER_LIMITS_DESC"
+             class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="0">JNO</option>
+      </field>
+      <field name="showUserINFO"
+             type="radio"
+             default="1"
+             label="COM_JOOMGALLERY_MENU_SHOW_USER_INFO"
+             description="COM_JOOMGALLERY_MENU_SHOW_USER_INFO_DESC"
+             class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="0">JNO</option>
+      </field>
+
+      <field name="showLatestCategoryList"
+             type="radio"
+             default="1"
+             label="COM_JOOMGALLERY_MENU_SHOW_LATEST_CATEGORIES"
+             description="COM_JOOMGALLERY_MENU_SHOW_LATEST_CATEGORIES_DESC"
+             class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="0">JNO</option>
+      </field>
+      <field
+        name="latestCategoryListCount"
+        type="number"
+        default="10"
+        label="COM_JOOMGALLERY_MENU_LATEST_CATEGORIES_COUNT"
+        description="COM_JOOMGALLERY_MENU_LATEST_CATEGORIES_COUNT_DESC"
+        filter="integer"
+        showon="userPanelShowUserCategoryList:1"
+      />
+      <field name="showLatestImagesList"
+             type="radio"
+             default="1"
+             label="COM_JOOMGALLERY_MENU_SHOW_LATEST_IMAGES"
+             description="COM_JOOMGALLERY_MENU_SHOW_LATEST_IMAGES_DESC"
+             class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="0">JNO</option>
+      </field>
+      <field
+        name="latestImagesListCount"
+        type="number"
+        default="40"
+        label="COM_JOOMGALLERY_MENU_LATEST_IMAGES_COUNT"
+        description="COM_JOOMGALLERY_MENU_LATEST_IMAGES_COUNT_DESC"
+        filter="integer"
+        showon="userPanelShowUserImagesList:1"
+      />
+
+      <field name="showManageableImages"
+             type="radio"
+             default="o"
+             label="COM_JOOMGALLERY_MENU_SHOW_USER_IMAGES_MANAGE"
+             description="COM_JOOMGALLERY_MENU_SHOW_USER_IMAGES_MANAGE_DESC"
              class="btn-group btn-group-yesno">
         <option value="1">JYES</option>
         <option value="0">JNO</option>
