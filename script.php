@@ -991,6 +991,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       $pluginGroup = (string) $plugin['group'];
       $path        = $installation_folder . '/plugins/' . $pluginGroup . '/' . $pluginName;
       $installer   = new Installer;
+      $installer->setDatabase($db);
 
       if (!$this->isAlreadyInstalled('plugin', $pluginName, $pluginGroup))
       {
@@ -1062,8 +1063,9 @@ class com_joomgalleryInstallerScript extends InstallerScript
 	 */
 	private function installModules($parent)
 	{
-		$installation_folder = $parent->getParent()->getPath('source');
-		$app                 = Factory::getApplication();
+		$folder = $parent->getParent()->getPath('source');
+		$app    = Factory::getApplication();
+		$db     = Factory::getContainer()->get(DatabaseInterface::class);
 
 		if (method_exists($parent, 'getManifest'))
 		{
@@ -1082,8 +1084,9 @@ class com_joomgalleryInstallerScript extends InstallerScript
     foreach($modules->children() as $module)
     {
       $moduleName = (string) $module['module'];
-      $path       = $installation_folder . '/modules/' . $moduleName;
+      $path       = $folder . '/modules/' . $moduleName;
       $installer  = new Installer;
+      $installer->setDatabase($db);
 
       if (!$this->isAlreadyInstalled('module', $moduleName))
       {
@@ -1167,6 +1170,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       if (!empty($extension))
       {
         $installer = new Installer;
+        $installer->setDatabase($db);
         $result    = $installer->uninstall('plugin', $extension);
 
         if ($result)
@@ -1248,6 +1252,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       if (!empty($extension))
       {
         $installer = new Installer;
+        $installer->setDatabase($db);
         $result    = $installer->uninstall('module', $extension);
 
         if ($result)
