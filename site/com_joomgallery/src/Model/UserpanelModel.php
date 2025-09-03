@@ -221,10 +221,24 @@ class UserpanelModel extends ImagesModel
       // Check number of records in tables
       $query = $db->getQuery(true)
         ->select('*')
-        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('created_by').' = '.(int) $userId)
-        ->order($db->quoteName('lft').' DESC')
+        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'a'))
+        ->where($db->quoteName('a.created_by').' = '.(int) $userId)
+        ->order($db->quoteName('a.lft').' DESC')
         ->setLimit($limit);
+
+      // assign parent category title
+      $parentNameQuery = $db->getQuery(true)
+        ->select('`parent`.title')
+        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'parent'))
+        ->where($db->quoteName('a.parent_id') . ' = ' . $db->quoteName('parent.id'));
+      $query->select('(' . $parentNameQuery->__toString() . ') AS ' . $db->quoteName('parent_title'));
+
+      // Get image count
+      $imgQuery = $db->getQuery(true)
+         ->select('COUNT(`img`.id)')
+        ->from($db->quoteName('#__joomgallery', 'img'))
+        ->where($db->quoteName('img.catid') . ' = ' . $db->quoteName('a.id'));
+      $query->select('(' . $imgQuery->__toString() . ') AS ' . $db->quoteName('img_count'));
 
       $db->setQuery($query);
       $dbCategories = $db->loadObjectList();
@@ -233,7 +247,6 @@ class UserpanelModel extends ImagesModel
       {
         $categories = $dbCategories;
       }
-
     }
     catch(\RuntimeException $e)
     {
@@ -256,10 +269,17 @@ class UserpanelModel extends ImagesModel
       // Check number of records in tables
       $query = $db->getQuery(true)
         ->select('*')
-        ->from($db->quoteName(_JOOM_TABLE_IMAGES))
+        ->from($db->quoteName(_JOOM_TABLE_IMAGES, 'a'))
         ->where($db->quoteName('created_by').' = '.(int) $userId)
         ->order($db->quoteName('ordering').' DESC')
         ->setLimit($limit);
+
+      // assign category title
+      $parentNameQuery = $db->getQuery(true)
+        ->select('`cat`.title')
+        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'cat'))
+        ->where($db->quoteName('a.catid') . ' = ' . $db->quoteName('cat.id'));
+      $query->select('(' . $parentNameQuery->__toString() . ') AS ' . $db->quoteName('cattitle'));
 
       $db->setQuery($query);
       $dbImages = $db->loadObjectList();
@@ -279,6 +299,4 @@ class UserpanelModel extends ImagesModel
 
     return $images;
   }
-
-
 }

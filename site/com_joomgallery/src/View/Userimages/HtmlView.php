@@ -72,7 +72,7 @@ class HtmlView extends JoomGalleryView
    * @var bool
    * @since version
    */
-  protected bool $isDevelopSite = false;
+  protected bool $isDebugSite = false;
 
   /**
    * @var int
@@ -105,8 +105,8 @@ class HtmlView extends JoomGalleryView
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
 
-    $this->isDevelopSite = (bool) ($this->params['configs']->get('isDebugSite'))
-      || $this->app->input->getBool('isDevelop');
+    $this->isDebugSite = (bool) ($this->params['configs']->get('isDebugSite'))
+      || $this->app->input->getBool('isDebug');
 
     // Check for errors.
     if(\count($errors = $model->getErrors()))

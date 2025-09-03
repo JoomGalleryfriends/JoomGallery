@@ -39,6 +39,13 @@ $returnURL       = base64_encode('index.php?option=com_joomgallery&view=useruplo
 $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return='.$returnURL);
 
 $config    = $this->params['configs'];
+
+// Prevent any display if userspace is not enabled
+$isUserSpaceEnabled = $config->get('jg_userspace');
+if ( ! $isUserSpaceEnabled) {
+  return;
+}
+
 $menuParam = $this->params['menu'];
 
 $isUseOrigFilename   = $config->get('jg_useorigfilename');

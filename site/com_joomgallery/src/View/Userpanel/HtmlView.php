@@ -100,13 +100,19 @@ class HtmlView extends JoomGalleryView
    * @var    bool
    * @since   4.2.0
    */
-  public bool $isDevelopSite = false;
+  public bool $isDebugSite = false;
 
   /**
    * @var int
    * @since   4.2.0
    */
   protected int $userId = 0;
+
+  /**
+   * @var array
+   * @since version
+   */
+  public array $orderingCatLatest = [];
 
   /**
    * Execute and display a template script.
@@ -136,7 +142,7 @@ class HtmlView extends JoomGalleryView
     $this->state  = $modUserPanel->getState();
     $this->params = $modUserPanel->getParams();
 
-    $menuParam = $this->params['menu'];
+    $menuParam                = $this->params['menu'];
     $isShowLatestCategoryList = $menuParam->get('showLatestCategoryList') ?? true;
     $isShowLatestImagesList   = $menuParam->get('showLatestImagesList') ?? false;
     $isShowManageableImages   = $menuParam->get('showManageableImages') ?? false;
@@ -146,19 +152,35 @@ class HtmlView extends JoomGalleryView
     $this->filterForm    = $modUserPanel->getFilterForm();
     $this->activeFilters = $modUserPanel->getActiveFilters();
 
-    $this->isDevelopSite = (bool) ($this->params['configs']->get('isDebugSite'))
-      || $this->app->input->getBool('isDevelop');
+    $this->isDebugSite = (bool) ($this->params['configs']->get('isDebugSite'))
+      || $this->app->input->getBool('isDebug');
+    // $this->isDebugSite = true;
 
     $this->config = $this->params['configs'];
 
-    if ($isShowLatestCategoryList) {
-      $limitLatestCategories = (int) $menuParam->get('latestCategoryListCount', 11);
+    //--- latest categories area ---------------------------------------------------
+
+    if($isShowLatestCategoryList)
+    {
+
+      $limitLatestCategories  = (int) $menuParam->get('latestCategoryListCount', 11);
       $this->latestCategories = $modUserPanel->dbLatestUserCategories($user->id, $limitLatestCategories);
+
+      // Preprocess the list of items to find ordering divisions.
+      foreach($this->latestCategories as $item)
+      {
+        $this->orderingCatLatest[$item->parent_id][] = $item->id;
+      }
+
     }
 
-    if ($isShowLatestImagesList) {
-      $limitLatestImages = (int) $menuParam->get('latestImagesListCount', 22);
+    //--- latest images area ---------------------------------------------------
+
+    if($isShowLatestImagesList)
+    {
+      $limitLatestImages  = (int) $menuParam->get('latestImagesListCount', 22);
       $this->latestImages = $modUserPanel->dbLatestUserImages($user->id, $limitLatestImages);
+
     }
 
     // Check for errors.
@@ -188,10 +210,7 @@ class HtmlView extends JoomGalleryView
 
 
     $this->userData = [];
-    $modUserPanel->assignUserData ($this->userData, $this->userId);
-
-
-
+    $modUserPanel->assignUserData($this->userData, $this->userId);
 
 
     // Prepares the document breadcrumbs
