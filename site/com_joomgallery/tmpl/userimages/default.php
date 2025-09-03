@@ -34,6 +34,13 @@ $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', 0, 
 $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
 $config    = $this->params['configs'];
+
+// Prevent any display if userspace is not enabled
+$isUserSpaceEnabled = $config->get('jg_userspace');
+if ( ! $isUserSpaceEnabled) {
+  return;
+}
+
 $menuParam = $this->params['menu'];
 
 $isShowTitle = $menuParam->get('showTitle') ?? true;
@@ -141,7 +148,7 @@ $canDelete = false;
             <div class="alert alert-info">
               <span class="icon-info-circle" aria-hidden="true"></span><span
                 class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
-              <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+              <?php echo Text::_('COM_JOOMGALLERY_USER_NO_IMAGES_ASSIGNED'); ?>
             </div>
 
           <?php else : ?>
@@ -255,7 +262,7 @@ $canDelete = false;
                       <a href="<?php echo $route; ?>">
                         <?php echo $this->escape($item->title); ?>
                         <?php
-                        if($this->isDevelopSite)
+                        if($this->isDebugSite)
                         {
                           echo '&nbsp;('.$this->escape($item->id).')';
                         }

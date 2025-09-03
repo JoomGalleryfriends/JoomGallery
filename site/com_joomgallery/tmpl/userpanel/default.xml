@@ -39,7 +39,7 @@
         <option value="1">JYES</option>
         <option value="0">JNO</option>
       </field>
-      <field name="showUserINFO"
+      <field name="showUserInformation"
              type="radio"
              default="1"
              label="COM_JOOMGALLERY_MENU_SHOW_USER_INFO"

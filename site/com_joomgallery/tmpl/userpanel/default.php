@@ -26,14 +26,23 @@ $wa->useStyle('com_joomgallery.list')
 
 $isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
 
-$config    = $this->params['configs'];
+$config      = $this->params['configs'];
+
+// Prevent any display if userspace is not enabled
+$isUserSpaceEnabled = $config->get('jg_userspace');
+if ( ! $isUserSpaceEnabled) {
+  return;
+}
+
 $menuParam = $this->params['menu'];
 
 $isShowTitle              = $menuParam->get('showTitle') ?? true;
 $isShowLatestCategoryList = $menuParam->get('showLatestCategoryList') ?? true;
 $isShowLatestImagesList   = $menuParam->get('showLatestImagesList') ?? false;
 $isShowManageableImages   = $menuParam->get('showManageableImages') ?? false;
-$isShowUserLimits         = $menuParam->get('showUserLimits') ?? true;
+
+$isShowUserLimits      = $menuParam->get('showUserLimits') ?? false;
+$isShowUserInformation = $menuParam->get('showUserInformation') ?? false;
 
 $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
 // return to userpanel;
@@ -44,11 +53,10 @@ $userDataComment['userCatCount']    = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
 $userDataComment['userImgCount']    = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG);
 $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_TIMESPAN_LONG);
 
-
 ?>
 
 <div class="jg jg-user-panel ">
-  <form class="jg-images"
+  <form class="jg-user-panel"
         action="<?php echo $panelView; ?>"
         method="post" name="adminForm" id="adminForm"
         novalidate aria-label="<?php echo Text::_('COM_JOOMGALLERY_USER_PANEL', true); ?>">
@@ -80,7 +88,10 @@ $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
 
         <?php // --- user information ----------------------------------------------------- ?>
 
-        <?php displayUserPanelInfo($this->config, $this->userData, $userDataComment); ?>
+        <?php if($isShowUserInformation): ?>
+          <?php displayUserPanelInfo($this->config, $this->userData, $userDataComment); ?>
+        <?php endif; ?>
+
       <?php endif; ?>
     </div">
 
@@ -93,7 +104,7 @@ $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
       <?php endif; ?>
     </div">
 
-    <div class="userCategoriesList">
+    <div class="userImageList">
 
       <?php // --- panel images list ----------------------------------------------------- ?>
 
@@ -159,68 +170,67 @@ function displayUserPanelLimits($config, array $userData, array $userDataComment
         <h5><?php echo Text::_('COM_JOOMGALLERY_LIMITS'); ?></h5>
       </div>
       <div class="card-body">
-        <table class="table table-striped table-bordered table-responsive"
-        ">
-        <thead>
-        <tr>
-          <td class="text-center"></td>
-          <td class="text-center"><?php echo Text::_('COM_JOOMGALLERY_ACTUAL_VALUE'); ?></td>
-          <td class="text-center"><?php echo Text::_('COM_JOOMGALLERY_MAXIMUM_VALUE'); ?></td>
-          <td><?php echo Text::_('COM_JOOMGALLERY_COMMENT'); ?></td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>
-            <?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORIES'); ?>
-          </td>
-          <td class="text-center <?php echo $classDangerValueUserCat; ?>">
-            <b><?php echo $usrUserCat; ?></b>
-          </td>
-          <td class="text-center">
-            <?php echo $cfgMaxUserCat; ?>
-          </td>
-          <td>
-            <?php echo $usrUserCatComment; ?>
-          </td>
-        </tr>
-
-        <?php if($cfgMaxUserImgTimespan == '0'): ?>
+        <table class="table table-striped table-bordered table-responsive">
+          <thead>
+          <tr>
+            <td class="text-center"></td>
+            <td class="text-center"><?php echo Text::_('COM_JOOMGALLERY_ACTUAL_VALUE'); ?></td>
+            <td class="text-center"><?php echo Text::_('COM_JOOMGALLERY_MAXIMUM_VALUE'); ?></td>
+            <td><?php echo Text::_('COM_JOOMGALLERY_COMMENT'); ?></td>
+          </tr>
+          </thead>
+          <tbody>
           <tr>
             <td>
-              <?php echo Text::_('COM_JOOMGALLERY_USER_IMAGES'); ?>
+              <?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORIES'); ?>
             </td>
-            <td class="text-center <?php echo $classDangerValueUserImgCount; ?>">
-              <b><?php echo $usrUserImgCount; ?></b>
-            </td>
-            <td class="text-center">
-              <?php echo $cfgMaxUserImg; ?>
-            </td>
-            <td>
-              <?php echo $usrUserImgCountComment; ?>
-            </td>
-          </tr>
-        <?php endif; ?>
-
-        <?php if($cfgMaxUserImgTimespan != '0'): ?>
-          <tr>
-            <td>
-              <?php echo Text::sprintf('COM_JOOMGALLERY_USER_IMAGES_IN_N_DAYS', $cfgMaxUserImgTimespan); ?>
-            </td>
-            <td class="text-center <?php echo $classDangerValueUserUserImgTimespan; ?>">
-              <b><?php echo $usrUserImgTimespan; ?></b>
+            <td class="text-center <?php echo $classDangerValueUserCat; ?>">
+              <b><?php echo $usrUserCat; ?></b>
             </td>
             <td class="text-center">
-              <!--                  --><?php //echo $cfgMaxUserImgTimespan; ?>
-              <?php echo $cfgMaxUserImg; ?>
+              <?php echo $cfgMaxUserCat; ?>
             </td>
             <td>
-              <?php echo $usrUserImgTimespanComment; ?>
+              <?php echo $usrUserCatComment; ?>
             </td>
           </tr>
-        <?php endif; ?>
 
-        </tbody>
+          <?php if($cfgMaxUserImgTimespan == '0'): ?>
+            <tr>
+              <td>
+                <?php echo Text::_('COM_JOOMGALLERY_USER_IMAGES'); ?>
+              </td>
+              <td class="text-center <?php echo $classDangerValueUserImgCount; ?>">
+                <b><?php echo $usrUserImgCount; ?></b>
+              </td>
+              <td class="text-center">
+                <?php echo $cfgMaxUserImg; ?>
+              </td>
+              <td>
+                <?php echo $usrUserImgCountComment; ?>
+              </td>
+            </tr>
+          <?php endif; ?>
+
+          <?php if($cfgMaxUserImgTimespan != '0'): ?>
+            <tr>
+              <td>
+                <?php echo Text::sprintf('COM_JOOMGALLERY_USER_IMAGES_IN_N_DAYS', $cfgMaxUserImgTimespan); ?>
+              </td>
+              <td class="text-center <?php echo $classDangerValueUserUserImgTimespan; ?>">
+                <b><?php echo $usrUserImgTimespan; ?></b>
+              </td>
+              <td class="text-center">
+                <!--                  --><?php //echo $cfgMaxUserImgTimespan; ?>
+                <?php echo $cfgMaxUserImg; ?>
+              </td>
+              <td>
+                <?php echo $usrUserImgTimespanComment; ?>
+              </td>
+            </tr>
+          <?php endif; ?>
+
+          </tbody>
         </table>
       </div>
     </div>
@@ -231,27 +241,8 @@ function displayUserPanelLimits($config, array $userData, array $userDataComment
 
 function displayUserPanelInfo($config, array $userData, array $userDataComment)
 {
-  $usrUserCat        = (string) $userData['userCatCount'];
-  $cfgMaxUserCat     = (string) ($config->get('jg_maxusercat') ?? '%');
-  $usrUserCatComment = (string) $userDataComment['userCatCount'];
-
-  $usrUserImgCount        = (string) $userData['userImgCount'];
-  $cfgMaxUserImg          = (string) ($config->get('jg_maxuserimage') ?? '%');
-  $usrUserImgCountComment = (string) $userDataComment['userImgCount'];
-
-  $usrUserImgTimespan        = (string) $userData['userImgTimeSpan'];
-  $cfgMaxUserImgTimespan     = (string) ($config->get('jg_maxuserimage_timespan') ?? '%');
-  $usrUserImgTimespanComment = (string) $userDataComment['userImgTimeSpan'];
-
-
-  $classDangerValue = 'table-danger';
-
-  $classDangerValueUserCat      = ($usrUserCat > $cfgMaxUserCat) ? ' '.$classDangerValue : '';
-  $classDangerValueUserImgCount = ($usrUserImgCount > $cfgMaxUserImg) ? ' '.$classDangerValue : '';
-  // $classDangerValueUserUserImgTimespan = ($usrUserImgTimespan > $cfgMaxUserImgTimespan) ? ' ' . $classDangerValue :  '';
-  $classDangerValueUserUserImgTimespan = ($usrUserImgTimespan > $cfgMaxUserImg) ? ' '.$classDangerValue : '';
-
-
+  $usrUserCat      = (string) $userData['userCatCount'];
+  $usrUserImgCount = (string) $userData['userImgCount'];
   ?>
 
   <div class="col-md-3 mb">
@@ -369,29 +360,214 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
   {
     $categories = $data->latestCategories;
 
+    $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
+
+    $tokenLink = '&'.Session::getFormToken().'='. 1;
+    // return to userpanel;
+    $returnURL = base64_encode('index.php?option=com_joomgallery&view=userpanel');
+
+    // index.php?option=com_modules&task=module.orderPosition&' . $token . '"';
+
+    $baseLink_CategoryEdit      = 'index.php?option=com_joomgallery&task=usercategory.edit&id=';
+    $baseLink_CategoryPublish   = 'index.php?option=com_joomgallery&task=usercategory.publish&id=';
+    $baseLink_CategoryUnpublish = 'index.php?option=com_joomgallery&task=usercategory.unpublish&id=';
+    $baseLink_ImagesFilter      = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
+
+    // return to userpanel;
+    $returnURL = base64_encode('index.php?option=com_joomgallery&view=userpanel');
 
     ?>
-    <div class="col-md-3 mb">
+    <div class="mb">
 
-      <div class="card col-sm">
+      <div class="card">
         <div class="card-header">
-          <h5>
-            <?php
-            echo Text::_('COM_JOOMGALLERY_LATEST_CATEGORIES');
-            echo ' (' . count($categories) . ')' ;
-            ?>
-          </h5>
+          <h4>
+            <?php echo Text::_('COM_JOOMGALLERY_LATEST_CATEGORIES').' ('.count($categories).')'; ?>
+          </h4>
         </div>
+
         <div class="card-body">
 
-          <?php
+          <form class="jg-categories"
+                action="<?php echo $panelView; ?>"
+                method="post" name="adminForm" id="adminForm"
+                novalidate aria-label="<?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORIES', true); ?>">
 
-          foreach ($categories as $category) {
-            echo "* " . $category->title . '<br>';
-          }
+            <?php if(empty($categories)) : ?>
 
-          ?>
+              <div class="alert alert-info">
+                <span class="icon-info-circle" aria-hidden="true"></span><span
+                  class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
+                <?php echo Text::_('COM_JOOMGALLERY_USER_NO_CATEGORIES_ASSIGNED'); ?>
+              </div>
 
+            <?php else : ?>
+
+              <div class="clearfix"></div>
+
+              <div class="table-responsive">
+                <table class="table table-striped itemList" id="categoryList">
+                  <thead>
+                  <tr>
+                    <th scope="col" style="min-width:180px">
+                      <?php echo Text::_('JGLOBAL_TITLE'); ?>
+                    </th>
+
+                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                      <?php echo Text::_('COM_JOOMGALLERY_IMAGES'); ?>
+                    </th>
+
+                    <th scope="col" style="min-width:180px" class="w-3 d-none d-lg-table-cell text-center">
+                      <?php echo Text::_('COM_JOOMGALLERY_PARENT_CATEGORY'); ?>
+                    </th>
+
+                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                      <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
+                    </th>
+
+                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                      <?php echo Text::_('JPUBLISHED'); ?>
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+
+                  <?php foreach($categories as $i => $item) :
+                    // Access check
+                    $canEdit = $data->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
+                    $canDelete = $data->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
+                    $canChange = $data->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
+                    $canCheckin = $canChange || $item->checked_out == $data->getCurrentUser->id;
+                    $disabled = ($item->checked_out > 0) ? 'disabled' : '';
+                    $statePublished = ((int) $item->published) ? 'unpublish' : 'publish';
+
+                    // $catRoute = Route::_($baseLink_CategoryEdit.(int) $item->id);
+
+                    $editCategoryLink      = Route::_($baseLink_CategoryEdit.(int) $item->id.$tokenLink.'&return='.$returnURL);
+                    $publishCategoryLink   = Route::_($baseLink_CategoryPublish.(int) $item->id.$tokenLink.'&return='.$returnURL);
+                    $unpublishCategoryLink = Route::_($baseLink_CategoryUnpublish.(int) $item->id.$tokenLink.'&return='.$returnURL);
+//                      $publishCategoryLink = Route::_($baseLink_CategoryPublish . (int) $item->id . $tokenLink);
+//                      $unpublishCategoryLink = Route::_($baseLink_CategoryUnpublish . (int) $item->id . $tokenLink);
+
+                    // user may not delete his root gallery
+                    if((!empty($item->id)) && $item->parent_id == 1)
+                    {
+                      $canDelete = false;
+                    }
+                    ?>
+
+                    <tr class="row<?php echo $i % 2; ?>">
+
+                      <th scope="row" class="has-context title-cell">
+                        <div id="divCheckbox" style="display: none;">
+                          <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
+                        </div>
+
+                        <?php if($canCheckin && $item->checked_out > 0) : ?>
+                          <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
+                                  data-item-id="cb<?php echo $i; ?>"
+                                  data-item-task="usercategory.checkin" <?php echo $disabled; ?>>
+                            <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'category.', false); ?>
+                          </button>
+                        <?php endif; ?>
+                        <a href="<?php echo $editCategoryLink; ?>">
+                          <?php echo $data->escape($item->title); ?>
+                          <?php
+                          if($data->isDebugSite)
+                          {
+                            echo '&nbsp;('.$data->escape($item->id).')';
+                          }
+                          ?>
+                        </a>
+                      </th>
+
+                      <td class="d-none d-lg-table-cell text-center">
+                        <a class="badge bg-info"
+                           title="ToDo: Text: Click to view images list of category"
+                           href="<?php echo $baseLink_ImagesFilter.(int) $item->id; ?>">
+                          <?php echo (int) $item->img_count; ?>
+                        </a>
+                      </td>
+
+                      <td class="d-none d-lg-table-cell text-center">
+                        <?php echo ($item->parent_title == 'Root') ? '--' : $data->escape($item->parent_title); ?>
+                        <?php
+                        if($data->isDebugSite)
+                        {
+                          echo '&nbsp;('.$data->escape($item->parent_id).')';
+                        }
+                        ?>
+
+                      </td>
+
+                      <td class="d-none d-lg-table-cell text-center">
+                        <?php if($canEdit || $canDelete): ?>
+                          <?php if($canEdit): ?>
+                            <?php
+                            $route = Route::_($baseLink_CategoryEdit.(int) $item->id);
+                            ?>
+                            <a href="<?php echo $editCategoryLink; ?>">
+                              <span class="icon-edit" aria-hidden="true"></span>
+                            </a>
+                          <?php endif; ?>
+
+                          <?php if($canDelete): ?>
+                            <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
+                                    data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
+                                    data-item-id="cb<?php echo $i; ?>"
+                                    data-item-task="usercategory.remove" <?php echo $disabled; ?>>
+                              <span class="icon-trash" aria-hidden="true"></span>
+                            </button>
+                          <?php endif; ?>
+                        <?php endif; ?>
+                      </td>
+
+                      <td class="d-none d-lg-table-cell text-center">
+                        <?php if($canChange): ?>
+                          <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
+                                  data-item-id="cb<?php echo $i; ?>"
+                                  data-item-task="usercategory.<?php echo $statePublished; ?>"
+                            <?php echo $disabled; ?>
+                          >
+                              <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
+                                    aria-hidden="true"></span>
+                          </button>
+                          <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
+                                  data-url="<?php echo ((int) $item->published) ? $publishCategoryLink : $unpublishCategoryLink; ?>"
+                          >
+                              <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
+                                    aria-hidden="true"></span>
+                          </button>
+
+                          <!--                            <a class="btn js-grid-item-action tbody-icon --><?php //echo $disabled; ?><!--"-->
+                          <!--                              href="--><?php //echo ((int) $item->published) ? $unpublishCategoryLink : $publishCategoryLink; ?><!--"-->
+                          <!--                            >-->
+                          <!--                              <span class="icon---><?php //echo (int) $item->published ? 'check' : 'cancel'; ?><!--"-->
+                          <!--                                    aria-hidden="true"></span>-->
+                          <!--                            </a>-->
+
+                          <a href="<?php echo $publishCategoryLink; ?>">
+                            <span class="icon-check" aria-hidden="true"></span>
+                          </a>
+
+                          <a href="<?php echo $unpublishCategoryLink; ?>">
+                            <span class="icon-cancel" aria-hidden="true"></span>
+                          </a>
+
+                        <?php else : ?>
+                          <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
+                        <?php endif; ?>
+                      </td>
+
+                    </tr>
+                  <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+            <?php endif; ?>
+
+            <?php echo HTMLHelper::_('form.token'); ?>
+          </form>
         </div>
       </div>
     </div>
@@ -401,32 +577,189 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
   function displayLatestImagesList($data)
   {
-
     $images = $data->latestImages;
+
+    $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
+
+    // index.php?option=com_modules&task=module.orderPosition&' . $token . '"';
+    $token = Session::getFormToken().'='. 1;
+    // return to userpanel;
+    $returnURL = base64_encode('index.php?option=com_joomgallery&view=userpanel');
+
+    $baseLink_ImageEdit    = 'index.php?option=com_joomgallery&view=userimage&layout=editImg&id=';
+    $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
+
+    $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
 
 
     ?>
-    <div class="col-md-3 mb">
+    <div class="mb">
 
-      <div class="card col-sm">
+      <div class="card">
         <div class="card-header">
-          <h5>
-            <?php
-            echo Text::_('COM_JOOMGALLERY_LATEST_IMAGES');
-            echo ' (' . count($images) . ')' ;
-            ?>
-          </h5>
+          <h4>
+            <?php echo Text::_('COM_JOOMGALLERY_LATEST_IMAGES').' ('.count($images).')'; ?>
+          </h4>
         </div>
         <div class="card-body">
 
-          <?php
+          <form class="jg-images"
+                action="<?php echo $panelView; ?>"
+                method="post" name="adminForm" id="adminForm"
+                novalidate aria-label="<?php echo Text::_('COM_JOOMGALLERY_USER_PANEL', true); ?>">
 
-          foreach ($images as $image) {
-            echo "* " . $image->title . '<br>';
-          }
+            <?php if(empty($images)) : ?>
 
+              <div class="alert alert-info">
+                <span class="icon-info-circle" aria-hidden="true"></span><span
+                  class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
+                <?php echo Text::_('COM_JOOMGALLERY_USER_NO_IMAGES_ASSIGNED'); ?>
+              </div>
 
-          ?>
+            <?php else : ?>
+
+              <div class="clearfix"></div>
+
+              <div class="table-responsive">
+                <table class="table table-striped itemList" id="imageList">
+                  <thead>
+                  <tr>
+                    <th></th>
+
+                    <th scope="col" style="min-width:180px">
+                      <?php echo Text::_('JGLOBAL_TITLE'); ?>
+                    </th>
+
+                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                      <?php echo Text::_('JGLOBAL_HITS'); ?>
+                    </th>
+
+                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                      <?php echo Text::_('COM_JOOMGALLERY_DOWNLOADS'); ?>
+                    </th>
+
+                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                      <?php echo Text::_('JCATEGORY'); ?>
+                    </th>
+
+                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                      <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
+                    </th>
+
+                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                      <?php echo Text::_('JPUBLISHED'); ?>
+                    </th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <?php foreach($images as $i => $item) :
+                    // Access check
+                    $canEdit = $data->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
+                    $canDelete = $data->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
+                    $canChange = $data->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
+                    $canCheckin = $canChange || $item->checked_out == $data->getCurrentUser->id;
+                    $disabled = ($item->checked_out > 0) ? 'disabled' : '';
+                    $statePublished = ((int) $item->published) ? 'unpublish' : 'publish';
+
+                    $editImageLink = Route::_($baseLink_ImageEdit.(int) $item->id.'&return='.$returnURL);
+                    ?>
+
+                    <tr class="row<?php echo $i % 2; ?>">
+
+                      <td class="small d-none d-md-table-cell">
+                        <div id="divCheckbox" style="display: none;">
+                          <?php
+                          $test = HTMLHelper::_('grid.id', $i, $item->id, false, 'iid', 'cb', $item->title);
+                          echo HTMLHelper::_('grid.id', $i, $item->id, false, 'iid', 'cb', $item->title); ?>
+                        </div>
+
+                        <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>"
+                             alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
+                      </td>
+
+                      <th scope="row" class="has-context title-cell">
+                        <?php if($canCheckin && $item->checked_out > 0) : ?>
+                          <button class="js-grid-item-action tbody-icon" data-item-id="cb<?php echo $i; ?>"
+                                  data-item-task="userimage.checkin">
+                            <span class="icon-checkedout" aria-hidden="true"></span>
+                          </button>
+                        <?php endif; ?>
+                        <?php
+                        $route = Route::_($baseLink_ImageEdit.(int) $item->id);
+                        ?>
+                        <a href="<?php echo $route; ?>">
+                          <?php echo $data->escape($item->title); ?>
+                          <?php
+                          if($data->isDebugSite)
+                          {
+                            echo '&nbsp;('.$data->escape($item->id).')';
+                          }
+                          ?>
+                        </a>
+                      </th>
+
+                      <td class="d-none d-lg-table-cell text-center">
+                          <span class="badge bg-info">
+                            <?php echo (int) $item->hits; ?>
+                          </span>
+                      </td>
+                      <td class="d-none d-lg-table-cell text-center">
+                          <span class="badge bg-info">
+                            <?php echo (int) $item->downloads; ?>
+                          </span>
+                      </td>
+
+                      <td class="d-none d-lg-table-cell text-center">
+                        <a title="ToDo: Text: Click to view images list of category"
+                           href="<?php echo $baseLink_ImagesFilter.(int) $item->catid; ?>">
+                          <?php echo $data->escape($item->cattitle); ?>
+                        </a>
+                      </td>
+
+                      <td class="d-none d-lg-table-cell text-center">
+
+                        <?php if($canEdit || $canDelete): ?>
+                          <?php if($canEdit): ?>
+                            <a href="<?php echo $editImageLink; ?>">
+                              <span class="icon-edit" aria-hidden="true"></span>
+                            </a>
+                          <?php endif; ?>
+
+                          <?php if($canDelete): ?>
+                            <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
+                                    data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
+                                    data-item-id="cb<?php echo $i; ?>"
+                                    data-item-task="Userimage.remove" <?php echo $disabled; ?>>
+                              <span class="icon-trash" aria-hidden="true"></span>
+                            </button>
+                          <?php endif; ?>
+                        <?php endif; ?>
+                      </td>
+
+                      <td class="d-none d-lg-table-cell text-center">
+                        <?php if($canChange): ?>
+                          <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
+                                  data-item-id="cb<?php echo $i; ?>"
+                                  data-item-task="Userimage.<?php echo $statePublished; ?>" <?php echo $disabled; ?>>
+                              <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
+                                    aria-hidden="true"></span>
+                          </button>
+                        <?php else : ?>
+                          <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
+                        <?php endif; ?>
+                      </td>
+
+                    </tr>
+                  <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+
+            <?php endif; ?>
+
+            <?php echo HTMLHelper::_('form.token'); ?>
+          </form>
 
         </div>
       </div>
@@ -437,7 +770,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
   function displayUserManageableImages($data, $returnURL)
   {
-// Access check
+    // Access check
     $listOrder = $data->state->get('list.ordering');
     $listDirn  = $data->state->get('list.direction');
     $canOrder  = $data->getAcl()->checkACL('editstate', 'com_joomgallery.image', 0, 1, true);
@@ -450,7 +783,8 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
       HTMLHelper::_('draggablelist.draggable');
     }
 
-    $baseLink_ImageEdit = 'index.php?option=com_joomgallery&view=userimage&layout=editImg&id=';
+    $baseLink_ImageEdit    = 'index.php?option=com_joomgallery&view=userimage&layout=editImg&id=';
+    $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
 
     ?>
     <div class="form-group">
@@ -534,6 +868,8 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                   $canChange = $data->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canCheckin = $canChange || $item->checked_out == $data->getCurrentUser->id;
                   $disabled = ($item->checked_out > 0) ? 'disabled' : '';
+                  $statePublished = ((int) $item->published) ? 'unpublish' : 'publish';
+
                   ?>
 
                   <tr class="row<?php echo $i % 2; ?>">
@@ -581,7 +917,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                       <a href="<?php echo $route; ?>">
                         <?php echo $data->escape($item->title); ?>
                         <?php
-                        if($data->isDevelopSite)
+                        if($data->isDebugSite)
                         {
                           echo '&nbsp;('.$data->escape($item->id).')';
                         }
@@ -601,7 +937,10 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                     </td>
 
                     <td class="d-none d-lg-table-cell text-center">
-                      <?php echo $data->escape($item->cattitle); ?>
+                      <a title="ToDo: Text: Click to view images list of category"
+                         href="<?php echo $baseLink_ImagesFilter.(int) $item->catid; ?>">
+                        <?php echo $data->escape($item->cattitle); ?>
+                      </a>
                     </td>
 
                     <td class="d-none d-lg-table-cell text-center">
@@ -630,10 +969,9 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
                     <td class="d-none d-lg-table-cell text-center">
                       <?php if($canChange): ?>
-                        <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                         <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                 data-item-id="cb<?php echo $i; ?>"
-                                data-item-task="Userimage.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
+                                data-item-task="Userimage.<?php echo $statePublished; ?>" <?php echo $disabled; ?>>
                             <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
                                   aria-hidden="true"></span>
                         </button>
@@ -647,6 +985,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                 </tbody>
               </table>
             </div>
+
           <?php endif; ?>
 
         </div>

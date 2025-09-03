@@ -33,6 +33,13 @@ $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category');
 $saveOrder = ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 
 $config    = $this->params['configs'];
+
+// Prevent any display if userspace is not enabled
+$isUserSpaceEnabled = $config->get('jg_userspace');
+if ( ! $isUserSpaceEnabled) {
+  return;
+}
+
 $menuParam = $this->params['menu'];
 
 $isShowTitle = $menuParam->get('showTitle') ?? true;
@@ -53,7 +60,6 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 // return to usercategories;
 $returnURL = base64_encode('index.php?option=com_joomgallery&view=usercategories');
 
-//$baseLink_CategoryEdit = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=';
 $baseLink_CategoryEdit = 'index.php?option=com_joomgallery&task=usercategory.edit&id=';
 $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
 
@@ -63,7 +69,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
   <form class="jg-categories"
         action="<?php echo $categoriesView; ?>"
         method="post" name="adminForm" id="adminForm"
-        novalidate aria-label="<?php echo Text::_('COM_JOOMGALLERY_USER_PANEL', true); ?>">
+        novalidate aria-label="<?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORIES', true); ?>">
 
     <?php if($isShowTitle): ?>
       <h3><?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORIES'); ?></h3>
@@ -139,7 +145,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
             <div class="alert alert-info">
               <span class="icon-info-circle" aria-hidden="true"></span><span
                 class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
-              <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+              <?php echo Text::_('COM_JOOMGALLERY_USER_NO_CATEGORIES_ASSIGNED'); ?>
             </div>
 
           <?php else : ?>
@@ -274,7 +280,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                       <a href="<?php echo $route; ?>">
                         <?php echo $this->escape($item->title); ?>
                         <?php
-                        if($this->isDevelopSite)
+                        if($this->isDebugSite)
                         {
                           echo '&nbsp;('.$this->escape($item->id).')';
                         }
