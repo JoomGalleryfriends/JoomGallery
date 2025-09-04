@@ -77,8 +77,8 @@ class HtmlView extends JoomGalleryView
     $this->state  = $model->getState();
     $this->params = $model->getParams();
 
-    $this->item = $model->getItem();
-    $this->form = $model->getForm();
+    $this->item   = $model->getItem();
+    $this->form   = $model->getForm();
 
     // Get return page
     $this->return_page = $model->getReturnPage();
