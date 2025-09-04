@@ -26,10 +26,11 @@ $wa->useScript('keepalive')
 HTMLHelper::_('bootstrap.framework');
 
 // Load admin language file
+// Load admin lang may be useful as edit is a copy of backend items
 $lang = Factory::getApplication()->getLanguage();
-$lang->load('com_joomgallery', JPATH_SITE);
-$lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
-$lang->load('joomla', JPATH_ADMINISTRATOR);
+//$lang->load('com_joomgallery', JPATH_SITE);
+$testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
+//$lang->load('joomla', JPATH_ADMINISTRATOR);
 
 if($this->item->id)
 {

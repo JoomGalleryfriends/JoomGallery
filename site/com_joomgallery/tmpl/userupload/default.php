@@ -27,6 +27,14 @@ $wa->useScript('keepalive')
   ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip');
 
+//// ToDo: Remove: copy needed items from admin and load only once may be faster
+//// Info: debug messages for task must be loaded in controller
+//// Load admin language file
+//$lang = Factory::getApplication()->getLanguage();
+////$lang->load('com_joomgallery', JPATH_SITE);
+//$testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
+////$lang->load('joomla', JPATH_ADMINISTRATOR);
+
 $isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
 
 $panelView      = Route::_('index.php?option=com_joomgallery&view=userpanel');

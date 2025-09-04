@@ -25,6 +25,14 @@ $wa->useStyle('com_joomgallery.list')
   ->useScript('com_joomgallery.list-view')
   ->useScript('multiselect');
 
+//// ToDo: Remove: copy needed items from admin and load only once may be faster
+//// Info: debug messages for task must be loaded in controller
+//// Load admin language file
+//$lang = Factory::getApplication()->getLanguage();
+////$lang->load('com_joomgallery', JPATH_SITE);
+//$testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
+////$lang->load('joomla', JPATH_ADMINISTRATOR);
+
 $isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
 
 // Access check
