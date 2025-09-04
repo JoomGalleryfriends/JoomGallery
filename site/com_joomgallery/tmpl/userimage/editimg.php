@@ -28,7 +28,7 @@ $wa->useScript('keepalive')
 $lang = Factory::getApplication()->getLanguage();
 //$lang->load('com_joomgallery', JPATH_SITE);
 $testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
-//$lang->load('joomla', JPATH_ADMINISTRATOR);
+$lang->load('joomla', JPATH_ADMINISTRATOR);
 
 if($this->item->catid)
 {

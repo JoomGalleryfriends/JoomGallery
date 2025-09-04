@@ -299,6 +299,10 @@ td ul.list-inline {
 }
 
 .form-control[readonly] {
-  background-color: #e8e8e8;
+  background-color: var(--jg-gray-300);
+  opacity: 1;
+}
+.form-select:disabled {
+  background-color: var(--jg-gray-300);
   opacity: 1;
 }
