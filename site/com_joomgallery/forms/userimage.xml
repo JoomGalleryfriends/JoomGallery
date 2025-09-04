@@ -5,8 +5,8 @@
 
     <field name="id"
            type="text"
-           readonly="true"
            class="readonly"
+           readonly="true"
            label="JGLOBAL_FIELD_ID_LABEL" />
 
     <field name="checked_out"
@@ -15,44 +15,44 @@
 
     <field name="hits"
            type="text"
-           readonly="true"
            class="readonly"
+           readonly="true"
            label="JGLOBAL_HITS" />
 
     <field name="downloads"
            type="text"
+           class="readonly"
            readonly="true"
            default="0"
-           class="readonly"
            label="COM_JOOMGALLERY_DOWNLOADS" />
 
     <field name="votes"
            type="text"
+           class="readonly"
            readonly="true"
            default="0"
-           class="readonly"
            label="COM_JOOMGALLERY_VOTES" />
 
     <field name="votesum"
            type="text"
+           class="readonly"
            readonly="true"
            default="0"
-           class="readonly"
            hidden="true"
            label="COM_JOOMGALLERY_IMAGE_RATING" />
 
     <field name="rating"
            type="text"
+           class="readonly"
            readonly="true"
            default="0"
-           class="readonly"
            label="COM_JOOMGALLERY_RATING" />
 
     <field name="approved"
            type="list"
+           class="readonly"
            readonly="true"
            default="0"
-           class="readonly"
            label="COM_JOOMGALLERY_APPROVED">
         <option value="0">JNO</option>
         <option value="1">JYES</option>
@@ -164,7 +164,7 @@
 
     <field name="modified_time"
            type="calendar"
-           class="form-control"
+           class="readonly form-control"
            translateformat="true"
            showtime="true"
            size="22"

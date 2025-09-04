@@ -4,8 +4,8 @@
     <field name="id"
            type="number"
            default="0"
-           readonly="true"
            class="readonly"
+           readonly="true"
            label="JGLOBAL_FIELD_ID_LABEL" />
 
     <field name="checked_out"
@@ -53,6 +53,7 @@
       name="parent_id_root"
       type="text"
       label="JGLOBAL_SHOW_PARENT_CATEGORY_LABEL"
+      class="readonly"
       readonly="true"
       >
     </field>
@@ -156,8 +157,9 @@
            label="COM_JOOMGALLERY_OWNER"
            description="JGLOBAL_FIELD_CREATED_BY_DESC"
            validate="UserId"
-           class="form-control:disabled"
-           readonly="true" />
+           class="readonly form-control:disabled"
+           readonly="true"
+    />
 
     <field name="modified_by"
            type="user"
@@ -170,7 +172,7 @@
 
     <field name="modified_time"
            type="calendar"
-           class="form-control"
+           class="readonly form-control:disabled"
            translateformat="true"
            showtime="true"
            size="22"
@@ -209,7 +211,7 @@
 
     <field name="params"
            type="subform"
-           formsource="administrator/components/com_joomgallery/forms/subform_catparams.xml"
+           formsource="components/com_joomgallery/forms/subform_catparams.xml"
            layout="joomla.form.field.subform.default"
            label="COM_JOOMGALLERY_PARAMETERS" />
 

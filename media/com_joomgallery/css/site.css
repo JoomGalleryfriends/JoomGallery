@@ -297,3 +297,8 @@ html.lg-on {
 td ul.list-inline {
   margin: 0;
 }
+
+.form-control[readonly] {
+  background-color: #e8e8e8;
+  opacity: 1;
+}
