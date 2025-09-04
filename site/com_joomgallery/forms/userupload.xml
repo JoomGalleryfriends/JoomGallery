@@ -154,6 +154,7 @@
 
     <field name="debug"
            type="radio"
+           layout="joomla.form.field.radio.switcher"
            class="btn-group"
            default="0"
            size="1"
