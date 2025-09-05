@@ -180,7 +180,7 @@
            default=""
            label="JGLOBAL_DESCRIPTION"
            description="JFIELD_META_DESCRIPTION_LABEL"
-           maxlength="160"
+           maxlength="300"
            charcounter="true"
     />
 
