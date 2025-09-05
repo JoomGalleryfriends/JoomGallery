@@ -105,6 +105,11 @@
            label="JGLOBAL_DESCRIPTION"
            hide="pagebreak" />
 
+    <field name="access"
+           type="accesslevel"
+           label="JFIELD_ACCESS_LABEL"
+           description="JFIELD_ACCESS_DESC" />
+
     <field name="hidden"
            type="radio"
            layout="joomla.form.field.radio.switcher"
