@@ -49,6 +49,15 @@ $menuParam = $this->params['menu'];
 
 $isShowTitle = $menuParam->get('showTitle') ?? true;
 
+$app       = Factory::getApplication();
+$form      = $this->getForm();
+$fieldSets = $form->getFieldsets();
+
+// In case of modal
+$isModal = $app->input->get('layout') === 'modal';
+$layout  = $isModal ? 'modal' : 'edit';
+$tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=component' : '';
+
 ?>
 
 <div class="jg category-edit front-end-edit item-page">
@@ -57,7 +66,7 @@ $isShowTitle = $menuParam->get('showTitle') ?? true;
   <?php else : ?>
     <form id="adminForm"
           action="<?php echo Route::_('index.php?option=com_joomgallery&controller=usercategory&id='.$this->item->id); ?>"
-          method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data">
+          method="post" name="adminForm" class="form-validate form-horizontal well" enctype="multipart/form-data">
 
       <?php if($isShowTitle): ?>
         <h3><?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORY_EDIT'); ?></h3>
@@ -88,7 +97,9 @@ $isShowTitle = $menuParam->get('showTitle') ?? true;
 
       <fieldset>
         <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'category')); ?>
+
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'category', Text::_('JCATEGORY', true)); ?>
+
         <?php echo $this->form->renderField('title'); ?>
         <?php echo $this->form->renderField('alias'); ?>
         <?php
@@ -111,24 +122,69 @@ $isShowTitle = $menuParam->get('showTitle') ?? true;
         <?php echo $this->form->renderField('password'); ?>
         <?php echo $this->form->renderField('language'); ?>
         <?php echo $this->form->renderField('description'); ?>
+
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Options', Text::_('JGLOBAL_FIELDSET_BASIC', true)); ?>
-        <?php echo $this->form->renderField('hidden'); ?>
-        <?php echo $this->form->renderField('exclude_toplist'); ?>
-        <?php echo $this->form->renderField('exclude_search'); ?>
-        <?php echo $this->form->renderField('thumbnail'); ?>
+
+        <div class="row">
+          <div class="col-12 col-lg-6">
+            <fieldset id="fieldset-options" class="options-form">
+              <legend><?php echo Text::_('JGLOBAL_FIELDSET_BASIC'); ?></legend>
+              <div>
+                <?php echo $this->form->renderField('hidden'); ?>
+                <?php echo $this->form->renderField('exclude_toplist'); ?>
+                <?php echo $this->form->renderField('exclude_search'); ?>
+              </div>
+            </fieldset>
+          </div>
+          <div class="col-12 col-lg-6">
+            <fieldset id="fieldset-thumbnail" class="options-form">
+              <legend><?php echo Text::_('JGLOBAL_PREVIEW'); ?></legend>
+              <div>
+                <?php echo $this->form->renderField('thumbnail'); ?>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
+        <?php foreach ($fieldSets as $name => $fieldSet) :?>
+          <?php if (strpos($name,'fields-') !== 0) continue; ?>
+          <?php echo HTMLHelper::_('uitab.addTab', 'myTab', $name, Text::_($fieldSet->label)); ?>
+          <?php $this->fieldset = $name; ?>
+          <?php echo LayoutHelper::render('joomla.edit.fieldset', $this); ?>
+          <?php echo HTMLHelper::_('uitab.endTab'); ?>
+        <?php endforeach; ?>
+
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING', true)); ?>
-        <?php echo $this->form->renderField('created_time'); ?>
-        <?php echo $this->form->renderField('created_by'); ?>
-        <?php echo $this->form->renderField('modified_by'); ?>
-        <?php echo $this->form->renderField('modified_time'); ?>
-        <?php echo $this->form->renderField('id'); ?>
-        <?php echo $this->form->renderField('metadesc'); ?>
-        <?php echo $this->form->renderField('metakey'); ?>
-        <?php echo $this->form->renderField('robots'); ?>
+
+        <div class="row">
+          <div class="col-12 col-lg-6">
+            <fieldset id="fieldset-publishingdata" class="options-form">
+              <legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
+              <div>
+                <?php echo $this->form->renderField('created_time'); ?>
+                <?php echo $this->form->renderField('created_by'); ?>
+                <?php echo $this->form->renderField('modified_by'); ?>
+                <?php echo $this->form->renderField('modified_time'); ?>
+                <?php echo $this->form->renderField('id'); ?>
+              </div>
+            </fieldset>
+          </div>
+          <div class="col-12 col-lg-6">
+            <fieldset id="fieldset-metadata" class="options-form">
+              <legend><?php echo Text::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'); ?></legend>
+              <div>
+                <?php echo $this->form->renderField('metadesc'); ?>
+                <?php echo $this->form->renderField('metakey'); ?>
+                <?php echo $this->form->renderField('robots'); ?>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Displayparams', Text::_('COM_JOOMGALLERY_PARAMETERS', true)); ?>
