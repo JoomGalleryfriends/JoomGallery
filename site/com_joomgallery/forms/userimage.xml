@@ -220,14 +220,30 @@
            label="COM_JOOMGALLERY_DATE"
            description="COM_JOOMGALLERY_DATE_DESC" />
 
-    <field name="imgmetadata"
-           type="editor"
-           editor="codemirror"
-           buttons="false"
+<!--    <field name="imgmetadata"-->
+<!--           type="subform"-->
+<!--           formsource="administrator/components/com_joomgallery/forms/subform_imageimgmetadata.xml"-->
+<!--           layout="joomla.form.field.subform.default"-->
+<!--           label="COM_JOOMGALLERY_IMGMETADATA" />-->
+    <field name="comment"
+           type="metadatacomment"
            default=""
-           filter="\Joomla\CMS\Component\ComponentHelper::filterText"
-           label="COM_JOOMGALLERY_IMGMETADATA"
-           description="COM_JOOMGALLERY_IMGMETADATA_DESC" />
+           label="COM_JOOMGALLERY_COMMENT_COMMENT"
+           message="COM_JOOMGALLERY_COMMENT_COMMENT_DESCRIPTION" />
+
+    <field name="iptc"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_metadata_iptc.xml"
+           layout="joomla.form.field.subform.default"
+    />
+<!--    label="IPTC"-->
+
+    <field name="exif"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_metadata_exif.xml"
+           layout="joomla.form.field.subform.default"
+    />
+<!--           label="EXIF" -->
 
     <field name="params"
            type="subform"

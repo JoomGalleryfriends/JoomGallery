@@ -59,6 +59,14 @@ class HtmlView extends JoomGalleryView
    */
   protected string $return_page = '';
 
+  protected $state;
+  /**
+   *
+   * @var  array
+   *
+   * @since   4.2.0
+   */
+  protected array $imagetypes;
   /**
    * Display the view
    *
@@ -79,6 +87,10 @@ class HtmlView extends JoomGalleryView
 
     $this->item   = $model->getItem();
     $this->form   = $model->getForm();
+
+    $this->imagetypes = JoomHelper::getRecords('imagetypes');
+
+
 
     // Get return page
     $this->return_page = $model->getReturnPage();

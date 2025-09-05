@@ -16,6 +16,7 @@ use \Joomla\CMS\Factory;
 use \Joomla\Utilities\ArrayHelper;
 use \Joomla\Database\ParameterType;
 use \Joomla\CMS\Form\Field\ListField;
+use \Joomla\CMS\Language\Multilanguage;
 
 /**
  * List of Tags field.
