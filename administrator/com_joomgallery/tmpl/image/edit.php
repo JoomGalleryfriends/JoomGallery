@@ -20,7 +20,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
-$wa->useScript('keepalive')imgmeta
+$wa->useScript('keepalive')
 	 ->useScript('form.validate')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip', '.hasTip');
