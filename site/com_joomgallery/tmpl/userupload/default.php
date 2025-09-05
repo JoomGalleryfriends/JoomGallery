@@ -31,9 +31,9 @@ HTMLHelper::_('bootstrap.tooltip');
 //// Info: debug messages for task must be loaded in controller
 //// Load admin language file
 //$lang = Factory::getApplication()->getLanguage();
-////$lang->load('com_joomgallery', JPATH_SITE);
+//$lang->load('com_joomgallery', JPATH_SITE);
 //$testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
-////$lang->load('joomla', JPATH_ADMINISTRATOR);
+//$lang->load('joomla', JPATH_ADMINISTRATOR);
 
 $isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
 
