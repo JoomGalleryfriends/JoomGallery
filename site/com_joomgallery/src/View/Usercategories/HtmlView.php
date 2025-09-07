@@ -50,7 +50,7 @@ class HtmlView extends JoomGalleryView
    * @var    bool
    * @since   4.2.0
    */
-  protected bool $isUserHasCategory = false;
+  //protected bool $isUserHasCategory = false;
 
   /**
    * @var bool
@@ -116,8 +116,8 @@ class HtmlView extends JoomGalleryView
       $this->isUserLoggedIn = false;
     }
 
-    // at least one category is needed for upload view
-    $this->isUserHasCategory = $model->getUserHasACategory($user->id);
+//    // at least one category is needed for upload view
+//    $this->isUserHasCategory = $model->getUserHasACategory($user->id);
 
     $this->userId = $user->id;
 

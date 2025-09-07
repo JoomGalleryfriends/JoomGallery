@@ -33,7 +33,8 @@ $wa->useStyle('com_joomgallery.list')
 //$testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
 ////$lang->load('joomla', JPATH_ADMINISTRATOR);
 
-$isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
+//$isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
+$isHasAccess = $this->isUserLoggedIn && $this->isUserCoreManager;
 
 // Access check
 $listOrder = $this->state->get('list.ordering');
@@ -98,14 +99,14 @@ $canDelete = false;
 
         <?php else: ?>
 
-          <?php if(!$this->isUserHasCategory): ?>
-            <div class="alert alert-warning" role="alert">
-              <span class="icon-images"></span>
-              <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
-            </div>
-          <?php endif; ?>
+<!--          --><?php //if(!$this->isUserHasCategory): ?>
+<!--            <div class="alert alert-warning" role="alert">-->
+<!--              <span class="icon-images"></span>-->
+<!--              --><?php //echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
+<!--              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+<!--              --><?php //echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
+<!--            </div>-->
+<!--          --><?php //endif; ?>
           <?php if(!$this->isUserCoreManager): ?>
             <div class="alert alert-warning" role="alert">
               <span class="icon-lamp"></span>

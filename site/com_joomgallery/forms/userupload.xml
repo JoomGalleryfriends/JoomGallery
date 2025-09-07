@@ -116,9 +116,19 @@
            label="JCATEGORY"
            categoriesOfUser="true"
            default=""
-           show_root="false"
+           show_root="true"
            required="true"
            message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY" />
+
+    <!-- root replacement for drop down list  -->
+    <field
+      name="no_cat_exist"
+      type="text"
+      label="COM_JOOMGALLERY_NO_CATEGORY"
+      class="readonly"
+      readonly="true"
+    >
+    </field>
 
     <field name="tags"
            type="jgtag"

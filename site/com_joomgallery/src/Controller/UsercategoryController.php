@@ -368,15 +368,15 @@ class UsercategoryController extends FormController
     // Get the model.
     $model = $this->getModel('Usercategory', 'Site');
 
-    // user may not delete his root gallery
-    $isUserRootCategory = $model->isUserRootCategory($removeId);
-    if($isUserRootCategory)
-    {
-      $this->setMessage(Text::_('COM_JOOMGALLERY_ERROR_NO_DEL_USER_ROOT_CAT'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('usercategories').'&'.$this->getItemAppend(), false));
-
-      return false;
-    }
+//    // user may not delete his root gallery
+//    $isUserRootCategory = $model->isUserRootCategory($removeId);
+//    if($isUserRootCategory)
+//    {
+//      $this->setMessage(Text::_('COM_JOOMGALLERY_ERROR_NO_DEL_USER_ROOT_CAT'), 'error');
+//      $this->setRedirect(Route::_($this->getReturnPage('usercategories').'&'.$this->getItemAppend(), false));
+//
+//      return false;
+//    }
 
     // Attempt to delete the record.
     if($model->delete($removeId) === false)

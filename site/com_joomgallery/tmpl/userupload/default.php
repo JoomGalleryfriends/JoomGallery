@@ -35,7 +35,8 @@ HTMLHelper::_('bootstrap.tooltip');
 //$testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
 //$lang->load('joomla', JPATH_ADMINISTRATOR);
 
-$isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
+//$isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
+$isHasAccess = $this->isUserLoggedIn && $this->isUserCoreManager;
 
 $panelView      = Route::_('index.php?option=com_joomgallery&view=userpanel');
 $uploadView     = Route::_('index.php?option=com_joomgallery&view=userupload');
@@ -122,13 +123,13 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
 
         <?php else: ?>
 
-          <?php if(!$this->isUserHasCategory): ?>
-            <div class="alert alert-warning" role="alert">
-              <span class="icon-images"></span>
-              <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
-            </div>
-          <?php endif; ?>
+<!--          --><?php //if(!$this->isUserHasCategory): ?>
+<!--            <div class="alert alert-warning" role="alert">-->
+<!--              <span class="icon-images"></span>-->
+<!--              --><?php //echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
+<!--              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--><?php //echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
+<!--            </div>-->
+<!--          --><?php //endif; ?>
           <?php if(!$this->isUserCoreManager): ?>
             <div class="alert alert-warning" role="alert">
               <span class="icon-lamp"></span>
@@ -167,6 +168,15 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
         </div>
 
       </div>
+    
+      <?php if(!$this->isUserHasCategory): ?>
+
+        <div class="alert alert-warning" role="alert">
+          <span class="icon-images"></span>
+          <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
+        </div>
+
+      <?php else: ?>
 
       <div class="form-group">
         <div class="row align-items-start">
@@ -196,7 +206,13 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
               <p>
                 <?php echo $rendererTip->render($displayTipData); ?>
               </p>
-              <?php echo $this->form->renderField('catid'); ?>
+
+              <?php if ($this->isUserHasCategory): ?>
+                <?php echo $this->form->renderField('catid'); ?>
+              <?php else: ?>
+                <?php echo $this->form->renderField('no_cat_exist', null, Text::_('COM_JOOMGALLERY_NO_CATEGORY_CREATE_ONE')); ?>
+              <?php endif; ?>
+
               <?php if(!$isUseOrigFilename): ?>
                 <?php echo $this->form->renderField('title'); ?>
                 <?php if($isUseFilenameNumber): ?>
@@ -217,6 +233,8 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
           </div>
         </div>
       </div>
+
+      <?php endif; ?>
 
     <?php endif; ?>
 

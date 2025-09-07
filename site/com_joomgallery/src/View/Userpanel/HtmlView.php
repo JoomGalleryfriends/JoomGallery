@@ -76,25 +76,25 @@ class HtmlView extends JoomGalleryView
    * @var    array
    * @since   4.2.0
    */
-  protected array $params;
+  public array $params;
 
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected bool $isUserLoggedIn = false;
+  public bool $isUserLoggedIn = false;
 
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected bool $isUserHasCategory = false;
+  //public bool $isUserHasCategory = false;
 
   /**
    * @var    bool
    * @since   4.2.0
    */
-  protected bool $isUserCoreManager = false;
+  public bool $isUserCoreManager = false;
 
   /**
    * @var    bool
@@ -106,7 +106,7 @@ class HtmlView extends JoomGalleryView
    * @var int
    * @since   4.2.0
    */
-  protected int $userId = 0;
+  public int $userId = 0;
 
   /**
    * @var array
@@ -196,8 +196,8 @@ class HtmlView extends JoomGalleryView
       $this->isUserLoggedIn = false;
     }
 
-    // at least one category is needed for upload view
-    $this->isUserHasCategory = $modUserPanel->getUserHasACategory($user->id);
+//    // at least one category is needed for upload view
+//    $this->isUserHasCategory = $modUserPanel->getUserHasACategory($user->id);
 
     $this->userId = $user->id;
 
