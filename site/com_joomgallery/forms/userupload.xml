@@ -116,8 +116,9 @@
            label="JCATEGORY"
            categoriesOfUser="true"
            default=""
-           show_root="true"
+           show_root="false"
            required="true"
+           ordering="desc"
            message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY" />
 
     <!-- root replacement for drop down list  -->
