@@ -47,11 +47,12 @@ $imagesView     = Route::_('index.php?option=com_joomgallery&view=userimages');
 $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userupload');
 $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return='.$returnURL);
 
-$config    = $this->params['configs'];
+$config = $this->params['configs'];
 
 // Prevent any display if userspace is not enabled
 $isUserSpaceEnabled = $config->get('jg_userspace');
-if ( ! $isUserSpaceEnabled) {
+if(!$isUserSpaceEnabled)
+{
   return;
 }
 
@@ -123,13 +124,13 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
 
         <?php else: ?>
 
-<!--          --><?php //if(!$this->isUserHasCategory): ?>
-<!--            <div class="alert alert-warning" role="alert">-->
-<!--              <span class="icon-images"></span>-->
-<!--              --><?php //echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
-<!--              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--><?php //echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
-<!--            </div>-->
-<!--          --><?php //endif; ?>
+          <!--          --><?php //if(!$this->isUserHasCategory): ?>
+          <!--            <div class="alert alert-warning" role="alert">-->
+          <!--              <span class="icon-images"></span>-->
+          <!--              --><?php //echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
+          <!--              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--><?php //echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_CHECK_W_ADMIN'); ?>
+          <!--            </div>-->
+          <!--          --><?php //endif; ?>
           <?php if(!$this->isUserCoreManager): ?>
             <div class="alert alert-warning" role="alert">
               <span class="icon-lamp"></span>
@@ -168,7 +169,7 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
         </div>
 
       </div>
-    
+
       <?php if(!$this->isUserHasCategory): ?>
 
         <div class="alert alert-warning" role="alert">
@@ -178,61 +179,57 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
 
       <?php else: ?>
 
-      <div class="form-group">
-        <div class="row align-items-start">
-          <div class="col-md-6 mb">
-            <div class="card">
-              <div class="card-header">
-                <h2><?php echo Text::_('COM_JOOMGALLERY_IMAGE_SELECTION'); ?></h2>
+        <div class="form-group">
+          <div class="row align-items-start">
+            <div class="col-md-6 mb">
+              <div class="card">
+                <div class="card-header">
+                  <h2><?php echo Text::_('COM_JOOMGALLERY_IMAGE_SELECTION'); ?></h2>
+                </div>
+                <div id="drag-drop-area">
+                  <div class="card-body"><?php echo Text::_('COM_JOOMGALLERY_INFO_UPLOAD_FORM_NOT_LOADED'); ?></div>
+                </div>
+                <div class="card-body">
+                  <?php echo $this->form->renderField('debug'); ?>
+                </div>
               </div>
-              <div id="drag-drop-area">
-                <div class="card-body"><?php echo Text::_('COM_JOOMGALLERY_INFO_UPLOAD_FORM_NOT_LOADED'); ?></div>
+
+              <div>
+                <?php DisplaySystemSettings($this->uploadLimit, $this->postMaxSize, $this->memoryLimit, $this->mediaSize, $this->configSize, $this->maxSize); ?>
+              </div>
+            </div>
+
+            <div class="col card">
+              <div class="card-header">
+                <h2><?php echo Text::_('JOPTIONS'); ?></h2>
               </div>
               <div class="card-body">
-                <?php echo $this->form->renderField('debug'); ?>
-              </div>
-            </div>
+                <p>
+                  <?php echo $rendererTip->render($displayTipData); ?>
+                </p>
 
-            <div>
-              <?php DisplaySystemSettings($this->uploadLimit, $this->postMaxSize, $this->memoryLimit, $this->mediaSize, $this->configSize, $this->maxSize); ?>
-            </div>
-          </div>
-
-          <div class="col card">
-            <div class="card-header">
-              <h2><?php echo Text::_('JOPTIONS'); ?></h2>
-            </div>
-            <div class="card-body">
-              <p>
-                <?php echo $rendererTip->render($displayTipData); ?>
-              </p>
-
-              <?php if ($this->isUserHasCategory): ?>
                 <?php echo $this->form->renderField('catid'); ?>
-              <?php else: ?>
-                <?php echo $this->form->renderField('no_cat_exist', null, Text::_('COM_JOOMGALLERY_NO_CATEGORY_CREATE_ONE')); ?>
-              <?php endif; ?>
 
-              <?php if(!$isUseOrigFilename): ?>
-                <?php echo $this->form->renderField('title'); ?>
-                <?php if($isUseFilenameNumber): ?>
-                  <?php echo $this->form->renderField('nmb_start'); ?>
+                <?php if(!$isUseOrigFilename): ?>
+                  <?php echo $this->form->renderField('title'); ?>
+                  <?php if($isUseFilenameNumber): ?>
+                    <?php echo $this->form->renderField('nmb_start'); ?>
+                  <?php endif; ?>
                 <?php endif; ?>
-              <?php endif; ?>
-              <?php echo $this->form->renderField('author'); ?>
-              <?php echo $this->form->renderField('published'); ?>
-              <?php echo $this->form->renderField('access'); ?>
-              <?php echo $this->form->renderField('language'); ?>
-              <fieldset class="adminform">
-                <?php echo $this->form->getLabel('description'); ?>
-                <?php echo $this->form->getInput('description'); ?>
-              </fieldset>
-              <input type="text" id="jform_id" class="hidden form-control readonly" name="jform[id]" value=""
-                     readonly/>
+                <?php echo $this->form->renderField('author'); ?>
+                <?php echo $this->form->renderField('published'); ?>
+                <?php echo $this->form->renderField('access'); ?>
+                <?php echo $this->form->renderField('language'); ?>
+                <fieldset class="adminform">
+                  <?php echo $this->form->getLabel('description'); ?>
+                  <?php echo $this->form->getInput('description'); ?>
+                </fieldset>
+                <input type="text" id="jform_id" class="hidden form-control readonly" name="jform[id]" value=""
+                       readonly/>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
       <?php endif; ?>
 
