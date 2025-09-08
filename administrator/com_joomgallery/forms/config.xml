@@ -523,8 +523,8 @@
              label="COM_JOOMGALLERY_CONFIG_COPYRIGHT_NOTE"
              description="COM_JOOMGALLERY_CONFIG_COPYRIGHT_NOTE_LONG"
              showon="jg_userupload:1">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_uploaddefaultcat"
@@ -549,8 +549,8 @@
              label="COM_JOOMGALLERY_CONFIG_PROBLEMATIC_FILES_UPLOAD"
              description="COM_JOOMGALLERY_CONFIG_PROBLEMATIC_FILES_UPLOAD_LONG"
              showon="jg_userupload:1">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_newpicnote"
@@ -561,8 +561,8 @@
              label="COM_JOOMGALLERY_CONFIG_UPLOAD_QUOTA"
              description="COM_JOOMGALLERY_CONFIG_UPLOAD_QUOTA_LONG"
              showon="jg_userupload:1">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_redirect_after_upload"
@@ -599,8 +599,8 @@
              showon="jg_download:1"
              label="COM_JOOMGALLERY_CONFIG_HINT_NOT_ENOUGH_RIGHTS"
              description="COM_JOOMGALLERY_CONFIG_DOWNLOAD_HINT_LONG">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_downloadfile"
@@ -623,8 +623,8 @@
              showon="jg_download:1"
              label="COM_JOOMGALLERY_CONFIG_DOWNLOADWITHWATERMARK"
              description="COM_JOOMGALLERY_CONFIG_DOWNLOADWITHWATERMARK_LONG">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
     </fieldset>
 
