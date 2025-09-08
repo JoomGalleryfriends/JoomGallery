@@ -316,7 +316,7 @@ $canDelete = false;
                           <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
                                   data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
                                   data-item-id="cb<?php echo $i; ?>"
-                                  data-item-task="Userimage.remove" <?php echo $disabled; ?>>
+                                  data-item-task="userimage.remove" <?php echo $disabled; ?>>
                             <span class="icon-trash" aria-hidden="true"></span>
                           </button>
                         <?php endif; ?>
@@ -328,7 +328,7 @@ $canDelete = false;
                         <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                         <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                 data-item-id="cb<?php echo $i; ?>"
-                                data-item-task="Userimage.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
+                                data-item-task="userimage.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
                         <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
                               aria-hidden="true"></span>
                         </button>
