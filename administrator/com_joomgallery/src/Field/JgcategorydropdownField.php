@@ -279,7 +279,7 @@ class JgcategorydropdownField extends ListField
     // Filter for user
     if($this->isCategoriesOfUser)
     {
-      $query->where($db->quoteName('created_by').' = '.(int) $user->id);
+      $query->where($db->quoteName('a.created_by').' = '.(int) $user->id);
     }
 
     // Get the options.
