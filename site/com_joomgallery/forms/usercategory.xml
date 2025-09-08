@@ -6,31 +6,31 @@
            default="0"
            class="readonly"
            readonly="true"
-           label="JGLOBAL_FIELD_ID_LABEL" />
+           label="JGLOBAL_FIELD_ID_LABEL"/>
 
     <field name="checked_out"
            type="hidden"
-           filter="unset" />
+           filter="unset"/>
 
     <field name="lft"
            type="hidden"
-           filter="unset" />
+           filter="unset"/>
 
     <field name="rgt"
            type="hidden"
-           filter="unset" />
+           filter="unset"/>
 
     <field name="level"
            type="hidden"
-           filter="unset" />
+           filter="unset"/>
 
     <field name="path"
            type="hidden"
-           filter="unset" />
+           filter="unset"/>
 
     <field name="in_hidden"
            type="hidden"
-           filter="unset" />
+           filter="unset"/>
 
     <field name="title"
            type="text"
@@ -39,34 +39,32 @@
            required="true"
            autofocus="true"
            label="JGLOBAL_TITLE"
-           message="COM_JOOMGALLERY_CATMAN_ALERT_CATEGORY_MUST_HAVE_TITLE" />
+           message="COM_JOOMGALLERY_CATMAN_ALERT_CATEGORY_MUST_HAVE_TITLE"/>
 
     <field name="alias"
            type="text"
            maxlength="255"
            generator="title"
            label="JALIAS"
-           description="JFIELD_ALIAS_DESC" />
+           description="JFIELD_ALIAS_DESC"/>
 
     <!-- root replacement for drop down list  -->
-    <field
-      name="parent_id_root"
-      type="text"
-      label="JGLOBAL_SHOW_PARENT_CATEGORY_LABEL"
-      class="readonly"
-      readonly="true"
-      >
+    <field name="parent_id_root"
+           type="text"
+           label="JGLOBAL_SHOW_PARENT_CATEGORY_LABEL"
+           class="readonly"
+           readonly="true"
+    >
     </field>
 
     <!-- drop down list -->
-    <field
-        name="parent_id"
+    <field name="parent_id"
            type="jgcategorydropdown"
            label="JGLOBAL_SHOW_PARENT_CATEGORY_LABEL"
            categoriesOfUser="true"
            default="1"
            show_root="false"
-           message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY" />
+           message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY"/>
 
     <field name="published"
            type="radio"
@@ -74,27 +72,27 @@
            class="btn-group"
            default="1"
            label="JPUBLISHED">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
     </field>
 
     <field name="access"
            type="accesslevel"
            label="JFIELD_ACCESS_LABEL"
            description="JFIELD_ACCESS_DESC"
-           size="1" />
+           size="1"/>
 
     <field name="password"
            type="password"
            size="100"
            label="JGLOBAL_PASSWORD"
-           description="COM_JOOMGALLERY_FIELDS_PASSWORD_DESC" />
+           description="COM_JOOMGALLERY_FIELDS_PASSWORD_DESC"/>
 
     <field name="language"
            type="language"
            client="administrator"
-           label="JGRID_HEADING_LANGUAGE" >
-           <option value="*">JALL</option>
+           label="JGRID_HEADING_LANGUAGE">
+      <option value="*">JALL</option>
     </field>
 
     <field name="description"
@@ -103,12 +101,12 @@
            buttons="true"
            filter="JComponentHelper::filterText"
            label="JGLOBAL_DESCRIPTION"
-           hide="pagebreak" />
+           hide="pagebreak"/>
 
     <field name="access"
            type="accesslevel"
            label="JFIELD_ACCESS_LABEL"
-           description="JFIELD_ACCESS_DESC" />
+           description="JFIELD_ACCESS_DESC"/>
 
     <field name="hidden"
            type="radio"
@@ -116,7 +114,7 @@
            default="0"
            class="btn-group"
            label="COM_JOOMGALLERY_HIDDEN"
-           description="COM_JOOMGALLERY_FIELDS_CATEGORY_HIDDEN_DESC" >
+           description="COM_JOOMGALLERY_FIELDS_CATEGORY_HIDDEN_DESC">
       <option value="0">JNO</option>
       <option value="1">JYES</option>
     </field>
@@ -127,7 +125,7 @@
            default="0"
            class="btn-group"
            label="COM_JOOMGALLERY_FIELDS_EXCLUDE_FROM_TOPLISTS"
-           description="COM_JOOMGALLERY_FIELDS_EXCLUDE_FROM_TOPLISTS_DESC" >
+           description="COM_JOOMGALLERY_FIELDS_EXCLUDE_FROM_TOPLISTS_DESC">
       <option value="0">JNO</option>
       <option value="1">JYES</option>
     </field>
@@ -138,7 +136,7 @@
            default="0"
            class="btn-group"
            label="COM_JOOMGALLERY_FIELDS_EXCLUDE_FROM_SEARCH"
-           description="COM_JOOMGALLERY_FIELDS_EXCLUDE_FROM_SEARCH_DESC" >
+           description="COM_JOOMGALLERY_FIELDS_EXCLUDE_FROM_SEARCH_DESC">
       <option value="0">JNO</option>
       <option value="1">JYES</option>
     </field>
@@ -147,7 +145,7 @@
            type="jgimage"
            directory="/images/joomgallery/"
            label="COM_JOOMGALLERY_THUMBNAIL"
-           description="COM_JOOMGALLERY_FIELDS_THUMBNAIL_DESC" />
+           description="COM_JOOMGALLERY_FIELDS_THUMBNAIL_DESC"/>
 
     <field name="created_time"
            type="calendar"
@@ -155,7 +153,7 @@
            showtime="true"
            size="22"
            filter="user_utc"
-           label="JGLOBAL_FIELD_CREATED_LABEL" />
+           label="JGLOBAL_FIELD_CREATED_LABEL"/>
 
     <field name="created_by"
            type="user"
@@ -173,7 +171,7 @@
            filter="unset"
            validate="UserId"
            label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
-           description="JGLOBAL_FIELD_MODIFIED_BY_DESC" />
+           description="JGLOBAL_FIELD_MODIFIED_BY_DESC"/>
 
     <field name="modified_time"
            type="calendar"
@@ -183,7 +181,7 @@
            size="22"
            readonly="true"
            filter="user_utc"
-           label="JGLOBAL_FIELD_MODIFIED_LABEL" />
+           label="JGLOBAL_FIELD_MODIFIED_LABEL"/>
 
     <field name="metadesc"
            type="textarea"
@@ -193,7 +191,7 @@
            label="JGLOBAL_DESCRIPTION"
            description="JFIELD_META_DESCRIPTION_LABEL"
            maxlength="300"
-           charcounter="true" />
+           charcounter="true"/>
 
     <field name="metakey"
            type="textarea"
@@ -201,24 +199,24 @@
            rows="5"
            filter="string"
            label="JFIELD_META_KEYWORDS_LABEL"
-           description="JFIELD_META_KEYWORDS_DESC" />
+           description="JFIELD_META_KEYWORDS_DESC"/>
 
     <field name="robots"
            type="list"
            default="0"
-           label="JFIELD_METADATA_ROBOTS_LABEL" >
-        <option value="0">JGLOBAL_USE_GLOBAL</option>
-        <option value="1">index, follow</option>
-        <option value="2">noindex, follow</option>
-        <option value="3">index, nofollow</option>
-        <option value="4">noindex, nofollow</option>
+           label="JFIELD_METADATA_ROBOTS_LABEL">
+      <option value="0">JGLOBAL_USE_GLOBAL</option>
+      <option value="1">index, follow</option>
+      <option value="2">noindex, follow</option>
+      <option value="3">index, nofollow</option>
+      <option value="4">noindex, nofollow</option>
     </field>
 
     <field name="params"
            type="subform"
            formsource="components/com_joomgallery/forms/subform_catparams.xml"
            layout="joomla.form.field.subform.default"
-           label="COM_JOOMGALLERY_PARAMETERS" />
+           label="COM_JOOMGALLERY_PARAMETERS"/>
 
     <field name="version_note"
            type="text"
@@ -226,13 +224,13 @@
            description="JGLOBAL_FIELD_VERSION_NOTE_DESC"
            class="inputbox"
            size="45"
-           labelclass="control-label" />
+           labelclass="control-label"/>
   </fieldset>
 
   <fieldset name="accesscontrol">
     <field name="asset_id"
            type="hidden"
-           filter="unset" />
+           filter="unset"/>
 
     <field name="rules"
            type="rules"
@@ -242,6 +240,6 @@
            validate="rules"
            class="inputbox"
            component="com_joomgallery"
-           section="category" />
+           section="category"/>
   </fieldset>
 </form>
