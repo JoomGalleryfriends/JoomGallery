@@ -134,17 +134,6 @@ $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
     </div">
 
       <?php endif; ?>
-
-      <!--    <input type="hidden" name="task" value=""/>-->
-      <!--    <!--input type="hidden" name="id" value="0"/-->-->
-      <!--    <input type="hidden" name="return" value="--><?php //echo $returnURL; ?><!--"/>-->
-      <!--    <input type="hidden" name="boxchecked" value="0"/>-->
-      <!--    <input type="hidden" name="form_submited" value="1"/>-->
-      <!--    <input type="hidden" name="filter_order" value=""/>-->
-      <!--    <input type="hidden" name="filter_order_Dir" value=""/>-->
-      <!---->
-      <!--    --><?php //echo HTMLHelper::_('form.token'); ?>
-      <!--  </form>-->
   </div>
 </div>
 
@@ -548,27 +537,6 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                               <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
                                     aria-hidden="true"></span>
                           </button>
-                          <!--                          <button class="js-grid-item-action tbody-icon --><?php //echo $disabled; ?><!--"-->
-                          <!--                                  data-url="--><?php //echo ((int) $item->published) ? $publishCategoryLink : $unpublishCategoryLink; ?><!--"-->
-                          <!--                          >-->
-                          <!--                              <span class="icon---><?php //echo (int) $item->published ? 'check' : 'cancel'; ?><!--"-->
-                          <!--                                    aria-hidden="true"></span>-->
-                          <!--                          </button>-->
-
-                          <!--                            <a class="btn js-grid-item-action tbody-icon --><?php //echo $disabled; ?><!--"-->
-                          <!--                              href="--><?php //echo ((int) $item->published) ? $unpublishCategoryLink : $publishCategoryLink; ?><!--"-->
-                          <!--                            >-->
-                          <!--                              <span class="icon---><?php //echo (int) $item->published ? 'check' : 'cancel'; ?><!--"-->
-                          <!--                                    aria-hidden="true"></span>-->
-                          <!--                            </a>-->
-
-                          <!--                          <a href="--><?php //echo $publishCategoryLink; ?><!--">-->
-                          <!--                            <span class="icon-check" aria-hidden="true"></span>-->
-                          <!--                          </a>-->
-                          <!---->
-                          <!--                          <a href="--><?php //echo $unpublishCategoryLink; ?><!--">-->
-                          <!--                            <span class="icon-cancel" aria-hidden="true"></span>-->
-                          <!--                          </a>-->
 
                         <?php else : ?>
                           <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
@@ -695,8 +663,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                       <td class="small d-none d-md-table-cell">
                         <div id="divCheckbox" style="display: none;">
                           <?php
-                          $test = HTMLHelper::_('grid.id', $i, $item->id, false, 'iid', 'cb', $item->title);
-                          echo HTMLHelper::_('grid.id', $i, $item->id, false, 'iid', 'cb', $item->title); ?>
+                          echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                         </div>
 
                         <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>"
@@ -704,6 +671,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                       </td>
 
                       <th scope="row" class="has-context title-cell">
+
                         <?php if($canCheckin && $item->checked_out > 0) : ?>
                           <button class="js-grid-item-action tbody-icon"
                                   data-item-id="cb<?php echo $i; ?>"
@@ -921,30 +889,30 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
                     <tr class="row<?php echo $i % 2; ?>">
 
-                      <?php if(isset($data->items[0]->ordering)) : ?>
-                        <td class="text-center d-none d-md-table-cell sort-cell">
-                          <?php
-                          $iconClass = '';
-                          if(!$canChange)
-                          {
-                            $iconClass = ' inactive';
-                          }
-                          elseif(!$saveOrder)
-                          {
-                            $iconClass = ' inactive" title="'.Text::_('JORDERINGDISABLED');
-                          }
-                          ?>
-                          <?php if($canChange && $saveOrder) : ?>
-                            <span class="sortable-handler<?php echo $iconClass ?>">
+                    <?php if(isset($data->items[0]->ordering)) : ?>
+                      <td class="text-center d-none d-md-table-cell sort-cell">
+                        <?php
+                        $iconClass = '';
+                        if(!$canChange)
+                        {
+                          $iconClass = ' inactive';
+                        }
+                        elseif(!$saveOrder)
+                        {
+                          $iconClass = ' inactive" title="'.Text::_('JORDERINGDISABLED');
+                        }
+                        ?>
+                        <?php if($canChange && $saveOrder) : ?>
+                          <span class="sortable-handler<?php echo $iconClass ?>">
                           <span class="icon-ellipsis-v" aria-hidden="true"></span>
                         </span>
-                            <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
-                                   class="width-20 text-area-order hidden">
-                          <?php endif; ?>
+                          <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
+                                 class="width-20 text-area-order hidden">
+                        <?php endif; ?>
 
-                          <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
-                        </td>
-                      <?php endif; ?>
+                        <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
+                      </td>
+                    <?php endif; ?>
 
                       <td class="small d-none d-md-table-cell">
                         <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>"
@@ -1057,16 +1025,6 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
       </div>
 
     </div>
-
-    <input type="hidden" name="task" value=""/>
-    <!--input type="hidden" name="id" value="0"/-->
-    <input type="hidden" name="return" value="<?php echo $returnURL; ?>"/>
-    <input type="hidden" name="boxchecked" value="0"/>
-    <input type="hidden" name="form_submited" value="1"/>
-    <input type="hidden" name="filter_order" value=""/>
-    <input type="hidden" name="filter_order_Dir" value=""/>
-
-    <?php echo HTMLHelper::_('form.token'); ?>
 
     <?php return;
   }
