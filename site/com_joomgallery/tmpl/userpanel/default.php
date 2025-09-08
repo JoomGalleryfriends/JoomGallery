@@ -889,30 +889,30 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
                     <tr class="row<?php echo $i % 2; ?>">
 
-                    <?php if(isset($data->items[0]->ordering)) : ?>
-                      <td class="text-center d-none d-md-table-cell sort-cell">
-                        <?php
-                        $iconClass = '';
-                        if(!$canChange)
-                        {
-                          $iconClass = ' inactive';
-                        }
-                        elseif(!$saveOrder)
-                        {
-                          $iconClass = ' inactive" title="'.Text::_('JORDERINGDISABLED');
-                        }
-                        ?>
-                        <?php if($canChange && $saveOrder) : ?>
-                          <span class="sortable-handler<?php echo $iconClass ?>">
+                      <?php if(isset($data->items[0]->ordering)) : ?>
+                        <td class="text-center d-none d-md-table-cell sort-cell">
+                          <?php
+                          $iconClass = '';
+                          if(!$canChange)
+                          {
+                            $iconClass = ' inactive';
+                          }
+                          elseif(!$saveOrder)
+                          {
+                            $iconClass = ' inactive" title="'.Text::_('JORDERINGDISABLED');
+                          }
+                          ?>
+                          <?php if($canChange && $saveOrder) : ?>
+                            <span class="sortable-handler<?php echo $iconClass ?>">
                           <span class="icon-ellipsis-v" aria-hidden="true"></span>
                         </span>
-                          <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
-                                 class="width-20 text-area-order hidden">
-                        <?php endif; ?>
+                            <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
+                                   class="width-20 text-area-order hidden">
+                          <?php endif; ?>
 
-                        <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
-                      </td>
-                    <?php endif; ?>
+                          <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
+                        </td>
+                      <?php endif; ?>
 
                       <td class="small d-none d-md-table-cell">
                         <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>"
