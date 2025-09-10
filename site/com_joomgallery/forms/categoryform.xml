@@ -87,7 +87,7 @@
            type="editor"
            cols="250"
            buttons="true"
-           filter="JComponentHelper::filterText"
+           filter="\Joomla\CMS\Component\ComponentHelper::filterText"
            label="JGLOBAL_DESCRIPTION"
            hide="pagebreak" />
 

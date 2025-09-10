@@ -15,6 +15,7 @@ use \Joomla\CMS\Factory;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // Import CSS & JS
@@ -29,7 +30,6 @@ HTMLHelper::_('bootstrap.tooltip', '.hasTip');
 // Load admin language file
 // Load admin lang may be useful as edit is a copy of backend items
 $lang = Factory::getApplication()->getLanguage();
-//$lang->load('com_joomgallery', JPATH_SITE);
 $lang->load('joomla', JPATH_ADMINISTRATOR);
 $lang->load(_JOOM_OPTION.'.exif', JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION);
 $lang->load(_JOOM_OPTION.'.iptc', JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION);
@@ -55,22 +55,25 @@ $app       = Factory::getApplication();
 $form      = $this->getForm();
 $fieldSets = $form->getFieldsets();
 
+$paramComponent = $this->params['component'];
+
 // In case of modal
 $isModal = $app->input->get('layout') === 'modal';
 $layout  = $isModal ? 'modal' : 'edit';
 $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=component' : '';
 
-$paramComponent = $this->params['component']
 ?>
 
 <div class="jg image-edit front-end-edit item-page">
   <?php if(!$canEdit) : ?>
     <?php Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error'); ?>
   <?php else : ?>
+    <!--          action="--><?php //echo Route::_('index.php?option=com_joomgallery&controller=userimage&id='.$this->item->id); ?><!--" -->
     <form id="adminForm"
-          action="<?php echo Route::_('index.php?option=com_joomgallery&controller=userimage&id='.$this->item->id); ?>"
-          method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data">
-
+          action="<?php echo Route::_('index.php?option=com_joomgallery&view=userimage&layout=editImg&id='.$this->item->id); ?>"
+          method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data"
+          aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_'.((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>"
+    >
       <?php if($isShowTitle): ?>
         <h3><?php echo Text::_('COM_JOOMGALLERY_USER_IMAGE_EDIT'); ?></h3>
         <hr>
@@ -219,31 +222,34 @@ $paramComponent = $this->params['component']
 
         <div class="row form-control">
           <div class="col-12">
-            <fieldset id="fieldset-images-metadata" class="options-form col">
+            <fieldset id="fieldset-images-metadata" class="options-form">
               <legend><?php echo Text::_('COM_JOOMGALLERY_METADATA'); ?></legend>
+              <div class="control-group">
+                <div class="controls">
+                  <?php echo $this->form->renderField('imgmetadata'); ?></div>
+              </div>
               <!--              <div class="control-group">-->
               <!--                <div class="controls">-->
-              <?php //echo $this->form->renderField('imgmetadata'); ?><!--</div>-->
+              <?php //echo $this->form->renderField('comment'); ?><!--</div>-->
               <!--              </div>-->
-              <div class="control-group">
-                <div class="controls"><?php echo $this->form->renderField('comment'); ?></div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">IPTC</h5>
-                  <div class="control-group">
-                    <div class="controls"><?php echo $this->form->renderField('iptc'); ?></div>
-                  </div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">EXIF</h5>
-                  <div class="control-group">
-                    <div class="controls"><?php echo $this->form->renderField('exif'); ?></div>
-                  </div>
-                </div>
-              </div>
+              <!--              <div class="card">-->
+              <!--                <div class="card-body">-->
+              <!--                  <h5 class="card-title">IPTC</h5>-->
+              <!--                  <div class="control-group">-->
+              <!--                    <div class="controls">-->
+              <?php //echo $this->form->renderField('iptc'); ?><!--</div>-->
+              <!--                  </div>-->
+              <!--                </div>-->
+              <!--              </div>-->
+              <!--              <div class="card">-->
+              <!--                <div class="card-body">-->
+              <!--                  <h5 class="card-title">EXIF</h5>-->
+              <!--                  <div class="control-group">-->
+              <!--                    <div class="controls">-->
+              <?php //echo $this->form->renderField('exif'); ?><!--</div>-->
+              <!--                  </div>-->
+              <!--                </div>-->
+              <!--              </div>-->
             </fieldset>
           </div>
         </div>
@@ -265,6 +271,12 @@ $paramComponent = $this->params['component']
       <input type="hidden" name="type" id="itemType" value="userimage"/>
       <input type="hidden" name="return" value="<?php echo $this->return_page; ?>"/>
       <input type="hidden" name="task" value=""/>
+      <input type="hidden" id="mediaManagerPath" name="mediapath" value=""/>
+      <input type="hidden" name="jform[uploader]" value="html"/>
+      <?php /* <input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
+	<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
+	<input type="hidden" name="jform[votes]" value="<?php echo $this->item->votes; ?>" />
+	<input type="hidden" name="jform[useruploaded]" value="<?php echo $this->item->useruploaded; ?>" /> */ ?>
       <?php echo HTMLHelper::_('form.token'); ?>
       <!--      </fieldset>-->
 
@@ -272,3 +284,78 @@ $paramComponent = $this->params['component']
     </form>
   <?php endif; ?>
 </div>
+
+<?php
+$mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
+if(in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
+{
+  $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP').'">'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
+}
+
+// Image preview modal
+$options = array('modal-dialog-scrollable' => true,
+                 'title'                   => 'Test Title',
+                 'footer'                  => $mediaManagerBtn
+                   .'<a id="replaceBtn" class="btn hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP')
+                   .'" href="'.Route::_('index.php?option=com_joomgallery&view=userimage&layout=replace&id='.(int) $this->item->id).'">'
+                   .Text::_('COM_JOOMGALLERY_REPLACE')
+                   .'</a>'
+                   .'<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+                   .Text::_('JCLOSE')
+                   .'</button>',
+);
+
+echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
+?>
+
+<script>
+  function openModal(typename) {
+    let modal = document.getElementById('image-modal-box');
+
+    let modalTitle = modal.querySelector('.modal-title');
+    let modalBody = modal.querySelector('.modal-body');
+    let replaceBtn = document.getElementById('replaceBtn');
+    let mediaInput = document.getElementById('mediaManagerPath');
+
+    <?php
+    $imgURL = '{';
+    $title = '{';
+    $mediaURL = '{';
+
+    foreach($this->imagetypes as $key => $imagetype)
+    {
+      $imgURL .= $imagetype->typename.':"'.JoomHelper::getImg($this->item, $imagetype->typename).'",';
+      $title  .= $imagetype->typename.':"'.Text::_('COM_JOOMGALLERY_'.strtoupper($imagetype->typename)).'",';
+
+      $img_path = str_replace('\\', '/', JoomHelper::getImg($this->item, $imagetype->typename, false, false));
+      if($this->item->filesystem == 'local-images')
+      {
+        // Adjust for local file adapter
+        $img_path = str_replace('/images/', '/', $img_path);
+      }
+
+      $mediaURL .= $imagetype->typename.':"index.php?option=com_joomgallery&path='.$this->item->filesystem.':'.$img_path.'",';
+    }
+
+    $imgURL .= '}';
+    $title .= '}';
+    $mediaURL .= '}';
+    ?>
+    let imgURL = <?php echo $imgURL; ?>;
+    let title = <?php echo $title; ?>;
+    let mediaURL = <?php echo $mediaURL; ?>;
+
+    modalTitle.innerHTML = title[typename];
+    let body = '<div class="joom-image center">'
+    body = body + '<div class="joom-loader"><img src="<?php echo Uri::root(true); ?>/media/system/images/ajax-loader.gif" alt="loading..."></div>';
+    body = body + '<img src="' + imgURL[typename] + '" alt="' + title[typename] + '">';
+    body = body + '</div>';
+    modalBody.innerHTML = body;
+
+    replaceBtn.href = replaceBtn.href + '&type=' + typename;
+    mediaInput.value = mediaURL[typename];
+
+    let bsmodal = new bootstrap.Modal(document.getElementById('image-modal-box'), {keyboard: false});
+    bsmodal.show();
+  };
+</script>

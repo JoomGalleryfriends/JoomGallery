@@ -17,6 +17,7 @@ use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\Controller\FormController;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 
 /**
  * Image class.
@@ -24,7 +25,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
  * @package JoomGallery
  * @since   4.2.0
  */
-class UserimageController extends FormController
+class UserimageController extends JoomFormController
 {
   use RoutingTrait;
 

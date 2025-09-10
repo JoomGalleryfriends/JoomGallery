@@ -50,9 +50,10 @@
 
     <field name="approved"
            type="list"
-           class="readonly"
+           class="readonly hidden"
            readonly="true"
            default="0"
+           hidden="true"
            label="COM_JOOMGALLERY_APPROVED">
         <option value="0">JNO</option>
         <option value="1">JYES</option>
@@ -162,6 +163,12 @@
            filter="user_utc"
            label="JGLOBAL_FIELD_CREATED_LABEL" />
 
+    <field name="created_by"
+           type="user"
+           label="COM_JOOMGALLERY_OWNER"
+           description="COM_JOOMGALLERY_FIELDS_OWNER_DESC"
+           validate="UserId" />
+
     <field name="modified_time"
            type="calendar"
            class="readonly form-control"
@@ -171,6 +178,15 @@
            readonly="true"
            filter="user_utc"
            label="JGLOBAL_FIELD_MODIFIED_LABEL" />
+
+    <field name="modified_by"
+           type="user"
+           class="readonly"
+           readonly="true"
+           filter="unset"
+           validate="UserId"
+           label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
+           description="JGLOBAL_FIELD_MODIFIED_BY_DESC" />
 
     <field name="metadesc"
            type="textarea"
@@ -220,11 +236,12 @@
            label="COM_JOOMGALLERY_DATE"
            description="COM_JOOMGALLERY_DATE_DESC" />
 
-<!--    <field name="imgmetadata"-->
-<!--           type="subform"-->
-<!--           formsource="administrator/components/com_joomgallery/forms/subform_imageimgmetadata.xml"-->
-<!--           layout="joomla.form.field.subform.default"-->
-<!--           label="COM_JOOMGALLERY_IMGMETADATA" />-->
+    <field name="imgmetadata"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_imageimgmetadata.xml"
+           layout="joomla.form.field.subform.default"
+           label="COM_JOOMGALLERY_IMGMETADATA" />
+
     <field name="comment"
            type="metadatacomment"
            default=""

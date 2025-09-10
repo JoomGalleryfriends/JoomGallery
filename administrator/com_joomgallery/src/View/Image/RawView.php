@@ -13,6 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Router\Route;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
