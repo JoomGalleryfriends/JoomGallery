@@ -146,6 +146,8 @@ class Category extends AbstractCommand
       $row[]     = current($value);
     }
 
+    /* patch password to yes/no ? Do not: category may be transferred to other webspace */
+
     $this->ioStyle->horizontalTable($headers, [$row]);
 
     return Command::SUCCESS;

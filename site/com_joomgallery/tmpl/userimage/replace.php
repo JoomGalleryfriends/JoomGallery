@@ -22,7 +22,10 @@ $uppy_version = 'v3.5.0'; // Uppy version to use
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
 	 ->useScript('form.validate')
-   ->useStyle('com_joomgallery.admin');
+//   ->useStyle('com_joomgallery.admin')
+   ->useStyle('com_joomgallery.site')
+;
+
 HTMLHelper::_('bootstrap.tooltip');
 
 $app = Factory::getApplication();
@@ -31,13 +34,20 @@ $app = Factory::getApplication();
 $isModal = $app->input->get('layout') === 'modal';
 $layout  = $isModal ? 'modal' : 'edit';
 $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=component' : '';
+
+$categoryTitle = $this->categoryTitle;
+$replaceType =$app->input->get('type');
 ?>
 
 <div class="jg jg-img-replace">
   <form
     action="<?php echo Route::_('index.php?option=com_joomgallery&layout='.$layout.$tmpl); ?>"
-    method="post" enctype="multipart/form-data" name="adminForm" id="image-form" class="form-validate"
+    method="post" enctype="multipart/form-data" name="adminForm" id="image-form" class="form-validate form-horizontal"
     aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGES_UPLOAD', true); ?>" >
+
+    <div class="row align-items-start">
+
+    <\div>
 
     <div class="row align-items-start">
       <div class="col-xxl-auto col-md-6 mb">
@@ -46,7 +56,8 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
             <h2><?php echo Text::_('COM_JOOMGALLERY_REPLACE'); ?></h2>
           </div>
           <div class="card-body">
-            <?php echo $this->form->renderField('replacetype'); ?>
+<!--            --><?php //echo $this->form->renderField('replacetype'); ?>
+            <?php echo $this->form->renderField('replacetype_disabled','',$replaceType); ?>
             <?php echo $this->form->renderField('replaceprocess'); ?>
             <?php echo $this->form->renderField('image'); ?>
           </div>
@@ -61,7 +72,9 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
             <?php echo $this->form->renderField('title'); ?>
             <?php echo $this->form->renderField('alias'); ?>
             <?php echo $this->form->renderField('id'); ?>
-            <?php echo $this->form->renderField('catid'); ?>
+<!--            --><?php //echo $this->form->renderField('catid'); ?>
+            <?php echo $this->form->renderField('catid_disabled','',$categoryTitle);
+            ?>
           </div>
         </div>
       </div>

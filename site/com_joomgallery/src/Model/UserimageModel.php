@@ -12,7 +12,9 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // No direct access
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
+use Joomla\Database\DatabaseInterface;
 use \Joomla\CMS\User\CurrentUserInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
 
@@ -137,4 +139,51 @@ class UserimageModel extends AdminImageModel
   {
     return \base64_encode($this->getState('return_page', ''));
   }
+
+
+  /**
+   * Method to get the title of the category by category id
+   *
+   * @param   integer   $id  The id of the primary key.
+   *
+   * @return  string
+   *
+   * @throws \Exception
+   * @since   4.2.0
+   */
+  public function categoryTitle(int $id): string
+  {
+    $categoryTitle = '%';
+
+    try
+    {
+      $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+      // Check number of records in tables
+      $query = $db->getQuery(true)
+        ->select('title')
+        ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
+        ->where($db->quoteName('id').' = '.(int) $id);
+
+      $db->setQuery($query);
+      $item = $db->loadObject();
+
+      if(!empty($item->title))
+      {
+        $categoryTitle = $item->title;
+      }
+    }
+    catch(\RuntimeException $e)
+    {
+      Factory::getApplication()->enqueueMessage('categoryTitle-Error: '.$e->getMessage(), 'error');
+
+      return false;
+    }
+
+    return $categoryTitle;
+  }
+
+
+
+
 }

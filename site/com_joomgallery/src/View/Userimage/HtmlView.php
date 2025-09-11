@@ -83,6 +83,12 @@ class HtmlView extends JoomGalleryView
   protected $config;
 
   /**
+   * @var string title of the category
+   * @since version
+   */
+  protected string $categoryTitle = '';
+
+  /**
    * Display the view
    *
    * @param   string   $tpl  Template name
@@ -157,6 +163,9 @@ class HtmlView extends JoomGalleryView
         $this->component->addLog('View needs an image ID to be loaded.', 'error', 'jerror');
         throw new \Exception("View needs an image ID to be loaded.", 1);
       }
+
+      $this->categoryTitle = $model->categoryTitle($this->item->catid);
+
       $this->addToolbarReplace();
       $this->modifyFieldsReplace();
     }

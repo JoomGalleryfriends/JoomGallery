@@ -306,3 +306,10 @@ td ul.list-inline {
   background-color: var(--jg-gray-300);
   opacity: 1;
 }
+
+.joom-image > .joom-loader {
+  position: absolute;
+  text-align: center;
+  margin: 1rem auto;
+  width: 100%;
+}

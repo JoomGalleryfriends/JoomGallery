@@ -89,6 +89,13 @@
            required="true"
            message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY" />
 
+    <field name="catid_disabled"
+           type="text"
+           class="readonly"
+           readonly="true"
+           label="JCATEGORY"
+    />
+
     <field name="tags"
            type="jgtag"
            label="JTAG"
@@ -219,6 +226,37 @@
         <option value="2">noindex, follow</option>
         <option value="3">index, nofollow</option>
         <option value="4">noindex, nofollow</option>
+    </field>
+
+    <field name="image"
+           type="file"
+           accept="image/*"
+           size="10485760"
+           class="input-group"
+           label="COM_JOOMGALLERY_IMG_UPLOAD_IMAGE" />
+
+    <field name="replacetype"
+           type="jgimagetype"
+           label="COM_JOOMGALLERY_IMAGETYPE"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_DESC" />
+
+    <field name="replacetype_disabled"
+           type="text"
+           class="readonly"
+           readonly="true"
+           label="COM_JOOMGALLERY_IMAGETYPE"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_DESC"
+    />
+
+    <field name="replaceprocess"
+           type="radio"
+           default="0"
+           class="btn-group"
+           layout="joomla.form.field.radio.switcher"
+           label="COM_JOOMGALLERY_CONFIG_TAB_IMAGE_PROCESSING"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_PROCESS_DESC">
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
     </field>
 
     <field name="date"

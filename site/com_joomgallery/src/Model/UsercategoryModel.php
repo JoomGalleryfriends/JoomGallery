@@ -38,6 +38,14 @@ class UsercategoryModel extends AdminCategoryModel
   protected $type = 'category';
 
   /**
+   * True if a password is set
+   *
+   * @access  protected
+   * @var     bool
+   */
+//  protected $is_password = true;
+
+  /**
    * Method to auto-populate the model state.
    *
    * Note. Calling getState in this method will result in recursion.
@@ -160,6 +168,15 @@ class UsercategoryModel extends AdminCategoryModel
       return false;
     }
 
+    // Disable remove password field if no password is set
+    if(!$this->is_password)
+    {
+      $form->setFieldAttribute('rm_password', 'disabled', 'true');
+      $form->setFieldAttribute('rm_password', 'filter', 'unset');
+      $form->setFieldAttribute('rm_password', 'hidden', 'true');
+      $form->setFieldAttribute('rm_password', 'class', 'hidden');
+    }
+
     // Apply filter to exclude child categories
     $children = $form->getFieldAttribute('parent_id', 'children', 'true');
     $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
@@ -177,11 +194,11 @@ class UsercategoryModel extends AdminCategoryModel
   /**
    * Method to get the data that should be injected in the form.
    *
-   * @return  \Joomla\CMS\Object\CMSObject|\stdClass  The default data is an empty array.
+   * @return  array|\Joomla\CMS\Object\CMSObject  The default data is an empty array.
    *
    * @since   4.2.0
    */
-  protected function loadFormData(): \Joomla\CMS\Object\CMSObject|\stdClass
+  protected function loadFormData(): \Joomla\CMS\Object\CMSObject|array
   {
     return parent::loadFormData();
   }

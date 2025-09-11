@@ -79,6 +79,7 @@ class HtmlView extends JoomGalleryView
   public function display($tpl = null): void
   {
     // Get model data
+
     $model = $this->getModel();
 
     $this->state  = $model->getState();

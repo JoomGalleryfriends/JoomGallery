@@ -60,6 +60,15 @@ class JgcategorydropdownField extends ListField
   protected $isCategoriesOfUser;
 
   /**
+   * Optional add " -No parent- " as selevtion
+   *
+   *
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $isShow_NoParent;
+
+  /**
    * Optional restrict to categories of logged user
    *
    * @var    bool
@@ -99,6 +108,7 @@ class JgcategorydropdownField extends ListField
       $this->customPrefix = (string) $this->element['customPrefix'];
 
       $this->isCategoriesOfUser = isset($this->element['categoriesOfUser']) ? (boolean) $this->element['categoriesOfUser'] : false;
+      $this->isShow_NoParent = isset($this->element['show_NoParent']) ? (boolean) $this->element['show_NoParent'] : false;
 
       $elementOrdering = $this->element['ordering'] ?? '';
       if (strtolower($elementOrdering) == 'desc') {
@@ -414,7 +424,12 @@ class JgcategorydropdownField extends ListField
       \array_unshift($options, HTMLHelper::_('select.option', '0', Text::_('JGLOBAL_ROOT')));
     }
 
-    // Merge any additional options in the XML definition.
+    if ($this->isShow_NoParent)
+    {
+      // Merge root (any additional options) in the XML definition.
+      \array_unshift($options, HTMLHelper::_('select.option', '1', Text::_('JGLOBAL_ROOT_PARENT')));
+    }
+
     return \array_merge(parent::getOptions(), $options);
   }
 

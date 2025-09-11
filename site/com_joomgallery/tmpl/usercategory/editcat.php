@@ -104,23 +104,24 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
         <?php echo $this->form->renderField('title'); ?>
         <?php echo $this->form->renderField('alias'); ?>
         <?php
-        // for root category avoid selection of category display is root info
-        if($this->isUserRootCategory)
-        {
-          $defaultInfo = Text::_('COM_JOOMGALLERY_PARENT_USER_ROOT_INDICATOR');
-          echo $this->form->renderField('parent_id_root', null, $defaultInfo);
-          ?>
-          <input type="hidden" name="jform[parent_id]" value="<?php echo $this->item->parent_id; ?>"/>
-          <?php
-        }
-        else
-        {
+//        // for root category avoid selection of category display is root info
+//        if($this->isUserRootCategory)
+//        {
+//          $defaultInfo = Text::_('COM_JOOMGALLERY_PARENT_USER_ROOT_INDICATOR');
+//          echo $this->form->renderField('parent_id_root', null, $defaultInfo);
+//          ?>
+<!--          <input type="hidden" name="jform[parent_id]" value="--><?php //echo $this->item->parent_id; ?><!--"/>-->
+<!--          --><?php
+//        }
+//        else
+//        {
           echo $this->form->renderField('parent_id');
-        }
+//        }
         ?>
         <?php echo $this->form->renderField('published'); ?>
         <?php echo $this->form->renderField('access'); ?>
         <?php echo $this->form->renderField('password'); ?>
+        <?php echo $this->form->renderField('rm_password'); ?>
         <?php echo $this->form->renderField('language'); ?>
         <?php echo $this->form->renderField('description'); ?>
 
