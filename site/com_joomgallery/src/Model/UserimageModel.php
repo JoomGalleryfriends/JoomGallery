@@ -12,9 +12,9 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
+use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
-use Joomla\Database\DatabaseInterface;
+use \Joomla\Database\DatabaseInterface;
 use \Joomla\CMS\User\CurrentUserInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
 

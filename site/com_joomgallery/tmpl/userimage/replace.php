@@ -21,10 +21,9 @@ $uppy_version = 'v3.5.0'; // Uppy version to use
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+  ->useScript('form.validate')
 //   ->useStyle('com_joomgallery.admin')
-   ->useStyle('com_joomgallery.site')
-;
+  ->useStyle('com_joomgallery.site');
 
 HTMLHelper::_('bootstrap.tooltip');
 
@@ -36,18 +35,34 @@ $layout  = $isModal ? 'modal' : 'edit';
 $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=component' : '';
 
 $categoryTitle = $this->categoryTitle;
-$replaceType =$app->input->get('type');
+$replaceType   = $app->input->get('type');
 ?>
 
 <div class="jg jg-img-replace">
-  <form
-    action="<?php echo Route::_('index.php?option=com_joomgallery&layout='.$layout.$tmpl); ?>"
-    method="post" enctype="multipart/form-data" name="adminForm" id="image-form" class="form-validate form-horizontal"
-    aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGES_UPLOAD', true); ?>" >
+  <form id="image-form"
+        action="<?php echo Route::_('index.php?option=com_joomgallery&view=userimage&layout=editImg&id='.$this->item->id); ?>"
+        method="post" enctype="multipart/form-data" name="adminForm" class="form-validate form-horizontal"
+        aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_EDIT'); ?>">
 
-    <div class="row align-items-start">
+    <h3><span class="icon-images">&nbsp;</span>
+      <?php echo Text::_('COM_JOOMGALLERY_IMAGES'); ?>&nbsp;::&nbsp;<?php echo Text::_('COM_JOOMGALLERY_REPLACE'); ?></h3>
+    <hr>
 
-    <\div>
+    <div class="align-items-start me-10">
+      <div class="d-grid gap-2 d-sm-block jg-img-command">
+
+        <button type="button" class="btn btn-save btn-sm btn-success "  disabled="disabled" onclick="Joomla.submitbutton('userimage.replace')">
+          <span class="icon-save" aria-hidden="true"></span>
+          <s><?php echo Text::_('COM_JOOMGALLERY_REPLACE'); ?></s>
+        </button>
+
+        <button type="button" class="btn btn-cancel btn-sm btn-danger" onclick="Joomla.submitbutton('userimage.cancel')">
+          <span class="icon-times" aria-hidden="true"></span>
+          <?php echo Text::_('JCANCEL'); ?>
+        </button>
+
+      </div>
+    </div>
 
     <div class="row align-items-start">
       <div class="col-xxl-auto col-md-6 mb">
@@ -56,8 +71,8 @@ $replaceType =$app->input->get('type');
             <h2><?php echo Text::_('COM_JOOMGALLERY_REPLACE'); ?></h2>
           </div>
           <div class="card-body">
-<!--            --><?php //echo $this->form->renderField('replacetype'); ?>
-            <?php echo $this->form->renderField('replacetype_disabled','',$replaceType); ?>
+            <!--            --><?php //echo $this->form->renderField('replacetype'); ?>
+            <?php echo $this->form->renderField('replacetype_disabled', '', $replaceType); ?>
             <?php echo $this->form->renderField('replaceprocess'); ?>
             <?php echo $this->form->renderField('image'); ?>
           </div>
@@ -72,9 +87,8 @@ $replaceType =$app->input->get('type');
             <?php echo $this->form->renderField('title'); ?>
             <?php echo $this->form->renderField('alias'); ?>
             <?php echo $this->form->renderField('id'); ?>
-<!--            --><?php //echo $this->form->renderField('catid'); ?>
-            <?php echo $this->form->renderField('catid_disabled','',$categoryTitle);
-            ?>
+            <!--            --><?php //echo $this->form->renderField('catid'); ?>
+            <?php echo $this->form->renderField('catid_disabled', '', $categoryTitle); ?>
           </div>
         </div>
       </div>
@@ -83,6 +97,8 @@ $replaceType =$app->input->get('type');
     <input type="hidden" name="id" value="<?php echo $this->item->id; ?>"/>
     <input type="hidden" name="layout" value="replace"/>
     <input type="hidden" name="task" value=""/>
+
     <?php echo HTMLHelper::_('form.token'); ?>
+
   </form>
 </div>

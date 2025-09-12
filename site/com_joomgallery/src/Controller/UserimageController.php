@@ -244,6 +244,13 @@ class UserimageController extends JoomFormController
     // Check for request forgeries.
     $this->checkToken();
 
+    if($this->input->get('layout', 'edit', 'cmd') == 'replace')
+    {
+      // Redirect to the edit screen.
+      $this->setRedirect(Route::_('index.php?option='.$this->option.'&view=userimage&layout=editImg&id='.$this->input->getInt('id'), false));
+      return true;
+    }
+
     // Get the current edit id.
     $recordId = $this->input->getInt('id');
 
