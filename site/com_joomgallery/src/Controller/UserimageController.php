@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // No direct access
 \defined('_JEXEC') or die;
 
+use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
@@ -224,6 +225,124 @@ class UserimageController extends JoomFormController
     // Redirect to the list screen.
     $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SAVE_SUCCESSFUL'));
     $this->setRedirect($backLink);
+
+    return true;
+  }
+
+  /**
+   * Method to exchange/replace an existing imagetype.
+   *
+   * @return  boolean  True if imagetype is successfully replaced, false if not.
+   *
+   * @since   4.0
+   */
+  public function replace(): bool
+  {
+    // Check for request forgeries.
+    $this->checkToken();
+
+    $app     = $this->app;
+    $model   = $this->getModel();
+    $data    = $this->input->post->get('jform', [], 'array');
+    $context = (string) _JOOM_OPTION.'.'.$this->context.'.replace';
+    $id      = \intval($data['id']);
+
+    // Access check.
+    if(!$this->allowSave($data, $id))
+    {
+      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error');
+      $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error', 'jerror');
+
+      $this->setRedirect(
+        Route::_('index.php?option='._JOOM_OPTION.'&view='.$this->view_list.$this->getRedirectToListAppend(), false)
+      );
+
+      return false;
+    }
+
+    // Load form data
+    $form = $model->getForm($data, false);
+    if(!$form)
+    {
+      $this->setMessage($model->getError(), 'error');
+
+      return false;
+    }
+    $form->setFieldAttribute('title', 'required', false);
+    $form->setFieldAttribute('catid', 'required', false);
+    $form->setFieldAttribute('replacetype', 'required', true);
+    $form->setFieldAttribute('image', 'required', true);
+
+    // Test whether the data is valid.
+    $validData = $model->validate($form, $data);
+
+    // Check for validation errors.
+    if($validData === false)
+    {
+      // Get the validation messages.
+      $errors = $model->getErrors();
+
+      // Push up to three validation messages out to the user.
+      for($i = 0, $n = \count($errors); $i < $n && $i < 3; $i++)
+      {
+        if($errors[$i] instanceof \Exception)
+        {
+          $this->setMessage($errors[$i]->getMessage(), 'warning');
+        }
+        else
+        {
+          $this->setMessage($errors[$i], 'warning');
+        }
+      }
+
+      // Save the data in the session.
+      $app->setUserState($context.'.data', $data);
+
+      // Redirect back to the replace screen.
+      $this->setRedirect(
+        Route::_('index.php?option='._JOOM_OPTION.'&view=image&layout=replace&id='.$id, false)
+      );
+
+      return false;
+    }
+
+    // Attempt to replace the image.
+    if(!$model->replace($validData))
+    {
+      // Save the data in the session.
+      $app->setUserState($context.'.data', $validData);
+
+      // Redirect back to the replace screen.
+      $this->setMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_REPLACE_IMAGETYPE', \ucfirst($validData['replacetype']), $model->getError()), 'error');
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_REPLACE_IMAGETYPE', \ucfirst($validData['replacetype']), $model->getError()), 'error', 'jerror');
+
+      $this->setRedirect(
+        Route::_('index.php?option='._JOOM_OPTION.'&view=image&layout=replace&id='.$id, false)
+      );
+
+      return false;
+    }
+
+    // Set message
+    $this->setMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_REPLACE_IMAGETYPE', \ucfirst($validData['replacetype'])));
+    $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SUCCESS_REPLACE_IMAGETYPE', \ucfirst($validData['replacetype'])), 'error', 'jerror');
+
+    // Clear the data from the session.
+    $app->setUserState($context.'.data', null);
+
+    // Redirect to edit screen
+    $url = 'index.php?option='._JOOM_OPTION.'&view=image&layout=edit&id='.$id;
+
+    // Check if there is a return value
+    $return = $this->input->get('return', null, 'base64');
+
+    if(!\is_null($return) && Uri::isInternal(\base64_decode($return)))
+    {
+      $url = \base64_decode($return);
+    }
+
+    // Redirect to the list screen.
+    $this->setRedirect(Route::_($url, false));
 
     return true;
   }

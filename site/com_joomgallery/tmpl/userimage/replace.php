@@ -51,12 +51,17 @@ $replaceType   = $app->input->get('type');
     <div class="align-items-start me-10">
       <div class="d-grid gap-2 d-sm-block jg-img-command">
 
-        <button type="button" class="btn btn-save btn-sm btn-success "  disabled="disabled" onclick="Joomla.submitbutton('userimage.replace')">
+<!--        <button type="button" class="btn btn-save btn-sm btn-success "  disabled="disabled" onclick="Joomla.submitbutton('userimage.replace')">-->
+<!--          <span class="icon-save" aria-hidden="true"></span>-->
+<!--          <s>--><?php //echo Text::_('COM_JOOMGALLERY_REPLACE'); ?><!--</s>-->
+<!--        </button>-->
+<!---->
+        <button type="button" class="btn btn-save btn-sm btn-light " onclick="Joomla.submitbutton('userimage.replace')">
           <span class="icon-save" aria-hidden="true"></span>
-          <s><?php echo Text::_('COM_JOOMGALLERY_REPLACE'); ?></s>
+                    <s><?php echo Text::_('COM_JOOMGALLERY_REPLACE'); ?></s>
         </button>
 
-        <button type="button" class="btn btn-cancel btn-sm btn-danger" onclick="Joomla.submitbutton('userimage.cancel')">
+        <button type="button" class="btn btn-cancel btn-sm btn-light" onclick="Joomla.submitbutton('userimage.cancel')">
           <span class="icon-times" aria-hidden="true"></span>
           <?php echo Text::_('JCANCEL'); ?>
         </button>

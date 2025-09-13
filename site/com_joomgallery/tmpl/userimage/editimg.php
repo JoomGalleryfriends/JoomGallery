@@ -289,19 +289,19 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 $mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
 if(in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
 {
-  $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn hasTip"  disabled="disabled"
-     title="'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP').'">'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').' readonly </button></joomla-toolbar-button>';
+  $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn btn-secondary hasTip"  disabled="disabled" readonly                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+     title="'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP').'"><s>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</s> </button></joomla-toolbar-button>';
 }
 
 // Image preview modal
 $options = array('modal-dialog-scrollable' => true,
                  'title'                   => 'Test Title',
                  'footer'                  => $mediaManagerBtn
-                   .'<a id="replaceBtn" class="btn hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP')
+                   .'<a id="replaceBtn" class="btn btn-outline-dark hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP')
                    .'" href="'.Route::_('index.php?option=com_joomgallery&view=userimage&layout=replace&id='.(int) $this->item->id).'">'
                    .Text::_('COM_JOOMGALLERY_REPLACE')
                    .'</a>'
-                   .'<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+                   .'<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">'
                    .Text::_('JCLOSE')
                    .'</button>',
 );
