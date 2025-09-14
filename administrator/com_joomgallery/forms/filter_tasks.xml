@@ -30,7 +30,7 @@
                type="list"
                label="COM_JOOMGALLERY_TASKS_SELECT_COMPLETED_LABEL"
                onchange="this.form.submit();" >
-            <option value="*">COM_JOOMGALLERY_TASKS_SELECT_FAILED_LABEL</option>
+            <option value="*">COM_JOOMGALLERY_TASKS_SELECT_COMPLETED_LABEL</option>
             <option value="1">COM_JOOMGALLERY_COMPLETED</option>
             <option value="0">COM_JOOMGALLERY_NOT_COMPLETED</option>
         </field>
