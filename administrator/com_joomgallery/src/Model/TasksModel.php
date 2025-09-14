@@ -117,12 +117,13 @@ class TasksModel extends JoomListModel
     if($std_items)
     {
       // Initialize
-      $items = [];
-      $table = $this->component->getMVCFactory()->createTable('Task', 'Administrator');
+      $items      = [];
+      $table_base = $this->component->getMVCFactory()->createTable('Task', 'Administrator');
 
       // Turn items to table objects
       foreach($std_items as $item)
       {
+        $table = clone $table_base;
         $table->reset();
 
         if(\is_object($item))
