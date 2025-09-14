@@ -126,7 +126,11 @@ class HtmlView extends JoomGalleryView
       // If not checked out, can save the item.
       if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || ($this->getAcl()->checkACL('core.create'))))
       {
-        ToolbarHelper::apply('task.save', 'JTOOLBAR_APPLY');
+        // Save
+        ToolbarHelper::apply('task.apply', 'JTOOLBAR_APPLY');
+
+        // Save&Close
+        ToolbarHelper::apply('task.save', 'JTOOLBAR_SAVE');
       }
 
       if(empty($this->item->id))
