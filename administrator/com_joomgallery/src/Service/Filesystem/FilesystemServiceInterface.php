@@ -9,7 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 
-\defined('JPATH_PLATFORM') or die;
+\defined('_JEXEC') or die;
 
 /**
 * The Filesystem service

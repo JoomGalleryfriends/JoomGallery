@@ -13,12 +13,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Filesystem\File as JFile;
-use \Joomla\CMS\Filesystem\Path as JPath;
+use \Joomla\Filesystem\File as JFile;
 use \Joomla\CMS\Filter\InputFilter;
 use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Object\CMSObject;
-
+use \Joomla\Database\DatabaseInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 
@@ -264,7 +262,7 @@ abstract class Uploader implements UploaderInterface
     require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/iptcarray.php';
     require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/exifarray.php';
 
-    $lang = Factory::getLanguage();
+    $lang = $this->app->getLanguage();
     $lang->load(_JOOM_OPTION.'.exif', JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION);
     $lang->load(_JOOM_OPTION.'.iptc', JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION);
 
@@ -418,7 +416,7 @@ abstract class Uploader implements UploaderInterface
         $data['title'] = $filter->clean($source_value, 'string');
 
         // Recreate alias
-        if(Factory::getConfig()->get('unicodeslugs') == 1)
+        if($this->app->getConfig()->get('unicodeslugs') == 1)
         {
           $data['alias'] = OutputFilter::stringURLUnicodeSlug(trim($data['title']));
         }
@@ -500,7 +498,7 @@ abstract class Uploader implements UploaderInterface
       $this->component->createMessenger($jg_filenamenumber);
 
       // Get user
-      $user = Factory::getUser();
+      $user = $this->app->getIdentity();
 
       // Get category
       $cat = JoomHelper::getRecord('category', $data_row->catid, $this->component);
@@ -541,7 +539,7 @@ abstract class Uploader implements UploaderInterface
   /**
    * Rollback an erroneous upload
    *
-   * @param   CMSObject   $data_row     Image object containing at least catid and filename (default: false)
+   * @param   object  $data_row   Image object containing at least catid and filename (default: false)
    *
    * @return  void
    *
@@ -599,7 +597,7 @@ abstract class Uploader implements UploaderInterface
    */
   protected function getImageNumber($userid)
   {
-    $db = Factory::getDbo();
+    $db = Factory::getContainer()->get(DatabaseInterface::class);
 
     $query = $db->getQuery(true)
           ->select('COUNT(id)')
@@ -679,7 +677,7 @@ abstract class Uploader implements UploaderInterface
    *
    * @param   array   $data      The form data
    *
-   * @return  CMSObject
+   * @return  object
    *
    * @since   4.0.0
    */
@@ -691,10 +689,10 @@ abstract class Uploader implements UploaderInterface
       throw new \Exception('Form data must have at least catid and filename');
     }
 
-    $img = new CMSObject;
+    $img = new stdClass;
 
-    $img->set('catid', $data['catid']);
-    $img->set('filename', $data['filename']);
+    $img->catid = $data['catid'];
+    $img->filename = $data['filename'];
 
     return $img;
   }

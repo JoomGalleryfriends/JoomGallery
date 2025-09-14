@@ -12,11 +12,11 @@ defined('_JEXEC') or die();
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Log\Log;
-use \Joomla\CMS\Table\Table;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Filesystem\File;
-use \Joomla\CMS\Filesystem\Folder;
+use \Joomla\Filesystem\Path;
+use \Joomla\Filesystem\File;
+use \Joomla\Filesystem\Folder;
 use \Joomla\CMS\Installer\Installer;
 use \Joomla\CMS\Installer\InstallerScript;
 use \Joomla\Database\DatabaseInterface;
@@ -155,7 +155,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     {
       // save release code information
       //-------------------------------
-      if(File::exists(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml'))
+      if(is_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml'))
       {
         $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
         $this->act_code = $xml->version;
@@ -190,7 +190,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       // copy old XML file (JGv1-3) to temp folder
       $xml_path   = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR;
       $tmp_folder = Factory::getApplication()->get('tmp_path');
-      if(File::exists($xml_path.'joomgallery.xml'))
+      if(is_file($xml_path.'joomgallery.xml'))
       {
         File::copy($xml_path.'joomgallery.xml', $tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml');
       }
@@ -198,16 +198,16 @@ class com_joomgalleryInstallerScript extends InstallerScript
       // remove old JoomGallery files and folders
       foreach($this->detectJGfolders() as $folder)
       {
-        if(Folder::exists($folder))
+        if(is_dir(Path::clean($folder)))
         {
-          Folder::delete($folder);
+          Folder::delete(Path::clean($folder));
         }
       }
       foreach($this->detectJGfiles() as $file)
       {
-        if(File::exists($file))
+        if(is_file(Path::clean($file)))
         {
-          File::delete($file);
+          File::delete(Path::clean($file));
         }
       }
 
@@ -441,7 +441,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
         // copy old XML file (JGv1-3) back from temp folder
         $xml_path   = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR;
         $tmp_folder = Factory::getApplication()->get('tmp_path');
-        if(File::exists($tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml'))
+        if(is_file($tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml'))
         {
           File::copy($tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml', $xml_path.'joomgallery_old.xml');
         }
@@ -991,6 +991,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       $pluginGroup = (string) $plugin['group'];
       $path        = $installation_folder . '/plugins/' . $pluginGroup . '/' . $pluginName;
       $installer   = new Installer;
+      $installer->setDatabase($db);
 
       if (!$this->isAlreadyInstalled('plugin', $pluginName, $pluginGroup))
       {
@@ -1062,8 +1063,9 @@ class com_joomgalleryInstallerScript extends InstallerScript
 	 */
 	private function installModules($parent)
 	{
-		$installation_folder = $parent->getParent()->getPath('source');
-		$app                 = Factory::getApplication();
+		$folder = $parent->getParent()->getPath('source');
+		$app    = Factory::getApplication();
+		$db     = Factory::getContainer()->get(DatabaseInterface::class);
 
 		if (method_exists($parent, 'getManifest'))
 		{
@@ -1082,8 +1084,9 @@ class com_joomgalleryInstallerScript extends InstallerScript
     foreach($modules->children() as $module)
     {
       $moduleName = (string) $module['module'];
-      $path       = $installation_folder . '/modules/' . $moduleName;
+      $path       = $folder . '/modules/' . $moduleName;
       $installer  = new Installer;
+      $installer->setDatabase($db);
 
       if (!$this->isAlreadyInstalled('module', $moduleName))
       {
@@ -1167,6 +1170,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       if (!empty($extension))
       {
         $installer = new Installer;
+        $installer->setDatabase($db);
         $result    = $installer->uninstall('plugin', $extension);
 
         if ($result)
@@ -1248,6 +1252,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       if (!empty($extension))
       {
         $installer = new Installer;
+        $installer->setDatabase($db);
         $result    = $installer->uninstall('module', $extension);
 
         if ($result)
@@ -1278,9 +1283,9 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $error = false;
 
     // Create destination folder if not exists
-    if(!Folder::exists($dst))
+    if(!is_dir(Path::clean($dst)))
     {
-      Folder::create($dst);
+      Folder::create(Path::clean($dst));
     }
 
     // Copy files
@@ -1559,7 +1564,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     // create module if it is not yet created
     if (empty($module_id))
     {
-      $row            = Table::getInstance('module');
+      $row            = $this->getTableInstance('\\Joomla\\CMS\\Table\\Module');
       $row->title     = $title;
       $row->ordering  = $ordering;
       $row->position  = $position;
@@ -1593,5 +1598,32 @@ class com_joomgalleryInstallerScript extends InstallerScript
     }
 
     return true;
+  }
+
+  /**
+   * Returns a Table Object
+   *
+   * @param   string    $tableClass   The name of the table (e.g '\\Joomla\\CMS\\Table\\Module')
+   *
+   * @return  object|bool   Table object on success, false otherwise.
+   *
+   * @since   4.2.0
+   * NOTE:    Use Factory::getApplication()->bootComponent('...')->getMVCFactory()->createTable($name, $prefix, $config); instead
+   */
+  private static function getTableInstance(string $tableClass)
+  {
+    if(!\class_exists($tableClass))
+    {
+      return false;
+    }
+
+    // Check for a possible service from the container otherwise manually instantiate the class
+    if(Factory::getContainer()->has($tableClass))
+    {
+      return Factory::getContainer()->get($tableClass);
+    }
+    
+    // Instantiate a new table class and return it.
+    return new $tableClass(Factory::getContainer()->get(DatabaseInterface::class));
   }
 }
