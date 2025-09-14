@@ -4,6 +4,11 @@
   --jg-gray-300: #dfe3e7;
 }
 
+/* borrowed from atum */
+:root {
+  --form-select-disabled-bg: var(--gray-200);
+  --form-control-bg-disabled: var(--gray-200);
+}
 .wrapper .container-main {
   overflow: hidden;
 }
@@ -312,4 +317,55 @@ td ul.list-inline {
   text-align: center;
   margin: 1rem auto;
   width: 100%;
+}
+
+body:has(div.jg-img-replace) {
+  background-color: var(--form-select-disabled-bg);
+  /*border: solid 3px red; */
+}
+
+.jg-img-replace .form-control[readonly] {
+  background-color: var(--form-control-bg-disabled);
+  opacity: 1;
+}
+
+.jg-img-replace .choices__inner {
+  background-color: var(--form-control-bg-disabled);
+  opacity: 1;
+}
+
+.jg-img-replace .form-control[readonly] {
+  background-color: var(--form-control-bg-disabled);
+  opacity: 1;
+}
+
+.jg-img-replace .choices__inner select {
+  cursor: default;
+  color: #000 !important;
+  border: 3px solid #444;
+}
+
+select.disabled {
+  color:red;
+}
+
+.jg-img-command {
+  background-color: #D3D3D3; /* var(--form-control-bg-disabled); */
+  margin-left: calc(-.5 * var(--gutter-x));
+  margin-right: calc(-.5 * var(--gutter-x));
+  margin-bottom: calc(8px);
+  border-radius: 1px;
+}
+
+.jg-img-command button {
+  margin: 8px 0 8px 8px;
+
+}
+
+.form-select:disabled, .custom-select:disabled {
+  cursor: default;
+  background-color: var(--gray-200); /* var(--form-select-disabled-bg); */
+  box-shadow: none;
+  background-image: none;
+  border: 0;
 }

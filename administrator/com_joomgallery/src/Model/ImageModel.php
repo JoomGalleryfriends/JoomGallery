@@ -611,7 +611,7 @@ class ImageModel extends JoomAdminModel
         $filesystem_success = $manager->renameImages($old_table, $table->filename);        
       }
 
-			// Dont store the table if filesystem changes was not successful
+			// Don't store the table if filesystem changes was not successful
 			if(!$filesystem_success)
 			{
 				$this->component->addError(Text::_('COM_JOOMGALLERY_ERROR_SAVE_FILESYSTEM_ERROR'));
