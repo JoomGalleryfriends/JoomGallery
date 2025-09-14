@@ -110,18 +110,16 @@ class ImagesModel extends AdminImagesModel
 	public function getItems()
 	{
 		$items = parent::getItems();
-
 		$start = $this->getState('list.start');
 
 		if($start > 0)
 		{
 			$pages = \boolval($this->getState('list.pages', 0));
-			$limit = $this->getState('list.limit');
-			$total = $this->getTotal();
 
 			if(!$pages)
 			{
-				$items = \array_slice($items, $start);
+				// Make sure $start=1 starts at the first image
+				$items = \array_slice($items, $start-1);
 			}
 		}
 
@@ -155,6 +153,7 @@ class ImagesModel extends AdminImagesModel
 
 			if($pages && ($start > $total - $limit))
 			{
+				// Get a start value that makes sense for pagination
 				$start = \max(0, (int) (\ceil($total / $limit) - 1) * $limit);
 			}
 		}
