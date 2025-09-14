@@ -74,11 +74,19 @@ trait ServiceTrait
 	 */
 	public function get(string $property, $default = null)
 	{
-		if(isset($this->__data[$property]))
+		// Get real property if exists
+		if(\property_exists($this, $property) && isset($this->$property))
+		{
+			return $this->$property;
+		}
+
+		// Get dynamic property if exists
+		if(\array_key_exists($property, $this->__data) && isset($this->__data[$property]))
 		{
 			return $this->__data[$property];
 		}
 
+		// Return default value as fallback
 		return $default;
 	}
 
@@ -94,8 +102,18 @@ trait ServiceTrait
 	 */
 	public function set(string $property, $value = null)
 	{
-		$previous = $this->__data[$property] ?? null;
-		$this->__data[$property] = $value;
+		if(\property_exists($this, $property))
+		{
+			// Set the real property if exists
+			$previous = $this->$property ?? null;
+			$this->$property = $value;
+		}
+		else
+		{
+			// Set dynamic property
+			$previous = $this->__data[$property] ?? null;
+			$this->__data[$property] = $value;
+		}
 
 		return $previous;
 	}
