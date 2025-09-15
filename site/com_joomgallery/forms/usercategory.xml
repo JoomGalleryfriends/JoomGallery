@@ -87,6 +87,7 @@
            type="password"
            size="100"
            label="JGLOBAL_PASSWORD"
+           lock="true"
            description="COM_JOOMGALLERY_FIELDS_PASSWORD_DESC"/>
 
     <field name="rm_password"

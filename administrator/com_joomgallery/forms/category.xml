@@ -75,6 +75,7 @@
            label="JGLOBAL_PASSWORD"
            description="COM_JOOMGALLERY_FIELDS_PASSWORD_DESC"
            filter="raw"
+           lock="true"
            strengthmeter="true" />
 
     <field name="rm_password"
