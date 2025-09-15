@@ -119,11 +119,11 @@ class UserimageModel extends AdminImageModel
   /**
    * Method to get the data that should be injected in the form.
    *
-   * @return  \Joomla\CMS\Object\CMSObject|\stdClass  The default data is an empty array.
+   * @return  \Joomla\CMS\Object\CMSObject|\stdClass|array  The default data is an empty array.
    *
    * @since   4.2.0
    */
-  protected function loadFormData(): \Joomla\CMS\Object\CMSObject|\stdClass
+  protected function loadFormData(): \Joomla\CMS\Object\CMSObject|\stdClass|array
   {
     return parent::loadFormData();
   }

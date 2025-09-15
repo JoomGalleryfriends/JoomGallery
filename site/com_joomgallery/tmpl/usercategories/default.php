@@ -190,6 +190,10 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JOOMGALLERY_PARENT_CATEGORY', 'parent_title', $listDirn, $listOrder); ?>
                   </th>
 
+                  <th scope="col" class="w-10 d-none d-md-table-cell">
+                    <?php echo HTMLHelper::_('searchtools.sort',  'JDATE', 'a.date', $listDirn, $listOrder); ?>
+                  </th>
+
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                     <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
                   </th>
@@ -307,6 +311,13 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
 
                     <td class="d-none d-lg-table-cell text-center">
                       <?php echo ($item->parent_title == 'Root') ? '--' : $this->escape($item->parent_title); ?>
+                    </td>
+
+                    <td class="small d-none d-md-table-cell text-center">
+                      <?php
+                      $date = $item->created_time;
+                      echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
+                      ?>
                     </td>
 
                     <td class="d-none d-lg-table-cell text-center">
