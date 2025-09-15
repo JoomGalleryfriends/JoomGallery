@@ -199,7 +199,7 @@ $canDelete = false;
                     <?php echo HTMLHelper::_('grid.sort', 'JCATEGORY', 'a.catid', $listDirn, $listOrder); ?>
                   </th>
 
-                  <th scope="col" class="w-10 d-none d-md-table-cell">
+                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                     <?php echo HTMLHelper::_('searchtools.sort',  'JDATE', 'a.date', $listDirn, $listOrder); ?>
                   </th>
 

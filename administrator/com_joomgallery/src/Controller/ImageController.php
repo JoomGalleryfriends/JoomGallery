@@ -16,6 +16,7 @@ use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Response\JsonResponse;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 
 /**
  * Image controller class.
@@ -149,6 +150,7 @@ class ImageController extends JoomFormController
     $this->checkToken();
 
     $app     = $this->app;
+    /** @var ImageModel $model */
     $model   = $this->getModel();
     $data    = $this->input->post->get('jform', [], 'array');
     $context = (string) _JOOM_OPTION.'.'.$this->context.'.replace';
