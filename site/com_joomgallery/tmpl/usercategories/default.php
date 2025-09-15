@@ -191,7 +191,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                   </th>
 
                   <th scope="col" class="w-10 d-none d-md-table-cell">
-                    <?php echo HTMLHelper::_('searchtools.sort',  'JDATE', 'a.date', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort',  'JDATE', 'a.created_time', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
