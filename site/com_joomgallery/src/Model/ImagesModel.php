@@ -110,7 +110,57 @@ class ImagesModel extends AdminImagesModel
 	public function getItems()
 	{
 		$items = parent::getItems();
+		$start = $this->getState('list.start');
+
+		if($start > 0)
+		{
+			$pages = \boolval($this->getState('list.pages', 0));
+
+			if(!$pages)
+			{
+				// Make sure $start=1 starts at the first image
+				$items = \array_slice($items, $start-1);
+			}
+		}
 
 		return $items;
+	}
+
+	/**
+	 * Method to get the starting number of items for the data set.
+	 *
+	 * @return  integer  The starting number of items available in the data set.
+	 *
+	 * @since   4.2.0
+	 */
+	public function getStart()
+	{
+		$store = $this->getStoreId('getstart');
+
+		// Try to load the data from internal storage.
+		if(isset($this->cache[$store]))
+		{
+			return $this->cache[$store];
+		}
+
+		$start = $this->getState('list.start');
+
+		if($start > 0)
+		{
+			$pages = \boolval($this->getState('list.pages', 0));
+			$limit = $this->getState('list.limit');
+			$total = $this->getTotal();
+
+			if($pages && ($start > $total - $limit))
+			{
+				// Get a start value that makes sense for pagination
+				$start = \max(0, (int) (\ceil($total / $limit) - 1) * $limit);
+			}
+		}
+
+		// Add the total to the internal cache.
+		$this->cache[$store] = $start;
+
+		return $this->cache[$store];
 	}
 }
