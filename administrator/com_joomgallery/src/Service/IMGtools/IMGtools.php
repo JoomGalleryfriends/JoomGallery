@@ -183,7 +183,7 @@ abstract class IMGtools implements IMGtoolsInterface
    */
   public function types(): void
   {
-    $types = \implode(', ', $this->get('supported_types'));
+    $types = \implode(', ', $this->supported_types);
     $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SUPPORTED_TYPES', $types));
 
     return;
