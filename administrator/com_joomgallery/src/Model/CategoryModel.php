@@ -116,7 +116,7 @@ class CategoryModel extends JoomAdminModel
   /**
 	 * Method to get the data that should be injected in the form.
 	 *
-	 * @return  mixed  The data for the form.
+	 * @return  mixed  The data for the form. (\Joomla\CMS\Object\CMSObject)
 	 *
 	 * @since   4.0.0
 	 */

@@ -16,27 +16,27 @@ use \Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Categories list controller class.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
 class CategoriesController extends FormController
 {
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional
-	 * @param   array   $config  Configuration array for model. Optional
-	 *
-	 * @return  object	The model
-	 *
-	 * @since   4.0.0
-	 */
-	public function getModel($name = 'Categories', $prefix = 'Site', $config = array())
-	{
-		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}
+  /**
+   * Proxy for getModel.
+   *
+   * @param   string   $name    The model name. Optional.
+   * @param   string   $prefix  The class prefix. Optional
+   * @param   array    $config  Configuration array for model. Optional
+   *
+   * @return  object  The model
+   *
+   * @since   4.0.0
+   */
+  public function getModel($name = 'Categories', $prefix = 'Site', $config = ['ignore_request' => true])
+  {
+    return parent::getModel($name, $prefix, $config);
+  }
 
   /**
    * Method to save the submitted ordering values for records via AJAX.
@@ -68,12 +68,7 @@ class CategoriesController extends FormController
     $model = $this->getModel('Categoryform', 'Site');
 
     // Save the ordering
-    $return = $model->saveorder($pks, $order);
-
-    if($return)
-    {
-      echo '1';
-    }
+    $model->saveorder($pks, $order);
 
     // Close the application
     $this->app->close();

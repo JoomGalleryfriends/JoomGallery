@@ -14,8 +14,8 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Language\Text;
 use \Joomla\Filesystem\File;
+use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Plugin\PluginHelper;
 use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Form\FormFactory;

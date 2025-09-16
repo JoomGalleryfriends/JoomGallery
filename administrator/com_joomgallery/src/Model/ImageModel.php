@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Language\Text;
+use \Joomla\Registry\Registry;
 use \Joomla\Utilities\ArrayHelper;
 use \Joomla\Database\ParameterType;
 use \Joomla\CMS\Plugin\PluginHelper;
@@ -22,7 +23,6 @@ use \Joomla\CMS\Language\Multilanguage;
 use \Joomla\CMS\User\UserFactoryInterface;
 use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\Registry\Registry;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
@@ -611,7 +611,7 @@ class ImageModel extends JoomAdminModel
         $filesystem_success = $manager->renameImages($old_table, $table->filename);        
       }
 
-			// Dont store the table if filesystem changes was not successful
+			// Don't store the table if filesystem changes was not successful
 			if(!$filesystem_success)
 			{
 				$this->component->addError(Text::_('COM_JOOMGALLERY_ERROR_SAVE_FILESYSTEM_ERROR'));

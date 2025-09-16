@@ -11,7 +11,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 \defined('_JEXEC') or die;
 
-use Psr\Http\Message\ResponseInterface;
+use \Psr\Http\Message\ResponseInterface;
 
 /**
 * TUS server Interface
