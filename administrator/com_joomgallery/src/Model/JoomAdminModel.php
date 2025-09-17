@@ -117,25 +117,29 @@ abstract class JoomAdminModel extends AdminModel
 
     $this->app       = Factory::getApplication('administrator');
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
-    $this->user      = $this->component->getMVCFactory()->getIdentity();
-    $this->typeAlias = _JOOM_OPTION . '.' . $this->type;
+    if (!$this->app->isClient('api')) {
+      $this->user = $this->component->getMVCFactory()->getIdentity();
+    } else {
+      $this->user = $this->app->getIdentity();
+    }
+    $this->typeAlias = _JOOM_OPTION.'.'.$this->type;
   }
 
   /**
-   * Returns a reference to the a Table object, always creating it.
-   *
-   * @param   string  $type    The table type to instantiate
-   * @param   string  $prefix  A prefix for the table class name. Optional.
-   * @param   array   $config  Configuration array for model. Optional.
-   *
-   * @return  Table    A database object
-   *
-   * @since   4.0.0
-   */
-  public function getTable($type = 'Image', $prefix = 'Administrator', $config = [])
-  {
-    return parent::getTable($this->type, $prefix, $config);
-  }
+	 * Returns a reference to the Table object, always creating it.
+	 *
+	 * @param   string  $type    The table type to instantiate
+	 * @param   string  $prefix  A prefix for the table class name. Optional.
+	 * @param   array   $config  Configuration array for model. Optional.
+	 *
+	 * @return  Table    A database object
+	 *
+	 * @since   4.0.0
+	 */
+	public function getTable($type = 'Image', $prefix = 'Administrator', $config = array())
+	{
+		return parent::getTable($this->type, $prefix, $config);
+	}
 
   /**
    * Method to get parameters from model state.
@@ -338,7 +342,13 @@ abstract class JoomAdminModel extends AdminModel
     $this->type = $type;
 
     // Get current user
-    $this->user = $this->component->getMVCFactory()->getIdentity();
+      $app = Factory::getApplication();
+      if (! $app->isClient('api')) {
+        $this->user = $this->component->getMVCFactory()->getIdentity();
+      } else {
+          $this->user = $app->getIdentity();
+      }
+
   }
 
   /**
