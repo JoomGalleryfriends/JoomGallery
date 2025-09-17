@@ -78,12 +78,17 @@
       </fieldset>
     </fields>
   </config>
-
+  <api>
+    <files folder="api/components/com_joomgallery">
+      <folder>src</folder>
+    </files>
+  </api>
   <plugins>
     <plugin group="system" plugin="joomgallery"/>
     <plugin group="system" plugin="joomowner"/>
     <plugin group="privacy" plugin="joomgallery"/>
     <plugin group="console" plugin="joomconsole"/>
+    <plugin group="webservices" plugin="joomgallery"/>
   </plugins>
 
   <changelogurl>https://www.joomgalleryfriends.net/updates/changelog.xml</changelogurl>
