@@ -115,12 +115,16 @@ abstract class JoomAdminModel extends AdminModel
 
     $this->app       = Factory::getApplication('administrator');
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
-    $this->user      = $this->component->getMVCFactory()->getIdentity();
+    if (!$this->app->isClient('api')) {
+      $this->user = $this->component->getMVCFactory()->getIdentity();
+    } else {
+      $this->user = $this->app->getIdentity();
+    }
     $this->typeAlias = _JOOM_OPTION.'.'.$this->type;
   }
 
   /**
-	 * Returns a reference to the a Table object, always creating it.
+	 * Returns a reference to the Table object, always creating it.
 	 *
 	 * @param   string  $type    The table type to instantiate
 	 * @param   string  $prefix  A prefix for the table class name. Optional.
@@ -335,7 +339,13 @@ abstract class JoomAdminModel extends AdminModel
     $this->type = $type;
 
     // Get current user
-    $this->user = $this->component->getMVCFactory()->getIdentity();
+      $app = Factory::getApplication();
+      if (! $app->isClient('api')) {
+        $this->user = $this->component->getMVCFactory()->getIdentity();
+      } else {
+          $this->user = $app->getIdentity();
+      }
+
   }
 
   /**
