@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomla\Component\Scheduler\Administrator\Field">
+  <fieldset name="general" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+    <field name="id"
+           type="text"
+           readonly="true"
+           class="readonly"
+           label="JGLOBAL_FIELD_ID_LABEL" />
+
+    <field name="title"
+           type="text"
+           maxlength="255"
+           filter="safehtml"
+           label="JGLOBAL_TITLE"
+           message="COM_JOOMGALLERY_ERROR_NEEDS_TITLE" />
+
+    <field name="type"
+				   type="taskType"
+				   label="COM_JOOMGALLERY_TASK_TYPE"
+				   required="true"
+				   readonly="true"
+				   maxlength="1024" />
+
+    <field name="taskid"
+           type="jgtask"
+           required="true"
+           label="COM_JOOMGALLERY_TASK_TASKID_LABEL"
+           description="COM_JOOMGALLERY_TASK_TASKID_DESC" />
+
+    <field name="queue"
+           type="text"
+           required="true"
+           default="0"
+           label="COM_JOOMGALLERY_TASK_QUEUE_LABEL"
+           description="COM_JOOMGALLERY_TASK_QUEUE_DESC" />
+
+    <field name="note"
+           type="text"
+           label="JFIELD_NOTE_LABEL"
+           description="JGLOBAL_FIELD_VERSION_NOTE_DESC"
+           class="inputbox"
+           size="45"
+           labelclass="control-label" />
+
+    <field name="published"
+           type="radio"
+           class="btn-group"
+           layout="joomla.form.field.radio.switcher"
+           default="1"
+           size="1"
+           label="JPUBLISHED">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="times_executed"
+           type="text"
+           readonly="true"
+           class="readonly"
+           default="0"
+           label="COM_JOOMGALLERY_TASK_EXECUTIONS" />
+
+    <field name="checked_out"
+           type="hidden"
+           filter="unset" />
+
+    <field name="ordering"/>
+
+    <field name="last_execution"
+           type="calendar"
+           class="form-control"
+           translateformat="true"
+           showtime="true"
+           size="22"
+           readonly="true"
+           filter="user_utc"
+           label="COM_JOOMGALLERY_TASK_LAST_RUN_DATE" />
+
+    <field name="created_time"
+           type="calendar"
+           translateformat="true"
+           showtime="true"
+           size="22"
+           filter="user_utc"
+           label="JGLOBAL_FIELD_CREATED_LABEL" />
+  </fieldset>
+</form>

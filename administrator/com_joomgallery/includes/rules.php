@@ -27,6 +27,7 @@ $rules_map_array = array
                                               '.category',
                                               '.config',
                                               '.tag',
+                                              '.task',
                                               '.collection'
                                             ),
                           'own'    => 'inown',
@@ -63,6 +64,7 @@ $rules_map_array = array
                                               '.category',
                                               '.config',
                                               '.tag',
+                                              '.task',
                                               '.collection'
                                             ),
                           'own'    => 'own',
@@ -80,6 +82,7 @@ $rules_map_array = array
                                               '.category',
                                               '.config',
                                               '.tag',
+                                              '.task',
                                               '.collection'
                                             ),
                           'own'    => 'own',
@@ -98,6 +101,7 @@ $rules_map_array = array
                                               '.category',
                                               '.config',
                                               '.tag',
+                                              '.task',
                                               '.collection'
                                             ),
                           'own'    => false,
