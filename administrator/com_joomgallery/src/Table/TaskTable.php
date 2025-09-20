@@ -217,7 +217,12 @@ class TaskTable extends Table
     {
       if(\is_string($this->queue))
       {
-        if(!$queue = \json_decode($this->queue))
+        if(\filter_var($this->queue, FILTER_VALIDATE_INT) !== false)
+        {
+          // integer value detected. Add it into an array
+          $queue = [$this->queue];
+        }
+        elseif(!$queue = \json_decode($this->queue))
         {
           // json_decode did not work. Lets try explode()
           $queue = \array_map('trim', \explode(',', $this->queue)) ?? [];
