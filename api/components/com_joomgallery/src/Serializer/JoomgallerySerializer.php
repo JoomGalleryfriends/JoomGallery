@@ -75,7 +75,7 @@ class JoomgallerySerializer extends JoomlaSerializer
 //        $resource = (new Resource($model->catid, $serializer))
 //            ->addLink(
 //                'self',
-//                Route::link('siadministratorte', Uri::root() . 'api/index.php/v1/joomgallery/images/' . $model->catid)
+//                Route::link('administrator', Uri::root() . 'api/index.php/v1/joomgallery/categories/' . $model->catid)
 //            );
 //
 //        return new Relationship($resource);
