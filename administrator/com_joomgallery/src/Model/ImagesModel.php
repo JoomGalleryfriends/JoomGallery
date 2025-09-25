@@ -207,9 +207,12 @@ class ImagesModel extends JoomListModel
     }
 
     // With less than two tags, we dont need the AND logic
-    if(\count($tag) < 2)
-    {
-      $logicAnd = false;
+    if(empty($tag)) {
+        $logicAnd = false;
+    } else {
+        if (\count($tag) < 2) {
+            $logicAnd = false;
+        }
     }
 
     // Select the required fields from the table.
@@ -516,12 +519,15 @@ class ImagesModel extends JoomListModel
     }
 
     // With less than two tags, we dont need the AND logic
-    if(\count($tag) < 2)
-    {
-      $logicAnd = false;
+    if(empty($tag)) {
+        $logicAnd = false;
+    } else {
+        if (\count($tag) < 2) {
+            $logicAnd = false;
+        }
     }
 
-		// Select the required fields from the table.
+    // Select the required fields from the table.
     if(!empty($tag) && \count($tag) > 1 && !$logicAnd)
     {
       // Add DISTINCT when filtering with multiple tags
