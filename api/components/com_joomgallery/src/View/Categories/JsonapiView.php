@@ -182,7 +182,7 @@ class JsonapiView extends BaseApiView
     {
         $this->relationship[] = 'modified_by';
 
-        foreach (FieldsHelper::getFields('com_joomgallery.project') as $field) {
+        foreach (FieldsHelper::getFields('com_joomgallery.categories') as $field) {
             $this->fieldsToRenderItem[] = $field->name;
         }
 
@@ -213,7 +213,7 @@ class JsonapiView extends BaseApiView
 
         // Process the joomgallery plugins.
         PluginHelper::importPlugin('joomgallery');
-        Factory::getApplication()->triggerEvent('onContentPrepare', ['com_joomgallery.project', &$item, &$item->params]);
+//        Factory::getApplication()->triggerEvent('onContentPrepare', ['com_joomgallery.categories', &$item, &$item->params]);
 
         foreach (FieldsHelper::getFields('com_joomgallery.project', $item, true) as $field) {
             $item->{$field->name} = $field->apivalue ?? $field->rawvalue;

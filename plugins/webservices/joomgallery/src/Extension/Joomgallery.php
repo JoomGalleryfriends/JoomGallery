@@ -61,7 +61,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
 //			    ['slug' => '(.*)'], ['option' => 'com_example']),
 
       $router->addRoutes([
-        new Route(['GET'], 'v1/joomgallery/version', 'joomgallery.version', [], $getDefaults),
+        new Route(['GET'], 'v1/joomgallery/version', 'version.display', [], $getDefaults),
       ]);
 
 //      $router->addRoutes([
