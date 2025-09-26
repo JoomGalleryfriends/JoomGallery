@@ -105,6 +105,7 @@ class JoomgalleryController extends ApiController
 			throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
 		}
 
+        // test if model is valid
 		try {
 			$modelName = $model->getName();
 		} catch (\Exception $e) {

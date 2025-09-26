@@ -1,30 +1,30 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
-
+ * @package        RSGallery2
+ * @subpackage     com_rsgallery2
+ * @author         RSGallery2 Team <team2@rsgallery2.org>
+ * @copyright  (c) 2005-2025 RSGallery2 Team
+ * @license        GNU General Public License version 2 or later
+ */
+ 
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
-use Joomla\CMS\Language\Text;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\MVC\Controller\ApiController;
+use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\String\Inflector;
-use Joomgallery\Component\Joomgallery\Api\View\Version\JsonapiView;
-//use Joomla\CMS\MVC\View\JsonApiView;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * The version controller
+ * The images controller
  *
  * @since  4.0.0
  */
-class VersionController extends ApiController
+class ConfiginjController extends ApiController
 {
     /**
      * The content type of the item.
@@ -32,7 +32,7 @@ class VersionController extends ApiController
      * @var    string
      * @since  4.0.0
      */
-    protected $contentType = 'version';
+    protected $contentType = 'configinj';
 
     /**
      * The default view for the display method.
@@ -40,14 +40,15 @@ class VersionController extends ApiController
      * @var    string
      * @since  3.0
      */
-    protected $default_view = 'version';
+    protected $default_view = 'configinj';
 
     /**
      * Call version model
+     *
      * @param $cachable
      * @param $urlparams
      *
-     * @return $this|VersionController
+     * @return $this|\Joomgallery\Component\Joomgallery\Api\Controller\VersionController
      *
      * @since version
      */
@@ -58,7 +59,7 @@ class VersionController extends ApiController
         $viewLayout = $this->input->get('layout', 'default', 'string');
 
         try {
-            /** @var JsonApiView $view */
+            /** @var \Joomla\CMS\MVC\View\JsonApiView $view */
             $view = $this->getView(
                 $viewName,
                 $viewType,
@@ -66,7 +67,12 @@ class VersionController extends ApiController
                 ['base_path' => $this->basePath, 'layout' => $viewLayout, 'contentType' => $this->contentType]
             );
         } catch (\Exception $e) {
-            throw new \RuntimeException($e->getMessage());
+            // throw new \RuntimeException($e->getMessage());
+            throw new \RuntimeException(''
+//                . "type: '" . $viewType ?? '' . "' "
+                . "name: '" . $viewName ?? ''  . "' "
+                . "layout: '" . $viewLayout ?? ''  . "' "
+                . $e->getMessage());
         }
 
         $modelName = $this->input->get('model', Inflector::singularize($this->contentType));
@@ -94,4 +100,6 @@ class VersionController extends ApiController
         return $this;
     }
 
+
+    // Implement other methods like read, update, delete as needed
 }

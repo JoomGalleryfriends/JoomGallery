@@ -20,7 +20,7 @@ use Joomla\Database\DatabaseInterface;
  *
  * @since  4.2.0
  */
-class VersionModel extends BaseModel
+class ConfiginjModel extends BaseModel
 {
     /**
      * Instance of com_media's ApiModel
@@ -38,6 +38,7 @@ class VersionModel extends BaseModel
     }
 
     /**
+     * Method to get all configuration parameters
      *
      * @return  \stdClass  A file or folder object.
      *
@@ -48,30 +49,32 @@ class VersionModel extends BaseModel
 
         $componentName = 'com_joomgallery';
 
-        $oVersion = new \stdClass();
-        $oVersion->version = "xx.xx.xx";
-        $oVersion->creationDate = "2025.xx.xx";
+        $oConfig = new \stdClass();
 
         try {
 
-            //$db = Factory::getDbo();
             $db = Factory::getContainer()->get(DatabaseInterface::class);
+//            $db = $this->database;
 
             $query = $db->getQuery(true)
-                ->select($db->quoteName('manifest_cache'))
+                ->select($db->quoteName('params'))
                 ->from($db->quoteName('#__extensions'))
                 ->where($db->quoteName('element') . ' = ' . $db->quote($componentName));
             $db->setQuery($query);
 
-            $manifest = json_decode($db->loadResult(), true);
+            $jsonStr = $db->loadResult();
+            if (!empty ($jsonStr)) {
+                $params = json_decode($jsonStr, true);
+            }
 
-            $oVersion->version = $manifest['version'];
-            $oVersion->creationDate = $manifest['creationDate'];
+            $oConfig = (object) $params;
 
         } catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
 
-        return $oVersion;
+        return $oConfig;
     }
+
+
 }
