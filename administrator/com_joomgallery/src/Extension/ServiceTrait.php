@@ -27,16 +27,23 @@ trait ServiceTrait
   /**
    * JoomGallery extension class
    * 
-   * @var JoomgalleryComponent
+   * @var JoomgalleryComponent|null
    */
   protected $component = null;
 
   /**
    * Current application object
    *
-   * @var    CMSApplicationInterface
+   * @var    CMSApplicationInterface|null
    */
   protected $app = null;
+
+  /**
+   * Internal store for dynamic properties.
+   *
+   * @var array<string, mixed>
+   */
+  protected array $__data = [];
 
   /**
 	 * Sets a default value if not already assigned
@@ -65,37 +72,22 @@ trait ServiceTrait
 	 *
 	 * @since   4.0.0
 	 */
-	public function get($property, $default = null)
+	public function get(string $property, $default = null)
 	{
-		if(isset($this->$property))
+		// Get real property if exists
+		if(\property_exists($this, $property) && isset($this->$property))
 		{
 			return $this->$property;
 		}
 
+		// Get dynamic property if exists
+		if(\array_key_exists($property, $this->__data) && isset($this->__data[$property]))
+		{
+			return $this->__data[$property];
+		}
+
+		// Return default value as fallback
 		return $default;
-	}
-
-  /**
-	 * Returns an associative array of object properties.
-	 *
-	 * @param   boolean  $public  If true, returns only the public properties.
-	 *
-	 * @return  array
-	 *
-	 * @since   4.0.0
-	 */
-	public function getProperties($public = true)
-	{
-		if($public)
-		{
-			$vars = \Closure::fromCallable("get_object_vars")->__invoke($this);
-		}
-		else
-		{
-			$vars = \get_object_vars($this);
-		}
-
-		return $vars;
 	}
 
   /**
@@ -108,12 +100,67 @@ trait ServiceTrait
 	 *
 	 * @since   4.0.0
 	 */
-	public function set($property, $value = null)
+	public function set(string $property, $value = null)
 	{
-		$previous = $this->$property ?? null;
-		$this->$property = $value;
+		if(\property_exists($this, $property))
+		{
+			// Set the real property if exists
+			$previous = $this->$property ?? null;
+			$this->$property = $value;
+		}
+		else
+		{
+			// Set dynamic property
+			$previous = $this->__data[$property] ?? null;
+			$this->__data[$property] = $value;
+		}
 
 		return $previous;
+	}
+
+  /**
+	 * Returns an associative array of object properties.
+	 *
+	 * @param   boolean  $public  If true, returns only the public properties.
+	 *
+	 * @return  array
+	 *
+	 * @since   4.0.0
+	 */
+	public function getProperties(bool $public = true): array
+	{
+    $vars = \array_merge(\get_object_vars($this), $this->__data);
+
+		if($public)
+    {
+      // Remove all properties starting with an underscore
+      foreach($vars as $key => $value)
+      {
+        if(\str_starts_with($key, '_'))
+        {
+          unset($vars[$key]);
+        }
+      }
+
+      // Now remove protected/private props declared in this class or parents
+      $reflection = new \ReflectionObject($this);
+      do {
+        $nonPublicProps = $reflection->getProperties(
+          \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PRIVATE
+        );
+
+        foreach($nonPublicProps as $prop)
+        {
+          $propName = $prop->getName();
+          if(\array_key_exists($propName, $vars))
+          {
+            unset($vars[$propName]);
+          }
+        }
+      } while ($reflection = $reflection->getParentClass());
+    }
+
+		return $vars;
 	}
 
   /**
