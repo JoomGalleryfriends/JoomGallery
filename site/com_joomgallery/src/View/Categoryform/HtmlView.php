@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Site\Model\CategoryformModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
@@ -65,18 +66,18 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function display($tpl = null)
 	{
-		$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_NOT_YET_AVAILABLE'), 'warning');
+//		$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_NOT_YET_AVAILABLE'), 'warning');
 
 		if(!$this->app->input->get('preview', 0))
 		{
 			return;
 		}
 
-		/** @var CategoryfromModel $model */
+		/** @var CategoryformModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();
@@ -95,7 +96,7 @@ class HtmlView extends JoomGalleryView
     }
 		
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}

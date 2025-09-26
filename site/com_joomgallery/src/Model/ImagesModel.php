@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // No direct access.
 defined('_JEXEC') or die;
 
+use \Joomla\Database\Mysqli\MysqliQuery;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\ImagesModel as AdminImagesModel;
 
 /**
@@ -91,11 +92,11 @@ class ImagesModel extends AdminImagesModel
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return  DatabaseQuery
+	 * @return  MysqliQuery
 	 *
 	 * @since   4.0.0
 	 */
-	protected function getListQuery()
+	protected function getListQuery(): MysqliQuery
 	{
     $query = parent::getListQuery();
 

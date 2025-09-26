@@ -16,6 +16,7 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Site\Model\ImagesModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
@@ -47,7 +48,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function display($tpl = null)
 	{
@@ -62,7 +63,7 @@ class HtmlView extends JoomGalleryView
 		$this->activeFilters = $model->getActiveFilters();
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
@@ -79,7 +80,7 @@ class HtmlView extends JoomGalleryView
       // Redirect to gallery view
       $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
       
-      return false;
+      return;
     }
 
 		$this->_prepareDocument();
