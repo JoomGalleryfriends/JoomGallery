@@ -64,6 +64,11 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         new Route(['GET'], 'v1/joomgallery/version', 'version.display', [], $getDefaults),
       ]);
 
+        // joomla part of JG (not much there)
+        $router->addRoutes([
+            new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),
+        ]);
+
 //      $router->addRoutes([
 //		    new Route(['GET'], 'v1/joomgallery', 'joomgallery.displayItem', [], $getDefaults),
 //	    ]);
@@ -88,6 +93,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
 			 ['component' => 'com_joomgallery'],
 	         true // ToDo: Remove when tests finished
 		 );
+
 
          // custom fields
         // $this->createFieldsRoutes($router);
@@ -156,6 +162,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         ];
 
         $router->addRoutes($routes);
+
     }
 }
 
