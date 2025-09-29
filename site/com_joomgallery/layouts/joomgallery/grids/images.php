@@ -41,6 +41,7 @@ extract($displayData);
 <div class="jg-gallery <?php echo $layout; ?>" itemscope="" itemtype="https://schema.org/ImageGallery">
   <div class="jg-loader"></div>
   <div id="lightgallery-<?php echo $id; ?>" class="jg-images <?php echo $layout; ?>-<?php echo $num_columns; ?> jg-category" data-masonry="{ pollDuration: 175 }">
+    <?php $index = 0; ?>
     <?php foreach($items as $key => $item) : ?>
 
       <div class="jg-image">
@@ -52,11 +53,6 @@ extract($displayData);
           <?php if($image_link == 'lightgallery') : ?>
             <a class="lightgallery-item" href="<?php echo JoomHelper::getImg($item, $lightbox_type); ?>" data-sub-html="#jg-image-caption-<?php echo $item->id; ?>" data-thumb="<?php echo JoomHelper::getImg($item, $image_type); ?>">
               <img src="<?php echo JoomHelper::getImg($item, $image_type); ?>" class="jg-image-thumb" alt="<?php echo $item->title; ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php endif; ?>>
-              <?php if($layout != 'justified' && $title_link == 'lightgallery') : ?>
-                <div class="jg-image-caption <?php echo $caption_align; ?>">
-                  <?php echo $this->escape($item->title); ?>
-                </div>
-              <?php endif; ?>
               <?php if($image_title && $layout == 'justified') : ?>
                 <div class="jg-image-caption-hover <?php echo $caption_align; ?>">
                   <?php echo $this->escape($item->title); ?>
@@ -115,6 +111,13 @@ extract($displayData);
                 <?php elseif($title_link != 'lightgallery') : ?>
                   <?php echo $this->escape($item->title); ?>
                 <?php endif; ?>
+                <?php if($layout != 'justified' && $title_link == 'lightgallery') : ?>
+                  <!-- <div class="jg-image-caption <?php echo $caption_align; ?>"> -->
+                  <a href="#" class="caption-trigger-<?php echo $id; ?>" data-index="<?php echo $index; ?>">
+                    <?php echo $this->escape($item->title); ?>
+                  </a>
+                  <!-- </div> -->
+                <?php endif; ?>
               <?php endif; ?>
             <?php endif; ?>
 
@@ -138,6 +141,7 @@ extract($displayData);
           </div>
         <?php endif; ?>
       </div>
+    <?php $index++; ?>
     <?php endforeach; ?>
   </div>
 </div>
