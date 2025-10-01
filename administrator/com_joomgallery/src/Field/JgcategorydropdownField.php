@@ -60,13 +60,21 @@ class JgcategorydropdownField extends ListField
   protected $isCategoriesOfUser;
 
   /**
-   * Optional add " -No parent- " as selevtion
+   * Add " -No parent- " as first selection
    *
    *
    * @var    bool
    * @since  4.0.0
    */
   protected $isShow_NoParent;
+
+  /**
+   * Add " -select category- " as first selection
+   *
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $isShow_SelectHeader;
 
   /**
    * Optional restrict to categories of logged user
@@ -109,6 +117,7 @@ class JgcategorydropdownField extends ListField
 
       $this->isCategoriesOfUser = isset($this->element['categoriesOfUser']) ? (boolean) $this->element['categoriesOfUser'] : false;
       $this->isShow_NoParent = isset($this->element['show_NoParent']) ? (boolean) $this->element['show_NoParent'] : false;
+      $this->isShow_SelectHeader = isset($this->element['showSelect']) ? (boolean) $this->element['showSelect'] : false;
 
       $elementOrdering = $this->element['ordering'] ?? '';
       if (strtolower($elementOrdering) == 'desc') {
@@ -394,8 +403,11 @@ class JgcategorydropdownField extends ListField
       }
     }
 
-    if($oldCat != 0 && ($this->element['parent'] == true || ($jinput->get('option') == _JOOM_OPTION
-          && ($jinput->get('view') == 'category') || $jinput->get('view') == 'usercategory'))
+    if($oldCat != 0
+      && (
+        $this->element['parent'] == true
+        || ($jinput->get('option') == _JOOM_OPTION && ($jinput->get('view') == 'category')
+        || $jinput->get('view') == 'usercategory'))
       && !isset($options[0])
       && isset($this->element['show_root']))
     {
@@ -421,13 +433,18 @@ class JgcategorydropdownField extends ListField
         \array_unshift($options, $parent);
       }
 
-      \array_unshift($options, HTMLHelper::_('select.option', '0', Text::_('JGLOBAL_ROOT')));
     }
 
     if ($this->isShow_NoParent)
     {
       // Merge root (any additional options) in the XML definition.
       \array_unshift($options, HTMLHelper::_('select.option', '1', Text::_('JGLOBAL_ROOT_PARENT')));
+    }
+
+    if ($this->isShow_SelectHeader)
+    {
+      // Merge root (any additional options) in the XML definition.
+      \array_unshift($options, HTMLHelper::_('select.option', '', Text::_('JOPTION_SELECT_CATEGORY')));
     }
 
     return \array_merge(parent::getOptions(), $options);

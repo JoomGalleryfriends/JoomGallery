@@ -114,9 +114,12 @@
     <field name="catid"
            type="jgcategorydropdown"
            label="JCATEGORY"
+           hint="JOPTION_SELECT_CATEGORY"
+           layout="joomla.form.field.list-fancy-select"
            categoriesOfUser="true"
-           default=""
            show_root="false"
+           showSelect="true"
+           default=""
            required="true"
            ordering="desc"
            message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY" />
