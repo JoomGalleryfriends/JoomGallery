@@ -13,8 +13,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseQuery;
 use \Joomla\Utilities\ArrayHelper;
+use \Joomla\Database\DatabaseQuery;
 use \Joomla\Database\ParameterType;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 

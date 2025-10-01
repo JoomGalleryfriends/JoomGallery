@@ -16,7 +16,7 @@ use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Response\JsonResponse;
-use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 
 /**
  * Image controller class.
