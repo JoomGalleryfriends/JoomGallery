@@ -150,8 +150,8 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * The base form is loaded from XML
    *
-   * @param   array     $data      An optional array of data for the form to interogate.
-   * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
+   * @param   array   $data      An optional array of data for the form to interogate.
+   * @param   bool    $loadData  True if the form is to load its own data (default case), false if not.
    *
    * @return  Form|CurrentUserInterface|false    A Form object on success, false on failure
    *
@@ -168,26 +168,31 @@ class UsercategoryModel extends AdminCategoryModel
       return false;
     }
 
-    // Disable remove password field if no password is set
-    if(!$this->is_password)
-    {
-      $form->setFieldAttribute('rm_password', 'disabled', 'true');
-      $form->setFieldAttribute('rm_password', 'filter', 'unset');
-      $form->setFieldAttribute('rm_password', 'hidden', 'true');
-      $form->setFieldAttribute('rm_password', 'class', 'hidden');
-    }
-
-    // Apply filter to exclude child categories
-    $children = $form->getFieldAttribute('parent_id', 'children', 'true');
-    $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
-    if(!$children)
-    {
-      $form->setFieldAttribute('parent_id', 'exclude', $this->item->id);
-    }
-
-    // Apply filter for current category on thumbnail field
-    $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
-
+//    // Disable remove password field if no password is set
+//    if(!$this->is_password)
+//    {
+//      $form->setFieldAttribute('rm_password', 'disabled', 'true');
+//      $form->setFieldAttribute('rm_password', 'filter', 'unset');
+//      $form->setFieldAttribute('rm_password', 'hidden', 'true');
+//      $form->setFieldAttribute('rm_password', 'class', 'hidden');
+//
+//      $form->setFieldAttribute('password', 'lock', 'false');
+//    }
+//    else { // ToDo Remove (debug reasons)
+//      $this->is_password = true;
+//    }
+//
+//    // Apply filter to exclude child categories
+//    $children = $form->getFieldAttribute('parent_id', 'children', 'true');
+//    $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
+//    if(!$children)
+//    {
+//      $form->setFieldAttribute('parent_id', 'exclude', $this->item->id);
+//    }
+//
+//    // Apply filter for current category on thumbnail field
+//    $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
+//
     return $form;
   }
 

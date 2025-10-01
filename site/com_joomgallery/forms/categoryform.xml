@@ -74,13 +74,26 @@
            type="password"
            size="100"
            label="JGLOBAL_PASSWORD"
-           description="COM_JOOMGALLERY_FIELDS_PASSWORD_DESC" />
+           description="COM_JOOMGALLERY_FIELDS_PASSWORD_DESC"
+           filter="raw"
+           lock="true"
+           strengthmeter="true" />
+
+    <field name="rm_password"
+           type="radio"
+           label="COM_JOOMGALLERY_FIELDS_REMOVE_PASSWORD_LABEL"
+           description="COM_JOOMGALLERY_FIELDS_REMOVE_PASSWORD_DESC"
+           class="btn-group"
+           default="0">
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
 
     <field name="language"
            type="language"
            client="administrator"
            label="JGRID_HEADING_LANGUAGE" >
-           <option value="*">JALL</option>
+      <option value="*">JALL</option>
     </field>
 
     <field name="description"

@@ -80,6 +80,7 @@ class HtmlView extends JoomGalleryView
   {
     // Get model data
 
+    /** @var \Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();
@@ -114,6 +115,36 @@ class HtmlView extends JoomGalleryView
     if(\count($errors = $model->getErrors()))
     {
       throw new GenericDataException(\implode("\n", $errors), 500);
+    }
+
+    //--- handle form fields -----------------------------------------------------
+
+    if(!empty($this->form))
+    {
+      $form = $this->form;
+
+      // Disable remove password field if no password is set
+      if(!$model->hasPassword())
+      {
+        $form->setFieldAttribute('rm_password', 'disabled', 'true');
+        // 'filter', 'unset': multiple calls of code in model leads to ignore of reset password
+        $form->setFieldAttribute('rm_password', 'filter', 'unset');
+        $form->setFieldAttribute('rm_password', 'hidden', 'true');
+        $form->setFieldAttribute('rm_password', 'class', 'hidden');
+
+        $form->setFieldAttribute('password', 'lock', 'false');
+      }
+
+      // Apply filter to exclude child categories
+      $children = $form->getFieldAttribute('parent_id', 'children', 'true');
+      $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
+      if(!$children)
+      {
+        $form->setFieldAttribute('parent_id', 'exclude', $this->item->id);
+      }
+
+      // Apply filter for current category on thumbnail field
+      $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
     }
 
     // Prepares the document breadcrumbs

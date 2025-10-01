@@ -16,6 +16,7 @@ use \Joomla\CMS\Factory;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\Controller\FormController;
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 
 /**
  * User category controller class.
@@ -24,7 +25,7 @@ use \Joomla\CMS\MVC\Controller\FormController;
  *
  * @since   4.2.0
  */
-class UsercategoryController extends FormController
+class UsercategoryController extends JoomFormController // FormController
 {
   use RoutingTrait;
 
@@ -132,6 +133,28 @@ class UsercategoryController extends FormController
     return $isSaved;
   }
 
+//  /**
+//   * Method to save data.
+//   *
+//   * @param $key
+//   * @param $urlVar
+//   *
+//   * @return  bool
+//   *
+//   * @throws  \Exception
+//   * @since   4.2.0
+//   */
+//  public function savePrepared($key = null, $urlVar = null): bool
+//  {
+//    // Check for request forgeries.
+//    $this->checkToken();
+//
+//    // $model = $this->component->getModel();
+//    $model = $this->getModel();
+//
+//    return $this->save($key, $urlVar);
+//  }
+
   /**
    * Method to save data.
    *
@@ -145,8 +168,6 @@ class UsercategoryController extends FormController
    */
   public function save($key = null, $urlVar = null): bool
   {
-    // Check for request forgeries.
-    $this->checkToken();
 
     // Get the user data.
     $data = $this->input->post->get('jform', [], 'array');

@@ -53,9 +53,7 @@
            type="text"
            label="JGLOBAL_SHOW_PARENT_CATEGORY_LABEL"
            class="readonly"
-           readonly="true"
-    >
-    </field>
+           readonly="true"/>
 
     <!-- drop down list -->
     <field name="parent_id"
@@ -90,8 +88,7 @@
            description="COM_JOOMGALLERY_FIELDS_PASSWORD_DESC"
            filter="raw"
            lock="true"
-           strengthmeter="true" />
-    />
+           strengthmeter="true"/>
 
     <field name="rm_password"
            type="radio"
@@ -176,8 +173,7 @@
            description="JGLOBAL_FIELD_CREATED_BY_DESC"
            validate="UserId"
            class="readonly form-control:disabled"
-           readonly="true"
-    />
+           readonly="true"/>
 
     <field name="modified_by"
            type="user"
@@ -191,20 +187,20 @@
     <field name="modified_time"
            type="calendar"
            class="readonly form-control:disabled"
+           readonly="true"
            translateformat="true"
            showtime="true"
            size="22"
-           readonly="true"
            filter="user_utc"
            label="JGLOBAL_FIELD_MODIFIED_LABEL"/>
 
     <field name="metadesc"
            type="textarea"
-           cols="40"
-           rows="5"
            filter="safehtml"
            label="JGLOBAL_DESCRIPTION"
            description="JFIELD_META_DESCRIPTION_LABEL"
+           rows="5"
+           cols="40"
            maxlength="300"
            charcounter="true"/>
 
@@ -249,6 +245,7 @@
 
     <field name="rules"
            type="rules"
+           asset_field="asset_id"
            label="JFIELD_RULES_LABEL"
            translate_label="false"
            filter="rules"
