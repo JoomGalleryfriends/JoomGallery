@@ -155,7 +155,8 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   </a>
 <?php endif; ?>
 
-<?php // Edit buttons ?>
+<?php /*
+// Edit buttons ?>
 <?php if($canEdit || $canAdd || $canDelete): ?>
   <div class="mb-3">
     <?php if($canEdit): ?>
@@ -164,11 +165,11 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
       </a>
     <?php endif; ?>
 
-    <?php /*if($canAdd): ?>
+    <?php / *if($canAdd): ?>
       <a class="btn btn-outline-success" href="<?php echo Route::_('index.php?option=com_joomgallery&task=usercategory.add&id=0&catid='.$this->item->id.'&return='.$returnURL); ?>">
         <?php echo Text::_("JGLOBAL_FIELD_ADD"); ?>
       </a>
-    <?php endif; */?>
+    <?php endif; * /?>
 
     <?php if($canDelete) : ?>
       <a class="btn btn-danger" rel="noopener noreferrer" href="#deleteModal" role="button" data-bs-toggle="modal">
@@ -190,6 +191,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
     <?php endif; ?>
   </div>
 <?php endif; ?>
+<?php */ ?>
 
 <?php // Category text ?>
 <p><?php echo $this->item->description; ?></p>
