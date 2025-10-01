@@ -159,13 +159,13 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php if($canEdit || $canAdd || $canDelete): ?>
   <div class="mb-3">
     <?php if($canEdit): ?>
-      <a class="btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.edit&id='.$this->item->id.'&return='.$returnURL); ?>">
+      <a class="btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&task=usercategory.edit&id='.$this->item->id.'&return='.$returnURL); ?>">
         <i class="jg-icon-edit"></i><span><?php echo Text::_("JACTION_EDIT"); ?></span>
       </a>
     <?php endif; ?>
 
     <?php /*if($canAdd): ?>
-      <a class="btn btn-outline-success" href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.add&id=0&catid='.$this->item->id.'&return='.$returnURL); ?>">
+      <a class="btn btn-outline-success" href="<?php echo Route::_('index.php?option=com_joomgallery&task=usercategory.add&id=0&catid='.$this->item->id.'&return='.$returnURL); ?>">
         <?php echo Text::_("JGLOBAL_FIELD_ADD"); ?>
       </a>
     <?php endif; */?>
@@ -182,7 +182,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
                                     'width'  => '20%',
                                     'modalWidth'  => '50',
                                     'bodyHeight'  => '100',
-                                    'footer' => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=category.remove&id='. $this->item->id.'&return='.$returnURL.'&'.Session::getFormToken().'=1', false, 2) .'" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION') .'</a>'
+                                    'footer' => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=usercategory.remove&id='. $this->item->id.'&return='.$returnURL.'&'.Session::getFormToken().'=1', false, 2) .'" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION') .'</a>'
                                 ),
                                 Text::_('COM_JOOMGALLERY_COMMON_ALERT_SURE_DELETE_SELECTED_ITEM')
                               );
@@ -237,6 +237,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
       ?>
       <input type="hidden" name="contenttype" value="image"/>
       <input type="hidden" name="task" value=""/>
+      <input type="hidden" name="return" value="<?php echo $returnURL; ?>"/>
       <input type="hidden" name="filter_order" value=""/>
       <input type="hidden" name="filter_order_Dir" value=""/>
       <?php echo HTMLHelper::_('form.token'); ?>

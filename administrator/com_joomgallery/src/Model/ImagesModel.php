@@ -13,6 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
+use \Joomla\Database\DatabaseQuery;
 use \Joomla\Utilities\ArrayHelper;
 use \Joomla\Database\ParameterType;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
@@ -91,7 +92,7 @@ class ImagesModel extends JoomListModel
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function populateState($ordering = 'a.id', $direction = 'ASC')
 	{
@@ -177,8 +178,8 @@ class ImagesModel extends JoomListModel
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return  DatabaseQuery
-	 *
+	 * @return  \Joomla\Database\QueryInterface
+   *
 	 * @since   4.0.0
 	 */
 	protected function getListQuery()

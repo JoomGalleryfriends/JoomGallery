@@ -87,8 +87,11 @@
            type="password"
            size="100"
            label="JGLOBAL_PASSWORD"
+           description="COM_JOOMGALLERY_FIELDS_PASSWORD_DESC"
+           filter="raw"
            lock="true"
-           description="COM_JOOMGALLERY_FIELDS_PASSWORD_DESC"/>
+           strengthmeter="true" />
+    />
 
     <field name="rm_password"
            type="radio"

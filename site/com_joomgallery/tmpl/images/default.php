@@ -29,7 +29,10 @@ $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', 0, 1, true);
 $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
-$returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->getLayout()));
+// $returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->getLayout()));
+$returnURL = base64_encode(JoomHelper::getListRoute('images', null, $this->getLayout()));
+
+// $baseLink_ImageEdit = 'index.php?option=com_joomgallery&task=userimage.edit&id=';
 
 $saveOrderingUrl = '';
 if($saveOrder && !empty($this->items))
@@ -194,7 +197,7 @@ $canDeleteFound = false;
                   <?php if($canEdit || $canDelete): ?>
                     <?php if($canEdit): ?>
                       <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
-                              data-item-id="cb<?php echo $i; ?>" data-item-task="image.edit" <?php echo $disabled; ?>>
+                              data-item-id="cb<?php echo $i; ?>" data-item-task="userimage.edit" <?php echo $disabled; ?>>
                         <span class="icon-edit" aria-hidden="true"></span>
                       </button>
                     <?php endif; ?>
