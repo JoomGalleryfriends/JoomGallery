@@ -65,11 +65,12 @@ class HtmlView extends JoomGalleryView
     $this->item->images->pagination = $model->getImagesPagination();
 
     // Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
+    // Prepares the document breadcrumbs
     $this->_prepareDocument();
 
     parent::display($tpl);

@@ -29,10 +29,10 @@
             <option value="a.lft DESC">JGRID_HEADING_ORDERING_DESC</option>
             <option value="a.title ASC">JGLOBAL_TITLE_ASC</option>
             <option value="a.title DESC">JGLOBAL_TITLE_DESC</option>
-            <option value="a.img_count ASC">COM_JOOMGALLERY_IMAGES_ASC</option>
-            <option value="a.img_count DESC">COM_JOOMGALLERY_IMAGES_DESC</option>
-            <option value="a.parent_title ASC">COM_JOOMGALLERY_PARENT_CATEGORY_LABEL_ASC</option>
-            <option value="a.parent_title DESC">COM_JOOMGALLERY_PARENT_CATEGORY_LABEL_DESC</option>
+            <option value="img_count ASC">COM_JOOMGALLERY_IMAGES_ASC</option>
+            <option value="img_count DESC">COM_JOOMGALLERY_IMAGES_DESC</option>
+            <option value="parent_title ASC">COM_JOOMGALLERY_PARENT_CATEGORY_LABEL_ASC</option>
+            <option value="parent_title DESC">COM_JOOMGALLERY_PARENT_CATEGORY_LABEL_DESC</option>
             <option value="a.published ASC">JSTATUS_ASC</option>
             <option value="a.published DESC">JSTATUS_DESC</option>
         </field>

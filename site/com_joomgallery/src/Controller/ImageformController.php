@@ -71,12 +71,12 @@ class ImageformController extends FormController
 	/**
 	 * Method to save data.
 	 *
-	 * @return  void
+	 * @return  bool
 	 *
 	 * @throws  \Exception
 	 * @since   4.0.0
 	 */
-	public function save($key = NULL, $urlVar = NULL)
+	public function save($key = NULL, $urlVar = NULL): bool
 	{
 		// Check for request forgeries.
 		$this->checkToken();

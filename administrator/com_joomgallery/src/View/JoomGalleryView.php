@@ -64,7 +64,7 @@ class JoomGalleryView extends BaseHtmlView
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 

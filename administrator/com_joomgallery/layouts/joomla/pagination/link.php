@@ -5,13 +5,13 @@
 **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
 **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
 **   @license    GNU General Public License version 3 or later                          **
-******************************************************************************************/
+*****************************************************************************************/
 
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Language\Text;
 
 $item       = $displayData['data'];
 $display    = $item->text;

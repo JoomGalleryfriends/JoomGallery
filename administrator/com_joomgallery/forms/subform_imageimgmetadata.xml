@@ -16,7 +16,7 @@
     <field name="exif"
            type="subform"
            formsource="administrator/components/com_joomgallery/forms/subform_metadata_exif.xml"
-           layout="joomla.form.field.subform.exif"
+           layout="joomla.form.field.subform.default"
            label="EXIF" />
   </fieldset>
 </form>

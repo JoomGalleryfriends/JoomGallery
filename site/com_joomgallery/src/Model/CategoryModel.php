@@ -13,11 +13,13 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\User\UserHelper;
 use \Joomla\CMS\MVC\Model\ListModel;
+use \Joomla\CMS\Pagination\Pagination;
 use \Joomla\CMS\Language\Multilanguage;
 use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\CMS\User\UserHelper;
 
 /**
  * Model to get a category record.
@@ -44,7 +46,7 @@ class CategoryModel extends JoomItemModel
 	 *
 	 * @since   4.0.0
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function populateState()
 	{
@@ -162,12 +164,7 @@ class CategoryModel extends JoomItemModel
 
     if(!$category = $db->loadObject())
     {
-      throw new \Exception($db->getErrorMsg());
-    }
-
-    if(!$category)
-    {
-      throw new \Exception('Provided category not found.');
+      throw new \Exception('Provided category not found. '. $db->getErrorMsg());
     }
 
     if(!$category->password)
@@ -222,7 +219,7 @@ class CategoryModel extends JoomItemModel
 	 *
 	 * @return  array|false    Array of children on success, false on failure.
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
   public function getChildren()
   {
@@ -287,7 +284,7 @@ class CategoryModel extends JoomItemModel
    * @param   array    $data      data
    * @param   boolean  $loadData  load current data
    *
-   * @return  Form|null  The \JForm object or null if the form can't be found
+   * @return  Form|null  The Joomla Form object or null if the form can't be found
    */
   public function getChildrenFilterForm($data = [], $loadData = true)
   {
@@ -333,7 +330,7 @@ class CategoryModel extends JoomItemModel
 	 *
 	 * @return  array|false    Array of images on success, false on failure.
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
   public function getImages()
   {
@@ -472,12 +469,12 @@ class CategoryModel extends JoomItemModel
     }
 
     $imgform_list = array();
-    $imgform_limitstart = $this->app->getUserState('joom.categoryview.'.$this->item->id.'.image.limitstart', 0);
+    $imgform_limitstart = $this->app->getUserState('joom.categoryview.image.limitstart', 0);
     if($this->app->input->get('contenttype', '') == 'image')
     {
       // Get query variables sent by the images form
       $imgform_list = $this->app->input->get('list', array());
-      $imgform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.'.$this->item->id.'.image.limitstart', 'limitstart', 0, 'uint');
+      $imgform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.image.limitstart', 'limitstart', 0, 'uint');
     }
 
     // Override number of images being loaded
@@ -542,12 +539,12 @@ class CategoryModel extends JoomItemModel
     }
 
     $catform_list = array();
-    $catform_limitstart = $this->app->getUserState('joom.categoryview.'.$this->item->id.'.category.limitstart', 0);
+    $catform_limitstart = $this->app->getUserState('joom.categoryview.category.limitstart', 0);
     if($this->app->input->get('contenttype', '') == 'category')
     {
       // Get query variables sent by the subcategories form
       $catform_list = $this->app->input->get('list', array());
-      $catform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.'.$this->item->id.'.category.limitstart', 'limitstart', 0, 'uint');
+      $catform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.category.limitstart', 'limitstart', 0, 'uint');
     }
 
     // Override number of subcategories being loaded
@@ -602,13 +599,13 @@ class CategoryModel extends JoomItemModel
   /**
    * Get a list of parent categories that are not published (state = 1)
    *
-   * @param   int    $pk         Primary key of the category
+   * @param   ?int    $pk         Primary key of the category
    * @param   bool   $approved   True if the parents also have to be approved
    *
    * @return  array  List of all parents that are published
    *
    * @since   4.0.0
-   * @throws Exception
+   * @throws \Exception
    */
   public function getUnpublishedParents(?int $pk = null, bool $approved = false): array
   {

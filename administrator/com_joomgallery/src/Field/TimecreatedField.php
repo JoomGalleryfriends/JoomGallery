@@ -14,8 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Date\Date;
-use \Joomla\CMS\Form\FormField;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Form\FormField;
 
 /**
  * Supports an HTML select list of categories
