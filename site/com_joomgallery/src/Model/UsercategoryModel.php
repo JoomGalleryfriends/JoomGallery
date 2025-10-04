@@ -168,31 +168,6 @@ class UsercategoryModel extends AdminCategoryModel
       return false;
     }
 
-//    // Disable remove password field if no password is set
-//    if(!$this->is_password)
-//    {
-//      $form->setFieldAttribute('rm_password', 'disabled', 'true');
-//      $form->setFieldAttribute('rm_password', 'filter', 'unset');
-//      $form->setFieldAttribute('rm_password', 'hidden', 'true');
-//      $form->setFieldAttribute('rm_password', 'class', 'hidden');
-//
-//      $form->setFieldAttribute('password', 'lock', 'false');
-//    }
-//    else { // ToDo Remove (debug reasons)
-//      $this->is_password = true;
-//    }
-//
-//    // Apply filter to exclude child categories
-//    $children = $form->getFieldAttribute('parent_id', 'children', 'true');
-//    $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
-//    if(!$children)
-//    {
-//      $form->setFieldAttribute('parent_id', 'exclude', $this->item->id);
-//    }
-//
-//    // Apply filter for current category on thumbnail field
-//    $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
-//
     return $form;
   }
 
@@ -219,4 +194,33 @@ class UsercategoryModel extends AdminCategoryModel
   {
     return \base64_encode($this->getState('return_page', ''));
   }
+
+  /**
+   * Get the most recent error message.
+   * Eiter generated in model or written to component
+   *
+   * @param   integer   $i  Option error index.
+   * @param   boolean   $toString  Indicates if Exception objects should return their error message.
+   *
+   * @return  string   Error message
+   *
+   * @since   1.7.0
+   *
+   * @deprecated  3.1.4 will be removed in 6.0
+   *              Will be removed without replacement
+   *              Catch thrown Exceptions instead of getError
+   */
+  public function getError($i = null, $toString = true)
+  {
+    // 2025.10.04: user images checkin does not find error message in model !manuel!
+    $error = parent::getError($i, $toString);
+
+    // error saved by $this->component->setError(...)
+    if (empty($error)){
+      $error = $this->component->getError(true);
+    }
+
+    return $error;
+  }
+
 }

@@ -183,7 +183,32 @@ class UserimageModel extends AdminImageModel
     return $categoryTitle;
   }
 
+  /**
+   * Get the most recent error message.
+   * Eiter generated in model or written to component
+   *
+   * @param   integer   $i  Option error index.
+   * @param   boolean   $toString  Indicates if Exception objects should return their error message.
+   *
+   * @return  string   Error message
+   *
+   * @since   1.7.0
+   *
+   * @deprecated  3.1.4 will be removed in 6.0
+   *              Will be removed without replacement
+   *              Catch thrown Exceptions instead of getError
+   */
+  public function getError($i = null, $toString = true)
+  {
+    // 2025.10.04: user images checkin does not find error message in model !manuel!
+    $error = parent::getError($i, $toString);
 
+    // error saved by $this->component->setError(...)
+    if (empty($error)){
+      $error = $this->component->getError(true);
+    }
 
+    return $error;
+  }
 
 }
