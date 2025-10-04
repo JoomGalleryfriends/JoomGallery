@@ -109,7 +109,7 @@ class HtmlView extends JoomGalleryView
     $this->item   = $model->getItem();
     $this->form   = $model->getForm();
 
-    $config    = $this->params['configs']; // ToDo: check with manuel
+    $config    = $this->params['configs'];
 
     $this->config = JoomHelper::getService('config');
 

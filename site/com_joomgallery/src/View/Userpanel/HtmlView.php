@@ -129,13 +129,6 @@ class HtmlView extends JoomGalleryView
     $user = $this->getCurrentUser();
 //    $app  = Factory::getApplication();
 
-//    // ToDo: in next version include both latest image and latest category views
-//    //--- include both image and category views -----------------------------
-//
-//    //  https://joomla.stackexchange.com/questions/33248/how-to-load-and-render-a-view-of-a-component-from-anothers-component-template-f
-//    // $modCategories = $this->getModel('Usercategories');
-
-
     // Get modUserPanel data
     $modUserPanel = $this->getModel('Userpanel');
 

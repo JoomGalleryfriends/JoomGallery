@@ -25,14 +25,6 @@ $wa->useStyle('com_joomgallery.list')
   ->useScript('com_joomgallery.list-view')
   ->useScript('multiselect');
 
-//// ToDo: Remove: copy needed items from admin and load only once may be faster
-//// Info: debug messages for task must be loaded in controller
-//// Load admin language file
-//$lang = Factory::getApplication()->getLanguage();
-////$lang->load('com_joomgallery', JPATH_SITE);
-//$testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
-////$lang->load('joomla', JPATH_ADMINISTRATOR);
-
 //$isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
 $isHasAccess = $this->isUserLoggedIn && $this->isUserCoreManager;
 
@@ -71,6 +63,7 @@ $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userimag
 $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return='.$returnURL);
 
 $baseLink_ImageEdit = 'index.php?option=com_joomgallery&task=userimage.edit&id=';
+$baseLink_ImagesFilter      = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
 
 $canDelete = false;
 
@@ -296,7 +289,10 @@ $canDelete = false;
                     </td>
 
                     <td class="d-none d-lg-table-cell text-center">
-                      <?php echo $this->escape($item->cattitle); ?>
+                      <a title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>"
+                         href="<?php echo $baseLink_ImagesFilter.(int) $item->catid; ?>">
+                        <?php echo $this->escape($item->cattitle); ?>
+                      </a>
                     </td>
 
                     <td class="small d-none d-md-table-cell text-center">
@@ -311,7 +307,6 @@ $canDelete = false;
                         <?php if($canEdit): ?>
 
                           <?php
-                          // ToDo: canEdit
                           $itemId    = $item->id;
                           $title     = $this->escape($item->title);
                           $baseRoute = $baseLink_ImageEdit.(int) $item->id;

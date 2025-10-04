@@ -139,7 +139,7 @@ class UsercategoriesModel extends AdminCategoriesModel
 
     try
     {
-      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+      $db = Factory::getContainer()->get(DatabaseInterface::class);
 
       // Check number of records in tables
       $query = $db->getQuery(true)

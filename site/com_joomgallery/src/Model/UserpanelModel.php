@@ -53,7 +53,7 @@ class UserpanelModel extends ImagesModel
    * Method to check if user owns at least one category. Without
    * only a matching request message will be displayed
    *
-   * @param   int   $userId  ToDO: Id would suffice
+   * @param   int   $userId
    *
    * @return  bool true when user owns at least one category
    *

@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 // No direct access
 defined('_JEXEC') or die;
 
+use \Joomla\Language\Text;
 use \Joomgallery\Component\Joomgallery\Administrator\View\Category\RawView as AdminRawView;
 
 /**

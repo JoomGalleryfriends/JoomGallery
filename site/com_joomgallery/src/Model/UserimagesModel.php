@@ -54,7 +54,7 @@ class UserimagesModel extends ImagesModel
    * Method to check if user owns at least one category. Without
    * only a matching request message will be displayed
    *
-   * @param   int   $userId  ToDO: Id would suffice
+   * @param   int   $userId
    *
    * @return  bool true when user owns at least one category
    *
@@ -68,7 +68,7 @@ class UserimagesModel extends ImagesModel
 
     try
     {
-      $db = Factory::getContainer()->get(DatabaseInterface::class);    // ToDo: Count categories of user
+      $db = Factory::getContainer()->get(DatabaseInterface::class);
 
       // Check number of records in tables
       $query = $db->getQuery(true)

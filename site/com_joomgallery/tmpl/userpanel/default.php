@@ -24,15 +24,6 @@ $wa->useStyle('com_joomgallery.list')
   ->useScript('com_joomgallery.list-view')
   ->useScript('multiselect');
 
-//// ToDo: Remove: copy needed items from admin and load only once may be faster
-//// Info: debug messages for task must be loaded in controller
-//// Load admin language file
-//$lang = Factory::getApplication()->getLanguage();
-////$lang->load('com_joomgallery', JPATH_SITE);
-//$testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
-////$lang->load('joomla', JPATH_ADMINISTRATOR);
-
-//$isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
 $isHasAccess = $this->isUserLoggedIn && $this->isUserCoreManager;
 
 $config = $this->params['configs'];
@@ -485,7 +476,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
                       <td class="d-none d-lg-table-cell text-center">
                         <a class="badge bg-info"
-                           title="ToDo: Text: Click to view images list of category"
+                           title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>")
                            href="<?php echo $baseLink_ImagesFilter.(int) $item->id; ?>">
                           <?php echo (int) $item->img_count; ?>
                         </a>
@@ -707,7 +698,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                       </td>
 
                       <td class="d-none d-lg-table-cell text-center">
-                        <a title="ToDo: Text: Click to view images list of category"
+                        <a title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>"
                            href="<?php echo $baseLink_ImagesFilter.(int) $item->catid; ?>">
                           <?php echo $data->escape($item->cattitle); ?>
                         </a>
@@ -955,7 +946,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                       </td>
 
                       <td class="d-none d-lg-table-cell text-center">
-                        <a title="ToDo: Text: Click to view images list of category"
+                        <a title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>"
                            href="<?php echo $baseLink_ImagesFilter.(int) $item->catid; ?>">
                           <?php echo $data->escape($item->cattitle); ?>
                         </a>

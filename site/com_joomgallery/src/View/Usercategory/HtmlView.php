@@ -48,7 +48,6 @@ class HtmlView extends JoomGalleryView
    *
    * @since   4.2.0
    */
-  // ToDo: check all htmlview.php / model for getparams -> params being array or registry :-(
   protected array $params = array();
 
   /**
@@ -92,7 +91,7 @@ class HtmlView extends JoomGalleryView
     // Get return page
     $this->return_page = $model->getReturnPage();
 
-    // ToDo: fix for empty Id: item->id=null
+    // fix for empty Id: item->id=null
     if(empty($this->item->id))
     {
       $this->item->id = 0;

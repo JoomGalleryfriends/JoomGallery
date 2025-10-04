@@ -23,15 +23,6 @@ $wa->useStyle('com_joomgallery.list')
   ->useScript('com_joomgallery.list-view')
   ->useScript('multiselect');
 
-//// ToDo: Remove: copy needed items from admin and load only once may be faster
-//// Info: debug messages for task must be loaded in controller
-//// Load admin language file
-//$lang = Factory::getApplication()->getLanguage();
-////$lang->load('com_joomgallery', JPATH_SITE);
-//$testOk = $lang->load('com_joomgallery', JPATH_ADMINISTRATOR);
-////$lang->load('joomla', JPATH_ADMINISTRATOR);
-
-//$isHasAccess = $this->isUserLoggedIn && $this->isUserHasCategory && $this->isUserCoreManager;
 $isHasAccess = $this->isUserLoggedIn && $this->isUserCoreManager;
 
 // Access check
@@ -286,24 +277,25 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                           <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'category.', false); ?>
                         </button>
                       <?php endif; ?>
-                      <?php
-                      // ToDo: canEdit see userimages if ($canEdit):
-                      $route = Route::_($baseLink_CategoryEdit.(int) $item->id);
-                      ?>
-                      <a href="<?php echo $route; ?>">
-                        <?php echo $this->escape($item->title); ?>
+                      <?php if($canEdit): ?>
                         <?php
-                        if($this->isDebugSite)
-                        {
-                          echo '&nbsp;('.$this->escape($item->id).')';
-                        }
+                          $route = Route::_($baseLink_CategoryEdit.(int) $item->id);
                         ?>
-                      </a>
+                        <a href="<?php echo $route; ?>">
+                          <?php echo $this->escape($item->title); ?>
+                          <?php
+                          if($this->isDebugSite)
+                          {
+                            echo '&nbsp;('.$this->escape($item->id).')';
+                          }
+                          ?>
+                        </a>
+                      <?php endif; ?>
                     </th>
 
                     <td class="d-none d-lg-table-cell text-center">
                       <a class="badge bg-info"
-                         title="ToDo: Number of images in the category. Click to view images list of gallery"
+                         title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>"
                          href="<?php echo $baseLink_ImagesFilter.(int) $item->id; ?>">
                         <?php echo (int) $item->img_count; ?>
                       </a>
