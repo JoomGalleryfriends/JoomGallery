@@ -52,7 +52,7 @@ class CategoryController extends JoomBaseController
 		if(!$editId)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($editId),false));
 
 			return false;
 		}
@@ -61,7 +61,7 @@ class CategoryController extends JoomBaseController
 		if(!$this->acl->checkACL('edit', 'category', $editId))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($editId),false));
 
 			return false;
 		}
@@ -77,7 +77,7 @@ class CategoryController extends JoomBaseController
 		{
 			// Check-out failed, display a notice but allow the user to see the record.
 			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKOUT_FAILED', $model->getError()), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($editId),false));
 			
 			return false;
 		}
@@ -112,7 +112,7 @@ class CategoryController extends JoomBaseController
 		if(!$this->acl->checkACL('add', 'category', $editId, $addCatId, true))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($editId),false));
 
 			return false;
 		}
