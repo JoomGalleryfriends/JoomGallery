@@ -429,10 +429,10 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                     $canDelete = $data->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
                     $canChange = $data->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
                     $canCheckin = $canChange || $item->checked_out == $data->getCurrentUser->id;
-                    $disabled = ($item->checked_out > 0) ? 'disabled' : '';
+                    // $disabled = ($item->checked_out > 0) ? 'disabled' : '';
+                    $disabled = '';
                     $statePublished = ((int) $item->published) ? 'unpublish' : 'publish';
 
-                    // $catRoute = Route::_($baseLink_CategoryEdit.(int) $item->id);
 
                     $editCategoryLink      = Route::_($baseLink_CategoryEdit.(int) $item->id.$tokenLink.'&return='.$returnURL);
                     $publishCategoryLink   = Route::_($baseLink_CategoryPublish.(int) $item->id.$tokenLink.'&return='.$returnURL);
@@ -440,11 +440,11 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 //                      $publishCategoryLink = Route::_($baseLink_CategoryPublish . (int) $item->id . $tokenLink);
 //                      $unpublishCategoryLink = Route::_($baseLink_CategoryUnpublish . (int) $item->id . $tokenLink);
 
-                    // user may not delete his root gallery
-                    if((!empty($item->id)) && $item->parent_id == 1)
-                    {
-                      $canDelete = false;
-                    }
+                    // // user may not delete his root gallery
+                    // if((!empty($item->id)) && $item->parent_id == 1)
+                    // {
+                    //   $canDelete = false;
+                    // }
                     ?>
 
                     <tr class="row<?php echo $i % 2; ?>">
@@ -460,7 +460,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                                   data-item-task="usercategory.checkin" <?php echo $disabled; ?>
                                   data-item-form-id="adminFormCategories"
                           >
-                            <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'category.', false); ?>
+                            <span class="icon-checkedout" aria-hidden="true"></span>
                           </button>
                         <?php endif; ?>
                         <a href="<?php echo $editCategoryLink; ?>">
@@ -672,10 +672,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                             <span class="icon-checkedout" aria-hidden="true"></span>
                           </button>
                         <?php endif; ?>
-                        <?php
-                        $route = Route::_($baseLink_ImageEdit.(int) $item->id);
-                        ?>
-                        <a href="<?php echo $route; ?>">
+                        <a href="<?php echo $editImageLink; ?>">
                           <?php echo $data->escape($item->title); ?>
                           <?php
                           if($data->isDebugSite)
@@ -876,6 +873,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                     $disabled = ($item->checked_out > 0) ? 'disabled' : '';
                     $statePublished = ((int) $item->published) ? 'unpublish' : 'publish';
 
+                    $editImageLink = Route::_($baseLink_ImageEdit.(int) $item->id.'&return='.$returnURL);
                     ?>
 
                     <tr class="row<?php echo $i % 2; ?>">
@@ -920,10 +918,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                             <span class="icon-checkedout" aria-hidden="true"></span>
                           </button>
                         <?php endif; ?>
-                        <?php
-                        $route = Route::_($baseLink_ImageEdit.(int) $item->id);
-                        ?>
-                        <a href="<?php echo $route; ?>">
+                        <a href="<?php echo $editImageLink; ?>">
                           <?php echo $data->escape($item->title); ?>
                           <?php
                           if($data->isDebugSite)

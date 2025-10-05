@@ -209,13 +209,14 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                   $canDelete = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
                   $canChange = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
                   $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser->id;
-                  $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
+                  // $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
+                  $disabled   = '';
 
-//                  // user may not delete his root gallery
-//                  if((!empty($item->id)) && $item->parent_id == 1)
-//                  {
-//                    $canDelete = false;
-//                  }
+                  // // user may not delete his root gallery
+                  // if((!empty($item->id)) && $item->parent_id == 1)
+                  // {
+                  //   $canDelete = false;
+                  // }
 
                   // Get the parents of item for sorting
                   $parentsStr = '';
@@ -274,7 +275,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                         <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                 data-item-id="cb<?php echo $i; ?>"
                                 data-item-task="usercategory.checkin" <?php echo $disabled; ?>>
-                          <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'category.', false); ?>
+                          <span class="icon-checkedout" aria-hidden="true"></span>
                         </button>
                       <?php endif; ?>
                       <?php if($canEdit): ?>
