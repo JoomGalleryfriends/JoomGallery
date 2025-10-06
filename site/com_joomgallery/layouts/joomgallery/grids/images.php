@@ -112,11 +112,9 @@ extract($displayData);
                   <?php echo $this->escape($item->title); ?>
                 <?php endif; ?>
                 <?php if($layout != 'justified' && $title_link == 'lightgallery') : ?>
-                  <!-- <div class="jg-image-caption <?php echo $caption_align; ?>"> -->
                   <a href="#" class="caption-trigger-<?php echo $id; ?>" data-index="<?php echo $index; ?>">
                     <?php echo $this->escape($item->title); ?>
                   </a>
-                  <!-- </div> -->
                 <?php endif; ?>
               <?php endif; ?>
             <?php endif; ?>
