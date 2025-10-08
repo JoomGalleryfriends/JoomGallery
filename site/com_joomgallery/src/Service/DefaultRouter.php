@@ -741,7 +741,7 @@ class DefaultRouter extends RouterView
    *
    * @return string alias
    *
-   * * @since   4.2.0
+   * @since   4.2.0
    */
   public function getImageAliasDb(string $id): string
   {

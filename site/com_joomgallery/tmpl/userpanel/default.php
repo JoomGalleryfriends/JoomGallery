@@ -788,7 +788,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
       <div class="card ">
         <div class="card-header">
-          <h5 class="card-title"><?php echo Text::_('COM_JOOMGALLERY_USER_PANEL_USER_IMAGES'); ?></h5>
+          <h5 class="card-title"><?php echo Text::_('COM_JOOMGALLERY_USER_PANEL_USER_IMAGES_USER_PANEL'); ?></h5>
         </div>
         <div class="card-body">
           <form class="jg-images"
