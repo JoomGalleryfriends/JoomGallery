@@ -57,7 +57,7 @@ var callback = function() {
         zoom: settings.zoom,
         toggleThumb: true,
         speed: 500,
-        plugins: [lgThumbnail,lgZoom],
+        plugins: [lgHash,lgThumbnail,lgZoom],
         preload: 1,
         loop: false,
         slideEndAnimation: false,
