@@ -257,8 +257,10 @@ $canDelete = false;
 
                     <th scope="row" class="has-context title-cell">
                       <?php if($canCheckin && $item->checked_out > 0) : ?>
-                        <button class="js-grid-item-action tbody-icon" data-item-id="cb<?php echo $i; ?>"
-                                data-item-task="userimage.checkin">
+                        <button class="js-grid-item-action tbody-icon"
+                                data-item-id="cb<?php echo $i; ?>"
+                                data-item-task="userimage.checkin"
+                        >
                           <span class="icon-checkedout" aria-hidden="true"></span>
                         </button>
                       <?php endif; ?>
@@ -335,8 +337,7 @@ $canDelete = false;
                         <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                 data-item-id="cb<?php echo $i; ?>"
                                 data-item-task="userimage.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
-                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
-                              aria-hidden="true"></span>
+                          <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" aria-hidden="true"></span>
                         </button>
                       <?php else : ?>
                         <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>

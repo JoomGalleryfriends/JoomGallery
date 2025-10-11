@@ -476,7 +476,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
                       <td class="d-none d-lg-table-cell text-center">
                         <a class="badge bg-info"
-                           title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>")
+                           title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>"
                            href="<?php echo $baseLink_ImagesFilter.(int) $item->id; ?>">
                           <?php echo (int) $item->img_count; ?>
                         </a>
@@ -793,7 +793,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
         <div class="card-body">
           <form class="jg-images"
                 action="<?php echo $panelView; ?>"
-                method="post" name="adminForm" id="adminFormManImages"
+                method="post" name="adminForm" id="adminForm"
                 novalidate aria-label="<?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORIES', true); ?>">
 
             <?php if(!empty($data->filterForm)) : ?>
@@ -913,7 +913,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                           <button class="js-grid-item-action tbody-icon"
                                   data-item-id="cb<?php echo $i; ?>"
                                   data-item-task="userimage.checkin"
-                                  data-item-form-id="adminFormManImages"
+                                  data-item-form-id="adminForm"
                           >
                             <span class="icon-checkedout" aria-hidden="true"></span>
                           </button>
@@ -965,7 +965,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                                     data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
                                     data-item-id="cb<?php echo $i; ?>"
                                     data-item-task="userimage.remove" <?php echo $disabled; ?>
-                                    data-item-form-id="adminFormManImages"
+                                    data-item-form-id="adminForm"
                             >
                               <span class="icon-trash" aria-hidden="true"></span>
                             </button>
@@ -975,13 +975,13 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
                       <td class="d-none d-lg-table-cell text-center">
                         <?php if($canChange): ?>
+                          <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                           <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                   data-item-id="cb<?php echo $i; ?>"
-                                  data-item-task="userimage.<?php echo $statePublished; ?>" <?php echo $disabled; ?>
-                                  data-item-form-id="adminFormManImages"
+                                  data-item-task="userimage.<?php echo $statetask; ?>" <?php echo $disabled; ?>
+                                  data-item-form-id="adminForm"
                           >
-                            <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
-                                  aria-hidden="true"></span>
+                            <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" aria-hidden="true"></span>
                           </button>
                         <?php else : ?>
                           <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
