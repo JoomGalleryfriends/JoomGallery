@@ -1,37 +1,36 @@
 <?php
 
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+******************************************************************************************
+**   @package    com_joomgallery                                                        **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 3 or later                          **
+*****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 
 // No direct access
 \defined('_JEXEC') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Metadata\Metadata as BaseMetadata;
+use \lsolesen\pel\Pel;
+use \lsolesen\pel\PelIfd;
+use \lsolesen\pel\PelTag;
+use \lsolesen\pel\PelExif;
+use \lsolesen\pel\PelJpeg;
+use \lsolesen\pel\PelTiff;
 use \Joomla\Filesystem\File;
 use \Joomla\Filesystem\Path;
-
-use \lsolesen\pel\Pel;
+use \lsolesen\pel\PelFormat;
+use \lsolesen\pel\PelEntryTime;
 use \lsolesen\pel\PelDataWindow;
 use \lsolesen\pel\PelEntryAscii;
-use lsolesen\pel\PelEntryCopyright;
-use lsolesen\pel\PelEntryRational;
-use lsolesen\pel\PelEntrySRational;
-use lsolesen\pel\PelEntryTime;
-use lsolesen\pel\PelEntryUserComment;
-use \lsolesen\pel\PelExif;
-use \lsolesen\pel\PelFormat;
-use \lsolesen\pel\PelIfd;
-use \lsolesen\pel\PelJpeg;
-use \lsolesen\pel\PelTag;
-use \lsolesen\pel\PelTiff;
+use \lsolesen\pel\PelEntryRational;
+use \lsolesen\pel\PelEntryCopyright;
+use \lsolesen\pel\PelEntrySRational;
+use \lsolesen\pel\PelEntryUserComment;
+use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Metadata\Metadata as BaseMetadata;
 
 /**
  * PHP implementation of Metadata Class

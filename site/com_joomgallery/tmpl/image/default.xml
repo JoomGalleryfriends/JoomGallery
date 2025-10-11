@@ -1,166 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-    <layout title="COM_JOOMGALLERY_VIEW_IMAGE_TITLE" option="JDEFAULT">
-      <message>
-        <![CDATA[COM_JOOMGALLERY_VIEW_IMAGE_DESC]]>
-      </message>
-    </layout>
-    <fields name="request">
-        <fieldset name="request" >
-            <field name="id"
-                   type="sql"
-                   query="SELECT `id`,`title` FROM #__joomgallery ORDER BY `id`"
-                   key_field="id"
-                   value_field="title"
-                   label="COM_JOOMGALLERY_IMAGES"
-                   require="true" >
-            </field>
-        </fieldset>
-    </fields>
-    <fields name="params">
-        <fieldset name="advanced" label="COM_JOOMGALLERY_MENU_SINGLE_IMAGE_VIEW_OPTIONS" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
-            <field
-                label="COM_JOOMGALLERY_CONFIG_IMAGE_INFORMATION"
-                type="spacer"
-                name="spacer3"
-                hr="false"
-                >
-            </field>
-            <field
-                name="jg_detail_view_show_title"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="JGLOBAL_TITLE"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_category"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="JCATEGORY"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_description"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="JGLOBAL_DESCRIPTION"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_imgdate"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_DATE"
-                description="COM_JOOMGALLERY_DATE_DESC"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_imgauthor"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="JAUTHOR"
-                description="COM_JOOMGALLERY_FIELDS_AUTHOR_DESC"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_created_by"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_OWNER"
-                description="COM_JOOMGALLERY_FIELDS_OWNER_DESC"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_votes"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_VOTES"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_rating"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_IMAGE_RATING"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_hits"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="JGLOBAL_HITS"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_downloads"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_DOWNLOADS"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_tags"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_TAGS"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field
-                name="jg_detail_view_show_metadata"
-                type="jgradio"
-                useglobal="true"
-                class="btn-group btn-group-yesno"
-                label="COM_JOOMGALLERY_IMGMETADATA"
-                validate="options"
-                >
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-        </fieldset>
-    </fields>
+  <layout title="COM_JOOMGALLERY_VIEW_IMAGE_TITLE" option="JDEFAULT">
+    <message>
+      <![CDATA[COM_JOOMGALLERY_VIEW_IMAGE_DESC]]>
+    </message>
+  </layout>
+  <fields name="request">
+    <fieldset name="request">
+      <field name="id"
+             type="sql"
+             query="SELECT `id`,`title` FROM #__joomgallery ORDER BY `id`"
+             key_field="id"
+             value_field="title"
+             label="COM_JOOMGALLERY_IMAGES"
+             require="true">
+      </field>
+    </fieldset>
+  </fields>
+  <fields name="params">
+    <fieldset name="advanced" label="COM_JOOMGALLERY_MENU_SINGLE_IMAGE_VIEW_OPTIONS"
+              addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+      <field
+        label="COM_JOOMGALLERY_CONFIG_IMAGE_INFORMATION"
+        type="spacer"
+        name="spacer3"
+        hr="false"
+      >
+      </field>
+      <field
+        name="jg_detail_view_show_title"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="JGLOBAL_TITLE"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_category"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="JCATEGORY"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_description"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="JGLOBAL_DESCRIPTION"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_imgdate"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_DATE"
+        description="COM_JOOMGALLERY_DATE_DESC"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_imgauthor"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="JAUTHOR"
+        description="COM_JOOMGALLERY_FIELDS_AUTHOR_DESC"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_created_by"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_OWNER"
+        description="COM_JOOMGALLERY_FIELDS_OWNER_DESC"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_votes"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_VOTES"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_rating"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_IMAGE_RATING"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_hits"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="JGLOBAL_HITS"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_downloads"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_DOWNLOADS"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_tags"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_TAGS"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field
+        name="jg_detail_view_show_metadata"
+        type="jgradio"
+        useglobal="true"
+        class="btn-group btn-group-yesno"
+        label="COM_JOOMGALLERY_IMGMETADATA"
+        validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+    </fieldset>
+  </fields>
 </metadata>

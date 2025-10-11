@@ -311,7 +311,8 @@
            type="subform"
            formsource="administrator/components/com_joomgallery/forms/subform_imageimgmetadata.xml"
            layout="joomla.form.field.subform.default"
-           label="COM_JOOMGALLERY_IMGMETADATA" />
+           label="COM_JOOMGALLERY_IMGMETADATA"
+    />
 
     <field name="params"
            type="subform"

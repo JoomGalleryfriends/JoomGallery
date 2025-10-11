@@ -13,6 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
+use \Joomla\Language\Text;
 use \Joomla\Database\DatabaseInterface;
 use \Joomla\CMS\Language\Multilanguage;
 use \Joomla\CMS\Component\ComponentHelper;
