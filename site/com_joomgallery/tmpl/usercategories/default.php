@@ -163,22 +163,23 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                 <tr>
                   <?php if($canOrder && $saveOrder) : ?>
                     <th scope="col" class="w-1 text-center d-none d-md-table-cell">
-                      <?php echo HTMLHelper::_('grid.sort', '', 'a.lft', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
+                      <?php echo HTMLHelper::_('searchtools.sort', '', 'a.lft', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
+
                     </th>
                   <?php else : ?>
                     <th scope="col" class="w-1 d-md-table-cell"></th>
                   <?php endif; ?>
 
                   <th scope="col" style="min-width:180px">
-                    <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JOOMGALLERY_IMAGES', 'img_count', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_IMAGES', 'img_count', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JOOMGALLERY_PARENT_CATEGORY', 'parent_title', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_PARENT_CATEGORY', 'parent_title', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
@@ -190,7 +191,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
                   </th>
                 </tr>
                 </thead>
