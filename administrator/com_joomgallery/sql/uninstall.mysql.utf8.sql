@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS `#__joomgallery_img_types`;
 DROP TABLE IF EXISTS `#__joomgallery_migration`;
 DROP TABLE IF EXISTS `#__joomgallery_tags`;
 DROP TABLE IF EXISTS `#__joomgallery_tags_ref`;
+DROP TABLE IF EXISTS `#__joomgallery_tasks`;
 DROP TABLE IF EXISTS `#__joomgallery_users`;
 DROP TABLE IF EXISTS `#__joomgallery_votes`;
 
