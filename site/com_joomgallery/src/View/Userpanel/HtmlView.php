@@ -32,7 +32,7 @@ class HtmlView extends JoomGalleryView
 
   /**
    * @var Registry
-   * @since version
+   * @since 4.2
    */
   protected Registry $config;
 
@@ -110,7 +110,7 @@ class HtmlView extends JoomGalleryView
 
   /**
    * @var array
-   * @since version
+   * @since 4.2
    */
   public array $orderingCatLatest = [];
 

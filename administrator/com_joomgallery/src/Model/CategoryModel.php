@@ -169,7 +169,7 @@ class CategoryModel extends JoomAdminModel
    * Attention: $data->password variable may be already overwritten to ''.
    * @return bool true when password was set on loadFormData ()
    *
-   * @since version
+   * @since  4.2
    */
   public function hasPassword(): bool
   {

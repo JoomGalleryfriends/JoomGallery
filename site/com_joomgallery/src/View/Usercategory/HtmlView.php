@@ -61,7 +61,7 @@ class HtmlView extends JoomGalleryView
 
   /**
    * @var bool
-   * @since version
+   * @since 4.2
    */
   protected bool $isUserRootCategory = false;
 

@@ -31,7 +31,7 @@ class HtmlView extends JoomGalleryView
 
   /**
    * @var array
-   * @since version
+   * @since 4.2
    */
   protected array $ordering = [];
 

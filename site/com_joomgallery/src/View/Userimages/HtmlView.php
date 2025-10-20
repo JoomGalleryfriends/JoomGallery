@@ -64,19 +64,19 @@ class HtmlView extends JoomGalleryView
 
   /**
    * @var bool
-   * @since version
+   * @since 4.2
    */
   protected bool $isUserCoreManager = false;
 
   /**
    * @var bool
-   * @since version
+   * @since 4.2
    */
   protected bool $isDebugSite = false;
 
   /**
    * @var int
-   * @since version
+   * @since 4.2
    */
   protected int $userId = 0;
 

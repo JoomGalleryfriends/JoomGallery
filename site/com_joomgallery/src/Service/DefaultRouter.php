@@ -818,7 +818,7 @@ class DefaultRouter extends RouterView
    *
    * @return int|false
    *
-   * @since version
+   * @since  4.2
    */
   public function getImageIdDb($segment, $query): int|false
   {

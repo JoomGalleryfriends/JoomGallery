@@ -196,10 +196,12 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
       {
         case 'image':
         case 'imageform':
+        case 'userimage':
             return 'image';
 
         case 'category':
         case 'categoryform':
+        case 'usercategory':
           return 'category';
       }
     }
@@ -225,8 +227,11 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
     $language = Factory::getApplication()->getLanguage();
     $language->load('com_joomgallery', JPATH_ADMINISTRATOR);
 
-    return [ 'com_joomgallery.image' => $language->_('COM_JOOMGALLERY_IMAGES'),
-             'com_joomgallery.category' => $language->_('JCATEGORIES'),
+    return [
+      'com_joomgallery.image' => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.category' => $language->_('JCATEGORIES'),
+      'com_joomgallery.userimage' => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.usercategory' => $language->_('JCATEGORIES'),
            ];
   }
 }
