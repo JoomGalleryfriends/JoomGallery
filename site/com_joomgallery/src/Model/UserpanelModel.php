@@ -70,7 +70,7 @@ class UserpanelModel extends ImagesModel
       $db = $this->getDatabase();
 
       // Check number of records in tables
-      $query = $db->getQuery(true)
+      $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
         ->where($db->quoteName('created_by').' = '.(int) $userId);
@@ -112,7 +112,7 @@ class UserpanelModel extends ImagesModel
       $db = $this->getDatabase();
 
       // Check number of records in tables
-      $query = $db->getQuery(true)
+      $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
         ->where($db->quoteName('created_by').' = '.(int) $userId);
@@ -145,7 +145,7 @@ class UserpanelModel extends ImagesModel
       $db = $this->getDatabase();
 
       // Check number of records in tables
-      $query = $db->getQuery(true)
+      $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_IMAGES))
         ->where($db->quoteName('created_by').' = '.(int) $userId);
@@ -178,7 +178,7 @@ class UserpanelModel extends ImagesModel
       $db = $this->getDatabase();
 
       // Check number of records in tables
-      $query = $db->getQuery(true)
+      $query = $db->createQuery()
         ->select('COUNT(id)')
         ->from($db->quoteName(_JOOM_TABLE_IMAGES))
         ->where($db->quoteName('created_by').' = '.(int) $userId);
@@ -219,7 +219,7 @@ class UserpanelModel extends ImagesModel
       $db = $this->getDatabase();
 
       // Check number of records in tables
-      $query = $db->getQuery(true)
+      $query = $db->createQuery()
         ->select('*')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'a'))
         ->where($db->quoteName('a.created_by').' = '.(int) $userId)
@@ -227,14 +227,14 @@ class UserpanelModel extends ImagesModel
         ->setLimit($limit);
 
       // assign parent category title
-      $parentNameQuery = $db->getQuery(true)
+      $parentNameQuery = $db->createQuery()
         ->select('`parent`.title')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'parent'))
         ->where($db->quoteName('a.parent_id') . ' = ' . $db->quoteName('parent.id'));
       $query->select('(' . $parentNameQuery->__toString() . ') AS ' . $db->quoteName('parent_title'));
 
       // Get image count
-      $imgQuery = $db->getQuery(true)
+      $imgQuery = $db->createQuery()
          ->select('COUNT(`img`.id)')
         ->from($db->quoteName('#__joomgallery', 'img'))
         ->where($db->quoteName('img.catid') . ' = ' . $db->quoteName('a.id'));
@@ -267,7 +267,7 @@ class UserpanelModel extends ImagesModel
       $db = $this->getDatabase();
 
       // Check number of records in tables
-      $query = $db->getQuery(true)
+      $query = $db->createQuery()
         ->select('*')
         ->from($db->quoteName(_JOOM_TABLE_IMAGES, 'a'))
         ->where($db->quoteName('created_by').' = '.(int) $userId)
@@ -275,7 +275,7 @@ class UserpanelModel extends ImagesModel
         ->setLimit($limit);
 
       // assign category title
-      $parentNameQuery = $db->getQuery(true)
+      $parentNameQuery = $db->createQuery()
         ->select('`cat`.title')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'cat'))
         ->where($db->quoteName('a.catid') . ' = ' . $db->quoteName('cat.id'));

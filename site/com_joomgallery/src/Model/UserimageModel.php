@@ -160,7 +160,7 @@ class UserimageModel extends AdminImageModel
       $db = Factory::getContainer()->get(DatabaseInterface::class);
 
       // Check number of records in tables
-      $query = $db->getQuery(true)
+      $query = $db->createQuery()
         ->select('title')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
         ->where($db->quoteName('id').' = '.(int) $id);

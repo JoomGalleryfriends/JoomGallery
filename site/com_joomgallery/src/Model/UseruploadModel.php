@@ -104,7 +104,7 @@ class UseruploadModel extends JoomAdminModel
    * @param   array     $data      An optional array of data for the form to interogate.
    * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
    *
-   * @return  Form|bool  A \JForm object on success, false on failure
+   * @return  Form|bool  A \Form object on success, false on failure
    *
    * @throws \Exception
    * @since   4.2.0
@@ -233,7 +233,7 @@ class UseruploadModel extends JoomAdminModel
       $db = Factory::getContainer()->get(DatabaseInterface::class);
 
       // Check number of records in tables
-      $query = $db->getQuery(true)
+      $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
         ->where($db->quoteName('created_by').' = '.(int) $userId);

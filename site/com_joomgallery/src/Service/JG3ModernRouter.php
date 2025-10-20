@@ -159,7 +159,7 @@ class JG3ModernRouter extends DefaultRouter
   {
     if(!\strpos($id, ':'))
     {
-      $dbquery = $this->db->getQuery(true);
+      $dbquery = $this->db->createQuery();
 
       $dbquery->select($this->db->quoteName('alias'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
@@ -196,7 +196,7 @@ class JG3ModernRouter extends DefaultRouter
 
     if($img_id < 1)
     {
-      $dbquery = $this->db->getQuery(true);
+      $dbquery = $this->db->createQuery();
 
       $dbquery->select($this->db->quoteName('id'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))

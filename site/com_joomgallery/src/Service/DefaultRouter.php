@@ -630,7 +630,7 @@ class DefaultRouter extends RouterView
       if(!empty($segment))
       {
 
-        $dbquery = $this->db->getQuery(true);
+        $dbquery = $this->db->createQuery();
 
         $dbquery->select($this->db->quoteName('id'))
           ->from($this->db->quoteName(_JOOM_TABLE_CATEGORIES))
@@ -746,7 +746,7 @@ class DefaultRouter extends RouterView
   public function getImageAliasDb(string $id): string
   {
     $alias = '';
-    $dbquery = $this->db->getQuery(true);
+    $dbquery = $this->db->createQuery();
 
     $dbquery->select($this->db->quoteName('alias'))
       ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
@@ -833,7 +833,7 @@ class DefaultRouter extends RouterView
 
     if($img_id < 1)
     {
-      $dbquery = $this->db->getQuery(true);
+      $dbquery = $this->db->createQuery();
 
       $dbquery->select($this->db->quoteName('id'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))

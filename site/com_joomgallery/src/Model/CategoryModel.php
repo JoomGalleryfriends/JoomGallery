@@ -155,7 +155,7 @@ class CategoryModel extends JoomItemModel
 
     // Create a new query object.
 		$db    = $this->getDatabase();
-		$query = $db->getQuery(true);
+		$query = $db->createQuery();
 
     $query->select('id, password')
           ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
@@ -395,7 +395,7 @@ class CategoryModel extends JoomItemModel
    * @param   array    $data      data
    * @param   boolean  $loadData  load current data
    *
-   * @return  Form|null  The \JForm object or null if the form can't be found
+   * @return  Form|null  The \Form object or null if the form can't be found
    */
   public function getImagesFilterForm($data = [], $loadData = true)
   {
@@ -625,7 +625,7 @@ class CategoryModel extends JoomItemModel
 
     // Create a new query object.
 		$db    = $this->getDatabase();
-		$query = $db->getQuery(true);
+		$query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');
@@ -690,7 +690,7 @@ class CategoryModel extends JoomItemModel
 
     // Create a new query object.
 		$db    = $this->getDatabase();
-		$query = $db->getQuery(true);
+		$query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');
@@ -750,7 +750,7 @@ class CategoryModel extends JoomItemModel
 
     // Create a new query object.
 		$db    = $this->getDatabase();
-		$query = $db->getQuery(true);
+		$query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');

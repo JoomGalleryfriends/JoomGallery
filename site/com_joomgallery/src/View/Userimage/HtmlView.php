@@ -1,27 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userimage;
 
 // No direct access
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\CMS\Helper\MediaHelper;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Site\Model\UserimageModel;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Helper\MediaHelper;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomgallery\Component\Joomgallery\Site\Model\UserimageModel;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a list of Joomgallery.
@@ -109,11 +109,11 @@ class HtmlView extends JoomGalleryView
     $this->item   = $model->getItem();
     $this->form   = $model->getForm();
 
-    $config    = $this->params['configs'];
+    $config = $this->params['configs'];
 
     $this->config = JoomHelper::getService('config');
 
-    $rating           = JoomHelper::getRating($this->item->id);
+    $rating = JoomHelper::getRating($this->item->id);
     $this->form->setvalue('rating', '', $rating);
 
     $this->imagetypes = JoomHelper::getRecords('imagetypes');
@@ -144,12 +144,12 @@ class HtmlView extends JoomGalleryView
       $js_vars->TUSlocation  = $this->item->tus_location;
       $js_vars->allowedTypes = $this->getAllowedTypes();
 
-      $js_vars->uppyTarget   = '#drag-drop-area';          // Id of the DOM element to apply the uppy form
-      $js_vars->uppyLimit    = 5;                          // Number of concurrent tus upploads (only file upload)
-      $js_vars->uppyDelays   = array(0, 1000, 3000, 5000); // Delay in ms between upload retrys
+      $js_vars->uppyTarget = '#drag-drop-area';          // Id of the DOM element to apply the uppy form
+      $js_vars->uppyLimit  = 5;                          // Number of concurrent tus upploads (only file upload)
+      $js_vars->uppyDelays = array(0, 1000, 3000, 5000); // Delay in ms between upload retrys
 
-      $js_vars->semaCalls    = $this->config->get('jg_parallelprocesses', 1); // Number of concurrent async calls to save the record to DB (including image processing)
-      $js_vars->semaTokens   = 100;                                           // Prealloc space for 100 tokens
+      $js_vars->semaCalls  = $this->config->get('jg_parallelprocesses', 1); // Number of concurrent async calls to save the record to DB (including image processing)
+      $js_vars->semaTokens = 100;                                           // Prealloc space for 100 tokens
 
       $this->js_vars = $js_vars;
 
@@ -297,8 +297,7 @@ class HtmlView extends JoomGalleryView
 
       $saveGroup->configure
       (
-        function (Toolbar $childBar) use ($checkedOut, $isNew)
-        {
+        function(Toolbar $childBar) use ($checkedOut, $isNew) {
           $childBar->save('image.save', 'JTOOLBAR_SAVE');
 
           if(!$checkedOut && ($this->getAcl()->checkACL('core.create')))
@@ -324,7 +323,7 @@ class HtmlView extends JoomGalleryView
       ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CLOSE');
     }
 
-    if (!empty($this->item->id))
+    if(!empty($this->item->id))
     {
       ToolbarHelper::custom('image.savemetadata', 'save', '', 'Save metadata to file', false);
     }
@@ -363,9 +362,9 @@ class HtmlView extends JoomGalleryView
 
     // add different types of jpg files
     $jpg_array = array('jpg', 'jpeg', 'jpe', 'jfif');
-    if (\in_array('jpg', $types) || \in_array('jpeg', $types) || \in_array('jpe', $types) || \in_array('jfif', $types))
+    if(\in_array('jpg', $types) || \in_array('jpeg', $types) || \in_array('jpe', $types) || \in_array('jfif', $types))
     {
-      foreach ($jpg_array as $jpg)
+      foreach($jpg_array as $jpg)
       {
         if(!\in_array($jpg, $types))
         {
@@ -375,11 +374,11 @@ class HtmlView extends JoomGalleryView
     }
 
     // add point to types
-    foreach ($types as $key => $type)
+    foreach($types as $key => $type)
     {
       if(\substr($type, 0, 1) !== '.')
       {
-        $types[$key] = '.'. \strtolower($type);
+        $types[$key] = '.'.\strtolower($type);
       }
       else
       {
@@ -465,13 +464,15 @@ class HtmlView extends JoomGalleryView
     //--- Max size to be used (previously defined by joomla function but ...) -------------------------
 
     // $uploadMaxSize=0 for no limit
-    if (empty($mediaUploadMaxsize)) {
+    if(empty($mediaUploadMaxsize))
+    {
       $this->maxSize = min($this->uploadLimit, $this->postMaxSize);
-    } else {
+    }
+    else
+    {
       $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $mediaUploadMaxsize);
     }
   }
-
 
 
 } // class

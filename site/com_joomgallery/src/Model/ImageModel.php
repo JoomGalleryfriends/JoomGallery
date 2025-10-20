@@ -323,7 +323,7 @@ class ImageModel extends JoomAdminModel
    * @param   array    $data      An optional array of data for the form to interogate.
    * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
    *
-   * @return  Form|boolean  A \JForm object on success, false on failure
+   * @return  Form|boolean  A \Form object on success, false on failure
    *
    * @since   4.0.0
    */

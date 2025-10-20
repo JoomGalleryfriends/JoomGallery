@@ -122,7 +122,7 @@ class UsercategoryModel extends AdminCategoryModel
       $db = Factory::getContainer()->get(DatabaseInterface::class);
 
       // Check number of records in tables
-      $query = $db->getQuery(true)
+      $query = $db->createQuery()
         ->select('id, parent_id')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
         ->where($db->quoteName('id').' = '.(int) $id);
