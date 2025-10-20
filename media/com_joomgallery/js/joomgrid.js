@@ -57,7 +57,7 @@ var callback = function() {
         zoom: settings.zoom,
         toggleThumb: true,
         speed: 500,
-        plugins: [lgThumbnail,lgZoom],
+        plugins: [lgHash,lgThumbnail,lgZoom],
         preload: 1,
         loop: false,
         slideEndAnimation: false,
@@ -71,7 +71,7 @@ var callback = function() {
         },
         licenseKey: '1111-1111-111-1111',
       });
-      
+
       if(lightbox && settings.zoom === false) {
         window.joomGrid[itemid].lightbox_obj.outer.on('click', (e) => {
           const $item = window.joomGrid[itemid].lightbox_obj.outer.find('.lg-current .lg-image');
@@ -83,6 +83,15 @@ var callback = function() {
           }
         });
       }
+
+      // Title links for lightGallery
+      document.querySelectorAll('.caption-trigger-' + itemid).forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          const index = Number(el.dataset.index);
+          window.joomGrid[itemid].lightbox_obj.openGallery(index);
+        });
+      });
     }
 
     // Load justified for grid selected by gridclass (category images)

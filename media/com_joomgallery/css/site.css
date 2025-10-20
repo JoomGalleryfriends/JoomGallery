@@ -126,10 +126,12 @@ table.itemList th.sort-cell .form-check-input {
 .jg-image {
   padding: 0;
 }
-.jg-gallery:not(.justified) .jg-category .jg-image {
+.jg-gallery:not(.justified) .jg-category .jg-image,
+.jg-gallery .jg-subcategories .jg-image {
   visibility: hidden;
 }
-.jg-gallery:not(.justified) .jg-category .jg-image.loaded {
+.jg-gallery:not(.justified) .jg-category .jg-image.loaded,
+.jg-gallery .jg-subcategories .jg-image.loaded {
   visibility: visible;
   animation: fadein 1.5s;
 }
@@ -146,13 +148,15 @@ table.itemList th.sort-cell .form-check-input {
   border: 1px solid var(--jg-gray-300);
   border-radius: 0.25rem;
 }
-.jg-images[class*=" columns-"] > .jg-image > .jg-image-thumbnail > a {
+.jg-images[class*=" columns-"] > .jg-image > .jg-image-thumbnail > a,
+.jg-images[class*=" columns-"] > .jg-image > .jg-image-thumbnail > .jg-image-caption-hover > a {
   display: block;
   position: relative;
   overflow: hidden;
   padding-bottom: 100%;
 }
-.jg-images[class*=" columns-"] > .jg-image > .jg-image-thumbnail > a > img {
+.jg-images[class*=" columns-"] > .jg-image > .jg-image-thumbnail > a > img,
+.jg-images[class*=" columns-"] > .jg-image > .jg-image-thumbnail > .jg-image-caption-hover > a > img {
   position: absolute;
   max-width: 100%;
   max-height: 100%;
