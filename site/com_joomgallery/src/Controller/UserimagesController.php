@@ -13,6 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') or die;
 
 use \Joomla\CMS\MVC\Controller\FormController;
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\ImagesController as AdminImagesController;
 
 /**
  * User images list controller class.
@@ -21,7 +22,7 @@ use \Joomla\CMS\MVC\Controller\FormController;
  *
  * @since   4.2.0
  */
-class UserimagesController extends FormController
+class UserimagesController extends AdminImagesController // FormController
 {
 
   /**
@@ -43,57 +44,4 @@ class UserimagesController extends FormController
     $this->default_view = 'userimages';
   }
 
-
-  /**
-   * Proxy for getModel.
-   *
-   * @param   string   $name    The model name. Optional.
-   * @param   string   $prefix  The class prefix. Optional
-   * @param   array    $config  Configuration array for model. Optional
-   *
-   * @return  object  The model
-   *
-   * @since   4.2.0
-   */
-  public function getModel($name = 'Form', $prefix = 'Site', $config = ['ignore_request' => true])
-  {
-    return parent::getModel($name, $prefix, $config);
-  }
-
-  /**
-   * Method to save the submitted ordering values for records via AJAX.
-   *
-   * @return  void
-   *
-   * @throws \Exception
-   * @since   4.2.0
-   */
-  public function saveOrderAjax(): void
-  {
-    // Check for request forgeries.
-    $this->checkToken();
-
-    // Get the input
-    $pks   = (array) $this->input->post->get('cid', [], 'int');
-    $order = (array) $this->input->post->get('order', [], 'int');
-
-    // Remove zero PKs and corresponding order values resulting from input filter for PK
-    foreach($pks as $i => $pk)
-    {
-      if($pk === 0)
-      {
-        unset($pks[$i]);
-        unset($order[$i]);
-      }
-    }
-
-    // Get the model
-    $model = $this->getModel('userimage', 'Site');
-
-    // Save the ordering
-    $model->saveorder($pks, $order);
-
-    // Close the application
-    $this->app->close();
-  }
 }

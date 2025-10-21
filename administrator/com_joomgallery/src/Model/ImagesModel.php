@@ -208,7 +208,7 @@ class ImagesModel extends JoomListModel
     }
 
     // With less than two tags, we dont need the AND logic
-    if(\count($tag) < 2)
+    if(!empty($tag) && \count($tag) < 2)
     {
       $logicAnd = false;
     }
@@ -517,7 +517,7 @@ class ImagesModel extends JoomListModel
     }
 
     // With less than two tags, we dont need the AND logic
-    if(\count($tag) < 2)
+    if(!empty($tag) && \count($tag) < 2)
     {
       $logicAnd = false;
     }

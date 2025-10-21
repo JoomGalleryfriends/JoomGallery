@@ -7,7 +7,7 @@
   <author>JoomGallery::ProjectTeam</author>
   <authorEmail>team@joomgalleryfriends.net</authorEmail>
   <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-  <version>4.2.0.34</version>
+  <version>4.2.0.35</version>
   <description>JoomGallery 4, a native gallery component for Joomla! 4.x, 5.x and 6.x</description>
   <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
   <scriptfile>script.php</scriptfile>

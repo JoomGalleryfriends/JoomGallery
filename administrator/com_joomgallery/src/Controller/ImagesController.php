@@ -343,7 +343,7 @@ class ImagesController extends JoomAdminController
       // Change the state of the items.
       try
       {
-        $model->changeSate($cid, $type, $value);
+        $model->changeState($cid, $type, $value);
         $errors = $model->getErrors();
         $ntext  = null;
 

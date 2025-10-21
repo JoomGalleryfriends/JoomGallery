@@ -886,7 +886,7 @@ class ImageModel extends JoomAdminModel
 	 *
 	 * @since   4.0.0
 	 */
-	public function changeSate(&$pks, $type='publish', $value = 1)
+	public function changeState(&$pks, $type='publish', $value = 1)
 	{
 		$user    = Factory::getContainer()->get(UserFactoryInterface::class);
 		$table   = $this->getTable();
@@ -1001,7 +1001,7 @@ class ImageModel extends JoomAdminModel
 	 */
 	public function publish(&$pks, $value = 1)
 	{
-    return $this->changeSate($pks, 'publish', $value);
+    return $this->changeState($pks, 'publish', $value);
   }
 
   /**

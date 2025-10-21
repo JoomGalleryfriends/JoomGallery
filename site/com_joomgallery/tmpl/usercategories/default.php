@@ -275,7 +275,6 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                       </td>
                     <?php endif; ?>
 
-<!--                    <td class="small d-none d-md-table-cell">-->
                     <td class="d-none d-md-table-cell text-center">
                       <?php if(!empty($item->thumbnail)) : ?>
                         <img class="jg_minithumb"
@@ -343,7 +342,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                           <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
                                   data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
                                   data-item-id="cb<?php echo $i; ?>"
-                                  data-item-task="usercategory.remove" <?php echo $disabled; ?>>
+                                  data-item-task="usercategories.delete" <?php echo $disabled; ?>>
                             <span class="icon-trash" aria-hidden="true"></span>
                           </button>
                         <?php endif; ?>
@@ -355,12 +354,12 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                         <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                         <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                 data-item-id="cb<?php echo $i; ?>"
-                                data-item-task="usercategory.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
-                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
+                                data-item-task="usercategories.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
+                        <span class="icon-<?php echo (int) $item->published ? 'publish' : 'unpublish'; ?>"
                               aria-hidden="true"></span>
                         </button>
                       <?php else : ?>
-                        <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
+                        <i class="icon-<?php echo (int) $item->published ? 'publish' : 'unpublish'; ?>"></i>
                       <?php endif; ?>
                     </td>
 

@@ -16,7 +16,9 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
 use \Joomla\CMS\Session\Session;
 use \Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Button\FeaturedButton;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -200,8 +202,16 @@ $canDelete = false;
                     <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
                   </th>
 
+                  <th scope="col" class="w-1 text-center d-none d-md-table-cell">
+                    <?php echo HTMLHelper::_('searchtools.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder); ?>
+                  </th>
+
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                  </th>
+
+                  <th scope="col" class="w-10 d-none d-md-table-cell">
+                    <?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
                   </th>
                 </tr>
                 </thead>
@@ -259,7 +269,7 @@ $canDelete = false;
                       <?php if($canCheckin && $item->checked_out > 0) : ?>
                         <button class="js-grid-item-action tbody-icon"
                                 data-item-id="cb<?php echo $i; ?>"
-                                data-item-task="userimage.checkin"
+                                data-item-task="userimages.checkin"
                         >
                           <span class="icon-checkedout" aria-hidden="true"></span>
                         </button>
@@ -324,7 +334,7 @@ $canDelete = false;
                           <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
                                   data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
                                   data-item-id="cb<?php echo $i; ?>"
-                                  data-item-task="userimage.remove" <?php echo $disabled; ?>>
+                                  data-item-task="userimages.delete" <?php echo $disabled; ?>>
                             <span class="icon-trash" aria-hidden="true"></span>
                           </button>
                         <?php endif; ?>
@@ -333,15 +343,33 @@ $canDelete = false;
 
                     <td class="d-none d-lg-table-cell text-center">
                       <?php if($canChange): ?>
+                        <?php $statetask = ((int) $item->featured) ? 'unfeatured' : 'featured'; ?>
+                        <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
+                                data-item-id="cb<?php echo $i; ?>"
+                                data-item-task="userimages.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
+                          <span class="icon-<?php echo (int) $item->featured ? 'featured' : 'minus-2'; ?>" aria-hidden="true"></span>
+                        </button>
+
+                      <?php else : ?>
+                        YYY<i class="icon-<?php echo (int) $item->featured ? 'featured' : 'minus-2'; ?>"></i>
+                      <?php endif; ?>
+                    </td>
+
+                    <td class="d-none d-lg-table-cell text-center">
+                      <?php if($canChange): ?>
                         <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                         <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                 data-item-id="cb<?php echo $i; ?>"
-                                data-item-task="userimage.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
-                          <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" aria-hidden="true"></span>
+                                data-item-task="userimages.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
+                          <span class="icon-<?php echo (int) $item->published ? 'publish' : 'unpublish'; ?>" aria-hidden="true"></span>
                         </button>
                       <?php else : ?>
-                        <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
+                        <i class="icon-<?php echo (int) $item->published ? 'publish' : 'unpublish'; ?>"></i>
                       <?php endif; ?>
+                    </td>
+
+                    <td class="d-none d-lg-table-cell text-center">
+                      <i class="icon-<?php echo (int) $item->approved ? 'publish' : 'unpublish'; ?>"></i>
                     </td>
 
                   </tr>

@@ -145,7 +145,7 @@ class HtmlView extends JoomGalleryView
     $this->filterForm    = $modUserPanel->getFilterForm();
     $this->activeFilters = $modUserPanel->getActiveFilters();
 
-    $this->isDebugSite = (bool) ($this->params['configs']->get('isDebugSite'))
+    $this->isDebugSite = (bool) ($this->params['configs']?->get('isDebugSite'))
       || $this->app->input->getBool('isDebug');
     // $this->isDebugSite = true;
 

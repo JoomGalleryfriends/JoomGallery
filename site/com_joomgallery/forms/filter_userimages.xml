@@ -55,6 +55,10 @@
             <option value="a.cattitle DESC">JCATEGORY_DESC</option>
             <option value="a.published ASC">JSTATUS_ASC</option>
             <option value="a.published DESC">JSTATUS_DESC</option>
+            <option value="a.featured ASC">JFEATURED_ASC</option>
+            <option value="a.featured DESC">JFEATURED_DESC</option>
+            <option value="a.approved ASC">COM_JOOMGALLERY_APPROVED_ASC</option>
+            <option value="a.approved DESC">COM_JOOMGALLERY_APPROVED_DESC</option>
         </field>
 
         <field name="limit"

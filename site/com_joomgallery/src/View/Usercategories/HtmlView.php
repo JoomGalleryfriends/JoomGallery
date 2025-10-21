@@ -9,6 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Usercategories;
 
+use Joomla\CMS\Factory;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Pagination\Pagination;
@@ -100,7 +101,12 @@ class HtmlView extends JoomGalleryView
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
 
-    $this->isDebugSite = ($this->params['configs']->get('isDebugSite'))
+    if (empty($this->params['configs']))
+    {
+      Factory::getApplication()->enqueueMessage(Text::_('Attention: $this->params[\'configs\'] is null'), 'error');
+    }
+
+    $this->isDebugSite = (bool)($this->params['configs']?->get('isDebugSite'))
       || $this->app->input->getBool('isDebug');
 
     // Check for errors.
@@ -129,9 +135,9 @@ class HtmlView extends JoomGalleryView
     $this->isUserCoreManager = $this->acl->checkACL('core.manage', 'com_joomgallery');
 
     // Check access permission (ACL) if userspace is enabled
-    if($this->params['configs']->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
+    if($this->params['configs']?->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
     {
-      if($this->params['configs']->get('jg_userspace', 1, 'int') == 0)
+      if($this->params['configs']?->get('jg_userspace', 1, 'int') == 0)
       {
         $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_VIEW_NO_ACCESS'), 'message');
       }
