@@ -128,10 +128,12 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
             <div class="text-center">
               <div class="btn-group joom-imgtypes" role="group"
                    aria-label="<?php echo Text::_('COM_JOOMGALLERY_SHOWIMAGE_LBL'); ?>">
-                <?php foreach($this->imagetypes as $key => $imagetype) : ?>
-                  <a class="btn btn-outline-primary" style="cursor:pointer;"
-                     onclick="openModal('<?php echo $imagetype->typename; ?>')"><?php echo Text::sprintf('COM_JOOMGALLERY_SHOWIMAGE_IMGTYPE', \ucfirst($imagetype->typename)); ?></a>
-                <?php endforeach; ?>
+                <?php if (false): ?>
+                  <?php foreach($this->imagetypes as $key => $imagetype) : ?>
+                    <a class="btn btn-outline-primary" style="cursor:pointer;"
+                       onclick="openModal('<?php echo $imagetype->typename; ?>')"><?php echo Text::sprintf('COM_JOOMGALLERY_SHOWIMAGE_IMGTYPE', \ucfirst($imagetype->typename)); ?></a>
+                  <?php endforeach; ?>
+                <?php endif ?>
               </div>
             </div>
             <div class="mt-5"><?php echo $this->form->renderField('filesystem'); ?></div>
