@@ -15,6 +15,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
 use \Joomla\CMS\Session\Session;
 use \Joomla\CMS\Layout\LayoutHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -170,6 +171,10 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                     <th scope="col" class="w-1 d-md-table-cell"></th>
                   <?php endif; ?>
 
+                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                    <?php echo Text::_('COM_JOOMGALLERY_IMAGE') ?>
+                  </th>
+
                   <th scope="col" style="min-width:180px">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                   </th>
@@ -269,6 +274,15 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                         <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                       </td>
                     <?php endif; ?>
+
+<!--                    <td class="small d-none d-md-table-cell">-->
+                    <td class="d-none d-md-table-cell text-center">
+                      <?php if(!empty($item->thumbnail)) : ?>
+                        <img class="jg_minithumb"
+                             src="<?php echo JoomHelper::getImg($item->thumbnail, 'thumbnail'); ?>"
+                             alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
+                      <?php endif; ?>
+                    </td>
 
                     <th scope="row" class="has-context title-cell">
                       <?php echo LayoutHelper::render('joomla.html.treeprefix', array('level' => $item->level)); ?>
