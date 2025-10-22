@@ -44,7 +44,7 @@ class Access implements AccessInterface
    *
    * @var array
    */
-  protected $types = array('category', 'collection', 'comment', 'config', 'image', 'imagetype', 'tag', 'user', 'vote');
+  protected $types = array('category', 'collection', 'comment', 'config', 'image', 'imagetype', 'tag', 'task', 'user', 'vote');
 
   /**
    * List of parent content types
@@ -73,7 +73,7 @@ class Access implements AccessInterface
    *
    * @var array
    */
-  protected $asset_global_types = array('tag', 'comment', 'imagetype', 'vote');
+  protected $asset_global_types = array('tag', 'comment', 'imagetype', 'vote', 'task');
 
   /**
    * Component specific prefix for its rules.

@@ -16,3 +16,6 @@ DROP TABLE IF EXISTS `#__joomgallery_votes`;
 DELETE FROM `#__assets` WHERE (name LIKE 'com_joomgallery%');
 DELETE FROM `#__content_types` WHERE (type_alias LIKE 'com_joomgallery%');
 DELETE FROM `#__mail_templates` WHERE (extension LIKE 'com_joomgallery%');
+DELETE `#__fields_values` FROM `#__fields_values` INNER JOIN `#__fields` ON `#__fields`.`id` = `#__fields_values`.`field_id` WHERE (`#__fields`.`context` LIKE 'com_joomgallery%');
+DELETE FROM `#__fields_groups` WHERE (context LIKE 'com_joomgallery%');
+DELETE FROM `#__fields` WHERE (context LIKE 'com_joomgallery%');

@@ -1087,12 +1087,13 @@ class ImageModel extends JoomAdminModel
    *
    * @param   int     $pk    The record primary key.
    * @param   string  $type  The imagetype to use as source for the recreation
+   * @param   array   $skip  List of imagetypes to skip creation (default: [])
    *
    * @return  boolean  True if successful, false if an error occurs.
    *
    * @since   4.0
    */
-  public function recreate(int $pk, $type='original'): bool
+  public function recreate(int $pk, $type='original', $skip=[]): bool
   {
 		$table = $this->getTable();
 
@@ -1136,8 +1137,14 @@ class ImageModel extends JoomAdminModel
           return false;
         }
 
+        // Add source type to the list of skiped types
+        if(!\in_array($type, $skip))
+        {
+          \array_push($skip, $type);
+        }
+
         // Perform the recreation
-        if(!$this->component->getFileManager()->createImages($source, $table->filename, $table->catid, true, false, [$type]))
+        if(!$this->component->getFileManager()->createImages($source, $table->filename, $table->catid, true, false, $skip))
         {
           $this->setError($table->getError());
 
@@ -1150,7 +1157,6 @@ class ImageModel extends JoomAdminModel
       else
       {
         // Prune items that you can't change.
-        unset($pks[$i]);
         $error = $this->getError();
 
         if($error)
