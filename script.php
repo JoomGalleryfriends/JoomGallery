@@ -511,7 +511,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     // remove old JoomGallery sql files
     foreach($this->detectSQLfiles() as $file)
     {
-      if(File::exists($file))
+      if(is_file($file))
       {
         File::delete($file);
       }
