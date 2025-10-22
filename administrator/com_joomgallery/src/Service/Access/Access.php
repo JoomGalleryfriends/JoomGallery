@@ -132,7 +132,11 @@ class Access implements AccessInterface
     }
 
     // Set current user
-    $this->user = $this->component->getMVCFactory()->getIdentity();
+    if (!$this->app->isClient('api')) {
+      $this->user = $this->component->getMVCFactory()->getIdentity();
+    } else {
+      $this->user = $this->app->getIdentity();
+    }
 
     // Set acl map for components with advanced rules
     $mapPath = _JOOM_PATH_ADMIN.'/includes/rules.php';
