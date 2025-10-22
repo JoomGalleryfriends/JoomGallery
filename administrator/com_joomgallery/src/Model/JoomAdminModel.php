@@ -124,7 +124,7 @@ abstract class JoomAdminModel extends AdminModel
   }
 
   /**
-	 * Returns a reference to the Table object, always creating it.
+	 * Returns a reference to the a Table object, always creating it.
 	 *
 	 * @param   string  $type    The table type to instantiate
 	 * @param   string  $prefix  A prefix for the table class name. Optional.

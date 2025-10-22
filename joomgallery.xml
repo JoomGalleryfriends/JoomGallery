@@ -88,6 +88,7 @@
     <plugin group="system" plugin="joomowner"/>
     <plugin group="privacy" plugin="joomgallery"/>
     <plugin group="console" plugin="joomconsole"/>
+    <plugin group="task" plugin="joomgallery"/>
     <plugin group="webservices" plugin="joomgallery"/>
   </plugins>
 
