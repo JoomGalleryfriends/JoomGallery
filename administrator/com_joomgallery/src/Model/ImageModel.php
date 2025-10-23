@@ -766,13 +766,42 @@ class ImageModel extends JoomAdminModel
 					}
 
 					// Delete corresponding comments
+					$db = $this->getDatabase();
+					$query = $db->getQuery(true)
+							->delete($db->quoteName('#__joomgallery_comments'))
+							->where(
+									$db->quoteName('imgid') . ' = :pk',
+							)
+							->bind(':pk', $pk, ParameterType::INTEGER);
+
+						$db->setQuery($query);
+						$db->execute();
 
 					// Delete corresponding votes
+					$query = $db->getQuery(true)
+							->delete($db->quoteName('#__joomgallery_votes'))
+							->where(
+									$db->quoteName('imgid') . ' = :pk',
+							)
+							->bind(':pk', $pk, ParameterType::INTEGER);
+
+						$db->setQuery($query);
+						$db->execute();
+
+					// Delete corresponding collection reference
+					$query = $db->getQuery(true)
+							->delete($db->quoteName('#__joomgallery_collections_ref'))
+							->where(
+									$db->quoteName('imgid') . ' = :pk',
+							)
+							->bind(':pk', $pk, ParameterType::INTEGER);
+
+						$db->setQuery($query);
+						$db->execute();
 
 					// Multilanguage: if associated, delete the item in the _associations table
 					if($this->associationsContext && Associations::isEnabled())
 					{
-						$db = $this->getDatabase();
 						$query = $db->getQuery(true)
 							->select(
 								[
