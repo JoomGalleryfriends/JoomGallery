@@ -202,6 +202,39 @@ abstract class JoomListModel extends ListModel
   }
 
   /**
+   * Method to get all available item ids.
+   *
+   * @return  mixed  Array of item ids on success, false on failure.
+   *
+   * @since   4.2.0
+   */
+  public function getIDs()
+  {
+    // Get a storage key.
+    $store = $this->getStoreId('getIDs');
+
+    // Try to load the data from internal storage.
+    if(isset($this->cache[$store]))
+    {
+      return $this->cache[$store];
+    }
+
+    try
+    {
+      // Load the list items and add the items to the internal cache.
+      $this->cache[$store] = $this->_getList($this->getIDListQuery());
+    }
+    catch(\RuntimeException $e)
+    {
+      $this->setError($e->getMessage());
+
+      return false;
+    }
+
+    return $this->cache[$store];
+  }
+
+  /**
    * Method to cache the last count query constructed.
    *
    * @return  QueryInterface  An object implementing the QueryInterface interface
@@ -221,6 +254,33 @@ abstract class JoomListModel extends ListModel
     }
 
     return $this->countQuery;
+  }
+
+  /**
+   * Build an SQL query to load the full list of ids.
+   *
+   * @return  DatabaseQuery
+   *
+   * @since   4.2.0
+   */
+  protected function getIDListQuery($ordering = '')
+  {
+    // Create a new query object.
+    $db    = $this->getDbo();
+    $query = $db->getQuery(true);
+
+    // Get the corresponding table
+    $table = $this->getTable($this->type);
+
+    // Select the required fields from the table.
+    $query->select($db->quoteName($table->getKeyName()));
+    $query->from($db->quoteName($table->getTableName()));
+
+    // Apply ordering
+    if(!$ordering) $ordering = $table->getKeyName() . ' ASC';
+    $query->order($db->escape($ordering));
+
+    return $query;
   }
 
   /**

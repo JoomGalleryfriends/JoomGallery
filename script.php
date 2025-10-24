@@ -546,6 +546,15 @@ class com_joomgalleryInstallerScript extends InstallerScript
         $this->activateExtension($plugin_id);
       }
     }
+
+    // remove old JoomGallery sql files
+    foreach($this->detectSQLfiles() as $file)
+    {
+      if(is_file($file))
+      {
+        File::delete($file);
+      }
+    }
   }
 
   /**
@@ -1560,6 +1569,23 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions2.rss').'.spc';
     $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss').'.spc';
     $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss').'.spc';
+
+    return $files;
+  }
+
+  /**
+   * Detect old JoomGallery update sql files
+   *
+   * @return  array|bool   List of file paths or false if no files detected
+   */
+  private function detectSQLfiles()
+  {
+    $folder = JPATH_ADMINISTRATOR.'/components/com_joomgallery/sql/updates/mysql/';
+
+    $files = array();
+    // SQL file delete
+    $files[] = $folder . '4.0.0.sql';
+    $files[] = $folder . '4.1.0.sql';
 
     return $files;
   }

@@ -23,6 +23,7 @@ extract($displayData);
  * @var   string   $image_type      The imagetype used for the grid
  * @var   string   $image_class     Class to be added to the image box
  * @var   string   $caption_align   Alignment class for the caption
+ * @var   string   $description     Category description
  * @var   bool     $random_image    True, if a random inage should be loaded (only for categories)
  */
 ?>
@@ -57,6 +58,9 @@ extract($displayData);
               <?php echo $this->escape($item->title); ?>
             </a>
           </div>
+          <?php if($description) : ?>
+            <?php echo $item->description; ?>
+          <?php endif; ?>
         <?php endif; ?>
       </div>
     <?php endforeach; ?>

@@ -496,15 +496,15 @@
 
         <field name="jg_maxfilesize"
               type="number"
-              default="2000000"
-              min="1"
-              step="1"
+              default="2"
+              min="0"
+              step="0.1"
               validate="number"
-              filter="integer"
-              showon="jg_userspace:1"
+              filter="float"
               class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE"
-              description="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE_LONG" />
+              description="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE_LONG"
+              showon="jg_userspace:1" />
     </fieldset>
 
     <fieldset type="tab" name="user-upload" label="COM_JOOMGALLERY_UPLOADS">
@@ -971,6 +971,16 @@
             <option value="center">JGLOBAL_CENTER</option>
             <option value="right">JGLOBAL_RIGHT</option>
         </field>
+        <field name="jg_category_view_subcategories_category_description"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_DESCRIPTION"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
         <field name="jg_category_view_subcategories_random_image"
             type="radio"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_IMAGES"
@@ -1174,6 +1184,18 @@
             default="0"
             layout="joomla.form.field.radio.switcher"
             validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="jg_category_view_show_description_label"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_DESCRIPTION_LABEL"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_DESCRIPTION_LABEL_DESC"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            showon="jg_category_view_show_description:1"
             >
             <option value="0">JNO</option>
             <option value="1">JYES</option>
