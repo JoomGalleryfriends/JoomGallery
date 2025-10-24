@@ -88,6 +88,13 @@ class com_joomgalleryInstallerScript extends InstallerScript
    */
   protected $fromOldJG = false;
 
+  /**
+   * Storage array to store whatever needed during the script runtime
+   *
+   * @var  array
+   */
+  protected $storage = [];
+
 
 	/**
 	 * Method called before install/update the component. Note: This method won't be called during uninstall process.
@@ -150,6 +157,29 @@ class com_joomgalleryInstallerScript extends InstallerScript
 		{
 			return $result;
 		}
+
+    // Deactivate plugins that might interrupt install
+    $problemPlugins = ['versionable' => ['name' => 'plg_behaviour_versionable', 'type' => 'plugin', 'element' => 'versionable', 'folder' => 'behaviour']];
+    foreach($problemPlugins as $plugin)
+    {
+      if(!key_exists('problemPlugins', $this->storage))
+      {
+        $this->storage['problemPlugins'] = [];
+      }
+
+      if($id = $this->getExtensionID($plugin['name'], $plugin['type'], $plugin['element'], $plugin['folder'], false))
+      {
+        $language = Factory::getApplication()->getLanguage();
+        $language->load($plugin['name'], JPATH_ADMINISTRATOR);
+
+        Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_DEACTIVATE_PLUGIN', $plugin['folder'], Text::_(strtoupper($plugin['name']))), 'error');
+
+        //array_push($this->storage['problemPlugins'], $id);
+        //$this->deactivateExtension($id);
+
+        return false;
+      }
+    }
 
     if($type == 'update')
     {
@@ -505,6 +535,15 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         $app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_CONFIG', 'error'));
         Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_CONFIG'), 8, 'joomgallery');
+      }
+    }
+
+    // Re-activate previously deactivated Plugins
+    if(key_exists('problemPlugins', $this->storage))
+    {
+      foreach($this->storage['problemPlugins'] as $plugin_id)
+      {
+        $this->activateExtension($plugin_id);
       }
     }
 
@@ -944,6 +983,57 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
+	 * Tries to get an extension id based on information
+   *
+   * @param   string $name           Extension name
+   * @param   string $type           Extension type
+   * @param   string $element        Extension element
+   * @param   string $folder         Extension folder
+   * @param   bool   $get_disabled   True to load also disabled extensions (default: true)
+   *
+	 * @return  int  Extension id
+	 */
+  private function getExtensionID($name=null, $type=null, $element=null, $folder=null, $get_disabled=true)
+  {
+    $db    = Factory::getContainer()->get(DatabaseInterface::class);
+    $query = $db->getQuery(true);
+
+    $query->select('extension_id')
+					->from('#__extensions');
+    
+    if($name)
+    {
+      $query->where('name = ' . $db->quote($name));
+    }
+
+    if($type)
+    {
+      $query->where('type = ' . $db->quote($type));
+    }
+
+    if($element)
+    {
+      $query->where('element = ' . $db->quote($element));
+    }
+
+    if($folder)
+    {
+      $query->where('folder = ' . $db->quote($folder));
+    }
+
+    if(!$get_disabled)
+    {
+      $query->where('enabled = 1');
+    }
+
+    $db->setQuery($query);
+
+    $id = $db->loadResult();
+
+    return $id ? $id : 0;
+  }
+
+  /**
 	 * Deactivate an extension based on its id
 	 *
 	 * @param  int   $id  The ID of the extension to be deactivated
@@ -958,6 +1048,27 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $query->update($db->quoteName('#__extensions'))
           ->set($db->quoteName('enabled'). ' = 0')
 					->where($db->quoteName('extension_id') . ' = ' . $id);
+		
+    $db->setQuery($query);
+		
+    return $db->execute();
+  }
+
+  /**
+   * Activate an extension based on its id
+   *
+   * @param  int   $id  The ID of the extension to be activated
+   *
+   * @return void
+   */
+  private function activateExtension($id)
+  {
+    $db    = Factory::getContainer()->get(DatabaseInterface::class);
+    $query = $db->getQuery(true);
+
+    $query->update($db->quoteName('#__extensions'))
+          ->set($db->quoteName('enabled'). ' = 1')
+          ->where($db->quoteName('extension_id') . ' = ' . $id);
 		
     $db->setQuery($query);
 		
