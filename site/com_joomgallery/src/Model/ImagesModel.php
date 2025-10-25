@@ -114,7 +114,7 @@ class ImagesModel extends AdminImagesModel
 
 		if($start > 0)
 		{
-			$pages = \boolval($this->getState('list.pages', 0));
+			$pages = \boolval($this->getState('list.pages', 1));
 
 			if(!$pages)
 			{
@@ -147,7 +147,7 @@ class ImagesModel extends AdminImagesModel
 
 		if($start > 0)
 		{
-			$pages = \boolval($this->getState('list.pages', 0));
+			$pages = \boolval($this->getState('list.pages', 1));
 			$limit = $this->getState('list.limit');
 			$total = $this->getTotal();
 
