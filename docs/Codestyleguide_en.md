@@ -22,13 +22,6 @@ Last updated: 24/02/2025
 3. Copyright  
 4. Licence
 
-- PHP files in the `src` directory must use namespaces:
-```php
-namespace Joomgallery\Component\Joomgallery\<Client>\<Folder>;
-```
-
-- Always import classes using `use` or `require_once` for non-namespaced files. **Do not** use `include`, `include_once`, or `require`.
-
 - Function names: start with a lowercase letter, capitalise each subsequent word:
 ```php
 buildCategoryQuery()
@@ -38,6 +31,47 @@ buildCategoryQuery()
 - Keywords must be lowercase: `if`, `while`, `for`, `foreach`, `require_once`, `true`, `false`, `null`, `function`, etc.
 - HTML output should be handled only in template (`tmpl`) files. If generated elsewhere, buffer it and pass it to the template.
 - All identifiers, comments, and code must be in **English only**.
+
+### Namespacing
+
+- PHP files in the `src` directory must use namespaces:
+```php
+namespace Joomgallery\Component\Joomgallery\<Client>\<Folder>;
+```
+
+- Always import classes using `use` or `require_once` for non-namespaced files. **Do not** use `include`, `include_once`, or `require`.
+
+- Classes, functions, and constants from the PHP global namespace (built-in ones like DateTime, strlen, or PHP_VERSION) must not be imported with use statements.
+- Built-in PHP functions (e.g. strlen, count, array_merge) must be referenced with a leading backslash when used inside namespaced code.
+
+#### CORRECT
+```php
+$date = new \DateTime();
+```
+
+#### INCORRECT
+```php
+use DateTime;
+
+$date = new DateTime();
+```
+
+- `use` statements (imports) must be grouped and sorted consistently:
+
+1. Order by type:
+  - Classes first
+  - Then functions
+  - Then constants
+2. Sort each group by length (shorter names first).
+
+#### CORRECT
+```php
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use function strlen;
+use const PHP_VERSION;
+```
 
 ### Language Standards
 - Use `image` instead of `picture`
@@ -103,6 +137,33 @@ if($integer == 1){
 }
 else if($integer == 2)
     $count = 3;
+```
+
+## Trailing Commas
+
+Single-line and multi-line lists must not have a trailing comma.
+
+
+#### CORRECT
+```php
+$values = ['a', 'b', 'c'];
+
+$values = [
+  'a',
+  'b',
+  'c'
+];
+```
+
+#### INCORRECT
+```php
+$values = ['a', 'b', 'c',];
+
+$values = [
+  'a',
+  'b',
+  'c',
+];
 ```
 
 ### `switch` Notes

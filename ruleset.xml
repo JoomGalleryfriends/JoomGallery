@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<ruleset name="JoomGallery">
+  <description>The JoomGallery PSR-12 exceptions.</description>
+
+  <!-- Exclude folders not containing production code -->
+  <exclude-pattern type="relative">^docs/*</exclude-pattern>
+  <exclude-pattern type="relative">^media/*</exclude-pattern>
+  <exclude-pattern type="relative">^node_modules/*</exclude-pattern>
+  <!-- Exclude 3rd party libraries and Framework code. -->
+  <exclude-pattern type="relative">^administrator/com_joomgallery/vendor/*</exclude-pattern>
+  <!-- Exclude installation script. -->
+  <exclude-pattern type="relative">^script.php</exclude-pattern>
+
+  <rule ref="PSR12">
+    <exclude name="Squiz.ControlStructures.ControlSignature"/>
+    <exclude name="PEAR.ControlStructures.ControlSignature"/>
+  </rule>
+
+  <!-- temporary extend the line length -->
+  <rule ref="Generic.Files.LineLength">
+    <properties>
+      <property name="lineLimit" value="560"/>
+      <property name="absoluteLineLimit" value="560"/>
+    </properties>
+  </rule>
+
+  <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+    <exclude-pattern type="relative">includes/defines\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/exifarray\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/iptcarray\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/latinbased\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/rules\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/tusspecs\.php</exclude-pattern>
+  </rule>
+</ruleset>
