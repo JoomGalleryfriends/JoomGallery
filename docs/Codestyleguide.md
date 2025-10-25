@@ -22,13 +22,6 @@ Letzte Änderungen: 24.02.2025
 4. Copyright
 5. Lizenz
 
-- PHP Dateien im src-Ordner mit Namespaces versehen!
-```php
-namespace Joomgallery\Component\Joomgallery\<Client>\<Folder>;
-```
-
-- Einbinden weiterer Dateien wenn immer möglich per use (namespacing) oder require_once falls Dateien keinen Namespace haben. KEIN include, include_once oder require.
-
 - Funktionsnamen: Kleiner Anfangsbuchstabe, dann mit jedem neuen 'Wort' ein großer Buchstabe
 ```php
 buildCategoryQuery()
@@ -38,6 +31,48 @@ buildCategoryQuery()
 - Schlüsselwörter: Kleingeschrieben (if, while, for, foreach, require_once, true, false, null, function...)
 - HTML Ausgabe wenn möglich nur in den Dateien der 'tmpl'-Ordner. Falls HTML in anderen Dateien aufgebaut wird, nicht direkt ausgeben sondern zwischenspeichern und an die Template-Dateien übergeben.
 - In den Dateien ausnahmslos Englisch verwenden (Funktionsnamen, Variablennamen, Kommentare, ...)
+
+### Namespacing
+
+- PHP Dateien im src-Ordner mit Namespaces versehen!
+```php
+namespace Joomgallery\Component\Joomgallery\<Client>\<Folder>;
+```
+- Einbinden weiterer Dateien wenn immer möglich per `use` (namespacing) oder `require_once` falls Dateien keinen Namespace haben. KEIN `include`, `include_once` oder `require`.
+
+- Klassen, Funktionen und Konstanten aus dem globalen PHP-Namensraum (integrierte Funktionen wie DateTime, strlen oder PHP_VERSION) dürfen nicht mit use-Anweisungen importiert werden.
+
+- Integrierte PHP-Funktionen (z. B. strlen, count, array_merge) müssen mit einem vorangestellten Backslash referenziert werden, wenn sie innerhalb von Namespace-Code verwendet werden.
+
+#### RICHTIG
+```php
+$date = new \DateTime();
+```
+
+#### FALSCH
+```php
+use DateTime;
+
+$date = new DateTime();
+```
+
+- `use` statements (imports) müssen gruppiert und srotiert werden nach folgendem Muster:
+
+1. Sortieren nach Typ:
+  - Zuerst Klassen
+  - Dann Funktionen
+  - Dann Konstanten
+
+2. Jede Gruppe nach Länge sortieren (kürzere Namen zuerst).
+
+#### RICHTIG
+```php
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use function strlen;
+use const PHP_VERSION;
+``
 
 ### Sprache
 - 'image' statt 'picture'
@@ -103,6 +138,32 @@ if($integer == 1){
 }
 else if($integer == 2)
     $count = 3;
+```
+
+## Nachgestellte Kommas
+
+Einzeilige und mehrzeilige Listen dürfen kein abschließendes Komma enthalten.
+
+#### RICHTIG
+```php
+$values = ['a', 'b', 'c'];
+
+$values = [
+  'a',
+  'b',
+  'c'
+];
+```
+
+#### FALSCH
+```php
+$values = ['a', 'b', 'c',];
+
+$values = [
+  'a',
+  'b',
+  'c',
+];
 ```
 
 ### switch (Einige Dinge sind hier besonders zu beachten)
