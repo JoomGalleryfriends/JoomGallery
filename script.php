@@ -159,25 +159,28 @@ class com_joomgalleryInstallerScript extends InstallerScript
 		}
 
     // Deactivate plugins that might interrupt install
-    $problemPlugins = ['versionable' => ['name' => 'plg_behaviour_versionable', 'type' => 'plugin', 'element' => 'versionable', 'folder' => 'behaviour']];
+    $problemPlugins = ['versionable' => ['jversion' => '6.0.0', 'name' => 'plg_behaviour_versionable', 'type' => 'plugin', 'element' => 'versionable', 'folder' => 'behaviour']];
     foreach($problemPlugins as $plugin)
     {
-      if(!key_exists('problemPlugins', $this->storage))
+      if(version_compare($jversion[0], $plugin['jversion'], '>='))
       {
-        $this->storage['problemPlugins'] = [];
-      }
+        if(!key_exists('problemPlugins', $this->storage))
+        {
+          $this->storage['problemPlugins'] = [];
+        }
 
-      if($id = $this->getExtensionID($plugin['name'], $plugin['type'], $plugin['element'], $plugin['folder'], false))
-      {
-        $language = Factory::getApplication()->getLanguage();
-        $language->load($plugin['name'], JPATH_ADMINISTRATOR);
+        if($id = $this->getExtensionID($plugin['name'], $plugin['type'], $plugin['element'], $plugin['folder'], false))
+        {
+          $language = Factory::getApplication()->getLanguage();
+          $language->load($plugin['name'], JPATH_ADMINISTRATOR);
 
-        Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_DEACTIVATE_PLUGIN', $plugin['folder'], Text::_(strtoupper($plugin['name']))), 'error');
+          Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_DEACTIVATE_PLUGIN', $plugin['folder'], Text::_(strtoupper($plugin['name']))), 'error');
 
-        //array_push($this->storage['problemPlugins'], $id);
-        //$this->deactivateExtension($id);
+          //array_push($this->storage['problemPlugins'], $id);
+          //$this->deactivateExtension($id);
 
-        return false;
+          return false;
+        }
       }
     }
 
