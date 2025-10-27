@@ -163,6 +163,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_category_view_subcategory_type_images` VARCHAR(25) NOT NULL DEFAULT "thumbnail",
 `jg_category_view_subcategories_pagination` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_subcategories_caption_align` VARCHAR(25) NOT NULL DEFAULT "left",
+`jg_category_view_subcategories_category_description` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_subcategories_random_image` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_subcategories_random_subimages` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_class` VARCHAR(25) NOT NULL DEFAULT "columns",
@@ -180,6 +181,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_category_view_images_show_title` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_title_link` VARCHAR(25) NOT NULL DEFAULT "defaultview",
 `jg_category_view_show_description` TINYINT(1) NOT NULL DEFAULT 0,
+`jg_category_view_show_description_label` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_show_imgdate` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_show_imgauthor` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_show_tags` TINYINT(1) NOT NULL DEFAULT 0,
@@ -214,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_maxusercat` DOUBLE NOT NULL DEFAULT 10,
 `jg_maxuserimage` DOUBLE NOT NULL DEFAULT 500,
 `jg_maxuserimage_timespan` DOUBLE NOT NULL DEFAULT 0,
-`jg_maxfilesize` DOUBLE NOT NULL DEFAULT 2000000,
+`jg_maxfilesize` DOUBLE NOT NULL DEFAULT 2,
 `jg_userupload` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_newpiccopyright` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_uploaddefaultcat` TINYINT(1) NOT NULL DEFAULT 0,
@@ -255,27 +257,6 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_faulties` (
 `created_time` DATETIME NOT NULL,
 PRIMARY KEY (`id`),
 KEY `idx_type` (`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `#__joomgallery_fields`
---
-
-CREATE TABLE IF NOT EXISTS `#__joomgallery_fields` (
-`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-`asset_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT "FK to the #__assets table.",
-`type` VARCHAR(50) NOT NULL DEFAULT "",
-`key` VARCHAR(255) NOT NULL DEFAULT "",
-`value` TEXT NOT NULL,
-`ordering` INT(11) NOT NULL DEFAULT 0,
-`created_time` DATETIME NOT NULL,
-`created_by` INT(11)  NULL  DEFAULT 0,
-`language` CHAR(7) NOT NULL DEFAULT "*" COMMENT "The language code.",
-PRIMARY KEY (`id`),
-KEY `idx_type` (`type`),
-INDEX `idx_list_types` (`type`, `language`, `ordering`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -333,7 +314,10 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_tags_ref` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `imgid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `tagid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX `idx_imgid` (`imgid`),
+INDEX `idx_tagid` (`tagid`),
+INDEX `idx_tag_img` (`tagid`, `imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -381,7 +365,10 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_collections_ref` (
 `collectionid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `imgid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `approved` TINYINT(1) NOT NULL DEFAULT 0,
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX `idx_imgid` (`imgid`),
+INDEX `idx_collectionid` (`collectionid`),
+INDEX `idx_col_img` (`collectionid`, `imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -470,6 +457,36 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_migration` (
 `checked_out` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `checked_out_time` DATETIME DEFAULT NULL,
 PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `#__joomgallery_tasks`
+--
+
+CREATE TABLE IF NOT EXISTS `#__joomgallery_tasks` (
+`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`title` VARCHAR(255) NOT NULL DEFAULT "",
+`taskid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
+`type` VARCHAR(128) NOT NULL DEFAULT "",
+`queue` LONGTEXT NOT NULL,
+`successful` LONGTEXT NOT NULL,
+`failed` LONGTEXT NOT NULL,
+`counter` LONGTEXT NOT NULL,
+`last_id` VARCHAR(25) NOT NULL DEFAULT "0",
+`completed` TINYINT(1) NOT NULL DEFAULT 0,
+`last_execution` DATETIME DEFAULT NULL COMMENT 'timestamp of last run',
+`times_executed` INT(11) UNSIGNED DEFAULT 0 COMMENT 'count of successful runs',
+`params` TEXT NOT NULL,
+`published` TINYINT(1) NOT NULL DEFAULT 1,
+`ordering` INT(11) NOT NULL DEFAULT 0,
+`note` TEXT NOT NULL,
+`created_time` DATETIME NOT NULL,
+`checked_out` INT(11) UNSIGNED NOT NULL DEFAULT 0,
+`checked_out_time` DATETIME DEFAULT NULL,
+PRIMARY KEY (`id`),
+KEY `idx_type` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
