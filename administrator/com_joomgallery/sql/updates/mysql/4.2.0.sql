@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS `#__joomgallery_fields`;
+UPDATE `#__joomgallery_configs` SET `jg_maxfilesize` = `jg_maxfilesize` / 1000000;
 ALTER TABLE `#__joomgallery_tags_ref` ADD INDEX `idx_imgid` (`imgid`);
 ALTER TABLE `#__joomgallery_tags_ref` ADD INDEX `idx_tagid` (`tagid`);
 ALTER TABLE `#__joomgallery_tags_ref` ADD INDEX `idx_tag_img` (`tagid`, `imgid`);
@@ -8,7 +9,6 @@ ALTER TABLE `#__joomgallery_collections_ref` ADD INDEX `idx_col_img` (`collectio
 ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_description_label` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_show_description`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_subcategories_category_description` TINYINT(1) NOT NULL DEFAULT 0 AFTER `jg_category_view_subcategories_caption_align`;
 ALTER TABLE `#__joomgallery_configs` MODIFY `jg_maxfilesize` DOUBLE NOT NULL DEFAULT 2;
-UPDATE `#__joomgallery_configs` SET `jg_maxfilesize` = `jg_maxfilesize` / 1000000;
 CREATE TABLE IF NOT EXISTS `#__joomgallery_tasks` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `title` VARCHAR(255) NOT NULL DEFAULT "",

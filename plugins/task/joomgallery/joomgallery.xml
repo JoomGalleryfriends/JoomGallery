@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="plugin" group="task" method="upgrade">
-	<name>plg_task_joomgallery</name>
-	<creationDate>2025-07-07</creationDate>
-  <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
-  <license>GNU General Public License version 3 or later</license>
-  <author>JoomGallery::ProjectTeam</author>
-  <authorEmail>team@joomgalleryfriends.net</authorEmail>
-  <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-	<version>4.1.0</version>
-	<description>PLG_TASK_JOOMGALLERY_XML_DESCRIPTION</description>
-	<namespace path="src">Joomgallery\Plugin\Task\Joomgallery</namespace>
-	<files>
-		<folder plugin="joomgallery">services</folder>
-		<folder>src</folder>
-		<folder>forms</folder>
-	</files>
-	<languages>
-		<language tag="en-GB">language/en-GB/plg_task_joomgallery.ini</language>
-		<language tag="en-GB">language/en-GB/plg_task_joomgallery.sys.ini</language>
-	</languages>
+    <name>plg_task_joomgallery</name>
+    <creationDate>2025-10-27</creationDate>
+    <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
+    <license>GNU General Public License version 3 or later</license>
+    <author>JoomGallery::ProjectTeam</author>
+    <authorEmail>team@joomgalleryfriends.net</authorEmail>
+    <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
+    <version>4.2.0</version>
+    <description>PLG_TASK_JOOMGALLERY_XML_DESCRIPTION</description>
+    <namespace path="src">Joomgallery\Plugin\Task\Joomgallery</namespace>
+
+    <files>
+		    <folder>forms</folder>
+		    <folder>language</folder>
+		    <folder>src</folder>
+		    <folder plugin="joomgallery">services</folder>
+    </files>
 </extension>

@@ -500,7 +500,7 @@ class CategoryModel extends JoomItemModel
 
     // Switch between pagination behavior and plugin behavior for
     // limit and start
-    $listModel->setState('list.pages', $params['configs']->get('jg_category_view_pages', 0));
+    $listModel->setState('list.pages', $params['configs']->get('jg_category_view_pages', 1));
 
     // Disable behavior of remembering pagination position
     // if it is not explicitly given in the request
