@@ -12,31 +12,31 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // No direct access
 \defined('_JEXEC') or die;
 
-use \Joomla\CMS\MVC\Controller\FormController;
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
 
 /**
  * Images list controller class.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
-class ImagesController extends FormController
+class ImagesController extends JoomAdminController
 {
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional
-	 * @param   array   $config  Configuration array for model. Optional
-	 *
-	 * @return  object	The model
-	 *
-	 * @since   4.0.0
-	 */
-	public function getModel($name = 'Images', $prefix = 'Site', $config = array())
-	{
-		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}
+  /**
+   * Proxy for getModel.
+   *
+   * @param   string   $name    The model name. Optional.
+   * @param   string   $prefix  The class prefix. Optional
+   * @param   array    $config  Configuration array for model. Optional
+   *
+   * @return  object  The model
+   *
+   * @since   4.0.0
+   */
+  public function getModel($name = 'Images', $prefix = 'Site', $config = array())
+  {
+    return parent::getModel($name, $prefix, array('ignore_request' => true));
+  }
 
   /**
    * Method to save the submitted ordering values for records via AJAX.
@@ -45,7 +45,7 @@ class ImagesController extends FormController
    *
    * @since   4.0.0
    */
-  public function saveOrderAjax()
+  public function saveOrderAjax(): void
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -68,12 +68,7 @@ class ImagesController extends FormController
     $model = $this->getModel('Imageform', 'Site');
 
     // Save the ordering
-    $return = $model->saveorder($pks, $order);
-
-    if($return)
-    {
-      echo '1';
-    }
+    $model->saveorder($pks, $order);
 
     // Close the application
     $this->app->close();

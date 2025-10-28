@@ -11,8 +11,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 
 \defined('_JEXEC') or die;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\DefaultConfig;
 use \Joomla\CMS\Component\ComponentHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\DefaultConfig;
 
 /**
 * Trait to implement ConfigServiceInterface

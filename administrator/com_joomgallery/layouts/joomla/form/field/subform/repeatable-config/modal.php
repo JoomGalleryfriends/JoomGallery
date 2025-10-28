@@ -10,9 +10,9 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Form\Form;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Form\Form;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Layout\LayoutHelper;
 
 extract($displayData);
 

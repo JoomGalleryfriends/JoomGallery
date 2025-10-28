@@ -12,9 +12,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 // No direct access
 \defined('_JEXEC') or die;
 
-use \Joomla\Filesystem\Path;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
+use \Joomla\Filesystem\Path;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Form\FormField;
 use \Joomla\CMS\Component\ComponentHelper;

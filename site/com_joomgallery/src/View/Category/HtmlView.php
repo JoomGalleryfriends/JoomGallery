@@ -1,5 +1,4 @@
 <?php
-
 /**
 ******************************************************************************************
 **   @package    com_joomgallery                                                        **
@@ -109,7 +108,7 @@ class HtmlView extends JoomGalleryView
 		}
 
     // Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}

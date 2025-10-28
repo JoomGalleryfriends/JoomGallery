@@ -11,14 +11,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\FileManager;
 
 \defined('_JEXEC') or die;
 
-use \Joomla\CMS\Language\Text;
 use \Joomla\Filesystem\Path;
+use \Joomla\CMS\Language\Text;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\Component\Media\Administrator\Exception\FileExistsException;
+use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
+use \Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerInterface;
-use \Joomla\Component\Media\Administrator\Exception\FileExistsException;
-use \Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
-use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 
 /**
 * File manager Class
