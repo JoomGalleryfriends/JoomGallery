@@ -91,7 +91,7 @@ $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
         <?php // --- user information ----------------------------------------------------- ?>
 
         <?php if($isShowUserInformation): ?>
-          <?php displayUserPanelInfo($this->config, $this->userData, $userDataComment); ?>
+          <?php displayUserPanelInfo($this->config, $this->userData); ?>
         <?php endif; ?>
 
       <?php endif; ?>
@@ -102,7 +102,7 @@ $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
       <?php // --- panel categories list ----------------------------------------------------- ?>
 
       <?php if($isShowLatestCategoryList): ?>
-        <?php displayLatestCategoryList($this); ?>
+        <?php displayLatestCategoryList($this, $returnURL); ?>
       <?php endif; ?>
     </div">
 
@@ -111,7 +111,7 @@ $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
       <?php // --- panel images list ----------------------------------------------------- ?>
 
       <?php if($isShowLatestImagesList): ?>
-        <?php displayLatestImagesList($this); ?>
+        <?php displayLatestImagesList($this, $returnURL); ?>
       <?php endif; ?>
     </div">
 
@@ -129,6 +129,17 @@ $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
 </div>
 
 <?php
+
+/**
+ * Display table with user cat/img/img timespan counts with config
+ * limits row and comment row behind
+ *
+ * @param           $config limits by config for user categories, images, images in time span
+ * @param   array   $userData  Count of user categories, images, images in time span
+ * @param   array   $userDataComment hints
+ *
+ * @since 4.3
+ */
 function displayUserPanelLimits($config, array $userData, array $userDataComment)
 {
   $usrUserCat        = (string) $userData['userCatCount'];
@@ -150,7 +161,6 @@ function displayUserPanelLimits($config, array $userData, array $userDataComment
   $classDangerValueUserImgCount = ($usrUserImgCount > $cfgMaxUserImg) ? ' '.$classDangerValue : '';
   // $classDangerValueUserUserImgTimespan = ($usrUserImgTimespan > $cfgMaxUserImgTimespan) ? ' ' . $classDangerValue :  '';
   $classDangerValueUserUserImgTimespan = ($usrUserImgTimespan > $cfgMaxUserImg) ? ' '.$classDangerValue : '';
-
 
   ?>
 
@@ -230,7 +240,14 @@ function displayUserPanelLimits($config, array $userData, array $userDataComment
   <?php return;
 }
 
-function displayUserPanelInfo($config, array $userData, array $userDataComment)
+/**
+ * Display table with user cat/img/img timespan counts
+ *
+ * @param   array   $userData  Count of user categories, images, images in time span
+ *
+ * @since 4.3
+ */
+function displayUserPanelInfo(array $userData)
 {
   $usrUserCat      = (string) $userData['userCatCount'];
   $usrUserImgCount = (string) $userData['userImgCount'];
@@ -272,6 +289,14 @@ function displayUserPanelInfo($config, array $userData, array $userDataComment)
   <?php return;
 }
 
+/**
+ * Displays information when user has not enough rights to see the user panel
+ *
+ * @param $data
+ *
+ *
+ * @since 4.3
+ */
 function displayNoAccess($data)
 {
   ?>
@@ -306,6 +331,13 @@ function displayNoAccess($data)
   <?php return;
 }
 
+/**
+ * Display available buttons in user area for this page
+ *
+ * @param $returnURL base64 url to this page
+ *
+ * @since 4.3
+ */
 function displayUserButtons ($returnURL)
 {
 
@@ -347,17 +379,21 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
   <?php return;
   }
 
-  function displayLatestCategoryList($data)
+  /**
+   * Display latest categories list table
+   *
+   * @param $data  $this: (latest categories, latest images, ...) as separate sub objects
+   * @param $returnURL base64 url to this page
+   *
+   * @since version
+   */
+  function displayLatestCategoryList($data, $returnURL)
   {
     $categories = $data->latestCategories;
 
     $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
 
     $tokenLink = '&'.Session::getFormToken().'='. 1;
-    // return to userpanel;
-    $returnURL = base64_encode('index.php?option=com_joomgallery&view=userpanel');
-
-    // index.php?option=com_modules&task=module.orderPosition&' . $token . '"';
 
     $baseLink_CategoryEdit      = 'index.php?option=com_joomgallery&task=usercategory.edit&id=';
     $baseLink_CategoryPublish   = 'index.php?option=com_joomgallery&task=usercategories.publish&id=';
@@ -558,23 +594,28 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
     <?php return;
   }
 
-  function displayLatestImagesList($data)
+  /**
+   * Display latest images list table
+   *
+   * @param $data $this: (latest categories, latest images, ...) as separate sub objects
+   * @param $returnURL base64 url to this page
+   *
+   *
+   * @throws Exception
+   * @since version
+   */
+  function displayLatestImagesList($data, $returnURL)
   {
     $images = $data->latestImages;
 
     $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
 
-    // index.php?option=com_modules&task=module.orderPosition&' . $token . '"';
     $token = Session::getFormToken().'='. 1;
-    // return to userpanel;
-    $returnURL = base64_encode('index.php?option=com_joomgallery&view=userpanel');
 
     $baseLink_ImageEdit    = 'index.php?option=com_joomgallery&view=userimage&layout=editImg&id=';
     $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
 
     $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
-
-
     ?>
     <div class="mb">
 
@@ -764,6 +805,19 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
     <?php return;
   }
 
+  /**
+   * Display managed images list table
+   * Copy of user images display page
+   * - can change ordering,
+   * - can change number of shown images
+   *
+   * @param $data $this: (latest categories, latest images, ...) as separate sub objects
+   * @param $returnURL base64 url to this page
+   *
+   *
+   * @throws Exception
+   * @since 4.3
+   */
   function displayUserManageableImages($data, $returnURL)
   {
     // Access check
@@ -1014,6 +1068,4 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
     <?php return;
   }
-
-
   ?>
