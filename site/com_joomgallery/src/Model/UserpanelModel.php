@@ -1,11 +1,11 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ ******************************************************************************************
+ **   @package    com_joomgallery                                                        **
+ **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+ **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+ **   @license    GNU General Public License version 3 or later                          **
+ *****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Factory;
 
 /**
- * Model to get a list of category records.
+ * Model prepares latest categories, latest images and image list of user
  *
  * @package JoomGallery
  * @since   4.2.0
@@ -94,6 +94,18 @@ class UserpanelModel extends ImagesModel
     return $isUserHasACategory;
   }
 
+  /**
+   * Collect from DB by user and assign into one object:
+   *  - category count
+   *  - image count
+   *  - image count by config time span
+   *
+   * @param   array   $userData object result
+   * @param   int     $userId Data only for this user
+   *
+   *
+   * @since 4.3
+   */
   public function assignUserData(array &$userData, int $userId): void
   {
 
@@ -103,6 +115,16 @@ class UserpanelModel extends ImagesModel
 
   }
 
+  /**
+   * Number of categories by user from DB
+   *
+   * @param   int   $userId  Data only for this user
+   *
+   * @return false|int Number of categories by user
+   *
+   * @throws \Exception
+   * @since 4.3
+   */
   private function dbUserCategoryCount(int $userId)
   {
     $categoryCount = 0;
@@ -136,6 +158,16 @@ class UserpanelModel extends ImagesModel
     return $categoryCount;
   }
 
+  /**
+   * Number of images by user from DB
+   *
+   * @param   int   $userId  Data only for this user
+   *
+   * @return false|int
+   *
+   * @throws \Exception
+   * @since 4.3
+   */
   private function dbUserImageCount(int $userId)
   {
     $imageCount = 0;
@@ -169,6 +201,16 @@ class UserpanelModel extends ImagesModel
     return $imageCount;
   }
 
+  /**
+   * Number of images from DB by user and time span in config
+   *
+   * @param   int   $userId  Data only for this user
+   *
+   * @return false|int
+   *
+   * @throws \Exception
+   * @since 4.3
+   */
   private function dbUserImgTimeSpan(int $userId)
   {
     $imageCount = 0;
@@ -208,8 +250,17 @@ class UserpanelModel extends ImagesModel
     return $imageCount;
   }
 
-//=================================================================================
-
+  /**
+   * Prepare data of latest categories for given user
+   *
+   * @param   int   $userId  Data only for this user
+   * @param   int   $limit
+   *
+   * @return array|mixed list of category data (selection)
+   *
+   * @throws \Exception
+   * @since 4.3
+   */
   public function dbLatestUserCategories(int $userId, int $limit)
   {
     $categories = [];
@@ -235,7 +286,7 @@ class UserpanelModel extends ImagesModel
 
       // Get image count
       $imgQuery = $db->createQuery()
-         ->select('COUNT(`img`.id)')
+        ->select('COUNT(`img`.id)')
         ->from($db->quoteName('#__joomgallery', 'img'))
         ->where($db->quoteName('img.catid') . ' = ' . $db->quoteName('a.id'));
       $query->select('(' . $imgQuery->__toString() . ') AS ' . $db->quoteName('img_count'));
@@ -258,6 +309,18 @@ class UserpanelModel extends ImagesModel
     return $categories;
   }
 
+  /**
+   * Prepare data of latest images for given user
+   *
+   * @param   int   $userId  Data only for this user
+   *
+   * @param   int   $limit
+   *
+   * @return array list of image data (selection)
+   *
+   * @throws \Exception
+   * @since 4.3
+   */
   public function dbLatestUserImages(int $userId, int $limit)
   {
     $images = [];
