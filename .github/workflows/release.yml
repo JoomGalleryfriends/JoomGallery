@@ -1,4 +1,4 @@
-name: Build and Release
+name: CI JoomGallery
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build Release Artifact
+    name: Build Release
     runs-on: ubuntu-latest
 
     steps:
