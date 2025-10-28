@@ -16,9 +16,9 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
 use \Joomla\CMS\Session\Session;
 use \Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Button\FeaturedButton;
+use \Joomla\CMS\Button\FeaturedButton;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();

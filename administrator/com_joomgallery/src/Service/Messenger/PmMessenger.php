@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Mail\MailTemplate;
-use \Joomla\CMS\User\UserFactoryInterface;
 use \Joomla\Database\DatabaseInterface;
+use \Joomla\CMS\User\UserFactoryInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
 

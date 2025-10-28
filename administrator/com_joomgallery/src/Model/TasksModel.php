@@ -14,8 +14,8 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
 use \Joomla\Registry\Registry;
-use \Joomla\CMS\MVC\Model\ListModel;
 use \Joomla\Database\ParameterType;
+use \Joomla\CMS\MVC\Model\ListModel;
 use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 
 /**

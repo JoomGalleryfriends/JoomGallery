@@ -10,12 +10,12 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\Component\Scheduler\Administrator\Task\Status;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Session\Session;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\Component\Scheduler\Administrator\Task\Status;
 
 // Load scheduler language file
 $this->app->getLanguage()->load('com_scheduler', JPATH_ADMINISTRATOR);

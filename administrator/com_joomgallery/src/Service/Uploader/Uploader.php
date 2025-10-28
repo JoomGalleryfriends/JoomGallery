@@ -16,14 +16,13 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Object\CMSObject;
 use \Joomla\CMS\Filter\InputFilter;
 use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\Database\DatabaseInterface;
 use \Joomla\Filesystem\File as JFile;
 use \Joomla\Filesystem\Path as JPath;
+use \Joomla\Database\DatabaseInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 
 /**
 * Base class for the Uploader helper classes

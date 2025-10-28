@@ -1,27 +1,27 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+******************************************************************************************
+**   @package    com_joomgallery                                                        **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 3 or later                          **
+*****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userimage;
 
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Toolbar\Toolbar;
-use Joomla\CMS\Helper\MediaHelper;
-use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\MVC\View\GenericDataException;
-use Joomgallery\Component\Joomgallery\Site\Model\UserimageModel;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Toolbar\Toolbar;
+use \Joomla\CMS\Helper\MediaHelper;
+use \Joomla\CMS\Toolbar\ToolbarHelper;
+use \Joomla\CMS\Component\ComponentHelper;
+use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Site\Model\UserimageModel;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a list of Joomgallery.

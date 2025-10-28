@@ -9,7 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Usercategories;
 
-use Joomla\CMS\Factory;
+use \Joomla\CMS\Factory;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Pagination\Pagination;
