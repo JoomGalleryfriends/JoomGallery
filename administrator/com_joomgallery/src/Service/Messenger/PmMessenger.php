@@ -16,6 +16,7 @@ use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Mail\MailTemplate;
 use \Joomla\CMS\User\UserFactoryInterface;
+use \Joomla\Database\DatabaseInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
 

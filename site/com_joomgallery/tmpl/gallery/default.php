@@ -50,6 +50,7 @@ if($image_link == 'lightgallery')
   $lightbox = true;
 
   $wa->useScript('com_joomgallery.lightgallery');
+  $wa->useScript('com_joomgallery.lg-hash');
   $wa->useScript('com_joomgallery.lg-thumbnail');
   $wa->useScript('com_joomgallery.lg-zoom');
   $wa->useStyle('com_joomgallery.lightgallery-bundle');

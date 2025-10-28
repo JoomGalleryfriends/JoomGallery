@@ -1243,4 +1243,31 @@ class JoomHelper
     // Default rule: add 's'
     return $word . 's';
   }
+
+  /**
+   * Returns a Table Object
+   *
+   * @param   string    $tableClass   The name of the table (e.g '\\Joomla\\CMS\\Table\\Module')
+   *
+   * @return  object|bool   Table object on success, false otherwise.
+   *
+   * @since   4.2.0
+   * NOTE:    Use Factory::getApplication()->bootComponent('...')->getMVCFactory()->createTable($name, $prefix, $config); instead
+   */
+  public static function getTableInstance(string $tableClass)
+  {
+    if(!\class_exists($tableClass))
+    {
+      return false;
+    }
+
+    // Check for a possible service from the container otherwise manually instantiate the class
+    if(Factory::getContainer()->has($tableClass))
+    {
+      return Factory::getContainer()->get($tableClass);
+    }
+    
+    // Instantiate a new table class and return it.
+    return new $tableClass(Factory::getContainer()->get(DatabaseInterface::class));
+  }
 }

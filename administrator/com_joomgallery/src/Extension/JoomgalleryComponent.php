@@ -61,7 +61,6 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
   use MessageTrait;
 	use AssociationServiceTrait;
 	use HTMLRegistryAwareTrait;
-  // use RouterServiceTrait;
   use RouterServiceTrait {RouterServiceTrait::createRouter as traitCreateRouter;}
 
   /**

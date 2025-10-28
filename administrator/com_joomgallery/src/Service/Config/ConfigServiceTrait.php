@@ -9,7 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 
-\defined('JPATH_PLATFORM') or die;
+\defined('_JEXEC') or die;
 
 use \Joomla\CMS\Component\ComponentHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\DefaultConfig;

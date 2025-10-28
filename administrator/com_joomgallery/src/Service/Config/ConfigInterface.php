@@ -9,7 +9,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 
-\defined('JPATH_PLATFORM') or die;
+\defined('_JEXEC') or die;
 
 /**
 * Interface for the configuration classes

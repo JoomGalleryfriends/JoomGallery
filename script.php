@@ -12,11 +12,11 @@ defined('_JEXEC') or die();
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Log\Log;
-use \Joomla\CMS\Table\Table;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Filesystem\File;
-use \Joomla\CMS\Filesystem\Folder;
+use \Joomla\Filesystem\Path;
+use \Joomla\Filesystem\File;
+use \Joomla\Filesystem\Folder;
 use \Joomla\CMS\Installer\Installer;
 use \Joomla\CMS\Installer\InstallerScript;
 use \Joomla\Database\DatabaseInterface;
@@ -88,6 +88,13 @@ class com_joomgalleryInstallerScript extends InstallerScript
    */
   protected $fromOldJG = false;
 
+  /**
+   * Storage array to store whatever needed during the script runtime
+   *
+   * @var  array
+   */
+  protected $storage = [];
+
 
 	/**
 	 * Method called before install/update the component. Note: This method won't be called during uninstall process.
@@ -151,11 +158,37 @@ class com_joomgalleryInstallerScript extends InstallerScript
 			return $result;
 		}
 
+    // Deactivate plugins that might interrupt install
+    $problemPlugins = ['versionable' => ['jversion' => '6.0.0', 'name' => 'plg_behaviour_versionable', 'type' => 'plugin', 'element' => 'versionable', 'folder' => 'behaviour']];
+    foreach($problemPlugins as $plugin)
+    {
+      if(version_compare($jversion[0], $plugin['jversion'], '>='))
+      {
+        if(!key_exists('problemPlugins', $this->storage))
+        {
+          $this->storage['problemPlugins'] = [];
+        }
+
+        if($id = $this->getExtensionID($plugin['name'], $plugin['type'], $plugin['element'], $plugin['folder'], false))
+        {
+          $language = Factory::getApplication()->getLanguage();
+          $language->load($plugin['name'], JPATH_ADMINISTRATOR);
+
+          Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_DEACTIVATE_PLUGIN', $plugin['folder'], Text::_(strtoupper($plugin['name']))), 'error');
+
+          //array_push($this->storage['problemPlugins'], $id);
+          //$this->deactivateExtension($id);
+
+          return false;
+        }
+      }
+    }
+
     if($type == 'update')
     {
       // save release code information
       //-------------------------------
-      if(File::exists(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml'))
+      if(is_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml'))
       {
         $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
         $this->act_code = $xml->version;
@@ -190,7 +223,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       // copy old XML file (JGv1-3) to temp folder
       $xml_path   = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR;
       $tmp_folder = Factory::getApplication()->get('tmp_path');
-      if(File::exists($xml_path.'joomgallery.xml'))
+      if(is_file($xml_path.'joomgallery.xml'))
       {
         File::copy($xml_path.'joomgallery.xml', $tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml');
       }
@@ -198,16 +231,16 @@ class com_joomgalleryInstallerScript extends InstallerScript
       // remove old JoomGallery files and folders
       foreach($this->detectJGfolders() as $folder)
       {
-        if(Folder::exists($folder))
+        if(is_dir(Path::clean($folder)))
         {
-          Folder::delete($folder);
+          Folder::delete(Path::clean($folder));
         }
       }
       foreach($this->detectJGfiles() as $file)
       {
-        if(File::exists($file))
+        if(is_file(Path::clean($file)))
         {
-          File::delete($file);
+          File::delete(Path::clean($file));
         }
       }
 
@@ -441,7 +474,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
         // copy old XML file (JGv1-3) back from temp folder
         $xml_path   = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR;
         $tmp_folder = Factory::getApplication()->get('tmp_path');
-        if(File::exists($tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml'))
+        if(is_file($tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml'))
         {
           File::copy($tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml', $xml_path.'joomgallery_old.xml');
         }
@@ -505,6 +538,24 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         $app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_CONFIG', 'error'));
         Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_CONFIG'), 8, 'joomgallery');
+      }
+    }
+
+    // Re-activate previously deactivated Plugins
+    if(key_exists('problemPlugins', $this->storage))
+    {
+      foreach($this->storage['problemPlugins'] as $plugin_id)
+      {
+        $this->activateExtension($plugin_id);
+      }
+    }
+
+    // remove old JoomGallery sql files
+    foreach($this->detectSQLfiles() as $file)
+    {
+      if(is_file($file))
+      {
+        File::delete($file);
       }
     }
   }
@@ -935,6 +986,57 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
+	 * Tries to get an extension id based on information
+   *
+   * @param   string $name           Extension name
+   * @param   string $type           Extension type
+   * @param   string $element        Extension element
+   * @param   string $folder         Extension folder
+   * @param   bool   $get_disabled   True to load also disabled extensions (default: true)
+   *
+	 * @return  int  Extension id
+	 */
+  private function getExtensionID($name=null, $type=null, $element=null, $folder=null, $get_disabled=true)
+  {
+    $db    = Factory::getContainer()->get(DatabaseInterface::class);
+    $query = $db->getQuery(true);
+
+    $query->select('extension_id')
+					->from('#__extensions');
+    
+    if($name)
+    {
+      $query->where('name = ' . $db->quote($name));
+    }
+
+    if($type)
+    {
+      $query->where('type = ' . $db->quote($type));
+    }
+
+    if($element)
+    {
+      $query->where('element = ' . $db->quote($element));
+    }
+
+    if($folder)
+    {
+      $query->where('folder = ' . $db->quote($folder));
+    }
+
+    if(!$get_disabled)
+    {
+      $query->where('enabled = 1');
+    }
+
+    $db->setQuery($query);
+
+    $id = $db->loadResult();
+
+    return $id ? $id : 0;
+  }
+
+  /**
 	 * Deactivate an extension based on its id
 	 *
 	 * @param  int   $id  The ID of the extension to be deactivated
@@ -949,6 +1051,27 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $query->update($db->quoteName('#__extensions'))
           ->set($db->quoteName('enabled'). ' = 0')
 					->where($db->quoteName('extension_id') . ' = ' . $id);
+		
+    $db->setQuery($query);
+		
+    return $db->execute();
+  }
+
+  /**
+   * Activate an extension based on its id
+   *
+   * @param  int   $id  The ID of the extension to be activated
+   *
+   * @return void
+   */
+  private function activateExtension($id)
+  {
+    $db    = Factory::getContainer()->get(DatabaseInterface::class);
+    $query = $db->getQuery(true);
+
+    $query->update($db->quoteName('#__extensions'))
+          ->set($db->quoteName('enabled'). ' = 1')
+          ->where($db->quoteName('extension_id') . ' = ' . $id);
 		
     $db->setQuery($query);
 		
@@ -991,6 +1114,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       $pluginGroup = (string) $plugin['group'];
       $path        = $installation_folder . '/plugins/' . $pluginGroup . '/' . $pluginName;
       $installer   = new Installer;
+      $installer->setDatabase($db);
 
       if (!$this->isAlreadyInstalled('plugin', $pluginName, $pluginGroup))
       {
@@ -1062,8 +1186,9 @@ class com_joomgalleryInstallerScript extends InstallerScript
 	 */
 	private function installModules($parent)
 	{
-		$installation_folder = $parent->getParent()->getPath('source');
-		$app                 = Factory::getApplication();
+		$folder = $parent->getParent()->getPath('source');
+		$app    = Factory::getApplication();
+		$db     = Factory::getContainer()->get(DatabaseInterface::class);
 
 		if (method_exists($parent, 'getManifest'))
 		{
@@ -1082,8 +1207,9 @@ class com_joomgalleryInstallerScript extends InstallerScript
     foreach($modules->children() as $module)
     {
       $moduleName = (string) $module['module'];
-      $path       = $installation_folder . '/modules/' . $moduleName;
+      $path       = $folder . '/modules/' . $moduleName;
       $installer  = new Installer;
+      $installer->setDatabase($db);
 
       if (!$this->isAlreadyInstalled('module', $moduleName))
       {
@@ -1167,6 +1293,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       if (!empty($extension))
       {
         $installer = new Installer;
+        $installer->setDatabase($db);
         $result    = $installer->uninstall('plugin', $extension);
 
         if ($result)
@@ -1248,6 +1375,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       if (!empty($extension))
       {
         $installer = new Installer;
+        $installer->setDatabase($db);
         $result    = $installer->uninstall('module', $extension);
 
         if ($result)
@@ -1278,9 +1406,9 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $error = false;
 
     // Create destination folder if not exists
-    if(!Folder::exists($dst))
+    if(!is_dir(Path::clean($dst)))
     {
-      Folder::create($dst);
+      Folder::create(Path::clean($dst));
     }
 
     // Copy files
@@ -1365,7 +1493,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     {
       $db     = Factory::getContainer()->get(DatabaseInterface::class);
       $tables = $db->getTableList();
-      $prefix = Factory::getApplication()->get('dbprefix');
+      $prefix = strtolower(Factory::getApplication()->get('dbprefix'));
 
       if(empty($tables))
       {
@@ -1444,6 +1572,23 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions2.rss').'.spc';
     $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss').'.spc';
     $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss').'.spc';
+
+    return $files;
+  }
+
+  /**
+   * Detect old JoomGallery update sql files
+   *
+   * @return  array|bool   List of file paths or false if no files detected
+   */
+  private function detectSQLfiles()
+  {
+    $folder = JPATH_ADMINISTRATOR.'/components/com_joomgallery/sql/updates/mysql/';
+
+    $files = array();
+    // SQL file delete
+    $files[] = $folder . '4.0.0.sql';
+    $files[] = $folder . '4.1.0.sql';
 
     return $files;
   }
@@ -1559,7 +1704,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     // create module if it is not yet created
     if (empty($module_id))
     {
-      $row            = Table::getInstance('module');
+      $row            = $this->getTableInstance('\\Joomla\\CMS\\Table\\Module');
       $row->title     = $title;
       $row->ordering  = $ordering;
       $row->position  = $position;
@@ -1593,5 +1738,32 @@ class com_joomgalleryInstallerScript extends InstallerScript
     }
 
     return true;
+  }
+
+  /**
+   * Returns a Table Object
+   *
+   * @param   string    $tableClass   The name of the table (e.g '\\Joomla\\CMS\\Table\\Module')
+   *
+   * @return  object|bool   Table object on success, false otherwise.
+   *
+   * @since   4.2.0
+   * NOTE:    Use Factory::getApplication()->bootComponent('...')->getMVCFactory()->createTable($name, $prefix, $config); instead
+   */
+  private static function getTableInstance(string $tableClass)
+  {
+    if(!\class_exists($tableClass))
+    {
+      return false;
+    }
+
+    // Check for a possible service from the container otherwise manually instantiate the class
+    if(Factory::getContainer()->has($tableClass))
+    {
+      return Factory::getContainer()->get($tableClass);
+    }
+    
+    // Instantiate a new table class and return it.
+    return new $tableClass(Factory::getContainer()->get(DatabaseInterface::class));
   }
 }
