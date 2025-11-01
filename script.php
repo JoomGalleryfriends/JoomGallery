@@ -602,6 +602,8 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $data['language'] = $language;
     $data['subject'] = 'COM_JOOMGALLERY_MAIL_'.strtoupper($context_id).'_SUBJECT';
     $data['body'] = 'COM_JOOMGALLERY_MAIL_'.strtoupper($context_id).'_BODY';
+    $data['htmlbody'] = '';
+    $data['attachments'] = '';
     $data['params'] = json_encode($params);
 
     if (!$table->bind($data))
@@ -684,6 +686,8 @@ class com_joomgalleryInstallerScript extends InstallerScript
       return false;
     }
 
+    $date = Factory::getDate();
+
     $data = array();
     $data["id"] = null;
     $data["asset_id"] = null;
@@ -699,6 +703,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $data["thumbnail"] = "0";
     $data["params"] = '{"allow_download":"-1","allow_comment":"-1","allow_rating":"-1","allow_watermark":"-1","allow_watermark_download":"-1"}';
     $data["language"] = "*";
+    $data["modified_time"] = $date->toSql();
     $data["metadesc"] = "";
     $data["metakey"] = "";
     $data["rules"] = "{}";
@@ -832,6 +837,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $gallerydata['menutype'] = 'mainmenu';
     $gallerydata['title'] = 'JoomGallery';
     $gallerydata['alias'] = 'gallery';
+    $gallerydata['path'] = 'gallery';
     $gallerydata['language'] = '*';
     $gallerydata['link'] = 'index.php?option=com_joomgallery&view=gallery';
     $gallerydata['type'] = 'component';
@@ -839,6 +845,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $gallerydata['level'] = 1;
     $gallerydata['component_id'] = $com_id;
     $gallerydata['access'] = 1;
+    $gallerydata['img'] = 'class:component';
     $gallerydata['params'] = '{"menu_show":1}';
 
     if (!$table->bind($gallerydata))
@@ -872,6 +879,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $catdata['menutype'] = 'mainmenu';
     $catdata['title'] = 'Categories';
     $catdata['alias'] = 'categories';
+    $catdata['path'] = 'gallery/categories';
     $catdata['language'] = '*';
     $catdata['link'] = 'index.php?option=com_joomgallery&view=category&id=1';
     $catdata['type'] = 'component';
@@ -880,6 +888,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $catdata['level'] = 2;
     $catdata['component_id'] = $com_id;
     $catdata['access'] = 1;
+    $catdata['img'] = 'class:component';
     $catdata['params'] = '{"menu_show":0}';
 
     if (!$table->bind($catdata))
@@ -910,6 +919,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $imgsdata['menutype'] = 'mainmenu';
     $imgsdata['title'] = 'Images';
     $imgsdata['alias'] = 'images';
+    $imgsdata['path'] = 'gallery/images';
     $imgsdata['language'] = '*';
     $imgsdata['link'] = 'index.php?option=com_joomgallery&view=images';
     $imgsdata['type'] = 'component';
@@ -918,6 +928,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $imgsdata['level'] = 2;
     $imgsdata['component_id'] = $com_id;
     $imgsdata['access'] = 1;
+    $imgsdata['img'] = 'class:component';
     $imgsdata['params'] = '{"menu_show":0}';
 
     if (!$table->bind($imgsdata))
