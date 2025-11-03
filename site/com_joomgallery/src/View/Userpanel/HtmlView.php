@@ -130,6 +130,7 @@ class HtmlView extends JoomGalleryView
 //    $app  = Factory::getApplication();
 
     // Get modUserPanel data
+    /** @var UserpanelModel $modUserPanel */
     $modUserPanel = $this->getModel('Userpanel');
 
     $this->state  = $modUserPanel->getState();

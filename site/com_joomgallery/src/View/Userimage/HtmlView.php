@@ -87,6 +87,12 @@ class HtmlView extends JoomGalleryView
    * @since 4.2
    */
   protected string $categoryTitle = '';
+  /**
+   * javascript variables for upload
+   * @var \stdClass
+   * @since version
+   */
+  private \stdClass $js_vars;
 
   /**
    * Display the view

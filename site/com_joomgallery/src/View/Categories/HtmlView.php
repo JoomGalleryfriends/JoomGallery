@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Site\Model\CategoriesModel;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**

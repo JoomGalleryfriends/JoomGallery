@@ -90,6 +90,8 @@ class CategoryController extends JoomBaseController
 
 		// Redirect to the form screen.
 		$this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=categoryform&'.$this->getItemAppend($editId), false));
+
+    return true;
 	}
 
 	/**
@@ -135,6 +137,8 @@ class CategoryController extends JoomBaseController
 
 		// Redirect to the form screen.
 		$this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=categoryform&'.$this->getItemAppend(0, $addCatId), false));
+
+    return true;
 	}
 
 	/**

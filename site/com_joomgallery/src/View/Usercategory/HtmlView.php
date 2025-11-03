@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
@@ -79,7 +80,7 @@ class HtmlView extends JoomGalleryView
   {
     // Get model data
 
-    /** @var \Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel $model */
+    /** @var UsercategoryModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();

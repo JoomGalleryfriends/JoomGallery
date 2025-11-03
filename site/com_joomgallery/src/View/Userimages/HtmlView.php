@@ -17,6 +17,7 @@ use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Pagination\Pagination;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Site\Model\UserimagesModel;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
@@ -96,6 +97,7 @@ class HtmlView extends JoomGalleryView
     $user = $this->getCurrentUser();
 
     // Get model data
+    /** @var UserimagesModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();

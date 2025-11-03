@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Userupload;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\Registry;
+use \Joomgallery\Component\Joomgallery\Site\Model\UseruploadModel;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
@@ -115,6 +116,7 @@ class HtmlView extends JoomGalleryView
     $user = $this->getCurrentUser();
 
     // Get model data
+    /** @var UseruploadModel $model */
     $model        = $this->getModel();
     $this->state  = $model->getState();
     $this->form   = $model->getForm();

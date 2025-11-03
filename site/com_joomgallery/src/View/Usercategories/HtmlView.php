@@ -91,6 +91,7 @@ class HtmlView extends JoomGalleryView
     $user = $this->getCurrentUser();
 
     // Get model data
+    /** @var UsercategoriesModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();
