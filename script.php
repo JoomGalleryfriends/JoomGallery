@@ -783,7 +783,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $data["jg_maxusercat"] = 10;
     $data["jg_maxuserimage"] = 500;
     $data["jg_maxuserimage_timespan"] = 0;
-    $data["jg_maxfilesize"] = 2000000;
+    $data["jg_maxfilesize"] = 2;
     $data["jg_maxuploadfields"] = 3;
     $data["jg_maxvoting"] = 5;
 
