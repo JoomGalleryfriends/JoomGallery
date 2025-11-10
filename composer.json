@@ -5,13 +5,20 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.88.0",
         "squizlabs/php_codesniffer": "^3.13.4",
-        "phpstan/phpstan": "^2.1.29",
-        "phpstan/phpstan-deprecation-rules": "^2.0.3"
+        "slevomat/coding-standard": "^8.15"
     },
     "config": {
         "vendor-dir": "administrator/com_joomgallery/vendor",
         "platform": {
             "php": "8.0.0"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+          "administrator/com_joomgallery/vendor/bin/phpcs --config-set installed_paths tools/phpcs,administrator/com_joomgallery/vendor/slevomat/coding-standard"
+        ],
+        "post-update-cmd": [
+          "administrator/com_joomgallery/vendor/bin/phpcs --config-set installed_paths tools/phpcs,administrator/com_joomgallery/vendor/slevomat/coding-standard"
+        ]
     }
 }
