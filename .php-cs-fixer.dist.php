@@ -43,15 +43,17 @@ $finder = PhpCsFixer\Finder::create()
   // https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues/3702#issuecomment-396717120
   ->notPath('administrator/com_joomgallery/tmpl')
   ->notPath('administrator/com_joomgallery/layouts')
-  ->name('*.php');
+  ->name('*.php')
+  ->ignoreDotFiles(true)
+  ->ignoreVCS(true);
 
 $header = <<<'EOF'
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-******************************************************************************************
+*********************************************************************************
+   @package    com_joomgallery                                                 **
+   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+   @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+   @license    GNU General Public License version 3 or later                   **
+*********************************************************************************
 EOF;
 
 return (new PhpCsFixer\Config())
@@ -68,7 +70,7 @@ return (new PhpCsFixer\Config())
     'line_ending' => true,
 
     // Enforce file header
-    'header_comment' => ['comment_type' => 'PHPDoc', 'location' => 'after_open', 'header' => $header],
+    'header_comment' => ['comment_type' => 'PHPDoc', 'location' => 'after_open', 'separate' => 'bottom', 'header' => $header],
 
     // Arrays & commas
     'array_syntax' => ['syntax' => 'short'],
@@ -84,11 +86,10 @@ return (new PhpCsFixer\Config())
     'braces_position' => ['control_structures_opening_brace' => 'next_line_unless_newline_at_signature_end'],
     'function_typehint_space' => true,
     'method_argument_space' => ['on_multiline' => 'ignore'],
-    
+
     // Imports
     'no_unused_imports' => true,
-    'global_namespace_import' => ['import_classes' => false, 'import_constants' => false, 'import_functions' => false],
-    'ordered_imports' => ['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'length'],
+    'ordered_imports' => ['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha'],
 
     // Misc quality/cleanup
     'no_useless_else' => true,

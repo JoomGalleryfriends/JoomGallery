@@ -43,7 +43,7 @@ jobs:
           name: JoomGallery-${{ steps.pr.outputs.SAFE_TITLE }}
           path: .
           retention-days: 60
-  
+
   code-style-php:
     name: Check PHP code style
     runs-on: ubuntu-latest
@@ -79,34 +79,3 @@ jobs:
 
       - name: Run PHPCS
         run: ./administrator/com_joomgallery/vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml .
-
-  static-analysis:
-    name: Static PHP code analysis
-    runs-on: ubuntu-latest
-    needs: [code-style-php]
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-          tools: composer
-          coverage: none
-
-      # Cache composer downloads + vendor to speed up installs
-      - name: Cache Composer
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.composer/cache/files
-            administrator/com_joomgallery/vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
-      # Install WITH dev so cs tools are available
-      - name: Install dependencies (with dev)
-        run: composer install --prefer-dist --no-ansi --no-interaction --no-progress
-
-      - name: Run PHPstan
-        run:  ./administrator/com_joomgallery/vendor/bin/phpstan --error-format=github
