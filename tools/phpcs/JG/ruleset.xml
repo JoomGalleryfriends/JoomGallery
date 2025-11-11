@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="JG">
+  <description>JoomGallery custom PHPCS standard.</description>
+
+  <!-- Optional: expose/organize multiple sniffs here; for now, this is enough
+       because the class is auto-discovered under Sniffs/. -->
+</ruleset>
