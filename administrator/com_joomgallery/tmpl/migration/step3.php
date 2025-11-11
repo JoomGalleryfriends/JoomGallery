@@ -10,12 +10,12 @@
 // No direct access
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\FileLayout;
-use Joomla\CMS\Form\FormFactoryInterface;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Layout\FileLayout;
+use \Joomla\CMS\Form\FormFactoryInterface;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();

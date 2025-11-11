@@ -1,24 +1,24 @@
 <?php
 
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+******************************************************************************************
+**   @package    com_joomgallery                                                        **
+**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
+**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
+**   @license    GNU General Public License version 3 or later                          **
+*****************************************************************************************/
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 
-use \lsolesen\pel\PelEntryAscii;
-use \lsolesen\pel\PelEntryCopyright;
-use \lsolesen\pel\PelEntryLong;
-use \lsolesen\pel\PelEntryShort;
-use \lsolesen\pel\PelEntryTime;
-use \lsolesen\pel\PelEntryUserComment;
-use \lsolesen\pel\PelFormat;
 use \lsolesen\pel\PelIfd;
 use \lsolesen\pel\PelTag;
+use \lsolesen\pel\PelFormat;
+use \lsolesen\pel\PelEntryLong;
+use \lsolesen\pel\PelEntryTime;
+use \lsolesen\pel\PelEntryAscii;
+use \lsolesen\pel\PelEntryShort;
+use \lsolesen\pel\PelEntryCopyright;
+use \lsolesen\pel\PelEntryUserComment;
 
 // No direct access
 \defined('_JEXEC') or die;

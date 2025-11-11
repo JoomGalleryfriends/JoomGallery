@@ -24,7 +24,7 @@ use \Joomla\CMS\Component\ComponentHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
 
 /**
- * List field with useglobal option based on config service 
+ * List field with useglobal option based on config service
  *
  * @since  4.0.0
  */
@@ -132,12 +132,12 @@ class JglistField extends ListField
       $selected = ($selected === 'true' || $selected === 'selected' || $selected === '1');
 
       $tmp = [
-              'value'    => $value,
-              'text'     => Text::alt($text, $fieldname),
-              'disable'  => $disabled,
-              'class'    => (string) $option['class'],
-              'selected' => ($checked || $selected),
-              'checked'  => ($checked || $selected),
+        'value'    => $value,
+        'text'     => Text::alt($text, $fieldname),
+        'disable'  => $disabled,
+        'class'    => (string) $option['class'],
+        'selected' => ($checked || $selected),
+        'checked'  => ($checked || $selected),
       ];
 
       // Set some event handler attributes. But really, should be using unobtrusive js.
@@ -161,7 +161,7 @@ class JglistField extends ListField
       {
         $tmp        = new \stdClass();
         $tmp_def    = (string) $this->element['default'];
-        $tmp->value = $tmp_def ? $tmp_def : ''; 
+        $tmp->value = $tmp_def ? $tmp_def : '';
         $tmp->text  = Text::_('JGLOBAL_USE_GLOBAL_VALUE');
 
         \array_unshift($options, $tmp);
@@ -173,6 +173,17 @@ class JglistField extends ListField
     return $options;
   }
 
+  /**
+   * Restrict field name to "a-z2, "0-9" or "_-" characters
+   * On context found the value from config is retrieved with a default value given
+   *
+   * @param $default
+   *
+   * ??? Why is $default not used when context is not given ???
+   *
+   * @throws \Exception
+   * @since 4.0
+   */
   protected function getGlobalValue($default='')
   {
     $fieldname = \preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);

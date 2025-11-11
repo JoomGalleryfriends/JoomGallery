@@ -13,12 +13,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\Filesystem\File as JFile;
+use \Joomla\CMS\Object\CMSObject;
 use \Joomla\CMS\Filter\InputFilter;
 use \Joomla\CMS\Filter\OutputFilter;
+use \Joomla\Filesystem\File as JFile;
+use \Joomla\Filesystem\Path as JPath;
 use \Joomla\Database\DatabaseInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 
 /**
 * Base class for the Uploader helper classes
@@ -159,10 +163,12 @@ abstract class Uploader implements UploaderInterface
     $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_FILENAME', $this->src_name));
 
     // Image size must not exceed the setting in backend if we are in frontend
-    if($this->app->isClient('site') && $this->src_size > $this->component->getConfig()->get('jg_maxfilesize'))
+    $maxFileSizeMB = $this->component->getConfig()->get('jg_maxfilesize');
+    $maxFileSizeBytes = $maxFileSizeMB * (1024 * 1024);
+    if($this->app->isClient('site') && $this->src_size > $maxFileSizeBytes)
     {
-      $this->component->addDebug(Text::sprintf('JGLOBAL_MAXIMUM_UPLOAD_SIZE_LIMIT', $this->component->getConfig()->get('jg_maxfilesize')));
-      $this->component->addLog(Text::sprintf('JGLOBAL_MAXIMUM_UPLOAD_SIZE_LIMIT', $this->component->getConfig()->get('jg_maxfilesize')), 'error', 'jerror');
+      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_MAXIMUM_USER_UPLOAD_LIMIT_EXCEEDED', $maxFileSizeMB));
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_MAXIMUM_USER_UPLOAD_LIMIT_EXCEEDED', $maxFileSizeMB), 'error', 'jerror');
       $this->error  = true;
 
       return false;
@@ -589,7 +595,7 @@ abstract class Uploader implements UploaderInterface
   /**
    * Returns the number of images of the current user
    *
-   * @param   $userid  Id of the current user
+   * @param   int $userid  Id of the current user
    *
    * @return  int      The number of images of the current user
    *
@@ -607,7 +613,9 @@ abstract class Uploader implements UploaderInterface
     $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
     if($timespan > 0)
     {
-      $query->where('date > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
+      // image 'date' may be manipulated, use created time instead
+      // $query->where('date > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
+      $query->where('created_time > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
     }
 
     $db->setQuery($query);

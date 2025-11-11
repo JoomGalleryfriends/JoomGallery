@@ -1,7 +1,6 @@
 <?php
 /**
 ******************************************************************************************
-
 **   @package    com_joomgallery                                                        **
 **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
 **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
@@ -13,10 +12,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table\Asset;
 // No direct access
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Access\Rules;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Table\Asset;
 use \Joomla\CMS\Table\Table;
+use \Joomla\CMS\Access\Rules;
 
 /**
 * Trait for Tables with no asset

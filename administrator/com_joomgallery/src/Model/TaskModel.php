@@ -14,8 +14,8 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Form\Form;
 use \Joomla\Registry\Registry;
-use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 use \Joomla\Component\Scheduler\Administrator\Task\TaskOption;
+use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 
 /*
  * Task model.

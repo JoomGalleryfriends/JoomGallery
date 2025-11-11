@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\Model\ListModel;
+use \Joomla\CMS\Pagination\Pagination;
 use \Joomla\CMS\Language\Multilanguage;
 
 /**
@@ -53,11 +54,11 @@ class GalleryModel extends JoomItemModel
 	 *
 	 * @param   integer $id The id of the object to get.
 	 *
-	 * @return  mixed    Object on success, false on failure.
+	 * @return  object    Object on success, false on failure.
 	 *
 	 * @throws \Exception
 	 */
-	public function getItem($id = null)
+	public function getItem($id = null): object
 	{
 		if($this->item === null)
 		{
@@ -105,7 +106,7 @@ class GalleryModel extends JoomItemModel
 	 *
 	 * @return  array|false    Array of images on success, false on failure.
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
   public function getImages()
   {
@@ -148,7 +149,7 @@ class GalleryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load categories list model
+    // Load images list model
     $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
     $listModel->getState();
 

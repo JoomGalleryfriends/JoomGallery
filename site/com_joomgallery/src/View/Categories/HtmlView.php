@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Site\Model\CategoriesModel;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
@@ -29,7 +30,13 @@ class HtmlView extends JoomGalleryView
 
 	protected $pagination;
 
-	/**
+  /**
+   * @var array
+   * @since 4.2
+   */
+  protected array $ordering = [];
+
+  /**
 	 * The page parameters
 	 *
 	 * @var    array
@@ -60,7 +67,7 @@ class HtmlView extends JoomGalleryView
 		$this->activeFilters = $model->getActiveFilters();
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
@@ -77,7 +84,7 @@ class HtmlView extends JoomGalleryView
       // Redirect to category view
       $this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=category&id=1'));
       
-      return false;
+      return;
     }
 
 		// Preprocess the list of items to find ordering divisions.
@@ -124,11 +131,11 @@ class HtmlView extends JoomGalleryView
 		}
 		elseif($this->app->get('sitename_pagetitles', 0) == 1)
 		{
-			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+			$title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
 		}
 		elseif($this->app->get('sitename_pagetitles', 0) == 2)
 		{
-			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
+			$title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
 		}
 
 		$this->document->setTitle($title);
