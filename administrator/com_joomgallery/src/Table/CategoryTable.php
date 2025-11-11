@@ -481,6 +481,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     $checkQuery->where('level = 0');
 
     $db->setQuery($checkQuery);
+    $date = Factory::getDate();
 
     // Add root category
     if(empty($db->loadAssoc()))
@@ -498,6 +499,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       ->set('access = 1')
       ->set('published = 1')
       ->set('params = ' . $db->quote(''))
+      ->set('created_time = ' . $db->quote($date->toSql()))
+      ->set('modified_time = ' . $db->quote($date->toSql()))
       ->set('language = ' . $db->quote('*'))
       ->set('metadesc = ' . $db->quote(''))
       ->set('metakey = ' . $db->quote(''));
