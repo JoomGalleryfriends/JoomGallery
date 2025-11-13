@@ -102,7 +102,7 @@ class JoomGalleryView extends BaseHtmlView
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION'), 'warning');
     }
 
-    if($this->app->get('unicodeslugs', false))
+    if($this->app->isClient('administrator') && $this->app->get('unicodeslugs', false))
     {
       // The option unicodeslugs is activated.
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNICODESLUGS'), 'warning');
