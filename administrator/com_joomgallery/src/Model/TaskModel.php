@@ -103,8 +103,37 @@ class TaskModel extends JoomAdminModel
       $data = $this->item;
     }
 
-    // Add support for queue
-    $data->queue = implode(',', $data->queue);
+    $taskId = $data->id ?? $this->getState($this->getName() . '.id');
+
+    if ($taskId > 0)
+    {
+      try {
+        $db = $this->getDatabase();
+
+        $query = $db->getQuery(true)
+          ->select($db->quoteName('item_id'))
+          ->from($db->quoteName('#__joomgallery_task_items'))
+          ->where($db->quoteName('task_id') . ' = ' . (int) $taskId)
+          ->where($db->quoteName('status') . ' = ' . $db->quote('pending'))
+          ->order($db->quoteName('id') . ' ASC');
+
+        $db->setQuery($query);
+        $pendingItems = $db->loadColumn();
+
+        $data->queue = implode(',', $pendingItems);
+
+      } catch (\Exception $e) {
+        $data->queue = '';
+        $this->app->enqueueMessage('Could not load pending items: ' . $e->getMessage(), 'warning');
+      }
+    } else {
+      $data->queue = '0';
+    }
+
+    if (isset($data->params))
+    {
+      $data->params = (string) $data->params;
+    }
 
     return $data;
   }
