@@ -83,40 +83,20 @@ class TaskTable extends Table
     return $this->typeAlias;
   }
 
-  /**
-   * Method to store a row in the database from the Table instance properties.
-   *
-   * If a primary key value is set the row with that primary key value will be updated with the instance property values.
-   * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
-   *
-   * @param   boolean  $updateNulls  True to update fields even if they are null.
-   *
-   * @return  boolean  True on success.
-   *
-   * @since   4.2.0
-   */
-  public function store($updateNulls = true)
-  {
-    // Support for queue field
-    if(isset($this->queue) && !\is_string($this->queue))
-    {
-      $this->queue = json_encode(array_values($this->queue), JSON_UNESCAPED_UNICODE);
-    }
-
-    // Support for successful field
-    if(isset($this->successful) && !\is_string($this->successful))
-    {
-      $registry         = new Registry($this->successful);
-      $this->successful = (string) $registry;
-    }
-
-    // Support for failed field
-    if(isset($this->failed) && !\is_string($this->failed))
-    {
-      $registry     = new Registry($this->failed);
-      $this->failed = (string) $registry;
-    }
-
+	/**
+	 * Method to store a row in the database from the Table instance properties.
+	 *
+	 * If a primary key value is set the row with that primary key value will be updated with the instance property values.
+	 * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
+	 *
+	 * @param   boolean  $updateNulls  True to update fields even if they are null.
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 * @since   4.2.0
+	 */
+	public function store($updateNulls = true)
+	{
     // Support for counter field
     if(isset($this->counter) && !\is_string($this->counter))
     {
@@ -159,28 +139,6 @@ class TaskTable extends Table
       }
     }
 
-    // Support for queue field
-    if(isset($array['queue']) && \is_array($array['queue']))
-    {
-      $array['queue'] = json_encode($array['queue'], JSON_UNESCAPED_UNICODE);
-    }
-
-    // Support for successful field
-    if(isset($array['successful']) && \is_array($array['successful']))
-    {
-      $registry = new Registry();
-      $registry->loadArray($array['successful']);
-      $array['successful'] = (string) $registry;
-    }
-
-    // Support for failed field
-    if(isset($array['failed']) && \is_array($array['failed']))
-    {
-      $registry = new Registry();
-      $registry->loadArray($array['failed']);
-      $array['failed'] = (string) $registry;
-    }
-
     // Support for counter field
     if(isset($array['counter']) && \is_array($array['counter']))
     {
@@ -216,60 +174,6 @@ class TaskTable extends Table
    */
   public function check()
   {
-    // Support for queue field
-    if(isset($this->queue))
-    {
-      if(\is_string($this->queue))
-      {
-        if(filter_var($this->queue, FILTER_VALIDATE_INT) !== false)
-        {
-          // integer value detected. Add it into an array
-          $queue = [$this->queue];
-        }
-        elseif(!$queue = json_decode($this->queue))
-        {
-          // json_decode did not work. Lets try explode()
-          $queue = array_map('trim', explode(',', $this->queue)) ?? [];
-        }
-        $this->queue = $queue;
-      }
-      elseif(\is_object($this->queue))
-      {
-        $this->queue = ArrayHelper::fromObject($this->queue);
-      }
-    }
-
-    // Support for successful field
-    if(isset($this->successful))
-    {
-      if(\is_string($this->successful))
-      {
-        $this->successful = json_decode($this->successful);
-      }
-
-      if(\is_object($this->successful))
-      {
-        if($this->successful instanceof Registry)
-        {
-          $this->successful = $this->successful->toArray();
-        }
-        else
-        {
-          $this->successful = ArrayHelper::fromObject($this->successful);
-        }
-      }
-
-      // Convert values to integer
-      $this->successful = ArrayHelper::toInteger($this->successful);
-      $this->successful = new Registry($this->successful);
-    }
-
-    // Support for failed field
-    if(isset($this->failed))
-    {
-      $this->failed = new Registry($this->failed);
-    }
-
     // Support for counter field
     if(isset($this->counter))
     {
@@ -280,10 +184,6 @@ class TaskTable extends Table
     if(isset($this->params))
     {
       $this->params = new Registry($this->params);
-    }
-    else
-    {
-      $this->params = '{}';
     }
 
     // Support for completed field
