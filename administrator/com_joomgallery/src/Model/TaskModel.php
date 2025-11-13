@@ -166,7 +166,88 @@ class TaskModel extends JoomAdminModel
    */
   public function save($data): bool
   {
-    return parent::save($data);
+    $queueInput = $data['queue'] ?? null;
+
+    $data['queue'] = '{}';
+    if (isset($data['title']))
+    {
+      $data['successful'] = '{}';
+      $data['failed']     = '{}';
+      $data['counter']    = '{}';
+    }
+
+    if (!parent::save($data))
+    {
+      return false;
+    }
+
+    $taskId = (int) $this->getState($this->getName() . '.id');
+
+    if ($taskId === 0) {
+      $this->setError('Konnte Task-ID nach dem Speichern nicht abrufen.');
+      return false;
+    }
+
+    $imageIds = [];
+
+    if ($queueInput === '0')
+    {
+      $imageIds = $this->getAllImageIds();
+
+      if (empty($imageIds)) {
+        $this->app->enqueueMessage(
+          'Aktion "0" (Alle Bilder) ausgeführt, aber `getAllImageIds()` hat keine Bilder gefunden. Queue ist leer.',
+          'warning'
+        );
+      }
+    }
+    elseif (!empty($queueInput))
+    {
+      $imageIds = \array_map('trim', \explode(',', $queueInput));
+      $imageIds = \array_filter($imageIds, 'is_numeric');
+    }
+
+    return $this->populateTaskItems($taskId, $imageIds);
+  }
+
+  /**
+   * Befüllt die Job-Queue-Tabelle für einen Task.
+   *
+   * @param   int    $taskId     Die ID des Haupt-Tasks
+   * @param   array  $itemIds    Ein Array von Item-IDs (z.B. Bild-IDs)
+   * @return  bool
+   */
+  private function populateTaskItems(int $taskId, array $itemIds): bool
+  {
+    $db = $this->getDatabase();
+
+    // Delete old job for task
+    $query = $db->getQuery(true)
+      ->delete($db->quoteName('#__joomgallery_task_items'))
+      ->where($db->quoteName('task_id') . ' = ' . (int) $taskId);
+    $db->setQuery($query)->execute();
+
+    if (empty($itemIds)) {
+      return true;
+    }
+
+    // Batch insert new jobs for task
+    $query = $db->getQuery(true)
+      ->insert($db->quoteName('#__joomgallery_task_items'))
+      ->columns([$db->quoteName('task_id'), $db->quoteName('item_id'), $db->quoteName('status')]);
+
+    foreach ($itemIds as $itemId) {
+      $query->values((int) $taskId . ', ' . $db->quote((string) $itemId) . ', ' . $db->quote('pending'));
+    }
+
+    try {
+      $db->setQuery($query)->execute();
+    } catch (\Exception $e) {
+      $this->setError($e->getMessage());
+      return false;
+    }
+
+    return true;
   }
 
   /**
