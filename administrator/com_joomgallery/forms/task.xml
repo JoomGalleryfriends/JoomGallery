@@ -29,10 +29,16 @@
 
     <field name="queue"
            type="text"
-           required="true"
-           default="0"
+           required="false"
+           default=""
            label="COM_JOOMGALLERY_TASK_QUEUE_LABEL"
            description="COM_JOOMGALLERY_TASK_QUEUE_DESC" />
+
+    <field name="params"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_taskparams.xml"
+           layout="joomla.form.field.subform.default"
+           label="COM_JOOMGALLERY_PARAMETERS" />
 
     <field name="note"
            type="text"
