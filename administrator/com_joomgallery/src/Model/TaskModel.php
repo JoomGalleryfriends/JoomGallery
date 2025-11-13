@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 use Joomla\Component\Scheduler\Administrator\Task\TaskOption;
@@ -191,5 +192,46 @@ class TaskModel extends JoomAdminModel
     }
 
     return $jg_tasks;
+  }
+
+  /**
+   * Holt alle Bild-IDs aus dem ImagesModel.
+   *
+   * @return  array  Ein Array von Bild-ID-Strings.
+   *
+   * @since   4.2.0
+   */
+  private function getAllImageIds(): array
+  {
+    try {
+      $db = Factory::getDbo();
+
+      $query = $db->getQuery(true)
+        ->select($db->quoteName(['a.id', 'a.title']))
+        ->from($db->quoteName(_JOOM_TABLE_IMAGES, 'a'))
+        ->where($db->quoteName('a.published') . ' = 1')
+        ->where($db->quoteName('a.approved') . ' = 1')
+        ->leftJoin(
+          $db->quoteName(_JOOM_TABLE_CATEGORIES, 'b') .
+          ' ON ' . $db->quoteName('a.catid') . ' = ' . $db->quoteName('b.id')
+        )
+        ->where($db->quoteName('b.published') . ' = 1')
+        ->order($db->quoteName('a.ordering') . ' DESC');
+
+      $db->setQuery($query);
+      $allImageObjects = $db->loadObjectList();
+
+      // Nur IDs zurückgeben (als Strings)
+      $allImageIds = array_map(fn($item) => (string) $item->id, $allImageObjects);
+
+      return $allImageIds;
+
+    } catch (\Exception $e) {
+      $this->app->enqueueMessage(
+        'Fehler beim Auflösen der "Alle Bilder"-Queue: ' . $e->getMessage(),
+        'error'
+      );
+      return [];
+    }
   }
 }
