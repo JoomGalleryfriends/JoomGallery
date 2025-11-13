@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <fieldset name="general">
+    <field name="parallel_limit"
+           type="number"
+           label="COM_JOOMGALLERY_TASK_PARALLEL_LIMIT_LABEL"
+           description="COM_JOOMGALLERY_TASK_PARALLEL_LIMIT_DESC"
+           default="1"
+           min="1"
+           max="10"
+           step="1"
+           filter="integer" />
+  </fieldset>
+</form>
