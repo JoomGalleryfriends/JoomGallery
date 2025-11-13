@@ -239,18 +239,42 @@ class TaskTable extends Table
   public function clcProgress()
   {
     // Calculate progress property
-    $total    = \count($this->queue) + $this->successful->count() + $this->failed->count();
-    $finished = $this->successful->count() + $this->failed->count();
+    $db = $this->getDatabase();
+    $query = $db->getQuery(true);
 
-    if($total > 0)
-    {
+    // Get Counts per status
+    $query->select('status, COUNT(*) AS count')
+      ->from($db->quoteName('#__joomgallery_task_items'))
+      ->where($db->quoteName('task_id') . ' = ' . (int) $this->id)
+      ->group('status');
+
+    $db->setQuery($query);
+    $results = $db->loadObjectList('status');
+
+    // Set Counts
+    $this->count_pending = $results['pending']->count ?? 0;
+    $this->count_success = $results['success']->count ?? 0;
+    $this->count_failed = $results['failed']->count ?? 0;
+    $count_processing = $results['processing']->count ?? 0;
+
+    $total = $this->count_pending + $this->count_success + $this->count_failed + $count_processing;
+    $finished = $this->count_success + $this->count_failed;
+
+    if($total > 0) {
       $this->progress = (int) round((100 / $total) * ($finished));
     }
+    else
+    {
+      $this->progress = 0;
+    }
 
-    // Update completed property
-    if($total === $finished || $total == 0)
+    if($total > 0 && $this->count_pending === 0 && $count_processing === 0)
     {
       $this->completed = true;
+    }
+    else
+    {
+      $this->completed = false;
     }
   }
 
