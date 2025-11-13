@@ -30,6 +30,7 @@ $wa->useStyle('com_joomgallery.admin')
    ->useScript('com_joomgallery.admin')
    ->useScript('table.columns')
    ->useScript('multiselect')
+   ->useScript('com_joomgallery.tasks')
    ->useStyle('com_scheduler.admin-view-tasks-css');
 
 // Add modified test-task script
@@ -91,63 +92,96 @@ if($saveOrder && !empty($this->items))
 
 <div class="row">
   <div class="col-md-12">
-    <h2><?php echo Text::_('COM_JOOMGALLERY_TASKS_INSTANT_TASKS'); ?></h2>
-    <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=tasks'); ?>" method="post" name="adminForm" id="adminForm">
-      <div id="ajax-tasks-container" class="j-main-container">
-        <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
-        <div class="clearfix"></div>
+    <div id="instant-task-container">
+      <h2><?php echo Text::_('COM_JOOMGALLERY_TASKS_INSTANT_TASKS'); ?></h2>
+      <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=tasks'); ?>" method="post" name="adminForm" id="adminForm">
+        <div id="ajax-tasks-container" class="j-main-container">
+          <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+          <div class="clearfix"></div>
 
-        <?php if(empty($this->items)) : ?>
-          <div class="alert alert-info">
-            <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
-            <?php echo Text::_('COM_JOOMGALLERY_TASKS_EMPTYSTATE_TITLE'); ?>
-          </div>
-        <?php else : ?>
-          <div class="ms-4 mb-2">
-            <span><?php echo HTMLHelper::_('grid.checkall'); ?></span> <span><?php echo Text::_('JGLOBAL_SELECTION_ALL'); ?></span>
-          </div>
-          <?php foreach($this->items as $i => $item): ?>
-            <div class="row align-items-start">
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header flex-column">
-                    <h3><?php echo  $this->escape($item->title); ?></h3>
-                    <h4 class="small"><?php echo  '(' . $item->type . '.' . $item->taskid . ')'; ?></h4>
-                  </div>
-                  <div class="card-body d-flex flex-row">
-                    <div class="p-2 align-self-center">
-                      <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
-                    </div>
-                    <div class="p-2 flex-grow-1">
-                      <a class="btn btn-sm btn-primary mb-2" href="<?php echo Route::_('index.php?option=com_joomgallery&view=task&layout=edit&id=' . $item->id); ?>"><span class="fa fa-edit fa-sm me-2"></span> <?php echo Text::_('JACTION_EDIT'); ?></a>
-                      <button type="button" class="btn btn-sm btn-warning mb-2" <?php echo $item->published < 0 ? 'disabled' : ''; ?> data-id="<?php echo (int) $item->id; ?>" data-title="<?php echo htmlspecialchars($item->title); ?>">
-                        <span class="fa fa-play fa-sm me-2"></span><?php echo Text::_('COM_JOOMGALLERY_TASK_START'); ?>
-                      </button>
-                      <div class="badge-group mb-3">
-                        <span class="badge bg-secondary"><?php echo Text::_('COM_JOOMGALLERY_PENDING'); ?>: <span id="badgeQueue-<?php echo $item->id; ?>"><?php echo \count($item->queue); ?></span></span>
-                        <span class="badge bg-success"><?php echo Text::_('COM_JOOMGALLERY_SUCCESSFUL'); ?>: <span id="badgeSuccessful-<?php echo $item->id; ?>"><?php echo \count($item->successful); ?></span></span>
-                        <span class="badge bg-danger"><?php echo Text::_('COM_JOOMGALLERY_FAILED'); ?>: <span id="badgeFailed-<?php echo $item->id; ?>"><?php echo \count($item->failed); ?></span></span>
-                      </div>
-                      <div class="progress mb-2">
-                        <div id="progress-<?php echo $item->id; ?>" class="progress-bar" style="width: <?php echo $item->progress; ?>%" role="progressbar" aria-valuenow="<?php echo $item->progress; ?>" aria-valuemin="0" aria-valuemax="100"><?php if($item->progress > 0)
-                        {
-                        echo $item->progress . '%';
-                                          }; ?></div>
-                      </div>
-                      <a class="collapse-arrow mb-2" data-bs-toggle="collapse" href="#collapseLog-<?php echo $item->id; ?>" role="button" aria-expanded="false" aria-controls="collapseLog">
-                        <i class="icon-angle-down"></i><span> <?php echo Text::_('COM_JOOMGALLERY_SHOWLOG'); ?></span>
-                      </a>
-                      <div class="collapse mt-2" id="collapseLog-<?php echo $item->id; ?>">
-                        <div id="logOutput-<?php echo $item->id; ?>" class="card card-body border bg-light log-area">
+          <?php if (empty($this->items)) : ?>
+            <div class="alert alert-info">
+              <span class="icon-info-circle" aria-hidden="true"></span>
+              <span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
+              <?php echo Text::_('COM_JOOMGALLERY_TASKS_EMPTYSTATE_TITLE'); ?>
+            </div>
+          <?php else : ?>
+            <div class="ms-3 mb-2">
+              <span><?php echo HTMLHelper::_('grid.checkall'); ?></span>
+              <span><?php echo Text::_('JGLOBAL_SELECTION_ALL'); ?></span>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-4 g-4">
+              <?php foreach ($this->items as $i => $item): ?>
+                <div class="col">
+                  <div class="row align-items-start">
+                    <div class="col-md-12">
+                      <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                          <div class="d-flex align-items-center gap-2">
+                            <div>
+                              <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
+                            </div>
+                            <div>
+                              <strong><?= $this->escape($item->title); ?></strong><br>
+                            </div>
+<!--                            <span class="badge --><?php //= $item->published > 0 ? 'bg-success' : 'bg-secondary'; ?><!--">-->
+<!--                            --><?php //= $item->published > 0 ? Text::_('JPUBLISHED') : Text::_('JUNPUBLISHED'); ?>
+<!--                          </span>-->
+                          </div>
+
+                          <div class="d-flex gap-1">
+                            <button type="button"
+                                    title="Run Log"
+                                    class="btn btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#joomgallery-task-modal">
+                              <span class="fa fa-file-lines m-0"></span>
+                            </button>
+                            <a href="<?= Route::_('index.php?option=com_joomgallery&view=task&layout=edit&id=' . $item->id); ?>"
+                               class="btn btn-sm btn-primary" title="Edit Task">
+                              <span class="fa fa-edit m-0"></span>
+                            </a>
+                            <button type="button"
+                                    class="btn btn-sm btn-warning jg-run-instant-task"
+                                    title="Run/Pause Task"
+                                    <?= $item->published < 0 ? 'disabled' : ''; ?>
+                                    data-id="<?= (int)$item->id; ?>"
+                                    data-title="<?= htmlspecialchars($item->title); ?>"
+                                    data-limit="<?= $item->params->get('parallel_limit', 1) ?>">
+                              <span class="fa fa-play m-0"></span>
+                            </button>
+                          </div>
+
+                        </div>
+                        <div class="card-body">
+                          <div class="progress mb-2" style="height: 6px;">
+                            <div id="progress-<?= $item->id; ?>"
+                                 class="progress-bar"
+                                 style="width: <?= $item->progress; ?>%"
+                                 aria-valuenow="<?= $item->progress; ?>"
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                          </div>
+
+                          <div class="d-flex justify-content-between small mb-2">
+                            <span><?= Text::_('COM_JOOMGALLERY_PENDING'); ?>: <span id="count-pending-<?= $item->id; ?>"><?= $item->count_pending; ?></span></span>
+                            <span><?= Text::_('COM_JOOMGALLERY_SUCCESSFUL'); ?>: <span id="count-success-<?= $item->id; ?>"><?= $item->count_success; ?></span></span>
+                            <a href="#"
+                               class="jg-show-failed-items"
+                               data-task-id="<?= $item->id; ?>"
+                               data-bs-toggle="modal"
+                               data-bs-target="#joomgallery-failed-items-modal">
+                              <?= Text::_('COM_JOOMGALLERY_FAILED'); ?>: <span id="count-failed-<?= $item->id; ?>"><?= $item->count_failed; ?></span>
+                            </a>
+                          </div>
                         </div>
                       </div>
-                    </div>                      
+                    </div>
                   </div>
                 </div>
-              </div>
+              <?php endforeach; ?>
             </div>
-          <?php endforeach; ?>
-        <?php endif; ?>
+          <?php endif; ?>
 
         <input type="hidden" name="task" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
@@ -156,6 +190,20 @@ if($saveOrder && !empty($this->items))
       </div>
     </form>
 
+      <?php
+      $modalParams = ['title' => Text::_('COM_JOOMGALLERY_TASK_RUNNING'), 'id' => 'joomgallery-task-modal'];
+      $modalBody = '<div id="jg-modal-log-output" class="card card-body border overflow-visible text-dark log-area" style="max-height: 400px; overflow-y: auto;"></div>';
+      echo HTMLHelper::_('bootstrap.renderModal', 'joomgallery-task-modal', $modalParams, $modalBody);
+      ?>
+      <?php
+      $failedModalParams = [
+        'title' => Text::_('COM_JOOMGALLERY_TASKS_FAILED_ITEMS_TITLE'), // Sie benötigen diesen neuen Sprachstring
+        'id'    => 'joomgallery-failed-items-modal'
+      ];
+      $failedModalBody = '<div id="jg-failed-items-list" class="overflow-visible text-muted log-area" style="max-height: 400px; overflow-y: auto;"></div>';
+      echo HTMLHelper::_('bootstrap.renderModal', 'joomgallery-failed-items-modal', $failedModalParams, $failedModalBody);
+      ?>
+    </div>
     <br><hr><br>
 
     <h2><?php echo Text::_('COM_SCHEDULER'); ?></h2>
