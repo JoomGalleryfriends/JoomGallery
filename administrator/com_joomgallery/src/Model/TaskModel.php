@@ -157,25 +157,6 @@ class TaskModel extends JoomAdminModel
       $item = parent::getItem(null);
     }
 
-    // Support for queue field
-    if(isset($item->queue))
-    {
-      $registry    = new Registry($item->queue);
-      $item->queue = $registry->toArray();
-    }
-
-    // Support for successful field
-    if(isset($item->successful))
-    {
-      $item->successful = new Registry($item->successful);
-    }
-
-    // Support for failed field
-    if(isset($item->failed))
-    {
-      $item->failed = new Registry($item->failed);
-    }
-
     // Support for params field
     if(isset($item->params))
     {
