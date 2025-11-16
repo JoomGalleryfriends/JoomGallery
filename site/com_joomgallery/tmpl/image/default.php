@@ -134,7 +134,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
         <?php if ($show_imgdate) : ?>
           <tr>
             <th><?php echo Text::_('COM_JOOMGALLERY_DATE'); ?></th>
-            <td><?php echo HTMLHelper::_('date', $this->item->date, Text::_('DATE_FORMAT_LC4')); ?></td>
+            <td><?php echo HTMLHelper::_('date', $this->item->date, Text::_('DATE_FORMAT_LC6')); ?></td>
           </tr>
         <?php endif; ?>
         <?php if ($show_imgauthor) : ?>
