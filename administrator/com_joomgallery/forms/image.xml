@@ -294,11 +294,9 @@
 
     <field name="date"
            type="calendar"
-           format="%Y-%m-%d"
-           timeformat="24"
-           filter="server_utc"
+           filter="user_utc"
            translateformat="true"
-           showtime="false"
+           showtime="true"
            singleheader="false"
            todaybutton="true"
            weeknumbers="false"
