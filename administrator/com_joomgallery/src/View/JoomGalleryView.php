@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\View;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\Uri\Uri;
 use \Joomla\CMS\Factory;

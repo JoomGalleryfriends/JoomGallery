@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Site\View\Image;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\Registry\Registry;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;

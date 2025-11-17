@@ -8,7 +8,9 @@
 *****************************************************************************************/
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\DI\Container;
 use Joomla\CMS\HTML\Registry;

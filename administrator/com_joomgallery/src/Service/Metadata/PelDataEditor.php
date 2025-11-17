@@ -21,7 +21,9 @@ use \lsolesen\pel\PelIfd;
 use \lsolesen\pel\PelTag;
 
 // No direct access
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Editor class to handle exif data type editing

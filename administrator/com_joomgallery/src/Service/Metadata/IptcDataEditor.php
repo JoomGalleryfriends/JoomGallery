@@ -11,7 +11,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 
 // No direct access
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Editor class to handle iptc data type editing

@@ -9,7 +9,9 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
 * Add functionality for tables of migrateable records

@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Category;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Router\Route;
 use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;

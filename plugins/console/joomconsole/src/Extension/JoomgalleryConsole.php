@@ -12,7 +12,9 @@
 
 namespace JoomGallery\Plugin\Console\Joomconsole\Extension;
 
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Category;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryAdd;

@@ -9,7 +9,9 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\HTMLUploader;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\TUSUploader;

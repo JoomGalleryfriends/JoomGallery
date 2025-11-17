@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Router;
 
 // No direct access
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\DI\Container;
 use \Joomla\Database\DatabaseInterface;
