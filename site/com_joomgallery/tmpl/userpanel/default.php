@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Router\Route;
+use Joomla\Registry\Registry;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
 use \Joomla\CMS\Session\Session;
@@ -91,7 +92,7 @@ $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
         <?php // --- user information ----------------------------------------------------- ?>
 
         <?php if($isShowUserInformation): ?>
-          <?php displayUserPanelInfo($this->config, $this->userData); ?>
+          <?php displayUserPanelInfo($this->userData); ?>
         <?php endif; ?>
 
       <?php endif; ?>
@@ -134,7 +135,7 @@ $userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORC
  * Display table with user cat/img/img timespan counts with config
  * limits row and comment row behind
  *
- * @param           $config limits by config for user categories, images, images in time span
+ * @param   Registry   $config limits by config for user categories, images, images in time span
  * @param   array   $userData  Count of user categories, images, images in time span
  * @param   array   $userDataComment hints
  *
@@ -334,7 +335,7 @@ function displayNoAccess($data)
 /**
  * Display available buttons in user area for this page
  *
- * @param $returnURL base64 url to this page
+ * @param $returnURL string a base64 url to this page
  *
  * @since 4.3
  */
@@ -383,7 +384,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
    * Display latest categories list table
    *
    * @param $data  $this: (latest categories, latest images, ...) as separate sub objects
-   * @param $returnURL base64 url to this page
+   * @param $returnURL string a base64 url to this page
    *
    * @since version
    */
@@ -436,19 +437,23 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                 <table class="table table-striped itemList" id="categoryList">
                   <thead>
                   <tr>
-                    <th scope="col" style="min-width:180px">
+                    <th scope="col" class="w-3 text-center">
+                      <?php echo Text::_('COM_JOOMGALLERY_IMAGE') ?>
+                    </th>
+
+                    <th scope="col" style="w-3 has-context title-cell text-center">
                       <?php echo Text::_('JGLOBAL_TITLE'); ?>
                     </th>
 
-                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                    <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                       <?php echo Text::_('COM_JOOMGALLERY_IMAGES'); ?>
                     </th>
 
-                    <th scope="col" style="min-width:180px" class="w-3 d-none d-lg-table-cell text-center">
+                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                       <?php echo Text::_('COM_JOOMGALLERY_PARENT_CATEGORY'); ?>
                     </th>
 
-                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                    <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                       <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
                     </th>
 
@@ -485,6 +490,14 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
                     <tr class="row<?php echo $i % 2; ?>">
 
+                    <td class="has-context title-cell">
+                      <?php if(!empty($item->thumbnail)) : ?>
+                        <img class="jg_minithumb"
+                             src="<?php echo JoomHelper::getImg($item->thumbnail, 'thumbnail'); ?>"
+                             alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
+                      <?php endif; ?>
+                    </td>
+
                       <th scope="row" class="has-context title-cell">
                         <div id="divCheckbox" style="display: none;">
                           <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
@@ -510,7 +523,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                         </a>
                       </th>
 
-                      <td class="d-none d-lg-table-cell text-center">
+                      <td class="d-none d-md-table-cell text-center">
                         <a class="badge bg-info"
                            title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>"
                            href="<?php echo $baseLink_ImagesFilter.(int) $item->id; ?>">
@@ -529,7 +542,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
                       </td>
 
-                      <td class="d-none d-lg-table-cell text-center">
+                      <td class="d-none d-md-table-cell text-center">
                         <?php if($canEdit || $canDelete): ?>
                           <?php if($canEdit): ?>
                             <?php
@@ -598,7 +611,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
    * Display latest images list table
    *
    * @param $data $this: (latest categories, latest images, ...) as separate sub objects
-   * @param $returnURL base64 url to this page
+   * @param $returnURL string a base64 url to this page
    *
    *
    * @throws Exception
@@ -649,9 +662,12 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                 <table class="table table-striped itemList" id="imageList">
                   <thead>
                   <tr>
-                    <th></th>
 
-                    <th scope="col" style="min-width:180px">
+                    <th scope="col" class="w-1">
+                      <?php echo Text::_('COM_JOOMGALLERY_IMAGE') ?>
+                    </th>
+
+                    <th scope="col" style="w-3 has-context title-cell">
                       <?php echo Text::_('JGLOBAL_TITLE'); ?>
                     </th>
 
@@ -667,11 +683,11 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                       <?php echo Text::_('JCATEGORY'); ?>
                     </th>
 
-                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                    <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                       <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
                     </th>
 
-                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                    <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                       <?php echo Text::_('JPUBLISHED'); ?>
                     </th>
                   </tr>
@@ -692,7 +708,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
 
                     <tr class="row<?php echo $i % 2; ?>">
 
-                      <td class="small d-none d-md-table-cell">
+                      <td class="small">
                         <div id="divCheckbox" style="display: none;">
                           <?php
                           echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
@@ -742,7 +758,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                         </a>
                       </td>
 
-                      <td class="d-none d-lg-table-cell text-center">
+                      <td class="d-none d-md-table-cell text-center">
 
                         <?php if($canEdit || $canDelete): ?>
                           <?php if($canEdit): ?>
@@ -764,7 +780,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                         <?php endif; ?>
                       </td>
 
-                      <td class="d-none d-lg-table-cell text-center">
+                      <td class="d-none d-md-table-cell text-center">
                         <?php if($canChange): ?>
                           <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                   data-item-id="cb<?php echo $i; ?>"
@@ -812,7 +828,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
    * - can change number of shown images
    *
    * @param $data $this: (latest categories, latest images, ...) as separate sub objects
-   * @param $returnURL base64 url to this page
+   * @param $returnURL string a base64 url to this page
    *
    *
    * @throws Exception
@@ -882,9 +898,11 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                       <th scope="col" class="w-1 d-md-table-cell"></th>
                     <?php endif; ?>
 
-                    <th></th>
+                    <th scope="col" class="w-1">
+                      <?php echo Text::_('COM_JOOMGALLERY_IMAGE') ?>
+                    </th>
 
-                    <th scope="col" style="min-width:180px">
+                    <th scope="col" style="w-3 has-context title-cell">
                       <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                     </th>
 
@@ -900,11 +918,11 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                       <?php echo HTMLHelper::_('searchtools.sort', 'JCATEGORY', 'a.cattitle', $listDirn, $listOrder); ?>
                     </th>
 
-                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                    <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                       <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
                     </th>
 
-                    <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                    <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                       <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
                     </th>
                   </tr>
@@ -947,8 +965,8 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                           ?>
                           <?php if($canChange && $saveOrder) : ?>
                             <span class="sortable-handler<?php echo $iconClass ?>">
-                          <span class="icon-ellipsis-v" aria-hidden="true"></span>
-                        </span>
+                              <span class="icon-ellipsis-v" aria-hidden="true"></span>
+                            </span>
                             <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
                                    class="width-20 text-area-order hidden">
                           <?php endif; ?>
@@ -957,7 +975,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                         </td>
                       <?php endif; ?>
 
-                      <td class="small d-none d-md-table-cell">
+                      <td class="small">
                         <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>"
                              alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                       </td>
@@ -1001,7 +1019,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                         </a>
                       </td>
 
-                      <td class="d-none d-lg-table-cell text-center">
+                      <td class="d-none d-md-table-cell text-center">
 
                         <?php if($canEdit || $canDelete): ?>
                           <?php if($canEdit): ?>
@@ -1027,7 +1045,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                         <?php endif; ?>
                       </td>
 
-                      <td class="d-none d-lg-table-cell text-center">
+                      <td class="d-none d-md-table-cell text-center">
                         <?php if($canChange): ?>
                           <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                           <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"

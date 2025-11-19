@@ -176,9 +176,11 @@ $canDelete = false;
                     <th scope="col" class="w-1 d-md-table-cell"></th>
                   <?php endif; ?>
 
-                  <th></th>
+                  <th scope="col" class="w-1">
+                    <?php echo Text::_('COM_JOOMGALLERY_IMAGE') ?>
+                  </th>
 
-                  <th scope="col" style="min-width:180px">
+                  <th scope="col" class="w-3 has-context title-cell">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                   </th>
 
@@ -198,19 +200,19 @@ $canDelete = false;
                     <?php echo HTMLHelper::_('searchtools.sort', 'JDATE', 'a.date', $listDirn, $listOrder); ?>
                   </th>
 
-                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                  <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                     <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
                   </th>
 
-                  <th scope="col" class="w-1 text-center d-none d-md-table-cell">
+                  <th scope="col" class="w-1 text-center d-none d-lg-table-cell">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder); ?>
                   </th>
 
-                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                  <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
                   </th>
 
-                  <th scope="col" class="w-10 d-none d-md-table-cell">
+                  <th scope="col" class="w-10 d-none d-lg-table-cell">
                     <?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
                   </th>
                 </tr>
@@ -260,7 +262,7 @@ $canDelete = false;
                       </td>
                     <?php endif; ?>
 
-                    <td class="small d-none d-md-table-cell">
+                    <td class="small has-context title-cell">
                       <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>"
                            alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                     </td>
@@ -307,14 +309,14 @@ $canDelete = false;
                       </a>
                     </td>
 
-                    <td class="small d-none d-md-table-cell text-center">
+                    <td class="small d-none d-lg-table-cell text-center">
                       <?php
                       $date = $item->date;
                       echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
                       ?>
                     </td>
 
-                    <td class="d-none d-lg-table-cell text-center">
+                    <td class="d-none d-md-table-cell text-center">
                       <?php if($canEdit || $canDelete): ?>
                         <?php if($canEdit): ?>
 
@@ -355,7 +357,7 @@ $canDelete = false;
                       <?php endif; ?>
                     </td>
 
-                    <td class="d-none d-lg-table-cell text-center">
+                    <td class="d-none d-md-table-cell text-center">
                       <?php if($canChange): ?>
                         <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                         <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"

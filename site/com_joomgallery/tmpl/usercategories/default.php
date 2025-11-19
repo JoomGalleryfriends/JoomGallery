@@ -168,18 +168,18 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
 
                     </th>
                   <?php else : ?>
-                    <th scope="col" class="w-1 d-md-table-cell"></th>
+                    <th scope="col" class="w-1 d-none d-md-table-cell"></th>
                   <?php endif; ?>
 
-                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                  <th scope="col" class="w-3 text-center">
                     <?php echo Text::_('COM_JOOMGALLERY_IMAGE') ?>
                   </th>
 
-                  <th scope="col" style="min-width:180px">
+                  <th scope="col" style="w-3 has-context title-cell">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                   </th>
 
-                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                  <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_IMAGES', 'img_count', $listDirn, $listOrder); ?>
                   </th>
 
@@ -191,7 +191,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                     <?php echo HTMLHelper::_('searchtools.sort',  'JDATE', 'a.created_time', $listDirn, $listOrder); ?>
                   </th>
 
-                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
+                  <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                     <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
                   </th>
 
@@ -275,7 +275,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                       </td>
                     <?php endif; ?>
 
-                    <td class="d-none d-md-table-cell text-center">
+                    <td class="has-context title-cell">
                       <?php if(!empty($item->thumbnail)) : ?>
                         <img class="jg_minithumb"
                              src="<?php echo JoomHelper::getImg($item->thumbnail, 'thumbnail'); ?>"
@@ -308,7 +308,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                       <?php endif; ?>
                     </th>
 
-                    <td class="d-none d-lg-table-cell text-center">
+                    <td class="d-none d-md-table-cell text-center">
                       <a class="badge bg-info"
                          title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>"
                          href="<?php echo $baseLink_ImagesFilter.(int) $item->id; ?>">
@@ -320,14 +320,14 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                       <?php echo ($item->parent_title == 'Root') ? '--' : $this->escape($item->parent_title); ?>
                     </td>
 
-                    <td class="d-none d-md-table-cell text-center">
+                    <td class="d-none d-lg-table-cell text-center">
                       <?php
                       $date = $item->created_time;
                       echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
                       ?>
                     </td>
 
-                    <td class="d-none d-lg-table-cell text-center">
+                    <td class="d-none d-md-table-cell text-center">
                       <?php if($canEdit || $canDelete): ?>
                         <?php if($canEdit): ?>
                           <?php
