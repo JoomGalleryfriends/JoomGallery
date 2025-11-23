@@ -84,6 +84,7 @@ return (new PhpCsFixer\Config())
     'blank_line_before_statement' => ['statements' => ['return', 'if', 'for', 'foreach', 'while']],
     'no_break_comment' => ['comment_text' => "'break' intentionally omitted"],
     'braces_position' => ['control_structures_opening_brace' => 'next_line_unless_newline_at_signature_end'],
+    'control_structure_continuation_position' => ['position' => 'next_line'],
     'function_typehint_space' => true,
     'method_argument_space' => ['on_multiline' => 'ignore'],
 
