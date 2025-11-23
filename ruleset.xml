@@ -38,11 +38,6 @@
   <rule ref="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing">
     <properties>
     <property name="linesCountBefore" value="1"/>
-    <property name="linesCountBeforeFirst" value="0"/>
-    <property name="linesCountAfter" value="0"/>
-    <property name="linesCountAfterLast" value="0"/>
-    <property name="linesCountAfterWhenLastInCaseOrDefault" value="0"/>
-    <property name="linesCountAfterWhenLastInLastCaseOrDefault" value="0"/>
     <property name="jumpStatements" type="array">
       <element value="return"/>
       <element value="throw"/>
@@ -59,7 +54,6 @@
   <!-- override indentation: 2 spaces, not tabs -->
   <rule ref="Generic.WhiteSpace.ScopeIndent">
     <properties>
-      <property name="indent" value="2"/>
       <property name="tabIndent" value="false"/>
       <property name="exact" value="true"/>
     </properties>
@@ -69,6 +63,7 @@
 
   <!-- apply JoomGallery specific sniffs -->
   <rule ref="JG.ControlStructures.ControlSignature"/>
+  <rule ref="JG.Arrays.MultilineArrayFirstElementNewline"/>
 
   <!-- temporary extend the line length -->
   <rule ref="Generic.Files.LineLength">

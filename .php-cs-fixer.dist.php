@@ -71,6 +71,7 @@ return (new PhpCsFixer\Config())
 
     // Enforce file header
     'header_comment' => ['comment_type' => 'PHPDoc', 'location' => 'after_open', 'separate' => 'bottom', 'header' => $header],
+    'blank_line_after_opening_tag' => false,
 
     // Arrays & commas
     'array_syntax' => ['syntax' => 'short'],
@@ -78,9 +79,10 @@ return (new PhpCsFixer\Config())
     'no_whitespace_before_comma_in_array' => true,
     'no_trailing_comma_in_singleline' => true,
     'trailing_comma_in_multiline' => ['elements' => ['arrays']],
+    'array_indentation' => true,
 
     // Operators, spacing & braces
-    'binary_operator_spaces' => ['operators' => ['=>' => 'align_single_space_minimal', '=' => 'align', '??=' => 'align']],
+    'binary_operator_spaces' => ['operators' => ['=>' => 'align_single_space_minimal', '=' => 'align_single_space_minimal', '??=' => 'align_single_space_minimal']],
     'blank_line_before_statement' => ['statements' => ['return', 'if', 'for', 'foreach', 'while']],
     'no_break_comment' => ['comment_text' => "'break' intentionally omitted"],
     'braces_position' => ['control_structures_opening_brace' => 'next_line_unless_newline_at_signature_end'],
@@ -89,7 +91,6 @@ return (new PhpCsFixer\Config())
     'method_argument_space' => ['on_multiline' => 'ignore'],
 
     // Imports
-    'no_unused_imports' => true,
     'ordered_imports' => ['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha'],
 
     // Misc quality/cleanup
@@ -108,5 +109,7 @@ return (new PhpCsFixer\Config())
     'no_trailing_whitespace' => true,
     'no_whitespace_in_blank_line' => true,
     'no_spaces_after_function_name' => true,
+    'phpdoc_indent' => true,
+    'phpdoc_trim' => true,
   ])
   ->setFinder($finder);
