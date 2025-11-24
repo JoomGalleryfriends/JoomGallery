@@ -9,19 +9,21 @@
   <exclude-pattern type="relative">^script.php</exclude-pattern>
 
   <rule ref="PSR12">
+    <!-- Disable automatic formatting of control structures -->
     <exclude name="Squiz.ControlStructures.ControlSignature"/>
     <exclude name="PEAR.ControlStructures.ControlSignature"/>
     <exclude name="PSR12.ControlStructures.ControlStructureSpacing"/>
+    <exclude name="Generic.ControlStructures.InlineControlStructure"/>
+    <exclude name="Squiz.ControlStructures.InlineIfDeclaration"/>
+    <!-- Disable built-in PSR12 header -->
     <exclude name="PSR12.Files.FileHeader"/>
+    <!-- Disable indentation (handled by PHP-CS-Fixer) -->
+    <exclude name="Generic.WhiteSpace.ScopeIndent"/>
+    <exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
   </rule>
 
   <!-- clean imports -->
   <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
-  <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
-    <properties>
-      <property name="searchAnnotations" value="true"/>
-    </properties>
-  </rule>
 
   <!-- arrays & commas -->
   <rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
@@ -34,36 +36,18 @@
     </properties>
   </rule>
 
-  <!-- blank line before return/throw/etc -->
-  <rule ref="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing">
-    <properties>
-    <property name="linesCountBefore" value="1"/>
-    <property name="jumpStatements" type="array">
-      <element value="return"/>
-      <element value="throw"/>
-      <element value="break"/>
-      <element value="continue"/>
-    </property>
-  </properties>
-  </rule>
-
   <!-- calls and declarations spacing -->
   <rule ref="PEAR.Functions.FunctionCallSignature"/>
   <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing"/>
 
-  <!-- override indentation: 2 spaces, not tabs -->
-  <rule ref="Generic.WhiteSpace.ScopeIndent">
-    <properties>
-      <property name="tabIndent" value="false"/>
-      <property name="exact" value="true"/>
-    </properties>
-  </rule>
-  <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
-  <config name="tab_width" value="2"/>
-
   <!-- apply JoomGallery specific sniffs -->
   <rule ref="JG.ControlStructures.ControlSignature"/>
   <rule ref="JG.Arrays.MultilineArrayFirstElementNewline"/>
+  <rule ref="JG.Commenting.FileHeader">
+    <properties>
+      <property name="headerFile" value="./header.txt"/>
+    </properties>
+  </rule>
 
   <!-- temporary extend the line length -->
   <rule ref="Generic.Files.LineLength">

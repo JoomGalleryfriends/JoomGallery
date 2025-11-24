@@ -39,22 +39,17 @@ $finder = PhpCsFixer\Finder::create()
     ]
   )
   ->notPath('administrator/com_joomgallery/vendor')
-  // Ignore template files as PHP CS fixer can't handle them properly
-  // https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues/3702#issuecomment-396717120
-  ->notPath('administrator/com_joomgallery/tmpl')
-  ->notPath('administrator/com_joomgallery/layouts')
   ->name('*.php')
   ->ignoreDotFiles(true)
   ->ignoreVCS(true);
 
-$header = <<<'EOF'
-*********************************************************************************
-   @package    com_joomgallery                                                 **
-   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
-   @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
-   @license    GNU General Public License version 3 or later                   **
-*********************************************************************************
-EOF;
+// Load hesder from header.txt
+$headerFile = __DIR__ . '/header.txt';
+if(!file_exists($headerFile))
+{
+  throw new RuntimeException("header.txt not found at: " . $headerFile);
+}
+$header = trim(file_get_contents($headerFile));
 
 return (new PhpCsFixer\Config())
   ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
@@ -64,7 +59,7 @@ return (new PhpCsFixer\Config())
   ->setIndent('  ')
   ->setLineEnding("\n")
   ->setRules([
-    '@PSR12' => true,
+    '@PSR1' => true,
     'encoding' => true,
     'indentation_type' => true,
     'line_ending' => true,
