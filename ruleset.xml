@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="JoomGallery">
   <description>The JoomGallery PSR-12 exceptions.</description>
+  <autoload>administrator/com_joomgallery/vendor/autoload.php</autoload>
 
   <exclude-pattern type="relative">^docs/*</exclude-pattern>
   <exclude-pattern type="relative">^media/*</exclude-pattern>
@@ -41,13 +42,18 @@
   <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing"/>
 
   <!-- apply JoomGallery specific sniffs -->
-  <rule ref="JG.ControlStructures.ControlSignature"/>
+  <rule ref="JG.A_Preprocessing.A_Indentation">
+    <properties>
+      <property name="indentSize" value="2"/>
+    </properties>
+  </rule>
   <rule ref="JG.Arrays.MultilineArrayFirstElementNewline"/>
   <rule ref="JG.Commenting.FileHeader">
     <properties>
       <property name="headerFile" value="./header.txt"/>
     </properties>
   </rule>
+  <rule ref="JG.ControlStructures.ControlSignature"/>
 
   <!-- temporary extend the line length -->
   <rule ref="Generic.Files.LineLength">
