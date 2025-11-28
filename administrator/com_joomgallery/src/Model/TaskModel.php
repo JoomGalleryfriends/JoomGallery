@@ -325,4 +325,34 @@ class TaskModel extends JoomAdminModel
       return [];
     }
   }
+
+  /**
+   * Method to delete one or more records.
+   *
+   * @param   array  &$pks  An array of record primary keys.
+   *
+   * @return  boolean  True if successful, false if an error occurs.
+   *
+   * @since   4.2.0
+   */
+  public function delete(&$pks)
+  {
+    // Delete associated task items first (Cascade behavior in PHP)
+    if (!empty($pks))
+    {
+      $db = $this->getDatabase();
+      $query = $db->getQuery(true)
+        ->delete($db->quoteName('#__joomgallery_task_items'))
+        ->whereIn($db->quoteName('task_id'), $pks); // whereIn handles array sanitization
+
+      try {
+        $db->setQuery($query)->execute();
+      } catch (\Exception $e) {
+        $this->setError($e->getMessage());
+        return false;
+      }
+    }
+
+    return parent::delete($pks);
+  }
 }
