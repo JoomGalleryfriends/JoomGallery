@@ -156,9 +156,9 @@ class TaskController extends JoomFormController
         $taskModel = $this->getModel();
         $task = $taskModel->getItem($taskId);
 
-        if (str_starts_with($itemRow->item_id, '9')) {
-          throw new \RuntimeException("Manueller Fehler wenn ItemId mit 8 beginnt.");
-        }
+//        if (str_starts_with($itemRow->item_id, '9')) {
+//          throw new \RuntimeException("Manueller Fehler wenn ItemId mit 8 beginnt.");
+//        }
 
         if (!$task) {
           throw new \RuntimeException('Haupt-Task ' . $taskId . ' nicht gefunden.');
@@ -350,5 +350,73 @@ class TaskController extends JoomFormController
 
     echo json_encode($response);
     $app->close();
+  }
+
+  /**
+   * Attempts to clean up the task and its items if successful.
+   *
+   * @return  void
+   * @since   4.2.0
+   */
+  public function cleanupTask()
+  {
+    if (!$this->checkToken('post'))
+    {
+      echo new JsonResponse(null, Text::_('JINVALID_TOKEN'), true);
+      $this->app->close();
+    }
+
+    $taskId = $this->app->input->getInt('task_id');
+    $db     = Factory::getDbo();
+
+    $data = [
+      'deleted' => false,
+      'reason'  => ''
+    ];
+
+    if (!$taskId)
+    {
+      echo new JsonResponse(null, 'Keine Task ID übergeben', true);
+      $this->app->close();
+    }
+
+    try
+    {
+      $query = $db->getQuery(true)
+        ->select('COUNT(*)')
+        ->from($db->quoteName('#__joomgallery_task_items'))
+        ->where($db->quoteName('task_id') . ' = ' . (int) $taskId)
+        ->where($db->quoteName('status') . ' != ' . $db->quote('success'));
+
+      $db->setQuery($query);
+      $notSuccessCount = (int) $db->loadResult();
+
+      if ($notSuccessCount > 0)
+      {
+        $data['reason'] = 'Items with errors present';
+
+        echo new JsonResponse($data, 'Task finished with errors. Cleanup skipped.');
+      }
+      else
+      {
+        $pks = [(int)$taskId];
+        if ($this->getModel()->delete($pks))
+        {
+          $data['deleted'] = true;
+          echo new JsonResponse($data, 'Cleanup successful.');
+        }
+        else
+        {
+          $data['reason'] = $this->getModel()->getError();
+          echo new JsonResponse($data, 'Cleanup failed: ' . $this->getModel()->getError());
+        }
+      }
+    }
+    catch (\Exception $e)
+    {
+      echo new JsonResponse(null, $e->getMessage(), true);
+    }
+
+    $this->app->close();
   }
 }
