@@ -8,18 +8,24 @@
 import { Sema } from 'async-sema';
 
 /**
- * Wie viele Tasks (Worker) parallel ausgeführt werden sollen.
+ * How many tasks (workers) should be executed in parallel.
  */
 let parallelLimit = 10;
 
 /**
- * Auf true setzen, um die automatische Ausführung zu stoppen.
+ * Set to true to stop automatic execution.
  * @var {Boolean}
  */
 var forceStop = false;
 
 /**
- * Speichert, ob bereits ein Task aktiv ausgeführt wird.
+ * Stores whether the stop was explicitly triggered by the user (pause click).
+ * @var {Boolean}
+ */
+var userPaused = false;
+
+/**
+ * Stores whether a task is already being actively executed.
  * @var {Boolean}
  */
 var taskActive = false;
@@ -47,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const taskId = link.dataset.taskId;
       const modalBody = document.getElementById('jg-failed-items-list');
 
-      modalBody.innerHTML = '<p>Lade Fehlerliste...</p>';
+      modalBody.innerHTML = '<p>Loading error list...</p>';
 
       try {
         const response = await getFailedItems(taskId);
@@ -56,29 +62,29 @@ document.addEventListener('DOMContentLoaded', () => {
           if (response.data.items && response.data.items.length > 0) {
             let html = '<ul class="list-group">';
             response.data.items.forEach(item => {
-              html += `<li class="list-group-item"><strong>Item ${item.item_id || 'Unbekannt'}:</strong><br>${item.error_message || 'Keine Fehlermeldung'}</li>`;
+              html += `<li class="list-group-item"><strong>Item ${item.item_id || 'Unknown'}:</strong><br>${item.error_message || 'No error message'}</li>`;
             });
             html += '</ul>';
             modalBody.innerHTML = html;
           } else {
-            modalBody.innerHTML = '<p>Keine fehlgeschlagenen Items gefunden.</p>';
+            modalBody.innerHTML = '<p>No failed items found.</p>';
           }
         } else {
-          const errorMsg = response.data.error || response.message || 'Fehler beim Laden der Daten.';
+          const errorMsg = response.data.error || response.message || 'Error loading data.';
           throw new Error(errorMsg);
         }
       } catch (error) {
-        modalBody.innerHTML = `<p class="text-danger">Ein Fehler ist aufgetreten: ${error.message}</p>`;
+        modalBody.innerHTML = `<p class="text-danger">An error occurred: ${error.message}</p>`;
       }
     });
   });
 });
 
 /**
- * Setzt den Play/Pause-Button auf einen bestimmten Status.
+ * Sets the play/pause button to a specific state.
  *
- * @param {Element} button Das Button-Element
- * @param {String} state    'play' (zeigt Play-Icon) oder 'pause' (zeigt Pause-Icon)
+ * @param {Element} button The button element
+ * @param {String} state    'play' (shows play icon) or 'pause' (shows pause icon)
  */
 let setPlayButtonState = function(button, state) {
   if (!button) return;
@@ -95,13 +101,13 @@ let setPlayButtonState = function(button, state) {
 }
 
 /**
- * Eine "Worker-Schleife", die kontinuierlich Arbeit anfordert.
+ * A "worker loop" that continuously requests work.
  *
- * @param {int} workerId     Nur zur Info
- * @param {String} taskId    Die ID des Haupt-Tasks
- * @param {Sema} sema        Die Semaphore-Instanz
- * @param {Element} logContainer Das Log-Element
- * @param {function} updateCounters Callback, um die Zähler in runTask zu aktualisieren
+ * @param {int} workerId     Just for info
+ * @param {String} taskId    The ID of the main task
+ * @param {Sema} sema        The semaphore instance
+ * @param {Element} logContainer The log element
+ * @param {function} updateCounters Callback to update counters in runTask
  */
 async function runWorkerLoop(workerId, taskId, sema, logContainer, updateCounters) {
   while (!forceStop) {
@@ -112,7 +118,7 @@ async function runWorkerLoop(workerId, taskId, sema, logContainer, updateCounter
     } else if (result.status === 'failed') {
       updateCounters('failed', result.itemId);
     } else if (result.status === 'no_work') {
-      forceStop = true; // Stoppt alle anderen Worker
+      forceStop = true; // Stops all other workers
       break;
     } else if (result.status === 'network_error') {
       break;
@@ -121,12 +127,12 @@ async function runWorkerLoop(workerId, taskId, sema, logContainer, updateCounter
 }
 
 /**
- * Verarbeitet EIN Item. Holt sich den Job atomar vom Backend.
+ * Processes ONE item. Fetches the job atomically from the backend.
  *
- * @param   {String}   taskId         Die ID des Haupt-Tasks
- * @param   {Sema}     sema           Die Semaphore-Instanz
- * @param   {Element}  logContainer   Das Log-Element
- * @returns {Object}   Ein Status-Objekt
+ * @param   {String}   taskId         The ID of the main task
+ * @param   {Sema}     sema           The semaphore instance
+ * @param   {Element}  logContainer   The log element
+ * @returns {Object}   A status object
  */
 async function processItem(taskId, sema, logContainer) {
   await sema.acquire();
@@ -139,19 +145,19 @@ async function processItem(taskId, sema, logContainer) {
       itemId = response.data.item_id;
 
       if (itemId === null) {
-        addLog('Keine weiteren Items gefunden. Worker beendet.', logContainer, 'info');
+        addLog('No further items found. Worker finished.', logContainer, 'info');
         return { status: 'no_work' };
       }
 
       return { status: 'success', itemId: itemId };
     } else {
-      itemId = response.data.item_id || 'Unbekannt';
-      const errorMsg = response.data.error || response.message || 'Server meldete einen Fehler';
-      addLog(`Verarbeitung von Item ${itemId} fehlgeschlagen. Fehler: ${errorMsg}`, logContainer, 'error');
+      itemId = response.data.item_id || 'Unknown';
+      const errorMsg = response.data.error || response.message || 'Server reported an error';
+      addLog(`Processing of item ${itemId} failed. Error: ${errorMsg}`, logContainer, 'error');
       return { status: 'failed', itemId: itemId };
     }
   } catch (error) {
-    addLog(`Netzwerk/AJAX Fehler: ${error.message}`, logContainer, 'error');
+    addLog(`Network/AJAX Error: ${error.message}`, logContainer, 'error');
     return { status: 'network_error' };
   } finally {
     sema.release();
@@ -160,15 +166,15 @@ async function processItem(taskId, sema, logContainer) {
 
 
 /**
- * Startet die Abarbeitung der Queue für einen bestimmten Task.
+ * Starts processing the queue for a specific task.
  *
  * @param {Object}  event     Event object
- * @param {Object}  element   Der geklickte Button
- * @param {Boolean} isNewRun  True, wenn das Log geleert werden soll
+ * @param {Object}  element   The clicked button
+ * @param {Boolean} isNewRun  True if the log should be cleared
  */
 async function runTask(event, element, isNewRun = false) {
   if (taskActive) {
-    alert('Ein anderer Task wird bereits ausgeführt.');
+    alert('Another task is already running.');
     return;
   }
 
@@ -182,7 +188,7 @@ async function runTask(event, element, isNewRun = false) {
   if (isNewRun) {
     clearLog(logContainer);
   }
-  addLog('Task wird gestartet...', logContainer, 'info');
+  addLog('Task starting...', logContainer, 'info');
   startTaskUI(taskId);
 
   let successCount = parseInt(document.getElementById(`count-success-${taskId}`).textContent, 10) || 0;
@@ -192,9 +198,9 @@ async function runTask(event, element, isNewRun = false) {
 
   if (totalItems === 0 || (pendingCount === 0 && isNewRun)) {
     if (totalItems === 0) {
-      addLog('Queue ist leer. (Keine Items gefunden)', logContainer, 'info');
+      addLog('Queue is empty. (No items found)', logContainer, 'info');
     } else {
-      addLog('Queue ist bereits abgeschlossen. (Keine "Pending" Items)', logContainer, 'info');
+      addLog('Queue is already finished. (No "Pending" items)', logContainer, 'info');
     }
     taskActive = false;
     finishTaskUI(taskId);
@@ -202,7 +208,7 @@ async function runTask(event, element, isNewRun = false) {
     return;
   }
 
-  addLog(`Starte ${workerCount} Worker für ${pendingCount} verbleibende Items...`, logContainer, 'info');
+  addLog(`Starting ${workerCount} workers for ${pendingCount} remaining items...`, logContainer, 'info');
 
   const sema = new Sema(workerCount);
 
@@ -233,16 +239,16 @@ async function runTask(event, element, isNewRun = false) {
 }
 
 /**
- * Führt einen Ajax-Request aus, um ein einzelnes Queue-Item zu verarbeiten.
+ * Executes an Ajax request to process a single queue item.
  *
- * @param   {String}   taskId   Die ID des Haupt-Tasks
- * @returns {Object}   Das Antwort-Objekt
+ * @param   {String}   taskId   The ID of the main task
+ * @returns {Object}   The response object
  */
 let ajax = async function(taskId) {
   let formData = new FormData(document.getElementById('adminForm'));
 
   formData.append('format', 'json');
-  formData.append('task', 'task.runTask'); // Ruft TaskController::runTask()
+  formData.append('task', 'task.runTask'); // Calls TaskController::runTask()
   formData.append('task_id', taskId);
   formData.append(Joomla.getOptions('csrf.token'), 1);
 
@@ -263,7 +269,7 @@ let ajax = async function(taskId) {
     if (res.data) {
       try {
         res.data = JSON.parse(res.data);
-      } catch (e) { /* ist ok */ }
+      } catch (e) { /* is ok */ }
     }
   } else if (txt.includes('Fatal error')) {
     res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: txt, data:null}};
@@ -274,23 +280,23 @@ let ajax = async function(taskId) {
       let data  = JSON.parse(temp.data);
       res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
     } else {
-      res = {success: false, status: response.status, message: 'Unbekannte Antwort vom Server', messages: {}, data: {error: txt, data:null}};
+      res = {success: false, status: response.status, message: 'Unknown response from server', messages: {}, data: {error: txt, data:null}};
     }
   }
   return res;
 }
 
 /**
- * Führt einen Ajax-Request aus, um die Liste der fehlgeschlagenen Items zu holen.
+ * Executes an Ajax request to get the list of failed items.
  *
- * @param   {String}   taskId   Die ID des Haupt-Tasks
- * @returns {Object}   Das Antwort-Objekt
+ * @param   {String}   taskId   The ID of the main task
+ * @returns {Object}   The response object
  */
 let getFailedItems = async function(taskId) {
   let formData = new FormData(document.getElementById('adminForm'));
 
   formData.append('format', 'json');
-  formData.append('task', 'task.getFailedItems'); // Ruft TaskController::getFailedItems()
+  formData.append('task', 'task.getFailedItems'); // Calls TaskController::getFailedItems()
   formData.append('task_id', taskId);
   formData.append(Joomla.getOptions('csrf.token'), 1);
 
@@ -322,18 +328,18 @@ let getFailedItems = async function(taskId) {
       let data  = JSON.parse(temp.data);
       res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
     } else {
-      res = {success: false, status: response.status, message: 'Unbekannte Antwort vom Server', messages: {}, data: {error: txt, data:null}};
+      res = {success: false, status: response.status, message: 'Unknown response from server', messages: {}, data: {error: txt, data:null}};
     }
   }
   return res;
 }
 
 /**
- * Fügt eine Nachricht zum Log-Fenster hinzu.
+ * Adds a message to the log window.
  *
- * @param   {String}   msg             Die Nachricht
- * @param   {Element}  logContainer    Das DOM-Element für das Log (im Modal)
- * @param   {String}   msgType         Typ: 'error', 'warning', 'success', 'info'
+ * @param   {String}   msg             The message
+ * @param   {Element}  logContainer    The DOM element for the log (in the modal)
+ * @param   {String}   msgType         Type: 'error', 'warning', 'success', 'info'
  */
 let addLog = function(msg, logContainer, msgType) {
   if (!msg || !logContainer) {
@@ -354,9 +360,9 @@ let addLog = function(msg, logContainer, msgType) {
 }
 
 /**
- * Leert das Log-Fenster.
+ * Clears the log window.
  *
- * @param {Element} logContainer Das DOM-Element für das Log (im Modal)
+ * @param {Element} logContainer The DOM element for the log (in the modal)
  */
 let clearLog = function(logContainer) {
   if (logContainer) {
@@ -365,13 +371,13 @@ let clearLog = function(logContainer) {
 }
 
 /**
- * Aktualisiert die Zähler und den Fortschrittsbalken für einen Task.
+ * Updates the counters and the progress bar for a task.
  *
- * @param {String} taskId        Die ID des Tasks
- * @param {int}    totalItems    Gesamtzahl der Items
- * @param {int}    successCount  Anzahl erfolgreicher Items
- * @param {int}    failedCount   Anzahl fehlgeschlagener Items
- * @param {int}    pendingCount  Die Anzahl der verbleibenden Items
+ * @param {String} taskId        The ID of the task
+ * @param {int}    totalItems    Total number of items
+ * @param {int}    successCount  Number of successful items
+ * @param {int}    failedCount   Number of failed items
+ * @param {int}    pendingCount  The number of remaining items
  */
 let updateTaskProgress = function(taskId, totalItems, successCount, failedCount, pendingCount) {
   totalItems = totalItems || 0;
@@ -392,9 +398,9 @@ let updateTaskProgress = function(taskId, totalItems, successCount, failedCount,
 }
 
 /**
- * Aktualisiert die UI, wenn ein Task startet (nur Ladebalken).
+ * Updates the UI when a task starts (only progress bar).
  *
- * @param {String} taskId Die ID des Tasks
+ * @param {String} taskId The ID of the task
  */
 let startTaskUI = function(taskId) {
   let bar = document.getElementById(`progress-${taskId}`);
@@ -404,9 +410,9 @@ let startTaskUI = function(taskId) {
 }
 
 /**
- * Aktualisiert die UI, wenn ein Task endet (Ladebalken und Button).
+ * Updates the UI when a task ends (progress bar and button).
  *
- * @param {String} taskId Die ID des Tasks
+ * @param {String} taskId The ID of the task
  */
 let finishTaskUI = function(taskId) {
   let startBtn = document.querySelector(`.jg-run-instant-task[data-id="${taskId}"]`);
