@@ -33,34 +33,7 @@ $wa->useStyle('com_joomgallery.admin')
    ->useScript('com_joomgallery.tasks')
    ->useStyle('com_scheduler.admin-view-tasks-css');
 
-// Add modified test-task script
-$jsPathES5 = JPATH_ROOT . '/media/com_scheduler/js/admin-view-run-test-task-es5.min.js';
-$jsPath    = JPATH_ROOT . '/media/com_scheduler/js/admin-view-run-test-task.min.js';
-
-// Prefer the ES5 build, fall back to the modern build
-if(is_file($jsPathES5) && is_readable($jsPathES5))
-{
-  $jsContent = file_get_contents($jsPathES5);
-}
-elseif(is_file($jsPath) && is_readable($jsPath))
-{
-  $jsContent = file_get_contents($jsPath);
-}
-
-if($jsContent !== false && $jsContent !== '')
-{
-$jsContent = str_replace(
-    '?option=com_scheduler&view=tasks',
-    '?option=com_joomgallery&view=tasks',
-    $jsContent
-);
-
-  $wa->addInlineScript($jsContent, ['name' => 'com_scheduler.test-task']);
-}
-else
-{
-  $wa->useScript('com_scheduler.test-task');
-}
+$wa->useScript('com_scheduler.test-task');
 
 // Add language strings to JS
 Text::script('COM_SCHEDULER_TEST_RUN_TITLE');
