@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await runTask(event, button, isNewRun);
       } else {
         console.log('Task pause requested.');
+        userPaused = true;
         forceStop = true;
         setPlayButtonState(button, 'play');
       }
@@ -180,6 +181,7 @@ async function runTask(event, element, isNewRun = false) {
 
   taskActive = true;
   forceStop = false;
+  userPaused = false;
 
   const taskId = element.dataset.id;
   const logContainer = document.getElementById('jg-modal-log-output');
@@ -233,7 +235,33 @@ async function runTask(event, element, isNewRun = false) {
 
   await Promise.allSettled(promises);
 
-  addLog('Task-Abarbeitung abgeschlossen.', logContainer, 'info');
+  // If not stopped by user (pause), clean up and reload
+  if (!userPaused) {
+    addLog('Cleaning up and reloading...', logContainer, 'info');
+
+    try {
+      const res = await cleanupTask(taskId);
+      const json = await res.json();
+
+      if (json.success) {
+        if (json.data && json.data.deleted === false) {
+          console.warn('Reloading, but task was not deleted:', json.data.reason);
+        }
+        window.location.reload();
+      } else {
+        alert('System error during cleanup: ' + json.message);
+        window.location.reload(); // Trotzdem reload als Fallback
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Fallback reload (ensure reload happens even if JSON parsing fails)
+    window.location.reload();
+    return;
+  }
+
+  addLog('Task processing paused.', logContainer, 'info');
   taskActive = false;
   finishTaskUI(taskId);
 }
@@ -424,4 +452,23 @@ let finishTaskUI = function(taskId) {
   if (startBtn) {
     setPlayButtonState(startBtn, 'play');
   }
+}
+
+/**
+ * Calls the cleanup endpoint.
+ *
+ * @param {String} taskId The ID of the task
+ */
+let cleanupTask = async function(taskId) {
+  let formData = new FormData(document.getElementById('adminForm'));
+  formData.append('format', 'json');
+  formData.append('task', 'task.cleanupTask');
+  formData.append('task_id', taskId);
+  formData.append(Joomla.getOptions('csrf.token'), 1);
+
+  // We wait for the response, but the content doesn't matter for the reload strategy
+  return fetch(document.getElementById('adminForm').getAttribute('action'), {
+    method: 'POST',
+    body: formData
+  });
 }
