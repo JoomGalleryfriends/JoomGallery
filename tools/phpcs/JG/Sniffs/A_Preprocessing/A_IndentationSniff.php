@@ -23,7 +23,8 @@ class A_IndentationSniff implements Sniff
   public function process(File $phpcsFile, $stackPtr)
   {
     // Load whole content
-    $content = \file_get_contents($phpcsFile->getFilename());
+    //$content = \file_get_contents($phpcsFile->getFilename());
+    $content = $phpcsFile->getTokensAsString(0, $phpcsFile->numTokens - 1);
 
     // Detect tabs
     $hasTabs = \strpos($content, "\t") !== false;
@@ -64,7 +65,18 @@ class A_IndentationSniff implements Sniff
       $newContent = Indentation::change($content, $newIndent);
 
       // Replace entire file content
-      \file_put_contents($phpcsFile->getFilename(), $newContent);
+      //\file_put_contents($phpcsFile->getFilename(), $newContent);
+      $phpcsFile->fixer->beginChangeset();
+
+      // Put the entire new content into the first token
+      $phpcsFile->fixer->replaceToken(0, $newContent);
+
+      // Clear all remaining tokens so old code doesn’t hang around
+      for ($i = 1; $i < $phpcsFile->numTokens; $i++) {
+          $phpcsFile->fixer->replaceToken($i, '');
+      }
+
+      $phpcsFile->fixer->endChangeset();
     }
 
     // Only run sniff once per file
