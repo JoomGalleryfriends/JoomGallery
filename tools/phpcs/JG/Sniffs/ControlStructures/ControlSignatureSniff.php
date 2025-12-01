@@ -1,4 +1,13 @@
 <?php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
 declare(strict_types=1);
 
 namespace PHP_CodeSniffer\Standards\JG\Sniffs\ControlStructures;
@@ -6,13 +15,6 @@ namespace PHP_CodeSniffer\Standards\JG\Sniffs\ControlStructures;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
-/**
- * Enforce:
- *  - NO space between control-structure keyword and "("  ->  if(condition)
- *  - Opening brace "{" on the NEXT line after the closing ")" (Allman)
- *
- * Affects: if, elseif, for, foreach, while, switch
- */
 final class ControlSignatureSniff implements Sniff
 {
   public function register(): array
@@ -42,7 +44,7 @@ final class ControlSignatureSniff implements Sniff
     if($tokens[$immediate]['code'] === T_WHITESPACE)
     {
       $found = $tokens[$immediate]['content'];
-      $fix = $phpcsFile->addFixableError(
+      $fix   = $phpcsFile->addFixableError(
         'No space allowed after control-structure keyword; found "%s".',
         $immediate,
         'SpaceAfterKeyword',
@@ -144,7 +146,7 @@ final class ControlSignatureSniff implements Sniff
   private function fetchLineIndentBefore(array $tokens, int $ptr): string
   {
     // Walk backwards to find the first token on the line, then capture its leading whitespace
-    $line = (int)$tokens[$ptr]['line'];
+    $line        = (int)$tokens[$ptr]['line'];
     $firstOnLine = $ptr;
 
     while($firstOnLine > 0 && (int)$tokens[$firstOnLine - 1]['line'] === $line)

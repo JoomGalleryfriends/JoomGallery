@@ -1,13 +1,22 @@
 <?php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
 declare(strict_types=1);
 
 namespace PHP_CodeSniffer\Standards\JG\Sniffs\A_Preprocessing;
 
+use ColinODell\Indentation\Indentation;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
-use ColinODell\Indentation\Indentation;
 
-class A_IndentationSniff implements Sniff
+final class A_IndentationSniff implements Sniff
 {
   /**
    * Indent size you want to enforce
@@ -30,7 +39,7 @@ class A_IndentationSniff implements Sniff
     $hasTabs = \strpos($content, "\t") !== false;
 
     // Detect indentation
-    $indent = Indentation::detect($content);
+    $indent      = Indentation::detect($content);
     $currentSize = $indent->getAmount();
     $currentType = $indent->getType();
 
@@ -42,12 +51,12 @@ class A_IndentationSniff implements Sniff
 
     // Add an error with autofix enabled
     $fix = $phpcsFile->addFixableError(
-      sprintf(
-        'Indentation probably not correct. Expects %d spaces and no tabs.',
-        $this->indentSize
-      ),
-      $stackPtr,
-      'WrongIndentation'
+        sprintf(
+            'Indentation probably not correct. Expects %d spaces and no tabs.',
+            $this->indentSize
+        ),
+        $stackPtr,
+        'WrongIndentation'
     );
 
     if($fix === true)
@@ -56,12 +65,16 @@ class A_IndentationSniff implements Sniff
       $content = \str_replace("\t", "  ", $content);
 
       //Normalize mixed indents
-      $content = \preg_replace_callback('/^\s+/m', function($m) {
-        return \str_replace("\t", "  ", $m[0]);
-      }, $content);
+    $content = \preg_replace_callback(
+        '/^\s+/m',
+        function ($m) {
+          return \str_replace("\t", "  ", $m[0]);
+        },
+        $content
+    );
 
       // Fix indentation
-      $newIndent = new Indentation($this->indentSize, Indentation::TYPE_SPACE);
+      $newIndent  = new Indentation($this->indentSize, Indentation::TYPE_SPACE);
       $newContent = Indentation::change($content, $newIndent);
 
       // Replace entire file content
@@ -72,8 +85,9 @@ class A_IndentationSniff implements Sniff
       $phpcsFile->fixer->replaceToken(0, $newContent);
 
       // Clear all remaining tokens so old code doesn’t hang around
-      for ($i = 1; $i < $phpcsFile->numTokens; $i++) {
-          $phpcsFile->fixer->replaceToken($i, '');
+      for($i = 1; $i < $phpcsFile->numTokens; $i++)
+      {
+        $phpcsFile->fixer->replaceToken($i, '');
       }
 
       $phpcsFile->fixer->endChangeset();
