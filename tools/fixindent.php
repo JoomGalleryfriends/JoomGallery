@@ -3,22 +3,38 @@ require_once('Indentation.php');
 use ColinODell\Indentation\Indentation;
 
 /**
- * Removes all lines before the class/interface/trait/enum definition.
- *
- * @param   string   $content  The full contents of a PHP file.
- * @return  string   The cleaned file content.
+ * Remove everything before the first class/interface/trait/enum
+ * including docblocks, comments, attributes, and blank lines.
  */
 function stripHeader(string $content): string
 {
-    $lines = preg_split('/\R/', $content);
+  $lines = preg_split('/\R/', $content);
 
-    foreach ($lines as $i => $line) {
-        if (preg_match('/^\s*(final\s+|abstract\s+)?(class|interface|trait|enum)\s+\w+/i', $line)) {
-            return implode("\n", array_slice($lines, $i));
-        }
+  foreach($lines as $i => $line)
+  {
+    // skip docblocks
+    if(preg_match('/^\s*\/\*\*/', $line)) {
+      continue;
+    }
+    if(preg_match('/^\s*\*/', $line)) {
+      continue;
+    }
+    if(preg_match('/^\s*\*\/\s*$/', $line)) {
+      continue;
     }
 
-    return '';
+    // skip attribute blocks #[...]
+    if(preg_match('/^\s*#\[.*\]/', $line)) {
+      continue;
+    }
+
+    // first class-like definition found
+    if(preg_match('/^\s*(final\s+|abstract\s+)?(class|interface|trait|enum)\s+\w+/i', $line)) {
+      return implode("\n", array_slice($lines, $i));
+    }
+  }
+
+  return '';
 }
 
 $dir = __DIR__;
