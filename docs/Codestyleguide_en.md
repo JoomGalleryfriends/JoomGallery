@@ -1,5 +1,5 @@
 # Code Style Guide for JoomGallery 4.x by JoomGalleryfriends  
-Last updated: 24/02/2025
+Last updated: 01/12/2025
 [Wechsle zur Deutschen Version](Codestyleguide.md)
 
 ## General
@@ -12,16 +12,23 @@ Last updated: 24/02/2025
 ### File Structure
 1. File header
 2. Namespace definition
-3. \defined('_JEXEC') or die;
+3. \defined('_JEXEC') || die;
 4. `use` statements (importing required classes)
 5. Content
 
 ### File Header
-1. Component name  
-2. Author  
-3. Copyright  
-4. Licence
+```php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+```
 
+### Others
 - Function names: start with a lowercase letter, capitalise each subsequent word:
 ```php
 buildCategoryQuery()
@@ -62,13 +69,13 @@ $date = new DateTime();
   - Classes first
   - Then functions
   - Then constants
-2. Sort each group by length (shorter names first).
+2. Sort each group by alphabetical order.
 
 #### CORRECT
 ```php
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use function strlen;
 use const PHP_VERSION;
 ```
@@ -141,21 +148,10 @@ else if($integer == 2)
 
 ## Trailing Commas
 
-Single-line and multi-line lists must not have a trailing comma.
+Single-line and multi-line lists can have a trailing comma.
 
 
 #### CORRECT
-```php
-$values = ['a', 'b', 'c'];
-
-$values = [
-  'a',
-  'b',
-  'c'
-];
-```
-
-#### INCORRECT
 ```php
 $values = ['a', 'b', 'c',];
 
@@ -166,7 +162,7 @@ $values = [
 ];
 ```
 
-### `switch` Notes
+### `Switch` Notes
 
 - `default` case is **mandatory**, even if it only contains `break`
 - If `break` is intentionally omitted, add a comment
@@ -527,16 +523,16 @@ $controller->execute(Factory::getApplication()->input->get('task', 'display', 'c
 ## Miscellaneous
 
 - `require_once` is not a function – **do not use parentheses**
-- No spaces before and after concatenation dots in expressions
+- Add spaces before and after concatenation dots in expressions
 
 #### CORRECT
 ```php
-require_once JPATH_COMPONENT.DS.'helpers'.DS.'messenger.php';
+require_once(JPATH_COMPONENT . DS . 'helpers'.DS.'messenger.php');
 ```
 
 #### INCORRECT
 ```php
-require_once(JPATH_COMPONENT . DS . 'helpers'.DS.'messenger.php');
+require_once JPATH_COMPONENT.DS.'helpers'.DS.'messenger.php';
 ```
 
 - Prefer single quotes for strings wherever possible (for performance)
