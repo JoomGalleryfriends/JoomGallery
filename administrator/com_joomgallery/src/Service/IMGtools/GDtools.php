@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // No direct access
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\Filesystem\File;
 use \Joomla\Filesystem\Path;

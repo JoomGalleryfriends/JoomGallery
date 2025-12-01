@@ -10,7 +10,9 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
 * Trait to implement MetadataServiceInterface

@@ -7,7 +7,9 @@
  **   @license    GNU General Public License version 3 or later                          **
  *****************************************************************************************/
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Extension\Service\Provider\MVCFactory;

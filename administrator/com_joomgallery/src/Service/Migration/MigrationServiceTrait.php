@@ -9,7 +9,9 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Language\Text;
