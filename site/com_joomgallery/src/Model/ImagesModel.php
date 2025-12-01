@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
