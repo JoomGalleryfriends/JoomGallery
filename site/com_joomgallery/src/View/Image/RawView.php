@@ -1,47 +1,48 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Image;
 
-// No direct access
+
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Registry\Registry;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\Image\RawView as AdminRawView;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\Image\RawView as AdminRawView;
+use Joomla\Registry\Registry;
 
 /**
  * Raw view class for a single Image.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
 class RawView extends AdminRawView
 {
-  /**
-	 * The media object
-	 *
-	 * @var  \stdClass
-	 */
-	protected $item;
+    /**
+     * The media object
+     *
+     * @var  \stdClass
+     */
+    protected $item;
 
   /**
-	 * Postprocessing the image after retrieving the image ressource
-	 *
-	 * @param   \stdClass  $file_info    Object with file information
+   * Postprocessing the image after retrieving the image ressource
+   *
+   * @param   \stdClass  $file_info    Object with file information
    * @param   resource   $resource     Image resource
    * @param   string     $imagetype    Type of image (original, detail, thumbnail, ...)
-	 *
-	 * @return  bool       True on success, false otherwise
-	 */
+   *
+   * @return  bool       True on success, false otherwise
+   */
   public function ppImage(&$file_info, &$resource, $imagetype)
   {
     // Get the current imagetype
@@ -55,6 +56,7 @@ class RawView extends AdminRawView
 
     // Get dynamicprocessing params for this imagetype
     $params = false;
+
     foreach($this->component->getConfig()->get('jg_dynamicprocessing') as $key => $tmp_param)
     {
       if($tmp_param->jg_imgtypename == $imagetype->typename)
@@ -74,8 +76,7 @@ class RawView extends AdminRawView
     // Are there any params set which leads to dynamic processing?
     if( $params->get('jg_imgtypeorinet', 0) == 1 || $params->get('jg_imgtyperesize', 0) > 0 ||
         ($params->get('jg_imgtypewatermark', 0) == 1 && $this->component->getConfig()->get('jg_dynamic_watermark', 0))
-      )
-    {
+      ) {
       // Create the IMGtools service
       $this->component->createIMGtools($this->component->getConfig()->get('jg_imgprocessor'));
 
@@ -111,13 +112,14 @@ class RawView extends AdminRawView
       if($params->get('jg_imgtyperesize', 0) > 0)
       {
         // Yes
-        if(!$this->component->getIMGtools()->resize($params->get('jg_imgtyperesize', 3),
-                                            $params->get('jg_imgtypewidth', 5000),
-                                            $params->get('jg_imgtypeheight', 5000),
-                                            $params->get('jg_cropposition', 2),
-                                            $params->get('jg_imgtypesharpen', 0))
-          )
-        {
+        if(!$this->component->getIMGtools()->resize(
+            $params->get('jg_imgtyperesize', 3),
+            $params->get('jg_imgtypewidth', 5000),
+            $params->get('jg_imgtypeheight', 5000),
+            $params->get('jg_cropposition', 2),
+            $params->get('jg_imgtypesharpen', 0)
+        )
+          ) {
           // Destroy the IMGtools service
           $this->component->delIMGtools();
 
@@ -132,13 +134,14 @@ class RawView extends AdminRawView
       if($params->get('jg_imgtypewatermark', 0) == 1 && $this->component->getConfig()->get('jg_dynamic_watermark', 0))
       {
         // Yes
-        if(!$this->component->getIMGtools()->watermark(JPATH_ROOT.\DIRECTORY_SEPARATOR.$this->component->getConfig()->get('jg_wmfile'),
-                                                $params->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
-                                                $params->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
-                                                $params->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
-                                                $params->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80))
-          )
-        {
+        if(!$this->component->getIMGtools()->watermark(
+            JPATH_ROOT . \DIRECTORY_SEPARATOR . $this->component->getConfig()->get('jg_wmfile'),
+            $params->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
+            $params->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
+            $params->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
+            $params->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80)
+        )
+          ) {
           // Destroy the IMGtools service
           $this->component->delIMGtools();
 
@@ -150,13 +153,13 @@ class RawView extends AdminRawView
       }
 
       $img_string = $this->component->getIMGtools()->stream($params->get('jg_imgtypequality', 100), false);
-      $new_size   = \getimagesizefromstring($img_string);
+      $new_size   = getimagesizefromstring($img_string);
 
       // Retrieve stream resource from image string
-      $stream = \fopen('php://temp', 'r+');
-      \fwrite($stream, $img_string);
-      \rewind($stream);
-      $stat = \fstat($stream);
+      $stream = fopen('php://temp', 'r+');
+      fwrite($stream, $img_string);
+      rewind($stream);
+      $stat = fstat($stream);
 
       // Override file info
       $file_info->width  = $new_size[0];
@@ -171,13 +174,13 @@ class RawView extends AdminRawView
   }
 
   /**
-	 * Check access to this image
-	 *
-	 * @param   int     $id    Image id
+   * Check access to this image
+   *
+   * @param   int     $id    Image id
    * @param   string  $type  Imagetype
-	 *
-	 * @return   bool    True on success, false otherwise
-	 */
+   *
+   * @return   bool    True on success, false otherwise
+   */
   protected function access($id, $type = 'thumbnail')
   {
     if($id === 'null') return true;
@@ -188,13 +191,14 @@ class RawView extends AdminRawView
     /** @var ImageModel $model */
     $model = $this->getModel();
 
-		try {
-			$this->item = $model->getItem();
-		}
-		catch (\Exception $e)
-		{
-			$loaded = false;
-		}
+        try
+        {
+            $this->item = $model->getItem();
+        }
+        catch (\Exception $e)
+        {
+            $loaded = false;
+        }
 
     // Check if the current user is the owner of the image
     if($loaded && $type == 'thumbnail' && $this->item->created_by == $this->getCurrentUser()->id)
@@ -204,22 +208,22 @@ class RawView extends AdminRawView
     }
 
     // Check if category is protected?
-		if($loaded && $model->getCategoryProtected())
-		{
+        if($loaded && $model->getCategoryProtected())
+        {
       $access = false;
-		}
+        }
 
     // Check published state
-		if(!$loaded || !$model->getCategoryPublished() || $this->item->published !== 1 || $this->item->approved !== 1)
-		{
-			$access = false;
-		}
+        if(!$loaded || !$model->getCategoryPublished() || $this->item->published !== 1 || $this->item->approved !== 1)
+        {
+            $access = false;
+        }
 
     // Check access view level
-		if(!$model->getCategoryAccess() || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
-    {
+        if(!$model->getCategoryAccess() || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
+        {
       $access = false;
-    }
+        }
 
     return $access;
   }

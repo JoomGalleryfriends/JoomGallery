@@ -1,15 +1,15 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Form\Form;
@@ -33,18 +33,19 @@ extract($displayData);
 <div class="p-3">
   <?php
     $i = 0;
-    foreach ($form->getGroup('') as $k => $field) : ?>
+
+    foreach($form->getGroup('') as $k => $field) : ?>
       <?php if($i > 1): ?>
         <div class="row">
           <?php
             if(!$is_global_config && !empty($field->getAttribute('global_only')) && $field->getAttribute('global_only') == true)
             {
-              $field_data = array(
-                'name' =>$field->name,
-                'label' => LayoutHelper::render('joomla.form.renderlabel', array('text'=>Text::_($field->getAttribute('label')), 'for'=>$field->id, 'required'=>false, 'classes'=>array())),
-                'input' => LayoutHelper::render('joomla.form.field.value', array('id'=>$field->id, 'value'=>$field->value, 'class'=>'')),
-                'description' => Text::_('COM_JOOMGALLERY_CONFIG_EDIT_ONLY_IN_GLOBAL')
-              );
+              $field_data = [
+                'name'        => $field->name,
+                'label'       => LayoutHelper::render('joomla.form.renderlabel', ['text' => Text::_($field->getAttribute('label')), 'for' => $field->id, 'required' => false, 'classes' => []]),
+                'input'       => LayoutHelper::render('joomla.form.field.value', ['id' => $field->id, 'value' => $field->value, 'class' => '']),
+                'description' => Text::_('COM_JOOMGALLERY_CONFIG_EDIT_ONLY_IN_GLOBAL'),
+              ];
               echo LayoutHelper::render('joomla.form.renderfield', $field_data);
             }
             else
@@ -56,6 +57,7 @@ extract($displayData);
       <?php endif; ?>
     <?php
     $i++;
+
     endforeach;
   ?>
 </div>

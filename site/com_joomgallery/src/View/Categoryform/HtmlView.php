@@ -1,186 +1,187 @@
 <?php
-
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Categoryform;
 
-// No direct access
+
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 
 /**
  * View class for a list of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
 class HtmlView extends JoomGalleryView
 {
-	/**
-	 * The category object
-	 *
-	 * @var  \stdClass
-	 */
-	protected $item;
+  /**
+   * The category object
+   *
+   * @var  \stdClass
+   */
+  protected $item;
 
   /**
-	 * The form object
-	 *
-	 * @var  \Joomla\CMS\Form\Form;
-	 */
-	protected $form;
+   * The form object
+   *
+   * @var  \Joomla\CMS\Form\Form;
+   */
+  protected $form;
 
-	/**
-	 * The page parameters
-	 *
-	 * @var    array
-	 *
-	 * @since  4.0.0
-	 */
-	protected $params = array();
+  /**
+   * The page parameters
+   *
+   * @var    array
+   *
+   * @since  4.0.0
+   */
+  protected $params = [];
 
-	/**
+  /**
    * The page to return to after the article is submitted
    *
    * @var  string
-   * 
+   *
    * @since  4.0.0
    */
   protected $return_page = '';
 
-	/**
-	 * Display the view
-	 *
-	 * @param   string  $tpl  Template name
-	 *
-	 * @return void
-	 *
-	 * @throws Exception
-	 */
-	public function display($tpl = null)
-	{
-		$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_NOT_YET_AVAILABLE'), 'warning');
+  /**
+   * Display the view
+   *
+   * @param   string  $tpl  Template name
+   *
+   * @return void
+   *
+   * @throws Exception
+   */
+  public function display($tpl = null)
+  {
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_NOT_YET_AVAILABLE'), 'warning');
 
-		if(!$this->app->input->get('preview', 0))
-		{
-			return;
-		}
-
-		/** @var CategoryfromModel $model */
-    $model = $this->getModel();
-
-    $this->state  = $model->getState();
-		$this->params = $model->getParams();
-		$this->item   = $model->getItem();
-		$this->form   = $model->getForm();
-
-    // Get return page
-    $this->return_page = $model->getReturnPage();		
-
-    // Check access view level
-		if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
+    if(!$this->app->input->get('preview', 0))
     {
-      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
-			return;
+      return;
     }
-		
-		// Check for errors.
-		if(count($errors = $model->getErrors()))
-		{
-			throw new GenericDataException(implode("\n", $errors), 500);
-		}
 
-		$this->_prepareDocument();
+  /** @var CategoryfromModel $model */
+  $model = $this->getModel();
 
-		parent::display($tpl);
-	}
+  $this->state    = $model->getState();
+    $this->params = $model->getParams();
+    $this->item   = $model->getItem();
+    $this->form   = $model->getForm();
 
-	/**
-	 * Prepares the document
-	 *
-	 * @return void
-	 *
-	 * @throws \Exception
-	 */
-	protected function _prepareDocument()
-	{
-		$menus = $this->app->getMenu();
-		$title = null;
+  // Get return page
+  $this->return_page = $model->getReturnPage();
 
-		// Because the application sets a default page title,
-		// we need to get it from the menu item itself
-		$menu = $menus->getActive();
+  // Check access view level
+    if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
+    {
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
 
-		if($menu)
-		{
-			$this->params['menu']->def('page_heading', $this->params['menu']->get('page_title', $menu->title));
-		}
-		else
-		{
-			$this->params['menu']->def('page_heading', Text::_('JoomGallery'));
-		}
+      return;
+    }
 
-		$title = $this->params['menu']->get('page_title', '');
+    // Check for errors.
+    if(\count($errors = $model->getErrors()))
+    {
+      throw new GenericDataException(implode("\n", $errors), 500);
+    }
 
-		if(empty($title))
-		{
-			$title = $this->app->get('sitename');
-		}
-		elseif($this->app->get('sitename_pagetitles', 0) == 1)
-		{
-			$title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
-		}
-		elseif($this->app->get('sitename_pagetitles', 0) == 2)
-		{
-			$title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
-		}
+    $this->_prepareDocument();
 
-		$this->document->setTitle($title);
+    parent::display($tpl);
+  }
 
-		if($this->params['menu']->get('menu-meta_description'))
-		{
-			$this->document->setDescription($this->params['menu']->get('menu-meta_description'));
-		}
+  /**
+   * Prepares the document
+   *
+   * @return void
+   *
+   * @throws \Exception
+   */
+  protected function _prepareDocument()
+  {
+    $menus = $this->app->getMenu();
+    $title = null;
 
-		if($this->params['menu']->get('menu-meta_keywords'))
-		{
-			$this->document->setMetadata('keywords', $this->params['menu']->get('menu-meta_keywords'));
-		}
+    // Because the application sets a default page title,
+    // we need to get it from the menu item itself
+    $menu = $menus->getActive();
 
-		if($this->params['menu']->get('robots'))
-		{
-			$this->document->setMetadata('robots', $this->params['menu']->get('robots'));
-		}
+    if($menu)
+    {
+      $this->params['menu']->def('page_heading', $this->params['menu']->get('page_title', $menu->title));
+    }
+    else
+    {
+      $this->params['menu']->def('page_heading', Text::_('JoomGallery'));
+    }
 
-		if(!$this->isMenuCurrentView($menu))
-		{
-			// Add Breadcrumbs
-			$pathway = $this->app->getPathway();
-			$breadcrumbList = Text::_('COM_JOOMGALLERY_CATEGORIES');
+    $title = $this->params['menu']->get('page_title', '');
 
-			if(!\in_array($breadcrumbList, $pathway->getPathwayNames()))
-			{
-				$pathway->addItem($breadcrumbList, JoomHelper::getViewRoute('categories'));
-			}
+    if(empty($title))
+    {
+      $title = $this->app->get('sitename');
+    }
+    elseif($this->app->get('sitename_pagetitles', 0) == 1)
+    {
+      $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
+    }
+    elseif($this->app->get('sitename_pagetitles', 0) == 2)
+    {
+      $title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
+    }
 
-			$breadcrumbTitle = isset($this->item->id) ? Text::_("JGLOBAL_EDIT") : Text::_("JGLOBAL_FIELD_ADD");
+    $this->document->setTitle($title);
 
-			if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
-			{
-				$pathway->addItem($breadcrumbTitle, '');
-			}
-		}
-	}
+    if($this->params['menu']->get('menu-meta_description'))
+    {
+      $this->document->setDescription($this->params['menu']->get('menu-meta_description'));
+    }
+
+    if($this->params['menu']->get('menu-meta_keywords'))
+    {
+      $this->document->setMetadata('keywords', $this->params['menu']->get('menu-meta_keywords'));
+    }
+
+    if($this->params['menu']->get('robots'))
+    {
+      $this->document->setMetadata('robots', $this->params['menu']->get('robots'));
+    }
+
+    if(!$this->isMenuCurrentView($menu))
+    {
+      // Add Breadcrumbs
+      $pathway        = $this->app->getPathway();
+      $breadcrumbList = Text::_('COM_JOOMGALLERY_CATEGORIES');
+
+      if(!\in_array($breadcrumbList, $pathway->getPathwayNames()))
+      {
+        $pathway->addItem($breadcrumbList, JoomHelper::getViewRoute('categories'));
+      }
+
+      $breadcrumbTitle = isset($this->item->id) ? Text::_('JGLOBAL_EDIT') : Text::_('JGLOBAL_FIELD_ADD');
+
+      if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
+      {
+        $pathway->addItem($breadcrumbTitle, '');
+      }
+    }
+  }
 }

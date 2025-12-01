@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 
-// No direct access
+
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\User\User;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\User\User;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Configuration Class
@@ -46,7 +47,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    *
    * @var array
    */
-  protected $subforms = array('jg_replaceinfo', 'jg_staticprocessing', 'jg_dynamicprocessing', 'jg_imgtypewtmsettings');
+  protected $subforms = ['jg_replaceinfo', 'jg_staticprocessing', 'jg_dynamicprocessing', 'jg_imgtypewtmsettings'];
 
   /**
    * Content for which the settings has to be calculated
@@ -60,7 +61,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    *
    * @var array
    */
-  protected $ids = array('user' => null, 'gallery' => null, 'category' => null, 'image' => null, 'menu' => null);
+  protected $ids = ['user' => null, 'gallery' => null, 'category' => null, 'image' => null, 'menu' => null];
 
   /**
    * Simple unique string for this parameter combination
@@ -74,7 +75,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    *
    * @var    array
    */
-  protected static $cache = array();
+  protected static $cache = [];
 
   /**
    * Loading the calculated settings for a specific content
@@ -98,13 +99,12 @@ abstract class Config extends \stdClass implements ConfigInterface
     $this->getComponent();
 
     // Check context
-    $context_array = \explode('.', $context);
+    $context_array = explode('.', $context);
 
-    if( $context_array[0] != 'com_joomgallery' || 
-        (\count($context_array) > 1 && !\array_key_exists($context_array[1], $this->ids)) || 
+    if( $context_array[0] != 'com_joomgallery' ||
+        (\count($context_array) > 1 && !\array_key_exists($context_array[1], $this->ids)) ||
         (\count($context_array) > 2 && $context_array[2] != 'id')
-      )
-    {
+      ) {
       $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_CONFIG_INVALID_CONTEXT', $context), 'error');
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CONFIG_INVALID_CONTEXT', $context), 'error', 'jerror');
 
@@ -116,7 +116,8 @@ abstract class Config extends \stdClass implements ConfigInterface
     }
 
     // Load cache from session
-    $cache = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.'.$this->name);
+    $cache = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.' . $this->name);
+
     if(!empty($cache))
     {
       self::$cache = $cache;
@@ -131,19 +132,19 @@ abstract class Config extends \stdClass implements ConfigInterface
       switch($context_array[1])
       {
         case 'user':
-          $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $id);
+          $user              = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $id);
           $this->ids['user'] = (int) $id;
-          break;
-        
+            break;
+
         case 'gallery':
           $this->ids['user']     = $user->id;
           $this->ids['category'] = 1;
-          break;
+            break;
 
         case 'category':
           $this->ids['user']     = $user->id;
           $this->ids['category'] = (int) $id;
-          break;
+            break;
 
         case 'image':
           $img = $this->component->getMVCFactory()->createModel('image', 'administrator')->getItem($id);
@@ -151,18 +152,18 @@ abstract class Config extends \stdClass implements ConfigInterface
           $this->ids['user']     = $user->id;
           $this->ids['image']    = (int) $id;
           $this->ids['category'] = (int) $img->catid;
-          break;
+            break;
 
         case 'menu':
           $this->ids['user'] = $user->id;
           $this->ids['menu'] = (int) $id;
           // TBD
           // Depending on frontend views and router
-          break;
-        
+            break;
+
         default:
           $this->ids['user'] = $user->id;
-          break;
+            break;
       }
     }
     else
@@ -180,12 +181,12 @@ abstract class Config extends \stdClass implements ConfigInterface
         $this->ids['menu'] = (int) $menuitem->id;
       }
     }
-    
+
     // Creates a simple unique string for each parameter combination
     $group         = $this->getUsergroup($user);
-    $contentId     = \is_null($id) ? '' : ':'.$id;
+    $contentId     = \is_null($id) ? '' : ':' . $id;
     $own           = \is_null($inclOwn) ? '' : ':1';
-    $this->storeId = $this->name.':'.$this->context.':'.$group.$contentId.$own;
+    $this->storeId = $this->name . ':' . $this->context . ':' . $group . $contentId . $own;
     // ConfigName:context:usergroup:own
   }
 
@@ -201,8 +202,8 @@ abstract class Config extends \stdClass implements ConfigInterface
     // Store current caches to session
     if(!empty(self::$cache))
     {
-      $res = \array_merge(Factory::getApplication()->getSession()->get('com_joomgallery.configcache.'.$this->name, array()), self::$cache);
-      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.'.$this->name, $res);
+      $res = array_merge(Factory::getApplication()->getSession()->get('com_joomgallery.configcache.' . $this->name, []), self::$cache);
+      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.' . $this->name, $res);
     }
   }
 
@@ -210,42 +211,42 @@ abstract class Config extends \stdClass implements ConfigInterface
    * Empty all the cache
    *
    * @param   string|false   $type   Type name of types to delete the cache from. False: Delete all types
-   * 
+   *
    * @return  void
    *
    * @since   4.0.0
    */
-  public function emptyCache($type=false)
+  public function emptyCache($type = false)
   {
-    $configServices = array('Config', 'DefaultConfig');
+    $configServices = ['Config', 'DefaultConfig'];
 
     foreach($configServices as $service)
     {
-      if(\strpos($type, 'user') === 0)
+      if(strpos($type, 'user') === 0)
       {
         // Delete only cache which is related to one of the usergoups this user is part of
-        $user_array = \explode('.', $type);
+        $user_array = explode('.', $type);
         $user_id    = (\count($user_array) > 1) ? $user_array[1] : 0;
         $user       = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $user_id);
         $usergroups = $user->get('groups');
-        $regex      = '/^'.$service.':com_joomgallery.*:\b('.\implode('|', $usergroups).')\b:.*/';
+        $regex      = '/^' . $service . ':com_joomgallery.*:\b(' . implode('|', $usergroups) . ')\b:.*/';
       }
-      elseif(\strpos($type, 'image') === 0)
+      elseif(strpos($type, 'image') === 0)
       {
         // Delete only cache which is related to context of type image
         $context = 'com_joomgallery.image';
-        $regex = '/^'.$service.':'.$context.'.*:.*/';
+        $regex   = '/^' . $service . ':' . $context . '.*:.*/';
       }
-      elseif(\strpos($type, 'category') === 0)
+      elseif(strpos($type, 'category') === 0)
       {
         // Delete only cache which is related to context of type image or category
         $context = 'com_joomgallery.\b(image|category)\b';
-        $regex = '/^'.$service.':'.$context.'.*:.*/';
+        $regex   = '/^' . $service . ':' . $context . '.*:.*/';
       }
       else
       {
         // Delete all cache
-        $regex   = false;
+        $regex = false;
       }
 
       // Delete cache based on regex
@@ -258,12 +259,12 @@ abstract class Config extends \stdClass implements ConfigInterface
    *
    * @param   string|false   $storeId   ID of the cache to be deleted. Can be a regex pattern to delete all matching items. False: Delete everything
    * @param   string         $name      Name of the config service which cache gets deleted
-   * 
+   *
    * @return  void
    *
    * @since   4.0.0
    */
-  protected function deleteCache($storeId=false, $name=false)
+  protected function deleteCache($storeId = false, $name = false)
   {
     if(!$name)
     {
@@ -277,18 +278,19 @@ abstract class Config extends \stdClass implements ConfigInterface
       self::$cache = $this->del_preg_keys($storeId, self::$cache);
 
       // Get session cache
-      $session = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.'.$name);
+      $session = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.' . $name);
+
       if($session && \is_array($session))
       {
         // Delete matching entries in session
-        Factory::getApplication()->getSession()->set('com_joomgallery.configcache.'.$name, $this->del_preg_keys($storeId, $session));
+        Factory::getApplication()->getSession()->set('com_joomgallery.configcache.' . $name, $this->del_preg_keys($storeId, $session));
       }
     }
     else
     {
       // No storeId provided. Delete everything.
-      self::$cache = array();
-      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.'.$name, array());
+      self::$cache = [];
+      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.' . $name, []);
     }
   }
 
@@ -296,7 +298,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    * Set properties to object cache
    *
    * @param   string   $storeId   The id under which to store the properties
-   * 
+   *
    * @return  void
    *
    * @since   4.0.0
@@ -304,34 +306,34 @@ abstract class Config extends \stdClass implements ConfigInterface
   protected function setCache(string $storeId)
   {
     /**
-    * Cashing the calculated params allows us to store
-    * one instance of the Config object for contexts that have
-    * the same exact configs.
-    */
-    self::$cache[\base64_encode($this->storeId)] = $this->getProperties();
+     * Cashing the calculated params allows us to store
+     * one instance of the Config object for contexts that have
+     * the same exact configs.
+     */
+    self::$cache[base64_encode($this->storeId)] = $this->getProperties();
   }
 
-  /**
-	 * Writes params from database record to class properties
-	 *
-	 * @param   array  $params  Array of all configs
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
-	public function setParamsToClass($params)
-	{
+    /**
+     * Writes params from database record to class properties
+     *
+     * @param   array  $params  Array of all configs
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     */
+    public function setParamsToClass($params)
+    {
     foreach($params as $key => $value)
     {
-      if(\strncmp($key, 'jg_', \strlen('jg_')) === 0)
+      if(strncmp($key, 'jg_', \strlen('jg_')) === 0)
       {
         // param key starts with 'jg_'
 
         if(\in_array($key, $this->subforms))
         {
           // param is a subform
-          $object = \json_decode($value, false);
+          $object = json_decode($value, false);
 
           // convert to object if needed
           if(\is_array($object))
@@ -358,7 +360,7 @@ abstract class Config extends \stdClass implements ConfigInterface
             {
               $value = \intval($value);
             }
-            elseif(\is_numeric($value))
+            elseif(is_numeric($value))
             {
               $value = \floatval($value);
             }
@@ -368,48 +370,48 @@ abstract class Config extends \stdClass implements ConfigInterface
         }
       }
     }
-  }
+    }
 
-  /**
-	 * Read out a row by id from `#_joomgallery_configs` table
-	 *
-	 * @param   int    $id  id of param row to be loaded (default: 1)
-	 *
-	 * @return  array  record values
-	 *
-	 * @since   4.0.0
-	 */
-	protected function getParamsByID($id = 1)
-	{
+    /**
+     * Read out a row by id from `#_joomgallery_configs` table
+     *
+     * @param   int    $id  id of param row to be loaded (default: 1)
+     *
+     * @return  array  record values
+     *
+     * @since   4.0.0
+     */
+    protected function getParamsByID($id = 1)
+    {
     $com_obj = $this->app->bootComponent('com_joomgallery');
     $model   = $com_obj->getMVCFactory()->createModel('Config', 'administrator');
 
-    $id   = intval($id);
+    $id   = \intval($id);
     $item = $model->getItem($id);
 
-    if(\method_exists($item, 'getProperties'))
+    if(method_exists($item, 'getProperties'))
     {
       $properties = $item->getProperties();
     }
     else
     {
-      $properties = \get_object_vars($item);
+      $properties = get_object_vars($item);
     }
 
     return $properties;
-  }
+    }
 
   /**
-	 * Read out the row from `#_joomgallery_configs` table
+   * Read out the row from `#_joomgallery_configs` table
    * with the biggest group_id number
    * and correspond to the user group of the given user
-	 *
+   *
    * @param   int|string|User   $user   User id, username or userobject
-   * 
-	 * @return  array  record values
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  array  record values
+   *
+   * @since   4.0.0
+   */
   protected function getParamsByUser($user)
   {
     $usergroup = $this->getUsergroup($user);
@@ -432,6 +434,7 @@ abstract class Config extends \stdClass implements ConfigInterface
 
     // load matching configuration set
     $params = false;
+
     if(!empty($match['id']))
     {
       $params = $this->getParamsByID($match['id']);
@@ -441,20 +444,20 @@ abstract class Config extends \stdClass implements ConfigInterface
   }
 
   /**
-	 * Get the usergoup id to use for loading the config set
-	 *
+   * Get the usergoup id to use for loading the config set
+   *
    * @param   int|string|User   $user   User id, username or userobject
-   * 
-	 * @return  int               ID of the usergroup
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  int               ID of the usergroup
+   *
+   * @since   4.0.0
+   */
   protected function getUsergroup($user)
   {
     // Load user if needed
     if(!($user instanceof User))
     {
-      if(\is_numeric($user))
+      if(is_numeric($user))
       {
         // We assume that $user is a user id
         $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $user);
@@ -466,9 +469,9 @@ abstract class Config extends \stdClass implements ConfigInterface
       }
     }
 
-    $userGroups  = \array_values($user->get('groups'));
+    $userGroups  = array_values($user->get('groups'));
     $configGroup = $this->getUserSetting($user->id);
-    
+
     if(\in_array($configGroup, $userGroups))
     {
       // Great there is a valid usergroup selected in the user options
@@ -480,11 +483,10 @@ abstract class Config extends \stdClass implements ConfigInterface
       // Use the first usergroup in the list
       return $userGroups[0];
     }
-    else
-    {
+
+
       // This user has no usergoup
       return 1;
-    }
   }
 
   /**
@@ -496,7 +498,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    *
    * @since   4.0.0
    */
-  protected function getUserSetting($userId) 
+  protected function getUserSetting($userId)
   {
     // get a db connection
     $db = Factory::getContainer()->get(DatabaseInterface::class);
@@ -513,31 +515,31 @@ abstract class Config extends \stdClass implements ConfigInterface
   }
 
   /**
-	 * Deletes entriey of key or id in the array matching the given regex pattern
-	 *
+   * Deletes entriey of key or id in the array matching the given regex pattern
+   *
    * @param   string   $pattern   The pattern to search for, as a string.
-   * @param   array    $array    An array containing base64 encoded keys to delete. 
-   * 
-	 * @return  array    The emptied array.
-	 *
-	 * @since   4.0.0
-	 */
+   * @param   array    $array    An array containing base64 encoded keys to delete.
+   *
+   * @return  array    The emptied array.
+   *
+   * @since   4.0.0
+   */
   protected function del_preg_keys(string $pattern, array $array)
   {
     // Check if the pattern provided is valid
-    if(@\preg_match($pattern, '') === false)
+    if(@preg_match($pattern, '') === false)
     {
       // Return the complete if the pattern is not valid
       return $array;
     }
 
-    foreach(\array_keys($array) as $key)
+    foreach(array_keys($array) as $key)
     {
       // Decode the key
-      $decodedKey = \base64_decode($key);
+      $decodedKey = base64_decode($key);
 
       // Check if the decoded key matches the pattern
-      if(\preg_match($pattern, $decodedKey))
+      if(preg_match($pattern, $decodedKey))
       {
         // If it matches, unset the original (encoded) key from the array
         unset($array[$key]);

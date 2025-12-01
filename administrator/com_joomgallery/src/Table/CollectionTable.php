@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
-// No direct access
+
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Table;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\Database\DatabaseDriver;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseDriver;
 
 /**
  * Collection table
@@ -42,75 +43,76 @@ class CollectionTable extends Table
   public $images = null;
 
   /**
-   * True if new mapped images should be automatically approved 
+   * True if new mapped images should be automatically approved
    *
    * @var    bool
    * @since  4.0.0
    */
   public $approveImages = false;
 
-	/**
-	 * Constructor
-	 *
-	 * @param   JDatabase  &$db               A database connector object
-	 * @param   bool       $component_exists  True if the component object class exists
-	 */
-	public function __construct(DatabaseDriver $db, bool $component_exists = true)
-	{
-		$this->component_exists = $component_exists;
-		$this->typeAlias = _JOOM_OPTION.'.collection';
+    /**
+     * Constructor
+     *
+     * @param   JDatabase  &$db               A database connector object
+     * @param   bool       $component_exists  True if the component object class exists
+     */
+    public function __construct(DatabaseDriver $db, bool $component_exists = true)
+    {
+        $this->component_exists = $component_exists;
+        $this->typeAlias        = _JOOM_OPTION . '.collection';
 
-		parent::__construct(_JOOM_TABLE_COLLECTIONS, 'id', $db);
+        parent::__construct(_JOOM_TABLE_COLLECTIONS, 'id', $db);
 
     $this->setColumnAlias('published', 'published');
-	}
+    }
 
-  /**
-	 * Overloaded bind function to pre-process the params.
-	 *
-	 * @param   array  $array   Named array
-	 * @param   mixed  $ignore  Optional array or list of parameters to ignore
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @see     Table:bind
-	 * @since   4.0.0
-	 * @throws  \InvalidArgumentException
-	 */
-	public function bind($array, $ignore = '')
-	{
-		$date = Factory::getDate();
-		$task = Factory::getApplication()->input->get('task', '', 'cmd');
+    /**
+     * Overloaded bind function to pre-process the params.
+     *
+     * @param   array  $array   Named array
+     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     *
+     * @return  boolean  True on success.
+     *
+     * @see     Table:bind
+     * @since   4.0.0
+     * @throws  \InvalidArgumentException
+     */
+    public function bind($array, $ignore = '')
+    {
+        $date = Factory::getDate();
+        $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
     // Support for title field: title
     if(\array_key_exists('title', $array))
     {
-      $array['title'] = \trim($array['title']);
+      $array['title'] = trim($array['title']);
+
       if(empty($array['title']))
       {
         $array['title'] = 'Unknown';
       }
     }
 
-		// Support for alias field: alias
-		if(empty($array['alias']))
-		{
-			if(empty($array['title']))
-			{
-				$array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
-			}
-			else
-			{
-				if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
-				{
-					$array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
-				}
-				else
-				{
-					$array['alias'] = OutputFilter::stringURLSafe(trim($array['title']));
-				}
-			}
-		}
+        // Support for alias field: alias
+        if(empty($array['alias']))
+        {
+            if(empty($array['title']))
+            {
+                $array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
+            }
+            else
+            {
+                if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
+                {
+                    $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
+                }
+                else
+                {
+                    $array['alias'] = OutputFilter::stringURLSafe(trim($array['title']));
+                }
+            }
+        }
     else
     {
       if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
@@ -123,62 +125,62 @@ class CollectionTable extends Table
       }
     }
 
-		if($array['id'] == 0)
-		{
-			$array['created_time'] = $date->toSql();
-		}
+        if($array['id'] == 0)
+        {
+            $array['created_time'] = $date->toSql();
+        }
 
-		if(!\key_exists('created_by', $array) || empty($array['created_by']))
-		{
-			$array['created_by'] = Factory::getApplication()->getIdentity()->id;
-		}
+        if(!key_exists('created_by', $array) || empty($array['created_by']))
+        {
+            $array['created_by'] = Factory::getApplication()->getIdentity()->id;
+        }
 
-		if($task == 'apply' || \strpos($task, 'save') !== false)
-		{
-			$array['modified_time'] = $date->toSql();
-		}
+        if($task == 'apply' || strpos($task, 'save') !== false)
+        {
+            $array['modified_time'] = $date->toSql();
+        }
 
-		if($array['id'] == 0 && (!\key_exists('modified_by', $array) ||empty($array['modified_by'])))
-		{
-			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-		}
+        if($array['id'] == 0 && (!key_exists('modified_by', $array) || empty($array['modified_by'])))
+        {
+            $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+        }
 
-		if($task == 'apply' || \strpos($task, 'save') !== false)
-		{
-			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-		}
+        if($task == 'apply' || strpos($task, 'save') !== false)
+        {
+            $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+        }
 
     // Support for list of images to be mapped
     if(isset($array['images']) && !\is_array($array['images']))
-		{
-			// Try to convert from json string
+    {
+            // Try to convert from json string
       $decoded = json_decode($array['images'], true);
 
-      if(\json_last_error() === JSON_ERROR_NONE)
+      if(json_last_error() === JSON_ERROR_NONE)
       {
         $array['images'] = $decoded;
       }
       else
       {
-        $array['images'] = \explode(',', $array['images']);
+        $array['images'] = explode(',', $array['images']);
       }
-		}
+    }
 
     return parent::bind($array, $ignore);
-	}
+    }
 
-  /**
-	 * Overloaded check function
-	 *
-	 * @return bool
-	 */
-	public function check()
-	{
-		// Check if alias is unique inside this user
+    /**
+     * Overloaded check function
+     *
+     * @return bool
+     */
+    public function check()
+    {
+        // Check if alias is unique inside this user
     if(!$this->isUnique('alias', $this->userid, 'userid'))
     {
-      $count = 2;
-      $currentAlias =  $this->alias;
+      $count        = 2;
+      $currentAlias = $this->alias;
 
       while(!$this->isUnique('alias', $this->userid, 'userid'))
       {
@@ -186,7 +188,7 @@ class CollectionTable extends Table
       }
     }
 
-		// Support for field description
+        // Support for field description
     if(empty($this->description))
     {
       $this->description = $this->loadDefaultField('description');
@@ -204,22 +206,23 @@ class CollectionTable extends Table
       $this->metakey = $this->loadDefaultField('metakey');
     }
 
-		return parent::check();
-	}
+        return parent::check();
+    }
 
-  /**
-	 * Method to store a row in the database from the Table instance properties.
-	 *
-	 * @param   boolean  $updateNulls  True to update fields even if they are null.
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @since   4.0.0
-	 */
-	public function store($updateNulls = true)
-	{
+    /**
+     * Method to store a row in the database from the Table instance properties.
+     *
+     * @param   boolean  $updateNulls  True to update fields even if they are null.
+     *
+     * @return  boolean  True on success.
+     *
+     * @since   4.0.0
+     */
+    public function store($updateNulls = true)
+    {
     $images = null;
-    if(\property_exists($this, 'images') && !empty($this->images))
+
+    if(property_exists($this, 'images') && !empty($this->images))
     {
       $images = $this->images;
     }
@@ -229,6 +232,7 @@ class CollectionTable extends Table
       if(!\is_null($images) && !empty($images))
       {
         $approved = false;
+
         if($this->created_by == Factory::getApplication()->getIdentity()->id || $this->approveImages)
         {
           $approved = true;
@@ -240,7 +244,7 @@ class CollectionTable extends Table
     }
 
     return $success;
-  }
+    }
 
   /**
    * Delete a record by id
@@ -252,7 +256,7 @@ class CollectionTable extends Table
   public function delete($pk = null)
   {
     $this->_trackAssets = false;
-    
+
     if($success = parent::delete($pk))
     {
       // Delete mappings if existent
@@ -261,7 +265,7 @@ class CollectionTable extends Table
 
     return $success;
   }
-  
+
   /**
    * Map one or multiple images to the currently loaded collection.
    *
@@ -284,7 +288,7 @@ class CollectionTable extends Table
     // Prepare image ids
     if(!\is_array($img_id))
     {
-      $img_id = array($img_id);
+      $img_id = [$img_id];
     }
 
     // Load db driver
@@ -294,14 +298,14 @@ class CollectionTable extends Table
     {
       if($iid > 0)
       {
-        $mapping = new \stdClass();
+        $mapping               = new \stdClass();
         $mapping->imgid        = (int) $iid;
         $mapping->collectionid = (int) $this->getId();
 
         if($approve === true)
         {
           $mapping->approved = 1;
-        }        
+        }
 
         try
         {
@@ -314,7 +318,7 @@ class CollectionTable extends Table
 
           return false;
         }
-      }      
+      }
     }
 
     return true;
@@ -341,7 +345,7 @@ class CollectionTable extends Table
     // Prepare image ids
     if(!\is_array($img_id) && $img_id != 0)
     {
-      $img_id = array($img_id);
+      $img_id = [$img_id];
     }
 
     // Load db driver
@@ -350,10 +354,11 @@ class CollectionTable extends Table
 
     // Create where conditions
     $query->where($db->quoteName('collectionid') . ' = ' . $db->quote((int) $this->getId()));
+
     if(\is_array($img_id))
     {
       // Delete mapping only for a specified images
-      $query->where($db->quoteName('imgid') . ' IN (' . \implode(',', $img_id) . ')');
+      $query->where($db->quoteName('imgid') . ' IN (' . implode(',', $img_id) . ')');
     }
 
     // Create the query

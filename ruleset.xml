@@ -7,6 +7,8 @@
   <exclude-pattern type="relative">^media/*</exclude-pattern>
   <exclude-pattern type="relative">^node_modules/*</exclude-pattern>
   <exclude-pattern type="relative">^administrator/com_joomgallery/vendor/*</exclude-pattern>
+  <exclude-pattern type="relative">^administrator/com_joomgallery/includes/*</exclude-pattern>
+  <exclude-pattern type="relative">^tools/phpcs/*</exclude-pattern>
   <exclude-pattern type="relative">^script.php</exclude-pattern>
 
   <rule ref="PSR12">

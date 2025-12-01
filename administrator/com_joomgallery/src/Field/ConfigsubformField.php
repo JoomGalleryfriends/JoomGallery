@@ -1,21 +1,22 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
-// No direct access
+
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Form\Field\SubformField;
-use \Joomgallery\Component\Joomgallery\Administrator\Form\ConfigForm;
+use Joomgallery\Component\Joomgallery\Administrator\Form\ConfigForm;
+use Joomla\CMS\Form\Field\SubformField;
 
 /**
  * The Field to load the form inside current form
@@ -108,7 +109,7 @@ class ConfigsubformField extends SubformField
       $value = array_values($value);
 
       // Show as many rows as we have values, but at least min and at most max.
-      $c = \max($this->min, \min(\count($value), $this->max));
+      $c = max($this->min, min(\count($value), $this->max));
 
       for($i = 0; $i < $c; $i++)
       {

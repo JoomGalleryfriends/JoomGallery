@@ -1,25 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @subpackage plg_privacyjoomgalleryimages                                           **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
 namespace Joomgallery\Plugin\Task\Joomgallery\Extension;
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
+use Joomla\Component\Scheduler\Administrator\Task\Status;
+use Joomla\Component\Scheduler\Administrator\Task\Task;
+use Joomla\Component\Scheduler\Administrator\Traits\TaskPluginTrait;
 use Joomla\Database\ParameterType;
 use Joomla\Event\SubscriberInterface;
-use Joomla\CMS\User\UserFactoryInterface;
-use Joomla\Component\Scheduler\Administrator\Task\Task;
-use Joomla\Component\Scheduler\Administrator\Task\Status;
-use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
-use Joomla\Component\Scheduler\Administrator\Traits\TaskPluginTrait;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\Registry\Registry;
 
 /**
  * A task plugin. Offers task routines for JoomGallery {@see TaskPluginTrait},
@@ -48,7 +49,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     'joomgalleryTask.recreateImage' => [
       'langConstPrefix' => 'PLG_TASK_JOOMGALLERY_TASK_RECREATEIMAGE',
       'method'          => 'recreate',
-      'form'            => 'recreateForm'
+      'form'            => 'recreateForm',
     ],
   ];
 
@@ -99,17 +100,18 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     if(!$user->id)
     {
       $user_id = (int) $params->user;
-      $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($user_id);
+      $user    = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($user_id);
       $app->loadIdentity($user);
     }
 
     // Retreiving param values
-    $ids  = \array_map('trim', \explode(',', $params->cid)) ?? [];
+    $ids  = array_map('trim', explode(',', $params->cid)) ?? [];
     $type = \strval($params->type) ?? 'thumbnail';
 
     // Only when using WebCron requests
     $ids_str = $app->input->get('cid', null, 'string');
     $ids_arr = (array) $app->input->get('cid', [], 'int');
+
     if($ids_str || $ids_arr)
     {
       // There are ids submitted to the task with a request
@@ -117,7 +119,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       if($ids_str)
       {
         // ids were submitted as a comma separated string
-        $ids = \array_map('trim', \explode(',', $ids_str));
+        $ids = array_map('trim', explode(',', $ids_str));
       }
       else
       {
@@ -128,6 +130,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $webcron    = true;
       $willResume = false;
     }
+
     if($type_val = $app->input->get('type', null, 'string'))
     {
       // There is a catid submitted to the task with a request
@@ -144,11 +147,16 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $this->logTask('Attempt to recreate all available images...');
 
       $listModel = $app->bootComponent('com_joomgallery')->getMVCFactory()->createModel('images', 'administrator');
-      $ids       = \array_map(function($item) { return $item->id;}, $listModel->getIDs());
+      $ids       = array_map(
+          function ($item) {
+            return $item->id;
+          },
+          $listModel->getIDs()
+      );
     }
 
     // Remove zero ids from list
-    $ids = \array_filter($ids);
+    $ids = array_filter($ids);
 
     // Load the model to perform the task
     $component = $app->bootComponent('com_joomgallery');
@@ -172,8 +180,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     }
 
     // Create list of imagetypes to be skipped
-    $skip = \array_map(fn($obj) => $obj->typename, JoomHelper::getRecords('imagetypes', $component));
-    $skip = \array_filter($skip, fn($typename) => $typename !== $type);
+    $skip = array_map(fn($obj) => $obj->typename, JoomHelper::getRecords('imagetypes', $component));
+    $skip = array_filter($skip, fn($typename) => $typename !== $type);
 
     // Actually performing the task using the model and a specific method
     $task_def     = ['model' => $model, 'method' => 'recreate', 'options' => ['original', $skip]];
@@ -184,7 +192,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     if(\count($ids) == \count($executed_ids))
     {
       // We finished the job
-      $willResume = false;
+      $willResume         = false;
       $params->successful = '';
     }
 
@@ -192,7 +200,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     if($willResume && !$webcron)
     {
       // Write params with successful executed ids to database
-      $params->successful = \implode(',', $executed_ids);
+      $params->successful = implode(',', $executed_ids);
       $this->logTask(\sprintf('Recreation of images (Task %d) will resume', $task->get('id')));
     }
     else
@@ -208,16 +216,16 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   }
 
   /**
-   * Performs the actual task with the model defined in the 
-   * 
+   * Performs the actual task with the model defined in the
+   *
    * @param   array   $ids         The id of the task
    * @param   array   $task_def    Task definition array in the form
    *                               ['model' => (object) Model, 'method' => (string) method-name, 'options' => (array) method-arguments]
    * @param   object  $params      The params object
    * @param   string  $error_msg   The message to be logged on error
-   * 
+   *
    * @return  array   List of ecexuted ids
-   * 
+   *
    * @since   4.2.0
    */
   private function performTask(array $ids, array $task_def, object $params, string $error_msg = ''): array
@@ -231,7 +239,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     }
 
     // Check if method exists in the model
-    if(!isset($task_def['method']) || !\method_exists($task_def['model'], $task_def['method']))
+    if(!isset($task_def['method']) || !method_exists($task_def['model'], $task_def['method']))
     {
       throw new \InvalidArgumentException('Invalid method given. Method does not exist on the provided model');
     }
@@ -243,26 +251,29 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     }
 
     // Check that $task_def is correctly given
-    $model    = $task_def['model'];
-    $method   = $task_def['method'];
-    $options  = $task_def['options'];
+    $model   = $task_def['model'];
+    $method  = $task_def['method'];
+    $options = $task_def['options'];
 
     $assumed_duration = 1;
-    $successful   = \is_string($params->successful) ? $params->successful : '';
-    $executed_ids = $successful !== '' ? \array_map('trim', \explode(',', $successful)) : [];
+    $successful       = \is_string($params->successful) ? $params->successful : '';
+    $executed_ids     = $successful !== '' ? array_map('trim', explode(',', $successful)) : [];
+
     foreach($ids as $id)
     {
       // Skip the already executed ids
-      if(in_array($id, $executed_ids))
+      if(\in_array($id, $executed_ids))
       {
         continue;
       }
 
       // Check if we can still continue executing the task
       $execute_task = true;
+
       if($max_time !== 0)
       {
-        $remaining = $max_time - (\microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']);
+        $remaining = $max_time - (microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']);
+
         if($assumed_duration > $remaining)
         {
           $execute_task = false;
@@ -272,9 +283,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       if($execute_task)
       {
         // Continue execution
-        $start   = \microtime(true);
-        $success = $model->{$method}($id, ...$options);
-        $assumed_duration = \microtime(true) - $start;
+        $start            = microtime(true);
+        $success          = $model->{$method}($id, ...$options);
+        $assumed_duration = microtime(true) - $start;
 
         if(!$success && $error_msg)
         {
@@ -283,7 +294,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         }
 
         // Add id to executed ids array
-        \array_push($executed_ids, $id);
+        array_push($executed_ids, $id);
       }
       else
       {
@@ -297,12 +308,12 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
 
   /**
    * Writes the params to the database
-   * 
+   *
    * @param   int     $task_id  The id of the task
    * @param   object  $params   The params object
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.2.0
    */
   private function setParams($task_id, $params)
@@ -315,7 +326,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
           ->set($this->db->quoteName('params') . ' = ' . $this->db->quote($params->toString('json')))
           ->where($this->db->quoteName('id') . ' = :extension_id')
           ->bind(':extension_id', $task_id, ParameterType::INTEGER);
-      
+
     $this->db->setQuery($query);
 
     try

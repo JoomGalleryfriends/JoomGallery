@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-// No direct access.
+.
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\Model\ListModel;
-use \Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Model for the gallery view.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -34,85 +35,85 @@ class GalleryModel extends JoomItemModel
    */
   protected $type = 'gallery';
 
-	/**
-	 * Method to auto-populate the model state.
-	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 *
-	 * @throws \Exception
-	 */
-	protected function populateState()
-	{
-		$this->loadComponentParams();
-	}
+    /**
+     * Method to auto-populate the model state.
+     *
+     * Note. Calling getState in this method will result in recursion.
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     *
+     * @throws \Exception
+     */
+    protected function populateState()
+    {
+        $this->loadComponentParams();
+    }
 
-	/**
-	 * Method to get an object.
-	 *
-	 * @param   integer $id The id of the object to get.
-	 *
-	 * @return  mixed    Object on success, false on failure.
-	 *
-	 * @throws \Exception
-	 */
-	public function getItem($id = null)
-	{
-		if($this->item === null)
-		{
-			$this->item = new \stdClass();
-      $this->item->id = 1;
-		}
+    /**
+     * Method to get an object.
+     *
+     * @param   integer $id The id of the object to get.
+     *
+     * @return  mixed    Object on success, false on failure.
+     *
+     * @throws \Exception
+     */
+    public function getItem($id = null)
+    {
+        if($this->item === null)
+        {
+            $this->item = new \stdClass();
+      $this->item->id   = 1;
+        }
 
     // Get Gallery description
-    $params = $this->getParams();
-    $this->item->description = $params['configs']->get('jg_gallery_view_description','', 'STRING');
+    $params                  = $this->getParams();
+    $this->item->description = $params['configs']->get('jg_gallery_view_description', '', 'STRING');
 
-		return $this->item;
-	}
+        return $this->item;
+    }
 
-  /**
-	 * Method to check in an item.
-	 *
-	 * @param   integer $id The id of the row to check out.
-	 *
-	 * @return  boolean True on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
-	public function checkin($id = null)
-	{
+    /**
+     * Method to check in an item.
+     *
+     * @param   integer $id The id of the row to check out.
+     *
+     * @return  boolean True on success, false on failure.
+     *
+     * @since   4.0.0
+     */
+    public function checkin($id = null)
+    {
     return true;
-  }
+    }
 
-  /**
-	 * Method to check out an item for editing.
-	 *
-	 * @param   integer $id The id of the row to check out.
-	 *
-	 * @return  boolean True on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
-	public function checkout($id = null)
-	{
+    /**
+     * Method to check out an item for editing.
+     *
+     * @param   integer $id The id of the row to check out.
+     *
+     * @return  boolean True on success, false on failure.
+     *
+     * @since   4.0.0
+     */
+    public function checkout($id = null)
+    {
     return true;
-  }
+    }
 
   /**
-	 * Method to get the images to be viewed in the gallery view.
-	 *
-	 * @return  array|false    Array of images on success, false on failure.
-	 *
-	 * @throws Exception
-	 */
+   * Method to get the images to be viewed in the gallery view.
+   *
+   * @return  array|false    Array of images on success, false on failure.
+   *
+   * @throws Exception
+   */
   public function getImages()
   {
     if($this->item === null)
-		{
+    {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -121,7 +122,7 @@ class GalleryModel extends JoomItemModel
     $listModel->getState();
 
     // Select fields to load
-    $fields = array('id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum');
+    $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum'];
     $fields = $this->addColumnPrefix('a', $fields);
 
     // Apply preselected filters and fields selection for images
@@ -146,7 +147,7 @@ class GalleryModel extends JoomItemModel
   public function getImagesPagination()
   {
     if($this->item === null)
-		{
+    {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -168,13 +169,13 @@ class GalleryModel extends JoomItemModel
 
   /**
    * Function to set the image list model state for the pre defined filter and fields selection
-   * 
+   *
    * @param   ListModel   $listModel    Images list model
    * @param   array       $fields       List of field names to be loaded (default: array())
    *
    * @return  void
    */
-  protected function setImagesModelState(ListModel &$listModel, array $fields = array())
+  protected function setImagesModelState(ListModel &$listModel, array $fields = [])
   {
     // Get current user
     $user   = $this->app->getIdentity();
@@ -197,12 +198,13 @@ class GalleryModel extends JoomItemModel
       $listModel->setState('filter.language', $this->item->language);
     }
 
-    $imgform_list = array();
+    $imgform_list       = [];
     $imgform_limitstart = 0;
+
     if($this->app->input->get('contenttype', '') == 'image')
     {
       // Get query variables sent by the images form
-      $imgform_list = $this->app->input->get('list', array());
+      $imgform_list       = $this->app->input->get('list', []);
       $imgform_limitstart = $this->app->getUserStateFromRequest('joom.galleryview.limitstart', 'limitstart', 0, 'uint');
     }
 
@@ -225,20 +227,20 @@ class GalleryModel extends JoomItemModel
   }
 
   /**
-	 * Method to add a prefix to a list of field names
-	 *
-	 * @param   string  $prefix   The prefix to apply
+   * Method to add a prefix to a list of field names
+   *
+   * @param   string  $prefix   The prefix to apply
    * @param   array   $fields   List of fields
-	 *
-	 * @return  array   List of fields with applied prefix
-	 */
+   *
+   * @return  array   List of fields with applied prefix
+   */
   protected function addColumnPrefix(string $prefix, array $fields): array
   {
     foreach($fields as $key => $field)
     {
       $field = (string) $field;
 
-      if(\strpos($field, $prefix.'.') === false)
+      if(strpos($field, $prefix . '.') === false)
       {
         $fields[$key] = $prefix . '.' . $field;
       }

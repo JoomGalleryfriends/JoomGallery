@@ -1,20 +1,20 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -24,7 +24,7 @@ $wa->useStyle('com_joomgallery.admin')
    ->useScript('com_joomgallery.form-edit');
 ?>
 
-<div class="jg jg-migration step4">  
+<div class="jg jg-migration step4">
   <div class="flex-center">
     <div class="btn-group navigation" aria-label="Migration navigation">
       <a href="<?php echo Route::_('index.php?option=com_joomgallery&view=migration&layout=step1'); ?>" class="btn btn-outline-primary"><?php echo Text::sprintf('COM_JOOMGALLERY_STEP_X', 1); ?></a>
@@ -39,7 +39,7 @@ $wa->useStyle('com_joomgallery.admin')
 
   <?php if(!empty($this->error)): ?>
     <div class="alert alert-warning" role="alert">
-      <?php foreach($this->error as $error) : ?>      
+      <?php foreach($this->error as $error) : ?>
         <p><?php echo $error; ?></p>
       <?php endforeach; ?>
     </div>
@@ -56,9 +56,9 @@ $wa->useStyle('com_joomgallery.admin')
   <?php // Postcheck results ?>
   <?php if(empty($this->error)) : ?>
     <?php // Loop through all available check-categories ?>
-    <?php foreach ($this->postcheck as $cat) : ?>
+    <?php foreach($this->postcheck as $cat) : ?>
       <div class="card">
-        <div class="card-body"> 
+        <div class="card-body">
           <?php if($cat->title): ?>
             <div class="card-title">
               <h3><?php echo Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_CHECK_TITLE') . ': ' . $cat->title; ?></h3>
@@ -80,7 +80,7 @@ $wa->useStyle('com_joomgallery.admin')
               <tbody>
 
                   <?php // Loop through all available check-categories ?>
-                  <?php foreach ($cat->checks as $check) : ?>
+                  <?php foreach($cat->checks as $check) : ?>
                     <?php
                       if($check->result)
                       {
@@ -102,7 +102,7 @@ $wa->useStyle('com_joomgallery.admin')
                         // Check failed
                         $badgeClass = 'danger';
                         $badgeText  = Text::_('COM_JOOMGALLERY_FAILED');
-                      }                          
+                      }
                     ?>
                     <tr>
                       <td>
@@ -111,14 +111,20 @@ $wa->useStyle('com_joomgallery.admin')
                       </td>
                       <td><span class="badge bg-<?php echo $badgeClass; ?>"><?php echo $badgeText; ?></span></td>
                       <td>
-                        <button class="btn btn-outline-secondary<?php if(empty($check->help)) { echo ' disabled';};?>" <?php if(empty($check->help)) { echo 'disabled';};?>
+                        <button class="btn btn-outline-secondary<?php if(empty($check->help))
+                        {
+                          echo ' disabled';
+                        };?>" <?php if(empty($check->help))
+                        {
+                          echo 'disabled';
+                        };?>
                                 data-title="<?php echo $check->title; ?>" data-text="<?php echo $check->help; ?>" onclick="openModal(event, this)">
                           <span class="icon-question" aria-hidden="true"></span>
                         </button>
                       </td>
                     </tr>
                   <?php endforeach; ?>
-                
+
               </tbody>
             </table>
           </div>
@@ -155,11 +161,11 @@ $wa->useStyle('com_joomgallery.admin')
       <joomla-button id="migration-abort" task="migration.delete">
         <button class="btn btn-primary" data-submit-task="migration.delete" type="button"><?php echo Text::_('COM_JOOMGALLERY_MIGRATION_BTN_END_MIGRATION'); ?></button>
       </joomla-button>
-    
+
       <input type="hidden" name="script" value="<?php echo $this->script->name; ?>"/>
       <input type="hidden" name="task" value=""/>
       <input id="itemType" type="hidden" name="type" value="migration"/>
-      <?php foreach ($this->openMigrations as $openMigration) : ?>
+      <?php foreach($this->openMigrations as $openMigration) : ?>
         <input type="hidden" name="cid[]" value="<?php echo $openMigration->id; ?>"/>
       <?php endforeach; ?>
       <?php echo HTMLHelper::_('form.token'); ?>
@@ -171,10 +177,11 @@ $wa->useStyle('com_joomgallery.admin')
 
   <?php
   // Help modal box
-  $options = array('modal-dialog-scrollable' => true,
-                    'title'  => 'Test Title',
-                    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
-                  );
+  $options = [
+    'modal-dialog-scrollable' => true,
+    'title'                   => 'Test Title',
+    'footer'                  => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
+  ];
 
   echo HTMLHelper::_('bootstrap.renderModal', 'help-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
   ?>

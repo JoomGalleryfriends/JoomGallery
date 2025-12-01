@@ -1,11 +1,21 @@
 <?php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
-namespace JG\Sniffs\Commenting;
+declare(strict_types=1);
 
-use PHP_CodeSniffer\Sniffs\Sniff;
+namespace PHP_CodeSniffer\Standards\JG\Sniffs\Commenting;
+
 use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
 
-class FileHeaderSniff implements Sniff
+final class FileHeaderSniff implements Sniff
 {
   /** @var string Filename of header template */
   public $headerFile = '';
@@ -49,11 +59,11 @@ class FileHeaderSniff implements Sniff
     // CASE 1 — No header present → insert it
     if($tokens[$nextPtr]['code'] !== T_DOC_COMMENT_OPEN_TAG)
     {
-      $phpcsFile->addFixableError(
-          'Missing required JoomGallery file header.',
-          $stackPtr,
-          'Missing'
-      );
+    $phpcsFile->addFixableError(
+        'Missing required JoomGallery file header.',
+        $stackPtr,
+        'Missing'
+    );
 
       if($phpcsFile->fixer->enabled)
       {
@@ -64,16 +74,16 @@ class FileHeaderSniff implements Sniff
     }
 
     // CASE 2 — A header exists: validate
-    $closer = $tokens[$nextPtr]['comment_closer'];
+    $closer         = $tokens[$nextPtr]['comment_closer'];
     $existingHeader = trim($phpcsFile->getTokensAsString($nextPtr, $closer - $nextPtr + 1));
 
     if($this->normalize($existingHeader) !== $this->normalize($expected))
     {
-      $phpcsFile->addFixableError(
-          'Invalid or outdated JoomGallery file header.',
-          $stackPtr,
-          'Mismatch'
-      );
+    $phpcsFile->addFixableError(
+        'Invalid or outdated JoomGallery file header.',
+        $stackPtr,
+        'Mismatch'
+    );
 
       if($phpcsFile->fixer->enabled)
       {
@@ -91,11 +101,11 @@ class FileHeaderSniff implements Sniff
   {
     if(!is_readable($this->headerFile))
     {
-      $phpcsFile->addWarning(
-          'Could not read header file: ' . $this->headerFile,
-          0,
-          'HeaderFileMissing'
-      );
+    $phpcsFile->addWarning(
+        'Could not read header file: ' . $this->headerFile,
+        0,
+        'HeaderFileMissing'
+    );
       $this->header = '';
 
       return;
@@ -135,8 +145,9 @@ class FileHeaderSniff implements Sniff
 
   private function removeWhitespaces(File $phpcsFile, int $openTagPtr)
   {
-    $next = $openTagPtr + 1;
+    $next   = $openTagPtr + 1;
     $tokens = $phpcsFile->getTokens();
+
     while(isset($tokens[$next]) && $tokens[$next]['code'] === T_WHITESPACE)
     {
       $phpcsFile->fixer->replaceToken($next, '');
@@ -146,14 +157,13 @@ class FileHeaderSniff implements Sniff
 
   private function getHeaderBlock()
   {
-    $lines = explode("\n", $this->header);
+    $lines   = explode("\n", $this->header);
     $wrapped = "/**\n";
 
     foreach($lines as $line)
     {
       $wrapped .= " * " . rtrim($line) . "\n";
     }
-
     $wrapped .= " */";
 
     return $wrapped;

@@ -1,20 +1,21 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 extract($displayData);
 
@@ -45,16 +46,17 @@ extract($displayData);
   <div id="lightgallery-<?php echo $id; ?>" class="jg-images <?php echo $layout; ?>-<?php echo $num_columns; ?> jg-category" data-masonry="{ pollDuration: 175 }">
     <?php $index = 0; ?>
     <?php foreach($items as $key => $item) : ?>
-
       <div class="jg-image">
-        <div class="jg-image-thumbnail<?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php endif; ?>">
+        <div class="jg-image-thumbnail<?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php
+                                      endif; ?>">
           <?php if($layout != 'justified') : ?>
             <div class="jg-image-caption-hover <?php echo $caption_align; ?>">
           <?php endif; ?>
 
           <?php if($image_link == 'lightgallery') : ?>
             <a class="lightgallery-item" href="<?php echo JoomHelper::getImg($item, $lightbox_type); ?>" data-sub-html="#jg-image-caption-<?php echo $item->id; ?>" data-thumb="<?php echo JoomHelper::getImg($item, $image_type); ?>">
-              <img src="<?php echo JoomHelper::getImg($item, $image_type); ?>" class="jg-image-thumb" alt="<?php echo $item->title; ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php endif; ?>>
+              <img src="<?php echo JoomHelper::getImg($item, $image_type); ?>" class="jg-image-thumb" alt="<?php echo $item->title; ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php
+                        endif; ?>>
               <?php if($image_title && $layout == 'justified') : ?>
                 <div class="jg-image-caption-hover <?php echo $caption_align; ?>">
                   <?php echo $this->escape($item->title); ?>
@@ -76,7 +78,8 @@ extract($displayData);
               <?php endif; ?>
           <?php elseif($image_link == 'defaultview') : ?>
             <a href="<?php echo Route::_(JoomHelper::getViewRoute('image', (int) $item->id, (int) $item->catid)); ?>">
-              <img src="<?php echo JoomHelper::getImg($item, $image_type); ?>" class="jg-image-thumb" alt="<?php echo $item->title; ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php endif; ?>>
+              <img src="<?php echo JoomHelper::getImg($item, $image_type); ?>" class="jg-image-thumb" alt="<?php echo $item->title; ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php
+                        endif; ?>>
               <?php if($image_title && $layout == 'justified') : ?>
                 <div class="jg-image-caption-hover <?php echo $caption_align; ?>">
                   <?php echo $this->escape($item->title); ?>
@@ -84,7 +87,8 @@ extract($displayData);
               <?php endif; ?>
             </a>
           <?php else : ?>
-            <img src="<?php echo JoomHelper::getImg($item, $image_type); ?>" class="jg-image-thumb" alt="<?php echo $item->title; ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php endif; ?>>
+            <img src="<?php echo JoomHelper::getImg($item, $image_type); ?>" class="jg-image-thumb" alt="<?php echo $item->title; ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php
+                      endif; ?>>
           <?php endif; ?>
 
           <?php if($layout != 'justified') : ?>

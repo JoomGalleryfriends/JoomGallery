@@ -1,18 +1,19 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later            ToDo: Format  **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // WIP: in development, but can not be called from caommand line (plugin)
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel;
@@ -31,219 +32,221 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CategoryAdd extends AbstractCommand
 {
-  use MVCFactoryAwareTrait;
-  use DatabaseAwareTrait;
+    use MVCFactoryAwareTrait;
+    use DatabaseAwareTrait;
 
-  /**
-   * The default command name
-   *
-   * @var    string
-   */
-  protected static $defaultName = 'joomgallery:category:add';
+    /**
+     * The default command name
+     *
+     * @var    string
+     */
+    protected static $defaultName = 'joomgallery:category:add';
 
-  /**
-   * @var   SymfonyStyle
-   */
-  private $ioStyle;
+    /**
+     * @var   SymfonyStyle
+     */
+    private $ioStyle;
 
-  /**
-   * @var   InputInterface
-   */
-  private $cliInput;
+    /**
+     * @var   InputInterface
+     */
+    private $cliInput;
 
-  /**
-   * category title from user input
-   * @var string
-   */
-  private $title;
+    /**
+     * category title from user input
+     * @var string
+     */
+    private $title;
 
-  /**
-   * category published from user input, yes/no true/false
-   * @var string
-   */
-  private $published;
+    /**
+     * category published from user input, yes/no true/false
+     * @var string
+     */
+    private $published;
 
-  /**
-   * category created by from user input
-   * @var string
-   */
-  private $created_by;
+    /**
+     * category created by from user input
+     * @var string
+     */
+    private $created_by;
 
-  /**
-   * category created time from user input
-   * @var string
-   */
-  private $created_time;
+    /**
+     * category created time from user input
+     * @var string
+     */
+    private $created_time;
 
-  /**
-   * category modified by from user input
-   * @var string
-   */
-  private $modified_by;
+    /**
+     * category modified by from user input
+     * @var string
+     */
+    private $modified_by;
 
-  /**
-   * category modified time from user input
-   * @var string
-   */
-  private $modified_time;
+    /**
+     * category modified time from user input
+     * @var string
+     */
+    private $modified_time;
 
-  /**
-   * category parent id from user input
-   * @var string
-   */
-  private $parent_id;
+    /**
+     * category parent id from user input
+     * @var string
+     */
+    private $parent_id;
 
-  /**
-   * Instantiate the command.
-   *
-   * @since   4.2.0
-   */
-  public function __construct()
-  {
-    parent::__construct();
-  }
+    /**
+     * Instantiate the command.
+     *
+     * @since   4.2.0
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-  /**
-   * Configure the IO.
-   *
-   * @param   InputInterface   $input   The input to inject into the command.
-   * @param   OutputInterface  $output  The output to inject into the command.
-   *
-   * @return  void
-   */
-  private function configureIO(InputInterface $input, OutputInterface $output)
-  {
-    $this->cliInput = $input;
-    $this->ioStyle  = new SymfonyStyle($input, $output);
-  }
+    /**
+     * Configure the IO.
+     *
+     * @param   InputInterface   $input   The input to inject into the command.
+     * @param   OutputInterface  $output  The output to inject into the command.
+     *
+     * @return  void
+     */
+    private function configureIO(InputInterface $input, OutputInterface $output)
+    {
+        $this->cliInput = $input;
+        $this->ioStyle  = new SymfonyStyle($input, $output);
+    }
 
-  /**
-   * Configure the command.
-   *
-   * @return  void
-   */
-  protected function configure(): void
-  {
+    /**
+     * Configure the command.
+     *
+     * @return  void
+     */
+    protected function configure(): void
+    {
 
-    // ToDo: title as argument ? $this->addArgument('title', 't', InputOption::VALUE_REQUIRED, 'Title');
-    $this->addOption('title', 't', InputOption::VALUE_REQUIRED, 'Title');
-    $this->addOption('published', null, InputOption::VALUE_OPTIONAL, 'Published (yes/no)');
-    $this->addOption('created_time', null, InputOption::VALUE_OPTIONAL, 'Created time');
-    $this->addOption('created_by', 'c', InputOption::VALUE_REQUIRED, 'Created by (owner)');
-    $this->addOption('modified_time', null, InputOption::VALUE_OPTIONAL, 'Modified time');
-    $this->addOption('modified_by', 'm', InputOption::VALUE_OPTIONAL, 'Modified by');
+        // ToDo: title as argument ? $this->addArgument('title', 't', InputOption::VALUE_REQUIRED, 'Title');
+        $this->addOption('title', 't', InputOption::VALUE_REQUIRED, 'Title');
+        $this->addOption('published', null, InputOption::VALUE_OPTIONAL, 'Published (yes/no)');
+        $this->addOption('created_time', null, InputOption::VALUE_OPTIONAL, 'Created time');
+        $this->addOption('created_by', 'c', InputOption::VALUE_REQUIRED, 'Created by (owner)');
+        $this->addOption('modified_time', null, InputOption::VALUE_OPTIONAL, 'Modified time');
+        $this->addOption('modified_by', 'm', InputOption::VALUE_OPTIONAL, 'Modified by');
 //    $this->addOption('parent_title', 'p', InputOption::VALUE_OPTIONAL, 'parent title');
-    $this->addOption('parent_id', 'p', InputOption::VALUE_OPTIONAL, 'parent id (1=no parent)');
+        $this->addOption('parent_id', 'p', InputOption::VALUE_OPTIONAL, 'parent id (1=no parent)');
 
-    $help = "<info>%command.name%</info> add a category
-	Usage: <info>php %command.full_name%</info>";
+        $help = '<info>%command.name%</info> add a category
+        Usage: <info>php %command.full_name%</info>';
 
-    $this->setDescription(Text::_('WIP, not finished: Add category'));
-    $this->setHelp($help);
-
-  }
-
-  /**
-   * Internal function to execute the command.
-   *
-   * @param   InputInterface   $input   The input to inject into the command.
-   * @param   OutputInterface  $output  The output to inject into the command.
-   *
-   * @return  integer  The command exit code
-   *
-   * @since   4.2.0
-   */
-  protected function doExecute(InputInterface $input, OutputInterface $output): int
-  {
-    // Configure the Symfony output helper
-    $this->configureIO($input, $output);
-    $this->ioStyle->title('WIP, not finished: JoomGallery add category');
-
-    //--- assign option ----------------------------
-
-    // Get filter to remove invalid characters
-    $filter = new InputFilter();
-
-    // create/update time fallback
-    $date       = Factory::getDate();
-    $actualTime = $date->toSql();
-
-    echo "actualTime: $actualTime\n";
-
-    //--- title -----------------------
-
-    $this->title = $filter->clean($this->getStringFromOption('title', 'Please enter a category title'));
-
-    //--- created_by -----------------------
-
-    $this->created_by = $filter->clean($this->getStringFromOption(
-      'created_by', 'Please enter a username (owner)'));
-    $created_by_Id    = $this->getUserId($this->created_by);
-
-    if (empty($created_by_Id))
-    {
-      $this->ioStyle->error("The user (owner)" . $this->created_by . " does not exist!");
-
-      return Command::FAILURE;
+        $this->setDescription(Text::_('WIP, not finished: Add category'));
+        $this->setHelp($help);
     }
 
-    $this->published     = $filter->clean($input->getOption('published') ?? '0');
-    $this->created_time  = $filter->clean($input->getOption('created_time') ?? $actualTime);
-    $this->modified_time = $filter->clean($input->getOption('modified_time') ?? $actualTime);
-    $this->parent_id     = $filter->clean($input->getOption('parent_id') ?? '1');
-
-    //--- modified_by -----------------------
-
-    $this->modified_by = $filter->clean($input->getOption('modified_by')) ?? null;
-
-    // not given by input use created by
-    if (empty($this->modified_by))
+    /**
+     * Internal function to execute the command.
+     *
+     * @param   InputInterface   $input   The input to inject into the command.
+     * @param   OutputInterface  $output  The output to inject into the command.
+     *
+     * @return  integer  The command exit code
+     *
+     * @since   4.2.0
+     */
+    protected function doExecute(InputInterface $input, OutputInterface $output): int
     {
-      $this->modified_by = $this->created_by;
-    }
-    else
-    {
+        // Configure the Symfony output helper
+        $this->configureIO($input, $output);
+        $this->ioStyle->title('WIP, not finished: JoomGallery add category');
 
-      $modified_by_Id = $this->getUserId($this->modified_by);
+        //--- assign option ----------------------------
 
-      if (empty($modified_by_Id))
-      {
-        $this->ioStyle->error("The user (author)" . $this->modified_by . " does not exist!");
+        // Get filter to remove invalid characters
+        $filter = new InputFilter();
 
-        return Command::FAILURE;
-      }
-    }
+        // create/update time fallback
+        $date       = Factory::getDate();
+        $actualTime = $date->toSql();
 
-    //--- validate -----------------------------------
+        echo "actualTime: $actualTime\n";
 
-    if (!is_numeric($this->published))
-    {
-      $this->ioStyle->error('Invalid published value passed! (0/1) ? ');
+        //--- title -----------------------
 
-      return Command::FAILURE;
-    }
+        $this->title = $filter->clean($this->getStringFromOption('title', 'Please enter a category title'));
+
+        //--- created_by -----------------------
+
+        $this->created_by = $filter->clean(
+            $this->getStringFromOption(
+                'created_by',
+                'Please enter a username (owner)'
+            )
+        );
+        $created_by_Id = $this->getUserId($this->created_by);
+
+        if(empty($created_by_Id))
+        {
+            $this->ioStyle->error('The user (owner)' . $this->created_by . ' does not exist!');
+
+            return Command::FAILURE;
+        }
+
+        $this->published     = $filter->clean($input->getOption('published') ?? '0');
+        $this->created_time  = $filter->clean($input->getOption('created_time') ?? $actualTime);
+        $this->modified_time = $filter->clean($input->getOption('modified_time') ?? $actualTime);
+        $this->parent_id     = $filter->clean($input->getOption('parent_id') ?? '1');
+
+        //--- modified_by -----------------------
+
+        $this->modified_by = $filter->clean($input->getOption('modified_by')) ?? null;
+
+        // not given by input use created by
+        if(empty($this->modified_by))
+        {
+            $this->modified_by = $this->created_by;
+        }
+        else
+        {
+            $modified_by_Id = $this->getUserId($this->modified_by);
+
+            if(empty($modified_by_Id))
+            {
+                $this->ioStyle->error('The user (author)' . $this->modified_by . ' does not exist!');
+
+                return Command::FAILURE;
+            }
+        }
+
+        //--- validate -----------------------------------
+
+        if(!is_numeric($this->published))
+        {
+            $this->ioStyle->error('Invalid published value passed! (0/1) ? ');
+
+            return Command::FAILURE;
+        }
 
 
-    $category = [
-      'title'         => $filter->clean($this->title, 'STRING'),
-      'published'     => $filter->clean($this->published, 'INT'),
-      'created_by'    => $filter->clean($this->created_by, 'STRING'),
-      'created_time'  => $filter->clean($this->created_time, 'STRING'),
-      'modified_by'   => $filter->clean($this->modified_time, 'STRING'),
-      'modified_time' => $filter->clean($this->title, 'STRING'),
-      'parent_id'     => $filter->clean($this->parent_id, 'INT'),
-    ];
+        $category = [
+          'title'         => $filter->clean($this->title, 'STRING'),
+          'published'     => $filter->clean($this->published, 'INT'),
+          'created_by'    => $filter->clean($this->created_by, 'STRING'),
+          'created_time'  => $filter->clean($this->created_time, 'STRING'),
+          'modified_by'   => $filter->clean($this->modified_time, 'STRING'),
+          'modified_time' => $filter->clean($this->title, 'STRING'),
+          'parent_id'     => $filter->clean($this->parent_id, 'INT'),
+        ];
 
-    echo json_encode($category, JSON_PRETTY_PRINT) . "\n";
+        echo json_encode($category, JSON_PRETTY_PRINT) . "\n";
 
-    // Save the category, using the backend model
-    /** @var  CategoryModel $categoryModel */
-    $categoryModel = $this->getMVCFactory()->createModel('Category', 'Administrator');
+        // Save the category, using the backend model
+        /** @var  CategoryModel $categoryModel */
+        $categoryModel = $this->getMVCFactory()->createModel('Category', 'Administrator');
 
-    echo "add:save 01" . "\n";
+        echo 'add:save 01' . "\n";
 
-    if (!$categoryModel->save($category))
-    {
+        if(!$categoryModel->save($category))
+        {
 //      switch ($categoryModel->getError()) {
 //        case "JLIB_DATABASE_ERROR_USERNAME_INUSE":
 //          $this->ioStyle->error("The username already exists!");
@@ -255,18 +258,18 @@ class CategoryAdd extends AbstractCommand
 //          $this->ioStyle->error("The email address is invalid!");
 //          break;
 //      }
-      echo "add:save error 02" . "\n";
+            echo 'add:save error 02' . "\n";
 
-      $this->ioStyle->error($categoryModel->getError());
+            $this->ioStyle->error($categoryModel->getError());
 
-      return Command::FAILURE;
-    }
+            return Command::FAILURE;
+        }
 
-    echo "add:after save 01" . "\n";
+        echo 'add:after save 01' . "\n";
 
-    $this->ioStyle->success("User created!");
+        $this->ioStyle->success('User created!');
 
-    return Command::SUCCESS;
+        return Command::SUCCESS;
 
 
 //    yyyy
@@ -359,54 +362,51 @@ class CategoryAdd extends AbstractCommand
 //    );
 
 //    return 0;
-  }
-
-  /**
-   * Method to get a value from option
-   *
-   * @param   string  $option    set the option name
-   *
-   * @param   string  $question  set the question if user enters no value to option
-   *
-   * @return  string
-   *
-   * @since   4.2.0
-   */
-  protected function getStringFromOption($option, $question): string
-  {
-    $answer = (string) $this->getApplication()->getConsoleInput()->getOption($option);
-
-    while (!$answer)
-    {
-      $answer = (string) $this->ioStyle->ask($question);
     }
 
-    return $answer;
-  }
+    /**
+     * Method to get a value from option
+     *
+     * @param   string  $option    set the option name
+     *
+     * @param   string  $question  set the question if user enters no value to option
+     *
+     * @return  string
+     *
+     * @since   4.2.0
+     */
+    protected function getStringFromOption($option, $question): string
+    {
+        $answer = (string) $this->getApplication()->getConsoleInput()->getOption($option);
 
-  /**
-   * Method to get a user object
-   *
-   * @param   string  $username  username
-   *
-   * @return  object
-   *
-   * @since   4.2.0
-   */
-  protected function getUserId($username)
-  {
-    // $db    = $this->getDatabase();
-    $db    = Factory::getContainer()->get(DatabaseInterface::class);
-    $query = $db->getQuery(true)
-      ->select($db->quoteName('id'))
-      ->from($db->quoteName('#__users'))
-      ->where($db->quoteName('username') . '= :username')
-      ->bind(':username', $username);
-    $db->setQuery($query);
+        while(!$answer)
+        {
+            $answer = (string) $this->ioStyle->ask($question);
+        }
 
-    return $db->loadResult();
-  }
+        return $answer;
+    }
 
+    /**
+     * Method to get a user object
+     *
+     * @param   string  $username  username
+     *
+     * @return  object
+     *
+     * @since   4.2.0
+     */
+    protected function getUserId($username)
+    {
+        // $db    = $this->getDatabase();
+        $db    = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__users'))
+            ->where($db->quoteName('username') . '= :username')
+            ->bind(':username', $username);
+        $db->setQuery($query);
 
-} // class
-
+        return $db->loadResult();
+    }
+}

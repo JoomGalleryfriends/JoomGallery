@@ -1,26 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useScript('bootstrap.collapse')
    ->useScript('com_joomgallery.form-edit')
    ->useStyle('com_joomgallery.site');
@@ -34,24 +34,24 @@ $lang->load('joomla', JPATH_ADMINISTRATOR);
 if($this->item->id)
 {
   // ID given -> edit
-  $canEdit  = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $this->item->id);
+  $canEdit = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $this->item->id);
 }
 else
 {
   // ID = null -> add
-  $canEdit  = $this->getAcl()->checkACL('add', 'com_joomgallery.category', 0, 1, true);
+  $canEdit = $this->getAcl()->checkACL('add', 'com_joomgallery.category', 0, 1, true);
 }
 $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
 ?>
 
 <div class="jg category-edit front-end-edit item-page">
-	<?php if (!$canEdit) : ?>
+	<?php if(!$canEdit) : ?>
 		<?php Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error'); ?>
 	<?php else : ?>
-		<form id="adminForm" action="<?php echo Route::_('index.php?option=com_joomgallery&controller=categoryform&id='.$this->item->id); ?>"
+		<form id="adminForm" action="<?php echo Route::_('index.php?option=com_joomgallery&controller=categoryform&id=' . $this->item->id); ?>"
 			    method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data">
       <fieldset>
-        <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'category')); ?>
+        <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'category']); ?>
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'category', Text::_('JCATEGORY', true)); ?>
           <?php echo $this->form->renderField('title'); ?>
           <?php echo $this->form->renderField('alias'); ?>
@@ -91,8 +91,8 @@ $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
           <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'permissions', Text::_('JGLOBAL_ACTION_PERMISSIONS_LABEL', true)); ?>
             <div class="fltlft">
               <fieldset class="panelform">
-                  <?php echo $this->form->getLabel('rules'); ?>
-                  <?php echo $this->form->getInput('rules'); ?>
+                <?php echo $this->form->getLabel('rules'); ?>
+                <?php echo $this->form->getInput('rules'); ?>
               </fieldset>
             </div>
           <?php echo HTMLHelper::_('uitab.endTab'); ?>
@@ -104,13 +104,12 @@ $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
         <input type="hidden" name="jform[level]" value="<?php echo isset($this->item->level) ? $this->item->level : ''; ?>" />
         <input type="hidden" name="jform[path]" value="<?php echo isset($this->item->path) ? $this->item->path : ''; ?>" />
         <input type="hidden" name="jform[in_hidden]" value="<?php echo isset($this->item->in_hidden) ? $this->item->in_hidden : ''; ?>" />
-
         <input type="hidden" name="type" id ="itemType" value="categoryform"/>
         <input type="hidden" name="return" value="<?php echo $this->return_page; ?>"/>
         <input type="hidden" name="task" value=""/>
         <?php echo HTMLHelper::_('form.token'); ?>
       </fieldset>
-        
+
       <div class="mb-2">
         <button class="btn btn-primary" type="button" data-submit-task="categoryform.save">
           <span class="fas fa-check" aria-hidden="true"></span> <?php echo Text::_('JAPPLY'); ?>
