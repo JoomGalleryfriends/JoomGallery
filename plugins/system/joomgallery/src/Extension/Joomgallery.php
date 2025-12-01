@@ -575,7 +575,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
     if($array)
     {
-      $result       = $event->getArgument('result', []) ?: [];
+      $result   = $event->getArgument('result', []) ?: [];
       $result   = \is_array($result) ? $result : [];
       $result[] = $value;
     }

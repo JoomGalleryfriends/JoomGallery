@@ -107,10 +107,10 @@ if($saveOrder && !empty($this->items))
                    endif; ?>>
               <?php foreach($this->items as $i => $item) :
                 // Access check
-                $ordering           = ($listOrder == 'a.ordering');
-                $canEdit            = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
-                $canDelete          = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
-                $canChange          = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
+                $ordering   = ($listOrder == 'a.ordering');
+                $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
+                $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
+                $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
                 $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser()->id;
                 $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
 
