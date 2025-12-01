@@ -44,11 +44,11 @@
   <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing"/>
 
   <!-- apply JoomGallery specific sniffs -->
-  <rule ref="JG.A_Preprocessing.A_Indentation">
+  <!-- <rule ref="JG.A_Preprocessing.A_Indentation">
     <properties>
       <property name="indentSize" value="2"/>
     </properties>
-  </rule>
+  </rule> -->
   <rule ref="JG.Arrays.MultilineArrayFirstElementNewline"/>
   <rule ref="JG.Commenting.FileHeader">
     <properties>
