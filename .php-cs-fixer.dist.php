@@ -38,6 +38,9 @@ $finder = PhpCsFixer\Finder::create()
       __DIR__ . '/site',
     ]
   )
+  ->notPath('administrator/com_joomgallery/vendor')
+  ->notPath('administrator/com_joomgallery/includes')
+  ->notPath('tools/phpcs')
   ->exclude('vendor')
   ->exclude('includes')
   ->exclude('tools')
