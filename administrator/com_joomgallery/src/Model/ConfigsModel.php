@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -18,7 +17,7 @@ use \Joomla\Database\ParameterType;
 
 /**
  * Methods supporting a list of Configs records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -34,7 +33,7 @@ class ConfigsModel extends JoomListModel
 
 	/**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
@@ -150,7 +149,7 @@ class ConfigsModel extends JoomListModel
 		// Join over the user field 'created_by'
 		$query->select(array($db->quoteName('ua.name', 'created_by'), $db->quoteName('ua.id', 'created_by_id')));
     $query->join('LEFT', $db->quoteName('#__users', 'ua'), $db->quoteName('ua.id') . ' = ' . $db->quoteName('a.created_by'));
-		
+
     // Join over the user field 'modified_by'
 		$query->select(array($db->quoteName('um.name', 'modified_by'), $db->quoteName('um.id', 'modified_by_id')));
     $query->join('LEFT', $db->quoteName('#__users', 'um'), $db->quoteName('um.id') . ' = ' . $db->quoteName('a.modified_by'));

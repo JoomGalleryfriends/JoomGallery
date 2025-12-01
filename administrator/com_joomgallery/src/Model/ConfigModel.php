@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -25,7 +24,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Config model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -188,7 +187,7 @@ class ConfigModel extends JoomAdminModel
 	 * @since   4.0.0
 	 */
 	public function getItem($pk = null)
-	{		
+	{
     if($item = parent::getItem($pk))
     {
       if(isset($item->params))
@@ -293,7 +292,7 @@ class ConfigModel extends JoomAdminModel
 		$table = $this->getTable();
 
 		foreach($pks as $pk)
-		{			
+		{
       if($table->load($pk, true))
       {
         // Reset the id to create a new record.
@@ -303,7 +302,7 @@ class ConfigModel extends JoomAdminModel
         {
           $this->component->addLog($table->getError(), 'error', 'jerror');
           throw new \Exception($table->getError());
-        }        
+        }
 
         // Trigger the before save event.
         $result = $this->app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
@@ -321,7 +320,7 @@ class ConfigModel extends JoomAdminModel
       {
         $this->component->addLog($table->getError(), 'error', 'jerror');
         throw new \Exception($table->getError());
-      }			
+      }
 		}
 
 		// Clean cache
@@ -366,7 +365,7 @@ class ConfigModel extends JoomAdminModel
 
         $staticprocessing['jg_imgtype'] = 1;
       }
-      
+
       // update data
       $imagetype_db->typename = $staticprocessing['jg_imgtypename'];
       $imagetype_db->path     = $staticprocessing['jg_imgtypepath'];
@@ -384,7 +383,7 @@ class ConfigModel extends JoomAdminModel
         // prepare data to create new imagetype row
         $imagetype_db->id       = 0;
         $imagetype_db->ordering = '';
-        
+
         if(empty($imagetype_db->path))
         {
           // create a default path for new imagetype row
@@ -466,7 +465,7 @@ class ConfigModel extends JoomAdminModel
 	 * Initialize new stdObject with default config params of jg_staticprocessing.
 	 *
    * @param   string     $type    Imagetype (default:original)
-   * 
+   *
 	 * @return  \stdClass   Default config params of jg_staticprocessing
 	 *
 	 * @since   4.0.0
@@ -496,7 +495,7 @@ class ConfigModel extends JoomAdminModel
 	 * Initialize new stdObject with default config params of jg_staticprocessing.
 	 *
    * @param   string     $type    Imagetype (default:original)
-   * 
+   *
 	 * @return  string   Params json string
 	 *
 	 * @since   4.0.0
@@ -512,7 +511,7 @@ class ConfigModel extends JoomAdminModel
       case 'thumbnail':
         $params = '{"jg_imgtype":"1","jg_imgtyperesize":"4","jg_imgtypewidth":"250","jg_imgtypeheight":"250","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"1","jg_imgtypequality":"60","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"{}"}';
         break;
-      
+
       default:
         $params = '{"jg_imgtype":"1","jg_imgtyperesize":"0","jg_imgtypewidth":"2000","jg_imgtypeheight":"2000","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"1","jg_imgtypesharpen":"0","jg_imgtypequality":"100","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"{}"}';
         break;
@@ -521,7 +520,7 @@ class ConfigModel extends JoomAdminModel
 
   /**
 	 * Loads jg_staticprocessing data from imagetypes.
-   * 
+   *
 	 * @return  object   static processing data
 	 *
 	 * @since   4.0.0
@@ -559,7 +558,7 @@ class ConfigModel extends JoomAdminModel
 	 * Decode params string.
 	 *
    * @param   string      $params     Json string with params
-   * 
+   *
 	 * @return  CMSObject   Params object
 	 *
 	 * @since   4.0.0
@@ -581,7 +580,7 @@ class ConfigModel extends JoomAdminModel
 	 *
    * @param   array    $data       New submitted params form data
    * @param   string   $old_data   JSON string of old params
-   * 
+   *
 	 * @return  string   Params JSON string
 	 *
 	 * @since   4.0.0
@@ -620,7 +619,7 @@ class ConfigModel extends JoomAdminModel
       else
       {
         $data['jg_imgtype'] = 1;
-      }      
+      }
     }
 
     return json_encode($data);
@@ -630,7 +629,7 @@ class ConfigModel extends JoomAdminModel
 	 * Method to reset form data to default values.
 	 *
 	 * @param   array  $data   Form data array
-	 * 
+	 *
 	 * @return  array  Form data array with default data
 	 *
 	 * @since   4.0.0
@@ -697,7 +696,7 @@ class ConfigModel extends JoomAdminModel
 								else
 								{
 									$reset_str = $subform->getField($subformkey)->getAttribute('reset', 'not found');
-									
+
 									if($default === 'not found')
 									{
 										$this->component->addLog('Convert subform field with name '.$key.' does not have any reset value!', 'error', 'jerror');
@@ -719,7 +718,7 @@ class ConfigModel extends JoomAdminModel
 						}
 					}
 
-					continue; 
+					continue;
 				}
 				else
 				{
@@ -746,7 +745,7 @@ class ConfigModel extends JoomAdminModel
 	 *
 	 * @param   array    $file        Uploaded file info
 	 * @param   string   $fieldname   Name of the form field
-	 * 
+	 *
 	 * @return  array    Associative array containing form data of json file
 	 *
 	 * @since   4.0.0
@@ -772,7 +771,7 @@ class ConfigModel extends JoomAdminModel
       $this->setError($uploader->checkError($file['error']));
 
       return false;
-    }	
+    }
 
 		// Check file size
 		$filesize = intval($field->getAttribute('size', '512000'));
@@ -801,7 +800,7 @@ class ConfigModel extends JoomAdminModel
 
 		// Check file content
 		$json = json_decode($json_string, true);
-    
+
    		if(json_last_error() !== JSON_ERROR_NONE)
 		{
 			// JSON not valid
@@ -818,7 +817,7 @@ class ConfigModel extends JoomAdminModel
 	 * Method to create the imagetype reset array from string.
 	 *
 	 * @param   string  $string   String containing the reset values
-	 * 
+	 *
 	 * @return  array   Array with reset values for each image type
 	 *
 	 * @since   4.0.0
@@ -852,7 +851,7 @@ class ConfigModel extends JoomAdminModel
 			if($name)
 			{
 				$array[$name] = $content[1];
-			}			
+			}
 		}
 
 		return $array;

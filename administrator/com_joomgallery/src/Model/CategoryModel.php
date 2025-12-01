@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -24,7 +23,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Category model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -91,7 +90,7 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('rm_password', 'filter', 'unset');
       $form->setFieldAttribute('rm_password', 'hidden', 'true');
       $form->setFieldAttribute('rm_password', 'class', 'hidden');
-    }    
+    }
 
     // Modify the form based on Edit State access controls.
 		if(!$this->canEditState($record))
@@ -172,7 +171,7 @@ class CategoryModel extends JoomAdminModel
 	 * @since   4.0.0
 	 */
 	public function getItem($pk = null)
-	{		
+	{
     if($this->item === null)
 		{
 			$this->item = false;
@@ -188,7 +187,7 @@ class CategoryModel extends JoomAdminModel
         {
           $this->item->params = json_encode($this->item->params);
         }
-        
+
         // Do any processing on fields here if needed
       }
     }
@@ -221,7 +220,7 @@ class CategoryModel extends JoomAdminModel
 		{
 			if($table->load($pk))
 			{
-				if($this->canDelete($table)) 
+				if($this->canDelete($table))
 				{
 					$context = $this->option . '.' . $this->name;
 
@@ -355,7 +354,7 @@ class CategoryModel extends JoomAdminModel
 
 		return true;
 	}
-	
+
   /**
    * Method to save the form data.
    *
@@ -366,7 +365,7 @@ class CategoryModel extends JoomAdminModel
    * @since   4.0.0
    */
   public function save($data)
-  { 
+  {
     $table          = $this->getTable();
     $context        = $this->option . '.' . $this->name;
     $app            = Factory::getApplication();
@@ -380,7 +379,7 @@ class CategoryModel extends JoomAdminModel
 
     $key = $table->getKeyName();
     $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
-    
+
     // Are we going to copy the image record?
     if($app->input->get('task') == 'save2copy')
 		{
@@ -446,7 +445,7 @@ class CategoryModel extends JoomAdminModel
               $data['published'] = $table->published;
             }
           }
-          
+
           // Check if category has subcategories (children)
           if($this->getChildren($pk))
           {
@@ -472,14 +471,14 @@ class CategoryModel extends JoomAdminModel
         {
           // Only allowed in toplevel categories
           $this->setError(Text::_('COM_JOOMGALLERY_ERROR_FILESYSTEM_ONLY_TOP_LEVEL_CAT'));
-          
+
           return false;
         }
         elseif($adapterChanged && ($hasChildren || $hasImages))
         {
           // Only allowed if there are no images and no subcategories
           $this->setError(Text::_('COM_JOOMGALLERY_ERROR_FILESYSTEM_ONLY_EMPTY_CAT'));
-          
+
           return false;
         }
 
@@ -719,7 +718,7 @@ class CategoryModel extends JoomAdminModel
 
 			return false;
 		}
-    
+
 		$this->cleanCache();
 
 		return true;
@@ -855,7 +854,7 @@ class CategoryModel extends JoomAdminModel
 
       // Change path
       $pos = \strpos($child_table->path, $old_table->path);
-      if($pos !== false) 
+      if($pos !== false)
       {
         $child_table->path = \substr_replace($child_table->path, $table->path, $pos, \strlen($old_table->path));
       }
@@ -885,7 +884,7 @@ class CategoryModel extends JoomAdminModel
 
   /**
    * Get children categories.
-   * 
+   *
    * @param   integer  $pk        The id of the primary key.
    * @param   bool     $self      Include current node id (default: false)
    * @param   bool     $setError  True to set an Error if no children found (default: false)
@@ -928,13 +927,13 @@ class CategoryModel extends JoomAdminModel
 
       return false;
     }
-    
+
     return $children;
   }
 
   /**
    * Get parent categories.
-   * 
+   *
    * @param   integer  $pk        The id of the primary key.
    * @param   bool     $self      Include current node id (default: false)
    * @param   bool     $root      Include root node (default: false)
@@ -971,13 +970,13 @@ class CategoryModel extends JoomAdminModel
 
       return false;
     }
-    
+
     return $parents;
   }
 
   /**
    * Get category tree
-   * 
+   *
    * @param   integer  $pk        The id of the primary key.
    * @param   bool     $self      Include current node id (default: false)
    * @param   bool     $root      Include root node (default: false)
@@ -1014,16 +1013,16 @@ class CategoryModel extends JoomAdminModel
 
       return false;
     }
-    
+
     return $tree;
   }
 
   /**
    * Get direct left or right sibling (adjacent) of the category.
-   * 
+   *
    * @param   integer  $pk        The id of the primary key.
    * @param   string   $side      Left or right side ribling.
-   * @param   bool     $setError  True to set an Error if no sibling found (default: false) 
+   * @param   bool     $setError  True to set an Error if no sibling found (default: false)
    *
    * @return  mixed    List of sibling or false if an error occurs.
    *
@@ -1044,7 +1043,7 @@ class CategoryModel extends JoomAdminModel
 
       return false;
     }
-    
+
     $sibling = $table->getSibling($side, true);
 
     if(!$sibling)
@@ -1057,13 +1056,13 @@ class CategoryModel extends JoomAdminModel
 
       return false;
     }
-    
+
     return $sibling;
   }
 
   /**
    * Get all left and/or right siblings (adjacent) of the category.
-   * 
+   *
    * @param   integer  $pk        The id of the primary key.
    * @param   string   $side      Left, right or both sides siblings.
    * @param   bool     $setError  True to set an Error if no siblings found (default: false)
@@ -1105,7 +1104,7 @@ class CategoryModel extends JoomAdminModel
 
       return false;
     }
-    
+
     $sibling = $table->getSibling($side, false, $ptable);
 
     if(!$sibling)
@@ -1118,13 +1117,13 @@ class CategoryModel extends JoomAdminModel
 
       return false;
     }
-    
+
     return $sibling;
   }
 
   /**
    * Get the number of images in this category
-   * 
+   *
    * @param   integer  $pk        The id of the primary key.
    * @param   bool     $setError  True to set an Error if no images are found (default: false)
    *

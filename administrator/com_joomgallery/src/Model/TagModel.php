@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -20,7 +19,7 @@ use \Joomla\CMS\Plugin\PluginHelper;
 
 /*
  * Tag model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -53,7 +52,7 @@ class TagModel extends JoomAdminModel
 				$this->item = $this->getItem();
 			}
 
-			$data = $this->item;			
+			$data = $this->item;
 		}
 
 		return $data;
@@ -146,11 +145,11 @@ class TagModel extends JoomAdminModel
       {
         $item->params = json_encode($item->params);
       }
-      
+
       // Do any processing on fields here if needed
     }
 
-    return $item;		
+    return $item;
 	}
 
 	/**
@@ -179,7 +178,7 @@ class TagModel extends JoomAdminModel
 		$table = $this->getTable();
 
 		foreach($pks as $pk)
-		{			
+		{
       if($table->load($pk, true))
       {
         // Reset the id to create a new record.
@@ -189,7 +188,7 @@ class TagModel extends JoomAdminModel
         {
           $this->component->addLog($table->getError(), 'error', 'jerror');
           throw new \Exception($table->getError());
-        }        
+        }
 
         // Trigger the before save event.
         $result = $this->app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
@@ -207,14 +206,14 @@ class TagModel extends JoomAdminModel
       {
         $this->component->addLog($table->getError(), 'error', 'jerror');
         throw new \Exception($table->getError());
-      }			
+      }
 		}
 
 		// Clean cache
 		$this->cleanCache();
 
 		return true;
-	} 
+	}
 
   /**
    * Method to add a mapping between tag and image.

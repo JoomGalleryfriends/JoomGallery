@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -21,7 +20,7 @@ use \Joomla\CMS\User\UserFactoryInterface;
 
 /**
  * Model to get an image record.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -196,7 +195,7 @@ class ImageModel extends JoomItemModel
 		if(!$this->category)
 		{
 			// Create model
-			$this->category = $this->component->getMVCFactory()->createModel('category', 'site');		
+			$this->category = $this->component->getMVCFactory()->createModel('category', 'site');
 		}
 
 		// Load category
@@ -211,7 +210,7 @@ class ImageModel extends JoomItemModel
 	 * @param   int  $catid  Category id
 	 *
 	 * @return  bool  True if categories are protected, false otherwise
-	 * 
+	 *
 	 * @throws \Exception
 	 */
 	public function getCategoryProtected(int $catid = 0)
@@ -234,7 +233,7 @@ class ImageModel extends JoomItemModel
 
 			// Load category
 			$this->category->getItem($catid);
-			
+
 			$this->item->protectedParents = $this->category->getProtectedParents();
 		}
 
@@ -247,7 +246,7 @@ class ImageModel extends JoomItemModel
 	 * @param   int  $catid  Category id
 	 *
 	 * @return  bool  True if all categories are published, false otherwise
-	 * 
+	 *
 	 * @throws \Exception
 	 */
 	public function getCategoryPublished(int $catid = 0, bool $approved = false)
@@ -283,7 +282,7 @@ class ImageModel extends JoomItemModel
 	 * @param   int  $catid  Category id
 	 *
 	 * @return  bool  True if all categories are accessible, false otherwise
-	 * 
+	 *
 	 * @throws \Exception
 	 */
 	public function getCategoryAccess(int $catid = 0)

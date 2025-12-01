@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -18,7 +17,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as Admi
 
 /**
  * Model to handle a category form.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -82,7 +81,7 @@ class CategoryformModel extends AdminCategoryModel
 	{
 		return parent::getItem($id);
 	}
-  
+
 	/**
 	 * Method to get the profile form.
 	 *
@@ -123,7 +122,7 @@ class CategoryformModel extends AdminCategoryModel
 	 * Method to get the data that should be injected in the form.
 	 *
 	 * @return  array  The default data is an empty array.
-   * 
+   *
 	 * @since   4.0.0
 	 */
 	protected function loadFormData()

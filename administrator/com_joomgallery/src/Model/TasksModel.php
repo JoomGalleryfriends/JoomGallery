@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -22,7 +21,7 @@ use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 
 /**
  * Methods supporting a list of Tasks records.
- * 
+ *
  * @package JoomGallery
  * @since   4.2.0
  */
@@ -38,7 +37,7 @@ class TasksModel extends JoomListModel
 
 	/**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
@@ -138,20 +137,20 @@ class TasksModel extends JoomListModel
         }
 
         $table->check();
-        $table->clcProgress(); 
-        
+        $table->clcProgress();
+
         \array_push($items, $table);
       }
 
       return $items;
     }
 
-    return false;    
+    return false;
   }
 
   /**
    * Function to set the scheduler tasks list model state for the pre defined filter and fields selection
-   * 
+   *
    * @param   ListModel   $listModel    Scheduler tasks list model
    * @param   array       $fields       List of field names to be loaded (default: array())
    *
@@ -236,7 +235,7 @@ class TasksModel extends JoomListModel
 	 */
 	protected function getListQuery()
 	{
-		// Create a new query object. 
+		// Create a new query object.
 		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
 
@@ -269,7 +268,7 @@ class TasksModel extends JoomListModel
 					->bind([':search1', ':search2', ':search3'], $search);
 			}
 		}
- 
+
     // Filter by published state
 		$published = (string) $this->getState('filter.published');
 
@@ -322,7 +321,7 @@ class TasksModel extends JoomListModel
 		}
 
 		// Add the list ordering clause.
-		$orderCol  = $this->state->get('list.ordering', 'a.ordering'); 
+		$orderCol  = $this->state->get('list.ordering', 'a.ordering');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
     if($orderCol && $orderDirn)
     {
@@ -345,7 +344,7 @@ class TasksModel extends JoomListModel
 	 */
 	protected function getCountListQuery()
 	{
-		// Create a new query object. 
+		// Create a new query object.
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
@@ -374,7 +373,7 @@ class TasksModel extends JoomListModel
 					->bind([':search1', ':search2', ':search3'], $search);
 			}
 		}
- 
+
     // Filter by published state
 		$published = (string) $this->getState('filter.published');
 

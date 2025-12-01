@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -20,7 +19,7 @@ use \Joomla\CMS\Language\Multilanguage;
 
 /**
  * Model for the gallery view.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -168,7 +167,7 @@ class GalleryModel extends JoomItemModel
 
   /**
    * Function to set the image list model state for the pre defined filter and fields selection
-   * 
+   *
    * @param   ListModel   $listModel    Images list model
    * @param   array       $fields       List of field names to be loaded (default: array())
    *

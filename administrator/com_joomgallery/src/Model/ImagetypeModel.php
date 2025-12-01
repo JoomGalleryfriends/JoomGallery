@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -20,7 +19,7 @@ use \Joomla\CMS\Object\CMSObject;
 
 /**
  * Imagetype model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -93,7 +92,7 @@ class ImagetypeModel extends JoomAdminModel
 		$properties = get_object_vars($table);
 		$item       = ArrayHelper::toObject($properties);
 
-    if(property_exists($item, 'params')) 
+    if(property_exists($item, 'params'))
 		{
 			$registry = new Registry($item->params);
 			$item->params = $registry->toArray();
@@ -104,6 +103,6 @@ class ImagetypeModel extends JoomAdminModel
       $item->params = json_encode($item->params);
     }
 
-		return $item;	
+		return $item;
 	}
 }

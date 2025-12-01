@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -22,7 +21,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Control model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -136,7 +135,7 @@ class ControlModel extends BaseDatabaseModel
    * short description of the extension
    *
    * @return  array  Array with extensions data
-   * 
+   *
    * @since   4.0.0
    */
   public function getOfficialExtensionsData()
@@ -148,7 +147,7 @@ class ControlModel extends BaseDatabaseModel
 
     $extensions = array();
 
-    // Get url of joomgallery extensions xml    
+    // Get url of joomgallery extensions xml
     $server = (array) JoomHelper::getComponent()->xml->updateservers->server;
     if(!empty($server))
     {
@@ -177,7 +176,7 @@ class ControlModel extends BaseDatabaseModel
     catch (\Exception $e)
     {
       JoomHelper::getComponent()->setWarning('Error fetching list of extensions: ' . $e);
-    }    
+    }
 
     // Get the list of extensions
     foreach($extensionsArray as $key => $xml_extension)
@@ -195,7 +194,7 @@ class ControlModel extends BaseDatabaseModel
 
       // Get extension url
       $url  =  (string) $xml_extension->attributes()->detailsurl;
-      $name =  (string) $xml_extension->attributes()->name;      
+      $name =  (string) $xml_extension->attributes()->name;
 
       try
       {
@@ -203,7 +202,7 @@ class ControlModel extends BaseDatabaseModel
         if($info_extension)
         {
           $extensions[$name] = \json_decode(\json_encode($info_extension), true);
-        }        
+        }
       }
       catch (\Exception $e)
       {

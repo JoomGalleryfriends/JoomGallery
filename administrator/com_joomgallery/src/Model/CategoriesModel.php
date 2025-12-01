@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -20,7 +19,7 @@ use \Joomla\Utilities\ArrayHelper;
 
 /**
  * Methods supporting a list of Categories records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -36,7 +35,7 @@ class CategoriesModel extends JoomListModel
 
 	/**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
@@ -251,7 +250,7 @@ class CategoriesModel extends JoomListModel
         $query->whereIn($db->quoteName('a.access'), $access);
       }
     }
-    
+
     // Filter by owner
 		$userId = $this->getState('filter.created_by');
 
@@ -622,6 +621,6 @@ class CategoriesModel extends JoomListModel
       $subCatItemsWhere[] = '(' . $categoryWhere . ')';
     }
 
-    $query->where('(' . implode(' OR ', $subCatItemsWhere) . ')');  
+    $query->where('(' . implode(' OR ', $subCatItemsWhere) . ')');
   }
 }

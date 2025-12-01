@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -18,7 +17,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as Ad
 
 /**
  * Model to get a list of category records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -26,7 +25,7 @@ class CategoriesModel extends AdminCategoriesModel
 {
 	/**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void

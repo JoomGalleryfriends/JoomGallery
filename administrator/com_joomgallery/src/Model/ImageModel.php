@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -29,7 +28,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Image model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -47,7 +46,7 @@ class ImageModel extends JoomAdminModel
    * The event to trigger after recreation of imagetypes.
    *
    * @var    string
-   * 
+   *
    * @since  4.0.0
    */
   protected $event_after_recreate = null;
@@ -56,7 +55,7 @@ class ImageModel extends JoomAdminModel
    * The event to trigger before recreation of imagetypes.
    *
    * @var    string
-   * 
+   *
    * @since  4.0.0
    */
   protected $event_before_recreate = null;
@@ -531,7 +530,7 @@ class ImageModel extends JoomAdminModel
         {
           $two_filesystems = [$table->filesystem, $tmp_config->get('jg_filesystem','local-images')];
         }
-      }      
+      }
       if(!empty($two_filesystems))
       {
         $this->component->addError(Text::sprintf('COM_JOOMGALLERY_ERROR_IMAGE_SAVE_TWO_FILESYSTEMS', $two_filesystems[0], $two_filesystems[1]));
@@ -577,7 +576,7 @@ class ImageModel extends JoomAdminModel
 
 			// Filesystem changes
 			$filesystem_success = true;
-			
+
       // Handle images if category was changed
 			if(!$isNew && $catMoved)
 			{
@@ -610,7 +609,7 @@ class ImageModel extends JoomAdminModel
         }
 
         // Rename files
-        $filesystem_success = $manager->renameImages($old_table, $table->filename);        
+        $filesystem_success = $manager->renameImages($old_table, $table->filename);
       }
 
 			// Dont store the table if filesystem changes was not successful
@@ -685,7 +684,7 @@ class ImageModel extends JoomAdminModel
 
 			return false;
 		}
-		
+
 		// Output warning messages
 		if(\count($this->component->getWarning()) > 0)
 		{
@@ -709,7 +708,7 @@ class ImageModel extends JoomAdminModel
 		// Create/update associations
 		if($this->associationsContext && Associations::isEnabled() && !empty($data['associations']))
 		{
-      $this->createAssociations($table, $data['associations']);			
+      $this->createAssociations($table, $data['associations']);
 		}
 
 		// Redirect to associations
@@ -743,7 +742,7 @@ class ImageModel extends JoomAdminModel
 		{
 			if($table->load($pk))
 			{
-				if($this->canDelete($table)) 
+				if($this->canDelete($table))
 				{
 					$context = $this->option . '.' . $this->name;
 
@@ -964,7 +963,7 @@ class ImageModel extends JoomAdminModel
           case 'approve':
             $stateColumnName  = 'approved';
             break;
-          
+
           case 'publish':
           default:
             $stateColumnName  = 'published';
@@ -1050,7 +1049,7 @@ class ImageModel extends JoomAdminModel
 		$app   = Factory::getApplication();
 		$key   = $table->getKeyName();
 		$pk    = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
-		
+
 		// Rertrieve request image file data
     if(\array_key_exists('image', $app->input->files->get('jform')) && !empty($app->input->files->get('jform')['image'])
     && $app->input->files->get('jform')['image']['error'] != 4 &&  $app->input->files->get('jform')['image']['size'] > 0)
@@ -1133,7 +1132,7 @@ class ImageModel extends JoomAdminModel
 
     if($table->load($pk))
     {
-      if($this->canRecreate($table)) 
+      if($this->canRecreate($table))
       {
         $context = $this->option . '.' . $this->name . '.recreate';
 
@@ -1241,7 +1240,7 @@ class ImageModel extends JoomAdminModel
           $table->ordering = $table->getNextOrder('catid = '.$table->catid);
           break;
       }
-    }    
+    }
 	}
 
   /**

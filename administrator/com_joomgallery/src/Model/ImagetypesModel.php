@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -18,7 +17,7 @@ use \Joomla\Registry\Registry;
 
 /**
  * Methods supporting a list of Image types records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -34,7 +33,7 @@ class ImagetypesModel extends JoomListModel
 
 	/**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
@@ -79,7 +78,7 @@ class ImagetypesModel extends JoomListModel
 
     foreach($items as $key => $item)
     {
-      if(property_exists($item, 'params')) 
+      if(property_exists($item, 'params'))
       {
         $items[$key]->params = new Registry($item->params);
       }

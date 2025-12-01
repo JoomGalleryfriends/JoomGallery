@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -21,7 +20,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 
 /**
  * Methods supporting a list of Images records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -37,7 +36,7 @@ class ImagesModel extends JoomListModel
 
 	/**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
@@ -162,8 +161,8 @@ class ImagesModel extends JoomListModel
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id .= ':' . $this->getState('filter.search');		
-		$id .= ':' . $this->getState('filter.published');		
+		$id .= ':' . $this->getState('filter.search');
+		$id .= ':' . $this->getState('filter.published');
 		$id .= ':' . $this->getState('filter.language');
     $id .= ':' . $this->getState('filter.showunapproved');
     $id .= ':' . $this->getState('filter.showhidden');
@@ -235,7 +234,7 @@ class ImagesModel extends JoomListModel
                ->where($db->quoteName('tr.tagid') . ' IN (' . \implode(',', \array_map('intval', $tag)) . ')')
                ->group($db->quoteName('tr.imgid'))
                ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
-      
+
       // Join the image table to the subquery
       $query->from('(' . \trim($subquery->__toString()) . ') AS imgs');
       $query->join('INNER', $db->quoteName('#__joomgallery', 'a') . ' ON ' . $db->quoteName('a.id') . ' = ' . $db->quoteName('imgs.imgid'));
@@ -248,7 +247,7 @@ class ImagesModel extends JoomListModel
 		// Join over the users for the checked out user
     $query->select($db->quoteName('uc.name', 'uEditor'));
     $query->join('LEFT', $db->quoteName('#__users', 'uc'), $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.checked_out'));
-    
+
 		// Join over the foreign key 'catid'
     $query->select(array($db->quoteName('category.title', 'cattitle'), $db->quoteName('category.created_by', 'cat_uid')));
     $query->join('LEFT', $db->quoteName('#__joomgallery_categories', 'category'), $db->quoteName('category.id') . ' = ' . $db->quoteName('a.catid'));
@@ -275,10 +274,10 @@ class ImagesModel extends JoomListModel
       $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
       $query->join('INNER', $db->quoteName('#__joomgallery_tags', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('tr.tagid'));
     }
-	
+
     // Filter by access level.
 		$filter_access = $this->state->get("filter.access");
-    
+
     if(!empty($filter_access))
 		{
       if(is_numeric($filter_access))
@@ -358,7 +357,7 @@ class ImagesModel extends JoomListModel
 
           // translate state
           $state = ($state == 3) ? 1 : 0;
-          
+
           // row name
           $row = 'a.approved';
         }
@@ -381,7 +380,7 @@ class ImagesModel extends JoomListModel
         {
           $query->where($db->quoteName($row) . ' = :state')
 					->bind(':state', $state, ParameterType::INTEGER);
-        }        
+        }
 			}
 		}
 
@@ -471,7 +470,7 @@ class ImagesModel extends JoomListModel
 		}
 
 		// Add the list ordering clause.
-		$orderCol  = $this->state->get('list.ordering', 'a.id'); 
+		$orderCol  = $this->state->get('list.ordering', 'a.id');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
     if($orderCol && $orderDirn)
     {
@@ -544,7 +543,7 @@ class ImagesModel extends JoomListModel
                ->where($db->quoteName('tr.tagid') . ' IN (' . \implode(',', \array_map('intval', $tag)) . ')')
                ->group($db->quoteName('tr.imgid'))
                ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
-      
+
       // Join the image table to the subquery
       $query->from('(' . \trim($subquery->__toString()) . ') AS imgs');
       $query->join('INNER', $db->quoteName('#__joomgallery', 'a') . ' ON ' . $db->quoteName('a.id') . ' = ' . $db->quoteName('imgs.imgid'));
@@ -560,10 +559,10 @@ class ImagesModel extends JoomListModel
       $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
       $query->join('INNER', $db->quoteName('#__joomgallery_tags', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('tr.tagid'));
     }
-	
+
     // Filter by access level.
 		$filter_access = $this->state->get("filter.access");
-    
+
     if(!empty($filter_access))
 		{
       if(is_numeric($filter_access))
@@ -643,7 +642,7 @@ class ImagesModel extends JoomListModel
 
           // translate state
           $state = ($state == 3) ? 1 : 0;
-          
+
           // row name
           $row = 'a.approved';
         }
@@ -666,7 +665,7 @@ class ImagesModel extends JoomListModel
         {
           $query->where($db->quoteName($row) . ' = :state')
 					->bind(':state', $state, ParameterType::INTEGER);
-        }        
+        }
 			}
 		}
 

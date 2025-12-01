@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -1376,7 +1375,7 @@ class MigrationModel extends JoomAdminModel
       Form::addFormPath(_JOOM_PATH_ADMIN . '/forms');
       $formFactory = Factory::getContainer()->get(FormFactoryInterface::class);
       $form        = $formFactory->createForm(_JOOM_OPTION.'.'.$type, ['control' => 'jform', 'load_data' => false]);
-      
+
       // Load form xml
       if($form->loadFile($type, false, null) == false)
       {

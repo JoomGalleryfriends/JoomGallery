@@ -9,7 +9,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -21,7 +20,7 @@ use \Joomla\Component\Scheduler\Administrator\Task\TaskOption;
 
 /*
  * Task model.
- * 
+ *
  * @package JoomGallery
  * @since   4.2.0
  */
@@ -99,7 +98,7 @@ class TaskModel extends JoomAdminModel
 				$this->item = $this->getItem();
 			}
 
-			$data = $this->item;			
+			$data = $this->item;
 		}
 
     // Add support for queue
