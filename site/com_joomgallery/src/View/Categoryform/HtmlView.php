@@ -11,7 +11,9 @@
 namespace Joomgallery\Component\Joomgallery\Site\View\Categoryform;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;

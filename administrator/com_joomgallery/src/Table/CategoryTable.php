@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Table\Asset;
@@ -487,6 +489,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     $checkQuery->where('level = 0');
 
     $db->setQuery($checkQuery);
+    $date = Factory::getDate();
 
     // Add root category
     if(empty($db->loadAssoc()))
@@ -504,6 +507,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       ->set('access = 1')
       ->set('published = 1')
       ->set('params = ' . $db->quote(''))
+      ->set('created_time = ' . $db->quote($date->toSql()))
+      ->set('modified_time = ' . $db->quote($date->toSql()))
       ->set('language = ' . $db->quote('*'))
       ->set('metadesc = ' . $db->quote(''))
       ->set('metakey = ' . $db->quote(''));

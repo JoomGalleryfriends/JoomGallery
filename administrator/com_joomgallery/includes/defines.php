@@ -8,7 +8,9 @@
 *****************************************************************************************/
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 define('_JOOM_OPTION',               'com_joomgallery');
 define('_JOOM_OPTION_UC',            'COM_JOOMGALLERY');

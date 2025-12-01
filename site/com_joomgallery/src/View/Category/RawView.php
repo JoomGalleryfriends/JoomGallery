@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\Language\Text;
 use \Joomgallery\Component\Joomgallery\Administrator\View\Category\RawView as AdminRawView;

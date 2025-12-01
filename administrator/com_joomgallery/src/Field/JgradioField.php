@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Radio field with useglobal option based on config service 
