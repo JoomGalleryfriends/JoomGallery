@@ -38,7 +38,9 @@ $finder = PhpCsFixer\Finder::create()
       __DIR__ . '/site',
     ]
   )
-  ->notPath('administrator/com_joomgallery/vendor')
+  ->exclude('vendor')
+  ->exclude('includes')
+  ->exclude('tools')
   ->name('*.php')
   ->ignoreDotFiles(true)
   ->ignoreVCS(true);
@@ -82,7 +84,7 @@ return (new PhpCsFixer\Config())
     'no_break_comment' => ['comment_text' => "'break' intentionally omitted"],
     'braces_position' => ['control_structures_opening_brace' => 'next_line_unless_newline_at_signature_end'],
     'control_structure_continuation_position' => ['position' => 'next_line'],
-    'function_typehint_space' => true,
+    'type_declaration_spaces' => ['elements' => ['function', 'property']],
     'method_argument_space' => ['on_multiline' => 'ignore'],
 
     // Imports
