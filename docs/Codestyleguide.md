@@ -1,5 +1,5 @@
 # Code Style Guide für die JoomGallery 4.x by JoomGalleryfriends
-Letzte Änderungen: 24.02.2025
+Letzte Änderungen: 01.12.2025
 [Change to the english version](Codestyleguide_en.md)
 
 ## Allgemeines
@@ -17,11 +17,18 @@ Letzte Änderungen: 24.02.2025
 5. Inhalt
 
 ### Datei-Header
-2. Komponentenname
-3. Author
-4. Copyright
-5. Lizenz
+```php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+```
 
+### Sonstiges
 - Funktionsnamen: Kleiner Anfangsbuchstabe, dann mit jedem neuen 'Wort' ein großer Buchstabe
 ```php
 buildCategoryQuery()
@@ -63,13 +70,13 @@ $date = new DateTime();
   - Dann Funktionen
   - Dann Konstanten
 
-2. Jede Gruppe nach Länge sortieren (kürzere Namen zuerst).
+2. Jede Gruppe dem Alphabet nach sortieren.
 
 #### RICHTIG
 ```php
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use function strlen;
 use const PHP_VERSION;
 ``
@@ -142,20 +149,9 @@ else if($integer == 2)
 
 ## Nachgestellte Kommas
 
-Einzeilige und mehrzeilige Listen dürfen kein abschließendes Komma enthalten.
+Einzeilige und mehrzeilige Listen dürfen ein abschließendes Komma enthalten.
 
 #### RICHTIG
-```php
-$values = ['a', 'b', 'c'];
-
-$values = [
-  'a',
-  'b',
-  'c'
-];
-```
-
-#### FALSCH
 ```php
 $values = ['a', 'b', 'c',];
 
@@ -166,7 +162,7 @@ $values = [
 ];
 ```
 
-### switch (Einige Dinge sind hier besonders zu beachten)
+### Switch (Einige Dinge sind hier besonders zu beachten)
 - Default muss IMMER erscheinen, auch wenn dieser Fall dann nur das break enthält
 - Falls ein break mit Absicht weggelassen wird, muss das durch einen Kommentar deutlich gemacht werden
 
@@ -530,16 +526,16 @@ $controller->execute(Factory::getApplication()->input->get('task', 'display', 'c
 
 ## Verschiedenes
 - require_once ist keine Funktion -> keine Klammern
-- Bei zusammengesetzten Ausdrücken keine Leerzeichen vor und nach den Punkten
+- Bei zusammengesetzten Ausdrücken Leerzeichen vor und nach den Punkten
 
 #### RICHTIG
 ```php
-require_once JPATH_COMPONENT.DS.'helpers'.DS.'messenger.php';
+require_once(JPATH_COMPONENT . DS . 'helpers'.DS.'messenger.php');
 ```
 
 #### FALSCH
 ```php
-require_once(JPATH_COMPONENT . DS . 'helpers'.DS.'messenger.php');
+require_once JPATH_COMPONENT.DS.'helpers'.DS.'messenger.php';
 ```
 
 - Möglichst immer nur einfache Anführungszeichen verwenden (Performance)
