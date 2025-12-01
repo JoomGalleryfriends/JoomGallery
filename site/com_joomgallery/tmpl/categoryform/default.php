@@ -9,13 +9,13 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -34,12 +34,12 @@ $lang->load('joomla', JPATH_ADMINISTRATOR);
 if($this->item->id)
 {
   // ID given -> edit
-  $canEdit  = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $this->item->id);
+  $canEdit = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $this->item->id);
 }
 else
 {
   // ID = null -> add
-  $canEdit  = $this->getAcl()->checkACL('add', 'com_joomgallery.category', 0, 1, true);
+  $canEdit = $this->getAcl()->checkACL('add', 'com_joomgallery.category', 0, 1, true);
 }
 $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
 ?>
@@ -51,7 +51,7 @@ $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
 		<form id="adminForm" action="<?php echo Route::_('index.php?option=com_joomgallery&controller=categoryform&id='.$this->item->id); ?>"
 			    method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data">
       <fieldset>
-        <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'category')); ?>
+        <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'category']); ?>
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'category', Text::_('JCATEGORY', true)); ?>
           <?php echo $this->form->renderField('title'); ?>
           <?php echo $this->form->renderField('alias'); ?>

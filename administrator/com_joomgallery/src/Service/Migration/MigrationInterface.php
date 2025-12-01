@@ -1,22 +1,23 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Table\Table;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
 use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
+use \Joomla\CMS\Table\Table;
 
 /**
  * Interface for the migration service class
@@ -41,7 +42,7 @@ interface MigrationInterface
   //  * (Required in migration scripts.)
   //  *
   //  * @var    boolean
-  //  * 
+  //  *
   //  * @since  4.0.0
   //  */
   // protected $sourceDeletion = false;
@@ -95,7 +96,7 @@ interface MigrationInterface
    * 
    * @since   4.0.0
    */
-  public function defineTypes($names_only=false, &$type=null): array;
+  public function defineTypes($names_only = false, &$type = null): array;
 
   /**
    * Returns a list of involved source directories.
@@ -216,7 +217,7 @@ interface MigrationInterface
    *
    * @since   4.0.0
    * @throws  \Exception
-  */
+   */
   public function getDB(string $target): array;
 
   /**
@@ -253,7 +254,7 @@ interface MigrationInterface
    * @since   4.0.0
    */
   public function getSourceTableInfo(string $type): array;
-  
+
   /**
    * Returns a list of involved source tables.
    * (Optional in migration scripts, can be overwritten if required.)
@@ -339,7 +340,7 @@ interface MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   public function scriptSpecificChecks(string $type, Checks &$checks, string $category);
 
   /**

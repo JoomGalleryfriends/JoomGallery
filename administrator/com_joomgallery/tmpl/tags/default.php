@@ -9,16 +9,16 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Button\PublishedButton;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -45,7 +45,7 @@ if($saveOrder && !empty($this->items))
 	<div class="row">
 		<div class="col-md-12">
 			<div id="j-main-container" class="j-main-container">
-			<?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+			<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <?php if (empty($this->items)) : ?>
           <div class="alert alert-info">
             <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
@@ -71,30 +71,30 @@ if($saveOrder && !empty($this->items))
                 </th>
               <?php endif; ?>
               <th scope="col" class="w-1 text-center">
-                <?php echo HTMLHelper::_('searchtools.sort',  'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
               </th>
               <th scope="col" style="min-width:180px">
-                <?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
               </th>
               <th scope="col" class="w-10 d-none d-md-table-cell">
-                <?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
+                <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
               </th>
               <?php if (Multilanguage::isEnabled()) : ?>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
                 </th>
               <?php endif; ?>
               <th scope="col" class="w-10 d-none d-md-table-cell text-center">
                 <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_TAGGED_ITEMS', 'countTaggedItems', $listDirn, $listOrder); ?>
               </th>
               <th scope="col" class="w-3 d-none d-lg-table-cell">
-                <?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
+                <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
               </th>
             </tr>
             </thead>
             <tfoot>
             <tr>
-              <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+              <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                 <?php echo $this->pagination->getListFooter(); ?>
               </td>
             </tr>
@@ -103,7 +103,7 @@ if($saveOrder && !empty($this->items))
             <?php foreach ($this->items as $i => $item) :
               $ordering   = ($listOrder == 'a.ordering');
               $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION.'.tag.1', $item->id);
-              $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || is_null($item->checked_out);
+              $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
               $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION.'.tag.1', $item->id) && $canCheckin;
               ?>
 
@@ -116,6 +116,7 @@ if($saveOrder && !empty($this->items))
                   <td class="text-center d-none d-md-table-cell">
                     <?php
                       $iconClass = '';
+
                       if (!$canChange)
                       {
                         $iconClass = ' inactive';
@@ -135,14 +136,14 @@ if($saveOrder && !empty($this->items))
                 <?php endif; ?>
 
                 <td class="image-status text-center">
-                  <?php 
+                  <?php
                     $options = [
                       'task_prefix' => 'tags.',
-                      'disabled' => !$canChange,
-                      'id' => 'state-' . $item->id
+                      'disabled'    => !$canChange,
+                      'id'          => 'state-' . $item->id,
                     ];
 
-                    echo (new PublishedButton)->render((int) $item->published, $i, $options); 
+                    echo (new PublishedButton)->render((int) $item->published, $i, $options);
                   ?>
                 </td>
 

@@ -1,25 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
+use \Joomla\CMS\Access\Rules;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Table\Table;
-use \Joomla\CMS\Access\Rules;
-use \Joomla\Registry\Registry;
 use \Joomla\Database\DatabaseDriver;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
+use \Joomla\Registry\Registry;
 
 /**
  * Config table
@@ -31,7 +32,7 @@ class ConfigTable extends Table
 {
   use JoomTableTrait;
   use AssetTableTrait;
-  
+
 	/**
 	 * Constructor
 	 *
@@ -40,8 +41,8 @@ class ConfigTable extends Table
 	 */
 	public function __construct(DatabaseDriver $db, bool $component_exists = true)
 	{
-		$this->component_exists = $component_exists;    
-		$this->typeAlias = _JOOM_OPTION.'.config';
+		$this->component_exists = $component_exists;
+		$this->typeAlias        = _JOOM_OPTION.'.config';
 
 		parent::__construct(_JOOM_TABLE_CONFIGS, 'id', $db);
 
@@ -58,7 +59,7 @@ class ConfigTable extends Table
 	 *
 	 * @see     Table:bind
 	 * @since   4.0.0
-   * 
+	 * 
 	 * @throws  \InvalidArgumentException
 	 */
 	public function bind($array, $ignore = '')
@@ -69,14 +70,15 @@ class ConfigTable extends Table
     // Support for title field: title
     if(\array_key_exists('title', $array))
     {
-      $array['title'] = \trim($array['title']);
+      $array['title'] = trim($array['title']);
+
       if(empty($array['title']))
       {
         $array['title'] = 'Unknown';
       }
     }
 
-		if($array['id'] == 0 && (!\key_exists('created_by', $array) || empty($array['created_by'])))
+		if($array['id'] == 0 && (!key_exists('created_by', $array) || empty($array['created_by'])))
 		{
 			$array['created_by'] = Factory::getApplication()->getIdentity()->id;
 		}
@@ -86,7 +88,7 @@ class ConfigTable extends Table
 			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
 		}
 
-		if($task == 'apply' || \strpos($task, 'save') !== false)
+		if($task == 'apply' || strpos($task, 'save') !== false)
 		{
 			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
 		}
@@ -141,10 +143,10 @@ class ConfigTable extends Table
 
 		// Support for multiple field: jg_downloadfile
 		$this->multipleFieldSupport($array, 'jg_downloadfile');
-    
+
     // Support for multiple field: jg_ratingcalctype
 		$this->multipleFieldSupport($array, 'jg_ratingcalctype');
-    
+
     // Support for number field: jg_maxusercat
     $this->numberFieldSupport($array, 'jg_maxusercat');
 
@@ -175,7 +177,7 @@ class ConfigTable extends Table
     // Support for multiple field: jg_record_hits_select
 		$this->multipleFieldSupport($array, 'jg_record_hits_select');
 
-    // 
+    //
 		if(isset($array['params']) && \is_array($array['params']))
 		{
 			$registry = new Registry;
@@ -208,7 +210,7 @@ class ConfigTable extends Table
 	public function check()
 	{
 		// If there is an ordering column and this is a new row then get the next ordering value
-		if(\property_exists($this, 'ordering') && $this->id == 0)
+		if(property_exists($this, 'ordering') && $this->id == 0)
 		{
 			$this->ordering = self::getNextOrder();
 		}
@@ -216,8 +218,9 @@ class ConfigTable extends Table
 		// Support for subform field jg_replaceinfo
 		if(\is_array($this->jg_replaceinfo))
 		{
-			$this->jg_replaceinfo = \json_encode($this->jg_replaceinfo, JSON_UNESCAPED_UNICODE);
+			$this->jg_replaceinfo = json_encode($this->jg_replaceinfo, JSON_UNESCAPED_UNICODE);
 		}
+
 		if(\is_null($this->jg_replaceinfo))
 		{
 			$this->jg_replaceinfo = '{}';
@@ -226,8 +229,9 @@ class ConfigTable extends Table
 		// Support for subform field jg_staticprocessing
 		if(\is_array($this->jg_staticprocessing))
 		{
-			$this->jg_staticprocessing = \json_encode($this->jg_staticprocessing, JSON_UNESCAPED_UNICODE);
+			$this->jg_staticprocessing = json_encode($this->jg_staticprocessing, JSON_UNESCAPED_UNICODE);
 		}
+
 		if(\is_null($this->jg_staticprocessing))
 		{
 			$this->jg_staticprocessing = '{}';
@@ -236,17 +240,18 @@ class ConfigTable extends Table
 		// Support for subform field jg_dynamicprocessing
 		if(\is_array($this->jg_dynamicprocessing))
 		{
-			$this->jg_dynamicprocessing = \json_encode($this->jg_dynamicprocessing, JSON_UNESCAPED_UNICODE);
+			$this->jg_dynamicprocessing = json_encode($this->jg_dynamicprocessing, JSON_UNESCAPED_UNICODE);
 		}
+
 		if(\is_null($this->jg_dynamicprocessing))
 		{
 			$this->jg_dynamicprocessing = '{}';
 		}
 
     // Support for media manager image select
-    if(!empty($this->jg_wmfile) && \strpos($this->jg_wmfile, '#') !== false)
+    if(!empty($this->jg_wmfile) && strpos($this->jg_wmfile, '#') !== false)
     {
-      $this->jg_wmfile = \explode('#', $this->jg_wmfile)[0];
+      $this->jg_wmfile = explode('#', $this->jg_wmfile)[0];
     }
 
 

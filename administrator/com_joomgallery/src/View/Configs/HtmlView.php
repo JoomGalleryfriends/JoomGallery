@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Configs;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\CMS\HTML\Helpers\Sidebar;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomla\CMS\HTML\Helpers\Sidebar;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomla\CMS\Toolbar\Toolbar;
+use \Joomla\CMS\Toolbar\ToolbarHelper;
+use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
  * View class for a list of Configs.
@@ -32,7 +33,7 @@ class HtmlView extends JoomGalleryView
 {
 	protected $items;
 
-	protected $pagination;	
+	protected $pagination;
 
 	/**
 	 * Display the view
@@ -48,14 +49,14 @@ class HtmlView extends JoomGalleryView
     /** @var ConfigsModel $model */
     $model = $this->getModel();
 
-    $this->state         = $model->getState();
-    $this->items         = $model->getItems();		
+    $this->state       = $model->getState();
+    $this->items       = $model->getItems();
 		$this->pagination    = $model->getPagination();
 		$this->filterForm    = $model->getFilterForm();
 		$this->activeFilters = $model->getActiveFilters();
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
@@ -75,7 +76,7 @@ class HtmlView extends JoomGalleryView
 	 */
 	protected function addToolbar()
 	{
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CONFIG_SETS'), "sliders-h");
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CONFIG_SETS'), 'sliders-h');
 
     /** @var Toolbar $model */
     $toolbar = $this->getToolbar();
@@ -168,12 +169,12 @@ class HtmlView extends JoomGalleryView
 	 */
 	protected function getSortFields()
 	{
-		return array(
-			'a.`id`' => Text::_('JGRID_HEADING_ID'),
-			'a.`published`' => Text::_('JSTATUS'),
-			'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
-			'a.`title`' => Text::_('JGLOBAL_TITLE'),
-			'a.`group_id`' => Text::_('COM_JOOMGALLERY_USER_GROUP'),
-		);
+		return [
+		  'a.`id`'        => Text::_('JGRID_HEADING_ID'),
+		  'a.`published`' => Text::_('JSTATUS'),
+		  'a.`ordering`'  => Text::_('JGRID_HEADING_ORDERING'),
+		  'a.`title`'     => Text::_('JGLOBAL_TITLE'),
+		  'a.`group_id`'  => Text::_('COM_JOOMGALLERY_USER_GROUP'),
+		];
 	}
 }

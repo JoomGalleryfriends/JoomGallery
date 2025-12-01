@@ -9,33 +9,33 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // image params
-$image_type        = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
-$show_title        = $this->params['configs']->get('jg_detail_view_show_title', 0, 'INT');
-$show_category     = $this->params['configs']->get('jg_detail_view_show_category', 0, 'INT');
-$show_description  = $this->params['configs']->get('jg_detail_view_show_description', 0, 'INT');
-$show_imgdate      = $this->params['configs']->get('jg_detail_view_show_imgdate', 0, 'INT');
-$show_imgauthor    = $this->params['configs']->get('jg_detail_view_show_imgauthor', 0, 'INT');
-$show_created_by   = $this->params['configs']->get('jg_detail_view_show_created_by', 0, 'INT');
-$show_votes        = $this->params['configs']->get('jg_detail_view_show_votes', 0, 'INT');
-$show_rating       = $this->params['configs']->get('jg_detail_view_show_rating', 0, 'INT');
-$show_hits         = $this->params['configs']->get('jg_detail_view_show_hits', 0, 'INT');
-$show_downloads    = $this->params['configs']->get('jg_detail_view_show_downloads', 0, 'INT');
-$show_tags         = $this->params['configs']->get('jg_detail_view_show_tags', 0, 'INT');
-$show_metadata     = $this->params['configs']->get('jg_detail_view_show_metadata', 0, 'INT');
+$image_type       = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
+$show_title       = $this->params['configs']->get('jg_detail_view_show_title', 0, 'INT');
+$show_category    = $this->params['configs']->get('jg_detail_view_show_category', 0, 'INT');
+$show_description = $this->params['configs']->get('jg_detail_view_show_description', 0, 'INT');
+$show_imgdate     = $this->params['configs']->get('jg_detail_view_show_imgdate', 0, 'INT');
+$show_imgauthor   = $this->params['configs']->get('jg_detail_view_show_imgauthor', 0, 'INT');
+$show_created_by  = $this->params['configs']->get('jg_detail_view_show_created_by', 0, 'INT');
+$show_votes       = $this->params['configs']->get('jg_detail_view_show_votes', 0, 'INT');
+$show_rating      = $this->params['configs']->get('jg_detail_view_show_rating', 0, 'INT');
+$show_hits        = $this->params['configs']->get('jg_detail_view_show_hits', 0, 'INT');
+$show_downloads   = $this->params['configs']->get('jg_detail_view_show_downloads', 0, 'INT');
+$show_tags        = $this->params['configs']->get('jg_detail_view_show_tags', 0, 'INT');
+$show_metadata    = $this->params['configs']->get('jg_detail_view_show_metadata', 0, 'INT');
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -50,11 +50,11 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('image', $this->item->id, $
 
 // Tags
 $tagLayout = new FileLayout('joomgallery.content.tags');
-$tags = $tagLayout->render($this->item->tags);
+$tags      = $tagLayout->render($this->item->tags);
 
 // Metadata
 $metadataLayout = new FileLayout('joomgallery.content.metadata');
-$metadata = $metadataLayout->render($this->item->imgmetadata);
+$metadata       = $metadataLayout->render($this->item->imgmetadata);
 
 // Custom Fields
 $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
@@ -75,33 +75,33 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
   <div class="mb-3">
     <?php if ($canCheckin && $this->item->checked_out > 0): ?>
       <a class="btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&task=image.checkin&id='.$this->item->id.'&return='.$returnURL.'&'.Session::getFormToken().'=1'); ?>">
-        <?php echo Text::_("JLIB_HTML_CHECKIN"); ?>
+        <?php echo Text::_('JLIB_HTML_CHECKIN'); ?>
       </a>
     <?php endif; ?>
 
     <?php if ($canEdit): ?>
       <a class="btn btn-outline-primary<?php echo ($this->item->checked_out > 0) ? ' disabled' : ''; ?>" href="<?php echo Route::_('index.php?option=com_joomgallery&task=image.edit&id='.$this->item->id.'&return='.$returnURL); ?>" <?php echo ($this->item->checked_out > 0) ? 'disabled' : ''; ?>>
-        <i class="jg-icon-edit"></i><span><?php echo Text::_("JGLOBAL_EDIT"); ?></span>
+        <i class="jg-icon-edit"></i><span><?php echo Text::_('JGLOBAL_EDIT'); ?></span>
       </a>
     <?php endif; ?>
 
     <?php if ($canDelete) : ?>
       <a class="btn btn-danger<?php echo ($this->item->checked_out > 0) ? ' disabled' : ''; ?>" rel="noopener noreferrer" href="#deleteModal" role="button" data-bs-toggle="modal" <?php echo ($this->item->checked_out > 0) ? 'disabled' : ''; ?>>
-        <i class="jg-icon-delete"></i><span><?php echo Text::_("JACTION_DELETE"); ?></span>
+        <i class="jg-icon-delete"></i><span><?php echo Text::_('JACTION_DELETE'); ?></span>
       </a>
 
       <?php echo HTMLHelper::_(
                                 'bootstrap.renderModal',
                                 'deleteModal',
-                                array(
-                                    'title'  => Text::_('JACTION_DELETE'),
-                                    'height' => '50%',
-                                    'width'  => '20%',
+                                [
+                                  'title'  => Text::_('JACTION_DELETE'),
+                                  'height' => '50%',
+                                  'width'  => '20%',
 
-                                    'modalWidth'  => '50',
-                                    'bodyHeight'  => '100',
-                                    'footer' => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=image.remove&id='.$this->item->id.'&return='.$returnURL.'&'.Session::getFormToken().'=1', false, 2) .'" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_IMAGE_TIPCAPTION') .'</a>'
-                                ),
+                                  'modalWidth' => '50',
+                                  'bodyHeight' => '100',
+                                  'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=image.remove&id='.$this->item->id.'&return='.$returnURL.'&'.Session::getFormToken().'=1', false, 2) .'" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_IMAGE_TIPCAPTION') .'</a>',
+                                ],
                                 Text::_('COM_JOOMGALLERY_COMMON_ALERT_SURE_DELETE_SELECTED_ITEM')
                               );
       ?>
@@ -188,7 +188,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
             <td><?php echo $metadata; ?></td>
           </tr>
         <?php endif; ?>
-        <?php if (count($fields) > 0) : ?>
+        <?php if (\count($fields) > 0) : ?>
           <tr>
             <th><strong><?php echo Text::_('JGLOBAL_FIELDS'); ?></strong></th>
             <td></td>

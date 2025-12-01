@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\Utilities\ArrayHelper;
-use \Joomla\Database\ParameterType;
 use \Joomla\CMS\Form\Field\ListField;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
 use \Joomla\Database\DatabaseInterface;
+use \Joomla\Database\ParameterType;
+use \Joomla\Utilities\ArrayHelper;
 
 /**
  * Category Edit field for JoomGallery
@@ -81,7 +82,7 @@ class JgcategorydropdownField extends ListField
 
 		if ($return)
 		{
-			$this->allowAdd = isset($this->element['allowAdd']) ? (boolean) $this->element['allowAdd'] : false;
+			$this->allowAdd     = isset($this->element['allowAdd']) ? (boolean) $this->element['allowAdd'] : false;
 			$this->customPrefix = (string) $this->element['customPrefix'];
 		}
 
@@ -127,7 +128,7 @@ class JgcategorydropdownField extends ListField
 		switch ($name)
 		{
 			case 'allowAdd':
-				$value = (string) $value;
+				$value       = (string) $value;
 				$this->$name = ($value === 'true' || $value === $name || $value === '1');
 				break;
 			case 'customPrefix':
@@ -149,9 +150,9 @@ class JgcategorydropdownField extends ListField
 	 */
 	protected function getOptions()
 	{
-		$options = array();
-		$published = $this->element['published'] ? \explode(',', (string) $this->element['published']) : array(0, 1);
-		$name = (string) $this->element['name'];
+		$options   = [];
+		$published = $this->element['published'] ? explode(',', (string) $this->element['published']) : [0, 1];
+		$name      = (string) $this->element['name'];
 
 		// Let's get the id for the current item, either category or content item.
 		$jinput = Factory::getApplication()->input;
@@ -161,20 +162,20 @@ class JgcategorydropdownField extends ListField
 		// For categories the old category is the category id or 0 for new category.
 		if ($this->element['parent'] || ($jinput->get('option') == _JOOM_OPTION && $jinput->get('view') == 'category'))
 		{
-			$oldCat = $jinput->get('id', 0);
+			$oldCat    = $jinput->get('id', 0);
 			$oldParent = $this->form->getValue($name, 0);
 			$extension = $this->element['extension'] ? (string) $this->element['extension'] : (string) $jinput->get('extension', _JOOM_OPTION);
 		}
 		else
 			// For items the old category is the category they are in when opened or 0 if new.
 		{
-			$oldCat = $this->form->getValue($name, 0);
+			$oldCat    = $this->form->getValue($name, 0);
 			$extension = $this->element['extension'] ? (string) $this->element['extension'] : (string) $jinput->get('option', _JOOM_OPTION);
 		}
 
 		// Account for case that a submitted form has a multi-value category id field (e.g. a filtering form), just use the first category
 		$oldCat = \is_array($oldCat)
-			? (int) \reset($oldCat)
+			? (int) reset($oldCat)
 			: (int) $oldCat;
 
 		// Initialize needed classes
@@ -184,19 +185,19 @@ class JgcategorydropdownField extends ListField
 
 		// Get access service
 		$comp->createAccess();
-    $acl  = $comp->getAccess();
+    $acl = $comp->getAccess();
 
 		$query = $db->getQuery(true)
 			->select(
 				[
-					$db->quoteName('a.id', 'value'),
-					$db->quoteName('a.title', 'text'),
-					$db->quoteName('a.level'),
-					$db->quoteName('a.published'),
-          $db->quoteName('a.hidden'),
-          $db->quoteName('a.in_hidden'),
-					$db->quoteName('a.lft'),
-					$db->quoteName('a.language'),
+				  $db->quoteName('a.id', 'value'),
+				  $db->quoteName('a.title', 'text'),
+				  $db->quoteName('a.level'),
+				  $db->quoteName('a.published'),
+				  $db->quoteName('a.hidden'),
+				  $db->quoteName('a.in_hidden'),
+				  $db->quoteName('a.lft'),
+				  $db->quoteName('a.language'),
 				]
 			)
 			->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'a'));
@@ -206,7 +207,7 @@ class JgcategorydropdownField extends ListField
 		{
 			if (strpos($this->element['language'], ',') !== false)
 			{
-				$language = \explode(',', $this->element['language']);
+				$language = explode(',', $this->element['language']);
 			}
 			else
 			{
@@ -266,7 +267,7 @@ class JgcategorydropdownField extends ListField
 		}
 
 		// Pad the option text with spaces using depth level as a multiplier.
-		for ($i = 0, $n = count($options); $i < $n; $i++)
+		for ($i = 0, $n = \count($options); $i < $n; $i++)
 		{
 			// Translate ROOT
 			if ($this->element['parent'] == true || ($jinput->get('option') == _JOOM_OPTION && $jinput->get('view') == 'category'))
@@ -279,11 +280,11 @@ class JgcategorydropdownField extends ListField
 
 			if ($options[$i]->published == 1 && $options[$i]->hidden == 0 && $options[$i]->in_hidden == 0 || $options[$i]->level == 0)
 			{
-				$options[$i]->text = \str_repeat('- ', !$options[$i]->level ? 0 : $options[$i]->level - 1) . $options[$i]->text;
+				$options[$i]->text = str_repeat('- ', !$options[$i]->level ? 0 : $options[$i]->level - 1) . $options[$i]->text;
 			}
 			else
 			{
-				$options[$i]->text = \str_repeat('- ', !$options[$i]->level ? 0 : $options[$i]->level - 1) . '[' . $options[$i]->text . ']';
+				$options[$i]->text = str_repeat('- ', !$options[$i]->level ? 0 : $options[$i]->level - 1) . '[' . $options[$i]->text . ']';
 			}
 
 			// Displays language code if not set to All
@@ -328,7 +329,7 @@ class JgcategorydropdownField extends ListField
 					continue;
 				}
 
-				if ($option->level != 0	&& isset($oldParent) && $option->value != $oldParent && !$acl->checkACL('core.edit.state', $assetKey))
+				if ($option->level != 0 && isset($oldParent) && $option->value != $oldParent && !$acl->checkACL('core.edit.state', $assetKey))
 				{
 					unset($options[$i]);
 					continue;
@@ -346,7 +347,7 @@ class JgcategorydropdownField extends ListField
 					continue;
 				}
 
-				if ($option->level != 0	&& isset($oldParent) && $option->value != $oldParent && !$acl->checkACL('core.create', $assetKey, 0, $option->value, true))
+				if ($option->level != 0 && isset($oldParent) && $option->value != $oldParent && !$acl->checkACL('core.create', $assetKey, 0, $option->value, true))
 				{
 					unset($options[$i]);
 				}
@@ -360,10 +361,10 @@ class JgcategorydropdownField extends ListField
 			$rowQuery = $db->getQuery(true)
 				->select(
 					[
-						$db->quoteName('a.id', 'value'),
-						$db->quoteName('a.title', 'text'),
-						$db->quoteName('a.level'),
-						$db->quoteName('a.parent_id'),
+					  $db->quoteName('a.id', 'value'),
+					  $db->quoteName('a.title', 'text'),
+					  $db->quoteName('a.level'),
+					  $db->quoteName('a.parent_id'),
 					]
 				)
 				->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'a'))
@@ -374,16 +375,16 @@ class JgcategorydropdownField extends ListField
 
 			if ($row->parent_id == '1')
 			{
-				$parent = new \stdClass;
+				$parent       = new \stdClass;
 				$parent->text = Text::_('JGLOBAL_ROOT_PARENT');
-				\array_unshift($options, $parent);
+				array_unshift($options, $parent);
 			}
 
-			\array_unshift($options, HTMLHelper::_('select.option', '0', Text::_('JGLOBAL_ROOT')));
+			array_unshift($options, HTMLHelper::_('select.option', '0', Text::_('JGLOBAL_ROOT')));
 		}
 
 		// Merge any additional options in the XML definition.
-		return \array_merge(parent::getOptions(), $options);
+		return array_merge(parent::getOptions(), $options);
 	}
 
 	/**

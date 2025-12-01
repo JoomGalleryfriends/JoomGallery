@@ -1,54 +1,55 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
+
 use \Joomla\Filesystem\File as JFile;
 use \Joomla\Filesystem\Path as JPath;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-
 /**
-* Uploader helper class (Standard HTML Upload)
-*
-* @since  4.0.0
-*/
+ * Uploader helper class (Standard HTML Upload)
+ *
+ * @since  4.0.0
+ */
 class HTMLUploader extends BaseUploader implements UploaderInterface
 {
 	/**
 	 * Method to retrieve an uploaded image. Step 1.
-   * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
+	 * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
 	 *
-   * @param   array    $data        Form data (as reference)
-   * @param   bool     $filename    True, if the filename has to be created (default: True)
-   *
+	 * @param   array    $data        Form data (as reference)
+	 * @param   bool     $filename    True, if the filename has to be created (default: True)
+	 *
 	 * @return  bool     True on success, false otherwise
 	 *
 	 * @since  4.0.0
 	 */
-	public function retrieveImage(&$data, $filename=True): bool
-  {
+	public function retrieveImage(&$data, $filename = True): bool
+	{
     $user = Factory::getUser();
     $app  = Factory::getApplication();
 
     // Retrieve request image file data
     if(\array_key_exists('image', $app->input->files->get('jform')) && !empty($app->input->files->get('jform')['image']))
     {
-      $data['images'] = array();
-      \array_push($data['images'], $app->input->files->get('jform')['image']);
+      $data['images'] = [];
+      array_push($data['images'], $app->input->files->get('jform')['image']);
     }
 
     if(\count($data['images']) > 1)
@@ -60,7 +61,7 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
       $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_IMAGE_NBR_PROCESSING', $this->filecounter + 1));
     }
 
-    $image = $data['images'][$this->filecounter-1];
+    $image = $data['images'][$this->filecounter - 1];
 
     // Check for upload error codes
     if($image['error'] > 0)
@@ -105,7 +106,8 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
 
     // Upload file to temp file
     $this->src_file = JPath::clean(\dirname($this->src_tmp).\DIRECTORY_SEPARATOR.$this->src_name);
-    $return = JFile::upload($this->src_tmp, $this->src_file);
+    $return         = JFile::upload($this->src_tmp, $this->src_file);
+
     if(!$return)
     {
       $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MOVING_FILE', $this->src_file));
@@ -136,7 +138,7 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
   public function overrideData(&$data): bool
   {
     // Get upload date
-    if(empty($data['date']) || \strpos($data['date'], '1900-01-01') !== false)
+    if(empty($data['date']) || strpos($data['date'], '1900-01-01') !== false)
     {
       $data['date'] = $data['created_time'];
     }
@@ -157,23 +159,25 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
   public function checkError($uploaderror): string
   {
     // Common PHP errors
-    $uploadErrors = array(
+    $uploadErrors = [
       1 => Text::_('COM_JOOMGALLERY_ERROR_PHP_MAXFILESIZE'),
       2 => Text::_('COM_JOOMGALLERY_ERROR_HTML_MAXFILESIZE'),
       3 => Text::_('COM_JOOMGALLERY_ERROR_FILE_PARTLY_UPLOADED'),
-      4 => Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED')
-    );
+      4 => Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED'),
+    ];
 
-    if(in_array($uploaderror, $uploadErrors))
+    if(\in_array($uploaderror, $uploadErrors))
     {
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', $uploadErrors[$uploaderror]), 'error', 'jerror');
+
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', $uploadErrors[$uploaderror]);
     }
-    else
-    {
+
+
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN')), 'error', 'jerror');
+
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
-    }
+
   }
 
   /**
@@ -190,13 +194,13 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
     $app   = Factory::getApplication();
     $files = $app->input->files->get('jform');
 
-    if($files && \array_key_exists('image', $files) && !empty($files['image']) && $files['image']['error'] != 4 &&  $files['image']['size'] > 0)
-		{
+    if($files && \array_key_exists('image', $files) && !empty($files['image']) && $files['image']['error'] != 4 && $files['image']['size'] > 0)
+    {
       return true;
     }
-    else
-    {
+
+
       return false;
-    }
+
   }
 }

@@ -1,22 +1,23 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomla\CMS\Button\ActionButton;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Layout\FileLayout;
-use \Joomla\CMS\Button\ActionButton;
 
 /**
  * The ApprovedButton class.
@@ -54,7 +55,7 @@ class ApprovedButton extends ActionButton
 		return parent::render($value, $row, $options);
 	}
 
-  /**
+	/**
 	 * Method to get the CSS class name for an icon identifier.
 	 *
 	 * Can be redefined in the final class.
@@ -79,11 +80,11 @@ class ApprovedButton extends ActionButton
       case 'unapprove':
         $identifier = 'unpublish';
         break;
-      
+
       default:
         break;
     }
 
-		return $layout->render(array('icon' => $identifier));
+		return $layout->render(['icon' => $identifier]);
 	}
 }

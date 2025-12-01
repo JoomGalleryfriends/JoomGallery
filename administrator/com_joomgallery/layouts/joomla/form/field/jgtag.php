@@ -8,13 +8,13 @@
 *****************************************************************************************/
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use \Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
 extract($displayData);
 
@@ -55,7 +55,7 @@ extract($displayData);
  * @var   array    $dataAttributes  Miscellaneous data attributes for eg, data-*.
  */
 
-$html = array();
+$html = [];
 $attr = '';
 
 // Initialize some field attributes.
@@ -65,21 +65,24 @@ $attr .= $onchange ? ' onchange="' . $onchange . '"' : '';
 $attr .= $dataAttribute;
 
 // To avoid user's confusion, readonly="readonly" should imply disabled="disabled".
-if ($readonly || $disabled) {
+if ($readonly || $disabled)
+{
     $attr .= ' disabled="disabled"';
 }
 
-$attr2  = '';
+$attr2 = '';
 $attr2 .= !empty($class) ? ' class="' . $class . '"' : '';
 $attr2 .= ' placeholder="' . $this->escape($hint ?: Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_TAGS')) . '" ';
 $attr2 .= $dataAttribute;
 
-if ($allowCustom) {
+if ($allowCustom)
+{
     $attr2 .= $allowCustom ? ' allow-custom' : '';
     $attr2 .= $allowCustom ? ' new-item-prefix="#new#"' : '';
 }
 
-if ($remoteSearch) {
+if ($remoteSearch)
+{
     $attr2 .= ' remote-search';
     //$attr2 .= ' url="' . Uri::root(true) . '/index.php?option=com_tags&task=tags.searchAjax"';
     $attr2 .= ' url="'.Route::_('index.php?option=com_joomgallery&task=tags.searchAjax').'"';
@@ -87,28 +90,36 @@ if ($remoteSearch) {
     $attr2 .= ' min-term-length="' . $minTermLength . '"';
 }
 
-if ($required) {
-    $attr  .= ' required class="required"';
+if ($required)
+{
+    $attr .= ' required class="required"';
     $attr2 .= ' required';
 }
 
 // Create a read-only list (no name) with hidden input(s) to store the value(s).
-if ($readonly) {
+if ($readonly)
+{
     $html[] = HTMLHelper::_('select.genericlist', $options, '', trim($attr), 'value', 'text', $value, $id);
 
     // E.g. form field type tag sends $this->value as array
-    if ($multiple && is_array($value)) {
-        if (!count($value)) {
+    if ($multiple && \is_array($value))
+    {
+        if (!\count($value))
+        {
             $value[] = '';
         }
 
-        foreach ($value as $val) {
+        foreach ($value as $val)
+        {
             $html[] = '<input type="hidden" name="' . $name . '" value="' . htmlspecialchars($val, ENT_COMPAT, 'UTF-8') . '">';
         }
-    } else {
+    }
+    else
+    {
         $html[] = '<input type="hidden" name="' . $name . '" value="' . htmlspecialchars($value, ENT_COMPAT, 'UTF-8') . '">';
     }
-} else // Create a regular list.
+}
+else // Create a regular list.
 {
     $html[] = HTMLHelper::_('select.genericlist', $options, $name, trim($attr), 'value', 'text', $value, $id);
 }

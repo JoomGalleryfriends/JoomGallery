@@ -9,7 +9,7 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Language\Text;
@@ -59,8 +59,8 @@ $blockEnd    = $isBtnGroup ? '' : '</div>';
 // Set global value in first option
 if(strpos($options[0]->text, '%s') !== false)
 {
-  $globvalue         = $globvalue ? Text::_('JYES') : Text::_('JNO');
-  $options[0]->text  = str_replace('%s', $globvalue, $options[0]->text);
+  $globvalue        = $globvalue ? Text::_('JYES') : Text::_('JNO');
+  $options[0]->text = str_replace('%s', $globvalue, $options[0]->text);
 }
 
 // Add the attributes of the fieldset in an array
@@ -68,23 +68,28 @@ $containerClass = trim($class . ' radio' . ($readonly || $disabled ? ' disabled'
 
 $attribs = ['id="' . $id . '"'];
 
-if (!empty($disabled)) {
+if (!empty($disabled))
+{
     $attribs[] = 'disabled';
 }
 
-if (!empty($autofocus)) {
+if (!empty($autofocus))
+{
     $attribs[] = 'autofocus';
 }
 
-if ($required) {
+if ($required)
+{
     $attribs[] = 'class="required radio"';
 }
 
-if ($readonly || $disabled) {
+if ($readonly || $disabled)
+{
     $attribs[] = 'style="pointer-events: none"';
 }
 
-if ($dataAttribute) {
+if ($dataAttribute)
+{
     $attribs[] = $dataAttribute;
 }
 
@@ -101,9 +106,11 @@ if ($dataAttribute) {
                 $style    = $disabled ? ' style="pointer-events: none"' : '';
 
                 // Initialize some option attributes.
-                if ($isBtnYesNo) {
+                if ($isBtnYesNo)
+                {
                     // Set the button classes for the yes/no group
-                    switch ($option->value) {
+                    switch ($option->value)
+                    {
                         case '0':
                             $btnClass = 'btn btn-outline-danger';
                             break;
@@ -125,7 +132,7 @@ if ($dataAttribute) {
                 $onchange   = !empty($option->onchange) ? 'onchange="' . $option->onchange . '"' : '';
                 $oid        = $id . $i;
                 $ovalue     = htmlspecialchars($option->value, ENT_COMPAT, 'UTF-8');
-                $attributes = array_filter(array($checked, $disabled, ltrim($style), $onchange, $onclick));
+                $attributes = array_filter([$checked, $disabled, ltrim($style), $onchange, $onclick]);
                 ?>
                 <?php if ($required) : ?>
                     <?php $attributes[] = 'required'; ?>

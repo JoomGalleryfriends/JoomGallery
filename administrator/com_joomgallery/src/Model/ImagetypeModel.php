@@ -1,21 +1,22 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomla\CMS\Object\CMSObject;
 use \Joomla\Registry\Registry;
 use \Joomla\Utilities\ArrayHelper;
-use \Joomla\CMS\Object\CMSObject;
 
 /**
  * Imagetype model.
@@ -33,7 +34,7 @@ class ImagetypeModel extends JoomAdminModel
    */
   protected $type = 'imagetype';
 
-  /**
+	/**
 	 * Method to get the data that should be injected in the form.
 	 *
 	 * @return  mixed  The data for the form.
@@ -50,7 +51,7 @@ class ImagetypeModel extends JoomAdminModel
 		return $this->item;
 	}
 
-  /**
+	/**
 	 * Method to get a single record.
 	 *
 	 * @param   integer|array  $pk  The id of the primary key or array(fieldname => value)
@@ -61,7 +62,7 @@ class ImagetypeModel extends JoomAdminModel
 	 */
 	public function getItem($pk = null)
 	{
-    $pk = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
+    $pk  = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
 		$table = $this->getTable();
 
 		if($pk > 0 || \is_array($pk))
@@ -93,8 +94,8 @@ class ImagetypeModel extends JoomAdminModel
 		$item       = ArrayHelper::toObject($properties);
 
     if(property_exists($item, 'params'))
-		{
-			$registry = new Registry($item->params);
+    {
+			$registry     = new Registry($item->params);
 			$item->params = $registry->toArray();
 		}
 

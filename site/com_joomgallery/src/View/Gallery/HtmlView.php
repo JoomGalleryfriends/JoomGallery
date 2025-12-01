@@ -1,23 +1,23 @@
 <?php
-
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Gallery;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a gallery view of Joomgallery.
@@ -33,17 +33,17 @@ class HtmlView extends JoomGalleryView
 	 * @var  \stdClass
 	 */
 	protected $item;
-	
-  /**
+
+	/**
 	 * The page parameters
 	 *
 	 * @var    array
 	 *
 	 * @since  4.0.0
 	 */
-	protected $params = array();
+	protected $params = [];
 
-  /**
+	/**
 	 * Display the view
 	 *
 	 * @param   string  $tpl  Template name
@@ -54,20 +54,20 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		/** @var GalleryModel $model */
+    /** @var GalleryModel $model */
     $model = $this->getModel();
 
-    $this->state  = $model->getState();
-		$this->params = $model->getParams();
-		$this->item   = $model->getItem();
+    $this->state = $model->getState();
+		$this->params  = $model->getParams();
+		$this->item    = $model->getItem();
 
     // Load images
-    $this->item->images = new \stdClass();
+    $this->item->images             = new \stdClass();
     $this->item->images->items      = $model->getImages();
     $this->item->images->pagination = $model->getImagesPagination();
 
     // Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
@@ -77,7 +77,7 @@ class HtmlView extends JoomGalleryView
     parent::display($tpl);
   }
 
-  /**
+	/**
 	 * Prepares the document
 	 *
 	 * @return void

@@ -9,14 +9,14 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -32,7 +32,7 @@ if(property_exists($this, 'filesystem_js'))
 
 HTMLHelper::_('bootstrap.tooltip');
 
-$app = Factory::getApplication();
+$app       = Factory::getApplication();
 $form      = $this->getForm();
 $fieldSets = $form->getFieldsets();
 
@@ -58,7 +58,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   </div>
 
   <div class="main-card">
-	<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'category', 'recall' => true, 'breakpoint' => 768)); ?>
+	<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'category', 'recall' => true, 'breakpoint' => 768]); ?>
 	
   <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'category', Text::_('JCATEGORY', true)); ?>
 	<div class="row">
@@ -106,7 +106,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
   <?php foreach ($fieldSets as $name => $fieldSet) :?>
-    <?php if (strpos($name,'fields-') !== 0) continue; ?>
+    <?php if (strpos($name, 'fields-') !== 0) continue; ?>
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', $name, Text::_($fieldSet->label)); ?>
       <?php $this->fieldset = $name; ?>
       <?php echo LayoutHelper::render('joomla.edit.fieldset', $this); ?>
@@ -153,13 +153,13 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 	</div>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-	<?php if($this->getAcl()->checkACL('core.admin','joomgallery')) : ?>
+	<?php if($this->getAcl()->checkACL('core.admin', 'joomgallery')) : ?>
 		<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'permissions', Text::_('COM_JOOMGALLERY_ACTION_CAT_PERMISSIONS_LABEL', true)); ?>
 			<?php echo $this->form->getInput('rules'); ?>
 		<?php echo HTMLHelper::_('uitab.endTab'); ?>
   <?php endif; ?>
 
-	<?php if($this->getAcl()->checkACL('core.admin','joomgallery')) : ?>
+	<?php if($this->getAcl()->checkACL('core.admin', 'joomgallery')) : ?>
 		<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'image-permissions', Text::_('COM_JOOMGALLERY_ACTION_IMAGE_PERMISSIONS_LABEL', true)); ?>
 			<?php echo $this->form->getInput('rules-image'); ?>
 		<?php echo HTMLHelper::_('uitab.endTab'); ?>

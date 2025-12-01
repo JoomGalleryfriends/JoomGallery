@@ -9,7 +9,7 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
@@ -47,14 +47,15 @@ if($multiple)
 }
 
 // Get input variables
-$input  = Factory::getApplication()->input;
+$input = Factory::getApplication()->input;
 
 $option = $input->get('option');
 $view   = $input->get('view');
-$id     = $input->get('id',0,'integer');
+$id     = $input->get('id', 0, 'integer');
 
 // Guess config id
 $is_global_config = false;
+
 if($option == 'com_joomgallery' && $view == 'config' && $id === 1)
 {
   $is_global_config = true;
@@ -63,10 +64,11 @@ if($option == 'com_joomgallery' && $view == 'config' && $id === 1)
 $class = $class ? ' ' . $class : '';
 
 // Build heading
-$table_head = '';
-$subforms_with_popup = array('jg_staticprocessing', 'jg_dynamicprocessing');
+$table_head          = '';
+$subforms_with_popup = ['jg_staticprocessing', 'jg_dynamicprocessing'];
 
 $i = 0;
+
 foreach ($tmpl->getGroup('') as $field)
 {
   if($i < 2)
@@ -85,7 +87,8 @@ foreach ($tmpl->getGroup('') as $field)
 }
 
 $section = 'section';
-if(in_array($fieldname, $subforms_with_popup))
+
+if(\in_array($fieldname, $subforms_with_popup))
 {
   $table_head .= '<th scope="col">'.Text::_('COM_JOOMGALLERY_SETTINGS').'</th>';
   $section = 'sectionWithPopup';
@@ -128,7 +131,7 @@ Factory::getApplication()
 				<tbody class="subform-repeatable-container">
 				<?php
 				foreach ($forms as $k => $form) :
-            echo $this->sublayout($section, array('label' => $label, 'form' => $form, 'basegroup' => $fieldname, 'group' => $fieldname . $k, 'buttons' => $buttons, 'is_global_config' => $is_global_config));		
+            echo $this->sublayout($section, ['label' => $label, 'form' => $form, 'basegroup' => $fieldname, 'group' => $fieldname . $k, 'buttons' => $buttons, 'is_global_config' => $is_global_config]);
 				endforeach;
 				?>
 				</tbody>
@@ -136,7 +139,7 @@ Factory::getApplication()
 		</div>
 		<?php if ($multiple) : ?>
 		<template class="subform-repeatable-template-section hidden">
-			<?php echo trim($this->sublayout($section, array('label' => $label, 'form' => $tmpl, 'basegroup' => $fieldname, 'group' => $fieldname . 'X', 'buttons' => $buttons, 'is_global_config' => $is_global_config))); ?>
+			<?php echo trim($this->sublayout($section, ['label' => $label, 'form' => $tmpl, 'basegroup' => $fieldname, 'group' => $fieldname . 'X', 'buttons' => $buttons, 'is_global_config' => $is_global_config])); ?>
 		</template>
 		<?php endif; ?>
 	</joomla-field-subform>

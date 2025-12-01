@@ -1,30 +1,31 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Psr\Http\Message\ResponseInterface;
-
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
+
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Request;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
+use \Joomla\CMS\Factory;
+use \Psr\Http\Message\ResponseInterface;
 
 /**
  * Tus-Server v1.0.0 implementation
@@ -43,8 +44,8 @@ class Server implements ServerInterface
 {
     use ResponseTrait;
 
-    public const TIMEOUT = 30;
-    public const TUS_VERSION = '1.0.0';
+    public const TIMEOUT        = 30;
+    public const TUS_VERSION    = '1.0.0';
     public const TUS_EXTENSIONS = 'creation,termination';
 
     /**
@@ -131,7 +132,7 @@ class Server implements ServerInterface
      *
      * @var string
      */
-    private $fileType  = '';
+    private $fileType = '';
 
     /**
      * Name of the uploaded file
@@ -155,7 +156,7 @@ class Server implements ServerInterface
         $this->setDirectory($directory);
         $this->setLocation($location);
 
-        $this->app = Factory::getApplication();
+        $this->app       = Factory::getApplication();
         $this->debugMode = $debug;
 
         require JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/tusspecs.php';
@@ -396,6 +397,7 @@ class Server implements ServerInterface
         if ($this->existsInMetaData('id') === false)
         {
             $this->setStatusCode(404);
+
             return;
         }
 
@@ -405,10 +407,11 @@ class Server implements ServerInterface
             // allow new upload
             $this->deleteMetaData($this->uuid);
             $this->setStatusCode(404);
+
             return;
         }
 
-        $offset  = $this->getMetaDataValue('offset', true);
+        $offset = $this->getMetaDataValue('offset', true);
         $this->addHeaderLine('Upload-Offset', $offset);
 
         $length = $this->getMetaDataValue('size', true);
@@ -459,7 +462,7 @@ class Server implements ServerInterface
             throw new BadHeader('Content-Length must be a positive integer');
         }
 
-        if(is_string($headers['Content-Type']) === false || $headers['Content-Type'] !== 'application/offset+octet-stream')
+        if(\is_string($headers['Content-Type']) === false || $headers['Content-Type'] !== 'application/offset+octet-stream')
         {
             $this->component->addLog('Content-Type must be "application/offset+octet-stream"', 'error', 'jerror');
             throw new BadHeader('Content-Type must be "application/offset+octet-stream"');
@@ -481,6 +484,7 @@ class Server implements ServerInterface
         {
             $this->setStatusCode(409);
             $this->addHeaderLine('Upload-Offset', $offsetSession);
+
             return;
         }
 
@@ -490,19 +494,22 @@ class Server implements ServerInterface
             // the whole file was uploaded
             $this->setStatusCode(204);
             $this->addHeaderLine('Upload-Offset', $offsetSession);
+
             return;
         }
 
         // Read / Write data
         $handleInput = fopen('php://input', 'rb');
+
         if($handleInput === false)
         {
             $this->component->addLog('Impossible to open php://input', 'error', 'jerror');
             throw new File('Impossible to open php://input');
         }
 
-        $file = $this->directory . $this->getFilename();
+        $file         = $this->directory . $this->getFilename();
         $handleOutput = fopen($file, 'ab');
+
         if ($handleOutput === false)
         {
             $this->component->addLog('Impossible to open file to write into', 'error', 'jerror');
@@ -525,7 +532,8 @@ class Server implements ServerInterface
         $returnCode = 204;
         $returnMsg  = 'No Content';
 
-        try {
+        try
+        {
             while (true)
             {
                 set_time_limit(self::TIMEOUT);
@@ -546,13 +554,14 @@ class Server implements ServerInterface
                 }
 
                 $data = fread($handleInput, 8192);
+
                 if($data === false)
                 {
                     $this->component->addLog('Impossible to read the data', 'error', 'jerror');
                     throw new File('Impossible to read the data');
                 }
 
-                $sizeRead = strlen($data);
+                $sizeRead = \strlen($data);
 
                 // If user sent 0 bytes and we do not write all data yet, abort
                 if($sizeRead === 0)
@@ -583,6 +592,7 @@ class Server implements ServerInterface
 
                 // Write data
                 $sizeWrite = fwrite($handleOutput, $data);
+
                 if($sizeWrite === false)
                 {
                     $this->component->addLog('Unable to write data', 'error', 'jerror');
@@ -663,6 +673,7 @@ class Server implements ServerInterface
         }
 
         $file = $this->directory . $this->getFilename();
+
         if(!file_exists($file))
         {
             $this->component->addLog('The file ' . $this->uuid . ' doesn\'t exist 404', 'error', 'jerror');
@@ -686,6 +697,7 @@ class Server implements ServerInterface
         if ($this->debugMode)
         {
             $isInfo = $this->app->get('info', -1, 'integer');
+
             if($isInfo !== -1)
             {
                 FileToolsService::downloadFile($file . '.info', $fileName . '.info');
@@ -717,6 +729,7 @@ class Server implements ServerInterface
       if($this->existsInMetaData('id') === false)
       {
           $this->setStatusCode(404);
+
           return;
       }
 
@@ -726,6 +739,7 @@ class Server implements ServerInterface
           // allow new upload
           $this->deleteMetaData($this->uuid);
           $this->setStatusCode(404);
+
           return;
       }
 
@@ -751,10 +765,10 @@ class Server implements ServerInterface
         {
           return true;
         }
-        else
-        {
+
+
           return false;
-        }
+
     }
 
     /**
@@ -815,7 +829,7 @@ class Server implements ServerInterface
         {
             $uuid = $this->app->input->get('uuid', '', 'string');
 
-            if(strlen($uuid) === 32 && preg_match('/[a-z0-9]/', $uuid))
+            if(\strlen($uuid) === 32 && preg_match('/[a-z0-9]/', $uuid))
             {
                 $this->uuid = $uuid;
             }
@@ -853,12 +867,12 @@ class Server implements ServerInterface
      *
      * @return void
      */
-    private function setMetaData($metadata, $replace=true)
+    private function setMetaData($metadata, $replace = true)
     {
       // Make keys lowercase
       foreach($metadata as $key => $value)
       {
-        $metadata[\strtolower($key)] = $value;
+        $metadata[strtolower($key)] = $value;
       }
 
       if($replace)
@@ -867,7 +881,7 @@ class Server implements ServerInterface
       }
       else
       {
-        $this->metaData = \array_merge($this->metaData, $metadata);
+        $this->metaData = array_merge($this->metaData, $metadata);
       }
     }
 
@@ -881,9 +895,10 @@ class Server implements ServerInterface
      *
      * @throws \Exception key is not defined in medatada
      */
-    public function getMetaDataValue($key, $throw=false)
+    public function getMetaDataValue($key, $throw = false)
     {
         $data = $this->getMetaData();
+
         if(isset($data[$key]))
         {
             return $data[$key];
@@ -894,10 +909,10 @@ class Server implements ServerInterface
           $this->component->addLog($key . ' is not defined in medatada', 'error', 'jerror');
           throw new \RuntimeException($key . ' is not defined in medatada');
         }
-        else
-        {
+
+
           return false;
-        }
+
     }
 
     /**
@@ -911,7 +926,7 @@ class Server implements ServerInterface
     private function setMetaDataValue($key, $value): void
     {
         $data = $this->getMetaData();
-        $key  = \strtolower($key);
+        $key  = strtolower($key);
 
         if($key == 'size')
         {
@@ -956,15 +971,16 @@ class Server implements ServerInterface
       if(\count($parts) <= 1)
       {
         // if only one metadata exists, it is the filename
-        return array('filename' => $header);
+        return ['filename' => $header];
       }
 
       // multiple metadata submitted
-      $metadata = array();
+      $metadata = [];
+
       foreach($parts as $part)
       {
-        $pair = explode(' ', $part);
-        $metadata[\strtolower($pair[0])] = base64_decode($pair[1]);
+        $pair                           = explode(' ', $part);
+        $metadata[strtolower($pair[0])] = base64_decode($pair[1]);
       }
 
       return $metadata;
@@ -980,26 +996,26 @@ class Server implements ServerInterface
     private function readMetaData($filename): array
     {
         $refData = [
-            'id' => '',
-            'size' => 0,
-            'offset' => 0,
-            'extension' => '',
-            'filename' => '',
-            'mimetype' => '',
-            'ispartial' => true,
-            'isfinal' => false,
+          'id'        => '',
+          'size'      => 0,
+          'offset'    => 0,
+          'extension' => '',
+          'filename'  => '',
+          'mimetype'  => '',
+          'ispartial' => true,
+          'isfinal'   => false,
         ];
 
         $file = $this->directory . $filename . '.info';
 
-        if(\file_exists($file))
+        if(file_exists($file))
         {
-            $json = \file_get_contents($file);
-            $data = \json_decode($json, true);
+            $json = file_get_contents($file);
+            $data = json_decode($json, true);
 
             if(\is_array($data))
             {
-                return \array_merge($refData, $data);
+                return array_merge($refData, $data);
             }
         }
 
@@ -1046,7 +1062,7 @@ class Server implements ServerInterface
             $this->setMetaDataValue('mimetype', $this->fileType);
         }
 
-        $json = \json_encode($this->getMetaData());
+        $json = json_encode($this->getMetaData());
 
         file_put_contents($this->directory . $this->getUserUuid() . '.info', $json);
     }
@@ -1065,6 +1081,7 @@ class Server implements ServerInterface
         if(file_exists($file) && is_writable($file))
         {
             unset($file);
+
             return true;
         }
 
@@ -1132,12 +1149,13 @@ class Server implements ServerInterface
       $files = glob($this->directory.'*');
 
       $num_files = 0;
+
       foreach($files as $file)
       {
-        if(\strpos(\basename($file), $uuid) !== false)
+        if(strpos(basename($file), $uuid) !== false)
         {
           // Delete file with uuid in its name
-          if(!\unlink($file))
+          if(!unlink($file))
           {
             $this->component->addLog('File with name "' . $file . '" can not be deleted. 500', 'error', 'jerror');
             throw new File('File with name "' . $file . '" can not be deleted.', 500);
@@ -1157,13 +1175,14 @@ class Server implements ServerInterface
      */
     private function extractHeaders($headers): array
     {
-        if(is_array($headers) === false)
+        if(\is_array($headers) === false)
         {
             $this->component->addLog('Headers must be an array', 'error', 'jerror');
             throw new \InvalidArgumentException('Headers must be an array');
         }
 
         $headersValues = [];
+
         foreach ($headers as $headerName)
         {
             $value = $this->app->input->server->get($this->specs['Headers'][$headerName]['Name'], $this->specs['Headers'][$headerName]['Default'], $this->specs['Headers'][$headerName]['Type']);
@@ -1213,10 +1232,12 @@ class Server implements ServerInterface
      */
     public function setAllowMaxSize(int $value)
     {
-        if ($value > 0) {
+        if ($value > 0)
+        {
             $this->allowMaxSize = $value;
         }
-        else {
+        else
+        {
             $this->component->addLog('given $value must be integer, greater them 0', 'error', 'jerror');
             throw new \BadMethodCallException('given $value must be integer, greater them 0');
         }
@@ -1254,7 +1275,7 @@ class Server implements ServerInterface
      */
     public function getDirectory(): string
     {
-      if(\substr($this->directory, -1) != '/')
+      if(substr($this->directory, -1) != '/')
       {
         // directory should end with a slash (/)
         return $this->directory. '/';
@@ -1270,7 +1291,7 @@ class Server implements ServerInterface
      */
     public function getLocation(): string
     {
-      if(\substr($this->location, 0, 1) != '/')
+      if(substr($this->location, 0, 1) != '/')
       {
         // location should always starts with a slash (/)
         return '/' . $this->location;
@@ -1290,14 +1311,14 @@ class Server implements ServerInterface
      */
     private function setLocation(string $location)
     {
-      if(\strpos($location, 'http') !== false || \strpos($location, '://') !== false || \strpos($location, 'www.') !== false)
+      if(strpos($location, 'http') !== false || strpos($location, '://') !== false || strpos($location, 'www.') !== false)
       {
         // looks like $location contains the domain
         $this->component->addLog('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 'error', 'jerror');
         throw new \Exception('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 1);
       }
 
-      if(\substr($location, 0, 1) != '/')
+      if(substr($location, 0, 1) != '/')
       {
         // location should always starts with a slash (/)
         $location = '/' . $location;
@@ -1315,10 +1336,10 @@ class Server implements ServerInterface
      */
     public function getDomain(): string
     {
-      if(\substr($this->domain, -1) == '/')
+      if(substr($this->domain, -1) == '/')
       {
         // domain should never ends with a slash (/)
-        return \substr($this->domain, 0, -1);
+        return substr($this->domain, 0, -1);
       }
 
       return $this->domain;
@@ -1333,10 +1354,10 @@ class Server implements ServerInterface
      */
     public function setDomain(string $domain)
     {
-      if(\substr($domain, -1) == '/')
+      if(substr($domain, -1) == '/')
       {
         // domain should never ends with a slash (/)
-        $domain = \substr($domain, 0, -1);
+        $domain = substr($domain, 0, -1);
       }
 
       $this->domain = $domain;

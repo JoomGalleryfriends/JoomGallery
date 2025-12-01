@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Table\Table;
+use \Joomla\Database\DatabaseDriver;
 use \Joomla\Registry\Registry;
 use \Joomla\Utilities\ArrayHelper;
-use \Joomla\Database\DatabaseDriver;
 
 /**
  * Migration table
@@ -28,7 +29,7 @@ use \Joomla\Database\DatabaseDriver;
  */
 class MigrationTable extends Table
 {
-	/**
+  /**
    * Migration progress (0-100)
    *
    * @var  int
@@ -37,7 +38,7 @@ class MigrationTable extends Table
    */
   public $progress = 0;
 
-	/**
+  /**
    * True if migration of this migrateable is completed
    *
    * @var  bool
@@ -56,15 +57,15 @@ class MigrationTable extends Table
 	public function __construct(DatabaseDriver $db, bool $component_exists = true)
 	{
 		$this->component_exists = $component_exists;
-		$this->typeAlias = _JOOM_OPTION.'.migration';
+		$this->typeAlias        = _JOOM_OPTION.'.migration';
 
 		parent::__construct(_JOOM_TABLE_MIGRATION, 'id', $db);
 
 		// Initialize queue, successful and failed
-		$this->queue      = array();
+		$this->queue      = [];
 		$this->successful = new Registry();
 		$this->failed     = new Registry();
-    $this->counter    = new Registry();
+    $this->counter  = new Registry();
 	}
 
 	/**
@@ -95,42 +96,42 @@ class MigrationTable extends Table
 	{
     // Support for queue field
     if(isset($this->queue) && !\is_string($this->queue))
-		{
-			$this->queue = \json_encode(array_values($this->queue), JSON_UNESCAPED_UNICODE);
+    {
+			$this->queue = json_encode(array_values($this->queue), JSON_UNESCAPED_UNICODE);
 		}
 
 		// Support for successful field
     if(isset($this->successful) && !\is_string($this->successful))
-		{
-      $registry = new Registry($this->successful);
+    {
+      $registry      = new Registry($this->successful);
 			$this->successful = (string) $registry;
 		}
 
 		// Support for failed field
     if(isset($this->failed) && !\is_string($this->failed))
-		{
-			$registry = new Registry($this->failed);
+    {
+			$registry     = new Registry($this->failed);
 			$this->failed = (string) $registry;
 		}
 
     // Support for counter field
     if(isset($this->counter) && !\is_string($this->counter))
-		{
-			$registry = new Registry($this->counter);
+    {
+			$registry      = new Registry($this->counter);
 			$this->counter = (string) $registry;
 		}
 
     // Support for params field
     if(isset($this->params) && !\is_string($this->params))
-		{
-			$registry = new Registry($this->params);
+    {
+			$registry     = new Registry($this->params);
 			$this->params = (string) $registry;
 		}
 
 		return parent::store($updateNulls);
 	}
 
-  /**
+	/**
 	 * Overloaded bind function to pre-process the params.
 	 *
 	 * @param   array  $array   Named array
@@ -146,13 +147,13 @@ class MigrationTable extends Table
 
     // Support for queue field
     if(isset($array['queue']) && \is_array($array['queue']))
-		{
-			$array['queue'] = \json_encode($array['queue'], JSON_UNESCAPED_UNICODE);
+    {
+			$array['queue'] = json_encode($array['queue'], JSON_UNESCAPED_UNICODE);
 		}
 
 		// Support for successful field
     if(isset($array['successful']) && \is_array($array['successful']))
-		{
+    {
       $registry = new Registry;
 			$registry->loadArray($array['successful']);
 			$array['successful'] = (string) $registry;
@@ -160,7 +161,7 @@ class MigrationTable extends Table
 
 		// Support for failed field
     if(isset($array['failed']) && \is_array($array['failed']))
-		{
+    {
 			$registry = new Registry;
 			$registry->loadArray($array['failed']);
 			$array['failed'] = (string) $registry;
@@ -168,7 +169,7 @@ class MigrationTable extends Table
 
     // Support for counter field
     if(isset($array['counter']) && \is_array($array['counter']))
-		{
+    {
 			$registry = new Registry;
 			$registry->loadArray($array['counter']);
 			$array['counter'] = (string) $registry;
@@ -176,18 +177,18 @@ class MigrationTable extends Table
 
     // Support for params field
     if(isset($array['params']) && \is_array($array['params']))
-		{
+    {
 			$registry = new Registry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
     if($array['id'] == 0)
-		{
+    {
 			$array['created_time'] = $date->toSql();
 		}
 
-    return parent::bind($array, array('progress', 'completed'));
+    return parent::bind($array, ['progress', 'completed']);
   }
 
   /**
@@ -206,7 +207,7 @@ class MigrationTable extends Table
     {
       if(\is_string($this->queue))
       {
-        $this->queue = \json_decode($this->queue);
+        $this->queue = json_decode($this->queue);
       }
       elseif(\is_object($this->queue))
       {
@@ -219,7 +220,7 @@ class MigrationTable extends Table
     {
       if(\is_string($this->successful))
       {
-        $this->successful = \json_decode($this->successful);
+        $this->successful = json_decode($this->successful);
       }
 
       if(\is_object($this->successful))
@@ -231,7 +232,7 @@ class MigrationTable extends Table
         else
         {
           $this->successful = ArrayHelper::fromObject($this->successful);
-        }        
+        }
       }
 
       // Convert values to integer
@@ -303,8 +304,8 @@ class MigrationTable extends Table
 
     if($total > 0)
     {
-      $this->progress = (int) \round((100 / $total) * ($finished));
-    }   
+      $this->progress = (int) round((100 / $total) * ($finished));
+    }
 
     // Update completed property
     if($total === $finished || $total == 0)

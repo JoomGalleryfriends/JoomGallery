@@ -9,7 +9,7 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
@@ -46,8 +46,8 @@ if(isset($data['view']->filterForm) && !empty($data['view']->filterForm))
   }
 
   // Checks if the filters button should exist.
-  $filters = $data['view']->filterForm->getGroup('filter');
-  $showFilterButton = isset($filters['filter_search']) && count($filters) === 1 ? false : true;
+  $filters          = $data['view']->filterForm->getGroup('filter');
+  $showFilterButton = isset($filters['filter_search']) && \count($filters) === 1 ? false : true;
 
   // Checks if it should show the be hidden.
   $hideActiveFilters = empty($data['view']->activeFilters);
@@ -66,20 +66,20 @@ if(isset($data['view']->filterForm) && !empty($data['view']->filterForm))
 
 // Set some basic options.
 $customOptions = [
-    'filtersHidden'       => isset($data['options']['filtersHidden']) && $data['options']['filtersHidden'] ? $data['options']['filtersHidden'] : $hideActiveFilters,
-    'filterButton'        => isset($data['options']['filterButton']) && $data['options']['filterButton'] ? $data['options']['filterButton'] : $showFilterButton,
-    'defaultLimit'        => $data['options']['defaultLimit'] ?? Factory::getApplication()->get('list_limit', 20),
-    'searchFieldSelector' => '#filter_search',
-    'selectorFieldName'   => $selectorFieldName,
-    'selectorClass'       => '',
-    'showSelector'        => $showSelector,
-    'orderFieldSelector'  => '#list_fullordering',
-    'showNoResults'       => !empty($noResultsText),
-    'noResultsText'       => !empty($noResultsText) ? $noResultsText : '',
-    'formSelector'        => !empty($data['options']['formSelector']) ? $data['options']['formSelector'] : '#adminForm',
-    'barClass'            => '',
-    'showSearch'          => true,
-    'showList'            => true
+  'filtersHidden'       => isset($data['options']['filtersHidden']) && $data['options']['filtersHidden'] ? $data['options']['filtersHidden'] : $hideActiveFilters,
+  'filterButton'        => isset($data['options']['filterButton']) && $data['options']['filterButton'] ? $data['options']['filterButton'] : $showFilterButton,
+  'defaultLimit'        => $data['options']['defaultLimit'] ?? Factory::getApplication()->get('list_limit', 20),
+  'searchFieldSelector' => '#filter_search',
+  'selectorFieldName'   => $selectorFieldName,
+  'selectorClass'       => '',
+  'showSelector'        => $showSelector,
+  'orderFieldSelector'  => '#list_fullordering',
+  'showNoResults'       => !empty($noResultsText),
+  'noResultsText'       => !empty($noResultsText) ? $noResultsText : '',
+  'formSelector'        => !empty($data['options']['formSelector']) ? $data['options']['formSelector'] : '#adminForm',
+  'barClass'            => '',
+  'showSearch'          => true,
+  'showList'            => true,
 ];
 
 // Merge custom options in the options array.

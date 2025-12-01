@@ -1,30 +1,31 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Utilities\ArrayHelper;
-use \Joomla\Database\ParameterType;
-use \Joomla\CMS\Plugin\PluginHelper;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\User\UserFactoryInterface;
 use \Joomla\CMS\Form\FormFactoryInterface;
+use \Joomla\CMS\Language\Multilanguage;
+use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use \Joomla\CMS\Plugin\PluginHelper;
+use \Joomla\CMS\User\UserFactoryInterface;
+use \Joomla\Database\ParameterType;
 use \Joomla\Registry\Registry;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\Utilities\ArrayHelper;
 
 /**
  * Image model.
@@ -113,10 +114,10 @@ class ImageModel extends JoomAdminModel
 	 *
 	 * @since   4.0.0
 	 */
-	public function getForm($data = array(), $loadData = true)
+	public function getForm($data = [], $loadData = true)
 	{
 		// Get the form.
-		$form = $this->loadForm($this->typeAlias, 'image',	array('control' => 'jform',	'load_data' => $loadData));
+		$form = $this->loadForm($this->typeAlias, 'image', ['control' => 'jform',	'load_data' => $loadData]);
 
 		if(empty($form))
 		{
@@ -127,7 +128,7 @@ class ImageModel extends JoomAdminModel
 		$id = (int) $this->getState('image.id', $this->app->getInput()->getInt('id', null));
 
 		// Object uses for checking edit state permission of image
-		$record = new \stdClass();
+		$record     = new \stdClass();
 		$record->id = $id;
 
 		// Modify the form based on Edit State access controls.
@@ -164,7 +165,7 @@ class ImageModel extends JoomAdminModel
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = Factory::getApplication()->getUserState(_JOOM_OPTION.'.edit.image.data', array());
+		$data = Factory::getApplication()->getUserState(_JOOM_OPTION.'.edit.image.data', []);
 
 		if(empty($data))
 		{
@@ -176,18 +177,18 @@ class ImageModel extends JoomAdminModel
 			$data = $this->item;
 
 			// Support for multiple or not foreign key field: robots
-			$array = array();
+			$array = [];
 
 			foreach((array) $data->robots as $value)
 			{
-				if(!is_array($value))
+				if(!\is_array($value))
 				{
 					$array[] = $value;
 				}
 			}
 
 			if(!empty($array))
-      {
+			{
 			  $data->robots = $array;
 			}
 		}
@@ -211,7 +212,7 @@ class ImageModel extends JoomAdminModel
       return $this->item;
     }
 
-    $pk = (!empty($pk)) ? $pk : (int) $this->getState('image.id');
+    $pk  = (!empty($pk)) ? $pk : (int) $this->getState('image.id');
 		$table = $this->getTable();
 
 		if($pk > 0 || \is_array($pk))
@@ -279,7 +280,7 @@ class ImageModel extends JoomAdminModel
 
 				if(!empty($table->catid))
 				{
-					if(is_array($table->catid))
+					if(\is_array($table->catid))
 					{
 						$table->catid = implode(',', $table->catid);
 					}
@@ -290,7 +291,7 @@ class ImageModel extends JoomAdminModel
 				}
 
 				// Create file manager service
-				$manager = JoomHelper::getService('FileManager', array($table->catid));
+				$manager = JoomHelper::getService('FileManager', [$table->catid]);
 
 				// Regenerate filename
 				$newFilename = $manager->regenFilename($table->filename);
@@ -314,15 +315,15 @@ class ImageModel extends JoomAdminModel
 				}
 
 				// Trigger the before save event.
-				$result = $this->app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
+				$result = $this->app->triggerEvent($this->event_before_save, [$context, &$table, true, $table]);
 
-				if(in_array(false, $result, true) || !$table->store())
+				if(\in_array(false, $result, true) || !$table->store())
 				{
 					throw new \Exception($table->getError());
 				}
 
 				// Trigger the after save event.
-				$this->app->triggerEvent($this->event_after_save, array($context, &$table, true));
+				$this->app->triggerEvent($this->event_after_save, [$context, &$table, true]);
 			}
 			else
 			{
@@ -336,7 +337,7 @@ class ImageModel extends JoomAdminModel
 		return true;
 	}
 
-  /**
+	/**
 	 * Method to save image from form data.
 	 *
 	 * @param   array  $data  The form data.
@@ -347,13 +348,13 @@ class ImageModel extends JoomAdminModel
 	 */
 	public function save($data)
 	{
-		$table        = $this->getTable();
-		$context      = $this->option . '.' . $this->name;
-		$app          = Factory::getApplication();
-		$imgUploaded  = false;
-		$catMoved     = false;
-		$isNew        = true;
-		$isCopy       = false;
+		$table          = $this->getTable();
+		$context        = $this->option . '.' . $this->name;
+		$app            = Factory::getApplication();
+		$imgUploaded    = false;
+		$catMoved       = false;
+		$isNew          = true;
+		$isCopy         = false;
     $isAjax       = false;
     $aliasChanged = false;
 
@@ -361,20 +362,20 @@ class ImageModel extends JoomAdminModel
 		$pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
 		// Are we going to copy the image record?
-    if(\strpos($app->input->get('task'), 'save2copy') !== false)
-		{
+    if(strpos($app->input->get('task'), 'save2copy') !== false)
+    {
 			$isCopy = true;
 		}
 
     // Are we going to save image in an ajax request?
-    if(\strpos($app->input->get('task'), 'ajaxsave') !== false)
-		{
+    if(strpos($app->input->get('task'), 'ajaxsave') !== false)
+    {
 			$isAjax = true;
 		}
 
     // Change language to 'All' if multilangugae is not enabled
     if (!Multilanguage::isEnabled())
-		{
+    {
 			$data['language'] = '*';
 		}
 
@@ -399,8 +400,8 @@ class ImageModel extends JoomAdminModel
         // Check if the alias was changed
 				if($table->alias != $data['alias'])
 				{
-					$aliasChanged = true;
-          $old_alias    = $table->alias;
+					$aliasChanged   = true;
+          $old_alias = $table->alias;
 				}
 
 				// Check if the state was changed
@@ -419,21 +420,23 @@ class ImageModel extends JoomAdminModel
 			$app->setUserState(_JOOM_OPTION.'.image.upload', $data);
 
       // Detect uploader service
-      $upload_service  = 'html';
+      $upload_service = 'html';
+
       if(isset($data['uploader']) && !empty($data['uploader']))
       {
         $upload_service = $data['uploader'];
       }
 
       // Detect multiple upload service
-      $upload_multiple  = false;
+      $upload_multiple = false;
+
       if(isset($data['multiple']) && !empty($data['multiple']))
       {
         $upload_multiple = \boolval($data['multiple']);
       }
 
       // Create uploader service
-			$uploader = JoomHelper::getService('uploader', array($upload_service, $upload_multiple, $isAjax));
+			$uploader = JoomHelper::getService('uploader', [$upload_service, $upload_multiple, $isAjax]);
 
       // Detect uploaded file
       $imgUploaded = $uploader->isImgUploaded($data);
@@ -443,6 +446,7 @@ class ImageModel extends JoomAdminModel
 			{
 				// Determine if we have to create new filename
 				$createFilename = false;
+
 				if($isNew || empty($data['filename']))
 				{
 					$createFilename = true;
@@ -469,7 +473,7 @@ class ImageModel extends JoomAdminModel
 			}
 
       // Create file manager service
-			$manager = JoomHelper::getService('FileManager', array($data['catid']));
+			$manager = JoomHelper::getService('FileManager', [$data['catid']]);
 
       // Get source image id
 			$source_id = $app->input->get('origin_id', false, 'INT');
@@ -485,6 +489,7 @@ class ImageModel extends JoomAdminModel
 			if(!$table->bind($data))
 			{
 				$this->setError($table->getError());
+
 				if($imgUploaded)
 				{
 					$uploader->rollback($table);
@@ -500,6 +505,7 @@ class ImageModel extends JoomAdminModel
 			if(!$table->check())
 			{
 				$this->setError($table->getError());
+
 				if($imgUploaded)
 				{
 					$uploader->rollback($table);
@@ -511,6 +517,7 @@ class ImageModel extends JoomAdminModel
       // Cancel if file needs two filesystems to be saved
       // Can be deleted if filesystem service supports two filesystems
       $two_filesystems = [];
+
       if($isCopy)
       {
         // Get source img object
@@ -526,14 +533,16 @@ class ImageModel extends JoomAdminModel
         // Get filesystem for new category
         $tmp_config = new \Joomgallery\Component\Joomgallery\Administrator\Service\Config\DefaultConfig('com_joomgallery.category', $table->catid);
 
-        if($tmp_config->get('jg_filesystem','local-images') !== $table->filesystem)
+        if($tmp_config->get('jg_filesystem', 'local-images') !== $table->filesystem)
         {
-          $two_filesystems = [$table->filesystem, $tmp_config->get('jg_filesystem','local-images')];
+          $two_filesystems = [$table->filesystem, $tmp_config->get('jg_filesystem', 'local-images')];
         }
       }
+
       if(!empty($two_filesystems))
       {
         $this->component->addError(Text::sprintf('COM_JOOMGALLERY_ERROR_IMAGE_SAVE_TWO_FILESYSTEMS', $two_filesystems[0], $two_filesystems[1]));
+
         if($imgUploaded)
         {
         	$uploader->rollback($table);
@@ -555,18 +564,18 @@ class ImageModel extends JoomAdminModel
         if(!$this->component->getConfig()->get('jg_useorigfilename'))
         {
           // Replace alias in filename if filename is title dependent
-          $table->filename = \str_replace($old_alias, $table->alias, $table->filename);
+          $table->filename = str_replace($old_alias, $table->alias, $table->filename);
         }
       }
 
       // Trigger the before save event.
-			$result = $app->triggerEvent($this->event_before_save, array($context, $table, $isNew, $data));
+			$result = $app->triggerEvent($this->event_before_save, [$context, $table, $isNew, $data]);
 
       // Stop storing data if one of the plugins returns false
 			if(\in_array(false, $result, true))
 			{
         if($imgUploaded)
-				{
+        {
         	$uploader->rollback($table);
 				}
 				$this->setError($table->getError());
@@ -616,6 +625,7 @@ class ImageModel extends JoomAdminModel
 			if(!$filesystem_success)
 			{
 				$this->component->addError(Text::_('COM_JOOMGALLERY_ERROR_SAVE_FILESYSTEM_ERROR'));
+
 				if($imgUploaded)
 				{
         	$uploader->rollback($table);
@@ -628,8 +638,9 @@ class ImageModel extends JoomAdminModel
 			if(!$table->store())
 			{
 				$this->setError($table->getError());
+
         if($imgUploaded)
-				{
+        {
         	$uploader->rollback($table);
 				}
 
@@ -662,7 +673,7 @@ class ImageModel extends JoomAdminModel
       // Handle ajax uploads
       if($isAjax)
       {
-        $this->component->cache->set('imgObj', $table->getFieldsValues(array('form', 'imgmetadata', 'params', 'created_by', 'modified_by', 'checked_out')));
+        $this->component->cache->set('imgObj', $table->getFieldsValues(['form', 'imgmetadata', 'params', 'created_by', 'modified_by', 'checked_out']));
       }
 
       // All done. Clean created temp files
@@ -672,7 +683,7 @@ class ImageModel extends JoomAdminModel
 			$this->cleanCache();
 
 			// Trigger the after save event.
-			$app->triggerEvent($this->event_after_save, array($context, $table, $isNew, $data));
+			$app->triggerEvent($this->event_after_save, [$context, $table, $isNew, $data]);
 		}
 		catch (\Exception $e)
 		{
@@ -720,7 +731,7 @@ class ImageModel extends JoomAdminModel
 		return true;
 	}
 
-  /**
+	/**
 	 * Method to delete one or more images.
 	 *
 	 * @param   array  &$pks  An array of record primary keys.
@@ -747,7 +758,7 @@ class ImageModel extends JoomAdminModel
 					$context = $this->option . '.' . $this->name;
 
 					// Trigger the before delete event.
-					$result = Factory::getApplication()->triggerEvent($this->event_before_delete, array($context, $table));
+					$result = Factory::getApplication()->triggerEvent($this->event_before_delete, [$context, $table]);
 
 					if(\in_array(false, $result, true))
 					{
@@ -757,7 +768,7 @@ class ImageModel extends JoomAdminModel
 					}
 
 					// Delete corresponding imagetypes
-					$manager = JoomHelper::getService('FileManager', array($table->catid));
+					$manager = JoomHelper::getService('FileManager', [$table->catid]);
 
 					if(!$manager->deleteImages($table))
 					{
@@ -767,7 +778,7 @@ class ImageModel extends JoomAdminModel
 					}
 
 					// Delete corresponding comments
-					$db = $this->getDatabase();
+					$db    = $this->getDatabase();
 					$query = $db->getQuery(true)
 							->delete($db->quoteName('#__joomgallery_comments'))
 							->where(
@@ -806,16 +817,16 @@ class ImageModel extends JoomAdminModel
 						$query = $db->getQuery(true)
 							->select(
 								[
-									'COUNT(*) AS ' . $db->quoteName('count'),
-									$db->quoteName('as1.key'),
+								  'COUNT(*) AS ' . $db->quoteName('count'),
+								  $db->quoteName('as1.key'),
 								]
 							)
 							->from($db->quoteName('#__associations', 'as1'))
 							->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
 							->where(
 								[
-									$db->quoteName('as1.context') . ' = :context',
-									$db->quoteName('as1.id') . ' = :pk',
+								  $db->quoteName('as1.context') . ' = :context',
+								  $db->quoteName('as1.id') . ' = :pk',
 								]
 							)
 							->bind(':context', $this->associationsContext)
@@ -831,8 +842,8 @@ class ImageModel extends JoomAdminModel
 								->delete($db->quoteName('#__associations'))
 								->where(
 									[
-										$db->quoteName('context') . ' = :context',
-										$db->quoteName('key') . ' = :key',
+									  $db->quoteName('context') . ' = :context',
+									  $db->quoteName('key') . ' = :key',
 									]
 								)
 								->bind(':context', $this->associationsContext)
@@ -857,7 +868,7 @@ class ImageModel extends JoomAdminModel
 					}
 
 					// Trigger the after event.
-					Factory::getApplication()->triggerEvent($this->event_after_delete, array($context, $table));
+					Factory::getApplication()->triggerEvent($this->event_after_delete, [$context, $table]);
 				}
 				else
 				{
@@ -871,12 +882,12 @@ class ImageModel extends JoomAdminModel
 
 						return false;
 					}
-					else
-					{
+
+
 						$this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED') . '; Image ID: ' . $pk, 'warning', 'jerror');
 
 						return false;
-					}
+
 				}
 			}
 			else
@@ -905,18 +916,18 @@ class ImageModel extends JoomAdminModel
 		return true;
 	}
 
-  /**
+	/**
 	 * Method to change the state of one or more records.
 	 *
 	 * @param   array    &$pks   A list of the primary keys to change.
-   * @param   string   $type   Name of the state to be changed
+	 * @param   string   $type   Name of the state to be changed
 	 * @param   integer  $value  The value of the state.
 	 *
 	 * @return  boolean  True on success.
 	 *
 	 * @since   4.0.0
 	 */
-	public function changeSate(&$pks, $type='publish', $value = 1)
+	public function changeSate(&$pks, $type = 'publish', $value = 1)
 	{
 		$user    = Factory::getContainer()->get(UserFactoryInterface::class);
 		$table   = $this->getTable();
@@ -957,16 +968,16 @@ class ImageModel extends JoomAdminModel
         switch($type)
         {
           case 'feature':
-            $stateColumnName  = 'featured';
+            $stateColumnName = 'featured';
             break;
 
           case 'approve':
-            $stateColumnName  = 'approved';
+            $stateColumnName = 'approved';
             break;
 
           case 'publish':
           default:
-            $stateColumnName  = 'published';
+            $stateColumnName = 'published';
             break;
         }
 
@@ -986,7 +997,7 @@ class ImageModel extends JoomAdminModel
 		}
 
 		// Trigger the before change state event.
-		$result = Factory::getApplication()->triggerEvent($this->event_before_change_state, array($context, $pks, $value));
+		$result = Factory::getApplication()->triggerEvent($this->event_before_change_state, [$context, $pks, $value]);
 
 		if(\in_array(false, $result, true))
 		{
@@ -1004,7 +1015,7 @@ class ImageModel extends JoomAdminModel
 		}
 
 		// Trigger the change state event.
-		$result = Factory::getApplication()->triggerEvent($this->event_change_state, array($context, $pks, $value));
+		$result = Factory::getApplication()->triggerEvent($this->event_change_state, [$context, $pks, $value]);
 
 		if (\in_array(false, $result, true))
 		{
@@ -1019,7 +1030,7 @@ class ImageModel extends JoomAdminModel
 		return true;
 	}
 
-  /**
+	/**
 	 * Method to change the published state of one or more records.
 	 *
 	 * @param   array    &$pks   A list of the primary keys to change.
@@ -1034,7 +1045,7 @@ class ImageModel extends JoomAdminModel
     return $this->changeSate($pks, 'publish', $value);
   }
 
-  /**
+	/**
 	 * Method to replace an image type.
 	 *
 	 * @param   array  $data  The form data.
@@ -1046,16 +1057,16 @@ class ImageModel extends JoomAdminModel
 	public function replace($data)
 	{
     $table = $this->getTable();
-		$app   = Factory::getApplication();
-		$key   = $table->getKeyName();
-		$pk    = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
+		$app     = Factory::getApplication();
+		$key     = $table->getKeyName();
+		$pk      = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
 		// Rertrieve request image file data
     if(\array_key_exists('image', $app->input->files->get('jform')) && !empty($app->input->files->get('jform')['image'])
-    && $app->input->files->get('jform')['image']['error'] != 4 &&  $app->input->files->get('jform')['image']['size'] > 0)
-		{
-			$data['images'] = array();
-			\array_push($data['images'], $app->input->files->get('jform')['image']);
+    && $app->input->files->get('jform')['image']['error'] != 4 && $app->input->files->get('jform')['image']['size'] > 0)
+    {
+			$data['images'] = [];
+			array_push($data['images'], $app->input->files->get('jform')['image']);
 		}
 
     try
@@ -1064,14 +1075,14 @@ class ImageModel extends JoomAdminModel
       $table->load($pk);
 
       // Create uploader service
-      $uploader = JoomHelper::getService('uploader', array('single', false));
+      $uploader = JoomHelper::getService('uploader', ['single', false]);
 
       // Set replacement settings
       $uploader->type         = $data['replacetype'];
       $uploader->processImage = \boolval($data['replaceprocess']);
 
       // Set filename in data since it will not be new created during retrieveImage()
-      $data['filename']       = $table->filename;
+      $data['filename'] = $table->filename;
 
       // Retrieve image
       // (check upload, check user upload limit, create filename, onJoomBeforeSave)
@@ -1096,7 +1107,7 @@ class ImageModel extends JoomAdminModel
 			$this->cleanCache();
     }
     catch (\Exception $e)
-		{
+    {
 			$uploader->rollback();
 			$this->setError($e->getMessage());
 
@@ -1123,7 +1134,7 @@ class ImageModel extends JoomAdminModel
    *
    * @since   4.0
    */
-  public function recreate(int $pk, $type='original', $skip=[]): bool
+  public function recreate(int $pk, $type = 'original', $skip = []): bool
   {
 		$table = $this->getTable();
 
@@ -1158,7 +1169,7 @@ class ImageModel extends JoomAdminModel
         $source = $this->component->getFileManager()->getImgPath($table, $type);
 
         // Trigger the before recreate event.
-        $result = Factory::getApplication()->triggerEvent($this->event_before_recreate, array($table, $imagetypes, $source));
+        $result = Factory::getApplication()->triggerEvent($this->event_before_recreate, [$table, $imagetypes, $source]);
 
         if(\in_array(false, $result, true))
         {
@@ -1170,7 +1181,7 @@ class ImageModel extends JoomAdminModel
         // Add source type to the list of skiped types
         if(!\in_array($type, $skip))
         {
-          \array_push($skip, $type);
+          array_push($skip, $type);
         }
 
         // Perform the recreation
@@ -1182,7 +1193,7 @@ class ImageModel extends JoomAdminModel
         }
 
         // Trigger the after event.
-        Factory::getApplication()->triggerEvent($this->event_after_recreate, array($context, $table));
+        Factory::getApplication()->triggerEvent($this->event_after_recreate, [$context, $table]);
       }
       else
       {
@@ -1195,12 +1206,12 @@ class ImageModel extends JoomAdminModel
 
           return false;
         }
-        else
-        {
+
+
           $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
 
           return false;
-        }
+
       }
     }
     else
@@ -1216,7 +1227,7 @@ class ImageModel extends JoomAdminModel
 		return true;
   }
 
-  /**
+	/**
 	 * Prepare and sanitise the table prior to saving.
 	 *
 	 * @param   Table  $table  Table Object
@@ -1228,7 +1239,7 @@ class ImageModel extends JoomAdminModel
 	protected function prepareTable($table)
 	{
     // Apply the ordering
-    if(\property_exists($table, 'ordering') && $table->id == 0)
+    if(property_exists($table, 'ordering') && $table->id == 0)
     {
       switch($this->component->getConfig()->get('jg_uploadorder', 2))
       {
@@ -1253,7 +1264,7 @@ class ImageModel extends JoomAdminModel
    *
    * @since   4.0
    */
-  public function savemetadata(int $pk, $type='original'): bool
+  public function savemetadata(int $pk, $type = 'original'): bool
   {
     $table = $this->getTable();
 
@@ -1278,11 +1289,12 @@ class ImageModel extends JoomAdminModel
 	  if ($filesystem != 'local-images')
 	  {
 		$data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
-	  } else
+	  }
+	  else
 	  {
 		$data = $this->component->getMetadata()->writeMetadata($path, $registry);
 	  }
-	  $this->component->getFilesystem()->createFile(basename($path), dirname($path), $data);
+	  $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
     }
     else
     {

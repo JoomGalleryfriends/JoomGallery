@@ -1,22 +1,23 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Router\Route;
 
 /**
  * Config controller class.
@@ -28,7 +29,7 @@ class ConfigController extends JoomFormController
 {
 	protected $view_list = 'configs';
 
-  	/**
+	/**
 	 * Method to restore a record to its default values.
 	 *
 	 * @param   string  $key     The name of the primary key of the URL variable.
@@ -82,7 +83,7 @@ class ConfigController extends JoomFormController
 		$data[$key] = $recordId;
 
 		// Load data array from JInput
-		$data  = $this->input->getArray(array());
+		$data = $this->input->getArray([]);
 
 		// Exchange data array with default data
 		$data = $model->resetData($data);
@@ -91,7 +92,7 @@ class ConfigController extends JoomFormController
 		$this->input->post->set('jform', $data['jform']);
 
 		// Set task
-		$this->task ='apply';
+		$this->task = 'apply';
 
 		// Perform save task
     	parent::save($key, $urlVar);
@@ -147,13 +148,13 @@ class ConfigController extends JoomFormController
 		}
 
 		// Load table object
-		$data = $model->getItem($recordId);
-		$title = $data->title;
-		$data->jg_staticprocessing = \json_decode($model->getStaticprocessing());
+		$data                      = $model->getItem($recordId);
+		$title                     = $data->title;
+		$data->jg_staticprocessing = json_decode($model->getStaticprocessing());
 
 		// json decode subform fields
-		$data->jg_replaceinfo = \json_decode($data->jg_replaceinfo);
-		$data->jg_dynamicprocessing = \json_decode($data->jg_dynamicprocessing);
+		$data->jg_replaceinfo       = json_decode($data->jg_replaceinfo);
+		$data->jg_dynamicprocessing = json_decode($data->jg_dynamicprocessing);
 
 		foreach ($data as $key => $value)
 		{
@@ -169,7 +170,7 @@ class ConfigController extends JoomFormController
 		$this->app->sendHeaders();
 
 		// Output json data
-		echo \json_encode($data);
+		echo json_encode($data);
 
 		$this->app->close();
 	}
@@ -224,13 +225,14 @@ class ConfigController extends JoomFormController
 		}
 
 		// Get uploaded json file info
-		$file  = $this->input->files->get('jform', array(), 'array')['import_json'];
+		$file = $this->input->files->get('jform', [], 'array')['import_json'];
 
 		// Load form data
-		$data = $this->input->post->get('jform', array(), 'array');
+		$data = $this->input->post->get('jform', [], 'array');
 
 		// Retrieve json file content
 		$file_data = $model->getJSONfile($file, 'import_json');
+
 		if(!$file_data)
 		{
 			$this->setMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_IMPORT_FAILED', $model->getError()), 'error');
@@ -250,7 +252,7 @@ class ConfigController extends JoomFormController
 		// Transfer file content to data array
 		foreach($data as $key => $value)
 		{
-			if(\strpos($key, 'jg_') !== false && \key_exists($key, $file_data))
+			if(strpos($key, 'jg_') !== false && key_exists($key, $file_data))
 			{
 				if(\is_array($file_data[$key]) && \count($file_data[$key]) <= 0)
 				{
@@ -267,7 +269,7 @@ class ConfigController extends JoomFormController
 		$this->input->post->set('jform', $data);
 
 		// Set task
-		$this->task ='apply';
+		$this->task = 'apply';
 
 		Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_IMPORT', $file['name']), 'success');
 
@@ -277,7 +279,7 @@ class ConfigController extends JoomFormController
     	parent::save($key, $urlVar);
 	}
 
-	/**
+  /**
    * Analyses an error code and returns its text
    *
    * @param   int      $uploaderror  The errorcode
@@ -289,20 +291,20 @@ class ConfigController extends JoomFormController
   protected function checkError($uploaderror)
   {
     // Common PHP errors
-    $uploadErrors = array(
+    $uploadErrors = [
       1 => Text::_('COM_JOOMGALLERY_UPLOAD_ERROR_PHP_MAXFILESIZE'),
       2 => Text::_('COM_JOOMGALLERY_UPLOAD_ERROR_HTML_MAXFILESIZE'),
       3 => Text::_('COM_JOOMGALLERY_UPLOAD_ERROR_FILE_PARTLY_UPLOADED'),
-      4 => Text::_('COM_JOOMGALLERY_UPLOAD_ERROR_FILE_NOT_UPLOADED')
-    );
+      4 => Text::_('COM_JOOMGALLERY_UPLOAD_ERROR_FILE_NOT_UPLOADED'),
+    ];
 
-    if(in_array($uploaderror, $uploadErrors))
+    if(\in_array($uploaderror, $uploadErrors))
     {
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', $uploadErrors[$uploaderror]);
     }
-    else
-    {
+
+
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
-    }
+
   }
 }

@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Table\Table;
 use \Joomla\Database\DatabaseDriver;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
 
 /**
  * Vote table
@@ -40,12 +41,12 @@ class VoteTable extends Table
 	public function __construct(DatabaseDriver $db, bool $component_exists = true)
 	{
 		$this->component_exists = $component_exists;
-		$this->typeAlias = _JOOM_OPTION.'.vote';
+		$this->typeAlias        = _JOOM_OPTION.'.vote';
 
 		parent::__construct(_JOOM_TABLE_VOTES, 'id', $db);
 	}
 
-  /**
+	/**
 	 * Overloaded bind function to pre-process the params.
 	 *
 	 * @param   array  $array   Named array
@@ -66,8 +67,8 @@ class VoteTable extends Table
 			$array['created_time'] = $date->toSql();
 		}
 
-    if($array['id'] == 0 && (!\key_exists('created_by', $array) || empty($array['created_by'])))
-		{
+    if($array['id'] == 0 && (!key_exists('created_by', $array) || empty($array['created_by'])))
+    {
 			$array['created_by'] = Factory::getApplication()->getIdentity()->id;
 		}
 
@@ -84,7 +85,7 @@ class VoteTable extends Table
   public function delete($pk = null)
   {
     $this->_trackAssets = false;
-    
+
     return parent::delete($pk);
   }
 }

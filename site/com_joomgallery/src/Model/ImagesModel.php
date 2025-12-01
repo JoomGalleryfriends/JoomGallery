@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomgallery\Component\Joomgallery\Administrator\Model\ImagesModel as AdminImagesModel;
@@ -23,7 +24,7 @@ use \Joomgallery\Component\Joomgallery\Administrator\Model\ImagesModel as AdminI
  */
 class ImagesModel extends AdminImagesModel
 {
-	/**
+  /**
    * Constructor
    *
    * @param   array  $config  An optional associative array of configuration settings.
@@ -31,34 +32,34 @@ class ImagesModel extends AdminImagesModel
    * @return  void
    * @since   4.0.0
    */
-  function __construct($config = array())
-	{
+  function __construct($config = [])
+  {
 		if(empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = array(
-				'ordering', 'a.ordering',
-				'hits', 'a.hits',
-				'downloads', 'a.downloads',
-				'votes', 'a.votes',
-				'votesum', 'a.votesum',
-				'approved', 'a.approved',
-				'title', 'a.title',
-				'alias', 'a.alias',
-				'catid', 'a.catid',
-				'published', 'a.published',
-				'author', 'a.author',
-				'language', 'a.language',
-				'description', 'a.description',
-				'access', 'a.access',
-				'hidden', 'a.hidden',
-				'featured', 'a.featured',
-				'created_time', 'a.created_time',
-				'created_by', 'a.created_by',
-				'modified_time', 'a.modified_time',
-				'modified_by', 'a.modified_by',
-				'id', 'a.id',
-				'date', 'a.date'
-			);
+			$config['filter_fields'] = [
+			  'ordering', 'a.ordering',
+			  'hits', 'a.hits',
+			  'downloads', 'a.downloads',
+			  'votes', 'a.votes',
+			  'votesum', 'a.votesum',
+			  'approved', 'a.approved',
+			  'title', 'a.title',
+			  'alias', 'a.alias',
+			  'catid', 'a.catid',
+			  'published', 'a.published',
+			  'author', 'a.author',
+			  'language', 'a.language',
+			  'description', 'a.description',
+			  'access', 'a.access',
+			  'hidden', 'a.hidden',
+			  'featured', 'a.featured',
+			  'created_time', 'a.created_time',
+			  'created_by', 'a.created_by',
+			  'modified_time', 'a.modified_time',
+			  'modified_by', 'a.modified_by',
+			  'id', 'a.id',
+			  'date', 'a.date',
+			];
 		}
 
 		parent::__construct($config);
@@ -120,7 +121,7 @@ class ImagesModel extends AdminImagesModel
 			if(!$pages)
 			{
 				// Make sure $start=1 starts at the first image
-				$items = \array_slice($items, $start-1);
+				$items = \array_slice($items, $start - 1);
 			}
 		}
 
@@ -155,7 +156,7 @@ class ImagesModel extends AdminImagesModel
 			if($pages && ($start > $total - $limit))
 			{
 				// Get a start value that makes sense for pagination
-				$start = \max(0, (int) (\ceil($total / $limit) - 1) * $limit);
+				$start = max(0, (int) (ceil($total / $limit) - 1) * $limit);
 			}
 		}
 

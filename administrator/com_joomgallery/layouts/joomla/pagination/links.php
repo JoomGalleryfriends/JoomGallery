@@ -9,12 +9,12 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\Registry\Registry;
 
 $list  = $displayData['list'];
 $pages = $list['pages'];
@@ -69,7 +69,7 @@ if($currentPage >= $step)
           <?php echo LayoutHelper::render('joomla.pagination.link', $pages['previous']); ?>
           <?php foreach ($pages['pages'] as $k => $page) : ?>
             <?php $output = LayoutHelper::render('joomla.pagination.link', $page); ?>
-            <?php if (in_array($k, range($range * $step - ($step + 1), $range * $step), true)) : ?>
+            <?php if (\in_array($k, range($range * $step - ($step + 1), $range * $step), true)) : ?>
               <?php if (($k % $step === 0 || $k === $range * $step - ($step + 1)) && $k !== $currentPage && $k !== $range * $step - $step) : ?>
                 <?php $output = preg_replace('#(<a.*?>).*?(</a>)#', '$1...$2', $output); ?>
               <?php endif; ?>

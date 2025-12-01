@@ -9,11 +9,11 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 extract($displayData);
 
@@ -73,20 +73,22 @@ if(!empty($addClass))
 }
 
 $tip = null;
+
 if(!empty($description) && strpos($description, '{tip}') !== false)
 {
-  $desc_arr    = explode('{tip}',$description);
+  $desc_arr   = explode('{tip}', $description);
 	$description = $desc_arr[0];
 	$tip         = $desc_arr[1];
 }
 
 $sensitiveBtn = '';
 $sensitiveLbl = '';
+
 if($sensitive)
 {
   // disabled input field
   $tmp_input = explode(' ', trim($input));
-  $tmp_input = array_merge(array($tmp_input[0]), array('disabled'), array_slice($tmp_input, 1));
+  $tmp_input = array_merge([$tmp_input[0]], ['disabled'], \array_slice($tmp_input, 1));
   $input     = implode(' ', $tmp_input);
 
   // add sensitive class
@@ -97,7 +99,7 @@ if($sensitive)
 
   Text::script('COM_JOOMGALLERY_CONFIG_ALERT_ENABLE_SENSITIVE_FIELD');
 
-  /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+	/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
 	$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 	$wa->useScript('com_joomgallery.sensitiveField');
 }

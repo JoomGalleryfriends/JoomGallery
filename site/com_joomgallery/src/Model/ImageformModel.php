@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
@@ -46,6 +47,7 @@ class ImageformModel extends AdminImageModel
 	{
 		// Load state from the request userState on edit or from the passed variable on default
 		$id = $this->app->input->getInt('id', null);
+
 		if($id)
 		{
 			$this->app->setUserState('com_joomgallery.edit.image.id', $id);
@@ -94,10 +96,10 @@ class ImageformModel extends AdminImageModel
 	 *
 	 * @since   4.0.0
 	 */
-	public function getForm($data = array(), $loadData = true)
+	public function getForm($data = [], $loadData = true)
 	{
 		// Get the form.
-		$form = $this->loadForm($this->typeAlias, 'imageform', array('control'   => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm($this->typeAlias, 'imageform', ['control' => 'jform', 'load_data' => $loadData]);
 
 		if(empty($form))
 		{
@@ -111,7 +113,7 @@ class ImageformModel extends AdminImageModel
 	 * Method to get the data that should be injected in the form.
 	 *
 	 * @return  array  The default data is an empty array.
-   *
+	 *
 	 * @since   4.0.0
 	 */
 	protected function loadFormData()
@@ -128,6 +130,6 @@ class ImageformModel extends AdminImageModel
    */
   public function getReturnPage()
   {
-    return \base64_encode($this->getState('return_page', ''));
+    return base64_encode($this->getState('return_page', ''));
   }
 }

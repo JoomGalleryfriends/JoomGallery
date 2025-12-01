@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base\AccessOwn;
+use \Joomgallery\Component\Joomgallery\Administrator\User\User;
+use \Joomla\CMS\Access\Access as AccessBase;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\CMS\Access\Access as AccessBase;
-use \Joomgallery\Component\Joomgallery\Administrator\User\User;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base\AccessOwn;
 
 /**
  * Access Class
@@ -46,21 +47,21 @@ class Access implements AccessInterface
    *
    * @var array
    */
-  protected $types = array('category', 'collection', 'comment', 'config', 'image', 'imagetype', 'tag', 'task', 'user', 'vote');
+  protected $types = ['category', 'collection', 'comment', 'config', 'image', 'imagetype', 'tag', 'task', 'user', 'vote'];
 
   /**
    * List of parent content types
    *
    * @var array
    */
-  protected $parents = array('image' => 'category', 'category' => 'category');
+  protected $parents = ['image' => 'category', 'category' => 'category'];
 
   /**
    * List of content types with appended media (categorised, containing upload rules)
    *
    * @var array
    */
-  protected $media_types = array('image');
+  protected $media_types = ['image'];
 
   /**
    * List of content types which do not have their own assets but uses assets
@@ -68,14 +69,14 @@ class Access implements AccessInterface
    *
    * @var array
    */
-  protected $parent_dependent_types = array('image');
+  protected $parent_dependent_types = ['image'];
 
   /**
    * List of content types which have only one global asset
    *
    * @var array
    */
-  protected $asset_global_types = array('tag', 'comment', 'imagetype', 'vote', 'task');
+  protected $asset_global_types = ['tag', 'comment', 'imagetype', 'vote', 'task'];
 
   /**
    * Component specific prefix for its rules.
@@ -89,7 +90,7 @@ class Access implements AccessInterface
    *
    * @var array
    */
-  protected $aclMap = array();
+  protected $aclMap = [];
 
   /**
    * The user for which to check access
@@ -103,14 +104,14 @@ class Access implements AccessInterface
    *
    * @var array
    */
-  public $allowed = array('default' => null, 'own' => null, 'upload' => null, 'upload-own' => null);
+  public $allowed = ['default' => null, 'own' => null, 'upload' => null, 'upload-own' => null];
 
   /**
    * Containing all acl checks with a mark if we are going to check for that
    *
    * @var array
    */
-  public $tocheck = array('default' => true, 'own' => false, 'upload' => false, 'upload-own' => false);
+  public $tocheck = ['default' => true, 'own' => false, 'upload' => false, 'upload-own' => false];
 
   /**
    * Initialize class for specific option
@@ -119,7 +120,7 @@ class Access implements AccessInterface
    *
    * @since   4.0.0
    */
-  public function __construct(string $option='')
+  public function __construct(string $option = '')
   {
     // Load application
     $this->getApp();
@@ -138,7 +139,8 @@ class Access implements AccessInterface
 
     // Set acl map for components with advanced rules
     $mapPath = _JOOM_PATH_ADMIN.'/includes/rules.php';
-    if(\file_exists($mapPath))
+
+    if(file_exists($mapPath))
     {
       require $mapPath;
       $this->aclMap = $rules_map_array;
@@ -162,7 +164,7 @@ class Access implements AccessInterface
    *
    * @since   4.0.0
    */
-  public function checkACL(string $action, string $asset='', int $pk=0, int $parent_pk=0, bool $use_parent=false): bool
+  public function checkACL(string $action, string $asset = '', int $pk = 0, int $parent_pk = 0, bool $use_parent = false): bool
   {
     // Prepare action
     if(!empty($this->aclMap))
@@ -172,7 +174,7 @@ class Access implements AccessInterface
 
     // Prepare asset & pk's
     list($asset, $asset_array, $asset_type, $parent_pk) = $this->prepareAsset($asset, $pk, $parent_pk, $use_parent);
-    $asset_length = \count($asset_array);
+    $asset_length                                       = \count($asset_array);
 
     if($asset_length >= 3 && $pk == 0)
     {
@@ -184,11 +186,10 @@ class Access implements AccessInterface
       // Check if asset is available for this action
       if( ($asset_length == 1 && !\in_array('.', $this->aclMap[$action]['assets'])) ||
           (!\in_array('.'.$asset_type, $this->aclMap[$action]['assets']))
-        )
-      {
+        ) {
         // Action not available for this asset.
         $this->component->addLog('Action not available for this asset. Access can not be checked. Please provide reasonable inputs.', 'error', 'jerror');
-        throw new \Exception("Action not available for this asset. Access can not be checked. Please provide reasonable inputs.", 1);
+        throw new \Exception('Action not available for this asset. Access can not be checked. Please provide reasonable inputs.', 1);
       }
 
       // Get the acl rule for this action
@@ -200,7 +201,7 @@ class Access implements AccessInterface
     }
 
     // Check that use_parent flag is set to yes if adding into a nested asset
-    if($action == 'add' && \in_array($asset_type, \array_keys($this->parents)) && !$use_parent)
+    if($action == 'add' && \in_array($asset_type, array_keys($this->parents)) && !$use_parent)
     {
       // Flag parent_pk has to be set to yes
       $this->component->addLog("Error in your input command: parent_pk (4th argument) has to be set to check permission for the action 'add' on an item within a nested group of assets. Please set parent_pk to 'true' and make sure that the specified primary key corresponds to the category you want to add to.", 'error', 'jerror');
@@ -222,7 +223,7 @@ class Access implements AccessInterface
       if(\in_array($asset_type, $this->media_types) && $action == 'add')
       {
         // Special acl rule for media upload
-        $acl_rule       = $this->prefix.'.upload';
+        $acl_rule = $this->prefix.'.upload';
       }
 
       // Get asset for parent checks
@@ -230,13 +231,13 @@ class Access implements AccessInterface
       {
         $parent_type  = $asset_type ? $this->parents[$asset_type] : 'category';
         $asset        = $asset_array[0].'.'.$parent_type.'.'.$parent_pk;
-        $asset_length = \count(\explode('.', $asset));
+        $asset_length = \count(explode('.', $asset));
       }
     }
 
     // More preparations
-    $acl_rule_array = \explode('.', $acl_rule);
-    $appuser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->user->id);
+    $acl_rule_array = explode('.', $acl_rule);
+    $appuser        = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->user->id);
 
     // Special case: super user
     if($appuser->get('isRoot') === true)
@@ -289,8 +290,8 @@ class Access implements AccessInterface
         $parent_action = $this->prefix.'.upload';
 
         // Check for the category in general
-        $this->tocheck['upload']     = true;
-        $this->allowed['upload']     = AccessBase::check($this->user->id, $parent_action, $parent_asset);
+        $this->tocheck['upload'] = true;
+        $this->allowed['upload'] = AccessBase::check($this->user->id, $parent_action, $parent_asset);
 
         // Check also against parent ownership
         $this->tocheck['upload-own'] = true;
@@ -351,7 +352,7 @@ class Access implements AccessInterface
   {
     if(!\is_int($level))
     {
-      if(\is_string($level) && \is_numeric($level))
+      if(\is_string($level) && is_numeric($level))
       {
         $level = (int) $level;
       }
@@ -414,7 +415,7 @@ class Access implements AccessInterface
     }
     elseif(!\is_object($user))
     {
-      if(\is_numeric($user))
+      if(is_numeric($user))
       {
         // user id given
         $appuser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($user);
@@ -444,30 +445,32 @@ class Access implements AccessInterface
    * @since   4.0.0
    * @throws  \Exception
    */
-  protected function prepareAsset(string $asset, int $pk=0, int $parent_pk=0, bool $use_parent=false): array
+  protected function prepareAsset(string $asset, int $pk = 0, int $parent_pk = 0, bool $use_parent = false): array
   {
     // Do we have a global asset?
     $global = false;
-    if(!$asset || $asset === \str_replace('com_', '', $this->option))
+
+    if(!$asset || $asset === str_replace('com_', '', $this->option))
     {
       $asset  = $this->option;
       $global = true;
     }
 
     // Option in asset partially given?
-    if(\strpos($asset, \str_replace('com_', '', $this->option)) === 0)
+    if(strpos($asset, str_replace('com_', '', $this->option)) === 0)
     {
       $asset = 'com_' . $asset;
     }
 
     // First entry has to be the option
-    if(\strpos($asset, $this->option) !== 0)
+    if(strpos($asset, $this->option) !== 0)
     {
       $asset = $this->option . '.' . $asset;
     }
 
     // Get type from asset
-    $asset_array  = \explode('.', $asset);
+    $asset_array = explode('.', $asset);
+
     if(\count($asset_array) > 1)
     {
       $asset_type = $asset_array[1];
@@ -508,14 +511,15 @@ class Access implements AccessInterface
       // We have a global only asset
       $asset = $asset_array[0] . '.' . $asset_array[1] .'.1';
     }
-    elseif(!$global && !$use_parent && $pk > 0 && \substr($asset, -\strlen($pk)) !== $pk)
+    elseif(!$global && !$use_parent && $pk > 0 && substr($asset, -\strlen($pk)) !== $pk)
     {
       // We have a standard asset
       $asset = $asset . '.' . \strval($pk);
     }
 
     // Update type from asset
-    $asset_array  = \explode('.', $asset);
+    $asset_array = explode('.', $asset);
+
     if(\count($asset_array) > 1)
     {
       $asset_type = $asset_array[1];
@@ -548,30 +552,31 @@ class Access implements AccessInterface
   protected function prepareAction(string $action): string
   {
     // Clean action if it is dot separated (core.delete)
-    $act_array = \explode('.', $action, 2);
+    $act_array = explode('.', $action, 2);
+
     if(\count($act_array) >= 2)
     {
       $action = $act_array[1];
     }
 
     // Take away own and inown in action statement
-    $action = \str_replace(array('.own', '.inown'), '', $action);
+    $action = str_replace(['.own', '.inown'], '', $action);
 
     // Synonyms for add
-    $addSyn    = array('add', 'create', 'new', 'upload');
+    $addSyn = ['add', 'create', 'new', 'upload'];
     // Synonyms for delete
-    $delSyn    = array('delete', 'remove', 'drop', 'clear', 'erase');
+    $delSyn = ['delete', 'remove', 'drop', 'clear', 'erase'];
     // Synonyms for edit
-    $editSyn   = array('edit', 'change', 'modify', 'alter');
+    $editSyn = ['edit', 'change', 'modify', 'alter'];
     // Synonyms for editstate
-    $stateSyn  = array('editstate', 'edit.state', 'feature', 'unfeature', 'publish', 'unpublish', 'approve', 'unapprove');
+    $stateSyn = ['editstate', 'edit.state', 'feature', 'unfeature', 'publish', 'unpublish', 'approve', 'unapprove'];
     // Synonyms for admin
-    $adminSyn  = array('admin', 'acl');
+    $adminSyn = ['admin', 'acl'];
     // Synonyms for manage
-    $manageSyn = array('manage', 'options');
+    $manageSyn = ['manage', 'options'];
 
     // Compose array
-    $composition = array($addSyn, $delSyn, $editSyn, $editSyn, $stateSyn, $adminSyn, $manageSyn);
+    $composition = [$addSyn, $delSyn, $editSyn, $editSyn, $stateSyn, $adminSyn, $manageSyn];
 
     // Get the correct action from composition array
     if(!$res = $this->arrayRecursiveSearch($action, $composition))
@@ -603,7 +608,7 @@ class Access implements AccessInterface
         // value found in this level
         return $array[0];
       }
-      elseif(is_array($value))
+      elseif(\is_array($value))
       {
         // perform recursive search
         $callback = $this->arrayRecursiveSearch($needle, $value);

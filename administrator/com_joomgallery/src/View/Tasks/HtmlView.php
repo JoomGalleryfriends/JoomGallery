@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Tasks;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomla\CMS\HTML\Helpers\Sidebar;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
-use \Joomla\CMS\HTML\Helpers\Sidebar;
-use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a list of batch tasks.
@@ -48,12 +49,12 @@ class HtmlView extends JoomGalleryView
 
     $this->state          = $model->getState();
     $this->items          = $model->getItems();
-		$this->filterForm     = $model->getFilterForm();
-		$this->activeFilters  = $model->getActiveFilters();
+		$this->filterForm       = $model->getFilterForm();
+		$this->activeFilters    = $model->getActiveFilters();
     $this->scheduledTasks = $model->getScheduledTasks();
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
@@ -73,7 +74,7 @@ class HtmlView extends JoomGalleryView
    */
   protected function addToolbar()
   {
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TASKS_MANAGER'), "play-circle");
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TASKS_MANAGER'), 'play-circle');
 
     /** @var Toolbar $model */
     $toolbar = $this->getToolbar();
@@ -135,12 +136,12 @@ class HtmlView extends JoomGalleryView
 	 */
 	protected function getSortFields()
 	{
-		return array(
-			'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
-			'a.`published`' => Text::_('JSTATUS'),
-      'a.`failed`' => Text::_('JSTATUS'),
-      'a.`completed`' => Text::_('JSTATUS'),
-			'a.`id`' => Text::_('JGRID_HEADING_ID'),
-		);
+		return [
+		  'a.`ordering`'  => Text::_('JGRID_HEADING_ORDERING'),
+		  'a.`published`' => Text::_('JSTATUS'),
+		  'a.`failed`'    => Text::_('JSTATUS'),
+		  'a.`completed`' => Text::_('JSTATUS'),
+		  'a.`id`'        => Text::_('JGRID_HEADING_ID'),
+		];
 	}
 }

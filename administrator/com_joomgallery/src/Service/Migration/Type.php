@@ -1,17 +1,18 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
@@ -106,7 +107,7 @@ class Type
    *
    * @since  4.0.0
    */
-  protected $pkstoskip = array(0);
+  protected $pkstoskip = [0];
 
   /**
    * List of types this type depends on.
@@ -116,7 +117,7 @@ class Type
    *
    * @since  4.0.0
    */
-  protected $dependent_on = array();
+  protected $dependent_on = [];
 
   /**
    * List of types depending on this type.
@@ -126,7 +127,7 @@ class Type
    *
    * @since  4.0.0
    */
-  protected $dependent_of = array();
+  protected $dependent_of = [];
 
   /**
    * Table name used to load the queue
@@ -204,13 +205,13 @@ class Type
       {
         if($type && \count($type->get('dependent_on')) > 0 && \in_array($this->name, $type->get('dependent_on')))
         {
-          \array_push($this->dependent_of, $type_name);
+          array_push($this->dependent_of, $type_name);
         }
       }
     }
   }
 
-  /**
+	/**
 	 * Modifies a property of the object, creating it if it does not already exist.
 	 *
 	 * @param   string  $property  The name of the property.
@@ -229,16 +230,16 @@ class Type
 
         if(\is_array($value))
         {
-          $this->$property = \array_merge($this->$property, $value);
+          $this->$property = array_merge($this->$property, $value);
         }
         else
         {
-          \array_push($this->$property, $value);
+          array_push($this->$property, $value);
         }
         break;
 
       default:
-        $previous = $this->$property ?? null;
+        $previous        = $this->$property ?? null;
         $this->$property = $value;
         break;
     }

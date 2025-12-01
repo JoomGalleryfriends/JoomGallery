@@ -1,17 +1,18 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -22,7 +23,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 class JgradioField extends JglistField
 {
   use JgMenuitemTrait;
-  
+
   /**
    * The form field type.
    *
@@ -70,10 +71,10 @@ class JgradioField extends JglistField
     $data = parent::getLayoutData();
 
     $extraData = [
-        'options' => $this->getOptions(),
-        'value'   => (string) $this->value,
+      'options' => $this->getOptions(),
+      'value'   => (string) $this->value,
     ];
 
-    return \array_merge($data, $extraData);
+    return array_merge($data, $extraData);
   }
 }

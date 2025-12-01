@@ -1,28 +1,29 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Filesystem;
 
 /**
-* Trait to implement FilesystemServiceInterface
-*
-* @since  4.0.0
-*/
+ * Trait to implement FilesystemServiceInterface
+ *
+ * @since  4.0.0
+ */
 trait FilesystemServiceTrait
 {
-  /**
+	/**
 	 * Storage for the filesystem helper class.
 	 *
 	 * @var FilesystemInterface
@@ -31,7 +32,7 @@ trait FilesystemServiceTrait
 	 */
 	private $filesystem = null;
 
-  /**
+	/**
 	 * Returns the filesystem helper class.
 	 *
 	 * @return  FilesystemInterface
@@ -43,13 +44,13 @@ trait FilesystemServiceTrait
 		return $this->filesystem;
 	}
 
-  /**
+	/**
 	 * Creates the filesystem helper class
-   *
-   * @param   string  $filesystem  Name of the filesystem adapter to be used
 	 *
-   * @return  void
-   *
+	 * @param   string  $filesystem  Name of the filesystem adapter to be used
+	 *
+	 * @return  void
+	 *
 	 * @since  4.0.0
 	 */
 	public function createFilesystem($filesystem = ''): void

@@ -9,7 +9,7 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
@@ -31,15 +31,15 @@ switch((string) $item->text)
     // Check for "Prev" item
     case $item->text === Text::_('JPREV'):
         $item->text = Text::_('JPREVIOUS');
-        $icon = $app->getLanguage()->isRtl() ? 'icon-angle-right' : 'icon-angle-left';
-        $aria = Text::sprintf('JLIB_HTML_GOTO_POSITION', strtolower($item->text));
+        $icon       = $app->getLanguage()->isRtl() ? 'icon-angle-right' : 'icon-angle-left';
+        $aria       = Text::sprintf('JLIB_HTML_GOTO_POSITION', strtolower($item->text));
         $span_class = ' previous';
         break;
 
     // Check for "Next" item
     case Text::_('JNEXT'):
-        $icon = $app->getLanguage()->isRtl() ? 'icon-angle-left' : 'icon-angle-right';
-        $aria = Text::sprintf('JLIB_HTML_GOTO_POSITION', strtolower($item->text));
+        $icon       = $app->getLanguage()->isRtl() ? 'icon-angle-left' : 'icon-angle-right';
+        $aria       = Text::sprintf('JLIB_HTML_GOTO_POSITION', strtolower($item->text));
         $span_class = ' next';
         break;
 

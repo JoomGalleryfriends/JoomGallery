@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Filesystem\File;
-use \Joomla\CMS\Plugin\PluginHelper;
-use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Form\FormFactory;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Form\Form;
+use \Joomla\CMS\Form\FormFactoryInterface;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Plugin\PluginHelper;
+use \Joomla\Filesystem\File;
 
 /**
  * Config model.
@@ -38,19 +39,19 @@ class ConfigModel extends JoomAdminModel
    */
   protected $type = 'config';
 
-  /**
+	/**
 	 * @var    null  Form object
 	 *
 	 * @since  4.0.0
 	 */
 	protected $form = null;
 
-  /**
+	/**
 	 * @var    array  Fieldset array
 	 *
 	 * @since  4.0.0
 	 */
-	protected $fieldsets = array();
+	protected $fieldsets = [];
 
 	/**
 	 * Method to get the record form.
@@ -62,10 +63,10 @@ class ConfigModel extends JoomAdminModel
 	 *
 	 * @since   4.0.0
 	 */
-	public function getForm($data = array(), $loadData = true)
+	public function getForm($data = [], $loadData = true)
 	{
 		// Get the form.
-		$this->form = $this->loadForm($this->typeAlias, 'config', array('control' => 'jform', 'load_data' => $loadData));
+		$this->form = $this->loadForm($this->typeAlias, 'config', ['control' => 'jform', 'load_data' => $loadData]);
 
 		if(empty($this->form))
 		{
@@ -83,7 +84,7 @@ class ConfigModel extends JoomAdminModel
     }
 
 		// Object uses for checking edit state permission of image
-		$record = new \stdClass();
+		$record     = new \stdClass();
 		$record->id = $id;
 
 		// Modify the form based on Edit State access controls.
@@ -131,7 +132,7 @@ class ConfigModel extends JoomAdminModel
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = $this->app->getUserState(_JOOM_OPTION.'.edit.config.data', array());
+		$data = $this->app->getUserState(_JOOM_OPTION.'.edit.config.data', []);
 
     if($this->item === null)
     {
@@ -174,7 +175,7 @@ class ConfigModel extends JoomAdminModel
     PluginHelper::importPlugin($group);
 
     // Trigger the form preparation event.
-    Factory::getApplication()->triggerEvent('onContentPrepareForm', array($form, $data));
+    Factory::getApplication()->triggerEvent('onContentPrepareForm', [$form, $data]);
   }
 
 	/**
@@ -203,61 +204,61 @@ class ConfigModel extends JoomAdminModel
 	}
 
   /**
-	 * Method to get all available fieldsets from form.
-	 *
-	 * @return  array   Array with available fieldsets
-	 *
-	 * @since   4.0.0
-	 */
+   * Method to get all available fieldsets from form.
+   *
+   * @return  array   Array with available fieldsets
+   *
+   * @since   4.0.0
+   */
   public function getFieldsets()
   {
     // Fill fieldset array
 		foreach($this->form->getFieldsets() as $key => $fieldset)
 		{
-			$parts = \explode('-',$key);
+			$parts = explode('-', $key);
 			$level = \count($parts);
 
 			$fieldset->level = $level;
-			$fieldset->title = \end($parts);
+			$fieldset->title = end($parts);
 
-			$this->setFieldset($key, array('this'=>$fieldset));
+			$this->setFieldset($key, ['this' => $fieldset]);
 		}
 
 		// Add permissions fieldset to level 1 fieldsets
-		$permissions = array('name' => 'permissions',
-							'label' => 'JGLOBAL_ACTION_PERMISSIONS_LABEL',
-							'description' => '',
-							'type' => 'tab',
-							'level' => 1,
-							'title' => 'permissions');
-		$this->fieldsets['permissions'] = array('this' => (object) $permissions);
+		$permissions = ['name' => 'permissions',
+		  'label'              => 'JGLOBAL_ACTION_PERMISSIONS_LABEL',
+		  'description'        => '',
+		  'type'               => 'tab',
+		  'level'              => 1,
+		  'title'              => 'permissions'];
+		$this->fieldsets['permissions'] = ['this' => (object) $permissions];
 
     return $this->fieldsets;
   }
 
-  /**
+	/**
 	 * Add a fieldset to the fieldset array.
-   * source: https://stackoverflow.com/questions/13308968/create-infinitely-deep-multidimensional-array-from-string-in-php
-   *
-   * @param  string  $key    path for the value in the array
-   * @param  string  $value  the value to be placed at the defined path
+	 * source: https://stackoverflow.com/questions/13308968/create-infinitely-deep-multidimensional-array-from-string-in-php
+	 *
+	 * @param  string  $key    path for the value in the array
+	 * @param  string  $value  the value to be placed at the defined path
 	 *
 	 * @return void
-	 *
 	 */
 	protected function setFieldset($key, $value)
 	{
-    if(false === ($levels = \explode('-',$key)))
+    if(false === ($levels = explode('-', $key)))
     {
       return;
     }
 
     $pointer = &$this->fieldsets;
-    for ($i=0; $i < \sizeof($levels); $i++)
+
+    for ($i = 0; $i < \sizeof($levels); $i++)
     {
       if(!isset($pointer[$levels[$i]]))
       {
-        $pointer[$levels[$i]] = array();
+        $pointer[$levels[$i]] = [];
       }
 
       $pointer = &$pointer[$levels[$i]];
@@ -305,16 +306,16 @@ class ConfigModel extends JoomAdminModel
         }
 
         // Trigger the before save event.
-        $result = $this->app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
+        $result = $this->app->triggerEvent($this->event_before_save, [$context, &$table, true, $table]);
 
-        if(in_array(false, $result, true) || !$table->store())
+        if(\in_array(false, $result, true) || !$table->store())
         {
           $this->component->addLog($table->getError(), 'error', 'jerror');
           throw new \Exception($table->getError());
         }
 
         // Trigger the after save event.
-        $this->app->triggerEvent($this->event_after_save, array($context, &$table, true));
+        $this->app->triggerEvent($this->event_after_save, [$context, &$table, true]);
       }
       else
       {
@@ -329,7 +330,7 @@ class ConfigModel extends JoomAdminModel
 		return true;
 	}
 
-  /**
+	/**
 	 * Method to save the form data.
 	 *
 	 * @param   array  $data  The form data.
@@ -341,7 +342,7 @@ class ConfigModel extends JoomAdminModel
 	public function save($data)
 	{
     // id of the data to be saved
-    $id = intval($data['id']);
+    $id = \intval($data['id']);
 
     $mod_items = $this->component->getMVCFactory()->createModel('imagetypes', 'administrator');
     $model     = $this->component->getMVCFactory()->createModel('imagetype', 'administrator');
@@ -353,10 +354,11 @@ class ConfigModel extends JoomAdminModel
     foreach($data['jg_staticprocessing'] as $staticprocessing)
     {
       // load data
-      $imagetype_db = $model->getItem(array('typename' => $staticprocessing['jg_imgtypename']));
+      $imagetype_db = $model->getItem(['typename' => $staticprocessing['jg_imgtypename']]);
 
       // check if forbidden imagetypes gets disables
-      $forbidden = array('detail', 'thumbnail');
+      $forbidden = ['detail', 'thumbnail'];
+
       if(\in_array($staticprocessing['jg_imgtypename'], $forbidden) && $staticprocessing['jg_imgtype'] != '1')
       {
         // not allowed to unset this imagetype
@@ -387,10 +389,10 @@ class ConfigModel extends JoomAdminModel
         if(empty($imagetype_db->path))
         {
           // create a default path for new imagetype row
-          $path_parts = \explode('/',$detail_path);
-          \array_pop($path_parts);
+          $path_parts = explode('/', $detail_path);
+          array_pop($path_parts);
 
-          $imagetype_db->path = \implode('/',$path_parts).'/'.$imagetype_db->typename;
+          $imagetype_db->path = implode('/', $path_parts).'/'.$imagetype_db->typename;
         }
       }
 
@@ -408,7 +410,8 @@ class ConfigModel extends JoomAdminModel
     }
 
     // delete unused imagetypes from db
-    $forbidden = array('original', 'detail', 'thumbnail');
+    $forbidden = ['original', 'detail', 'thumbnail'];
+
     foreach($imagetypes_list as $imagetype_list)
     {
       if(\in_array($imagetype_list->typename, $forbidden))
@@ -436,7 +439,7 @@ class ConfigModel extends JoomAdminModel
     return parent::save($data);
   }
 
-  /**
+	/**
 	 * Method to change the published state of one or more records.
 	 *
 	 * @param   array    &$pks   A list of the primary keys to change.
@@ -449,7 +452,7 @@ class ConfigModel extends JoomAdminModel
 	public function publish(&$pks, $value = 1)
 	{
     // remove record with id=1 from the list of primary keys to change
-    if(($key = \array_search(1, $pks)) !== false)
+    if(($key = array_search(1, $pks)) !== false)
     {
       unset($pks[$key]);
 
@@ -462,17 +465,17 @@ class ConfigModel extends JoomAdminModel
   }
 
   /**
-	 * Initialize new stdObject with default config params of jg_staticprocessing.
-	 *
+   * Initialize new stdObject with default config params of jg_staticprocessing.
+   *
    * @param   string     $type    Imagetype (default:original)
    *
-	 * @return  \stdClass   Default config params of jg_staticprocessing
-	 *
-	 * @since   4.0.0
-	 */
-  protected function newStaticprocessing($type='original')
+   * @return  \stdClass   Default config params of jg_staticprocessing
+   *
+   * @since   4.0.0
+   */
+  protected function newStaticprocessing($type = 'original')
   {
-    $obj = array();
+    $obj = [];
 
     $obj['jg_imgtype']            = '1';
     $obj['jg_imgtypename']        = '';
@@ -492,15 +495,15 @@ class ConfigModel extends JoomAdminModel
   }
 
   /**
-	 * Initialize new stdObject with default config params of jg_staticprocessing.
-	 *
+   * Initialize new stdObject with default config params of jg_staticprocessing.
+   *
    * @param   string     $type    Imagetype (default:original)
    *
-	 * @return  string   Params json string
-	 *
-	 * @since   4.0.0
-	 */
-  protected function newImagetypeParams($type='original')
+   * @return  string   Params json string
+   *
+   * @since   4.0.0
+   */
+  protected function newImagetypeParams($type = 'original')
   {
     switch($type)
     {
@@ -519,16 +522,16 @@ class ConfigModel extends JoomAdminModel
   }
 
   /**
-	 * Loads jg_staticprocessing data from imagetypes.
+   * Loads jg_staticprocessing data from imagetypes.
    *
-	 * @return  object   static processing data
-	 *
-	 * @since   4.0.0
-	 */
+   * @return  object   static processing data
+   *
+   * @since   4.0.0
+   */
   public function getStaticprocessing()
   {
     // Load imagetypes from database
-    $new_staticprocessing = array();
+    $new_staticprocessing = [];
     $imagetypes           = JoomHelper::getRecords('imagetypes');
 
     // Replace jg_staticprocessing based on imagetypes
@@ -551,18 +554,18 @@ class ConfigModel extends JoomAdminModel
     }
 
     // Return jg_staticprocessing data
-    return \json_encode((object) $new_staticprocessing);
+    return json_encode((object) $new_staticprocessing);
   }
 
   /**
-	 * Decode params string.
-	 *
+   * Decode params string.
+   *
    * @param   string      $params     Json string with params
    *
-	 * @return  CMSObject   Params object
-	 *
-	 * @since   4.0.0
-	 */
+   * @return  CMSObject   Params object
+   *
+   * @since   4.0.0
+   */
   protected function decodeParams($params)
   {
     $params = (string) $params;
@@ -576,25 +579,25 @@ class ConfigModel extends JoomAdminModel
   }
 
   /**
-	 * Update the staticprocessing params string.
-	 *
+   * Update the staticprocessing params string.
+   *
    * @param   array    $data       New submitted params form data
    * @param   string   $old_data   JSON string of old params
    *
-	 * @return  string   Params JSON string
-	 *
-	 * @since   4.0.0
-	 */
-  protected function updateParams(array $data, string $old_data=''): string
+   * @return  string   Params JSON string
+   *
+   * @since   4.0.0
+   */
+  protected function updateParams(array $data, string $old_data = ''): string
   {
     // Decode old params string
     if($old_data === '')
     {
-      $old_data = array();
+      $old_data = [];
     }
     else
     {
-      $old_data = \json_decode($old_data, true);
+      $old_data = json_decode($old_data, true);
     }
 
     // support for jg_imgtypename
@@ -625,7 +628,7 @@ class ConfigModel extends JoomAdminModel
     return json_encode($data);
   }
 
-  /**
+	/**
 	 * Method to reset form data to default values.
 	 *
 	 * @param   array  $data   Form data array
@@ -638,7 +641,7 @@ class ConfigModel extends JoomAdminModel
 	{
 		// Load config form
 		$xmlfile = _JOOM_PATH_ADMIN . '/forms/config.xml';
-		$cform = new Form('configForm');
+		$cform   = new Form('configForm');
 		$cform->loadFile($xmlfile);
 
 		foreach($data['jform'] as $key => $value)
@@ -657,13 +660,13 @@ class ConfigModel extends JoomAdminModel
 				{
 					// Load imageconvert subform
 					$xmlfile_subform = _JOOM_PATH_ADMIN . '/forms/subform_imageconvert.xml';
-					$subform = new Form('imageconvertSubform');
+					$subform         = new Form('imageconvertSubform');
 					$subform->loadFile($xmlfile_subform);
 
 					// load default from imageconvert subform xml
 					foreach($value as $nmb => $array)
 					{
-						if(\in_array($array['jg_imgtypename'],array('original', 'detail', 'thumbnail')))
+						if(\in_array($array['jg_imgtypename'], ['original', 'detail', 'thumbnail']))
 						{
 							foreach($array as $subformkey => $subformvalue)
 							{
@@ -671,11 +674,11 @@ class ConfigModel extends JoomAdminModel
 								{
 									// Load imagewatermark subform
 									$xmlfile_wtmsubform = _JOOM_PATH_ADMIN . '/forms/subform_imagewatermark.xml';
-									$wtm_subform = new Form('imagewatermarkSubform');
+									$wtm_subform        = new Form('imagewatermarkSubform');
 									$wtm_subform->loadFile($xmlfile_wtmsubform);
 
 									// initialize watermark array
-									$default = array();
+									$default = [];
 
 									foreach($subformvalue as $wtm_key => $wtm_value)
 									{
@@ -753,7 +756,7 @@ class ConfigModel extends JoomAdminModel
 	public function getJSONfile($file, $fieldname)
 	{
 		// Get form field
-		$xml = _JOOM_PATH_ADMIN . '/forms/config.xml';
+		$xml  = _JOOM_PATH_ADMIN . '/forms/config.xml';
 		$form = new Form('configForm');
 		$form->loadFile($xml);
 		$field = $form->getField($fieldname);
@@ -767,14 +770,15 @@ class ConfigModel extends JoomAdminModel
 
         return false;
       }
-      $uploader = JoomHelper::getService('Uploader', array('html'));
+      $uploader = JoomHelper::getService('Uploader', ['html']);
       $this->setError($uploader->checkError($file['error']));
 
       return false;
     }
 
 		// Check file size
-		$filesize = intval($field->getAttribute('size', '512000'));
+		$filesize = \intval($field->getAttribute('size', '512000'));
+
 		if($file['size'] > $filesize)
 		{
 			// Upload failed
@@ -786,6 +790,7 @@ class ConfigModel extends JoomAdminModel
 
 		// Check file extension
 		$filesystem = JoomHelper::getService('Filesystem');
+
 		if(strtolower($filesystem->getExt($file['name'])) != 'json')
 		{
 			// Invalid file extension
@@ -796,13 +801,13 @@ class ConfigModel extends JoomAdminModel
 		}
 
 		// Retrieve file content
-		$json_string = \file_get_contents($file['tmp_name']);
+		$json_string = file_get_contents($file['tmp_name']);
 
 		// Check file content
 		$json = json_decode($json_string, true);
 
    		if(json_last_error() !== JSON_ERROR_NONE)
-		{
+   		{
 			// JSON not valid
 			$this->setError(Text::sprintf('COM_JOOMGALLERY_ERROR_INVALID_FILE_CONTENT', $file['name']), 'error');
 			$this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_INVALID_FILE_CONTENT', $file['name']), 'error', 'jerror');
@@ -824,13 +829,13 @@ class ConfigModel extends JoomAdminModel
 	 */
 	protected function getResetArray($string)
 	{
-		$array = array();
+		$array = [];
 
-		$imgtypes = \explode(';', $string);
+		$imgtypes = explode(';', $string);
 
 		foreach($imgtypes as $imgtype)
 		{
-			$content = \explode(':', $imgtype);
+			$content = explode(':', $imgtype);
 
 			switch($content[0])
 			{

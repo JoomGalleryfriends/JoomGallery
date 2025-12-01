@@ -9,16 +9,16 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -49,7 +49,10 @@ if($saveOrder && !empty($this->items))
 <?php endif; ?>
 
 <form class="jg-categories" action="<?php echo Route::_('index.php?option=com_joomgallery&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
-	<?php if(!empty($this->filterForm)) { echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); } ?>
+	<?php if(!empty($this->filterForm))
+	{
+	echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
+	} ?>
 	<div class="row">
 		<div class="col-md-12">
 
@@ -78,15 +81,15 @@ if($saveOrder && !empty($this->items))
                   <?php endif; ?>
 
 									<th scope="col" style="min-width:180px">
-										<?php echo HTMLHelper::_('grid.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+										<?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
 									</th>
 
 									<th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_IMAGES', 'a.img_count', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JOOMGALLERY_IMAGES', 'a.img_count', $listDirn, $listOrder); ?>
                   </th>
 
 									<th scope="col" style="min-width:180px" class="w-3 d-none d-lg-table-cell text-center">
-										<?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_PARENT_CATEGORY', 'a.parent_title', $listDirn, $listOrder); ?>
+										<?php echo HTMLHelper::_('grid.sort', 'COM_JOOMGALLERY_PARENT_CATEGORY', 'a.parent_title', $listDirn, $listOrder); ?>
 									</th>
 
 									<th scope="col" class="w-3 d-none d-lg-table-cell text-center">
@@ -94,13 +97,13 @@ if($saveOrder && !empty($this->items))
 									</th>
 
 									<th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-										<?php echo HTMLHelper::_('grid.sort',  'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+										<?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
 									</th>
 							</tr>
 						</thead>
 						<tfoot>
 							<tr>
-								<td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+								<td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
 									<?php echo $this->pagination->getListFooter(); ?>
 								</td>
 							</tr>
@@ -108,25 +111,27 @@ if($saveOrder && !empty($this->items))
 						<tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
 							<?php foreach ($this->items as $i => $item) :
                   // Access check
-                  $ordering   = ($listOrder == 'a.ordering');
-                  $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
-                  $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
-                  $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
-									$canCheckin = $canChange || $item->checked_out == $this->getCurrentUser()->id;
-									$disabled   = ($item->checked_out > 0) ? 'disabled' : '';
-                
+                  $ordering  = ($listOrder == 'a.ordering');
+                  $canEdit   = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
+                  $canDelete = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
+                  $canChange = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
+									$canCheckin         = $canChange || $item->checked_out == $this->getCurrentUser()->id;
+									$disabled           = ($item->checked_out > 0) ? 'disabled' : '';
+
 									// Get the parents of item for sorting
 									if ($item->level > 1)
 									{
-										$parentsStr = '';
+										$parentsStr       = '';
 										$_currentParentId = $item->parent_id;
-										$parentsStr = ' ' . $_currentParentId;
+										$parentsStr       = ' ' . $_currentParentId;
+
 										for ($i2 = 0; $i2 < $item->level; $i2++)
 										{
 											foreach ($this->ordering as $k => $v)
 											{
 												$v = implode('-', $v);
 												$v = '-' . $v . '-';
+
 												if (strpos($v, '-' . $_currentParentId . '-') !== false)
 												{
 													$parentsStr .= ' ' . $k;
@@ -150,6 +155,7 @@ if($saveOrder && !empty($this->items))
                     <td class="text-center d-none d-md-table-cell sort-cell">
 											<?php
 											$iconClass = '';
+
 											if (!$canChange)
 											{
 												$iconClass = ' inactive';
@@ -171,7 +177,7 @@ if($saveOrder && !empty($this->items))
                   <?php endif; ?>
 
 									<th scope="row" class="has-context title-cell">
-										<?php echo LayoutHelper::render('joomla.html.treeprefix', array('level' => $item->level)); ?>
+										<?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
 										<?php if($canCheckin && $item->checked_out > 0) : ?>
                       <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="category.checkin" <?php echo $disabled; ?>>
                         <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'category.', false); ?>

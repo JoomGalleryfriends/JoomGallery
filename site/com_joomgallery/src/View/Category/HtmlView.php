@@ -1,24 +1,24 @@
 <?php
-
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
 
 /**
  * View class for a category view of Joomgallery.
@@ -35,7 +35,7 @@ class HtmlView extends JoomGalleryView
 	 */
 	protected $item;
 
-  /**
+	/**
 	 * The active menu item object
 	 *
 	 * @var  \Joomla\CMS\Menu\MenuItem
@@ -49,7 +49,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @since  4.0.0
 	 */
-	protected $params = array();
+	protected $params = [];
 
 	/**
 	 * Display the view
@@ -61,15 +61,16 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		/** @var CategoryModel $model */
+    /** @var CategoryModel $model */
     $model = $this->getModel();
 
-    $this->state  = $model->getState();
-		$this->params = $model->getParams();
-    $this->menu   = $this->app->getMenu()->getActive();
+    $this->state = $model->getState();
+		$this->params  = $model->getParams();
+    $this->menu  = $this->app->getMenu()->getActive();
 
 		$loaded = true;
-		try {
+		try
+		{
 			$this->item = $model->getItem();
 		}
 		catch (\Exception $e)
@@ -78,16 +79,18 @@ class HtmlView extends JoomGalleryView
 		}
 
 		// Check published state
-		if($loaded && $this->item->published !== 1) 
+		if($loaded && $this->item->published !== 1)
 		{
 			$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
+
 			return;
 		}
 
 		// Check access view level
 		if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
-    {
+		{
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
+
 			return;
     }
 
@@ -98,12 +101,12 @@ class HtmlView extends JoomGalleryView
 			$this->item->parent = $model->getParent();
 
 			// Load subcategories
-			$this->item->children = new \stdClass();
-			$this->item->children->items         = $model->getChildren();
-			$this->item->children->pagination    = $model->getChildrenPagination();
+			$this->item->children             = new \stdClass();
+			$this->item->children->items      = $model->getChildren();
+			$this->item->children->pagination = $model->getChildrenPagination();
 
 			// Load images
-			$this->item->images = new \stdClass();
+			$this->item->images                = new \stdClass();
 			$this->item->images->items         = $model->getImages();
 			$this->item->images->pagination    = $model->getImagesPagination();
 			$this->item->images->filterForm    = $model->getImagesFilterForm();
@@ -111,7 +114,7 @@ class HtmlView extends JoomGalleryView
 		}
 
     // Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
@@ -176,7 +179,7 @@ class HtmlView extends JoomGalleryView
 		}
 
     // Get ID of the category from active menu item
-    if($this->menu && $this->menu->component == _JOOM_OPTION && isset($this->menu->query['view']) && in_array($this->menu->query['view'], ['categories', 'category']))
+    if($this->menu && $this->menu->component == _JOOM_OPTION && isset($this->menu->query['view']) && \in_array($this->menu->query['view'], ['categories', 'category']))
     {
       $id = $this->menu->query['id'];
     }
@@ -196,18 +199,18 @@ class HtmlView extends JoomGalleryView
 			{
 				$path = [];
 			}
-			
+
 			if(!$this->item->pw_protected)
 			{
 				$category = $this->item->parent;
-			
+
 				while($category && $category->id !== 1 && $category->id != $id)
 				{
 					$path[]   = ['title' => $category->title, 'link' => JoomHelper::getViewRoute('category', $category->id, 0, null, null, $category->language)];
 					$category = $this->getModel()->getParent($category->parent_id);
 				}
 
-				$path = \array_reverse($path);
+				$path = array_reverse($path);
 
 				foreach($path as $item)
 				{

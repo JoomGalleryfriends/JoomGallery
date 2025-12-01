@@ -1,12 +1,12 @@
 <?php
-
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 
@@ -22,7 +22,7 @@ use \lsolesen\pel\PelTag;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -55,40 +55,54 @@ class PelDataEditor
         // Datetime, Copyright and UserComment entries all have specific ways that they need to be handled.
         $entry = $ifd->getEntry($tag);
 
-        if(in_array($tag, self::$timeTags))
+        if(\in_array($tag, self::$timeTags))
         {
-            if ($entry == null) {
+            if ($entry == null)
+            {
                 $entry = new PelEntryTime($tag, $data, PelEntryTime::EXIF_STRING);
                 $ifd->addEntry($entry);
-            } else {
+            }
+            else
+            {
                 $entry->setValue($data, PelEntryTime::EXIF_STRING);
             }
         }
         elseif ($tag == PelTag::COPYRIGHT)
         {
-            if ($entry == null) {
+            if ($entry == null)
+            {
                 $entry = new PelEntryCopyright($data[0], $data[1]);
                 $ifd->addEntry($entry);
-            } else {
+            }
+            else
+            {
                 $entry->setValue($data[0], $data[1]);
             }
         }
         elseif($tag == PelTag::USER_COMMENT)
         {
             // We need to strip the first 8 characters to comply with UserComments saved before PEL.
-            if ($entry == null) {
+            if ($entry == null)
+            {
                 $entry = new PelEntryUserComment(substr($data, 8));
                 $ifd->addEntry($entry);
-            } else {
+            }
+            else
+            {
                 $entry->setValue($data);
             }
         }
-        else {
+        else
+        {
             $entryClass = '\lsolesen\pel\PelEntry' . PelFormat::getName($format);
-            if ($entry == null) {
+
+            if ($entry == null)
+            {
                 $entry = new $entryClass($tag, $data);
                 $ifd->addEntry($entry);
-            } else {
+            }
+            else
+            {
                 $entry->setValue($data);
             }
         }

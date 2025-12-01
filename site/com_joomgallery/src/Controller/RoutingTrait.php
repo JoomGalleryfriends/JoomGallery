@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Uri\Uri;
 
 /**
-* Trait implementing methods for URL manipulation.
-*
-* @since  4.0.0
-*/
+ * Trait implementing methods for URL manipulation.
+ *
+ * @since  4.0.0
+ */
 trait RoutingTrait
 {
   /**
@@ -31,7 +32,7 @@ trait RoutingTrait
    */
   protected $useReturnPage = false;
 
-  /**
+	/**
 	 * Get the return URL.	 *
 	 * If a "return" variable has been passed in the request
 	 * 
@@ -41,7 +42,7 @@ trait RoutingTrait
 	 *
 	 * @since   4.0.0
 	 */
-	protected function getReturnPage(string $default='')
+	protected function getReturnPage(string $default = '')
 	{
 		$return = $this->input->get('return', null, 'base64');
 
@@ -51,17 +52,17 @@ trait RoutingTrait
 			{
 				return 'index.php?option='._JOOM_OPTION.'&view='.$default;
 			}
-			else
-			{
+
+
 				return 'index.php?option='._JOOM_OPTION.'&view='.$this->default_view;
-			}
+
 		}
-		else
-		{
+
+
       $this->useReturnPage = true;
 
-			return \base64_decode($return);
-		}
+			return base64_decode($return);
+
 	}
 
 	/**
@@ -86,12 +87,14 @@ trait RoutingTrait
 		}
 
 		$layout = $this->input->get('layout', '', 'string');
+
 		if($layout && $layout != 'default')
 		{
 			$append .= '&layout=' . $layout;
 		}
 
 		$forcedLanguage = $this->input->get('forcedLanguage', '', 'cmd');
+
 		if($forcedLanguage && $forcedLanguage != '*')
 		{
 			$append .= '&forcedLanguage=' . $forcedLanguage;
@@ -108,6 +111,7 @@ trait RoutingTrait
 		}
 
 		$return = $this->input->get('return', null, 'base64');
+
 		if($return && !$this->useReturnPage)
 		{
 			$append .= '&return=' . $return;
@@ -117,12 +121,12 @@ trait RoutingTrait
 	}
 
   /**
-	 * Remove return from input.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
+   * Remove return from input.
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
   protected function removeReturn()
   {
     $this->input->set('return', null);

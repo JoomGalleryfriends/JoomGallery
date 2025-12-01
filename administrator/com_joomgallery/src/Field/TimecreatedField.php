@@ -1,21 +1,22 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
 use \Joomla\CMS\Date\Date;
+use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\FormField;
 use \Joomla\CMS\Language\Text;
 
@@ -45,11 +46,11 @@ class TimecreatedField extends FormField
 	protected function getInput()
 	{
 		// Initialize variables.
-		$html = array();
+		$html = [];
 
 		$time_created = $this->value;
 
-		if(!\strtotime($time_created))
+		if(!strtotime($time_created))
 		{
 			$time_created = Factory::getDate('now', Factory::getApplication()->getConfig()->get('offset'))->toSql(true);
 			$html[]       = '<input type="hidden" name="' . $this->name . '" value="' . $time_created . '" />';
@@ -61,9 +62,9 @@ class TimecreatedField extends FormField
 		{
 			$jdate       = new Date($time_created);
 			$pretty_date = $jdate->format(Text::_('DATE_FORMAT_LC2'));
-			$html[]      = "<div>" . $pretty_date . "</div>";
+			$html[]      = '<div>' . $pretty_date . '</div>';
 		}
 
-		return \implode($html);
+		return implode($html);
 	}
 }

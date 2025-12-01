@@ -9,16 +9,16 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Language\Multilanguage;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -27,11 +27,11 @@ $wa->useStyle('com_joomgallery.list')
    ->useScript('com_joomgallery.list-view')
    ->useScript('multiselect');
 
-$input        = Factory::getApplication()->input;
-$field        = $input->getCmd('field');
-$listOrder    = $this->state->get('list.ordering');
-$listDirn     = $this->state->get('list.direction');
-$imgRequired  = (int) $input->get('required', 0, 'int');
+$input       = Factory::getApplication()->input;
+$field       = $input->getCmd('field');
+$listOrder   = $this->state->get('list.ordering');
+$listDirn    = $this->state->get('list.direction');
+$imgRequired = (int) $input->get('required', 0, 'int');
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component'); ?>" method="post"
@@ -48,7 +48,7 @@ $imgRequired  = (int) $input->get('required', 0, 'int');
         </div>
       <?php endif; ?>
 
-			<?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+			<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
 				<div class="clearfix"></div>
         <div class="table-responsive">
           <table class="table table-striped" id="imageList">
@@ -66,30 +66,30 @@ $imgRequired  = (int) $input->get('required', 0, 'int');
                   <?php // Spaceholder for thumbnail image ?>
                 </th>
                 <th scope="col" style="min-width:180px">
-                  <?php echo HTMLHelper::_('grid.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                  <?php echo HTMLHelper::_('grid.sort',  'JCATEGORY', 'a.catid', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('grid.sort', 'JCATEGORY', 'a.catid', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                  <?php echo HTMLHelper::_('grid.sort',  'JAUTHOR', 'a.author', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('grid.sort', 'JAUTHOR', 'a.author', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                  <?php echo HTMLHelper::_('grid.sort',  'JDATE', 'a.date', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('grid.sort', 'JDATE', 'a.date', $listDirn, $listOrder); ?>
                 </th>
                 <?php if (Multilanguage::isEnabled()) : ?>
                   <th scope="col" class="w-10 d-none d-md-table-cell">
-                    <?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
                   </th>
                 <?php endif; ?>
                 <th scope="col" class="w-3 d-none d-lg-table-cell">
-                  <?php echo HTMLHelper::_('grid.sort',  'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
                 </th>
               </tr>
             </thead>
             <tfoot>
             <tr>
-              <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+              <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                 <?php echo $this->pagination->getListFooter(); ?>
               </td>
             </tr>

@@ -1,25 +1,25 @@
 <?php
-
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Images;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomla\CMS\Router\Route;
 
 /**
  * View class for a list of Joomgallery.
@@ -40,7 +40,7 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @since  4.0.0
 	 */
-	protected $params = array();
+	protected $params = [];
 
 	/**
 	 * Display the view
@@ -53,18 +53,18 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		/** @var ImagesModel $model */
+    /** @var ImagesModel $model */
     $model = $this->getModel();
 
-    $this->state         = $model->getState();
+    $this->state       = $model->getState();
 		$this->params        = $model->getParams();
-    $this->items         = $model->getItems();		
+    $this->items       = $model->getItems();
 		$this->pagination    = $model->getPagination();
 		$this->filterForm    = $model->getFilterForm();
 		$this->activeFilters = $model->getActiveFilters();
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
@@ -80,7 +80,7 @@ class HtmlView extends JoomGalleryView
 
       // Redirect to gallery view
       $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
-      
+
       return false;
     }
 
@@ -149,7 +149,7 @@ class HtmlView extends JoomGalleryView
 		if(!$this->isMenuCurrentView($menu))
 		{
 			// Add Breadcrumbs
-			$pathway = $this->app->getPathway();
+			$pathway         = $this->app->getPathway();
 			$breadcrumbTitle = Text::_('COM_JOOMGALLERY_IMAGES');
 
 			if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))

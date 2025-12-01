@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
- 
+
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Table;
-use \Joomla\CMS\Access\Rules;
-use \Joomla\Registry\Registry;
-use \Joomla\Database\DatabaseDriver;
-use \Joomla\CMS\Filter\OutputFilter;
 use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
+use \Joomla\CMS\Access\Rules;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Filter\OutputFilter;
+use \Joomla\CMS\Table\Table;
+use \Joomla\Database\DatabaseDriver;
+use \Joomla\Registry\Registry;
 
 /**
  * Tag table
@@ -51,7 +52,7 @@ class TagTable extends Table
 	public function __construct(DatabaseDriver $db, bool $component_exists = true)
 	{
 		$this->component_exists = $component_exists;
-		$this->typeAlias = _JOOM_OPTION.'.tag';
+		$this->typeAlias        = _JOOM_OPTION.'.tag';
 
 		parent::__construct(_JOOM_TABLE_TAGS, 'id', $db);
 
@@ -79,7 +80,8 @@ class TagTable extends Table
     // Support for title field: title
     if(\array_key_exists('title', $array))
     {
-      $array['title'] = \trim($array['title']);
+      $array['title'] = trim($array['title']);
+
       if(empty($array['title']))
       {
         $array['title'] = 'Unknown';
@@ -122,12 +124,12 @@ class TagTable extends Table
 			$array['created_time'] = $date->toSql();
 		}
 
-		if(!\key_exists('created_by', $array) || empty($array['created_by']))
+		if(!key_exists('created_by', $array) || empty($array['created_by']))
 		{
 			$array['created_by'] = Factory::getApplication()->getIdentity()->id;
 		}
 
-		if($task == 'apply' || \strpos($task, 'save') !== false)
+		if($task == 'apply' || strpos($task, 'save') !== false)
 		{
 			$array['modified_time'] = $date->toSql();
 		}
@@ -137,36 +139,36 @@ class TagTable extends Table
 			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
 		}
 
-		if($task == 'apply' || \strpos($task, 'save') !== false)
+		if($task == 'apply' || strpos($task, 'save') !== false)
 		{
 			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
 		}
 
 		if(isset($array['params']) && \is_array($array['params']))
 		{
-			$registry = new Registry($array['params']);
+			$registry        = new Registry($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
 		if(isset($array['metadata']) && \is_array($array['metadata']))
 		{
-			$registry = new Registry($array['metadata']);
+			$registry          = new Registry($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
 
     // Support for list of images to be mapped
     if(isset($array['images']) && !\is_array($array['images']))
-		{
+    {
 			// Try to convert from json string
       $decoded = json_decode($array['images'], true);
 
-      if(\json_last_error() === JSON_ERROR_NONE)
+      if(json_last_error() === JSON_ERROR_NONE)
       {
         $array['images'] = $decoded;
       }
       else
       {
-        $array['images'] = \explode(',', $array['images']);
+        $array['images'] = explode(',', $array['images']);
       }
 		}
 
@@ -180,7 +182,7 @@ class TagTable extends Table
 		return parent::bind($array, $ignore);
 	}
 
-  /**
+	/**
 	 * Method to store a row in the database from the Table instance properties.
 	 *
 	 * @param   boolean  $updateNulls  True to update fields even if they are null.
@@ -192,7 +194,8 @@ class TagTable extends Table
 	public function store($updateNulls = true)
 	{
     $images = null;
-    if(\property_exists($this, 'images') && !empty($this->images))
+
+    if(property_exists($this, 'images') && !empty($this->images))
     {
       $images = $this->images;
     }
@@ -219,7 +222,7 @@ class TagTable extends Table
   public function delete($pk = null)
   {
     $this->_trackAssets = false;
-    
+
     if($success = parent::delete($pk))
     {
       // Delete mappings if existent
@@ -250,7 +253,7 @@ class TagTable extends Table
     // Prepare image ids
     if(!\is_array($img_id))
     {
-      $img_id = array($img_id);
+      $img_id = [$img_id];
     }
 
     // Load db driver
@@ -258,7 +261,7 @@ class TagTable extends Table
 
     foreach($img_id as $key => $iid)
     {
-      $mapping = new \stdClass();
+      $mapping        = new \stdClass();
       $mapping->imgid = (int) $iid;
       $mapping->tagid = (int) $this->getId();
 
@@ -299,7 +302,7 @@ class TagTable extends Table
     // Prepare image ids
     if(!\is_array($img_id) && $img_id != 0)
     {
-      $img_id = array($img_id);
+      $img_id = [$img_id];
     }
 
     // Load db driver
@@ -308,10 +311,11 @@ class TagTable extends Table
 
     // Create where conditions
     $query->where($db->quoteName('tagid') . ' = ' . $db->quote((int) $this->getId()));
+
     if(\is_array($img_id))
     {
       // Delete mapping only for a specified images
-      $query->where($db->quoteName('imgid') . ' IN (' . \implode(',', $img_id) . ')');
+      $query->where($db->quoteName('imgid') . ' IN (' . implode(',', $img_id) . ')');
     }
 
     // Create the query

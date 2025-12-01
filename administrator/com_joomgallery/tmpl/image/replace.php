@@ -7,15 +7,15 @@
 **   @license    GNU General Public License version 3 or later                          **
 *****************************************************************************************/
 
-// No direct access 
+// No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Uppy config
 $uppy_version = 'v3.5.0'; // Uppy version to use

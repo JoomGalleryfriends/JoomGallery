@@ -8,26 +8,27 @@
 *****************************************************************************************/
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
 
 extract($displayData);
 
-/**
- * Layout variables
- * -----------------
- * @var   string   $description     The description which could contain a tip.
- * @var   string   $id              The id of the description.
- * @var   string   $class           Class for the collapse tip div.
- * @var   bool     $small           True, if the collapse should be rendered in a small tag.
- */
+  /**
+   * Layout variables
+   * -----------------
+   * @var   string   $description     The description which could contain a tip.
+   * @var   string   $id              The id of the description.
+   * @var   string   $class           Class for the collapse tip div.
+   * @var   bool     $small           True, if the collapse should be rendered in a small tag.
+   */
 
   $tip = null;
+
   if(!empty($description) && strpos($description, '{tip}') !== false)
   {
-    $desc_arr    = explode('{tip}',$description);
+    $desc_arr    = explode('{tip}', $description);
     $description = $desc_arr[0];
     $tip         = $desc_arr[1];
   }
@@ -38,6 +39,7 @@ extract($displayData);
   }
 
   $tag = 'div';
+
   if(!empty($small) && $small === true)
   {
     $tag = 'small';

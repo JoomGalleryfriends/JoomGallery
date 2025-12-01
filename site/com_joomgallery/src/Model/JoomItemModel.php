@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\Registry\Registry;
-use \Joomla\CMS\MVC\Model\ItemModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\MVC\Model\ItemModel;
+use \Joomla\Registry\Registry;
 
 /**
  * Base model class for JoomGallery items
@@ -51,12 +52,12 @@ abstract class JoomItemModel extends ItemModel
    */
   protected $type = 'image';
 
-  /**
-   * Item object
-   *
-   * @access  protected
-   * @var     object
-   */
+	/**
+	 * Item object
+	 *
+	 * @access  protected
+	 * @var     object
+	 */
 	protected $item = null;
 
   /**
@@ -67,7 +68,7 @@ abstract class JoomItemModel extends ItemModel
    */
   protected $acl = null;
 
-  /**
+	/**
 	 * Constructor
 	 *
 	 * @param   array                $config   An array of configuration options (name, state, dbo, table_path, ignore_request).
@@ -77,25 +78,25 @@ abstract class JoomItemModel extends ItemModel
 	 * @throws  \Exception
 	 */
 	public function __construct($config = [], $factory = null)
-  {
+	{
     parent::__construct($config, $factory);
 
     $this->app       = Factory::getApplication('site');
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
   }
 
-  /**
+	/**
 	 * Method to get parameters from model state.
 	 *
 	 * @return  Registry[]   List of parameters
-   * @since   4.0.0
+	 * @since   4.0.0
 	 */
 	public function getParams(): array
 	{
-		$params = array('component' => $this->getState('parameters.component'),
-										'menu'      => $this->getState('parameters.menu'),
-									  'configs'   => $this->getState('parameters.configs')
-									);
+		$params = ['component' => $this->getState('parameters.component'),
+		  'menu'               => $this->getState('parameters.menu'),
+		  'configs'            => $this->getState('parameters.configs'),
+		];
 
 		return $params;
 	}
@@ -123,7 +124,7 @@ abstract class JoomItemModel extends ItemModel
   }
 
 
-  /**
+ /**
   * Method to get the access service class.
   *
   * @return  AccessInterface   Object on success, false on failure.
@@ -141,7 +142,7 @@ abstract class JoomItemModel extends ItemModel
    return $this->acl;
  }
 
-  /**
+	/**
 	 * Get an instance of Table class
 	 *
 	 * @param   string  $type     Name of the Table class to get an instance of.
@@ -150,12 +151,12 @@ abstract class JoomItemModel extends ItemModel
 	 *
 	 * @return  Table|bool Table if success, false on failure.
 	 */
-	public function getTable($type = 'Image', $prefix = 'Administrator', $config = array())
+	public function getTable($type = 'Image', $prefix = 'Administrator', $config = [])
 	{
 		return parent::getTable($this->type, $prefix, $config);
 	}
 
-  /**
+	/**
 	 * Method to check in an item.
 	 *
 	 * @param   integer $id The id of the row to check out.
@@ -175,7 +176,7 @@ abstract class JoomItemModel extends ItemModel
 			$table = $this->getTable();
 
 			// Attempt to check the row in.
-			if(\method_exists($table, 'checkin'))
+			if(method_exists($table, 'checkin'))
 			{
 				if(!$table->checkin($id))
 				{
@@ -210,7 +211,7 @@ abstract class JoomItemModel extends ItemModel
 			$user = $this->app->getIdentity();
 
 			// Attempt to check the row out.
-			if(\method_exists($table, 'checkout'))
+			if(method_exists($table, 'checkout'))
 			{
 				if(!$table->checkout($user->id, $id))
 				{
@@ -222,17 +223,17 @@ abstract class JoomItemModel extends ItemModel
 		return true;
 	}
 
-	
+
 
   /**
-	 * Method to load component specific parameters into model state.
+   * Method to load component specific parameters into model state.
    * 
    * @param   int   $id   ID of the content if needed (default: 0)
-	 *
-	 * @return  void
+   *
+   * @return  void
    * @since   4.0.0
-	 */
-  protected function loadComponentParams(int $id=0)
+   */
+  protected function loadComponentParams(int $id = 0)
   {
     // Load the parameters.
 		$params       = Factory::getApplication('com_joomgallery')->getParams();

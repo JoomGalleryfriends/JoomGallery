@@ -1,29 +1,30 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MailMessenger;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\PmMessenger;
 
 /**
-* Trait to implement MessengerServiceInterface
-*
-* @since  4.0.0
-*/
+ * Trait to implement MessengerServiceInterface
+ *
+ * @since  4.0.0
+ */
 trait MessengerServiceTrait
 {
-  /**
+	/**
 	 * Storage for the messenger service class.
 	 *
 	 * @var MessengerInterface
@@ -32,17 +33,17 @@ trait MessengerServiceTrait
 	 */
 	private $messenger = null;
 
-  /**
+	/**
 	 * Creates the messenger service class
-   * 
-   * @param   string  $msgMethod   Name of the messager to be used
+	 * 
+	 * @param   string  $msgMethod   Name of the messager to be used
 	 *
-   * @return  void
-   *
+	 * @return  void
+	 *
 	 * @since  4.0.0
 	 */
 	public function createMessenger($msgMethod)
-  {
+	{
     switch ($msgMethod)
     {
       case 'pm':
@@ -57,7 +58,7 @@ trait MessengerServiceTrait
     return;
   }
 
-  /**
+	/**
 	 * Returns the messenger service class.
 	 *
 	 * @return  MessengerInterface
@@ -65,7 +66,7 @@ trait MessengerServiceTrait
 	 * @since  4.0.0
 	 */
 	public function getMessenger()
-  {
+	{
     return $this->messenger;
   }
 }

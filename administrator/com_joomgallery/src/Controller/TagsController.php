@@ -1,17 +1,18 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
@@ -39,7 +40,7 @@ class TagsController extends JoomAdminController
 		$this->checkToken();
 
 		// Get id(s)
-		$pks = $this->input->post->get('cid', array(), 'array');
+		$pks = $this->input->post->get('cid', [], 'array');
 
 		try
 		{
@@ -52,7 +53,7 @@ class TagsController extends JoomAdminController
 			ArrayHelper::toInteger($pks);
 			$model = $this->getModel();
 			$model->duplicate($pks);
-			
+
       if(\count($pks) > 1)
       {
         $this->setMessage(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'));
@@ -84,10 +85,10 @@ class TagsController extends JoomAdminController
 	 *
 	 * @since   4.0.0
 	 */
-	public function getModel($name = 'Tag', $prefix = 'Administrator', $config = array())
+	public function getModel($name = 'Tag', $prefix = 'Administrator', $config = [])
 	{
-		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}	
+		return parent::getModel($name, $prefix, ['ignore_request' => true]);
+	}
 
 	/**
 	 * Method to save the submitted ordering values for records via AJAX.
@@ -102,8 +103,8 @@ class TagsController extends JoomAdminController
 	{
 		// Get the input
 		$input = Factory::getApplication()->input;
-		$pks   = $input->post->get('cid', array(), 'array');
-		$order = $input->post->get('order', array(), 'array');
+		$pks   = $input->post->get('cid', [], 'array');
+		$order = $input->post->get('order', [], 'array');
 
 		// Sanitize the input
 		ArrayHelper::toInteger($pks);
@@ -117,7 +118,7 @@ class TagsController extends JoomAdminController
 
 		if($return)
 		{
-			echo "1";
+			echo '1';
 		}
 
 		// Close the application
@@ -135,13 +136,13 @@ class TagsController extends JoomAdminController
     $user = $this->app->getIdentity();
 
     // Receive request data
-    $filters = array(
-        'like'      => $this->input->get('like', null, 'string') ? trim($this->input->get('like', '', 'string')) : null,
-        'title'     => $this->input->get('title', null, 'string') ? trim($this->input->get('title', '', 'string')) : null,
-        'flanguage' => $this->input->get('flanguage', null, 'word'),
-        'published' => $this->input->get('published', 1, 'int'),
-        'access'    => $user->getAuthorisedViewLevels(),
-    );
+    $filters = [
+      'like'      => $this->input->get('like', null, 'string') ? trim($this->input->get('like', '', 'string')) : null,
+      'title'     => $this->input->get('title', null, 'string') ? trim($this->input->get('title', '', 'string')) : null,
+      'flanguage' => $this->input->get('flanguage', null, 'word'),
+      'published' => $this->input->get('published', 1, 'int'),
+      'access'    => $user->getAuthorisedViewLevels(),
+    ];
 
     if((!$user->authorise('core.edit.state', 'com_joomgallery.tag')) && (!$user->authorise('core.edit', 'com_joomgallery.tag')))
     {
@@ -150,13 +151,13 @@ class TagsController extends JoomAdminController
     }
 
     // Search for tags
-    $model = $this->getModel('Tags');
+    $model   = $this->getModel('Tags');
     $results = $model->searchItems($filters);
 
     if($results)
     {
       // Output a JSON object
-      echo \json_encode($results);
+      echo json_encode($results);
     }
 
     $this->app->close();

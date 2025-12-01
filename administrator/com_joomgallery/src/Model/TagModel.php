@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
@@ -43,7 +44,7 @@ class TagModel extends JoomAdminModel
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = $this->app->getUserState(_JOOM_OPTION.'.edit.tag.data', array());
+		$data = $this->app->getUserState(_JOOM_OPTION.'.edit.tag.data', []);
 
 		if(empty($data))
 		{
@@ -59,17 +60,17 @@ class TagModel extends JoomAdminModel
 	}
 
   /**
-	 * Method to get the item ID based on alias or title.
-	 *
-	 * @param   string  $string  The alias or title of the item
-	 *
-	 * @return  mixed    ID on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
+   * Method to get the item ID based on alias or title.
+   *
+   * @param   string  $string  The alias or title of the item
+   *
+   * @return  mixed    ID on success, false on failure.
+   *
+   * @since   4.0.0
+   */
   protected function getItemID($string)
   {
-    $db = $this->getDatabase();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true);
 
     $query->select($db->quoteName('id'));
@@ -85,6 +86,7 @@ class TagModel extends JoomAdminModel
     catch(\Exception $e)
     {
       $this->setError($e->getMessage());
+
       return false;
     }
 
@@ -127,7 +129,7 @@ class TagModel extends JoomAdminModel
 	 */
 	public function getItem($pk = null)
 	{
-    if(!\is_null($pk) && !\is_numeric($pk))
+    if(!\is_null($pk) && !is_numeric($pk))
     {
       // get item based on alias or title
       if(!$pk = $this->getItemID($pk))
@@ -191,16 +193,16 @@ class TagModel extends JoomAdminModel
         }
 
         // Trigger the before save event.
-        $result = $this->app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
+        $result = $this->app->triggerEvent($this->event_before_save, [$context, &$table, true, $table]);
 
-        if(in_array(false, $result, true) || !$table->store())
+        if(\in_array(false, $result, true) || !$table->store())
         {
           $this->component->addLog($table->getError(), 'error', 'jerror');
           throw new \Exception($table->getError());
         }
 
         // Trigger the after save event.
-        $this->app->triggerEvent($this->event_after_save, array($context, &$table, true));
+        $this->app->triggerEvent($this->event_after_save, [$context, &$table, true]);
       }
       else
       {
@@ -229,7 +231,7 @@ class TagModel extends JoomAdminModel
   {
     $db = $this->getDatabase();
 
-    $mapping = new \stdClass();
+    $mapping        = new \stdClass();
     $mapping->imgid = (int) $img_id;
     $mapping->tagid = (int) $tag_id;
 
@@ -258,20 +260,20 @@ class TagModel extends JoomAdminModel
    *
    * @since   4.0.0
    */
-  public function removeMapping($tag_id, $img_id=0)
+  public function removeMapping($tag_id, $img_id = 0)
   {
     $tag_id = (int) $tag_id;
     $img_id = (int) $img_id;
 
-    $db = $this->getDatabase();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true);
 
-    $conditions = array($db->quoteName('tagid') . ' = ' . $db->quote($tag_id));
+    $conditions = [$db->quoteName('tagid') . ' = ' . $db->quote($tag_id)];
 
     if($img_id > 0)
     {
       // Delete mapping only for a specific image
-      \array_push($conditions, $db->quoteName('imgid') . ' = ' . $db->quote($img_id));
+      array_push($conditions, $db->quoteName('imgid') . ' = ' . $db->quote($img_id));
     }
 
     $query->delete($db->quoteName(_JOOM_TABLE_TAGS_REF));

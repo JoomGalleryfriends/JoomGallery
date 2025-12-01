@@ -9,16 +9,16 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS
 $wa = $this->document->getWebAssetManager();
@@ -48,7 +48,10 @@ if($saveOrder && !empty($this->items))
 <?php endif; ?>
 
 <form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post" name="adminForm" id="adminForm">
-	<?php if(!empty($this->filterForm)) { echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); } ?>
+	<?php if(!empty($this->filterForm))
+	{
+	echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
+	} ?>
   <div class="row">
 		<div class="col-md-12">
 
@@ -79,19 +82,19 @@ if($saveOrder && !empty($this->items))
                   <th></th>
 
                   <th scope="col" style="min-width:180px">
-                    <?php echo HTMLHelper::_('grid.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'JGLOBAL_HITS', 'a.hits', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_HITS', 'a.hits', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JOOMGALLERY_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'JCATEGORY', 'a.catid', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'JCATEGORY', 'a.catid', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
@@ -99,13 +102,13 @@ if($saveOrder && !empty($this->items))
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
                   </th>
               </tr>
             </thead>
             <tfoot>
               <tr>
-                <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+                <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                   <?php echo $this->pagination->getListFooter(); ?>
                 </td>
               </tr>
@@ -126,6 +129,7 @@ if($saveOrder && !empty($this->items))
                     <td class="text-center d-none d-md-table-cell sort-cell">
                       <?php
                         $iconClass = '';
+
                         if(!$canChange)
                         {
                           $iconClass = ' inactive';
@@ -222,7 +226,8 @@ if($saveOrder && !empty($this->items))
 </form>
 
 <?php
-	if($canDelete) {
+	if($canDelete)
+	{
 		$wa->addInlineScript("
 			jQuery(document).ready(function () {
 				jQuery('.delete-button').click(deleteItem);
@@ -230,10 +235,10 @@ if($saveOrder && !empty($this->items))
 
 			function deleteItem() {
 
-				if (!confirm(\"" . Text::_('COM_JOOMGALLERY_DELETE_MESSAGE') . "\")) {
+				if (!confirm(\"" . Text::_('COM_JOOMGALLERY_DELETE_MESSAGE') . '")) {
 					return false;
 				}
 			}
-		", [], [], ["jquery"]);
+		', [], [], ['jquery']);
 	}
 ?>

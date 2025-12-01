@@ -9,19 +9,19 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Language\Multilanguage;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Button\FeaturedButton;
 use Joomla\CMS\Button\PublishedButton;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -35,7 +35,7 @@ $userId    = $user->id;
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery');
-$saveOrder = ($listOrder == 'a.ordering' && \strtolower($listDirn) == 'asc');
+$saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
 if($saveOrder && !empty($this->items))
 {
@@ -49,7 +49,7 @@ if($saveOrder && !empty($this->items))
 	<div class="row">
 		<div class="col-md-12">
 			<div id="j-main-container" class="j-main-container">
-			<?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+			<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <?php if (empty($this->items)) : ?>
           <div class="alert alert-info">
             <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
@@ -78,58 +78,58 @@ if($saveOrder && !empty($this->items))
                   <?php echo HTMLHelper::_('searchtools.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-1 text-center">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-1 text-center">
                   <?php echo Text::_('COM_JOOMGALLERY_IMAGE') ?>
                 </th>
                 <th scope="col" style="min-width:180px">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JAUTHOR', 'a.author', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JAUTHOR', 'a.author', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JDATE', 'a.date', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JDATE', 'a.date', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                   <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_HITS', 'a.hits', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
                 </th>              
                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_OWNER', 'a.created_by', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_OWNER', 'a.created_by', $listDirn, $listOrder); ?>
                 </th>
                 <?php if (Multilanguage::isEnabled()) : ?>
                   <th scope="col" class="w-10 d-none d-md-table-cell">
-                    <?php echo HTMLHelper::_('searchtools.sort',  'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
                   </th>
                 <?php endif; ?>
                 <th scope="col" class="w-3 d-none d-lg-table-cell">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
                 </th>
               </tr>
             </thead>
             <tfoot>
             <tr>
-              <td colspan="<?php echo isset($this->items[0]) ? \count(\get_object_vars($this->items[0])) : 10; ?>">
+              <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                 <?php echo $this->pagination->getListFooter(); ?>
               </td>
             </tr>
             </tfoot>
-            <tbody <?php if ($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo \strtolower($listDirn); ?>" <?php endif; ?>>
+            <tbody <?php if ($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
               <?php foreach ($this->items as $i => $item) :
                 $ordering   = ($listOrder == 'a.ordering');
                 $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION.'.image', $item->id, $item->catid, true);
                 $canEditCat = $this->getAcl()->checkACL('edit', _JOOM_OPTION.'.category.'.$item->catid);
-                $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || is_null($item->checked_out);
+                $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
                 $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION.'.image', $item->id, $item->catid, true) && $canCheckin;
                 ?>
 
@@ -142,6 +142,7 @@ if($saveOrder && !empty($this->items))
                   <td class="text-center d-none d-md-table-cell">
                     <?php
                       $iconClass = '';
+
                       if (!$canChange)
                       {
                         $iconClass = ' inactive';
@@ -164,8 +165,8 @@ if($saveOrder && !empty($this->items))
                   <?php
                     $options = [
                       'task_prefix' => 'images.',
-                      'disabled' => !$canChange,
-                      'id' => 'featured-' . $item->id
+                      'disabled'    => !$canChange,
+                      'id'          => 'featured-' . $item->id,
                     ];
 
                     echo (new FeaturedButton)->render((int) $item->featured, $i, $options);
@@ -173,14 +174,14 @@ if($saveOrder && !empty($this->items))
                 </td>
 
                 <td class="image-status text-center">
-                  <?php 
+                  <?php
                     $options = [
                       'task_prefix' => 'images.',
-                      'disabled' => !$canChange,
-                      'id' => 'state-' . $item->id
+                      'disabled'    => !$canChange,
+                      'id'          => 'state-' . $item->id,
                     ];
 
-                    echo (new PublishedButton)->render((int) $item->published, $i, $options); 
+                    echo (new PublishedButton)->render((int) $item->published, $i, $options);
                   ?>
                 </td>
 
@@ -235,14 +236,14 @@ if($saveOrder && !empty($this->items))
                 </th>
 
                 <td class="d-none d-lg-table-cell text-center">
-                  <?php 
+                  <?php
                     $options = [
                       'task_prefix' => 'images.',
-                      'disabled' => !$canChange,
-                      'id' => 'state-' . $item->id
+                      'disabled'    => !$canChange,
+                      'id'          => 'state-' . $item->id,
                     ];
 
-                    echo (new ApprovedButton)->render((int) $item->approved, $i, $options); 
+                    echo (new ApprovedButton)->render((int) $item->approved, $i, $options);
                   ?>
                   <?php //echo $item->approved; ?>
                 </td>

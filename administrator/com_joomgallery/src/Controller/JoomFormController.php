@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Input\Input;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\CMS\Application\CMSApplication;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\MVC\Controller\FormController as BaseFormController;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use \Joomla\CMS\Application\CMSApplication;
+use \Joomla\CMS\MVC\Controller\FormController as BaseFormController;
+use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use \Joomla\CMS\User\CurrentUserInterface;
+use \Joomla\Input\Input;
 
 /**
  * JoomGallery Base of Joomla Form Controller
@@ -77,11 +78,11 @@ class JoomFormController extends BaseFormController
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
   }
 
-  /**
+	/**
 	 * Method to get the access service class.
 	 *
 	 * @return  AccessInterface   Object on success, false on failure.
-   * @since   4.0.0
+	 * @since   4.0.0
 	 */
 	public function getAcl(): AccessInterface
 	{
@@ -111,20 +112,20 @@ class JoomFormController extends BaseFormController
     // Before execution of the task
     if(!empty($task))
     {
-      if(\property_exists($this, 'task'))
+      if(property_exists($this, 'task'))
       {
         $this->task = $task;
       }
-      
+
       $this->component->msgUserStateKey = 'com_joomgallery.'.$task.'.messages';
     }
 
     // Guess context if needed
-    if(empty($this->context) || ($this->context && \strpos($this->context, $task) === false))
+    if(empty($this->context) || ($this->context && strpos($this->context, $task) === false))
     {
       $this->context = _JOOM_OPTION . '.' . $this->name;
 
-      if(\property_exists($this, 'task') && !empty($this->task))
+      if(property_exists($this, 'task') && !empty($this->task))
       {
         $this->context .= '.' . $this->task;
       }
@@ -135,7 +136,7 @@ class JoomFormController extends BaseFormController
       // Get messages from session
       $this->component->msgFromSession();
     }
-    
+
 
     // execute the task
     $res = parent::execute($task);
@@ -173,10 +174,10 @@ class JoomFormController extends BaseFormController
   {
     if(empty($name))
     {
-      $parts = \explode('.', $this->context);
+      $parts = explode('.', $this->context);
       $key   = 0;
 
-      if(\strpos($parts[0], 'com_') !== false)
+      if(strpos($parts[0], 'com_') !== false)
       {
         $key = 1;
       }
@@ -199,10 +200,10 @@ class JoomFormController extends BaseFormController
    */
   protected function allowAdd($data = [])
   {
-    $parts = \explode('.', $this->context);
+    $parts = explode('.', $this->context);
     $key   = 0;
 
-    if(\strpos($parts[0], 'com_') !== false)
+    if(strpos($parts[0], 'com_') !== false)
     {
       $key = 1;
     }
@@ -223,7 +224,8 @@ class JoomFormController extends BaseFormController
 
         $parent_id = $data['parent_id'] ?: 1;
         $cat_id    = $data['id'] ?: 0;
-        return $this->getAcl()->checkACL('add','category', $cat_id, $parent_id, true);
+
+        return $this->getAcl()->checkACL('add', 'category', $cat_id, $parent_id, true);
         break;
 
       case 'image':
@@ -235,11 +237,13 @@ class JoomFormController extends BaseFormController
 
         $catid = $data['catid'] ?: 1;
         $imgid = $data['id'] ?: 0;
-        return $this->getAcl()->checkACL('add','image', $imgid, $catid, true);
+
+        return $this->getAcl()->checkACL('add', 'image', $imgid, $catid, true);
         break;
-      
+
       default:
         $id = $data['id'] ?: 0;
+
         return $this->getAcl()->checkACL('add', $this->context, $id);
         break;
     }
@@ -265,14 +269,14 @@ class JoomFormController extends BaseFormController
 
     foreach($this->getAcl()->get('parent_dependent_types') as $type)
     {
-      if(\strpos($this->context, $type) !== false && $data['id'] > 0)
+      if(strpos($this->context, $type) !== false && $data['id'] > 0)
       {
         $parent_id  = isset($data['catid']) ? $data['catid'] : JoomHelper::getParent($type, $data['id']);
         $use_parent = true;
         $assetname  = $type;
       }
     }
-    
+
 
     return $this->getAcl()->checkACL('edit', $assetname, $id, $parent_id, $use_parent);
   }

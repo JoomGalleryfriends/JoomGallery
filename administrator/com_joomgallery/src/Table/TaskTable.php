@@ -1,25 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
- 
+
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Table\Table;
+use \Joomla\Database\DatabaseDriver;
 use \Joomla\Registry\Registry;
 use \Joomla\Utilities\ArrayHelper;
-use \Joomla\Database\DatabaseDriver;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
 
 /**
  * Task table
@@ -41,7 +42,7 @@ class TaskTable extends Table
    */
   public $progress = 0;
 
-	/**
+  /**
    * True if migration of this migrateable is completed
    *
    * @var  bool
@@ -49,7 +50,7 @@ class TaskTable extends Table
    * @since  4.2.0
    */
   public $completed = false;
-  
+
 	/**
 	 * Constructor
 	 *
@@ -59,7 +60,7 @@ class TaskTable extends Table
 	public function __construct(DatabaseDriver $db, bool $component_exists = true)
 	{
 		$this->component_exists = $component_exists;
-		$this->typeAlias = _JOOM_OPTION.'.task';
+		$this->typeAlias        = _JOOM_OPTION.'.task';
 
     parent::__construct(_JOOM_TABLE_TASKS, 'id', $db);
 
@@ -67,10 +68,10 @@ class TaskTable extends Table
 		$this->queue      = [];
 		$this->successful = new Registry();
 		$this->failed     = new Registry();
-    $this->counter    = new Registry();
+    $this->counter  = new Registry();
 	}
 
-  /**
+	/**
 	 * Get the type alias for the history table
 	 *
 	 * @return  string  The alias as described above
@@ -98,42 +99,42 @@ class TaskTable extends Table
 	{
     // Support for queue field
     if(isset($this->queue) && !\is_string($this->queue))
-		{
-			$this->queue = \json_encode(array_values($this->queue), JSON_UNESCAPED_UNICODE);
+    {
+			$this->queue = json_encode(array_values($this->queue), JSON_UNESCAPED_UNICODE);
 		}
 
 		// Support for successful field
     if(isset($this->successful) && !\is_string($this->successful))
-		{
-      $registry = new Registry($this->successful);
+    {
+      $registry      = new Registry($this->successful);
 			$this->successful = (string) $registry;
 		}
 
 		// Support for failed field
     if(isset($this->failed) && !\is_string($this->failed))
-		{
-			$registry = new Registry($this->failed);
+    {
+			$registry     = new Registry($this->failed);
 			$this->failed = (string) $registry;
 		}
 
     // Support for counter field
     if(isset($this->counter) && !\is_string($this->counter))
-		{
-			$registry = new Registry($this->counter);
+    {
+			$registry      = new Registry($this->counter);
 			$this->counter = (string) $registry;
 		}
 
     // Support for params field
     if(isset($this->params) && !\is_string($this->params))
-		{
-			$registry = new Registry($this->params);
+    {
+			$registry     = new Registry($this->params);
 			$this->params = (string) $registry;
 		}
 
 		return parent::store($updateNulls);
 	}
 
-  /**
+	/**
 	 * Overloaded bind function to pre-process the params.
 	 *
 	 * @param   array  $array   Named array
@@ -150,7 +151,8 @@ class TaskTable extends Table
     // Support for title field: title
     if(\array_key_exists('title', $array))
     {
-      $array['title'] = \trim($array['title']);
+      $array['title'] = trim($array['title']);
+
       if(empty($array['title']))
       {
         $array['title'] = $this->getSchedulerTask((int) $array['taskid'])->title;
@@ -159,13 +161,13 @@ class TaskTable extends Table
 
     // Support for queue field
     if(isset($array['queue']) && \is_array($array['queue']))
-		{
-			$array['queue'] = \json_encode($array['queue'], JSON_UNESCAPED_UNICODE);
+    {
+			$array['queue'] = json_encode($array['queue'], JSON_UNESCAPED_UNICODE);
 		}
 
 		// Support for successful field
     if(isset($array['successful']) && \is_array($array['successful']))
-		{
+    {
       $registry = new Registry;
 			$registry->loadArray($array['successful']);
 			$array['successful'] = (string) $registry;
@@ -173,7 +175,7 @@ class TaskTable extends Table
 
 		// Support for failed field
     if(isset($array['failed']) && \is_array($array['failed']))
-		{
+    {
 			$registry = new Registry;
 			$registry->loadArray($array['failed']);
 			$array['failed'] = (string) $registry;
@@ -181,7 +183,7 @@ class TaskTable extends Table
 
     // Support for counter field
     if(isset($array['counter']) && \is_array($array['counter']))
-		{
+    {
 			$registry = new Registry;
 			$registry->loadArray($array['counter']);
 			$array['counter'] = (string) $registry;
@@ -189,18 +191,18 @@ class TaskTable extends Table
 
     // Support for params field
     if(isset($array['params']) && \is_array($array['params']))
-		{
+    {
 			$registry = new Registry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
     if($array['id'] == 0)
-		{
+    {
 			$array['created_time'] = $date->toSql();
 		}
 
-    return parent::bind($array, array('progress', 'completed'));
+    return parent::bind($array, ['progress', 'completed']);
   }
 
   /**
@@ -219,15 +221,15 @@ class TaskTable extends Table
     {
       if(\is_string($this->queue))
       {
-        if(\filter_var($this->queue, FILTER_VALIDATE_INT) !== false)
+        if(filter_var($this->queue, FILTER_VALIDATE_INT) !== false)
         {
           // integer value detected. Add it into an array
           $queue = [$this->queue];
         }
-        elseif(!$queue = \json_decode($this->queue))
+        elseif(!$queue = json_decode($this->queue))
         {
           // json_decode did not work. Lets try explode()
-          $queue = \array_map('trim', \explode(',', $this->queue)) ?? [];
+          $queue = array_map('trim', explode(',', $this->queue)) ?? [];
         }
         $this->queue = $queue;
       }
@@ -242,7 +244,7 @@ class TaskTable extends Table
     {
       if(\is_string($this->successful))
       {
-        $this->successful = \json_decode($this->successful);
+        $this->successful = json_decode($this->successful);
       }
 
       if(\is_object($this->successful))
@@ -254,7 +256,7 @@ class TaskTable extends Table
         else
         {
           $this->successful = ArrayHelper::fromObject($this->successful);
-        }        
+        }
       }
 
       // Convert values to integer
@@ -342,8 +344,8 @@ class TaskTable extends Table
 
     if($total > 0)
     {
-      $this->progress = (int) \round((100 / $total) * ($finished));
-    }   
+      $this->progress = (int) round((100 / $total) * ($finished));
+    }
 
     // Update completed property
     if($total === $finished || $total == 0)
@@ -352,10 +354,10 @@ class TaskTable extends Table
     }
   }
 
-  /**
+	/**
 	 * Method to get a task object by id
-   * 
-   * @param   int  $id  Task type
+	 * 
+	 * @param   int  $id  Task type
 	 *
 	 * @return  object    The task object.
 	 *

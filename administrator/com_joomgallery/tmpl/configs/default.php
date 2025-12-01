@@ -9,15 +9,15 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Button\PublishedButton;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -46,7 +46,7 @@ if ($saveOrder && !empty($this->items))
 	<div class="row">
 		<div class="col-md-12">
 			<div id="j-main-container" class="j-main-container">
-			<?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+			<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
 				<div class="clearfix"></div>
         <div class="table-responsive">
           <table class="table table-striped" id="configList">
@@ -66,25 +66,25 @@ if ($saveOrder && !empty($this->items))
                   </th>
                 <?php endif; ?>
                 <th scope="col" class="w-1 text-center">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" style="min-width:140px">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-25 d-none d-md-table-cell">
                   <?php echo Text::_('JFIELD_NOTE_LABEL'); ?>
                 </th>
                 <th scope="col" class="w-25 d-none d-md-table-cell">
-                <?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_USER_GROUP', 'a.group_id', $listDirn, $listOrder); ?>
+                <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_USER_GROUP', 'a.group_id', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-3 d-none d-lg-table-cell">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
                 </th>
               </tr>
             </thead>
             <tfoot>
             <tr>
-              <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+              <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                 <?php echo $this->pagination->getListFooter(); ?>
               </td>
             </tr>
@@ -94,7 +94,7 @@ if ($saveOrder && !empty($this->items))
                 $ordering   = ($listOrder == 'a.ordering');
                 $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION.'.config.'.$item->id);
                 $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION.'.config.'.$item->id);
-                $canCheckin = $user->authorise('core.admin', 'com_checkin') || $item->checked_out == $userId || is_null($item->checked_out);
+                $canCheckin = $user->authorise('core.admin', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
               ?>
               <tr class="row<?php echo $i % 2; ?>">
               <td >
@@ -105,6 +105,7 @@ if ($saveOrder && !empty($this->items))
                 <td class="text-center d-none d-md-table-cell">
                 <?php
                   $iconClass = '';
+
                   if (!$canChange)
                   {
                     $iconClass = ' inactive';
@@ -124,14 +125,14 @@ if ($saveOrder && !empty($this->items))
                 <?php endif; ?>
 
                 <td class="image-status text-center">
-                  <?php 
+                  <?php
                     $options = [
                       'task_prefix' => 'configs.',
-                      'disabled' => !$canChange,
-                      'id' => 'state-' . $item->id
+                      'disabled'    => !$canChange,
+                      'id'          => 'state-' . $item->id,
                     ];
 
-                    echo (new PublishedButton)->render((int) $item->published, $i, $options); 
+                    echo (new PublishedButton)->render((int) $item->published, $i, $options);
                   ?>
                 </td>
 

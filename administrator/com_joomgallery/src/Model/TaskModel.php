@@ -1,22 +1,23 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Form\Form;
-use \Joomla\Registry\Registry;
 use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 use \Joomla\Component\Scheduler\Administrator\Task\TaskOption;
+use \Joomla\Registry\Registry;
 
 /*
  * Task model.
@@ -52,7 +53,7 @@ class TaskModel extends JoomAdminModel
     $this->setState($this->getName() . '.option', $taskOption);
   }
 
-  /**
+	/**
 	 * Method to get the record form.
 	 *
 	 * @param   array    $data      An optional array of data for the form to interogate.
@@ -102,7 +103,7 @@ class TaskModel extends JoomAdminModel
 		}
 
     // Add support for queue
-    $data->queue = \implode(',', $data->queue);
+    $data->queue = implode(',', $data->queue);
 
 		return $data;
 	}
@@ -179,12 +180,13 @@ class TaskModel extends JoomAdminModel
 
     // Filter for JoomGallery Tasks
     $jg_tasks = [];
+
     foreach($tasks as $key => $task)
     {
-      if(\strpos(\strtolower($task->id), 'joomgallery') !== false)
+      if(strpos(strtolower($task->id), 'joomgallery') !== false)
       {
         // Its a JoomGallery task
-        \array_push($jg_tasks, $task);
+        array_push($jg_tasks, $task);
       }
     }
 

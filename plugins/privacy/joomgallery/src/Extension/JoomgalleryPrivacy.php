@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @subpackage plg_privacyjoomgalleryimages                                           **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
 namespace Joomgallery\Plugin\Privacy\Joomgallery\Extension;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\User\User;
@@ -41,14 +42,14 @@ final class JoomgalleryPrivacy extends PrivacyPlugin
 	{
 		if (!$user)
 		{
-			return array();
+			return [];
 		}
 
-		$domains   = array();
+		$domains   = [];
 		$domain    = $this->createDomain('user_image', 'joomla_user_image_data');
 		$domains[] = $domain;
 
-		$db = $this->getDatabase();
+		$db    = $this->getDatabase();
 		$query = $db->getQuery(true)
 			->select('*')
 			->from($db->quoteName('#__joomgallery'))

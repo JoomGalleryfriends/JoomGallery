@@ -1,30 +1,31 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Asset;
-use \Joomla\CMS\Access\Rules;
-use \Joomla\CMS\User\UserHelper;
-use \Joomla\Registry\Registry;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\Database\DatabaseDriver;
-use \Joomla\CMS\Versioning\VersionableTableInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\MultipleAssetsTableTrait;
+use \Joomla\CMS\Access\Rules;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Filter\OutputFilter;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Table\Asset;
+use \Joomla\CMS\User\UserHelper;
+use \Joomla\CMS\Versioning\VersionableTableInterface;
+use \Joomla\Database\DatabaseDriver;
+use \Joomla\Registry\Registry;
 
 /**
  * Category table
@@ -33,12 +34,12 @@ use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\MultipleAssetsT
  * @since   4.0.0
  */
 class CategoryTable extends MultipleAssetsTable implements VersionableTableInterface
-{ 
+{
   use JoomTableTrait;
   use MultipleAssetsTableTrait;
   use MigrationTableTrait;
   use LegacyDatabaseTrait;
-  
+
   /**
    * Object property to hold the path of the new location reference node.
    *
@@ -88,7 +89,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 	public function __construct(DatabaseDriver $db, bool $component_exists = true)
 	{
 		$this->component_exists = $component_exists;
-		$this->typeAlias = _JOOM_OPTION.'.category';
+		$this->typeAlias        = _JOOM_OPTION.'.category';
 
 		parent::__construct(_JOOM_TABLE_CATEGORIES, 'id', $db);
 
@@ -97,12 +98,12 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 	}
 
   /**
-	 * Resets the root_id property to the default value: 0
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
+   * Resets the root_id property to the default value: 0
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
   public static function resetRootId()
   {
     self::$root_id = 0;
@@ -127,17 +128,18 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     $comp->createAccess();
 
     // Get all unlocked categories of this user from session
-    $unlockedCats = Factory::getApplication()->getUserState(_JOOM_OPTION.'unlockedCategories', array(0));
+    $unlockedCats = Factory::getApplication()->getUserState(_JOOM_OPTION.'unlockedCategories', [0]);
 
     // Return password only if user is admin or owner
     $this->pw_protected = false;
+
     if(isset($this->password) && !empty($this->password) && !\in_array($keys, $unlockedCats))
     {
       if(!$comp->getAccess()->checkACL('admin') || $user->id != $this->created_by)
       {
         $this->password = '';
       }
-      
+
       // Set a property showing that the category is protected
       $this->pw_protected = true;
     }
@@ -170,7 +172,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     // Support for title field: title
     if(\array_key_exists('title', $array))
     {
-      $array['title'] = \trim($array['title']);
+      $array['title'] = trim($array['title']);
+
       if(empty($array['title']))
       {
         $array['title'] = 'Unknown';
@@ -182,7 +185,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 			$array['created_time'] = $date->toSql();
 		}
 
-		if(!\key_exists('created_by', $array) || empty($array['created_by']))
+		if(!key_exists('created_by', $array) || empty($array['created_by']))
 		{
 			$array['created_by'] = Factory::getApplication()->getIdentity()->id;
 		}
@@ -192,12 +195,12 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
 		}
 
-		if($task == 'apply' || \strpos($task, 'save') !== false)
+		if($task == 'apply' || strpos($task, 'save') !== false)
 		{
 			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
 		}
 
-		if($task == 'apply' || \strpos($task, 'save') !== false)
+		if($task == 'apply' || strpos($task, 'save') !== false)
 		{
 			$array['modified_time'] = $date->toSql();
 		}
@@ -250,7 +253,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     // Support for multiple rules
     foreach ($array as $key => $value)
     {
-      if(\strpos($key, 'rules') !== false)
+      if(strpos($key, 'rules') !== false)
       {
         // We found a rules entry in the data
         if($key === 'rules')
@@ -259,7 +262,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
         }
         else
         {
-          $itemtype = \str_replace('rules-', '', $key);
+          $itemtype = str_replace('rules-', '', $key);
         }
 
         // Bind the rules for ACL where supported.
@@ -267,7 +270,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
         $this->setRules($rules, $itemtype);
       }
     }
-		
+
 
 		return parent::bind($array, $ignore);
 	}
@@ -289,7 +292,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     $this->setPathWithLocation();
 
     // Support for password field
-    if(\property_exists($this, 'password'))
+    if(property_exists($this, 'password'))
     {
       if(\strlen($this->new_pw) > 0)
       {
@@ -306,8 +309,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 
     // Support for params field
     if(isset($this->params) && !\is_string($this->params))
-		{
-			$registry = new Registry($this->params);
+    {
+			$registry     = new Registry($this->params);
 			$this->params = (string) $registry;
 		}
 
@@ -315,14 +318,14 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 	}
 
   /**
-	 * Method to set path based on the location properties.
-	 *
-	 * @param   boolean  $old  To use the old location path.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
+   * Method to set path based on the location properties.
+   *
+   * @param   boolean  $old  To use the old location path.
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
   public function setPathWithLocation($old = false)
   {
     // Check with new categories and category data changes!!
@@ -332,7 +335,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     }
     elseif($this->_new_location_path)
     {
-      $this->path = \str_replace('{alias}', $this->alias, $this->_new_location_path);
+      $this->path = str_replace('{alias}', $this->alias, $this->_new_location_path);
     }
   }
 
@@ -344,7 +347,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 	public function check()
 	{
 		// If there is an ordering column and this is a new row then get the next ordering value
-		if(\property_exists($this, 'ordering') && $this->id == 0)
+		if(property_exists($this, 'ordering') && $this->id == 0)
 		{
 			$this->ordering = self::getNextOrder();
 		}
@@ -354,8 +357,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     {
       if(!$this->isUnique('alias', $this->parent_id, 'parent_id'))
       {
-        $count = 2;
-        $currentAlias =  $this->alias;
+        $count        = 2;
+        $currentAlias = $this->alias;
 
         while(!$this->isUnique('alias', $this->parent_id, 'parent_id'))
         {
@@ -365,7 +368,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     }
 
     // Create new path based on alias and parent category
-    $manager    = JoomHelper::getService('FileManager', array($this->id));
+    $manager    = JoomHelper::getService('FileManager', [$this->id]);
     $filesystem = JoomHelper::getService('Filesystem');
     $this->path = $manager->getCatPath(0, false, $this->parent_id, $this->alias, false, false);
     $this->path = $filesystem->cleanPath($this->path, '/');
@@ -373,9 +376,10 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     // Create static_path if compatibility mode is activated and we are not in migration
     if(!$this->is_migration && $this->getComponent()->getConfig()->get('jg_compatibility_mode', 0))
     {
-      $alias = $this->alias;
-      $static_name = \basename($this->static_path);
-      if(\preg_match('/_([0-9]+)$/', $static_name))
+      $alias       = $this->alias;
+      $static_name = basename($this->static_path);
+
+      if(preg_match('/_([0-9]+)$/', $static_name))
       {
         // We found a numeric value at the end of the folder name: e.g alias_6
         // Therefore we use the static folder name instead
@@ -391,6 +395,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     {
       $this->params = $this->loadDefaultField('params');
     }
+
     if(isset($this->params))
     {
       $this->params = new Registry($this->params);
@@ -450,7 +455,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       else
       {
         $this->_new_location_path = $referenceObj->path.'/{alias}';
-      }      
+      }
     }
   }
 
@@ -506,7 +511,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       ->set('language = ' . $db->quote('*'))
       ->set('metadesc = ' . $db->quote(''))
       ->set('metakey = ' . $db->quote(''));
-      
+
       $db->setQuery($query);
 
       if(!$db->execute())
@@ -515,15 +520,15 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
         $this->getComponent()->addLog(Text::_('Error create root category'), 'error', 'jerror');
 
         return false;
-      }      
+      }
       $root_catid = $db->insertid();
 
       // Get parent id for asset
-      $old_parentID = $this->parent_id;
+      $old_parentID    = $this->parent_id;
       $this->parent_id = 0;
-      $parentId = $this->_getAssetParentId();
+      $parentId        = $this->_getAssetParentId();
       $this->parent_id = $old_parentID;
-      
+
       // Get asset name
       $name = $this->typeAlias . '.1';
 
@@ -538,8 +543,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 
         return false;
       }
-      else
-      {
+
+
         // Specify how a new or moved node asset is inserted into the tree.
         if(empty($assetTable->id) || $assetTable->parent_id != $parentId)
         {
@@ -559,7 +564,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 
           return false;
         }
-      }
+
 
       // Connect root category with asset table
       $query = $db->getQuery(true);
@@ -628,7 +633,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       case 'children':
         $type = 'children';
         break;
-      
+
       default:
         $type = 'cpl';
         break;
@@ -639,7 +644,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 		$query = $db->getQuery(true);
 
     // Select the required fields from the table.
-		$query->select(array('id', 'level', 'alias', 'title'));
+		$query->select(['id', 'level', 'alias', 'title']);
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
 
     if($type === 'children')
@@ -673,7 +678,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       // parents
       $pWhere = '(' . $db->quoteName('lft') . ' < ' . $this->lft . ' AND ' . $db->quoteName('rgt') . ' > ' . $this->rgt . ')';
 
-      $query->where('(' . implode(' OR ', array($cWhere, $pWhere)) . ')');
+      $query->where('(' . implode(' OR ', [$cWhere, $pWhere]) . ')');
     }
 
     // Exclude root category
@@ -681,7 +686,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     {
       $query->where($db->quoteName('level') . ' > 0');
     }
-    
+
     // Apply ordering
     $query->order($db->quoteName('level') . ' ASC');
 
@@ -743,7 +748,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       case 'r':
         $type = 'right';
         break;
-      
+
       default:
         $type = 'both';
         break;
@@ -761,7 +766,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 		$query = $db->getQuery(true);
 
     // Select the required fields from the table.
-		$query->select(array('id', 'title', 'lft', 'rgt'));
+		$query->select(['id', 'title', 'lft', 'rgt']);
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
 
     if($type === 'left')
@@ -769,11 +774,11 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       // Select left siblings
       if($direct)
       {
-        $query->where($db->quoteName('rgt') . ' = ' . strval($this->lft - 1));
+        $query->where($db->quoteName('rgt') . ' = ' . \strval($this->lft - 1));
       }
       else
       {
-        $query->where($db->quoteName('lft') . ' > ' . strval($parent->lft) . ' AND ' . $db->quoteName('rgt') . ' < ' . strval($this->lft));
+        $query->where($db->quoteName('lft') . ' > ' . \strval($parent->lft) . ' AND ' . $db->quoteName('rgt') . ' < ' . \strval($this->lft));
       }
     }
     elseif($type === 'right')
@@ -781,11 +786,11 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       // Select right siblings
       if($direct)
       {
-        $query->where($db->quoteName('lft') . ' = ' . strval($this->rgt + 1));
+        $query->where($db->quoteName('lft') . ' = ' . \strval($this->rgt + 1));
       }
       else
       {
-        $query->where($db->quoteName('lft') . ' > ' . strval($this->rgt) . ' AND ' . $db->quoteName('rgt') . ' < ' . strval($parent->rgt));
+        $query->where($db->quoteName('lft') . ' > ' . \strval($this->rgt) . ' AND ' . $db->quoteName('rgt') . ' < ' . \strval($parent->rgt));
       }
     }
     else
@@ -793,7 +798,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       // Select all siblings
       if($direct)
       {
-        $query->where($db->quoteName('rgt') . ' = ' . strval($this->lft - 1). ' OR ' . $db->quoteName('lft') . ' = ' . strval($this->rgt + 1));
+        $query->where($db->quoteName('rgt') . ' = ' . \strval($this->lft - 1). ' OR ' . $db->quoteName('lft') . ' = ' . \strval($this->rgt + 1));
       }
       else
       {
@@ -840,8 +845,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
         throw new \UnexpectedValueException('Unexpected sibling received.');
       }
 
-      unset($siblings[$key]['lft']);
-      unset($siblings[$key]['rgt']);
+      unset($siblings[$key]['lft'], $siblings[$key]['rgt']);
+
     }
 
     return $siblings;
@@ -866,9 +871,10 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 
     if(!isset($this->{$prop_name}))
     {
-      $parents = \array_reverse($this->getNodeTree('parents', true, $root));
+      $parents = array_reverse($this->getNodeTree('parents', true, $root));
 
-      $this->{$prop_name} = array();
+      $this->{$prop_name} = [];
+
       foreach ($parents as $key => $node)
       {
         $this->{$prop_name}[$node['id']] = $node['id'] . ':' . $node['alias'];

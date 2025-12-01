@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\Database\ParameterType;
@@ -31,7 +32,7 @@ class ConfigsModel extends JoomListModel
    */
   protected $type = 'config';
 
-	/**
+  /**
    * Constructor
    *
    * @param   array  $config  An optional associative array of configuration settings.
@@ -39,20 +40,20 @@ class ConfigsModel extends JoomListModel
    * @return  void
    * @since   4.0.0
    */
-  function __construct($config = array())
-	{
+  function __construct($config = [])
+  {
 		if(empty($config['filter_fields']))
 		{
-      $config['filter_fields'] = array(
-				'id', 'a.id',
+      $config['filter_fields'] = [
+        'id', 'a.id',
         'group_id', 'a.group_id',
-				'published', 'a.published',
-				'ordering', 'a.ordering',
-				'created_by', 'a.created_by',
-				'modified_by', 'a.modified_by',
-				'title', 'a.title',
-        'note', 'a.note'
-			);
+        'published', 'a.published',
+        'ordering', 'a.ordering',
+        'created_by', 'a.created_by',
+        'modified_by', 'a.modified_by',
+        'title', 'a.title',
+        'note', 'a.note',
+      ];
 		}
 
 		parent::__construct($config);
@@ -147,11 +148,11 @@ class ConfigsModel extends JoomListModel
 		$query->join('LEFT', $db->quoteName('#__users', 'uc'), $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.checked_out'));
 
 		// Join over the user field 'created_by'
-		$query->select(array($db->quoteName('ua.name', 'created_by'), $db->quoteName('ua.id', 'created_by_id')));
+		$query->select([$db->quoteName('ua.name', 'created_by'), $db->quoteName('ua.id', 'created_by_id')]);
     $query->join('LEFT', $db->quoteName('#__users', 'ua'), $db->quoteName('ua.id') . ' = ' . $db->quoteName('a.created_by'));
 
     // Join over the user field 'modified_by'
-		$query->select(array($db->quoteName('um.name', 'modified_by'), $db->quoteName('um.id', 'modified_by_id')));
+		$query->select([$db->quoteName('um.name', 'modified_by'), $db->quoteName('um.id', 'modified_by_id')]);
     $query->join('LEFT', $db->quoteName('#__users', 'um'), $db->quoteName('um.id') . ' = ' . $db->quoteName('a.modified_by'));
 
 		// Filter by search
@@ -191,6 +192,7 @@ class ConfigsModel extends JoomListModel
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', 'id');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
+
     if($orderCol && $orderDirn)
     {
       $query->order($db->escape($orderCol . ' ' . $orderDirn));
@@ -203,7 +205,7 @@ class ConfigsModel extends JoomListModel
 		return $query;
 	}
 
-  /**
+	/**
 	 * Build an SQL query to load the list data for counting.
 	 *
 	 * @return  DatabaseQuery
@@ -271,13 +273,13 @@ class ConfigsModel extends JoomListModel
 			if(isset($oneItem->group_id))
 			{
 				$values    = explode(',', $oneItem->group_id);
-				$textValue = array();
+				$textValue = [];
 
 				foreach($values as $value)
 				{
 					if(!empty($value))
 					{
-						$db = $this->getDatabase();
+						$db    = $this->getDatabase();
 						$query = "SELECT id, title FROM #__usergroups HAVING id LIKE '" . $value . "'";
 						$db->setQuery($query);
 						$results = $db->loadObject();

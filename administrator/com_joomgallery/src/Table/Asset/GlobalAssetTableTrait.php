@@ -1,47 +1,47 @@
 <?php
 /**
-******************************************************************************************
-
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table\Asset;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Access\Rules;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Table\Asset;
 use \Joomla\CMS\Table\Table;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
-* Trait for Tables with only one global asset
-*
-* @since  4.0.0
-*/
+ * Trait for Tables with only one global asset
+ *
+ * @since  4.0.0
+ */
 trait GlobalAssetTableTrait
 {
-  /**
+	/**
 	 * Define a namespaced asset name for inclusion in the #__assets table
 	 *
 	 * @return string The asset name
 	 *
-   * @since 4.0.0
+	 * @since 4.0.0
 	 * @see Joomla\CMS\Table\Table::_getAssetName
 	 */
 	protected function _getAssetName($itemtype = null)
-  {
+	{
     return $this->typeAlias . '.1';
   }
 
-  /**
+	/**
 	 * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
 	 *
 	 * @param   Table   $table  Table name
@@ -73,25 +73,25 @@ trait GlobalAssetTableTrait
 		return $assetParentId;
 	}
 
-  /**
+	/**
 	 * Method to return the title to use for the asset table.
 	 *
 	 * @return  string
 	 *
-   * @since 4.0.0
+	 * @since 4.0.0
 	 * @see Joomla\CMS\Table\Table::_getAssetTitle
 	 */
 	protected function _getAssetTitle($itemtype = null)
 	{
     if(!$itemtype)
     {
-      $itemtype = \explode('.', $this->typeAlias, 2)[1];
+      $itemtype = explode('.', $this->typeAlias, 2)[1];
     }
 
-		return 'Global ' . \ucfirst(JoomHelper::pluralize($itemtype));
+		return 'Global ' . ucfirst(JoomHelper::pluralize($itemtype));
 	}
 
-	/**
+  /**
    * Method to set empty rules for the record based on a form.
    * 
    * @param   Form  $form  The form object where the rules gets extracted

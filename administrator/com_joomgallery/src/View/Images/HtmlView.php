@@ -1,27 +1,28 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Images;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\CMS\HTML\Helpers\Sidebar;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomla\CMS\HTML\Helpers\Sidebar;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomla\CMS\Toolbar\Toolbar;
+use \Joomla\CMS\Toolbar\ToolbarHelper;
+use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
  * View class for a list of Images.
@@ -33,7 +34,7 @@ class HtmlView extends JoomGalleryView
 {
 	protected $items;
 
-	protected $pagination;	
+	protected $pagination;
 
 	/**
 	 * Display the view
@@ -49,17 +50,17 @@ class HtmlView extends JoomGalleryView
     /** @var ImagesModel $model */
     $model = $this->getModel();
 
-    $this->state         = $model->getState();
-    $this->items         = $model->getItems();		
+    $this->state       = $model->getState();
+    $this->items       = $model->getItems();
 		$this->pagination    = $model->getPagination();
 		$this->filterForm    = $model->getFilterForm();
 		$this->activeFilters = $model->getActiveFilters();
-    
+
 		// Check if filesystem plugins are available
 		JoomHelper::checkFilesystems();
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
@@ -79,7 +80,7 @@ class HtmlView extends JoomGalleryView
    */
   protected function addToolbar()
   {
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES'), "image");
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES'), 'image');
 
     /** @var Toolbar $model */
     $toolbar = $this->getToolbar();
@@ -92,7 +93,7 @@ class HtmlView extends JoomGalleryView
     $toolbar->appendButton('Custom', $html);
 
     // New button
-    if(\file_exists($formPath))
+    if(file_exists($formPath))
     {
       if($this->getAcl()->checkACL('add'))
       {
@@ -111,7 +112,7 @@ class HtmlView extends JoomGalleryView
           ->task('image.multipleadd');
       }
     }
-    
+
     if($this->getAcl()->checkACL('core.edit.state'))
     {
       // Batch button
@@ -123,7 +124,7 @@ class HtmlView extends JoomGalleryView
           ->icon('fas fa-ellipsis-h')
           ->buttonClass('btn btn-action')
           ->listCheck(true);
-        
+
         $batch_childBar = $batch_dropdown->getChildToolbar();
 
         // Duplicate button inside batch dropdown
@@ -143,7 +144,7 @@ class HtmlView extends JoomGalleryView
           ->icon('fas fa-images')
           ->buttonClass('btn btn-action')
           ->listCheck(true);
-        
+
         $process_childBar = $process_dropdown->getChildToolbar();
 
         // Recreate button inside image manipulation
@@ -153,7 +154,7 @@ class HtmlView extends JoomGalleryView
           ->task('images.recreate')
           ->listCheck(true);
       }
-  
+
       // State button
       $dropdown = $toolbar->dropdownButton('status-group')
         ->text('JSTATUS')
@@ -205,20 +206,20 @@ class HtmlView extends JoomGalleryView
 	 */
 	protected function getSortFields()
 	{
-		return array(
-			'a.`ordering`'   => Text::_('JGRID_HEADING_ORDERING'),
-			'a.`hits`'       => Text::_('COM_JOOMGALLERY_COMMON_HITS'),
-			'a.`downloads`'  => Text::_('COM_JOOMGALLERY_DOWNLOADS'),
-			'a.`approved`'   => Text::_('COM_JOOMGALLERY_APPROVED'),
-			'a.`title`'   => Text::_('JGLOBAL_TITLE'),
-			'a.`catid`'      => Text::_('JCATEGORY'),
-			'a.`published`'  => Text::_('JSTATUS'),
-			'a.`author`'  => Text::_('JAUTHOR'),
-			'a.`language`'   => Text::_('JGRID_HEADING_LANGUAGE'),
-			'a.`access`'     => Text::_('JGRID_HEADING_ACCESS'),
-			'a.`created_by`' => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
-			'a.`id`'         => Text::_('JGRID_HEADING_ID'),
-			'a.`date`'    => Text::_('JDATE'),
-		);
+		return [
+		  'a.`ordering`'   => Text::_('JGRID_HEADING_ORDERING'),
+		  'a.`hits`'       => Text::_('COM_JOOMGALLERY_COMMON_HITS'),
+		  'a.`downloads`'  => Text::_('COM_JOOMGALLERY_DOWNLOADS'),
+		  'a.`approved`'   => Text::_('COM_JOOMGALLERY_APPROVED'),
+		  'a.`title`'      => Text::_('JGLOBAL_TITLE'),
+		  'a.`catid`'      => Text::_('JCATEGORY'),
+		  'a.`published`'  => Text::_('JSTATUS'),
+		  'a.`author`'     => Text::_('JAUTHOR'),
+		  'a.`language`'   => Text::_('JGRID_HEADING_LANGUAGE'),
+		  'a.`access`'     => Text::_('JGRID_HEADING_ACCESS'),
+		  'a.`created_by`' => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
+		  'a.`id`'         => Text::_('JGRID_HEADING_ID'),
+		  'a.`date`'       => Text::_('JDATE'),
+		];
 	}
 }

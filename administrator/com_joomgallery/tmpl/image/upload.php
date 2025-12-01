@@ -7,16 +7,16 @@
 **   @license    GNU General Public License version 3 or later                          **
 *****************************************************************************************/
 
-// No direct access 
+// No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -44,7 +44,7 @@ Text::script('JGLOBAL_VALIDATION_FORM_FAILED');
 Text::script('COM_JOOMGALLERY_UPLOADING');
 Text::script('COM_JOOMGALLERY_SAVING');
 Text::script('COM_JOOMGALLERY_WAITING');
-Text::script('COM_JOOMGALLERY_DEBUG_INFORMATION'); 
+Text::script('COM_JOOMGALLERY_DEBUG_INFORMATION');
 Text::script('COM_JOOMGALLERY_FILE_TITLE_HINT');
 Text::script('COM_JOOMGALLERY_FILE_DESCRIPTION_HINT');
 Text::script('COM_JOOMGALLERY_FILE_AUTHOR_HINT');
@@ -89,9 +89,9 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''. json_encode($this->js_va
           <p>
             <?php
               $displayData = [
-                  'description' => Text::_('COM_JOOMGALLERY_GENERIC_UPLOAD_DATA'),
-                  'id'          => 'adminForm-desc',
-                  'small'       => true
+                'description' => Text::_('COM_JOOMGALLERY_GENERIC_UPLOAD_DATA'),
+                'id'          => 'adminForm-desc',
+                'small'       => true,
               ];
               $renderer = new FileLayout('joomgallery.tip');
             ?>

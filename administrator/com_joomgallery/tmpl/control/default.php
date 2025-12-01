@@ -9,15 +9,15 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Helper\ModuleHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -26,6 +26,7 @@ $wa->useStyle('com_joomgallery.admin');
 // Get language tag for donate button
 $langTag = 'US';
 $cTag    = 'USD';
+
 if(strpos(strtolower(Factory::getApplication()->getLanguage()->getTag()), 'de') !== false)
 {
   $langTag = 'DE';
@@ -79,7 +80,7 @@ if(strpos(strtolower(Factory::getApplication()->getLanguage()->getTag()), 'de') 
       <?php // Render admin modules in position joom_cpanel
       foreach ($this->modules as $module)
       {
-        echo ModuleHelper::renderModule($module, array('style' => 'well'));
+        echo ModuleHelper::renderModule($module, ['style' => 'well']);
       }
       ?>
 
@@ -98,18 +99,18 @@ if(strpos(strtolower(Factory::getApplication()->getLanguage()->getTag()), 'de') 
         </div>
       </div>
 
-      <?php // Display official extensions 
+      <?php // Display official extensions
       DisplayOfficialExtensions($this->galleryofficialextensionsdata); ?>
       <hr>
 
-      <?php // Display installed extensions 
+      <?php // Display installed extensions
       DisplayInstalledExtensions($this->galleryinstalledextensionsdata); ?>
       <hr>
 
       <?php // Display system settings
       $title    = Text::_('PHP system settings');
       $settings = $this->php_settings;
-      $id      = '200';
+      $id       = '200';
 
       DisplaySystemSettings($title, $settings); ?>
       <hr>
@@ -123,7 +124,7 @@ if(strpos(strtolower(Factory::getApplication()->getLanguage()->getTag()), 'de') 
             <?php echo HTMLHelper::_('image', 'com_joomgallery/logo.png', Text::_('COM_JOOMGALLERY_LOGO'), ['class' => 'joom-logo-small', 'style' => 'max-width: 40px'], true); ?>
             <p>
               <?php echo Text::_('COM_JOOMGALLERY'); ?> <?php echo $this->galleryinfodata['version']; ?> by <a href="<?php echo Text::_('COM_JOOMGALLERY_WEBSITE_URL'); ?>" target="_blank">JoomGallery::ProjectTeam</a>
-              <br /><span>Copyright &copy; 2008-<?php echo date("Y"); ?>. All rights reserved.</span>
+              <br /><span>Copyright &copy; 2008-<?php echo date('Y'); ?>. All rights reserved.</span>
             </p>
           </div>
         </div>
@@ -341,7 +342,7 @@ function DisplayGalleryInfo($manifest)
  * @param   array   $header      Array with column header, $header[0]=columheader, $header[1]=first column...
  * @param   array   $data        Array with hold the Images data, $data[0]=image, $data[1]=title, $data[2]=value, $data[3]=imgid
  * @param   int     $id          Unique id
-   *
+ *
  * @since 4.0.0
  */
 function DisplayMostViewedImages($header, $data, $id)
@@ -383,7 +384,7 @@ function DisplayMostViewedImages($header, $data, $id)
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($value[2], 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
                   <td class="d-md-table-cell">
-                    <?php $ImgUrl   = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
+                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
                       $EditImgTxt = Text::_('COM_JOOMGALLERY_IMAGE_EDIT');
                     ?>
                     <a href="<?php echo $ImgUrl; ?>" title="<?php echo $EditImgTxt; ?>">
@@ -457,7 +458,7 @@ function DisplayNewestImages($header, $data, $id)
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($value[2], 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
                   <td class="d-md-table-cell">
-                    <?php $ImgUrl   = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
+                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
                       $EditImgTxt = Text::_('COM_JOOMGALLERY_IMAGE_EDIT');
                     ?>
                     <a href="<?php echo $ImgUrl; ?>" title="<?php echo $EditImgTxt; ?>">
@@ -533,7 +534,7 @@ function DisplayBestRatedImages($header, $data, $id)
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($value[2], 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
                   <td class="d-md-table-cell">
-                    <?php $ImgUrl   = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
+                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
                       $EditImgTxt = Text::_('COM_JOOMGALLERY_IMAGE_EDIT');
                     ?>
                     <a href="<?php echo $ImgUrl; ?>" title="<?php echo $EditImgTxt; ?>">
@@ -541,7 +542,7 @@ function DisplayBestRatedImages($header, $data, $id)
                     </a>
                   </td>
                   <td class="d-md-table-cell">
-                    <?php echo round(floatval($value[1]), 2); ?>
+                    <?php echo round(\floatval($value[1]), 2); ?>
                   </td>
                   <td class="d-md-table-cell">
                     <?php echo $value[2]; ?>
@@ -607,7 +608,7 @@ function DisplayMostDownloadedImages($header, $data, $id)
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($value[2], 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
                   <td class="d-md-table-cell">
-                    <?php $ImgUrl   = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
+                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
                       $EditImgTxt = Text::_('COM_JOOMGALLERY_IMAGE_EDIT');
                     ?>
                     <a href="<?php echo $ImgUrl; ?>" title="<?php echo $EditImgTxt; ?>">
@@ -856,7 +857,7 @@ function DisplaySystemSettings($title, $settings)
                     </td>
                     <td class="d-md-table-cell">
                       <?php switch ($value)
-                        {
+                      {
                           case '':
                           case '0':
                             echo Text::_('JNO');

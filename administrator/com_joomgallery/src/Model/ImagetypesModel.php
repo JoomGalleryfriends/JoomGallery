@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\Registry\Registry;
@@ -31,7 +32,7 @@ class ImagetypesModel extends JoomListModel
    */
   protected $type = 'imagetype';
 
-	/**
+  /**
    * Constructor
    *
    * @param   array  $config  An optional associative array of configuration settings.
@@ -39,8 +40,8 @@ class ImagetypesModel extends JoomListModel
    * @return  void
    * @since   4.0.0
    */
-  function __construct($config = array())
-	{
+  function __construct($config = [])
+  {
 		parent::__construct($config);
 	}
 

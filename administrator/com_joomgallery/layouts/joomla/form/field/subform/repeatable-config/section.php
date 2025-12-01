@@ -9,7 +9,7 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Form\Form;
@@ -30,7 +30,7 @@ extract($displayData);
 <tr class="subform-repeatable-group" data-base-name="<?php echo $basegroup; ?>" data-group="<?php echo $group; ?>">
 	<?php foreach ($form->getGroup('') as $field) : ?>
 		<td data-column="<?php echo strip_tags($field->label); ?>">
-			<?php echo $field->renderField(array('hiddenLabel' => true, 'hiddenDescription' => true)); ?>
+			<?php echo $field->renderField(['hiddenLabel' => true, 'hiddenDescription' => true]); ?>
 		</td>
 	<?php endforeach; ?>
 	<?php if (!empty($buttons)) : ?>

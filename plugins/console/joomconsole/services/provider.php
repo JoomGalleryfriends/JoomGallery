@@ -1,16 +1,18 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Plugin\Console\Joomconsole\Extension\JoomgalleryConsole;
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Extension\Service\Provider\MVCFactory;
 use Joomla\CMS\Factory;
@@ -19,7 +21,6 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use Joomgallery\Plugin\Console\Joomconsole\Extension\JoomgalleryConsole;
 
 return new class implements ServiceProviderInterface {
   public function register(Container $container)
@@ -32,10 +33,10 @@ return new class implements ServiceProviderInterface {
     $container->set(
       PluginInterface::class,
       function (Container $container) {
-        $config = (array)PluginHelper::getPlugin('console', 'joomconsole');
-        $subject = $container->get(DispatcherInterface::class);
+        $config     = (array)PluginHelper::getPlugin('console', 'joomconsole');
+        $subject    = $container->get(DispatcherInterface::class);
         $mvcFactory = $container->get(MVCFactoryInterface::class);
-        $plugin = new JoomgalleryConsole($subject, $config);
+        $plugin     = new JoomgalleryConsole($subject, $config);
 
         $plugin->setApplication(Factory::getApplication());
 

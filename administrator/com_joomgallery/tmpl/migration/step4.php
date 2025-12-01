@@ -9,12 +9,12 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -102,7 +102,7 @@ $wa->useStyle('com_joomgallery.admin')
                         // Check failed
                         $badgeClass = 'danger';
                         $badgeText  = Text::_('COM_JOOMGALLERY_FAILED');
-                      }                          
+                      }
                     ?>
                     <tr>
                       <td>
@@ -111,7 +111,13 @@ $wa->useStyle('com_joomgallery.admin')
                       </td>
                       <td><span class="badge bg-<?php echo $badgeClass; ?>"><?php echo $badgeText; ?></span></td>
                       <td>
-                        <button class="btn btn-outline-secondary<?php if(empty($check->help)) { echo ' disabled';};?>" <?php if(empty($check->help)) { echo 'disabled';};?>
+                        <button class="btn btn-outline-secondary<?php if(empty($check->help))
+                        {
+                        echo ' disabled';
+                        };?>" <?php if(empty($check->help))
+                        {
+                        echo 'disabled';
+                        };?>
                                 data-title="<?php echo $check->title; ?>" data-text="<?php echo $check->help; ?>" onclick="openModal(event, this)">
                           <span class="icon-question" aria-hidden="true"></span>
                         </button>
@@ -171,10 +177,10 @@ $wa->useStyle('com_joomgallery.admin')
 
   <?php
   // Help modal box
-  $options = array('modal-dialog-scrollable' => true,
-                    'title'  => 'Test Title',
-                    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
-                  );
+  $options = ['modal-dialog-scrollable' => true,
+    'title'                             => 'Test Title',
+    'footer'                            => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
+  ];
 
   echo HTMLHelper::_('bootstrap.renderModal', 'help-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
   ?>

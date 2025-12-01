@@ -1,17 +1,18 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\FileNotFoundException;
@@ -51,70 +52,89 @@ class FileToolsService
      */
     public static function downloadFile($filePath, $fileName, $mime = '', $size = -1, $openMode = self::OPEN_MODE_ATTACHMENT)
     {
-        if (!file_exists($filePath)) {
+        if (!file_exists($filePath))
+        {
             $this->component->addLog('File not found: ' . $filePath, 'error', 'jerror');
             throw new FileNotFoundException(null, 0, null, $filePath);
         }
-        if (!is_readable($filePath)) {
-            $this->component->addLog(sprintf('File %s is not readable', $filePath), 'error', 'jerror');
-            throw new FileNotFoundException(sprintf('File %s is not readable', $filePath), 0, null, $filePath);
+
+        if (!is_readable($filePath))
+        {
+            $this->component->addLog(\sprintf('File %s is not readable', $filePath), 'error', 'jerror');
+            throw new FileNotFoundException(\sprintf('File %s is not readable', $filePath), 0, null, $filePath);
         }
 
         // Fetching File
         $mtime = ($mtime = filemtime($filePath)) ? $mtime : gmtime();
 
-        if ($mime === '') {
-            header("Content-Type: application/force-download");
+        if ($mime === '')
+        {
+            header('Content-Type: application/force-download');
             header('Content-Type: application/octet-stream');
         }
-        else {
-            if(is_null($mime)) {
+        else
+        {
+            if(\is_null($mime))
+            {
                 $mime = self::detectMimeType($filePath, $fileName);
             }
             header('Content-Type: ' . $mime);
         }
 
-        if (strstr(filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_UNSAFE_RAW), "MSIE") != false) {
-            header("Content-Disposition: ".$openMode."; filename=" . urlencode($fileName) . '; modification-date="' . date('r', $mtime) . '";');
+        if (strstr(filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_UNSAFE_RAW), 'MSIE') != false)
+        {
+            header('Content-Disposition: '.$openMode.'; filename=' . urlencode($fileName) . '; modification-date="' . date('r', $mtime) . '";');
         }
-        else {
-            header("Content-Disposition: ".$openMode."; filename=\"" . $fileName . '"; modification-date="' . date('r', $mtime) . '";');
+        else
+        {
+            header('Content-Disposition: '.$openMode.'; filename="' . $fileName . '"; modification-date="' . date('r', $mtime) . '";');
         }
 
-        if (function_exists('apache_get_modules') && in_array('mod_xsendfile', apache_get_modules())) {
+        if (\function_exists('apache_get_modules') && \in_array('mod_xsendfile', apache_get_modules()))
+        {
             // Sending file via mod_xsendfile
-            header("X-Sendfile: " . $filePath);
+            header('X-Sendfile: ' . $filePath);
         }
-        else {
+        else
+        {
             // Sending file directly via script
             // according memory_limit byt not higher than 1GB
-            $memory_limit = ini_get('memory_limit');
+            $memory_limit = \ini_get('memory_limit');
+
             // get file size
-            if ($size === -1) {
+            if ($size === -1)
+            {
                 $size = filesize($filePath);
             }
 
-            if (intval($size + 1) > self::toBytes($memory_limit) && intval($size * 1.5) <= 1073741824) {
+            if (\intval($size + 1) > self::toBytes($memory_limit) && \intval($size * 1.5) <= 1073741824)
+            {
                 // Setting memory limit
-                ini_set('memory_limit', intval($size * 1.5));
+                ini_set('memory_limit', \intval($size * 1.5));
             }
 
             @ini_set('zlib.output_compression', 0);
-            header("Content-Length: " . $size);
+            header('Content-Length: ' . $size);
             // Set the time limit based on an average D/L speed of 50kb/sec
             set_time_limit(min(7200, // No more than 120 minutes (this is really bad, but...)
-                            ($size > 0) ? intval($size / 51200) + 60 // 1 minute more than what it should take to D/L at 50kb/sec
+                            ($size > 0) ? \intval($size / 51200) + 60 // 1 minute more than what it should take to D/L at 50kb/sec
                                     : 1 // Minimum of 1 second in case size is found to be 0
             ));
             $chunkSize = 1 * (1024 * 1024); // how many megabytes to read at a time
-            if ($size > $chunkSize) {
+
+            if ($size > $chunkSize)
+            {
                 // Chunking file for download
                 $handle = fopen($filePath, 'rb');
-                if ($handle === false) {
+
+                if ($handle === false)
+                {
                     return false;
                 }
                 $buffer = '';
-                while (!feof($handle)) {
+
+                while (!feof($handle))
+                {
                     $buffer = fread($handle, $chunkSize);
                     echo $buffer;
 
@@ -124,7 +144,8 @@ class FileToolsService
                 }
                 fclose($handle);
             }
-            else {
+            else
+            {
                 // Streaming whole file for download
                 readfile($filePath);
             }
@@ -142,38 +163,48 @@ class FileToolsService
      */
     public static function detectMimeType($fileName, $userFileName = ''): string
     {
-        if (!file_exists($fileName)) {
+        if (!file_exists($fileName))
+        {
             return '';
         }
 
         $mime = '';
 
-        if (class_exists('finfo', false)) {
-            $const = defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME;
+        if (class_exists('finfo', false))
+        {
+            $const = \defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME;
 
-            if (empty($mime)) {
+            if (empty($mime))
+            {
                 $mime = @finfo_open($const);
             }
 
-            if (!empty($mime)) {
+            if (!empty($mime))
+            {
                 $result = finfo_file($mime, $fileName);
             }
             unset($mime);
         }
 
-        if (empty($result) && (function_exists('mime_content_type') && ini_get('mime_magic.magicfile'))) {
+        if (empty($result) && (\function_exists('mime_content_type') && \ini_get('mime_magic.magicfile')))
+        {
             $result = mime_content_type($fileName);
         }
 
         // dodatkowe sprawdzenie i korekta dla docx, xlsx, pptx
-        if (empty($result) || $result == 'application/zip') {
-            if (empty($userFileName)) {
+        if (empty($result) || $result == 'application/zip')
+        {
+            if (empty($userFileName))
+            {
                 $userFileName = $fileName;
             }
 
             $pathParts = pathinfo($userFileName);
-            if (isset($pathParts['extension'])) {
-                switch ($pathParts['extension']) {
+
+            if (isset($pathParts['extension']))
+            {
+                switch ($pathParts['extension'])
+                {
                     case '7z':
                         $result = 'application/x-7z-compressed';
                         break;
@@ -209,7 +240,8 @@ class FileToolsService
             }
         }
 
-        if (empty($result)) {
+        if (empty($result))
+        {
             $result = 'application/octet-stream';
         }
 
@@ -224,15 +256,18 @@ class FileToolsService
      */
     private static function toBytes($val): int
     {
-        $val = trim($val);
-        $last = strtolower($val[strlen($val) - 1]);
-        $val = (int)$val;
-        switch ($last) {
+        $val  = trim($val);
+        $last = strtolower($val[\strlen($val) - 1]);
+        $val  = (int)$val;
+        switch ($last)
+        {
             // The 'G' modifier is available since PHP 5.1.0
             case 'g':
                 $val *= 1024;
+                // 'break' intentionally omitted
             case 'm':
                 $val *= 1024;
+                // 'break' intentionally omitted
             case 'k':
                 $val *= 1024;
         }
@@ -255,17 +290,21 @@ class FileToolsService
      */
     public static function formatFileSize($size, string $locale, string $emptyValue = '-'): string
     {
-        $sizes = array(' B', ' kB', ' MB', ' GB', ' TB', ' PB');
-        if (is_null($size) || $size == 0) {
-            return($emptyValue);
+        $sizes = [' B', ' kB', ' MB', ' GB', ' TB', ' PB'];
+
+        if (\is_null($size) || $size == 0)
+        {
+            return $emptyValue;
         }
 
         $precision = 2;
-        if ($size == (int) $size && $size < 1024) { // < 1MB
-            $precision = 0;
+
+        if ($size == (int) $size && $size < 1024) // < 1MB
+        {$precision = 0;
         }
 
         $size = round($size / pow(1024, ($i = floor(log($size, 1024)))), $precision);
+
         // if (class_exists('NumberFormat')) {
         //     $filter = new NumberFormat($locale, NumberFormatter::DECIMAL, NumberFormatter::TYPE_DOUBLE);
         //     return $filter->filter($size) . $sizes[$i];

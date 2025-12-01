@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
@@ -33,7 +34,7 @@ class TagsModel extends JoomListModel
    */
   protected $type = 'tag';
 
-	/**
+  /**
    * Constructor
    *
    * @param   array  $config  An optional associative array of configuration settings.
@@ -41,23 +42,23 @@ class TagsModel extends JoomListModel
    * @return  void
    * @since   4.0.0
    */
-  function __construct($config = array())
-	{
+  function __construct($config = [])
+  {
 		if(empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = array(
-				'ordering', 'a.ordering',
-				'title', 'a.title',
-				'published', 'a.published',
-				'access', 'a.access',
-				'language', 'a.language',
-				'description', 'a.description',
-				'created_time', 'a.created_time',
-				'created_by', 'a.created_by',
-				'modified_time', 'a.modified_time',
-				'modified_by', 'a.modified_by',
-				'id', 'a.id',
-			);
+			$config['filter_fields'] = [
+			  'ordering', 'a.ordering',
+			  'title', 'a.title',
+			  'published', 'a.published',
+			  'access', 'a.access',
+			  'language', 'a.language',
+			  'description', 'a.description',
+			  'created_time', 'a.created_time',
+			  'created_by', 'a.created_by',
+			  'modified_time', 'a.modified_time',
+			  'modified_by', 'a.modified_by',
+			  'id', 'a.id',
+			];
 		}
 
 		parent::__construct($config);
@@ -103,7 +104,7 @@ class TagsModel extends JoomListModel
 		$this->setState('filter.published', $published);
     $language = $this->getUserStateFromRequest($this->context . '.filter.language', 'filter_language', '');
 		$this->setState('filter.language', $language);
-    $access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', array());
+    $access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', []);
     $this->setState('filter.access', $access);
 
     // Force a language
@@ -164,15 +165,15 @@ class TagsModel extends JoomListModel
     $query->join('LEFT', $db->quoteName('#__viewlevels', 'access'), $db->quoteName('access.id') . ' = ' . $db->quoteName('a.access'));
 
 		// Join over the user field 'created_by'
-    $query->select(array($db->quoteName('ua.name', 'created_by'), $db->quoteName('ua.id', 'created_by_id')));
+    $query->select([$db->quoteName('ua.name', 'created_by'), $db->quoteName('ua.id', 'created_by_id')]);
     $query->join('LEFT', $db->quoteName('#__users', 'ua'), $db->quoteName('ua.id') . ' = ' . $db->quoteName('a.created_by'));
 
 		// Join over the user field 'modified_by'
-    $query->select(array($db->quoteName('um.name', 'modified_by'), $db->quoteName('um.id', 'modified_by_id')));
+    $query->select([$db->quoteName('um.name', 'modified_by'), $db->quoteName('um.id', 'modified_by_id')]);
     $query->join('LEFT', $db->quoteName('#__users', 'um'), $db->quoteName('um.id') . ' = ' . $db->quoteName('a.modified_by'));
 
     // Join over the language fields 'language_title' and 'language_image'
-		$query->select(array($db->quoteName('l.title', 'language_title'), $db->quoteName('l.image', 'language_image')));
+		$query->select([$db->quoteName('l.title', 'language_title'), $db->quoteName('l.image', 'language_image')]);
 		$query->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'));
 
     // Count Items
@@ -183,17 +184,17 @@ class TagsModel extends JoomListModel
 		$query->select('(' . $countQuery->__toString() . ') AS ' . $db->quoteName('countTaggedItems'));
 
     // Filter by access level.
-		$filter_access = $this->state->get("filter.access");
+		$filter_access = $this->state->get('filter.access');
 
     if(!empty($filter_access))
-		{
+    {
       if(is_numeric($filter_access))
       {
         $filter_access = (int) $filter_access;
         $query->where($db->quoteName('a.access') . ' = :access')
               ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
-      elseif (is_array($filter_access))
+      elseif (\is_array($filter_access))
       {
         $filter_access = ArrayHelper::toInteger($filter_access);
         $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -245,6 +246,7 @@ class TagsModel extends JoomListModel
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', 'a.id');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
+
     if($orderCol && $orderDirn)
     {
       $query->order($db->escape($orderCol . ' ' . $orderDirn));
@@ -257,7 +259,7 @@ class TagsModel extends JoomListModel
 		return $query;
 	}
 
-  /**
+	/**
 	 * Build an SQL query to load the list data for counting.
 	 *
 	 * @return  DatabaseQuery
@@ -275,17 +277,17 @@ class TagsModel extends JoomListModel
     $query->from($db->quoteName('#__joomgallery_tags', 'a'));
 
     // Filter by access level.
-		$filter_access = $this->state->get("filter.access");
+		$filter_access = $this->state->get('filter.access');
 
     if(!empty($filter_access))
-		{
+    {
       if(is_numeric($filter_access))
       {
         $filter_access = (int) $filter_access;
         $query->where($db->quoteName('a.access') . ' = :access')
               ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
-      elseif (is_array($filter_access))
+      elseif (\is_array($filter_access))
       {
         $filter_access = ArrayHelper::toInteger($filter_access);
         $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -341,8 +343,8 @@ class TagsModel extends JoomListModel
 	 * Get an array of data items
 	 *
 	 * @return mixed Array of data items on success, false on failure.
-   *
-   * @since   4.0.0
+	 *
+	 * @since   4.0.0
 	 */
 	public function getItems()
 	{
@@ -351,23 +353,23 @@ class TagsModel extends JoomListModel
 		return $items;
 	}
 
-  /**
+	/**
 	 * Search for data items
-   *
-   * @param   array  $filters  Filter to apply to the search
+	 *
+	 * @param   array  $filters  Filter to apply to the search
 	 *
 	 * @return  array
-   *
-   * @since   4.0.0
+	 *
+	 * @since   4.0.0
 	 */
-	public function searchItems($filters = array())
+	public function searchItems($filters = [])
 	{
-    $db = $this->getDatabase();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true)
             ->select([
-                        $db->quoteName('a.id', 'value'),
-                        $db->quoteName('a.title', 'text'),
-                      ])
+              $db->quoteName('a.id', 'value'),
+              $db->quoteName('a.title', 'text'),
+            ])
             ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
 
     // Filter language
@@ -409,12 +411,12 @@ class TagsModel extends JoomListModel
     }
 
     $query->group([
-            $db->quoteName('a.id'),
-            $db->quoteName('a.title'),
-            $db->quoteName('a.ordering'),
-            $db->quoteName('a.published'),
-            $db->quoteName('a.access'),
-          ])
+      $db->quoteName('a.id'),
+      $db->quoteName('a.title'),
+      $db->quoteName('a.ordering'),
+      $db->quoteName('a.published'),
+      $db->quoteName('a.access'),
+    ])
           ->order($db->quoteName('a.ordering') . ' ASC');
 
     // Get the options.
@@ -426,16 +428,16 @@ class TagsModel extends JoomListModel
     }
     catch(\RuntimeException $e)
     {
-      return array();
+      return [];
     }
 
     return $items;
   }
 
-  /**
+	/**
 	 * Build an SQL query to load a list of all items mapped to an image.
-   *
-   * @param   int  $img_id  ID of the mapped image
+	 *
+	 * @param   int  $img_id  ID of the mapped image
 	 *
 	 * @return  DatabaseQuery
 	 *
@@ -456,15 +458,15 @@ class TagsModel extends JoomListModel
     $query->join('LEFT', $db->quoteName('#__viewlevels', 'access'), $db->quoteName('access.id') . ' = ' . $db->quoteName('a.access'));
 
 		// Join over the user field 'created_by'
-    $query->select(array($db->quoteName('ua.name', 'created_by'), $db->quoteName('ua.id', 'created_by_id')));
+    $query->select([$db->quoteName('ua.name', 'created_by'), $db->quoteName('ua.id', 'created_by_id')]);
     $query->join('LEFT', $db->quoteName('#__users', 'ua'), $db->quoteName('ua.id') . ' = ' . $db->quoteName('a.created_by'));
 
 		// Join over the user field 'modified_by'
-    $query->select(array($db->quoteName('um.name', 'modified_by'), $db->quoteName('um.id', 'modified_by_id')));
+    $query->select([$db->quoteName('um.name', 'modified_by'), $db->quoteName('um.id', 'modified_by_id')]);
     $query->join('LEFT', $db->quoteName('#__users', 'um'), $db->quoteName('um.id') . ' = ' . $db->quoteName('a.modified_by'));
 
     // Join over the language fields 'language_title' and 'language_image'
-		$query->select(array($db->quoteName('l.title', 'language_code')));
+		$query->select([$db->quoteName('l.title', 'language_code')]);
 		$query->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'));
 
     // Apply the mapping
@@ -496,21 +498,21 @@ class TagsModel extends JoomListModel
     $query->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
 
     // Make the selection
-    $quotedList = \array_map([$db, 'quote'], $list);
+    $quotedList = array_map([$db, 'quote'], $list);
     $query->where($db->quoteName('a.title') . ' IN (' . implode(',', $quotedList) . ')');
 
     return $query;
   }
 
   /**
-	 * Get an array of data items mapped to an an image.
+   * Get an array of data items mapped to an an image.
    *
    * @param   int  $img_id  ID of the mapped image
-	 *
-	 * @return mixed Array of data items on success, false on failure.
+   *
+   * @return mixed Array of data items on success, false on failure.
    *
    * @since   4.0.0
-	 */
+   */
   public function getMappedItems($img_id)
   {
     try
@@ -531,14 +533,14 @@ class TagsModel extends JoomListModel
   }
 
   /**
-	 * Get an array of data items which titles are present in the given list.
+   * Get an array of data items which titles are present in the given list.
    *
    * @param  array  $list   A list of titles to be looked for
-	 *
-	 * @return mixed  Array of data items on success, false on failure.
+   *
+   * @return mixed  Array of data items on success, false on failure.
    *
    * @since   4.1.0
-	 */
+   */
   public function getItemsInList($list)
   {
     try
@@ -569,7 +571,7 @@ class TagsModel extends JoomListModel
 	 */
 	public function storeTagsList($tags)
 	{
-		$com_obj   = Factory::getApplication()->bootComponent('com_joomgallery');
+		$com_obj     = Factory::getApplication()->bootComponent('com_joomgallery');
     $tag_model = $com_obj->getMVCFactory()->createModel('Tag', 'administrator');
 
     foreach($tags as $key => $tag)
@@ -589,10 +591,10 @@ class TagsModel extends JoomListModel
 
       if(strpos($tag_title, '#new#') !== false)
       {
-        $tag_title = \str_replace('#new#', '', $tag_title);
+        $tag_title = str_replace('#new#', '', $tag_title);
 
         // Create tag object
-        $data = array();
+        $data                = [];
         $data['id']          = '0';
         $data['title']       = $tag_title;
         $data['published']   = '1';
@@ -607,11 +609,11 @@ class TagsModel extends JoomListModel
 
           return false;
         }
-        else
-        {
+
+
           // Update tags list entry on success
           $tags[$key] = \strval($tag_model->getItem($tag_title)->id);
-        }
+
       }
     }
 
@@ -632,13 +634,14 @@ class TagsModel extends JoomListModel
 	{
     $new_tags = ArrayHelper::toInteger($new_tags);
 
-		$current_tags = $this->idArray($this->getMappedItems($img_id));
+		$current_tags   = $this->idArray($this->getMappedItems($img_id));
     $current_tags = ArrayHelper::toInteger($current_tags);
 
     $com_obj   = Factory::getApplication()->bootComponent('com_joomgallery');
     $tag_model = $com_obj->getMVCFactory()->createModel('Tag', 'administrator');
 
     $success = true;
+
     foreach($new_tags as $tag_id)
     {
       if(!\in_array($tag_id, $current_tags))
@@ -672,21 +675,21 @@ class TagsModel extends JoomListModel
 
 
   /**
-	 * Convert a list of tag objects to a list of tag ids
-	 *
-	 * @param   array  $objectlist   List of tag objects
-	 *
-	 * @return  array  List of tag ids
-	 *
-	 * @since   4.0.0
-	 */
+   * Convert a list of tag objects to a list of tag ids
+   *
+   * @param   array  $objectlist   List of tag objects
+   *
+   * @return  array  List of tag ids
+   *
+   * @since   4.0.0
+   */
   protected function idArray($objectlist)
   {
-    $array = array();
+    $array = [];
 
     foreach($objectlist as $obj)
     {
-      \array_push($array, $obj->id);
+      array_push($array, $obj->id);
     }
 
     return $array;

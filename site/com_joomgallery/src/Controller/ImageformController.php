@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\Controller\FormController;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Router\Route;
 
 /**
  * Image class.
@@ -38,7 +39,7 @@ class ImageformController extends FormController
    */
   protected $component;
 
-	/**
+  /**
    * Joomgallery\Component\Joomgallery\Administrator\Service\Access\Access
    *
    * @access  protected
@@ -97,17 +98,18 @@ class ImageformController extends FormController
 		if(!$data)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend(),false));
+			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend(), false));
 
 			return false;
 		}
 
     // Access check
 		$parent_id = JoomHelper::getParent('image', $recordId);
+
 		if(!$this->acl->checkACL('edit', 'image', $recordId, $parent_id, true))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($recordId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($recordId), false));
 
 			return false;
 		}
@@ -134,7 +136,7 @@ class ImageformController extends FormController
 			$errors = $model->getErrors();
 
 			// Push up to three validation messages out to the user.
-			for($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
+			for($i = 0, $n = \count($errors); $i < $n && $i < 3; $i++)
 			{
 				if($errors[$i] instanceof \Exception)
 				{
@@ -187,8 +189,8 @@ class ImageformController extends FormController
 
 		// Redirect to the list screen.
 		$this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SAVE_SUCCESSFUL'));
-		$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($recordId),false));
-		
+		$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($recordId), false));
+
 		return true;
 	}
 
@@ -226,7 +228,7 @@ class ImageformController extends FormController
 
 		// Redirect to the list screen.
 		$tmp = $this->getReturnPage().'&'.$this->getItemAppend($recordId);
-		$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($recordId),false));
+		$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($recordId), false));
 	}
 
 	/**
@@ -244,6 +246,7 @@ class ImageformController extends FormController
     // Get the current edit id.
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       // List view action
@@ -259,17 +262,18 @@ class ImageformController extends FormController
 		if(!$removeId)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend(),false));
+			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend(), false));
 
 			return false;
 		}
 
 		// Access check
 		$parent_id = JoomHelper::getParent('image', $removeId);
+
 		if(!$this->acl->checkACL('delete', 'image', $removeId, $parent_id, true))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($removeId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($removeId), false));
 
 			return false;
 		}
@@ -326,10 +330,11 @@ class ImageformController extends FormController
 	{
 		// Check for request forgeries
 		$this->checkToken();
-    
+
     // Get ID
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       // List view action
@@ -345,23 +350,24 @@ class ImageformController extends FormController
 		if(!$id)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('images').'&'.$this->getItemAppend($id),false));
+			$this->setRedirect(Route::_($this->getReturnPage('images').'&'.$this->getItemAppend($id), false));
 
 			return false;
 		}
 
     // Access check
 		$parent_id = JoomHelper::getParent('image', $id);
+
 		if(!$this->acl->checkACL('editstate', 'image', $id, $parent_id, true))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('images').'&'.$this->getItemAppend($id),false));
+			$this->setRedirect(Route::_($this->getReturnPage('images').'&'.$this->getItemAppend($id), false));
 
 			return false;
 		}
 
 		// Get the model.
-		$model  = $this->getModel('Imageform', 'Site');
+		$model = $this->getModel('Imageform', 'Site');
 
 		// Attempt to check-in the current record.
 		if($model->checkin($id) === false)
@@ -382,7 +388,7 @@ class ImageformController extends FormController
 		$this->app->redirect(Route::_($this->getReturnPage('images').'&'.$this->getItemAppend($id), false));
 	}
 
-  /**
+	/**
 	 * Method to publish an image
 	 *
 	 * @return  void
@@ -397,6 +403,7 @@ class ImageformController extends FormController
     // Get ID
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       // List view action
@@ -412,30 +419,31 @@ class ImageformController extends FormController
 		if(!$id)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('images').'&'.$this->getItemAppend($id),false));
+			$this->setRedirect(Route::_($this->getReturnPage('images').'&'.$this->getItemAppend($id), false));
 
 			return false;
 		}
 
     // Access check
 		$parent_id = JoomHelper::getParent('image', $id);
+
 		if(!$this->acl->checkACL('editstate', 'image', $id, $parent_id, true))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('images').'&'.$this->getItemAppend($id),false));
+			$this->setRedirect(Route::_($this->getReturnPage('images').'&'.$this->getItemAppend($id), false));
 
 			return false;
 		}
 
     // Available states
-    $data  = ['publish' => 1, 'unpublish' => 0];
+    $data = ['publish' => 1, 'unpublish' => 0];
 
     // Get new state.
     $task  = $this->getTask();
     $value = $data[$task];
 
     // Get the model
-    $model  = $this->getModel('Imageform', 'Site');
+    $model = $this->getModel('Imageform', 'Site');
 
     // Attempt to change state the current record.
 		if($model->publish($id, $value) === false)
@@ -448,11 +456,11 @@ class ImageformController extends FormController
 		}
 
     // Redirect to the list screen.
-		$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_'.\strtoupper($task).'_SUCCESSFUL'), 'success');
+		$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_'.strtoupper($task).'_SUCCESSFUL'), 'success');
 		$this->app->redirect(Route::_($this->getReturnPage('categories').'&'.$this->getItemAppend($id), false));
   }
 
-  /**
+	/**
 	 * Method to unpublish an image
 	 *
 	 * @return  void

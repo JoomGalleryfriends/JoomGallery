@@ -1,32 +1,33 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\DI\Container;
-use Joomla\CMS\HTML\Registry;
-use Joomla\Database\DatabaseInterface;
-use Joomla\DI\ServiceProviderInterface;
-use Joomla\CMS\User\UserFactoryInterface;
-use Joomla\CMS\Extension\ComponentInterface;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\Component\Router\RouterFactoryInterface;
-//use Joomla\CMS\Extension\Service\Provider\RouterFactory;
-use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
-use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
-use Joomgallery\Component\Joomgallery\Administrator\User\UserFactory;
 use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
 use Joomgallery\Component\Joomgallery\Administrator\MVC\MVCFactoryProvider as MVCFactory;
 use Joomgallery\Component\Joomgallery\Administrator\Router\RouterFactoryProvider as RouterFactory;
+use Joomgallery\Component\Joomgallery\Administrator\User\UserFactory;
+use Joomla\CMS\Component\Router\RouterFactoryInterface;
+use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
+use Joomla\CMS\Extension\ComponentInterface;
+use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
+//use Joomla\CMS\Extension\Service\Provider\RouterFactory;
+use Joomla\CMS\HTML\Registry;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
+use Joomla\DI\Container;
+use Joomla\DI\ServiceProviderInterface;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -36,8 +37,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * @package JoomGallery
  * @since  4.0.0
  */
-return new class implements ServiceProviderInterface
-{
+return new class implements ServiceProviderInterface {
 	/**
 	 * Registers the service provider with a DI container.
 	 *
@@ -56,8 +56,7 @@ return new class implements ServiceProviderInterface
     // Create the component class
 		$container->set(
 			ComponentInterface::class,
-			function (Container $container)
-			{
+			function (Container $container) {
 				$component = new JoomgalleryComponent($container->get(ComponentDispatcherFactoryInterface::class));
 
 				$component->setRegistry($container->get(Registry::class));

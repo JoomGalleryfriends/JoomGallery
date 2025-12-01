@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\Registry\Registry;
 use \Joomla\CMS\MVC\Model\ListModel;
-use \Joomla\Database\ParameterType;
 use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
+use \Joomla\Database\ParameterType;
+use \Joomla\Registry\Registry;
 
 /**
  * Methods supporting a list of Tasks records.
@@ -35,7 +36,7 @@ class TasksModel extends JoomListModel
    */
   protected $type = 'task';
 
-	/**
+  /**
    * Constructor
    *
    * @param   array  $config  An optional associative array of configuration settings.
@@ -43,30 +44,30 @@ class TasksModel extends JoomListModel
    * @return  void
    * @since   4.2.0
    */
-  function __construct($config = array())
-	{
+  function __construct($config = [])
+  {
 		if(empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = array(
-				'ordering', 'a.ordering',
-				'published', 'a.published',
-        'failed', 'a.failed',
-        'completed', 'a.completed',
-				'created_time', 'a.created_time',
-				'id', 'a.id',
-			);
+			$config['filter_fields'] = [
+			  'ordering', 'a.ordering',
+			  'published', 'a.published',
+			  'failed', 'a.failed',
+			  'completed', 'a.completed',
+			  'created_time', 'a.created_time',
+			  'id', 'a.id',
+			];
 		}
 
 		parent::__construct($config);
 	}
 
   /**
-	 * Method to get the scheduler tasks to be viewed in the tasks view.
-	 *
-	 * @return  array|false    Array of tasks on success, false on failure.
-	 *
-	 * @throws Exception
-	 */
+   * Method to get the scheduler tasks to be viewed in the tasks view.
+   *
+   * @return  array|false    Array of tasks on success, false on failure.
+   *
+   * @throws Exception
+   */
   public function getScheduledTasks()
   {
     // Load scheduler tasks model
@@ -74,7 +75,7 @@ class TasksModel extends JoomListModel
     $listModel->getState();
 
     // Select fields to load
-    $fields = array('id', 'title', 'type', 'safeTypeTitle', 'state', 'last_exit_code', 'last_execution', 'times_executed', 'locked', 'params', 'note');
+    $fields = ['id', 'title', 'type', 'safeTypeTitle', 'state', 'last_exit_code', 'last_execution', 'times_executed', 'locked', 'params', 'note'];
     $fields = $this->addColumnPrefix('a', $fields);
 
     // Apply preselected filters and fields selection for images
@@ -91,9 +92,8 @@ class TasksModel extends JoomListModel
     // Apply type filter
     try
     {
-      $filteredItems = \array_filter($items, function($obj)
-      {
-        return isset($obj->type) && \stripos($obj->type, 'joomgallery') !== false;
+      $filteredItems = array_filter($items, function($obj) {
+        return isset($obj->type) && stripos($obj->type, 'joomgallery') !== false;
       });
     }
     catch(\Exception $e)
@@ -139,7 +139,7 @@ class TasksModel extends JoomListModel
         $table->check();
         $table->clcProgress();
 
-        \array_push($items, $table);
+        array_push($items, $table);
       }
 
       return $items;
@@ -156,7 +156,7 @@ class TasksModel extends JoomListModel
    *
    * @return  void
    */
-  protected function setTasksModelState(ListModel &$listModel, array $fields = array())
+  protected function setTasksModelState(ListModel &$listModel, array $fields = [])
   {
     // Apply filters
     $listModel->setState('filter.state', 1);
@@ -290,6 +290,7 @@ class TasksModel extends JoomListModel
 			if(is_numeric($failed))
 			{
 				$failed = (int) $failed;
+
         if($failed > 0)
         {
           // Show only records with failed tasks (non-empty JSON arrays)
@@ -301,7 +302,7 @@ class TasksModel extends JoomListModel
           // Show only records with no failed tasks (empty or empty JSON array)
           $query->where([
             $db->quoteName('a.failed') . ' = ' . $db->quote(''),
-            $db->quoteName('a.failed') . ' = ' . $db->quote('{}')
+            $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
           ], 'OR');
         }
 			}
@@ -323,6 +324,7 @@ class TasksModel extends JoomListModel
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', 'a.ordering');
 		$orderDirn = $this->state->get('list.direction', 'ASC');
+
     if($orderCol && $orderDirn)
     {
       $query->order($db->escape($orderCol . ' ' . $orderDirn));
@@ -335,7 +337,7 @@ class TasksModel extends JoomListModel
 		return $query;
 	}
 
-  /**
+	/**
 	 * Build an SQL query to load the list data for counting.
 	 *
 	 * @return  DatabaseQuery
@@ -395,6 +397,7 @@ class TasksModel extends JoomListModel
 			if(is_numeric($failed))
 			{
 				$failed = (int) $failed;
+
         if($failed > 0)
         {
           // Show only records with failed tasks (non-empty JSON arrays)
@@ -406,7 +409,7 @@ class TasksModel extends JoomListModel
           // Show only records with no failed tasks (empty or empty JSON array)
           $query->where([
             $db->quoteName('a.failed') . ' = ' . $db->quote(''),
-            $db->quoteName('a.failed') . ' = ' . $db->quote('{}')
+            $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
           ], 'OR');
         }
 			}
@@ -429,20 +432,20 @@ class TasksModel extends JoomListModel
 	}
 
   /**
-	 * Method to add a prefix to a list of field names
-	 *
-	 * @param   string  $prefix   The prefix to apply
+   * Method to add a prefix to a list of field names
+   *
+   * @param   string  $prefix   The prefix to apply
    * @param   array   $fields   List of fields
-	 *
-	 * @return  array   List of fields with applied prefix
-	 */
+   *
+   * @return  array   List of fields with applied prefix
+   */
   protected function addColumnPrefix(string $prefix, array $fields): array
   {
     foreach($fields as $key => $field)
     {
       $field = (string) $field;
 
-      if(\strpos($field, $prefix.'.') === false)
+      if(strpos($field, $prefix.'.') === false)
       {
         $fields[$key] = $prefix . '.' . $field;
       }

@@ -1,28 +1,29 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
+use \Joomla\CMS\Event\AbstractEvent;
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\Filter\OutputFilter;
 use \Joomla\CMS\Table\Asset;
 use \Joomla\CMS\Table\Table;
-use \Joomla\Registry\Registry;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\Database\DatabaseDriver;
-use \Joomla\CMS\Event\AbstractEvent;
 use \Joomla\CMS\Versioning\VersionableTableInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
+use \Joomla\Database\DatabaseDriver;
+use \Joomla\Registry\Registry;
 
 /**
  * Image table
@@ -46,7 +47,7 @@ class ImageTable extends Table implements VersionableTableInterface
 	public function __construct(DatabaseDriver $db, bool $component_exists = true)
 	{
 		$this->component_exists = $component_exists;
-		$this->typeAlias = _JOOM_OPTION.'.image';
+		$this->typeAlias        = _JOOM_OPTION.'.image';
 
 		parent::__construct(_JOOM_TABLE_IMAGES, 'id', $db);
 
@@ -99,6 +100,7 @@ class ImageTable extends Table implements VersionableTableInterface
 	protected function _getAssetName()
 	{
 		$catId = '';
+
 		if($this->catid)
 		{
 			// The image has a category as asset-parent
@@ -135,7 +137,7 @@ class ImageTable extends Table implements VersionableTableInterface
 
       $this->tags = $tags_model->getMappedItems($this->id);
     }
-    
+
     return $success;
   }
 
@@ -158,7 +160,7 @@ class ImageTable extends Table implements VersionableTableInterface
 		$component = Factory::getApplication()->bootComponent('com_joomgallery');
 
     // Support for id field
-    if(!\key_exists('id', $array))
+    if(!key_exists('id', $array))
     {
       $array['id'] = 0;
     }
@@ -166,7 +168,8 @@ class ImageTable extends Table implements VersionableTableInterface
     // Support for title field: title
     if(\array_key_exists('title', $array))
     {
-      $array['title'] = \trim($array['title']);
+      $array['title'] = trim($array['title']);
+
       if(empty($array['title']))
       {
         $array['title'] = 'Unknown';
@@ -207,17 +210,17 @@ class ImageTable extends Table implements VersionableTableInterface
 		// Support for multiple or not foreign key field: catid
 			if(!empty($array['catid']))
 			{
-				if(is_array($array['catid']))
-        {
-					$array['catid'] = implode(',',$array['catid']);
+				if(\is_array($array['catid']))
+				{
+					$array['catid'] = implode(',', $array['catid']);
 				}
 				else if(strrpos($array['catid'], ',') != false)
-        {
-					$array['catid'] = explode(',',$array['catid']);
+				{
+					$array['catid'] = explode(',', $array['catid']);
 				}
 			}
 			else
-      {
+			{
 				$array['catid'] = 0;
 			}
 
@@ -226,7 +229,7 @@ class ImageTable extends Table implements VersionableTableInterface
 			$array['created_time'] = $date->toSql();
 		}
 
-		if(!\key_exists('created_by', $array) || empty($array['created_by']))
+		if(!key_exists('created_by', $array) || empty($array['created_by']))
 		{
 			$array['created_by'] = Factory::getApplication()->getIdentity()->id;
 		}
@@ -236,23 +239,23 @@ class ImageTable extends Table implements VersionableTableInterface
 			$array['approved'] = 1;
 		}
 
-		if($task == 'apply' || \strpos($task, 'save') !== false)
+		if($task == 'apply' || strpos($task, 'save') !== false)
 		{
 			$array['modified_time'] = $date->toSql();
 		}
 
-		if($array['id'] == 0 && (!\key_exists('modified_by', $array) ||empty($array['modified_by'])))
+		if($array['id'] == 0 && (!key_exists('modified_by', $array) || empty($array['modified_by'])))
 		{
 			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
 		}
 
-		if($task == 'apply' || \strpos($task, 'save') !== false)
+		if($task == 'apply' || strpos($task, 'save') !== false)
 		{
 			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
 		}
 
 		// Support for empty date field: date
-		if(!\key_exists('date', $array) || $array['date'] == '0000-00-00' || empty($array['date']))
+		if(!key_exists('date', $array) || $array['date'] == '0000-00-00' || empty($array['date']))
 		{
 			$array['date'] = $date->toSql();
 			$this->date    = $date->toSql();
@@ -260,7 +263,7 @@ class ImageTable extends Table implements VersionableTableInterface
 
 		if(isset($array['params']) && \is_array($array['params']))
 		{
-			$registry = new Registry($array['params']);
+			$registry        = new Registry($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
@@ -270,8 +273,10 @@ class ImageTable extends Table implements VersionableTableInterface
 			// Insert user comment format
 			// Although this technically isn't needed with PEL, we keep the format to support images saved before PEL.
 			$exif = $registry->get('exif');
-			if (isset($exif->EXIF->UserComment)) {
-				$exif->EXIF->UserComment = str_pad('ASCII', 8, chr(0)) . $exif->EXIF->UserComment;
+
+			if (isset($exif->EXIF->UserComment))
+			{
+				$exif->EXIF->UserComment = str_pad('ASCII', 8, \chr(0)) . $exif->EXIF->UserComment;
 				$registry->set('exif', $exif);
 			}
 
@@ -281,7 +286,7 @@ class ImageTable extends Table implements VersionableTableInterface
     // Support for tags
     if(!isset($this->tags))
     {
-      $this->tags = array();
+      $this->tags = [];
     }
 
 		return parent::bind($array, $ignore);
@@ -302,23 +307,24 @@ class ImageTable extends Table implements VersionableTableInterface
 	public function store($updateNulls = true)
 	{
     // Support for params field
-    if(isset($this->params) && !is_string($this->params))
-		{
-			$registry = new Registry($this->params);
+    if(isset($this->params) && !\is_string($this->params))
+    {
+			$registry     = new Registry($this->params);
 			$this->params = (string) $registry;
 		}
-    
+
     $success = parent::store($updateNulls);
 
     if($success)
     {
       // Record successfully stored
      	// Store Tags
-	  	$com_obj    = Factory::getApplication()->bootComponent('com_joomgallery');
+	  	$com_obj     = Factory::getApplication()->bootComponent('com_joomgallery');
     	$tags_model = $com_obj->getMVCFactory()->createModel('Tags', 'administrator');
 
       // Create tags
       $this->tags = $tags_model->storeTagsList($this->tags);
+
       if($this->tags === false)
       {
         $this->setError('Tags Model reports '.$tags_model->getError());
@@ -353,11 +359,11 @@ class ImageTable extends Table implements VersionableTableInterface
 
 		// Check if alias is unique inside this category
 		if($this->_checkAliasUniqueness)
-    {
+		{
 			if(!$this->isUnique('alias', $this->catid, 'catid'))
 			{
-				$count = 2;
-				$currentAlias =  $this->alias;
+				$count        = 2;
+				$currentAlias = $this->alias;
 
 				while(!$this->isUnique('alias', $this->catid, 'catid'))
 				{
@@ -371,6 +377,7 @@ class ImageTable extends Table implements VersionableTableInterface
     {
       $this->params = $this->loadDefaultField('params');
     }
+
     if(isset($this->params))
     {
       $this->params = new Registry($this->params);
@@ -437,12 +444,12 @@ class ImageTable extends Table implements VersionableTableInterface
     return $success;
   }
 
-  /**
+	/**
 	 * Method to set the state for a row or list of rows in the database table.
 	 *
 	 * The method respects checked out rows by other users and will attempt to checkin rows that it can after adjustments are made.
 	 *
-   * @param   string   $type    Name of the state to be changed
+	 * @param   string   $type    Name of the state to be changed
 	 * @param   mixed    $pks     An optional array of primary key values to update. If not set the instance property value is used.
 	 * @param   integer  $state   The new state.
 	 * @param   integer  $userId  The user ID of the user performing the operation.
@@ -459,28 +466,28 @@ class ImageTable extends Table implements VersionableTableInterface
 
 		// Pre-processing by observers
 		$event = AbstractEvent::create(
-			'onTableBefore'.\ucfirst($type),
+			'onTableBefore'.ucfirst($type),
 			[
-				'subject'	=> $this,
-				'pks'		  => $pks,
-				'state'		=> $state,
-				'userId'	=> $userId,
+			  'subject' => $this,
+			  'pks'     => $pks,
+			  'state'   => $state,
+			  'userId'  => $userId,
 			]
 		);
-		$this->getDispatcher()->dispatch('onTableBefore'.\ucfirst($type), $event);
+		$this->getDispatcher()->dispatch('onTableBefore'.ucfirst($type), $event);
 
 		if (!\is_null($pks))
 		{
 			if (!\is_array($pks))
 			{
-				$pks = array($pks);
+				$pks = [$pks];
 			}
 
 			foreach ($pks as $key => $pk)
 			{
 				if (!\is_array($pk))
 				{
-					$pks[$key] = array($this->_tbl_key => $pk);
+					$pks[$key] = [$this->_tbl_key => $pk];
 				}
 			}
 		}
@@ -488,7 +495,7 @@ class ImageTable extends Table implements VersionableTableInterface
 		// If there are no primary keys set check to see if the instance key is set.
 		if (empty($pks))
 		{
-			$pk = array();
+			$pk = [];
 
 			foreach ($this->_tbl_keys as $key)
 			{
@@ -506,27 +513,28 @@ class ImageTable extends Table implements VersionableTableInterface
 				}
 			}
 
-			$pks = array($pk);
+			$pks = [$pk];
 		}
 
     switch($type)
     {
       case 'feature':
-        $stateField  = 'featured';
+        $stateField = 'featured';
         break;
 
       case 'approve':
-        $stateField  = 'approved';
+        $stateField = 'approved';
         break;
-      
+
       case 'publish':
       default:
-        $stateField  = 'published';
+        $stateField = 'published';
         break;
     }
 		$checkedOutField = $this->getColumnAlias('checked_out');
 
 		$db = $this->getDatabase();
+
 		foreach ($pks as $pk)
 		{
 			// Update the publishing state for rows with the given primary keys.
@@ -602,20 +610,20 @@ class ImageTable extends Table implements VersionableTableInterface
 
 		// Pre-processing by observers
 		$event = AbstractEvent::create(
-			'onTableAfter'.\ucfirst($type),
+			'onTableAfter'.ucfirst($type),
 			[
-				'subject'	=> $this,
-				'pks'		=> $pks,
-				'state'		=> $state,
-				'userId'	=> $userId,
+			  'subject' => $this,
+			  'pks'     => $pks,
+			  'state'   => $state,
+			  'userId'  => $userId,
 			]
 		);
-		$this->getDispatcher()->dispatch('onTableAfter'.\ucfirst($type), $event);
+		$this->getDispatcher()->dispatch('onTableAfter'.ucfirst($type), $event);
 
 		return true;
 	}
 
-  /**
+	/**
 	 * Method to set the publishing state for a row or list of rows in the database table.
 	 *
 	 * The method respects checked out rows by other users and will attempt to checkin rows that it can after adjustments are made.
@@ -631,5 +639,5 @@ class ImageTable extends Table implements VersionableTableInterface
 	public function publish($pks = null, $state = 1, $userId = 0)
 	{
     return $this->changeState('publish', $pks, $state, $userId);
-  } 
+  }
 }

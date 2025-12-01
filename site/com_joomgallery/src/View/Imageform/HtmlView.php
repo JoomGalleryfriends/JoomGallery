@@ -1,24 +1,24 @@
 <?php
-
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Imageform;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
 
 /**
  * View class for a list of Joomgallery.
@@ -35,7 +35,7 @@ class HtmlView extends JoomGalleryView
 	 */
 	protected $item;
 
-  /**
+	/**
 	 * The form object
 	 *
 	 * @var  \Joomla\CMS\Form\Form;
@@ -49,9 +49,9 @@ class HtmlView extends JoomGalleryView
 	 *
 	 * @since  4.0.0
 	 */
-	protected $params = array();
+	protected $params = [];
 
-	/**
+  /**
    * The page to return to after the article is submitted
    *
    * @var  string
@@ -78,26 +78,26 @@ class HtmlView extends JoomGalleryView
 			return;
 		}
 
-		/** @var ImagefromModel $model */
+    /** @var ImagefromModel $model */
     $model = $this->getModel();
 
-    $this->state  = $model->getState();
-		$this->params = $model->getParams();
-		$this->item   = $model->getItem();
-		$this->form   = $model->getForm();
+    $this->state = $model->getState();
+		$this->params  = $model->getParams();
+		$this->item    = $model->getItem();
+		$this->form    = $model->getForm();
 
     // Get return page
     $this->return_page = $model->getReturnPage();
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
     // Check access view level
 		if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
-    {
+		{
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
     }
 
@@ -166,7 +166,7 @@ class HtmlView extends JoomGalleryView
 		if(!$this->isMenuCurrentView($menu))
 		{
 			// Add Breadcrumbs
-			$pathway = $this->app->getPathway();
+			$pathway        = $this->app->getPathway();
 			$breadcrumbList = Text::_('COM_JOOMGALLERY_IMAGES');
 
 			if(!\in_array($breadcrumbList, $pathway->getPathwayNames()))

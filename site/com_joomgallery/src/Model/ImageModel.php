@@ -1,20 +1,21 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
 use \Joomla\CMS\Access\Access;
+use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\User\UserFactoryInterface;
 
@@ -34,7 +35,7 @@ class ImageModel extends JoomItemModel
    */
   protected $type = 'image';
 
-	/**
+  /**
    * Category model
    *
    * @access  protected
@@ -64,6 +65,7 @@ class ImageModel extends JoomItemModel
 
 		// Load state from the request userState on edit or from the passed variable on default
 		$id = $this->app->input->getInt('id', null);
+
 		if($id)
 		{
 			$this->app->setUserState('com_joomgallery.edit.image.id', $id);
@@ -132,7 +134,7 @@ class ImageModel extends JoomItemModel
 
     // Adjust tags
     if(isset($this->item->tags))
-		{
+    {
       foreach($this->item->tags as $key => $tag)
       {
         if(\is_object($tag) && $tag->published < 1)
@@ -149,7 +151,8 @@ class ImageModel extends JoomItemModel
     }
 
     // Delete unnecessary properties
-		$toDelete = array('asset_id', 'params');
+		$toDelete = ['asset_id', 'params'];
+
 		foreach($toDelete as $property)
 		{
 			unset($this->item->{$property});
@@ -176,12 +179,12 @@ class ImageModel extends JoomItemModel
   }
 
   /**
-	 * Method to load the title of a category
-	 *
-	 * @param   int  $catid  Category id
-	 *
-	 * @return  string|bool  The category title on success, false otherwise
-	 */
+   * Method to load the title of a category
+   *
+   * @param   int  $catid  Category id
+   *
+   * @return  string|bool  The category title on success, false otherwise
+   */
   protected function getCategoryName(int $catid)
   {
 		if(!$catid && $this->item === null)
@@ -276,7 +279,7 @@ class ImageModel extends JoomItemModel
 		return empty($this->item->unpublishedParents);
 	}
 
-  /**
+	/**
 	 * Method to check if all parent categories are accessible (view levels)
 	 *
 	 * @param   int  $catid  Category id

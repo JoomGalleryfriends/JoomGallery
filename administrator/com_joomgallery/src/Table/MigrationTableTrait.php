@@ -1,38 +1,39 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
-* Add functionality for tables of migrateable records
-*
-* @since  4.0.0
-*/
+ * Add functionality for tables of migrateable records
+ *
+ * @since  4.0.0
+ */
 trait MigrationTableTrait
 {
   /**
    * True if the table is used during migration
    *
    * @var bool
-  */
+   */
   public $is_migration = false;
-  
+
   /**
    * True to insert the provided value of the primary key
    * Needed if you want to create a new record with a given ID
    *
    * @var bool
-  */
+   */
   protected $_insertID = false;
 
   /**
@@ -40,7 +41,7 @@ trait MigrationTableTrait
    * This speeds up the creation of a new record. Recommended for the migration of many records (> 10'000)
    *
    * @var bool
-  */
+   */
   protected $_checkAliasUniqueness = true;
 
   /**
@@ -56,10 +57,10 @@ trait MigrationTableTrait
     {
       return false;
     }
-    else
-    {
+
+
       return parent::hasPrimaryKey();
-    }
+
   }
 
   /**

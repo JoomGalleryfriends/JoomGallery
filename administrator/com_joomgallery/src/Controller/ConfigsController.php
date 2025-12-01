@@ -1,17 +1,18 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
@@ -39,7 +40,7 @@ class ConfigsController extends JoomAdminController
 		$this->checkToken();
 
 		// Get id(s)
-		$pks = $this->input->post->get('cid', array(), 'array');
+		$pks = $this->input->post->get('cid', [], 'array');
 
 		try
 		{
@@ -83,10 +84,10 @@ class ConfigsController extends JoomAdminController
 	 *
 	 * @since   4.0.0
 	 */
-	public function getModel($name = 'Config', $prefix = 'Administrator', $config = array())
+	public function getModel($name = 'Config', $prefix = 'Administrator', $config = [])
 	{
-		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}	
+		return parent::getModel($name, $prefix, ['ignore_request' => true]);
+	}
 
 	/**
 	 * Method to save the submitted ordering values for records via AJAX.
@@ -101,8 +102,8 @@ class ConfigsController extends JoomAdminController
 	{
 		// Get the input
 		$input = Factory::getApplication()->input;
-		$pks   = $input->post->get('cid', array(), 'array');
-		$order = $input->post->get('order', array(), 'array');
+		$pks   = $input->post->get('cid', [], 'array');
+		$order = $input->post->get('order', [], 'array');
 
 		// Sanitize the input
 		ArrayHelper::toInteger($pks);
@@ -116,14 +117,14 @@ class ConfigsController extends JoomAdminController
 
 		if($return)
 		{
-			echo "1";
+			echo '1';
 		}
 
 		// Close the application
 		Factory::getApplication()->close();
 	}
 
-  /**
+	/**
 	 * Removes an item.
 	 *
 	 * @return  void
@@ -133,7 +134,7 @@ class ConfigsController extends JoomAdminController
 	public function delete()
 	{
     // Get items to remove from the request.
-		$cid = $this->input->get('cid', array(), 'array');    
+		$cid = $this->input->get('cid', [], 'array');
 
     if(\is_array($cid) && \in_array(1, $cid))
     {

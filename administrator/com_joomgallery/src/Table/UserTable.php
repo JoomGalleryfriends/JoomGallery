@@ -1,25 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Table\Table;
-use \Joomla\Registry\Registry;
-use \Joomla\Database\DatabaseDriver;
 use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
+use \Joomla\Database\DatabaseDriver;
+use \Joomla\Registry\Registry;
 
 /**
  * User table
@@ -42,12 +43,12 @@ class UserTable extends Table
 	public function __construct(DatabaseDriver $db, bool $component_exists = true)
 	{
 		$this->component_exists = $component_exists;
-		$this->typeAlias = _JOOM_OPTION.'.user';
+		$this->typeAlias        = _JOOM_OPTION.'.user';
 
 		parent::__construct(_JOOM_TABLE_USERS, 'id', $db);
 	}
 
-  /**
+	/**
 	 * Overloaded bind function to pre-process the params.
 	 *
 	 * @param   array  $array   Named array
@@ -68,20 +69,20 @@ class UserTable extends Table
 			$array['created_time'] = $date->toSql();
 		}
 
-    if(!\key_exists('cmsuser', $array) || empty($array['cmsuser']))
-		{
+    if(!key_exists('cmsuser', $array) || empty($array['cmsuser']))
+    {
 			$array['cmsuser'] = Factory::getApplication()->getIdentity()->id;
 		}
 
     if(isset($array['params']) && \is_array($array['params']))
-		{
+    {
 			$registry = new Registry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
     if(isset($array['files']) && \is_array($array['files']))
-		{
+    {
 			$registry = new Registry;
 			$registry->loadArray($array['files']);
 			$array['files'] = (string) $registry;
@@ -90,19 +91,19 @@ class UserTable extends Table
     // Support for collections
     if(!isset($this->collections))
     {
-      $this->collections = array();
+      $this->collections = [];
     }
 
     // Support for favourites
     if(!isset($this->favourites))
     {
-      $this->favourites = array();
+      $this->favourites = [];
     }
 
     return parent::bind($array, $ignore);
 	}
 
-  /**
+	/**
 	 * Overloaded check function
 	 *
 	 * @return bool
@@ -114,6 +115,7 @@ class UserTable extends Table
     {
       $this->params = $this->loadDefaultField('params');
     }
+
     if(isset($this->params))
     {
       $this->params = new Registry($this->params);
@@ -124,6 +126,7 @@ class UserTable extends Table
     {
       $this->files = $this->loadDefaultField('files');
     }
+
     if(isset($this->files))
     {
       $this->files = new Registry($this->files);
@@ -138,7 +141,7 @@ class UserTable extends Table
     return parent::check();
   }
 
-  /**
+	/**
 	 * Method to store a row in the database from the Table instance properties.
 	 *
 	 * If a primary key value is set the row with that primary key value will be updated with the instance property values.
@@ -155,26 +158,26 @@ class UserTable extends Table
     // Support for params field
     if(isset($this->params) && !\is_string($this->params))
     {
-      $registry = new Registry($this->params);
+      $registry     = new Registry($this->params);
       $this->params = (string) $registry;
     }
 
     // Support for files field
     if(isset($this->files) && !\is_string($this->files))
     {
-      $registry = new Registry($this->files);
+      $registry    = new Registry($this->files);
       $this->files = (string) $registry;
     }
 
     return parent::store($updateNulls);
   }
 
-  /**
+	/**
 	 * Method to return the title to use for the asset table.
 	 *
 	 * @return  string
 	 *
-   * @since 4.0.0
+	 * @since 4.0.0
 	 * @see Joomla\CMS\Table\Table::_getAssetTitle
 	 */
 	protected function _getAssetTitle($itemtype = null)

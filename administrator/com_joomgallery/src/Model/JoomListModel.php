@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
 use \Joomla\CMS\Factory;
-use \Joomla\Registry\Registry;
 use \Joomla\CMS\MVC\Model\ListModel;
 use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use \Joomla\Registry\Registry;
 
 /**
  * Base model class for JoomGallery list of items
@@ -92,7 +93,7 @@ abstract class JoomListModel extends ListModel
    * @return  void
    * @since   4.0.0
    */
-  function __construct($config = array())
+  function __construct($config = [])
   {
     parent::__construct($config);
 
@@ -101,18 +102,18 @@ abstract class JoomListModel extends ListModel
     $this->user      = $this->component->getMVCFactory()->getIdentity();
   }
 
-  /**
+	/**
 	 * Method to get parameters from model state.
 	 *
 	 * @return  Registry[]   List of parameters
-   * @since   4.0.0
+	 * @since   4.0.0
 	 */
 	public function getParams(): array
 	{
-		$params = array('component' => $this->getState('parameters.component'),
-										'menu'      => $this->getState('parameters.menu'),
-									  'configs'   => $this->getState('parameters.configs')
-									);
+		$params = ['component' => $this->getState('parameters.component'),
+		  'menu'               => $this->getState('parameters.menu'),
+		  'configs'            => $this->getState('parameters.configs'),
+		];
 
 		return $params;
 	}
@@ -121,7 +122,7 @@ abstract class JoomListModel extends ListModel
 	 * Method to get the access service class.
 	 *
 	 * @return  AccessInterface   Object on success, false on failure.
-   * @since   4.0.0
+	 * @since   4.0.0
 	 */
 	public function getAcl(): AccessInterface
 	{
@@ -136,11 +137,11 @@ abstract class JoomListModel extends ListModel
 	}
 
   /**
-	 * Method to load component specific parameters into model state.
-	 *
-	 * @return  void
+   * Method to load component specific parameters into model state.
+   *
+   * @return  void
    * @since   4.0.0
-	 */
+   */
   protected function loadComponentParams()
   {
     // Load the componen parameters.
@@ -183,7 +184,8 @@ abstract class JoomListModel extends ListModel
     // For record types including a group, merge, querySet or having statement in the list query
     // Add a _getCountListQuery method without them to speed up the record counting
     $getListQuery = '_getListQuery';
-    if(\method_exists($this, 'getCountListQuery'))
+
+    if(method_exists($this, 'getCountListQuery'))
     {
       $getListQuery = '_getCountListQuery';
     }

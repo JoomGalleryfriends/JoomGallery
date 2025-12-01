@@ -1,25 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Category;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomla\CMS\Toolbar\Toolbar;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
 /**
  * View class for a single Category.
@@ -44,7 +45,7 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
-		/** @var CategoryModel $model */
+    /** @var CategoryModel $model */
     $model = $this->getModel();
 
 		$this->state = $model->getState();
@@ -52,16 +53,16 @@ class HtmlView extends JoomGalleryView
 		$this->form  = $model->getForm();
 
 		// JS to deactivate filesystem form field
-		$js  = 'var callback = function() {';
-		$js .=    'let catid = document.getElementById("jform_id");';
-		$js .=    'let filesystem = document.getElementById("jform_params__jg_filesystem");';
-		$js .=    'if(catid && filesystem && catid.value > 1) {filesystem.setAttribute("disabled", "disabled"); filesystem.classList.add("readonly");};';
+		$js = 'var callback = function() {';
+		$js .= 'let catid = document.getElementById("jform_id");';
+		$js .= 'let filesystem = document.getElementById("jform_params__jg_filesystem");';
+		$js .= 'if(catid && filesystem && catid.value > 1) {filesystem.setAttribute("disabled", "disabled"); filesystem.classList.add("readonly");};';
 		$js .= '};';
 		$js .= 'if(document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)){callback();} else {document.addEventListener("DOMContentLoaded", callback);}';
 		$this->filesystem_js = $js;
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
@@ -81,7 +82,7 @@ class HtmlView extends JoomGalleryView
 	{
 		Factory::getApplication()->input->set('hidemainmenu', true);
 
-		/** @var Toolbar $model */
+    /** @var Toolbar $model */
     $toolbar = $this->getToolbar();
 
 		$user  = Factory::getApplication()->getIdentity();
@@ -96,7 +97,7 @@ class HtmlView extends JoomGalleryView
 			$checkedOut = false;
 		}
 
-		ToolbarHelper::title(Text::_('JCATEGORIES').' :: '.Text::_('COM_JOOMGALLERY_CATEGORY_EDIT'), "folder-open");
+		ToolbarHelper::title(Text::_('JCATEGORIES').' :: '.Text::_('COM_JOOMGALLERY_CATEGORY_EDIT'), 'folder-open');
 
 		// If not checked out, can save the item.
 		if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || ($this->getAcl()->checkACL('core.create'))))
@@ -108,10 +109,8 @@ class HtmlView extends JoomGalleryView
 		{
 			$saveGroup = $toolbar->dropdownButton('save-group');
 
-			$saveGroup->configure
-			(
-				function (Toolbar $childBar) use ($checkedOut, $isNew)
-				{
+			$saveGroup->configure(
+				function (Toolbar $childBar) use ($checkedOut, $isNew) {
 					$childBar->save('category.save', 'JTOOLBAR_SAVE');
 
 					if(!$checkedOut && ($this->getAcl()->checkACL('core.create')))

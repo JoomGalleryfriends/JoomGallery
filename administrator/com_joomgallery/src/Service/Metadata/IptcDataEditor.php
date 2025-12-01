@@ -1,18 +1,18 @@
 <?php
-
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -22,43 +22,43 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
  * @since 4.1.0
  */
 class IptcDataEditor
-{    
+{
     /**
      * @var array
      */
-    public $iptcStringArray = array(
-        '2#003' => [3, 67],
-        '2#005' => [0, 64],
-        '2#007' => [0, 64],
-        '2#015' => [0, 3],
-        '2#020' => [0, 32],
-        '2#022' => [0, 32],
-        '2#025' => [0, 64],
-        '2#040' => [0, 256],
-        '2#080' => [0, 32],
-        '2#085' => [0, 32],
-        '2#090' => [0, 32],
-        '2#092' => [0, 32],
-        '2#095' => [0, 32],
-        '2#100' => [3, 3],
-        '2#101' => [0, 64],
-        '2#105' => [0, 256],
-        '2#110' => [0, 32],
-        '2#115' => [0, 32],
-        '2#116' => [0, 128],
-        '2#118' => [0, 128],
-        '2#120' => [0, 2000],
-        '2#122' => [0, 32]
-    );
+    public $iptcStringArray = [
+      '2#003' => [3, 67],
+      '2#005' => [0, 64],
+      '2#007' => [0, 64],
+      '2#015' => [0, 3],
+      '2#020' => [0, 32],
+      '2#022' => [0, 32],
+      '2#025' => [0, 64],
+      '2#040' => [0, 256],
+      '2#080' => [0, 32],
+      '2#085' => [0, 32],
+      '2#090' => [0, 32],
+      '2#092' => [0, 32],
+      '2#095' => [0, 32],
+      '2#100' => [3, 3],
+      '2#101' => [0, 64],
+      '2#105' => [0, 256],
+      '2#110' => [0, 32],
+      '2#115' => [0, 32],
+      '2#116' => [0, 128],
+      '2#118' => [0, 128],
+      '2#120' => [0, 2000],
+      '2#122' => [0, 32],
+    ];
 
     /**
      * @var array
      */
-    public $iptcDigitsArray = array(
-        '2#008' => 2,
-        '2#010' => 1,
-        '2#055' => 8
-    );
+    public $iptcDigitsArray = [
+      '2#008' => 2,
+      '2#010' => 1,
+      '2#055' => 8,
+    ];
 
     /**
      * Validates input and creates the octet structure to be saved with iptcembed.
@@ -75,10 +75,9 @@ class IptcDataEditor
         if( ( isset($this->iptcStringArray) && $tag != '2#025' &&
               $this->iptcStringArray[$tag][0] <= \strlen($data) && \strlen($data) <= $this->iptcStringArray[$tag][1]
             ) || (isset($this->iptcDigitsArray) && $this->iptcDigitsArray[$tag] >= $data)
-          )
-        {
-            $explode     = \explode('#', $tag);
-            $octetStruct = self::makeTag(\intval($explode[0]), intval($explode[1]), $data);
+          ) {
+            $explode     = explode('#', $tag);
+            $octetStruct = self::makeTag(\intval($explode[0]), \intval($explode[1]), $data);
 
             return $octetStruct;
         }
@@ -86,13 +85,14 @@ class IptcDataEditor
         {
             // Special case for keywords array
             $octetStruct = '';
+
             foreach($data as $keyword)
             {
-                $keyword = \trim($keyword);
+                $keyword = trim($keyword);
+
                 if( \strlen($keyword) > 0 && $this->iptcStringArray[$tag][0] <= \strlen($keyword) &&
                     \strlen($keyword) <= $this->iptcStringArray[$tag][1]
-                  )
-                {
+                  ) {
                     $octetStruct .= self::makeTag(2, 25, $keyword);
                 }
             }
@@ -126,7 +126,7 @@ class IptcDataEditor
         {
             // 4th and 5th octet (total amount of octets that the value contains). Standard DataSet Tag
             // Maximum total of octets is 32767.
-            $retval .= chr($length >> 8) .  chr($length & 0xFF);
+            $retval .= \chr($length >> 8) .  \chr($length & 0xFF);
         }
         else
         {
@@ -158,9 +158,10 @@ class IptcDataEditor
     public function convertIptcToString(array $app13): string
     {
         $retval = '';
+
         foreach($app13 as $tag => $value)
         {
-            $explode = \explode('#', $tag);
+            $explode = explode('#', $tag);
             $retval .= self::makeTag(\intval($explode[0]), \intval($explode[1]), $value[0]);
         }
 

@@ -9,15 +9,15 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\Utilities\ArrayHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Utilities\ArrayHelper;
 
 extract($displayData);
 
@@ -54,7 +54,7 @@ extract($displayData);
  * @var   array    $dataAttributes  Miscellaneous data attribute for eg, data-*.
  */
 $modalHTML = '';
-$uri = new Uri('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
+$uri       = new Uri('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
 $uri->setVar('field', $this->escape($id));
 
 if(empty($value))
@@ -90,21 +90,25 @@ if($this->escape($imageName) === Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'))
 	$imageName = '';
 }
 
-$inputAttributes = array(
-	'type' => 'text', 'id' => $id, 'class' => 'form-control field-image-input-name', 'value' => $this->escape($imageName)
-);
+$inputAttributes = [
+  'type' => 'text', 'id' => $id, 'class' => 'form-control field-image-input-name', 'value' => $this->escape($imageName),
+];
+
 if($class)
 {
 	$inputAttributes['class'] .= ' ' . $class;
 }
+
 if($size)
 {
 	$inputAttributes['size'] = (int) $size;
 }
+
 if($required)
 {
 	$inputAttributes['required'] = 'required';
 }
+
 if(!$readonly)
 {
 	$inputAttributes['placeholder'] = Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE');
@@ -115,16 +119,16 @@ if(!$readonly)
 	$modalHTML = HTMLHelper::_(
 		'bootstrap.renderModal',
 		'imageModal_' . $id,
-		array(
-			'url'         => $uri,
-			'title'       => Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'),
-			'closeButton' => true,
-			'height'      => '100%',
-			'width'       => '100%',
-			'modalWidth'  => 80,
-			'bodyHeight'  => 60,
-			'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCANCEL') . '</button>',
-		)
+		[
+		  'url'         => $uri,
+		  'title'       => Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'),
+		  'closeButton' => true,
+		  'height'      => '100%',
+		  'width'       => '100%',
+		  'modalWidth'  => 80,
+		  'bodyHeight'  => 60,
+		  'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCANCEL') . '</button>',
+		]
 	);
 
 	Factory::getApplication()->getDocument()->getWebAssetManager()

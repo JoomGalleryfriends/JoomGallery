@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\FormField;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Layout\FileLayout;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 /**
  * Field to select a JoomGallery category ID from a modal list.
@@ -84,7 +85,7 @@ class JgcategoryField extends FormField
 			// Get access service
 			$comp = Factory::getApplication()->bootComponent('com_joomgallery');
 			$comp->createAccess();
-    	$acl  = $comp->getAccess();
+    	$acl = $comp->getAccess();
 
 			$this->readonly = !$acl->checkACL('core.manage', 'com_joomgallery');
 		}
@@ -103,8 +104,8 @@ class JgcategoryField extends FormField
 	{
 		if (empty($this->layout))
 		{
-			$this->component->addLog(sprintf('%s has no layout assigned.', $this->name), 'error', 'jerror');
-			throw new \UnexpectedValueException(sprintf('%s has no layout assigned.', $this->name));
+			$this->component->addLog(\sprintf('%s has no layout assigned.', $this->name), 'error', 'jerror');
+			throw new \UnexpectedValueException(\sprintf('%s has no layout assigned.', $this->name));
 		}
 
 		// Make sure the component is correctly set
@@ -129,7 +130,7 @@ class JgcategoryField extends FormField
 		// Initialize value
 		$name = Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY');
 
-		if(\is_numeric($this->value))
+		if(is_numeric($this->value))
 		{
 			if($this->value > 0)
 			{
@@ -158,13 +159,13 @@ class JgcategoryField extends FormField
 			$name = $this->value;
 		}
 
-		$extraData = array(
-			'categoryName'  => $name,
-			'category' => $this->getCat(),
-			'excluded'   => $this->getExcluded(),
-		);
+		$extraData = [
+		  'categoryName' => $name,
+		  'category'     => $this->getCat(),
+		  'excluded'     => $this->getExcluded(),
+		];
 
-		return \array_merge($data, $extraData);
+		return array_merge($data, $extraData);
 	}
 
 	/**

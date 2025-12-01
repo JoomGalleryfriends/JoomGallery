@@ -1,23 +1,24 @@
 <?php
-/** 
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Form\FormField;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Form\FormField;
+use \Joomla\CMS\Language\Text;
 
 /**
  * Field to select a JoomGallery image ID from a modal list.
@@ -83,7 +84,7 @@ class JgimageField extends FormField
 			// Get access service
 			$comp = Factory::getApplication()->bootComponent('com_joomgallery');
 			$comp->createAccess();
-    	$acl  = $comp->getAccess();
+    	$acl = $comp->getAccess();
 
 			$this->readonly = !$acl->checkACL('core.manage', 'com_joomgallery');
 		}
@@ -102,8 +103,8 @@ class JgimageField extends FormField
 	{
 		if(empty($this->layout))
 		{
-			$this->component->addLog(sprintf('%s has no layout assigned.', $this->name), 'error', 'jerror');
-			throw new \UnexpectedValueException(sprintf('%s has no layout assigned.', $this->name));
+			$this->component->addLog(\sprintf('%s has no layout assigned.', $this->name), 'error', 'jerror');
+			throw new \UnexpectedValueException(\sprintf('%s has no layout assigned.', $this->name));
 		}
 
 		// Make sure the component is correctly set
@@ -128,13 +129,13 @@ class JgimageField extends FormField
 		// Initialize value
 		$name = Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE');
 
-		if(\is_numeric($this->value))
+		if(is_numeric($this->value))
 		{
       if($this->value > 0)
       {
         $img = JoomHelper::getRecord('image', $this->value);
       }
-      
+
       if($this->value == 0 || !$img)
       {
         $name = '';
@@ -151,13 +152,13 @@ class JgimageField extends FormField
 			$name = $this->value;
 		}
 
-		$extraData = array(
-			'imageName'  => $name,
-			'categories' => $this->getCats(),
-			'excluded'   => $this->getExcluded(),
-		);
+		$extraData = [
+		  'imageName'  => $name,
+		  'categories' => $this->getCats(),
+		  'excluded'   => $this->getExcluded(),
+		];
 
-		return \array_merge($data, $extraData);
+		return array_merge($data, $extraData);
 	}
 
 	/**
@@ -171,7 +172,7 @@ class JgimageField extends FormField
 	{
 		if(isset($this->element['categories']))
 		{
-			return \explode(',', $this->element['categories']);
+			return explode(',', $this->element['categories']);
 		}
 	}
 
@@ -186,7 +187,7 @@ class JgimageField extends FormField
 	{
 		if(isset($this->element['exclude']))
 		{
-			return \explode(',', $this->element['exclude']);
+			return explode(',', $this->element['exclude']);
 		}
 	}
 }

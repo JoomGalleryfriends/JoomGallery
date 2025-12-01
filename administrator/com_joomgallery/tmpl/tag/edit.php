@@ -9,13 +9,13 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -47,7 +47,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   </div>
 	
   <div class="main-card">
-    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details', 'recall' => true, 'breakpoint' => 768)); ?>
+    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'Details', 'recall' => true, 'breakpoint' => 768]); ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>
     <div class="row">
@@ -85,7 +85,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     </div>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-    <?php if($this->getAcl()->checkACL('core.admin','joomgallery')) : ?>
+    <?php if($this->getAcl()->checkACL('core.admin', 'joomgallery')) : ?>
       <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'permissions', Text::_('JGLOBAL_ACTION_PERMISSIONS_LABEL', true)); ?>
         <div class="alert alert-primary" role="alert"><?php echo Text::sprintf('COM_JOOMGALLERY_ACTION_GLOBAL_ASSET_MESSAGE', Text::_('COM_JOOMGALLERY_TAGS'), Text::_('COM_JOOMGALLERY_TAG')); ?></div>
         <?php echo $this->form->getInput('rules'); ?>
