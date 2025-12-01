@@ -15,7 +15,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Object\CMSObject;
 use \Joomla\CMS\Filter\InputFilter;
 use \Joomla\CMS\Filter\OutputFilter;
 use \Joomla\Filesystem\File as JFile;

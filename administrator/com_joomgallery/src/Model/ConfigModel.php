@@ -560,7 +560,7 @@ class ConfigModel extends JoomAdminModel
 	 *
    * @param   string      $params     Json string with params
    * 
-	 * @return  CMSObject   Params object
+	 * @return  CMSObject|stdClass   Params object
 	 *
 	 * @since   4.0.0
 	 */
