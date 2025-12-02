@@ -303,9 +303,9 @@ class JgtagField extends ListField
       }
 
         // Get access service
-		  $comp = Factory::getApplication()->bootComponent('com_joomgallery');
-		  $comp->createAccess();
-    	$acl = $comp->getAccess();
+      $comp = Factory::getApplication()->bootComponent('com_joomgallery');
+      $comp->createAccess();
+      $acl = $comp->getAccess();
 
       return $acl->checkACL('core.create', 'com_joomgallery.tag');
     }

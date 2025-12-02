@@ -46,25 +46,25 @@ class TUSUploader extends BaseUploader implements UploaderInterface
    */
   public function __construct($multiple = false, $async = false)
   {
-		parent::__construct($multiple, $async);
+    parent::__construct($multiple, $async);
 
-		$this->component->createTusServer();
-	}
+    $this->component->createTusServer();
+  }
 
-	/**
-	 * Method to retrieve an uploaded image. Step 1.
-	 * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
-	 *
-	 * @param   array    $data        Form data (as reference)
-	 * @param   bool     $filename    True, if the filename has to be created (default: True)
-	 *
-	 * @return  bool     True on success, false otherwise
-	 *
-	 * @since  4.0.0
-	 */
-	public function retrieveImage(&$data, $filename = True): bool
-	{
-		$user = Factory::getUser();
+  /**
+   * Method to retrieve an uploaded image. Step 1.
+   * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
+   *
+   * @param   array    $data        Form data (as reference)
+   * @param   bool     $filename    True, if the filename has to be created (default: True)
+   *
+   * @return  bool     True on success, false otherwise
+   *
+   * @since  4.0.0
+   */
+  public function retrieveImage(&$data, $filename = True): bool
+  {
+    $user = Factory::getUser();
 
     // Load tus upload
     $uuid = $data['uuid'];
@@ -133,7 +133,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
 
     return true;
-	}
+  }
 
   /**
    * Override form data with image metadata

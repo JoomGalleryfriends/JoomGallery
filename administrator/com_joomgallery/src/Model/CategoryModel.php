@@ -46,32 +46,32 @@ class CategoryModel extends JoomAdminModel
    */
   protected $is_password = true;
 
-	/**
-	 * Method to get the record form.
-	 *
-	 * @param   array    $data      An optional array of data for the form to interogate.
-	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
-	 *
-	 * @return  \JForm|boolean  A \JForm object on success, false on failure
-	 *
-	 * @since   4.0.0
-	 */
-	public function getForm($data = [], $loadData = true)
-	{
-		// Get the form.
-		$form = $this->loadForm($this->typeAlias, 'category', ['control' => 'jform', 'load_data' => $loadData]);
+  /**
+   * Method to get the record form.
+   *
+   * @param   array    $data      An optional array of data for the form to interogate.
+   * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+   *
+   * @return  \JForm|boolean  A \JForm object on success, false on failure
+   *
+   * @since   4.0.0
+   */
+  public function getForm($data = [], $loadData = true)
+  {
+    // Get the form.
+    $form = $this->loadForm($this->typeAlias, 'category', ['control' => 'jform', 'load_data' => $loadData]);
 
     if(empty($form))
     {
-			return false;
-		}
+      return false;
+    }
 
     // On edit, we get ID from state, but on save, we use data from input
-		$id = (int) $this->getState('category.id', $this->app->getInput()->getInt('id', 0));
+    $id = (int) $this->getState('category.id', $this->app->getInput()->getInt('id', 0));
 
-		// Object uses for checking edit state permission of image
-		$record     = new \stdClass();
-		$record->id = $id;
+    // Object uses for checking edit state permission of image
+    $record     = new \stdClass();
+    $record->id = $id;
 
     // Apply filter to exclude child categories
     $children = $form->getFieldAttribute('parent_id', 'children', 'true');
@@ -82,7 +82,7 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('parent_id', 'exclude', $id);
     }
 
-		// Apply filter for current category on thumbnail field
+    // Apply filter for current category on thumbnail field
     $form->setFieldAttribute('thumbnail', 'categories', $id);
 
     // Disable remove password field if no password is set
@@ -95,17 +95,17 @@ class CategoryModel extends JoomAdminModel
     }
 
     // Modify the form based on Edit State access controls.
-		if(!$this->canEditState($record))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('ordering', 'disabled', 'true');
-			$form->setFieldAttribute('published', 'disabled', 'true');
+    if(!$this->canEditState($record))
+    {
+      // Disable fields for display.
+      $form->setFieldAttribute('ordering', 'disabled', 'true');
+      $form->setFieldAttribute('published', 'disabled', 'true');
 
-			// Disable fields while saving.
-			// The controller has already verified this is an article you can edit.
-			$form->setFieldAttribute('ordering', 'filter', 'unset');
-			$form->setFieldAttribute('published', 'filter', 'unset');
-		}
+      // Disable fields while saving.
+      // The controller has already verified this is an article you can edit.
+      $form->setFieldAttribute('ordering', 'filter', 'unset');
+      $form->setFieldAttribute('published', 'filter', 'unset');
+    }
 
     // Don't allow to change the created_user_id user if not allowed to access com_users.
     if(!$this->user->authorise('core.manage', 'com_users'))
@@ -113,29 +113,29 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('created_by', 'filter', 'unset');
     }
 
-		return $form;
-	}
+    return $form;
+  }
 
-	/**
-	 * Method to get the data that should be injected in the form.
-	 *
-	 * @return  mixed  The data for the form.
-	 *
-	 * @since   4.0.0
-	 */
-	protected function loadFormData()
-	{
-		// Check the session for previously entered form data.
-		$data = Factory::getApplication()->getUserState(_JOOM_OPTION.'.edit.category.data', []);
+  /**
+   * Method to get the data that should be injected in the form.
+   *
+   * @return  mixed  The data for the form.
+   *
+   * @since   4.0.0
+   */
+  protected function loadFormData()
+  {
+    // Check the session for previously entered form data.
+    $data = Factory::getApplication()->getUserState(_JOOM_OPTION.'.edit.category.data', []);
 
-		if(empty($data))
-		{
-			if($this->item === null)
-			{
-				$this->item = $this->getItem();
-			}
+    if(empty($data))
+    {
+      if($this->item === null)
+      {
+        $this->item = $this->getItem();
+      }
 
-			$data = $this->item;
+      $data = $this->item;
 
       // Support for password field
       if(property_exists($data, 'password') && empty($data->password))
@@ -144,45 +144,45 @@ class CategoryModel extends JoomAdminModel
       }
       $data->password = '';
 
-			// Support for multiple or not foreign key field: robots
-			$array = [];
+      // Support for multiple or not foreign key field: robots
+      $array = [];
 
-			foreach((array) $data->robots as $value)
-			{
-				if(!\is_array($value))
-				{
-					$array[] = $value;
-				}
-			}
+      foreach((array) $data->robots as $value)
+      {
+        if(!\is_array($value))
+        {
+          $array[] = $value;
+        }
+      }
 
-			if(!empty($array))
-			{
-			  $data->robots = $array;
-			}
-		}
+      if(!empty($array))
+      {
+        $data->robots = $array;
+      }
+    }
 
-		return $data;
-	}
+    return $data;
+  }
 
-	/**
-	 * Method to get a single record.
-	 *
-	 * @param   integer  $pk  The id of the primary key.
-	 *
-	 * @return  Object|boolean Object on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
-	public function getItem($pk = null)
-	{
+  /**
+   * Method to get a single record.
+   *
+   * @param   integer  $pk  The id of the primary key.
+   *
+   * @return  Object|boolean Object on success, false on failure.
+   *
+   * @since   4.0.0
+   */
+  public function getItem($pk = null)
+  {
     if($this->item === null)
     {
-			$this->item = false;
+      $this->item = false;
 
       if(empty($pk))
       {
-				$pk = $this->getState('category.id');
-			}
+        $pk = $this->getState('category.id');
+      }
 
       if($this->item = parent::getItem($pk))
       {
@@ -196,167 +196,167 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $this->item;
-	}
+  }
 
-	/**
-	 * Method to delete one or more categories.
-	 *
-	 * @param   array  &$pks  An array of record primary keys.
-	 *
-	 * @return  boolean  True if successful, false if an error occurs.
-	 *
-	 * @since   4.0.0
-	 */
-	public function delete(&$pks)
-	{
-		$pks   = ArrayHelper::toInteger((array) $pks);
-		$table = $this->getTable();
+  /**
+   * Method to delete one or more categories.
+   *
+   * @param   array  &$pks  An array of record primary keys.
+   *
+   * @return  boolean  True if successful, false if an error occurs.
+   *
+   * @since   4.0.0
+   */
+  public function delete(&$pks)
+  {
+    $pks   = ArrayHelper::toInteger((array) $pks);
+    $table = $this->getTable();
 
     // Check if the deletion is forced
     $force_delete = Factory::getApplication()->input->get('del_force', false, 'BOOL');
 
-		// Include the plugins for the delete events.
-		PluginHelper::importPlugin($this->events_map['delete']);
+    // Include the plugins for the delete events.
+    PluginHelper::importPlugin($this->events_map['delete']);
 
-		// Iterate the items to delete each one.
-		foreach($pks as $i => $pk)
-		{
-			if($table->load($pk))
-			{
-				if($this->canDelete($table))
-				{
-					$context = $this->option . '.' . $this->name;
+    // Iterate the items to delete each one.
+    foreach($pks as $i => $pk)
+    {
+      if($table->load($pk))
+      {
+        if($this->canDelete($table))
+        {
+          $context = $this->option . '.' . $this->name;
 
-					// Trigger the before delete event.
-					$result = Factory::getApplication()->triggerEvent($this->event_before_delete, [$context, $table]);
+          // Trigger the before delete event.
+          $result = Factory::getApplication()->triggerEvent($this->event_before_delete, [$context, $table]);
 
-					if(\in_array(false, $result, true))
-					{
-						$this->setError($table->getError());
-						$this->component->addLog($table->getError(), 'error', 'jerror');
+          if(\in_array(false, $result, true))
+          {
+            $this->setError($table->getError());
+            $this->component->addLog($table->getError(), 'error', 'jerror');
 
-						return false;
-					}
+            return false;
+          }
 
-					// Create file manager service
-					$manager = JoomHelper::getService('FileManager', [$table->id]);
+          // Create file manager service
+          $manager = JoomHelper::getService('FileManager', [$table->id]);
 
           // Delete corresponding folders
-					if(!$manager->deleteCategory($table, $force_delete))
-					{
-						$this->setError($this->component->getDebug(true));
-						$this->component->addLog($this->component->getDebug(true) . '; Category ID: ' . $pk, 'error', 'jerror');
+          if(!$manager->deleteCategory($table, $force_delete))
+          {
+            $this->setError($this->component->getDebug(true));
+            $this->component->addLog($this->component->getDebug(true) . '; Category ID: ' . $pk, 'error', 'jerror');
 
-						return false;
-					}
+            return false;
+          }
 
-					// Multilanguage: if associated, delete the item in the _associations table
-					if($this->associationsContext && Associations::isEnabled())
-					{
-						$db    = $this->getDbo();
-						$query = $db->getQuery(true)
-							->select(
-								[
-								  'COUNT(*) AS ' . $db->quoteName('count'),
-								  $db->quoteName('as1.key'),
-								]
-							)
-							->from($db->quoteName('#__associations', 'as1'))
-							->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
-							->where(
-								[
-								  $db->quoteName('as1.context') . ' = :context',
-								  $db->quoteName('as1.id') . ' = :pk',
-								]
-							)
-							->bind(':context', $this->associationsContext)
-							->bind(':pk', $pk, ParameterType::INTEGER)
-							->group($db->quoteName('as1.key'));
+          // Multilanguage: if associated, delete the item in the _associations table
+          if($this->associationsContext && Associations::isEnabled())
+          {
+            $db    = $this->getDbo();
+            $query = $db->getQuery(true)
+              ->select(
+                [
+                  'COUNT(*) AS ' . $db->quoteName('count'),
+                  $db->quoteName('as1.key'),
+                ]
+              )
+              ->from($db->quoteName('#__associations', 'as1'))
+              ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
+              ->where(
+                [
+                  $db->quoteName('as1.context') . ' = :context',
+                  $db->quoteName('as1.id') . ' = :pk',
+                ]
+              )
+              ->bind(':context', $this->associationsContext)
+              ->bind(':pk', $pk, ParameterType::INTEGER)
+              ->group($db->quoteName('as1.key'));
 
-						$db->setQuery($query);
-						$row = $db->loadAssoc();
+            $db->setQuery($query);
+            $row = $db->loadAssoc();
 
-						if(!empty($row['count']))
-						{
-							$query = $db->getQuery(true)
-								->delete($db->quoteName('#__associations'))
-								->where(
-									[
-									  $db->quoteName('context') . ' = :context',
-									  $db->quoteName('key') . ' = :key',
-									]
-								)
-								->bind(':context', $this->associationsContext)
-								->bind(':key', $row['key']);
+            if(!empty($row['count']))
+            {
+              $query = $db->getQuery(true)
+                ->delete($db->quoteName('#__associations'))
+                ->where(
+                  [
+                    $db->quoteName('context') . ' = :context',
+                    $db->quoteName('key') . ' = :key',
+                  ]
+                )
+                ->bind(':context', $this->associationsContext)
+                ->bind(':key', $row['key']);
 
-							if($row['count'] > 2)
-							{
-								$query->where($db->quoteName('id') . ' = :pk')
-									->bind(':pk', $pk, ParameterType::INTEGER);
-							}
+              if($row['count'] > 2)
+              {
+                $query->where($db->quoteName('id') . ' = :pk')
+                  ->bind(':pk', $pk, ParameterType::INTEGER);
+              }
 
-							$db->setQuery($query);
-							$db->execute();
-						}
-					}
+              $db->setQuery($query);
+              $db->execute();
+            }
+          }
 
-					if(!$table->delete($pk))
-					{
-						$this->setError($table->getError());
-						$this->component->addLog($table->getError(), 'error', 'jerror');
+          if(!$table->delete($pk))
+          {
+            $this->setError($table->getError());
+            $this->component->addLog($table->getError(), 'error', 'jerror');
 
-						return false;
-					}
+            return false;
+          }
 
-					// Trigger the after event.
-					Factory::getApplication()->triggerEvent($this->event_after_delete, [$context, $table]);
-				}
-				else
-				{
-					// Prune items that you can't change.
-					unset($pks[$i]);
-					$error = $this->getError();
+          // Trigger the after event.
+          Factory::getApplication()->triggerEvent($this->event_after_delete, [$context, $table]);
+        }
+        else
+        {
+          // Prune items that you can't change.
+          unset($pks[$i]);
+          $error = $this->getError();
 
-					if($error)
-					{
-						$this->component->addLog($error, 'warning', 'jerror');
+          if($error)
+          {
+            $this->component->addLog($error, 'warning', 'jerror');
 
-						return false;
-					}
+            return false;
+          }
 
 
-						$this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
+            $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
 
-						return false;
+            return false;
 
-				}
-			}
-			else
-			{
-				$this->setError($table->getError());
-				$this->component->addLog($table->getError(), 'error', 'jerror');
+        }
+      }
+      else
+      {
+        $this->setError($table->getError());
+        $this->component->addLog($table->getError(), 'error', 'jerror');
 
-				return false;
-			}
-		}
+        return false;
+      }
+    }
 
-		// Output messages
-		if(\count($this->component->getWarning()) > 1)
-		{
-			$this->component->printWarning();
-		}
+    // Output messages
+    if(\count($this->component->getWarning()) > 1)
+    {
+      $this->component->printWarning();
+    }
 
-		// Output debug data
-		if(\count($this->component->getDebug()) > 1)
-		{
-			$this->component->printDebug();
-		}
+    // Output debug data
+    if(\count($this->component->getDebug()) > 1)
+    {
+      $this->component->printDebug();
+    }
 
-		// Clear the component's cache
-		$this->cleanCache();
+    // Clear the component's cache
+    $this->cleanCache();
 
-		return true;
-	}
+    return true;
+  }
 
   /**
    * Method to save the form data.
@@ -386,8 +386,8 @@ class CategoryModel extends JoomAdminModel
     // Are we going to copy the image record?
     if($app->input->get('task') == 'save2copy')
     {
-			$isCopy = true;
-		}
+      $isCopy = true;
+    }
 
     // Create tags
     if(\array_key_exists('tags', $data) && \is_array($data['tags']) && \count($data['tags']) > 0)
@@ -504,7 +504,7 @@ class CategoryModel extends JoomAdminModel
         }
 
         // Create file manager service
-				$manager = JoomHelper::getService('FileManager', [$data['parent_id']]);
+        $manager = JoomHelper::getService('FileManager', [$data['parent_id']]);
 
         // Bind the data.
         if(!$table->bind($data))
@@ -546,7 +546,7 @@ class CategoryModel extends JoomAdminModel
         }
 
         // Filesystem changes
-			  $filesystem_success = true;
+        $filesystem_success = true;
 
         if(!$isNew && ($catMoved || $aliasChanged))
         {
@@ -676,15 +676,15 @@ class CategoryModel extends JoomAdminModel
     }
 
     // Output warning messages
-		if(\count($this->component->getWarning()) > 0)
-		{
-			$this->component->printWarning();
-		}
+    if(\count($this->component->getWarning()) > 0)
+    {
+      $this->component->printWarning();
+    }
 
-		// Output debug data
-		if(\count($this->component->getDebug()) > 0)
-		{
-			$this->component->printDebug();
+    // Output debug data
+    if(\count($this->component->getDebug()) > 0)
+    {
+      $this->component->printDebug();
     }
 
     // Set state
@@ -710,85 +710,85 @@ class CategoryModel extends JoomAdminModel
     return true;
   }
 
-	/**
-	 * Method rebuild the entire nested set tree.
-	 * @return  boolean  False on failure or error, true otherwise.
-	 * @since   4.0.0
-	 */
-	public function rebuild()
-	{
-		$table = $this->getTable();
+  /**
+   * Method rebuild the entire nested set tree.
+   * @return  boolean  False on failure or error, true otherwise.
+   * @since   4.0.0
+   */
+  public function rebuild()
+  {
+    $table = $this->getTable();
 
-		if(!$table->rebuild())
-		{
-			$this->setError($table->getError());
-			$this->component->addLog($table->getError(), 'error', 'jerror');
+    if(!$table->rebuild())
+    {
+      $this->setError($table->getError());
+      $this->component->addLog($table->getError(), 'error', 'jerror');
 
-			return false;
-		}
+      return false;
+    }
 
-		$this->cleanCache();
+    $this->cleanCache();
 
-		return true;
-	}
+    return true;
+  }
 
-	/**
-	 * Method to save the reordered nested set tree.
-	 * First we save the new order values in the lft values of the changed ids.
-	 * Then we invoke the table rebuild to implement the new ordering.
-	 *
-	 * @param   array    $idArray   An array of primary key ids.
-	 * @param   integer  $lftArray  The lft value
-	 *
-	 * @return  boolean  False on failure or error, True otherwise
-	 *
-	 * @since   4.0.0
-	 */
-	public function saveorder($idArray = null, $lftArray = null)
-	{
-		// Get an instance of the table object.
-		$table = $this->getTable();
+  /**
+   * Method to save the reordered nested set tree.
+   * First we save the new order values in the lft values of the changed ids.
+   * Then we invoke the table rebuild to implement the new ordering.
+   *
+   * @param   array    $idArray   An array of primary key ids.
+   * @param   integer  $lftArray  The lft value
+   *
+   * @return  boolean  False on failure or error, True otherwise
+   *
+   * @since   4.0.0
+   */
+  public function saveorder($idArray = null, $lftArray = null)
+  {
+    // Get an instance of the table object.
+    $table = $this->getTable();
 
-		if(!$table->saveorder($idArray, $lftArray))
-		{
-			$this->setError($table->getError());
-			$this->component->addLog($table->getError(), 'error', 'jerror');
+    if(!$table->saveorder($idArray, $lftArray))
+    {
+      $this->setError($table->getError());
+      $this->component->addLog($table->getError(), 'error', 'jerror');
 
-			return false;
-		}
+      return false;
+    }
 
-		// Clear the cache
-		$this->cleanCache();
+    // Clear the cache
+    $this->cleanCache();
 
-		return true;
-	}
+    return true;
+  }
 
-	/**
-	 * Method to duplicate an Category
-	 *
-	 * @param   array  &$pks  An array of primary key IDs.
-	 *
-	 * @return  boolean  True if successful.
-	 *
-	 * @throws  Exception
-	 */
-	public function duplicate(&$pks)
-	{
+  /**
+   * Method to duplicate an Category
+   *
+   * @param   array  &$pks  An array of primary key IDs.
+   *
+   * @return  boolean  True if successful.
+   *
+   * @throws  Exception
+   */
+  public function duplicate(&$pks)
+  {
     $task = $this->app->input->get('task');
 
-		// Access checks.
-		if(!$this->user->authorise('core.create', _JOOM_OPTION))
-		{
-			throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
-		}
+    // Access checks.
+    if(!$this->user->authorise('core.create', _JOOM_OPTION))
+    {
+      throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
+    }
 
     // Set task to be save2copy
     $this->app->input->set('task', 'save2copy');
 
-		$table = $this->getTable();
+    $table = $this->getTable();
 
-		foreach($pks as $pk)
-		{
+    foreach($pks as $pk)
+    {
       if($table->load($pk, true))
       {
         // Reset the id to create a new record.
@@ -823,16 +823,16 @@ class CategoryModel extends JoomAdminModel
       {
         throw new \Exception($table->getError());
       }
-		}
+    }
 
     // Reset official task
     $this->app->input->set('task', $task);
 
-		// Clean cache
-		$this->cleanCache();
+    // Clean cache
+    $this->cleanCache();
 
-		return true;
-	}
+    return true;
+  }
 
   /**
    * Method to adjust path of child categories based on new path
@@ -1160,8 +1160,8 @@ class CategoryModel extends JoomAdminModel
     }
 
     // Create a new query object.
-		$db    = $this->getDbo();
-		$query = $db->getQuery(true);
+    $db    = $this->getDbo();
+    $query = $db->getQuery(true);
 
     $query->select('COUNT(*)')
           ->from($db->quoteName(_JOOM_TABLE_IMAGES))

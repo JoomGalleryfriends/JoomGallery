@@ -27,7 +27,7 @@ interface ConfigInterface
    *
    * @param   string   $context   Context of the content (default: com_joomgallery)
    * @param   int      $id        ID of the contenttype if needed (default: null)
-   * @param   bool		 $inclOwn   True, if you want to include settings of current item (default: true)
+   * @param   bool     $inclOwn   True, if you want to include settings of current item (default: true)
    *
    * @return  void
    *

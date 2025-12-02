@@ -40,14 +40,14 @@ use \Joomla\Filesystem\Path;
  */
 class Jg3ToJg4 extends Migration implements MigrationInterface
 {
-	/**
-	 * Name of the migration script to be used.
-	 *
-	 * @var   string
-	 *
-	 * @since  4.0.0
-	 */
-	protected $name = 'Jg3ToJg4';
+  /**
+   * Name of the migration script to be used.
+   *
+   * @var   string
+   *
+   * @since  4.0.0
+   */
+  protected $name = 'Jg3ToJg4';
 
   /**
    * True to offer the task migration.removesource for this script
@@ -511,7 +511,7 @@ return $path;
     list($db, $prefix) = $this->getDB('source');
 
     // Initialize query object
-		$query = $db->getQuery(true);
+    $query = $db->getQuery(true);
 
     // Create selection
     $selection = [$db->quoteName($primarykey)];

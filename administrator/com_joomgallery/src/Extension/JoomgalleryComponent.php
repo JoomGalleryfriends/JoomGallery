@@ -62,8 +62,8 @@ use \Psr\Container\ContainerInterface;
 class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface
 {
   use MessageTrait;
-	use AssociationServiceTrait;
-	use HTMLRegistryAwareTrait;
+  use AssociationServiceTrait;
+  use HTMLRegistryAwareTrait;
   use RouterServiceTrait {RouterServiceTrait::createRouter as traitCreateRouter;}
 
   /**

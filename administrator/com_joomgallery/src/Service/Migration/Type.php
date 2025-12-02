@@ -211,18 +211,18 @@ class Type
     }
   }
 
-	/**
-	 * Modifies a property of the object, creating it if it does not already exist.
-	 *
-	 * @param   string  $property  The name of the property.
-	 * @param   mixed   $value     The value of the property to set.
-	 *
-	 * @return  mixed  Previous value of the property.
-	 *
-	 * @since   4.0.0
-	 */
-	public function set($property, $value = null)
-	{
+  /**
+   * Modifies a property of the object, creating it if it does not already exist.
+   *
+   * @param   string  $property  The name of the property.
+   * @param   mixed   $value     The value of the property to set.
+   *
+   * @return  mixed  Previous value of the property.
+   *
+   * @since   4.0.0
+   */
+  public function set($property, $value = null)
+  {
     switch($property)
     {
       case 'pkstoskip':
@@ -244,6 +244,6 @@ class Type
         break;
     }
 
-		return $previous;
-	}
+    return $previous;
+  }
 }

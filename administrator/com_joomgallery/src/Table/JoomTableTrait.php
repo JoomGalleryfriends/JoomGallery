@@ -59,20 +59,20 @@ trait JoomTableTrait
     return $result;
   }
 
-	/**
-	 * Overloaded check function
-	 *
-	 * @return bool
-	 */
-	public function check()
-	{
-		// If there is an ordering column and this is a new row then get the next ordering value
-		if(property_exists($this, 'ordering') && $this->id == 0 && \is_null($this->ordering))
-		{
-			$this->ordering = self::getNextOrder();
-		}
+  /**
+   * Overloaded check function
+   *
+   * @return bool
+   */
+  public function check()
+  {
+    // If there is an ordering column and this is a new row then get the next ordering value
+    if(property_exists($this, 'ordering') && $this->id == 0 && \is_null($this->ordering))
+    {
+      $this->ordering = self::getNextOrder();
+    }
 
-		// Check if alias is unique
+    // Check if alias is unique
     if( property_exists($this, 'alias') &&
         (property_exists($this, '_checkAliasUniqueness') ? $this->_checkAliasUniqueness : true)
       ) {
@@ -97,7 +97,7 @@ trait JoomTableTrait
       }
     }
 
-		// Support for subform field params
+    // Support for subform field params
     if(property_exists($this, 'params'))
     {
       if(empty($this->params))
@@ -128,25 +128,25 @@ trait JoomTableTrait
       }
     }
 
-		return parent::check();
-	}
+    return parent::check();
+  }
 
-	/**
-	 * Overloaded bind function to pre-process the params.
-	 *
-	 * @param   array  $array   Named array
-	 * @param   mixed  $ignore  Optional array or list of parameters to ignore
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @see     Table:bind
-	 * @since   4.0.0
-	 * @throws  \InvalidArgumentException
-	 */
-	public function bind($array, $ignore = '')
-	{
-		$date = Factory::getDate();
-		$task = Factory::getApplication()->input->get('task', '', 'cmd');
+  /**
+   * Overloaded bind function to pre-process the params.
+   *
+   * @param   array  $array   Named array
+   * @param   mixed  $ignore  Optional array or list of parameters to ignore
+   *
+   * @return  boolean  True on success.
+   *
+   * @see     Table:bind
+   * @since   4.0.0
+   * @throws  \InvalidArgumentException
+   */
+  public function bind($array, $ignore = '')
+  {
+    $date = Factory::getDate();
+    $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
     // Support for title field: title
     if(\array_key_exists('title', $array))
@@ -193,39 +193,39 @@ trait JoomTableTrait
       }
     }
 
-		if(\array_key_exists('params', $array) && isset($array['params']) && \is_array($array['params']))
-		{
-			$registry        = new Registry($array['params']);
-			$array['params'] = (string) $registry;
-		}
+    if(\array_key_exists('params', $array) && isset($array['params']) && \is_array($array['params']))
+    {
+      $registry        = new Registry($array['params']);
+      $array['params'] = (string) $registry;
+    }
 
-		if(\array_key_exists('metadata', $array) && isset($array['metadata']) && \is_array($array['metadata']))
-		{
-			$registry          = new Registry($array['metadata']);
-			$array['metadata'] = (string) $registry;
-		}
+    if(\array_key_exists('metadata', $array) && isset($array['metadata']) && \is_array($array['metadata']))
+    {
+      $registry          = new Registry($array['metadata']);
+      $array['metadata'] = (string) $registry;
+    }
 
     // Bind the rules for ACL where supported.
-		if(isset($array['rules']))
-		{
+    if(isset($array['rules']))
+    {
       $rules = new Rules($array['rules']);
-			$this->setRules($rules);
-		}
+      $this->setRules($rules);
+    }
 
-		return parent::bind($array, $ignore);
-	}
+    return parent::bind($array, $ignore);
+  }
 
-	/**
-	 * Get the type alias for the history table
-	 *
-	 * @return  string  The alias as described above
-	 *
-	 * @since   4.0.0
-	 */
-	public function getTypeAlias()
-	{
-		return $this->typeAlias;
-	}
+  /**
+   * Get the type alias for the history table
+   *
+   * @return  string  The alias as described above
+   *
+   * @since   4.0.0
+   */
+  public function getTypeAlias()
+  {
+    return $this->typeAlias;
+  }
 
   /**
    * Get an array of all record fields and their current values
@@ -239,19 +239,19 @@ trait JoomTableTrait
   public function getFieldsValues($exclude = [])
   {
     // Convert to \stdClass before adding other data
-		$properties = $this->getProperties(1);
-		$item       = ArrayHelper::toObject($properties);
+    $properties = $this->getProperties(1);
+    $item       = ArrayHelper::toObject($properties);
 
-		if(property_exists($item, 'params'))
-		{
-			$registry     = new Registry($item->params);
-			$item->params = $registry->toArray();
-		}
+    if(property_exists($item, 'params'))
+    {
+      $registry     = new Registry($item->params);
+      $item->params = $registry->toArray();
+    }
 
-		if(isset($item->params))
-		{
-		  $item->params = json_encode($item->params);
-		}
+    if(isset($item->params))
+    {
+      $item->params = json_encode($item->params);
+    }
 
     // Delete excluded properties
     if(\count($exclude) > 0)
@@ -262,7 +262,7 @@ trait JoomTableTrait
       }
     }
 
-		return $item;
+    return $item;
   }
 
   /**
@@ -310,45 +310,45 @@ trait JoomTableTrait
     if($this->component_exists)
     {
       $obj = Factory::getApplication()->bootComponent('com_joomgallery');
-		}
-		else
-		{
-		  $obj = $this->addMessageTrait();
-		}
+    }
+    else
+    {
+      $obj = $this->addMessageTrait();
+    }
 
     return $obj;
   }
 
-	/**
-	 * Check if a field is unique
-	 *
-	 * @param   string   $field         Name of the field
-	 * @param   integer  $parent        Parent id (default=null)
-	 * @param   string   $parentfield   Field name of parent id (default='parent_id')
-	 *
-	 * @return  bool    True if unique
-	 */
-	protected function isUnique($field, $parent = null, $parentfield = 'parent_id')
-	{
-		$db    = $this->getDbo();
-		$query = $db->getQuery(true);
+  /**
+   * Check if a field is unique
+   *
+   * @param   string   $field         Name of the field
+   * @param   integer  $parent        Parent id (default=null)
+   * @param   string   $parentfield   Field name of parent id (default='parent_id')
+   *
+   * @return  bool    True if unique
+   */
+  protected function isUnique($field, $parent = null, $parentfield = 'parent_id')
+  {
+    $db    = $this->getDbo();
+    $query = $db->getQuery(true);
 
-		$query
-			->select($db->quoteName($field))
-			->from($db->quoteName($this->_tbl))
-			->where($db->quoteName($field) . ' = ' . $db->quote($this->$field))
-			->where($db->quoteName('id') . ' <> ' . (int) $this->{$this->_tbl_key});
+    $query
+      ->select($db->quoteName($field))
+      ->from($db->quoteName($this->_tbl))
+      ->where($db->quoteName($field) . ' = ' . $db->quote($this->$field))
+      ->where($db->quoteName('id') . ' <> ' . (int) $this->{$this->_tbl_key});
 
     if($parent > 0)
     {
       $query->where($db->quoteName($parentfield) . ' = ' . $db->quote($parent));
     }
 
-		$db->setQuery($query);
-		$db->execute();
+    $db->setQuery($query);
+    $db->execute();
 
-		return ($db->getNumRows() == 0) ? true : false;
-	}
+    return ($db->getNumRows() == 0) ? true : false;
+  }
 
   /**
    * Support for multiple field
@@ -362,23 +362,23 @@ trait JoomTableTrait
   {
     if(isset($data[$fieldName]))
     {
-			if(\is_array($data[$fieldName]))
-			{
-				$data[$fieldName] = implode(',', $data[$fieldName]);
-			}
-			elseif(strpos($data[$fieldName], ',') != false)
-			{
-				$data[$fieldName] = explode(',', $data[$fieldName]);
-			}
-			elseif(\strlen($data[$fieldName]) == 0)
-			{
-				$data[$fieldName] = '';
-			}
-		}
-		else
-		{
-			$data[$fieldName] = '';
-		}
+      if(\is_array($data[$fieldName]))
+      {
+        $data[$fieldName] = implode(',', $data[$fieldName]);
+      }
+      elseif(strpos($data[$fieldName], ',') != false)
+      {
+        $data[$fieldName] = explode(',', $data[$fieldName]);
+      }
+      elseif(\strlen($data[$fieldName]) == 0)
+      {
+        $data[$fieldName] = '';
+      }
+    }
+    else
+    {
+      $data[$fieldName] = '';
+    }
   }
 
   /**
@@ -393,9 +393,9 @@ trait JoomTableTrait
   {
     if($data[$fieldName] === '')
     {
-			$data[$fieldName]   = null;
-			$this->{$fieldName} = null;
-		}
+      $data[$fieldName]   = null;
+      $this->{$fieldName} = null;
+    }
   }
 
   /**

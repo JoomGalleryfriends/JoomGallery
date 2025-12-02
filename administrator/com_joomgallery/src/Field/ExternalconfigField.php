@@ -30,13 +30,13 @@ use \Joomla\Filesystem\Path;
  */
 class ExternalconfigField extends FormField
 {
-	/**
-	 * The form field type.
-	 *
-	 * @var    string
-	 * @since  4.0.0
-	 */
-	protected $type = 'externalconfig';
+  /**
+   * The form field type.
+   *
+   * @var    string
+   * @since  4.0.0
+   */
+  protected $type = 'externalconfig';
 
   /**
    * Storage for the external field object.
@@ -84,15 +84,15 @@ class ExternalconfigField extends FormField
     return $res;
   }
 
-	/**
-	 * Method to get the field input markup.
-	 *
-	 * @return  string    The field input markup.
-	 *
-	 * @since   4.0.0
-	 */
-	protected function getInput()
-	{
+  /**
+   * Method to get the field input markup.
+   *
+   * @return  string    The field input markup.
+   *
+   * @since   4.0.0
+   */
+  protected function getInput()
+  {
     $data = $this->getLayoutData();
 
     // Get externalconfig
@@ -108,7 +108,7 @@ class ExternalconfigField extends FormField
     $html .= '<input id="'.$this->id.'" disabled class="form-control sensitive-input" type="text" name="'.$this->name.'" value="'.$this->value.'" aria-describedby="'.$this->id.'-desc">';
 
     return $html;
-	}
+  }
 
   /**
    * Method to get the field label markup.

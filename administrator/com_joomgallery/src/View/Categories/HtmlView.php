@@ -31,47 +31,47 @@ use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
  */
 class HtmlView extends JoomGalleryView
 {
-	protected $items;
+  protected $items;
 
-	protected $pagination;
+  protected $pagination;
 
-	/**
-	 * Display the view
-	 *
-	 * @param   string  $tpl  Template name
-	 *
-	 * @return void
-	 *
-	 * @throws Exception
-	 */
-	public function display($tpl = null)
-	{
+  /**
+   * Display the view
+   *
+   * @param   string  $tpl  Template name
+   *
+   * @return void
+   *
+   * @throws Exception
+   */
+  public function display($tpl = null)
+  {
     /** @var CategoriesModel $model */
     $model = $this->getModel();
 
     $this->state       = $model->getState();
     $this->items       = $model->getItems();
-		$this->pagination    = $model->getPagination();
-		$this->filterForm    = $model->getFilterForm();
-		$this->activeFilters = $model->getActiveFilters();
+    $this->pagination    = $model->getPagination();
+    $this->filterForm    = $model->getFilterForm();
+    $this->activeFilters = $model->getActiveFilters();
 
-		// Check for errors.
-		if(\count($errors = $model->getErrors()))
-		{
-			throw new GenericDataException(implode("\n", $errors), 500);
-		}
+    // Check for errors.
+    if(\count($errors = $model->getErrors()))
+    {
+      throw new GenericDataException(implode("\n", $errors), 500);
+    }
 
     // Preprocess the list of items to find ordering divisions.
-		foreach ($this->items as &$item)
-		{
-			$this->ordering[$item->parent_id][] = $item->id;
-		}
+    foreach ($this->items as &$item)
+    {
+      $this->ordering[$item->parent_id][] = $item->id;
+    }
 
-		$this->addToolbar();
+    $this->addToolbar();
 
-		$this->sidebar = Sidebar::render();
-		parent::display($tpl);
-	}
+    $this->sidebar = Sidebar::render();
+    parent::display($tpl);
+  }
 
   /**
    * Add the page title and toolbar.
@@ -188,21 +188,21 @@ class HtmlView extends JoomGalleryView
     Sidebar::setAction('index.php?option=com_joomgallery&view=categories');
   }
 
-	/**
-	 * Method to order fields
-	 *
-	 * @return void
-	 */
-	protected function getSortFields()
-	{
-		return [
-		  'a.`title`'      => Text::_('JGLOBAL_TITLE'),
-		  'a.`parent_id`'  => Text::_('JGLOBAL_SHOW_PARENT_CATEGORY_LABEL'),
-		  'a.`published`'  => Text::_('JSTATUS'),
-		  'a.`access`'     => Text::_('JGRID_HEADING_ACCESS'),
-		  'a.`language`'   => Text::_('JGRID_HEADING_LANGUAGE'),
-		  'a.`created_by`' => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
-		  'a.`id`'         => Text::_('JGRID_HEADING_ID'),
-		];
-	}
+  /**
+   * Method to order fields
+   *
+   * @return void
+   */
+  protected function getSortFields()
+  {
+    return [
+      'a.`title`'      => Text::_('JGLOBAL_TITLE'),
+      'a.`parent_id`'  => Text::_('JGLOBAL_SHOW_PARENT_CATEGORY_LABEL'),
+      'a.`published`'  => Text::_('JSTATUS'),
+      'a.`access`'     => Text::_('JGRID_HEADING_ACCESS'),
+      'a.`language`'   => Text::_('JGRID_HEADING_LANGUAGE'),
+      'a.`created_by`' => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
+      'a.`id`'         => Text::_('JGRID_HEADING_ID'),
+    ];
+  }
 }

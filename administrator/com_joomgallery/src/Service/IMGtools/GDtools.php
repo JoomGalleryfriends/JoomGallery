@@ -101,17 +101,17 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     $this->fastgd2thumbcreation = $fastgd2thumbcreation;
   }
 
-	/**
-	 * Destructor
-	 *
-	 * @return  void
-	 *
-	 * @since  4.0.0
-	 */
-	public function __destruct()
-	{
+  /**
+   * Destructor
+   *
+   * @return  void
+   *
+   * @since  4.0.0
+   */
+  public function __destruct()
+  {
     $this->deleteFrames_GD(['src_frames', 'dst_frames', 'res_frames']);
-	}
+  }
 
   /**
    * Version notes

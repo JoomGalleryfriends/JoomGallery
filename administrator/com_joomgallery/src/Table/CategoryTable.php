@@ -80,22 +80,22 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
    */
   public $def_itemtype = 'category';
 
-	/**
-	 * Constructor
-	 *
-	 * @param   JDatabase  &$db               A database connector object
-	 * @param   bool       $component_exists  True if the component object class exists
-	 */
-	public function __construct(DatabaseDriver $db, bool $component_exists = true)
-	{
-		$this->component_exists = $component_exists;
-		$this->typeAlias        = _JOOM_OPTION.'.category';
+  /**
+   * Constructor
+   *
+   * @param   JDatabase  &$db               A database connector object
+   * @param   bool       $component_exists  True if the component object class exists
+   */
+  public function __construct(DatabaseDriver $db, bool $component_exists = true)
+  {
+    $this->component_exists = $component_exists;
+    $this->typeAlias        = _JOOM_OPTION.'.category';
 
-		parent::__construct(_JOOM_TABLE_CATEGORIES, 'id', $db);
+    parent::__construct(_JOOM_TABLE_CATEGORIES, 'id', $db);
 
-		$this->setColumnAlias('published', 'published');
-		$this->getRootId();
-	}
+    $this->setColumnAlias('published', 'published');
+    $this->getRootId();
+  }
 
   /**
    * Resets the root_id property to the default value: 0
@@ -152,22 +152,22 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     return $res;
   }
 
-	/**
-	 * Overloaded bind function to pre-process the params.
-	 *
-	 * @param   array  $array   Named array
-	 * @param   mixed  $ignore  Optional array or list of parameters to ignore
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @see     Table:bind
-	 * @since   4.0.0
-	 * @throws  \InvalidArgumentException
-	 */
-	public function bind($array, $ignore = '')
-	{
-		$date = Factory::getDate();
-		$task = Factory::getApplication()->input->get('task', '', 'cmd');
+  /**
+   * Overloaded bind function to pre-process the params.
+   *
+   * @param   array  $array   Named array
+   * @param   mixed  $ignore  Optional array or list of parameters to ignore
+   *
+   * @return  boolean  True on success.
+   *
+   * @see     Table:bind
+   * @since   4.0.0
+   * @throws  \InvalidArgumentException
+   */
+  public function bind($array, $ignore = '')
+  {
+    $date = Factory::getDate();
+    $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
     // Support for title field: title
     if(\array_key_exists('title', $array))
@@ -180,50 +180,50 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       }
     }
 
-		if($array['id'] == 0)
-		{
-			$array['created_time'] = $date->toSql();
-		}
+    if($array['id'] == 0)
+    {
+      $array['created_time'] = $date->toSql();
+    }
 
-		if(!key_exists('created_by', $array) || empty($array['created_by']))
-		{
-			$array['created_by'] = Factory::getApplication()->getIdentity()->id;
-		}
+    if(!key_exists('created_by', $array) || empty($array['created_by']))
+    {
+      $array['created_by'] = Factory::getApplication()->getIdentity()->id;
+    }
 
-		if($array['id'] == 0 && empty($array['modified_by']))
-		{
-			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-		}
+    if($array['id'] == 0 && empty($array['modified_by']))
+    {
+      $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+    }
 
-		if($task == 'apply' || strpos($task, 'save') !== false)
-		{
-			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-		}
+    if($task == 'apply' || strpos($task, 'save') !== false)
+    {
+      $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+    }
 
-		if($task == 'apply' || strpos($task, 'save') !== false)
-		{
-			$array['modified_time'] = $date->toSql();
-		}
+    if($task == 'apply' || strpos($task, 'save') !== false)
+    {
+      $array['modified_time'] = $date->toSql();
+    }
 
     // Support for alias field: alias
-		if(empty($array['alias']))
-		{
-			if(empty($array['title']))
-			{
-				$array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
-			}
-			else
-			{
-				if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
-				{
-					$array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
-				}
-				else
-				{
-					$array['alias'] = OutputFilter::stringURLSafe(trim($array['title']));
-				}
-			}
-		}
+    if(empty($array['alias']))
+    {
+      if(empty($array['title']))
+      {
+        $array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
+      }
+      else
+      {
+        if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
+        {
+          $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
+        }
+        else
+        {
+          $array['alias'] = OutputFilter::stringURLSafe(trim($array['title']));
+        }
+      }
+    }
     else
     {
       if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
@@ -236,19 +236,19 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       }
     }
 
-		if(isset($array['params']) && \is_array($array['params']))
-		{
-			$registry = new Registry;
-			$registry->loadArray($array['params']);
-			$array['params'] = (string) $registry;
-		}
+    if(isset($array['params']) && \is_array($array['params']))
+    {
+      $registry = new Registry;
+      $registry->loadArray($array['params']);
+      $array['params'] = (string) $registry;
+    }
 
-		if(isset($array['metadata']) && \is_array($array['metadata']))
-		{
-			$registry = new Registry;
-			$registry->loadArray($array['metadata']);
-			$array['metadata'] = (string) $registry;
-		}
+    if(isset($array['metadata']) && \is_array($array['metadata']))
+    {
+      $registry = new Registry;
+      $registry->loadArray($array['metadata']);
+      $array['metadata'] = (string) $registry;
+    }
 
     // Support for multiple rules
     foreach ($array as $key => $value)
@@ -272,23 +272,23 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     }
 
 
-		return parent::bind($array, $ignore);
-	}
+    return parent::bind($array, $ignore);
+  }
 
-	/**
-	 * Method to store a row in the database from the Table instance properties.
-	 *
-	 * If a primary key value is set the row with that primary key value will be updated with the instance property values.
-	 * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
-	 *
-	 * @param   boolean  $updateNulls  True to update fields even if they are null.
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @since   4.0.0
-	 */
-	public function store($updateNulls = true)
-	{
+  /**
+   * Method to store a row in the database from the Table instance properties.
+   *
+   * If a primary key value is set the row with that primary key value will be updated with the instance property values.
+   * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
+   *
+   * @param   boolean  $updateNulls  True to update fields even if they are null.
+   *
+   * @return  boolean  True on success.
+   *
+   * @since   4.0.0
+   */
+  public function store($updateNulls = true)
+  {
     $this->setPathWithLocation();
 
     // Support for password field
@@ -310,12 +310,12 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     // Support for params field
     if(isset($this->params) && !\is_string($this->params))
     {
-			$registry     = new Registry($this->params);
-			$this->params = (string) $registry;
-		}
+      $registry     = new Registry($this->params);
+      $this->params = (string) $registry;
+    }
 
-		return parent::store($updateNulls);
-	}
+    return parent::store($updateNulls);
+  }
 
   /**
    * Method to set path based on the location properties.
@@ -339,20 +339,20 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     }
   }
 
-	/**
-	 * Overloaded check function
-	 *
-	 * @return bool
-	 */
-	public function check()
-	{
-		// If there is an ordering column and this is a new row then get the next ordering value
-		if(property_exists($this, 'ordering') && $this->id == 0)
-		{
-			$this->ordering = self::getNextOrder();
-		}
+  /**
+   * Overloaded check function
+   *
+   * @return bool
+   */
+  public function check()
+  {
+    // If there is an ordering column and this is a new row then get the next ordering value
+    if(property_exists($this, 'ordering') && $this->id == 0)
+    {
+      $this->ordering = self::getNextOrder();
+    }
 
-		// Check if alias is unique inside this parent category
+    // Check if alias is unique inside this parent category
     if($this->_checkAliasUniqueness)
     {
       if(!$this->isUnique('alias', $this->parent_id, 'parent_id'))
@@ -419,8 +419,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       $this->metakey = $this->loadDefaultField('metakey');
     }
 
-		return parent::check();
-	}
+    return parent::check();
+  }
 
   /**
    * Method to set the location of a node in the tree object.  This method does not
@@ -640,11 +640,11 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     }
 
     // Create a new query object.
-		$db    = $this->getDatabase();
-		$query = $db->getQuery(true);
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true);
 
     // Select the required fields from the table.
-		$query->select(['id', 'level', 'alias', 'title']);
+    $query->select(['id', 'level', 'alias', 'title']);
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
 
     if($type === 'children')
@@ -762,11 +762,11 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     }
 
     // Create a new query object.
-		$db    = $this->getDatabase();
-		$query = $db->getQuery(true);
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true);
 
     // Select the required fields from the table.
-		$query->select(['id', 'title', 'lft', 'rgt']);
+    $query->select(['id', 'title', 'lft', 'rgt']);
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
 
     if($type === 'left')

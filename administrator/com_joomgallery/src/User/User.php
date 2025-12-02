@@ -37,14 +37,14 @@ class User extends BaseUser
    */
   protected $acl = null;
 
-	/**
-	 * Method to get the access service class.
-	 *
-	 * @return  AccessInterface   Object on success, false on failure.
-	 * @since   4.0.0
-	 */
-	public function getAcl(): AccessInterface
-	{
+  /**
+   * Method to get the access service class.
+   *
+   * @return  AccessInterface   Object on success, false on failure.
+   * @since   4.0.0
+   */
+  public function getAcl(): AccessInterface
+  {
     // Create access service
     if(\is_null($this->acl))
     {
@@ -53,8 +53,8 @@ class User extends BaseUser
       $this->acl = $component->getAccess();
     }
 
-		return $this->acl;
-	}
+    return $this->acl;
+  }
 
   /**
    * Method to check User object authorisation against an access control

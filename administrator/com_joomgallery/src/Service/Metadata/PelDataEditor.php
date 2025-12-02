@@ -34,77 +34,77 @@ use \lsolesen\pel\PelTag;
 class PelDataEditor
 {
 
-    /**
-     * @var array
-     */
-    protected static $timeTags = [PelTag::DATE_TIME, PelTag::DATE_TIME_ORIGINAL, PelTag::DATE_TIME_DIGITIZED];
+  /**
+   * @var array
+   */
+  protected static $timeTags = [PelTag::DATE_TIME, PelTag::DATE_TIME_ORIGINAL, PelTag::DATE_TIME_DIGITIZED];
 
-    /**
-     * Makes an edit to the metadata directly.
-     * Note: File must be saved with the PelJpeg/PelTiff object for the edits to persist.
-     * 
-     * @param   PelIfd $ifd    The IFD that contains the necessary entry
-     * @param   int    $tag    The tag that contains the necessary data
-     * @param   mixed  $data   The data to be saved
-     * @param   int    $format The format in which the data must be saved (given as one of the PelTag consts)
-     * 
-     * @since   4.1.0
-     */
-    public function makeEdit(PelIfd $ifd, int $tag, mixed $data, int $format)
+  /**
+   * Makes an edit to the metadata directly.
+   * Note: File must be saved with the PelJpeg/PelTiff object for the edits to persist.
+   * 
+   * @param   PelIfd $ifd    The IFD that contains the necessary entry
+   * @param   int    $tag    The tag that contains the necessary data
+   * @param   mixed  $data   The data to be saved
+   * @param   int    $format The format in which the data must be saved (given as one of the PelTag consts)
+   * 
+   * @since   4.1.0
+   */
+  public function makeEdit(PelIfd $ifd, int $tag, mixed $data, int $format)
+  {
+    // Datetime, Copyright and UserComment entries all have specific ways that they need to be handled.
+    $entry = $ifd->getEntry($tag);
+
+    if(\in_array($tag, self::$timeTags))
     {
-        // Datetime, Copyright and UserComment entries all have specific ways that they need to be handled.
-        $entry = $ifd->getEntry($tag);
-
-        if(\in_array($tag, self::$timeTags))
-        {
-            if ($entry == null)
-            {
-                $entry = new PelEntryTime($tag, $data, PelEntryTime::EXIF_STRING);
-                $ifd->addEntry($entry);
-            }
-            else
-            {
-                $entry->setValue($data, PelEntryTime::EXIF_STRING);
-            }
-        }
-        elseif ($tag == PelTag::COPYRIGHT)
-        {
-            if ($entry == null)
-            {
-                $entry = new PelEntryCopyright($data[0], $data[1]);
-                $ifd->addEntry($entry);
-            }
-            else
-            {
-                $entry->setValue($data[0], $data[1]);
-            }
-        }
-        elseif($tag == PelTag::USER_COMMENT)
-        {
-            // We need to strip the first 8 characters to comply with UserComments saved before PEL.
-            if ($entry == null)
-            {
-                $entry = new PelEntryUserComment(substr($data, 8));
-                $ifd->addEntry($entry);
-            }
-            else
-            {
-                $entry->setValue($data);
-            }
-        }
-        else
-        {
-            $entryClass = '\lsolesen\pel\PelEntry' . PelFormat::getName($format);
-
-            if ($entry == null)
-            {
-                $entry = new $entryClass($tag, $data);
-                $ifd->addEntry($entry);
-            }
-            else
-            {
-                $entry->setValue($data);
-            }
-        }
+      if ($entry == null)
+      {
+        $entry = new PelEntryTime($tag, $data, PelEntryTime::EXIF_STRING);
+        $ifd->addEntry($entry);
+      }
+      else
+      {
+        $entry->setValue($data, PelEntryTime::EXIF_STRING);
+      }
     }
+    elseif ($tag == PelTag::COPYRIGHT)
+    {
+      if ($entry == null)
+      {
+        $entry = new PelEntryCopyright($data[0], $data[1]);
+        $ifd->addEntry($entry);
+      }
+      else
+      {
+        $entry->setValue($data[0], $data[1]);
+      }
+    }
+    elseif($tag == PelTag::USER_COMMENT)
+    {
+      // We need to strip the first 8 characters to comply with UserComments saved before PEL.
+      if ($entry == null)
+      {
+        $entry = new PelEntryUserComment(substr($data, 8));
+        $ifd->addEntry($entry);
+      }
+      else
+      {
+        $entry->setValue($data);
+      }
+    }
+    else
+    {
+      $entryClass = '\lsolesen\pel\PelEntry' . PelFormat::getName($format);
+
+      if ($entry == null)
+      {
+        $entry = new $entryClass($tag, $data);
+        $ifd->addEntry($entry);
+      }
+      else
+      {
+        $entry->setValue($data);
+      }
+    }
+  }
 }

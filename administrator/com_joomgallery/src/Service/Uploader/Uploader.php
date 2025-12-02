@@ -121,19 +121,19 @@ abstract class Uploader implements UploaderInterface
     $this->component->addWarning($this->app->getUserStateFromRequest($this->userStateKey.'.warningoutput', 'warningoutput', '', 'string'));
   }
 
-	/**
-	 * Base method to retrieve an uploaded image. Step 1.
-	 * Method has to be extended! Do not use it in this way!
-	 *
-	 * @param   array    $data        Form data (as reference)
-	 * @param   bool     $filename    True, if the filename has to be created (default: True)
-	 *
-	 * @return  bool     True on success, false otherwise
-	 *
-	 * @since  4.0.0
-	 */
-	public function retrieveImage(&$data, $filename = True): bool
-	{
+  /**
+   * Base method to retrieve an uploaded image. Step 1.
+   * Method has to be extended! Do not use it in this way!
+   *
+   * @param   array    $data        Form data (as reference)
+   * @param   bool     $filename    True, if the filename has to be created (default: True)
+   *
+   * @return  bool     True on success, false otherwise
+   *
+   * @since  4.0.0
+   */
+  public function retrieveImage(&$data, $filename = True): bool
+  {
     // Create filesystem service
     $this->component->createFilesystem();
 
@@ -464,18 +464,18 @@ abstract class Uploader implements UploaderInterface
   }
 
 
-	/**
-	 * Method to create uploaded image files. Step 3.
-	 * (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
-	 *
-	 * @param   ImageTable   $data_row     Image object
-	 *
-	 * @return  bool         True on success, false otherwise
-	 *
-	 * @since  4.0.0
-	 */
-	public function createImage($data_row): bool
-	{
+  /**
+   * Method to create uploaded image files. Step 3.
+   * (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
+   *
+   * @param   ImageTable   $data_row     Image object
+   *
+   * @return  bool         True on success, false otherwise
+   *
+   * @since  4.0.0
+   */
+  public function createImage($data_row): bool
+  {
     // Check if filename was set
     if(!isset($data_row->filename) || empty($data_row->filename))
     {

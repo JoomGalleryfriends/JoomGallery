@@ -28,17 +28,17 @@ use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
  */
 class RawView extends JoomGalleryView
 {
-	/**
-	 * Raw view display method, outputs one image
-	 *
-	 * @param   string  $tpl  Template name
-	 *
-	 * @return void
-	 *
-	 * @throws \Exception
-	 */
-	public function display($tpl = null)
-	{
+  /**
+   * Raw view display method, outputs one image
+   *
+   * @param   string  $tpl  Template name
+   *
+   * @return void
+   *
+   * @throws \Exception
+   */
+  public function display($tpl = null)
+  {
     // Get request variables
     $type = $this->app->input->get('type', 'thumbnail', 'word');
     $id   = $this->app->input->get('id', 0);

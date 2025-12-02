@@ -32,36 +32,36 @@ class CommentTable extends Table
   use GlobalAssetTableTrait;
   use MigrationTableTrait;
 
-	/**
-	 * Constructor
-	 *
-	 * @param   JDatabase  &$db               A database connector object
-	 * @param   bool       $component_exists  True if the component object class exists
-	 */
-	public function __construct(DatabaseDriver $db, bool $component_exists = true)
-	{
-		$this->component_exists = $component_exists;
-		$this->typeAlias        = _JOOM_OPTION.'.comment';
+  /**
+   * Constructor
+   *
+   * @param   JDatabase  &$db               A database connector object
+   * @param   bool       $component_exists  True if the component object class exists
+   */
+  public function __construct(DatabaseDriver $db, bool $component_exists = true)
+  {
+    $this->component_exists = $component_exists;
+    $this->typeAlias        = _JOOM_OPTION.'.comment';
 
-		parent::__construct(_JOOM_TABLE_COMMENTS, 'id', $db);
-	}
+    parent::__construct(_JOOM_TABLE_COMMENTS, 'id', $db);
+  }
 
-	/**
-	 * Overloaded bind function to pre-process the params.
-	 *
-	 * @param   array  $array   Named array
-	 * @param   mixed  $ignore  Optional array or list of parameters to ignore
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @see     Table:bind
-	 * @since   4.0.0
-	 * @throws  \InvalidArgumentException
-	 */
-	public function bind($array, $ignore = '')
-	{
-		$date = Factory::getDate();
-		$task = Factory::getApplication()->input->get('task', '', 'cmd');
+  /**
+   * Overloaded bind function to pre-process the params.
+   *
+   * @param   array  $array   Named array
+   * @param   mixed  $ignore  Optional array or list of parameters to ignore
+   *
+   * @return  boolean  True on success.
+   *
+   * @see     Table:bind
+   * @since   4.0.0
+   * @throws  \InvalidArgumentException
+   */
+  public function bind($array, $ignore = '')
+  {
+    $date = Factory::getDate();
+    $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
     // Support for title field: title
     if(\array_key_exists('title', $array))
@@ -74,33 +74,33 @@ class CommentTable extends Table
       }
     }
 
-		if($array['id'] == 0)
-		{
-			$array['created_time'] = $date->toSql();
-		}
+    if($array['id'] == 0)
+    {
+      $array['created_time'] = $date->toSql();
+    }
 
-		if(!key_exists('created_by', $array) || empty($array['created_by']))
-		{
-			$array['created_by'] = Factory::getApplication()->getIdentity()->id;
-		}
+    if(!key_exists('created_by', $array) || empty($array['created_by']))
+    {
+      $array['created_by'] = Factory::getApplication()->getIdentity()->id;
+    }
 
-		if($task == 'apply' || strpos($task, 'save') !== false)
-		{
-			$array['modified_time'] = $date->toSql();
-		}
+    if($task == 'apply' || strpos($task, 'save') !== false)
+    {
+      $array['modified_time'] = $date->toSql();
+    }
 
-		if($array['id'] == 0 && empty($array['modified_by']))
-		{
-			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-		}
+    if($array['id'] == 0 && empty($array['modified_by']))
+    {
+      $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+    }
 
-		if($task == 'apply' || strpos($task, 'save') !== false)
-		{
-			$array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-		}
+    if($task == 'apply' || strpos($task, 'save') !== false)
+    {
+      $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+    }
 
-		return parent::bind($array, $ignore);
-	}
+    return parent::bind($array, $ignore);
+  }
 
   /**
    * Delete a record by id

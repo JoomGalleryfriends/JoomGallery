@@ -29,19 +29,19 @@ use \Joomla\Filesystem\Path as JPath;
  */
 class HTMLUploader extends BaseUploader implements UploaderInterface
 {
-	/**
-	 * Method to retrieve an uploaded image. Step 1.
-	 * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
-	 *
-	 * @param   array    $data        Form data (as reference)
-	 * @param   bool     $filename    True, if the filename has to be created (default: True)
-	 *
-	 * @return  bool     True on success, false otherwise
-	 *
-	 * @since  4.0.0
-	 */
-	public function retrieveImage(&$data, $filename = True): bool
-	{
+  /**
+   * Method to retrieve an uploaded image. Step 1.
+   * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
+   *
+   * @param   array    $data        Form data (as reference)
+   * @param   bool     $filename    True, if the filename has to be created (default: True)
+   *
+   * @return  bool     True on success, false otherwise
+   *
+   * @since  4.0.0
+   */
+  public function retrieveImage(&$data, $filename = True): bool
+  {
     $user = Factory::getUser();
     $app  = Factory::getApplication();
 

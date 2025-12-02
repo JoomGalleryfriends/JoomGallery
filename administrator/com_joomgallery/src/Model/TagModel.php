@@ -34,30 +34,30 @@ class TagModel extends JoomAdminModel
    */
   protected $type = 'tag';
 
-	/**
-	 * Method to get the data that should be injected in the form.
-	 *
-	 * @return  mixed  The data for the form.
-	 *
-	 * @since   4.0.0
-	 */
-	protected function loadFormData()
-	{
-		// Check the session for previously entered form data.
-		$data = $this->app->getUserState(_JOOM_OPTION.'.edit.tag.data', []);
+  /**
+   * Method to get the data that should be injected in the form.
+   *
+   * @return  mixed  The data for the form.
+   *
+   * @since   4.0.0
+   */
+  protected function loadFormData()
+  {
+    // Check the session for previously entered form data.
+    $data = $this->app->getUserState(_JOOM_OPTION.'.edit.tag.data', []);
 
-		if(empty($data))
-		{
-			if($this->item === null)
-			{
-				$this->item = $this->getItem();
-			}
+    if(empty($data))
+    {
+      if($this->item === null)
+      {
+        $this->item = $this->getItem();
+      }
 
-			$data = $this->item;
-		}
+      $data = $this->item;
+    }
 
-		return $data;
-	}
+    return $data;
+  }
 
   /**
    * Method to get the item ID based on alias or title.
@@ -118,17 +118,17 @@ class TagModel extends JoomAdminModel
     return $tag_id;
   }
 
-	/**
-	 * Method to get a single record.
-	 *
-	 * @param   int|string  $pk  The id alias or title of the item
-	 *
-	 * @return  mixed    Object on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
-	public function getItem($pk = null)
-	{
+  /**
+   * Method to get a single record.
+   *
+   * @param   int|string  $pk  The id alias or title of the item
+   *
+   * @return  mixed    Object on success, false on failure.
+   *
+   * @since   4.0.0
+   */
+  public function getItem($pk = null)
+  {
     if(!\is_null($pk) && !is_numeric($pk))
     {
       // get item based on alias or title
@@ -152,35 +152,35 @@ class TagModel extends JoomAdminModel
     }
 
     return $item;
-	}
+  }
 
-	/**
-	 * Method to duplicate an Tag
-	 *
-	 * @param   array  &$pks  An array of primary key IDs.
-	 *
-	 * @return  boolean  True if successful.
-	 *
-	 * @throws  \Exception
-	 */
-	public function duplicate(&$pks)
-	{
-		// Access checks.
-		if(!$this->user->authorise('core.create', _JOOM_OPTION))
-		{
-			$this->component->addLog(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'), 'error', 'jerror');
-			throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
-		}
+  /**
+   * Method to duplicate an Tag
+   *
+   * @param   array  &$pks  An array of primary key IDs.
+   *
+   * @return  boolean  True if successful.
+   *
+   * @throws  \Exception
+   */
+  public function duplicate(&$pks)
+  {
+    // Access checks.
+    if(!$this->user->authorise('core.create', _JOOM_OPTION))
+    {
+      $this->component->addLog(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'), 'error', 'jerror');
+      throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
+    }
 
-		$context = $this->option . '.' . $this->name;
+    $context = $this->option . '.' . $this->name;
 
-		// Include the plugins for the save events.
-		PluginHelper::importPlugin($this->events_map['save']);
+    // Include the plugins for the save events.
+    PluginHelper::importPlugin($this->events_map['save']);
 
-		$table = $this->getTable();
+    $table = $this->getTable();
 
-		foreach($pks as $pk)
-		{
+    foreach($pks as $pk)
+    {
       if($table->load($pk, true))
       {
         // Reset the id to create a new record.
@@ -209,13 +209,13 @@ class TagModel extends JoomAdminModel
         $this->component->addLog($table->getError(), 'error', 'jerror');
         throw new \Exception($table->getError());
       }
-		}
+    }
 
-		// Clean cache
-		$this->cleanCache();
+    // Clean cache
+    $this->cleanCache();
 
-		return true;
-	}
+    return true;
+  }
 
   /**
    * Method to add a mapping between tag and image.
