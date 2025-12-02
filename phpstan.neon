@@ -1,0 +1,22 @@
+includes:
+  - administrator/com_joomgallery/vendor/phpstan/phpstan-deprecation-rules/rules.neon
+parameters:
+  level: 0
+  phpVersion: 80100
+  paths:
+    - administrator/com_joomgallery
+    - site/com_joomgallery
+    - plugins
+  excludePaths:
+    - */vendor/*
+    - */tests/*
+    - administrator/com_joomgallery/tmpl/*
+    - administrator/com_joomgallery/layouts/*
+    - site/com_joomgallery/tmpl/*
+    - site/com_joomgallery/layouts/*
+    - media/*
+    - node_modules/*
+  bootstrapFiles:
+    - administrator/com_joomgallery/vendor/autoload.php
+  ignoreErrors:
+  reportUnmatchedIgnoredErrors: false
