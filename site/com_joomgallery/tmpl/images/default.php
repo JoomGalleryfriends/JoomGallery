@@ -36,8 +36,8 @@ $returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->g
 
 if($saveOrder && !empty($this->items))
 {
-	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
-	HTMLHelper::_('draggablelist.draggable');
+  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  HTMLHelper::_('draggablelist.draggable');
 }
 ?>
 
@@ -48,12 +48,12 @@ if($saveOrder && !empty($this->items))
 <?php endif; ?>
 
 <form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post" name="adminForm" id="adminForm">
-	<?php if(!empty($this->filterForm))
-	{
-	echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
-	} ?>
+  <?php if(!empty($this->filterForm))
+  {
+  echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
+  } ?>
   <div class="row">
-		<div class="col-md-12">
+    <div class="col-md-12">
 
       <?php if (empty($this->items)) : ?>
         <div class="alert alert-info">
@@ -226,19 +226,19 @@ if($saveOrder && !empty($this->items))
 </form>
 
 <?php
-	if($canDelete)
-	{
-		$wa->addInlineScript("
-			jQuery(document).ready(function () {
-				jQuery('.delete-button').click(deleteItem);
-			});
+  if($canDelete)
+  {
+    $wa->addInlineScript("
+      jQuery(document).ready(function () {
+        jQuery('.delete-button').click(deleteItem);
+      });
 
-			function deleteItem() {
+      function deleteItem() {
 
-				if (!confirm(\"" . Text::_('COM_JOOMGALLERY_DELETE_MESSAGE') . '")) {
-					return false;
-				}
-			}
-		', [], [], ['jquery']);
-	}
+        if (!confirm(\"" . Text::_('COM_JOOMGALLERY_DELETE_MESSAGE') . '")) {
+          return false;
+        }
+      }
+    ', [], [], ['jquery']);
+  }
 ?>

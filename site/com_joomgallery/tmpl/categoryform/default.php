@@ -20,7 +20,7 @@ use Joomla\CMS\Router\Route;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useScript('bootstrap.collapse')
    ->useScript('com_joomgallery.form-edit')
    ->useStyle('com_joomgallery.site');
@@ -45,11 +45,11 @@ $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
 ?>
 
 <div class="jg category-edit front-end-edit item-page">
-	<?php if (!$canEdit) : ?>
-		<?php Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error'); ?>
-	<?php else : ?>
-		<form id="adminForm" action="<?php echo Route::_('index.php?option=com_joomgallery&controller=categoryform&id='.$this->item->id); ?>"
-			    method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data">
+  <?php if (!$canEdit) : ?>
+    <?php Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error'); ?>
+  <?php else : ?>
+    <form id="adminForm" action="<?php echo Route::_('index.php?option=com_joomgallery&controller=categoryform&id='.$this->item->id); ?>"
+          method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data">
       <fieldset>
         <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'category']); ?>
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'category', Text::_('JCATEGORY', true)); ?>
@@ -119,6 +119,6 @@ $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
           <span class="fas fa-times" aria-hidden="true"></span> <?php echo Text::_('JCANCEL'); ?>
         </button>
       </div>
-		</form>
-	<?php endif; ?>
+    </form>
+  <?php endif; ?>
 </div>
