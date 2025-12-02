@@ -15,13 +15,13 @@ $nmb = \count((array) $displayData);
 ?>
 
 <?php if(!empty($displayData) && \count((array) $displayData) > 0) : ?>
-    <ul class="tags list-inline">
-        <?php foreach($displayData as $i => $tag) : ?>
-            <li class="list-inline-item tag-<?php echo $tag->id; ?> tag-list<?php echo $i; ?>" itemprop="keywords">
-                <span class="badge text-bg-primary"><?php echo $this->escape($tag->title); ?></span>
-            </li>
-        <?php endforeach; ?>
-    </ul>
+  <ul class="tags list-inline">
+    <?php foreach($displayData as $i => $tag) : ?>
+      <li class="list-inline-item tag-<?php echo $tag->id; ?> tag-list<?php echo $i; ?>" itemprop="keywords">
+        <span class="badge text-bg-primary"><?php echo $this->escape($tag->title); ?></span>
+      </li>
+    <?php endforeach; ?>
+  </ul>
 <?php else: ?>
-    <span>-</span>
+  <span>-</span>
 <?php endif; ?>
