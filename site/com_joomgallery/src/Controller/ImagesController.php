@@ -25,21 +25,21 @@ use \Joomla\CMS\MVC\Controller\FormController;
  */
 class ImagesController extends FormController
 {
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional
-	 * @param   array   $config  Configuration array for model. Optional
-	 *
-	 * @return  object	The model
-	 *
-	 * @since   4.0.0
-	 */
-	public function getModel($name = 'Images', $prefix = 'Site', $config = [])
-	{
-		return parent::getModel($name, $prefix, ['ignore_request' => true]);
-	}
+  /**
+   * Proxy for getModel.
+   *
+   * @param   string  $name    The model name. Optional.
+   * @param   string  $prefix  The class prefix. Optional
+   * @param   array   $config  Configuration array for model. Optional
+   *
+   * @return  object  The model
+   *
+   * @since   4.0.0
+   */
+  public function getModel($name = 'Images', $prefix = 'Site', $config = [])
+  {
+    return parent::getModel($name, $prefix, ['ignore_request' => true]);
+  }
 
   /**
    * Method to save the submitted ordering values for records via AJAX.

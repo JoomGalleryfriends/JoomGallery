@@ -32,62 +32,62 @@ use \Joomla\Database\ParameterType;
  */
 class DefaultRouter extends RouterView
 {
-	/**
-	 * Name to be displayed
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $displayName = 'COM_JOOMGALLERY_DEFAULT_ROUTER';
+  /**
+   * Name to be displayed
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $displayName = 'COM_JOOMGALLERY_DEFAULT_ROUTER';
 
-	/**
-	 * Type of the router
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $type = 'modern';
+  /**
+   * Type of the router
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $type = 'modern';
 
-	/**
-	 * ID of the parent of the image view. Empty if none.
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $image_parentID = '';
+  /**
+   * ID of the parent of the image view. Empty if none.
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $image_parentID = '';
 
-	/**
-	 * Param to use ids in URLs
-	 *
-	 * @var    bool
-	 *
-	 * @since  4.0.0
-	 */
-	private $noIDs;
+  /**
+   * Param to use ids in URLs
+   *
+   * @var    bool
+   *
+   * @since  4.0.0
+   */
+  private $noIDs;
 
-	/**
-	 * Database object
-	 *
-	 * @var    DatabaseInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $db;
+  /**
+   * Database object
+   *
+   * @var    DatabaseInterface
+   *
+   * @since  4.0.0
+   */
+  private $db;
 
-	/**
-	 * The category cache
-	 *
-	 * @var    array
-	 *
-	 * @since  4.0.0
-	 */
-	private $categoryCache = [];
+  /**
+   * The category cache
+   *
+   * @var    array
+   *
+   * @since  4.0.0
+   */
+  private $categoryCache = [];
 
-	public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db, $skipSelf = false)
-	{
+  public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db, $skipSelf = false)
+  {
     parent::__construct($app, $menu);
 
     // Get router config value
@@ -113,9 +113,9 @@ class DefaultRouter extends RouterView
     $categoryform->setKey('id');
     $this->registerView($categoryform);
 
-		$images = new RouterViewConfiguration('images');
+    $images = new RouterViewConfiguration('images');
     $images->setParent($gallery);
-		$this->registerView($images);
+    $this->registerView($images);
 
     $image = new RouterViewConfiguration('image');
     $image->setKey('id')->setParent($images);
@@ -125,10 +125,10 @@ class DefaultRouter extends RouterView
     $imageform->setKey('id');
     $this->registerView($imageform);
 
-		$this->attachRule(new MenuRules($this));
-		$this->attachRule(new StandardRules($this));
-		$this->attachRule(new NomenuRules($this));
-	}
+    $this->attachRule(new MenuRules($this));
+    $this->attachRule(new StandardRules($this));
+    $this->attachRule(new NomenuRules($this));
+  }
 
   /**
    * Method to get the segment for a gallery view
@@ -451,26 +451,26 @@ class DefaultRouter extends RouterView
     return $this->getCategoryId($segment, $query);
   }
 
-	/**
-	 * Method to get categories from cache
-	 *
-	 * @param   int             $id         It of the category
-	 * @param   string          $available  The property to make available in the category
-	 *
-	 * @return  CategoryTable   The category table object
-	 *
-	 * @since   4.0.0
-	 * @throws  \UnexpectedValueException
-	 */
-	private function getCategory($id, $available = null, $root = true): CategoryTable
-	{
+  /**
+   * Method to get categories from cache
+   *
+   * @param   int             $id         It of the category
+   * @param   string          $available  The property to make available in the category
+   *
+   * @return  CategoryTable   The category table object
+   *
+   * @since   4.0.0
+   * @throws  \UnexpectedValueException
+   */
+  private function getCategory($id, $available = null, $root = true): CategoryTable
+  {
     // Load the category table
-		if(!isset($this->categoryCache[$id]))
-		{
+    if(!isset($this->categoryCache[$id]))
+    {
       $table = $this->app->bootComponent('com_joomgallery')->getMVCFactory()->createTable('Category', 'administrator');
       $table->load($id);
       $this->categoryCache[$id] = $table;
-		}
+    }
 
     // Make node tree available in cache
     if(!\is_null($available) && !isset($this->categoryCache[$id]->{$available}))
@@ -495,6 +495,6 @@ class DefaultRouter extends RouterView
       }
     }
 
-		return $this->categoryCache[$id];
-	}
+    return $this->categoryCache[$id];
+  }
 }

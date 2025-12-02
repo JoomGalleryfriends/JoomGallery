@@ -29,25 +29,25 @@ use \Joomla\Database\DatabaseInterface;
  */
 class JG3LegacyRouter implements RouterInterface
 {
-	/**
-	 * Name to be displayed
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $displayName = 'JG3 Router';
+  /**
+   * Name to be displayed
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $displayName = 'JG3 Router';
 
-	/**
-	 * Type of the router
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $type = 'legacy';
+  /**
+   * Type of the router
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $type = 'legacy';
 
-	private $application;
+  private $application;
 
   private $menu;
 

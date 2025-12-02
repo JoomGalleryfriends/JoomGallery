@@ -25,28 +25,28 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\Category\RawView as Ad
  */
 class RawView extends AdminRawView
 {
-	/**
-	 * Display the category image
-	 *
-	 * @param   string  $tpl  Template name
-	 *
-	 * @return void
-	 */
-	public function display($tpl = null)
-	{
+  /**
+   * Display the category image
+   *
+   * @param   string  $tpl  Template name
+   *
+   * @return void
+   */
+  public function display($tpl = null)
+  {
     parent::display($tpl);
 
     // Check published state
-		if($this->item->id && $this->item->published !== 1)
-		{
-			$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
+    if($this->item->id && $this->item->published !== 1)
+    {
+      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
 
-			return;
-		}
+      return;
+    }
 
     // Check access view level
-		if(!\in_array($this->item->access, $this->user->getAuthorisedViewLevels()))
-		{
+    if(!\in_array($this->item->access, $this->user->getAuthorisedViewLevels()))
+    {
       $this->output(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
 
       return;

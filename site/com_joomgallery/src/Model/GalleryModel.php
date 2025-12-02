@@ -34,71 +34,71 @@ class GalleryModel extends JoomItemModel
    */
   protected $type = 'gallery';
 
-	/**
-	 * Method to auto-populate the model state.
-	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 *
-	 * @throws \Exception
-	 */
-	protected function populateState()
-	{
-		$this->loadComponentParams();
-	}
+  /**
+   * Method to auto-populate the model state.
+   *
+   * Note. Calling getState in this method will result in recursion.
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   *
+   * @throws \Exception
+   */
+  protected function populateState()
+  {
+    $this->loadComponentParams();
+  }
 
-	/**
-	 * Method to get an object.
-	 *
-	 * @param   integer $id The id of the object to get.
-	 *
-	 * @return  mixed    Object on success, false on failure.
-	 *
-	 * @throws \Exception
-	 */
-	public function getItem($id = null)
-	{
-		if($this->item === null)
-		{
-			$this->item        = new \stdClass();
+  /**
+   * Method to get an object.
+   *
+   * @param   integer $id The id of the object to get.
+   *
+   * @return  mixed    Object on success, false on failure.
+   *
+   * @throws \Exception
+   */
+  public function getItem($id = null)
+  {
+    if($this->item === null)
+    {
+      $this->item        = new \stdClass();
       $this->item->id = 1;
-		}
+    }
 
     // Get Gallery description
     $params                  = $this->getParams();
     $this->item->description = $params['configs']->get('jg_gallery_view_description', '', 'STRING');
 
-		return $this->item;
-	}
+    return $this->item;
+  }
 
-	/**
-	 * Method to check in an item.
-	 *
-	 * @param   integer $id The id of the row to check out.
-	 *
-	 * @return  boolean True on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
-	public function checkin($id = null)
-	{
+  /**
+   * Method to check in an item.
+   *
+   * @param   integer $id The id of the row to check out.
+   *
+   * @return  boolean True on success, false on failure.
+   *
+   * @since   4.0.0
+   */
+  public function checkin($id = null)
+  {
     return true;
   }
 
-	/**
-	 * Method to check out an item for editing.
-	 *
-	 * @param   integer $id The id of the row to check out.
-	 *
-	 * @return  boolean True on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
-	public function checkout($id = null)
-	{
+  /**
+   * Method to check out an item for editing.
+   *
+   * @param   integer $id The id of the row to check out.
+   *
+   * @return  boolean True on success, false on failure.
+   *
+   * @since   4.0.0
+   */
+  public function checkout($id = null)
+  {
     return true;
   }
 

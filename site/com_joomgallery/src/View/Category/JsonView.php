@@ -26,48 +26,48 @@ use \Joomla\CMS\Language\Text;
  */
 class JsonView extends JoomGalleryJsonView
 {
-	/**
-	 * The category object
-	 *
-	 * @var  \stdClass
-	 */
-	protected $item;
+  /**
+   * The category object
+   *
+   * @var  \stdClass
+   */
+  protected $item;
 
-	/**
-	 * Display the json view
-	 *
-	 * @param   string  $tpl  Template name
-	 *
-	 * @return void
-	 */
-	public function display($tpl = null)
-	{
+  /**
+   * Display the json view
+   *
+   * @param   string  $tpl  Template name
+   *
+   * @return void
+   */
+  public function display($tpl = null)
+  {
     /** @var CategoryModel $model */
     $model = $this->getModel();
 
     $this->state = $model->getState();
 
     $loaded = true;
-		try
-		{
-			$this->item = $model->getItem();
-		}
-		catch (\Exception $e)
-		{
-			$loaded = false;
-		}
+    try
+    {
+      $this->item = $model->getItem();
+    }
+    catch (\Exception $e)
+    {
+      $loaded = false;
+    }
 
     // Check published state
-		if($loaded && $this->item->published !== 1)
-		{
-			$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
+    if($loaded && $this->item->published !== 1)
+    {
+      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
 
-			return;
-		}
+      return;
+    }
 
     // Check access view level
-		if(!\in_array($this->item->access, $this->user->getAuthorisedViewLevels()))
-		{
+    if(!\in_array($this->item->access, $this->user->getAuthorisedViewLevels()))
+    {
       $this->output(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
 
       return;
@@ -85,8 +85,8 @@ class JsonView extends JoomGalleryJsonView
     $this->item->images->items = $model->getImages();
 
     // Check for errors.
-		if(\count($errors = $model->getErrors()))
-		{
+    if(\count($errors = $model->getErrors()))
+    {
       $this->error = true;
       $this->output($errors);
 

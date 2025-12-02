@@ -27,12 +27,12 @@ use \Joomla\Registry\Registry;
  */
 class RawView extends AdminRawView
 {
-	/**
-	 * The media object
-	 *
-	 * @var  \stdClass
-	 */
-	protected $item;
+  /**
+   * The media object
+   *
+   * @var  \stdClass
+   */
+  protected $item;
 
   /**
    * Postprocessing the image after retrieving the image ressource
@@ -187,14 +187,14 @@ class RawView extends AdminRawView
     /** @var ImageModel $model */
     $model = $this->getModel();
 
-		try
-		{
-			$this->item = $model->getItem();
-		}
-		catch (\Exception $e)
-		{
-			$loaded = false;
-		}
+    try
+    {
+      $this->item = $model->getItem();
+    }
+    catch (\Exception $e)
+    {
+      $loaded = false;
+    }
 
     // Check if the current user is the owner of the image
     if($loaded && $type == 'thumbnail' && $this->item->created_by == $this->getCurrentUser()->id)
@@ -204,20 +204,20 @@ class RawView extends AdminRawView
     }
 
     // Check if category is protected?
-		if($loaded && $model->getCategoryProtected())
-		{
+    if($loaded && $model->getCategoryProtected())
+    {
       $access = false;
-		}
+    }
 
     // Check published state
-		if(!$loaded || !$model->getCategoryPublished() || $this->item->published !== 1 || $this->item->approved !== 1)
-		{
-			$access = false;
-		}
+    if(!$loaded || !$model->getCategoryPublished() || $this->item->published !== 1 || $this->item->approved !== 1)
+    {
+      $access = false;
+    }
 
     // Check access view level
-		if(!$model->getCategoryAccess() || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
-		{
+    if(!$model->getCategoryAccess() || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
+    {
       $access = false;
     }
 

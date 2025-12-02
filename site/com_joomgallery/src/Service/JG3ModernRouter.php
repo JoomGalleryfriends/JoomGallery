@@ -30,62 +30,62 @@ use \Joomla\Database\ParameterType;
  */
 class JG3ModernRouter extends DefaultRouter
 {
-	/**
-	 * Name to be displayed
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $displayName = 'COM_JOOMGALLERY_JG3_ROUTER';
+  /**
+   * Name to be displayed
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $displayName = 'COM_JOOMGALLERY_JG3_ROUTER';
 
-	/**
-	 * Type of the router
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $type = 'modern';
+  /**
+   * Type of the router
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $type = 'modern';
 
-	/**
-	 * ID of the parent of the image view. Empty if none.
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $image_parentID = 'catid';
+  /**
+   * ID of the parent of the image view. Empty if none.
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $image_parentID = 'catid';
 
-	/**
-	 * Param to use ids in URLs
-	 *
-	 * @var    bool
-	 *
-	 * @since  4.0.0
-	 */
-	private $noIDs;
+  /**
+   * Param to use ids in URLs
+   *
+   * @var    bool
+   *
+   * @since  4.0.0
+   */
+  private $noIDs;
 
-	/**
-	 * Database object
-	 *
-	 * @var    DatabaseInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $db;
+  /**
+   * Database object
+   *
+   * @var    DatabaseInterface
+   *
+   * @since  4.0.0
+   */
+  private $db;
 
-	/**
-	 * The category cache
-	 *
-	 * @var    array
-	 *
-	 * @since  4.0.0
-	 */
-	private $categoryCache = [];
+  /**
+   * The category cache
+   *
+   * @var    array
+   *
+   * @since  4.0.0
+   */
+  private $categoryCache = [];
 
-	public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db)
-	{
+  public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db)
+  {
     parent::__construct($app, $menu, $categoryFactory, $db, true);
 
     // Get router config value
@@ -107,9 +107,9 @@ class JG3ModernRouter extends DefaultRouter
     $categoryform->setKey('id')->setParent($gallery);
     $this->registerView($categoryform);
 
-		$images = new RouterViewConfiguration('images');
+    $images = new RouterViewConfiguration('images');
     $images->setParent($gallery);
-		$this->registerView($images);
+    $this->registerView($images);
 
     $image = new RouterViewConfiguration('image');
     $image->setKey('id')->setParent($category, 'catid');
@@ -119,10 +119,10 @@ class JG3ModernRouter extends DefaultRouter
     $imageform->setKey('id')->setParent($gallery);
     $this->registerView($imageform);
 
-		$this->attachRule(new MenuRules($this));
-		$this->attachRule(new StandardRules($this));
-		$this->attachRule(new NomenuRules($this));
-	}
+    $this->attachRule(new MenuRules($this));
+    $this->attachRule(new StandardRules($this));
+    $this->attachRule(new NomenuRules($this));
+  }
 
   /**
    * Method to get the segment for an image view
