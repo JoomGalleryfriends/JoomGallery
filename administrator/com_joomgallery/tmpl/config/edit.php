@@ -20,7 +20,7 @@ use Joomla\CMS\Router\Route;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useScript('bootstrap.modal')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip');

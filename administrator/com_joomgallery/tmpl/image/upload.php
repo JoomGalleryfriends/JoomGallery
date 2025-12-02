@@ -21,7 +21,7 @@ use Joomla\CMS\Router\Route;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useScript('com_joomgallery.uppy-uploader')
    ->useScript('bootstrap.modal')
    ->useStyle('com_joomgallery.uppy')

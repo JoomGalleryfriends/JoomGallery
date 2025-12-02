@@ -39,24 +39,24 @@ $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
 if($saveOrder && !empty($this->items))
 {
-	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
-	HTMLHelper::_('draggablelist.draggable');
+  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  HTMLHelper::_('draggablelist.draggable');
 }
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post"
-	  name="adminForm" id="adminForm">
-	<div class="row">
-		<div class="col-md-12">
-			<div id="j-main-container" class="j-main-container">
-			<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+    name="adminForm" id="adminForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div id="j-main-container" class="j-main-container">
+      <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <?php if (empty($this->items)) : ?>
           <div class="alert alert-info">
             <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
             <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
           </div>
         <?php else : ?>
-				<div class="clearfix"></div>
+        <div class="clearfix"></div>
         <div class="table-responsive">
           <table class="table table-striped" id="imageList">
             <caption class="visually-hidden">
@@ -301,11 +301,11 @@ if($saveOrder && !empty($this->items))
           </table>
         </div>
         <?php endif; ?>
-				<input type="hidden" name="task" value=""/>
-				<input type="hidden" name="boxchecked" value="0"/>
+        <input type="hidden" name="task" value=""/>
+        <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="form_submited" value="1"/>
-				<?php echo HTMLHelper::_('form.token'); ?>
-			</div> 
-		</div>
-	</div>
+        <?php echo HTMLHelper::_('form.token'); ?>
+      </div> 
+    </div>
+  </div>
 </form>

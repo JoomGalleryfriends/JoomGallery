@@ -35,19 +35,19 @@ $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
 if ($saveOrder && !empty($this->items))
 {
-	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=configs.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
-	HTMLHelper::_('draggablelist.draggable');
+  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=configs.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  HTMLHelper::_('draggablelist.draggable');
 }
 
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=configs'); ?>" method="post"
-	  name="adminForm" id="adminForm">
-	<div class="row">
-		<div class="col-md-12">
-			<div id="j-main-container" class="j-main-container">
-			<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
-				<div class="clearfix"></div>
+    name="adminForm" id="adminForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div id="j-main-container" class="j-main-container">
+      <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+        <div class="clearfix"></div>
         <div class="table-responsive">
           <table class="table table-striped" id="configList">
             <caption class="visually-hidden">
@@ -170,12 +170,12 @@ if ($saveOrder && !empty($this->items))
           </table>
         </div>
 
-				<input type="hidden" name="task" value=""/>
-				<input type="hidden" name="boxchecked" value="0"/>
+        <input type="hidden" name="task" value=""/>
+        <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="form_submited" value="1"/>
-				<input type="hidden" name="list[fullorder]" value="<?php echo $listOrder; ?> <?php echo $listDirn; ?>"/>
-				<?php echo HTMLHelper::_('form.token'); ?>
-			</div>
-		</div>
-	</div>
+        <input type="hidden" name="list[fullorder]" value="<?php echo $listOrder; ?> <?php echo $listDirn; ?>"/>
+        <?php echo HTMLHelper::_('form.token'); ?>
+      </div>
+    </div>
+  </div>
 </form>

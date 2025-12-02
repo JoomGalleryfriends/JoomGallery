@@ -33,10 +33,10 @@ $imgRequired = (int) $input->get('required', 0, 'int');
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component'); ?>" method="post"
-	  name="adminForm" id="adminForm">
-	<div class="row">
-		<div class="col-md-12">
-			<div id="j-main-container" class="j-main-container">
+    name="adminForm" id="adminForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div id="j-main-container" class="j-main-container">
 
       <?php if (!$imgRequired) : ?>
         <div>
@@ -46,8 +46,8 @@ $imgRequired = (int) $input->get('required', 0, 'int');
         </div>
       <?php endif; ?>
 
-			<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
-				<div class="clearfix"></div>
+      <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+        <div class="clearfix"></div>
         <div class="table-responsive">
           <table class="table table-striped" id="imageList">
             <caption class="visually-hidden">
@@ -193,10 +193,10 @@ $imgRequired = (int) $input->get('required', 0, 'int');
             </tbody>
           </table>
         </div>
-				<input type="hidden" name="task" value=""/>
-				<input type="hidden" name="boxchecked" value="0"/>
-				<?php echo HTMLHelper::_('form.token'); ?>
-			</div> 
-		</div>
-	</div>
+        <input type="hidden" name="task" value=""/>
+        <input type="hidden" name="boxchecked" value="0"/>
+        <?php echo HTMLHelper::_('form.token'); ?>
+      </div> 
+    </div>
+  </div>
 </form>

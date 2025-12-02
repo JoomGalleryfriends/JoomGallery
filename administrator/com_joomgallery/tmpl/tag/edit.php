@@ -20,7 +20,7 @@ use Joomla\CMS\Router\Route;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip');
 
@@ -33,8 +33,8 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 ?>
 
 <form
-	action="<?php echo Route::_('index.php?option=com_joomgallery&layout='.$layout.$tmpl.'&id=' . (int) $this->item->id); ?>"
-	method="post" enctype="multipart/form-data" name="adminForm" id="tag-form" class="form-validate"
+  action="<?php echo Route::_('index.php?option=com_joomgallery&layout='.$layout.$tmpl.'&id=' . (int) $this->item->id); ?>"
+  method="post" enctype="multipart/form-data" name="adminForm" id="tag-form" class="form-validate"
   aria-label="<?php echo Text::_('COM_JOOMGALLERY_TAG_FORM_TITLE_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>" >
 
   <div class="row title-alias form-vertical mb-3">
@@ -45,7 +45,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
       <?php echo $this->form->renderField('alias'); ?>
     </div>
   </div>
-	
+  
   <div class="main-card">
     <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'Details', 'recall' => true, 'breakpoint' => 768]); ?>
 
@@ -95,7 +95,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
   </div>
 
-	<input type="hidden" name="task" value=""/>
-	<?php echo HTMLHelper::_('form.token'); ?>
+  <input type="hidden" name="task" value=""/>
+  <?php echo HTMLHelper::_('form.token'); ?>
 
 </form>

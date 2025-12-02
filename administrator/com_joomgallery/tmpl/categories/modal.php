@@ -33,10 +33,10 @@ $catRequired = (int) $input->get('required', 0, 'int');
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=categories&layout=modal&tmpl=component'); ?>" method="post"
-	  name="adminForm" id="adminForm">
-	<div class="row">
-		<div class="col-md-12">
-			<div id="j-main-container" class="j-main-container">
+    name="adminForm" id="adminForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div id="j-main-container" class="j-main-container">
         <?php if (!$catRequired) : ?>
           <div>
             <button type="button" class="btn btn-primary button-select" data-category-value="1" data-category-title="<?php echo $this->escape('Root'); ?>" data-category-field="<?php echo $this->escape($field); ?>">
@@ -44,15 +44,15 @@ $catRequired = (int) $input->get('required', 0, 'int');
             </button>
           </div>
         <?php endif; ?>
-				<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
-				<div class="clearfix"></div>
+        <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+        <div class="clearfix"></div>
         <div class="table-responsive">
           <table class="table table-striped" id="categoryList">
             <caption class="visually-hidden">
-							<?php echo Text::_('COM_JOOMGALLERY_CATEGORY_TABLE_CAPTION'); ?>,
-							<span id="orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
-							<span id="filteredBy"><?php echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
-						</caption>
+              <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_TABLE_CAPTION'); ?>,
+              <span id="orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
+              <span id="filteredBy"><?php echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
+            </caption>
             <thead>
               <tr>
                 <th scope="col" class="w-1 text-center">
@@ -162,11 +162,11 @@ $catRequired = (int) $input->get('required', 0, 'int');
             </tbody>
           </table>
         </div>
-				<input type="hidden" name="task" value=""/>
-				<input type="hidden" name="boxchecked" value="0"/>
-				<input type="hidden" name="list[fullorder]" value="<?php echo $listOrder; ?> <?php echo $listDirn; ?>"/>
-				<?php echo HTMLHelper::_('form.token'); ?>
-			</div>
-		</div>
-	</div>
+        <input type="hidden" name="task" value=""/>
+        <input type="hidden" name="boxchecked" value="0"/>
+        <input type="hidden" name="list[fullorder]" value="<?php echo $listOrder; ?> <?php echo $listDirn; ?>"/>
+        <?php echo HTMLHelper::_('form.token'); ?>
+      </div>
+    </div>
+  </div>
 </form>
