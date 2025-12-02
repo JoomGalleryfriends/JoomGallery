@@ -95,7 +95,7 @@ class ConfigSet extends AbstractCommand
   Usage: <info>php %command.full_name%</info> <option> <value>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
     * You may verify the written value with <info>--veryfy=true<info> option. This compares the given option with the resulting table value
-		";
+    ";
     $this->setDescription('Set a value for a configuration option');
     $this->setHelp($help);
   }
@@ -142,7 +142,7 @@ class ConfigSet extends AbstractCommand
       return Command::FAILURE;
     }
 
-	// ToDo: Make it sql save ....
+    // ToDo: Make it sql save ....
 
     // Sanitize for boolean. Boolean result is either '1' or '0'
     $sanitizeValue = $this->sanitizeValue($value);

@@ -89,7 +89,7 @@ class ConfigGet extends AbstractCommand
     $help = "<info>%command.name%</info> display one field value in configuration (Table)
   Usage: <info>php %command.full_name%</info> <option>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
-		";
+    ";
     $this->setDescription('Display the current value of a configuration option');
     $this->setHelp($help);
   }

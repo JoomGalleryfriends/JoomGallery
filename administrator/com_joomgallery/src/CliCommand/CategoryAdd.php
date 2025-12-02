@@ -133,11 +133,11 @@ class CategoryAdd extends AbstractCommand
     $this->addOption('created_by', 'c', InputOption::VALUE_REQUIRED, 'Created by (owner)');
     $this->addOption('modified_time', null, InputOption::VALUE_OPTIONAL, 'Modified time');
     $this->addOption('modified_by', 'm', InputOption::VALUE_OPTIONAL, 'Modified by');
-//    $this->addOption('parent_title', 'p', InputOption::VALUE_OPTIONAL, 'parent title');
+    // $this->addOption('parent_title', 'p', InputOption::VALUE_OPTIONAL, 'parent title');
     $this->addOption('parent_id', 'p', InputOption::VALUE_OPTIONAL, 'parent id (1=no parent)');
 
     $help = '<info>%command.name%</info> add a category
-	Usage: <info>php %command.full_name%</info>';
+  Usage: <info>php %command.full_name%</info>';
 
     $this->setDescription(Text::_('WIP, not finished: Add category'));
     $this->setHelp($help);
