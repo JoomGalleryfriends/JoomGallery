@@ -95,21 +95,21 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->registerTask('check', 'precheck');
   }
 
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    Optional. Model name
-	 * @param   string  $prefix  Optional. Class prefix
-	 * @param   array   $config  Optional. Configuration array for model
-	 *
-	 * @return  object	The Model
-	 *
-	 * @since   4.0.0
-	 */
-	public function getModel($name = 'Migration', $prefix = 'Administrator', $config = [])
-	{
-		return parent::getModel($name, $prefix, ['ignore_request' => true]);
-	}
+  /**
+   * Proxy for getModel.
+   *
+   * @param   string  $name    Optional. Model name
+   * @param   string  $prefix  Optional. Class prefix
+   * @param   array   $config  Optional. Configuration array for model
+   *
+   * @return  object  The Model
+   *
+   * @since   4.0.0
+   */
+  public function getModel($name = 'Migration', $prefix = 'Administrator', $config = [])
+  {
+    return parent::getModel($name, $prefix, ['ignore_request' => true]);
+  }
 
   /**
    * Execute a task by triggering a Method in the derived class.
@@ -516,17 +516,17 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     return true;
   }
 
-	/**
-	 * Step 2
-	 * Validate the form input data and perform the pre migration checks.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 * @throws  \Exception
-	 */
-	public function precheck()
-	{
+  /**
+   * Step 2
+   * Validate the form input data and perform the pre migration checks.
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   * @throws  \Exception
+   */
+  public function precheck()
+  {
     // Get script
     $script = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
 
@@ -653,17 +653,17 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     return;
   }
 
-	/**
-	 * Step 3
-	 * Enter the migration view.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 * @throws  \Exception
-	 */
-	public function migrate()
-	{
+  /**
+   * Step 3
+   * Enter the migration view.
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   * @throws  \Exception
+   */
+  public function migrate()
+  {
     // Check for request forgeries
     $this->checkToken();
 
@@ -708,17 +708,17 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=migration&layout=step3', false));
   }
 
-	/**
-	 * Step 4
-	 * Perform the post migration checks.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 * @throws  \Exception
-	 */
-	public function postcheck()
-	{
+  /**
+   * Step 4
+   * Perform the post migration checks.
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   * @throws  \Exception
+   */
+  public function postcheck()
+  {
     // Check for request forgeries
     $this->checkToken();
 
@@ -782,16 +782,16 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     return;
   }
 
-	/**
-	 * Perform a migration
-	 * Called by Ajax requests
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
-	public function start()
-	{
+  /**
+   * Perform a migration
+   * Called by Ajax requests
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
+  public function start()
+  {
     // Check for request forgeries
     $this->checkToken();
 
@@ -921,15 +921,15 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->ajaxRespond($response, $format);
   }
 
-	/**
-	 * Apply a migration state for a specific record manually
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
-	public function applyState()
-	{
+  /**
+   * Apply a migration state for a specific record manually
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
+  public function applyState()
+  {
     // Check for request forgeries
     $this->checkToken();
 

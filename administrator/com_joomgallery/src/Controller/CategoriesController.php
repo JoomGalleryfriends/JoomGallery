@@ -28,31 +28,31 @@ use \Joomla\Utilities\ArrayHelper;
  */
 class CategoriesController extends JoomAdminController
 {
-	/**
-	 * Method to clone existing Categories
-	 *
-	 * @return  void
-	 *
-	 * @throws  \Exception
-	 */
-	public function duplicate()
-	{
-		// Check for request forgeries
-		$this->checkToken();
+  /**
+   * Method to clone existing Categories
+   *
+   * @return  void
+   *
+   * @throws  \Exception
+   */
+  public function duplicate()
+  {
+    // Check for request forgeries
+    $this->checkToken();
 
-		// Get id(s)
-		$pks = $this->input->post->get('cid', [], 'array');
+    // Get id(s)
+    $pks = $this->input->post->get('cid', [], 'array');
 
-		try
-		{
-			if(empty($pks))
-			{
-				throw new \Exception(Text::_('JERROR_NO_ITEMS_SELECTED'));
-			}
+    try
+    {
+      if(empty($pks))
+      {
+        throw new \Exception(Text::_('JERROR_NO_ITEMS_SELECTED'));
+      }
 
-			ArrayHelper::toInteger($pks);
-			$model = $this->getModel();
-			$model->duplicate($pks);
+      ArrayHelper::toInteger($pks);
+      $model = $this->getModel();
+      $model->duplicate($pks);
 
       if(\count($pks) > 1)
       {
@@ -74,35 +74,35 @@ class CategoriesController extends JoomAdminController
       Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
     }
 
-		$this->setRedirect('index.php?option='._JOOM_OPTION.'&view=categories');
-	}
+    $this->setRedirect('index.php?option='._JOOM_OPTION.'&view=categories');
+  }
 
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    Optional. Model name
-	 * @param   string  $prefix  Optional. Class prefix
-	 * @param   array   $config  Optional. Configuration array for model
-	 *
-	 * @return  object	The Model
-	 *
-	 * @since   4.0.0
-	 */
-	public function getModel($name = 'Category', $prefix = 'Administrator', $config = [])
-	{
-		return parent::getModel($name, $prefix, ['ignore_request' => true]);
-	}
+  /**
+   * Proxy for getModel.
+   *
+   * @param   string  $name    Optional. Model name
+   * @param   string  $prefix  Optional. Class prefix
+   * @param   array   $config  Optional. Configuration array for model
+   *
+   * @return  object  The Model
+   *
+   * @since   4.0.0
+   */
+  public function getModel($name = 'Category', $prefix = 'Administrator', $config = [])
+  {
+    return parent::getModel($name, $prefix, ['ignore_request' => true]);
+  }
 
-	/**
-	 * Rebuild the nested set tree.
-	 * @return  boolean  False on failure or error, true on success.
-	 * @since   4.0.0
-	 */
-	public function rebuild()
-	{
-		$this->checkToken();
-		$this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=categories', false));
-		$model = $this->getModel();
+  /**
+   * Rebuild the nested set tree.
+   * @return  boolean  False on failure or error, true on success.
+   * @since   4.0.0
+   */
+  public function rebuild()
+  {
+    $this->checkToken();
+    $this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=categories', false));
+    $model = $this->getModel();
 
     if($model->rebuild())
     {
@@ -118,6 +118,6 @@ class CategoriesController extends JoomAdminController
     $this->setMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_FAILURE'));
 
 
-		return false;
-	}
+    return false;
+  }
 }

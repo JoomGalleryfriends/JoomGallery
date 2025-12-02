@@ -23,5 +23,5 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
  */
 class TagController extends JoomFormController
 {
-	protected $view_list = 'tags';
+  protected $view_list = 'tags';
 }
