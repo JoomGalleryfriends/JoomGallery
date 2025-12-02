@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // No direct access
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
@@ -109,7 +111,7 @@ abstract class JoomAdminModel extends AdminModel
    * @since   4.0.0
    * @throws  \Exception
    */
-  public function __construct($config = [], MVCFactoryInterface $factory = null, FormFactoryInterface $formFactory = null)
+  public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?FormFactoryInterface $formFactory = null)
   {
     parent::__construct($config, $factory, $formFactory);
 

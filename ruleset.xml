@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<ruleset name="JoomGallery">
+  <description>The JoomGallery PSR-12 exceptions.</description>
+  <autoload>administrator/com_joomgallery/vendor/autoload.php</autoload>
+
+  <exclude-pattern type="relative">^docs/*</exclude-pattern>
+  <exclude-pattern type="relative">^media/*</exclude-pattern>
+  <exclude-pattern type="relative">^node_modules/*</exclude-pattern>
+  <exclude-pattern type="relative">^administrator/com_joomgallery/vendor/*</exclude-pattern>
+  <exclude-pattern type="relative">^script.php</exclude-pattern>
+
+  <rule ref="PSR12">
+    <!-- Disable automatic formatting of control structures -->
+    <exclude name="Squiz.ControlStructures.ControlSignature"/>
+    <exclude name="PEAR.ControlStructures.ControlSignature"/>
+    <exclude name="PSR12.ControlStructures.ControlStructureSpacing"/>
+    <exclude name="Generic.ControlStructures.InlineControlStructure"/>
+    <exclude name="Squiz.ControlStructures.InlineIfDeclaration"/>
+    <!-- Disable built-in PSR12 header -->
+    <exclude name="PSR12.Files.FileHeader"/>
+    <!-- Disable indentation (handled by PHP-CS-Fixer) -->
+    <exclude name="Generic.WhiteSpace.ScopeIndent"/>
+    <exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
+  </rule>
+
+  <!-- clean imports -->
+  <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
+
+  <!-- arrays & commas -->
+  <rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
+  <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
+
+  <!-- operators/alignment -->
+  <rule ref="Generic.Formatting.MultipleStatementAlignment">
+    <properties>
+      <property name="maxPadding" value="50"/>
+    </properties>
+  </rule>
+
+  <!-- calls and declarations spacing -->
+  <rule ref="PEAR.Functions.FunctionCallSignature"/>
+  <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing"/>
+
+  <!-- apply JoomGallery specific sniffs -->
+  <rule ref="JG.A_Preprocessing.A_Indentation">
+    <properties>
+      <property name="indentSize" value="2"/>
+    </properties>
+  </rule>
+  <rule ref="JG.Arrays.MultilineArrayFirstElementNewline"/>
+  <rule ref="JG.Commenting.FileHeader">
+    <properties>
+      <property name="headerFile" value="./header.txt"/>
+    </properties>
+  </rule>
+  <rule ref="JG.ControlStructures.ControlSignature"/>
+
+  <!-- temporary extend the line length -->
+  <rule ref="Generic.Files.LineLength">
+    <properties>
+      <property name="lineLimit" value="560"/>
+      <property name="absoluteLineLimit" value="560"/>
+    </properties>
+  </rule>
+
+  <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+    <exclude-pattern type="relative">includes/defines\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/exifarray\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/iptcarray\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/latinbased\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/rules\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/tusspecs\.php</exclude-pattern>
+  </rule>
+</ruleset>

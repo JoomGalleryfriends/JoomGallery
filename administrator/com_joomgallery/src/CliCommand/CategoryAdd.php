@@ -11,7 +11,9 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel;
 use Joomla\CMS\Factory;

@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Create an animated GIF from multiple images

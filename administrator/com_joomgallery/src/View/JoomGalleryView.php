@@ -10,7 +10,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\View;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\Uri\Uri;
 use \Joomla\CMS\Factory;
@@ -102,7 +104,7 @@ class JoomGalleryView extends BaseHtmlView
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION'), 'warning');
     }
 
-    if($this->app->get('unicodeslugs', false))
+    if($this->app->isClient('administrator') && $this->app->get('unicodeslugs', false))
     {
       // The option unicodeslugs is activated.
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNICODESLUGS'), 'warning');
