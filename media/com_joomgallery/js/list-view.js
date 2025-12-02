@@ -29,14 +29,18 @@ function gridItemAction(event) {
     parts = itemTask.split('.', 2);
   }
   if (itemFormId) {
-    document.getElementById(itemFormId);
+    //
+    let form = document.getElementById(itemFormId);
     form.action = exchangeGETvar(form.action, 'view', 'controller='+parts[0]);
     form.baseURI = form.action;
+
     Joomla.listItemTask(itemId, itemTask, itemFormId);
   } else {
+    //
     let form = document.getElementById('adminForm');
     form.action = exchangeGETvar(form.action, 'view', 'controller='+parts[0]);
     form.baseURI = form.action;
+
     Joomla.listItemTask(itemId, itemTask);
   }
 }
@@ -77,14 +81,16 @@ function gridItemActionDelete(event) {
     parts = itemTask.split('.', 2);
   }
   if (itemFormId) {
-    document.getElementById(itemFormId);
+    let form = document.getElementById(itemFormId);
     form.action = exchangeGETvar(form.action, 'view', 'controller='+parts[0]);
     form.baseURI = form.action;
+
     Joomla.listItemTask(itemId, itemTask, itemFormId);
   } else {
     let form = document.getElementById('adminForm');
     form.action = exchangeGETvar(form.action, 'view', 'controller='+parts[0]);
-    form.baseURI = form.action;   
+    form.baseURI = form.action;
+
     Joomla.listItemTask(itemId, itemTask);
   }  
 }

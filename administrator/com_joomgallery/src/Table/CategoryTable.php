@@ -17,9 +17,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Table\Asset;
 use \Joomla\CMS\Access\Rules;
-use \Joomla\CMS\User\UserHelper;
 use \Joomla\Registry\Registry;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\User\UserHelper;
 use \Joomla\CMS\Filter\OutputFilter;
 use \Joomla\Database\DatabaseDriver;
 use \Joomla\CMS\Versioning\VersionableTableInterface;
@@ -131,13 +131,19 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 
     // Return password only if user is admin or owner
     $this->pw_protected = false;
-    if(isset($this->password) && !empty($this->password) && !\in_array($keys, $unlockedCats))
+    if(!empty($this->password) && !\in_array($keys, $unlockedCats))
     {
-      if(!$comp->getAccess()->checkACL('admin') || $user->id != $this->created_by)
-      {
-        $this->password = '';
-      }
-      
+//      //if(!$comp->getAccess()->checkACL('admin') || $user->id != $this->created_by)
+//      $isAccess = $comp->getAccess()->checkACL('edit');
+//      $diffUser = $user->id != $this->created_by;
+//      $usrId = $user->id;
+//      $crtId = $this->created_by;
+//
+//      if(!$comp->getAccess()->checkACL('edit') || $user->id != $this->created_by)
+//      {
+//        $this->password = '';
+//      }
+//
       // Set a property showing that the category is protected
       $this->pw_protected = true;
     }

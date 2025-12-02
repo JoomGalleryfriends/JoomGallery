@@ -13,10 +13,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\HTMLUploader;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\TUSUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\SingleUploader;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\FTPUploader;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\HTMLUploader;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\SingleUploader;
 
 /**
 * Trait to implement UploaderServiceInterface

@@ -11,8 +11,8 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 extract($displayData);
 

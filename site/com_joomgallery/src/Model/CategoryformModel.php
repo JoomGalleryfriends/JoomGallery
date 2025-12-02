@@ -14,6 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomla\CMS\Form\Form;
+use \Joomla\CMS\User\CurrentUserInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
 
 /**
@@ -41,7 +43,7 @@ class CategoryformModel extends AdminCategoryModel
 	 *
 	 * @since   4.0.0
 	 *
-	 * @throws  Exception
+	 * @throws  \Exception
 	 */
 	protected function populateState()
 	{
@@ -72,7 +74,7 @@ class CategoryformModel extends AdminCategoryModel
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param   integer  $pk  The id of the primary key.
+	 * @param   integer  $id  The id of the primary key.
 	 *
 	 * @return  Object|boolean Object on success, false on failure.
 	 *
@@ -91,14 +93,19 @@ class CategoryformModel extends AdminCategoryModel
 	 * @param   array   $data     An optional array of data for the form to interogate.
 	 * @param   boolean $loadData True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  Form    A Form object on success, false on failure
+	 * @return  Form|CurrentUserInterface|false    A Form object on success, false on failure
 	 *
 	 * @since   4.0.0
 	 */
-	public function getForm($data = array(), $loadData = true)
+	public function getForm($data = array(), $loadData = true): Form|CurrentUserInterface|false
 	{
 		// Get the form.
 		$form = $this->loadForm($this->typeAlias, 'categoryform', array('control'   => 'jform',	'load_data' => $loadData));
+
+    if(empty($form))
+    {
+      return false;
+    }
 
     // Apply filter to exclude child categories
     $children = $form->getFieldAttribute('parent_id', 'children', 'true');
@@ -110,11 +117,6 @@ class CategoryformModel extends AdminCategoryModel
 
 		// Apply filter for current category on thumbnail field
     $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
-
-		if(empty($form))
-		{
-			return false;
-		}
 
 		return $form;
 	}
@@ -138,7 +140,7 @@ class CategoryformModel extends AdminCategoryModel
    *
    * @since   4.0.0
    */
-  public function getReturnPage()
+  public function getReturnPage(): string
   {
     return \base64_encode($this->getState('return_page', ''));
   }

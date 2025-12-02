@@ -93,12 +93,12 @@ class ImagesModel extends AdminImagesModel
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return  DatabaseQuery
+	 * @return  \Joomla\Database\QueryInterface // MysqliQuery|
 	 *
 	 * @since   4.0.0
 	 */
-	protected function getListQuery()
-	{
+	protected function getListQuery(): \Joomla\Database\QueryInterface
+  {
     $query = parent::getListQuery();
 
     return $query;

@@ -16,15 +16,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 use \Joomla\CMS\Factory;
 use \Psr\Http\Message\ResponseInterface;
-
 use \Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Request;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
 
 /**
  * Tus-Server v1.0.0 implementation
@@ -286,7 +285,7 @@ class Server implements ServerInterface
         $this->app->sendHeaders();
 		    echo $this->app->getBody();
 
-        // The process must only sent the HTTP headers and content: kill request after send
+        // The process only needs to send the HTTP headers and content: kill request after send
         exit;
     }
 
@@ -399,7 +398,7 @@ class Server implements ServerInterface
             return;
         }
 
-        // if file in storage does not exists
+        // if file in storage does not exist
         if (!file_exists($this->directory . $this->getFilename()))
         {
             // allow new upload

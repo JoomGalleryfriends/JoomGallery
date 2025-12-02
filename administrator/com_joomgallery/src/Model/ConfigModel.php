@@ -16,8 +16,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Language\Text;
 use \Joomla\Filesystem\File;
+use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Plugin\PluginHelper;
 use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Form\FormFactory;
@@ -560,7 +560,7 @@ class ConfigModel extends JoomAdminModel
 	 *
    * @param   string      $params     Json string with params
    * 
-	 * @return  CMSObject   Params object
+	 * @return  CMSObject|stdClass   Params object
 	 *
 	 * @since   4.0.0
 	 */

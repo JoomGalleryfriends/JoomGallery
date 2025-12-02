@@ -66,7 +66,9 @@ class HtmlView extends JoomGalleryView
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}
 
+
 		$this->addToolbar();
+
 		parent::display($tpl);
 	}
 

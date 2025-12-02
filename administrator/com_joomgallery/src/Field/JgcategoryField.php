@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\FormField;
 use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Form\FormField;
 use \Joomla\CMS\Layout\FileLayout;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 

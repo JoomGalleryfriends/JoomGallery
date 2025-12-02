@@ -29,13 +29,13 @@ class CategoryController extends JoomBaseController
 	 * Edit a category
 	 * Checkout and redirect to from view
 	 *
-	 * @return  void
+	 * @return  void|false
 	 *
 	 * @since   4.0.0
 	 *
 	 * @throws  \Exception
 	 */
-	public function edit()
+	public function edit(): bool
 	{
 		// Get the previous edit id (if any) and the current edit id.
 		$previousId = (int) $this->app->getUserState(_JOOM_OPTION.'.edit.category.id');
@@ -54,7 +54,7 @@ class CategoryController extends JoomBaseController
 		if(!$editId)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($editId),false));
 
 			return false;
 		}
@@ -63,7 +63,7 @@ class CategoryController extends JoomBaseController
 		if(!$this->acl->checkACL('edit', 'category', $editId))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($editId),false));
 
 			return false;
 		}
@@ -79,7 +79,7 @@ class CategoryController extends JoomBaseController
 		{
 			// Check-out failed, display a notice but allow the user to see the record.
 			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKOUT_FAILED', $model->getError()), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($editId),false));
 			
 			return false;
 		}
@@ -92,6 +92,8 @@ class CategoryController extends JoomBaseController
 
 		// Redirect to the form screen.
 		$this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=categoryform&'.$this->getItemAppend($editId), false));
+
+    return true;
 	}
 
 	/**
@@ -102,7 +104,7 @@ class CategoryController extends JoomBaseController
 	 *
 	 * @since   4.0.0
 	 */
-	public function add()
+	public function add() : bool
 	{
 		// Get the previous edit id (if any) and the current edit id.
 		$previousId = (int) $this->app->getUserState(_JOOM_OPTION.'.add.category.id');
@@ -114,7 +116,7 @@ class CategoryController extends JoomBaseController
 		if(!$this->acl->checkACL('add', 'category', $editId, $addCatId, true))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($editId),false));
 
 			return false;
 		}
@@ -137,6 +139,8 @@ class CategoryController extends JoomBaseController
 
 		// Redirect to the form screen.
 		$this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=categoryform&'.$this->getItemAppend(0, $addCatId), false));
+
+    return true;
 	}
 
 	/**

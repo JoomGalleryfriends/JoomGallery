@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JOOMGALLERY_VIEW_CATEGORIES_TITLE" option="JDEFAULT">
+  <layout title="COM_JOOMGALLERY_VIEW_CATEGORIES_TITLE" option="JDEFAULT">
     <message>
       <![CDATA[COM_JOOMGALLERY_VIEW_CATEGORIES_DESC]]>
     </message>
-	</layout>
+  </layout>
 </metadata>

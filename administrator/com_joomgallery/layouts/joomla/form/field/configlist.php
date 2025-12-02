@@ -12,7 +12,7 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\HTML\HTMLHelper;
 
 extract($displayData);
 
@@ -54,7 +54,7 @@ $attr = '';
 // Set global value in first option
 if(strpos($options[0]->text, '%s') !== false)
 {
-  $options[0]->text  = str_replace('%s', $globvalue, $options[0]->text);
+  $options[0]->text  = str_replace('%s', $globvalue ?? "", $options[0]->text);
 }
 
 // Initialize the field attributes.

@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
 use \Joomla\Utilities\ArrayHelper;
 
 /**

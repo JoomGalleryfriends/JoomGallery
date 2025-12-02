@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Imageform;
 
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Site\Model\ImageformModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 
@@ -78,7 +79,7 @@ class HtmlView extends JoomGalleryView
 			return;
 		}
 
-		/** @var ImagefromModel $model */
+		/** @var ImageformModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();
@@ -90,7 +91,7 @@ class HtmlView extends JoomGalleryView
     $this->return_page = $model->getReturnPage();
 
 		// Check for errors.
-		if(count($errors = $model->getErrors()))
+		if(\count($errors = $model->getErrors()))
 		{
 			throw new GenericDataException(implode("\n", $errors), 500);
 		}

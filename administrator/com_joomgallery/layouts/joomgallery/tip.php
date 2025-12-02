@@ -11,7 +11,7 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Language\Text;
+use \Joomla\CMS\Language\Text;
 
 extract($displayData);
 
@@ -41,6 +41,10 @@ extract($displayData);
   if(!empty($small) && $small === true)
   {
     $tag = 'small';
+  }
+
+  if (empty($class)){
+    $class = '';
   }
 ?>
 

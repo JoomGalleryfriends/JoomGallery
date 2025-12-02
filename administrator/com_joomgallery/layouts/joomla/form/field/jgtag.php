@@ -11,10 +11,10 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
+use \Joomla\CMS\Factory;
 use \Joomla\CMS\Router\Route;
-use Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\HTML\HTMLHelper;
 
 extract($displayData);
 

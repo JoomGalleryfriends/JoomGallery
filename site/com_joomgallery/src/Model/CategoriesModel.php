@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomla\Database\Mysqli\MysqliQuery;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
 
 /**
@@ -92,11 +93,11 @@ class CategoriesModel extends AdminCategoriesModel
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return  DatabaseQuery
+	 * @return  MysqliQuery
 	 *
 	 * @since   4.0.0
 	 */
-	protected function getListQuery()
+	protected function getListQuery(): MysqliQuery
 	{
     $query = parent::getListQuery();
 

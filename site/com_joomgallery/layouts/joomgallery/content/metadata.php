@@ -11,8 +11,8 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\Registry\Registry;
-use Joomla\CMS\Language\Text;
+use \Joomla\CMS\Language\Text;
+use \Joomla\Registry\Registry;
 
 $exifData = new Registry($displayData);
 $i = 0;

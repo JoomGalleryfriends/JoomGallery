@@ -35,13 +35,13 @@ trait RoutingTrait
 	 * Get the return URL.	 *
 	 * If a "return" variable has been passed in the request
 	 * 
-	 * @param   string  Optional: A default view to return
+	 * @param   string $default Optional: A default view to return
 	 *
 	 * @return  string  The return URL.
 	 *
 	 * @since   4.0.0
 	 */
-	protected function getReturnPage(string $default='')
+	protected function getReturnPage(string $default=''): string
 	{
 		$return = $this->input->get('return', null, 'base64');
 

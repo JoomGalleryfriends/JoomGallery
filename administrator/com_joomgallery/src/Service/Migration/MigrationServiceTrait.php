@@ -14,9 +14,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Uri\Uri;
+use \Joomla\Filesystem\Path;
 use \Joomla\CMS\Language\Text;
 use \Joomla\Filesystem\Folder;
-use \Joomla\Filesystem\Path;
 
 /**
 * Trait to implement MigrationServiceInterface

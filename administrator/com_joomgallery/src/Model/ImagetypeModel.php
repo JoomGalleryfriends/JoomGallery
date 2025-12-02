@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\Registry\Registry;
-use \Joomla\Utilities\ArrayHelper;
 use \Joomla\CMS\Object\CMSObject;
+use \Joomla\Utilities\ArrayHelper;
 
 /**
  * Imagetype model.

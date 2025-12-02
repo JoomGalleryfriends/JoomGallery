@@ -14,7 +14,9 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Image;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomla\CMS\Language\Text;
 use \Joomla\Registry\Registry;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\Image\RawView as AdminRawView;
 

@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\Language\Text;
 use \Joomla\Database\DatabaseInterface;
 use \Joomla\CMS\Language\Multilanguage;
 use \Joomla\CMS\Component\ComponentHelper;
@@ -193,7 +194,7 @@ class JG3LegacyRouter implements RouterInterface
     {
       $segments[] = 'edit';
 
-      $dbquery = $this->db->getQuery(true)
+      $dbquery = $this->db->createQuery()
               ->select('alias')
               ->from(_JOOM_TABLE_IMAGES)
               ->where('id = '.(int) $query['id']);
@@ -214,7 +215,7 @@ class JG3LegacyRouter implements RouterInterface
       {
         $segments[] = 'editcategory';
 
-        $dbquery = $this->db->getQuery(true)
+        $dbquery = $this->db->createQuery()
                 ->select('alias')
                 ->from(_JOOM_TABLE_CATEGORIES)
                 ->where('cid = '.(int) $query['catid']);
@@ -335,7 +336,7 @@ class JG3LegacyRouter implements RouterInterface
 
       //if($config->get('jg_image_sef') == 2)
       //{
-        $dbquery = $this->db->getQuery(true)
+        $dbquery = $this->db->createQuery()
                 ->select('alias')
                 ->from(_JOOM_TABLE_IMAGES)
                 ->where('id = '.(int) $query['id']);
@@ -391,7 +392,7 @@ class JG3LegacyRouter implements RouterInterface
 
     if(isset($query['view']) and $query['view'] == 'category')
     {
-      $dbquery = $this->db->getQuery(true)
+      $dbquery = $this->db->createQuery()
               ->select('alias')
               ->from(_JOOM_TABLE_CATEGORIES)
               ->where('cid = '.(int) $query['catid']);
@@ -408,7 +409,7 @@ class JG3LegacyRouter implements RouterInterface
 
     if(isset($query['id']) && isset($query['view']) && $query['view'] == 'detail')
     {
-      $dbquery = $this->db->getQuery(true)
+      $dbquery = $this->db->createQuery()
               ->select('catid, alias')
               ->from(_JOOM_TABLE_IMAGES)
               ->where('id = '.(int) $query['id']);

@@ -82,7 +82,7 @@ interface UploaderInterface
   /**
    * Rollback an erroneous upload
    * 
-   * @param   CMSObject   $data_row     Image object containing at least catid and filename (default: false)
+   * @param   CMSObject|\stdClass   $data_row     Image object containing at least catid and filename (default: false)
    * 
    * @return  void
    * 

@@ -15,8 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
+use \Joomla\Database\DatabaseQuery;
+use \Joomla\Database\ParameterType;
 use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 
 /**
@@ -93,7 +94,7 @@ class ImagesModel extends JoomListModel
 	 *
 	 * @return void
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function populateState($ordering = 'a.id', $direction = 'ASC')
 	{
@@ -179,8 +180,8 @@ class ImagesModel extends JoomListModel
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return  DatabaseQuery
-	 *
+	 * @return  \Joomla\Database\QueryInterface
+   *
 	 * @since   4.0.0
 	 */
 	protected function getListQuery()
@@ -209,7 +210,7 @@ class ImagesModel extends JoomListModel
     }
 
     // With less than two tags, we dont need the AND logic
-    if(\count($tag) < 2)
+    if(!empty($tag) && \count($tag) < 2)
     {
       $logicAnd = false;
     }
@@ -518,7 +519,7 @@ class ImagesModel extends JoomListModel
     }
 
     // With less than two tags, we dont need the AND logic
-    if(\count($tag) < 2)
+    if(!empty($tag) && \count($tag) < 2)
     {
       $logicAnd = false;
     }

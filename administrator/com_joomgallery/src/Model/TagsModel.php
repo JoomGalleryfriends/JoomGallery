@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\Database\ParameterType;
 use \Joomla\Utilities\ArrayHelper;
+use \Joomla\Database\ParameterType;
 
 /**
  * Methods supporting a list of Tags records.

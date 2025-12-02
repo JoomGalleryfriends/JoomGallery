@@ -14,16 +14,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Toolbar\Toolbar;
+use \Joomla\CMS\Helper\MediaHelper;
 use \Joomla\CMS\Toolbar\ToolbarHelper;
+use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 
 /**
  * View class for a single Image.
@@ -311,7 +311,7 @@ class HtmlView extends JoomGalleryView
    *
    * On UploadMaxsize = 0 (from com_media) the php.ini limits are used
    *
-   * @since version 4.2
+   * @since 4.2
    */
   public function limitsPhpConfig(): void
   {

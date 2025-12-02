@@ -12,16 +12,16 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Language\Multilanguage;
-use Joomla\CMS\Button\FeaturedButton;
-use Joomla\CMS\Button\PublishedButton;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Session\Session;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Button\FeaturedButton;
+use \Joomla\CMS\Language\Multilanguage;
+use \Joomla\CMS\Button\PublishedButton;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();

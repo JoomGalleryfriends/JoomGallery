@@ -16,9 +16,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Form;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomla\Database\DatabaseInterface;
 use \Joomla\Database\DatabaseAwareTrait;
+use \Joomla\CMS\Form\FormFactoryInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Form\ConfigForm;
 
 /**

@@ -15,9 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\Controller\FormController;
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 
 /**
  * Category form controller class.
@@ -25,7 +26,7 @@ use \Joomla\CMS\MVC\Controller\FormController;
  * @package JoomGallery
  * @since   4.0.0
  */
-class CategoryformController extends FormController
+class CategoryformController extends JoomFormController
 {
   use RoutingTrait;
 
@@ -82,6 +83,8 @@ class CategoryformController extends FormController
 		// Check for request forgeries.
 		$this->checkToken();
 
+    $task = Factory::getApplication()->input->get('task', '', 'cmd');
+
 		// Get the user data.
 		$data = $this->input->post->get('jform', [], 'array');
 
@@ -96,7 +99,7 @@ class CategoryformController extends FormController
 		if(!$data)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend(),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend(),false));
 
 			return false;
 		}
@@ -105,7 +108,7 @@ class CategoryformController extends FormController
 		if(!$this->acl->checkACL('edit', 'category', $recordId))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($data->id),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($data->id),false));
 
 			return false;
 		}
@@ -174,7 +177,7 @@ class CategoryformController extends FormController
 
 			// Redirect to list screen.
 			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'warning');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($recordId), false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($recordId), false));
 
 			return false;
 		}
@@ -185,7 +188,7 @@ class CategoryformController extends FormController
 
 		// Redirect to the list screen.
 		$this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SAVE_SUCCESSFUL'));
-		$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($data->id),false));
+		$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($data->id),false));
 	}
 
 	/**
@@ -211,7 +214,7 @@ class CategoryformController extends FormController
 		{
 			// Check-in failed, go back to the record and display a notice.
 			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($recordId), false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($recordId), false));
 
 			return false;
 		}
@@ -221,7 +224,7 @@ class CategoryformController extends FormController
 		$this->app->setUserState('com_joomgallery.edit.category.data', null);
 
 		// Redirect to the list screen.
-		$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($recordId),false));
+		$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($recordId),false));
 	}
 
 	/**
@@ -229,7 +232,7 @@ class CategoryformController extends FormController
 	 *
 	 * @return  void
 	 *
-	 * @throws  Exception
+	 * @throws  \Exception
 	 *
 	 * @since   4.0.0
 	 */
@@ -256,7 +259,7 @@ class CategoryformController extends FormController
 		if(!$removeId)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend(),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend(),false));
 
 			return false;
 		}
@@ -265,7 +268,7 @@ class CategoryformController extends FormController
 		if(!$this->acl->checkACL('delete', 'category', $removeId))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($removeId),false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($removeId),false));
 
 			return false;
 		}
@@ -277,7 +280,7 @@ class CategoryformController extends FormController
 		if($model->delete($removeId) === false)
 		{
 			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_DELETE_FAILED', $model->getError()), 'error');
-			$this->app->redirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($removeId), false));
+			$this->app->redirect(Route::_($this->getReturnPage().$this->getItemAppend($removeId), false));
 
 			return false;
 		}
@@ -287,7 +290,7 @@ class CategoryformController extends FormController
 		{
 			// Check-in failed, go back to the record and display a notice.
 			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($removeId), false));
+			$this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($removeId), false));
 
 			return false;
 		}
@@ -296,7 +299,7 @@ class CategoryformController extends FormController
 		$this->app->setUserState('com_joomgallery.edit.category.data', null);
 
 		$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_DELETE_SUCCESSFUL'), 'success');
-		$this->app->redirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($removeId), false));
+		$this->app->redirect(Route::_($this->getReturnPage().$this->getItemAppend($removeId), false));
 	}
 
   /**
@@ -339,7 +342,7 @@ class CategoryformController extends FormController
 		if(!$id)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('categories').'&'.$this->getItemAppend($id),false));
+			$this->setRedirect(Route::_($this->getReturnPage('categories').$this->getItemAppend($id),false));
 
 			return false;
 		}
@@ -348,7 +351,7 @@ class CategoryformController extends FormController
 		if(!$this->acl->checkACL('editstate', 'category', $id))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('categories').'&'.$this->getItemAppend($id),false));
+			$this->setRedirect(Route::_($this->getReturnPage('categories').$this->getItemAppend($id),false));
 
 			return false;
 		}
@@ -361,7 +364,7 @@ class CategoryformController extends FormController
 		{
 			// Check-in failed, go back to the record and display a notice.
 			$this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('categories').'&'.$this->getItemAppend($id), false));
+			$this->setRedirect(Route::_($this->getReturnPage('categories').$this->getItemAppend($id), false));
 
 			return false;
 		}
@@ -372,7 +375,7 @@ class CategoryformController extends FormController
 
 		// Redirect to the list screen.
 		$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_CHECKIN_SUCCESSFUL'), 'success');
-		$this->app->redirect(Route::_($this->getReturnPage('categories').'&'.$this->getItemAppend($id), false));
+		$this->app->redirect(Route::_($this->getReturnPage('categories').$this->getItemAppend($id), false));
 	}
 
   /**
@@ -405,7 +408,7 @@ class CategoryformController extends FormController
 		if(!$id)
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('categories').'&'.$this->getItemAppend($id),false));
+			$this->setRedirect(Route::_($this->getReturnPage('categories').$this->getItemAppend($id),false));
 
 			return false;
 		}
@@ -414,7 +417,7 @@ class CategoryformController extends FormController
 		if(!$this->acl->checkACL('editstate', 'category', $id))
 		{
 			$this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('categories').'&'.$this->getItemAppend($id),false));
+			$this->setRedirect(Route::_($this->getReturnPage('categories').$this->getItemAppend($id),false));
 
 			return false;
 		}
@@ -434,14 +437,14 @@ class CategoryformController extends FormController
 		{
 			// Check-in failed, go back to the record and display a notice.
 			$this->setMessage(Text::sprintf('COM_JOOMGALLERY_ITEM_STATE_ERROR', $model->getError()), 'error');
-			$this->setRedirect(Route::_($this->getReturnPage('categories').'&'.$this->getItemAppend($id), false));
+			$this->setRedirect(Route::_($this->getReturnPage('categories').$this->getItemAppend($id), false));
 
 			return false;
 		}
 
     // Redirect to the list screen.
 		$this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_'.\strtoupper($task).'_SUCCESSFUL'), 'success');
-		$this->app->redirect(Route::_($this->getReturnPage('categories').'&'.$this->getItemAppend($id), false));
+		$this->app->redirect(Route::_($this->getReturnPage('categories').$this->getItemAppend($id), false));
   }
 
   /**

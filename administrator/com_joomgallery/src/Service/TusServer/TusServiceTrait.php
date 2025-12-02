@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
 
 /**
 * Trait to implement TusServerInterface
@@ -66,7 +66,12 @@ trait TusServiceTrait
     }
     if(empty($location))
     {
-      $location = Uri::root(true) . '/administrator/index.php?option=com_joomgallery&task=images.tusupload';
+      if (factory::getapplication()->isclient('site'))
+      {
+        $location = uri::root(true) . '/index.php?option=com_joomgallery&task=userupload.tusupload';
+	    } else {
+        $location = uri::root(true) . '/administrator/index.php?option=com_joomgallery&task=images.tusupload';
+      }
     }
 
     $this->tus = new Server($folder, $location, $debug);
