@@ -1,17 +1,27 @@
 <?php
-require_once('Indentation.php');
+require_once '../administrator/com_joomgallery/vendor/colinodell/indentation/src/Indentation.php';
 use ColinODell\Indentation\Indentation;
 
 // Setting
 //----------------------
 $indentSize = 2;
+$indentType = Indentation::TYPE_SPACE;
 $doFix = false;
+$details = false;
+$folders = ['administrator', 'site', 'plugins'];
+$exclude = ['.git', 'vendor', 'includes', 'node_modules', 'cache'];
 //----------------------
 
 // If script is called with "fix" argument → enable fixing
 if(isset($argv[1]) && strtolower($argv[1]) === 'fix')
 {
   $doFix = true;
+}
+
+// If script is called with "details" argument → enable printing
+if(isset($argv[2]) && strtolower($argv[2]) === 'details')
+{
+  $details = true;
 }
 
 /**
@@ -52,16 +62,34 @@ function stripHeader(string $content): string
 /**
  * Recursively yield all .php files in a directory.
  */
-function getPhpFilesRecursively(string $directory): Generator
+function getPhpFilesRecursively(string $directory, array $exclude = []): Generator
 {
-  $iterator = new RecursiveIteratorIterator(
-      new RecursiveDirectoryIterator(
-          $directory,
-          FilesystemIterator::SKIP_DOTS | FilesystemIterator::FOLLOW_SYMLINKS
-      )
+  $iterator = new RecursiveDirectoryIterator(
+    $directory,
+    FilesystemIterator::SKIP_DOTS | FilesystemIterator::FOLLOW_SYMLINKS
   );
 
-  foreach($iterator as $file)
+  $recursive = new RecursiveIteratorIterator(
+    new RecursiveCallbackFilterIterator($iterator, function ($current, $key, $iterator) use ($exclude)
+    {
+      // Exclude folder names (case-insensitive)
+      if($current->isDir())
+      {
+        $name = strtolower(basename($current));
+
+        if(in_array($name, $exclude))
+        {
+          return false; // do not recurse into this directory
+        }
+      }
+
+      return true; // keep everything else
+    }),
+
+    RecursiveIteratorIterator::SELF_FIRST
+  );
+
+  foreach($recursive as $file)
   {
     if($file->isFile() && strtolower($file->getExtension()) === 'php')
     {
@@ -70,93 +98,141 @@ function getPhpFilesRecursively(string $directory): Generator
   }
 }
 
+echo PHP_EOL;
 echo "Mode: " . ($doFix ? "FIXING files" : "ANALYZE only (no changes written)") . PHP_EOL;
 echo PHP_EOL;
 
-$baseDir = __DIR__;
-foreach(getPhpFilesRecursively($baseDir) as $file)
+$rootDir = dirname(__DIR__);
+$stats = ['total' => 0, 'tobeFixed' => 0, 'good' => 0, 'successful' => 0, 'error' => 0];
+foreach($folders as $folder)
 {
-  // Skip this file to avoid reloading itself
-  if($file === __FILE__ || \basename($file) === 'Indentation.php')
+  $baseDir = $rootDir . DIRECTORY_SEPARATOR . $folder;
+
+  foreach(getPhpFilesRecursively($baseDir, $exclude) as $file)
   {
-    continue;
-  }
-
-  // Read file
-  $content = file_get_contents($file);
-  if($content === false)
-  {
-    echo "Cannot read file: " . basename($file) . PHP_EOL;
-    continue;
-    echo PHP_EOL;
-  }
-
-  // Strip file headers
-  $content_det = stripHeader($content);
-  if($content_det === '')
-  {
-    $content_det = $content;
-  }
-
-  // Detect tabs
-  $hasTabs = \strpos($content_det, "\t") !== false;
-
-  // Detect indentation
-  $indent       = Indentation::detect($content_det);
-  $currentSize  = $indent->getAmount();
-  $currentType  = $indent->getType();
-  $needReIndent = ($currentType !== Indentation::TYPE_SPACE) || ($currentSize > 1 && $currentSize !== $indentSize);
-
-  $hasTabsString = $hasTabs ? 'true' : 'false';
-  echo "File (" . basename($file) . "): tabs: $hasTabsString, type: $currentType, size: $currentSize" . PHP_EOL;
-
-  if(!$doFix || (!$hasTabs && !$needReIndent))
-  {
-    // Already OK, nothing to fix
-    echo 'nothing to do'. PHP_EOL;
-    echo PHP_EOL;
-    continue;
-  }
-
-  if($doFix && $hasTabs)
-  {
-    echo 'normalize Tabs...'. PHP_EOL;
-
-    // Normalize tabs to spaces in the whole file
-    $content = \str_replace("\t", "  ", $content);
-
-    // Normalize mixed indents
-    $content = \preg_replace_callback('/^\s+/m', function($m) {
-        return \str_replace("\t", "  ", $m[0]);
-    }, $content);
-  }
-
-
-  if($doFix && $needReIndent)
-  {
-    echo 'fix indentation...'. PHP_EOL;
-
-    // Fix indention
-    $newIndent  = new Indentation($indentSize, Indentation::TYPE_SPACE);
-    $newContent = Indentation::change($content, $newIndent);
-  }
-  else
-  {
-    $newContent = $content;
-  }
-
-  // Write directly
-  try
-  {
-    if($doFix)
+    // Skip this file to avoid reloading itself
+    if($file === __FILE__ || \basename($file) === 'Indentation.php')
     {
-      \file_put_contents($file, $newContent);
+      continue;
     }
-  }
-  catch(\Exception $e)
-  {
-    echo "ERROR: Cannot write file " . basename($file) . PHP_EOL;
-  }
 
-  echo PHP_EOL;
+    $stats['total'] = $stats['total'] + 1;
+
+    // Read file
+    $content = file_get_contents($file);
+    if($content === false)
+    {
+      echo "Cannot read file: " . basename($file) . PHP_EOL . PHP_EOL;
+      continue;
+    }
+
+    // Strip file headers
+    $content_det = stripHeader($content);
+    if($content_det === '')
+    {
+      $content_det = $content;
+    }
+
+    // Detect tabs
+    $hasTabs = \strpos($content_det, "\t") !== false;
+
+    // Detect indentation
+    $indent       = Indentation::detect($content_det);
+    $currentSize  = $indent->getAmount();
+    $currentType  = $indent->getType();
+    $needReIndent = ($currentType !== Indentation::TYPE_UNKNOWN && $currentType !== $indentType) || ($currentSize > 1 && $currentSize !== $indentSize);
+
+    if($details || $hasTabs || $needReIndent)
+    {
+      $hasTabsString = $hasTabs ? 'true' : 'false';
+      echo "File (" . basename($file) . "): tabs: $hasTabsString, type: $currentType, size: $currentSize" . PHP_EOL;
+    }
+
+    if($hasTabs || $needReIndent)
+    {
+      $stats['tobeFixed'] = $stats['tobeFixed'] + 1;
+    }
+    else
+    {
+      $stats['good'] = $stats['good'] + 1;
+    }
+
+    if(!$doFix || (!$hasTabs && !$needReIndent))
+    {
+      // Already OK, nothing to fix
+      if($details)
+      {
+        echo 'nothing to do'. PHP_EOL . PHP_EOL;
+      }
+      continue;
+    }
+
+    if($doFix && $hasTabs)
+    {
+      if($details)
+      {
+        echo 'normalize Tabs...'. PHP_EOL;
+      }
+
+      // Normalize tabs to spaces in the whole file
+      $content = \str_replace("\t", "  ", $content);
+
+      // Normalize mixed indents
+      $content = \preg_replace_callback('/^\s+/m', function($m) {
+          return \str_replace("\t", "  ", $m[0]);
+      }, $content);
+    }
+
+
+    if($doFix && $needReIndent)
+    {
+      if($details)
+      {
+        echo 'fix indentation...'. PHP_EOL;
+      }
+
+      // Fix indention
+      $newIndent  = new Indentation($indentSize, $indentType);
+      $newContent = Indentation::change($content, $newIndent);
+    }
+    else
+    {
+      $newContent = $content;
+    }
+
+    // Write directly
+    try
+    {
+      if($doFix)
+      {
+        \file_put_contents($file, $newContent);
+        $stats['successful'] = $stats['successful'] + 1;
+      }
+    }
+    catch(\Exception $e)
+    {
+      echo "ERROR: Cannot write file " . basename($file) . PHP_EOL;
+      $stats['error'] = $stats['error'] + 1;
+    }
+
+    echo PHP_EOL;
+  }
 }
+
+echo PHP_EOL;
+echo 'STATISTICS' . PHP_EOL;
+echo '-----------------------' . PHP_EOL;
+echo 'Total files: ' . $stats['total'] . PHP_EOL;
+echo 'Nothing to fix: ' . $stats['good'] . PHP_EOL;
+echo 'Needs fixing: ' . $stats['tobeFixed'] . PHP_EOL;
+if($stats['tobeFixed'] > 0)
+{
+  echo 'Successfully fixed: ' . $stats['successful'] . PHP_EOL;
+
+  if($stats['error'] > 0)
+  {
+    echo 'Error during fixing: ' . $stats['error'] . PHP_EOL;
+  }
+}
+echo '-----------------------' . PHP_EOL;
+echo PHP_EOL;
