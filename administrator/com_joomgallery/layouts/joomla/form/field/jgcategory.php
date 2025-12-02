@@ -63,7 +63,7 @@ if(empty($value))
 
 if($required)
 {
-	$uri->setVar('required', 1);
+  $uri->setVar('required', 1);
 }
 
 // Apply filter in categories list
@@ -79,7 +79,7 @@ $uri->setVar('filter[exclude]', (isset($excluded)) ? (string) $excluded : '');
 // Invalidate the input value if no image selected
 if($this->escape($categoryName) === Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'))
 {
-	$categoryName = '';
+  $categoryName = '';
 }
 
 $inputAttributes = [
@@ -88,68 +88,68 @@ $inputAttributes = [
 
 if($class)
 {
-	$inputAttributes['class'] .= ' ' . $class;
+  $inputAttributes['class'] .= ' ' . $class;
 }
 
 if($size)
 {
-	$inputAttributes['size'] = (int) $size;
+  $inputAttributes['size'] = (int) $size;
 }
 
 if($required)
 {
-	$inputAttributes['required'] = 'required';
+  $inputAttributes['required'] = 'required';
 }
 
 if(!$readonly)
 {
-	$inputAttributes['placeholder'] = Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY');
+  $inputAttributes['placeholder'] = Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY');
 }
 
 if(!$readonly)
 {
-	$modalHTML = HTMLHelper::_(
-		'bootstrap.renderModal',
-		'categoryModal_' . $id,
-		[
-		  'url'         => $uri,
-		  'title'       => Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'),
-		  'closeButton' => true,
-		  'height'      => '100%',
-		  'width'       => '100%',
-		  'modalWidth'  => 80,
-		  'bodyHeight'  => 60,
-		  'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCANCEL') . '</button>',
-		]
-	);
+  $modalHTML = HTMLHelper::_(
+    'bootstrap.renderModal',
+    'categoryModal_' . $id,
+    [
+      'url'         => $uri,
+      'title'       => Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'),
+      'closeButton' => true,
+      'height'      => '100%',
+      'width'       => '100%',
+      'modalWidth'  => 80,
+      'bodyHeight'  => 60,
+      'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCANCEL') . '</button>',
+    ]
+  );
 
-	Factory::getApplication()->getDocument()->getWebAssetManager()
-		->useScript('com_joomgallery.field-category');
+  Factory::getApplication()->getDocument()->getWebAssetManager()
+    ->useScript('com_joomgallery.field-category');
 }
 ?>
 <?php // Create a dummy text field with the category name. ?>
 <joomla-field-category class="field-category-wrapper"
-		url="<?php echo (string) $uri; ?>"
-		modal=".modal"
-		modal-width="100%"
-		modal-height="400px"
-		input=".field-category-input"
-		input-name=".field-category-input-name"
-		button-select=".button-select">
-	<div class="input-group">
-		<input <?php echo ArrayHelper::toString($inputAttributes), $dataAttribute; ?> readonly>
-		<?php if (!$readonly) : ?>
-			<button type="button" class="btn btn-primary button-select" title="<?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'); ?>">
-				<span class="icon-folder icon-white" aria-hidden="true"></span>
-				<span class="visually-hidden"><?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'); ?></span>
-			</button>
-		<?php endif; ?>
-	</div>
-	<?php // Create the real field, hidden, that stored the category id. ?>
-	<?php if (!$readonly) : ?>
-		<input type="hidden" id="<?php echo $id; ?>_id" name="<?php echo $name; ?>" value="<?php echo $this->escape($value); ?>"
-			class="field-category-input <?php echo $class ? (string) $class : ''?>"
-			data-onchange="<?php echo $this->escape($onchange); ?>">
-		<?php echo $modalHTML; ?>
-	<?php endif; ?>
+    url="<?php echo (string) $uri; ?>"
+    modal=".modal"
+    modal-width="100%"
+    modal-height="400px"
+    input=".field-category-input"
+    input-name=".field-category-input-name"
+    button-select=".button-select">
+  <div class="input-group">
+    <input <?php echo ArrayHelper::toString($inputAttributes), $dataAttribute; ?> readonly>
+    <?php if (!$readonly) : ?>
+      <button type="button" class="btn btn-primary button-select" title="<?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'); ?>">
+        <span class="icon-folder icon-white" aria-hidden="true"></span>
+        <span class="visually-hidden"><?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'); ?></span>
+      </button>
+    <?php endif; ?>
+  </div>
+  <?php // Create the real field, hidden, that stored the category id. ?>
+  <?php if (!$readonly) : ?>
+    <input type="hidden" id="<?php echo $id; ?>_id" name="<?php echo $name; ?>" value="<?php echo $this->escape($value); ?>"
+      class="field-category-input <?php echo $class ? (string) $class : ''?>"
+      data-onchange="<?php echo $this->escape($onchange); ?>">
+    <?php echo $modalHTML; ?>
+  <?php endif; ?>
 </joomla-field-category>

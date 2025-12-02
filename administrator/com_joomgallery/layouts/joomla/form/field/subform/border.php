@@ -38,6 +38,6 @@ $form = $forms[0];
 
 <div class="subform-repeatable-group">
 <?php foreach ($form->getGroup('') as $field) : ?>
-	<?php echo $field->renderField(); ?>
+  <?php echo $field->renderField(); ?>
 <?php endforeach; ?>
 </div>

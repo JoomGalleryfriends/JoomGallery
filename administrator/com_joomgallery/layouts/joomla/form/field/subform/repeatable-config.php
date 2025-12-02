@@ -39,11 +39,11 @@ extract($displayData);
 
 if($multiple)
 {
-	// Add script
-	Factory::getApplication()
-		->getDocument()
-		->getWebAssetManager()
-		->useScript('webcomponent.field-subform');
+  // Add script
+  Factory::getApplication()
+    ->getDocument()
+    ->getWebAssetManager()
+    ->useScript('webcomponent.field-subform');
 }
 
 // Get input variables
@@ -103,44 +103,44 @@ Factory::getApplication()
 ?>
 
 <div class="subform-repeatable-wrapper subform-table-layout subform-table-sublayout-<?php echo $sublayout; ?>">
-	<joomla-field-subform class="subform-repeatable<?php echo $class; ?>" name="<?php echo $name; ?>"
-		button-add=".group-add" button-remove=".group-remove" button-move="<?php echo empty($buttons['move']) ? '' : '.group-move' ?>"
-		repeatable-element=".subform-repeatable-group"
-		rows-container="tbody.subform-repeatable-container" minimum="<?php echo $min; ?>" maximum="<?php echo $max; ?>">
-		<div class="table-responsive">
-			<table class="table" id="subfieldList_<?php echo $fieldId; ?>">
-				<caption class="visually-hidden">
-					<?php echo Text::_('JGLOBAL_REPEATABLE_FIELDS_TABLE_CAPTION'); ?>
-				</caption>
-				<thead>
-					<tr>
-						<?php echo $table_head; ?>
-						<?php if (!empty($buttons)) : ?>
-						<td style="width:8%;">
-							<?php if (!empty($buttons['add'])) : ?>
-								<div class="btn-group">
-									<button type="button" class="group-add btn btn-sm btn-success" aria-label="<?php echo Text::_('JGLOBAL_FIELD_ADD'); ?>">
-										<span class="icon-plus" aria-hidden="true"></span>
-									</button>
-								</div>
-							<?php endif; ?>
-						</td>
-						<?php endif; ?>
-					</tr>
-				</thead>
-				<tbody class="subform-repeatable-container">
-				<?php
-				foreach ($forms as $k => $form) :
+  <joomla-field-subform class="subform-repeatable<?php echo $class; ?>" name="<?php echo $name; ?>"
+    button-add=".group-add" button-remove=".group-remove" button-move="<?php echo empty($buttons['move']) ? '' : '.group-move' ?>"
+    repeatable-element=".subform-repeatable-group"
+    rows-container="tbody.subform-repeatable-container" minimum="<?php echo $min; ?>" maximum="<?php echo $max; ?>">
+    <div class="table-responsive">
+      <table class="table" id="subfieldList_<?php echo $fieldId; ?>">
+        <caption class="visually-hidden">
+          <?php echo Text::_('JGLOBAL_REPEATABLE_FIELDS_TABLE_CAPTION'); ?>
+        </caption>
+        <thead>
+          <tr>
+            <?php echo $table_head; ?>
+            <?php if (!empty($buttons)) : ?>
+            <td style="width:8%;">
+              <?php if (!empty($buttons['add'])) : ?>
+                <div class="btn-group">
+                  <button type="button" class="group-add btn btn-sm btn-success" aria-label="<?php echo Text::_('JGLOBAL_FIELD_ADD'); ?>">
+                    <span class="icon-plus" aria-hidden="true"></span>
+                  </button>
+                </div>
+              <?php endif; ?>
+            </td>
+            <?php endif; ?>
+          </tr>
+        </thead>
+        <tbody class="subform-repeatable-container">
+        <?php
+        foreach ($forms as $k => $form) :
             echo $this->sublayout($section, ['label' => $label, 'form' => $form, 'basegroup' => $fieldname, 'group' => $fieldname . $k, 'buttons' => $buttons, 'is_global_config' => $is_global_config]);
-				endforeach;
-				?>
-				</tbody>
-			</table>
-		</div>
-		<?php if ($multiple) : ?>
-		<template class="subform-repeatable-template-section hidden">
-			<?php echo trim($this->sublayout($section, ['label' => $label, 'form' => $tmpl, 'basegroup' => $fieldname, 'group' => $fieldname . 'X', 'buttons' => $buttons, 'is_global_config' => $is_global_config])); ?>
-		</template>
-		<?php endif; ?>
-	</joomla-field-subform>
+        endforeach;
+        ?>
+        </tbody>
+      </table>
+    </div>
+    <?php if ($multiple) : ?>
+    <template class="subform-repeatable-template-section hidden">
+      <?php echo trim($this->sublayout($section, ['label' => $label, 'form' => $tmpl, 'basegroup' => $fieldname, 'group' => $fieldname . 'X', 'buttons' => $buttons, 'is_global_config' => $is_global_config])); ?>
+    </template>
+    <?php endif; ?>
+  </joomla-field-subform>
 </div>

@@ -63,7 +63,7 @@ foreach ($form->getGroup('') as $k => $field)
 ?>
 
 <tr class="subform-repeatable-group <?php echo $basegroup.$imagetype;?>" data-base-name="<?php echo $basegroup; ?>" data-group="<?php echo $group; ?>">
-	<?php
+  <?php
   $i = 0;
 
   foreach ($form->getGroup('') as $k => $field) : ?>
@@ -82,7 +82,7 @@ foreach ($form->getGroup('') as $k => $field)
         <?php echo $field->renderField(['hiddenLabel' => true, 'hiddenDescription' => true, 'sensitive' => $sensitive]).' '.$sensitiveLbl; ?>
       </td>
     <?php endif; ?>
-	<?php
+  <?php
   $i++;
   endforeach; ?>
   <td data-column="<?php echo Text::_('COM_JOOMGALLERY_SETTINGS_POPUP'); ?>">
@@ -101,8 +101,8 @@ foreach ($form->getGroup('') as $k => $field)
       echo LayoutHelper::render('libraries.html.bootstrap.modal.main', $modalData);
     ?>
   </td>
-	<?php if (!empty($buttons)) : ?>
-	<td>
+  <?php if (!empty($buttons)) : ?>
+  <td>
     <?php if ($group != 'jg_staticprocessing0' && $group != 'jg_staticprocessing1' && $group != 'jg_staticprocessing2') : ?>
       <div class="btn-group">
         <?php if (!empty($buttons['add'])) : ?>
@@ -122,6 +122,6 @@ foreach ($form->getGroup('') as $k => $field)
         <?php endif; ?>
       </div>
     <?php endif; ?>
-	</td>
-	<?php endif; ?>
+  </td>
+  <?php endif; ?>
 </tr>

@@ -42,7 +42,7 @@ $form = $forms[0];
 ?>
 
 <div class="subform-wrapper exif-form">
-    <?php foreach ($form->getGroup('') as $field) : ?>
-        <?php echo $field->renderField(); ?>
-    <?php endforeach; ?>
+  <?php foreach ($form->getGroup('') as $field) : ?>
+    <?php echo $field->renderField(); ?>
+  <?php endforeach; ?>
 </div>
