@@ -205,7 +205,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     }
 
     // Return the result
-		$this->setResult($event, true);
+    $this->setResult($event, true);
   }
 
   /**
@@ -275,7 +275,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     if(!$ownerField = $this->guessType($typeAlias))
     {
       // We could not get the owner field. It probably does not exist.
-		  $this->setResult($event, true);
+      $this->setResult($event, true);
 
       return;
     }
@@ -287,7 +287,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     }
 
     // Return the result
-		$this->setResult($event, true);
+    $this->setResult($event, true);
   }
 
   /**
@@ -467,16 +467,16 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    */
   private function setResult(Event $event, $value): void
   {
-		if($event instanceof ResultAwareInterface)
-		{
-			$event->addResult($value);
+    if($event instanceof ResultAwareInterface)
+    {
+      $event->addResult($value);
 
-			return;
-		}
+      return;
+    }
 
-		$result   = $event->getArgument('result', []) ?: [];
-		$result   = \is_array($result) ? $result : [];
-		$result[] = $value;
-		$event->setArgument('result', $result);
-	}
+    $result   = $event->getArgument('result', []) ?: [];
+    $result   = \is_array($result) ? $result : [];
+    $result[] = $value;
+    $event->setArgument('result', $result);
+  }
 }

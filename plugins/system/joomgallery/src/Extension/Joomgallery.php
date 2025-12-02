@@ -205,7 +205,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     }
 
     // Return the result
-		$this->setResult($event, true, false);
+    $this->setResult($event, true, false);
   }
 
   /**
@@ -565,18 +565,18 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
    */
   private function setResult(Event $event, $value, $array = true): void
   {
-		if($event instanceof ResultAwareInterface)
-		{
-			$event->addResult($value);
+    if($event instanceof ResultAwareInterface)
+    {
+      $event->addResult($value);
 
-			return;
-		}
+      return;
+    }
 
     if($array)
     {
       $result = $event->getArgument('result', []) ?: [];
-		  $result   = \is_array($result) ? $result : [];
-		  $result[] = $value;
+      $result   = \is_array($result) ? $result : [];
+      $result[] = $value;
     }
     else
     {
@@ -584,8 +584,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       $result = ($result == false) ? false : $value;
     }
 
-		$event->setArgument('result', $result);
-	}
+    $event->setArgument('result', $result);
+  }
 
   /**
    * Returns the plugin error
@@ -599,15 +599,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
    */
   private function setError(Event $event, $message): void
   {
-		if($event instanceof EventInterface)
-		{
+    if($event instanceof EventInterface)
+    {
 
       $event->setArgument('error', $message);
       $event->setArgument('errorMessage', $message);
 
-			return;
-		}
-	}
+      return;
+    }
+  }
 
   /**
    * Delete user fields in DB
