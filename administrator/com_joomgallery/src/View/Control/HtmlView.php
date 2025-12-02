@@ -94,8 +94,8 @@ class HtmlView extends JoomGalleryView
     $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=categories" class="button-folder-open btn btn-primary"><span class="icon-folder-open" title="'.Text::_('JCATEGORIES').'"></span> '.Text::_('JCATEGORIES').'</a></joomla-toolbar-button>';
     $toolbar->appendButton('Custom', $html);
 
-    // Multiple upload button
-    $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=image&amp;layout=upload" class="btn btn-primary"><span class="icon-upload" title="'.Text::_('Upload').'"></span> '.Text::_('Upload').'</a></joomla-toolbar-button>';
+    // Multiple add/upload button
+    $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=image&amp;layout=upload" class="btn btn-primary"><span class="icon-upload" title="'.Text::_('COM_JOOMGALLERY_UPLOAD').'"></span> '.Text::_('COM_JOOMGALLERY_UPLOAD').'</a></joomla-toolbar-button>';
     $toolbar->appendButton('Custom', $html);
 
     // Images button
