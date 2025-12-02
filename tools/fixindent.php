@@ -2,6 +2,18 @@
 require_once('Indentation.php');
 use ColinODell\Indentation\Indentation;
 
+// Setting
+//----------------------
+$indentSize = 2;
+$doFix = false;
+//----------------------
+
+// If script is called with "fix" argument → enable fixing
+if(isset($argv[1]) && strtolower($argv[1]) === 'fix')
+{
+  $doFix = true;
+}
+
 /**
  * Remove everything before the first class/interface/trait/enum
  * including docblocks, comments, attributes, and blank lines.
@@ -37,15 +49,32 @@ function stripHeader(string $content): string
   return '';
 }
 
-$dir = __DIR__;
-// Find all .php files (except this file, optional)
-$files = \glob($dir . DIRECTORY_SEPARATOR . '*.php');
+/**
+ * Recursively yield all .php files in a directory.
+ */
+function getPhpFilesRecursively(string $directory): Generator
+{
+  $iterator = new RecursiveIteratorIterator(
+      new RecursiveDirectoryIterator(
+          $directory,
+          FilesystemIterator::SKIP_DOTS | FilesystemIterator::FOLLOW_SYMLINKS
+      )
+  );
 
-// Setting
-$indentSize = 2;
-$doFix = false;
+  foreach($iterator as $file)
+  {
+    if($file->isFile() && strtolower($file->getExtension()) === 'php')
+    {
+      yield $file->getPathname();
+    }
+  }
+}
 
-foreach($files as $file)
+echo "Mode: " . ($doFix ? "FIXING files" : "ANALYZE only (no changes written)") . PHP_EOL;
+echo PHP_EOL;
+
+$baseDir = __DIR__;
+foreach(getPhpFilesRecursively($baseDir) as $file)
 {
   // Skip this file to avoid reloading itself
   if($file === __FILE__ || \basename($file) === 'Indentation.php')
@@ -53,15 +82,16 @@ foreach($files as $file)
     continue;
   }
 
-  // Check if file exists
-  if(!\is_file($file))
+  // Read file
+  $content = file_get_contents($file);
+  if($content === false)
   {
-    echo 'File ' . basename($file) . ' not found.'. PHP_EOL;
+    echo "Cannot read file: " . basename($file) . PHP_EOL;
     continue;
+    echo PHP_EOL;
   }
 
-  // Read file
-  $content = \file_get_contents($file);
+  // Strip file headers
   $content_det = stripHeader($content);
   if($content_det === '')
   {
@@ -76,11 +106,15 @@ foreach($files as $file)
   $currentSize  = $indent->getAmount();
   $currentType  = $indent->getType();
   $needReIndent = ($currentType !== Indentation::TYPE_SPACE) || ($currentSize > 1 && $currentSize !== $indentSize);
-  echo 'File (' . basename($file) . '): hasTabs:' . $hasTabs . ', type:' . $currentType . ', #:' . $currentSize. PHP_EOL;
+
+  $hasTabsString = $hasTabs ? 'true' : 'false';
+  echo "File (" . basename($file) . "): tabs: $hasTabsString, type: $currentType, size: $currentSize" . PHP_EOL;
 
   if(!$doFix || (!$hasTabs && !$needReIndent))
   {
     // Already OK, nothing to fix
+    echo 'nothing to do'. PHP_EOL;
+    echo PHP_EOL;
     continue;
   }
 
@@ -103,7 +137,7 @@ foreach($files as $file)
     echo 'fix indentation...'. PHP_EOL;
 
     // Fix indention
-    $newIndent  = new Indentation(2, Indentation::TYPE_SPACE);
+    $newIndent  = new Indentation($indentSize, Indentation::TYPE_SPACE);
     $newContent = Indentation::change($content, $newIndent);
   }
   else
@@ -121,7 +155,7 @@ foreach($files as $file)
   }
   catch(\Exception $e)
   {
-    echo 'File ' . basename($file) . ' can not be written.'. PHP_EOL;
+    echo "ERROR: Cannot write file " . basename($file) . PHP_EOL;
   }
 
   echo PHP_EOL;
