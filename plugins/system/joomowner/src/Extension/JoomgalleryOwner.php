@@ -1,31 +1,32 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @subpackage plg_privacyjoomgalleryimages                                           **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
 namespace Joomgallery\Plugin\System\Joomowner\Extension;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\Event\DispatcherInterface;
-use Joomla\Event\Event;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\User\User;
-use Joomla\Event\Priority;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\Event\SubscriberInterface;
-use Joomla\CMS\User\UserFactoryInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\User\User;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Event\DispatcherInterface;
+use Joomla\Event\Event;
+use Joomla\Event\Priority;
+use Joomla\Event\SubscriberInterface;
 use Joomla\Registry\Registry;
 
 /**
@@ -79,14 +80,14 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    * 
    * @since   4.0.0
    */
-  protected $tables = array('category'   => array('pl_name' => 'categories'),
-                            'collection' => array('pl_name' => 'collections'),
-                            'comment'    => array('pl_name' => 'comments'),
-                            'config'     => array('pl_name' => 'configs'),
-                            'image'      => array('pl_name' => 'images'),
-                            'tag'        => array('pl_name' => 'tags'),
-                            'user'       => array('pl_name' => 'users')
-                          );
+  protected $tables = ['category'   => ['pl_name' => 'categories'],
+    'collection' => ['pl_name' => 'collections'],
+    'comment'    => ['pl_name' => 'comments'],
+    'config'     => ['pl_name' => 'configs'],
+    'image'      => ['pl_name' => 'images'],
+    'tag'        => ['pl_name' => 'tags'],
+    'user'       => ['pl_name' => 'users'],
+  ];
 
   /**
    * Constructor
@@ -119,18 +120,19 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
         // The constructor could be called from within an installer script
         // Make sure missing namespacing does not mess up installation process
         $helperClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Helper\\JoomHelper';
-        if(!\class_exists($helperClass))
+
+        if(!class_exists($helperClass))
         {
           $helper_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Helper'.DIRECTORY_SEPARATOR.'JoomHelper.php';
           require_once $helper_path;
         }
 
-        $this->tables[$name] = array( 'sing_name' => $name,
-                                      'pl_name'   => $value['pl_name'],
-                                      'tablename' => JoomHelper::getTableName($name),
-                                      'pk'        => $pkname,
-                                      'owner'     => $fieldname
-                                    );
+        $this->tables[$name] = ['sing_name' => $name,
+          'pl_name'   => $value['pl_name'],
+          'tablename' => JoomHelper::getTableName($name),
+          'pk'        => $pkname,
+          'owner'     => $fieldname,
+        ];
       }
     }
   }
@@ -152,10 +154,10 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
         'onUserBeforeDelete'    => ['onUserBeforeDelete', Priority::NORMAL],
       ];
     }
-    else
-    {
-      return array();
-    }    
+
+
+      return [];
+
   }
 
   /**
@@ -173,7 +175,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     // J4x and J5x (5x: $context = getContext (); $table = $event->getArgument ('subject');
     [$context, $table] = array_values($event->getArguments());
 
-    if(\strpos($context, 'com_joomgallery') !== 0)
+    if(strpos($context, 'com_joomgallery') !== 0)
     {
       // Do nothing if we are not handling joomgallery content
       $this->setResult($event, true);
@@ -187,6 +189,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
     // Guess the type of content
     $typeAlias = isset($table->typeAlias) ? $table->typeAlias : $context;
+
     if(!$ownerField = $this->guessType($typeAlias))
     {
       // We couldn't guess the type of content we are dealing with
@@ -194,7 +197,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
       return;
     }
-    
+
     if(isset($table->{$ownerField}) && !$this->isUserExists($table->{$ownerField}))
     {
       // Provided user does not exist. Use fallback user instead.
@@ -202,7 +205,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     }
 
     // Return the result
-		$this->setResult($event, true);
+        $this->setResult($event, true);
   }
 
   /**
@@ -219,7 +222,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     [$context, $table, $isNew, $data] = array_values($event->getArguments());
 
     // fast exit: expect context string as 'com_plugins.plugin' or containing 'com_joomgallery'
-    if($context != 'com_plugins.plugin' && \strpos($context, 'com_joomgallery') === false)
+    if($context != 'com_plugins.plugin' && strpos($context, 'com_joomgallery') === false)
     {
       return;
     }
@@ -252,13 +255,13 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
       if(!empty($userIdToChangeManually))
       {
         $this->params = $newParams;
-        $user = array('id' => $userIdToChangeManually);
+        $user = ['id' => $userIdToChangeManually];
 
         $this->changeUser($user);
       }
     }
 
-    if(\strpos($context, 'com_joomgallery') !== 0)
+    if(strpos($context, 'com_joomgallery') !== 0)
     {
       // Do nothing if we are not handling joomgallery content
       $this->setResult($event, true);
@@ -268,10 +271,11 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
     // Get the owner field
     $typeAlias = isset($table->typeAlias) ? $table->typeAlias : $context;
+
     if(!$ownerField = $this->guessType($typeAlias))
     {
       // We could not get the owner field. It probably does not exist.
-		  $this->setResult($event, true);
+          $this->setResult($event, true);
 
       return;
     }
@@ -283,7 +287,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     }
 
     // Return the result
-		$this->setResult($event, true);
+        $this->setResult($event, true);
   }
 
   /**
@@ -311,7 +315,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     {
       $this->app->enqueueMessage(Text::_('PLG_SYSTEM_JOOMOWNER_ERROR_FALLBACK_USER_CONNECTED_MSG'), 'error');
 
-      $url = Uri::getInstance()->toString(array('path', 'query', 'fragment'));
+      $url = Uri::getInstance()->toString(['path', 'query', 'fragment']);
       $this->app->redirect($url, 500);
     }
 
@@ -319,7 +323,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
     {
       $this->app->enqueueMessage(Text::_('PLG_SYSTEM_JOOMOWNER_ERROR_USER_NOT_DELETED_MSG'), 'error');
 
-      $url = Uri::getInstance()->toString(array('path', 'query', 'fragment'));
+      $url = Uri::getInstance()->toString(['path', 'query', 'fragment']);
       $this->app->redirect($url, 500);
     }
   }
@@ -359,7 +363,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
         if(!empty($selectResult))
         {
-          $elementList = \implode(', ', $selectResult);
+          $elementList = implode(', ', $selectResult);
           $tname       = \count($selectResult) > 1 ? $table['pl_name'] : $table['sing_name'];
 
           $this->db->setQuery($updateQuery)->execute();
@@ -408,10 +412,10 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
       $query->select('extension_id')
             ->from('#__extensions')
-            ->where( array( 'type LIKE ' . $this->db->quote('component'),
-                            'element LIKE ' . $this->db->quote('com_joomgallery')
-                          ));
-        
+            ->where( ['type LIKE ' . $this->db->quote('component'),
+              'element LIKE ' . $this->db->quote('com_joomgallery'),
+            ]);
+
       $this->db->setQuery($query);
 
       if(!$res = $this->db->loadResult())
@@ -437,14 +441,14 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    */
   protected function guessType(string $string)
   {
-    $pieces = \explode('.', $string);
+    $pieces = explode('.', $string);
 
     if(\count($pieces) > 1)
     {
-      if(\key_exists($pieces[1], $this->tables))
+      if(key_exists($pieces[1], $this->tables))
       {
         return $this->tables[$pieces[1]]['owner'];
-      }      
+      }
     }
 
     return false;
@@ -462,17 +466,17 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    * @since   4.0.0
    */
   private function setResult(Event $event, $value): void
-	{
-		if($event instanceof ResultAwareInterface)
     {
-			$event->addResult($value);
-			
-			return;
-		}
+        if($event instanceof ResultAwareInterface)
+    {
+            $event->addResult($value);
 
-		$result   = $event->getArgument('result', []) ?: [];
-		$result   = \is_array($result) ? $result : [];
-		$result[] = $value;
-		$event->setArgument('result', $result);
-	}
+            return;
+        }
+
+        $result   = $event->getArgument('result', []) ?: [];
+        $result   = \is_array($result) ? $result : [];
+        $result[] = $value;
+        $event->setArgument('result', $result);
+    }
 }

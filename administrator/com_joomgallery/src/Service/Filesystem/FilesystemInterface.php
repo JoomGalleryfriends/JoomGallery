@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
-* Filesystem service interface
-*
-* @since  4.0.0
-*/
+ * Filesystem service interface
+ *
+ * @since  4.0.0
+ */
 interface FilesystemInterface
 {
   /**
@@ -29,7 +30,7 @@ interface FilesystemInterface
    * @return  string  The cleaned path
    *
    * @since   4.0.0
-  */
+   */
   public function cleanPath(string $path, string $ds=\DIRECTORY_SEPARATOR): string;
 
   /**
@@ -44,7 +45,7 @@ interface FilesystemInterface
    * @return  mixed     cleaned name on success, false otherwise
    *
    * @since   4.0.0
-  */
+   */
   public function cleanFilename(string $file, int $with_ext=2, string $use_ext='jpg');
 
   /**

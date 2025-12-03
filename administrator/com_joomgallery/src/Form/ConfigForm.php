@@ -1,25 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Form;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use \Joomla\CMS\Event\AbstractEvent;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\Form\FormField;
-use \Joomla\CMS\Event\AbstractEvent;
 use \Joomla\Database\DatabaseInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
 
 /**
  * Form Class for the Joomla Platform.
@@ -138,6 +139,7 @@ class ConfigForm extends Form
 
     // Get script
     $script = $field->getAttribute('script', '');
+
     if(empty($script))
     {
       return false;
@@ -154,18 +156,18 @@ class ConfigForm extends Form
                     ]
       );
       Factory::getApplication()->getDispatcher()->dispatch($event->getName(), $event);
-      $options = $event->getArgument('result', array());
+      $options = $event->getArgument('result', []);
 
       // Option 2: Load script from ConfigHelper
-      if(\method_exists('\Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper', $script))
+      if(method_exists('\Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper', $script))
       {
-        $options = \array_merge($options, ConfigHelper::{$script}($this));
+        $options = array_merge($options, ConfigHelper::{$script}($this));
       }
 
     // Add options to field
     foreach($options as $key => $option)
     {
-      $field->addOption($option['text'], array('value'=>$option['value']));
+      $field->addOption($option['text'], ['value'=>$option['value']]);
     }
   }
 
@@ -183,7 +185,7 @@ class ConfigForm extends Form
     // Make sure there is a valid Form XML document.
     if(!($this->xml instanceof \SimpleXMLElement))
     {
-      throw new \UnexpectedValueException(sprintf('%s::%s `xml` is not an instance of SimpleXMLElement', \get_class($this), __METHOD__));
+      throw new \UnexpectedValueException(\sprintf('%s::%s `xml` is not an instance of SimpleXMLElement', \get_class($this), __METHOD__));
     }
 
     /*
@@ -212,7 +214,7 @@ class ConfigForm extends Form
     // Make sure there is a valid Form XML document.
     if(!($this->xml instanceof \SimpleXMLElement))
     {
-      throw new \UnexpectedValueException(sprintf('%s::%s `xml` is not an instance of SimpleXMLElement', \get_class($this), __METHOD__));
+      throw new \UnexpectedValueException(\sprintf('%s::%s `xml` is not an instance of SimpleXMLElement', \get_class($this), __METHOD__));
     }
 
     /*
@@ -252,7 +254,7 @@ class ConfigForm extends Form
 
         if(empty($data))
         {
-          throw new \InvalidArgumentException(sprintf('%1$s(%2$s, *%3$s*)', __METHOD__, $name, \gettype($data)));
+          throw new \InvalidArgumentException(\sprintf('%1$s(%2$s, *%3$s*)', __METHOD__, $name, \gettype($data)));
         }
 
         // Instantiate the form.
@@ -264,14 +266,14 @@ class ConfigForm extends Form
         {
           if($forms[$name]->load($data, $replace, $xpath) == false)
           {
-            throw new \RuntimeException(sprintf('%s() could not load form', __METHOD__));
+            throw new \RuntimeException(\sprintf('%s() could not load form', __METHOD__));
           }
         }
         else
         {
           if($forms[$name]->loadFile($data, $replace, $xpath) == false)
           {
-            throw new \RuntimeException(sprintf('%s() could not load file', __METHOD__));
+            throw new \RuntimeException(\sprintf('%s() could not load file', __METHOD__));
           }
         }
       }

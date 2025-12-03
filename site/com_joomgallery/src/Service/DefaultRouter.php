@@ -1,30 +1,31 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Service;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Menu\AbstractMenu;
-use \Joomla\Database\ParameterType;
-use \Joomla\Database\DatabaseInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
 use \Joomla\CMS\Application\SiteApplication;
+use \Joomla\CMS\Categories\CategoryFactoryInterface;
 use \Joomla\CMS\Component\Router\RouterView;
+use \Joomla\CMS\Component\Router\RouterViewConfiguration;
 use \Joomla\CMS\Component\Router\Rules\MenuRules;
 use \Joomla\CMS\Component\Router\Rules\NomenuRules;
-use \Joomla\CMS\Categories\CategoryFactoryInterface;
 use \Joomla\CMS\Component\Router\Rules\StandardRules;
-use \Joomla\CMS\Component\Router\RouterViewConfiguration;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use \Joomla\CMS\Menu\AbstractMenu;
+use \Joomla\Database\DatabaseInterface;
+use \Joomla\Database\ParameterType;
 
 /**
  * Joomgallery Router class
@@ -170,7 +171,7 @@ class DefaultRouter extends RouterView
    */
   public function getGallerySegment(string $id, array $query): array|string
   {
-    return array('');
+    return [''];
   }
 
   /**
@@ -185,12 +186,12 @@ class DefaultRouter extends RouterView
    */
   public function getImageSegment(string $id, $query) : array|string
   {
-    if(!\strpos($id, ':'))
+    if(!strpos($id, ':'))
     {
       if(!$id)
       {
         // Load empty form view
-        return array('');
+        return [''];
       }
 
       $id .= ':'.$this->getImageAliasDb($id);
@@ -203,7 +204,7 @@ class DefaultRouter extends RouterView
       return [$void => $segment];
     }
 
-    return array((int) $id => $id);
+    return [(int) $id => $id];
   }
 
   /**
@@ -223,7 +224,7 @@ class DefaultRouter extends RouterView
       if(!$id)
       {
         // Load empty form view
-        return array('');
+        return [''];
       }
 
     }
@@ -254,13 +255,14 @@ class DefaultRouter extends RouterView
     {
       if(!$id)
       {
-        return array('');
+        return [''];
       }
 
       //     return $this->getImageSegment($id, $query);
       // same as image segment
       $id .= ':'.$this->getImageAliasDb($id);
     }
+
     if($this->noIDs)
     {
       list($void, $segment) = explode(':', $id, 2);
@@ -268,7 +270,7 @@ class DefaultRouter extends RouterView
       return [$void => $segment];
     }
 
-    return array((int) $id => $id);
+    return [(int) $id => $id];
   }
 
   /**
@@ -292,16 +294,16 @@ class DefaultRouter extends RouterView
       if($category)
       {
         // Replace root with categories
-        if($root_key = \key(\preg_grep('/\broot\b/i', $category->route_path)))
+        if($root_key = key(preg_grep('/\broot\b/i', $category->route_path)))
         {
-          $category->route_path[$root_key] = \str_replace('root', 'categories', $category->route_path[$root_key]);
+          $category->route_path[$root_key] = str_replace('root', 'categories', $category->route_path[$root_key]);
         }
 
-        if($this->noIDs && \strpos(\reset($category->route_path), ':') !== false)
+        if($this->noIDs && strpos(reset($category->route_path), ':') !== false)
         {
           foreach($category->route_path as &$segment)
           {
-            list($id, $segment) = \explode(':', $segment, 2);
+            list($id, $segment) = explode(':', $segment, 2);
           }
         }
 
@@ -316,7 +318,7 @@ class DefaultRouter extends RouterView
       return [$void => $segment];
     }
 
-    return array();
+    return [];
   }
 
   /**
@@ -337,7 +339,7 @@ class DefaultRouter extends RouterView
       if(!$id)
       {
         // Load empty form view
-        return array('');
+        return [''];
       }
     }
 
@@ -363,18 +365,19 @@ class DefaultRouter extends RouterView
    */
   public function getUsercategorySegment($id, $query): array|string
   {
-    $alias = "";
+    $alias = '';
 
     if(!strpos($id, ':'))
     {
       if(empty($id))
       {
         // Load empty form view
-        return array('');
+        return [''];
       }
 
       $category = $this->getCategory((int) $query['id'], 'children', true);
-      if(!empty ($category))
+
+      if(!empty($category))
       {
         $id .= ':'.$category->alias;
       }
@@ -420,7 +423,7 @@ class DefaultRouter extends RouterView
       return [$void => $segment];
     }
 
-    return array((int) $id => $id);
+    return [(int) $id => $id];
   }
 
   /**
@@ -437,7 +440,7 @@ class DefaultRouter extends RouterView
   {
     if(!$id)
     {
-      return array('');
+      return [''];
     }
 
     return $this->getCategorySegment($id, $query);
@@ -550,10 +553,10 @@ class DefaultRouter extends RouterView
         $query['id'] = 1;
       }
 
-      if(\strpos($segment, 'categories'))
+      if(strpos($segment, 'categories'))
       {
         // If 'categories' is in the segment, means that we are looking for the root category
-        $segment = \str_replace('categories', 'root', $segment);
+        $segment = str_replace('categories', 'root', $segment);
       }
 
       if(isset($query['id']))
@@ -827,10 +830,10 @@ class DefaultRouter extends RouterView
     $img_id = 0;
 
     // ToDo: FiTh/Manuel where else do i need to distinguish with '-' ? documentation
-    if(\is_numeric(\explode('-', $segment, 2)[0]))
+    if(is_numeric(explode('-', $segment, 2)[0]))
     {
       // For a segment in the form: id-alias
-      $img_id = (int) \explode('-', $segment, 2)[0];
+      $img_id = (int) explode('-', $segment, 2)[0];
     }
 
     if($img_id < 1)
@@ -849,7 +852,7 @@ class DefaultRouter extends RouterView
         $dbquery->bind(':catid', $cat, ParameterType::INTEGER);
       }
 
-      if(\key_exists('view', $query) && $query['view'] == 'category' && \key_exists('id', $query))
+      if(key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
       {
         // We can identify the image via menu item of type category
         $dbquery->where($this->db->quoteName('catid').' = :catid');

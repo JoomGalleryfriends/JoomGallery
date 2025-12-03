@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
-use \Joomla\Database\DatabaseInterface;
 use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
+use \Joomla\Database\DatabaseInterface;
 
 /**
  * Model to handle an image form.
@@ -46,12 +47,12 @@ class UserimageModel extends AdminImageModel
    *
    * @throws  \Exception
    * @since   4.2.0
-   *
    */
   protected function populateState()
   {
     // Load state from the request userState on edit or from the passed variable on default
     $id = $this->app->input->getInt('id', null);
+
     if($id)
     {
       $this->app->setUserState('com_joomgallery.edit.image.id', $id);
@@ -103,11 +104,11 @@ class UserimageModel extends AdminImageModel
    * @throws \Exception
    * @since   4.2.0
    */
-  public function getForm($data = array(), $loadData = true): Form|CurrentUserInterface|false
+  public function getForm($data = [], $loadData = true): Form|CurrentUserInterface|false
   {
     // Get the form.
     $form = $this->loadForm($this->typeAlias, 'userimage',
-      array('control' => 'jform', 'load_data' => $loadData));
+      ['control' => 'jform', 'load_data' => $loadData]);
 
 
     if(empty($form))
@@ -139,7 +140,7 @@ class UserimageModel extends AdminImageModel
    */
   public function getReturnPage(): string
   {
-    return \base64_encode($this->getState('return_page', ''));
+    return base64_encode($this->getState('return_page', ''));
   }
 
 

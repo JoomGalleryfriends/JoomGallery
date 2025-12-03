@@ -1,17 +1,18 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
@@ -80,7 +81,7 @@ class UserpanelModel extends ImagesModel
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(empty ($count))
+      if(empty($count))
       {
         $isUserHasACategory = false;
       }
@@ -144,7 +145,7 @@ class UserpanelModel extends ImagesModel
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(!empty ($count))
+      if(!empty($count))
       {
         $categoryCount = $count;
       }
@@ -187,7 +188,7 @@ class UserpanelModel extends ImagesModel
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(!empty ($count))
+      if(!empty($count))
       {
         $imageCount = $count;
       }
@@ -228,6 +229,7 @@ class UserpanelModel extends ImagesModel
         ->where($db->quoteName('created_by').' = '.(int) $userId);
 
       $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
+
       if($timespan > 0)
       {
         $query->where('created_time > (UTC_TIMESTAMP() - INTERVAL '.$timespan.' DAY)');
@@ -236,7 +238,7 @@ class UserpanelModel extends ImagesModel
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(!empty ($count))
+      if(!empty($count))
       {
         $imageCount = $count;
       }
@@ -296,7 +298,7 @@ class UserpanelModel extends ImagesModel
       $db->setQuery($query);
       $dbCategories = $db->loadObjectList();
 
-      if(!empty ($dbCategories))
+      if(!empty($dbCategories))
       {
         $categories = $dbCategories;
       }
@@ -349,7 +351,7 @@ class UserpanelModel extends ImagesModel
       $db->setQuery($query);
       $dbImages = $db->loadObjectList();
 
-      if(!empty ($dbImages))
+      if(!empty($dbImages))
       {
         $images = $dbImages;
       }

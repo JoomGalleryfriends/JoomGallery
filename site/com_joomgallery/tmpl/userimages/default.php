@@ -9,18 +9,18 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Session\Session;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Button\FeaturedButton;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Button\FeaturedButton;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -42,6 +42,7 @@ $config    = $this->params['configs'];
 
 // Prevent any display if userspace is not enabled
 $isUserSpaceEnabled = $config->get('jg_userspace');
+
 if ( ! $isUserSpaceEnabled) {
   return;
 }
@@ -51,6 +52,7 @@ $menuParam = $this->params['menu'];
 $isShowTitle = $menuParam->get('showTitle') ?? true;
 
 $saveOrderingUrl = '';
+
 if($saveOrder && !empty($this->items))
 {
   $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=userimages.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
@@ -147,7 +149,7 @@ $canDelete = false;
         <div class="card-body">
 
           <?php if(!empty($this->filterForm)) : ?>
-            <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+            <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
           <?php endif; ?>
 
           <?php if(empty($this->items)) : ?>
@@ -215,13 +217,13 @@ $canDelete = false;
                   </th>
 
                   <th scope="col" class="w-10 d-none d-lg-table-cell">
-                    <?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
                   </th>
                 </tr>
                 </thead>
                 <tfoot>
                 <tr>
-                  <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+                  <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                     <?php echo $this->pagination->getListFooter(); ?>
                   </td>
                 </tr>
@@ -243,6 +245,7 @@ $canDelete = false;
                       <td class="text-center d-none d-md-table-cell sort-cell">
                         <?php
                         $iconClass = '';
+
                         if(!$canChange)
                         {
                           $iconClass = ' inactive';

@@ -1,29 +1,30 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Form\Field\ListField;
 use \Joomla\CMS\Form\FormHelper;
 use \Joomla\CMS\Helper\ModuleHelper;
-use \Joomla\CMS\Plugin\PluginHelper;
-use \Joomla\CMS\Form\Field\ListField;
 use \Joomla\CMS\Language\Associations;
 use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Plugin\PluginHelper;
 
 /**
  * List field with useglobal option based on config service
@@ -82,13 +83,13 @@ class JglistField extends ListField
    */
   protected function getOptions()
   {
-    $fieldname = \preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
+    $fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
     $options   = [];
 
     foreach($this->element->xpath('option') as $option)
     {
       // Filter requirements
-      $requires = \explode(',', (string) $option['requires']);
+      $requires = explode(',', (string) $option['requires']);
 
       // Requires multilanguage
       if(\in_array('multilanguage', $requires) && !Multilanguage::isEnabled())
@@ -121,7 +122,7 @@ class JglistField extends ListField
       }
 
       $value = (string) $option['value'];
-      $text  = \trim((string) $option) != '' ? \trim((string) $option) : $value;
+      $text  = trim((string) $option) != '' ? trim((string) $option) : $value;
 
       $disabled = (string) $option['disabled'];
       $disabled = ($disabled === 'true' || $disabled === 'disabled' || $disabled === '1');
@@ -148,7 +149,7 @@ class JglistField extends ListField
 
       if((string) $option['showon'])
       {
-        $encodedConditions = \json_encode(FormHelper::parseShowOnConditions((string) $option['showon'], $this->formControl, $this->group));
+        $encodedConditions = json_encode(FormHelper::parseShowOnConditions((string) $option['showon'], $this->formControl, $this->group));
         $tmp['optionattr'] = " data-showon='" . $encodedConditions . "'";
       }
 
@@ -159,18 +160,18 @@ class JglistField extends ListField
     if($this->element['useglobal'])
     {
       // Add global option if not already available
-      if(empty($options) || \strpos($options[0]->text, '%s') === false)
+      if(empty($options) || strpos($options[0]->text, '%s') === false)
       {
         $tmp        = new \stdClass();
         $tmp_def    = (string) $this->element['default'];
         $tmp->value = $tmp_def ? $tmp_def : '';
         $tmp->text  = Text::_('JGLOBAL_USE_GLOBAL_VALUE');
 
-        \array_unshift($options, $tmp);
+        array_unshift($options, $tmp);
       }
     }
 
-    \reset($options);
+    reset($options);
 
     return $options;
   }
@@ -188,7 +189,7 @@ class JglistField extends ListField
    */
   protected function getGlobalValue($default='')
   {
-    $fieldname = \preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
+    $fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
 
     // Guess form context
     $context = ConfigHelper::getFormContext($this->form->getData());
@@ -197,7 +198,7 @@ class JglistField extends ListField
     {
       // Load JG config service
       $jg = Factory::getApplication()->bootComponent('com_joomgallery');
-      $jg->createConfig($context[0] , $context[1], false);
+      $jg->createConfig($context[0], $context[1], false);
 
       // Get inherited global config value
       return $jg->getConfig()->get($fieldname, $default);

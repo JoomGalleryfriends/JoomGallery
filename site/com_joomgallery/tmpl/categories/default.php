@@ -9,15 +9,15 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Session\Session;
-use \Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -35,6 +35,7 @@ $saveOrder = ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 $returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->getLayout()));
 
 $saveOrderingUrl = '';
+
 if($saveOrder && !empty($this->items))
 {
   $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
@@ -52,7 +53,7 @@ if($saveOrder && !empty($this->items))
       method="post" name="adminForm" id="adminForm">
 
   <?php if(!empty($this->filterForm)) : ?>
-    <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+    <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
   <?php endif; ?>
 
   <div class="row">
@@ -106,7 +107,7 @@ if($saveOrder && !empty($this->items))
             </thead>
             <tfoot>
             <tr>
-              <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+              <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                 <?php echo $this->pagination->getListFooter(); ?>
               </td>
             </tr>
@@ -128,12 +129,14 @@ if($saveOrder && !empty($this->items))
               {
                 $_currentParentId = $item->parent_id;
                 $parentsStr       = ' '.$_currentParentId;
+
                 for($i2 = 0; $i2 < $item->level; $i2++)
                 {
                   foreach($this->ordering as $k => $v)
                   {
                     $v = implode('-', $v);
                     $v = '-'.$v.'-';
+
                     if(strpos($v, '-'.$_currentParentId.'-') !== false)
                     {
                       $parentsStr       .= ' '.$k;
@@ -153,6 +156,7 @@ if($saveOrder && !empty($this->items))
                   <td class="text-center d-none d-md-table-cell sort-cell">
                     <?php
                     $iconClass = '';
+
                     if(!$canChange)
                     {
                       $iconClass = ' inactive';
@@ -176,7 +180,7 @@ if($saveOrder && !empty($this->items))
                 <?php endif; ?>
 
                 <th scope="row" class="has-context title-cell">
-                  <?php echo LayoutHelper::render('joomla.html.treeprefix', array('level' => $item->level)); ?>
+                  <?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
                   <?php if($canCheckin && $item->checked_out > 0) : ?>
                     <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                             data-item-id="cb<?php echo $i; ?>"
@@ -254,8 +258,8 @@ if($saveOrder && !empty($this->items))
           <a href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.add&return='.$returnURL, false, 0); ?>" class="btn btn-success btn-small">
             <i class="icon-plus"></i> <?php echo Text::_('JGLOBAL_ADD_CUSTOM_CATEGORY'); ?>
           </a>
-        </div>				
-			<?php endif; */ ?>
+        </div>        
+            <?php endif; */ ?>
     </div>
   </div>
 </form>

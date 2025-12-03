@@ -9,16 +9,16 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Language\Multilanguage;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Multilanguage;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -51,7 +51,7 @@ $imgRequired = (int) $input->get('required', 0, 'int');
           </div>
         <?php endif; ?>
 
-        <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+        <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <div class="clearfix"></div>
         <div class="table-responsive">
           <table class="table table-striped" id="imageList">
@@ -92,7 +92,7 @@ $imgRequired = (int) $input->get('required', 0, 'int');
             </thead>
             <tfoot>
             <tr>
-              <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+              <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                 <?php echo $this->pagination->getListFooter(); ?>
               </td>
             </tr>

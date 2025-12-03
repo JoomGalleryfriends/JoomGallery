@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Feed\FeedFactory;
-use \Joomla\Database\DatabaseInterface;
 use \Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\Database\DatabaseInterface;
 
 /**
  * Control model.
@@ -42,7 +43,7 @@ class ControlModel extends BaseDatabaseModel
    * @access  protected
    * @var     array
    */
-  static protected $extensions = array();
+  static protected $extensions = [];
 
   /**
    * Method to get the statistic data
@@ -53,7 +54,7 @@ class ControlModel extends BaseDatabaseModel
    */
   public function getStatisticData()
   {
-    $statisticdata = array();
+    $statisticdata = [];
 
     $db = $this->getDatabase();
 
@@ -114,7 +115,7 @@ class ControlModel extends BaseDatabaseModel
    */
   public function getGalleryInfoData()
   {
-    $galleryinfodata = array();
+    $galleryinfodata = [];
 
     $db = $this->getDatabase();
 
@@ -125,7 +126,7 @@ class ControlModel extends BaseDatabaseModel
                 ->where($db->quoteName('element') . ' = ' . $db->quote(_JOOM_OPTION));
     $db->setQuery($query);
 
-    $galleryinfodata = \json_decode($db->loadResult(), true);
+    $galleryinfodata = json_decode($db->loadResult(), true);
 
     return $galleryinfodata;
   }
@@ -146,15 +147,16 @@ class ControlModel extends BaseDatabaseModel
       return self::$extensions;
     }
 
-    $extensions = array();
+    $extensions = [];
 
-    // Get url of joomgallery extensions xml    
+    // Get url of joomgallery extensions xml
     $server = (array) JoomHelper::getComponent()->xml->updateservers->server;
+
     if(!empty($server))
     {
       foreach($server as $key => $value)
       {
-        if(!\is_array($value) && \strpos(\basename((string) $value), 'extensions') !== false)
+        if(!\is_array($value) && strpos(basename((string) $value), 'extensions') !== false)
         {
           $extensions_url = (string) $server[$key];
         }
@@ -177,7 +179,7 @@ class ControlModel extends BaseDatabaseModel
     catch (\Exception $e)
     {
       JoomHelper::getComponent()->setWarning('Error fetching list of extensions: ' . $e);
-    }    
+    }
 
     // Get the list of extensions
     foreach($extensionsArray as $key => $xml_extension)
@@ -185,8 +187,9 @@ class ControlModel extends BaseDatabaseModel
       // Detect main JoomGallery component
       $element = (string) $xml_extension->attributes()->element;
       $type    = (string) $xml_extension->attributes()->type;
-      if( (\strtolower($type) === 'component' || \strtolower($type) === 'package') &&
-          \strpos(\strtolower($element), 'joomgallery') !== false
+
+      if( (strtolower($type) === 'component' || strtolower($type) === 'package') &&
+          strpos(strtolower($element), 'joomgallery') !== false
         )
       {
         // Skip main JoomGallery component
@@ -195,15 +198,16 @@ class ControlModel extends BaseDatabaseModel
 
       // Get extension url
       $url  =  (string) $xml_extension->attributes()->detailsurl;
-      $name =  (string) $xml_extension->attributes()->name;      
+      $name =  (string) $xml_extension->attributes()->name;
 
       try
       {
         $info_extension    = $this->getBestUpdate(JoomHelper::fetchXML($url));
+
         if($info_extension)
         {
-          $extensions[$name] = \json_decode(\json_encode($info_extension), true);
-        }        
+          $extensions[$name] = json_decode(json_encode($info_extension), true);
+        }
       }
       catch (\Exception $e)
       {
@@ -225,12 +229,12 @@ class ControlModel extends BaseDatabaseModel
    */
   public function getInstalledExtensionsData()
   {
-    $InstalledExtensionsData = array();
+    $InstalledExtensionsData = [];
 
     $db = $this->getDatabase();
 
     $query = $db->getQuery(true)
-                ->select($db->quoteName(array('extension_id', 'enabled', 'manifest_cache')))
+                ->select($db->quoteName(['extension_id', 'enabled', 'manifest_cache']))
                 ->from($db->quoteName('#__extensions'))
                 ->where($db->quoteName('name')     . ' like ' . $db->quote('%joomgallery%'))
                 ->where($db->quoteName('name')     . ' != '   . $db->quote('com_joomgallery'))
@@ -267,23 +271,24 @@ class ControlModel extends BaseDatabaseModel
       $targetPlatformRegex = (string) $update->targetplatform->attributes()->version;
 
       // Extract the major and minor version for comparison
-      $majorMinorVersion = \implode('.', \array_slice(\explode('.', JVERSION), 0, 2));
+      $majorMinorVersion = implode('.', \array_slice(explode('.', JVERSION), 0, 2));
 
       // Check Joomla version compatibility (regex matching)
-      if(!empty($targetPlatformRegex) && !\preg_match('/' . $targetPlatformRegex . '/', $majorMinorVersion))
+      if(!empty($targetPlatformRegex) && !preg_match('/' . $targetPlatformRegex . '/', $majorMinorVersion))
       {
         continue;
       }
 
       // Check PHP version compatibility
-      if(!empty($phpMinimum) && \version_compare(PHP_VERSION, $phpMinimum, '<='))
+      if(!empty($phpMinimum) && version_compare(PHP_VERSION, $phpMinimum, '<='))
       {
         continue;
       }
 
       // Check and compare versions to find the newest one
       $currentVersion = (string) $update->version;
-      if($bestVersion === null || \version_compare($currentVersion, $bestVersion, '>'))
+
+      if($bestVersion === null || version_compare($currentVersion, $bestVersion, '>'))
       {
         $bestUpdate = $update;
         $bestVersion = $currentVersion;

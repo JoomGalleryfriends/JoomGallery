@@ -1,28 +1,29 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\DatabaseAwareTrait;
 use \Joomla\Console\Command\AbstractCommand;
+use \Joomla\Database\DatabaseAwareTrait;
+use \Joomla\Database\DatabaseInterface;
 use \Symfony\Component\Console\Command\Command;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Style\SymfonyStyle;
 use \Symfony\Component\Console\Input\InputArgument;
 use \Symfony\Component\Console\Input\InputInterface;
+use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Output\OutputInterface;
+use \Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConfigGet extends AbstractCommand
 {
@@ -88,7 +89,7 @@ class ConfigGet extends AbstractCommand
     $help = "<info>%command.name%</info> display one field value in configuration (Table)
   Usage: <info>php %command.full_name%</info> <option>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
-		";
+    ";
     $this->setDescription('Display the current value of a configuration option');
     $this->setHelp($help);
   }
@@ -106,14 +107,14 @@ class ConfigGet extends AbstractCommand
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
     $this->configureIO($input, $output);
-    $this->ioStyle->title("JoomGallery Configuration Value (table)");
+    $this->ioStyle->title('JoomGallery Configuration Value (table)');
 
     $option   = $this->cliInput->getArgument('option');
     $configId = $input->getOption('id') ?? '1';
 
     $configurationAssoc = $this->getItemAssocFromDB($configId);
 
-    if (empty ($configurationAssoc))
+    if (empty($configurationAssoc))
     {
       $this->ioStyle->error("The configuration id '" . $configId . "' is invalid, No configuration found matching your criteria!");
 

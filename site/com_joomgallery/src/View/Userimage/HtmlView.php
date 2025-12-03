@@ -1,29 +1,30 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userimage;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\CMS\Helper\MediaHelper;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Site\Model\UserimageModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomgallery\Component\Joomgallery\Site\Model\UserimageModel;
+use \Joomla\CMS\Component\ComponentHelper;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Helper\MediaHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomla\CMS\Toolbar\Toolbar;
+use \Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a list of Joomgallery.
@@ -56,7 +57,7 @@ class HtmlView extends JoomGalleryView
    *
    * @since   4.2.0
    */
-  protected array $params = array();
+  protected array $params = [];
 
   /**
    * The page to return to after the article is submitted
@@ -69,7 +70,6 @@ class HtmlView extends JoomGalleryView
 
   protected $state;
   /**
-   *
    * @var  array
    *
    * @since   4.2.0
@@ -133,7 +133,7 @@ class HtmlView extends JoomGalleryView
     // Check for errors.
     if(\count($errors = $model->getErrors()))
     {
-      throw new GenericDataException(\implode("\n", $errors), 500);
+      throw new GenericDataException(implode("\n", $errors), 500);
     }
 
     // Check access view level
@@ -154,7 +154,7 @@ class HtmlView extends JoomGalleryView
 
       $js_vars->uppyTarget = '#drag-drop-area';          // Id of the DOM element to apply the uppy form
       $js_vars->uppyLimit  = 5;                          // Number of concurrent tus upploads (only file upload)
-      $js_vars->uppyDelays = array(0, 1000, 3000, 5000); // Delay in ms between upload retrys
+      $js_vars->uppyDelays = [0, 1000, 3000, 5000]; // Delay in ms between upload retrys
 
       $js_vars->semaCalls  = $this->config->get('jg_parallelprocesses', 1); // Number of concurrent async calls to save the record to DB (including image processing)
       $js_vars->semaTokens = 100;                                           // Prealloc space for 100 tokens
@@ -169,7 +169,7 @@ class HtmlView extends JoomGalleryView
       if($this->item->id == 0)
       {
         $this->component->addLog('View needs an image ID to be loaded.', 'error', 'jerror');
-        throw new \Exception("View needs an image ID to be loaded.", 1);
+        throw new \Exception('View needs an image ID to be loaded.', 1);
       }
 
       $this->categoryTitle = $model->categoryTitle($this->item->catid);
@@ -291,7 +291,7 @@ class HtmlView extends JoomGalleryView
       $checkedOut = false;
     }
 
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES').' :: '.Text::_('COM_JOOMGALLERY_IMAGE_EDIT'), "image");
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES').' :: '.Text::_('COM_JOOMGALLERY_IMAGE_EDIT'), 'image');
 
     // If not checked out, can save the item.
     if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || ($this->getAcl()->checkACL('core.create'))))
@@ -303,8 +303,7 @@ class HtmlView extends JoomGalleryView
     {
       $saveGroup = $toolbar->dropdownButton('save-group');
 
-      $saveGroup->configure
-      (
+      $saveGroup->configure(
         function(Toolbar $childBar) use ($checkedOut, $isNew) {
           $childBar->save('image.save', 'JTOOLBAR_SAVE');
 
@@ -348,7 +347,7 @@ class HtmlView extends JoomGalleryView
   {
     Factory::getApplication()->input->set('hidemainmenu', true);
 
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES').' :: '.Text::_('COM_JOOMGALLERY_IMAGES_UPLOAD'), "image");
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES').' :: '.Text::_('COM_JOOMGALLERY_IMAGES_UPLOAD'), 'image');
     ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CLOSE');
 
     // Create tus server
@@ -362,21 +361,21 @@ class HtmlView extends JoomGalleryView
    * Get array of all allowed filetypes based on the config parameter jg_imagetypes.
    *
    * @return  array  List with all allowed filetypes
-   *
    */
   protected function getAllowedTypes()
   {
-    $types = \explode(',', $this->config->get('jg_imagetypes'));
+    $types = explode(',', $this->config->get('jg_imagetypes'));
 
     // add different types of jpg files
-    $jpg_array = array('jpg', 'jpeg', 'jpe', 'jfif');
+    $jpg_array = ['jpg', 'jpeg', 'jpe', 'jfif'];
+
     if(\in_array('jpg', $types) || \in_array('jpeg', $types) || \in_array('jpe', $types) || \in_array('jfif', $types))
     {
       foreach($jpg_array as $jpg)
       {
         if(!\in_array($jpg, $types))
         {
-          \array_push($types, $jpg);
+          array_push($types, $jpg);
         }
       }
     }
@@ -384,13 +383,13 @@ class HtmlView extends JoomGalleryView
     // add point to types
     foreach($types as $key => $type)
     {
-      if(\substr($type, 0, 1) !== '.')
+      if(substr($type, 0, 1) !== '.')
       {
-        $types[$key] = '.'.\strtolower($type);
+        $types[$key] = '.'.strtolower($type);
       }
       else
       {
-        $types[$key] = \strtolower($type);
+        $types[$key] = strtolower($type);
       }
     }
 
@@ -408,7 +407,7 @@ class HtmlView extends JoomGalleryView
   {
     Factory::getApplication()->input->set('hidemainmenu', true);
 
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES').' :: '.Text::_('COM_JOOMGALLERY_REPLACE'), "image");
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES').' :: '.Text::_('COM_JOOMGALLERY_REPLACE'), 'image');
 
     // Add replace button
     if($this->getAcl()->checkACL('core.edit'))
@@ -424,7 +423,6 @@ class HtmlView extends JoomGalleryView
    * Modify form fields according to view needs.
    *
    * @return void
-   *
    */
   protected function modifyFieldsReplace()
   {
@@ -461,9 +459,9 @@ class HtmlView extends JoomGalleryView
     $mediaHelper = new MediaHelper;
 
     // Maximum allowed size in MB
-    $this->uploadLimit = round($mediaHelper->toBytes(ini_get('upload_max_filesize')) / (1024 * 1024));
-    $this->postMaxSize = round($mediaHelper->toBytes(ini_get('post_max_size')) / (1024 * 1024));
-    $this->memoryLimit = round($mediaHelper->toBytes(ini_get('memory_limit')) / (1024 * 1024));
+    $this->uploadLimit = round($mediaHelper->toBytes(\ini_get('upload_max_filesize')) / (1024 * 1024));
+    $this->postMaxSize = round($mediaHelper->toBytes(\ini_get('post_max_size')) / (1024 * 1024));
+    $this->memoryLimit = round($mediaHelper->toBytes(\ini_get('memory_limit')) / (1024 * 1024));
 
     $mediaParams        = ComponentHelper::getParams('com_media');
     $mediaUploadMaxsize = $mediaParams->get('upload_maxsize', 0);

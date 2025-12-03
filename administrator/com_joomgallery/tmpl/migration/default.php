@@ -9,12 +9,12 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -30,9 +30,9 @@ $wa->useStyle('com_joomgallery.admin')
   <?php foreach ($this->scripts as $name => $script) : ?>
     <?php
       $openMigrations    = false;
-      $openMigrationsIDs = array();
+      $openMigrationsIDs = [];
 
-      if(!empty($this->openMigrations) && \key_exists($name, $this->openMigrations))
+      if(!empty($this->openMigrations) && key_exists($name, $this->openMigrations))
       {
         $openMigrations    = true;
         $openMigrationsIDs = $this->openMigrations[$name];

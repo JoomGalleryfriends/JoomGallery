@@ -1,28 +1,29 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\DatabaseAwareTrait;
 use \Joomla\Console\Command\AbstractCommand;
+use \Joomla\Database\DatabaseAwareTrait;
+use \Joomla\Database\DatabaseInterface;
 use \Symfony\Component\Console\Command\Command;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Style\SymfonyStyle;
 use \Symfony\Component\Console\Input\InputInterface;
+use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Output\OutputInterface;
+use \Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Display category params as they can not be displayed in one line
@@ -92,10 +93,10 @@ class CategoryParams extends AbstractCommand
   {
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'category ID');
 
-    $help = "<info>%command.name%</info> display parameters of params field from table of selected category
+    $help = '<info>%command.name%</info> display parameters of params field from table of selected category
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the category with the <info>--id<info> option. Otherwise, it will be requested
-  ";
+  ';
     $this->setDescription(Text::_('List all variables in params field of selected category'));
     $this->setHelp($help);
   }
@@ -119,7 +120,7 @@ class CategoryParams extends AbstractCommand
 
     $categoryId = $input->getOption('id') ?? '';
 
-    if (empty ($categoryId))
+    if (empty($categoryId))
     {
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid (empty) !");
 
@@ -129,7 +130,7 @@ class CategoryParams extends AbstractCommand
     $jsonParams = $this->getParamsAsJsonFromDB($categoryId);
 
     // If no params returned  show a warning and set the exit code to 1.
-    if (empty ($jsonParams))
+    if (empty($jsonParams))
     {
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid or parameters are empty !");
 

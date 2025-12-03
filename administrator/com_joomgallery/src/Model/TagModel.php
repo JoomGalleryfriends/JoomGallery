@@ -1,17 +1,18 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
@@ -34,40 +35,40 @@ class TagModel extends JoomAdminModel
    */
   protected $type = 'tag';
 
-	/**
-	 * Method to get the data that should be injected in the form.
-	 *
-	 * @return  mixed  The data for the form.
-	 *
-	 * @since   4.0.0
-	 */
-	protected function loadFormData()
-	{
-		// Check the session for previously entered form data.
-		$data = $this->app->getUserState(_JOOM_OPTION.'.edit.tag.data', array());
+    /**
+     * Method to get the data that should be injected in the form.
+     *
+     * @return  mixed  The data for the form.
+     *
+     * @since   4.0.0
+     */
+    protected function loadFormData()
+    {
+        // Check the session for previously entered form data.
+        $data = $this->app->getUserState(_JOOM_OPTION.'.edit.tag.data', []);
 
-		if(empty($data))
-		{
-			if($this->item === null)
-			{
-				$this->item = $this->getItem();
-			}
+        if(empty($data))
+        {
+            if($this->item === null)
+            {
+                $this->item = $this->getItem();
+            }
 
-			$data = $this->item;			
-		}
+            $data = $this->item;
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 
   /**
-	 * Method to get the item ID based on alias or title.
-	 *
-	 * @param   string  $string  The alias or title of the item
-	 *
-	 * @return  mixed    ID on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
+   * Method to get the item ID based on alias or title.
+   *
+   * @param   string  $string  The alias or title of the item
+   *
+   * @return  mixed    ID on success, false on failure.
+   *
+   * @since   4.0.0
+   */
   protected function getItemID($string)
   {
     $db = $this->getDatabase();
@@ -86,6 +87,7 @@ class TagModel extends JoomAdminModel
     catch(\Exception $e)
     {
       $this->setError($e->getMessage());
+
       return false;
     }
 
@@ -117,18 +119,18 @@ class TagModel extends JoomAdminModel
     return $tag_id;
   }
 
-	/**
-	 * Method to get a single record.
-	 *
-	 * @param   int|string  $pk  The id alias or title of the item
-	 *
-	 * @return  mixed    Object on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
-	public function getItem($pk = null)
-	{
-    if(!\is_null($pk) && !\is_numeric($pk))
+    /**
+     * Method to get a single record.
+     *
+     * @param   int|string  $pk  The id alias or title of the item
+     *
+     * @return  mixed    Object on success, false on failure.
+     *
+     * @since   4.0.0
+     */
+    public function getItem($pk = null)
+    {
+    if(!\is_null($pk) && !is_numeric($pk))
     {
       // get item based on alias or title
       if(!$pk = $this->getItemID($pk))
@@ -146,40 +148,40 @@ class TagModel extends JoomAdminModel
       {
         $item->params = json_encode($item->params);
       }
-      
+
       // Do any processing on fields here if needed
     }
 
-    return $item;		
-	}
+    return $item;
+    }
 
-	/**
-	 * Method to duplicate an Tag
-	 *
-	 * @param   array  &$pks  An array of primary key IDs.
-	 *
-	 * @return  boolean  True if successful.
-	 *
-	 * @throws  \Exception
-	 */
-	public function duplicate(&$pks)
-	{
-		// Access checks.
-		if(!$this->user->authorise('core.create', _JOOM_OPTION))
-		{
-			$this->component->addLog(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'), 'error', 'jerror');
-			throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
-		}
+    /**
+     * Method to duplicate an Tag
+     *
+     * @param   array  &$pks  An array of primary key IDs.
+     *
+     * @return  boolean  True if successful.
+     *
+     * @throws  \Exception
+     */
+    public function duplicate(&$pks)
+    {
+        // Access checks.
+        if(!$this->user->authorise('core.create', _JOOM_OPTION))
+        {
+            $this->component->addLog(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'), 'error', 'jerror');
+            throw new \Exception(Text::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
+        }
 
-		$context = $this->option . '.' . $this->name;
+        $context = $this->option . '.' . $this->name;
 
-		// Include the plugins for the save events.
-		PluginHelper::importPlugin($this->events_map['save']);
+        // Include the plugins for the save events.
+        PluginHelper::importPlugin($this->events_map['save']);
 
-		$table = $this->getTable();
+        $table = $this->getTable();
 
-		foreach($pks as $pk)
-		{			
+        foreach($pks as $pk)
+        {
       if($table->load($pk, true))
       {
         // Reset the id to create a new record.
@@ -189,32 +191,32 @@ class TagModel extends JoomAdminModel
         {
           $this->component->addLog($table->getError(), 'error', 'jerror');
           throw new \Exception($table->getError());
-        }        
+        }
 
         // Trigger the before save event.
-        $result = $this->app->triggerEvent($this->event_before_save, array($context, &$table, true, $table));
+        $result = $this->app->triggerEvent($this->event_before_save, [$context, &$table, true, $table]);
 
-        if(in_array(false, $result, true) || !$table->store())
+        if(\in_array(false, $result, true) || !$table->store())
         {
           $this->component->addLog($table->getError(), 'error', 'jerror');
           throw new \Exception($table->getError());
         }
 
         // Trigger the after save event.
-        $this->app->triggerEvent($this->event_after_save, array($context, &$table, true));
+        $this->app->triggerEvent($this->event_after_save, [$context, &$table, true]);
       }
       else
       {
         $this->component->addLog($table->getError(), 'error', 'jerror');
         throw new \Exception($table->getError());
-      }			
-		}
+      }
+        }
 
-		// Clean cache
-		$this->cleanCache();
+        // Clean cache
+        $this->cleanCache();
 
-		return true;
-	} 
+        return true;
+    }
 
   /**
    * Method to add a mapping between tag and image.
@@ -267,12 +269,12 @@ class TagModel extends JoomAdminModel
     $db = $this->getDatabase();
     $query = $db->getQuery(true);
 
-    $conditions = array($db->quoteName('tagid') . ' = ' . $db->quote($tag_id));
+    $conditions = [$db->quoteName('tagid') . ' = ' . $db->quote($tag_id)];
 
     if($img_id > 0)
     {
       // Delete mapping only for a specific image
-      \array_push($conditions, $db->quoteName('imgid') . ' = ' . $db->quote($img_id));
+      array_push($conditions, $db->quoteName('imgid') . ' = ' . $db->quote($img_id));
     }
 
     $query->delete($db->quoteName(_JOOM_TABLE_TAGS_REF));

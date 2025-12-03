@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
-* Interface for the IMGtools class
-*
-* @since  4.0.0
-*/
+ * Interface for the IMGtools class
+ *
+ * @since  4.0.0
+ */
 interface IMGtoolsInterface
 {
   /**
@@ -111,7 +112,7 @@ interface IMGtoolsInterface
    */
   public function analyse($img, $is_stream = false);
 
-	/**
+  /**
    * Resize image
    *
    * @param   int     $method         Resize to 0:noresize,1:height,2:width,3:proportional,4:crop

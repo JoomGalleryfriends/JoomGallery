@@ -1,25 +1,25 @@
 <?php
-
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\Form\Field\TextField;
 use \Joomla\CMS\Language\Text;
 use \Joomla\Registry\Registry;
-use \Joomla\CMS\Form\Field\TextField;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
 
 /**
  * UserComment Field for EXIF in imgmetadata.
@@ -56,7 +56,7 @@ class ExifusercommentField extends TextField
      */
     protected function getInput()
     {
-        $fieldname = \preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
+        $fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
 
         if ($this->element['useglobal']) {
             // Guess form context
@@ -77,7 +77,7 @@ class ExifusercommentField extends TextField
                 }
             }
         }
-        
+
         $data = $this->getLayoutData();
         $data['value'] = substr($data['value'], 8);
 

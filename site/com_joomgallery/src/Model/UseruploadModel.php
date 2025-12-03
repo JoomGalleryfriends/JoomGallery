@@ -1,31 +1,32 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
+use \Joomla\CMS\Application\CMSApplicationInterface;
+use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Form\Form;
-use \Joomla\Registry\Registry;
 use \Joomla\CMS\Helper\MediaHelper;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\Application\CMSApplicationInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use \Joomla\Database\DatabaseInterface;
+use \Joomla\Registry\Registry;
 
 /**
  * Model to get a list of category records.
@@ -111,11 +112,11 @@ class UseruploadModel extends JoomAdminModel
    * @throws \Exception
    * @since   4.2.0
    */
-  public function getForm($data = array(), $loadData = true): Form|bool
+  public function getForm($data = [], $loadData = true): Form|bool
   {
     // Get the form.
     $form = $this->loadForm($this->typeAlias, 'userupload',
-      array('control' => 'jform', 'load_data' => $loadData));
+      ['control' => 'jform', 'load_data' => $loadData]);
 
     if(empty($form))
     {
@@ -166,10 +167,10 @@ class UseruploadModel extends JoomAdminModel
    */
   public function getParams(): array
   {
-    $params = array('component' => $this->getState('parameters.component'),
-                    'menu'      => $this->getState('parameters.menu'),
-                    'configs'   => $this->getState('parameters.configs')
-    );
+    $params = ['component' => $this->getState('parameters.component'),
+      'menu'      => $this->getState('parameters.menu'),
+      'configs'   => $this->getState('parameters.configs'),
+    ];
 
     return $params;
   }
@@ -243,7 +244,7 @@ class UseruploadModel extends JoomAdminModel
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(empty ($count))
+      if(empty($count))
       {
         $isUserHasACategory = false;
       }
@@ -264,24 +265,24 @@ class UseruploadModel extends JoomAdminModel
    *
    * @return  array  List with all allowed filetypes
    * @since   4.2.0
-   *
    */
   public function getAllowedTypes($config): array
   {
 //    $config = $this->params['configs'];
 
     /** @var array $types */
-    $types = \explode(',', $config->get('jg_imagetypes'));
+    $types = explode(',', $config->get('jg_imagetypes'));
 
     // add different types of jpg files
-    $jpg_array = array('jpg', 'jpeg', 'jpe', 'jfif');
+    $jpg_array = ['jpg', 'jpeg', 'jpe', 'jfif'];
+
     if(\in_array('jpg', $types) || \in_array('jpeg', $types) || \in_array('jpe', $types) || \in_array('jfif', $types))
     {
       foreach($jpg_array as $jpg)
       {
         if(!\in_array($jpg, $types))
         {
-          \array_push($types, $jpg);
+          array_push($types, $jpg);
         }
       }
     }
@@ -289,13 +290,13 @@ class UseruploadModel extends JoomAdminModel
     // add point to types
     foreach($types as $key => $type)
     {
-      if(\substr($type, 0, 1) !== '.')
+      if(substr($type, 0, 1) !== '.')
       {
-        $types[$key] = '.'.\strtolower($type);
+        $types[$key] = '.'.strtolower($type);
       }
       else
       {
-        $types[$key] = \strtolower($type);
+        $types[$key] = strtolower($type);
       }
     }
 
@@ -339,9 +340,9 @@ class UseruploadModel extends JoomAdminModel
     $mediaHelper = new MediaHelper;
 
     // Maximum allowed size in MB
-    $uploadLimit = round($mediaHelper->toBytes(ini_get('upload_max_filesize')) / (1024 * 1024));
-    $postMaxSize = round($mediaHelper->toBytes(ini_get('post_max_size')) / (1024 * 1024));
-    $memoryLimit = round($mediaHelper->toBytes(ini_get('memory_limit')) / (1024 * 1024));
+    $uploadLimit = round($mediaHelper->toBytes(\ini_get('upload_max_filesize')) / (1024 * 1024));
+    $postMaxSize = round($mediaHelper->toBytes(\ini_get('post_max_size')) / (1024 * 1024));
+    $memoryLimit = round($mediaHelper->toBytes(\ini_get('memory_limit')) / (1024 * 1024));
 
     $mediaParams        = ComponentHelper::getParams('com_media');
     $mediaUploadMaxsize = $mediaParams->get('upload_maxsize', 0);

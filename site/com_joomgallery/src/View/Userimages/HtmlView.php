@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userimages;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Pagination\Pagination;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Site\Model\UserimagesModel;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomgallery\Component\Joomgallery\Site\Model\UserimagesModel;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomla\CMS\Pagination\Pagination;
+use \Joomla\CMS\Router\Route;
 
 /**
  * View class for a list of Joomgallery.
@@ -121,11 +122,12 @@ class HtmlView extends JoomGalleryView
     // Check for errors.
     if(\count($errors = $model->getErrors()))
     {
-      throw new GenericDataException(\implode("\n", $errors), 500);
+      throw new GenericDataException(implode("\n", $errors), 500);
     }
 
-    //	user must be logged in and have one 'master/base' category
+    //  user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
+
     if($user->guest)
     {
       $this->isUserLoggedIn = false;

@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Usercategory;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
 
 /**
  * View class for a category
@@ -51,7 +52,7 @@ class HtmlView extends JoomGalleryView
    *
    * @since   4.2.0
    */
-  protected array $params = array();
+  protected array $params = [];
 
   /**
    * The page to return to after the article is submitted
@@ -116,7 +117,7 @@ class HtmlView extends JoomGalleryView
     // Check for errors.
     if(\count($errors = $model->getErrors()))
     {
-      throw new GenericDataException(\implode("\n", $errors), 500);
+      throw new GenericDataException(implode("\n", $errors), 500);
     }
 
     //--- handle form fields -----------------------------------------------------
@@ -140,6 +141,7 @@ class HtmlView extends JoomGalleryView
       // Apply filter to exclude child categories
       $children = $form->getFieldAttribute('parent_id', 'children', 'true');
       $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
+
       if(!$children)
       {
         $form->setFieldAttribute('parent_id', 'exclude', $this->item->id);
@@ -223,7 +225,7 @@ class HtmlView extends JoomGalleryView
         $pathway->addItem($breadcrumbList, JoomHelper::getViewRoute('categories'));
       }
 
-      $breadcrumbTitle = isset($this->item->id) ? Text::_("JGLOBAL_EDIT") : Text::_("JGLOBAL_FIELD_ADD");
+      $breadcrumbTitle = isset($this->item->id) ? Text::_('JGLOBAL_EDIT') : Text::_('JGLOBAL_FIELD_ADD');
 
       if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
       {

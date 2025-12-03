@@ -8,11 +8,11 @@
 *****************************************************************************************/
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Router\Route;
 
 extract($displayData);
 
@@ -36,6 +36,7 @@ extract($displayData);
     <?php foreach($items as $key => $item) : ?>
       <?php
         $img_type = $image_type;
+
         if($item->thumbnail == 0 && $random_image)
         {
           $item->thumbnail = $item->id;

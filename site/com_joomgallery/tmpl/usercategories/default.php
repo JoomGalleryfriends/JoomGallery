@@ -9,15 +9,15 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Session\Session;
-use \Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -39,6 +39,7 @@ $config    = $this->params['configs'];
 
 // Prevent any display if userspace is not enabled
 $isUserSpaceEnabled = $config->get('jg_userspace');
+
 if ( ! $isUserSpaceEnabled) {
   return;
 }
@@ -48,6 +49,7 @@ $menuParam = $this->params['menu'];
 $isShowTitle = $menuParam->get('showTitle') ?? true;
 
 $saveOrderingUrl = '';
+
 if($saveOrder && !empty($this->items))
 {
   $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=usercategories.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
@@ -140,7 +142,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
         <div class="card-body">
 
           <?php if(!empty($this->filterForm)) : ?>
-            <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+            <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
           <?php endif; ?>
 
           <?php if(empty($this->items)) : ?>
@@ -190,7 +192,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('searchtools.sort',  'JDATE', 'a.created_time', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'JDATE', 'a.created_time', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-md-table-cell text-center">
@@ -204,7 +206,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                 </thead>
                 <tfoot>
                 <tr>
-                  <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+                  <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                     <?php echo $this->pagination->getListFooter(); ?>
                   </td>
                 </tr>
@@ -228,16 +230,19 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
 
                   // Get the parents of item for sorting
                   $parentsStr = '';
+
                   if($item->level > 1)
                   {
                     $_currentParentId = $item->parent_id;
                     $parentsStr       = ' '.$_currentParentId;
+
                     for($i2 = 0; $i2 < $item->level; $i2++)
                     {
                       foreach($this->ordering as $k => $v)
                       {
                         $v = implode('-', $v);
                         $v = '-'.$v.'-';
+
                         if(strpos($v, '-'.$_currentParentId.'-') !== false)
                         {
                           $parentsStr       .= ' '.$k;
@@ -257,6 +262,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                       <td class="text-center d-none d-md-table-cell sort-cell">
                         <?php
                         $iconClass = '';
+
                         if(!$canChange)
                         {
                           $iconClass = ' inactive';
@@ -286,7 +292,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                     </td>
 
                     <th scope="row" class="has-context title-cell">
-                      <?php echo LayoutHelper::render('joomla.html.treeprefix', array('level' => $item->level)); ?>
+                      <?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
                       <?php if($canCheckin && $item->checked_out > 0) : ?>
                         <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                                 data-item-id="cb<?php echo $i; ?>"

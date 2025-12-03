@@ -9,11 +9,11 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
 
 extract($displayData);
 
@@ -56,15 +56,15 @@ $maxSize = HTMLHelper::_('number.bytes', $size);
 
 ?>
 <input type="file"
-	name="<?php echo $name; ?>"
-	id="<?php echo $id; ?>"
-	<?php echo !empty($size) ? ' size="' . $size . '"' : ''; ?>
-	<?php echo !empty($accept) ? ' accept="' . $accept . '"' : ''; ?>
-	<?php echo !empty($class) ? ' class="form-control ' . $class . '"' : ' class="form-control"'; ?>
-	<?php echo !empty($multiple) ? ' multiple' : ''; ?>
-	<?php echo $disabled ? ' disabled' : ''; ?>
-	<?php echo $autofocus ? ' autofocus' : ''; ?>
-	<?php echo $dataAttribute; ?>
-	<?php echo !empty($onchange) ? ' onchange="' . $onchange . '"' : ''; ?>
-	<?php echo $required ? ' required' : ''; ?>><br>
-	<?php echo Text::sprintf('JGLOBAL_MAXIMUM_UPLOAD_SIZE_LIMIT', $maxSize); ?>
+  name="<?php echo $name; ?>"
+  id="<?php echo $id; ?>"
+  <?php echo !empty($size) ? ' size="' . $size . '"' : ''; ?>
+  <?php echo !empty($accept) ? ' accept="' . $accept . '"' : ''; ?>
+  <?php echo !empty($class) ? ' class="form-control ' . $class . '"' : ' class="form-control"'; ?>
+  <?php echo !empty($multiple) ? ' multiple' : ''; ?>
+  <?php echo $disabled ? ' disabled' : ''; ?>
+  <?php echo $autofocus ? ' autofocus' : ''; ?>
+  <?php echo $dataAttribute; ?>
+  <?php echo !empty($onchange) ? ' onchange="' . $onchange . '"' : ''; ?>
+  <?php echo $required ? ' required' : ''; ?>><br>
+  <?php echo Text::sprintf('JGLOBAL_MAXIMUM_UPLOAD_SIZE_LIMIT', $maxSize); ?>

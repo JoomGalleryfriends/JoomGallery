@@ -1,28 +1,29 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\DatabaseAwareTrait;
 use \Joomla\Console\Command\AbstractCommand;
+use \Joomla\Database\DatabaseAwareTrait;
+use \Joomla\Database\DatabaseInterface;
 use \Symfony\Component\Console\Command\Command;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Style\SymfonyStyle;
 use \Symfony\Component\Console\Input\InputInterface;
+use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Output\OutputInterface;
+use \Symfony\Component\Console\Style\SymfonyStyle;
 
 class ImageList extends AbstractCommand
 {
@@ -88,12 +89,12 @@ class ImageList extends AbstractCommand
     $this->addOption('created', null, InputOption::VALUE_OPTIONAL, 'created_by');
     $this->addOption('category', null, InputOption::VALUE_OPTIONAL, 'category id');
 
-    $help = "<info>%command.name%</info> list all joomgallery images
+    $help = '<info>%command.name%</info> list all joomgallery images
   Usage: <info>php %command.full_name%</info>
     * You may filter on the user id of image using the <info>--owner</info> option.
     * You may filter on created_by of image using the <info>--created</info> option.
     * You may filter on the category id of image using the <info>--category</info> option.
-    Example: <info>php %command.full_name% --created_by=14</info>";
+    Example: <info>php %command.full_name% --created_by=14</info>';
     $this->setDescription(Text::_('List all images'));
     $this->setHelp($help);
   }
@@ -116,7 +117,8 @@ class ImageList extends AbstractCommand
     $this->ioStyle->title('JoomGallery Image list');
 
     $created_by_id = $input->getOption('created') ?? '';
-    if (empty ($created_by_id))
+
+    if (empty($created_by_id))
     {
       $created_by_id = $input->getOption('owner') ?? '';
     }
@@ -179,12 +181,12 @@ class ImageList extends AbstractCommand
       ->select('*')
       ->from('#__joomgallery');
 
-    if (!empty ($userId))
+    if (!empty($userId))
     {
       $query->where($db->quoteName('created_by') . ' = ' . (int) $userId);
     }
 
-    if (!empty ($cat_id))
+    if (!empty($cat_id))
     {
       $query->where($db->quoteName('catid') . ' = ' . (int) $cat_id);
     }

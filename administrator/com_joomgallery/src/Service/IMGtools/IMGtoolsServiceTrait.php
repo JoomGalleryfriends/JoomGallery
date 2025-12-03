@@ -1,58 +1,59 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMtools;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GDtools;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMtools;
 
 /**
-* Trait to implement IMGtoolsServiceInterface
-*
-* @since  4.0.0
-*/
+ * Trait to implement IMGtoolsServiceInterface
+ *
+ * @since  4.0.0
+ */
 trait IMGtoolsServiceTrait
 {
-  /**
-	 * Storage for the IMGtools class.
-	 *
-	 * @var IMGtoolsInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $IMGtools = null;
+    /**
+     * Storage for the IMGtools class.
+     *
+     * @var IMGtoolsInterface
+     *
+     * @since  4.0.0
+     */
+    private $IMGtools = null;
 
-  /**
-	 * Returns the IMGtools class.
-	 *
-	 * @return  IMGtoolsInterface
-	 *
-	 * @since  4.0.0
-	 */
-	public function getIMGtools(): IMGtoolsInterface
-	{
-		return $this->IMGtools;
-	}
+    /**
+     * Returns the IMGtools class.
+     *
+     * @return  IMGtoolsInterface
+     *
+     * @since  4.0.0
+     */
+    public function getIMGtools(): IMGtoolsInterface
+    {
+        return $this->IMGtools;
+    }
 
-  /**
-	 * Creates the IMGtools class
-	 *
-   * @return  void
-   *
-	 * @since  4.0.0
-	 */
-	public function createIMGtools($processor, $keep_metadata = false, $keep_anim = false): void
-	{
+    /**
+     * Creates the IMGtools class
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     */
+    public function createIMGtools($processor, $keep_metadata = false, $keep_anim = false): void
+    {
     switch ($processor)
     {
       case 'im':
@@ -65,19 +66,19 @@ trait IMGtoolsServiceTrait
     }
 
     return;
-	}
+    }
 
-  /**
-	 * Destroys the IMGtools class
-	 *
-   * @return  void
-   *
-	 * @since  4.0.0
-	 */
-	public function delIMGtools(): void
-	{
+    /**
+     * Destroys the IMGtools class
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     */
+    public function delIMGtools(): void
+    {
     unset($this->IMGtools);
 
     return;
-	}
+    }
 }

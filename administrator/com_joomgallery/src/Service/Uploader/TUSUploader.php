@@ -1,31 +1,32 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
+
 use \Joomla\Filesystem\File as JFile;
 use \Joomla\Filesystem\Path as JPath;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-
 /**
-* Uploader helper class (TUS Upload)
-*
-* @since  4.0.0
-*/
+ * Uploader helper class (TUS Upload)
+ *
+ * @since  4.0.0
+ */
 class TUSUploader extends BaseUploader implements UploaderInterface
 {
   protected $src_name;
@@ -33,7 +34,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
   protected $src_tmp;
   protected $src_file;
 
-	/**
+  /**
    * Constructor
    * 
    * @param   bool   $multiple     True, if it is a multiple upload  (default: false)
@@ -45,25 +46,25 @@ class TUSUploader extends BaseUploader implements UploaderInterface
    */
   public function __construct($multiple=false, $async=false)
   {
-		parent::__construct($multiple, $async);
+        parent::__construct($multiple, $async);
 
-		$this->component->createTusServer();
-	}
+        $this->component->createTusServer();
+    }
 
-	/**
-	 * Method to retrieve an uploaded image. Step 1.
-   * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
-	 *
-   * @param   array    $data        Form data (as reference)
-   * @param   bool     $filename    True, if the filename has to be created (default: True)
-   *
-	 * @return  bool     True on success, false otherwise
-	 *
-	 * @since  4.0.0
-	 */
-	public function retrieveImage(&$data, $filename=True): bool
+    /**
+     * Method to retrieve an uploaded image. Step 1.
+     * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
+     *
+     * @param   array    $data        Form data (as reference)
+     * @param   bool     $filename    True, if the filename has to be created (default: True)
+     *
+     * @return  bool     True on success, false otherwise
+     *
+     * @since  4.0.0
+     */
+    public function retrieveImage(&$data, $filename=True): bool
   {
-		$user = Factory::getUser();
+        $user = Factory::getUser();
 
     // Load tus upload
     $uuid = $data['uuid'];
@@ -116,6 +117,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
 
     // Upload file to temp file
     $this->src_file = JPath::clean(\dirname($this->src_tmp).\DIRECTORY_SEPARATOR.$this->src_name);
+
     if(!JFile::move($this->src_tmp, $this->src_file))
     {
       $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MOVING_FILE', $this->src_file));
@@ -131,7 +133,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
 
     return true;
-	}
+    }
 
   /**
    * Override form data with image metadata
@@ -146,7 +148,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
   public function overrideData(&$data): bool
   {
     // Get upload date
-    if(empty($data['date']) || \strpos($data['date'], '1900-01-01') !== false)
+    if(empty($data['date']) || strpos($data['date'], '1900-01-01') !== false)
     {
       $data['date'] = date('Y-m-d');
     }
@@ -197,22 +199,24 @@ class TUSUploader extends BaseUploader implements UploaderInterface
   public function checkError($uploaderror): string
   {
     // Common PHP errors
-    $uploadErrors = array(
+    $uploadErrors = [
       1 => Text::_('COM_JOOMGALLERY_ERROR_TUS_MAXFILESIZE'),
       2 => Text::_('COM_JOOMGALLERY_ERROR_FILE_PARTLY_UPLOADED'),
-      3 => Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED')
-    );
+      3 => Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED'),
+    ];
 
-    if(in_array($uploaderror, $uploadErrors))
+    if(\in_array($uploaderror, $uploadErrors))
     {
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', $uploadErrors[$uploaderror]), 'error', 'jerror');
+
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', $uploadErrors[$uploaderror]);
     }
-    else
-    {
+
+
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN')), 'error', 'jerror');
+
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
-    }
+
   }
 
   /**
@@ -234,9 +238,9 @@ class TUSUploader extends BaseUploader implements UploaderInterface
 
       return $this->component->getTusServer()->getMetaDataValue('isfinal');
     }
-    else
-    {
+
+
       return false;
-    }
+
   }
 }

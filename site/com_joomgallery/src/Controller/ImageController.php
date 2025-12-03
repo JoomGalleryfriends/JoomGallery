@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Response\JsonResponse;
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use \Joomla\CMS\Router\Route;
 
 /**
  * Image controller class.
@@ -56,7 +57,7 @@ class ImageController extends JoomFormController
     }
 
     // Clear form data from session
-    $this->app->setUserState(_JOOM_OPTION.'.edit.image.data', array());
+    $this->app->setUserState(_JOOM_OPTION.'.edit.image.data', []);
 
     // Set the current edit id in the session.
     $this->app->setUserState(_JOOM_OPTION.'.add.image.catid', $addCatId);
@@ -86,7 +87,7 @@ class ImageController extends JoomFormController
    */
   public function ajaxsave(): bool
   {
-    $result = array('error' => false);
+    $result = ['error' => false];
 
     try
     {

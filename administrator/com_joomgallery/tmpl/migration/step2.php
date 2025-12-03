@@ -9,12 +9,12 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -103,7 +103,7 @@ $wa->useStyle('com_joomgallery.admin')
                             // Check failed
                             $badgeClass = 'danger';
                             $badgeText  = Text::_('COM_JOOMGALLERY_FAILED');
-                          }                          
+                          }
                         ?>
                         <tr>
                           <td>
@@ -139,10 +139,10 @@ $wa->useStyle('com_joomgallery.admin')
 
   <?php
   // Help modal box
-  $options = array('modal-dialog-scrollable' => true,
-                    'title'  => 'Test Title',
-                    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
-                  );
+  $options = ['modal-dialog-scrollable' => true,
+    'title'  => 'Test Title',
+    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
+  ];
 
   echo HTMLHelper::_('bootstrap.renderModal', 'help-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
   ?>

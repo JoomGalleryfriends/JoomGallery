@@ -1,30 +1,31 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\Filesystem\Path;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Registry\Registry;
 use \Joomla\CMS\Access\Access;
+use \Joomla\CMS\Factory;
 use \Joomla\CMS\Http\HttpFactory;
 use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\Database\DatabaseInterface;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Uri\Uri;
 use \Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
+use \Joomla\Database\DatabaseInterface;
+use \Joomla\Filesystem\Path;
+use \Joomla\Registry\Registry;
 
 /**
  * JoomGallery Helper for the Backend
@@ -40,46 +41,46 @@ class JoomHelper
    *
    * @var array
    */
-  public static $content_types = array(   'category'  => _JOOM_TABLE_CATEGORIES,
-                                          'collection'=> _JOOM_TABLE_COLLECTIONS,
-                                          'comment'   => _JOOM_TABLE_COMMENTS,
-                                          'config'    => _JOOM_TABLE_CONFIGS,
-                                          'faulty'    => _JOOM_TABLE_FAULTIES,
-                                          'image'     => _JOOM_TABLE_IMAGES,
-                                          'imagetype' => _JOOM_TABLE_IMG_TYPES,
-                                          'tag'       => _JOOM_TABLE_TAGS,
-                                          'task'      => _JOOM_TABLE_TASKS,
-                                          'user'      => _JOOM_TABLE_USERS,
-                                          'vote'      => _JOOM_TABLE_VOTES
-                                        );
+  public static $content_types = ['category'  => _JOOM_TABLE_CATEGORIES,
+    'collection'=> _JOOM_TABLE_COLLECTIONS,
+    'comment'   => _JOOM_TABLE_COMMENTS,
+    'config'    => _JOOM_TABLE_CONFIGS,
+    'faulty'    => _JOOM_TABLE_FAULTIES,
+    'image'     => _JOOM_TABLE_IMAGES,
+    'imagetype' => _JOOM_TABLE_IMG_TYPES,
+    'tag'       => _JOOM_TABLE_TAGS,
+    'task'      => _JOOM_TABLE_TASKS,
+    'user'      => _JOOM_TABLE_USERS,
+    'vote'      => _JOOM_TABLE_VOTES,
+  ];
 
   /**
-	 * Gets the JoomGallery component object
-	 *
-	 * @return  Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
-	 *
-	 * @since   4.0.0
-	 */
+   * Gets the JoomGallery component object
+   *
+   * @return  Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
+   *
+   * @since   4.0.0
+   */
   public static function getComponent()
   {
     return Factory::getApplication()->bootComponent('com_joomgallery');
   }
 
   /**
-	 * Gets a JoomGallery service
+   * Gets a JoomGallery service
    *
    * @param   string   $name      The name of the service
    * @param   array    $arg       Arguments passed to the cunstructor of the service (optional)
    * @param   Object   $com_obj   JoomgalleryComponent object if available
-	 *
-	 * @return  JoomService
-	 *
-	 * @since   4.0.0
-	 */
-  public static function getService($name, $arg=array(), $com_obj=null)
+   *
+   * @return  JoomService
+   *
+   * @since   4.0.0
+   */
+  public static function getService($name, $arg=[], $com_obj=null)
   {
     // get the JoomgalleryComponent object if needed
-    if(!isset($com_obj) || !\strpos('JoomgalleryComponent', \get_class($com_obj)) === false)
+    if(!isset($com_obj) || !strpos('JoomgalleryComponent', \get_class($com_obj)) === false)
     {
       $com_obj = Factory::getApplication()->bootComponent('com_joomgallery');
     }
@@ -87,7 +88,7 @@ class JoomHelper
     // create the service
     try
     {
-      $createService = 'create'.\ucfirst($name);
+      $createService = 'create'.ucfirst($name);
       switch (\count($arg))
       {
         case 5:
@@ -121,22 +122,22 @@ class JoomHelper
     }
 
     // get the service
-    $getService = 'get'.\ucfirst($name);
+    $getService = 'get'.ucfirst($name);
 
     return $com_obj->{$getService}();
   }
 
   /**
-	 * Returns a database record
+   * Returns a database record
    *
    * @param   string          $name      The name of the record (available: category,image,tag, imagetype)
    * @param   int|string      $id        The id of the primary key, the alias or the filename
    * @param   object          $com_obj   JoomgalleryComponent object if available
-	 *
-	 * @return  \stdClass|bool  Object on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  \stdClass|bool  Object on success, false on failure.
+   *
+   * @since   4.0.0
+   */
   public static function getRecord($name, $id, $com_obj=null)
   {
     // Check if content type is available
@@ -148,7 +149,7 @@ class JoomHelper
       return $id;
     }
     // We got a record ID, an alias or a filename
-    elseif(!empty($id) && ((\is_numeric($id) && $id > 0) || \is_string($id) || ($name == 'imagetype' && \is_array($id))))
+    elseif(!empty($id) && ((is_numeric($id) && $id > 0) || \is_string($id) || ($name == 'imagetype' && \is_array($id))))
     {
       if(\is_string($id) && (int) $id == 0)
       {
@@ -157,11 +158,11 @@ class JoomHelper
 
       if($name != 'imagetype' || !\is_array($id))
       {
-        $id = intval($id);
+        $id = \intval($id);
       }
 
       // Get the JoomgalleryComponent object if needed
-      if(!isset($com_obj) || !\strpos('JoomgalleryComponent', \get_class($com_obj)) === false)
+      if(!isset($com_obj) || !strpos('JoomgalleryComponent', \get_class($com_obj)) === false)
       {
         $com_obj = Factory::getApplication()->bootComponent('com_joomgallery');
       }
@@ -181,40 +182,40 @@ class JoomHelper
       return $return;
     }
     // We got nothing to work with
-    else
-    {
+
+
       self::getComponent()->addLog('Please provide a valid record ID, alias or filename.', 'error', 'jerror');
       throw new \Exception('Please provide a valid record ID, alias or filename.');
 
       return false;
-    }
+
   }
 
   /**
-	 * Returns the creator of a database record
+   * Returns the creator of a database record
    *
    * @param   string          $name      The name of the record (available: category,image,tag,imagetype)
    * @param   int|string      $id        The id of the primary key
    * @param   bool            $parent    True to get the creator of the parent record (default:false)
-	 *
-	 * @return  int             User id of the creator on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  int             User id of the creator on success, false on failure.
+   *
+   * @since   4.0.0
+   */
   public static function getCreator($name, $id, $parent=false)
   {
     // Check if content type is available
     self::isAvailable($name);
 
-    $id = intval($id);
+    $id = \intval($id);
 
     // We got a record id
-    if(\is_numeric($id) && $id > 0)
+    if(is_numeric($id) && $id > 0)
     {
       $db = Factory::getContainer()->get(DatabaseInterface::class);
       $query = $db->getQuery(true);
 
-      if($parent && \in_array($name, array('image', 'category')))
+      if($parent && \in_array($name, ['image', 'category']))
       {
         // Get join selector id
         $parent_id   = ($name == 'category') ? 'a.parent_id' : 'a.catid';
@@ -244,18 +245,18 @@ class JoomHelper
   }
 
   /**
-	 * Returns the id of the parent database record
+   * Returns the id of the parent database record
    *
    * @param   string        $name      The name of the record (available: category,image)
    * @param   int|string    $id        The id of the primary key
-	 *
-	 * @return  int           Parent id of the record on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  int           Parent id of the record on success, false on failure.
+   *
+   * @since   4.0.0
+   */
   public static function getParent($name, $id)
   {
-    if(!\in_array($name, array('image', 'category')))
+    if(!\in_array($name, ['image', 'category']))
     {
       self::getComponent()->addLog(Text::_('COM_JOOMGALLERY_ERROR_INVALID_CONTENT_TYPE'), 'error', 'jerror');
       throw new \Exception(Text::_('COM_JOOMGALLERY_ERROR_INVALID_CONTENT_TYPE'));
@@ -264,7 +265,7 @@ class JoomHelper
     $id = \intval($id);
 
     // We got a record id
-    if(\is_numeric($id) && $id > 0)
+    if(is_numeric($id) && $id > 0)
     {
       $db = Factory::getContainer()->get(DatabaseInterface::class);
       $query = $db->getQuery(true);
@@ -287,19 +288,19 @@ class JoomHelper
   }
 
   /**
-	 * Returns a list of database records
+   * Returns a list of database records
    *
    * @param   string      $name      The name of the record (available: categories,images,tags,imagetypes)
    * @param   Object      $com_obj   JoomgalleryComponent object if available
    * @param   string      $key       Index the returning array by key
-	 *
-	 * @return  array|bool  Array on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  array|bool  Array on success, false on failure.
+   *
+   * @since   4.0.0
+   */
   public static function getRecords($name, $com_obj=null, $key=null)
   {
-    $availables = array('categories', 'images', 'tags', 'imagetypes');
+    $availables = ['categories', 'images', 'tags', 'imagetypes'];
 
     if(!\in_array($name, $availables))
     {
@@ -310,7 +311,7 @@ class JoomHelper
     }
 
     // Get the JoomgalleryComponent object if needed
-    if(!isset($com_obj) || !\strpos('JoomgalleryComponent', \get_class($com_obj)) === false)
+    if(!isset($com_obj) || !strpos('JoomgalleryComponent', \get_class($com_obj)) === false)
     {
       $com_obj = Factory::getApplication()->bootComponent('com_joomgallery');
     }
@@ -329,10 +330,11 @@ class JoomHelper
     // Indexing the array if needed
     if($return && !\is_null($key))
     {
-      $ind_array = array();
+      $ind_array = [];
+
       foreach($return as $obj)
       {
-        if(\property_exists($obj, $key))
+        if(property_exists($obj, $key))
         {
           $ind_array[$obj->{$key}] = $obj;
         }
@@ -366,20 +368,21 @@ class JoomHelper
     return $acl->checkACL($action, $asset, $pk);
   }
 
-	/**
-	 * Gets a list of the actions that can be performed.
-   * 
-   * @param   string  $type   The name of the content type of the item
-   * @param   int     $id     The item's id
-	 *
-	 * @return  Registry
-	 *
-	 * @since   4.0.0
-	 */
-	public static function getActions($type=null, $id=null)
-	{
+    /**
+     * Gets a list of the actions that can be performed.
+     * 
+     * @param   string  $type   The name of the content type of the item
+     * @param   int     $id     The item's id
+     *
+     * @return  Registry
+     *
+     * @since   4.0.0
+     */
+    public static function getActions($type=null, $id=null)
+    {
     // Create asset name
-		$assetName = _JOOM_OPTION;
+        $assetName = _JOOM_OPTION;
+
     if($type)
     {
       // Check if content type is available
@@ -387,6 +390,7 @@ class JoomHelper
 
       $assetName .= '.'.$type;
     }
+
     if($id)
     {
       $assetName .= '.'.$id;
@@ -397,13 +401,13 @@ class JoomHelper
     $result = new Registry;
 
     // Fill actions list based on access XML
-		foreach(self::getActionsList($type) as $action)
-		{
-			$result->set($action, $acl->checkACL($action, $assetName));
-		}
+        foreach(self::getActionsList($type) as $action)
+        {
+            $result->set($action, $acl->checkACL($action, $assetName));
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
   /**
    * Returns the URL or the path to an image
@@ -420,7 +424,7 @@ class JoomHelper
   public static function getImg($img, $type, $url=true, $root=true)
   {
     // Create file config service based on current user
-		$config = self::getService('Config');
+        $config = self::getService('Config');
 
     // Adjust type when in compatibility mode
     if($config->get('jg_compatibility_mode', 0))
@@ -430,7 +434,7 @@ class JoomHelper
         case 'thumb':
           $type = 'thumbnail';
           break;
-        
+
         case 'img':
           $type = 'detail';
           break;
@@ -438,13 +442,13 @@ class JoomHelper
         case 'orig':
           $type = 'original';
           break;
-        
+
         default:
           break;
       }
     }
 
-    if(\strpos($type, 'rnd_cat:') !== false && $config->get('jg_category_view_subcategories_random_image', 1))
+    if(strpos($type, 'rnd_cat:') !== false && $config->get('jg_category_view_subcategories_random_image', 1))
     {
       // we want to get a random image from a category
       $type_array = explode(':', $type, 2);
@@ -453,34 +457,34 @@ class JoomHelper
     }
 
     // get imagetypes
-    $imagetype = self::getRecord('imagetype', array('typename' => $type));
+    $imagetype = self::getRecord('imagetype', ['typename' => $type]);
 
     if($imagetype === false)
     {
       self::getComponent()->addLog('Imagetype not found.', 'error', 'jerror');
-      throw new \Exception("Imagetype not found.");
+      throw new \Exception('Imagetype not found.');
 
       return false;
     }
 
     if(!\is_object($img))
     {
-      if(\is_numeric($img) || $img == 'null')
+      if(is_numeric($img) || $img == 'null')
       {
         if($img == 0 || $img == 'null')
         {
           // ID = 0 given
-          return self::getImgZero($type, $url, $root);          
+          return self::getImgZero($type, $url, $root);
         }
-        else
-        {
+
+
           // get image based on ID
           $img = self::getRecord('image', $img);
-        }
+
       }
       elseif(\is_string($img))
       {
-        if(\strlen($img) > 5 && (\strpos($img, '/') !== false || \strpos($img, \DIRECTORY_SEPARATOR) !== false))
+        if(\strlen($img) > 5 && (strpos($img, '/') !== false || strpos($img, \DIRECTORY_SEPARATOR) !== false))
         {
           // already image url given
           if(strpos($img, '/') === 0)
@@ -488,21 +492,21 @@ class JoomHelper
             // url starts with '/'
             return Uri::root(true).$img;
           }
-          else
-          {
+
+
             return Uri::root(true).'/'.$img;
-          }
+
         }
-        else
-        {
+
+
           // get image id based on filename
-          $img = self::getRecord('image', array('filename' => $img));
-        }
+          $img = self::getRecord('image', ['filename' => $img]);
+
       }
       else
       {
         // no image given
-        return self::getImgZero($type, $url, $root); 
+        return self::getImgZero($type, $url, $root);
       }
     }
 
@@ -521,13 +525,13 @@ class JoomHelper
         // Example: https://www.example.org/index.php?option=com_joomgallery&controller=images&view=image&format=raw&type=orig&id=3&catid=1
         return Route::_(self::getViewRoute('image', $img->id, $img->catid, 'raw', $type));
       }
-      else
-      {
+
+
         // Create file manager service
-			  $manager    = self::getService('FileManager', array($img->catid));
+              $manager    = self::getService('FileManager', [$img->catid]);
         // Create file manager service
-			  $filesystem = self::getService('Filesystem', array($img->filesystem));
-        
+              $filesystem = self::getService('Filesystem', [$img->filesystem]);
+
         // Real URL
         // Example: https://www.example.org/images/joomgallery/orig/test.jpg
         try
@@ -538,12 +542,12 @@ class JoomHelper
         {
           return self::getImgZero($type, $url, $root);
         }
-      }
+
     }
     else
     {
       // Create file manager service
-			$manager = self::getService('FileManager', array($img->catid));
+            $manager = self::getService('FileManager', [$img->catid]);
 
       if($root)
       {
@@ -551,12 +555,12 @@ class JoomHelper
         // Example: D:/xampp/joomla/images/joomgallery/orig/test.jpg
         return $manager->getImgPath($img, $type, false, false, true);
       }
-      else
-      {
+
+
         // Relative system path
         // Example: /images/joomgallery/orig/test.jpg
         return $manager->getImgPath($img, $type, false, false, false);
-      }
+
     }
   }
 
@@ -576,12 +580,12 @@ class JoomHelper
   {
     if(!\is_object($cat))
     {
-      if((!\is_numeric($cat) && !\is_string($cat)) ||$cat == 0)
+      if((!is_numeric($cat) && !\is_string($cat)) ||$cat == 0)
       {
         // no actual category given
         return self::getImgZero($type, $url, $root);
       }
-  
+
       $cat = self::getRecord('category', $cat);
     }
 
@@ -629,14 +633,14 @@ class JoomHelper
 
     if(!\is_object($cat))
     {
-      if((!\is_numeric($cat) && !\is_string($cat)) ||$cat == 0)
+      if((!is_numeric($cat) && !\is_string($cat)) ||$cat == 0)
       {
         // no actual category given
         return $id;
       }
-  
+
       $cat = self::getRecord('category', $cat);
-    }    
+    }
 
     try
     {
@@ -644,6 +648,7 @@ class JoomHelper
       {
         // Create the category table
         $com_obj = self::getComponent();
+
         if(!$table = $com_obj->getMVCFactory()->createTable('category', 'administrator'))
         {
           return $id;
@@ -654,15 +659,16 @@ class JoomHelper
         $nodes = $table->getNodeTree('children', true);
 
         // Rearrange it into a list of category ids
-        $categories = array();
+        $categories = [];
+
         foreach ($nodes as $node)
         {
-          \array_push($categories, $node['id']);
+          array_push($categories, $node['id']);
         }
       }
       else
       {
-        $categories = array($cat->id);
+        $categories = [$cat->id];
       }
 
       // Load the random image id
@@ -730,7 +736,7 @@ class JoomHelper
     if((int) $catid > 0)
     {
       $config = self::getService('config');
-      $router = 'Joomgallery\\Component\\Joomgallery\\Site\\Service\\' . \ucfirst($config->get('jg_router', 'DefaultRouter'));
+      $router = 'Joomgallery\\Component\\Joomgallery\\Site\\Service\\' . ucfirst($config->get('jg_router', 'DefaultRouter'));
 
       if($view == 'image' && !empty($router::$image_parentID))
       {
@@ -791,22 +797,22 @@ class JoomHelper
   }
 
   /**
-	 * Returns a record ID based on a given alias
+   * Returns a record ID based on a given alias
    *
    * @param   string      $record   The name of the record (available: category,image,tag,imagetype)
    * @param   string      $name     The alias or the filename of the image
-	 *
-	 * @return  int|bool    Record ID on success, false otherwise.
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  int|bool    Record ID on success, false otherwise.
+   *
+   * @since   4.0.0
+   */
   public static function getRecordIDbyAliasOrFilename($record, $name)
   {
-    $tables = array('category'  => _JOOM_TABLE_CATEGORIES,
-                    'image'     => _JOOM_TABLE_IMAGES,
-                    'imagetype' => _JOOM_TABLE_IMG_TYPES,
-                   );
-    
+    $tables = ['category'  => _JOOM_TABLE_CATEGORIES,
+      'image'     => _JOOM_TABLE_IMAGES,
+      'imagetype' => _JOOM_TABLE_IMG_TYPES,
+    ];
+
     // Does imagetype support alias
     if(!\array_key_exists($record, $tables))
     {
@@ -819,13 +825,14 @@ class JoomHelper
     // Get alias row name
     $row_name = 'alias';
     $filename = false;
+
     if($record == 'imagetype')
     {
       $row_name = 'type_alias';
     }
     elseif($record == 'image')
     {
-      if(\strpos($name, '.') !== false)
+      if(strpos($name, '.') !== false)
       {
         // We assume that $name is a filename
         $filename = true;
@@ -859,24 +866,24 @@ class JoomHelper
     {
       return $result;
     }
-    else
-    {
+
+
       return false;
-    }     
+
   }
 
   /**
-	 * Checks if a specific content type is available
+   * Checks if a specific content type is available
    *
    * @param   string    $name   Content type name
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
   public static function isAvailable($name)
   {
-    if(!\in_array($name, \array_keys(self::$content_types)))
+    if(!\in_array($name, array_keys(self::$content_types)))
     {
       self::getComponent()->addLog(Text::_('COM_JOOMGALLERY_ERROR_INVALID_CONTENT_TYPE'), 'error', 'jerror');
       throw new \Exception(Text::_('COM_JOOMGALLERY_ERROR_INVALID_CONTENT_TYPE'));
@@ -884,29 +891,29 @@ class JoomHelper
   }
 
   /**
-	 * Returns the image url or path for image with id=0
+   * Returns the image url or path for image with id=0
    *
    * @param   string   $type    The image type
    * @param   bool     $url     True to return an image URL, false for a system path (default: true)
    * @param   bool     $root    True to add the system root to path. Only if $url=false. (default: true)
-	 *
-	 * @return  string     Image path or url
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  string     Image path or url
+   *
+   * @since   4.0.0
+   */
   public static function getImgZero($type, $url=true, $root=true)
   {
     if($url)
     {
       return Route::_(self::getViewRoute('image', 0, 1, 'raw', $type));
     }
-    else
-    {
+
+
       // Create file manager service
-			$manager = self::getService('FileManager', array(1));
+            $manager = self::getService('FileManager', [1]);
 
       return $manager->getImgPath(0, $type, false, false, $root);
-    }
+
   }
 
   /**
@@ -929,6 +936,7 @@ class JoomHelper
     $maxvoting            = $config->get('jg_maxvoting');
     $votesum              = 'votesum';
     $votes                = 'votes';
+
     if($tablealias != '')
     {
       $votesum = $tablealias.'.'.$votesum;
@@ -954,6 +962,7 @@ class JoomHelper
 
         $db->setQuery($query);
         $row = $db->loadObject();
+
         if($row != null)
         {
           if($row->imgcount > 0)
@@ -964,6 +973,7 @@ class JoomHelper
           }
         }
       }
+
       if($avgdone)
       {
         $clause = 'ROUND(LEAST(IF(votes > 0, (('.$avgimgvote.'*'.$avgimgrating.') + '.$votesum.') / ('.$avgimgvote.' + '.$votes.'), 0.0), '.(float)$maxvoting.'), 2)';
@@ -993,6 +1003,7 @@ class JoomHelper
           ->where($db->quoteName('id') . ' = ' . (int) $imgid);
 
     $db->setQuery($query);
+
     if(($result = $db->loadResult()) != null)
     {
       $rating = $result;
@@ -1018,7 +1029,7 @@ class JoomHelper
     $reader = new \XMLReader();
 
     // Enable internal error handling for better debugging
-    \libxml_use_internal_errors(true);
+    libxml_use_internal_errors(true);
 
     // Open the URI within the stream reader.
     if(!$reader->open($uri, null, LIBXML_NOWARNING | LIBXML_NOERROR))
@@ -1063,7 +1074,7 @@ class JoomHelper
 
         if(++$attempts > $maxAttempts)
         {
-          throw new \RuntimeException("Exceeded maximum attempts to find the root element.");
+          throw new \RuntimeException('Exceeded maximum attempts to find the root element.');
         }
       }
 
@@ -1106,18 +1117,19 @@ class JoomHelper
     foreach ($filesystems as $filesystem)
     {
       // Get corresponding names
-      $plugin_name     = \explode('-', $filesystem, 2)[0];
+      $plugin_name     = explode('-', $filesystem, 2)[0];
       $plugin_fullname = 'plg_filesystem_'.$plugin_name;
-      $adapter_name    = \explode('-', $filesystem, 2)[1];
+      $adapter_name    = explode('-', $filesystem, 2)[1];
 
       // Try to get the corresponding filesystem adapter
       try
       {
         $adapter = $helper->getAdapter($filesystem);
-      } catch (\Exception $e)
+      }
+      catch (\Exception $e)
       {
         $adapter = false;
-      }      
+      }
 
       if(!$adapter)
       {
@@ -1158,7 +1170,7 @@ class JoomHelper
 
     foreach($imagetypes as $imagetype)
     {
-      if(\strpos($path, $imagetype->path) !== false)
+      if(strpos($path, $imagetype->path) !== false)
       {
         return $imagetype->typename;
       }
@@ -1181,27 +1193,28 @@ class JoomHelper
   {
     $file = Path::clean(JPATH_ADMINISTRATOR . '/components/' . $comp . '/access.xml');
 
-    if(!$xml = \simplexml_load_file($file))
+    if(!$xml = simplexml_load_file($file))
     {
       // Access XML not available
-      return array();
-    }    
+      return [];
+    }
 
     if($type)
     {
-      $result = $xml->xpath('/access/section[@name="'.\strtolower($type).'"]/action');
+      $result = $xml->xpath('/access/section[@name="'.strtolower($type).'"]/action');
     }
     else
     {
       $result = $xml->xpath('/access/section/action');
-    }    
+    }
 
-    $list = array();
+    $list = [];
+
     foreach($result as $node)
     {
       if(!\in_array(\strval($node['name']), $list))
       {
-        \array_push($list, \strval($node['name']));
+        array_push($list, \strval($node['name']));
       }
     }
 
@@ -1220,24 +1233,24 @@ class JoomHelper
   public static function pluralize(string $word): string
   {
     // List of irregular words
-    $irregularWords = [ 'child' => 'children', 'man' => 'men', 'woman' => 'women', 'tooth' => 'teeth',
-                        'foot' => 'feet', 'person' => 'people', 'mouse' => 'mice'
-                      ];
+    $irregularWords = ['child' => 'children', 'man' => 'men', 'woman' => 'women', 'tooth' => 'teeth',
+      'foot' => 'feet', 'person' => 'people', 'mouse' => 'mice',
+    ];
 
     // If the word is in the irregular list, return the plural form
-    if(\array_key_exists(\strtolower($word), $irregularWords))
+    if(\array_key_exists(strtolower($word), $irregularWords))
     {
-      return $irregularWords[\strtolower($word)];
+      return $irregularWords[strtolower($word)];
     }
 
     // Rules for ending in 'y'
-    if(\preg_match('/[^aeiou]y$/i', $word))
+    if(preg_match('/[^aeiou]y$/i', $word))
     {
-      return \preg_replace('/y$/i', 'ies', $word);
+      return preg_replace('/y$/i', 'ies', $word);
     }
 
     // Rules for ending in 's', 'x', 'z', 'ch', or 'sh'
-    if(\preg_match('/(s|x|z|ch|sh)$/i', $word))
+    if(preg_match('/(s|x|z|ch|sh)$/i', $word))
     {
       return $word . 'es';
     }
@@ -1258,7 +1271,7 @@ class JoomHelper
    */
   public static function getTableInstance(string $tableClass)
   {
-    if(!\class_exists($tableClass))
+    if(!class_exists($tableClass))
     {
       return false;
     }
@@ -1268,7 +1281,7 @@ class JoomHelper
     {
       return Factory::getContainer()->get($tableClass);
     }
-    
+
     // Instantiate a new table class and return it.
     return new $tableClass(Factory::getContainer()->get(DatabaseInterface::class));
   }

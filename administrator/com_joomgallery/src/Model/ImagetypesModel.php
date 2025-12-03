@@ -1,17 +1,18 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\Registry\Registry;
@@ -32,7 +33,7 @@ class ImagetypesModel extends JoomListModel
    */
   protected $type = 'imagetype';
 
-	/**
+  /**
    * Constructor
    * 
    * @param   array  $config  An optional associative array of configuration settings.
@@ -40,51 +41,51 @@ class ImagetypesModel extends JoomListModel
    * @return  void
    * @since   4.0.0
    */
-  function __construct($config = array())
-	{
-		parent::__construct($config);
-	}
+  function __construct($config = [])
+    {
+        parent::__construct($config);
+    }
 
-	/**
-	 * Build an SQL query to load the list data.
-	 *
-	 * @return  DatabaseQuery
-	 *
-	 * @since   4.0.0
-	 */
-	protected function getListQuery()
-	{
-		// Create a new query object.
-		$db    = $this->getDatabase();
-		$query = $db->getQuery(true);
+    /**
+     * Build an SQL query to load the list data.
+     *
+     * @return  DatabaseQuery
+     *
+     * @since   4.0.0
+     */
+    protected function getListQuery()
+    {
+        // Create a new query object.
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true);
 
-		// Select the required fields from the table.
-		$query->select('a.*');
-		$query->from($db->quoteName(_JOOM_TABLE_IMG_TYPES, 'a'));
+        // Select the required fields from the table.
+        $query->select('a.*');
+        $query->from($db->quoteName(_JOOM_TABLE_IMG_TYPES, 'a'));
 
-		// Add the list ordering clause.
+        // Add the list ordering clause.
     $query->order($db->escape('a.id ASC'));
 
-		return $query;
-	}
+        return $query;
+    }
 
-	/**
-	 * Get an array of data items
-	 *
-	 * @return mixed Array of data items on success, false on failure.
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
+    /**
+     * Get an array of data items
+     *
+     * @return mixed Array of data items on success, false on failure.
+     */
+    public function getItems()
+    {
+        $items = parent::getItems();
 
     foreach($items as $key => $item)
     {
-      if(property_exists($item, 'params')) 
+      if(property_exists($item, 'params'))
       {
         $items[$key]->params = new Registry($item->params);
       }
     }
 
-		return $items;
-	}
+        return $items;
+    }
 }

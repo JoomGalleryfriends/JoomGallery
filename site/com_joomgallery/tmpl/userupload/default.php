@@ -9,14 +9,14 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Layout\FileLayout;
+use \Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -45,6 +45,7 @@ $config = $this->params['configs'];
 
 // Prevent any display if userspace is not enabled
 $isUserSpaceEnabled = $config->get('jg_userspace');
+
 if(!$isUserSpaceEnabled)
 {
   return;
@@ -66,7 +67,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 $displayTipData = [
   'description' => Text::_('COM_JOOMGALLERY_GENERIC_UPLOAD_DATA'),
   'id'          => 'adminForm-desc',
-  'small'       => true
+  'small'       => true,
 ];
 $rendererTip    = new FileLayout('joomgallery.tip');
 

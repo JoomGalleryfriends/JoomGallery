@@ -9,14 +9,14 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Session\Session;
 use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Session\Session;
 use \Joomla\Component\Scheduler\Administrator\Task\Status;
 
 // Load scheduler language file
@@ -36,18 +36,18 @@ $jsPathES5 = JPATH_ROOT . '/media/com_scheduler/js/admin-view-run-test-task-es5.
 $jsPath    = JPATH_ROOT . '/media/com_scheduler/js/admin-view-run-test-task.min.js';
 
 // Prefer the ES5 build, fall back to the modern build
-if(\is_file($jsPathES5) && \is_readable($jsPathES5))
+if(is_file($jsPathES5) && is_readable($jsPathES5))
 {
-  $jsContent = \file_get_contents($jsPathES5);
+  $jsContent = file_get_contents($jsPathES5);
 }
-elseif(\is_file($jsPath) && \is_readable($jsPath))
+elseif(is_file($jsPath) && is_readable($jsPath))
 {
-  $jsContent = \file_get_contents($jsPath);
+  $jsContent = file_get_contents($jsPath);
 }
 
 if($jsContent !== false && $jsContent !== '')
 {
-  $jsContent = \str_replace(
+  $jsContent = str_replace(
       '?option=com_scheduler&view=tasks',
       '?option=com_joomgallery&view=tasks',
       $jsContent
@@ -83,7 +83,7 @@ $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
 if($saveOrder && !empty($this->items))
 {
-	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=tasks.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+    $saveOrderingUrl = 'index.php?option=com_joomgallery&task=tasks.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
   HTMLHelper::_('draggablelist.draggable');
 }
 ?>
@@ -93,7 +93,7 @@ if($saveOrder && !empty($this->items))
     <h2><?php echo Text::_('COM_JOOMGALLERY_TASKS_INSTANT_TASKS'); ?></h2>
     <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=tasks'); ?>" method="post" name="adminForm" id="adminForm">
       <div id="ajax-tasks-container" class="j-main-container">
-        <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+        <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <div class="clearfix"></div>
 
         <?php if (empty($this->items)) : ?>
@@ -123,9 +123,9 @@ if($saveOrder && !empty($this->items))
                         <span class="fa fa-play fa-sm me-2"></span><?php echo Text::_('COM_JOOMGALLERY_TASK_START'); ?>
                       </button>
                       <div class="badge-group mb-3">
-                        <span class="badge bg-secondary"><?php echo Text::_('COM_JOOMGALLERY_PENDING'); ?>: <span id="badgeQueue-<?php echo $item->id; ?>"><?php echo count($item->queue); ?></span></span>
-                        <span class="badge bg-success"><?php echo Text::_('COM_JOOMGALLERY_SUCCESSFUL'); ?>: <span id="badgeSuccessful-<?php echo $item->id; ?>"><?php echo count($item->successful); ?></span></span>
-                        <span class="badge bg-danger"><?php echo Text::_('COM_JOOMGALLERY_FAILED'); ?>: <span id="badgeFailed-<?php echo $item->id; ?>"><?php echo count($item->failed); ?></span></span>
+                        <span class="badge bg-secondary"><?php echo Text::_('COM_JOOMGALLERY_PENDING'); ?>: <span id="badgeQueue-<?php echo $item->id; ?>"><?php echo \count($item->queue); ?></span></span>
+                        <span class="badge bg-success"><?php echo Text::_('COM_JOOMGALLERY_SUCCESSFUL'); ?>: <span id="badgeSuccessful-<?php echo $item->id; ?>"><?php echo \count($item->successful); ?></span></span>
+                        <span class="badge bg-danger"><?php echo Text::_('COM_JOOMGALLERY_FAILED'); ?>: <span id="badgeFailed-<?php echo $item->id; ?>"><?php echo \count($item->failed); ?></span></span>
                       </div>
                       <div class="progress mb-2">
                         <div id="progress-<?php echo $item->id; ?>" class="progress-bar" style="width: <?php echo $item->progress; ?>%" role="progressbar" aria-valuenow="<?php echo $item->progress; ?>" aria-valuemin="0" aria-valuemax="100"><?php if($item->progress > 0){echo $item->progress.'%';}; ?></div>
@@ -204,7 +204,7 @@ if($saveOrder && !empty($this->items))
           <tbody>
           <?php foreach ($this->scheduledTasks as $i => $item) :?>
             <?php
-              $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || is_null($item->checked_out);
+              $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
               $canChange  = $user->authorise('core.edit.state', 'com_scheduler') && $canCheckin;
             ?>
             <tr class="row<?php echo $i % 2; ?>">
@@ -224,13 +224,13 @@ if($saveOrder && !empty($this->items))
                     'inactive_class' => 'none fa fa-running', 'tip' => true, 'translate' => false,
                     'active_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
                     'inactive_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
-                    ]); ?>
+                  ]); ?>
                 <?php endif; ?>
                 <span class="task-title">
                   <a href="<?php echo Route::_('index.php?option=com_scheduler&task=task.edit&id=' . $item->id); ?>"
                     title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape($item->title); ?>"> <?php echo $this->escape($item->title); ?>
                   </a>
-                  <?php if(!in_array($item->last_exit_code, [Status::OK, Status::WILL_RESUME])) : ?>
+                  <?php if(!\in_array($item->last_exit_code, [Status::OK, Status::WILL_RESUME])) : ?>
                     <span class="failure-indicator icon-exclamation-triangle" aria-hidden="true"></span>
                     <div role="tooltip">
                       <?php echo Text::sprintf('COM_JOOMGALLERY_TASK_TOOLTIP_TASK_FAILING', $item->last_exit_code); ?>
@@ -284,7 +284,7 @@ if($saveOrder && !empty($this->items))
 
         <?php
           // Modal for scheduler test runs
-          $modalparams = ['title' => '',];
+          $modalparams = ['title' => ''];
           $modalbody = '<div class="p-3"></div>';
           echo HTMLHelper::_('bootstrap.renderModal', 'scheduler-test-modal', $modalparams, $modalbody);
         ?>

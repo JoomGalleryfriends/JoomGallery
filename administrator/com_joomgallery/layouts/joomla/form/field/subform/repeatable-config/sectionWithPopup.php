@@ -9,7 +9,7 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
@@ -36,20 +36,21 @@ $wa->useScript('bootstrap.modal');
 
 if($group == 'jg_staticprocessing0')
 {
-  $form->setFieldAttribute('jg_imgtype','sensitive',true);
+  $form->setFieldAttribute('jg_imgtype', 'sensitive', true);
 }
 
 if($group == 'jg_staticprocessing1' || $group == 'jg_staticprocessing2')
 {
-  $form->setFieldAttribute('jg_imgtype','readonly',true);
+  $form->setFieldAttribute('jg_imgtype', 'readonly', true);
 }
 
 if($group == 'jg_staticprocessing0' || $group == 'jg_staticprocessing1' || $group == 'jg_staticprocessing2')
 {
-  $form->setFieldAttribute('jg_imgtypename','readonly',true);
+  $form->setFieldAttribute('jg_imgtypename', 'readonly', true);
 }
 
 $imagetype = '';
+
 foreach ($form->getGroup('') as $k => $field)
 {
   if($field->fieldname == 'jg_imgtypename')
@@ -62,13 +63,15 @@ foreach ($form->getGroup('') as $k => $field)
 ?>
 
 <tr class="subform-repeatable-group <?php echo $basegroup.$imagetype;?>" data-base-name="<?php echo $basegroup; ?>" data-group="<?php echo $group; ?>">
-	<?php
+  <?php
   $i = 0;
+
   foreach ($form->getGroup('') as $k => $field) : ?>
     <?php
     $sensitive = $field->getAttribute('sensitive', 0) == 1 ? true : false ;
     $sensitiveLbl = $sensitive ? ' <span class="icon-notification-circle" aria-hidden="true"></span>' : '' ;
     $sensitiveClass = $sensitive ? 'sensitive' : '' ;
+
     if($i == 1)
     {
       $fieldname = $field->value;
@@ -76,10 +79,10 @@ foreach ($form->getGroup('') as $k => $field)
     ?>
     <?php if($i < 2): ?>
       <td data-column="<?php echo strip_tags($field->label); ?>" class="<?php echo $sensitiveClass; ?>">
-        <?php echo $field->renderField(array('hiddenLabel' => true, 'hiddenDescription' => true, 'sensitive' => $sensitive)).' '.$sensitiveLbl; ?>
+        <?php echo $field->renderField(['hiddenLabel' => true, 'hiddenDescription' => true, 'sensitive' => $sensitive]).' '.$sensitiveLbl; ?>
       </td>
     <?php endif; ?>
-	<?php 
+  <?php
   $i++;
   endforeach; ?>
   <td data-column="<?php echo Text::_('COM_JOOMGALLERY_SETTINGS_POPUP'); ?>">
@@ -90,16 +93,16 @@ foreach ($form->getGroup('') as $k => $field)
       </div>
     </div>
     <?php
-      $modalData = array(
+      $modalData = [
         'selector' => $group . '_modal',
-        'params'   => array('title'  => $label.': '.ucfirst($fieldname)),
-        'body' => LayoutHelper::render('joomla.form.field.subform.repeatable-config.modal', $displayData)
-      );
+        'params'   => ['title'  => $label.': '.ucfirst($fieldname)],
+        'body' => LayoutHelper::render('joomla.form.field.subform.repeatable-config.modal', $displayData),
+      ];
       echo LayoutHelper::render('libraries.html.bootstrap.modal.main', $modalData);
     ?>
   </td>
-	<?php if (!empty($buttons)) : ?>
-	<td>
+  <?php if (!empty($buttons)) : ?>
+  <td>
     <?php if ($group != 'jg_staticprocessing0' && $group != 'jg_staticprocessing1' && $group != 'jg_staticprocessing2') : ?>
       <div class="btn-group">
         <?php if (!empty($buttons['add'])) : ?>
@@ -119,6 +122,6 @@ foreach ($form->getGroup('') as $k => $field)
         <?php endif; ?>
       </div>
     <?php endif; ?>
-	</td>
-	<?php endif; ?>
+  </td>
+  <?php endif; ?>
 </tr>

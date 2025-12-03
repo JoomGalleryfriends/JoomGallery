@@ -1,28 +1,29 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Service;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Menu\AbstractMenu;
-use \Joomla\Database\ParameterType;
-use \Joomla\Database\DatabaseInterface;
 use \Joomla\CMS\Application\SiteApplication;
+use \Joomla\CMS\Categories\CategoryFactoryInterface;
+use \Joomla\CMS\Component\Router\RouterViewConfiguration;
 use \Joomla\CMS\Component\Router\Rules\MenuRules;
 use \Joomla\CMS\Component\Router\Rules\NomenuRules;
-use \Joomla\CMS\Categories\CategoryFactoryInterface;
 use \Joomla\CMS\Component\Router\Rules\StandardRules;
-use \Joomla\CMS\Component\Router\RouterViewConfiguration;
+use \Joomla\CMS\Menu\AbstractMenu;
+use \Joomla\Database\DatabaseInterface;
+use \Joomla\Database\ParameterType;
 
 /**
  * Joomgallery Router class (JG3 flavor)
@@ -159,7 +160,7 @@ class JG3ModernRouter extends DefaultRouter
    */
   public function getImageSegment($id, $query): array|string
   {
-    if(!\strpos($id, ':'))
+    if(!strpos($id, ':'))
     {
       $dbquery = $this->db->createQuery();
 
@@ -173,7 +174,7 @@ class JG3ModernRouter extends DefaultRouter
       $id = $this->db->loadResult().':'.$id;
     }
 
-    return array((int) $id => $id);
+    return [(int) $id => $id];
   }
 
   /**
@@ -190,10 +191,11 @@ class JG3ModernRouter extends DefaultRouter
     $img_id = 0;
 
     $parts  = explode('-', $segment);
-    if(\is_numeric(\end($parts)))
+
+    if(is_numeric(end($parts)))
     {
       // For a segment in the form: alias-id
-      $img_id = (int) \end($parts);
+      $img_id = (int) end($parts);
     }
 
     if($img_id < 1)
@@ -212,7 +214,7 @@ class JG3ModernRouter extends DefaultRouter
         $dbquery->bind(':catid', $cat, ParameterType::INTEGER);
       }
 
-      if(\key_exists('view', $query) && $query['view'] == 'category' && \key_exists('id', $query))
+      if(key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
       {
         // We can identify the image via menu item of type category
         $dbquery->where($this->db->quoteName('catid').' = :catid');

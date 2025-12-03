@@ -9,16 +9,16 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use Joomla\Registry\Registry;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Session\Session;
-use \Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Session\Session;
+use Joomla\Registry\Registry;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -33,6 +33,7 @@ $config = $this->params['configs'];
 
 // Prevent any display if userspace is not enabled
 $isUserSpaceEnabled = $config->get('jg_userspace');
+
 if(!$isUserSpaceEnabled)
 {
   return;
@@ -412,7 +413,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
       <div class="card">
         <div class="card-header">
           <h4>
-            <?php echo Text::_('COM_JOOMGALLERY_LATEST_CATEGORIES').' ('.count($categories).')'; ?>
+            <?php echo Text::_('COM_JOOMGALLERY_LATEST_CATEGORIES').' ('.\count($categories).')'; ?>
           </h4>
         </div>
 
@@ -637,7 +638,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
       <div class="card">
         <div class="card-header">
           <h4>
-            <?php echo Text::_('COM_JOOMGALLERY_LATEST_IMAGES').' ('.count($images).')'; ?>
+            <?php echo Text::_('COM_JOOMGALLERY_LATEST_IMAGES').' ('.\count($images).')'; ?>
           </h4>
         </div>
 
@@ -845,6 +846,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
     $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
     $saveOrderingUrl = '';
+
     if($saveOrder && !empty($data->items))
     {
       $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=userpanel.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
@@ -869,7 +871,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                 novalidate aria-label="<?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORIES', true); ?>">
 
             <?php if(!empty($data->filterForm)) : ?>
-              <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $data)); ?>
+              <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $data]); ?>
             <?php endif; ?>
 
             <?php if(empty($data->items)) : ?>
@@ -931,7 +933,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                   </thead>
                   <tfoot>
                   <tr>
-                    <td colspan="<?php echo isset($data->items[0]) ? count(get_object_vars($data->items[0])) : 10; ?>">
+                    <td colspan="<?php echo isset($data->items[0]) ? \count(get_object_vars($data->items[0])) : 10; ?>">
                       <?php echo $data->pagination->getListFooter(); ?>
                     </td>
                   </tr>
@@ -956,6 +958,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                         <td class="text-center d-none d-md-table-cell sort-cell">
                           <?php
                           $iconClass = '';
+
                           if(!$canChange)
                           {
                             $iconClass = ' inactive';

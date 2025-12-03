@@ -1,29 +1,30 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\FileManager;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
-* Interface for the file manager classes
-*
-* File manager classes provides methods to handle image files and folders based ...
-* - ... on the current available image types (#_joomgallery_img_types)
-* - ... on the parameters from the configuration set of the current user (Config-Service)
-* - ... on the chosen filesystem (Filesystem-Service)
-* - ... on the chosen image processor (IMGtools-Service)
-*
-* @since  4.0.0
-*/
+ * Interface for the file manager classes
+ *
+ * File manager classes provides methods to handle image files and folders based ...
+ * - ... on the current available image types (#_joomgallery_img_types)
+ * - ... on the parameters from the configuration set of the current user (Config-Service)
+ * - ... on the chosen filesystem (Filesystem-Service)
+ * - ... on the chosen image processor (IMGtools-Service)
+ *
+ * @since  4.0.0
+ */
 interface FileManagerInterface
 {
   /**

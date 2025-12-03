@@ -1,35 +1,36 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Filter\InputFilter;
 use \Joomla\CMS\Filter\OutputFilter;
+use \Joomla\CMS\Language\Text;
+use \Joomla\Database\DatabaseInterface;
 use \Joomla\Filesystem\File as JFile;
 use \Joomla\Filesystem\Path as JPath;
-use \Joomla\Database\DatabaseInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 
 /**
-* Base class for the Uploader helper classes
-*
-* @since  4.0.0
-*/
+ * Base class for the Uploader helper classes
+ *
+ * @since  4.0.0
+ */
 abstract class Uploader implements UploaderInterface
 {
   use ServiceTrait;
@@ -123,18 +124,18 @@ abstract class Uploader implements UploaderInterface
     $this->component->addWarning($this->app->getUserStateFromRequest($this->userStateKey.'.warningoutput', 'warningoutput', '', 'string'));
   }
 
-  /**
-	 * Base method to retrieve an uploaded image. Step 1.
-   * Method has to be extended! Do not use it in this way!
-	 *
-   * @param   array    $data        Form data (as reference)
-   * @param   bool     $filename    True, if the filename has to be created (default: True)
-   *
-	 * @return  bool     True on success, false otherwise
-	 *
-	 * @since  4.0.0
-	 */
-	public function retrieveImage(&$data, $filename=True): bool
+    /**
+     * Base method to retrieve an uploaded image. Step 1.
+     * Method has to be extended! Do not use it in this way!
+     *
+     * @param   array    $data        Form data (as reference)
+     * @param   bool     $filename    True, if the filename has to be created (default: True)
+     *
+     * @return  bool     True on success, false otherwise
+     *
+     * @since  4.0.0
+     */
+    public function retrieveImage(&$data, $filename=True): bool
   {
     // Create filesystem service
     $this->component->createFilesystem();
@@ -145,14 +146,14 @@ abstract class Uploader implements UploaderInterface
     // Get supported formats of image processor
     $this->component->createIMGtools($this->component->getConfig()->get('jg_imgprocessor'));
     $supported_ext = $this->component->getIMGtools()->get('supported_types');
-    $allowed_imgtools = \in_array(\strtoupper($tag), $supported_ext);
+    $allowed_imgtools = \in_array(strtoupper($tag), $supported_ext);
     $this->component->delIMGtools();
 
     // Get supported formats of filesystem
     $allowed_filesystem = $this->component->getFilesystem()->isAllowedFile($this->src_name);
 
     // Check for supported image format
-    if(!$allowed_imgtools || !$allowed_filesystem || strlen($this->src_tmp) == 0 || $this->src_tmp == 'none')
+    if(!$allowed_imgtools || !$allowed_filesystem || \strlen($this->src_tmp) == 0 || $this->src_tmp == 'none')
     {
       $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_UNSUPPORTED_IMAGEFILE_TYPE'));
       $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_UNSUPPORTED_IMAGEFILE_TYPE'), 'error', 'jerror');
@@ -166,6 +167,7 @@ abstract class Uploader implements UploaderInterface
     // Image size must not exceed the setting in backend if we are in frontend
     $maxFileSizeMB = $this->component->getConfig()->get('jg_maxfilesize');
     $maxFileSizeBytes = $maxFileSizeMB * (1024 * 1024);
+
     if($this->app->isClient('site') && $this->src_size > $maxFileSizeBytes)
     {
       $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_MAXIMUM_USER_UPLOAD_LIMIT_EXCEEDED', $maxFileSizeMB));
@@ -179,6 +181,7 @@ abstract class Uploader implements UploaderInterface
     {
       // Get filecounter
       $filecounter = null;
+
       if($this->multiple && $this->component->getConfig()->get('jg_filenamenumber'))
       {
         $filecounter = $this->getSerial();
@@ -187,7 +190,7 @@ abstract class Uploader implements UploaderInterface
       // Create filename, title and alias
       if($this->component->getConfig()->get('jg_useorigfilename'))
       {
-        $data['title'] = \pathinfo($this->src_name, PATHINFO_FILENAME);
+        $data['title'] = pathinfo($this->src_name, PATHINFO_FILENAME);
       }
       else
       {
@@ -203,7 +206,7 @@ abstract class Uploader implements UploaderInterface
       $data['filename'] = $this->component->getFileManager()->genFilename($newfilename, $tag, $filecounter);
 
       // Make an alias proposition if not given
-      if(!\key_exists('alias', $data) || empty($data['alias']))
+      if(!key_exists('alias', $data) || empty($data['alias']))
       {
         $data['alias'] = $data['title'];
       }
@@ -213,8 +216,9 @@ abstract class Uploader implements UploaderInterface
     $data['filesystem'] = $this->component->getFilesystem()->get('filesystem');
 
     // Trigger onJoomBeforeUpload
-    $plugins  = $this->app->triggerEvent('onJoomBeforeUpload', array($data['filename']));
-    if(in_array(false, $plugins, true))
+    $plugins  = $this->app->triggerEvent('onJoomBeforeUpload', [$data['filename']]);
+
+    if(\in_array(false, $plugins, true))
     {
       return false;
     }
@@ -256,10 +260,10 @@ abstract class Uploader implements UploaderInterface
     $metadata = $this->component->getMetadata()->readMetadata($this->src_file);
 
     // Add image metadata to data
-    $data['imgmetadata'] = \json_encode($metadata);
+    $data['imgmetadata'] = json_encode($metadata);
 
     // Check if there is something to override
-    if(!\property_exists($this->component->getConfig()->get('jg_replaceinfo'), 'jg_replaceinfo0'))
+    if(!property_exists($this->component->getConfig()->get('jg_replaceinfo'), 'jg_replaceinfo0'))
     {
       return true;
     }
@@ -276,16 +280,15 @@ abstract class Uploader implements UploaderInterface
     // Loop through all replacements defined in config
     foreach ($this->component->getConfig()->get('jg_replaceinfo') as $replaceinfo)
     {
-      $source_array = \explode('-', $replaceinfo->source);
+      $source_array = explode('-', $replaceinfo->source);
 
       // Get metadata value from image
       switch ($source_array[0])
       {
         case 'IFD0':
-          // 'break' intentionally omitted
         case 'EXIF':
           // Get exif source attribute
-          if(isset($exif_config_array[$source_array[0]]) && isset($exif_config_array[$source_array[0]][$source_array[1]]))
+          if(isset($exif_config_array[$source_array[0]], $exif_config_array[$source_array[0]][$source_array[1]])  )
           {
             $source = $exif_config_array[$source_array[0]][$source_array[1]];
           }
@@ -299,7 +302,7 @@ abstract class Uploader implements UploaderInterface
           $source_name      = $source['Name'];
 
           // Get metadata value
-          if(isset($metadata['exif'][$source_array[0]]) && isset($metadata['exif'][$source_array[0]][$source_attribute])
+          if(isset($metadata['exif'][$source_array[0]], $metadata['exif'][$source_array[0]][$source_attribute])
               && !empty($metadata['exif'][$source_array[0]][$source_attribute]))
           {
             $source_value = $metadata['exif'][$source_array[0]][$source_attribute];
@@ -346,7 +349,7 @@ abstract class Uploader implements UploaderInterface
 
         case 'IPTC':
           // Get iptc source attribute
-          if(isset($iptc_config_array[$source_array[0]]) && isset($iptc_config_array[$source_array[0]][$source_array[1]]))
+          if(isset($iptc_config_array[$source_array[0]], $iptc_config_array[$source_array[0]][$source_array[1]])  )
           {
             $source = $iptc_config_array[$source_array[0]][$source_array[1]];
           }
@@ -360,7 +363,7 @@ abstract class Uploader implements UploaderInterface
           $source_name      = $source['Name'];
 
           // Adjust iptc source attribute
-          $source_attribute = \str_replace(':', '#', $source_attribute);
+          $source_attribute = str_replace(':', '#', $source_attribute);
 
           // Get metadata value
           if(isset($metadata['iptc'][$source_attribute]) && !empty($metadata['iptc'][$source_attribute]))
@@ -397,25 +400,26 @@ abstract class Uploader implements UploaderInterface
       if($replaceinfo->target == 'tags')
       {
         // Get tags
-        $tags = \array_unique(\array_map('trim', \explode(',', $filter->clean($source_value, 'string'))));
+        $tags = array_unique(array_map('trim', explode(',', $filter->clean($source_value, 'string'))));
 
         // Get existing tags
         $tags_model     = $this->component->getMVCFactory()->createModel('Tags', 'administrator');
         $existing_tags = [];
+
         foreach($tags_model->getItemsInList($tags) as $tag)
         {
           $existing_tags[$tag->title] = $tag->id;
         }
 
         // Add #new# prefix to new tags
-        $data['tags'] = \array_map(function($tag) use ($existing_tags)
+        $data['tags'] = array_map(function($tag) use ($existing_tags)
         {
           return isset($existing_tags[$tag]) ? $existing_tags[$tag] : '#new#' . $tag;
         }, $tags);
 
         // Write debug info
-        $this->component->addWarning(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . \strtoupper('tags')));
-        $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . \strtoupper('tags')), 'warning', 'jerror');
+        $this->component->addWarning(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . strtoupper('tags')));
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . strtoupper('tags')), 'warning', 'jerror');
       }
       elseif($replaceinfo->target == 'title')
       {
@@ -434,6 +438,7 @@ abstract class Uploader implements UploaderInterface
 
         // Get filecounter
         $filecounter = null;
+
         if($this->multiple && $this->component->getConfig()->get('jg_filenamenumber'))
         {
           $filecounter = $this->getSerial();
@@ -445,8 +450,8 @@ abstract class Uploader implements UploaderInterface
         $data['filename'] = $this->component->getFileManager()->genFilename($newfilename, $tag, $filecounter);
 
         // Write debug info
-        $this->component->addWarning(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . \strtoupper('title')));
-        $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . \strtoupper('title')), 'warning', 'jerror');
+        $this->component->addWarning(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . strtoupper('title')));
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . strtoupper('title')), 'warning', 'jerror');
         $this->component->addWarning(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_ALIAS_FILENAME'));
         $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_ALIAS_FILENAME'), 'warning', 'jerror');
 
@@ -454,8 +459,8 @@ abstract class Uploader implements UploaderInterface
       else
       {
         $data[$replaceinfo->target] = $filter->clean($source_value, 'string');
-        $this->component->addWarning(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . \strtoupper($replaceinfo->target)));
-        $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . \strtoupper($replaceinfo->target)), 'warning', 'jerror');
+        $this->component->addWarning(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . strtoupper($replaceinfo->target)));
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . strtoupper($replaceinfo->target)), 'warning', 'jerror');
       }
     }
 
@@ -466,17 +471,17 @@ abstract class Uploader implements UploaderInterface
   }
 
 
-  /**
-	 * Method to create uploaded image files. Step 3.
-   * (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
-	 *
-   * @param   ImageTable   $data_row     Image object
-   *
-	 * @return  bool         True on success, false otherwise
-	 *
-	 * @since  4.0.0
-	 */
-	public function createImage($data_row): bool
+    /**
+     * Method to create uploaded image files. Step 3.
+     * (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
+     *
+     * @param   ImageTable   $data_row     Image object
+     *
+     * @return  bool         True on success, false otherwise
+     *
+     * @since  4.0.0
+     */
+    public function createImage($data_row): bool
   {
     // Check if filename was set
     if(!isset($data_row->filename) || empty($data_row->filename))
@@ -499,6 +504,7 @@ abstract class Uploader implements UploaderInterface
 
     // Message about new image
     $jg_filenamenumber = $this->component->getConfig()->get('jg_filenamenumber');
+
     if($this->app->isClient('site') && $jg_filenamenumber !== 'none')
     {
       // Create message service
@@ -511,14 +517,14 @@ abstract class Uploader implements UploaderInterface
       $cat = JoomHelper::getRecord('category', $data_row->catid, $this->component);
 
       // Template variables
-      $tpl_vars = array( 'user_id' => $user->id,
-                         'user_username' => $user->username,
-                         'user_name' => $user->name,
-                         'img_id' => $data_row->id,
-                         'img_title' => $data_row->title,
-                         'cat_id' => $cat->id,
-                         'cat_title' => $cat->title
-                        );
+      $tpl_vars = ['user_id' => $user->id,
+        'user_username' => $user->username,
+        'user_name' => $user->name,
+        'img_id' => $data_row->id,
+        'img_title' => $data_row->title,
+        'cat_id' => $cat->id,
+        'cat_title' => $cat->title,
+      ];
 
       // Setting up message template
       $this->component->getMessenger()->selectTemplate(_JOOM_OPTION.'.newimage');
@@ -535,7 +541,7 @@ abstract class Uploader implements UploaderInterface
     $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_SUCCESS_CREATE_IMAGETYPE_END'));
     $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_FILENAME', $data_row->filename));
 
-    $this->app->triggerEvent('onJoomAfterUpload', array($data_row));
+    $this->app->triggerEvent('onJoomAfterUpload', [$data_row]);
 
     // Reset user states
     $this->resetUserStates();
@@ -578,16 +584,16 @@ abstract class Uploader implements UploaderInterface
    */
   public function deleteTmp(): bool
   {
-    $files = array();
+    $files = [];
 
-    if(isset($this->src_file) && !empty($this->src_file) && \file_exists($this->src_file))
+    if(isset($this->src_file) && !empty($this->src_file) && file_exists($this->src_file))
     {
-      \array_push($files, $this->src_file);
+      array_push($files, $this->src_file);
     }
 
-    if(isset($this->src_tmp) && !empty($this->src_tmp) && \file_exists($this->src_tmp))
+    if(isset($this->src_tmp) && !empty($this->src_tmp) && file_exists($this->src_tmp))
     {
-      \array_push($files, $this->src_tmp);
+      array_push($files, $this->src_tmp);
     }
 
     return JFile::delete($files);
@@ -612,6 +618,7 @@ abstract class Uploader implements UploaderInterface
           ->where('created_by = '.\intval($userid));
 
     $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
+
     if($timespan > 0)
     {
       // image 'date' may be manipulated, use created time instead
@@ -692,7 +699,7 @@ abstract class Uploader implements UploaderInterface
    */
   protected function tempImgObj($data)
   {
-    if(!\key_exists('catid', $data) || !empty($data['catid']) || !\key_exists('filename', $data) || !empty($data['filename']))
+    if(!key_exists('catid', $data) || !empty($data['catid']) || !key_exists('filename', $data) || !empty($data['filename']))
     {
       $this->component->addLog('Form data must have at least catid and filename', 'error', 'jerror');
       throw new \Exception('Form data must have at least catid and filename');

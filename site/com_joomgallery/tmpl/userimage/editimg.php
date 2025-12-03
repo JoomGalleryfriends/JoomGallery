@@ -9,16 +9,16 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Uri\Uri;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -98,7 +98,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
       </div>
 
       <!--      <fieldset>-->
-      <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details')); ?>
+      <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'Details']); ?>
 
       <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('COM_JOOMGALLERY_DETAILS', true)); ?>
 
@@ -133,7 +133,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
                 <?php if (false): ?>
                   <?php foreach($this->imagetypes as $key => $imagetype) : ?>
                     <a class="btn btn-outline-primary" style="cursor:pointer;"
-                       onclick="openModal('<?php echo $imagetype->typename; ?>')"><?php echo Text::sprintf('COM_JOOMGALLERY_SHOWIMAGE_IMGTYPE', \ucfirst($imagetype->typename)); ?></a>
+                       onclick="openModal('<?php echo $imagetype->typename; ?>')"><?php echo Text::sprintf('COM_JOOMGALLERY_SHOWIMAGE_IMGTYPE', ucfirst($imagetype->typename)); ?></a>
                   <?php endforeach; ?>
                 <?php endif ?>
               </div>
@@ -278,9 +278,9 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
       <input type="hidden" id="mediaManagerPath" name="mediapath" value=""/>
       <input type="hidden" name="jform[uploader]" value="html"/>
       <?php /* <input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
-	<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
-	<input type="hidden" name="jform[votes]" value="<?php echo $this->item->votes; ?>" />
-	<input type="hidden" name="jform[useruploaded]" value="<?php echo $this->item->useruploaded; ?>" /> */ ?>
+    <input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
+    <input type="hidden" name="jform[votes]" value="<?php echo $this->item->votes; ?>" />
+    <input type="hidden" name="jform[useruploaded]" value="<?php echo $this->item->useruploaded; ?>" /> */ ?>
       <?php echo HTMLHelper::_('form.token'); ?>
       <!--      </fieldset>-->
 
@@ -291,24 +291,25 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 
 <?php
 $mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
-if(in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
+
+if(\in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
 {
   $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn btn-secondary hasTip"  disabled="disabled" readonly                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
      title="'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP').'"><s>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</s> </button></joomla-toolbar-button>';
 }
 
 // Image preview modal
-$options = array('modal-dialog-scrollable' => true,
-                 'title'                   => 'Test Title',
-                 'footer'                  => $mediaManagerBtn
-                   .'<a id="replaceBtn" class="btn btn-outline-dark hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP')
-                   .'" href="'.Route::_('index.php?option=com_joomgallery&view=userimage&layout=replace&id='.(int) $this->item->id).'">'
-                   .Text::_('COM_JOOMGALLERY_REPLACE')
-                   .'</a>'
-                   .'<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">'
-                   .Text::_('JCLOSE')
-                   .'</button>',
-);
+$options = ['modal-dialog-scrollable' => true,
+  'title'                   => 'Test Title',
+  'footer'                  => $mediaManagerBtn
+    .'<a id="replaceBtn" class="btn btn-outline-dark hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP')
+    .'" href="'.Route::_('index.php?option=com_joomgallery&view=userimage&layout=replace&id='.(int) $this->item->id).'">'
+    .Text::_('COM_JOOMGALLERY_REPLACE')
+    .'</a>'
+    .'<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">'
+    .Text::_('JCLOSE')
+    .'</button>',
+];
 
 echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
 ?>
@@ -333,6 +334,7 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
       $title  .= $imagetype->typename.':"'.Text::_('COM_JOOMGALLERY_'.strtoupper($imagetype->typename)).'",';
 
       $img_path = str_replace('\\', '/', JoomHelper::getImg($this->item, $imagetype->typename, false, false));
+
       if($this->item->filesystem == 'local-images')
       {
         // Adjust for local file adapter

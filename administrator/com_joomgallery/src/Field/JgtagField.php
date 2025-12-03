@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
-use \Joomla\Utilities\ArrayHelper;
-use \Joomla\Database\ParameterType;
 use \Joomla\CMS\Form\Field\ListField;
 use \Joomla\CMS\Language\Multilanguage;
+use \Joomla\Database\ParameterType;
+use \Joomla\Utilities\ArrayHelper;
 
 /**
  * List of Tags field.
@@ -60,16 +61,16 @@ class JgtagField extends ListField
         {
           if(empty($this->value))
           {
-            $this->value = array();
+            $this->value = [];
           }
           else
           {
             $tags = $this->value;
-            $this->value = array();
+            $this->value = [];
 
             foreach($tags as $tag)
             {
-              \array_push($this->value, $tag->id);
+              array_push($this->value, $tag->id);
             }
           }
         }
@@ -77,13 +78,13 @@ class JgtagField extends ListField
         // String in format 2,5,4
         if (\is_string($this->value))
         {
-          $this->value = \explode(',', $this->value);
+          $this->value = explode(',', $this->value);
         }
 
         // Integer is given
         if (\is_int($this->value))
         {
-          $this->value = array($this->value);
+          $this->value = [$this->value];
         }
 
         $data['value'] = $this->value;
@@ -111,7 +112,7 @@ class JgtagField extends ListField
      */
     protected function getOptions()
     {
-      $published = (string) $this->element['published'] ?: array(0, 1);
+      $published = (string) $this->element['published'] ?: [0, 1];
       $app       = Factory::getApplication();
       $language  = null;
       $options   = [];
@@ -123,11 +124,11 @@ class JgtagField extends ListField
       $db    = $this->getDatabase();
       $query = $db->getQuery(true)
           ->select([
-                      $db->quoteName('a.id', 'value'),
-                      $db->quoteName('a.title', 'text'),
-                      $db->quoteName('a.published'),
-                      $db->quoteName('a.ordering'),
-                    ])
+            $db->quoteName('a.id', 'value'),
+            $db->quoteName('a.title', 'text'),
+            $db->quoteName('a.published'),
+            $db->quoteName('a.ordering'),
+          ])
           ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
 
       // Limit Options in multilanguage
@@ -183,7 +184,7 @@ class JgtagField extends ListField
           $topIds = $db->loadColumn();
 
           // Merge the used values into the most used tags
-          if(!empty($this->value) && is_array($this->value))
+          if(!empty($this->value) && \is_array($this->value))
           {
               $topIds = array_merge($topIds, $this->value);
               $topIds = array_keys(array_flip($topIds));
@@ -206,11 +207,11 @@ class JgtagField extends ListField
             }
             catch(\RuntimeException $e)
             {
-              return array();
+              return [];
             }
 
             // Limit the main query to the missing amount of tags
-            $count = count($options);
+            $count = \count($options);
             $prefillLimit = $prefillLimit - $count;
             $query->setLimit($prefillLimit);
 
@@ -234,12 +235,12 @@ class JgtagField extends ListField
         }
         catch (\RuntimeException $e)
         {
-          return array();
+          return [];
         }
       }
 
       // Merge any additional options in the XML definition.
-      $options = \array_merge(parent::getOptions(), $options);
+      $options = array_merge(parent::getOptions(), $options);
 
       return $options;
     }
@@ -260,7 +261,7 @@ class JgtagField extends ListField
         foreach($options as &$option)
         {
           $repeat = (isset($option->level) && $option->level - 1 >= 0) ? $option->level - 1 : 0;
-          $option->text = \str_repeat('- ', $repeat) . $option->text;
+          $option->text = str_repeat('- ', $repeat) . $option->text;
         }
       }
 
@@ -298,15 +299,15 @@ class JgtagField extends ListField
      */
     public function allowCustom()
     {
-      if($this->element['custom'] && \in_array((string) $this->element['custom'], array('0', 'false', 'deny')))
+      if($this->element['custom'] && \in_array((string) $this->element['custom'], ['0', 'false', 'deny']))
       {
           return false;
       }
 
         // Get access service
-		  $comp = Factory::getApplication()->bootComponent('com_joomgallery');
-		  $comp->createAccess();
-    	$acl  = $comp->getAccess();
+          $comp = Factory::getApplication()->bootComponent('com_joomgallery');
+          $comp->createAccess();
+        $acl  = $comp->getAccess();
 
       return $acl->checkACL('core.create', 'com_joomgallery.tag');
     }
@@ -322,7 +323,7 @@ class JgtagField extends ListField
     {
         if($this->element['remote-search'])
         {
-            return !\in_array((string) $this->element['remote-search'], array('0', 'false', ''));
+            return !\in_array((string) $this->element['remote-search'], ['0', 'false', '']);
         }
 
         //return $this->comParams->get('tag_field_ajax_mode', 1) == 1;

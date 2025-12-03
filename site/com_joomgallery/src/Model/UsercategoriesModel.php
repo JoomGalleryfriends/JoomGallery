@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
 use \Joomla\CMS\Factory;
 use \Joomla\Database\DatabaseInterface;
 use \Joomla\Database\Mysqli\MysqliQuery;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
 
 /**
  * Model to get a list of category records.
@@ -35,11 +36,11 @@ class UsercategoriesModel extends AdminCategoriesModel
    * @return  void
    * @since   4.2.0
    */
-  function __construct($config = array())
+  function __construct($config = [])
   {
     if(empty($config['filter_fields']))
     {
-      $config['filter_fields'] = array(
+      $config['filter_fields'] = [
         'lft', 'a.lft',
         'rgt', 'a.rgt',
         'level', 'a.level',
@@ -60,8 +61,8 @@ class UsercategoriesModel extends AdminCategoriesModel
         'modified_time', 'a.modified_time',
         'id', 'a.id',
         'img_count', 'a.img_count',
-        'child_count', 'a.child_count'
-      );
+        'child_count', 'a.child_count',
+      ];
     }
 
     parent::__construct($config);
@@ -152,7 +153,7 @@ class UsercategoriesModel extends AdminCategoriesModel
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(empty ($count))
+      if(empty($count))
       {
         $isUserHasACategory = false;
       }

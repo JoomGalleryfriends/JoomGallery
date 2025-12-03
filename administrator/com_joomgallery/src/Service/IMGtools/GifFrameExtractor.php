@@ -1,17 +1,18 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -136,7 +137,7 @@ class GifFrameExtractor
   {
       if (!$this->isAnimatedGif($filename))
       {
-          return array(false);
+          return [false];
           //throw new \Exception('The GIF image you are trying to explode is not animated !');
       }
 
@@ -144,12 +145,12 @@ class GifFrameExtractor
       $this->parseFramesInfo($filename);
       $prevImg = null;
 
-      for($i = 0; $i < count($this->frameSources); $i++)
+      for($i = 0; $i < \count($this->frameSources); $i++)
       {
-        $this->frames[$i] = array();
+        $this->frames[$i] = [];
         $this->frameDurations[$i] = $this->frames[$i]['duration'] = $this->frameSources[$i]['delay_time'];
 
-        $img = imagecreatefromstring($this->fileHeader["gifheader"].$this->frameSources[$i]["graphicsextension"].$this->frameSources[$i]["imagedata"].chr(0x3b));
+        $img = imagecreatefromstring($this->fileHeader['gifheader'].$this->frameSources[$i]['graphicsextension'].$this->frameSources[$i]['imagedata'].\chr(0x3b));
 
         if(!$originalFrames)
         {
@@ -158,7 +159,7 @@ class GifFrameExtractor
              $prevImg = $this->frames[$i - 1]['image'];
 
              // Create empty GD-Object
-             if(function_exists('imagecreatetruecolor'))
+             if(\function_exists('imagecreatetruecolor'))
              {
                // Needs at least php v4.0.6
                $sprite = imagecreatetruecolor($this->gifMaxWidth, $this->gifMaxHeight);
@@ -168,7 +169,7 @@ class GifFrameExtractor
                $sprite = imagecreate($this->gifMaxWidth, $this->gifMaxHeight);
              }
 
-             if(function_exists('imagecolorallocatealpha'))
+             if(\function_exists('imagecolorallocatealpha'))
              {
                // Needs at least php v4.0.6
                $actualTrans = imagecolorallocatealpha($sprite, 0, 0, 0, 127);
@@ -190,7 +191,7 @@ class GifFrameExtractor
 
              if(((int) $this->frameSources[$i]['disposal_method'] == 1 || (int) $this->frameSources[$i]['disposal_method'] == 3) && $i > 0)
              {
-               if(function_exists('imagecopyresampled'))
+               if(\function_exists('imagecopyresampled'))
                {
                  // Needs at least php v4.0.6
                  imagecopyresampled($sprite, $prevImg, 0, 0, 0, 0, $this->gifMaxWidth, $this->gifMaxHeight, $this->gifMaxWidth, $this->gifMaxHeight);
@@ -204,14 +205,14 @@ class GifFrameExtractor
              $w = imagesx($img);
              $h = imagesy($img);
 
-             if(function_exists('imagecopyresampled'))
+             if(\function_exists('imagecopyresampled'))
              {
                // Needs at least php v4.3.2
-               imagecopyresampled($sprite, $img, $this->frameSources[$i]["offset_left"], $this->frameSources[$i]["offset_top"], 0, 0, $w, $h, $w, $h);
+               imagecopyresampled($sprite, $img, $this->frameSources[$i]['offset_left'], $this->frameSources[$i]['offset_top'], 0, 0, $w, $h, $w, $h);
              }
              else
              {
-               imagecopy($sprite, $img, $this->frameSources[$i]["offset_left"], $this->frameSources[$i]["offset_top"], 0, 0, $w, $h);
+               imagecopy($sprite, $img, $this->frameSources[$i]['offset_left'], $this->frameSources[$i]['offset_top'], 0, 0, $w, $h);
              }
 
              $img = $sprite;
@@ -301,11 +302,11 @@ class GifFrameExtractor
       $this->pointerForward(2);
     }
 
-    $this->fileHeader["gifheader"] = $this->dataPart(0, $this->pointer);
+    $this->fileHeader['gifheader'] = $this->dataPart(0, $this->pointer);
 
     // Decoding
-    $this->orgvars["gifheader"] = $this->fileHeader["gifheader"];
-    $this->orgvars["background_color"] = $this->orgvars["gifheader"][11];
+    $this->orgvars['gifheader'] = $this->fileHeader['gifheader'];
+    $this->orgvars['background_color'] = $this->orgvars['gifheader'][11];
   }
 
   /**
@@ -315,12 +316,12 @@ class GifFrameExtractor
   {
     $startdata = $this->readByte(2);
 
-    if($startdata == chr(0x21).chr(0xff))
+    if($startdata == \chr(0x21).\chr(0xff))
     {
       $start = $this->pointer - 2;
       $this->pointerForward($this->readByteInt());
       $this->readDataStream($this->readByteInt());
-      $this->fileHeader["applicationdata"] = $this->dataPart($start, $this->pointer - $start);
+      $this->fileHeader['applicationdata'] = $this->dataPart($start, $this->pointer - $start);
     }
     else
     {
@@ -335,11 +336,11 @@ class GifFrameExtractor
   {
     $startdata = $this->readByte(2);
 
-    if($startdata == chr(0x21).chr(0xfe))
+    if($startdata == \chr(0x21).\chr(0xfe))
     {
        $start = $this->pointer - 2;
        $this->readDataStream($this->readByteInt());
-       $this->fileHeader["commentdata"] = $this->dataPart($start, $this->pointer - $start);
+       $this->fileHeader['commentdata'] = $this->dataPart($start, $this->pointer - $start);
     }
     else
     {
@@ -356,7 +357,7 @@ class GifFrameExtractor
   {
     $startdata = $this->readByte(2);
 
-    if($startdata == chr(0x21).chr(0xf9))
+    if($startdata == \chr(0x21).\chr(0xf9))
     {
       $start = $this->pointer - 2;
       $this->pointerForward($this->readByteInt());
@@ -364,17 +365,17 @@ class GifFrameExtractor
 
       if($type == 2)
       {
-        $this->frameSources[$this->frameNumber]["graphicsextension"] = $this->dataPart($start, $this->pointer - $start);
+        $this->frameSources[$this->frameNumber]['graphicsextension'] = $this->dataPart($start, $this->pointer - $start);
       }
       elseif($type == 1)
       {
-        $this->orgvars["hasgx_type_1"] = 1;
-        $this->globaldata["graphicsextension"] = $this->dataPart($start, $this->pointer - $start);
+        $this->orgvars['hasgx_type_1'] = 1;
+        $this->globaldata['graphicsextension'] = $this->dataPart($start, $this->pointer - $start);
       }
       elseif($type == 0)
       {
-        $this->orgvars["hasgx_type_0"] = 1;
-        $this->globaldata["graphicsextension_0"] = $this->dataPart($start, $this->pointer - $start);
+        $this->orgvars['hasgx_type_0'] = 1;
+        $this->globaldata['graphicsextension_0'] = $this->dataPart($start, $this->pointer - $start);
       }
     }
     else
@@ -402,37 +403,37 @@ class GifFrameExtractor
 
       $this->pointerForward(1);
       $this->readDataStream($this->readByteInt());
-      $this->frameSources[$this->frameNumber]["imagedata"] = $this->dataPart($start, $this->pointer - $start);
+      $this->frameSources[$this->frameNumber]['imagedata'] = $this->dataPart($start, $this->pointer - $start);
 
       if($type == 0)
       {
-        $this->orgvars["hasgx_type_0"] = 0;
+        $this->orgvars['hasgx_type_0'] = 0;
 
-        if(isset($this->globaldata["graphicsextension_0"]))
+        if(isset($this->globaldata['graphicsextension_0']))
         {
-          $this->frameSources[$this->frameNumber]["graphicsextension"] = $this->globaldata["graphicsextension_0"];
+          $this->frameSources[$this->frameNumber]['graphicsextension'] = $this->globaldata['graphicsextension_0'];
         }
         else
         {
-          $this->frameSources[$this->frameNumber]["graphicsextension"] = null;
+          $this->frameSources[$this->frameNumber]['graphicsextension'] = null;
         }
 
-        unset($this->globaldata["graphicsextension_0"]);
+        unset($this->globaldata['graphicsextension_0']);
 
       }
       elseif($type == 1)
       {
-        if(isset($this->orgvars["hasgx_type_1"]) && $this->orgvars["hasgx_type_1"] == 1)
+        if(isset($this->orgvars['hasgx_type_1']) && $this->orgvars['hasgx_type_1'] == 1)
         {
-          $this->orgvars["hasgx_type_1"] = 0;
-          $this->frameSources[$this->frameNumber]["graphicsextension"] = $this->globaldata["graphicsextension"];
-          unset($this->globaldata["graphicsextension"]);
+          $this->orgvars['hasgx_type_1'] = 0;
+          $this->frameSources[$this->frameNumber]['graphicsextension'] = $this->globaldata['graphicsextension'];
+          unset($this->globaldata['graphicsextension']);
         }
         else
         {
-          $this->orgvars["hasgx_type_0"] = 0;
-          $this->frameSources[$this->frameNumber]["graphicsextension"] = $this->globaldata["graphicsextension_0"];
-          unset($this->globaldata["graphicsextension_0"]);
+          $this->orgvars['hasgx_type_0'] = 0;
+          $this->frameSources[$this->frameNumber]['graphicsextension'] = $this->globaldata['graphicsextension_0'];
+          unset($this->globaldata['graphicsextension_0']);
         }
       }
 
@@ -446,51 +447,51 @@ class GifFrameExtractor
    */
   private function parseFrameData()
   {
-    $this->frameSources[$this->frameNumber]["disposal_method"]         = $this->getImageDataBit("ext", 3, 3, 3);
-    $this->frameSources[$this->frameNumber]["user_input_flag"]         = $this->getImageDataBit("ext", 3, 6, 1);
-    $this->frameSources[$this->frameNumber]["transparent_color_flag"]  = $this->getImageDataBit("ext", 3, 7, 1);
-    $this->frameSources[$this->frameNumber]["delay_time"]              = $this->dualByteVal($this->getImageDataByte("ext", 4, 2));
-    $this->totalDuration                                              += (int) $this->frameSources[$this->frameNumber]["delay_time"];
-    $this->frameSources[$this->frameNumber]["transparent_color_index"] = ord($this->getImageDataByte("ext", 6, 1));
-    $this->frameSources[$this->frameNumber]["offset_left"]             = $this->dualByteVal($this->getImageDataByte("dat", 1, 2));
-    $this->frameSources[$this->frameNumber]["offset_top"]              = $this->dualByteVal($this->getImageDataByte("dat", 3, 2));
-    $this->frameSources[$this->frameNumber]["width"]                   = $this->dualByteVal($this->getImageDataByte("dat", 5, 2));
-    $this->frameSources[$this->frameNumber]["height"]                  = $this->dualByteVal($this->getImageDataByte("dat", 7, 2));
-    $this->frameSources[$this->frameNumber]["local_color_table_flag"]  = $this->getImageDataBit("dat", 9, 0, 1);
-    $this->frameSources[$this->frameNumber]["interlace_flag"]          = $this->getImageDataBit("dat", 9, 1, 1);
-    $this->frameSources[$this->frameNumber]["sort_flag"]               = $this->getImageDataBit("dat", 9, 2, 1);
-    $this->frameSources[$this->frameNumber]["color_table_size"]        = pow(2, $this->getImageDataBit("dat", 9, 5, 3) + 1) * 3;
-    $this->frameSources[$this->frameNumber]["color_table"]             = substr($this->frameSources[$this->frameNumber]["imagedata"], 10, $this->frameSources[$this->frameNumber]["color_table_size"]);
-    $this->frameSources[$this->frameNumber]["lzw_code_size"]           = ord($this->getImageDataByte("dat", 10, 1));
+    $this->frameSources[$this->frameNumber]['disposal_method']         = $this->getImageDataBit('ext', 3, 3, 3);
+    $this->frameSources[$this->frameNumber]['user_input_flag']         = $this->getImageDataBit('ext', 3, 6, 1);
+    $this->frameSources[$this->frameNumber]['transparent_color_flag']  = $this->getImageDataBit('ext', 3, 7, 1);
+    $this->frameSources[$this->frameNumber]['delay_time']              = $this->dualByteVal($this->getImageDataByte('ext', 4, 2));
+    $this->totalDuration                                              += (int) $this->frameSources[$this->frameNumber]['delay_time'];
+    $this->frameSources[$this->frameNumber]['transparent_color_index'] = \ord($this->getImageDataByte('ext', 6, 1));
+    $this->frameSources[$this->frameNumber]['offset_left']             = $this->dualByteVal($this->getImageDataByte('dat', 1, 2));
+    $this->frameSources[$this->frameNumber]['offset_top']              = $this->dualByteVal($this->getImageDataByte('dat', 3, 2));
+    $this->frameSources[$this->frameNumber]['width']                   = $this->dualByteVal($this->getImageDataByte('dat', 5, 2));
+    $this->frameSources[$this->frameNumber]['height']                  = $this->dualByteVal($this->getImageDataByte('dat', 7, 2));
+    $this->frameSources[$this->frameNumber]['local_color_table_flag']  = $this->getImageDataBit('dat', 9, 0, 1);
+    $this->frameSources[$this->frameNumber]['interlace_flag']          = $this->getImageDataBit('dat', 9, 1, 1);
+    $this->frameSources[$this->frameNumber]['sort_flag']               = $this->getImageDataBit('dat', 9, 2, 1);
+    $this->frameSources[$this->frameNumber]['color_table_size']        = pow(2, $this->getImageDataBit('dat', 9, 5, 3) + 1) * 3;
+    $this->frameSources[$this->frameNumber]['color_table']             = substr($this->frameSources[$this->frameNumber]['imagedata'], 10, $this->frameSources[$this->frameNumber]['color_table_size']);
+    $this->frameSources[$this->frameNumber]['lzw_code_size']           = \ord($this->getImageDataByte('dat', 10, 1));
 
-    $this->framePositions[$this->frameNumber] = array(
-      'x' => $this->frameSources[$this->frameNumber]["offset_left"],
-      'y' => $this->frameSources[$this->frameNumber]["offset_top"],
-    );
+    $this->framePositions[$this->frameNumber] = [
+      'x' => $this->frameSources[$this->frameNumber]['offset_left'],
+      'y' => $this->frameSources[$this->frameNumber]['offset_top'],
+    ];
 
-    $this->frameDimensions[$this->frameNumber] = array(
-      'width' => $this->frameSources[$this->frameNumber]["width"],
-      'height' => $this->frameSources[$this->frameNumber]["height"],
-    );
+    $this->frameDimensions[$this->frameNumber] = [
+      'width' => $this->frameSources[$this->frameNumber]['width'],
+      'height' => $this->frameSources[$this->frameNumber]['height'],
+    ];
 
     // Decoding
-    $this->orgvars[$this->frameNumber]["transparent_color_flag"]  = $this->frameSources[$this->frameNumber]["transparent_color_flag"];
-    $this->orgvars[$this->frameNumber]["transparent_color_index"] = $this->frameSources[$this->frameNumber]["transparent_color_index"];
-    $this->orgvars[$this->frameNumber]["delay_time"]              = $this->frameSources[$this->frameNumber]["delay_time"];
-    $this->orgvars[$this->frameNumber]["disposal_method"]         = $this->frameSources[$this->frameNumber]["disposal_method"];
-    $this->orgvars[$this->frameNumber]["offset_left"]             = $this->frameSources[$this->frameNumber]["offset_left"];
-    $this->orgvars[$this->frameNumber]["offset_top"]              = $this->frameSources[$this->frameNumber]["offset_top"];
+    $this->orgvars[$this->frameNumber]['transparent_color_flag']  = $this->frameSources[$this->frameNumber]['transparent_color_flag'];
+    $this->orgvars[$this->frameNumber]['transparent_color_index'] = $this->frameSources[$this->frameNumber]['transparent_color_index'];
+    $this->orgvars[$this->frameNumber]['delay_time']              = $this->frameSources[$this->frameNumber]['delay_time'];
+    $this->orgvars[$this->frameNumber]['disposal_method']         = $this->frameSources[$this->frameNumber]['disposal_method'];
+    $this->orgvars[$this->frameNumber]['offset_left']             = $this->frameSources[$this->frameNumber]['offset_left'];
+    $this->orgvars[$this->frameNumber]['offset_top']              = $this->frameSources[$this->frameNumber]['offset_top'];
 
     // Updating the max width
-    if($this->gifMaxWidth < $this->frameSources[$this->frameNumber]["width"])
+    if($this->gifMaxWidth < $this->frameSources[$this->frameNumber]['width'])
     {
-      $this->gifMaxWidth = $this->frameSources[$this->frameNumber]["width"];
+      $this->gifMaxWidth = $this->frameSources[$this->frameNumber]['width'];
     }
 
     // Updating the max height
-    if($this->gifMaxHeight < $this->frameSources[$this->frameNumber]["height"])
+    if($this->gifMaxHeight < $this->frameSources[$this->frameNumber]['height'])
     {
-      $this->gifMaxHeight = $this->frameSources[$this->frameNumber]["height"];
+      $this->gifMaxHeight = $this->frameSources[$this->frameNumber]['height'];
     }
   }
 
@@ -505,13 +506,13 @@ class GifFrameExtractor
    */
   private function getImageDataByte($type, $start, $length)
   {
-    if($type == "ext")
+    if($type == 'ext')
     {
-      return substr($this->frameSources[$this->frameNumber]["graphicsextension"], $start, $length);
+      return substr($this->frameSources[$this->frameNumber]['graphicsextension'], $start, $length);
     }
 
     // "dat"
-    return substr($this->frameSources[$this->frameNumber]["imagedata"], $start, $length);
+    return substr($this->frameSources[$this->frameNumber]['imagedata'], $start, $length);
   }
 
   /**
@@ -526,13 +527,13 @@ class GifFrameExtractor
    */
   private function getImageDataBit($type, $byteIndex, $bitStart, $bitLength)
   {
-    if($type == "ext")
+    if($type == 'ext')
     {
-      return $this->readBits(ord(substr($this->frameSources[$this->frameNumber]["graphicsextension"], $byteIndex, 1)), $bitStart, $bitLength);
+      return $this->readBits(\ord(substr($this->frameSources[$this->frameNumber]['graphicsextension'], $byteIndex, 1)), $bitStart, $bitLength);
     }
 
     // "dat"
-    return $this->readBits(ord(substr($this->frameSources[$this->frameNumber]["imagedata"], $byteIndex, 1)), $bitStart, $bitLength);
+    return $this->readBits(\ord(substr($this->frameSources[$this->frameNumber]['imagedata'], $byteIndex, 1)), $bitStart, $bitLength);
   }
 
   /**
@@ -544,7 +545,7 @@ class GifFrameExtractor
    */
   private function dualByteVal($s)
   {
-    $i = ord($s[1]) * 256 + ord($s[0]);
+    $i = \ord($s[1]) * 256 + \ord($s[0]);
 
     return $i;
   }
@@ -576,7 +577,7 @@ class GifFrameExtractor
    */
   private function openFile($filename)
   {
-    $this->handle  = fopen($filename, "rb");
+    $this->handle  = fopen($filename, 'rb');
     $this->pointer = 0;
 
     $imageSize       = getimagesize($filename);
@@ -618,7 +619,7 @@ class GifFrameExtractor
     $data = fread($this->handle, 1);
     $this->pointer++;
 
-    return ord($data);
+    return \ord($data);
   }
 
   /**
@@ -632,7 +633,7 @@ class GifFrameExtractor
    */
   private function readBits($byte, $start, $length)
   {
-    $bin  = str_pad(decbin($byte), 8, "0", STR_PAD_LEFT);
+    $bin  = str_pad(decbin($byte), 8, '0', STR_PAD_LEFT);
     $data = substr($bin, $start, $length);
 
     return bindec($data);
@@ -686,7 +687,7 @@ class GifFrameExtractor
    */
   private function checkByte($byte)
   {
-    if(fgetc($this->handle) == chr($byte))
+    if(fgetc($this->handle) == \chr($byte))
     {
       fseek($this->handle, $this->pointer);
 
@@ -722,7 +723,7 @@ class GifFrameExtractor
   {
     $this->gif             = null;
     $this->totalDuration   = $this->gifMaxHeight = $this->gifMaxWidth = $this->handle = $this->pointer = $this->frameNumber = 0;
-    $this->frameDimensions = $this->framePositions = $this->frameImages = $this->frameDurations = $this->globaldata = $this->orgvars = $this->frames = $this->fileHeader = $this->frameSources = array();
+    $this->frameDimensions = $this->framePositions = $this->frameImages = $this->frameDurations = $this->globaldata = $this->orgvars = $this->frames = $this->fileHeader = $this->frameSources = [];
   }
 
   // Getter / Setter
@@ -805,6 +806,6 @@ class GifFrameExtractor
    */
   public function getNumberFramens()
   {
-    return count($this->frameSources);
+    return \count($this->frameSources);
   }
 }

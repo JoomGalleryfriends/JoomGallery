@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Migration;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
-use \Joomla\CMS\MVC\View\GenericDataException;
 use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\MVC\View\GenericDataException;
+use \Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a single Tag.
@@ -27,26 +28,26 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
  */
 class HtmlView extends JoomGalleryView
 {
-	protected $scripts;
+    protected $scripts;
 
-	/**
-	 * Display the view
-	 *
-	 * @param   string  $tpl  Template name
-	 *
-	 * @return void
-	 *
-	 * @throws Exception
-	 */
-	public function display($tpl = null)
-	{
+    /**
+     * Display the view
+     *
+     * @param   string  $tpl  Template name
+     *
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function display($tpl = null)
+    {
     /** @var MigrationModel $model */
     $model = $this->getModel();
 
     $this->script  = $model->getScript();
     $this->scripts = $model->getScripts();
     $this->layout  = $this->app->input->get('layout', 'default', 'cmd');
-    $this->error   = array();
+    $this->error   = [];
 
     // Add page title
     ToolbarHelper::title(Text::_('COM_JOOMGALLERY_MIGRATION'), 'migration');
@@ -55,13 +56,13 @@ class HtmlView extends JoomGalleryView
     {
       $this->app->input->set('hidemainmenu', true);
       ToolbarHelper::cancel('migration.cancel', 'COM_JOOMGALLERY_MIGRATION_INERRUPT_MIGRATION');
-      ToolbarHelper::help('', false, Text::_('COM_JOOMGALLERY_WEBSITE_HELP_URL').'/migration/'. \strtolower($this->script->name) . '?tmpl=component');
+      ToolbarHelper::help('', false, Text::_('COM_JOOMGALLERY_WEBSITE_HELP_URL').'/migration/'. strtolower($this->script->name) . '?tmpl=component');
 
       // Check if requested script exists
-      if(!\in_array($this->script->name, \array_keys($this->scripts)))
+      if(!\in_array($this->script->name, array_keys($this->scripts)))
       {
         // Requested script does not exists
-        \array_push($this->error, 'COM_JOOMGALLERY_MIGRATION_SCRIPT_NOT_EXIST');
+        array_push($this->error, 'COM_JOOMGALLERY_MIGRATION_SCRIPT_NOT_EXIST');
       }
       else
       {
@@ -72,11 +73,11 @@ class HtmlView extends JoomGalleryView
         if(\is_null($this->params) && $this->layout != 'step1')
         {
           // Requested script does not exists
-          \array_push($this->error, 'COM_JOOMGALLERY_SERVICE_MIGRATION_STEP_NOT_AVAILABLE');
+          array_push($this->error, 'COM_JOOMGALLERY_SERVICE_MIGRATION_STEP_NOT_AVAILABLE');
         }
       }
 
-      switch($this->layout) 
+      switch($this->layout)
       {
         case 'step1':
           // Load migration form
@@ -85,7 +86,7 @@ class HtmlView extends JoomGalleryView
 
         case 'step2':
           // Load precheck results
-          $this->precheck = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step2.results', array());
+          $this->precheck = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step2.results', []);
           $this->success  = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step2.success', false);
           break;
 
@@ -93,28 +94,29 @@ class HtmlView extends JoomGalleryView
           // Data for the migration view
           $this->precheck     = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step2.success', false);
           $this->migrateables = $model->getMigrateables();
-          $this->migration    = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step3.results', array());
+          $this->migration    = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step3.results', []);
           $this->dependencies = $model->getDependencies();
           $this->completed    = $model->getCompleted();
           break;
 
         case 'step4':
           // Load postcheck results
-          $this->postcheck      = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step4.results', array());
+          $this->postcheck      = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step4.results', []);
           $this->success        = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step4.success', false);
           $this->sourceDeletion = $model->getSourceDeletion();
 
           $this->openMigrations = $model->getIdList();
-          if(!empty($this->openMigrations) && \key_exists($this->script->name, $this->openMigrations))
+
+          if(!empty($this->openMigrations) && key_exists($this->script->name, $this->openMigrations))
           {
             $this->openMigrations = $this->openMigrations[$this->script->name];
           }
           else
           {
-            $this->openMigrations = array();
+            $this->openMigrations = [];
           }
           break;
-        
+
         default:
           break;
       }
@@ -131,12 +133,12 @@ class HtmlView extends JoomGalleryView
       $this->openMigrations = $model->getIdList();
     }
 
-		// Check for errors.
-		if(count($errors = $model->getErrors()))
-		{
-			throw new GenericDataException(implode("\n", $errors), 500);
-		}
+        // Check for errors.
+        if(\count($errors = $model->getErrors()))
+        {
+            throw new GenericDataException(implode("\n", $errors), 500);
+        }
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 }

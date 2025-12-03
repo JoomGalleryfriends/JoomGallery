@@ -1,28 +1,29 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\DatabaseAwareTrait;
 use \Joomla\Console\Command\AbstractCommand;
+use \Joomla\Database\DatabaseAwareTrait;
+use \Joomla\Database\DatabaseInterface;
 use \Symfony\Component\Console\Command\Command;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Style\SymfonyStyle;
 use \Symfony\Component\Console\Input\InputInterface;
+use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Output\OutputInterface;
+use \Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConfigList extends AbstractCommand
 {
@@ -86,10 +87,10 @@ class ConfigList extends AbstractCommand
   {
     $this->addOption('id', null, InputOption::VALUE_OPTIONAL, 'configuration set id');
 
-    $help = "<info>%command.name%</info> list all joomgallery configurations (table)
+    $help = '<info>%command.name%</info> list all joomgallery configurations (table)
   Usage: <info>php %command.full_name%</info>
     * You may filter on the configuration id  using the <info>--id</info> option.
-    Example: <info>php %command.full_name% --created_by=14</info>";
+    Example: <info>php %command.full_name% --created_by=14</info>';
     $this->setDescription(Text::_('List all joomgallery configurations'));
     $this->setHelp($help);
   }
@@ -169,7 +170,7 @@ class ConfigList extends AbstractCommand
       ->select('*')
       ->from('#__joomgallery_configs');
 
-    if (!empty ($id))
+    if (!empty($id))
     {
       $query->where($db->quoteName('id') . ' = ' . (int) $id);
     }

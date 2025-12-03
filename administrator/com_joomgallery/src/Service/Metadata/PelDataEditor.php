@@ -1,28 +1,28 @@
 <?php
-
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 
+use \lsolesen\pel\PelEntryAscii;
+use \lsolesen\pel\PelEntryCopyright;
+use \lsolesen\pel\PelEntryLong;
+use \lsolesen\pel\PelEntryShort;
+use \lsolesen\pel\PelEntryTime;
+use \lsolesen\pel\PelEntryUserComment;
+use \lsolesen\pel\PelFormat;
 use \lsolesen\pel\PelIfd;
 use \lsolesen\pel\PelTag;
-use \lsolesen\pel\PelFormat;
-use \lsolesen\pel\PelEntryLong;
-use \lsolesen\pel\PelEntryTime;
-use \lsolesen\pel\PelEntryAscii;
-use \lsolesen\pel\PelEntryShort;
-use \lsolesen\pel\PelEntryCopyright;
-use \lsolesen\pel\PelEntryUserComment;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -34,63 +34,68 @@ use \lsolesen\pel\PelEntryUserComment;
 class PelDataEditor
 {
 
-    /**
-     * @var array
-     */
-    protected static $timeTags = [PelTag::DATE_TIME, PelTag::DATE_TIME_ORIGINAL, PelTag::DATE_TIME_DIGITIZED];
+  /**
+   * @var array
+   */
+  protected static $timeTags = [PelTag::DATE_TIME, PelTag::DATE_TIME_ORIGINAL, PelTag::DATE_TIME_DIGITIZED];
 
-    /**
-     * Makes an edit to the metadata directly.
-     * Note: File must be saved with the PelJpeg/PelTiff object for the edits to persist.
-     * 
-     * @param   PelIfd $ifd    The IFD that contains the necessary entry
-     * @param   int    $tag    The tag that contains the necessary data
-     * @param   mixed  $data   The data to be saved
-     * @param   int    $format The format in which the data must be saved (given as one of the PelTag consts)
-     * 
-     * @since   4.1.0
-     */
-    public function makeEdit(PelIfd $ifd, int $tag, mixed $data, int $format)
+  /**
+   * Makes an edit to the metadata directly.
+   * Note: File must be saved with the PelJpeg/PelTiff object for the edits to persist.
+   * 
+   * @param   PelIfd $ifd    The IFD that contains the necessary entry
+   * @param   int    $tag    The tag that contains the necessary data
+   * @param   mixed  $data   The data to be saved
+   * @param   int    $format The format in which the data must be saved (given as one of the PelTag consts)
+   * 
+   * @since   4.1.0
+   */
+  public function makeEdit(PelIfd $ifd, int $tag, mixed $data, int $format)
+  {
+    // Datetime, Copyright and UserComment entries all have specific ways that they need to be handled.
+    $entry = $ifd->getEntry($tag);
+
+    if(\in_array($tag, self::$timeTags))
     {
-        // Datetime, Copyright and UserComment entries all have specific ways that they need to be handled.
-        $entry = $ifd->getEntry($tag);
-
-        if(in_array($tag, self::$timeTags))
-        {
-            if ($entry == null) {
-                $entry = new PelEntryTime($tag, $data, PelEntryTime::EXIF_STRING);
-                $ifd->addEntry($entry);
-            } else {
-                $entry->setValue($data, PelEntryTime::EXIF_STRING);
-            }
-        }
-        elseif ($tag == PelTag::COPYRIGHT)
-        {
-            if ($entry == null) {
-                $entry = new PelEntryCopyright($data[0], $data[1]);
-                $ifd->addEntry($entry);
-            } else {
-                $entry->setValue($data[0], $data[1]);
-            }
-        }
-        elseif($tag == PelTag::USER_COMMENT)
-        {
-            // We need to strip the first 8 characters to comply with UserComments saved before PEL.
-            if ($entry == null) {
-                $entry = new PelEntryUserComment(substr($data, 8));
-                $ifd->addEntry($entry);
-            } else {
-                $entry->setValue($data);
-            }
-        }
-        else {
-            $entryClass = '\lsolesen\pel\PelEntry' . PelFormat::getName($format);
-            if ($entry == null) {
-                $entry = new $entryClass($tag, $data);
-                $ifd->addEntry($entry);
-            } else {
-                $entry->setValue($data);
-            }
-        }
+      if ($entry == null) {
+        $entry = new PelEntryTime($tag, $data, PelEntryTime::EXIF_STRING);
+        $ifd->addEntry($entry);
+      }
+      else {
+        $entry->setValue($data, PelEntryTime::EXIF_STRING);
+      }
     }
+    elseif ($tag == PelTag::COPYRIGHT)
+    {
+      if ($entry == null) {
+        $entry = new PelEntryCopyright($data[0], $data[1]);
+        $ifd->addEntry($entry);
+      }
+      else {
+        $entry->setValue($data[0], $data[1]);
+      }
+    }
+    elseif($tag == PelTag::USER_COMMENT)
+    {
+      // We need to strip the first 8 characters to comply with UserComments saved before PEL.
+      if ($entry == null) {
+        $entry = new PelEntryUserComment(substr($data, 8));
+        $ifd->addEntry($entry);
+      }
+      else {
+        $entry->setValue($data);
+      }
+    }
+    else {
+      $entryClass = '\lsolesen\pel\PelEntry' . PelFormat::getName($format);
+
+      if ($entry == null) {
+        $entry = new $entryClass($tag, $data);
+        $ifd->addEntry($entry);
+      }
+      else {
+        $entry->setValue($data);
+      }
+    }
+  }
 }

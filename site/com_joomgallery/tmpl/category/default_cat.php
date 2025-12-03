@@ -9,16 +9,16 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Session\Session;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\Factory;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Session\Session;
 
 // Subcategory params
 $subcategory_class           = $this->params['configs']->get('jg_category_view_subcategory_class', 'masonry', 'STRING');
@@ -87,6 +87,7 @@ if($category_class == 'justified')
 }
 
 $lightbox = false;
+
 if($image_link == 'lightgallery' || $title_link == 'lightgallery')
 {
   $lightbox = true;
@@ -124,6 +125,7 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
 // Permission checks
 $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $this->item->id);
 $canAdd     = $this->getAcl()->checkACL('add', 'com_joomgallery.category', 0, $this->item->id, true);
+
 if($this->item->id > 1)
 {
   $canAddImg  = $this->getAcl()->checkACL('add', 'com_joomgallery.image', 0, $this->item->id, true);
@@ -162,12 +164,12 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <p><?php echo $this->item->description; ?></p>
 
 <?php // Hint for no items ?>
-<?php if(count($this->item->children->items) == 0 && count($this->item->images->items) == 0) : ?>
+<?php if(\count($this->item->children->items) == 0 && \count($this->item->images->items) == 0) : ?>
   <p><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_NO_ELEMENTS') ?></p>
 <?php endif; ?>
 
 <?php // Subcategories ?>
-<?php if(count($this->item->children->items) > 0 && ($this->item->id == 1 || $numb_subcategories  > 0)) : ?>
+<?php if(\count($this->item->children->items) > 0 && ($this->item->id == 1 || $numb_subcategories  > 0)) : ?>
   <?php if($this->item->parent_id > 0) : ?>
     <h3><?php echo Text::_('COM_JOOMGALLERY_SUBCATEGORIES') ?></h3>
   <?php else : ?>
@@ -175,9 +177,9 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php endif; ?>
 
   <?php // Display data array for layout
-    $subcatData = [ 'layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns, 'image_type' => $subcategory_image_type,
-                    'caption_align' => $subcategories_caption_align, 'description' => $subcategories_description, 'image_class' => $subcategory_image_class, 'random_image' => (bool) $subcategories_random_image
-                  ];
+    $subcatData = ['layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns, 'image_type' => $subcategory_image_type,
+      'caption_align' => $subcategories_caption_align, 'description' => $subcategories_description, 'image_class' => $subcategory_image_class, 'random_image' => (bool) $subcategories_random_image,
+    ];
   ?>
 
   <?php // Subcategories grid ?>
@@ -189,17 +191,17 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php endif; ?>
 
 <?php // Category ?>
-<?php if(count($this->item->images->items) > 0) : ?>
+<?php if(\count($this->item->images->items) > 0) : ?>
   <h3><?php echo Text::_('COM_JOOMGALLERY_IMAGES') ?></h3>
   <?php if(!empty($this->item->images->filterForm) && $use_pagination == '0') : ?>
     <?php // Show image filters ?>
     <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.$this->item->id.'&Itemid='.$this->menu->id); ?>" method="post" name="adminForm" id="adminForm">
       <?php
         {
-          echo LayoutHelper::render('joomla.searchtools.default', array(
-            'view' => $this->item->images, 
-            'options' => array('showSelector' => false, 'filterButton' => false, 'showNoResults' => false, 'showSearch' => false, 'showList' => false, 'barClass' => 'flex-end')
-          ));
+          echo LayoutHelper::render('joomla.searchtools.default', [
+            'view' => $this->item->images,
+            'options' => ['showSelector' => false, 'filterButton' => false, 'showNoResults' => false, 'showSearch' => false, 'showList' => false, 'barClass' => 'flex-end'],
+          ]);
         }
       ?>
       <input type="hidden" name="contenttype" value="image"/>
@@ -212,11 +214,11 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php endif; ?>
 
   <?php // Display data array for layout
-    $imgsData = [ 'id' => '1-'.$this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
-                  'caption_align' => $caption_align, 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
-                  'image_title' => (bool) $show_title, 'title_link' => $title_link, 'image_desc' => (bool) $show_description, 'image_desc_label' => (bool) $show_description_label,
-                  'image_date' => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags
-                ];
+    $imgsData = ['id' => '1-'.$this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
+      'caption_align' => $caption_align, 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
+      'image_title' => (bool) $show_title, 'title_link' => $title_link, 'image_desc' => (bool) $show_description, 'image_desc_label' => (bool) $show_description_label,
+      'image_date' => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags,
+    ];
   ?>
 
   <?php // Images grid ?>
@@ -228,7 +230,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
     <div class="infinite-scroll"></div>
     <div id="noMore" class="btn btn-outline-primary no-more-images hidden"><?php echo Text::_('COM_JOOMGALLERY_NO_MORE_IMAGES') ?></div>
   </div>
-  <?php elseif($use_pagination == 2 && count($this->item->images->items) > $numb_images) : ?>
+  <?php elseif($use_pagination == 2 && \count($this->item->images->items) > $numb_images) : ?>
     <div class="load-more-container">
       <div id="loadMore" class="btn btn-outline-primary load-more"><span><?php echo Text::_('COM_JOOMGALLERY_LOAD_MORE') ?></span><i class="jg-icon-expand-more"></i></div>
       <div id="noMore" class="btn btn-outline-primary no-more-images hidden"><?php echo Text::_('COM_JOOMGALLERY_NO_MORE_IMAGES') ?></div>

@@ -1,33 +1,34 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // WIP: in development, but can not be called from caommand line (plugin)
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
-use \Joomla\Filter\InputFilter;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\DatabaseAwareTrait;
-use \Joomla\Console\Command\AbstractCommand;
-use \Symfony\Component\Console\Command\Command;
 use \Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Style\SymfonyStyle;
+use \Joomla\Console\Command\AbstractCommand;
+use \Joomla\Database\DatabaseAwareTrait;
+use \Joomla\Database\DatabaseInterface;
+use \Joomla\Filter\InputFilter;
+use \Symfony\Component\Console\Command\Command;
 use \Symfony\Component\Console\Input\InputInterface;
+use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Output\OutputInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel;
+use \Symfony\Component\Console\Style\SymfonyStyle;
 
 class CategoryAdd extends AbstractCommand
 {
@@ -135,8 +136,8 @@ class CategoryAdd extends AbstractCommand
 //    $this->addOption('parent_title', 'p', InputOption::VALUE_OPTIONAL, 'parent title');
     $this->addOption('parent_id', 'p', InputOption::VALUE_OPTIONAL, 'parent id (1=no parent)');
 
-    $help = "<info>%command.name%</info> add a category
-	Usage: <info>php %command.full_name%</info>";
+    $help = '<info>%command.name%</info> add a category
+  Usage: <info>php %command.full_name%</info>';
 
     $this->setDescription(Text::_('WIP, not finished: Add category'));
     $this->setHelp($help);
@@ -182,7 +183,7 @@ class CategoryAdd extends AbstractCommand
 
     if (empty($created_by_Id))
     {
-      $this->ioStyle->error("The user (owner)" . $this->created_by . " does not exist!");
+      $this->ioStyle->error('The user (owner)' . $this->created_by . ' does not exist!');
 
       return Command::FAILURE;
     }
@@ -208,7 +209,7 @@ class CategoryAdd extends AbstractCommand
 
       if (empty($modified_by_Id))
       {
-        $this->ioStyle->error("The user (author)" . $this->modified_by . " does not exist!");
+        $this->ioStyle->error('The user (author)' . $this->modified_by . ' does not exist!');
 
         return Command::FAILURE;
       }
@@ -240,7 +241,7 @@ class CategoryAdd extends AbstractCommand
     /** @var  CategoryModel $categoryModel */
     $categoryModel = $this->getMVCFactory()->createModel('Category', 'Administrator');
 
-    echo "add:save 01" . "\n";
+    echo 'add:save 01' . "\n";
 
     if (!$categoryModel->save($category))
     {
@@ -255,16 +256,16 @@ class CategoryAdd extends AbstractCommand
 //          $this->ioStyle->error("The email address is invalid!");
 //          break;
 //      }
-      echo "add:save error 02" . "\n";
+      echo 'add:save error 02' . "\n";
 
       $this->ioStyle->error($categoryModel->getError());
 
       return Command::FAILURE;
     }
 
-    echo "add:after save 01" . "\n";
+    echo 'add:after save 01' . "\n";
 
-    $this->ioStyle->success("User created!");
+    $this->ioStyle->success('User created!');
 
     return Command::SUCCESS;
 

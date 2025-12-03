@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Uri\Uri;
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\Controller\FormController;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Uri\Uri;
 
 /**
  * Image class.
@@ -143,6 +144,7 @@ class UserimageController extends JoomFormController
 
     // Access check
     $parent_id = JoomHelper::getParent('image', $recordId);
+
     if(!$this->acl->checkACL('edit', 'image', $recordId, $parent_id, true))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error');
@@ -173,7 +175,7 @@ class UserimageController extends JoomFormController
       $errors = $model->getErrors();
 
       // Push up to three validation messages out to the user.
-      for($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
+      for($i = 0, $n = \count($errors); $i < $n && $i < 3; $i++)
       {
         if($errors[$i] instanceof \Exception)
         {
@@ -264,6 +266,7 @@ class UserimageController extends JoomFormController
 
     // Load form data
     $form = $model->getForm($data, false);
+
     if(!$form)
     {
       $this->setMessage($model->getError(), 'error');
@@ -315,8 +318,8 @@ class UserimageController extends JoomFormController
       $app->setUserState($context.'.data', $validData);
 
       // Redirect back to the replace screen.
-      $this->setMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_REPLACE_IMAGETYPE', \ucfirst($validData['replacetype']), $model->getError()), 'error');
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_REPLACE_IMAGETYPE', \ucfirst($validData['replacetype']), $model->getError()), 'error', 'jerror');
+      $this->setMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_REPLACE_IMAGETYPE', ucfirst($validData['replacetype']), $model->getError()), 'error');
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_REPLACE_IMAGETYPE', ucfirst($validData['replacetype']), $model->getError()), 'error', 'jerror');
 
       $this->setRedirect(
         Route::_('index.php?option='._JOOM_OPTION.'&view=image&layout=replace&id='.$id, false)
@@ -326,8 +329,8 @@ class UserimageController extends JoomFormController
     }
 
     // Set message
-    $this->setMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_REPLACE_IMAGETYPE', \ucfirst($validData['replacetype'])));
-    $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SUCCESS_REPLACE_IMAGETYPE', \ucfirst($validData['replacetype'])), 'error', 'jerror');
+    $this->setMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_REPLACE_IMAGETYPE', ucfirst($validData['replacetype'])));
+    $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SUCCESS_REPLACE_IMAGETYPE', ucfirst($validData['replacetype'])), 'error', 'jerror');
 
     // Clear the data from the session.
     $app->setUserState($context.'.data', null);
@@ -338,9 +341,9 @@ class UserimageController extends JoomFormController
     // Check if there is a return value
     $return = $this->input->get('return', null, 'base64');
 
-    if(!\is_null($return) && Uri::isInternal(\base64_decode($return)))
+    if(!\is_null($return) && Uri::isInternal(base64_decode($return)))
     {
-      $url = \base64_decode($return);
+      $url = base64_decode($return);
     }
 
     // Redirect to the list screen.
@@ -369,6 +372,7 @@ class UserimageController extends JoomFormController
     {
       // Redirect to the edit screen.
       $this->setRedirect(Route::_('index.php?option='.$this->option.'&view=userimage&layout=editImg&id='.$this->input->getInt('id'), false));
+
       return true;
     }
 
@@ -415,6 +419,7 @@ class UserimageController extends JoomFormController
     // Get the current edit id.
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       // List view action
@@ -437,6 +442,7 @@ class UserimageController extends JoomFormController
 
     // Access check
     $parent_id = JoomHelper::getParent('image', $removeId);
+
     if(!$this->acl->checkACL('delete', 'image', $removeId, $parent_id, true))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'error');
@@ -486,6 +492,7 @@ class UserimageController extends JoomFormController
     $previousId = (int) $this->app->getUserState(_JOOM_OPTION.'.edit.image.id');
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       $editId = (int) $cid[0];
@@ -506,6 +513,7 @@ class UserimageController extends JoomFormController
 
     // Access check
     $parent_id = JoomHelper::getParent('image', $editId);
+
     if(!$this->acl->checkACL('edit', 'image', $editId, $parent_id, true))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
@@ -558,6 +566,7 @@ class UserimageController extends JoomFormController
     // Get ID
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       // List view action
@@ -580,6 +589,7 @@ class UserimageController extends JoomFormController
 
     // Access check
     $parent_id = JoomHelper::getParent('image', $id);
+
     if(!$this->acl->checkACL('editstate', 'image', $id, $parent_id, true))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
@@ -630,6 +640,7 @@ class UserimageController extends JoomFormController
     // Get ID
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       // List view action
@@ -652,6 +663,7 @@ class UserimageController extends JoomFormController
 
     // Access check
     $parent_id = JoomHelper::getParent('image', $id);
+
     if(!$this->acl->checkACL('editstate', 'image', $id, $parent_id, true))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
@@ -681,7 +693,7 @@ class UserimageController extends JoomFormController
     }
 
     // Redirect to the list screen.
-    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_'.\strtoupper($task).'_SUCCESSFUL'), 'success');
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_'.strtoupper($task).'_SUCCESSFUL'), 'success');
     $this->app->redirect(Route::_($this->getReturnPage('userimages').$this->getItemAppend($id), false));
 
     return true;

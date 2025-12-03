@@ -1,25 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Refresher;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use \Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherInterface;
+use \Joomla\CMS\Document\HtmlDocument;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Layout\FileLayout;
-use \Joomla\CMS\Document\HtmlDocument;
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherInterface;
 
 /**
  * JoomGallery Refresher Helper
@@ -108,11 +109,11 @@ class Refresher implements RefresherInterface
    *
    * @since   1.5.5
    */
-  public function __construct($params = array())
+  public function __construct($params = [])
   {
     // Load application
     $this->getApp();
-    
+
     // Load component
     $this->getComponent();
 
@@ -183,7 +184,7 @@ class Refresher implements RefresherInterface
   public function init()
   {
     // Check the maximum execution time of the script
-    $max_execution_time = @ini_get('max_execution_time');
+    $max_execution_time = @\ini_get('max_execution_time');
 
     // Set secure setting of the real execution time
     // Maximum time for the script will be set to 20 seconds
@@ -213,11 +214,11 @@ class Refresher implements RefresherInterface
    */
   public function reset($remaining, $start, $name)
   {
-    if(!is_null($remaining))
+    if(!\is_null($remaining))
     {
       $this->_remaining = $remaining;
 
-      if(!is_null($start) && $start)
+      if(!\is_null($start) && $start)
       {
         $this->_total = $remaining;
         $this->app->setUserState('joom.refresher.total', $this->_total);
@@ -234,7 +235,7 @@ class Refresher implements RefresherInterface
       $this->_showprogress = false;
     }
 
-    if(!is_null($name) && $name)
+    if(!\is_null($name) && $name)
     {
       $this->_name = $name;
     }
@@ -250,6 +251,7 @@ class Refresher implements RefresherInterface
   public function check(): bool
   {
     $timeleft = -(time() - $this->_starttime - $this->_maxtime);
+
     if($timeleft > 3)
     {
       return true;
@@ -278,14 +280,16 @@ class Refresher implements RefresherInterface
       $this->_remaining = $remaining;
     }
 
-    if($this->_msg && is_null($task))
+    if($this->_msg && \is_null($task))
     {
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_REFRESH_SITE'));
     }
+
     if(!$task)
     {
       $task = $this->_task;
     }
+
     if(!$controller)
     {
       $controller = $this->_controller;
@@ -301,7 +305,7 @@ class Refresher implements RefresherInterface
       // Persist messages if they exist
       $messages = $this->app->getMessageQueue();
 
-      if(count($messages))
+      if(\count($messages))
       {
         $session = Factory::getSession();
         $session->set('application.queue', $messages);
@@ -326,15 +330,15 @@ class Refresher implements RefresherInterface
           $tmpDir        = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'templates';
           $tmpIndexFile  = 'component.php';
           $tmpAssetFile  = 'administrator/templates/atum/joomla.asset.json';
-          $compAssetFile = 'media/com_joomgallery/joomla.asset.json';          
+          $compAssetFile = 'media/com_joomgallery/joomla.asset.json';
           break;
     }
 
     // Fill head of document
-    $head = array( 'title' => Text::_('COM_JOOMGALLERY_WORK_IN_PROGRESS'), 
-                   'description' => '',
-                   'link' => '',
-                   'assetManager' => array('registryFiles' => array($tmpAssetFile, $compAssetFile)));
+    $head = ['title' => Text::_('COM_JOOMGALLERY_WORK_IN_PROGRESS'),
+      'description' => '',
+      'link' => '',
+      'assetManager' => ['registryFiles' => [$tmpAssetFile, $compAssetFile]]];
     $doc->setHeadData($head);
     $doc->setHtml5(true);
 
@@ -345,17 +349,17 @@ class Refresher implements RefresherInterface
        ->useStyle('com_joomgallery.refresher');
 
     // Create html output of the component section
-    $data    = array('name' => $this->_name, 'maxtime' => $this->_maxtime, 'showprogress' => $this->_showprogress, 'total' => $this->_total, 'remaining' => $this->_remaining);
-    $layout  = new FileLayout('refresher', null, array('component' => 'com_joomgallery', 'client' => 1));
+    $data    = ['name' => $this->_name, 'maxtime' => $this->_maxtime, 'showprogress' => $this->_showprogress, 'total' => $this->_total, 'remaining' => $this->_remaining];
+    $layout  = new FileLayout('refresher', null, ['component' => 'com_joomgallery', 'client' => 1]);
     $buffer  = $layout->render($data);
     $buffer .= '<script type="text/javascript">document.location.href="index.php?option='._JOOM_OPTION.'&controller='.$controller.'&task='.$task.'"</script>';
     $doc->setBuffer($buffer, 'component');
 
     // Render the html document
-    $tmpl = array('directory' => $tmpDir,
-                  'template' => $tmpName,
-                  'file' => $tmpIndexFile
-                );
+    $tmpl = ['directory' => $tmpDir,
+      'template' => $tmpName,
+      'file' => $tmpIndexFile,
+    ];
     echo $doc->render(false, $tmpl);
 
     // Return the output

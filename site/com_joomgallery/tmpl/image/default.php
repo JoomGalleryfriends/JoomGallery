@@ -9,18 +9,18 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Session\Session;
 use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Layout\FileLayout;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Session\Session;
 use \Joomla\CMS\User\UserFactoryInterface;
 use \Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
 // image params
 $image_type       = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
@@ -154,7 +154,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
         <td><?php echo $metadata; ?></td>
       </tr>
     <?php endif; ?>
-    <?php if(count($fields) > 0) : ?>
+    <?php if(\count($fields) > 0) : ?>
       <tr>
         <th><strong><?php echo Text::_('JGLOBAL_FIELDS'); ?></strong></th>
         <td></td>

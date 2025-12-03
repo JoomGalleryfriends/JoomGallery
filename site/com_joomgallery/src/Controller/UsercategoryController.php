@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\MVC\Controller\FormController;
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use \Joomla\CMS\Router\Route;
 
 /**
  * User category controller class.
@@ -230,7 +231,7 @@ class UsercategoryController extends JoomFormController // FormController
       $errors = $model->getErrors();
 
       // Push up to three validation messages out to the user.
-      for($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
+      for($i = 0, $n = \count($errors); $i < $n && $i < 3; $i++)
       {
         if($errors[$i] instanceof \Exception)
         {
@@ -359,6 +360,7 @@ class UsercategoryController extends JoomFormController // FormController
     // Get the current edit id.
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       // List view action
@@ -447,6 +449,7 @@ class UsercategoryController extends JoomFormController // FormController
     $previousId = (int) $this->app->getUserState(_JOOM_OPTION.'.edit.category.id');
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       $editId = (int) $cid[0];
@@ -518,6 +521,7 @@ class UsercategoryController extends JoomFormController // FormController
     // Get ID
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       // List view action
@@ -588,6 +592,7 @@ class UsercategoryController extends JoomFormController // FormController
     // Get ID
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
     if($boxchecked)
     {
       // List view action
@@ -638,7 +643,7 @@ class UsercategoryController extends JoomFormController // FormController
     }
 
     // Redirect to the list screen.
-    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_'.\strtoupper($task).'_SUCCESSFUL'), 'success');
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_'.strtoupper($task).'_SUCCESSFUL'), 'success');
     $this->app->redirect(Route::_($this->getReturnPage('usercategories').$this->getItemAppend($id), false));
 
     return true;

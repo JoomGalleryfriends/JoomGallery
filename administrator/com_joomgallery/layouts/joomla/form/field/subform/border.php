@@ -9,7 +9,7 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Form\Form;
@@ -38,6 +38,6 @@ $form = $forms[0];
 
 <div class="subform-repeatable-group">
 <?php foreach ($form->getGroup('') as $field) : ?>
-	<?php echo $field->renderField(); ?>
+  <?php echo $field->renderField(); ?>
 <?php endforeach; ?>
 </div>

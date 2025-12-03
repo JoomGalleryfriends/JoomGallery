@@ -9,15 +9,15 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Session\Session;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Layout\LayoutHelper;
 use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use \Joomla\CMS\HTML\HTMLHelper;
+use \Joomla\CMS\Language\Text;
+use \Joomla\CMS\Layout\LayoutHelper;
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Session\Session;
 
 // Import CSS
 $wa = $this->document->getWebAssetManager();
@@ -37,6 +37,7 @@ $returnURL = base64_encode(JoomHelper::getListRoute('images', null, $this->getLa
 // $baseLink_ImageEdit = 'index.php?option=com_joomgallery&task=userimage.edit&id=';
 
 $saveOrderingUrl = '';
+
 if($saveOrder && !empty($this->items))
 {
   $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
@@ -67,7 +68,7 @@ $canDeleteFound = false;
       <?php else : ?>
 
         <?php if(!empty($this->filterForm)) : ?>
-          <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+          <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <?php endif; ?>
 
         <div class="clearfix"></div>
@@ -118,7 +119,7 @@ $canDeleteFound = false;
             </thead>
             <tfoot>
             <tr>
-              <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+              <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                 <?php echo $this->pagination->getListFooter(); ?>
               </td>
             </tr>
@@ -140,6 +141,7 @@ $canDeleteFound = false;
                   <td class="text-center d-none d-md-table-cell sort-cell">
                     <?php
                     $iconClass = '';
+
                     if(!$canChange)
                     {
                       $iconClass = ' inactive';
@@ -252,16 +254,16 @@ $canDeleteFound = false;
 if($canDeleteFound)
 {
   $wa->addInlineScript("
-			jQuery(document).ready(function () {
-				jQuery('.delete-button').click(deleteItem);
-			});
+      jQuery(document).ready(function () {
+        jQuery('.delete-button').click(deleteItem);
+      });
 
-			function deleteItem() {
+      function deleteItem() {
 
-				if (!confirm(\"".Text::_('COM_JOOMGALLERY_DELETE_MESSAGE')."\")) {
-					return false;
-				}
-			}
-		", [], [], ["jquery"]);
+        if (!confirm(\"".Text::_('COM_JOOMGALLERY_DELETE_MESSAGE').'")) {
+          return false;
+        }
+      }
+    ', [], [], ['jquery']);
 }
 ?>
