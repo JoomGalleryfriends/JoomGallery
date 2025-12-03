@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifFrameExtractor;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsInterface;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Filesystem\File;
-use \Joomla\Filesystem\Path;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifFrameExtractor;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsInterface;
+use Joomla\CMS\Language\Text;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Path;
 
 /**
  * IMGtools Base Class
@@ -112,7 +112,8 @@ abstract class IMGtools implements IMGtoolsInterface
    *
    * @var array
    */
-  protected $src_imginfo = ['width' => 0,
+  protected $src_imginfo = [
+    'width' => 0,
     'height'                        => 0,
     'orientation'                   => '',
     'transparency'                  => false,
@@ -126,7 +127,8 @@ abstract class IMGtools implements IMGtoolsInterface
     *
     * @var array
     */
-   protected $dst_imginfo = ['width' => 0,
+   protected $dst_imginfo = [
+     'width' => 0,
      'height'                        => 0,
      'orientation'                   => '',
      'truecolor'                     => true,
@@ -143,7 +145,8 @@ abstract class IMGtools implements IMGtoolsInterface
     *
     * @var array
     */
-   protected $res_imginfo = ['width' => 0,
+   protected $res_imginfo = [
+     'width' => 0,
      'height'                        => 0,
      'orientation'                   => '',
      'transparency'                  => false,
@@ -246,7 +249,8 @@ abstract class IMGtools implements IMGtoolsInterface
     }
 
     // Decrypt the imagetype
-    $imagetype = [0 => 'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
+    $imagetype = [
+      0 => 'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
       5             => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
       10            => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
       15            => 'WBMP', 16 => 'XBM', 17 => 'ICO', 18 => 'WEBP', 19 => 'COUNT'];
@@ -369,7 +373,7 @@ abstract class IMGtools implements IMGtoolsInterface
 
         while(!feof($fh) && $count < 2)
         {
-          $chunk = fread($fh, 1024 * 100); //read 100kb at a time
+          $chunk  = fread($fh, 1024 * 100); //read 100kb at a time
           $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
         }
 
@@ -462,13 +466,13 @@ abstract class IMGtools implements IMGtoolsInterface
 
     if($src_file == $dst_file && $bak)
     {
-      if(!File::copy($src_file, $src_file.'bak'))
+      if(!File::copy($src_file, $src_file . 'bak'))
       {
         return false;
       }
 
       $backupFile = true;
-      $src_file   = $src_file.'bak';
+      $src_file   = $src_file . 'bak';
     }
 
     if($src_imagetype == 'JPG' && $dst_imgtype == 'JPG')
@@ -533,7 +537,7 @@ abstract class IMGtools implements IMGtoolsInterface
       $key = [$key];
     }
 
-    foreach ($key as $kval)
+    foreach($key as $kval)
     {
       $name          = $kval . '_imginfo';
       $this->{$name} = $this->ini_imginfo[$kval];
@@ -590,7 +594,8 @@ abstract class IMGtools implements IMGtoolsInterface
     if( $width < 1 || $height < 1 || $imginfo[0] < 1 || $imginfo[1] < 1
         ||
         $width > 1000000 || $height > 1000000 || $imginfo[0] > 1000000 || $imginfo[1] > 1000000
-      ) {
+      )
+    {
       return false;
     }
 
@@ -640,12 +645,12 @@ abstract class IMGtools implements IMGtoolsInterface
       // calculate ratio by height
       $ratio = ($srcHeight / $new_height);
 
-      break;
+        break;
     case 2:
       // calculate ratio by width
       $ratio = ($srcWidth / $new_width);
 
-      break;
+        break;
     case 4:
       // Free resizing and cropping
       if($srcWidth < $new_width)
@@ -678,29 +683,29 @@ abstract class IMGtools implements IMGtoolsInterface
           // Left upper corner
           $this->dst_imginfo['offset_x'] = 0;
           $this->dst_imginfo['offset_y'] = 0;
-          break;
+            break;
         case 1:
           // Right upper corner
           $this->dst_imginfo['offset_x'] = (int)floor(($srcWidth - ($new_width * $ratio)));
           $this->dst_imginfo['offset_y'] = 0;
-          break;
+            break;
         case 3:
           // Left lower corner
           $this->dst_imginfo['offset_x'] = 0;
           $this->dst_imginfo['offset_y'] = (int)floor(($srcHeight - ($new_height * $ratio)));
-          break;
+            break;
         case 4:
           // Right lower corner
           $this->dst_imginfo['offset_x'] = (int)floor(($srcWidth - ($new_width * $ratio)));
           $this->dst_imginfo['offset_y'] = (int)floor(($srcHeight - ($new_height * $ratio)));
-          break;
+            break;
         default:
           // Default center
           $this->dst_imginfo['offset_x'] = (int)floor(($srcWidth - ($new_width * $ratio)) * 0.5);
           $this->dst_imginfo['offset_y'] = (int)floor(($srcHeight - ($new_height * $ratio)) * 0.5);
-          break;
+            break;
       }
-      break;
+        break;
     case 3:
       // Resize to maximum allowed dimensions but keeping original ratio
       // calculate ratio by height
@@ -713,11 +718,11 @@ abstract class IMGtools implements IMGtoolsInterface
         // calculate ratio by width
         $ratio = ($srcWidth / $new_width);
       }
-      break;
+        break;
     default:
       echo 'undefined "settings"-parameter!';
 
-      return false;
+        return false;
     }
 
     // Calculate widths and heights necessary for resize and bring them to integer values
@@ -729,7 +734,6 @@ abstract class IMGtools implements IMGtoolsInterface
       $this->dst_imginfo['height']        = (int)floor($srcHeight / $ratio);
       $this->dst_imginfo['src']['width']  = (int)$srcWidth;
       $this->dst_imginfo['src']['height'] = (int)$srcHeight;
-
     }
     else
     {
@@ -765,7 +769,6 @@ abstract class IMGtools implements IMGtoolsInterface
     // generate information about the new width and height
     if($resize)
     {
-
       if($new_size <= 0)
       {
         $new_size = 1;
@@ -820,26 +823,26 @@ abstract class IMGtools implements IMGtoolsInterface
     {
       case 1:
         $pos_x = round(($imginfo['width'] - $this->dst_imginfo['width']) / 2, 0);
-        break;
+          break;
       case 2:
         $pos_x = $imginfo['width'] - $this->dst_imginfo['width'];
-        break;
+          break;
       default:
         $pos_x = 0;
-        break;
+          break;
     }
     // Position y
     switch(floor(($position - 1) / 3))
     {
       case 1:
         $pos_y = round(($imginfo['height'] - $this->dst_imginfo['height']) / 2, 0);
-        break;
+          break;
       case 2:
         $pos_y = $imginfo['height'] - $this->dst_imginfo['height'];
-        break;
+          break;
       default:
         $pos_y = 0;
-        break;
+          break;
     }
 
     // Preserve information about truecolor
@@ -871,7 +874,6 @@ abstract class IMGtools implements IMGtoolsInterface
 
 
       return 'square';
-
   }
 
   /**
@@ -892,39 +894,39 @@ abstract class IMGtools implements IMGtoolsInterface
       case 1: // Do nothing!
         $this->dst_imginfo['flip']  = 'none';
         $this->dst_imginfo['angle'] = 0;
-        break;
+          break;
       case 2: // Flip horizontally
         $this->dst_imginfo['flip']  = 'horizontally';
         $this->dst_imginfo['angle'] = 0;
-        break;
+          break;
       case 3: // Rotate 180 degrees
         $this->dst_imginfo['flip']  = 'none';
         $this->dst_imginfo['angle'] = 180;
-        break;
+          break;
       case 4: // Flip vertically
         $this->dst_imginfo['flip']  = 'vertically';
         $this->dst_imginfo['angle'] = 0;
-        break;
+          break;
       case 5: // Rotate 90 degrees clockwise and flip vertically
         $this->dst_imginfo['flip']  = 'vertically';
         $this->dst_imginfo['angle'] = 270;
-        break;
+          break;
       case 6: // Rotate 90 clockwise
         $this->dst_imginfo['flip']  = 'none';
         $this->dst_imginfo['angle'] = 270;
-        break;
+          break;
       case 7: // Rotate 90 clockwise and flip horizontally
         $this->dst_imginfo['flip']  = 'horizontally';
         $this->dst_imginfo['angle'] = 270;
-        break;
+          break;
       case 8: // Rotate 90 anticlockwise
         $this->dst_imginfo['flip']  = 'none';
         $this->dst_imginfo['angle'] = 90;
-        break;
+          break;
       default:
         $this->dst_imginfo['flip']  = 'none';
         $this->dst_imginfo['angle'] = 0;
-        break;
+          break;
     }
 
     return true;
@@ -945,34 +947,34 @@ abstract class IMGtools implements IMGtoolsInterface
     {
       case 0: // Do nothing!
         $orientation = false;
-        break;
+          break;
       case 90: // Rotate 90 anticlockwise
         $orientation = 8;
-        break;
+          break;
       case 180: // Rotate 180 degrees
         $orientation = 3;
-        break;
+          break;
       case 270: // Rotate 270 anticlockwise
         $orientation = 6;
-        break;
+          break;
       case 360: // Rotate 360 anticlockwise
         $orientation = 1;
-        break;
+          break;
       case -90: // Rotate 90 clockwise
         $orientation = 6;
-        break;
+          break;
       case -180: // Rotate 180 degrees
         $orientation = 3;
-        break;
+          break;
       case -270: // Rotate 270 clockwise
         $orientation = 8;
-        break;
+          break;
       case -360: // Rotate 360 clockwise
         $orientation = 1;
-        break;
+          break;
       default: // in all other cases
         $orientation = false;
-        break;
+          break;
     }
 
     return $orientation;
@@ -993,18 +995,18 @@ abstract class IMGtools implements IMGtoolsInterface
     // Restore src from backup file or delete corrupt dst file
     if($src_file == $dst_file && $src_file != '')
     {
-      if(is_file(Path::clean($src_file.'bak')))
+      if(is_file(Path::clean($src_file . 'bak')))
       {
-        File::copy($src_file.'bak', $src_file);
-        File::delete($src_file.'bak');
+        File::copy($src_file . 'bak', $src_file);
+        File::delete($src_file . 'bak');
       }
     }
     elseif($dst_file != '')
     {
-      if(is_file(Path::clean($dst_file.'bak')))
+      if(is_file(Path::clean($dst_file . 'bak')))
       {
-        File::copy($dst_file.'bak', $dst_file);
-        File::delete($dst_file.'bak');
+        File::copy($dst_file . 'bak', $dst_file);
+        File::delete($dst_file . 'bak');
       }
       else
       {
@@ -1238,7 +1240,7 @@ abstract class IMGtools implements IMGtoolsInterface
           if((1 <= $iptcsegmentnumber) && (!$exifadded))
           {
             $portiontoadd .= $exifdata;
-            $exifadded = true;
+            $exifadded     = true;
 
             if(1 === $iptcsegmentnumber)
             {
@@ -1249,7 +1251,7 @@ abstract class IMGtools implements IMGtoolsInterface
           if((13 <= $iptcsegmentnumber) && (!$iptcadded))
           {
             $portiontoadd .= $iptcdata;
-            $iptcadded = true;
+            $iptcadded     = true;
 
             if(13 === $iptcsegmentnumber)
             {
@@ -1257,7 +1259,7 @@ abstract class IMGtools implements IMGtoolsInterface
             }
           }
 
-          $portiontoadd .= $thisexistingsegment;
+          $portiontoadd   .= $thisexistingsegment;
           $destfilecontent = substr($destfilecontent, $segmentlen + 2);
         }
 
@@ -1280,13 +1282,11 @@ abstract class IMGtools implements IMGtoolsInterface
 
         // Destination file doesn't exist
         return false;
-
     }
 
 
       // Source file doesn't exist
       return false;
-
   }
 
   /**
@@ -1423,7 +1423,6 @@ abstract class IMGtools implements IMGtoolsInterface
 
       // File doesn't exist
       return false;
-
   }
 
   /**
@@ -1440,7 +1439,8 @@ abstract class IMGtools implements IMGtoolsInterface
    */
   protected function replace_exif_orientation($exifdata, $newVal)
   {
-    $IFD_Data_Sizes = [1 => 1,         // Unsigned Byte
+    $IFD_Data_Sizes = [
+      1 => 1,         // Unsigned Byte
       2                  => 1,         // ASCII String
       3                  => 2,         // Unsigned Short
       4                  => 4,         // Unsigned Long
@@ -1454,7 +1454,7 @@ abstract class IMGtools implements IMGtoolsInterface
       12                 => 8];      // Double
 
     $tmp_folder = $this->app->get('tmp_path');
-    $tmp_file   = $tmp_folder.'/tmp.txt';
+    $tmp_file   = $tmp_folder . '/tmp.txt';
 
     if(isset($exifdata))
     {
@@ -1537,7 +1537,7 @@ abstract class IMGtools implements IMGtoolsInterface
 
     // If the data is corrupt, the number of entries may be huge, which will cause errors
     // This is often caused by a lack of a Next-IFD pointer
-    if ($No_Entries > 10000 || $No_Entries == 0)
+    if($No_Entries > 10000 || $No_Entries == 0)
     {
       // Delete file
       unlink($tmp_file);
@@ -1620,7 +1620,7 @@ abstract class IMGtools implements IMGtoolsInterface
     }
 
     // Total Data size is the Data Count multiplied by the size of the Data Type
-    $orient_Total_Data_Size = $IFD_Data_Sizes[ $orient_Data_Type ] * $orient_Data_Count;
+    $orient_Total_Data_Size = $IFD_Data_Sizes[$orient_Data_Type] * $orient_Data_Count;
 
     if($orient_Total_Data_Size > 4)
     {
@@ -1636,7 +1636,7 @@ abstract class IMGtools implements IMGtoolsInterface
 
 
     // Read the data items from the data block
-    if ($orient_Data_Type == 1 || $orient_Data_Type == 3 || $orient_Data_Type == 4)
+    if($orient_Data_Type == 1 || $orient_Data_Type == 3 || $orient_Data_Type == 4)
     {
       $orient_Data = $this->get_IFD_Data_Type($orient_DataStr, $orient_Data_Type, $Byte_Align);
     }
@@ -1719,7 +1719,6 @@ abstract class IMGtools implements IMGtoolsInterface
 
 
       return 0;
-
   }
 
   /**
@@ -1795,7 +1794,7 @@ abstract class IMGtools implements IMGtoolsInterface
       if($Byte_Align == 'II')
       {
         // This is in Intel format, reverse it
-        $input_data = strrev( $input_data );
+        $input_data = strrev($input_data);
       }
 
       // Convert the binary string to a number and return it
@@ -1832,7 +1831,6 @@ abstract class IMGtools implements IMGtoolsInterface
         // Intel LSB first byte alignment
         // Unpack the Numerator and denominator and return them
         return unpack('VNumerator/VDenominator', $input_data);
-
     }
     // Check if this is a Signed Byte, Signed Short or Signed Long
     elseif(( $data_type == 6) || ($data_type == 8) || ($data_type == 9))
@@ -1847,7 +1845,7 @@ abstract class IMGtools implements IMGtoolsInterface
       }
 
       // Convert the binary string to an Unsigned number
-      $value = hexdec(bin2hex( $input_data ));
+      $value = hexdec(bin2hex($input_data));
 
       // Convert to signed number
 
@@ -1939,8 +1937,6 @@ abstract class IMGtools implements IMGtoolsInterface
 
       // Error - Invalid Datatype
       return "Invalid Datatype $data_type";
-
-
   }
 
   /**
@@ -1981,11 +1977,11 @@ abstract class IMGtools implements IMGtoolsInterface
     switch($data_type)
     {
       case 1: // Unsigned Byte - return character as is
-        return \chr($input_data);
+          return \chr($input_data);
         break;
       case 2: // ASCII String
         // Return the string with terminating null
-        return $input_data . "\x00";
+          return $input_data . "\x00";
         break;
       case 3: // Unsigned Short
         // Check byte alignment
@@ -2040,7 +2036,7 @@ abstract class IMGtools implements IMGtoolsInterface
 
         break;
       case 7: // Unknown - return as is
-        return $input_data;
+          return $input_data;
         break;
 
       case 8: // Signed Short
@@ -2052,7 +2048,7 @@ abstract class IMGtools implements IMGtoolsInterface
         }
 
         // Check byte alignment
-        if ($Byte_Align == 'II')
+        if($Byte_Align == 'II')
         {
           // Intel/Little Endian - pack the short and return
           return pack('v', $input_data);
@@ -2113,16 +2109,16 @@ abstract class IMGtools implements IMGtoolsInterface
       case 11: // Float
         // IEEE 754 Float
         // TODO - EXIF - IFD datatype Float not implemented yet
-        return 'FLOAT NOT IMPLEMENTED YET';
+          return 'FLOAT NOT IMPLEMENTED YET';
         break;
       case 12: // Double
         // IEEE 754 Double
         // TODO - EXIF - IFD datatype Double not implemented yet
-        return 'DOUBLE NOT IMPLEMENTED YET';
+          return 'DOUBLE NOT IMPLEMENTED YET';
         break;
       default:
         // Error - Invalid Datatype
-        return "Invalid Datatype $data_type";
+          return "Invalid Datatype $data_type";
         break;
     }
 

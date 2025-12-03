@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-******************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -92,30 +93,30 @@ $filtersActiveClass = $hideActiveFilters ? '' : ' js-stools-container-filters-vi
 HTMLHelper::_('searchtools.form', $data['options']['formSelector'], $data['options']);
 ?>
 <div class="js-stools" role="search">
-  <?php if ($data['options']['showSelector']) : ?>
+  <?php if($data['options']['showSelector']) : ?>
   <div class="js-stools-container-selector <?php echo $data['options']['selectorClass'];?>">
     <?php echo $this->sublayout('selector', $data); ?>
   </div>
   <?php endif; ?>
   <div class="js-stools-container-bar <?php echo $data['options']['barClass'];?>">
     <div class="btn-toolbar">
-      <?php if ($data['options']['showSearch']) : ?>
+      <?php if($data['options']['showSearch']) : ?>
         <?php echo $this->sublayout('bar', $data); ?>
       <?php endif; ?>
-      <?php if ($data['options']['showList']) : ?>
+      <?php if($data['options']['showList']) : ?>
         <?php echo $this->sublayout('list', $data); ?>
       <?php endif; ?>
     </div>
   </div>
 
   <!-- Filters div -->
-  <?php if ($data['options']['filterButton']) : ?>
+  <?php if($data['options']['filterButton']) : ?>
     <div class="js-stools-container-filters clearfix<?php echo $filtersActiveClass; ?>">
       <?php echo $this->sublayout('filters', $data); ?>
     </div>
   <?php endif; ?>
 </div>
 
-<?php if ($data['options']['showNoResults']) : ?>
+<?php if($data['options']['showNoResults']) : ?>
   <?php echo $this->sublayout('noitems', $data); ?>
 <?php endif; ?>

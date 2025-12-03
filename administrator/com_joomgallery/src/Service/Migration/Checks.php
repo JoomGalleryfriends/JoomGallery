@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
+use Joomla\CMS\Language\Text;
 
 /**
  * Migration Checks Class
@@ -143,7 +143,6 @@ class Checks
       {
         $this->objects[$key]->desc = (string) $desc;
       }
-
   }
 
   /**
@@ -168,7 +167,7 @@ class Checks
     // Make category and check name lowercase
     $category = strtolower(trim($category));
     $name     = strtolower(trim($name));
-    $asset    = $category.'.'.$name;
+    $asset    = $category . '.' . $name;
 
     // Check if category exists
     if(!\in_array($category, array_keys($this->assets)))
@@ -207,7 +206,7 @@ class Checks
       $key = $this->array_push($this->objects[$catKey]->checks, $check);
 
       // Add check to assets array
-      $this->assets[$asset] = $catKey.'.'.$key;
+      $this->assets[$asset] = $catKey . '.' . $key;
 
       // Modify the overall success if needed
       if($result === false)
@@ -257,7 +256,7 @@ class Checks
     // Make category and check name lowercase
     $category = strtolower(trim($category));
     $name     = strtolower(trim($name));
-    $asset    = $category.'.'.$name;
+    $asset    = $category . '.' . $name;
 
     // Check if category exists
     if(!\in_array($category, array_keys($this->assets)))
@@ -313,7 +312,6 @@ class Checks
       {
         $this->objects[$catKey]->checks[$checkKey]->help = (string) $help;
       }
-
   }
 
   /**

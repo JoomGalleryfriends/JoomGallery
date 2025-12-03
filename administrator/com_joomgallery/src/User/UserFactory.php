@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\User;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\User\UserFactory as BaseUserFactory;
+use Joomla\CMS\User\UserFactory as BaseUserFactory;
 
 /**
  * JoomGallery factory for creating User objects

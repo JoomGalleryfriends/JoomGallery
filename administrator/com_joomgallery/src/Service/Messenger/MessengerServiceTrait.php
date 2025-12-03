@@ -14,8 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MailMessenger;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\PmMessenger;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MailMessenger;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\PmMessenger;
 
 /**
   * Trait to implement MessengerServiceInterface
@@ -35,7 +35,7 @@ trait MessengerServiceTrait
 
     /**
       * Creates the messenger service class
-      * 
+      *
       * @param   string  $msgMethod   Name of the messager to be used
       *
       * @return  void
@@ -44,7 +44,7 @@ trait MessengerServiceTrait
       */
     public function createMessenger($msgMethod)
     {
-        switch ($msgMethod)
+        switch($msgMethod)
         {
             case 'pm':
                 $this->messenger = new PmMessenger();

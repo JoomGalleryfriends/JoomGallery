@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Form\FormField;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Filesystem\Path;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Language\Text;
+use Joomla\Filesystem\Path;
 
 /**
  * Supports a config field whose content is defined in com_config
@@ -71,7 +71,7 @@ class ExternalconfigField extends FormField
     $option      = preg_replace('/[^a-z0-9_]/', '', $array[0]);
     $field       = preg_replace('/[^a-z0-9_]/', '', $array[1]);
     $config_xml  = Path::clean(JPATH_ADMINISTRATOR . '/components/' . $option . '/config.xml');
-    $config_form = new Form($option.'.config');
+    $config_form = new Form($option . '.config');
     $config_form->loadFile($config_xml, false, '//config//fieldset');
 
     // Add external field values
@@ -102,10 +102,10 @@ class ExternalconfigField extends FormField
 
     $this->value       = ComponentHelper::getParams($option)->get($field);
     $this->readonly    = true;
-    $this->description = Text::_(\strval($this->external->element->attributes()->description)) . ' ('.Text::_('COM_JOOMGALLERY_SOURCE').': '.$option.')';
+    $this->description = Text::_(\strval($this->external->element->attributes()->description)) . ' (' . Text::_('COM_JOOMGALLERY_SOURCE') . ': ' . $option . ')';
 
-    $html = '<a class="btn btn-secondary inline" target="_blank" href="index.php?option=com_config&view=component&component='.$option.'">'.Text::_('JACTION_EDIT').'</a>';
-    $html .= '<input id="'.$this->id.'" disabled class="form-control sensitive-input" type="text" name="'.$this->name.'" value="'.$this->value.'" aria-describedby="'.$this->id.'-desc">';
+    $html  = '<a class="btn btn-secondary inline" target="_blank" href="index.php?option=com_config&view=component&component=' . $option . '">' . Text::_('JACTION_EDIT') . '</a>';
+    $html .= '<input id="' . $this->id . '" disabled class="form-control sensitive-input" type="text" name="' . $this->name . '" value="' . $this->value . '" aria-describedby="' . $this->id . '-desc">';
 
     return $html;
   }

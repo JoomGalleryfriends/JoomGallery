@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\FormField;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormField;
 
 /**
   * Supports an HTML select list of categories
-  * 
+  *
   * @package JoomGallery
   * @since   4.0.0
   */

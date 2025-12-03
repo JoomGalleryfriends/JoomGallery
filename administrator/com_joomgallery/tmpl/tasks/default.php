@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -47,11 +48,11 @@ elseif(is_file($jsPath) && is_readable($jsPath))
 
 if($jsContent !== false && $jsContent !== '')
 {
-  $jsContent = str_replace(
-      '?option=com_scheduler&view=tasks',
-      '?option=com_joomgallery&view=tasks',
-      $jsContent
-  );
+$jsContent = str_replace(
+    '?option=com_scheduler&view=tasks',
+    '?option=com_joomgallery&view=tasks',
+    $jsContent
+);
 
   $wa->addInlineScript($jsContent, ['name' => 'com_scheduler.test-task']);
 }
@@ -96,7 +97,7 @@ if($saveOrder && !empty($this->items))
         <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <div class="clearfix"></div>
 
-        <?php if (empty($this->items)) : ?>
+        <?php if(empty($this->items)) : ?>
           <div class="alert alert-info">
             <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
             <?php echo Text::_('COM_JOOMGALLERY_TASKS_EMPTYSTATE_TITLE'); ?>
@@ -105,7 +106,7 @@ if($saveOrder && !empty($this->items))
           <div class="ms-4 mb-2">
             <span><?php echo HTMLHelper::_('grid.checkall'); ?></span> <span><?php echo Text::_('JGLOBAL_SELECTION_ALL'); ?></span>
           </div>
-          <?php foreach ($this->items as $i => $item): ?>
+          <?php foreach($this->items as $i => $item): ?>
             <div class="row align-items-start">
               <div class="col-md-12">
                 <div class="card">
@@ -118,7 +119,7 @@ if($saveOrder && !empty($this->items))
                       <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                     </div>
                     <div class="p-2 flex-grow-1">
-                      <a class="btn btn-sm btn-primary mb-2" href="<?php echo Route::_('index.php?option=com_joomgallery&view=task&layout=edit&id='.$item->id); ?>"><span class="fa fa-edit fa-sm me-2"></span> <?php echo Text::_('JACTION_EDIT'); ?></a>
+                      <a class="btn btn-sm btn-primary mb-2" href="<?php echo Route::_('index.php?option=com_joomgallery&view=task&layout=edit&id=' . $item->id); ?>"><span class="fa fa-edit fa-sm me-2"></span> <?php echo Text::_('JACTION_EDIT'); ?></a>
                       <button type="button" class="btn btn-sm btn-warning mb-2" <?php echo $item->published < 0 ? 'disabled' : ''; ?> data-id="<?php echo (int) $item->id; ?>" data-title="<?php echo htmlspecialchars($item->title); ?>">
                         <span class="fa fa-play fa-sm me-2"></span><?php echo Text::_('COM_JOOMGALLERY_TASK_START'); ?>
                       </button>
@@ -130,8 +131,8 @@ if($saveOrder && !empty($this->items))
                       <div class="progress mb-2">
                         <div id="progress-<?php echo $item->id; ?>" class="progress-bar" style="width: <?php echo $item->progress; ?>%" role="progressbar" aria-valuenow="<?php echo $item->progress; ?>" aria-valuemin="0" aria-valuemax="100"><?php if($item->progress > 0)
                         {
-                        echo $item->progress.'%';
-                        }; ?></div>
+                        echo $item->progress . '%';
+                                          }; ?></div>
                       </div>
                       <a class="collapse-arrow mb-2" data-bs-toggle="collapse" href="#collapseLog-<?php echo $item->id; ?>" role="button" aria-expanded="false" aria-controls="collapseLog">
                         <i class="icon-angle-down"></i><span> <?php echo Text::_('COM_JOOMGALLERY_SHOWLOG'); ?></span>
@@ -159,7 +160,7 @@ if($saveOrder && !empty($this->items))
 
     <h2><?php echo Text::_('COM_SCHEDULER'); ?></h2>
     <div id="scheduler-tasks-container" class="j-main-container">
-      <?php if (empty($this->scheduledTasks)) : ?>
+      <?php if(empty($this->scheduledTasks)) : ?>
         <div class="alert alert-info">
           <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
           <?php echo Text::_('COM_SCHEDULER_EMPTYSTATE_TITLE'); ?>
@@ -205,7 +206,7 @@ if($saveOrder && !empty($this->items))
           </tr>
           </thead>
           <tbody>
-          <?php foreach ($this->scheduledTasks as $i => $item) :?>
+          <?php foreach($this->scheduledTasks as $i => $item) :?>
             <?php
               $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
               $canChange  = $user->authorise('core.edit.state', 'com_scheduler') && $canCheckin;
@@ -218,16 +219,22 @@ if($saveOrder && !empty($this->items))
 
               <!-- Item title -->
               <th scope="row">
-                <?php if ($item->checked_out) : ?>
+                <?php if($item->checked_out) : ?>
                   <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'tasks.', false); ?>
                 <?php endif; ?>
-                <?php if ($item->locked) : ?>
-                  <?php echo HTMLHelper::_('jgrid.action', $i, 'unlock', ['enabled' => $canChange, 'prefix' => 'tasks.',
+                <?php if($item->locked) : ?>
+                <?php echo HTMLHelper::_(
+                    'jgrid.action',
+                    $i,
+                    'unlock',
+                    [
+                    'enabled' => $canChange, 'prefix' => 'tasks.',
                     'active_class'                                                  => 'none fa fa-running border-dark text-body',
                     'inactive_class'                                                => 'none fa fa-running', 'tip' => true, 'translate' => false,
                     'active_title'                                                  => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
                     'inactive_title'                                                => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
-                  ]); ?>
+                    ]
+                ); ?>
                 <?php endif; ?>
                 <span class="task-title">
                   <a href="<?php echo Route::_('index.php?option=com_scheduler&task=task.edit&id=' . $item->id); ?>"
@@ -240,7 +247,7 @@ if($saveOrder && !empty($this->items))
                     </div>
                   <?php endif; ?>
                 </span>
-                <?php if ($item->note) : ?>
+                <?php if($item->note) : ?>
                   <span class="small">
                     <?php echo Text::sprintf('JGLOBAL_LIST_NOTE', $this->escape($item->note)); ?>
                   </span>

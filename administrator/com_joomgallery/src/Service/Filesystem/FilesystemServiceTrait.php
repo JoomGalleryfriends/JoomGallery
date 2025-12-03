@@ -14,7 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Filesystem;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Filesystem;
 
 /**
   * Trait to implement FilesystemServiceInterface

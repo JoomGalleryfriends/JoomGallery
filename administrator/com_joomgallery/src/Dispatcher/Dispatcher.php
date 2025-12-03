@@ -10,8 +10,8 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Dispatcher;
 
-use \Joomla\CMS\Dispatcher\ComponentDispatcher;
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Dispatcher\ComponentDispatcher;
+use Joomla\CMS\Factory;
 
 /**
  * ComponentDispatcher class for com_joomgallery

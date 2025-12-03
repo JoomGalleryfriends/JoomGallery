@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Form\Field\ListField;
 
 /**
  * Form Field class for the Joomla Platform.

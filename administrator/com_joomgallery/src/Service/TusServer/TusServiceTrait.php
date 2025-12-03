@@ -14,10 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Uri\Uri;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 /**
   * Trait to implement TusServerInterface
@@ -49,7 +49,7 @@ trait TusServiceTrait
 
     /**
       * Creates the tus server class
-      * 
+      *
       * @param   string   Upload folder path
       * @param   string   TUS server implementation location (URI)
       * @param   bool     True if debug mode should be activated

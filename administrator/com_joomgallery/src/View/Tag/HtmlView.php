@@ -15,16 +15,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Tag;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a single Tag.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -88,7 +88,7 @@ class HtmlView extends JoomGalleryView
       $checkedOut = false;
     }
 
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TAGS').' :: '.Text::_('COM_JOOMGALLERY_TAG_EDIT'), 'tag');
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TAGS') . ' :: ' . Text::_('COM_JOOMGALLERY_TAG_EDIT'), 'tag');
 
     // If not checked out, can save the item.
     if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || ($this->getAcl()->checkACL('core.create'))))
@@ -100,7 +100,7 @@ class HtmlView extends JoomGalleryView
     {
       $saveGroup = $toolbar->dropdownButton('save-group');
 
-      $saveGroup->configure(
+    $saveGroup->configure(
         function (Toolbar $childBar) use ($checkedOut, $isNew) {
           $childBar->save('tag.save', 'JTOOLBAR_SAVE');
 
@@ -115,7 +115,7 @@ class HtmlView extends JoomGalleryView
             $childBar->save2copy('tag.save2copy');
           }
         }
-      );
+    );
     }
 
     if(empty($this->item->id))

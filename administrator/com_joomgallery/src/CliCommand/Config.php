@@ -118,7 +118,7 @@ class Config extends AbstractCommand
 
     $configurationAssoc = $this->getItemAssocFromDB($configId);
 
-    if (empty($configurationAssoc))
+    if(empty($configurationAssoc))
     {
       $this->ioStyle->error("The configuration id '" . $configId . "' is invalid, No configuration found matching your criteria!");
 
@@ -128,9 +128,9 @@ class Config extends AbstractCommand
     $strConfigurationAssoc = $this->assoc2DefinitionList($configurationAssoc, $max_line_length);
 
     // ToDo: Use horizontal table again ;-)
-    foreach ($strConfigurationAssoc as $value)
+    foreach($strConfigurationAssoc as $value)
     {
-      if (!\is_array($value))
+      if(!\is_array($value))
       {
         throw new \InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
       }
@@ -180,17 +180,16 @@ class Config extends AbstractCommand
   {
     $items = [];
 
-    if (empty($max_len))
+    if(empty($max_len))
     {
       $max_len = 70;
     }
 
-    foreach ($configurationAssoc as $key => $value)
+    foreach($configurationAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }
 
     return $items;
   }
-
 }

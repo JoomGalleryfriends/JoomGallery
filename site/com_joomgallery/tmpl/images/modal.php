@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -40,7 +41,7 @@ $imgRequired = (int) $input->get('required', 0, 'int');
     <div class="col-md-12">
       <div id="j-main-container" class="j-main-container">
 
-      <?php if (!$imgRequired) : ?>
+      <?php if(!$imgRequired) : ?>
         <div>
           <button type="button" class="btn btn-primary button-select" data-image-value="0" data-image-title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE')); ?>" data-image-field="<?php echo $this->escape($field); ?>">
             <?php echo Text::_('COM_JOOMGALLERY_NO_IMAGE'); ?>
@@ -77,7 +78,7 @@ $imgRequired = (int) $input->get('required', 0, 'int');
                 <th scope="col" class="w-10 d-none d-md-table-cell">
                   <?php echo HTMLHelper::_('grid.sort', 'JDATE', 'a.date', $listDirn, $listOrder); ?>
                 </th>
-                <?php if (Multilanguage::isEnabled()) : ?>
+                <?php if(Multilanguage::isEnabled()) : ?>
                   <th scope="col" class="w-10 d-none d-md-table-cell">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
                   </th>
@@ -95,17 +96,17 @@ $imgRequired = (int) $input->get('required', 0, 'int');
             </tr>
             </tfoot>
             <tbody>
-            <?php foreach ($this->items as $i => $item) : ?>
+            <?php foreach($this->items as $i => $item) : ?>
               <tr class="row<?php echo $i % 2; ?>">
                 <td class="text-center d-none d-md-table-cell">
                   <div class="small badge-list">
-                    <?php if ($item->featured === 1) : ?>
+                    <?php if($item->featured === 1) : ?>
                       <span class="badge bg-secondary">
                         <?php echo Text::_('JFEATURED'); ?>
                       </span>
                     <?php endif; ?>
 
-                    <?php if ($item->published === 1) : ?>
+                    <?php if($item->published === 1) : ?>
                       <span class="badge bg-secondary">
                         <?php echo Text::_('JPUBLISHED'); ?>
                       </span>
@@ -115,7 +116,7 @@ $imgRequired = (int) $input->get('required', 0, 'int');
                       </span>
                     <?php endif; ?>
 
-                    <?php if ($item->approved === 1) : ?>
+                    <?php if($item->approved === 1) : ?>
                       <span class="badge bg-secondary">
                         <?php echo Text::_('COM_JOOMGALLERY_APPROVED'); ?>
                       </span>
@@ -142,7 +143,7 @@ $imgRequired = (int) $input->get('required', 0, 'int');
                       <?php echo $this->escape($item->cattitle); ?>
                     </div>
 
-                    <?php if ($item->hidden === 1) : ?>
+                    <?php if($item->hidden === 1) : ?>
                       <div class="small">
                         <span class="badge bg-secondary">
                           <?php echo Text::_('COM_JOOMGALLERY_HIDDEN'); ?>
@@ -157,7 +158,7 @@ $imgRequired = (int) $input->get('required', 0, 'int');
                 </td>
 
                 <td class="small d-none d-md-table-cell">
-                  <?php if ($item->author) : ?>
+                  <?php if($item->author) : ?>
                     <?php echo $this->escape($item->author); ?>
                   <?php else : ?>
                     <?php echo Text::_('COM_JOOMGALLERY_NO_USER'); ?>
@@ -171,7 +172,7 @@ $imgRequired = (int) $input->get('required', 0, 'int');
                   ?>
                 </td>
 
-                <?php if (Multilanguage::isEnabled()) : ?>
+                <?php if(Multilanguage::isEnabled()) : ?>
                   <td class="small d-none d-md-table-cell">
                     <?php echo LayoutHelper::render('joomla.content.language', $item); ?>
                   </td>

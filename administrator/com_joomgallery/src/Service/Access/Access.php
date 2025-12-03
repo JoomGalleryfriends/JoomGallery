@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base\AccessOwn;
-use \Joomgallery\Component\Joomgallery\Administrator\User\User;
-use \Joomla\CMS\Access\Access as AccessBase;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\User\UserFactoryInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base\AccessOwn;
+use Joomgallery\Component\Joomgallery\Administrator\User\User;
+use Joomla\CMS\Access\Access as AccessBase;
+use Joomla\CMS\Factory;
+use Joomla\CMS\User\UserFactoryInterface;
 
 /**
  * Access Class
@@ -138,7 +138,7 @@ class Access implements AccessInterface
     $this->user = $this->component->getMVCFactory()->getIdentity();
 
     // Set acl map for components with advanced rules
-    $mapPath = _JOOM_PATH_ADMIN.'/includes/rules.php';
+    $mapPath = _JOOM_PATH_ADMIN . '/includes/rules.php';
 
     if(file_exists($mapPath))
     {
@@ -185,8 +185,9 @@ class Access implements AccessInterface
     {
       // Check if asset is available for this action
       if( ($asset_length == 1 && !\in_array('.', $this->aclMap[$action]['assets'])) ||
-          (!\in_array('.'.$asset_type, $this->aclMap[$action]['assets']))
-        ) {
+          (!\in_array('.' . $asset_type, $this->aclMap[$action]['assets']))
+        )
+      {
         // Action not available for this asset.
         $this->component->addLog('Action not available for this asset. Access can not be checked. Please provide reasonable inputs.', 'error', 'jerror');
         throw new \Exception('Action not available for this asset. Access can not be checked. Please provide reasonable inputs.', 1);
@@ -223,14 +224,14 @@ class Access implements AccessInterface
       if(\in_array($asset_type, $this->media_types) && $action == 'add')
       {
         // Special acl rule for media upload
-        $acl_rule = $this->prefix.'.upload';
+        $acl_rule = $this->prefix . '.upload';
       }
 
       // Get asset for parent checks
       if(!\in_array($asset_type, $this->parent_dependent_types))
       {
         $parent_type  = $asset_type ? $this->parents[$asset_type] : 'category';
-        $asset        = $asset_array[0].'.'.$parent_type.'.'.$parent_pk;
+        $asset        = $asset_array[0] . '.' . $parent_type . '.' . $parent_pk;
         $asset_length = \count(explode('.', $asset));
       }
     }
@@ -255,17 +256,17 @@ class Access implements AccessInterface
     // Adjust acl rule for the own check
     if($acl_rule_array[1] === 'edit')
     {
-      $acl_rule = 'core.'.$acl_rule_array[1].'.'.$this->aclMap[$action]['own'];
+      $acl_rule = 'core.' . $acl_rule_array[1] . '.' . $this->aclMap[$action]['own'];
     }
     else
     {
-      $acl_rule = $this->prefix.'.'.$acl_rule_array[1].'.'.$this->aclMap[$action]['own'];
+      $acl_rule = $this->prefix . '.' . $acl_rule_array[1] . '.' . $this->aclMap[$action]['own'];
     }
 
     if($asset_length >= 3)
     {
       // We are checking for a specific item, based on pk or parent pk
-      if(!empty($this->aclMap) && $this->aclMap[$action]['own'] !== false && \in_array('.'.$asset_type, $this->aclMap[$action]['own-assets']) && ($pk > 0 || $use_parent))
+      if(!empty($this->aclMap) && $this->aclMap[$action]['own'] !== false && \in_array('.' . $asset_type, $this->aclMap[$action]['own-assets']) && ($pk > 0 || $use_parent))
       {
         $this->tocheck['own'] = true;
 
@@ -286,8 +287,8 @@ class Access implements AccessInterface
         // Get parent/category info
         $parent_id     = $use_parent ? $parent_pk : JoomHelper::getParent($asset_array[1], $pk);
         $parent_type   = $asset_type ? $this->parents[$asset_type] : 'category';
-        $parent_asset  = $this->option.'.'.$parent_type.'.'.$parent_id;
-        $parent_action = $this->prefix.'.upload';
+        $parent_asset  = $this->option . '.' . $parent_type . '.' . $parent_id;
+        $parent_action = $this->prefix . '.upload';
 
         // Check for the category in general
         $this->tocheck['upload'] = true;
@@ -295,13 +296,13 @@ class Access implements AccessInterface
 
         // Check also against parent ownership
         $this->tocheck['upload-own'] = true;
-        $this->allowed['upload-own'] = AccessOwn::checkOwn($this->user->id, $parent_action.'.'.$this->aclMap[$action]['own'], $parent_asset, true, $parent_pk);
+        $this->allowed['upload-own'] = AccessOwn::checkOwn($this->user->id, $parent_action . '.' . $this->aclMap[$action]['own'], $parent_asset, true, $parent_pk);
       }
     }
     else
     {
       // We are checking for the own asset in general
-      if(!empty($this->aclMap) && $this->aclMap[$action]['own'] !== false && \in_array('.'.$asset_type, $this->aclMap[$action]['own-assets']))
+      if(!empty($this->aclMap) && $this->aclMap[$action]['own'] !== false && \in_array('.' . $asset_type, $this->aclMap[$action]['own-assets']))
       {
         $this->tocheck['own'] = true;
         $this->allowed['own'] = AccessBase::check($this->user->id, $acl_rule, $asset);
@@ -499,7 +500,7 @@ class Access implements AccessInterface
       if(\count($asset_array) > 2)
       {
         // parent_pk already given, exchange it
-        $asset = $asset_array[0] . '.' . $asset_array[1] .'.' . \strval($parent_pk);
+        $asset = $asset_array[0] . '.' . $asset_array[1] . '.' . \strval($parent_pk);
       }
       else
       {
@@ -509,7 +510,7 @@ class Access implements AccessInterface
     elseif(!$global && !$use_parent && \in_array($asset_type, $this->asset_global_types))
     {
       // We have a global only asset
-      $asset = $asset_array[0] . '.' . $asset_array[1] .'.1';
+      $asset = $asset_array[0] . '.' . $asset_array[1] . '.1';
     }
     elseif(!$global && !$use_parent && $pk > 0 && substr($asset, -\strlen($pk)) !== $pk)
     {

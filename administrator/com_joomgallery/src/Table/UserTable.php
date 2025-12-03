@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Table;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\Database\DatabaseDriver;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
 
 /**
  * User table
@@ -43,7 +43,7 @@ class UserTable extends Table
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
     $this->component_exists = $component_exists;
-    $this->typeAlias        = _JOOM_OPTION.'.user';
+    $this->typeAlias        = _JOOM_OPTION . '.user';
 
     parent::__construct(_JOOM_TABLE_USERS, 'id', $db);
   }
@@ -76,14 +76,14 @@ class UserTable extends Table
 
     if(isset($array['params']) && \is_array($array['params']))
     {
-      $registry = new Registry;
+      $registry = new Registry();
       $registry->loadArray($array['params']);
       $array['params'] = (string) $registry;
     }
 
     if(isset($array['files']) && \is_array($array['files']))
     {
-      $registry = new Registry;
+      $registry = new Registry();
       $registry->loadArray($array['files']);
       $array['files'] = (string) $registry;
     }

@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Categories list controller class.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -63,7 +63,6 @@ class CategoriesController extends FormController
       if($pk === 0)
       {
         unset($pks[$i], $order[$i]);
-
       }
     }
 

@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Field\ListField;
-use \Joomla\Database\ParameterType;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * List of Tags field.
@@ -54,9 +54,9 @@ class JgtagField extends ListField
     {
       $data = $this->getLayoutData();
 
-      if (!\is_array($this->value) && !empty($this->value))
+      if(!\is_array($this->value) && !empty($this->value))
       {
-        if (\is_object($this->value))
+        if(\is_object($this->value))
         {
           if(empty($this->value))
           {
@@ -75,13 +75,13 @@ class JgtagField extends ListField
         }
 
         // String in format 2,5,4
-        if (\is_string($this->value))
+        if(\is_string($this->value))
         {
           $this->value = explode(',', $this->value);
         }
 
         // Integer is given
-        if (\is_int($this->value))
+        if(\is_int($this->value))
         {
           $this->value = [$this->value];
         }
@@ -122,12 +122,14 @@ class JgtagField extends ListField
 
       $db    = $this->getDatabase();
       $query = $db->getQuery(true)
-          ->select([
+        ->select(
+            [
             $db->quoteName('a.id', 'value'),
             $db->quoteName('a.title', 'text'),
             $db->quoteName('a.published'),
             $db->quoteName('a.ordering'),
-          ])
+            ]
+        )
           ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
 
       // Limit Options in multilanguage
@@ -282,7 +284,8 @@ class JgtagField extends ListField
         if(
             isset($this->element['mode']) && (string) $this->element['mode'] === 'nested' ||
             !isset($this->element['mode']) && $this->comParams->get('tag_field_ajax_mode', 1) == 0
-          ) {
+          )
+        {
           $this->isNested = true;
         }
       }

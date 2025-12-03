@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 /**
  * Category controller class.
@@ -39,8 +39,8 @@ class CategoryController extends JoomBaseController
   public function edit()
   {
     // Get the previous edit id (if any) and the current edit id.
-    $previousId   = (int) $this->app->getUserState(_JOOM_OPTION.'.edit.category.id');
-    $cid          = (array) $this->input->post->get('cid', [], 'int');
+    $previousId = (int) $this->app->getUserState(_JOOM_OPTION . '.edit.category.id');
+    $cid        = (array) $this->input->post->get('cid', [], 'int');
     $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
 
     if($boxchecked)
@@ -56,7 +56,7 @@ class CategoryController extends JoomBaseController
     if(!$editId)
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId), false));
+      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
 
       return false;
     }
@@ -65,13 +65,13 @@ class CategoryController extends JoomBaseController
     if(!$this->acl->checkACL('edit', 'category', $editId))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId), false));
+      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
 
       return false;
     }
 
     // Set the current edit id in the session.
-    $this->app->setUserState(_JOOM_OPTION.'.edit.category.id', $editId);
+    $this->app->setUserState(_JOOM_OPTION . '.edit.category.id', $editId);
 
     // Get the model.
     $model = $this->getModel('Category', 'Site');
@@ -81,7 +81,7 @@ class CategoryController extends JoomBaseController
     {
       // Check-out failed, display a notice but allow the user to see the record.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKOUT_FAILED', $model->getError()), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId), false));
+      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
 
       return false;
     }
@@ -93,7 +93,7 @@ class CategoryController extends JoomBaseController
     }
 
     // Redirect to the form screen.
-    $this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=categoryform&'.$this->getItemAppend($editId), false));
+    $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=categoryform&' . $this->getItemAppend($editId), false));
   }
 
   /**
@@ -107,8 +107,8 @@ class CategoryController extends JoomBaseController
   public function add()
   {
     // Get the previous edit id (if any) and the current edit id.
-    $previousId = (int) $this->app->getUserState(_JOOM_OPTION.'.add.category.id');
-    $cid      = (array) $this->input->post->get('cid', [], 'int');
+    $previousId = (int) $this->app->getUserState(_JOOM_OPTION . '.add.category.id');
+    $cid        = (array) $this->input->post->get('cid', [], 'int');
     $editId     = (int) (\count($cid) ? $cid[0] : $this->input->getInt('id', 0));
     $addCatId   = (int) $this->input->getInt('catid', 0);
 
@@ -116,17 +116,17 @@ class CategoryController extends JoomBaseController
     if(!$this->acl->checkACL('add', 'category', $editId, $addCatId, true))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage().'&'.$this->getItemAppend($editId), false));
+      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
 
       return false;
     }
 
     // Clear form data from session
-    $this->app->setUserState(_JOOM_OPTION.'.edit.category.data', []);
+    $this->app->setUserState(_JOOM_OPTION . '.edit.category.data', []);
 
     // Set the current edit id in the session.
-    $this->app->setUserState(_JOOM_OPTION.'.add.category.id', $addCatId);
-    $this->app->setUserState(_JOOM_OPTION.'.edit.category.id', 0);
+    $this->app->setUserState(_JOOM_OPTION . '.add.category.id', $addCatId);
+    $this->app->setUserState(_JOOM_OPTION . '.edit.category.id', 0);
 
     // Check in the previous user.
     if($previousId && $previousId !== $addCatId)
@@ -138,7 +138,7 @@ class CategoryController extends JoomBaseController
     }
 
     // Redirect to the form screen.
-    $this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=categoryform&'.$this->getItemAppend(0, $addCatId), false));
+    $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=categoryform&' . $this->getItemAppend(0, $addCatId), false));
   }
 
   /**
@@ -163,7 +163,7 @@ class CategoryController extends JoomBaseController
       $this->setMessage($e->getMessage(), 'error');
     }
 
-    $this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=category&id='.$cid, false));
+    $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=' . $cid, false));
   }
 
   /**

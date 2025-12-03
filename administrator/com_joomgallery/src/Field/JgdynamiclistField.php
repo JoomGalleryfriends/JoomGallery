@@ -14,13 +14,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
-use \Joomla\CMS\Event\AbstractEvent;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use Joomla\CMS\Event\AbstractEvent;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 
 /**
- * List field with dynamic options and useglobal option based on config service 
+ * List field with dynamic options and useglobal option based on config service
  *
  * @since  4.0.0
  */
@@ -59,12 +59,12 @@ class JgdynamiclistField extends JglistField
 
     // Option 1: Plugin listening to onJoomGetOptions
     $event = AbstractEvent::create(
-      'onJoomGetOptions',
-      [
+        'onJoomGetOptions',
+        [
         'subject' => $this,
         'context' => 'com_joomgallery.config.form',
         'script'  => $script,
-      ]
+        ]
     );
     Factory::getApplication()->getDispatcher()->dispatch($event->getName(), $event);
     $dyn_options = $event->getArgument('result', []);

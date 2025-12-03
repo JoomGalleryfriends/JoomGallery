@@ -14,11 +14,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Feed\FeedFactory;
-use \Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use \Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Feed\FeedFactory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Control model.
@@ -42,7 +42,7 @@ class ControlModel extends BaseDatabaseModel
    * @access  protected
    * @var     array
    */
-  static protected $extensions = [];
+  protected static $extensions = [];
 
   /**
    * Method to get the statistic data
@@ -189,7 +189,8 @@ class ControlModel extends BaseDatabaseModel
 
       if( (strtolower($type) === 'component' || strtolower($type) === 'package') &&
           strpos(strtolower($element), 'joomgallery') !== false
-        ) {
+        )
+      {
         // Skip main JoomGallery component
         continue;
       }
@@ -209,7 +210,7 @@ class ControlModel extends BaseDatabaseModel
       }
       catch (\Exception $e)
       {
-        JoomHelper::getComponent()->setWarning('Error fetching extension info ('.(string) $xml_extension->attributes()->name.'): ' . $e);
+        JoomHelper::getComponent()->setWarning('Error fetching extension info (' . (string) $xml_extension->attributes()->name . '): ' . $e);
       }
     }
 

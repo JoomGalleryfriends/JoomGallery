@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Field\ListField;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\Database\DatabaseInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * List of JoomGallery Tasks field.
@@ -86,7 +86,7 @@ class JgtaskField extends ListField
 
   /**
    * Method to fetch all scheduled tasks of one type from db
-   * 
+   *
    * @param   string  $type  Task type
    *
    * @return  array  The field option objects.
@@ -107,7 +107,7 @@ class JgtaskField extends ListField
 
     if(!empty($type))
     {
-      $query->where(($db->quoteName('a.type')) .'='. $db->quote($type));
+      $query->where(($db->quoteName('a.type')) . '=' . $db->quote($type));
     }
 
     // Group by id to show user once in dropdown.

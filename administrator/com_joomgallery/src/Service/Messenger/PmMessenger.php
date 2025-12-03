@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Mail\MailTemplate;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Mail\MailTemplate;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Mail Messenger Class

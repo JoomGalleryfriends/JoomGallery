@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\Config;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
-use \Joomla\CMS\Language\Text;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Config\Config;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
+use Joomla\CMS\Language\Text;
 
 /**
  * Configuration Class
@@ -115,7 +115,7 @@ class DefaultConfig extends Config implements ConfigInterface
       }
 
       // Override class properties based on category params
-      foreach ($parents as $key => $cat)
+      foreach($parents as $key => $cat)
       {
         if($context_array[1] == 'category' && $cat['id'] == $id && !$inclOwn)
         {

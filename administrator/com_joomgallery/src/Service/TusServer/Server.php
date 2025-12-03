@@ -15,17 +15,17 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Request;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
-use \Joomla\CMS\Factory;
-use \Psr\Http\Message\ResponseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Request;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
+use Joomla\CMS\Factory;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Tus-Server v1.0.0 implementation
@@ -159,7 +159,7 @@ class Server implements ServerInterface
     $this->app       = Factory::getApplication();
     $this->debugMode = $debug;
 
-    require JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/tusspecs.php';
+    require JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/includes/tusspecs.php';
     $this->specs = $tus_specs_array;
   }
 
@@ -180,56 +180,56 @@ class Server implements ServerInterface
       $method = $this->app->input->getMethod();
 
       $isOption = false;
-      switch ($method)
+      switch($method)
       {
         case 'POST':
-          if (!$this->checkTusVersion())
+          if(!$this->checkTusVersion())
           {
             $this->component->addLog('The requested protocol version is not supported 405', 'error', 'jerror');
             throw new Request('The requested protocol version is not supported', 405);
           }
           $this->buildUuid();
           $this->processPost();
-          break;
+            break;
 
         case 'HEAD':
-          if (!$this->checkTusVersion())
+          if(!$this->checkTusVersion())
           {
             $this->component->addLog('The requested protocol version is not supported 405', 'error', 'jerror');
             throw new Request('The requested protocol version is not supported', 405);
           }
           $this->getUserUuid();
           $this->processHead();
-          break;
+            break;
 
         case 'PATCH':
-          if (!$this->checkTusVersion())
+          if(!$this->checkTusVersion())
           {
             $this->component->addLog('The requested protocol version is not supported 405', 'error', 'jerror');
             throw new Request('The requested protocol version is not supported', 405);
           }
           $this->getUserUuid();
           $this->processPatch();
-          break;
+            break;
 
         case 'OPTIONS':
           $isOption = true;
           $this->processOptions();
-          break;
+            break;
 
         case 'GET':
           $this->getUserUuid();
           $this->processGet();
-          break;
+            break;
 
         case 'DELETE':
           $this->getUserUuid();
           $this->processDelete();
-          break;
+            break;
 
         default:
           $this->component->addLog('The requested method ' . $method . ' is not allowed 405', 'error', 'jerror');
-          throw new Request('The requested method ' . $method . ' is not allowed', 405);
+            throw new Request('The requested method ' . $method . ' is not allowed', 405);
       }
 
       $this->addCommonHeader($isOption);
@@ -238,7 +238,6 @@ class Server implements ServerInterface
       {
         return $this->getResponse();
       }
-
     }
     catch (BadHeader $exp)
     {
@@ -249,7 +248,6 @@ class Server implements ServerInterface
 
       $this->setStatusCode(400);
       $this->addCommonHeader();
-
     }
     catch (Request $exp)
     {
@@ -363,7 +361,7 @@ class Server implements ServerInterface
       throw new File('File already exists : ' . $file, 500);
     }
 
-    if (touch($file) === false)
+    if(touch($file) === false)
     {
       $this->component->addLog('Impossible to touch ' . $file . ' 500', 'error', 'jerror');
       throw new File('Impossible to touch ' . $file, 500);
@@ -394,7 +392,7 @@ class Server implements ServerInterface
    */
   private function processHead(): void
   {
-    if ($this->existsInMetaData('id') === false)
+    if($this->existsInMetaData('id') === false)
     {
       $this->setStatusCode(404);
 
@@ -402,7 +400,7 @@ class Server implements ServerInterface
     }
 
     // if file in storage does not exists
-    if (!file_exists($this->directory . $this->getFilename()))
+    if(!file_exists($this->directory . $this->getFilename()))
     {
       // allow new upload
       $this->deleteMetaData($this->uuid);
@@ -510,13 +508,13 @@ class Server implements ServerInterface
     $file         = $this->directory . $this->getFilename();
     $handleOutput = fopen($file, 'ab');
 
-    if ($handleOutput === false)
+    if($handleOutput === false)
     {
       $this->component->addLog('Impossible to open file to write into', 'error', 'jerror');
       throw new File('Impossible to open file to write into');
     }
 
-    if (fseek($handleOutput, $offsetSession) === false)
+    if(fseek($handleOutput, $offsetSession) === false)
     {
       $this->component->addLog('Impossible to move pointer in the good position', 'error', 'jerror');
       throw new File('Impossible to move pointer in the good position');
@@ -534,7 +532,7 @@ class Server implements ServerInterface
 
     try
     {
-      while (true)
+      while(true)
       {
         set_time_limit(self::TIMEOUT);
 
@@ -600,7 +598,7 @@ class Server implements ServerInterface
         }
 
         $currentSize += $sizeWrite;
-        $totalWrite += $sizeWrite;
+        $totalWrite  += $sizeWrite;
         $this->setMetaDataValue('offset', $currentSize);
 
         if($currentSize === $lengthSession)
@@ -613,7 +611,6 @@ class Server implements ServerInterface
       }
 
       $this->addHeaderLine('Upload-Offset', $currentSize);
-
     }
     catch (Max $exp)
     {
@@ -666,7 +663,7 @@ class Server implements ServerInterface
    */
   private function processGet(): void
   {
-    if (!$this->allowGetMethod)
+    if(!$this->allowGetMethod)
     {
       $this->component->addLog('The requested method Get is not allowed 405', 'error', 'jerror');
       throw new Request('The requested method Get is not allowed', 405);
@@ -694,7 +691,7 @@ class Server implements ServerInterface
 
     $fileName = $this->getMetaDataValue('filename', true);
 
-    if ($this->debugMode)
+    if($this->debugMode)
     {
       $isInfo = $this->app->get('info', -1, 'integer');
 
@@ -768,7 +765,6 @@ class Server implements ServerInterface
 
 
       return false;
-
   }
 
   /**
@@ -912,7 +908,6 @@ class Server implements ServerInterface
 
 
       return false;
-
   }
 
   /**
@@ -1057,7 +1052,7 @@ class Server implements ServerInterface
     {
       if(!$this->fileType)
       {
-        $this->fileType = FileToolsService::detectMimeType($this->directory.$this->getUserUuid(), $this->getRealFileName());
+        $this->fileType = FileToolsService::detectMimeType($this->directory . $this->getUserUuid(), $this->getRealFileName());
       }
       $this->setMetaDataValue('mimetype', $this->fileType);
     }
@@ -1146,7 +1141,7 @@ class Server implements ServerInterface
   private function deleteUpload($uuid)
   {
     // List of name of files inside upload folder
-    $files = glob($this->directory.'*');
+    $files = glob($this->directory . '*');
 
     $num_files = 0;
 
@@ -1183,7 +1178,7 @@ class Server implements ServerInterface
 
     $headersValues = [];
 
-    foreach ($headers as $headerName)
+    foreach($headers as $headerName)
     {
       $value = $this->app->input->server->get($this->specs['Headers'][$headerName]['Name'], $this->specs['Headers'][$headerName]['Default'], $this->specs['Headers'][$headerName]['Type']);
 
@@ -1232,7 +1227,7 @@ class Server implements ServerInterface
    */
   public function setAllowMaxSize(int $value)
   {
-    if ($value > 0)
+    if($value > 0)
     {
       $this->allowMaxSize = $value;
     }
@@ -1278,7 +1273,7 @@ class Server implements ServerInterface
     if(substr($this->directory, -1) != '/')
     {
     // directory should end with a slash (/)
-    return $this->directory. '/';
+    return $this->directory . '/';
     }
 
     return $this->directory;

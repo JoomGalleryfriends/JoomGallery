@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\MultipleAssetsTableTrait;
-use \Joomla\CMS\Access\Rules;
-use \Joomla\CMS\Table\Asset;
-use \Joomla\CMS\Table\Nested as Table;
-use \Joomla\String\StringHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\MultipleAssetsTableTrait;
+use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Table\Asset;
+use Joomla\CMS\Table\Nested as Table;
+use Joomla\String\StringHelper;
 
 /**
  * Category table for records with multiple assets
@@ -65,7 +65,7 @@ class MultipleAssetsTable extends Table
       $itemtype = $this->def_itemtype;
     }
 
-    if ($input instanceof Rules)
+    if($input instanceof Rules)
     {
       $this->_rules[$itemtype] = $input;
     }
@@ -77,7 +77,7 @@ class MultipleAssetsTable extends Table
 
   /**
    * Method to get the rules for the record.
-   * 
+   *
    * @param   string  $itemtype  The name to identify the rule.
    *
    * @return  mixed   One or multiple Rule objects
@@ -101,7 +101,7 @@ class MultipleAssetsTable extends Table
 
   /**
    * Method to store a row in the database from the Table instance properties.
-   * 
+   *
    * @param   boolean  $updateNulls  True to update fields even if they are null.
    *
    * @return  boolean  True on success.
@@ -116,9 +116,9 @@ class MultipleAssetsTable extends Table
 
     $result = parent::store($updateNulls);
 
-    if ($trackAssets)
+    if($trackAssets)
     {
-      if ($this->_locked)
+      if($this->_locked)
       {
         $this->_unlock();
       }
@@ -126,7 +126,7 @@ class MultipleAssetsTable extends Table
       /*
        * Asset Tracking
        */
-      foreach ($this->_rules as $key => $rule)
+      foreach($this->_rules as $key => $rule)
       {
         $parentId = $this->_getAssetParentId($this->_tbl, $this->id, $key);
         $name     = $this->_getAssetName($key);
@@ -138,7 +138,7 @@ class MultipleAssetsTable extends Table
         // Get asset id property name
         $assetIdName = 'asset_id';
 
-        if ($key != $this->def_itemtype)
+        if($key != $this->def_itemtype)
         {
           $assetIdName = 'asset_id_' . $key;
         }
@@ -149,7 +149,7 @@ class MultipleAssetsTable extends Table
         // Check for an error.
         $error = $asset->getError();
 
-        if ($error)
+        if($error)
         {
             $this->setError($error);
 
@@ -157,7 +157,7 @@ class MultipleAssetsTable extends Table
         }
 
             // Specify how a new or moved node asset is inserted into the tree.
-            if (empty($this->{$assetIdName}) || $asset->parent_id != $parentId)
+            if(empty($this->{$assetIdName}) || $asset->parent_id != $parentId)
             {
                 $asset->setLocation($parentId, 'last-child');
             }
@@ -169,12 +169,12 @@ class MultipleAssetsTable extends Table
             // Respect the table field limits
             $asset->title = StringHelper::substr($title, 0, 100);
 
-            if ($rule instanceof Rules)
+            if($rule instanceof Rules)
             {
                 $asset->rules = (string) $rule;
             }
 
-            if (!$asset->check() || !$asset->store())
+            if(!$asset->check() || !$asset->store())
             {
                 $this->setError($asset->getError());
 
@@ -182,7 +182,7 @@ class MultipleAssetsTable extends Table
             }
 
                 // Create an asset_id or heal one that is corrupted.
-                if (empty($this->{$assetIdName}) || ($currentAssetId != $this->{$assetIdName} && !empty($this->{$assetIdName})))
+                if(empty($this->{$assetIdName}) || ($currentAssetId != $this->{$assetIdName} && !empty($this->{$assetIdName})))
                 {
                     // Update the asset_id field in this table.
                     $this->{$assetIdName} = (int) $asset->id;
@@ -193,8 +193,6 @@ class MultipleAssetsTable extends Table
                     $this->appendPrimaryKeys($query);
                     $this->getDatabase()->setQuery($query)->execute();
                 }
-
-
       }
     }
 
@@ -225,7 +223,7 @@ class MultipleAssetsTable extends Table
     if($trackAssets)
     {
       // Look for assets in object properties
-      foreach (get_object_vars($this) as $key => $value)
+      foreach(get_object_vars($this) as $key => $value)
       {
         if(strpos($key, 'asset_id') !== false)
         {
@@ -246,10 +244,10 @@ class MultipleAssetsTable extends Table
 
           $asset = new Asset($this->getDatabase(), $this->getDispatcher());
 
-          if ($asset->loadByName($name))
+          if($asset->loadByName($name))
           {
             // Delete the node in assets table.
-            if (!$asset->delete(null, $children))
+            if(!$asset->delete(null, $children))
             {
                 $this->setError($asset->getError());
 

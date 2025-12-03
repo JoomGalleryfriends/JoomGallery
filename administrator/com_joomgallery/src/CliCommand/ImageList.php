@@ -118,7 +118,7 @@ class ImageList extends AbstractCommand
 
     $created_by_id = $input->getOption('created') ?? '';
 
-    if (empty($created_by_id))
+    if(empty($created_by_id))
     {
       $created_by_id = $input->getOption('owner') ?? '';
     }
@@ -128,7 +128,7 @@ class ImageList extends AbstractCommand
     $images = $this->getItemsFromDB($created_by_id, $cat_id);
 
     // If no images are found show a warning and set the exit code to 1.
-    if (empty($images))
+    if(empty($images))
     {
       $this->ioStyle->warning('No images found matching your criteria');
 
@@ -137,30 +137,30 @@ class ImageList extends AbstractCommand
 
     // Reshape the images into something humans can read.
     $images = array_map(
-      function (object $item): array {
-        return [
-          $item->id,
-          $item->title,
-          $item->published ? Text::_('JYES') : Text::_('JNO'),
-          $item->hidden ? Text::_('JYES') : Text::_('JNO'),
-          $item->created_by,
-          $item->created_time,
-          $item->modified_by,
-          $item->modified_time,
-          $item->catid, // JGLOBAL_ROOT
-          // $item->,
+        function (object $item): array {
+          return [
+            $item->id,
+            $item->title,
+            $item->published ? Text::_('JYES') : Text::_('JNO'),
+            $item->hidden ? Text::_('JYES') : Text::_('JNO'),
+            $item->created_by,
+            $item->created_time,
+            $item->modified_by,
+            $item->modified_time,
+            $item->catid, // JGLOBAL_ROOT
+            // $item->,
 
-        ];
-      },
-      $images
+          ];
+        },
+        $images
     );
 
     // Display the images in a table and set the exit code to 0
     $this->ioStyle->table(
-      [
+        [
         'ID', 'Title', 'Published', 'Hidden', 'Created/Owner', 'Created', 'Modified by', 'Modified', 'Category',
-      ],
-      $images
+        ],
+        $images
     );
 
     return Command::SUCCESS;
@@ -181,12 +181,12 @@ class ImageList extends AbstractCommand
       ->select('*')
       ->from('#__joomgallery');
 
-    if (!empty($userId))
+    if(!empty($userId))
     {
       $query->where($db->quoteName('created_by') . ' = ' . (int) $userId);
     }
 
-    if (!empty($cat_id))
+    if(!empty($cat_id))
     {
       $query->where($db->quoteName('catid') . ' = ' . (int) $cat_id);
     }
@@ -197,4 +197,3 @@ class ImageList extends AbstractCommand
     return $images;
   }
 }
-

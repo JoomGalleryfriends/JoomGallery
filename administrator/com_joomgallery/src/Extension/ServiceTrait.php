@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
-use \Joomla\CMS\Application\CMSApplicationInterface;
-use \Joomla\CMS\Factory;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomla\CMS\Factory;
 
 /**
   * Trait to implement basic methods
@@ -29,7 +29,7 @@ trait ServiceTrait
 {
     /**
       * JoomGallery extension class
-      * 
+      *
       * @var JoomgalleryComponent|null
       */
     protected $component = null;
@@ -163,7 +163,7 @@ trait ServiceTrait
                     }
                 }
             }
-            while ($reflection = $reflection->getParentClass());
+            while($reflection = $reflection->getParentClass());
         }
 
         return $vars;

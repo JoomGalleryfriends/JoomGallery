@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\MVC\Model\ItemModel;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ItemModel;
+use Joomla\Registry\Registry;
 
 /**
   * Base model class for JoomGallery items
@@ -93,7 +93,8 @@ abstract class JoomItemModel extends ItemModel
       */
     public function getParams(): array
     {
-        $params = ['component' => $this->getState('parameters.component'),
+        $params = [
+            'component' => $this->getState('parameters.component'),
             'menu'               => $this->getState('parameters.menu'),
             'configs'            => $this->getState('parameters.configs'),
         ];
@@ -103,7 +104,7 @@ abstract class JoomItemModel extends ItemModel
 
     /**
       * Method to override a parameter in the model state
-      * 
+      *
       * @param   string  $property  The parameter name.
       * @param   string  $value     The parameter value.
       * @param   string  $type      The parameter type. Optional. Default='configs'
@@ -227,7 +228,7 @@ abstract class JoomItemModel extends ItemModel
 
     /**
       * Method to load component specific parameters into model state.
-      * 
+      *
       * @param   int   $id   ID of the content if needed (default: 0)
       *
       * @return  void
@@ -241,7 +242,7 @@ abstract class JoomItemModel extends ItemModel
 
         if(isset($params_array['item_id']))
         {
-            $this->setState($this->type.'.id', $params_array['item_id']);
+            $this->setState($this->type . '.id', $params_array['item_id']);
         }
 
         $this->setState('parameters.component', $params);
@@ -249,7 +250,7 @@ abstract class JoomItemModel extends ItemModel
         // Load the configs from config service
         $id = ($id === 0) ? null : $id;
 
-        $this->component->createConfig(_JOOM_OPTION.'.'.$this->type, $id, true);
+        $this->component->createConfig(_JOOM_OPTION . '.' . $this->type, $id, true);
         $configArray = $this->component->getConfig()->getProperties();
         $configs     = new Registry($configArray);
 

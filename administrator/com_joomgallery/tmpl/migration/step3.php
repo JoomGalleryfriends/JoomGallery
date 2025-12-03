@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -80,11 +81,11 @@ Text::script('SUCCESS');
           }
         }
       ?>
-      <form  name="migrationForm-<?php echo $type; ?>" id="migrationForm-<?php echo $type; ?>" action="<?php echo Route::_('index.php?option='._JOOM_OPTION); ?>" method="post">
+      <form  name="migrationForm-<?php echo $type; ?>" id="migrationForm-<?php echo $type; ?>" action="<?php echo Route::_('index.php?option=' . _JOOM_OPTION); ?>" method="post">
         <div class="row align-items-start">
           <div class="col-md-12">
             <div class="card">
-              <h3 class="card-header"><?php echo Text::_('FILES_JOOMGALLERY_MIGRATION_'.strtoupper($type).'_TITLE'); ?></h3>
+              <h3 class="card-header"><?php echo Text::_('FILES_JOOMGALLERY_MIGRATION_' . strtoupper($type) . '_TITLE'); ?></h3>
               <div class="card-body">
                 <div class="badge-group mb-3">
                   <span class="badge bg-secondary"><?php echo Text::_('COM_JOOMGALLERY_PENDING'); ?>: <span id="badgeQueue-<?php echo $type; ?>"><?php echo \count($migrateable->queue); ?></span></span>
@@ -96,7 +97,7 @@ Text::script('SUCCESS');
                   <?php if(empty($this->dependencies['from'][$key])) : ?>
                     <span><?php echo Text::_('JFIELD_OPTION_NONE'); ?></span>
                   <?php else : ?>
-                    <?php foreach ($this->dependencies['from'][$key] as $i => $dependency) : ?>
+                    <?php foreach($this->dependencies['from'][$key] as $i => $dependency) : ?>
                       <?php
                         if($i > 0) echo ',';
 
@@ -107,14 +108,14 @@ Text::script('SUCCESS');
                           $dep_class = 'fulfilled';
                         }
                       ?>
-                      <span data-type="<?php echo $dependency; ?>" class="dependency <?php echo $dep_class; ?>"><?php echo Text::_('FILES_JOOMGALLERY_MIGRATION_'.strtoupper($dependency).'_NAME'); ?></span>
+                      <span data-type="<?php echo $dependency; ?>" class="dependency <?php echo $dep_class; ?>"><?php echo Text::_('FILES_JOOMGALLERY_MIGRATION_' . strtoupper($dependency) . '_NAME'); ?></span>
                     <?php endforeach; ?>
                   <?php endif; ?>
                 </div>
                 <button id="migrationBtn-<?php echo $type; ?>" class="btn btn-primary mb-3 btn-migration<?php if($dependentCompleted && !$migrateable->completed)
                 {
                 echo '';
-                }
+                                         }
                       else
                       {
                       echo ' disabled';
@@ -138,8 +139,8 @@ Text::script('SUCCESS');
                 <div class="progress mb-2">
                   <div id="progress-<?php echo $type; ?>" class="progress-bar" style="width: <?php echo $migrateable->progress; ?>%" role="progressbar" aria-valuenow="<?php echo $migrateable->progress; ?>" aria-valuemin="0" aria-valuemax="100"><?php if($migrateable->progress > 0)
                   {
-                  echo $migrateable->progress.'%';
-                  }; ?></div>
+                  echo $migrateable->progress . '%';
+                                    }; ?></div>
                 </div>
                 <a class="collapse-arrow mb-2" data-bs-toggle="collapse" href="#collapseLog-<?php echo $type; ?>" role="button" aria-expanded="false" aria-controls="collapseLog">
                   <i class="icon-angle-down"></i><span> <?php echo Text::_('COM_JOOMGALLERY_SHOWLOG'); ?></span>
@@ -165,7 +166,7 @@ Text::script('SUCCESS');
       $total_complete = true;
     }
   ?>
-  <form action="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&task=migration.postcheck'); ?>" method="post" enctype="multipart/form-data" 
+  <form action="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&task=migration.postcheck'); ?>" method="post" enctype="multipart/form-data" 
         name="adminForm" id="migration-form" class="form-validate">
 
       <input id="step4Btn" type="submit" class="btn btn-primary<?php echo $total_complete ? '' : ' disabled'; ?>" value="<?php echo Text::_('COM_JOOMGALLERY_MIGRATION_STEP3_BTN_TXT'); ?>" <?php echo $total_complete ? '' : 'disabled'; ?>/>
@@ -180,30 +181,32 @@ Text::script('SUCCESS');
   $migrepairForm = $formFactory->createForm('migrepairForm', []);
   $source        = _JOOM_PATH_ADMIN . '/forms/migrationrepair.xml';
 
-  if ($migrepairForm->loadFile($source) == false)
+  if($migrepairForm->loadFile($source) == false)
   {
     throw new \RuntimeException('Form::loadForm could not load file');
   }
 
   // Migration repair modal box
-  $options = ['modal-dialog-scrollable' => true,
+  $options = [
+    'modal-dialog-scrollable' => true,
     'title'                             => Text::_('COM_JOOMGALLERY_MIGRATION_MANUAL'),
-    'footer'                            => '<input type="submit" form="migrepairForm" class="btn btn-primary" value="'.Text::_('COM_JOOMGALLERY_MIGRATION_MANUAL_BTN').'"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
+    'footer'                            => '<input type="submit" form="migrepairForm" class="btn btn-primary" value="' . Text::_('COM_JOOMGALLERY_MIGRATION_MANUAL_BTN') . '"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
   ];
-  $data   = ['script' => $this->script->name, 'form' => $migrepairForm];
-  $layout = new FileLayout('joomgallery.migrepair', null, ['component' => 'com_joomgallery', 'client' => 1]);
-  $body   = $layout->render($data);
+  $data    = ['script' => $this->script->name, 'form' => $migrepairForm];
+  $layout  = new FileLayout('joomgallery.migrepair', null, ['component' => 'com_joomgallery', 'client' => 1]);
+  $body    = $layout->render($data);
 
   echo HTMLHelper::_('bootstrap.renderModal', 'repair-modal-box', $options, $body);
   ?>
 
   <?php
   // Add sleeping mode info modal box
-  $options = ['modal-dialog-scrollable' => true,
+  $options = [
+    'modal-dialog-scrollable' => true,
     'title'                             => Text::_('JFIELD_NOTE_LABEL'),
-    'footer'                            => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('COM_JOOMGALLERY_CONFIRM').'</button>',
+    'footer'                            => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JOOMGALLERY_CONFIRM') . '</button>',
   ];
-  $body = Text::_('COM_JOOMGALLERY_MIGRATION_INFO_MODAL_TEXT');
+  $body    = Text::_('COM_JOOMGALLERY_MIGRATION_INFO_MODAL_TEXT');
 
   echo HTMLHelper::_('bootstrap.renderModal', 'info-modal-box', $options, $body);
   ?>

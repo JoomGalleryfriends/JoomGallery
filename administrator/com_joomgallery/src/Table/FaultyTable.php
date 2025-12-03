@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Database\DatabaseDriver;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseDriver;
 
 /**
   * Faulty table
@@ -40,7 +40,7 @@ class FaultyTable extends Table
     public function __construct(DatabaseDriver $db, bool $component_exists = true)
     {
         $this->component_exists = $component_exists;
-        $this->typeAlias        = _JOOM_OPTION.'.faulty';
+        $this->typeAlias        = _JOOM_OPTION . '.faulty';
 
         parent::__construct(_JOOM_TABLE_FAULTIES, 'id', $db);
     }

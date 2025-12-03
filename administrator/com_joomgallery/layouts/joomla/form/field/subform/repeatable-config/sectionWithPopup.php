@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -51,22 +52,22 @@ if($group == 'jg_staticprocessing0' || $group == 'jg_staticprocessing1' || $grou
 
 $imagetype = '';
 
-foreach ($form->getGroup('') as $k => $field)
+foreach($form->getGroup('') as $k => $field)
 {
   if($field->fieldname == 'jg_imgtypename')
   {
-    $imagetype = ' '.$field->value;
+    $imagetype = ' ' . $field->value;
 
     break;
   }
 }
 ?>
 
-<tr class="subform-repeatable-group <?php echo $basegroup.$imagetype;?>" data-base-name="<?php echo $basegroup; ?>" data-group="<?php echo $group; ?>">
+<tr class="subform-repeatable-group <?php echo $basegroup . $imagetype;?>" data-base-name="<?php echo $basegroup; ?>" data-group="<?php echo $group; ?>">
   <?php
   $i = 0;
 
-  foreach ($form->getGroup('') as $k => $field) : ?>
+  foreach($form->getGroup('') as $k => $field) : ?>
     <?php
     $sensitive      = $field->getAttribute('sensitive', 0) == 1 ? true : false ;
     $sensitiveLbl   = $sensitive ? ' <span class="icon-notification-circle" aria-hidden="true"></span>' : '' ;
@@ -79,7 +80,7 @@ foreach ($form->getGroup('') as $k => $field)
     ?>
     <?php if($i < 2): ?>
       <td data-column="<?php echo strip_tags($field->label); ?>" class="<?php echo $sensitiveClass; ?>">
-        <?php echo $field->renderField(['hiddenLabel' => true, 'hiddenDescription' => true, 'sensitive' => $sensitive]).' '.$sensitiveLbl; ?>
+        <?php echo $field->renderField(['hiddenLabel' => true, 'hiddenDescription' => true, 'sensitive' => $sensitive]) . ' ' . $sensitiveLbl; ?>
       </td>
     <?php endif; ?>
   <?php
@@ -95,27 +96,27 @@ foreach ($form->getGroup('') as $k => $field)
     <?php
       $modalData = [
         'selector' => $group . '_modal',
-        'params'   => ['title' => $label.': '.ucfirst($fieldname)],
+        'params'   => ['title' => $label . ': ' . ucfirst($fieldname)],
         'body'     => LayoutHelper::render('joomla.form.field.subform.repeatable-config.modal', $displayData),
       ];
       echo LayoutHelper::render('libraries.html.bootstrap.modal.main', $modalData);
     ?>
   </td>
-  <?php if (!empty($buttons)) : ?>
+  <?php if(!empty($buttons)) : ?>
   <td>
-    <?php if ($group != 'jg_staticprocessing0' && $group != 'jg_staticprocessing1' && $group != 'jg_staticprocessing2') : ?>
+    <?php if($group != 'jg_staticprocessing0' && $group != 'jg_staticprocessing1' && $group != 'jg_staticprocessing2') : ?>
       <div class="btn-group">
-        <?php if (!empty($buttons['add'])) : ?>
+        <?php if(!empty($buttons['add'])) : ?>
           <button type="button" class="group-add btn btn-sm btn-success" aria-label="<?php echo Text::_('JGLOBAL_FIELD_ADD'); ?>">
             <span class="icon-plus" aria-hidden="true"></span>
           </button>
         <?php endif; ?>
-        <?php if (!empty($buttons['remove'])) : ?>
+        <?php if(!empty($buttons['remove'])) : ?>
           <button type="button" class="group-remove btn btn-sm btn-danger" aria-label="<?php echo Text::_('JGLOBAL_FIELD_REMOVE'); ?>">
             <span class="icon-minus" aria-hidden="true"></span>
           </button>
         <?php endif; ?>
-        <?php if (!empty($buttons['move'])) : ?>
+        <?php if(!empty($buttons['move'])) : ?>
           <button type="button" class="group-move btn btn-sm btn-primary" aria-label="<?php echo Text::_('JGLOBAL_FIELD_MOVE'); ?>">
             <span class="icon-arrows-alt" aria-hidden="true"></span>
           </button>

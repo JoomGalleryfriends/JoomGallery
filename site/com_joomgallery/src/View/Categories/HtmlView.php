@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Categories;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Router\Route;
 
 /**
  * View class for a list of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -55,9 +55,9 @@ class HtmlView extends JoomGalleryView
     /** @var CategoriesModel $model */
     $model = $this->getModel();
 
-    $this->state       = $model->getState();
+    $this->state         = $model->getState();
     $this->params        = $model->getParams();
-    $this->items       = $model->getItems();
+    $this->items         = $model->getItems();
     $this->pagination    = $model->getPagination();
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
@@ -78,7 +78,7 @@ class HtmlView extends JoomGalleryView
       }
 
       // Redirect to category view
-      $this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=category&id=1'));
+      $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=1'));
 
       return false;
     }

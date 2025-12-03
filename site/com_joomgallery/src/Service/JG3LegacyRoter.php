@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Application\ApplicationHelper;
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomla\CMS\Component\Router\RouterInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\Database\DatabaseInterface;
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Component\Router\RouterInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Old Joomgallery v3 Router
@@ -118,7 +118,7 @@ class JG3LegacyRouter implements RouterInterface
 
     if(!\defined('_JOOM_OPTION'))
     {
-      require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/includes/defines.php';
+      require_once JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/defines.php';
     }
 
     if(isset($query['view']) && $query['view'] == 'toplist')
@@ -138,7 +138,7 @@ class JG3LegacyRouter implements RouterInterface
             {
               $segments[] = $segment;
             }
-            break;
+              break;
           case 'lastadded':
             $segment = ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_LAST_ADDED'));
 
@@ -150,7 +150,7 @@ class JG3LegacyRouter implements RouterInterface
             {
               $segments[] = $segment;
             }
-            break;
+              break;
           case 'lastcommented':
             $segment = ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_LAST_COMMENTED'));
 
@@ -162,7 +162,7 @@ class JG3LegacyRouter implements RouterInterface
             {
               $segments[] = $segment;
             }
-            break;
+              break;
           default:
             $segment = ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_MOST_VIEWED'));
 
@@ -174,7 +174,7 @@ class JG3LegacyRouter implements RouterInterface
             {
               $segments[] = $segment;
             }
-            break;
+              break;
         }
       }
       else
@@ -192,7 +192,6 @@ class JG3LegacyRouter implements RouterInterface
       }
 
       unset($query['type'], $query['view']);
-
     }
 
     if(isset($query['view']) && $query['view'] == 'edit')
@@ -202,17 +201,16 @@ class JG3LegacyRouter implements RouterInterface
       $dbquery = $this->db->getQuery(true)
               ->select('alias')
               ->from(_JOOM_TABLE_IMAGES)
-              ->where('id = '.(int) $query['id']);
+              ->where('id = ' . (int) $query['id']);
       $this->db->setQuery($dbquery);
 
       if(!$segment = $this->db->loadResult())
       {
         // Append ID of image if alias was not found?
-        $segment = 'alias-not-found-'.$query['id'];
+        $segment = 'alias-not-found-' . $query['id'];
       }
       $segments[] = $segment;
       unset($query['view'], $query['id']);
-
     }
 
     if(isset($query['view']) && $query['view'] == 'editcategory')
@@ -224,13 +222,13 @@ class JG3LegacyRouter implements RouterInterface
         $dbquery = $this->db->getQuery(true)
                 ->select('alias')
                 ->from(_JOOM_TABLE_CATEGORIES)
-                ->where('cid = '.(int) $query['catid']);
+                ->where('cid = ' . (int) $query['catid']);
         $this->db->setQuery($dbquery);
 
         if(!$segment = $this->db->loadResult())
         {
           // Append ID of category if alias was not found
-          $segment = 'alias-not-found-'.$query['catid'];
+          $segment = 'alias-not-found-' . $query['catid'];
         }
         $segments[] = $segment;
       }
@@ -239,7 +237,6 @@ class JG3LegacyRouter implements RouterInterface
         $segments[] = 'newcategory';
       }
       unset($query['view'], $query['catid']);
-
     }
 
     if(isset($query['view']) && $query['view'] == 'gallery')
@@ -265,11 +262,11 @@ class JG3LegacyRouter implements RouterInterface
 
       unset($query['view']);
       $query['format'] = 'jpg';
-      $segment         = 'image-'.$query['id'];
+      $segment         = 'image-' . $query['id'];
 
       if(isset($query['type']))
       {
-        $segment .= '-'.$query['type'];
+        $segment .= '-' . $query['type'];
         unset($query['type']);
       }
       else
@@ -279,13 +276,13 @@ class JG3LegacyRouter implements RouterInterface
 
       if(isset($query['width'], $query['height'])  )
       {
-        $segment .= '-'.$query['width'].'-'.$query['height'];
+        $segment .= '-' . $query['width'] . '-' . $query['height'];
         unset($query['width'], $query['height']);
 
 
         if(isset($query['pos']))
         {
-          $segment .= '-'.$query['pos'];
+          $segment .= '-' . $query['pos'];
         }
 
         if(isset($query['x']))
@@ -295,7 +292,7 @@ class JG3LegacyRouter implements RouterInterface
             $segment .= '-0';
           }
 
-          $segment .= '-'.$query['x'];
+          $segment .= '-' . $query['x'];
         }
 
         if(isset($query['y']))
@@ -318,7 +315,7 @@ class JG3LegacyRouter implements RouterInterface
             unset($query['x']);
           }
 
-          $segment .= '-'.$query['y'];
+          $segment .= '-' . $query['y'];
 
           unset($query['y']);
         }
@@ -350,7 +347,7 @@ class JG3LegacyRouter implements RouterInterface
         $dbquery = $this->db->getQuery(true)
                 ->select('alias')
                 ->from(_JOOM_TABLE_IMAGES)
-                ->where('id = '.(int) $query['id']);
+                ->where('id = ' . (int) $query['id']);
         $this->db->setQuery($dbquery);
 
         if($segment = $this->db->loadResult())
@@ -412,17 +409,16 @@ class JG3LegacyRouter implements RouterInterface
       $dbquery = $this->db->getQuery(true)
               ->select('alias')
               ->from(_JOOM_TABLE_CATEGORIES)
-              ->where('cid = '.(int) $query['catid']);
+              ->where('cid = ' . (int) $query['catid']);
       $this->db->setQuery($dbquery);
 
       if(!$segment = $this->db->loadResult())
       {
         // Append ID of category if alias was not found
-        $segment = 'alias-not-found-'.$query['catid'];
+        $segment = 'alias-not-found-' . $query['catid'];
       }
       $segments[] = $segment;
       unset($query['catid'], $query['view']);
-
     }
 
     if(isset($query['id'], $query['view']) && $query['view'] == 'detail')
@@ -430,30 +426,29 @@ class JG3LegacyRouter implements RouterInterface
       $dbquery = $this->db->getQuery(true)
               ->select('catid, alias')
               ->from(_JOOM_TABLE_IMAGES)
-              ->where('id = '.(int) $query['id']);
+              ->where('id = ' . (int) $query['id']);
       $this->db->setQuery($dbquery);
       $result_array = $this->db->loadAssoc();
       $dbquery->clear()
               ->select('alias')
               ->from(_JOOM_TABLE_CATEGORIES)
-              ->where('cid = '.$result_array['catid']);
+              ->where('cid = ' . $result_array['catid']);
       $this->db->setQuery($dbquery);
 
       if(!$segment = $this->db->loadResult())
       {
         // Append ID of category if alias was not found
-        $segment = 'alias-not-found-'.$result_array['catid'];
+        $segment = 'alias-not-found-' . $result_array['catid'];
       }
       $segments[] = $segment;
 
       if(!$segment = $result_array['alias'])
       {
         // Append ID of image if alias was not found
-        $segment = 'alias-not-found-'.$query['id'];
+        $segment = 'alias-not-found-' . $query['id'];
       }
       $segments[] = $segment;
       unset($query['id'], $query['view']);
-
     }
 
     if(isset($query['task']) && $query['task'] == 'savecategory')
@@ -482,7 +477,7 @@ class JG3LegacyRouter implements RouterInterface
   {
     if(!\defined('_JOOM_OPTION'))
     {
-      require_once JPATH_ADMINISTRATOR.'/components/com_joomgallery/includes/defines.php';
+      require_once JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/defines.php';
     }
 
     $vars = [];
@@ -500,7 +495,8 @@ class JG3LegacyRouter implements RouterInterface
       || $segment == 'last-added'
       || $segment == 'last-commented'
       || $segment == 'most-viewed'
-      ) {
+      )
+    {
       $vars['view'] = 'toplist';
 
       switch($segment)
@@ -508,17 +504,17 @@ class JG3LegacyRouter implements RouterInterface
         case 'top-rated':
         case ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_TOP_RATED')):
           $vars['type'] = 'toprated';
-          break;
+            break;
         case 'last-added':
         case ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_LAST_ADDED')):
           $vars['type'] = 'lastadded';
-          break;
+            break;
         case 'last-commented':
         case ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_LAST_COMMENTED')):
           $vars['type'] = 'lastcommented';
-          break;
+            break;
         default:
-          break;
+            break;
       }
 
       return $vars;
@@ -635,7 +631,8 @@ class JG3LegacyRouter implements RouterInterface
       return $vars;
     }
 
-    $valid_views = ['downloadzip',
+    $valid_views = [
+      'downloadzip',
       'favourites',
       'mini',
       'search',

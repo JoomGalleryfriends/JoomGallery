@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Config;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a single Config.
@@ -52,10 +52,10 @@ class HtmlView extends JoomGalleryView
     /** @var ConfigModel $model */
     $model = $this->getModel();
 
-    $this->state              = $model->getState();
-    $this->item               = $model->getItem();
-    $this->form               = $model->getForm();
-    $this->fieldsets          = $model->getFieldsets();
+    $this->state            = $model->getState();
+    $this->item             = $model->getItem();
+    $this->form             = $model->getForm();
+    $this->fieldsets        = $model->getFieldsets();
     $this->is_global_config = ($this->item->id === 1) ? true : false;
 
     // Check for errors.
@@ -94,7 +94,7 @@ class HtmlView extends JoomGalleryView
       $checkedOut = false;
     }
 
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CONFIG_SETS').' :: '.Text::_('COM_JOOMGALLERY_CONFIG_EDIT'), 'sliders-h');
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_CONFIG_SETS') . ' :: ' . Text::_('COM_JOOMGALLERY_CONFIG_EDIT'), 'sliders-h');
 
     // If not checked out, can save the item.
     if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || ($this->getAcl()->checkACL('core.create'))))
@@ -103,7 +103,7 @@ class HtmlView extends JoomGalleryView
 
       $saveGroup = $toolbar->dropdownButton('save-group');
 
-      $saveGroup->configure(
+    $saveGroup->configure(
         function (Toolbar $childBar) use ($checkedOut, $isNew) {
           $childBar->save('config.save', 'JTOOLBAR_SAVE');
 
@@ -118,7 +118,7 @@ class HtmlView extends JoomGalleryView
             $childBar->save2copy('config.save2copy');
           }
         }
-      );
+    );
     }
 
     if(empty($this->item->id))

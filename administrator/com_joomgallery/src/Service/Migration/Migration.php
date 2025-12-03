@@ -15,21 +15,21 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Checks;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Migration\MigrationInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\MigrationTable;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
-use \Joomla\Database\DatabaseFactory;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Filesystem\Path;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Checks;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\MigrationInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
+use Joomgallery\Component\Joomgallery\Administrator\Table\MigrationTable;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
+use Joomla\Database\DatabaseFactory;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Filesystem\Path;
+use Joomla\Registry\Registry;
 
 /**
  * Migration Base Class
@@ -140,16 +140,16 @@ abstract class Migration implements MigrationInterface
     $this->getComponent();
 
     // Try to load language file of the migration script
-    $this->app->getLanguage()->load('com_joomgallery.migration.'.$this->name, _JOOM_PATH_ADMIN);
+    $this->app->getLanguage()->load('com_joomgallery.migration.' . $this->name, _JOOM_PATH_ADMIN);
 
     // Set logger
     $this->component->setLogger('migration');
 
     // Fill info object
-    $this->info              = new \stdClass;
+    $this->info              = new \stdClass();
     $this->info->name        = $this->name;
-    $this->info->title       = Text::_('FILES_JOOMGALLERY_MIGRATION_'.strtoupper($this->name).'_TITLE');
-    $this->info->description = Text::_('FILES_JOOMGALLERY_MIGRATION_'.strtoupper($this->name).'_DESC');
+    $this->info->title       = Text::_('FILES_JOOMGALLERY_MIGRATION_' . strtoupper($this->name) . '_TITLE');
+    $this->info->description = Text::_('FILES_JOOMGALLERY_MIGRATION_' . strtoupper($this->name) . '_DESC');
   }
 
   /**
@@ -274,7 +274,7 @@ abstract class Migration implements MigrationInterface
     if(property_exists($migrateable, 'queue') && !empty($migrateable->queue))
     {
       $queue = (array) $migrateable->get('queue', []);
-      $query->where($db->quoteName($primarykey) . ' IN (' . implode(',', $queue) .')');
+      $query->where($db->quoteName($primarykey) . ' IN (' . implode(',', $queue) . ')');
     }
 
     // Gather migration types info
@@ -375,9 +375,9 @@ abstract class Migration implements MigrationInterface
    *
    * @param   string   $type   Name of the content type
    * @param   array    $data   Source data received from getData()
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function getRulesData(string $type, array &$data)
@@ -482,7 +482,8 @@ abstract class Migration implements MigrationInterface
   {
     if( !key_exists($type, $this->migrateables) || empty($this->migrateables[$type]) ||
         ($withQueue && empty($this->migrateables[$type]->queue))
-      ) {
+      )
+    {
       // Get MigrationModel
       $model = $this->component->getMVCFactory()->createModel('migration', 'administrator');
 
@@ -510,7 +511,6 @@ abstract class Migration implements MigrationInterface
           return $this->migrateables[$type];
         }
       }
-
     }
 
     return false;
@@ -553,9 +553,9 @@ abstract class Migration implements MigrationInterface
    *
    * @param   string   $type    Name of the content type
    * @param   Table    $table   Table object to be inserted into destination
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function onBeforeSave(string $type, Table &$table): void
@@ -979,7 +979,6 @@ abstract class Migration implements MigrationInterface
       $checks->addCheck($category, 'log_dir', false, false, Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_LOG_DIR_LABEL'), Text::_('Logging directory not existent.'));
       $this->component->addLog(Text::_('Logging directory not existent.'), 'error', 'jerror');
     }
-
   }
 
   /**
@@ -1392,7 +1391,7 @@ abstract class Migration implements MigrationInterface
       $check_name = 'dest_table_' . $tablename;
 
       // Check if required tables exists
-      if(!\in_array( str_replace('#__', $dbPrefix, $tablename), $tableList))
+      if(!\in_array(str_replace('#__', $dbPrefix, $tablename), $tableList))
       {
         $checks->addCheck($category, $check_name, false, false, Text::_('COM_JOOMGALLERY_TABLE') . ': ' . $tablename, Text::_('COM_JOOMGALLERY_ERROR_TABLE_NOT_EXISTING'));
         $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_TABLE_NOT_EXISTING'), 'error', 'jerror');
@@ -1582,7 +1581,7 @@ abstract class Migration implements MigrationInterface
     }
 
     // Load source imagetypes from xml file
-    $xml     = simplexml_load_file(JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/src/Service/Migration/Scripts/'. $this->name . '.xml');
+    $xml     = simplexml_load_file(JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts/' . $this->name . '.xml');
     $element = $xml->xpath('/form/fieldset/field[@name="image_mapping"]/form/field[@name="source"]');
 
     foreach($element[0]->option as $option)
@@ -1609,7 +1608,7 @@ abstract class Migration implements MigrationInterface
       else
       {
         // Destination imagetype in mapping does not exist
-        $checks->addCheck($category, 'mapping_dest_types_'.$mapVal->destination, false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_DEST_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->destination))));
+        $checks->addCheck($category, 'mapping_dest_types_' . $mapVal->destination, false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_DEST_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->destination))));
         $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_DEST_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->destination))), 'error', 'jerror');
 
         return;
@@ -1618,7 +1617,7 @@ abstract class Migration implements MigrationInterface
       if(!\in_array($mapVal->source, $src_imagetypes))
       {
         // Source imagetype in mapping does not exist
-        $checks->addCheck($category, 'mapping_src_types_'.$mapVal->source, false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->source))));
+        $checks->addCheck($category, 'mapping_src_types_' . $mapVal->source, false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->source))));
         $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->source))), 'error', 'jerror');
 
         return;
@@ -1697,7 +1696,7 @@ abstract class Migration implements MigrationInterface
     {
       if($mig->failed->count() > 0)
       {
-        foreach($mig->failed->toArray()as $id => $error)
+        foreach($mig->failed->toArray() as $id => $error)
         {
           $checks->addCheck($category, 'error_' . $mig->type . '_' . $id, false, false, Text::_('ERROR') . ': ' . $mig->type, Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERRORS_ERROR', $mig->type, $id, $error));
           $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERRORS_ERROR', $mig->type, $id, $error), 'error', 'jerror');

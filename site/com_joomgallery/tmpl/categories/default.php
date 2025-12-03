@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -42,7 +43,7 @@ if($saveOrder && !empty($this->items))
 }
 ?>
 
-<?php if ($this->params['menu']->get('show_page_heading')) : ?>
+<?php if($this->params['menu']->get('show_page_heading')) : ?>
     <div class="page-header page-title">
         <h1> <?php echo $this->escape($this->params['menu']->get('page_heading')); ?> </h1>
     </div>
@@ -56,7 +57,7 @@ if($saveOrder && !empty($this->items))
   <div class="row">
     <div class="col-md-12">
 
-      <?php if (empty($this->items)) : ?>
+      <?php if(empty($this->items)) : ?>
         <div class="alert alert-info">
           <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
           <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
@@ -108,33 +109,34 @@ if($saveOrder && !empty($this->items))
                 </td>
               </tr>
             </tfoot>
-            <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
-              <?php foreach ($this->items as $i => $item) :
+            <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
+                   endif; ?>>
+              <?php foreach($this->items as $i => $item) :
                   // Access check
-                  $ordering  = ($listOrder == 'a.ordering');
-                  $canEdit   = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
-                  $canDelete = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
-                  $canChange = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
-                  $canCheckin         = $canChange || $item->checked_out == $this->getCurrentUser()->id;
-                  $disabled           = ($item->checked_out > 0) ? 'disabled' : '';
+                  $ordering   = ($listOrder == 'a.ordering');
+                  $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
+                  $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
+                  $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
+                  $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser()->id;
+                  $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
 
                   // Get the parents of item for sorting
-                  if ($item->level > 1)
+                  if($item->level > 1)
                   {
                     $parentsStr       = '';
                     $_currentParentId = $item->parent_id;
                     $parentsStr       = ' ' . $_currentParentId;
 
-                    for ($i2 = 0; $i2 < $item->level; $i2++)
+                    for($i2 = 0; $i2 < $item->level; $i2++)
                     {
-                      foreach ($this->ordering as $k => $v)
+                      foreach($this->ordering as $k => $v)
                       {
                         $v = implode('-', $v);
                         $v = '-' . $v . '-';
 
-                        if (strpos($v, '-' . $_currentParentId . '-') !== false)
+                        if(strpos($v, '-' . $_currentParentId . '-') !== false)
                         {
-                          $parentsStr .= ' ' . $k;
+                          $parentsStr      .= ' ' . $k;
                           $_currentParentId = $k;
                           break;
                         }
@@ -156,11 +158,11 @@ if($saveOrder && !empty($this->items))
                       <?php
                       $iconClass = '';
 
-                      if (!$canChange)
+                      if(!$canChange)
                       {
                         $iconClass = ' inactive';
                       }
-                      elseif (!$saveOrder)
+                      elseif(!$saveOrder)
                       {
                         $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                       }
@@ -183,7 +185,7 @@ if($saveOrder && !empty($this->items))
                         <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'category.', false); ?>
                       </button>
                     <?php endif; ?>
-                    <a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.(int) $item->id); ?>">
+                    <a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $item->id); ?>">
                       <?php echo $this->escape($item->title); ?>
                     </a>
                   </th>
@@ -205,7 +207,7 @@ if($saveOrder && !empty($this->items))
                           <span class="icon-edit" aria-hidden="true"></span>
                         </button>
                       <?php endif; ?>
-                      <?php if ($canDelete): ?>
+                      <?php if($canDelete): ?>
                         <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>" data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="categoryform.remove" <?php echo $disabled; ?>>
                           <span class="icon-trash" aria-hidden="true"></span>
                         </button>
@@ -215,12 +217,12 @@ if($saveOrder && !empty($this->items))
 
                   <td class="d-none d-lg-table-cell text-center">
                     <?php if($canChange): ?>
-                      <?php $statetask = ((int) $item->published) ? 'unpublish': 'publish'; ?>
+                      <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                       <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="categoryform.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
-                        <span class="icon-<?php echo (int) $item->published ? 'check': 'cancel'; ?>" aria-hidden="true"></span>
+                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" aria-hidden="true"></span>
                       </button>
                     <?php else : ?>
-                      <i class="icon-<?php echo (int) $item->published ? 'check': 'cancel'; ?>"></i>
+                      <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
                     <?php endif; ?>
                   </td>
 
@@ -244,7 +246,7 @@ if($saveOrder && !empty($this->items))
           <a href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.add&return='.$returnURL, false, 0); ?>" class="btn btn-success btn-small">
             <i class="icon-plus"></i> <?php echo Text::_('JGLOBAL_ADD_CUSTOM_CATEGORY'); ?>
           </a>
-        </div>        
+        </div>
       <?php endif; */?>
     </div>
   </div>

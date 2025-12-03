@@ -120,7 +120,7 @@ class CategoryParams extends AbstractCommand
 
     $categoryId = $input->getOption('id') ?? '';
 
-    if (empty($categoryId))
+    if(empty($categoryId))
     {
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid (empty) !");
 
@@ -130,7 +130,7 @@ class CategoryParams extends AbstractCommand
     $jsonParams = $this->getParamsAsJsonFromDB($categoryId);
 
     // If no params returned  show a warning and set the exit code to 1.
-    if (empty($jsonParams))
+    if(empty($jsonParams))
     {
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid or parameters are empty !");
 
@@ -170,12 +170,12 @@ class CategoryParams extends AbstractCommand
     }
     catch (\Exception $e)
     {
-      $this->ioStyle->error(
+    $this->ioStyle->error(
         Text::sprintf(
-          'Retrieving params from DB failed for ID: "' . $categoryId . '\n%s',
-          $e->getMessage()
+            'Retrieving params from DB failed for ID: "' . $categoryId . '\n%s',
+            $e->getMessage()
         )
-      );
+    );
     }
 
     return $sParams;
@@ -195,18 +195,16 @@ class CategoryParams extends AbstractCommand
   {
     $items = [];
 
-    if (empty($max_len))
+    if(empty($max_len))
     {
       $max_len = 70;
     }
 
-    foreach ($categoryAssoc as $key => $value)
+    foreach($categoryAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }
 
     return $items;
   }
-
 }
-

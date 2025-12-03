@@ -14,10 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Form\Form;
-use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
-use \Joomla\Component\Scheduler\Administrator\Task\TaskOption;
-use \Joomla\Registry\Registry;
+use Joomla\CMS\Form\Form;
+use Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
+use Joomla\Component\Scheduler\Administrator\Task\TaskOption;
+use Joomla\Registry\Registry;
 
 /*
  * Task model.
@@ -90,7 +90,7 @@ class TaskModel extends JoomAdminModel
   protected function loadFormData()
   {
     // Check the session for previously entered form data.
-    $data = $this->app->getUserState(_JOOM_OPTION.'.edit.task.data', []);
+    $data = $this->app->getUserState(_JOOM_OPTION . '.edit.task.data', []);
 
     if(empty($data))
     {

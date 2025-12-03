@@ -15,16 +15,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Field\TextField;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\TextField;
+use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 
 /**
  * UserComment Field for EXIF in imgmetadata.
  * This field exists to keep the same format UserComment was saved in before PEL was integrated.
- * 
+ *
  * @since  4.0.0
  */
 class ExifusercommentField extends TextField
@@ -58,12 +58,12 @@ class ExifusercommentField extends TextField
   {
     $fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
 
-    if ($this->element['useglobal'])
+    if($this->element['useglobal'])
     {
       // Guess form context
       $context = ConfigHelper::getFormContext($this->form->getData());
 
-      if ($context !== false)
+      if($context !== false)
       {
         // Load JG config service
         $jg = Factory::getApplication()->bootComponent('com_joomgallery');
@@ -72,7 +72,7 @@ class ExifusercommentField extends TextField
         // Get inherited global config value
         $value = $jg->getConfig()->get($fieldname, '...');
 
-        if (!\is_null($value))
+        if(!\is_null($value))
         {
           $value = (string) $value;
 

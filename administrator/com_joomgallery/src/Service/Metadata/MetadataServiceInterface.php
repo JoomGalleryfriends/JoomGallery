@@ -23,7 +23,7 @@ interface MetadataServiceInterface
 {
     /**
       * Creates the metadata service class
-      * 
+      *
       * @param   string  $processor  Name of the metadata processor to be used
       *
       * @return  void

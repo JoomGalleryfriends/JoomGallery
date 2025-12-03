@@ -23,7 +23,7 @@ interface RefresherServiceInterface
 {
     /**
       * Creates the refresher helper class
-      * 
+      *
       * @param   array  $params   An array with optional parameters
       *
       * @return  void

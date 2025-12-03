@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 
 /**
  * Metadata Base Class
@@ -44,12 +44,12 @@ class Metadata implements MetadataInterface
 
   /**
    * Writes a list of values to the exif metadata of an image
-   * 
-   * @param   string $img    Path to the image 
+   *
+   * @param   string $img    Path to the image
    * @param   mixed  $edits  Exif object in imgmetadata
-   * 
+   *
    * @return  bool           True on success, false on failure
-   * 
+   *
    * @since   4.1.0
    */
   public function writeToExif(string $img, $edits): bool
@@ -59,12 +59,12 @@ class Metadata implements MetadataInterface
 
   /**
    * Saves an edit to the iptc metadata of an image
-   * 
-   * @param   string $img   Path to the image 
+   *
+   * @param   string $img   Path to the image
    * @param   mixed $edits  Array of edits to be made to the metadata
-   * 
+   *
    * @return  bool          True on success, false on failure
-   * 
+   *
    * @since   4.1.0
    */
   public function writeToIptc(string $img, $edits): bool

@@ -14,9 +14,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 
 /*
  * Tag model.
@@ -44,7 +44,7 @@ class TagModel extends JoomAdminModel
   protected function loadFormData()
   {
     // Check the session for previously entered form data.
-    $data = $this->app->getUserState(_JOOM_OPTION.'.edit.tag.data', []);
+    $data = $this->app->getUserState(_JOOM_OPTION . '.edit.tag.data', []);
 
     if(empty($data))
     {

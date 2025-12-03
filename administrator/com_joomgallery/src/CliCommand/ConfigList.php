@@ -115,7 +115,7 @@ class ConfigList extends AbstractCommand
     $configs = $this->getItemsFromDB($id);
 
     // If no configs are found show a warning and set the exit code to 1.
-    if (empty($configs))
+    if(empty($configs))
     {
       $this->ioStyle->warning('No configs found matching your criteria');
 
@@ -124,32 +124,32 @@ class ConfigList extends AbstractCommand
 
     // Reshape the configs into something humans can read.
     $configs = array_map(
-      function (object $item): array {
-        return [
-          $item->id,
-          $item->title,
-          $item->published ? Text::_('JYES') : Text::_('JNO'),
-          $item->note,
-          $item->group_id,
+        function (object $item): array {
+          return [
+            $item->id,
+            $item->title,
+            $item->published ? Text::_('JYES') : Text::_('JNO'),
+            $item->note,
+            $item->group_id,
 
-          $item->created_by,
-          $item->modified_by,
+            $item->created_by,
+            $item->modified_by,
 
-          $item->jg_filesystem,
-          $item->jg_imagetypes,
-          $item->jg_pathftpupload,
+            $item->jg_filesystem,
+            $item->jg_imagetypes,
+            $item->jg_pathftpupload,
 
-        ];
-      },
-      $configs
+          ];
+        },
+        $configs
     );
 
     // Display the configs in a table and set the exit code to 0
     $this->ioStyle->horizontalTable(
-      [
+        [
         'ID', 'Title', 'Published', 'Note', 'Group ID', 'Created by', 'Modified by', 'Filesystem', 'imagetypes', 'pathftpupload',
-      ],
-      $configs
+        ],
+        $configs
     );
 
     return Command::SUCCESS;
@@ -170,7 +170,7 @@ class ConfigList extends AbstractCommand
       ->select('*')
       ->from('#__joomgallery_configs');
 
-    if (!empty($id))
+    if(!empty($id))
     {
       $query->where($db->quoteName('id') . ' = ' . (int) $id);
     }
@@ -180,7 +180,4 @@ class ConfigList extends AbstractCommand
 
     return $configurations;
   }
-
-
 }
-

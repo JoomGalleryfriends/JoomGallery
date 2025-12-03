@@ -147,7 +147,12 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $this->logTask('Attempt to recreate all available images...');
 
       $listModel = $app->bootComponent('com_joomgallery')->getMVCFactory()->createModel('images', 'administrator');
-      $ids       = array_map(function($item) { return $item->id;}, $listModel->getIDs());
+    $ids         = array_map(
+        function ($item) {
+        return $item->id;
+        },
+        $listModel->getIDs()
+    );
     }
 
     // Remove zero ids from list
@@ -211,16 +216,16 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   }
 
   /**
-   * Performs the actual task with the model defined in the 
-   * 
+   * Performs the actual task with the model defined in the
+   *
    * @param   array   $ids         The id of the task
    * @param   array   $task_def    Task definition array in the form
    *                               ['model' => (object) Model, 'method' => (string) method-name, 'options' => (array) method-arguments]
    * @param   object  $params      The params object
    * @param   string  $error_msg   The message to be logged on error
-   * 
+   *
    * @return  array   List of ecexuted ids
-   * 
+   *
    * @since   4.2.0
    */
   private function performTask(array $ids, array $task_def, object $params, string $error_msg = ''): array
@@ -303,12 +308,12 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
 
   /**
    * Writes the params to the database
-   * 
+   *
    * @param   int     $task_id  The id of the task
    * @param   object  $params   The params object
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.2.0
    */
   private function setParams($task_id, $params)

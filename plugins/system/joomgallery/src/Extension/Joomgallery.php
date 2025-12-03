@@ -120,7 +120,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
 
       return [];
-
   }
 
   /**
@@ -171,37 +170,37 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
         // If a configuration set is modified, delete all cache
         JoomHelper::getComponent()->createConfig();
         JoomHelper::getComponent()->getConfig()->emptyCache();
-        break;
+          break;
 
       case 'user':
         // If a user is modified, delete only usergroup cache
         $userId = $this->guessType($defaultgroup, true);
         JoomHelper::getComponent()->createConfig();
-        JoomHelper::getComponent()->getConfig()->emptyCache('user.'.$userId);
-        break;
+        JoomHelper::getComponent()->getConfig()->emptyCache('user.' . $userId);
+          break;
 
       case 'category':
         // If a category is modified, delete only category cache
         JoomHelper::getComponent()->createConfig();
         JoomHelper::getComponent()->getConfig()->emptyCache('category');
-        break;
+          break;
 
       case 'image':
         // If an image is modified, delete only image cache
         JoomHelper::getComponent()->createConfig();
         JoomHelper::getComponent()->getConfig()->emptyCache('image');
-        break;
+          break;
 
       case 'menu':
         // If an image is modified, delete only image cache
         $itemid = $this->guessType($defaultgroup, true);
         JoomHelper::getComponent()->createConfig();
-        JoomHelper::getComponent()->getConfig()->emptyCache('menu.'.$itemid);
-        break;
+        JoomHelper::getComponent()->getConfig()->emptyCache('menu.' . $itemid);
+          break;
 
       default:
         // Do nothing
-        break;
+          break;
     }
 
     // Return the result
@@ -356,7 +355,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     if($userId && $result && isset($data['joomgallery']) && (\count($data['joomgallery'])))
     {
       $options = [
-        'defaultgroup' => 'com_users.user.'.$userId,
+        'defaultgroup' => 'com_users.user.' . $userId,
         'cachebase'    => $this->app->get('cache_path', JPATH_CACHE),
         'result'       => true,
       ];
@@ -476,9 +475,12 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
       $query->select('extension_id')
             ->from('#__extensions')
-            ->where( ['type LIKE ' . $this->db->quote('component'),
-              'element LIKE ' . $this->db->quote('com_joomgallery'),
-            ]);
+            ->where(
+                [
+                'type LIKE ' . $this->db->quote('component'),
+                'element LIKE ' . $this->db->quote('com_joomgallery'),
+                ]
+            );
 
       $this->db->setQuery($query);
 
@@ -546,7 +548,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
 
         return strtolower($pieces[1]);
-
     }
 
     return false;
@@ -574,7 +575,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
     if($array)
     {
-      $result = $event->getArgument('result', []) ?: [];
+      $result   = $event->getArgument('result', []) ?: [];
       $result   = \is_array($result) ? $result : [];
       $result[] = $value;
     }
@@ -601,7 +602,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
   {
     if($event instanceof EventInterface)
     {
-
       $event->setArgument('error', $message);
       $event->setArgument('errorMessage', $message);
 

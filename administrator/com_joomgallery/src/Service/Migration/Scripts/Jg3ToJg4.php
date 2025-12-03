@@ -15,21 +15,21 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Scri
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Checks;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Migration;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Migration\MigrationInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Targetinfo;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Component\Media\Administrator\Exception\FileExistsException;
-use \Joomla\Filesystem\File;
-use \Joomla\Filesystem\Folder;
-use \Joomla\Filesystem\Path;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Checks;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Migration;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\MigrationInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Targetinfo;
+use Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\Component\Media\Administrator\Exception\FileExistsException;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 
 /**
  * Migration script class
@@ -102,8 +102,8 @@ class Jg3ToJg4 extends Migration implements MigrationInterface
     }
     else
     {
-      $this->component->addLog('Type must be either "source" or "destination", but "'.$type.'" given.', 'error', 'migration');
-      throw new \Exception('Type must be either "source" or "destination", but "'.$type.'" given.', 1);
+      $this->component->addLog('Type must be either "source" or "destination", but "' . $type . '" given.', 'error', 'migration');
+      throw new \Exception('Type must be either "source" or "destination", but "' . $type . '" given.', 1);
     }
 
     return $info;
@@ -163,8 +163,6 @@ return $path;
         }
 
 return $path;
-
-
   }
 
   /**
@@ -176,7 +174,8 @@ return $path;
    */
   public function getSourceDirs(): array
   {
-    $dirs = [$this->params->get('orig_path'),
+    $dirs = [
+      $this->params->get('orig_path'),
       $this->params->get('detail_path'),
       $this->params->get('thumb_path'),
     ];
@@ -213,7 +212,8 @@ return $path;
    */
   public function defineTypes($names_only = false, &$type = null): array
   {
-    $types = ['category' => ['#__joomgallery_catg', 'cid', 'name', true, false, true],
+    $types = [
+      'category' => ['#__joomgallery_catg', 'cid', 'name', true, false, true],
       'image'            => ['#__joomgallery', 'id', 'imgtitle', false, true, true],
       'catimage'         => [_JOOM_TABLE_CATEGORIES, 'cid', 'name', false, false, false],
       'user'             => ['#__joomgallery_users', 'uid', '', false, false, true],
@@ -264,11 +264,11 @@ return $path;
     {
       case 'category':
         $type->set('pkstoskip', [1]);
-        break;
+          break;
 
       case 'image':
         $type->set('dependent_on', ['category']);
-        break;
+          break;
 
       case 'catimage':
         $type->set('dependent_on', ['category', 'image']);
@@ -276,27 +276,27 @@ return $path;
         $type->set('insertRecord', false);
         $type->set('queueTablename', '#__joomgallery_catg' . $source_db_suffix);
         $type->set('recordName', 'category');
-        break;
+          break;
 
       case 'user':
         $type->set('ownerFieldname', 'cmsuser');
-        break;
+          break;
 
       case 'vote':
         $type->set('dependent_on', ['image']);
-        break;
+          break;
 
       case 'comment':
         $type->set('dependent_on', ['image']);
-        break;
+          break;
 
       case 'collection':
         $type->set('dependent_on', ['user', 'image']);
-        break;
+          break;
 
       default:
         // No optional type infos needed
-        break;
+          break;
     }
 
     return $types;
@@ -336,7 +336,8 @@ return $path;
     {
       case 'category':
         // Apply mapping for category table
-        $mapping = ['cid'           => $id, 'asset_id' => 0, 'name' => 'title', 'alias' => false, 'lft' => false, 'rgt' => false, 'level' => false,
+        $mapping = [
+          'cid'           => $id, 'asset_id' => 0, 'name' => 'title', 'alias' => false, 'lft' => false, 'rgt' => false, 'level' => false,
           'owner'                    => $owner, 'img_position' => false, 'catpath' => 'static_path', 'params' => ['params', false, false],
           'allow_download'           => ['params', 'jg_download', false], 'allow_comment' => ['params', 'jg_showcomment', false],
           'allow_rating'             => ['params', 'jg_showrating', false], 'allow_watermark' => ['params', 'jg_dynamic_watermark', false],
@@ -349,11 +350,12 @@ return $path;
           $data['parent_id'] = $this->migrateables['category']->successful->get($data['parent_id']);
         }
 
-        break;
+          break;
 
       case 'image':
         // Apply mapping for image table
-        $mapping = ['id' => $id, 'asset_id' => 0, 'alias' => false, 'imgtitle' => 'title', 'imgtext' => 'description', 'imgauthor' => 'author',
+        $mapping = [
+          'id' => $id, 'asset_id' => 0, 'alias' => false, 'imgtitle' => 'title', 'imgtext' => 'description', 'imgauthor' => 'author',
           'imgdate'       => 'date', 'imgfilename' => 'filename', 'imgvotes' => 'votes', 'imgvotesum' => 'votesum', 'imgthumbname' => false,
           'owner'         => $owner, 'params' => ['params', false, false],
         ];
@@ -373,7 +375,7 @@ return $path;
           $data['catid'] = $this->migrateables['category']->successful->get($data['catid']);
         }
 
-        break;
+          break;
 
       case 'catimage':
         // Dont change the record data
@@ -394,19 +396,21 @@ return $path;
           }
         }
 
-        break;
+          break;
 
       case 'user':
         // Apply mapping for users table
-        $mapping = ['uid' => $id, 'uuserid' => $owner, 'piclist' => false, 'time' => 'created_time',
+        $mapping = [
+          'uid' => $id, 'uuserid' => $owner, 'piclist' => false, 'time' => 'created_time',
           'zipname'        => ['params', false, false], 'layout' => ['params', false, false],
         ];
 
-        break;
+          break;
 
       case 'vote':
         // Apply mapping for votes table
-        $mapping = ['voteid' => $id, 'picid' => 'imgid', 'userid' => $owner,
+        $mapping = [
+          'voteid' => $id, 'picid' => 'imgid', 'userid' => $owner,
           'userip'            => 'identication', 'datevoted' => 'created_time', 'vote' => 'score',
         ];
 
@@ -416,11 +420,12 @@ return $path;
           $data['picid'] = $this->migrateables['image']->successful->get($data['picid']);
         }
 
-        break;
+          break;
 
       case 'comment':
         // Apply mapping for comments table
-        $mapping = ['cmtid' => $id, 'cmtpic' => 'imgid', 'cmtip' => false, 'userid' => $owner,
+        $mapping = [
+          'cmtid' => $id, 'cmtpic' => 'imgid', 'cmtip' => false, 'userid' => $owner,
           'cmtname'          => 'title', 'cmttext' => 'description', 'cmtdate' => 'created_time',
         ];
 
@@ -430,11 +435,12 @@ return $path;
           $data['cmtpic'] = $this->migrateables['image']->successful->get($data['cmtpic']);
         }
 
-        break;
+          break;
 
       case 'collection':
         // Apply mapping for collections table
-        $mapping = ['uid' => false, 'uuserid' => 'userid', 'piclist' => 'images', 'layout' => false,
+        $mapping = [
+          'uid' => false, 'uuserid' => 'userid', 'piclist' => 'images', 'layout' => false,
           'time'           => false, 'zipname' => false,
         ];
 
@@ -460,13 +466,13 @@ return $path;
           $data['uuserid'] = $this->migrateables['user']->successful->get($data['uuserid']);
         }
 
-        break;
+          break;
 
       default:
         // The table structure is the same
         $mapping = ['id' => $id, 'owner' => $owner];
 
-        break;
+          break;
     }
 
     // Strip zero values for owners (owner=0)
@@ -532,7 +538,7 @@ return $path;
     if(property_exists($migrateable, 'queue') && !empty($migrateable->queue))
     {
       $queue = (array) $migrateable->get('queue', []);
-      $query->where($db->quoteName($primarykey) . ' IN (' . implode(',', $queue) .')');
+      $query->where($db->quoteName($primarykey) . ' IN (' . implode(',', $queue) . ')');
     }
 
     // Gather migration types info
@@ -594,9 +600,9 @@ return $path;
    *
    * @param   string   $type   Name of the content type
    * @param   array    $data   Source data received from getData()
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function getRulesData(string $type, array &$data)
@@ -606,11 +612,11 @@ return $path;
       case 'category':
         parent::getRulesData($type, $data);
         $data['rules-image'] = '{}';
-        break;
+          break;
 
       default:
         // Dont migrate any rules
-        break;
+          break;
     }
   }
 
@@ -620,9 +626,9 @@ return $path;
    *
    * @param   string   $type    Name of the content type
    * @param   Table    $table   Table object to be inserted into destination
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function onBeforeSave(string $type, Table &$table): void
@@ -737,7 +743,8 @@ return $path;
         // Create old/JG3 folder structure (based on static_path)
         if( $this->params->get('same_joomla', 1) == 1 &&
             $this->component->getConfig()->get('jg_filesystem', 'local-images') == 'local-images'
-          ) {
+          )
+        {
           // Recreate, copy or move within the same filesystem by keeping the old folder structure is impossible
           $this->component->setError('FILES_JOOMGALLERY_SERVICE_MIGRATION_MCR_ERROR');
           $this->component->addLog('FILES_JOOMGALLERY_SERVICE_MIGRATION_MCR_ERROR', 'error', 'migration');
@@ -746,7 +753,6 @@ return $path;
         }
 
         return $this->component->getFileManager()->createCategory(basename($cat->static_path), $cat->parent_id, 'migration');
-
     }
 
     return true;
@@ -785,7 +791,7 @@ return $path;
         }
 
         // Assemble path to source image with complete system root
-        return [Path::clean($this->getSourceRootPath() . '/' . $dir . '/' . $cat['catpath'] . '/' . $data['imgfilename'])];
+          return [Path::clean($this->getSourceRootPath() . '/' . $dir . '/' . $cat['catpath'] . '/' . $data['imgfilename'])];
         break;
 
       // Copy/Move images
@@ -811,15 +817,15 @@ return $path;
           }
 
           // Assemble path to source image
-          $paths[$type->typename] = Path::clean($this->getSourceRootPath() . '/' . $directories[$dirs_map[$source_type]]. '/' . $cat['catpath'] . '/' . $data['imgfilename']);
+          $paths[$type->typename] = Path::clean($this->getSourceRootPath() . '/' . $directories[$dirs_map[$source_type]] . '/' . $cat['catpath'] . '/' . $data['imgfilename']);
         }
 
-        return $paths;
+          return $paths;
         break;
 
       // Direct usage
       default:
-        return [];
+          return [];
         break;
     }
   }
@@ -837,7 +843,8 @@ return $path;
     // Retrieve a list of source directories involved in migration
     $directories = $this->getSourceDirs();
     $root        = $this->getSourceRootPath();
-    $dir_array   = [[Text::_('COM_JOOMGALLERY_ORIGINAL'), 'images/joomgallery/originals/'],
+    $dir_array   = [
+      [Text::_('COM_JOOMGALLERY_ORIGINAL'), 'images/joomgallery/originals/'],
       [Text::_('COM_JOOMGALLERY_DETAIL'), 'images/joomgallery/details/'],
       [Text::_('COM_JOOMGALLERY_THUMBNAIL'), 'images/joomgallery/thumbnails/'],
     ];
@@ -895,7 +902,8 @@ return $path;
 
     // Retrieve a list of source tables
     list($db, $dbPrefix) = $this->getDB('source');
-    $tables              = ['#__joomgallery',
+    $tables              = [
+      '#__joomgallery',
       '#__joomgallery_catg',
       '#__joomgallery_category_details',
       '#__joomgallery_comments',
@@ -1130,7 +1138,6 @@ return $path;
 
 
       return true;
-
   }
 
   /**
@@ -1267,7 +1274,8 @@ return $path;
         if( $this->params->get('same_joomla', 1) == 1 &&
             $this->params->get('new_dirs', 1) == 0 &&
             $this->component->getConfig()->get('jg_filesystem', 'local-images') == 'local-images'
-          ) {
+          )
+        {
           // Move/Copy/Recreate is not possible since source and destination folders are identical
           $checks->addCheck($category, 'copy_identical_folders', false, false, Text::_('FILES_JOOMGALLERY_SERVICE_MIGRATION_MCR'), Text::_('FILES_JOOMGALLERY_SERVICE_MIGRATION_MCR_ERROR'));
           $this->component->addLog(Text::_('FILES_JOOMGALLERY_SERVICE_MIGRATION_MCR_ERROR'), 'error', 'migration');
@@ -1300,7 +1308,6 @@ return $path;
 
             foreach($titles as $id => $title)
             {
-
               if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
               {
                 $titles[$id] = OutputFilter::stringURLUnicodeSlug(trim($title));
@@ -1338,7 +1345,6 @@ return $path;
 
     if($type == 'post' && $checks->getSuccess())
     {
-
     }
 
     return;
@@ -1357,13 +1363,13 @@ return $path;
   {
     // Prepare catpath
     $catpath    = basename($cat->catpath);
-    $parentpath = substr($cat->catpath, 0, -1 * \strlen('/'.$catpath));
+    $parentpath = substr($cat->catpath, 0, -1 * \strlen('/' . $catpath));
 
     // Prepare alias
     $alias = basename($cat->alias);
 
     // Check for alias_cid
-    if($catpath !== $alias.'_'.$cat->cid)
+    if($catpath !== $alias . '_' . $cat->cid)
     {
       return false;
     }
@@ -1375,7 +1381,7 @@ return $path;
     $query = $db->getQuery(true)
                 ->select($db->quoteName('catpath'))
                 ->from($db->quoteName($tablename))
-                ->where($db->quoteName('cid') . ' = '. $db->quote($cat->parent_id));
+                ->where($db->quoteName('cid') . ' = ' . $db->quote($cat->parent_id));
     $db->setQuery($query);
 
     $path = $db->loadResult();

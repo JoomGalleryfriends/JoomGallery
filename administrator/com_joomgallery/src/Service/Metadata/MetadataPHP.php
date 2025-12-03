@@ -15,25 +15,24 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Metadata\Metadata as BaseMetadata;
-use \Joomla\Filesystem\File;
-use \Joomla\Filesystem\Path;
-
-use \lsolesen\pel\Pel;
-use \lsolesen\pel\PelDataWindow;
-use \lsolesen\pel\PelEntryAscii;
-use \lsolesen\pel\PelExif;
-use \lsolesen\pel\PelFormat;
-use \lsolesen\pel\PelIfd;
-use \lsolesen\pel\PelJpeg;
-use \lsolesen\pel\PelTag;
-use \lsolesen\pel\PelTiff;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Metadata\Metadata as BaseMetadata;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Path;
+use lsolesen\pel\Pel;
+use lsolesen\pel\PelDataWindow;
+use lsolesen\pel\PelEntryAscii;
 use lsolesen\pel\PelEntryCopyright;
 use lsolesen\pel\PelEntryRational;
 use lsolesen\pel\PelEntrySRational;
 use lsolesen\pel\PelEntryTime;
 use lsolesen\pel\PelEntryUserComment;
+use lsolesen\pel\PelExif;
+use lsolesen\pel\PelFormat;
+use lsolesen\pel\PelIfd;
+use lsolesen\pel\PelJpeg;
+use lsolesen\pel\PelTag;
+use lsolesen\pel\PelTiff;
 
 /**
  * PHP implementation of Metadata Class
@@ -113,7 +112,7 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
     $file      = '';
     $isStream  = false;
 
-    if (\is_resource($img))
+    if(\is_resource($img))
     {
       $file     = $img;
       $isStream = true;
@@ -155,12 +154,12 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
   /**
    * Writes a list of values to the exif metadata of an image
-   * 
-   * @param   string $img    Path to the image 
+   *
+   * @param   string $img    Path to the image
    * @param   mixed  $edits  Exif object in imgmetadata
-   * 
+   *
    * @return  bool           True on success, false on failure
-   * 
+   *
    * @since   4.1.0
    */
   public function writeToExif(string $img, $edits): bool
@@ -230,12 +229,12 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
   /**
    * Writes a list of values to the iptc metadata of an image
-   * 
-   * @param   string $img   Path to the image 
+   *
+   * @param   string $img   Path to the image
    * @param   mixed  $edits Array of edits to be made to the metadata
-   * 
+   *
    * @return  bool          True on success, false on failure
-   * 
+   *
    * @since   4.1.0
    */
   public function writeToIptc(string $img, $edits): bool
@@ -280,9 +279,9 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
    * Reads the metadata from an image.
    * (Current supported image formats: JPEG)
    * (Current supported metadata formats: EXIF/IPTC)
-   * 
-   * @param  string $file  Path to the file 
-   * 
+   *
+   * @param  string $file  Path to the file
+   *
    * @return array  Metadata as array
    */
   public function readMetadata(string $file)
@@ -292,11 +291,11 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
   /**
    * Reads the EXIF and IPTC metadata from a JPEG.
-   * 
+   *
    * @param  string $file  The image path
-   * 
+   *
    * @return array         Metadata in array format
-   * 
+   *
    * @since 4.1.0
    */
   public function readJpegMetadata(string $file)
@@ -379,11 +378,11 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
   /**
    * Gets the jpeg/tiff objects from a valid JPEG or TIFF image with PEL.
-   * 
+   *
    * @param  string $img    The image data
-   * 
+   *
    * @return array|false    File and tiff objects on success, false on failure.
-   * 
+   *
    * @since 4.1.0
    */
   protected function getPelImageObjects(string $img)
@@ -408,7 +407,7 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
       $tiff = $exifdata->getTiff();
     }
-    elseif (PelTiff::isValid($data))
+    elseif(PelTiff::isValid($data))
     {
       // Data was recognized as TIFF. PelTiff/Ifd is what is being edited regardless.
       $tiff = $file = new PelTiff();
@@ -425,9 +424,9 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
   /**
    * Formats a PelEntry variant to be stored in a displayable format for the imgmetadata form.
-   * 
+   *
    * @param  mixed $entry  Variant of the PelEntry class
-   * 
+   *
    * @return mixed Value of the entry
    */
   private function formatPELEntryForForm($entry)
@@ -448,14 +447,13 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
     {
       return $entry->getValue(PelEntryTime::EXIF_STRING);
     }
-    elseif ($entry instanceof PelEntryUserComment)
+    elseif($entry instanceof PelEntryUserComment)
     {
       return str_pad('ASCII', 8, \chr(0)) . $entry->getValue();
     }
 
 
       return $entry->getValue();
-
   }
 
   private function formatForPelEntry($tag, $entry, $type)
@@ -466,7 +464,7 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
       return [\intval($explode[0]), \intval($explode[1])];
     }
-    elseif ($tag == PelTag::COPYRIGHT)
+    elseif($tag == PelTag::COPYRIGHT)
     {
       $explode = explode(' - ', $entry);
 
@@ -480,7 +478,6 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
 
       return $entry;
-
   }
 
   /**
@@ -541,13 +538,13 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
   /**
    * Copies the metadata from one file to another with PEL.
-   * 
+   *
    * @param  string $srcPath    Path to source file
    * @param  string $dstPath    Path to destination file
    * @param  int    $newOrient  New exif orientation (false: do not change exif orientation)
-   * 
+   *
    * @return int
-   * 
+   *
    * @since 4.1.0
    */
   public function copyExifData($srcPath, $dstPath, $newOrient = false)
@@ -683,9 +680,9 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
       // Read iTXt chunk
       if(isset($_src_chunks['iTXt']))
       {
-        foreach ($_src_chunks['iTXt'] as $chunk)
+        foreach($_src_chunks['iTXt'] as $chunk)
         {
-          if ($chunk['size'] > 0)
+          if($chunk['size'] > 0)
           {
             fseek($_fp, $chunk['offset'], SEEK_SET);
             $chunks['iTXt'] = fread($_fp, $chunk['size']);
@@ -694,11 +691,11 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
       }
 
       // Read tEXt chunk
-      if (isset($_src_chunks['tEXt']))
+      if(isset($_src_chunks['tEXt']))
       {
-        foreach ($_src_chunks['tEXt'] as $chunk)
+        foreach($_src_chunks['tEXt'] as $chunk)
         {
-          if ($chunk['size'] > 0)
+          if($chunk['size'] > 0)
           {
             fseek($_fp, $chunk['offset'], SEEK_SET);
             $chunks['tEXt'] = fread($_fp, $chunk['size']);
@@ -707,11 +704,11 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
       }
 
       // Read zTXt chunk
-      if (isset($_src_chunks['zTXt']))
+      if(isset($_src_chunks['zTXt']))
       {
-        foreach ($_src_chunks['zTXt'] as $chunk)
+        foreach($_src_chunks['zTXt'] as $chunk)
         {
-          if ($chunk['size'] > 0)
+          if($chunk['size'] > 0)
           {
             fseek($_fp, $chunk['offset'], SEEK_SET);
             $chunks['zTXt'] = fread($_fp, $chunk['size']);
@@ -747,6 +744,5 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
       // File doesn't exist
       return false;
-
   }
 }

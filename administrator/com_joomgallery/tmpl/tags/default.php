@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -46,7 +47,7 @@ if($saveOrder && !empty($this->items))
     <div class="col-md-12">
       <div id="j-main-container" class="j-main-container">
       <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
-        <?php if (empty($this->items)) : ?>
+        <?php if(empty($this->items)) : ?>
           <div class="alert alert-info">
             <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
             <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
@@ -65,7 +66,7 @@ if($saveOrder && !empty($this->items))
               <td class="w-1 text-center">
                 <?php echo HTMLHelper::_('grid.checkall'); ?>
               </td>
-              <?php if (isset($this->items[0]->ordering)): ?>
+              <?php if(isset($this->items[0]->ordering)): ?>
                 <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                   <?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
                 </th>
@@ -79,7 +80,7 @@ if($saveOrder && !empty($this->items))
               <th scope="col" class="w-10 d-none d-md-table-cell">
                 <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
               </th>
-              <?php if (Multilanguage::isEnabled()) : ?>
+              <?php if(Multilanguage::isEnabled()) : ?>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
                   <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
                 </th>
@@ -99,12 +100,13 @@ if($saveOrder && !empty($this->items))
               </td>
             </tr>
             </tfoot>
-            <tbody <?php if ($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
-            <?php foreach ($this->items as $i => $item) :
+            <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
+                   endif; ?>>
+            <?php foreach($this->items as $i => $item) :
               $ordering   = ($listOrder == 'a.ordering');
-              $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION.'.tag.1', $item->id);
+              $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION . '.tag.1', $item->id);
               $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
-              $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION.'.tag.1', $item->id) && $canCheckin;
+              $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION . '.tag.1', $item->id) && $canCheckin;
               ?>
 
               <tr class="row<?php echo $i % 2; ?>">
@@ -112,16 +114,16 @@ if($saveOrder && !empty($this->items))
                   <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                 </td>
 
-                <?php if (isset($this->items[0]->ordering)) : ?>
+                <?php if(isset($this->items[0]->ordering)) : ?>
                   <td class="text-center d-none d-md-table-cell">
                     <?php
                       $iconClass = '';
 
-                      if (!$canChange)
+                      if(!$canChange)
                       {
                         $iconClass = ' inactive';
                       }
-                      elseif (!$saveOrder)
+                      elseif(!$saveOrder)
                       {
                         $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                       }
@@ -129,7 +131,7 @@ if($saveOrder && !empty($this->items))
                     <span class="sortable-handler<?php echo $iconClass ?>">
                       <span class="icon-ellipsis-v" aria-hidden="true"></span>
                     </span>
-                    <?php if ($canChange && $saveOrder) : ?>
+                    <?php if($canChange && $saveOrder) : ?>
                       <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>" class="width-20 text-area-order hidden">
                     <?php endif; ?>
                   </td>
@@ -143,19 +145,19 @@ if($saveOrder && !empty($this->items))
                       'id'          => 'state-' . $item->id,
                     ];
 
-                    echo (new PublishedButton)->render((int) $item->published, $i, $options);
+                    echo (new PublishedButton())->render((int) $item->published, $i, $options);
                   ?>
                 </td>
 
                 <th scope="row" class="has-context">
                   <div class="break-word">
-                    <?php if (isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>
+                    <?php if(isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>
                       <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'tags.', $canCheckin); ?>
                     <?php endif; ?>
 
-                    <?php if ($canEdit) : ?>
+                    <?php if($canEdit) : ?>
                       <?php
-                        $TagUrl     = Route::_('index.php?option=com_joomgallery&task=tag.edit&id='.(int) $item->id);
+                        $TagUrl     = Route::_('index.php?option=com_joomgallery&task=tag.edit&id=' . (int) $item->id);
                         $EditTagTxt = Text::_('COM_JOOMGALLERY_TAG_EDIT');
                       ?>
                       <a href="<?php echo $TagUrl; ?>" title="<?php echo $EditTagTxt; ?>">
@@ -175,7 +177,7 @@ if($saveOrder && !empty($this->items))
                   <?php echo $this->escape($item->access); ?>
                 </td>
 
-                <?php if (Multilanguage::isEnabled()) : ?>
+                <?php if(Multilanguage::isEnabled()) : ?>
                   <td class="small d-none d-md-table-cell">
                     <?php echo LayoutHelper::render('joomla.content.language', $item); ?>
                   </td>

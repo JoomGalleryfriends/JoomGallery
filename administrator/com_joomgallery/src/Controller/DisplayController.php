@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Application\CMSApplication;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\MVC\Controller\BaseController;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\Filesystem\Path;
-use \Joomla\Input\Input;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\Filesystem\Path;
+use Joomla\Input\Input;
 
 /**
  * Joomgallery master display controller.
@@ -87,7 +87,7 @@ class DisplayController extends BaseController
       }
 
       // Conduct the context
-      $this->context = _JOOM_OPTION.'.'.$view.'.display';
+      $this->context = _JOOM_OPTION . '.' . $view . '.display';
     }
 
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
@@ -108,7 +108,7 @@ class DisplayController extends BaseController
     // Before execution of the task
     if(!empty($task))
     {
-      $this->component->msgUserStateKey = 'com_joomgallery.'.$task.'.messages';
+      $this->component->msgUserStateKey = 'com_joomgallery.' . $task . '.messages';
     }
 
     if(!$this->component->isRawTask($this->context))
@@ -140,7 +140,7 @@ class DisplayController extends BaseController
   /**
    * Method to get a list of available views based on the available folders in
    * Joomgallery\Component\Joomgallery\<App>\View.
-   * 
+   *
    * @return  array  List of available views.
    *
    * @since   4.0.0

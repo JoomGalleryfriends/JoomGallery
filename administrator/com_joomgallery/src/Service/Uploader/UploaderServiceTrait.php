@@ -14,10 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\FTPUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\HTMLUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\SingleUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\TUSUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\FTPUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\HTMLUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\SingleUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\TUSUploader;
 
 /**
   * Trait to implement UploaderServiceInterface
@@ -60,7 +60,7 @@ trait UploaderServiceTrait
       */
     public function createUploader($uploadMethod, $multiple = false, $async = false): void
     {
-        switch ($uploadMethod)
+        switch($uploadMethod)
         {
             case 'TUS':
             case 'tus':

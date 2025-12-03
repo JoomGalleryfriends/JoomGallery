@@ -33,7 +33,7 @@ interface ConfigServiceInterface
     /**
       * Creates the config helper class based on the selected
       * inheritance method in global component settings
-      * 
+      *
       * @param   string   $context   Context of the content (default: com_joomgallery)
       * @param   int      $id        ID of the content if needed (default: null)
       * @param   bool     $inclOwn   True, if you want to include settings of current item (default: true)

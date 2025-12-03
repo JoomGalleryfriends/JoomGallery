@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -50,7 +51,7 @@ $wa->useStyle('com_joomgallery.admin')
     <?php echo $this->script->description; ?>
   </div>
 
-  <form action="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&task=migration.precheck'); ?>" method="post" enctype="multipart/form-data" 
+  <form action="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&task=migration.precheck'); ?>" method="post" enctype="multipart/form-data" 
         name="adminForm" id="migration-form" class="form-validate card" aria-label="COM_JOOMGALLERY_MIGRATION_STEP1_TITLE">
 
     <div class="card-body">
@@ -61,7 +62,8 @@ $wa->useStyle('com_joomgallery.admin')
               <fieldset class="options-form">
                 <legend><?php echo Text::_($fieldset->label); ?></legend>
                 <div>
-                  <?php echo $this->form->renderFieldset($fieldset->name);; ?>
+                  <?php echo $this->form->renderFieldset($fieldset->name);
+; ?>
                 </div>
               </fieldset>
             </div>

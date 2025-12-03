@@ -14,14 +14,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Filter\InputFilter;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Filesystem\File as JFile;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\Text;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Filesystem\File as JFile;
 
 /**
  * Base class for the Uploader helper classes
@@ -113,12 +113,12 @@ abstract class Uploader implements UploaderInterface
     $this->multiple = $multiple;
     $this->async    = $async;
 
-    $this->error       = $this->app->getUserStateFromRequest($this->userStateKey.'.error', 'error', false, 'bool');
-    $this->catid       = $this->app->getUserStateFromRequest($this->userStateKey.'.catid', 'catid', 0, 'int');
-    $this->title       = $this->app->getUserStateFromRequest($this->userStateKey.'.title', 'title', '', 'string');
-    $this->filecounter = $this->app->getUserStateFromRequest($this->userStateKey.'.filecounter', 'filecounter', 1, 'post', 'int');
-    $this->component->addDebug($this->app->getUserStateFromRequest($this->userStateKey.'.debugoutput', 'debugoutput', '', 'string'));
-    $this->component->addWarning($this->app->getUserStateFromRequest($this->userStateKey.'.warningoutput', 'warningoutput', '', 'string'));
+    $this->error       = $this->app->getUserStateFromRequest($this->userStateKey . '.error', 'error', false, 'bool');
+    $this->catid       = $this->app->getUserStateFromRequest($this->userStateKey . '.catid', 'catid', 0, 'int');
+    $this->title       = $this->app->getUserStateFromRequest($this->userStateKey . '.title', 'title', '', 'string');
+    $this->filecounter = $this->app->getUserStateFromRequest($this->userStateKey . '.filecounter', 'filecounter', 1, 'post', 'int');
+    $this->component->addDebug($this->app->getUserStateFromRequest($this->userStateKey . '.debugoutput', 'debugoutput', '', 'string'));
+    $this->component->addWarning($this->app->getUserStateFromRequest($this->userStateKey . '.warningoutput', 'warningoutput', '', 'string'));
   }
 
   /**
@@ -132,7 +132,7 @@ abstract class Uploader implements UploaderInterface
    *
    * @since  4.0.0
    */
-  public function retrieveImage(&$data, $filename = True): bool
+  public function retrieveImage(&$data, $filename = true): bool
   {
     // Create filesystem service
     $this->component->createFilesystem();
@@ -190,7 +190,7 @@ abstract class Uploader implements UploaderInterface
       {
         if(!\is_null($filecounter))
         {
-          $data['title'] = $data['title'].'-'.$filecounter;
+          $data['title'] = $data['title'] . '-' . $filecounter;
         }
       }
       $newfilename = $this->component->getFilesystem()->cleanFilename($data['title'], 0);
@@ -264,20 +264,20 @@ abstract class Uploader implements UploaderInterface
 
     // Load dependencies
     $filter = InputFilter::getInstance();
-    require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/iptcarray.php';
-    require_once JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/exifarray.php';
+    require_once JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/includes/iptcarray.php';
+    require_once JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/includes/exifarray.php';
 
     $lang = $this->app->getLanguage();
-    $lang->load(_JOOM_OPTION.'.exif', JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION);
-    $lang->load(_JOOM_OPTION.'.iptc', JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION);
+    $lang->load(_JOOM_OPTION . '.exif', JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION);
+    $lang->load(_JOOM_OPTION . '.iptc', JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION);
 
     // Loop through all replacements defined in config
-    foreach ($this->component->getConfig()->get('jg_replaceinfo') as $replaceinfo)
+    foreach($this->component->getConfig()->get('jg_replaceinfo') as $replaceinfo)
     {
       $source_array = explode('-', $replaceinfo->source);
 
       // Get metadata value from image
-      switch ($source_array[0])
+      switch($source_array[0])
       {
         case 'IFD0':
         case 'EXIF':
@@ -320,7 +320,7 @@ abstract class Uploader implements UploaderInterface
 
             continue 2;
           }
-          break;
+            break;
 
         case 'COMMENT':
           // Get metadata value
@@ -339,7 +339,7 @@ abstract class Uploader implements UploaderInterface
 
             continue 2;
           }
-          break;
+            break;
 
         case 'IPTC':
           // Get iptc source attribute
@@ -375,11 +375,11 @@ abstract class Uploader implements UploaderInterface
 
             continue 2;
           }
-          break;
+            break;
 
         default:
           // Unknown metadata source
-          continue 2;
+            continue 2;
           break;
       }
 
@@ -406,9 +406,12 @@ abstract class Uploader implements UploaderInterface
         }
 
         // Add #new# prefix to new tags
-        $data['tags'] = array_map(function($tag) use ($existing_tags) {
-          return isset($existing_tags[$tag]) ? $existing_tags[$tag] : '#new#' . $tag;
-        }, $tags);
+        $data['tags'] = array_map(
+            function ($tag) use ($existing_tags) {
+            return isset($existing_tags[$tag]) ? $existing_tags[$tag] : '#new#' . $tag;
+            },
+            $tags
+        );
 
         // Write debug info
         $this->component->addWarning(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . strtoupper('tags')));
@@ -447,7 +450,6 @@ abstract class Uploader implements UploaderInterface
         $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_' . strtoupper('title')), 'warning', 'jerror');
         $this->component->addWarning(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_ALIAS_FILENAME'));
         $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_DEBUG_REPLACE_ALIAS_FILENAME'), 'warning', 'jerror');
-
       }
       else
       {
@@ -510,7 +512,8 @@ abstract class Uploader implements UploaderInterface
       $cat = JoomHelper::getRecord('category', $data_row->catid, $this->component);
 
       // Template variables
-      $tpl_vars = ['user_id' => $user->id,
+      $tpl_vars = [
+        'user_id' => $user->id,
         'user_username'      => $user->username,
         'user_name'          => $user->name,
         'img_id'             => $data_row->id,
@@ -520,7 +523,7 @@ abstract class Uploader implements UploaderInterface
       ];
 
       // Setting up message template
-      $this->component->getMessenger()->selectTemplate(_JOOM_OPTION.'.newimage');
+      $this->component->getMessenger()->selectTemplate(_JOOM_OPTION . '.newimage');
       $this->component->getMessenger()->addTemplateData($tpl_vars);
 
       // Get recipients
@@ -608,13 +611,13 @@ abstract class Uploader implements UploaderInterface
     $query = $db->getQuery(true)
           ->select('COUNT(id)')
           ->from(_JOOM_TABLE_IMAGES)
-          ->where('created_by = '.\intval($userid));
+          ->where('created_by = ' . \intval($userid));
 
     $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
 
     if($timespan > 0)
     {
-      $query->where('date > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
+      $query->where('date > (UTC_TIMESTAMP() - INTERVAL ' . $timespan . ' DAY)');
     }
 
     $db->setQuery($query);
@@ -638,7 +641,7 @@ abstract class Uploader implements UploaderInterface
       if(!$this->async)
       {
         // Store the next value in the session
-        $this->app->setUserState($this->userStateKey.'.filecounter', $this->filecounter + 1);
+        $this->app->setUserState($this->userStateKey . '.filecounter', $this->filecounter + 1);
       }
 
       return $this->filecounter;
@@ -673,10 +676,10 @@ abstract class Uploader implements UploaderInterface
   protected function resetUserStates()
   {
     // Reset file counter, delete original and create special gif selection and debug information
-    $this->app->setUserState($this->userStateKey.'.filecounter', 1);
-    $this->app->setUserState($this->userStateKey.'.error', false);
-    $this->app->setUserState($this->userStateKey.'.debugoutput', null);
-    $this->app->setUserState($this->userStateKey.'.warningoutput', null);
+    $this->app->setUserState($this->userStateKey . '.filecounter', 1);
+    $this->app->setUserState($this->userStateKey . '.error', false);
+    $this->app->setUserState($this->userStateKey . '.debugoutput', null);
+    $this->app->setUserState($this->userStateKey . '.warningoutput', null);
   }
 
   /**
@@ -696,7 +699,7 @@ abstract class Uploader implements UploaderInterface
       throw new \Exception('Form data must have at least catid and filename');
     }
 
-    $img = new stdClass;
+    $img = new stdClass();
 
     $img->catid    = $data['catid'];
     $img->filename = $data['filename'];

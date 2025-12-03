@@ -14,10 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\Filesystem\Folder;
-use \Joomla\Filesystem\Path;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 
 /**
   * Trait to implement MigrationServiceInterface
@@ -37,7 +37,7 @@ trait MigrationServiceTrait
 
     /**
       * Creates the migration service class
-      * 
+      *
       * @param   string          $script    Name of the migration script to be used
       *
       * @return  void
@@ -62,8 +62,8 @@ trait MigrationServiceTrait
         require_once $scripts[$script]['path'];
 
         $namespace                  = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Service\\Migration\\Scripts';
-        $fully_qualified_class_name = $namespace.'\\'.$script;
-        $this->migration            = new $fully_qualified_class_name;
+        $fully_qualified_class_name = $namespace . '\\' . $script;
+        $this->migration            = new $fully_qualified_class_name();
 
         return;
     }
@@ -89,13 +89,13 @@ trait MigrationServiceTrait
       */
     protected function getScripts()
     {
-        $files = Folder::files(JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/src/Service/Migration/Scripts', '.php$', false, true);
+        $files = Folder::files(JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts', '.php$', false, true);
 
         $scripts = [];
 
         foreach($files as $path)
         {
-            $img = Uri::base().'components/'._JOOM_OPTION.'/src/Service/Migration/Scripts/'.basename($path, '.php').'.jpg';
+            $img = Uri::base() . 'components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts/' . basename($path, '.php') . '.jpg';
 
             $scripts[basename($path, '.php')] = ['path' => Path::clean($path), 'img' => $img];
         }

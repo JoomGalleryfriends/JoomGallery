@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Field\ListField;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 
 
 /**
@@ -143,12 +143,12 @@ class ImgProcessorListField extends ListField
         $class = 'hidden';
       }
 
-      $html_desc .= '<span id=\"jg_imgprocessor_supplement_'.$key.'\" class=\"'.$class.'\">';
+      $html_desc .= '<span id=\"jg_imgprocessor_supplement_' . $key . '\" class=\"' . $class . '\">';
       $html_desc .= $desc;
       $html_desc .= '</span>';
     }
 
-    $js = 'var changeImgProcessorDesc = function() {';
+    $js  = 'var changeImgProcessorDesc = function() {';
     $js .= 'let select_val = document.getElementById("jform_jg_imgprocessor").value;';
     $js .= 'let elem = document.getElementById("jg_imgprocessor_supplement_"+select_val);';
     $js .= 'let elems = Array.from(document.getElementById("jg_imgprocessor_supplement").children);';
@@ -157,12 +157,12 @@ class ImgProcessorListField extends ListField
     $js .= '};';
 
     $js .= 'var callback = function(){';
-    $js .= 'document.getElementById("jg_imgprocessor_supplement").innerHTML = "'.$html_desc.'";';
+    $js .= 'document.getElementById("jg_imgprocessor_supplement").innerHTML = "' . $html_desc . '";';
     $js .= '};';
     $js .= 'if ( document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)){callback();} else {document.addEventListener("DOMContentLoaded", callback);}';
 
     $input = parent::getInput();
 
-    return $input.'<script>'.$js.'</script>';
+    return $input . '<script>' . $js . '</script>';
   }
 }

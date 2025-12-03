@@ -141,7 +141,6 @@ class CategoryAdd extends AbstractCommand
 
     $this->setDescription(Text::_('WIP, not finished: Add category'));
     $this->setHelp($help);
-
   }
 
   /**
@@ -177,11 +176,15 @@ class CategoryAdd extends AbstractCommand
 
     //--- created_by -----------------------
 
-    $this->created_by = $filter->clean($this->getStringFromOption(
-      'created_by', 'Please enter a username (owner)'));
-    $created_by_Id = $this->getUserId($this->created_by);
+    $this->created_by = $filter->clean(
+        $this->getStringFromOption(
+            'created_by',
+            'Please enter a username (owner)'
+        )
+    );
+    $created_by_Id    = $this->getUserId($this->created_by);
 
-    if (empty($created_by_Id))
+    if(empty($created_by_Id))
     {
       $this->ioStyle->error('The user (owner)' . $this->created_by . ' does not exist!');
 
@@ -198,16 +201,15 @@ class CategoryAdd extends AbstractCommand
     $this->modified_by = $filter->clean($input->getOption('modified_by')) ?? null;
 
     // not given by input use created by
-    if (empty($this->modified_by))
+    if(empty($this->modified_by))
     {
       $this->modified_by = $this->created_by;
     }
     else
     {
-
       $modified_by_Id = $this->getUserId($this->modified_by);
 
-      if (empty($modified_by_Id))
+      if(empty($modified_by_Id))
       {
         $this->ioStyle->error('The user (author)' . $this->modified_by . ' does not exist!');
 
@@ -217,7 +219,7 @@ class CategoryAdd extends AbstractCommand
 
     //--- validate -----------------------------------
 
-    if (!is_numeric($this->published))
+    if(!is_numeric($this->published))
     {
       $this->ioStyle->error('Invalid published value passed! (0/1) ? ');
 
@@ -243,7 +245,7 @@ class CategoryAdd extends AbstractCommand
 
     echo 'add:save 01' . "\n";
 
-    if (!$categoryModel->save($category))
+    if(!$categoryModel->save($category))
     {
 //      switch ($categoryModel->getError()) {
 //        case "JLIB_DATABASE_ERROR_USERNAME_INUSE":
@@ -377,7 +379,7 @@ class CategoryAdd extends AbstractCommand
   {
     $answer = (string) $this->getApplication()->getConsoleInput()->getOption($option);
 
-    while (!$answer)
+    while(!$answer)
     {
       $answer = (string) $this->ioStyle->ask($question);
     }
@@ -407,7 +409,4 @@ class CategoryAdd extends AbstractCommand
 
     return $db->loadResult();
   }
-
-
 } // class
-

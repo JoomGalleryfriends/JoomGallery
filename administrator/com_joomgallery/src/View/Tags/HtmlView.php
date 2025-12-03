@@ -15,17 +15,17 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Tags;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\HTML\Helpers\Sidebar;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
-use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\HTML\Helpers\Sidebar;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
  * View class for a list of Tags.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -49,8 +49,8 @@ class HtmlView extends JoomGalleryView
     /** @var TagsModel $model */
     $model = $this->getModel();
 
-    $this->state       = $model->getState();
-    $this->items       = $model->getItems();
+    $this->state         = $model->getState();
+    $this->items         = $model->getItems();
     $this->pagination    = $model->getPagination();
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
@@ -85,7 +85,7 @@ class HtmlView extends JoomGalleryView
     $formPath = _JOOM_PATH_ADMIN . '/src/View/Tags';
 
     // Show button back to control panel
-    $html = '<a href="index.php?option=com_joomgallery&amp;view=control" class="btn btn-primary"><span class="icon-arrow-left-4" title="'.Text::_('COM_JOOMGALLERY_CONTROL_PANEL').'"></span> '.Text::_('COM_JOOMGALLERY_CONTROL_PANEL').'</a>';
+    $html = '<a href="index.php?option=com_joomgallery&amp;view=control" class="btn btn-primary"><span class="icon-arrow-left-4" title="' . Text::_('COM_JOOMGALLERY_CONTROL_PANEL') . '"></span> ' . Text::_('COM_JOOMGALLERY_CONTROL_PANEL') . '</a>';
     $toolbar->appendButton('Custom', $html);
 
     // New button
@@ -148,7 +148,6 @@ class HtmlView extends JoomGalleryView
     // Show trash and delete for components that uses the state field
     if(isset($this->items[0]->published))
     {
-
       if($this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->getAcl()->checkACL('core.delete'))
       {
         $toolbar->delete('tags.delete')
@@ -165,7 +164,7 @@ class HtmlView extends JoomGalleryView
 
     // Set sidebar action
     Sidebar::setAction('index.php?option=com_joomgallery&view=tags');
-}
+  }
 
   /**
    * Method to order fields

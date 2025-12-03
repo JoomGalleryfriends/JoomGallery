@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Mail\Exception\MailDisabledException;
-use \Joomla\CMS\Mail\MailTemplate;
-use \PHPMailer\PHPMailer\Exception as phpMailerException;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Mail\Exception\MailDisabledException;
+use Joomla\CMS\Mail\MailTemplate;
+use PHPMailer\PHPMailer\Exception as phpMailerException;
 
 /**
  * Mail Template Messenger Class
@@ -90,16 +90,16 @@ class MailMessenger extends Messenger implements MessengerInterface
    * Method to add one ore more recipients
    *
    * @param   array   $recipients  An array of email addresses or a single one as a string
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   protected function addRecipients($recipients, $mailer)
   {
     if(\is_array($recipients))
     {
-      foreach ($recipients as $recipient)
+      foreach($recipients as $recipient)
       {
         if(is_numeric($recipient))
         {

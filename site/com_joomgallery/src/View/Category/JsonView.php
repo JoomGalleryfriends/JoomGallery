@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Site\View\JoomGalleryJsonView;
-use \Joomla\CMS\Language\Text;
+use Joomgallery\Component\Joomgallery\Site\View\JoomGalleryJsonView;
+use Joomla\CMS\Language\Text;
 
 /**
  * Json view class for a category view of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */

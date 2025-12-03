@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\DisplayController as AdminDisplayController;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\DisplayController as AdminDisplayController;
 
 /**
   * Joomgallery frontend display controller.
-  * 
+  *
   * @package JoomGallery
   * @since   4.0.0
   */

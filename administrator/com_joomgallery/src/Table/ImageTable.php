@@ -15,15 +15,15 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
-use \Joomla\CMS\Event\AbstractEvent;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Table\Asset;
-use \Joomla\CMS\Table\Table;
-use \Joomla\CMS\Versioning\VersionableTableInterface;
-use \Joomla\Database\DatabaseDriver;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
+use Joomla\CMS\Event\AbstractEvent;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Table\Asset;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Versioning\VersionableTableInterface;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
 
 /**
  * Image table
@@ -47,7 +47,7 @@ class ImageTable extends Table implements VersionableTableInterface
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
     $this->component_exists = $component_exists;
-    $this->typeAlias        = _JOOM_OPTION.'.image';
+    $this->typeAlias        = _JOOM_OPTION . '.image';
 
     parent::__construct(_JOOM_TABLE_IMAGES, 'id', $db);
 
@@ -73,7 +73,7 @@ class ImageTable extends Table implements VersionableTableInterface
     {
       // The image has a category as asset-parent
       $catId = (int) $this->catid;
-      $assetTable->loadByName(_JOOM_OPTION.'.category.'.$catId);
+      $assetTable->loadByName(_JOOM_OPTION . '.category.' . $catId);
     }
 
     // Return the found asset-parent-id
@@ -104,10 +104,10 @@ class ImageTable extends Table implements VersionableTableInterface
     if($this->catid)
     {
       // The image has a category as asset-parent
-      $catId = '.'.(int) $this->catid;
+      $catId = '.' . (int) $this->catid;
     }
 
-    return _JOOM_OPTION.'.image'.$catId;
+    return _JOOM_OPTION . '.image' . $catId;
   }
 
   /**
@@ -214,7 +214,7 @@ class ImageTable extends Table implements VersionableTableInterface
         {
           $array['catid'] = implode(',', $array['catid']);
         }
-        else if(strrpos($array['catid'], ',') != false)
+        elseif(strrpos($array['catid'], ',') != false)
         {
           $array['catid'] = explode(',', $array['catid']);
         }
@@ -274,7 +274,7 @@ class ImageTable extends Table implements VersionableTableInterface
       // Although this technically isn't needed with PEL, we keep the format to support images saved before PEL.
       $exif = $registry->get('exif');
 
-      if (isset($exif->EXIF->UserComment))
+      if(isset($exif->EXIF->UserComment))
       {
         $exif->EXIF->UserComment = str_pad('ASCII', 8, \chr(0)) . $exif->EXIF->UserComment;
         $registry->set('exif', $exif);
@@ -319,7 +319,7 @@ class ImageTable extends Table implements VersionableTableInterface
     {
       // Record successfully stored
        // Store Tags
-      $com_obj     = Factory::getApplication()->bootComponent('com_joomgallery');
+      $com_obj    = Factory::getApplication()->bootComponent('com_joomgallery');
       $tags_model = $com_obj->getMVCFactory()->createModel('Tags', 'administrator');
 
       // Create tags
@@ -327,7 +327,7 @@ class ImageTable extends Table implements VersionableTableInterface
 
       if($this->tags === false)
       {
-        $this->setError('Tags Model reports '.$tags_model->getError());
+        $this->setError('Tags Model reports ' . $tags_model->getError());
         $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
         $success = false;
       }
@@ -335,7 +335,7 @@ class ImageTable extends Table implements VersionableTableInterface
       // Update tags mapping
       if(!$tags_model->updateMapping($this->tags, $this->id))
       {
-        $this->setError('Tags Model reports '.$tags_model->getError());
+        $this->setError('Tags Model reports ' . $tags_model->getError());
         $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
         $success = false;
       }
@@ -466,26 +466,26 @@ class ImageTable extends Table implements VersionableTableInterface
 
     // Pre-processing by observers
     $event = AbstractEvent::create(
-      'onTableBefore'.ucfirst($type),
-      [
+        'onTableBefore' . ucfirst($type),
+        [
         'subject' => $this,
         'pks'     => $pks,
         'state'   => $state,
         'userId'  => $userId,
-      ]
+        ]
     );
-    $this->getDispatcher()->dispatch('onTableBefore'.ucfirst($type), $event);
+    $this->getDispatcher()->dispatch('onTableBefore' . ucfirst($type), $event);
 
-    if (!\is_null($pks))
+    if(!\is_null($pks))
     {
-      if (!\is_array($pks))
+      if(!\is_array($pks))
       {
         $pks = [$pks];
       }
 
-      foreach ($pks as $key => $pk)
+      foreach($pks as $key => $pk)
       {
-        if (!\is_array($pk))
+        if(!\is_array($pk))
         {
           $pks[$key] = [$this->_tbl_key => $pk];
         }
@@ -493,13 +493,13 @@ class ImageTable extends Table implements VersionableTableInterface
     }
 
     // If there are no primary keys set check to see if the instance key is set.
-    if (empty($pks))
+    if(empty($pks))
     {
       $pk = [];
 
-      foreach ($this->_tbl_keys as $key)
+      foreach($this->_tbl_keys as $key)
       {
-        if ($this->$key)
+        if($this->$key)
         {
           $pk[$key] = $this->$key;
         }
@@ -520,22 +520,22 @@ class ImageTable extends Table implements VersionableTableInterface
     {
       case 'feature':
         $stateField = 'featured';
-        break;
+          break;
 
       case 'approve':
         $stateField = 'approved';
-        break;
+          break;
 
       case 'publish':
       default:
         $stateField = 'published';
-        break;
+          break;
     }
     $checkedOutField = $this->getColumnAlias('checked_out');
 
     $db = $this->getDatabase();
 
-    foreach ($pks as $pk)
+    foreach($pks as $pk)
     {
       // Update the publishing state for rows with the given primary keys.
       $query = $db->getQuery(true)
@@ -543,21 +543,21 @@ class ImageTable extends Table implements VersionableTableInterface
         ->set($db->quoteName($stateField) . ' = ' . (int) $state);
 
       // If publishing, set published date/time if not previously set
-      if ($state && $this->hasField('publish_up') && (int) $this->publish_up == 0)
+      if($state && $this->hasField('publish_up') && (int) $this->publish_up == 0)
       {
         $nowDate = $db->quote(Factory::getDate()->toSql());
         $query->set($db->quoteName($this->getColumnAlias('publish_up')) . ' = ' . $nowDate);
       }
 
       // Determine if there is checkin support for the table.
-      if ($this->hasField('checked_out') || $this->hasField('checked_out_time'))
+      if($this->hasField('checked_out') || $this->hasField('checked_out_time'))
       {
         $query->where(
-          '('
+            '('
             . $db->quoteName($checkedOutField) . ' = 0'
             . ' OR ' . $db->quoteName($checkedOutField) . ' = ' . (int) $userId
             . ' OR ' . $db->quoteName($checkedOutField) . ' IS NULL'
-          . ')'
+            . ')'
         );
         $checkin = true;
       }
@@ -584,7 +584,7 @@ class ImageTable extends Table implements VersionableTableInterface
       }
 
       // If checkin is supported and all rows were adjusted, check them in.
-      if ($checkin && (\count($pks) == $db->getAffectedRows()))
+      if($checkin && (\count($pks) == $db->getAffectedRows()))
       {
         $this->checkIn($pk);
       }
@@ -592,15 +592,15 @@ class ImageTable extends Table implements VersionableTableInterface
       // If the Table instance value is in the list of primary keys that were set, set the instance.
       $ours = true;
 
-      foreach ($this->_tbl_keys as $key)
+      foreach($this->_tbl_keys as $key)
       {
-        if ($this->$key != $pk[$key])
+        if($this->$key != $pk[$key])
         {
           $ours = false;
         }
       }
 
-      if ($ours)
+      if($ours)
       {
         $this->$stateField = $state;
       }
@@ -610,15 +610,15 @@ class ImageTable extends Table implements VersionableTableInterface
 
     // Pre-processing by observers
     $event = AbstractEvent::create(
-      'onTableAfter'.ucfirst($type),
-      [
+        'onTableAfter' . ucfirst($type),
+        [
         'subject' => $this,
         'pks'     => $pks,
         'state'   => $state,
         'userId'  => $userId,
-      ]
+        ]
     );
-    $this->getDispatcher()->dispatch('onTableAfter'.ucfirst($type), $event);
+    $this->getDispatcher()->dispatch('onTableAfter' . ucfirst($type), $event);
 
     return true;
   }

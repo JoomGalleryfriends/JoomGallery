@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Field\TextField;
-use \Joomla\CMS\Language\Text;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\TextField;
+use Joomla\CMS\Language\Text;
 
 /**
- * Text field with useglobal option based on config service 
- * 
+ * Text field with useglobal option based on config service
+ *
  * @since  4.0.0
  */
 class JgtextField extends TextField

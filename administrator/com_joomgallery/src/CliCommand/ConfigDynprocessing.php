@@ -122,9 +122,8 @@ class ConfigDynprocessing extends AbstractCommand
     $jsonParams = $this->getParamsAsJsonFromDB($configId);
 
     // If no params returned  show a warning and set the exit code to 1.
-    if (empty($jsonParams))
+    if(empty($jsonParams))
     {
-
       $this->ioStyle->error("The config id '" . $configId . "' is invalid or parameters are empty !");
 
       return Command::FAILURE;
@@ -177,17 +176,16 @@ class ConfigDynprocessing extends AbstractCommand
   {
     $items = [];
 
-    if (empty($max_len))
+    if(empty($max_len))
     {
       $max_len = 70;
     }
 
-    foreach ($configAssoc as $key => $value)
+    foreach($configAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }
 
     return $items;
   }
-
 }

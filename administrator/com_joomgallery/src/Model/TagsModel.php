@@ -14,9 +14,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\Database\ParameterType;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Methods supporting a list of Tags records.
@@ -83,13 +83,13 @@ class TagsModel extends JoomListModel
     $forcedLanguage = $app->input->get('forcedLanguage', '', 'cmd');
 
     // Adjust the context to support modal layouts.
-    if ($layout = $app->input->get('layout'))
+    if($layout = $app->input->get('layout'))
     {
       $this->context .= '.' . $layout;
     }
 
     // Adjust the context to support forced languages.
-    if ($forcedLanguage)
+    if($forcedLanguage)
     {
       $this->context .= '.' . $forcedLanguage;
     }
@@ -108,7 +108,7 @@ class TagsModel extends JoomListModel
     $this->setState('filter.access', $access);
 
     // Force a language
-    if (!empty($forcedLanguage))
+    if(!empty($forcedLanguage))
     {
       $this->setState('filter.language', $forcedLanguage);
       $this->setState('filter.forcedLanguage', $forcedLanguage);
@@ -194,7 +194,7 @@ class TagsModel extends JoomListModel
         $query->where($db->quoteName('a.access') . ' = :access')
               ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
-      elseif (\is_array($filter_access))
+      elseif(\is_array($filter_access))
       {
         $filter_access = ArrayHelper::toInteger($filter_access);
         $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -216,7 +216,7 @@ class TagsModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -287,7 +287,7 @@ class TagsModel extends JoomListModel
         $query->where($db->quoteName('a.access') . ' = :access')
               ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
-      elseif (\is_array($filter_access))
+      elseif(\is_array($filter_access))
       {
         $filter_access = ArrayHelper::toInteger($filter_access);
         $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -309,7 +309,7 @@ class TagsModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -366,10 +366,12 @@ class TagsModel extends JoomListModel
   {
     $db    = $this->getDatabase();
     $query = $db->getQuery(true)
-            ->select([
-              $db->quoteName('a.id', 'value'),
-              $db->quoteName('a.title', 'text'),
-            ])
+            ->select(
+                [
+                $db->quoteName('a.id', 'value'),
+                $db->quoteName('a.title', 'text'),
+                ]
+            )
             ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
 
     // Filter language
@@ -383,8 +385,8 @@ class TagsModel extends JoomListModel
     {
         $search = '%' . trim($filters['like']) . '%';
         $query->where(
-                        '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2)'
-                      )
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2)'
+        )
               ->bind([':search1', ':search2'], $search);
     }
 
@@ -410,13 +412,15 @@ class TagsModel extends JoomListModel
         $query->whereIn($db->quoteName('a.access'), $groups);
     }
 
-    $query->group([
-      $db->quoteName('a.id'),
-      $db->quoteName('a.title'),
-      $db->quoteName('a.ordering'),
-      $db->quoteName('a.published'),
-      $db->quoteName('a.access'),
-    ])
+    $query->group(
+        [
+        $db->quoteName('a.id'),
+        $db->quoteName('a.title'),
+        $db->quoteName('a.ordering'),
+        $db->quoteName('a.published'),
+        $db->quoteName('a.access'),
+        ]
+    )
           ->order($db->quoteName('a.ordering') . ' ASC');
 
     // Get the options.
@@ -571,7 +575,7 @@ class TagsModel extends JoomListModel
    */
   public function storeTagsList($tags)
   {
-    $com_obj     = Factory::getApplication()->bootComponent('com_joomgallery');
+    $com_obj   = Factory::getApplication()->bootComponent('com_joomgallery');
     $tag_model = $com_obj->getMVCFactory()->createModel('Tag', 'administrator');
 
     foreach($tags as $key => $tag)
@@ -613,7 +617,6 @@ class TagsModel extends JoomListModel
 
           // Update tags list entry on success
           $tags[$key] = \strval($tag_model->getItem($tag_title)->id);
-
       }
     }
 
@@ -634,7 +637,7 @@ class TagsModel extends JoomListModel
   {
     $new_tags = ArrayHelper::toInteger($new_tags);
 
-    $current_tags   = $this->idArray($this->getMappedItems($img_id));
+    $current_tags = $this->idArray($this->getMappedItems($img_id));
     $current_tags = ArrayHelper::toInteger($current_tags);
 
     $com_obj   = Factory::getApplication()->bootComponent('com_joomgallery');

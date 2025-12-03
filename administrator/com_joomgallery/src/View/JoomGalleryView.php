@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Menu\MenuItem;
-use \Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\Uri\Uri;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Menu\MenuItem;
+use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\Uri\Uri;
 
 /**
  * Parent HTML View Class for JoomGallery
@@ -98,7 +98,8 @@ class JoomGalleryView extends BaseHtmlView
         stripos($this->component->version, 'alpha') ||
         stripos($this->component->version, 'beta') ||
         stripos($this->component->version, 'rc')
-     ) {
+     )
+    {
       // We are dealing with a development version (alpha, beta, rc)
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION'), 'warning');
     }
@@ -180,7 +181,8 @@ class JoomGalleryView extends BaseHtmlView
 
     if( $menu_link->getVar('option') == _JOOM_OPTION &&
         $menu_link->getVar('view') == $this->getName()
-      ) {
+      )
+    {
       if($menu_link->getVar('id', 0) && property_exists($this->item, 'id'))
       {
         return $menu_link->getVar('id', 0) == $this->item->id;

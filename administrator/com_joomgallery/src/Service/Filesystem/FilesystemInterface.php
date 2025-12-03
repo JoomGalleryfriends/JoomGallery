@@ -65,9 +65,9 @@ interface FilesystemInterface
    * Copies an index.html file into a specified folder
    *
    * @param   string   $path    The path where the index.html should be created
-   * 
+   *
    * @return  string
-   * 
+   *
    * @since   4.0.0
    * @throws  \Exception
    */

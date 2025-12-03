@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Log\Log;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 
 /**
  * Trait to implement messaging tools
@@ -70,7 +70,7 @@ trait MessageTrait
    * Warnings and messages storage
    *
    * @var array
-   * 
+   *
    * @since  4.0.0
    */
   protected $warnings = [];
@@ -79,7 +79,7 @@ trait MessageTrait
    * Errors storage
    *
    * @var array
-   * 
+   *
    * @since  4.0.0
    */
   protected $errors = [];
@@ -88,7 +88,7 @@ trait MessageTrait
    * State if logger is created
    *
    * @var bool
-   * 
+   *
    * @since  4.0.0
    */
   protected $log = false;
@@ -97,14 +97,14 @@ trait MessageTrait
    * Name of the logger to be used
    *
    * @var string
-   * 
+   *
    * @since  4.0.0
    */
   protected $logName = null;
 
   /**
    * Adds the storages to the session
-   * 
+   *
    * @return  void
    *
    * @since   4.0.0
@@ -113,9 +113,9 @@ trait MessageTrait
   {
     $app = Factory::getApplication();
 
-    $app->setUserState($this->msgUserStateKey.'.debug', $this->debug);
-    $app->setUserState($this->msgUserStateKey.'.warnings', $this->warnings);
-    $app->setUserState($this->msgUserStateKey.'.errors', $this->errors);
+    $app->setUserState($this->msgUserStateKey . '.debug', $this->debug);
+    $app->setUserState($this->msgUserStateKey . '.warnings', $this->warnings);
+    $app->setUserState($this->msgUserStateKey . '.errors', $this->errors);
   }
 
   /**
@@ -129,14 +129,14 @@ trait MessageTrait
   {
     $app = Factory::getApplication();
 
-    $this->debug    = $app->getUserState($this->msgUserStateKey.'.debug', []);
-    $this->warnings = $app->getUserState($this->msgUserStateKey.'.warnings', []);
-    $this->errors   = $app->getUserState($this->msgUserStateKey.'.errors', []);
+    $this->debug    = $app->getUserState($this->msgUserStateKey . '.debug', []);
+    $this->warnings = $app->getUserState($this->msgUserStateKey . '.warnings', []);
+    $this->errors   = $app->getUserState($this->msgUserStateKey . '.errors', []);
   }
 
   /**
    * Add a JoomGallery logger to the JLog class
-   * 
+   *
    * @param   string   Name of the specific logger
    *
    * @return  void
@@ -153,7 +153,7 @@ trait MessageTrait
       }
       else
       {
-        Log::addLogger(['text_file' => 'com_joomgallery.'.$name.'.log.php'], Log::ALL, ['com_joomgallery.'.$name]);
+        Log::addLogger(['text_file' => 'com_joomgallery.' . $name . '.log.php'], Log::ALL, ['com_joomgallery.' . $name]);
       }
     }
 
@@ -162,7 +162,7 @@ trait MessageTrait
 
   /**
    * Set a default logger to be used from now on
-   * 
+   *
    * @param   string   $name   Name of the logger. Empty to use the default JoomGallery logger
    *
    * @return  void
@@ -177,7 +177,7 @@ trait MessageTrait
 
   /**
    * Log a message
-   * 
+   *
    * @param   string   $txt       The message for a new log entry.
    * @param   mixed    $priority  Message priority.
    *
@@ -207,13 +207,13 @@ trait MessageTrait
         $name = $this->logName;
       }
 
-      Log::add($txt, $priority, 'com_joomgallery.'.$name);
+      Log::add($txt, $priority, 'com_joomgallery.' . $name);
     }
   }
 
   /**
    * Log a message
-   * 
+   *
    * @param   string   $txt       The message for a new log entry.
    * @param   mixed    $priority  Message priority.
    *
@@ -355,7 +355,7 @@ trait MessageTrait
 
   /**
    * Method to get the debugoutput
-   * 
+   *
    * @param   bool   $implode   True, if youi want to implode the array (optional)
    *
    * @return  string|array  Debugoutput
@@ -433,7 +433,7 @@ trait MessageTrait
 
   /**
    * Clear the debug storage
-   * 
+   *
    * @param   bool  $session   True if the session storage should be cleared too (optional)
    *
    * @return  void
@@ -447,7 +447,7 @@ trait MessageTrait
 
   /**
    * Clear the warning storage
-   * 
+   *
    * @param   bool  $session   True if the session storage should be cleared too (optional)
    *
    * @return  void
@@ -461,7 +461,7 @@ trait MessageTrait
 
   /**
    * Clear the error storage
-   * 
+   *
    * @param   bool  $session   True if the session storage should be cleared too (optional)
    *
    * @return  void
@@ -497,12 +497,12 @@ trait MessageTrait
     if(!$new_line && !empty($storage))
     {
       $last_line = array_pop($storage);
-      $txt       = $last_line.$txt;
+      $txt       = $last_line . $txt;
     }
 
     if($margin_top && $new_line && !empty($storage))
     {
-      $txt = '<br />'.$txt;
+      $txt = '<br />' . $txt;
     }
 
     array_push($storage, $txt);
@@ -528,7 +528,6 @@ trait MessageTrait
 
 
       return $storage;
-
   }
 
   /**
@@ -550,15 +549,15 @@ trait MessageTrait
     {
       case 'debug':
         $storage_title .= 'DEBUG_';
-        break;
+          break;
 
       case 'error':
       case 'errors':
         $storage_title .= 'ERROR_';
-        break;
+          break;
 
       default:
-        break;
+          break;
     }
     $storage_title .= 'INFORMATION';
 
@@ -576,7 +575,7 @@ trait MessageTrait
 
     if($title)
     {
-      $output .= '<strong>'.Text::_($storage_title).':</strong><br />';
+      $output .= '<strong>' . Text::_($storage_title) . ':</strong><br />';
       $output .= '---------------------------------<br />';
     }
     $output .= implode('<br />', $storage);
@@ -626,7 +625,7 @@ trait MessageTrait
    *
    * @return  array    The selected storage array
    *
-   * @since   4.0.0 
+   * @since   4.0.0
    * @throws  Exception
    */
   protected function &selectMsgStorage($selection)
@@ -634,21 +633,21 @@ trait MessageTrait
     switch($selection)
     {
       case 'debug':
-        return $this->debug;
+          return $this->debug;
         break;
 
       case 'warnings':
       case 'warning':
-        return $this->warnings;
+          return $this->warnings;
         break;
 
       case 'error':
       case 'errors':
-        return $this->errors;
+          return $this->errors;
         break;
 
       default:
-        throw new \Exception('Selected storage does not exist.');
+          throw new \Exception('Selected storage does not exist.');
 
         return false;
     }
@@ -661,7 +660,7 @@ trait MessageTrait
    *
    * @return  string   The selected session path
    *
-   * @since   4.0.0 
+   * @since   4.0.0
    * @throws  \Exception
    */
   protected function selectMsgStoragePath($selection)
@@ -669,21 +668,21 @@ trait MessageTrait
     switch($selection)
     {
       case 'debug':
-        return $this->msgUserStateKey.'.debug';
+          return $this->msgUserStateKey . '.debug';
         break;
 
       case 'warnings':
       case 'warning':
-        return $this->msgUserStateKey.'.warnings';
+          return $this->msgUserStateKey . '.warnings';
         break;
 
       case 'error':
       case 'errors':
-        return $this->msgUserStateKey.'.errors';
+          return $this->msgUserStateKey . '.errors';
         break;
 
       default:
-        throw new \Exception('Selected storage does not exist.');
+          throw new \Exception('Selected storage does not exist.');
 
         return false;
     }
@@ -697,7 +696,7 @@ trait MessageTrait
    *
    * @return  bool  True on success, false otherwise
    *
-   * @since   4.0.0 
+   * @since   4.0.0
    */
   public function isRawTask($context)
   {
@@ -719,6 +718,5 @@ trait MessageTrait
 
 
       return false;
-
   }
 }

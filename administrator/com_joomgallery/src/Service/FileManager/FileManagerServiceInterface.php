@@ -31,7 +31,7 @@ interface FileManagerServiceInterface
       *
       * @since  4.0.0
       */
-    public function createFileManager($catid, $selection = False);
+    public function createFileManager($catid, $selection = false);
 
     /**
       * Returns the file manager helper class.

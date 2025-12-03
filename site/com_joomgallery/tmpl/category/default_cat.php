@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-******************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -64,7 +65,7 @@ $wa->useStyle('com_joomgallery.jg-icon-font');
 
 <?php // Password protected category form ?>
 <?php if($this->item->pw_protected): ?>
-  <form action="<?php echo Route::_('index.php?task=category.unlock&catid='.$this->item->id);?>" method="post" class="form-inline" autocomplete="off">
+  <form action="<?php echo Route::_('index.php?task=category.unlock&catid=' . $this->item->id);?>" method="post" class="form-inline" autocomplete="off">
     <h3><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD_PROTECTED'); ?></h3>
     <label for="jg_password"><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD'); ?></label>
     <input type="password" name="password" id="jg_password" />
@@ -105,7 +106,7 @@ if(!empty($use_pagination))
 }
 
 // Add and initialize the grid script
-$iniJS = 'window.joomGrid["1-'.$this->item->id.'"] = {';
+$iniJS  = 'window.joomGrid["1-' . $this->item->id . '"] = {';
 $iniJS .= '  itemid: "1-' . $this->item->id . '",';
 $iniJS .= '  pagination: ' . $use_pagination . ',';
 $iniJS .= '  layout: "' . $category_class . '",';
@@ -113,10 +114,10 @@ $iniJS .= '  num_columns: ' . $num_columns . ',';
 $iniJS .= '  numb_images: ' . $numb_images . ',';
 $iniJS .= '  reloaded_images: ' . $reloaded_images . ',';
 $iniJS .= '  lightbox: ' . ($lightbox ? 'true' : 'false') . ',';
-$iniJS .= '  lightbox_params: {container: "lightgallery-1-'.$this->item->id.'", selector: ".lightgallery-item"},';
+$iniJS .= '  lightbox_params: {container: "lightgallery-1-' . $this->item->id . '", selector: ".lightgallery-item"},';
 $iniJS .= '  thumbnails: ' . ($lightbox_thumbnails ? 'true' : 'false') . ',';
 $iniJS .= '  zoom: ' . ($lightbox_zoom ? 'true' : 'false') . ',';
-$iniJS .= '  justified: {height: '.$justified_height.', gap: '.$justified_gap.'}';
+$iniJS .= '  justified: {height: ' . $justified_height . ', gap: ' . $justified_gap . '}';
 $iniJS .= '};';
 
 $wa->useScript('com_joomgallery.joomgrid');
@@ -148,7 +149,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 
 <?php // Back to parent category ?>
 <?php if($this->item->parent_id > 0) : ?>
-  <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.(int) $this->item->parent_id); ?>">
+  <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
     <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?></span>
   </a>
 <?php endif; ?>
@@ -164,7 +165,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php if($canEdit || $canAdd || $canDelete): ?>
   <div class="mb-3">
     <?php if($canEdit): ?>
-      <a class="btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.edit&id='.$this->item->id.'&return='.$returnURL); ?>">
+      <a class="btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.edit&id=' . $this->item->id . '&return=' . $returnURL); ?>">
         <i class="jg-icon-edit"></i><span><?php echo Text::_('JACTION_EDIT'); ?></span>
       </a>
     <?php endif; ?>
@@ -179,18 +180,19 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
       <a class="btn btn-danger" rel="noopener noreferrer" href="#deleteModal" role="button" data-bs-toggle="modal">
         <i class="jg-icon-delete"></i><span><?php echo Text::_('JACTION_DELETE'); ?></span>
       </a>
-      <?php echo HTMLHelper::_( 'bootstrap.renderModal',
-                                'deleteModal',
-                                [
+    <?php echo HTMLHelper::_(
+        'bootstrap.renderModal',
+        'deleteModal',
+        [
                                   'title'      => Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION'),
                                   'height'     => '50%',
                                   'width'      => '20%',
                                   'modalWidth' => '50',
                                   'bodyHeight' => '100',
-                                  'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=category.remove&id='. $this->item->id.'&return='.$returnURL.'&'.Session::getFormToken().'=1', false, 2) .'" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION') .'</a>',
+                                  'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=category.remove&id=' . $this->item->id . '&return=' . $returnURL . '&' . Session::getFormToken() . '=1', false, 2) . '" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION') . '</a>',
                                 ],
-                                Text::_('COM_JOOMGALLERY_COMMON_ALERT_SURE_DELETE_SELECTED_ITEM')
-                              );
+        Text::_('COM_JOOMGALLERY_COMMON_ALERT_SURE_DELETE_SELECTED_ITEM')
+    );
       ?>
     <?php endif; ?>
   </div>
@@ -213,7 +215,8 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php endif; ?>
 
   <?php // Display data array for layout
-    $subcatData = ['layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns, 'image_type' => $subcategory_image_type,
+    $subcatData = [
+      'layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns, 'image_type' => $subcategory_image_type,
       'caption_align'       => $subcategories_caption_align, 'description' => $subcategories_description, 'image_class' => $subcategory_image_class, 'random_image' => (bool) $subcategories_random_image,
     ];
   ?>
@@ -231,13 +234,16 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <h3><?php echo Text::_('COM_JOOMGALLERY_IMAGES') ?></h3>
   <?php if(!empty($this->item->images->filterForm) && $use_pagination == '0') : ?>
     <?php // Show image filters ?>
-    <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.$this->item->id.'&Itemid='.$this->menu->id); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . $this->item->id . '&Itemid=' . $this->menu->id); ?>" method="post" name="adminForm" id="adminForm">
       <?php
         {
-          echo LayoutHelper::render('joomla.searchtools.default', [
+        echo LayoutHelper::render(
+            'joomla.searchtools.default',
+            [
             'view'    => $this->item->images,
             'options' => ['showSelector' => false, 'filterButton' => false, 'showNoResults' => false, 'showSearch' => false, 'showList' => false, 'barClass' => 'flex-end'],
-          ]);
+            ]
+        );
         }
       ?>
       <input type="hidden" name="contenttype" value="image"/>
@@ -249,7 +255,8 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php endif; ?>
 
   <?php // Display data array for layout
-    $imgsData = ['id' => '1-'.$this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
+    $imgsData = [
+      'id' => '1-' . $this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
       'caption_align' => $caption_align, 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
       'image_title'   => (bool) $show_title, 'title_link' => $title_link, 'image_desc' => (bool) $show_description, 'image_desc_label' => (bool) $show_description_label,
       'image_date'    => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags,

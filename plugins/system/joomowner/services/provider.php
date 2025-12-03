@@ -24,17 +24,17 @@ return new class implements ServiceProviderInterface {
   public function register(Container $container)
   {
     $container->set(
-      PluginInterface::class,
-      function (Container $container) {
-        $plugin     = PluginHelper::getPlugin('system', 'joomowner');
-        $dispatcher = $container->get(DispatcherInterface::class);
+        PluginInterface::class,
+        function (Container $container) {
+          $plugin     = PluginHelper::getPlugin('system', 'joomowner');
+          $dispatcher = $container->get(DispatcherInterface::class);
 
-        /** @var \Joomla\CMS\Plugin\CMSPlugin $plugin */
-        $plugin = new JoomgalleryOwner($dispatcher, (array) $plugin);
-        $plugin->setApplication(Factory::getApplication());
+          /** @var \Joomla\CMS\Plugin\CMSPlugin $plugin */
+          $plugin = new JoomgalleryOwner($dispatcher, (array) $plugin);
+          $plugin->setApplication(Factory::getApplication());
 
-        return $plugin;
-      }
+          return $plugin;
+        }
     );
   }
 };

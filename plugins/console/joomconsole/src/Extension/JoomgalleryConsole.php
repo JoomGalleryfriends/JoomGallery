@@ -115,11 +115,11 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
   public function registerCLICommands(ApplicationEvent $event): void
   {
     // all commands are class definitions
-    foreach (self::$commands as $commandFQN)
+    foreach(self::$commands as $commandFQN)
     {
       try
       {
-        if (!class_exists($commandFQN))
+        if(!class_exists($commandFQN))
         {
           continue;
         }
@@ -127,7 +127,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
         // create command (class)
         $command = new $commandFQN();
 
-        if (method_exists($command, 'setMVCFactory'))
+        if(method_exists($command, 'setMVCFactory'))
         {
           $command->setMVCFactory($this->getMVCFactory());
         }
@@ -142,6 +142,4 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
       }
     }
   }
-
 }
-

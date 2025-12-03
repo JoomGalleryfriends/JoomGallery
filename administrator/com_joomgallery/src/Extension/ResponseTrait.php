@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Trait implementing tools to create responses
@@ -26,7 +26,7 @@ trait ResponseTrait
 {
   /**
    * Joomla! CMS Application class
-   * 
+   *
    * @var Joomla\CMS\Application\CMSApplication
    */
   protected $app;
@@ -111,7 +111,7 @@ trait ResponseTrait
   ];
 
   /**
-   * Get the PSR-7 Response Object. 
+   * Get the PSR-7 Response Object.
    *
    * @return  ResponseInterface The response object
    */
@@ -124,7 +124,7 @@ trait ResponseTrait
   {
     $this->app->setHeader('Status', (string) $code);
 
-    require JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/tusspecs.php';
+    require JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/includes/tusspecs.php';
 
     // Set content based on TUS specifications (https://tus.io/protocols/resumable-upload.html)
     if(isset($tus_specs_array['Codes'][$code]))
@@ -186,4 +186,3 @@ trait ResponseTrait
     return $this->app->setHeader($name, $value, $replace);
   }
 }
-

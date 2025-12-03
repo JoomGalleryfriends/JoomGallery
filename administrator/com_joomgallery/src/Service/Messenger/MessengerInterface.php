@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessageInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessageInterface;
 
 /**
  * Interface for the messenger class
@@ -30,9 +30,9 @@ interface MessengerInterface
    * Method to send a message
    *
    * @param   mixed   $recipients   List of users or email addresses receiving the message
-   * 
+   *
    * @return  bool    True on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function send($recipients): bool;
@@ -41,9 +41,9 @@ interface MessengerInterface
    * Method to select the template to be used for the message
    *
    * @param   string   $id   The id of the template to be used
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function selectTemplate(string $id);
@@ -52,9 +52,9 @@ interface MessengerInterface
    * Method to select the language of the message
    *
    * @param   string   $tag   The id of the template to be used
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function selectLanguage(string $tag);
@@ -63,9 +63,9 @@ interface MessengerInterface
    * Method to add one ore more variables to be used in the template
    *
    * @param   mixed   $data   An array of key value pairs with variables to be used in the template
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function addTemplateData($data);

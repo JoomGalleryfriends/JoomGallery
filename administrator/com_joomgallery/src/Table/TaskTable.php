@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Database\DatabaseDriver;
-use \Joomla\Registry\Registry;
-use \Joomla\Utilities\ArrayHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Task table
@@ -60,7 +60,7 @@ class TaskTable extends Table
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
     $this->component_exists = $component_exists;
-    $this->typeAlias        = _JOOM_OPTION.'.task';
+    $this->typeAlias        = _JOOM_OPTION . '.task';
 
     parent::__construct(_JOOM_TABLE_TASKS, 'id', $db);
 
@@ -68,7 +68,7 @@ class TaskTable extends Table
     $this->queue      = [];
     $this->successful = new Registry();
     $this->failed     = new Registry();
-    $this->counter  = new Registry();
+    $this->counter    = new Registry();
   }
 
   /**
@@ -106,7 +106,7 @@ class TaskTable extends Table
     // Support for successful field
     if(isset($this->successful) && !\is_string($this->successful))
     {
-      $registry      = new Registry($this->successful);
+      $registry         = new Registry($this->successful);
       $this->successful = (string) $registry;
     }
 
@@ -168,7 +168,7 @@ class TaskTable extends Table
     // Support for successful field
     if(isset($array['successful']) && \is_array($array['successful']))
     {
-      $registry = new Registry;
+      $registry = new Registry();
       $registry->loadArray($array['successful']);
       $array['successful'] = (string) $registry;
     }
@@ -176,7 +176,7 @@ class TaskTable extends Table
     // Support for failed field
     if(isset($array['failed']) && \is_array($array['failed']))
     {
-      $registry = new Registry;
+      $registry = new Registry();
       $registry->loadArray($array['failed']);
       $array['failed'] = (string) $registry;
     }
@@ -184,7 +184,7 @@ class TaskTable extends Table
     // Support for counter field
     if(isset($array['counter']) && \is_array($array['counter']))
     {
-      $registry = new Registry;
+      $registry = new Registry();
       $registry->loadArray($array['counter']);
       $array['counter'] = (string) $registry;
     }
@@ -192,7 +192,7 @@ class TaskTable extends Table
     // Support for params field
     if(isset($array['params']) && \is_array($array['params']))
     {
-      $registry = new Registry;
+      $registry = new Registry();
       $registry->loadArray($array['params']);
       $array['params'] = (string) $registry;
     }
@@ -356,7 +356,7 @@ class TaskTable extends Table
 
   /**
    * Method to get a task object by id
-   * 
+   *
    * @param   int  $id  Task type
    *
    * @return  object    The task object.
@@ -374,7 +374,7 @@ class TaskTable extends Table
     // Select all records from the scheduler tasks table where type is matching.
     $query->select('*');
     $query->from($db->quoteName('#__scheduler_tasks'));
-    $query->where(($db->quoteName('id')) .'='. $db->quote($id));
+    $query->where(($db->quoteName('id')) . '=' . $db->quote($id));
 
     // Reset the query using our newly populated query object.
     $db->setQuery($query);

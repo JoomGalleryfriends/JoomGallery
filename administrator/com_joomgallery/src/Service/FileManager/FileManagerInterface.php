@@ -38,21 +38,21 @@ interface FileManagerInterface
    * @param   bool                 $local_source  True if the source is a file located in a local folder (default: True)
    * @param   array                $skip          List of imagetypes to skip creation (default: [])
    * @param   string               $logfile       Name of the logfile to use
-   * 
+   *
    * @return  bool                 True on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
-  public function createImages($source, $filename, $cat = 2, $processing = True, $local_source = True, $skip = [], $logfile = 'jerror'): bool;
+  public function createImages($source, $filename, $cat = 2, $processing = true, $local_source = true, $skip = [], $logfile = 'jerror'): bool;
 
   /**
    * Deletion of image types
    *
    * @param   object|int|string    $img       Image object, image ID or image alias
    * @param   string               $logfile   Name of the logfile to use
-   * 
+   *
    * @return  bool                 True on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function deleteImages($img, $logfile = 'jerror'): bool;
@@ -62,9 +62,9 @@ interface FileManagerInterface
    *
    * @param   object|int|string    $img       Image object, image ID or image alias
    * @param   string               $logfile   Name of the logfile to use
-   * 
+   *
    * @return  array                List of filetype info
-   * 
+   *
    * @since   4.0.0
    */
   public function checkImages($img, $logfile = 'jerror'): array;
@@ -117,9 +117,9 @@ interface FileManagerInterface
    * @param   string              $foldername   Name of the folder to be created
    * @param   object|int|string   $parent       Object, ID or alias of the parent category (default: 1)
    * @param   string              $logfile      Name of the logfile to use
-   * 
+   *
    * @return  bool                True on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function createCategory($foldername, $parent = 1, $logfile = 'jerror'): bool;
@@ -130,9 +130,9 @@ interface FileManagerInterface
    * @param   object|int|string   $cat          Object, ID or alias of the category to be deleted
    * @param   bool                $del_images   True, if you want to delete even if there are still images in it (default: false)
    * @param   string              $logfile      Name of the logfile to use
-   * 
+   *
    * @return  bool                True on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function deleteCategory($cat, $del_images = false, $logfile = 'jerror'): bool;
@@ -142,9 +142,9 @@ interface FileManagerInterface
    *
    * @param   object|int|string   $cat       Object, ID or alias of the category to be checked
    * @param   string              $logfile   Name of the logfile to use
-   * 
+   *
    * @return  array               List of folder info
-   * 
+   *
    * @since   4.0.0
    */
   public function checkCategory($cat, $logfile = 'jerror'): array;
@@ -200,9 +200,9 @@ interface FileManagerInterface
    * @param   string|bool               $filename  The filename (default: false)
    * @param   boolean                   $root      True to add the system root to the path
    * @param   string                    $logfile   Name of the logfile to use
-   * 
+   *
    * @return  mixed   Path to the image on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function getImgPath($img, $type, $catid = false, $filename = false, $root = false, $logfile = 'jerror');
@@ -217,10 +217,10 @@ interface FileManagerInterface
    * @param   boolean                  $root            True to add the system root to the path
    * @param   boolean                  $compatibility   Take into account the compatibility mode when creating the path
    * @param   string                   $logfile         Name of the logfile to use
-   * 
-   * 
+   *
+   *
    * @return  mixed   Path to the category on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function getCatPath($cat, $type = false, $parent = false, $alias = false, $root = false, $compatibility = true, $logfile = 'jerror');

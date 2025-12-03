@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Form;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
-use \Joomla\CMS\Event\AbstractEvent;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Form\FormField;
-use \Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use Joomla\CMS\Event\AbstractEvent;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormField;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Form Class for the Joomla Platform.
@@ -63,7 +63,7 @@ class ConfigForm extends Form
     }
 
     // Build the result array from the found field elements.
-    foreach ($elements as $element)
+    foreach($elements as $element)
     {
       // Get the field groups for the element.
       $attrs  = $element->xpath('ancestor::fields[@name]/@name');
@@ -71,7 +71,7 @@ class ConfigForm extends Form
       $group  = implode('.', $groups);
 
       // If the field is successfully loaded add it to the result array.
-      if ($field = $this->loadField($element, $group))
+      if($field = $this->loadField($element, $group))
       {
         $fields[$field->id] = $field;
       }
@@ -101,7 +101,7 @@ class ConfigForm extends Form
     }
 
     // Build the result array from the found field elements.
-    foreach ($elements as $element)
+    foreach($elements as $element)
     {
       // Get the field groups for the element.
       $attrs  = $element->xpath('ancestor::fields[@name]/@name');
@@ -109,7 +109,7 @@ class ConfigForm extends Form
       $group  = implode('.', $groups);
 
       // If the field is successfully loaded add it to the result array.
-      if ($field = $this->loadField($element, $group))
+      if($field = $this->loadField($element, $group))
       {
         $fields[$field->id] = $field;
       }
@@ -121,7 +121,7 @@ class ConfigForm extends Form
   /**
    * Method to add field options provided by a script.
    * Script name provided in the field attribute 'script'.
-   * 
+   *
    * @param   FormField|string  $name   The name of the field for which to set the value.
    * @param   string            $group  The optional dot-separated form group path on which to find the field.
    *
@@ -147,14 +147,14 @@ class ConfigForm extends Form
 
     // Load options
       // Option 1: Plugin listening to onJoomGetOptions
-      $event = AbstractEvent::create(
-                    'onJoomGetOptions',
-                    [
+    $event = AbstractEvent::create(
+        'onJoomGetOptions',
+        [
                       'subject' => $this,
                       'context' => 'com_joomgallery.config.form',
                       'script'  => $script,
                     ]
-      );
+    );
       Factory::getApplication()->getDispatcher()->dispatch($event->getName(), $event);
       $options = $event->getArgument('result', []);
 

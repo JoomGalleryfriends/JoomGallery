@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Application\CMSApplication;
-use \Joomla\CMS\MVC\Controller\BaseController;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\Input\Input;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\Input\Input;
 
 /**
   * Base controller for standard views

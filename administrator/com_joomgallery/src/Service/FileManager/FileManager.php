@@ -14,14 +14,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\FileManager;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerInterface;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Component\Media\Administrator\Exception\FileExistsException;
-use \Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
-use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
-use \Joomla\Filesystem\Path;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerInterface;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Media\Administrator\Exception\FileExistsException;
+use Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
+use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
+use Joomla\Filesystem\Path;
 
 /**
  * File manager Class
@@ -75,7 +75,7 @@ class FileManager implements FileManagerInterface
 
   /**
    * Constructor
-   * 
+   *
    * @param   int          $catid       Id of the category for which the filesystem is chosen
    * @param   array|bool   $selection   List of imagetypes to consider or false to consider all (default: False)
    *
@@ -83,7 +83,7 @@ class FileManager implements FileManagerInterface
    *
    * @since   4.0.0
    */
-  public function __construct($catid, $selection = False)
+  public function __construct($catid, $selection = false)
   {
     // Load application
     $this->getApp();
@@ -107,7 +107,7 @@ class FileManager implements FileManagerInterface
     $this->getImagetypes();
 
     // Apply imagetype selection
-    if($selection !== False)
+    if($selection !== false)
     {
       $this->selectImagetypes($selection);
     }
@@ -124,12 +124,12 @@ class FileManager implements FileManagerInterface
    * @param   bool                 $local_source  True if the source is a file located in a local folder (default: True)
    * @param   array                $skip          List of imagetypes to skip creation (default: [])
    * @param   string               $logfile       Name of the logfile to use
-   * 
+   *
    * @return  bool                 True on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
-  public function createImages($source, $filename, $cat = 2, $processing = True, $local_source = True, $skip = [], $logfile = 'jerror'): bool
+  public function createImages($source, $filename, $cat = 2, $processing = true, $local_source = true, $skip = [], $logfile = 'jerror'): bool
   {
     if(!$filename)
     {
@@ -170,7 +170,8 @@ class FileManager implements FileManagerInterface
           $imagetype->params->get('jg_imgtypeorinet', 0) == 0 &&
           $imagetype->params->get('jg_imgtyperesize', 0) == 0 &&
           $imagetype->params->get('jg_imgtypewatermark', 0) == 0
-        ) {
+        )
+      {
         $processing = false;
       }
 
@@ -221,7 +222,7 @@ class FileManager implements FileManagerInterface
           if(!file_exists($source))
           {
             // Add root to the path
-            $source = JPATH_ROOT.\DIRECTORY_SEPARATOR.$source;
+            $source = JPATH_ROOT . \DIRECTORY_SEPARATOR . $source;
 
             $source = Path::clean($source);
           }
@@ -274,12 +275,15 @@ class FileManager implements FileManagerInterface
         if($imagetype->params->get('jg_imgtyperesize', 0) > 0)
         {
           // Yes
-          if(!$this->component->getIMGtools()->resize($imagetype->params->get('jg_imgtyperesize', 3),
-                                              $imagetype->params->get('jg_imgtypewidth', 5000),
-                                              $imagetype->params->get('jg_imgtypeheight', 5000),
-                                              $imagetype->params->get('jg_cropposition', 2),
-                                              $imagetype->params->get('jg_imgtypesharpen', 0))
-            ) {
+        if(!$this->component->getIMGtools()->resize(
+            $imagetype->params->get('jg_imgtyperesize', 3),
+            $imagetype->params->get('jg_imgtypewidth', 5000),
+            $imagetype->params->get('jg_imgtypeheight', 5000),
+            $imagetype->params->get('jg_cropposition', 2),
+            $imagetype->params->get('jg_imgtypesharpen', 0)
+        )
+            )
+          {
             // Destroy the IMGtools service
             $this->component->delIMGtools();
 
@@ -289,19 +293,22 @@ class FileManager implements FileManagerInterface
             $error = true;
 
             continue;
-          }
+        }
         }
 
         // Need for watermarking?
         if($imagetype->params->get('jg_imgtypewatermark', 0) == 1)
         {
           // Yes
-          if(!$this->component->getIMGtools()->watermark(JPATH_ROOT.\DIRECTORY_SEPARATOR.$this->component->getConfig()->get('jg_wmfile'),
-                                                  $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
-                                                  $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
-                                                  $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
-                                                  $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80))
-            ) {
+        if(!$this->component->getIMGtools()->watermark(
+            JPATH_ROOT . \DIRECTORY_SEPARATOR . $this->component->getConfig()->get('jg_wmfile'),
+            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
+            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
+            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
+            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80)
+        )
+            )
+          {
             // Destroy the IMGtools service
             $this->component->delIMGtools();
 
@@ -311,7 +318,7 @@ class FileManager implements FileManagerInterface
             $error = true;
 
             continue;
-          }
+        }
         }
       }
       else
@@ -468,9 +475,9 @@ class FileManager implements FileManagerInterface
    *
    * @param   object|int|string    $img       Image object, image ID or image alias
    * @param   string               $logfile   Name of the logfile to use
-   * 
+   *
    * @return  bool                 True on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function deleteImages($img, $logfile = 'jerror'): bool
@@ -529,9 +536,9 @@ class FileManager implements FileManagerInterface
    *
    * @param   object|int|string    $img       Image object, image ID or image alias
    * @param   string               $logfile   Name of the logfile to use
-   * 
+   *
    * @return  array                List of filetype info
-   * 
+   *
    * @since   4.0.0
    */
   public function checkImages($img, $logfile = 'jerror'): array
@@ -552,8 +559,8 @@ class FileManager implements FileManagerInterface
       catch (FileNotFoundException $e)
       {
         // File not found
-        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING').', '.basename($file).' ('.$imagetype->typename.')');
-        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING').', '.basename($file).' ('.$imagetype->typename.')', 'error', $logfile);
+        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING') . ', ' . basename($file) . ' (' . $imagetype->typename . ')');
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING') . ', ' . basename($file) . ' (' . $imagetype->typename . ')', 'error', $logfile);
 
         return false;
       }
@@ -562,8 +569,8 @@ class FileManager implements FileManagerInterface
         if(strpos(strtolower($e->getMessage()), 'not found') !== false || strpos(strtolower($e->getMessage()), 'no such file') !== false)
         {
           // File not found
-          $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING').', '.basename($file).' ('.$imagetype->typename.')');
-          $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING').', '.basename($file).' ('.$imagetype->typename.')', 'error', $logfile);
+          $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING') . ', ' . basename($file) . ' (' . $imagetype->typename . ')');
+          $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING') . ', ' . basename($file) . ' (' . $imagetype->typename . ')', 'error', $logfile);
         }
         else
         {
@@ -668,8 +675,8 @@ class FileManager implements FileManagerInterface
       catch(\FileNotFoundException $e)
       {
         // File not found
-        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING').', '.basename($img_src).' ('.$imagetype->typename.')');
-        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING').', '.basename($img_src).' ('.$imagetype->typename.')', 'error', $logfile);
+        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING') . ', ' . basename($img_src) . ' (' . $imagetype->typename . ')');
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING') . ', ' . basename($img_src) . ' (' . $imagetype->typename . ')', 'error', $logfile);
         $error = true;
 
         continue;
@@ -677,15 +684,15 @@ class FileManager implements FileManagerInterface
       catch(\Exception $e)
       {
         // Operation failed
-        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_'.$method.'_IMAGETYPE', basename($img_src), $imagetype->typename));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_'.$method.'_IMAGETYPE', basename($img_src), $imagetype->typename), 'error', $logfile);
+        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_' . $method . '_IMAGETYPE', basename($img_src), $imagetype->typename));
+        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_' . $method . '_IMAGETYPE', basename($img_src), $imagetype->typename), 'error', $logfile);
         $error = true;
 
         continue;
       }
 
       // Move successful
-      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_'.$method.'_IMAGETYPE', basename($img_src), $imagetype->typename));
+      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_' . $method . '_IMAGETYPE', basename($img_src), $imagetype->typename));
     }
 
     if($error)
@@ -738,7 +745,7 @@ class FileManager implements FileManagerInterface
       $file_orig = $this->getImgPath($img, $imagetype->typename);
 
       // Create renamed image filename
-      $file_new = substr($file_orig, 0, strrpos($file_orig, basename($file_orig))).$filename;
+      $file_new = substr($file_orig, 0, strrpos($file_orig, basename($file_orig))) . $filename;
 
       if($file_orig == $file_new)
       {
@@ -754,8 +761,8 @@ class FileManager implements FileManagerInterface
       catch(\FileNotFoundException $e)
       {
         // File not found
-        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING').', '.basename($file_orig).' ('.$imagetype->typename.')');
-        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING').', '.basename($file_orig).' ('.$imagetype->typename.')', 'error', $logfile);
+        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING') . ', ' . basename($file_orig) . ' (' . $imagetype->typename . ')');
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING') . ', ' . basename($file_orig) . ' (' . $imagetype->typename . ')', 'error', $logfile);
         $error = true;
 
         continue;
@@ -790,9 +797,9 @@ class FileManager implements FileManagerInterface
    * @param   string              $foldername   Name of the folder to be created
    * @param   object|int|string   $parent       Object, ID or alias of the parent category (default: 1)
    * @param   string              $logfile      Name of the logfile to use
-   * 
+   *
    * @return  bool                True on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function createCategory($foldername, $parent = 1, $logfile = 'jerror'): bool
@@ -869,9 +876,9 @@ class FileManager implements FileManagerInterface
    * @param   object|int|string   $cat          Object, ID or alias of the category to be deleted
    * @param   bool                $del_images   True, if you want to delete even if there are still images in it (default: false)
    * @param   string              $logfile      Name of the logfile to use
-   * 
+   *
    * @return  bool                True on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function deleteCategory($cat, $del_images = false, $logfile = 'jerror'): bool
@@ -892,8 +899,8 @@ class FileManager implements FileManagerInterface
       catch (FileNotFoundException $e)
       {
         // Folder not found
-        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FOLDER_NOT_EXISTING').' ('.basename($path).')');
-        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FOLDER_NOT_EXISTING').' ('.basename($path).')', 'error', $logfile);
+        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FOLDER_NOT_EXISTING') . ' (' . basename($path) . ')');
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FOLDER_NOT_EXISTING') . ' (' . basename($path) . ')', 'error', $logfile);
 
         return false;
       }
@@ -934,7 +941,6 @@ class FileManager implements FileManagerInterface
           }
 
           return false;
-
       }
 
       // Delete folder
@@ -976,9 +982,9 @@ class FileManager implements FileManagerInterface
    *
    * @param   object|int|string   $cat       Object, ID or alias of the category to be checked
    * @param   string              $logfile   Name of the logfile to use
-   * 
+   *
    * @return  array               List of folder info
-   * 
+   *
    * @since   4.0.0
    */
   public function checkCategory($cat, $logfile = 'jerror'): array
@@ -999,8 +1005,8 @@ class FileManager implements FileManagerInterface
       catch (FileNotFoundException $e)
       {
         // Folder not found
-        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FOLDER_NOT_EXISTING').' ('.basename($path).')');
-        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FOLDER_NOT_EXISTING').' ('.basename($path).')', 'error', $logfile);
+        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FOLDER_NOT_EXISTING') . ' (' . basename($path) . ')');
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FOLDER_NOT_EXISTING') . ' (' . basename($path) . ')', 'error', $logfile);
 
         return false;
       }
@@ -1033,8 +1039,8 @@ class FileManager implements FileManagerInterface
     }
 
     // Create path for messages
-    $this->paths['src']  = '[ROOT]'.\DIRECTORY_SEPARATOR . $this->getCatPath($cat);
-    $this->paths['dest'] = '[ROOT]'.\DIRECTORY_SEPARATOR . $this->getCatPath($dest) . \DIRECTORY_SEPARATOR . basename($this->paths['src']);
+    $this->paths['src']  = '[ROOT]' . \DIRECTORY_SEPARATOR . $this->getCatPath($cat);
+    $this->paths['dest'] = '[ROOT]' . \DIRECTORY_SEPARATOR . $this->getCatPath($dest) . \DIRECTORY_SEPARATOR . basename($this->paths['src']);
 
     // Loop through all imagetypes
     $error = false;
@@ -1091,14 +1097,14 @@ class FileManager implements FileManagerInterface
     if($error)
     {
       // Moving failed
-      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_'.$method.'_CATEGORY', basename($src_path)));
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_'.$method.'_CATEGORY', basename($src_path)), 'error', $logfile);
+      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_' . $method . '_CATEGORY', basename($src_path)));
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_' . $method . '_CATEGORY', basename($src_path)), 'error', $logfile);
 
       return false;
     }
 
     // Move successful
-    $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_'.$method.'_CATEGORY', basename($src_path)));
+    $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_' . $method . '_CATEGORY', basename($src_path)));
 
     return true;
   }
@@ -1117,7 +1123,7 @@ class FileManager implements FileManagerInterface
   public function renameCategory($cat, $foldername, $logfile = 'jerror'): bool
   {
     // Create path for messages
-    $this->paths['src']  = '[ROOT]'.\DIRECTORY_SEPARATOR.$this->getCatPath($cat);
+    $this->paths['src']  = '[ROOT]' . \DIRECTORY_SEPARATOR . $this->getCatPath($cat);
     $this->paths['dest'] = substr($this->paths['src'], 0, strrpos($this->paths['src'], basename($this->paths['src']))) . $foldername;
 
     // Loop through all imagetypes
@@ -1201,9 +1207,9 @@ class FileManager implements FileManagerInterface
    * @param   string|bool               $filename  The filename (default: false)
    * @param   boolean                   $root      True to add the system root to the path
    * @param   string                    $logfile   Name of the logfile to use
-   * 
+   *
    * @return  mixed   Path to the image on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function getImgPath($img, $type, $catid = false, $filename = false, $root = false, $logfile = 'jerror')
@@ -1244,7 +1250,7 @@ class FileManager implements FileManagerInterface
           // add root to path if needed
           if($root)
           {
-            $path = JPATH_ROOT.\DIRECTORY_SEPARATOR.$path;
+            $path = JPATH_ROOT . \DIRECTORY_SEPARATOR . $path;
           }
 
           return $this->component->getFilesystem()->cleanPath($path);
@@ -1266,12 +1272,12 @@ class FileManager implements FileManagerInterface
     }
 
     // Create the path of the image
-    $path = $this->imagetypes[$this->imagetypes_dict[$type]]->path.\DIRECTORY_SEPARATOR.$catpath.\DIRECTORY_SEPARATOR.$filename;
+    $path = $this->imagetypes[$this->imagetypes_dict[$type]]->path . \DIRECTORY_SEPARATOR . $catpath . \DIRECTORY_SEPARATOR . $filename;
 
     // add root to path if needed
     if($root)
     {
-      $path = JPATH_ROOT.\DIRECTORY_SEPARATOR.$path;
+      $path = JPATH_ROOT . \DIRECTORY_SEPARATOR . $path;
     }
 
     return $this->component->getFilesystem()->cleanPath($path);
@@ -1287,10 +1293,10 @@ class FileManager implements FileManagerInterface
    * @param   boolean                  $root            True to add the system root to the path
    * @param   boolean                  $compatibility   Take into account the compatibility mode when creating the path
    * @param   string                   $logfile         Name of the logfile to use
-   * 
-   * 
+   *
+   *
    * @return  mixed   Path to the category on success, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function getCatPath($cat, $type = false, $parent = false, $alias = false, $root = false, $compatibility = null, $logfile = 'jerror')
@@ -1343,13 +1349,13 @@ class FileManager implements FileManagerInterface
         }
         else
         {
-          $path = $this->catReadPath($parent, $compatibility).\DIRECTORY_SEPARATOR.$alias;
+          $path = $this->catReadPath($parent, $compatibility) . \DIRECTORY_SEPARATOR . $alias;
         }
       }
       // We got a parent category path
       elseif(\is_string($parent) && $this->is_path($parent))
       {
-        $path = $parent.\DIRECTORY_SEPARATOR.$alias;
+        $path = $parent . \DIRECTORY_SEPARATOR . $alias;
       }
       // We got a parent category ID or an alias
       elseif(is_numeric($parent) || \is_string($parent))
@@ -1376,7 +1382,7 @@ class FileManager implements FileManagerInterface
         }
         else
         {
-          $path = $this->catReadPath($parent, $compatibility).\DIRECTORY_SEPARATOR.$alias;
+          $path = $this->catReadPath($parent, $compatibility) . \DIRECTORY_SEPARATOR . $alias;
         }
       }
     }
@@ -1392,13 +1398,13 @@ class FileManager implements FileManagerInterface
     // add imagetype to path if needed
     if($type && key_exists($type, $this->imagetypes_dict))
     {
-      $path = $this->imagetypes[$this->imagetypes_dict[$type]]->path.\DIRECTORY_SEPARATOR.$path;
+      $path = $this->imagetypes[$this->imagetypes_dict[$type]]->path . \DIRECTORY_SEPARATOR . $path;
     }
 
     // add root to path if needed
     if($root)
     {
-      $path = JPATH_ROOT.\DIRECTORY_SEPARATOR.$path;
+      $path = JPATH_ROOT . \DIRECTORY_SEPARATOR . $path;
     }
 
     return $this->component->getFilesystem()->cleanPath($path);
@@ -1438,11 +1444,11 @@ class FileManager implements FileManagerInterface
     // New filename
     if(\is_null($filecounter))
     {
-      $newfilename = $filename.'_'.$filedate.'_'.$randomnumber.'.'.$tag;
+      $newfilename = $filename . '_' . $filedate . '_' . $randomnumber . '.' . $tag;
     }
     else
     {
-      $newfilename = $filename.'_'.$filecounter.'_'.$filedate.'_'.$randomnumber.'.'.$tag;
+      $newfilename = $filename . '_' . $filecounter . '_' . $filedate . '_' . $randomnumber . '.' . $tag;
     }
 
     return $newfilename;
@@ -1485,9 +1491,9 @@ class FileManager implements FileManagerInterface
 
   /**
    * Get all imagetypes and stores it to the class
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   protected function getImagetypes()
@@ -1498,7 +1504,7 @@ class FileManager implements FileManagerInterface
     // Sort imagetypes by id descending
     $this->imagetypes = array_reverse($this->imagetypes);
 
-    foreach ($this->imagetypes as $key => $imagetype)
+    foreach($this->imagetypes as $key => $imagetype)
     {
       // Sort out deactivated imagetypes
       if(!(int) $imagetype->params->get('jg_imgtype', 1))
@@ -1515,11 +1521,11 @@ class FileManager implements FileManagerInterface
 
   /**
    * Delete all imagetypes which are not selected
-   * 
+   *
    * @param   array||string    $selection    Name or list of names of imagetypes to consider
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   protected function selectImagetypes($selection)
@@ -1546,7 +1552,7 @@ class FileManager implements FileManagerInterface
     $this->imagetypes = array_values($this->imagetypes);
 
     // update dictionary for imagetypes array
-    foreach ($this->imagetypes as $key => $imagetype)
+    foreach($this->imagetypes as $key => $imagetype)
     {
       $this->imagetypes_dict[$imagetype->typename] = $key;
     }
@@ -1554,11 +1560,11 @@ class FileManager implements FileManagerInterface
 
   /**
    * Check if given string could be a path
-   * 
+   *
    * @param   string    $string    String to check
-   * 
+   *
    * @return  bool
-   * 
+   *
    * @since   4.0.0
    */
   protected function is_path($string)
@@ -1582,12 +1588,12 @@ class FileManager implements FileManagerInterface
 
   /**
    * Get path from category object
-   * 
+   *
    * @param   object   $cat             Category object
    * @param   boolean  $compatibility   Take into account the compatibility mode
-   * 
+   *
    * @return  string  Path to the category
-   * 
+   *
    * @since   4.0.0
    */
   protected function catReadPath(object $cat, bool $compatibility): string
@@ -1601,6 +1607,5 @@ class FileManager implements FileManagerInterface
 
       // Standard method
       return $cat->path;
-
   }
 }

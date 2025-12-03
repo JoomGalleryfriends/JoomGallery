@@ -14,9 +14,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\Database\ParameterType;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Methods supporting a list of Categories records.
@@ -101,13 +101,13 @@ class CategoriesModel extends JoomListModel
     $forcedLanguage = $app->input->get('forcedLanguage', '', 'cmd');
 
     // Adjust the context to support modal layouts.
-    if ($layout = $app->input->get('layout'))
+    if($layout = $app->input->get('layout'))
     {
       $this->context .= '.' . $layout;
     }
 
     // Adjust the context to support forced languages.
-    if ($forcedLanguage)
+    if($forcedLanguage)
     {
       $this->context .= '.' . $forcedLanguage;
     }
@@ -286,7 +286,7 @@ class CategoriesModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -370,7 +370,7 @@ class CategoriesModel extends JoomListModel
     {
       foreach($categoryId as $catId)
       {
-        $query->where($db->quoteName('a.id'). ' != :catid')
+        $query->where($db->quoteName('a.id') . ' != :catid')
           ->bind(':catid', $catId, ParameterType::INTEGER);
       }
     }
@@ -467,7 +467,7 @@ class CategoriesModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -551,7 +551,7 @@ class CategoriesModel extends JoomListModel
     {
       foreach($categoryId as $catId)
       {
-        $query->where($db->quoteName('a.id'). ' != :catid')
+        $query->where($db->quoteName('a.id') . ' != :catid')
           ->bind(':catid', $catId, ParameterType::INTEGER);
       }
     }

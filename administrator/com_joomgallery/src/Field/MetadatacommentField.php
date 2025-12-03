@@ -15,16 +15,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Field\TextField;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\TextField;
+use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 
 /**
  * General comment field in imgmetadata.
  * This field exists to convert the old default value (empty array) of the comment field to a displayable string.
- * 
+ *
  * @since  4.1.0
  */
 class MetadatacommentField extends TextField
@@ -59,12 +59,12 @@ class MetadatacommentField extends TextField
 
     $fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
 
-    if ($this->element['useglobal'])
+    if($this->element['useglobal'])
     {
       // Guess form context
       $context = ConfigHelper::getFormContext($this->form->getData());
 
-      if ($context !== false)
+      if($context !== false)
       {
         // Load JG config service
         $jg = Factory::getApplication()->bootComponent('com_joomgallery');
@@ -73,7 +73,7 @@ class MetadatacommentField extends TextField
         // Get inherited global config value
         $value = $jg->getConfig()->get($fieldname, '...');
 
-        if (!\is_null($value))
+        if(!\is_null($value))
         {
           $value = (string) $value;
 
@@ -84,7 +84,7 @@ class MetadatacommentField extends TextField
 
     $data = $this->getLayoutData();
 
-    if (\is_array($data['value']))
+    if(\is_array($data['value']))
     {
       $data['value'] = '';
     }

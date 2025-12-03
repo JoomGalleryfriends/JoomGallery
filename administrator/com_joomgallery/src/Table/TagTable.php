@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
-use \Joomla\CMS\Access\Rules;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Database\DatabaseDriver;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
+use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
 
 /**
  * Tag table
@@ -52,12 +52,11 @@ class TagTable extends Table
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
     $this->component_exists = $component_exists;
-    $this->typeAlias        = _JOOM_OPTION.'.tag';
+    $this->typeAlias        = _JOOM_OPTION . '.tag';
 
     parent::__construct(_JOOM_TABLE_TAGS, 'id', $db);
 
     $this->setColumnAlias('published', 'published');
-
   }
 
   /**

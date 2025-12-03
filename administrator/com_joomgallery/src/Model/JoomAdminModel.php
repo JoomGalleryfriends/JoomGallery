@@ -15,20 +15,20 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Form\FormFactoryInterface;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\MVC\Model\AdminModel;
-use \Joomla\CMS\Table\Table;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\Database\ParameterType;
-use \Joomla\Registry\Registry;
-use \Joomla\Utilities\ArrayHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Database\ParameterType;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Base model class for JoomGallery administration views
@@ -119,7 +119,7 @@ abstract class JoomAdminModel extends AdminModel
     $this->app       = Factory::getApplication('administrator');
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
     $this->user      = $this->component->getMVCFactory()->getIdentity();
-    $this->typeAlias = _JOOM_OPTION.'.'.$this->type;
+    $this->typeAlias = _JOOM_OPTION . '.' . $this->type;
   }
 
   /**
@@ -146,7 +146,8 @@ abstract class JoomAdminModel extends AdminModel
    */
   public function getParams(): array
   {
-    $params = ['component' => $this->getState('parameters.component'),
+    $params = [
+      'component' => $this->getState('parameters.component'),
       'menu'               => $this->getState('parameters.menu'),
       'configs'            => $this->getState('parameters.configs'),
     ];
@@ -185,10 +186,10 @@ abstract class JoomAdminModel extends AdminModel
   {
     $table = $this->getTable();
     $key   = $table->getKeyName();
-    $pk      = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
+    $pk    = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
     // Change language to 'All' if multilangugae is not enabled
-    if (!Multilanguage::isEnabled())
+    if(!Multilanguage::isEnabled())
     {
       $data['language'] = '*';
     }
@@ -236,9 +237,9 @@ abstract class JoomAdminModel extends AdminModel
     $checkedOutField = $table->getColumnAlias('checked_out');
 
     // Check in all items.
-    foreach ($pks as $pk)
+    foreach($pks as $pk)
     {
-        if ($table->load($pk))
+        if($table->load($pk))
         {
           if($table->{$checkedOutField} > 0)
           {
@@ -298,7 +299,8 @@ abstract class JoomAdminModel extends AdminModel
       // Check if this is the user having previously checked out the row.
       if( $table->$checkedOutField > 0 && $table->$checkedOutField != $this->user->id &&
           !$this->user->authorise('core.manage', 'com_checkin')
-        ) {
+        )
+      {
         $this->component->setError(Text::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH'));
         $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH'), 'error', 'jerror');
 
@@ -372,7 +374,6 @@ abstract class JoomAdminModel extends AdminModel
           $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_BATCH_MOVE_CATEGORY_NOT_FOUND'), 'error', 'jerror');
 
           return false;
-
       }
     }
 
@@ -398,7 +399,7 @@ abstract class JoomAdminModel extends AdminModel
 
   /**
    * Method to load component specific parameters into model state.
-   * 
+   *
    * @param   int   $id   ID of the content if needed (default: 0)
    *
    * @return  void
@@ -412,7 +413,7 @@ abstract class JoomAdminModel extends AdminModel
 
     if(isset($params_array['item_id']))
     {
-      $this->setState($this->type.'.id', $params_array['item_id']);
+      $this->setState($this->type . '.id', $params_array['item_id']);
     }
 
     $this->setState('parameters.component', $params);
@@ -420,7 +421,7 @@ abstract class JoomAdminModel extends AdminModel
     // Load the configs from config service
     $id = ($id === 0) ? null : $id;
 
-    $this->component->createConfig(_JOOM_OPTION.'.'.$this->type, $id, true);
+    $this->component->createConfig(_JOOM_OPTION . '.' . $this->type, $id, true);
     $configArray = $this->component->getConfig()->getProperties();
     $configs     = new Registry($configArray);
 
@@ -462,7 +463,7 @@ abstract class JoomAdminModel extends AdminModel
     }
 
     // On edit, we get ID from state, but on save, we use data from input
-    $id = (int) $this->getState($this->type.'.id', $this->app->getInput()->getInt('id', null));
+    $id = (int) $this->getState($this->type . '.id', $this->app->getInput()->getInt('id', null));
 
     // Object uses for checking edit state permission of item
     $record     = new \stdClass();
@@ -597,23 +598,23 @@ abstract class JoomAdminModel extends AdminModel
       $query = $db->getQuery(true)
         ->insert($db->quoteName('#__associations'))
         ->columns(
-          [
+            [
             $db->quoteName('id'),
             $db->quoteName('context'),
             $db->quoteName('key'),
-          ]
+            ]
         );
 
       foreach($associations as $id)
       {
         $query->values(
-          implode(
-            ',',
-            $query->bindArray(
-              [$id, $this->associationsContext, $key],
-              [ParameterType::INTEGER, ParameterType::STRING, ParameterType::STRING]
+            implode(
+                ',',
+                $query->bindArray(
+                    [$id, $this->associationsContext, $key],
+                    [ParameterType::INTEGER, ParameterType::STRING, ParameterType::STRING]
+                )
             )
-          )
         );
       }
 

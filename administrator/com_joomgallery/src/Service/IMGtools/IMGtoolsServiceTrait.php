@@ -14,8 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GDtools;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMtools;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GDtools;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMtools;
 
 /**
   * Trait to implement IMGtoolsServiceInterface
@@ -54,7 +54,7 @@ trait IMGtoolsServiceTrait
       */
     public function createIMGtools($processor, $keep_metadata = false, $keep_anim = false): void
     {
-        switch ($processor)
+        switch($processor)
         {
             case 'im':
                 $this->IMGtools = new IMtools($keep_metadata, $keep_anim);

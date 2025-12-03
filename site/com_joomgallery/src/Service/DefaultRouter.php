@@ -15,17 +15,17 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
-use \Joomla\CMS\Application\SiteApplication;
-use \Joomla\CMS\Categories\CategoryFactoryInterface;
-use \Joomla\CMS\Component\Router\RouterView;
-use \Joomla\CMS\Component\Router\RouterViewConfiguration;
-use \Joomla\CMS\Component\Router\Rules\MenuRules;
-use \Joomla\CMS\Component\Router\Rules\NomenuRules;
-use \Joomla\CMS\Component\Router\Rules\StandardRules;
-use \Joomla\CMS\Menu\AbstractMenu;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\ParameterType;
+use Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use Joomla\CMS\Application\SiteApplication;
+use Joomla\CMS\Categories\CategoryFactoryInterface;
+use Joomla\CMS\Component\Router\RouterView;
+use Joomla\CMS\Component\Router\RouterViewConfiguration;
+use Joomla\CMS\Component\Router\Rules\MenuRules;
+use Joomla\CMS\Component\Router\Rules\NomenuRules;
+use Joomla\CMS\Component\Router\Rules\StandardRules;
+use Joomla\CMS\Menu\AbstractMenu;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 
 /**
  * Joomgallery Router class
@@ -475,22 +475,22 @@ class DefaultRouter extends RouterView
     // Make node tree available in cache
     if(!\is_null($available) && !isset($this->categoryCache[$id]->{$available}))
     {
-      switch ($available)
+      switch($available)
       {
         case 'route_path':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getRoutePath($root, 'route_path');
-          break;
+            break;
 
         case 'children':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-          break;
+            break;
 
         case 'parents':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-          break;
+            break;
 
         default:
-          throw new \UnexpectedValueException('Requested property ('.$available.') can to be made available in a category.');
+            throw new \UnexpectedValueException('Requested property (' . $available . ') can to be made available in a category.');
           break;
       }
     }

@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -78,7 +79,7 @@ if(strpos(strtolower(Factory::getApplication()->getLanguage()->getTag()), 'de') 
       <hr>
 
       <?php // Render admin modules in position joom_cpanel
-      foreach ($this->modules as $module)
+      foreach($this->modules as $module)
       {
         echo ModuleHelper::renderModule($module, ['style' => 'well']);
       }
@@ -169,7 +170,7 @@ function DisplayGalleryStatistic($statisticdata)
           </th>
           <td class="d-md-table-cell text-center">
           <?php if($statisticdata['unpublishedcategories'] > 0) : ?>
-            <a href="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&view=categories&filter[published]=0'); ?>">
+            <a href="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&view=categories&filter[published]=0'); ?>">
               <span class="badge bg-info"><?php echo (int) $statisticdata['unpublishedcategories']; ?></span>
             </a>
           <?php else : ?>
@@ -178,7 +179,7 @@ function DisplayGalleryStatistic($statisticdata)
           </td>
           <td class="d-md-table-cell text-center">
           <?php if($statisticdata['publishedcategories'] > 0) : ?>
-            <a href="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&view=categories&filter[published]=1'); ?>">
+            <a href="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&view=categories&filter[published]=1'); ?>">
               <span class="badge bg-info"><?php echo (int) $statisticdata['publishedcategories']; ?></span>
             </a>
           <?php else : ?>
@@ -192,7 +193,7 @@ function DisplayGalleryStatistic($statisticdata)
           </th>
           <td class="d-md-table-cell text-center">
           <?php if($statisticdata['unpublishedimages'] > 0) : ?>
-            <a href="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&amp;view=images&amp;filter[published]=2'); ?>">
+            <a href="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&amp;view=images&amp;filter[published]=2'); ?>">
               <span class="badge bg-info"><?php echo (int) $statisticdata['unpublishedimages']; ?></span>
             </a>
           <?php else : ?>
@@ -201,7 +202,7 @@ function DisplayGalleryStatistic($statisticdata)
           </td>
           <td class="d-md-table-cell text-center">
           <?php if($statisticdata['publishedimages'] > 0) : ?>
-            <a href="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&amp;view=images&amp;filter[published]=1'); ?>">
+            <a href="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&amp;view=images&amp;filter[published]=1'); ?>">
               <span class="badge bg-info"><?php echo (int) $statisticdata['publishedimages']; ?></span>
             </a>
           <?php else : ?>
@@ -215,7 +216,7 @@ function DisplayGalleryStatistic($statisticdata)
           </th>
           <td class="d-md-table-cell text-center">
           <?php if($statisticdata['unapprovedimages'] > 0) : ?>
-            <a href="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&amp;view=images&amp;filter[published]=4'); ?>">
+            <a href="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&amp;view=images&amp;filter[published]=4'); ?>">
               <span class="badge bg-info"><?php echo (int) $statisticdata['unapprovedimages']; ?></span>
             </a>
           <?php else : ?>
@@ -227,7 +228,7 @@ function DisplayGalleryStatistic($statisticdata)
         </tr>
         <tr>
           <th scope="col" class="w-100 d-md-table-cell">
-            <a href="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&amp;view=images&amp;list[fullordering]=a.id DESC'); ?>"> <?php echo Text::_('COM_JOOMGALLERY_CONTROL_NEWEST_IMAGES'); ?></a>
+            <a href="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&amp;view=images&amp;list[fullordering]=a.id DESC'); ?>"> <?php echo Text::_('COM_JOOMGALLERY_CONTROL_NEWEST_IMAGES'); ?></a>
           </th>
           <td class="d-md-table-cell">
           </td>
@@ -236,7 +237,7 @@ function DisplayGalleryStatistic($statisticdata)
         </tr>
         <tr>
           <th scope="col" class="w-100 d-md-table-cell">
-            <a href="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&amp;view=images&amp;list[fullordering]=a.hits DESC'); ?>"> <?php echo Text::_('COM_JOOMGALLERY_CONTROL_MOST_VIEWED_IMAGES'); ?></a>
+            <a href="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&amp;view=images&amp;list[fullordering]=a.hits DESC'); ?>"> <?php echo Text::_('COM_JOOMGALLERY_CONTROL_MOST_VIEWED_IMAGES'); ?></a>
           </th>
           <td class="d-md-table-cell">
           </td>
@@ -245,7 +246,7 @@ function DisplayGalleryStatistic($statisticdata)
         </tr>
         <tr>
           <th scope="col" class="w-100 d-md-table-cell">
-            <a href="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&amp;view=images&amp;list[fullordering]=a.downloads DESC'); ?>"> <?php echo Text::_('COM_JOOMGALLERY_CONTROL_MOST_DOWNLOADED_IMAGES'); ?></a>
+            <a href="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&amp;view=images&amp;list[fullordering]=a.downloads DESC'); ?>"> <?php echo Text::_('COM_JOOMGALLERY_CONTROL_MOST_DOWNLOADED_IMAGES'); ?></a>
           </th>
           <td class="d-md-table-cell">
           </td>
@@ -384,7 +385,7 @@ function DisplayMostViewedImages($header, $data, $id)
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($value[2], 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
                   <td class="d-md-table-cell">
-                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
+                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id=' . (int) $value[2]);
                       $EditImgTxt = Text::_('COM_JOOMGALLERY_IMAGE_EDIT');
                     ?>
                     <a href="<?php echo $ImgUrl; ?>" title="<?php echo $EditImgTxt; ?>">
@@ -398,7 +399,7 @@ function DisplayMostViewedImages($header, $data, $id)
                     <?php echo $value[2]; ?>
                   </td>
                 </tr>
-                <?php endforeach; ?>
+              <?php endforeach; ?>
             </tbody>
           </table>
         </div><!--/accordion-body-->
@@ -407,7 +408,6 @@ function DisplayMostViewedImages($header, $data, $id)
   </div><!--/accordion -->
 
   <?php return;
-
 }
 
 /**
@@ -452,13 +452,13 @@ function DisplayNewestImages($header, $data, $id)
               </tr>
             </thead>
             <tbody>
-              <?php foreach ($data as $value) : ?>
+              <?php foreach($data as $value) : ?>
                 <tr>
                 <td class="d-md-table-cell small">
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($value[2], 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
                   <td class="d-md-table-cell">
-                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
+                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id=' . (int) $value[2]);
                       $EditImgTxt = Text::_('COM_JOOMGALLERY_IMAGE_EDIT');
                     ?>
                     <a href="<?php echo $ImgUrl; ?>" title="<?php echo $EditImgTxt; ?>">
@@ -483,7 +483,6 @@ function DisplayNewestImages($header, $data, $id)
   </div><!--/accordion -->
 
   <?php return;
-
 }
 
 /**
@@ -528,13 +527,13 @@ function DisplayBestRatedImages($header, $data, $id)
               </tr>
             </thead>
             <tbody>
-              <?php foreach ($data as $value) : ?>
+              <?php foreach($data as $value) : ?>
                 <tr>
                 <td class="d-md-table-cell small">
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($value[2], 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
                   <td class="d-md-table-cell">
-                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
+                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id=' . (int) $value[2]);
                       $EditImgTxt = Text::_('COM_JOOMGALLERY_IMAGE_EDIT');
                     ?>
                     <a href="<?php echo $ImgUrl; ?>" title="<?php echo $EditImgTxt; ?>">
@@ -557,7 +556,6 @@ function DisplayBestRatedImages($header, $data, $id)
   </div><!--/accordion -->
 
   <?php return;
-
 }
 
 /**
@@ -608,7 +606,7 @@ function DisplayMostDownloadedImages($header, $data, $id)
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($value[2], 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
                   <td class="d-md-table-cell">
-                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $value[2]);
+                    <?php $ImgUrl = Route::_('index.php?option=com_joomgallery&task=image.edit&id=' . (int) $value[2]);
                       $EditImgTxt = Text::_('COM_JOOMGALLERY_IMAGE_EDIT');
                     ?>
                     <a href="<?php echo $ImgUrl; ?>" title="<?php echo $EditImgTxt; ?>">
@@ -631,7 +629,6 @@ function DisplayMostDownloadedImages($header, $data, $id)
   </div><!--/accordion -->
 
   <?php return;
-
 }
 
 /**
@@ -725,7 +722,7 @@ function DisplayOfficialExtensions($manifest)
     </div><!--/accordion -->
   </div><!--/card -->
   <div class="m-2 small">
-    <a href="<?php echo Text::_('COM_JOOMGALLERY_WEBSITE_DOCU_URL').'/official-extensions'; ?>" target="_blank"><?php echo Text::_('COM_JOOMGALLERY_CONTROL_LIST_EXTENSION_LABEL'); ?></a>
+    <a href="<?php echo Text::_('COM_JOOMGALLERY_WEBSITE_DOCU_URL') . '/official-extensions'; ?>" target="_blank"><?php echo Text::_('COM_JOOMGALLERY_CONTROL_LIST_EXTENSION_LABEL'); ?></a>
   </div>
 
   <?php return;
@@ -796,7 +793,7 @@ function DisplayInstalledExtensions($manifest)
                       <?php echo $value['author']; ?>
                     </td>
                     <td class="d-md-table-cell">
-                      <?php if ($enabled === 1) : ?>
+                      <?php if($enabled === 1) : ?>
                         <span class="icon-publish text-center" title="<?php echo Text::_('JENABLED'); ?>"></span>
                       <?php else : ?>
                         <span class="icon-delete text-center" title="<?php echo Text::_('JDISABLED'); ?>"></span>
@@ -806,7 +803,7 @@ function DisplayInstalledExtensions($manifest)
                       <?php echo $extension_id; ?>
                     </td>
                   </tr>
-                  <?php endforeach; ?>
+                <?php endforeach; ?>
               </tbody>
             </table>
           </div>
@@ -816,7 +813,6 @@ function DisplayInstalledExtensions($manifest)
   </div><!--/card -->
 
   <?php return;
-
 }
 
 /**
@@ -856,24 +852,24 @@ function DisplaySystemSettings($title, $settings)
                       <?php echo $key; ?>
                     </td>
                     <td class="d-md-table-cell">
-                      <?php switch ($value)
+                      <?php switch($value)
                       {
                           case '':
                           case '0':
                             echo Text::_('JNO');
-                            break;
+                              break;
 
                           case '1':
                             echo Text::_('JYES');
-                            break;
+                              break;
 
                           default:
                             echo $value;
-                            break;
-                        } ?>
+                              break;
+                      } ?>
                     </td>
                   </tr>
-                  <?php endforeach; ?>
+                <?php endforeach; ?>
               </tbody>
             </table>
           </div>
@@ -883,7 +879,6 @@ function DisplaySystemSettings($title, $settings)
   </div><!--/card -->
 
   <?php return;
-
 }
 
 /**
@@ -918,5 +913,4 @@ function collapseContent($title, $content, $id)
   </div><!--/accordion -->
 
   <?php return;
-
 }

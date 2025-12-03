@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Database\DatabaseDriver;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseDriver;
 
 /**
  * Collection table
@@ -43,7 +43,7 @@ class CollectionTable extends Table
   public $images = null;
 
   /**
-   * True if new mapped images should be automatically approved 
+   * True if new mapped images should be automatically approved
    *
    * @var    bool
    * @since  4.0.0
@@ -59,7 +59,7 @@ class CollectionTable extends Table
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
     $this->component_exists = $component_exists;
-    $this->typeAlias        = _JOOM_OPTION.'.collection';
+    $this->typeAlias        = _JOOM_OPTION . '.collection';
 
     parent::__construct(_JOOM_TABLE_COLLECTIONS, 'id', $db);
 

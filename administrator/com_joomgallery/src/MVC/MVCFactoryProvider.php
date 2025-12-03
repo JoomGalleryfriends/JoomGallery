@@ -15,19 +15,19 @@ namespace Joomgallery\Component\Joomgallery\Administrator\MVC;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\User\UserFactory;
-use \Joomla\CMS\Cache\CacheControllerFactoryInterface;
-use \Joomla\CMS\Extension\Service\Provider\MVCFactory as MVCFactoryBaseProvider;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\FormFactoryInterface;
-use \Joomla\CMS\Mail\MailerFactoryInterface;
-use \Joomla\CMS\MVC\Factory\ApiMVCFactory;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\Router\SiteRouter;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\DI\Container;
-use \Joomla\DI\ServiceProviderInterface;
-use \Joomla\Event\DispatcherInterface;
+use Joomgallery\Component\Joomgallery\Administrator\User\UserFactory;
+use Joomla\CMS\Cache\CacheControllerFactoryInterface;
+use Joomla\CMS\Extension\Service\Provider\MVCFactory as MVCFactoryBaseProvider;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Mail\MailerFactoryInterface;
+use Joomla\CMS\MVC\Factory\ApiMVCFactory;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Router\SiteRouter;
+use Joomla\Database\DatabaseInterface;
+use Joomla\DI\Container;
+use Joomla\DI\ServiceProviderInterface;
+use Joomla\Event\DispatcherInterface;
 
 /**
  * Service provider for the service MVC factory.

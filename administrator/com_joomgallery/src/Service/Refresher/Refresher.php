@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Refresher;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherInterface;
-use \Joomla\CMS\Document\HtmlDocument;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\FileLayout;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherInterface;
+use Joomla\CMS\Document\HtmlDocument;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
 
 /**
  * JoomGallery Refresher Helper
@@ -335,7 +335,8 @@ class Refresher implements RefresherInterface
     }
 
     // Fill head of document
-    $head = ['title' => Text::_('COM_JOOMGALLERY_WORK_IN_PROGRESS'),
+    $head = [
+      'title' => Text::_('COM_JOOMGALLERY_WORK_IN_PROGRESS'),
       'description'  => '',
       'link'         => '',
       'assetManager' => ['registryFiles' => [$tmpAssetFile, $compAssetFile]]];
@@ -344,19 +345,20 @@ class Refresher implements RefresherInterface
 
     // Add styles
     $wa = $doc->getWebAssetManager();
-    $wa->useStyle('template.'.$tmpName.'.ltr')
+    $wa->useStyle('template.' . $tmpName . '.ltr')
        ->useStyle('template.user')
        ->useStyle('com_joomgallery.refresher');
 
     // Create html output of the component section
-    $data   = ['name' => $this->_name, 'maxtime' => $this->_maxtime, 'showprogress' => $this->_showprogress, 'total' => $this->_total, 'remaining' => $this->_remaining];
-    $layout = new FileLayout('refresher', null, ['component' => 'com_joomgallery', 'client' => 1]);
-    $buffer = $layout->render($data);
-    $buffer .= '<script type="text/javascript">document.location.href="index.php?option='._JOOM_OPTION.'&controller='.$controller.'&task='.$task.'"</script>';
+    $data    = ['name' => $this->_name, 'maxtime' => $this->_maxtime, 'showprogress' => $this->_showprogress, 'total' => $this->_total, 'remaining' => $this->_remaining];
+    $layout  = new FileLayout('refresher', null, ['component' => 'com_joomgallery', 'client' => 1]);
+    $buffer  = $layout->render($data);
+    $buffer .= '<script type="text/javascript">document.location.href="index.php?option=' . _JOOM_OPTION . '&controller=' . $controller . '&task=' . $task . '"</script>';
     $doc->setBuffer($buffer, 'component');
 
     // Render the html document
-    $tmpl = ['directory' => $tmpDir,
+    $tmpl = [
+      'directory' => $tmpDir,
       'template'         => $tmpName,
       'file'             => $tmpIndexFile,
     ];

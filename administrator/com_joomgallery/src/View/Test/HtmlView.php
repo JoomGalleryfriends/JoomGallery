@@ -15,19 +15,18 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Test;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for the testing view.
- * 
+ *
  * @package JoomGallery
  * @since   4.2.0
  */
 class HtmlView extends JoomGalleryView
 {
-
   /**
    * Display the view
    *

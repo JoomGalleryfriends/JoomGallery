@@ -14,7 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Registry\Registry;
+use Joomla\Registry\Registry;
 
 /**
   * Methods supporting a list of Image types records.

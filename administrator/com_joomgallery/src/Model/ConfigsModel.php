@@ -14,7 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Database\ParameterType;
+use Joomla\Database\ParameterType;
 
 /**
  * Methods supporting a list of Configs records.
@@ -76,13 +76,13 @@ class ConfigsModel extends JoomListModel
     $forcedLanguage = $this->app->input->get('forcedLanguage', '', 'cmd');
 
     // Adjust the context to support modal layouts.
-    if ($layout = $this->app->input->get('layout'))
+    if($layout = $this->app->input->get('layout'))
     {
       $this->context .= '.' . $layout;
     }
 
     // Adjust the context to support forced languages.
-    if ($forcedLanguage)
+    if($forcedLanguage)
     {
       $this->context .= '.' . $forcedLanguage;
     }
@@ -170,7 +170,7 @@ class ConfigsModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
         )
           ->bind([':search1', ':search2'], $search);
       }
@@ -237,7 +237,7 @@ class ConfigsModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
         )
           ->bind([':search1', ':search2'], $search);
       }

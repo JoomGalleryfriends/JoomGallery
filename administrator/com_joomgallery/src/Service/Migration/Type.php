@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 
 /**
  * Type Class
@@ -236,12 +236,12 @@ class Type
         {
           array_push($this->$property, $value);
         }
-        break;
+          break;
 
       default:
         $previous        = $this->$property ?? null;
         $this->$property = $value;
-        break;
+          break;
     }
 
     return $previous;

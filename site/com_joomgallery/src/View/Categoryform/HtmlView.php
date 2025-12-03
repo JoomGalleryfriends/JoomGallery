@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Categoryform;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 
 /**
  * View class for a list of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -55,7 +55,7 @@ class HtmlView extends JoomGalleryView
    * The page to return to after the article is submitted
    *
    * @var  string
-   * 
+   *
    * @since  4.0.0
    */
   protected $return_page = '';
@@ -81,10 +81,10 @@ class HtmlView extends JoomGalleryView
     /** @var CategoryfromModel $model */
     $model = $this->getModel();
 
-    $this->state = $model->getState();
-    $this->params  = $model->getParams();
-    $this->item    = $model->getItem();
-    $this->form    = $model->getForm();
+    $this->state  = $model->getState();
+    $this->params = $model->getParams();
+    $this->item   = $model->getItem();
+    $this->form   = $model->getForm();
 
     // Get return page
     $this->return_page = $model->getReturnPage();

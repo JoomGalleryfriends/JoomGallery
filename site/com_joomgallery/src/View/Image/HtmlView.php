@@ -15,15 +15,15 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Image;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Router\Route;
 
 /**
  * View class for a detail view of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -59,8 +59,8 @@ class HtmlView extends JoomGalleryView
     /** @var ImageModel $model */
     $model = $this->getModel();
 
-    $this->state = $model->getState();
-    $this->params  = $model->getParams();
+    $this->state  = $model->getState();
+    $this->params = $model->getParams();
 
     $loaded = true;
     try
@@ -78,7 +78,7 @@ class HtmlView extends JoomGalleryView
     if($loaded && $model->getCategoryProtected())
     {
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_IMAGE_CAT_PROTECTED'), 'error');
-      $this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=category&id='.$this->item->protectedParents[0]));
+      $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=' . $this->item->protectedParents[0]));
     }
 
     $temp = $model->getCategoryPublished();

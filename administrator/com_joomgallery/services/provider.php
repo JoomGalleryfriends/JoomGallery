@@ -54,16 +54,16 @@ return new class implements ServiceProviderInterface {
 
     // Create the component class
     $container->set(
-      ComponentInterface::class,
-      function (Container $container) {
-        $component = new JoomgalleryComponent($container->get(ComponentDispatcherFactoryInterface::class));
+        ComponentInterface::class,
+        function (Container $container) {
+          $component = new JoomgalleryComponent($container->get(ComponentDispatcherFactoryInterface::class));
 
-        $component->setRegistry($container->get(Registry::class));
-        $component->setMVCFactory($container->get(MVCFactoryInterface::class));
-        $component->setRouterFactory($container->get(RouterFactoryInterface::class));
+          $component->setRegistry($container->get(Registry::class));
+          $component->setMVCFactory($container->get(MVCFactoryInterface::class));
+          $component->setRouterFactory($container->get(RouterFactoryInterface::class));
 
-        return $component;
-      }
+          return $component;
+        }
     );
   }
 };

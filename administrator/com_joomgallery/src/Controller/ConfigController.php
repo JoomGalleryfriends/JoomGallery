@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 /**
  * Config controller class.
@@ -48,13 +48,13 @@ class ConfigController extends JoomFormController
     $table = $model->getTable();
 
     // Determine the name of the primary key for the data.
-    if (empty($key))
+    if(empty($key))
     {
       $key = $table->getKeyName();
     }
 
     // To avoid data collisions the urlVar may be different from the primary key.
-    if (empty($urlVar))
+    if(empty($urlVar))
     {
       $urlVar = $key;
     }
@@ -69,12 +69,13 @@ class ConfigController extends JoomFormController
 
       $this->component->addLog(Text::_('COM_JOOMGALLERY_INFO_IMPORT_EXPORT'), 'error', 'jerror');
 
-      $this->setRedirect(
+    $this->setRedirect(
         Route::_(
-          'index.php?option=' . $this->option . '&view=' . $this->view_item
-          . $this->getRedirectToItemAppend($recordId, $urlVar), false
+            'index.php?option=' . $this->option . '&view=' . $this->view_item
+              . $this->getRedirectToItemAppend($recordId, $urlVar),
+            false
         )
-      );
+    );
 
       return false;
     }
@@ -96,7 +97,7 @@ class ConfigController extends JoomFormController
 
     // Perform save task
       parent::save($key, $urlVar);
-    }
+  }
 
   /**
    * Method to export a record as json object.
@@ -115,13 +116,13 @@ class ConfigController extends JoomFormController
     $task  = $this->getTask();
 
     // Determine the name of the primary key for the data.
-    if (empty($key))
+    if(empty($key))
     {
       $key = $table->getKeyName();
     }
 
     // To avoid data collisions the urlVar may be different from the primary key.
-    if (empty($urlVar))
+    if(empty($urlVar))
     {
       $urlVar = $key;
     }
@@ -137,12 +138,13 @@ class ConfigController extends JoomFormController
 
       $this->component->addLog(Text::_('COM_JOOMGALLERY_INFO_IMPORT_EXPORT'), 'error', 'jerror');
 
-      $this->setRedirect(
+    $this->setRedirect(
         Route::_(
-          'index.php?option=' . $this->option . '&view=' . $this->view_item
-          . $this->getRedirectToItemAppend($recordId, $urlVar), false
+            'index.php?option=' . $this->option . '&view=' . $this->view_item
+              . $this->getRedirectToItemAppend($recordId, $urlVar),
+            false
         )
-      );
+    );
 
       return false;
     }
@@ -156,7 +158,7 @@ class ConfigController extends JoomFormController
     $data->jg_replaceinfo       = json_decode($data->jg_replaceinfo);
     $data->jg_dynamicprocessing = json_decode($data->jg_dynamicprocessing);
 
-    foreach ($data as $key => $value)
+    foreach($data as $key => $value)
     {
       if(strpos($key, 'jg_') === false)
       {
@@ -214,12 +216,13 @@ class ConfigController extends JoomFormController
 
       $this->component->addLog(Text::_('COM_JOOMGALLERY_INFO_IMPORT_EXPORT'), 'warning', 'jerror');
 
-      $this->setRedirect(
+    $this->setRedirect(
         Route::_(
-          'index.php?option=' . $this->option . '&view=' . $this->view_item
-          . $this->getRedirectToItemAppend($recordId, $urlVar), false
+            'index.php?option=' . $this->option . '&view=' . $this->view_item
+              . $this->getRedirectToItemAppend($recordId, $urlVar),
+            false
         )
-      );
+    );
 
       return false;
     }
@@ -239,12 +242,13 @@ class ConfigController extends JoomFormController
 
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_IMPORT_FAILED', $model->getError()), 'error', 'jerror');
 
-      $this->setRedirect(
+    $this->setRedirect(
         Route::_(
-          'index.php?option=' . $this->option . '&view=' . $this->view_item
-          . $this->getRedirectToItemAppend($recordId, $urlVar), false
+            'index.php?option=' . $this->option . '&view=' . $this->view_item
+              . $this->getRedirectToItemAppend($recordId, $urlVar),
+            false
         )
-      );
+    );
 
       return false;
     }
@@ -283,9 +287,9 @@ class ConfigController extends JoomFormController
    * Analyses an error code and returns its text
    *
    * @param   int      $uploaderror  The errorcode
-   * 
+   *
    * @return  string   Error message
-   * 
+   *
    * @since   4.0.0
    */
   protected function checkError($uploaderror)
@@ -305,6 +309,5 @@ class ConfigController extends JoomFormController
 
 
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
-
   }
 }

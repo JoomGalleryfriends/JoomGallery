@@ -14,8 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 
 /**
   * Uploader helper class (FTP Upload)

@@ -15,16 +15,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Category;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a single Category.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -53,12 +53,12 @@ class HtmlView extends JoomGalleryView
     $this->form  = $model->getForm();
 
     // JS to deactivate filesystem form field
-    $js = 'var callback = function() {';
-    $js .= 'let catid = document.getElementById("jform_id");';
-    $js .= 'let filesystem = document.getElementById("jform_params__jg_filesystem");';
-    $js .= 'if(catid && filesystem && catid.value > 1) {filesystem.setAttribute("disabled", "disabled"); filesystem.classList.add("readonly");};';
-    $js .= '};';
-    $js .= 'if(document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)){callback();} else {document.addEventListener("DOMContentLoaded", callback);}';
+    $js                  = 'var callback = function() {';
+    $js                 .= 'let catid = document.getElementById("jform_id");';
+    $js                 .= 'let filesystem = document.getElementById("jform_params__jg_filesystem");';
+    $js                 .= 'if(catid && filesystem && catid.value > 1) {filesystem.setAttribute("disabled", "disabled"); filesystem.classList.add("readonly");};';
+    $js                 .= '};';
+    $js                 .= 'if(document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)){callback();} else {document.addEventListener("DOMContentLoaded", callback);}';
     $this->filesystem_js = $js;
 
     // Check for errors.
@@ -97,7 +97,7 @@ class HtmlView extends JoomGalleryView
       $checkedOut = false;
     }
 
-    ToolbarHelper::title(Text::_('JCATEGORIES').' :: '.Text::_('COM_JOOMGALLERY_CATEGORY_EDIT'), 'folder-open');
+    ToolbarHelper::title(Text::_('JCATEGORIES') . ' :: ' . Text::_('COM_JOOMGALLERY_CATEGORY_EDIT'), 'folder-open');
 
     // If not checked out, can save the item.
     if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || ($this->getAcl()->checkACL('core.create'))))
@@ -109,7 +109,7 @@ class HtmlView extends JoomGalleryView
     {
       $saveGroup = $toolbar->dropdownButton('save-group');
 
-      $saveGroup->configure(
+    $saveGroup->configure(
         function (Toolbar $childBar) use ($checkedOut, $isNew) {
           $childBar->save('category.save', 'JTOOLBAR_SAVE');
 
@@ -124,7 +124,7 @@ class HtmlView extends JoomGalleryView
             $childBar->save2copy('category.save2copy');
           }
         }
-      );
+    );
     }
 
     if(empty($this->item->id))

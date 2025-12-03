@@ -14,9 +14,9 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Model for the gallery view.
@@ -63,7 +63,7 @@ class GalleryModel extends JoomItemModel
   {
     if($this->item === null)
     {
-      $this->item        = new \stdClass();
+      $this->item     = new \stdClass();
       $this->item->id = 1;
     }
 
@@ -239,7 +239,7 @@ class GalleryModel extends JoomItemModel
     {
       $field = (string) $field;
 
-      if(strpos($field, $prefix.'.') === false)
+      if(strpos($field, $prefix . '.') === false)
       {
         $fields[$key] = $prefix . '.' . $field;
       }

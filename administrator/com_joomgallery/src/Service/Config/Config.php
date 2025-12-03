@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\User\User;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\User\User;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Configuration Class
@@ -104,7 +104,8 @@ abstract class Config extends \stdClass implements ConfigInterface
     if( $context_array[0] != 'com_joomgallery' ||
         (\count($context_array) > 1 && !\array_key_exists($context_array[1], $this->ids)) ||
         (\count($context_array) > 2 && $context_array[2] != 'id')
-      ) {
+      )
+    {
       $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_CONFIG_INVALID_CONTEXT', $context), 'error');
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CONFIG_INVALID_CONTEXT', $context), 'error', 'jerror');
 
@@ -116,7 +117,7 @@ abstract class Config extends \stdClass implements ConfigInterface
     }
 
     // Load cache from session
-    $cache = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.'.$this->name);
+    $cache = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.' . $this->name);
 
     if(!empty($cache))
     {
@@ -134,17 +135,17 @@ abstract class Config extends \stdClass implements ConfigInterface
         case 'user':
           $user              = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $id);
           $this->ids['user'] = (int) $id;
-          break;
+            break;
 
         case 'gallery':
           $this->ids['user']     = $user->id;
           $this->ids['category'] = 1;
-          break;
+            break;
 
         case 'category':
           $this->ids['user']     = $user->id;
           $this->ids['category'] = (int) $id;
-          break;
+            break;
 
         case 'image':
           $img = $this->component->getMVCFactory()->createModel('image', 'administrator')->getItem($id);
@@ -152,18 +153,18 @@ abstract class Config extends \stdClass implements ConfigInterface
           $this->ids['user']     = $user->id;
           $this->ids['image']    = (int) $id;
           $this->ids['category'] = (int) $img->catid;
-          break;
+            break;
 
         case 'menu':
           $this->ids['user'] = $user->id;
           $this->ids['menu'] = (int) $id;
           // TBD
           // Depending on frontend views and router
-          break;
+            break;
 
         default:
           $this->ids['user'] = $user->id;
-          break;
+            break;
       }
     }
     else
@@ -184,9 +185,9 @@ abstract class Config extends \stdClass implements ConfigInterface
 
     // Creates a simple unique string for each parameter combination
     $group         = $this->getUsergroup($user);
-    $contentId     = \is_null($id) ? '' : ':'.$id;
+    $contentId     = \is_null($id) ? '' : ':' . $id;
     $own           = \is_null($inclOwn) ? '' : ':1';
-    $this->storeId = $this->name.':'.$this->context.':'.$group.$contentId.$own;
+    $this->storeId = $this->name . ':' . $this->context . ':' . $group . $contentId . $own;
     // ConfigName:context:usergroup:own
   }
 
@@ -202,8 +203,8 @@ abstract class Config extends \stdClass implements ConfigInterface
     // Store current caches to session
     if(!empty(self::$cache))
     {
-      $res = array_merge(Factory::getApplication()->getSession()->get('com_joomgallery.configcache.'.$this->name, []), self::$cache);
-      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.'.$this->name, $res);
+      $res = array_merge(Factory::getApplication()->getSession()->get('com_joomgallery.configcache.' . $this->name, []), self::$cache);
+      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.' . $this->name, $res);
     }
   }
 
@@ -211,7 +212,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    * Empty all the cache
    *
    * @param   string|false   $type   Type name of types to delete the cache from. False: Delete all types
-   * 
+   *
    * @return  void
    *
    * @since   4.0.0
@@ -229,19 +230,19 @@ abstract class Config extends \stdClass implements ConfigInterface
         $user_id    = (\count($user_array) > 1) ? $user_array[1] : 0;
         $user       = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $user_id);
         $usergroups = $user->get('groups');
-        $regex      = '/^'.$service.':com_joomgallery.*:\b('.implode('|', $usergroups).')\b:.*/';
+        $regex      = '/^' . $service . ':com_joomgallery.*:\b(' . implode('|', $usergroups) . ')\b:.*/';
       }
       elseif(strpos($type, 'image') === 0)
       {
         // Delete only cache which is related to context of type image
         $context = 'com_joomgallery.image';
-        $regex   = '/^'.$service.':'.$context.'.*:.*/';
+        $regex   = '/^' . $service . ':' . $context . '.*:.*/';
       }
       elseif(strpos($type, 'category') === 0)
       {
         // Delete only cache which is related to context of type image or category
         $context = 'com_joomgallery.\b(image|category)\b';
-        $regex   = '/^'.$service.':'.$context.'.*:.*/';
+        $regex   = '/^' . $service . ':' . $context . '.*:.*/';
       }
       else
       {
@@ -259,7 +260,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    *
    * @param   string|false   $storeId   ID of the cache to be deleted. Can be a regex pattern to delete all matching items. False: Delete everything
    * @param   string         $name      Name of the config service which cache gets deleted
-   * 
+   *
    * @return  void
    *
    * @since   4.0.0
@@ -278,19 +279,19 @@ abstract class Config extends \stdClass implements ConfigInterface
       self::$cache = $this->del_preg_keys($storeId, self::$cache);
 
       // Get session cache
-      $session = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.'.$name);
+      $session = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.' . $name);
 
       if($session && \is_array($session))
       {
         // Delete matching entries in session
-        Factory::getApplication()->getSession()->set('com_joomgallery.configcache.'.$name, $this->del_preg_keys($storeId, $session));
+        Factory::getApplication()->getSession()->set('com_joomgallery.configcache.' . $name, $this->del_preg_keys($storeId, $session));
       }
     }
     else
     {
       // No storeId provided. Delete everything.
       self::$cache = [];
-      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.'.$name, []);
+      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.' . $name, []);
     }
   }
 
@@ -298,7 +299,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    * Set properties to object cache
    *
    * @param   string   $storeId   The id under which to store the properties
-   * 
+   *
    * @return  void
    *
    * @since   4.0.0
@@ -407,7 +408,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    * and correspond to the user group of the given user
    *
    * @param   int|string|User   $user   User id, username or userobject
-   * 
+   *
    * @return  array  record values
    *
    * @since   4.0.0
@@ -447,7 +448,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    * Get the usergoup id to use for loading the config set
    *
    * @param   int|string|User   $user   User id, username or userobject
-   * 
+   *
    * @return  int               ID of the usergroup
    *
    * @since   4.0.0
@@ -487,7 +488,6 @@ abstract class Config extends \stdClass implements ConfigInterface
 
       // This user has no usergoup
       return 1;
-
   }
 
   /**
@@ -519,8 +519,8 @@ abstract class Config extends \stdClass implements ConfigInterface
    * Deletes entriey of key or id in the array matching the given regex pattern
    *
    * @param   string   $pattern   The pattern to search for, as a string.
-   * @param   array    $array    An array containing base64 encoded keys to delete. 
-   * 
+   * @param   array    $array    An array containing base64 encoded keys to delete.
+   *
    * @return  array    The emptied array.
    *
    * @since   4.0.0

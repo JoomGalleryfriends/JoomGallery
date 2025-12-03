@@ -14,11 +14,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\MVC\Model\ListModel;
-use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
-use \Joomla\Database\ParameterType;
-use \Joomla\Registry\Registry;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
+use Joomla\Database\ParameterType;
+use Joomla\Registry\Registry;
 
 /**
  * Methods supporting a list of Tasks records.
@@ -92,9 +92,12 @@ class TasksModel extends JoomListModel
     // Apply type filter
     try
     {
-      $filteredItems = array_filter($items, function($obj) {
+    $filteredItems = array_filter(
+        $items,
+        function ($obj) {
         return isset($obj->type) && stripos($obj->type, 'joomgallery') !== false;
-      });
+        }
+    );
     }
     catch(\Exception $e)
     {
@@ -183,7 +186,7 @@ class TasksModel extends JoomListModel
     $app = Factory::getApplication();
 
     // Adjust the context to support modal layouts.
-    if ($layout = $app->input->get('layout'))
+    if($layout = $app->input->get('layout'))
     {
       $this->context .= '.' . $layout;
     }
@@ -262,7 +265,7 @@ class TasksModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -300,10 +303,13 @@ class TasksModel extends JoomListModel
         else
         {
           // Show only records with no failed tasks (empty or empty JSON array)
-          $query->where([
+        $query->where(
+            [
             $db->quoteName('a.failed') . ' = ' . $db->quote(''),
             $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
-          ], 'OR');
+            ],
+            'OR'
+        );
         }
       }
     }
@@ -369,7 +375,7 @@ class TasksModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -407,10 +413,13 @@ class TasksModel extends JoomListModel
         else
         {
           // Show only records with no failed tasks (empty or empty JSON array)
-          $query->where([
+        $query->where(
+            [
             $db->quoteName('a.failed') . ' = ' . $db->quote(''),
             $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
-          ], 'OR');
+            ],
+            'OR'
+        );
         }
       }
     }
@@ -445,7 +454,7 @@ class TasksModel extends JoomListModel
     {
       $field = (string) $field;
 
-      if(strpos($field, $prefix.'.') === false)
+      if(strpos($field, $prefix . '.') === false)
       {
         $fields[$key] = $prefix . '.' . $field;
       }

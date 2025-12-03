@@ -14,7 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Database\DatabaseInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Trait to bridge the transition between getDbo and getDatabse

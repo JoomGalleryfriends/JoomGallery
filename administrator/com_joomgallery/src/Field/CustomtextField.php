@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Form\Field\TextField;
+use Joomla\CMS\Form\Field\TextField;
 
 /**
  * Form Field class for the Joomla Platform.

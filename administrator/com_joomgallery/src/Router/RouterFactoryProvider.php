@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Router;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Categories\CategoryFactoryInterface;
-use \Joomla\CMS\Component\Router\RouterFactoryInterface;
-use \Joomla\CMS\Extension\Service\Provider\RouterFactory as RouterFactoryBaseProvider;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\DI\Container;
-use \Joomla\DI\ServiceProviderInterface;
+use Joomla\CMS\Categories\CategoryFactoryInterface;
+use Joomla\CMS\Component\Router\RouterFactoryInterface;
+use Joomla\CMS\Extension\Service\Provider\RouterFactory as RouterFactoryBaseProvider;
+use Joomla\Database\DatabaseInterface;
+use Joomla\DI\Container;
+use Joomla\DI\ServiceProviderInterface;
 
 /**
  * Service provider for the service router factory.
@@ -66,7 +66,7 @@ class RouterFactoryProvider extends RouterFactoryBaseProvider implements Service
             function (Container $container) {
                 $categoryFactory = null;
 
-                if ($container->has(CategoryFactoryInterface::class))
+                if($container->has(CategoryFactoryInterface::class))
                 {
                     $categoryFactory = $container->get(CategoryFactoryInterface::class);
                 }

@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table\Asset;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Access\Rules;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Table\Asset;
-use \Joomla\CMS\Table\Table;
+use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Table\Asset;
+use Joomla\CMS\Table\Table;
 
 /**
  * Trait for Table methods with multiple assets
@@ -44,7 +44,7 @@ trait MultipleAssetsTableTrait
       $itemtype = $this->def_itemtype;
     }
 
-    foreach ($this->_tbl_keys as $k)
+    foreach($this->_tbl_keys as $k)
     {
         $keys[] = (int) $this->$k;
     }
@@ -59,7 +59,7 @@ trait MultipleAssetsTableTrait
    * @param   integer  $id     Id
    *
    * @return mixed The id on success, false on failure.
-   * 
+   *
    * @since 4.0.0
    * @see Joomla\CMS\Table\Table::_getAssetParentId
    */
@@ -72,13 +72,13 @@ trait MultipleAssetsTableTrait
     {
       // The item is a child of the current item
       $parent_id = \intval($this->id);
-      $assetTable->loadByName(_JOOM_OPTION.'.'.$this->def_itemtype.'.'.$parent_id);
+      $assetTable->loadByName(_JOOM_OPTION . '.' . $this->def_itemtype . '.' . $parent_id);
     }
     elseif($this->parent_id && \intval($this->parent_id) >= 1)
     {
       // The item has a category as asset-parent
       $parent_id = \intval($this->parent_id);
-      $assetTable->loadByName(_JOOM_OPTION.'.'.$this->def_itemtype.'.'.$parent_id);
+      $assetTable->loadByName(_JOOM_OPTION . '.' . $this->def_itemtype . '.' . $parent_id);
     }
     else
     {
@@ -112,17 +112,16 @@ trait MultipleAssetsTableTrait
   {
     if(!\is_null($itemtype) && $itemtype != $this->def_itemtype)
     {
-      return $this->title.' ('.$itemtype.')';
+      return $this->title . ' (' . $itemtype . ')';
     }
 
 
       return $this->title;
-
   }
 
   /**
    * Method to set empty rules for the record based on a form.
-   * 
+   *
    * @param   Form  $form  The form object where the rules gets extracted
    *
    * @return  void
@@ -136,13 +135,13 @@ trait MultipleAssetsTableTrait
     // Default itemtype
     $def_itemtype = explode('.', $form->getName(), 2)[1];
 
-    foreach ($fieldsets as $key => $fieldset)
+    foreach($fieldsets as $key => $fieldset)
     {
       if(strpos($key, 'accesscontrol') !== false)
       {
         $formItems = $form->getFieldset($key);
 
-        foreach ($formItems as $itemkey => $formItem)
+        foreach($formItems as $itemkey => $formItem)
         {
           if(strpos($itemkey, 'rules') !== false)
           {

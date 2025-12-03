@@ -14,10 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
-use \Joomla\CMS\Factory;
-use \Joomla\Database\ParameterType;
-use \Joomla\Utilities\ArrayHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
+use Joomla\CMS\Factory;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Methods supporting a list of Images records.
@@ -102,13 +102,13 @@ class ImagesModel extends JoomListModel
     $forcedLanguage = $app->input->get('forcedLanguage', '', 'cmd');
 
     // Adjust the context to support modal layouts.
-    if ($layout = $app->input->get('layout'))
+    if($layout = $app->input->get('layout'))
     {
       $this->context .= '.' . $layout;
     }
 
     // Adjust the context to support forced languages.
-    if ($forcedLanguage)
+    if($forcedLanguage)
     {
       $this->context .= '.' . $forcedLanguage;
     }
@@ -139,7 +139,7 @@ class ImagesModel extends JoomListModel
     $this->setState('filter.and', $and);
 
     // Force a language
-    if (!empty($forcedLanguage))
+    if(!empty($forcedLanguage))
     {
       $this->setState('filter.language', $forcedLanguage);
       $this->setState('filter.forcedLanguage', $forcedLanguage);
@@ -287,7 +287,7 @@ class ImagesModel extends JoomListModel
         $query->where($db->quoteName('a.access') . ' = :access')
               ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
-      elseif (\is_array($filter_access))
+      elseif(\is_array($filter_access))
       {
         $filter_access = ArrayHelper::toInteger($filter_access);
         $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -328,7 +328,7 @@ class ImagesModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -346,7 +346,6 @@ class ImagesModel extends JoomListModel
 
         if($state == 1 || $state == 2)
         { // published/unpublished
-
           // translate state
           $state = ($state == 1) ? 1 : 0;
 
@@ -355,7 +354,6 @@ class ImagesModel extends JoomListModel
         }
         elseif($state == 3 || $state == 4)
         {// approved/not approved
-
           // translate state
           $state = ($state == 3) ? 1 : 0;
 
@@ -369,7 +367,6 @@ class ImagesModel extends JoomListModel
         }
         elseif($state == 6 || $state == 7)
         {// featured/not featured
-
           // translate state
           $state = ($state == 6) ? 1 : 0;
 
@@ -575,7 +572,7 @@ class ImagesModel extends JoomListModel
         $query->where($db->quoteName('a.access') . ' = :access')
               ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
-      elseif (\is_array($filter_access))
+      elseif(\is_array($filter_access))
       {
         $filter_access = ArrayHelper::toInteger($filter_access);
         $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -616,7 +613,7 @@ class ImagesModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -634,7 +631,6 @@ class ImagesModel extends JoomListModel
 
         if($state == 1 || $state == 2)
         { // published/unpublished
-
           // translate state
           $state = ($state == 1) ? 1 : 0;
 
@@ -643,7 +639,6 @@ class ImagesModel extends JoomListModel
         }
         elseif($state == 3 || $state == 4)
         {// approved/not approved
-
           // translate state
           $state = ($state == 3) ? 1 : 0;
 
@@ -657,7 +652,6 @@ class ImagesModel extends JoomListModel
         }
         elseif($state == 6 || $state == 7)
         {// featured/not featured
-
           // translate state
           $state = ($state == 6) ? 1 : 0;
 

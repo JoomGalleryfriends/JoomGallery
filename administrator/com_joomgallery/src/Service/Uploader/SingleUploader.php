@@ -14,13 +14,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Filesystem\File as JFile;
-use \Joomla\Filesystem\Path as JPath;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Filesystem\File as JFile;
+use Joomla\Filesystem\Path as JPath;
 
 /**
  * Uploader helper class (Single Image Upload)
@@ -29,7 +29,6 @@ use \Joomla\Filesystem\Path as JPath;
  */
 class SingleUploader extends BaseUploader implements UploaderInterface
 {
-
   /**
    * The imagetype to create
    *
@@ -42,7 +41,7 @@ class SingleUploader extends BaseUploader implements UploaderInterface
    *
    * @var bool
    */
-  public $processImage = False;
+  public $processImage = false;
 
   /**
    * Method to retrieve an uploaded image. Step 1.
@@ -55,7 +54,7 @@ class SingleUploader extends BaseUploader implements UploaderInterface
    *
    * @since  4.0.0
    */
-  public function retrieveImage(&$data, $filename = True): bool
+  public function retrieveImage(&$data, $filename = true): bool
   {
     $user = Factory::getUser();
 
@@ -126,7 +125,7 @@ class SingleUploader extends BaseUploader implements UploaderInterface
     }
 
     // Upload file to temp file
-    $this->src_file = JPath::clean(\dirname($this->src_tmp).\DIRECTORY_SEPARATOR.$this->src_name);
+    $this->src_file = JPath::clean(\dirname($this->src_tmp) . \DIRECTORY_SEPARATOR . $this->src_name);
     $return         = JFile::upload($this->src_tmp, $this->src_file);
 
     if(!$return)
@@ -151,9 +150,9 @@ class SingleUploader extends BaseUploader implements UploaderInterface
    * according to configuration. Step 2.
    *
    * @param   array   $data       The form data (as a reference)
-   * 
+   *
    * @return  bool    True on success, false otherwise
-   * 
+   *
    * @since   1.5.7
    */
   public function overrideData(&$data): bool
@@ -234,16 +233,15 @@ class SingleUploader extends BaseUploader implements UploaderInterface
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN')), 'error', 'jerror');
 
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
-
   }
 
   /**
    * Detect if there is an image uploaded
-   * 
+   *
    * @param   array    $data      Form data
-   * 
+   *
    * @return  bool     True if file is detected, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function isImgUploaded($data): bool
@@ -258,6 +256,5 @@ class SingleUploader extends BaseUploader implements UploaderInterface
 
 
       return false;
-
   }
 }

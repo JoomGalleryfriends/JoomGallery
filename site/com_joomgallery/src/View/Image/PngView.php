@@ -17,7 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Image;
 
 /**
  * Raw view class for a single Image.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */

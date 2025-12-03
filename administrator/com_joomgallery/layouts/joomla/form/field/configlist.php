@@ -69,25 +69,25 @@ $attr .= !empty($description) ? ' aria-describedby="' . ($id ?: $name) . '-desc"
 $attr .= $dataAttribute;
 
 // To avoid user's confusion, readonly="readonly" should imply disabled="disabled".
-if ($readonly || $disabled)
+if($readonly || $disabled)
 {
   $attr .= ' disabled="disabled"';
 }
 
 // Create a read-only list (no name) with hidden input(s) to store the value(s).
-if ($readonly)
+if($readonly)
 {
   $html[] = HTMLHelper::_('select.genericlist', $options, '', trim($attr), 'value', 'text', $value, $id);
 
   // E.g. form field type tag sends $this->value as array
-  if ($multiple && \is_array($value))
+  if($multiple && \is_array($value))
   {
-    if (!\count($value))
+    if(!\count($value))
     {
       $value[] = '';
     }
 
-    foreach ($value as $val)
+    foreach($value as $val)
     {
       $html[] = '<input type="hidden" name="' . $name . '" value="' . htmlspecialchars($val, ENT_COMPAT, 'UTF-8') . '">';
     }
