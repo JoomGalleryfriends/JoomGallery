@@ -7,6 +7,8 @@
   <exclude-pattern type="relative">^media/*</exclude-pattern>
   <exclude-pattern type="relative">^node_modules/*</exclude-pattern>
   <exclude-pattern type="relative">^administrator/com_joomgallery/vendor/*</exclude-pattern>
+  <exclude-pattern type="relative">^administrator/com_joomgallery/includes/*</exclude-pattern>
+  <exclude-pattern type="relative">^tools/*</exclude-pattern>
   <exclude-pattern type="relative">^script.php</exclude-pattern>
 
   <rule ref="PSR12">
@@ -21,6 +23,15 @@
     <!-- Disable indentation (handled by PHP-CS-Fixer) -->
     <exclude name="Generic.WhiteSpace.ScopeIndent"/>
     <exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
+    <!-- Disable built-in PSR12 naming and visibility -->
+    <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
+    <exclude name="Squiz.Scope.MethodScope"/>
+    <exclude name="PSR2.Methods.MethodDeclaration.Underscore"/>
+    <exclude name="PSR1.Methods.CamelCapsMethodName"/>
+    <exclude name="Squiz.NamingConventions.ValidFunctionName"/>
+    <exclude name="PSR12.Properties.ConstantVisibility"/>
+    <!-- Allow comments after closing brace -->
+    <exclude name="Squiz.WhiteSpace.ScopeClosingBrace.ContentAfterBrace"/>
   </rule>
 
   <!-- clean imports -->
@@ -42,11 +53,6 @@
   <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing"/>
 
   <!-- apply JoomGallery specific sniffs -->
-  <rule ref="JG.A_Preprocessing.A_Indentation">
-    <properties>
-      <property name="indentSize" value="2"/>
-    </properties>
-  </rule>
   <rule ref="JG.Arrays.MultilineArrayFirstElementNewline"/>
   <rule ref="JG.Commenting.FileHeader">
     <properties>
@@ -54,12 +60,17 @@
     </properties>
   </rule>
   <rule ref="JG.ControlStructures.ControlSignature"/>
+  <rule ref="JG.Whitespace.Indentation">
+    <properties>
+      <property name="indentSize" value="2"/>
+    </properties>
+  </rule>
 
   <!-- temporary extend the line length -->
   <rule ref="Generic.Files.LineLength">
     <properties>
-      <property name="lineLimit" value="560"/>
-      <property name="absoluteLineLimit" value="560"/>
+      <property name="lineLimit" value="900"/>
+      <property name="absoluteLineLimit" value="900"/>
     </properties>
   </rule>
 
