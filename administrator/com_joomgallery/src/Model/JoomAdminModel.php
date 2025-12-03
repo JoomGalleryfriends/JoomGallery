@@ -1,31 +1,34 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // No direct access
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Registry\Registry;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Utilities\ArrayHelper;
-use \Joomla\Database\ParameterType;
-use \Joomla\CMS\MVC\Model\AdminModel;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\CMS\Form\FormFactoryInterface;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Database\ParameterType;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Base model class for JoomGallery administration views
@@ -36,12 +39,12 @@ use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterf
 abstract class JoomAdminModel extends AdminModel
 {
   /**
-	 * Alias to manage history control
-	 *
-	 * @access  public
+   * Alias to manage history control
+   *
+   * @access  public
    * @var     string
-	 */
-	public $typeAlias = '';
+   */
+  public $typeAlias = '';
 
   /**
    * Joomla application class
@@ -76,20 +79,20 @@ abstract class JoomAdminModel extends AdminModel
   protected $acl = null;
 
   /**
-	 * The prefix to use with controller messages.
-	 *
-	 * @access  protected
+   * The prefix to use with controller messages.
+   *
+   * @access  protected
    * @var     string
-	 */
-	protected $text_prefix = _JOOM_OPTION_UC;
+   */
+  protected $text_prefix = _JOOM_OPTION_UC;
 
-	/**
+  /**
    * Item object
    *
    * @access  protected
    * @var     object
    */
-	protected $item = null;
+  protected $item = null;
 
   /**
    * Item type
@@ -109,56 +112,57 @@ abstract class JoomAdminModel extends AdminModel
    * @since   4.0.0
    * @throws  \Exception
    */
-  public function __construct($config = [], MVCFactoryInterface $factory = null, FormFactoryInterface $formFactory = null)
+  public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?FormFactoryInterface $formFactory = null)
   {
     parent::__construct($config, $factory, $formFactory);
 
     $this->app       = Factory::getApplication('administrator');
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
     $this->user      = $this->component->getMVCFactory()->getIdentity();
-    $this->typeAlias = _JOOM_OPTION.'.'.$this->type;
+    $this->typeAlias = _JOOM_OPTION . '.' . $this->type;
   }
 
   /**
-	 * Returns a reference to the a Table object, always creating it.
-	 *
-	 * @param   string  $type    The table type to instantiate
-	 * @param   string  $prefix  A prefix for the table class name. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  Table    A database object
-	 *
-	 * @since   4.0.0
-	 */
-	public function getTable($type = 'Image', $prefix = 'Administrator', $config = array())
-	{
-		return parent::getTable($this->type, $prefix, $config);
-	}
+   * Returns a reference to the a Table object, always creating it.
+   *
+   * @param   string  $type    The table type to instantiate
+   * @param   string  $prefix  A prefix for the table class name. Optional.
+   * @param   array   $config  Configuration array for model. Optional.
+   *
+   * @return  Table    A database object
+   *
+   * @since   4.0.0
+   */
+  public function getTable($type = 'Image', $prefix = 'Administrator', $config = [])
+  {
+    return parent::getTable($this->type, $prefix, $config);
+  }
 
   /**
-	 * Method to get parameters from model state.
-	 *
-	 * @return  Registry[]   List of parameters
+   * Method to get parameters from model state.
+   *
+   * @return  Registry[]   List of parameters
    * @since   4.0.0
-	 */
-	public function getParams(): array
-	{
-		$params = array('component' => $this->getState('parameters.component'),
-										'menu'      => $this->getState('parameters.menu'),
-									  'configs'   => $this->getState('parameters.configs')
-									);
+   */
+  public function getParams(): array
+  {
+    $params = [
+      'component' => $this->getState('parameters.component'),
+      'menu'               => $this->getState('parameters.menu'),
+      'configs'            => $this->getState('parameters.configs'),
+    ];
 
-		return $params;
-	}
+    return $params;
+  }
 
-	/**
-	 * Method to get the access service class.
-	 *
-	 * @return  AccessInterface   Object on success, false on failure.
+  /**
+   * Method to get the access service class.
+   *
+   * @return  AccessInterface   Object on success, false on failure.
    * @since   4.0.0
-	 */
-	public function getAcl(): AccessInterface
-	{
+   */
+  public function getAcl(): AccessInterface
+  {
     // Create access service
     if(\is_null($this->acl))
     {
@@ -166,32 +170,32 @@ abstract class JoomAdminModel extends AdminModel
       $this->acl = $this->component->getAccess();
     }
 
-		return $this->acl;
-	}
+    return $this->acl;
+  }
 
   /**
-	 * Method to save image from form data.
-	 *
-	 * @param   array  $data  The form data.
-	 *
-	 * @return  boolean  True on success, False on error.
-	 *
-	 * @since   4.0.0
-	 */
-	public function save($data)
-	{
+   * Method to save image from form data.
+   *
+   * @param   array  $data  The form data.
+   *
+   * @return  boolean  True on success, False on error.
+   *
+   * @since   4.0.0
+   */
+  public function save($data)
+  {
     $table = $this->getTable();
     $key   = $table->getKeyName();
-		$pk    = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
+    $pk    = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
     // Change language to 'All' if multilangugae is not enabled
-    if (!Multilanguage::isEnabled())
+    if(!Multilanguage::isEnabled())
     {
       $data['language'] = '*';
     }
 
     if($pk > 0)
-		{
+    {
       $table->load($pk);
 
       // Check if the state was changed
@@ -233,9 +237,9 @@ abstract class JoomAdminModel extends AdminModel
     $checkedOutField = $table->getColumnAlias('checked_out');
 
     // Check in all items.
-    foreach ($pks as $pk)
+    foreach($pks as $pk)
     {
-        if ($table->load($pk))
+        if($table->load($pk))
         {
           if($table->{$checkedOutField} > 0)
           {
@@ -364,13 +368,12 @@ abstract class JoomAdminModel extends AdminModel
 
           return false;
         }
-        else
-        {
+
+
           $this->component->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_MOVE_CATEGORY_NOT_FOUND'));
           $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_BATCH_MOVE_CATEGORY_NOT_FOUND'), 'error', 'jerror');
 
           return false;
-        }
       }
     }
 
@@ -395,89 +398,89 @@ abstract class JoomAdminModel extends AdminModel
   }
 
   /**
-	 * Method to load component specific parameters into model state.
-   * 
+   * Method to load component specific parameters into model state.
+   *
    * @param   int   $id   ID of the content if needed (default: 0)
-	 *
-	 * @return  void
+   *
+   * @return  void
    * @since   4.0.0
-	 */
-  protected function loadComponentParams(int $id=0)
+   */
+  protected function loadComponentParams(int $id = 0)
   {
     // Load the parameters.
-		$params       = Factory::getApplication('com_joomgallery')->getParams();
-		$params_array = $params->toArray();
+    $params       = Factory::getApplication('com_joomgallery')->getParams();
+    $params_array = $params->toArray();
 
-		if(isset($params_array['item_id']))
-		{
-			$this->setState($this->type.'.id', $params_array['item_id']);
-		}
+    if(isset($params_array['item_id']))
+    {
+      $this->setState($this->type . '.id', $params_array['item_id']);
+    }
 
-		$this->setState('parameters.component', $params);
+    $this->setState('parameters.component', $params);
 
     // Load the configs from config service
     $id = ($id === 0) ? null : $id;
 
-		$this->component->createConfig(_JOOM_OPTION.'.'.$this->type, $id, true);
-		$configArray = $this->component->getConfig()->getProperties();
-		$configs     = new Registry($configArray);
+    $this->component->createConfig(_JOOM_OPTION . '.' . $this->type, $id, true);
+    $configArray = $this->component->getConfig()->getProperties();
+    $configs     = new Registry($configArray);
 
-		$this->setState('parameters.configs', $configs);
+    $this->setState('parameters.configs', $configs);
   }
 
   /**
-	 * Prepare and sanitise the table prior to saving.
-	 *
-	 * @param   Table  $table  Table Object
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
-	protected function prepareTable($table)
-	{
-		return;
-	}
+   * Prepare and sanitise the table prior to saving.
+   *
+   * @param   Table  $table  Table Object
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
+  protected function prepareTable($table)
+  {
+    return;
+  }
 
   /**
-	 * Method to get the record form.
-	 *
-	 * @param   array    $data      An optional array of data for the form to interogate.
-	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
-	 *
-	 * @return  \JForm|boolean  A \JForm object on success, false on failure
-	 *
-	 * @since   4.0.0
-	 */
-	public function getForm($data = array(), $loadData = true)
-	{
-		// Get the form.
-		$form = $this->loadForm($this->typeAlias, $this->type, array('control' => 'jform', 'load_data' => $loadData));
+   * Method to get the record form.
+   *
+   * @param   array    $data      An optional array of data for the form to interogate.
+   * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+   *
+   * @return  \JForm|boolean  A \JForm object on success, false on failure
+   *
+   * @since   4.0.0
+   */
+  public function getForm($data = [], $loadData = true)
+  {
+    // Get the form.
+    $form = $this->loadForm($this->typeAlias, $this->type, ['control' => 'jform', 'load_data' => $loadData]);
 
-		if(empty($form))
-		{
-			return false;
-		}
+    if(empty($form))
+    {
+      return false;
+    }
 
     // On edit, we get ID from state, but on save, we use data from input
-		$id = (int) $this->getState($this->type.'.id', $this->app->getInput()->getInt('id', null));
+    $id = (int) $this->getState($this->type . '.id', $this->app->getInput()->getInt('id', null));
 
-		// Object uses for checking edit state permission of item
-		$record = new \stdClass();
-		$record->id = $id;
+    // Object uses for checking edit state permission of item
+    $record     = new \stdClass();
+    $record->id = $id;
 
     // Modify the form based on Edit State access controls.
-		if(!$this->canEditState($record))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('ordering', 'disabled', 'true');
-			$form->setFieldAttribute('published', 'disabled', 'true');
+    if(!$this->canEditState($record))
+    {
+      // Disable fields for display.
+      $form->setFieldAttribute('ordering', 'disabled', 'true');
+      $form->setFieldAttribute('published', 'disabled', 'true');
 
-			// Disable fields while saving.
-			// The controller has already verified this is an article you can edit.
-			$form->setFieldAttribute('ordering', 'filter', 'unset');
-			$form->setFieldAttribute('published', 'filter', 'unset');
-		}
+      // Disable fields while saving.
+      // The controller has already verified this is an article you can edit.
+      $form->setFieldAttribute('ordering', 'filter', 'unset');
+      $form->setFieldAttribute('published', 'filter', 'unset');
+    }
 
     // Don't allow to change the created_user_id user if not allowed to access com_users.
     if(!$this->user->authorise('core.manage', 'com_users'))
@@ -485,41 +488,41 @@ abstract class JoomAdminModel extends AdminModel
       $form->setFieldAttribute('created_by', 'filter', 'unset');
     }
 
-		return $form;
-	}
+    return $form;
+  }
 
   /**
-	 * Allows preprocessing of the JForm object.
-	 *
-	 * @param   Form    $form   The form object
-	 * @param   array   $data   The data to be merged into the form object
-	 * @param   string  $group  The plugin group to be executed
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
-	protected function preprocessForm(Form $form, $data, $group = 'joomgallery')
-	{
-		if(!Multilanguage::isEnabled())
-		{
-			$form->setFieldAttribute('language', 'type', 'hidden');
-			$form->setFieldAttribute('language', 'default', '*');
-		}
+   * Allows preprocessing of the JForm object.
+   *
+   * @param   Form    $form   The form object
+   * @param   array   $data   The data to be merged into the form object
+   * @param   string  $group  The plugin group to be executed
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
+  protected function preprocessForm(Form $form, $data, $group = 'joomgallery')
+  {
+    if(!Multilanguage::isEnabled())
+    {
+      $form->setFieldAttribute('language', 'type', 'hidden');
+      $form->setFieldAttribute('language', 'default', '*');
+    }
 
-		parent::preprocessForm($form, $data, $group);
-	}
+    parent::preprocessForm($form, $data, $group);
+  }
 
   /**
-	 * Set or update associations.
-	 *
+   * Set or update associations.
+   *
    * @param   Table  &$table        Table object (with reference)
-	 * @param   array  $associations  List of associated ids
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
+   * @param   array  $associations  List of associated ids
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
   protected function createAssociations(Table &$table, array $associations)
   {
     $key = $table->getKeyName();
@@ -539,7 +542,7 @@ abstract class JoomAdminModel extends AdminModel
     // Show a warning if the item isn't assigned to a language but we have associations.
     if($associations && $table->language === '*')
     {
-      Factory::getApplication()->enqueueMessage(Text::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'),	'warning');
+      Factory::getApplication()->enqueueMessage(Text::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'), 'warning');
       $this->component->addLog(Text::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'), 'warning', 'jerror');
     }
 
@@ -595,23 +598,23 @@ abstract class JoomAdminModel extends AdminModel
       $query = $db->getQuery(true)
         ->insert($db->quoteName('#__associations'))
         ->columns(
-          [
-            $db->quoteName('id'),
-            $db->quoteName('context'),
-            $db->quoteName('key'),
-          ]
+            [
+              $db->quoteName('id'),
+              $db->quoteName('context'),
+              $db->quoteName('key'),
+            ]
         );
 
       foreach($associations as $id)
       {
         $query->values(
-          implode(
-            ',',
-            $query->bindArray(
-              [$id, $this->associationsContext, $key],
-              [ParameterType::INTEGER, ParameterType::STRING, ParameterType::STRING]
+            implode(
+                ',',
+                $query->bindArray(
+                    [$id, $this->associationsContext, $key],
+                    [ParameterType::INTEGER, ParameterType::STRING, ParameterType::STRING]
+                )
             )
-          )
         );
       }
 
@@ -633,7 +636,7 @@ abstract class JoomAdminModel extends AdminModel
   {
     return parent::cleanCache($this->typeAlias);
   }
-  
+
   /**
    * Method to test whether a record can be deleted.
    *
@@ -652,13 +655,13 @@ abstract class JoomAdminModel extends AdminModel
 
     if(\is_object($this->type))
     {
-      list($option, $type) = \explode('.', $this->type->type_alias, 2);
+      list($option, $type) = explode('.', $this->type->type_alias, 2);
     }
 
     if(\in_array($type, $this->getAcl()->get('parent_dependent_types')) && isset($record->catid))
     {
       // We have a parent dependent content type, so parent_id is needed
-      $parent_id = $record->catid;
+      $parent_id  = $record->catid;
       $use_parent = true;
     }
 
@@ -683,8 +686,8 @@ abstract class JoomAdminModel extends AdminModel
 
     if(\is_object($this->type))
     {
-      list($option, $type) = \explode('.', $this->type->type_alias, 2);
-    }      
+      list($option, $type) = explode('.', $this->type->type_alias, 2);
+    }
 
     if(\in_array($type, $this->getAcl()->get('parent_dependent_types')) && $record->id > 0)
     {
@@ -720,22 +723,22 @@ abstract class JoomAdminModel extends AdminModel
   }
 
   /**
-	 * Returns a property of the object or the default value if the property is not set.
-	 *
-	 * @param   string  $property  The name of the property.
-	 * @param   mixed   $default   The default value.
-	 *
-	 * @return  mixed    The value of the property.
-	 *
-	 * @since   4.1.0
-	 */
-	public function get($property, $default = null)
-	{
-		if(isset($this->$property))
-		{
-			return $this->$property;
-		}
+   * Returns a property of the object or the default value if the property is not set.
+   *
+   * @param   string  $property  The name of the property.
+   * @param   mixed   $default   The default value.
+   *
+   * @return  mixed    The value of the property.
+   *
+   * @since   4.1.0
+   */
+  public function get($property, $default = null)
+  {
+    if(isset($this->$property))
+    {
+      return $this->$property;
+    }
 
-		return $default;
-	}
+    return $default;
+  }
 }

@@ -1,5 +1,5 @@
 # Code Style Guide for JoomGallery 4.x by JoomGalleryfriends  
-Last updated: 24/02/2025
+Last updated: 01/12/2025
 [Wechsle zur Deutschen Version](Codestyleguide.md)
 
 ## General
@@ -12,23 +12,23 @@ Last updated: 24/02/2025
 ### File Structure
 1. File header
 2. Namespace definition
-3. \defined('_JEXEC') or die;
+3. \defined('_JEXEC') || die;
 4. `use` statements (importing required classes)
 5. Content
 
 ### File Header
-1. Component name  
-2. Author  
-3. Copyright  
-4. Licence
-
-- PHP files in the `src` directory must use namespaces:
 ```php
-namespace Joomgallery\Component\Joomgallery\<Client>\<Folder>;
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 ```
 
-- Always import classes using `use` or `require_once` for non-namespaced files. **Do not** use `include`, `include_once`, or `require`.
-
+### Others
 - Function names: start with a lowercase letter, capitalise each subsequent word:
 ```php
 buildCategoryQuery()
@@ -38,6 +38,47 @@ buildCategoryQuery()
 - Keywords must be lowercase: `if`, `while`, `for`, `foreach`, `require_once`, `true`, `false`, `null`, `function`, etc.
 - HTML output should be handled only in template (`tmpl`) files. If generated elsewhere, buffer it and pass it to the template.
 - All identifiers, comments, and code must be in **English only**.
+
+### Namespacing
+
+- PHP files in the `src` directory must use namespaces:
+```php
+namespace Joomgallery\Component\Joomgallery\<Client>\<Folder>;
+```
+
+- Always import classes using `use` or `require_once` for non-namespaced files. **Do not** use `include`, `include_once`, or `require`.
+
+- Classes, functions, and constants from the PHP global namespace (built-in ones like DateTime, strlen, or PHP_VERSION) must not be imported with use statements.
+- Built-in PHP functions (e.g. strlen, count, array_merge) must be referenced with a leading backslash when used inside namespaced code.
+
+#### CORRECT
+```php
+$date = new \DateTime();
+```
+
+#### INCORRECT
+```php
+use DateTime;
+
+$date = new DateTime();
+```
+
+- `use` statements (imports) must be grouped and sorted consistently:
+
+1. Order by type:
+  - Classes first
+  - Then functions
+  - Then constants
+2. Sort each group by alphabetical order.
+
+#### CORRECT
+```php
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use function strlen;
+use const PHP_VERSION;
+```
 
 ### Language Standards
 - Use `image` instead of `picture`
@@ -105,7 +146,23 @@ else if($integer == 2)
     $count = 3;
 ```
 
-### `switch` Notes
+## Trailing Commas
+
+Single-line and multi-line lists can have a trailing comma.
+
+
+#### CORRECT
+```php
+$values = ['a', 'b', 'c',];
+
+$values = [
+  'a',
+  'b',
+  'c',
+];
+```
+
+### `Switch` Notes
 
 - `default` case is **mandatory**, even if it only contains `break`
 - If `break` is intentionally omitted, add a comment
@@ -466,16 +523,16 @@ $controller->execute(Factory::getApplication()->input->get('task', 'display', 'c
 ## Miscellaneous
 
 - `require_once` is not a function – **do not use parentheses**
-- No spaces before and after concatenation dots in expressions
+- Add spaces before and after concatenation dots in expressions
 
 #### CORRECT
 ```php
-require_once JPATH_COMPONENT.DS.'helpers'.DS.'messenger.php';
+require_once(JPATH_COMPONENT . DS . 'helpers'.DS.'messenger.php');
 ```
 
 #### INCORRECT
 ```php
-require_once(JPATH_COMPONENT . DS . 'helpers'.DS.'messenger.php');
+require_once JPATH_COMPONENT.DS.'helpers'.DS.'messenger.php';
 ```
 
 - Prefer single quotes for strings wherever possible (for performance)

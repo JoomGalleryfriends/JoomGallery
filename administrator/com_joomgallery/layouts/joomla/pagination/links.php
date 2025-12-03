@@ -1,18 +1,21 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-******************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\Registry\Registry;
 
 $list  = $displayData['list'];
 $pages = $list['pages'];
@@ -52,23 +55,23 @@ if($currentPage >= $step)
 }
 ?>
 
-<?php if (!empty($pages)) : ?>
+<?php if(!empty($pages)) : ?>
   <nav class="pagination__wrapper" aria-label="<?php echo Text::_('JLIB_HTML_PAGINATION'); ?>">
     <div class="pagination pagination-toolbar text-center">
-      <?php if ($showLimitBox) : ?>
+      <?php if($showLimitBox) : ?>
         <div class="limit float-end">
           <?php echo Text::_('JGLOBAL_DISPLAY_NUM') . $list['limitfield']; ?>
         </div>
       <?php endif; ?>
 
-      <?php if ($showPagesLinks) : ?>
+      <?php if($showPagesLinks) : ?>
         <ul class="pagination">
           <?php echo LayoutHelper::render('joomla.pagination.link', $pages['start']); ?>
           <?php echo LayoutHelper::render('joomla.pagination.link', $pages['previous']); ?>
-          <?php foreach ($pages['pages'] as $k => $page) : ?>
+          <?php foreach($pages['pages'] as $k => $page) : ?>
             <?php $output = LayoutHelper::render('joomla.pagination.link', $page); ?>
-            <?php if (in_array($k, range($range * $step - ($step + 1), $range * $step), true)) : ?>
-              <?php if (($k % $step === 0 || $k === $range * $step - ($step + 1)) && $k !== $currentPage && $k !== $range * $step - $step) : ?>
+            <?php if(\in_array($k, range($range * $step - ($step + 1), $range * $step), true)) : ?>
+              <?php if(($k % $step === 0 || $k === $range * $step - ($step + 1)) && $k !== $currentPage && $k !== $range * $step - $step) : ?>
                 <?php $output = preg_replace('#(<a.*?>).*?(</a>)#', '$1...$2', $output); ?>
               <?php endif; ?>
             <?php endif; ?>
@@ -79,7 +82,7 @@ if($currentPage >= $step)
         </ul>
       <?php endif; ?>
 
-      <?php if ($showLimitStart) : ?>
+      <?php if($showLimitStart) : ?>
           <input type="hidden" name="<?php echo $list['prefix']; ?>limitstart" value="<?php echo $list['limitstart']; ?>">
       <?php endif; ?>
     </div>

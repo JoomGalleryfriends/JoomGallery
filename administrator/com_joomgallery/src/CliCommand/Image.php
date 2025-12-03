@@ -1,15 +1,18 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use InvalidArgumentException;
 use Joomla\CMS\Factory;
@@ -88,11 +91,11 @@ class Image extends AbstractCommand
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'image ID');
     $this->addOption('max_line_length', null, InputOption::VALUE_OPTIONAL, 'trim lenght of variable for item keeps in one line');
 
-    $help = "<info>%command.name%</info> list variables of one image
+    $help = '<info>%command.name%</info> list variables of one image
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
     * You may restrict the value string length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
-  ";
+  ';
     $this->setDescription(Text::_('List all variables of a image'));
     $this->setHelp($help);
   }
@@ -117,7 +120,7 @@ class Image extends AbstractCommand
     $imageId         = $input->getOption('id') ?? '';
     $max_line_length = $input->getOption('max_line_length') ?? null;
 
-    if (empty ($imageId))
+    if(empty($imageId))
     {
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid (empty) !");
 
@@ -126,7 +129,7 @@ class Image extends AbstractCommand
 
     $imageAssoc = $this->getItemAssocFromDB($imageId);
 
-    if (empty ($imageAssoc))
+    if(empty($imageAssoc))
     {
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid, No image found matching your criteria!");
 
@@ -136,9 +139,9 @@ class Image extends AbstractCommand
     $strImageAssoc = $this->assoc2DefinitionList($imageAssoc, $max_line_length);
 
     // ToDo: Use horizontal table again ;-)
-    foreach ($strImageAssoc as $value)
+    foreach($strImageAssoc as $value)
     {
-      if (!\is_array($value))
+      if(!\is_array($value))
       {
         throw new InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
       }
@@ -188,18 +191,16 @@ class Image extends AbstractCommand
   {
     $items = [];
 
-    if (empty($max_len))
+    if(empty($max_len))
     {
       $max_len = 70;
     }
 
-    foreach ($imageAssoc as $key => $value)
+    foreach($imageAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }
 
     return $items;
   }
-
 }
-
