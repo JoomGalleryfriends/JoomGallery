@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\ImagesController as AdminImagesController;
-use \Joomla\CMS\MVC\Controller\FormController;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\ImagesController as AdminImagesController;
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * User images list controller class.
@@ -27,7 +27,6 @@ use \Joomla\CMS\MVC\Controller\FormController;
  */
 class UserimagesController extends AdminImagesController // FormController
 {
-
   /**
    * Constructor.
    *
@@ -46,5 +45,4 @@ class UserimagesController extends AdminImagesController // FormController
     // parent view
     $this->default_view = 'userimages';
   }
-
 }

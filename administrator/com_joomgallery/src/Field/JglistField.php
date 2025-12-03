@@ -15,16 +15,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Field\ListField;
-use \Joomla\CMS\Form\FormHelper;
-use \Joomla\CMS\Helper\ModuleHelper;
-use \Joomla\CMS\Language\Associations;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Plugin\PluginHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\Language\Associations;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 
 /**
  * List field with useglobal option based on config service
@@ -187,7 +187,7 @@ class JglistField extends ListField
    * @throws \Exception
    * @since 4.0
    */
-  protected function getGlobalValue($default='')
+  protected function getGlobalValue($default = '')
   {
     $fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
 

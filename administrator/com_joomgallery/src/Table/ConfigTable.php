@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
-use \Joomla\CMS\Access\Rules;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Database\DatabaseDriver;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
+use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
 
 /**
  * Config table
@@ -42,7 +42,7 @@ class ConfigTable extends Table
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
     $this->component_exists = $component_exists;
-    $this->typeAlias = _JOOM_OPTION.'.config';
+    $this->typeAlias        = _JOOM_OPTION . '.config';
 
     parent::__construct(_JOOM_TABLE_CONFIGS, 'id', $db);
 
@@ -59,7 +59,7 @@ class ConfigTable extends Table
    *
    * @see     Table:bind
    * @since   4.0.0
-   * 
+   *
    * @throws  \InvalidArgumentException
    */
   public function bind($array, $ignore = '')
@@ -180,14 +180,14 @@ class ConfigTable extends Table
   //
     if(isset($array['params']) && \is_array($array['params']))
     {
-      $registry = new Registry;
+      $registry = new Registry();
       $registry->loadArray($array['params']);
       $array['params'] = (string) $registry;
     }
 
     if(isset($array['metadata']) && \is_array($array['metadata']))
     {
-      $registry = new Registry;
+      $registry = new Registry();
       $registry->loadArray($array['metadata']);
       $array['metadata'] = (string) $registry;
     }

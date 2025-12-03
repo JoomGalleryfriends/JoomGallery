@@ -14,16 +14,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Console\Command\AbstractCommand;
-use \Joomla\Database\DatabaseAwareTrait;
-use \Joomla\Database\DatabaseInterface;
-use \Symfony\Component\Console\Command\Command;
-use \Symfony\Component\Console\Input\InputInterface;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\Console\Style\SymfonyStyle;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Console\Command\AbstractCommand;
+use Joomla\Database\DatabaseAwareTrait;
+use Joomla\Database\DatabaseInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CategoryList extends AbstractCommand
 {
@@ -120,7 +120,7 @@ class CategoryList extends AbstractCommand
 
     $created_by_id = $input->getOption('created') ?? '';
 
-    if (empty($created_by_id))
+    if(empty($created_by_id))
     {
       $created_by_id = $input->getOption('owner') ?? '';
     }
@@ -129,7 +129,7 @@ class CategoryList extends AbstractCommand
     $categories = $this->getItemsFromDB($created_by_id, $parent_id);
 
     // If no categories are found show a warning and set the exit code to 1.
-    if (empty($categories))
+    if(empty($categories))
     {
       $this->ioStyle->warning('No categories found matching your criteria');
 
@@ -138,31 +138,31 @@ class CategoryList extends AbstractCommand
 
     // Reshape the categories into something humans can read.
     $categories = array_map(
-      function (object $item): array {
-        return [
-          $item->id,
-          $item->title,
-          $item->published ? Text::_('JYES') : Text::_('JNO'),
-          $item->hidden ? Text::_('JYES') : Text::_('JNO'),
-          $item->created_by,
-          $item->created_time,
-          $item->modified_by,
-          $item->modified_time,
-          $item->parent_id, // JGLOBAL_ROOT
-          empty($item->password) ? 'no' : 'yes',
-          // $item->,
+        function (object $item): array {
+          return [
+            $item->id,
+            $item->title,
+            $item->published ? Text::_('JYES') : Text::_('JNO'),
+            $item->hidden ? Text::_('JYES') : Text::_('JNO'),
+            $item->created_by,
+            $item->created_time,
+            $item->modified_by,
+            $item->modified_time,
+            $item->parent_id, // JGLOBAL_ROOT
+            empty($item->password) ? 'no' : 'yes',
+            // $item->,
 
-        ];
-      },
-      $categories
+          ];
+        },
+        $categories
     );
 
     // Display the categories in a table and set the exit code to 0
     $this->ioStyle->table(
-      [
+        [
         'ID', 'Title', 'Published', 'Hidden', 'Created', 'Created time', 'Modified', 'Modified time', 'Parent', 'Password',
-      ],
-      $categories
+        ],
+        $categories
     );
 
     return Command::SUCCESS;
@@ -183,12 +183,12 @@ class CategoryList extends AbstractCommand
       ->select('*')
       ->from('#__joomgallery_categories');
 
-    if (!empty($userId))
+    if(!empty($userId))
     {
       $query->where($db->quoteName('created_by') . ' = ' . (int) $userId);
     }
 
-    if (!empty($parent_id))
+    if(!empty($parent_id))
     {
       $query->where($db->quoteName('parent_id') . ' = ' . (int) $parent_id);
     }

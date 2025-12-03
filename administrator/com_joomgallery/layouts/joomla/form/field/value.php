@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -29,6 +30,8 @@ extract($displayData);
  $value  = empty($value) ? '' : $value;
 ?>
 
-  <span id="<?php echo $id; ?>" class="<?php echo $class; ?> <?php if($hidden){echo 'hidden';}; ?>">
+  <span id="<?php echo $id; ?>" class="<?php echo $class; ?> <?php if($hidden)
+{echo 'hidden';
+            }; ?>">
     <?php echo htmlspecialchars($value, ENT_COMPAT, 'UTF-8'); ?>
   </span>

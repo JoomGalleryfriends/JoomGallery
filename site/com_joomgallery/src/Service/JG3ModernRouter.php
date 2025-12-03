@@ -15,15 +15,15 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Application\SiteApplication;
-use \Joomla\CMS\Categories\CategoryFactoryInterface;
-use \Joomla\CMS\Component\Router\RouterViewConfiguration;
-use \Joomla\CMS\Component\Router\Rules\MenuRules;
-use \Joomla\CMS\Component\Router\Rules\NomenuRules;
-use \Joomla\CMS\Component\Router\Rules\StandardRules;
-use \Joomla\CMS\Menu\AbstractMenu;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\ParameterType;
+use Joomla\CMS\Application\SiteApplication;
+use Joomla\CMS\Categories\CategoryFactoryInterface;
+use Joomla\CMS\Component\Router\RouterViewConfiguration;
+use Joomla\CMS\Component\Router\Rules\MenuRules;
+use Joomla\CMS\Component\Router\Rules\NomenuRules;
+use Joomla\CMS\Component\Router\Rules\StandardRules;
+use Joomla\CMS\Menu\AbstractMenu;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 
 /**
  * Joomgallery Router class (JG3 flavor)
@@ -166,12 +166,12 @@ class JG3ModernRouter extends DefaultRouter
 
       $dbquery->select($this->db->quoteName('alias'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($this->db->quoteName('id').' = :id')
+        ->where($this->db->quoteName('id') . ' = :id')
         ->bind(':id', $id, ParameterType::INTEGER);
       $this->db->setQuery($dbquery);
 
       // To create a segment in the form: alias-id
-      $id = $this->db->loadResult().':'.$id;
+      $id = $this->db->loadResult() . ':' . $id;
     }
 
     return [(int) $id => $id];
@@ -190,7 +190,7 @@ class JG3ModernRouter extends DefaultRouter
   {
     $img_id = 0;
 
-    $parts  = explode('-', $segment);
+    $parts = explode('-', $segment);
 
     if(is_numeric(end($parts)))
     {
@@ -204,20 +204,20 @@ class JG3ModernRouter extends DefaultRouter
 
       $dbquery->select($this->db->quoteName('id'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($this->db->quoteName('alias').' = :alias')
+        ->where($this->db->quoteName('alias') . ' = :alias')
         ->bind(':alias', $segment);
 
       if($cat = $this->app->input->get('catid', 0, 'int'))
       {
         // We can identify the image via a request query variable of type catid
-        $dbquery->where($this->db->quoteName('catid').' = :catid');
+        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
         $dbquery->bind(':catid', $cat, ParameterType::INTEGER);
       }
 
       if(key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
       {
         // We can identify the image via menu item of type category
-        $dbquery->where($this->db->quoteName('catid').' = :catid');
+        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
         $dbquery->bind(':catid', $query['id'], ParameterType::INTEGER);
       }
 

@@ -15,15 +15,15 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Router\Route;
-use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Router\Route;
+use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 
 /**
  * Raw view class for a single Image.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -41,10 +41,12 @@ class RawView extends JoomGalleryView
     public function display($tpl = null)
     {
     // Get request variables
-    $type  = $this->app->input->get('type', 'thumbnail', 'word');
-    $id    = $this->app->input->get('id', 0);
+    $type = $this->app->input->get('type', 'thumbnail', 'word');
+    $id   = $this->app->input->get('id', 0);
 
-    if($id !== 'null') {$id = $this->app->input->get('id', 0, 'int');}
+    if($id !== 'null')
+    {$id = $this->app->input->get('id', 0, 'int');
+    }
 
     // Check access
     if(!$this->access($id, $type))
@@ -110,7 +112,7 @@ class RawView extends JoomGalleryView
 
     // Set header to specify the file name
     $this->app->setHeader('Content-Type', $file_info->mime_type);
-    $this->app->setHeader('Content-Disposition', 'inline; filename='.basename($img_path));
+    $this->app->setHeader('Content-Disposition', 'inline; filename=' . basename($img_path));
     $this->app->setHeader('Content-Length', \strval($file_info->size));
     $this->app->setHeader('Cache-Control', 'no-cache, must-revalidate');
     $this->app->setHeader('Pragma', 'no-cache');
@@ -120,7 +122,7 @@ class RawView extends JoomGalleryView
 
     fpassthru($resource);
     fclose($resource);
-  }
+    }
 
   /**
    * Postprocessing the image after retrieving the image resource

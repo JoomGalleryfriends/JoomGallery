@@ -15,25 +15,25 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Exception\AdapterNotFoundException;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\FilesystemInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Object\CMSObject;
-use \Joomla\CMS\Plugin\PluginHelper;
-use \Joomla\Component\Media\Administrator\Adapter\AdapterInterface;
-use \Joomla\Component\Media\Administrator\Event\FetchMediaItemEvent;
-use \Joomla\Component\Media\Administrator\Event\FetchMediaItemsEvent;
-use \Joomla\Component\Media\Administrator\Event\FetchMediaItemUrlEvent;
-use \Joomla\Component\Media\Administrator\Exception\FileExistsException;
-use \Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
-use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
-use \Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
-use \Joomla\Filesystem\File as JFile;
-use \Joomla\Filesystem\Path as JPath;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Exception\AdapterNotFoundException;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\FilesystemInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Component\Media\Administrator\Adapter\AdapterInterface;
+use Joomla\Component\Media\Administrator\Event\FetchMediaItemEvent;
+use Joomla\Component\Media\Administrator\Event\FetchMediaItemsEvent;
+use Joomla\Component\Media\Administrator\Event\FetchMediaItemUrlEvent;
+use Joomla\Component\Media\Administrator\Exception\FileExistsException;
+use Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
+use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
+use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
+use Joomla\Filesystem\File as JFile;
+use Joomla\Filesystem\Path as JPath;
 
 /**
  * Filesystem Base Class
@@ -116,7 +116,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function cleanPath(string $path, string $ds=\DIRECTORY_SEPARATOR): string
+  public function cleanPath(string $path, string $ds = \DIRECTORY_SEPARATOR): string
   {
     return JPath::clean($path, $ds);
   }
@@ -134,7 +134,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function cleanFilename(string $file, int $with_ext=2, string $def_ext='jpg')
+  public function cleanFilename(string $file, int $with_ext = 2, string $def_ext = 'jpg')
   {
     $ext = $this->getExt($file);
 
@@ -158,30 +158,30 @@ class Filesystem implements AdapterInterface, FilesystemInterface
       $filename = OutputFilter::stringURLSafe(trim($filename));
     }
 
-    switch ($with_ext)
+    switch($with_ext)
     {
       case 0:
         // strip extension
-        break;
+          break;
 
       case 1:
         // force extension
         if($ext)
         {
-          $filename = $filename.'.'. strtolower($ext);
+          $filename = $filename . '.' . strtolower($ext);
         }
         else
         {
-          $filename = $filename.'.'. strtolower($def_ext);
+          $filename = $filename . '.' . strtolower($def_ext);
         }
-        break;
+          break;
 
       default:
         if($ext)
         {
-          $filename = $filename.'.'. strtolower($ext);
+          $filename = $filename . '.' . strtolower($ext);
         }
-        break;
+          break;
     }
 
     return $filename;
@@ -212,7 +212,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
     $html = '<html><body bgcolor="#FFFFFF"></body></html>';
 
     // File path
-    $file = JPath::clean($this->local_root.\DIRECTORY_SEPARATOR.$folder.$path.\DIRECTORY_SEPARATOR.'index.html');
+    $file = JPath::clean($this->local_root . \DIRECTORY_SEPARATOR . $folder . $path . \DIRECTORY_SEPARATOR . 'index.html');
 
     if(file_put_contents($file, $html))
     {
@@ -222,7 +222,6 @@ class Filesystem implements AdapterInterface, FilesystemInterface
 
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_FILE'), 'error', 'filesystem');
       throw new InvalidPathException(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_FILE'));
-
   }
 
   /**
@@ -236,7 +235,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function chmod(string $path, string $val, bool $mode=true): bool
+  public function chmod(string $path, string $val, bool $mode = true): bool
   {
     // complete folder path
     $path = $this->completePath($path);
@@ -248,7 +247,6 @@ class Filesystem implements AdapterInterface, FilesystemInterface
 
 
       return JPath::setPermissions(JPath::clean($path), null, $val);
-
   }
 
   /**
@@ -284,7 +282,6 @@ class Filesystem implements AdapterInterface, FilesystemInterface
 
 
       return '';
-
   }
 
   /**
@@ -335,7 +332,6 @@ class Filesystem implements AdapterInterface, FilesystemInterface
 
         $this->component->addLog($e->getMessage(), 'error', 'filesystem');
         throw new \Exception($e->getMessage());
-
     }
 
     // Check if it is an allowed file
@@ -400,8 +396,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
     }
 
     // Add adapter prefix to all the files to be returned
-    foreach
-    ($files as $key => $file)
+    foreach($files as $key => $file)
     {
       // Check if the file is valid
       if($file->type == 'file' && !$this->isAllowedFile($file->path))
@@ -475,10 +470,10 @@ class Filesystem implements AdapterInterface, FilesystemInterface
       throw new FileExistsException('Folder already exists: ' . $path . '/' . $name);
     }
 
-    $object            = new CMSObject();
-    $object->adapter   = $adapter;
-    $object->name      = $name;
-    $object->path      = $path;
+    $object          = new CMSObject();
+    $object->adapter = $adapter;
+    $object->name    = $name;
+    $object->path    = $path;
 
     PluginHelper::importPlugin('content');
 
@@ -587,11 +582,11 @@ class Filesystem implements AdapterInterface, FilesystemInterface
       throw new InvalidPathException(Text::_('COM_JOOMGALLERY_ERROR_UNSUPPORTED_FILE_TYPE'));
     }
 
-    $object            = new CMSObject();
-    $object->adapter   = $adapter;
-    $object->name      = $name;
-    $object->path      = $path;
-    $object->data      = $data;
+    $object          = new CMSObject();
+    $object->adapter = $adapter;
+    $object->name    = $name;
+    $object->path    = $path;
+    $object->data    = $data;
     try
     {
       // Joomla 5+
@@ -648,11 +643,11 @@ class Filesystem implements AdapterInterface, FilesystemInterface
       throw new InvalidPathException(Text::_('COM_JOOMGALLERY_ERROR_UNSUPPORTED_FILE_TYPE'));
     }
 
-    $object            = new CMSObject();
-    $object->adapter   = $adapter;
-    $object->name      = $name;
-    $object->path      = $path;
-    $object->data      = $data;
+    $object          = new CMSObject();
+    $object->adapter = $adapter;
+    $object->name    = $name;
+    $object->path    = $path;
+    $object->data    = $data;
     try
     {
       // Joomla 5+
@@ -708,10 +703,10 @@ class Filesystem implements AdapterInterface, FilesystemInterface
       throw new InvalidPathException(Text::_('COM_JOOMGALLERY_ERROR_UNSUPPORTED_FILE_TYPE'));
     }
 
-    $type              = $file->type === 'file' ? 'file' : 'folder';
-    $object            = new CMSObject();
-    $object->adapter   = $adapter;
-    $object->path      = $path;
+    $type            = $file->type === 'file' ? 'file' : 'folder';
+    $object          = new CMSObject();
+    $object->adapter = $adapter;
+    $object->path    = $path;
 
     PluginHelper::importPlugin('content');
 
@@ -827,7 +822,6 @@ class Filesystem implements AdapterInterface, FilesystemInterface
 
         $this->component->addLog($e->getMessage(), 'error', 'filesystem');
         throw new \Exception($e->getMessage());
-
     }
 
     $event = new FetchMediaItemUrlEvent('onFetchMediaFileUrl', ['adapter' => $adapter, 'path' => $path, 'url' => $url]);
@@ -934,60 +928,60 @@ class Filesystem implements AdapterInterface, FilesystemInterface
       $types      = [];
       $extensions = [];
 
-      array_map(
-        function ($fileType) use (&$types)
+    array_map(
+        function ($fileType) use (&$types) {
+          switch($fileType)
         {
-          switch ($fileType) {
             case '0':
               $types[] = 'images';
-              break;
+                break;
             case '1':
               $types[] = 'audios';
-              break;
+                break;
             case '2':
               $types[] = 'videos';
-              break;
+                break;
             case '3':
               $types[] = 'documents';
-              break;
+                break;
             default:
-              break;
+                break;
           }
         },
         $fileTypes
-      );
+    );
 
-      $images = array_map(
+    $images = array_map(
         'trim',
         array_filter(
-          explode(',', $this->component->getConfig()->get('jg_imagetypes', '')),
-          fn($value) => !\is_null($value) && $value !== ''
+            explode(',', $this->component->getConfig()->get('jg_imagetypes', '')),
+            fn($value) => !\is_null($value) && $value !== ''
         )
-      );
+    );
 
-      $audios = array_map(
+    $audios = array_map(
         'trim',
         array_filter(
-          explode(',', $this->component->getConfig()->get('jg_audiotypes', '')),
-          fn($value) => !\is_null($value) && $value !== ''
+            explode(',', $this->component->getConfig()->get('jg_audiotypes', '')),
+            fn($value) => !\is_null($value) && $value !== ''
         )
-      );
+    );
 
-      $videos = array_map(
+    $videos = array_map(
         'trim',
         array_filter(
-          explode(',', $this->component->getConfig()->get('jg_videotypes', '')),
-          fn($value) => !\is_null($value) && $value !== ''
+            explode(',', $this->component->getConfig()->get('jg_videotypes', '')),
+            fn($value) => !\is_null($value) && $value !== ''
         )
-      );
+    );
 
-      $documents = array_map(
+    $documents = array_map(
         'trim',
         array_filter(
-          explode(',', $this->component->getConfig()->get('jg_documenttypes', '')),
-          fn($value) => !\is_null($value) && $value !== ''
+            explode(',', $this->component->getConfig()->get('jg_documenttypes', '')),
+            fn($value) => !\is_null($value) && $value !== ''
         )
-      );
+    );
 
       foreach($types as $type)
       {
@@ -1029,7 +1023,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function adjustPath(string $path=''): string
+  public function adjustPath(string $path = ''): string
   {
     if(empty($path))
     {

@@ -25,17 +25,16 @@ return new class () implements ServiceProviderInterface
   public function register(Container $container)
   {
     $container->set(
-      PluginInterface::class,
-      function (Container $container)
-      {
-        $plugin     = PluginHelper::getPlugin('task', 'joomgallery');
-        $dispatcher = $container->get(DispatcherInterface::class);
+        PluginInterface::class,
+        function (Container $container) {
+          $plugin     = PluginHelper::getPlugin('task', 'joomgallery');
+          $dispatcher = $container->get(DispatcherInterface::class);
 
-        $plugin = new Joomgallery($dispatcher, (array) $plugin);
-        $plugin->setApplication(Factory::getApplication());
+          $plugin = new Joomgallery($dispatcher, (array) $plugin);
+          $plugin->setApplication(Factory::getApplication());
 
-        return $plugin;
-      }
+          return $plugin;
+        }
     );
   }
 };

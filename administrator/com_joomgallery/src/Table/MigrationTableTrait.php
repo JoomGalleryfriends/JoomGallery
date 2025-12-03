@@ -60,7 +60,6 @@ trait MigrationTableTrait
 
 
       return parent::hasPrimaryKey();
-
   }
 
   /**

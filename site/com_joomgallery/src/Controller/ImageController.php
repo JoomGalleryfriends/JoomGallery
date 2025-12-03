@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Response\JsonResponse;
-use \Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Response\JsonResponse;
+use Joomla\CMS\Router\Route;
 
 /**
  * Image controller class.
@@ -42,7 +42,7 @@ class ImageController extends JoomFormController
   public function add(): bool
   {
     // Get the previous edit id (if any) and the current edit id.
-    $previousId = (int) $this->app->getUserState(_JOOM_OPTION.'.add.image.id');
+    $previousId = (int) $this->app->getUserState(_JOOM_OPTION . '.add.image.id');
     $cid        = (array) $this->input->post->get('cid', [], 'int');
     $editId     = (int) (\count($cid) ? $cid[0] : $this->input->getInt('id', 0));
     $addCatId   = (int) $this->input->getInt('catid', 0);
@@ -51,17 +51,17 @@ class ImageController extends JoomFormController
     if(!$this->acl->checkACL('add', 'image', $editId, $addCatId, true))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage().$this->getItemAppend($editId), false));
+      $this->setRedirect(Route::_($this->getReturnPage() . $this->getItemAppend($editId), false));
 
       return false;
     }
 
     // Clear form data from session
-    $this->app->setUserState(_JOOM_OPTION.'.edit.image.data', []);
+    $this->app->setUserState(_JOOM_OPTION . '.edit.image.data', []);
 
     // Set the current edit id in the session.
-    $this->app->setUserState(_JOOM_OPTION.'.add.image.catid', $addCatId);
-    $this->app->setUserState(_JOOM_OPTION.'.edit.image.id', 0);
+    $this->app->setUserState(_JOOM_OPTION . '.add.image.catid', $addCatId);
+    $this->app->setUserState(_JOOM_OPTION . '.edit.image.id', 0);
 
     // Check in the previous user.
     if($previousId && $previousId !== $addCatId)
@@ -73,7 +73,7 @@ class ImageController extends JoomFormController
     }
 
     // Redirect to the form screen.
-    $this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=imageform&'.$this->getItemAppend(0, $addCatId), false));
+    $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=imageform&' . $this->getItemAppend(0, $addCatId), false));
 
     return true;
   }

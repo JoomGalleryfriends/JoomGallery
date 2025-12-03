@@ -135,7 +135,7 @@ class GifFrameExtractor
    */
   public function extract($filename, $originalFrames = false)
   {
-      if (!$this->isAnimatedGif($filename))
+      if(!$this->isAnimatedGif($filename))
       {
           return [false];
           //throw new \Exception('The GIF image you are trying to explode is not animated !');
@@ -147,10 +147,10 @@ class GifFrameExtractor
 
       for($i = 0; $i < \count($this->frameSources); $i++)
       {
-        $this->frames[$i] = [];
+        $this->frames[$i]         = [];
         $this->frameDurations[$i] = $this->frames[$i]['duration'] = $this->frameSources[$i]['delay_time'];
 
-        $img = imagecreatefromstring($this->fileHeader['gifheader'].$this->frameSources[$i]['graphicsextension'].$this->frameSources[$i]['imagedata'].\chr(0x3b));
+        $img = imagecreatefromstring($this->fileHeader['gifheader'] . $this->frameSources[$i]['graphicsextension'] . $this->frameSources[$i]['imagedata'] . \chr(0x3b));
 
         if(!$originalFrames)
         {
@@ -182,7 +182,7 @@ class GifFrameExtractor
 
                if($transparent > -1 && imagecolorstotal($prevImg) > $transparent)
                {
-                 $actualTrans = imagecolorsforindex($prevImg, $transparent);
+                 $actualTrans     = imagecolorsforindex($prevImg, $transparent);
                  $actualTransIndx = imagecolorallocate($sprite, $actualTrans['red'], $actualTrans['green'], $actualTrans['blue']);
                  imagefill($sprite, 0, 0, $actualTransIndx);
                  imagecolortransparent($sprite, $actualTransIndx);
@@ -245,7 +245,7 @@ class GifFrameExtractor
 
     while(!feof($fh) && $count < 2)
     {
-      $chunk = fread($fh, 1024 * 100); //read 100kb at a time
+      $chunk  = fread($fh, 1024 * 100); //read 100kb at a time
       $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
     }
 
@@ -305,7 +305,7 @@ class GifFrameExtractor
     $this->fileHeader['gifheader'] = $this->dataPart(0, $this->pointer);
 
     // Decoding
-    $this->orgvars['gifheader'] = $this->fileHeader['gifheader'];
+    $this->orgvars['gifheader']        = $this->fileHeader['gifheader'];
     $this->orgvars['background_color'] = $this->orgvars['gifheader'][11];
   }
 
@@ -316,7 +316,7 @@ class GifFrameExtractor
   {
     $startdata = $this->readByte(2);
 
-    if($startdata == \chr(0x21).\chr(0xff))
+    if($startdata == \chr(0x21) . \chr(0xff))
     {
       $start = $this->pointer - 2;
       $this->pointerForward($this->readByteInt());
@@ -336,7 +336,7 @@ class GifFrameExtractor
   {
     $startdata = $this->readByte(2);
 
-    if($startdata == \chr(0x21).\chr(0xfe))
+    if($startdata == \chr(0x21) . \chr(0xfe))
     {
        $start = $this->pointer - 2;
        $this->readDataStream($this->readByteInt());
@@ -357,7 +357,7 @@ class GifFrameExtractor
   {
     $startdata = $this->readByte(2);
 
-    if($startdata == \chr(0x21).\chr(0xf9))
+    if($startdata == \chr(0x21) . \chr(0xf9))
     {
       $start = $this->pointer - 2;
       $this->pointerForward($this->readByteInt());
@@ -369,12 +369,12 @@ class GifFrameExtractor
       }
       elseif($type == 1)
       {
-        $this->orgvars['hasgx_type_1'] = 1;
+        $this->orgvars['hasgx_type_1']         = 1;
         $this->globaldata['graphicsextension'] = $this->dataPart($start, $this->pointer - $start);
       }
       elseif($type == 0)
       {
-        $this->orgvars['hasgx_type_0'] = 1;
+        $this->orgvars['hasgx_type_0']           = 1;
         $this->globaldata['graphicsextension_0'] = $this->dataPart($start, $this->pointer - $start);
       }
     }
@@ -419,19 +419,18 @@ class GifFrameExtractor
         }
 
         unset($this->globaldata['graphicsextension_0']);
-
       }
       elseif($type == 1)
       {
         if(isset($this->orgvars['hasgx_type_1']) && $this->orgvars['hasgx_type_1'] == 1)
         {
-          $this->orgvars['hasgx_type_1'] = 0;
+          $this->orgvars['hasgx_type_1']                               = 0;
           $this->frameSources[$this->frameNumber]['graphicsextension'] = $this->globaldata['graphicsextension'];
           unset($this->globaldata['graphicsextension']);
         }
         else
         {
-          $this->orgvars['hasgx_type_0'] = 0;
+          $this->orgvars['hasgx_type_0']                               = 0;
           $this->frameSources[$this->frameNumber]['graphicsextension'] = $this->globaldata['graphicsextension_0'];
           unset($this->globaldata['graphicsextension_0']);
         }
@@ -603,7 +602,7 @@ class GifFrameExtractor
    */
   private function readByte($byteCount)
   {
-    $data = fread($this->handle, $byteCount);
+    $data           = fread($this->handle, $byteCount);
     $this->pointer += $byteCount;
 
     return $data;

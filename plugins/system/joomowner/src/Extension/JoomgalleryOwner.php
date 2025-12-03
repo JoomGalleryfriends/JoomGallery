@@ -31,7 +31,7 @@ use Joomla\Registry\Registry;
 
 /**
  * System plugin managing ownership of JoomGallery content
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -41,7 +41,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    * Global database object
    *
    * @var    \JDatabaseDriver
-   * 
+   *
    * @since  4.0.0
    */
   protected $db = null;
@@ -50,7 +50,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    * Global application object
    *
    * @var     CMSApplication
-   * 
+   *
    * @since   4.0.0
    */
   protected $app = null;
@@ -59,7 +59,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    * True if JoomGallery component is installed
    *
    * @var     int|bool
-   * 
+   *
    * @since   4.0.0
    */
   protected static $jg_exists = null;
@@ -68,7 +68,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    * Load the language file on instantiation.
    *
    * @var    boolean
-   * 
+   *
    * @since  4.0.0
    */
   protected $autoloadLanguage = true;
@@ -77,10 +77,11 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    * List of tables connected to Joomla user table
    *
    * @var     array
-   * 
+   *
    * @since   4.0.0
    */
-  protected $tables = ['category'   => ['pl_name' => 'categories'],
+  protected $tables = [
+    'category'   => ['pl_name' => 'categories'],
     'collection' => ['pl_name' => 'collections'],
     'comment'    => ['pl_name' => 'comments'],
     'config'     => ['pl_name' => 'configs'],
@@ -91,7 +92,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
   /**
    * Constructor
-   * 
+   *
    * @param   DispatcherInterface  $dispatcher  The event dispatcher
    * @param   array                $config      An optional associative array of configuration settings.
    *
@@ -104,7 +105,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
     if($this->isJGExists())
     {
-      $defines = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'defines.php';
+      $defines = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'defines.php';
       require_once $defines;
 
       foreach($this->tables as $name => $value)
@@ -123,11 +124,12 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
         if(!class_exists($helperClass))
         {
-          $helper_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Helper'.DIRECTORY_SEPARATOR.'JoomHelper.php';
+          $helper_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Helper' . DIRECTORY_SEPARATOR . 'JoomHelper.php';
           require_once $helper_path;
         }
 
-        $this->tables[$name] = ['sing_name' => $name,
+        $this->tables[$name] = [
+          'sing_name' => $name,
           'pl_name'   => $value['pl_name'],
           'tablename' => JoomHelper::getTableName($name),
           'pk'        => $pkname,
@@ -157,7 +159,6 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
 
       return [];
-
   }
 
   /**
@@ -233,7 +234,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 //
     if($context == 'com_plugins.plugin' && $table->name == 'plg_system_joomowner')
     {
-      $newParams             = new Registry($table->params);
+      $newParams              = new Registry($table->params);
       $userIdToChangeManually = $newParams->get('userIdToChangeManualy', '');
 
       // Reset the fields
@@ -255,7 +256,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
       if(!empty($userIdToChangeManually))
       {
         $this->params = $newParams;
-        $user = ['id' => $userIdToChangeManually];
+        $user         = ['id' => $userIdToChangeManually];
 
         $this->changeUser($user);
       }
@@ -412,9 +413,12 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
 
       $query->select('extension_id')
             ->from('#__extensions')
-            ->where( ['type LIKE ' . $this->db->quote('component'),
-              'element LIKE ' . $this->db->quote('com_joomgallery'),
-            ]);
+            ->where(
+                [
+                'type LIKE ' . $this->db->quote('component'),
+                'element LIKE ' . $this->db->quote('com_joomgallery'),
+                ]
+            );
 
       $this->db->setQuery($query);
 
@@ -435,7 +439,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    *
    * @param   string        $string  Context like string
    *
-   * @return  string|false  Guessed type on success, false otherwise   
+   * @return  string|false  Guessed type on success, false otherwise
    *
    * @since   4.0.0
    */
@@ -466,7 +470,7 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
    * @since   4.0.0
    */
   private function setResult(Event $event, $value): void
-    {
+  {
         if($event instanceof ResultAwareInterface)
     {
             $event->addResult($value);
@@ -478,5 +482,5 @@ final class JoomgalleryOwner extends CMSPlugin implements SubscriberInterface
         $result   = \is_array($result) ? $result : [];
         $result[] = $value;
         $event->setArgument('result', $result);
-    }
+  }
 }

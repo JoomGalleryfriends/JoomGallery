@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Model to handle a user category form.
@@ -128,7 +128,7 @@ class UsercategoryModel extends AdminCategoryModel
       $query = $db->createQuery()
         ->select('id, parent_id')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('id').' = '.(int) $id);
+        ->where($db->quoteName('id') . ' = ' . (int) $id);
 
       $db->setQuery($query);
       $item = $db->loadObject();
@@ -140,7 +140,7 @@ class UsercategoryModel extends AdminCategoryModel
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('isUserRootCategory-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('isUserRootCategory-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
@@ -219,11 +219,11 @@ class UsercategoryModel extends AdminCategoryModel
     $error = parent::getError($i, $toString);
 
     // error saved by $this->component->setError(...)
-    if (empty($error)){
+    if(empty($error))
+    {
       $error = $this->component->getError(true);
     }
 
     return $error;
   }
-
 }

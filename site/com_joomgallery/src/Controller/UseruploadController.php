@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
 
 /**
  * Upload controller class.
@@ -25,7 +25,6 @@ use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminControl
  */
 class UseruploadController extends JoomAdminController
 {
-
   /**
    * Constructor.
    *
@@ -58,5 +57,4 @@ class UseruploadController extends JoomAdminController
   {
     return parent::getModel($name, $prefix, $config);
   }
-
 }

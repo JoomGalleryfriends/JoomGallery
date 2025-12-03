@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Router;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Application\CMSApplicationInterface;
-use \Joomla\CMS\Categories\CategoryFactoryInterface;
-use \Joomla\CMS\Component\Router\RouterFactory as RouterFactoryBase;
-use \Joomla\CMS\Component\Router\RouterFactoryInterface;
-use \Joomla\CMS\Component\Router\RouterInterface;
-use \Joomla\CMS\Menu\AbstractMenu;
-use \Joomla\Database\DatabaseInterface;
+use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomla\CMS\Categories\CategoryFactoryInterface;
+use Joomla\CMS\Component\Router\RouterFactory as RouterFactoryBase;
+use Joomla\CMS\Component\Router\RouterFactoryInterface;
+use Joomla\CMS\Component\Router\RouterInterface;
+use Joomla\CMS\Menu\AbstractMenu;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Default router factory.

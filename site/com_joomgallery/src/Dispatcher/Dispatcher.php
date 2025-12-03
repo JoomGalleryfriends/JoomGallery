@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\Dispatcher;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Dispatcher\ComponentDispatcher;
+use Joomla\CMS\Dispatcher\ComponentDispatcher;
 
 /**
  * ComponentDispatcher class for com_joomgallery
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */

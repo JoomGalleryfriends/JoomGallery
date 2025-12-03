@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Application\CMSApplication;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\Router\Route;
-use \Joomla\Input\Input;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Router\Route;
+use Joomla\Input\Input;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Images list controller class.
@@ -135,7 +135,7 @@ class ImagesController extends JoomAdminController
       Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
     }
 
-    $this->setRedirect('index.php?option='._JOOM_OPTION.'&view=images');
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=images');
   }
 
   /**
@@ -172,7 +172,8 @@ class ImagesController extends JoomAdminController
       $pks = ArrayHelper::toInteger($pks);
 
       // Create refresher
-      $options = ['controller' => 'images',
+      $options = [
+        'controller' => 'images',
         'task'       => 'recreate',
         'name'       => Text::_('COM_JOOMGALLERY_RECREATE_IMAGES'),
         'remaining'  => \count($pks),
@@ -237,7 +238,7 @@ class ImagesController extends JoomAdminController
     $this->app->setUserState('joom.recreate.created', []);
     $this->app->setUserState('joom.recreate.error', []);
 
-    $this->setRedirect('index.php?option='._JOOM_OPTION.'&view=images');
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=images');
   }
 
   /**
@@ -313,27 +314,27 @@ class ImagesController extends JoomAdminController
       case 'feature':
         $data = ['featured' => 1, 'unfeatured' => 0];
         $msgs = ['FEATURING', 'FEATURED', 'UNFEATURED', '', ''];
-        break;
+          break;
 
       case 'approve':
         $data = ['approved' => 1, 'unapproved' => 0];
         $msgs = ['APPROVING', 'APPROVED', 'UNAPPROVED', '', ''];
-        break;
+          break;
 
       case 'publish':
       default:
         $data = ['publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3];
         $msgs = ['PUBLISHING', 'PUBLISHED', 'UNPUBLISHED', 'ARCHIVED', 'TRASHED'];
-        break;
+          break;
     }
 
     $value = ArrayHelper::getValue($data, $task, 0, 'int');
 
     if(empty($cid))
     {
-      $this->app->getLogger()->warning(Text::_($this->text_prefix.'_NO_ITEM_SELECTED'), ['image' => 'jerror']);
+      $this->app->getLogger()->warning(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), ['image' => 'jerror']);
       // ToDo Manuel: Fix array to string conversion
-      $this->component->addLog(Text::_($this->text_prefix.'_NO_ITEM_SELECTED'.['image' => 'jerror']), 'warning', 'jerror');
+      $this->component->addLog(Text::_($this->text_prefix . '_NO_ITEM_SELECTED' . ['image' => 'jerror']), 'warning', 'jerror');
     }
     else
     {
@@ -354,25 +355,25 @@ class ImagesController extends JoomAdminController
         {
           if($errors)
           {
-            $this->app->enqueueMessage(Text::plural($this->text_prefix.'_N_ITEMS_FAILED_'.$msgs[0], \count($cid)), 'error');
-            $this->component->addLog(Text::plural($this->text_prefix.'_N_ITEMS_FAILED_'.$msgs[0], \count($cid)), 'error', 'jerror');
+            $this->app->enqueueMessage(Text::plural($this->text_prefix . '_N_ITEMS_FAILED_' . $msgs[0], \count($cid)), 'error');
+            $this->component->addLog(Text::plural($this->text_prefix . '_N_ITEMS_FAILED_' . $msgs[0], \count($cid)), 'error', 'jerror');
           }
           else
           {
-            $ntext = $this->text_prefix.'_N_ITEMS_'.$msgs[1];
+            $ntext = $this->text_prefix . '_N_ITEMS_' . $msgs[1];
           }
         }
         elseif($value === 0)
         {
-          $ntext = $this->text_prefix.'_N_ITEMS_'.$msgs[2];
+          $ntext = $this->text_prefix . '_N_ITEMS_' . $msgs[2];
         }
         elseif($value === 2)
         {
-          $ntext = $this->text_prefix.'_N_ITEMS_'.$msgs[3];
+          $ntext = $this->text_prefix . '_N_ITEMS_' . $msgs[3];
         }
         else
         {
-          $ntext = $this->text_prefix.'_N_ITEMS_'.$msgs[4];
+          $ntext = $this->text_prefix . '_N_ITEMS_' . $msgs[4];
         }
 
         if(\count($cid))
@@ -388,10 +389,11 @@ class ImagesController extends JoomAdminController
     }
 
     $this->setRedirect(
-      Route::_(
-        'index.php?option='.$this->option.'&view='.$this->view_list
-        .$this->getRedirectToListAppend(), false
-      )
+        Route::_(
+            'index.php?option=' . $this->option . '&view=' . $this->view_list
+            . $this->getRedirectToListAppend(),
+            false
+        )
     );
   }
 }

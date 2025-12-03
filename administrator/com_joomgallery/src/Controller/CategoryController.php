@@ -40,7 +40,7 @@ class CategoryController extends JoomFormController
         $task = $this->getTask();
 
         // The save2copy task needs to be handled slightly differently.
-        if ($task === 'save2copy')
+        if($task === 'save2copy')
         {
             $this->input->set('origin_id', $this->input->getInt('id'));
         }

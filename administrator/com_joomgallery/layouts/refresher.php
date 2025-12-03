@@ -1,19 +1,20 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 ?>
 
@@ -27,7 +28,7 @@ use \Joomla\CMS\Uri\Uri;
         <?php echo Text::_('COM_JOOMGALLERY_SERVICE_PLEASE_WAIT_EXEC'); ?>
         <?php if($displayData['name']): ?>
           <br />
-          <?php echo Text::sprintf('COM_JOOMGALLERY_SERVICE_CURRENT_TASK', '<span class="task-name">'.$displayData['name'].'</span>'); ?>
+          <?php echo Text::sprintf('COM_JOOMGALLERY_SERVICE_CURRENT_TASK', '<span class="task-name">' . $displayData['name'] . '</span>'); ?>
         <?php endif; ?>
       </div>
 

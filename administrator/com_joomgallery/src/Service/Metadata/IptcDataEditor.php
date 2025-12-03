@@ -17,7 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 
 /**
  * Editor class to handle iptc data type editing
- * 
+ *
  * @package JoomGallery
  * @since 4.1.0
  */
@@ -62,12 +62,12 @@ class IptcDataEditor
 
   /**
    * Validates input and creates the octet structure to be saved with iptcembed.
-   * 
+   *
    * @param   string  $tag  The record & dataset tags in a 0#000 format
    * @param   mixed   $data The data to be stored
-   * 
+   *
    * @return  mixed         Octet structure that complies to IPTC's specification
-   * 
+   *
    * @since   4.1.0
    */
   public function createEdit(string $tag, mixed $data): mixed
@@ -108,13 +108,13 @@ class IptcDataEditor
   /**
    * Create the necessary octet structure to be saved.
    * Function by Thies C. Arntzen, posted as example under the iptcembed PHP Documentation page.
-   * 
+   *
    * @param   int   $rec    IPTC Record Number
    * @param   int   $data   IPTC DataSet Number
    * @param   mixed $value  Value to be stored
-   * 
+   *
    * @return  string        String of chars to embed
-   * 
+   *
    * @since   4.1.0
    */
   private function makeTag(int $rec, int $data, mixed $value): string
@@ -150,11 +150,11 @@ class IptcDataEditor
 
   /**
    * Converts the APP13 section of a JPEG image to a string to be embedded.
-   * 
+   *
    * @param  array $app13  APP13 section from the info return value of getimagesize()
-   * 
+   *
    * @return string        APP13 as an iptcembed() compatible string
-   * 
+   *
    * @since 4.1.0
    */
   public function convertIptcToString(array $app13): string

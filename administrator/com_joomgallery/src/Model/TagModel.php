@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 
 /*
  * Tag model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -45,7 +45,7 @@ class TagModel extends JoomAdminModel
     protected function loadFormData()
     {
         // Check the session for previously entered form data.
-        $data = $this->app->getUserState(_JOOM_OPTION.'.edit.tag.data', []);
+        $data = $this->app->getUserState(_JOOM_OPTION . '.edit.tag.data', []);
 
         if(empty($data))
         {
@@ -71,7 +71,7 @@ class TagModel extends JoomAdminModel
    */
   protected function getItemID($string)
   {
-    $db = $this->getDatabase();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true);
 
     $query->select($db->quoteName('id'));
@@ -232,7 +232,7 @@ class TagModel extends JoomAdminModel
   {
     $db = $this->getDatabase();
 
-    $mapping = new \stdClass();
+    $mapping        = new \stdClass();
     $mapping->imgid = (int) $img_id;
     $mapping->tagid = (int) $tag_id;
 
@@ -261,12 +261,12 @@ class TagModel extends JoomAdminModel
    *
    * @since   4.0.0
    */
-  public function removeMapping($tag_id, $img_id=0)
+  public function removeMapping($tag_id, $img_id = 0)
   {
     $tag_id = (int) $tag_id;
     $img_id = (int) $img_id;
 
-    $db = $this->getDatabase();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true);
 
     $conditions = [$db->quoteName('tagid') . ' = ' . $db->quote($tag_id)];

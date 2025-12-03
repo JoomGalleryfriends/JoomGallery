@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\User\CurrentUserInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\User\CurrentUserInterface;
 
 /**
  * Model to handle a category form.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -128,7 +128,7 @@ class CategoryformModel extends AdminCategoryModel
      * Method to get the data that should be injected in the form.
      *
      * @return  array  The default data is an empty array.
-     * 
+     *
      * @since   4.0.0
      */
     protected function loadFormData()

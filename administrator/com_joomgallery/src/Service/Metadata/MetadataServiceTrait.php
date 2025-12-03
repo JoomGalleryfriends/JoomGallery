@@ -44,7 +44,7 @@ trait MetadataServiceTrait
 
     /**
      * Creates the metadata service class
-     * 
+     *
      * @param   string  $processor  Name of the metadata processor to be used
      *
      * @return  void
@@ -53,15 +53,15 @@ trait MetadataServiceTrait
      */
     public function createMetadata(string $processor)
     {
-    switch ($processor)
+    switch($processor)
     {
       case 'exiftools':
         $this->metadata = new MetadataExifTool();
-        break;
+          break;
 
       default:
         $this->metadata = new MetadataPHP();
-        break;
+          break;
     }
 
     return;

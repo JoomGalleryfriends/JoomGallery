@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Plugin\PluginHelper;
-use \Joomla\Utilities\ArrayHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Category model.
@@ -128,7 +128,7 @@ class CategoryModel extends JoomAdminModel
   protected function loadFormData()
   {
     // Check the session for previously entered form data.
-    $data = Factory::getApplication()->getUserState(_JOOM_OPTION.'.edit.category.data', []);
+    $data = Factory::getApplication()->getUserState(_JOOM_OPTION . '.edit.category.data', []);
 
     if(empty($data))
     {
@@ -242,7 +242,7 @@ class CategoryModel extends JoomAdminModel
       {
         if($this->canDelete($table))
         {
-          $context = $this->option.'.'.$this->name;
+          $context = $this->option . '.' . $this->name;
 
           // Trigger the before delete event.
           $result = Factory::getApplication()->triggerEvent($this->event_before_delete, [$context, $table]);
@@ -262,7 +262,7 @@ class CategoryModel extends JoomAdminModel
           if(!$manager->deleteCategory($table, $force_delete))
           {
             $this->setError($this->component->getDebug(true));
-            $this->component->addLog($this->component->getDebug(true).'; Category ID: '.$pk, 'error', 'jerror');
+            $this->component->addLog($this->component->getDebug(true) . '; Category ID: ' . $pk, 'error', 'jerror');
 
             return false;
           }
@@ -272,20 +272,20 @@ class CategoryModel extends JoomAdminModel
           {
             $db    = $this->getDbo();
             $query = $db->getQuery(true)
-              ->select(
+            ->select(
                 [
-                  'COUNT(*) AS '.$db->quoteName('count'),
+                  'COUNT(*) AS ' . $db->quoteName('count'),
                   $db->quoteName('as1.key'),
-                ]
-              )
+                  ]
+            )
               ->from($db->quoteName('#__associations', 'as1'))
-              ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key').' = '.$db->quoteName('as2.key'))
-              ->where(
+              ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
+            ->where(
                 [
-                  $db->quoteName('as1.context').' = :context',
-                  $db->quoteName('as1.id').' = :pk',
-                ]
-              )
+                  $db->quoteName('as1.context') . ' = :context',
+                  $db->quoteName('as1.id') . ' = :pk',
+                  ]
+            )
               ->bind(':context', $this->associationsContext)
               ->bind(':pk', $pk, ParameterType::INTEGER)
               ->group($db->quoteName('as1.key'));
@@ -298,17 +298,17 @@ class CategoryModel extends JoomAdminModel
               $query = $db->getQuery(true)
                 ->delete($db->quoteName('#__associations'))
                 ->where(
-                  [
-                    $db->quoteName('context').' = :context',
-                    $db->quoteName('key').' = :key',
-                  ]
+                    [
+                    $db->quoteName('context') . ' = :context',
+                    $db->quoteName('key') . ' = :key',
+                    ]
                 )
                 ->bind(':context', $this->associationsContext)
                 ->bind(':key', $row['key']);
 
               if($row['count'] > 2)
               {
-                $query->where($db->quoteName('id').' = :pk')
+                $query->where($db->quoteName('id') . ' = :pk')
                   ->bind(':pk', $pk, ParameterType::INTEGER);
               }
 
@@ -345,7 +345,6 @@ class CategoryModel extends JoomAdminModel
             $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
 
             return false;
-
         }
       }
       else
@@ -387,7 +386,7 @@ class CategoryModel extends JoomAdminModel
   public function save($data)
   {
     $table          = $this->getTable();
-    $context        = $this->option.'.'.$this->name;
+    $context        = $this->option . '.' . $this->name;
     $app            = Factory::getApplication();
     $isNew          = true;
     $catMoved       = false;
@@ -398,7 +397,7 @@ class CategoryModel extends JoomAdminModel
     $adapterChanged = false;
 
     $key = $table->getKeyName();
-    $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName().'.id');
+    $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
     // Are we going to copy the image record?
     if($app->input->get('task') == 'save2copy')
@@ -457,7 +456,7 @@ class CategoryModel extends JoomAdminModel
         // Check if the state was changed
         if($table->published != $data['published'])
         {
-          if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION.'.category.'.$table->id))
+          if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION . '.category.' . $table->id))
           {
             // We are not allowed to change the published state
             $this->component->addWarning(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'));
@@ -707,10 +706,10 @@ class CategoryModel extends JoomAdminModel
     // Set state
     if(isset($table->$key))
     {
-      $this->setState($this->getName().'.id', $table->$key);
+      $this->setState($this->getName() . '.id', $table->$key);
     }
 
-    $this->setState($this->getName().'.new', $isNew);
+    $this->setState($this->getName() . '.new', $isNew);
 
     // Create/update associations
     if($this->associationsContext && Associations::isEnabled() && !empty($data['associations']))
@@ -899,8 +898,8 @@ class CategoryModel extends JoomAdminModel
       // Store the data.
       if(!$child_table->store())
       {
-        $this->setError('Child category (ID='.$cat['id'].') tells: '.$child_table->getError());
-        $this->component->addLog('Child category (ID='.$cat['id'].') tells: '.$child_table->getError(), 'error', 'jerror');
+        $this->setError('Child category (ID=' . $cat['id'] . ') tells: ' . $child_table->getError());
+        $this->component->addLog('Child category (ID=' . $cat['id'] . ') tells: ' . $child_table->getError(), 'error', 'jerror');
 
         return false;
       }
@@ -1182,7 +1181,7 @@ class CategoryModel extends JoomAdminModel
 
     $query->select('COUNT(*)')
       ->from($db->quoteName(_JOOM_TABLE_IMAGES))
-      ->where($db->quoteName('catid').' = '.$db->quote($pk));
+      ->where($db->quoteName('catid') . ' = ' . $db->quote($pk));
 
     try
     {

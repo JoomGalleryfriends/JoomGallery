@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Category controller class.
@@ -82,7 +82,6 @@ class UserpanelController extends FormController //JoomBaseController
       if($pk === 0)
       {
         unset($pks[$i], $order[$i]);
-
       }
     }
 
@@ -95,5 +94,4 @@ class UserpanelController extends FormController //JoomBaseController
     // Close the application
     $this->app->close();
   }
-
 }

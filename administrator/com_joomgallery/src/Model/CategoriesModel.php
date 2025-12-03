@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\Database\ParameterType;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Methods supporting a list of Categories records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -37,14 +37,14 @@ class CategoriesModel extends JoomListModel
 
   /**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
    * @since   4.0.0
    */
   function __construct($config = [])
-    {
+  {
         if(empty($config['filter_fields']))
         {
             $config['filter_fields'] = [
@@ -81,7 +81,7 @@ class CategoriesModel extends JoomListModel
         }
 
         parent::__construct($config);
-    }
+  }
 
     /**
      * Method to auto-populate the model state.
@@ -102,13 +102,13 @@ class CategoriesModel extends JoomListModel
         $forcedLanguage = $app->input->get('forcedLanguage', '', 'cmd');
 
     // Adjust the context to support modal layouts.
-        if ($layout = $app->input->get('layout'))
+        if($layout = $app->input->get('layout'))
         {
             $this->context .= '.' . $layout;
         }
 
     // Adjust the context to support forced languages.
-        if ($forcedLanguage)
+        if($forcedLanguage)
         {
             $this->context .= '.' . $forcedLanguage;
         }
@@ -165,16 +165,16 @@ class CategoriesModel extends JoomListModel
     {
         // Compile the store id.
         $id .= ':' . $this->getState('filter.search');
-    $id .= ':' . $this->getState('filter.published');
-    $id .= ':' . $this->getState('filter.level');
-    $id .= ':' . $this->getState('filter.language');
-    $id .= ':' . $this->getState('filter.showself');
-    $id .= ':' . $this->getState('filter.showhidden');
-    $id .= ':' . $this->getState('filter.showempty');
+    $id     .= ':' . $this->getState('filter.published');
+    $id     .= ':' . $this->getState('filter.level');
+    $id     .= ':' . $this->getState('filter.language');
+    $id     .= ':' . $this->getState('filter.showself');
+    $id     .= ':' . $this->getState('filter.showhidden');
+    $id     .= ':' . $this->getState('filter.showempty');
         $id .= ':' . serialize($this->getState('filter.access'));
-    $id .= ':' . serialize($this->getState('filter.created_by'));
+    $id     .= ':' . serialize($this->getState('filter.created_by'));
         $id .= ':' . serialize($this->getState('filter.category'));
-    $id .= ':' . serialize($this->getState('filter.exclude'));
+    $id     .= ':' . serialize($this->getState('filter.exclude'));
 
         return parent::getStoreId($id);
     }
@@ -261,7 +261,7 @@ class CategoriesModel extends JoomListModel
       if(is_numeric($userId))
       {
         $userId = (int) $userId;
-        $type = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
+        $type   = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
         $query->where($db->quoteName('a.created_by') . $type . ':userId')
           ->bind(':userId', $userId, ParameterType::INTEGER);
       }
@@ -292,7 +292,7 @@ class CategoriesModel extends JoomListModel
                 )
                     ->bind([':search1', ':search2', ':search3'], $search);
             }
-        }
+    }
 
     // Filter by published state
         $published = (string) $this->getState('filter.published');
@@ -313,7 +313,7 @@ class CategoriesModel extends JoomListModel
     if(!$showhidden)
         {
       $query->where($db->quoteName('a.hidden') . ' = 0');
-        }
+    }
 
     // Filter by empty categories
     $showempty = (bool) $this->getState('filter.showempty');
@@ -356,7 +356,7 @@ class CategoriesModel extends JoomListModel
     if(!\is_array($excludeId))
         {
             $excludeId = $excludeId ? [$excludeId] : [];
-        }
+    }
 
     // Case: Exclude categories filter
     if(\count($excludeId))
@@ -371,7 +371,7 @@ class CategoriesModel extends JoomListModel
     {
       foreach($categoryId as $catId)
       {
-        $query->where($db->quoteName('a.id'). ' != :catid')
+        $query->where($db->quoteName('a.id') . ' != :catid')
           ->bind(':catid', $catId, ParameterType::INTEGER);
       }
     }
@@ -442,7 +442,7 @@ class CategoriesModel extends JoomListModel
       if(is_numeric($userId))
       {
         $userId = (int) $userId;
-        $type = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
+        $type   = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
         $query->where($db->quoteName('a.created_by') . $type . ':userId')
           ->bind(':userId', $userId, ParameterType::INTEGER);
       }
@@ -468,7 +468,7 @@ class CategoriesModel extends JoomListModel
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -552,7 +552,7 @@ class CategoriesModel extends JoomListModel
     {
       foreach($categoryId as $catId)
       {
-        $query->where($db->quoteName('a.id'). ' != :catid')
+        $query->where($db->quoteName('a.id') . ' != :catid')
           ->bind(':catid', $catId, ParameterType::INTEGER);
       }
     }
@@ -584,12 +584,12 @@ class CategoriesModel extends JoomListModel
    *
    * @return void
    */
-  protected function categoriesFilterQuery(&$query, $categoryId, $level=false, $exclude=false)
+  protected function categoriesFilterQuery(&$query, $categoryId, $level = false, $exclude = false)
   {
     $db = $this->getDatabase();
 
-    $categoryId = ArrayHelper::toInteger($categoryId);
-    $categoryTable = $this->getMVCFactory()->createTable('Category', 'administrator');
+    $categoryId       = ArrayHelper::toInteger($categoryId);
+    $categoryTable    = $this->getMVCFactory()->createTable('Category', 'administrator');
     $subCatItemsWhere = [];
 
     foreach($categoryId as $key => $filter_catid)

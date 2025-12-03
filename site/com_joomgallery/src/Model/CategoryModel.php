@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\Model\ListModel;
-use \Joomla\CMS\Pagination\Pagination;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\CMS\User\UserHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\CMS\User\UserHelper;
 
 /**
  * Model to get a category record.
@@ -164,12 +164,12 @@ class CategoryModel extends JoomItemModel
 
     $query->select('id, password')
           ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-          ->where('id = '.(int) $catid);
+          ->where('id = ' . (int) $catid);
     $db->setQuery($query);
 
     if(!$category = $db->loadObject())
     {
-      throw new \Exception('Provided category not found. '. $db->getErrorMsg());
+      throw new \Exception('Provided category not found. ' . $db->getErrorMsg());
     }
 
     if(!$category->password)
@@ -182,9 +182,9 @@ class CategoryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD_INCORRECT'));
     }
 
-    $categories = $this->app->getUserState(_JOOM_OPTION.'unlockedCategories', [0]);
+    $categories = $this->app->getUserState(_JOOM_OPTION . 'unlockedCategories', [0]);
     $categories = array_unique(array_merge($categories, [$catid]));
-    $this->app->setUserState(_JOOM_OPTION.'unlockedCategories', $categories);
+    $this->app->setUserState(_JOOM_OPTION . 'unlockedCategories', $categories);
 
     $this->app->triggerEvent('onJoomAfterUnlockCat', [$catid]);
 
@@ -473,13 +473,13 @@ class CategoryModel extends JoomItemModel
       $listModel->setState('filter.language', $this->item->language);
     }
 
-    $imgform_list = [];
+    $imgform_list       = [];
     $imgform_limitstart = $this->app->getUserState('joom.categoryview.image.limitstart', 0);
 
     if($this->app->input->get('contenttype', '') == 'image')
     {
       // Get query variables sent by the images form
-      $imgform_list = $this->app->input->get('list', []);
+      $imgform_list       = $this->app->input->get('list', []);
       $imgform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.image.limitstart', 'limitstart', 0, 'uint');
     }
 
@@ -548,13 +548,13 @@ class CategoryModel extends JoomItemModel
       $listModel->setState('filter.language', $this->item->language);
     }
 
-    $catform_list = [];
+    $catform_list       = [];
     $catform_limitstart = $this->app->getUserState('joom.categoryview.category.limitstart', 0);
 
     if($this->app->input->get('contenttype', '') == 'category')
     {
       // Get query variables sent by the subcategories form
-      $catform_list = $this->app->input->get('list', []);
+      $catform_list       = $this->app->input->get('list', []);
       $catform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.category.limitstart', 'limitstart', 0, 'uint');
     }
 
@@ -598,7 +598,7 @@ class CategoryModel extends JoomItemModel
     {
       $field = (string) $field;
 
-      if(strpos($field, $prefix.'.') === false)
+      if(strpos($field, $prefix . '.') === false)
       {
         $fields[$key] = $prefix . '.' . $field;
       }
@@ -713,7 +713,7 @@ class CategoryModel extends JoomItemModel
     $query->where($db->quoteName('level') . ' > 0');
 
     // Select records which are protected and not yet unlocked
-    $query->where('(' . $db->quoteName('password') . ' != ' . $db->quote('') . ' AND ' . $db->quoteName('id') . ' NOT IN (' . implode(',', $this->app->getUserState(_JOOM_OPTION.'unlockedCategories', [0])) . '))');
+    $query->where('(' . $db->quoteName('password') . ' != ' . $db->quote('') . ' AND ' . $db->quoteName('id') . ' NOT IN (' . implode(',', $this->app->getUserState(_JOOM_OPTION . 'unlockedCategories', [0])) . '))');
 
     try
     {
@@ -757,7 +757,7 @@ class CategoryModel extends JoomItemModel
     }
 
     // Get current user
-    $user  = $this->app->getIdentity();
+    $user = $this->app->getIdentity();
 
     // Create a new query object.
         $db    = $this->getDatabase();

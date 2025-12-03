@@ -15,15 +15,15 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
-use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseQuery;
-use \Joomla\Database\ParameterType;
-use \Joomla\Utilities\ArrayHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
+use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseQuery;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Methods supporting a list of Images records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -39,14 +39,14 @@ class ImagesModel extends JoomListModel
 
   /**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
    * @since   4.0.0
    */
   function __construct($config = [])
-    {
+  {
         if(empty($config['filter_fields']))
         {
             $config['filter_fields'] = [
@@ -83,7 +83,7 @@ class ImagesModel extends JoomListModel
         }
 
         parent::__construct($config);
-    }
+  }
 
     /**
      * Method to auto-populate the model state.
@@ -104,13 +104,13 @@ class ImagesModel extends JoomListModel
     $forcedLanguage = $app->input->get('forcedLanguage', '', 'cmd');
 
     // Adjust the context to support modal layouts.
-        if ($layout = $app->input->get('layout'))
+        if($layout = $app->input->get('layout'))
         {
             $this->context .= '.' . $layout;
         }
 
     // Adjust the context to support forced languages.
-        if ($forcedLanguage)
+        if($forcedLanguage)
         {
             $this->context .= '.' . $forcedLanguage;
         }
@@ -141,7 +141,7 @@ class ImagesModel extends JoomListModel
     $this->setState('filter.and', $and);
 
         // Force a language
-        if (!empty($forcedLanguage))
+        if(!empty($forcedLanguage))
         {
             $this->setState('filter.language', $forcedLanguage);
             $this->setState('filter.forcedLanguage', $forcedLanguage);
@@ -167,13 +167,13 @@ class ImagesModel extends JoomListModel
         $id .= ':' . $this->getState('filter.search');
         $id .= ':' . $this->getState('filter.published');
         $id .= ':' . $this->getState('filter.language');
-    $id .= ':' . $this->getState('filter.showunapproved');
-    $id .= ':' . $this->getState('filter.showhidden');
-    $id .= ':' . serialize($this->getState('filter.access'));
-    $id .= ':' . serialize($this->getState('filter.created_by'));
-    $id .= ':' . serialize($this->getState('filter.category'));
-    $id .= ':' . serialize($this->getState('filter.tag'));
-    $id .= ':' . serialize($this->getState('filter.and'));
+    $id     .= ':' . $this->getState('filter.showunapproved');
+    $id     .= ':' . $this->getState('filter.showhidden');
+    $id     .= ':' . serialize($this->getState('filter.access'));
+    $id     .= ':' . serialize($this->getState('filter.created_by'));
+    $id     .= ':' . serialize($this->getState('filter.category'));
+    $id     .= ':' . serialize($this->getState('filter.tag'));
+    $id     .= ':' . serialize($this->getState('filter.and'));
 
     return parent::getStoreId($id);
     }
@@ -289,7 +289,7 @@ class ImagesModel extends JoomListModel
         $query->where($db->quoteName('a.access') . ' = :access')
               ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
-      elseif (\is_array($filter_access))
+      elseif(\is_array($filter_access))
       {
         $filter_access = ArrayHelper::toInteger($filter_access);
         $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -304,7 +304,7 @@ class ImagesModel extends JoomListModel
       if(is_numeric($userId))
       {
         $userId = (int) $userId;
-        $type = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
+        $type   = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
         $query->where($db->quoteName('a.created_by') . $type . ':userId')
           ->bind(':userId', $userId, ParameterType::INTEGER);
       }
@@ -348,7 +348,6 @@ class ImagesModel extends JoomListModel
 
         if($state == 1 || $state == 2)
         { // published/unpublished
-
           // translate state
           $state = ($state == 1) ? 1 : 0;
 
@@ -357,7 +356,6 @@ class ImagesModel extends JoomListModel
         }
         elseif($state == 3 || $state == 4)
         {// approved/not approved
-
           // translate state
           $state = ($state == 3) ? 1 : 0;
 
@@ -371,7 +369,6 @@ class ImagesModel extends JoomListModel
         }
         elseif($state == 6 || $state == 7)
         {// featured/not featured
-
           // translate state
           $state = ($state == 6) ? 1 : 0;
 
@@ -393,7 +390,7 @@ class ImagesModel extends JoomListModel
     if(!$showhidden)
         {
       $query->where($db->quoteName('a.hidden') . ' = 0');
-        }
+    }
 
     // Filter by unapproved images
     $showunapproved = (bool) $this->getState('filter.showunapproved');
@@ -401,7 +398,7 @@ class ImagesModel extends JoomListModel
     if(!$showunapproved)
         {
       $query->where($db->quoteName('a.approved') . ' = 1');
-        }
+    }
 
     // Filter by categories
     $catId = $this->getState('filter.category');
@@ -460,7 +457,7 @@ class ImagesModel extends JoomListModel
             $excludedId = (int) $excludedId;
             $query->where($db->quoteName('a.id') . ' != :imgId')
                 ->bind(':imgId', $excludedId, ParameterType::INTEGER);
-        }
+    }
         elseif(\is_array($excludedId))
         {
             $excludedId = ArrayHelper::toInteger($excludedId);
@@ -577,7 +574,7 @@ class ImagesModel extends JoomListModel
         $query->where($db->quoteName('a.access') . ' = :access')
               ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
-      elseif (\is_array($filter_access))
+      elseif(\is_array($filter_access))
       {
         $filter_access = ArrayHelper::toInteger($filter_access);
         $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -592,7 +589,7 @@ class ImagesModel extends JoomListModel
       if(is_numeric($userId))
       {
         $userId = (int) $userId;
-        $type = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
+        $type   = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
         $query->where($db->quoteName('a.created_by') . $type . ':userId')
           ->bind(':userId', $userId, ParameterType::INTEGER);
       }
@@ -636,7 +633,6 @@ class ImagesModel extends JoomListModel
 
         if($state == 1 || $state == 2)
         { // published/unpublished
-
           // translate state
           $state = ($state == 1) ? 1 : 0;
 
@@ -645,7 +641,6 @@ class ImagesModel extends JoomListModel
         }
         elseif($state == 3 || $state == 4)
         {// approved/not approved
-
           // translate state
           $state = ($state == 3) ? 1 : 0;
 
@@ -659,7 +654,6 @@ class ImagesModel extends JoomListModel
         }
         elseif($state == 6 || $state == 7)
         {// featured/not featured
-
           // translate state
           $state = ($state == 6) ? 1 : 0;
 
@@ -681,7 +675,7 @@ class ImagesModel extends JoomListModel
     if(!$showhidden)
         {
       $query->where($db->quoteName('a.hidden') . ' = 0');
-        }
+    }
 
     // Filter by unapproved images
     $showunapproved = (bool) $this->getState('filter.showunapproved');
@@ -689,7 +683,7 @@ class ImagesModel extends JoomListModel
     if(!$showunapproved)
         {
       $query->where($db->quoteName('a.approved') . ' = 1');
-        }
+    }
 
     // Filter by categories
     $catId = $this->getState('filter.category');
@@ -748,7 +742,7 @@ class ImagesModel extends JoomListModel
             $excludedId = (int) $excludedId;
             $query->where($db->quoteName('a.id') . ' != :imgId')
                 ->bind(':imgId', $excludedId, ParameterType::INTEGER);
-        }
+    }
         elseif(\is_array($excludedId))
         {
             $excludedId = ArrayHelper::toInteger($excludedId);

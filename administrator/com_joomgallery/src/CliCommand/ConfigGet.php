@@ -14,16 +14,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\Console\Command\AbstractCommand;
-use \Joomla\Database\DatabaseAwareTrait;
-use \Joomla\Database\DatabaseInterface;
-use \Symfony\Component\Console\Command\Command;
-use \Symfony\Component\Console\Input\InputArgument;
-use \Symfony\Component\Console\Input\InputInterface;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\Console\Style\SymfonyStyle;
+use Joomla\CMS\Factory;
+use Joomla\Console\Command\AbstractCommand;
+use Joomla\Database\DatabaseAwareTrait;
+use Joomla\Database\DatabaseInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConfigGet extends AbstractCommand
 {
@@ -114,14 +114,14 @@ class ConfigGet extends AbstractCommand
 
     $configurationAssoc = $this->getItemAssocFromDB($configId);
 
-    if (empty($configurationAssoc))
+    if(empty($configurationAssoc))
     {
       $this->ioStyle->error("The configuration id '" . $configId . "' is invalid, No configuration found matching your criteria!");
 
       return Command::FAILURE;
     }
 
-    if (!\array_key_exists($option, $configurationAssoc))
+    if(!\array_key_exists($option, $configurationAssoc))
     {
       $this->ioStyle->error("Can't find option '$option' in configuration list");
 
@@ -168,27 +168,27 @@ class ConfigGet extends AbstractCommand
    */
   protected function formatConfigValue($value): string
   {
-    if ($value === false)
+    if($value === false)
     {
       return 'false';
     }
 
-    if ($value === true)
+    if($value === true)
     {
       return 'true';
     }
 
-    if ($value === null)
+    if($value === null)
     {
       return 'Not Set';
     }
 
-    if (\is_array($value))
+    if(\is_array($value))
     {
       return json_encode($value);
     }
 
-    if (\is_object($value))
+    if(\is_object($value))
     {
       return json_encode(get_object_vars($value));
     }

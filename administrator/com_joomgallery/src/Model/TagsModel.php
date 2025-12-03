@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\Database\ParameterType;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Methods supporting a list of Tags records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -37,7 +37,7 @@ class TagsModel extends JoomListModel
 
   /**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
@@ -84,13 +84,13 @@ class TagsModel extends JoomListModel
   $forcedLanguage = $app->input->get('forcedLanguage', '', 'cmd');
 
   // Adjust the context to support modal layouts.
-    if ($layout = $app->input->get('layout'))
+    if($layout = $app->input->get('layout'))
     {
       $this->context .= '.' . $layout;
     }
 
   // Adjust the context to support forced languages.
-    if ($forcedLanguage)
+    if($forcedLanguage)
     {
       $this->context .= '.' . $forcedLanguage;
     }
@@ -109,7 +109,7 @@ class TagsModel extends JoomListModel
   $this->setState('filter.access', $access);
 
   // Force a language
-    if (!empty($forcedLanguage))
+    if(!empty($forcedLanguage))
     {
       $this->setState('filter.language', $forcedLanguage);
       $this->setState('filter.forcedLanguage', $forcedLanguage);
@@ -135,7 +135,7 @@ class TagsModel extends JoomListModel
     $id .= ':' . $this->getState('filter.search');
     $id .= ':' . $this->getState('filter.published');
     $id .= ':' . $this->getState('filter.language');
-  $id .= ':' . serialize($this->getState('filter.access'));
+  $id   .= ':' . serialize($this->getState('filter.access'));
 
     return parent::getStoreId($id);
   }
@@ -195,7 +195,7 @@ class TagsModel extends JoomListModel
     $query->where($db->quoteName('a.access') . ' = :access')
         ->bind(':access', $filter_access, ParameterType::INTEGER);
     }
-    elseif (\is_array($filter_access))
+    elseif(\is_array($filter_access))
     {
     $filter_access = ArrayHelper::toInteger($filter_access);
     $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -217,7 +217,7 @@ class TagsModel extends JoomListModel
       {
     $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -288,7 +288,7 @@ class TagsModel extends JoomListModel
     $query->where($db->quoteName('a.access') . ' = :access')
         ->bind(':access', $filter_access, ParameterType::INTEGER);
     }
-    elseif (\is_array($filter_access))
+    elseif(\is_array($filter_access))
     {
     $filter_access = ArrayHelper::toInteger($filter_access);
     $query->whereIn($db->quoteName('a.access'), $filter_access);
@@ -310,7 +310,7 @@ class TagsModel extends JoomListModel
       {
     $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
@@ -344,7 +344,7 @@ class TagsModel extends JoomListModel
    * Get an array of data items
    *
    * @return mixed Array of data items on success, false on failure.
-   * 
+   *
    * @since   4.0.0
    */
   public function getItems()
@@ -356,21 +356,23 @@ class TagsModel extends JoomListModel
 
   /**
    * Search for data items
-   * 
+   *
    * @param   array  $filters  Filter to apply to the search
    *
    * @return  array
-   * 
+   *
    * @since   4.0.0
    */
   public function searchItems($filters = [])
   {
-  $db = $this->getDatabase();
+  $db    = $this->getDatabase();
   $query = $db->getQuery(true)
-      ->select([
+    ->select(
+        [
         $db->quoteName('a.id', 'value'),
         $db->quoteName('a.title', 'text'),
-      ])
+        ]
+    )
       ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
 
   // Filter language
@@ -384,8 +386,8 @@ class TagsModel extends JoomListModel
   {
     $search = '%' . trim($filters['like']) . '%';
     $query->where(
-            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2)'
-            )
+        '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2)'
+    )
         ->bind([':search1', ':search2'], $search);
   }
 
@@ -411,13 +413,15 @@ class TagsModel extends JoomListModel
     $query->whereIn($db->quoteName('a.access'), $groups);
   }
 
-  $query->group([
+$query->group(
+    [
     $db->quoteName('a.id'),
     $db->quoteName('a.title'),
     $db->quoteName('a.ordering'),
     $db->quoteName('a.published'),
     $db->quoteName('a.access'),
-  ])
+    ]
+)
       ->order($db->quoteName('a.ordering') . ' ASC');
 
   // Get the options.
@@ -437,7 +441,7 @@ class TagsModel extends JoomListModel
 
   /**
    * Build an SQL query to load a list of all items mapped to an image.
-   * 
+   *
    * @param   int  $img_id  ID of the mapped image
    *
    * @return  DatabaseQuery
@@ -481,7 +485,7 @@ class TagsModel extends JoomListModel
 
   /**
    * Build an SQL query to load a list of all items given in a list.
-   * 
+   *
    * @param   array  $list  A list of titles to be looked for
    *
    * @return  DatabaseQuery
@@ -507,11 +511,11 @@ class TagsModel extends JoomListModel
 
   /**
    * Get an array of data items mapped to an an image.
-   * 
+   *
    * @param   int  $img_id  ID of the mapped image
    *
    * @return mixed Array of data items on success, false on failure.
-   * 
+   *
    * @since   4.0.0
    */
   public function getMappedItems($img_id)
@@ -535,11 +539,11 @@ class TagsModel extends JoomListModel
 
   /**
    * Get an array of data items which titles are present in the given list.
-   * 
+   *
    * @param  array  $list   A list of titles to be looked for
    *
    * @return mixed  Array of data items on success, false on failure.
-   * 
+   *
    * @since   4.1.0
    */
   public function getItemsInList($list)
@@ -563,7 +567,7 @@ class TagsModel extends JoomListModel
 
   /**
    * Store items based on list generated by tags select field
-   * 
+   *
    * @param   array  $tags  List of tags
    *
    * @return  array  List of tags on success, False otherwise
@@ -572,7 +576,7 @@ class TagsModel extends JoomListModel
    */
   public function storeTagsList($tags)
   {
-    $com_obj   = Factory::getApplication()->bootComponent('com_joomgallery');
+    $com_obj = Factory::getApplication()->bootComponent('com_joomgallery');
   $tag_model = $com_obj->getMVCFactory()->createModel('Tag', 'administrator');
 
   foreach($tags as $key => $tag)
@@ -595,7 +599,7 @@ class TagsModel extends JoomListModel
     $tag_title = str_replace('#new#', '', $tag_title);
 
     // Create tag object
-    $data = [];
+    $data                = [];
     $data['id']          = '0';
     $data['title']       = $tag_title;
     $data['published']   = '1';
@@ -614,7 +618,6 @@ class TagsModel extends JoomListModel
 
       // Update tags list entry on success
       $tags[$key] = \strval($tag_model->getItem($tag_title)->id);
-
     }
   }
 
@@ -623,7 +626,7 @@ class TagsModel extends JoomListModel
 
   /**
    * Update mapping between tags and image
-   * 
+   *
    * @param   array  $new_tags   List of tags to be mapped to the image
    * @param   int    $img_id     Id of the image
    *
@@ -636,7 +639,7 @@ class TagsModel extends JoomListModel
   $new_tags = ArrayHelper::toInteger($new_tags);
 
     $current_tags = $this->idArray($this->getMappedItems($img_id));
-  $current_tags = ArrayHelper::toInteger($current_tags);
+  $current_tags   = ArrayHelper::toInteger($current_tags);
 
   $com_obj   = Factory::getApplication()->bootComponent('com_joomgallery');
   $tag_model = $com_obj->getMVCFactory()->createModel('Tag', 'administrator');
@@ -677,7 +680,7 @@ class TagsModel extends JoomListModel
 
   /**
    * Convert a list of tag objects to a list of tag ids
-   * 
+   *
    * @param   array  $objectlist   List of tag objects
    *
    * @return  array  List of tag ids

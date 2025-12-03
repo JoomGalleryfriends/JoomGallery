@@ -15,15 +15,15 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Feed\FeedFactory;
-use \Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use \Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Feed\FeedFactory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Control model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -43,7 +43,7 @@ class ControlModel extends BaseDatabaseModel
    * @access  protected
    * @var     array
    */
-  static protected $extensions = [];
+  protected static $extensions = [];
 
   /**
    * Method to get the statistic data
@@ -137,7 +137,7 @@ class ControlModel extends BaseDatabaseModel
    * short description of the extension
    *
    * @return  array  Array with extensions data
-   * 
+   *
    * @since   4.0.0
    */
   public function getOfficialExtensionsData()
@@ -202,7 +202,7 @@ class ControlModel extends BaseDatabaseModel
 
       try
       {
-        $info_extension    = $this->getBestUpdate(JoomHelper::fetchXML($url));
+        $info_extension = $this->getBestUpdate(JoomHelper::fetchXML($url));
 
         if($info_extension)
         {
@@ -211,7 +211,7 @@ class ControlModel extends BaseDatabaseModel
       }
       catch (\Exception $e)
       {
-        JoomHelper::getComponent()->setWarning('Error fetching extension info ('.(string) $xml_extension->attributes()->name.'): ' . $e);
+        JoomHelper::getComponent()->setWarning('Error fetching extension info (' . (string) $xml_extension->attributes()->name . '): ' . $e);
       }
     }
 
@@ -290,7 +290,7 @@ class ControlModel extends BaseDatabaseModel
 
       if($bestVersion === null || version_compare($currentVersion, $bestVersion, '>'))
       {
-        $bestUpdate = $update;
+        $bestUpdate  = $update;
         $bestVersion = $currentVersion;
       }
     }

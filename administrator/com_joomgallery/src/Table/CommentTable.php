@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Database\DatabaseDriver;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\GlobalAssetTableTrait;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseDriver;
 
 /**
  * Comment table
@@ -41,7 +41,7 @@ class CommentTable extends Table
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
     $this->component_exists = $component_exists;
-    $this->typeAlias = _JOOM_OPTION.'.comment';
+    $this->typeAlias        = _JOOM_OPTION . '.comment';
 
     parent::__construct(_JOOM_TABLE_COMMENTS, 'id', $db);
   }

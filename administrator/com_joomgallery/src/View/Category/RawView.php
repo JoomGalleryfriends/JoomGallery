@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Category;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Router\Route;
-use \Joomla\Component\Media\Administrator\Exception\InvalidPathException;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Router\Route;
+use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 
 /**
  * Raw view class for a single Image.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -73,10 +73,10 @@ class RawView extends JoomGalleryView
     // Set header to specify the file name
     $this->app->setHeader('Cache-Control', 'no-cache, must-revalidate');
     $this->app->setHeader('Pragma', 'no-cache');
-    $this->app->setHeader('Content-disposition', 'inline; filename='.basename($img_path));
+    $this->app->setHeader('Content-disposition', 'inline; filename=' . basename($img_path));
     $this->app->setHeader('Content-Length', \strval($file_info->size));
 
     ob_end_clean(); //required here or large files will not work
     fpassthru($ressource);
-  }
+    }
 }

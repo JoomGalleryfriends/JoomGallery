@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomla\CMS\Application\CMSApplicationInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\MVC\Model\ItemModel;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\Model\ItemModel;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Registry\Registry;
 
 /**
  * Base model class for JoomGallery items
@@ -82,12 +82,12 @@ abstract class JoomItemModel extends ItemModel
      * @throws  \Exception
      */
     public function __construct($config = [], $factory = null)
-  {
+    {
     parent::__construct($config, $factory);
 
     $this->app       = Factory::getApplication();
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
-  }
+    }
 
     /**
      * Method to get parameters from model state.
@@ -97,7 +97,8 @@ abstract class JoomItemModel extends ItemModel
      */
     public function getParams(): array
     {
-        $params = ['component' => $this->getState('parameters.component'),
+        $params = [
+          'component' => $this->getState('parameters.component'),
           'menu'      => $this->getState('parameters.menu'),
           'configs'   => $this->getState('parameters.configs'),
         ];
@@ -107,7 +108,7 @@ abstract class JoomItemModel extends ItemModel
 
   /**
    * Method to override a parameter in the model state
-   * 
+   *
    * @param   string  $property  The parameter name.
    * @param   string  $value     The parameter value.
    * @param   string  $type      The parameter type. Optional. Default='configs'
@@ -231,13 +232,13 @@ abstract class JoomItemModel extends ItemModel
 
   /**
    * Method to load component specific parameters into model state.
-   * 
+   *
    * @param   int   $id   ID of the content if needed (default: 0)
    *
    * @return  void
    * @since   4.0.0
    */
-  protected function loadComponentParams(int $id=0)
+  protected function loadComponentParams(int $id = 0)
   {
     // Load the parameters.
         $params       = Factory::getApplication('com_joomgallery')->getParams();
@@ -245,7 +246,7 @@ abstract class JoomItemModel extends ItemModel
 
         if(isset($params_array['item_id']))
         {
-            $this->setState($this->type.'.id', $params_array['item_id']);
+            $this->setState($this->type . '.id', $params_array['item_id']);
         }
 
         $this->setState('parameters.component', $params);
@@ -253,7 +254,7 @@ abstract class JoomItemModel extends ItemModel
     // Load the configs from config service
     $id = ($id === 0) ? null : $id;
 
-        $this->component->createConfig(_JOOM_OPTION.'.'.$this->type, $id, true);
+        $this->component->createConfig(_JOOM_OPTION . '.' . $this->type, $id, true);
         $configArray = $this->component->getConfig()->getProperties();
         $configs     = new Registry($configArray);
 

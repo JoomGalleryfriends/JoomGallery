@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
+use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
 
 /**
  * Helper for the filesystem adapters

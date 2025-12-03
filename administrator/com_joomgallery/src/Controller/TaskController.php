@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 
 /**
  * Task controller class.

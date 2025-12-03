@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Userimages;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomgallery\Component\Joomgallery\Site\Model\UserimagesModel;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Pagination\Pagination;
-use \Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\UserimagesModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Router\Route;
 
 /**
  * View class for a list of Joomgallery.
@@ -111,7 +111,7 @@ class HtmlView extends JoomGalleryView
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
 
-    if (empty($this->params['configs']))
+    if(empty($this->params['configs']))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Attention: $this->params[\'configs\'] is null'), 'error');
     }
@@ -154,7 +154,7 @@ class HtmlView extends JoomGalleryView
       }
 
       // Redirect to user panel view
-      $this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=userpanel'));
+      $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=userpanel'));
 
       return;
     }
@@ -234,5 +234,4 @@ class HtmlView extends JoomGalleryView
       }
     }
   }
-
 }

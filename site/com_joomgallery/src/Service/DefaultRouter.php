@@ -15,17 +15,17 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
-use \Joomla\CMS\Application\SiteApplication;
-use \Joomla\CMS\Categories\CategoryFactoryInterface;
-use \Joomla\CMS\Component\Router\RouterView;
-use \Joomla\CMS\Component\Router\RouterViewConfiguration;
-use \Joomla\CMS\Component\Router\Rules\MenuRules;
-use \Joomla\CMS\Component\Router\Rules\NomenuRules;
-use \Joomla\CMS\Component\Router\Rules\StandardRules;
-use \Joomla\CMS\Menu\AbstractMenu;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\ParameterType;
+use Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use Joomla\CMS\Application\SiteApplication;
+use Joomla\CMS\Categories\CategoryFactoryInterface;
+use Joomla\CMS\Component\Router\RouterView;
+use Joomla\CMS\Component\Router\RouterViewConfiguration;
+use Joomla\CMS\Component\Router\Rules\MenuRules;
+use Joomla\CMS\Component\Router\Rules\NomenuRules;
+use Joomla\CMS\Component\Router\Rules\StandardRules;
+use Joomla\CMS\Menu\AbstractMenu;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 
 /**
  * Joomgallery Router class
@@ -184,7 +184,7 @@ class DefaultRouter extends RouterView
    *
    * @since   4.2.0
    */
-  public function getImageSegment(string $id, $query) : array|string
+  public function getImageSegment(string $id, $query): array|string
   {
     if(!strpos($id, ':'))
     {
@@ -194,7 +194,7 @@ class DefaultRouter extends RouterView
         return [''];
       }
 
-      $id .= ':'.$this->getImageAliasDb($id);
+      $id .= ':' . $this->getImageAliasDb($id);
     }
 
     if($this->noIDs)
@@ -226,7 +226,6 @@ class DefaultRouter extends RouterView
         // Load empty form view
         return [''];
       }
-
     }
 
     if($this->noIDs)
@@ -260,7 +259,7 @@ class DefaultRouter extends RouterView
 
       //     return $this->getImageSegment($id, $query);
       // same as image segment
-      $id .= ':'.$this->getImageAliasDb($id);
+      $id .= ':' . $this->getImageAliasDb($id);
     }
 
     if($this->noIDs)
@@ -379,7 +378,7 @@ class DefaultRouter extends RouterView
 
       if(!empty($category))
       {
-        $id .= ':'.$category->alias;
+        $id .= ':' . $category->alias;
       }
     }
 
@@ -413,7 +412,7 @@ class DefaultRouter extends RouterView
 //        return array('');
 //      }
 
-      $id .= ':'.$this->getImageAliasDb($id);
+      $id .= ':' . $this->getImageAliasDb($id);
     }
 
     if($this->noIDs)
@@ -475,7 +474,6 @@ class DefaultRouter extends RouterView
   {
     if($this->noIDs)
     {
-
       if($segment == '0-' || $segment == 'noimage' || $segment == '0-noimage')
       {
         // Special case: No image with id=0
@@ -634,12 +632,11 @@ class DefaultRouter extends RouterView
 
       if(!empty($segment))
       {
-
         $dbquery = $this->db->createQuery();
 
         $dbquery->select($this->db->quoteName('id'))
           ->from($this->db->quoteName(_JOOM_TABLE_CATEGORIES))
-          ->where($this->db->quoteName('alias').' = :alias')
+          ->where($this->db->quoteName('alias') . ' = :alias')
           ->bind(':alias', $segment);
 
         $this->db->setQuery($dbquery);
@@ -721,18 +718,18 @@ class DefaultRouter extends RouterView
       {
         case 'route_path':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getRoutePath($root, 'route_path');
-          break;
+            break;
 
         case 'children':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-          break;
+            break;
 
         case 'parents':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-          break;
+            break;
 
         default:
-          throw new \UnexpectedValueException('Requested property ('.$available.') can to be made available in a category.');
+            throw new \UnexpectedValueException('Requested property (' . $available . ') can to be made available in a category.');
           break;
       }
     }
@@ -750,12 +747,12 @@ class DefaultRouter extends RouterView
    */
   public function getImageAliasDb(string $id): string
   {
-    $alias = '';
+    $alias   = '';
     $dbquery = $this->db->createQuery();
 
     $dbquery->select($this->db->quoteName('alias'))
       ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-      ->where($this->db->quoteName('id').' = :id')
+      ->where($this->db->quoteName('id') . ' = :id')
       ->bind(':id', $id, ParameterType::INTEGER);
     $this->db->setQuery($dbquery);
 
@@ -793,18 +790,18 @@ class DefaultRouter extends RouterView
       {
         case 'route_path':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getRoutePath($root, 'route_path');
-          break;
+            break;
 
         case 'children':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-          break;
+            break;
 
         case 'parents':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-          break;
+            break;
 
         default:
-          throw new \UnexpectedValueException('Requested property ('.$available.') can to be made available in a category.');
+            throw new \UnexpectedValueException('Requested property (' . $available . ') can to be made available in a category.');
           break;
       }
     }
@@ -842,20 +839,20 @@ class DefaultRouter extends RouterView
 
       $dbquery->select($this->db->quoteName('id'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($this->db->quoteName('alias').' = :alias')
+        ->where($this->db->quoteName('alias') . ' = :alias')
         ->bind(':alias', $segment);
 
       if($cat = $this->app->input->get('catid', 0, 'int'))
       {
         // We can identify the image via a request query variable of type catid
-        $dbquery->where($this->db->quoteName('catid').' = :catid');
+        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
         $dbquery->bind(':catid', $cat, ParameterType::INTEGER);
       }
 
       if(key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
       {
         // We can identify the image via menu item of type category
-        $dbquery->where($this->db->quoteName('catid').' = :catid');
+        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
         $dbquery->bind(':catid', $query['id'], ParameterType::INTEGER);
       }
 
@@ -866,5 +863,4 @@ class DefaultRouter extends RouterView
 
     return $img_id;
   }
-
 }

@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
-use \Joomla\Database\Mysqli\MysqliQuery;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
+use Joomla\Database\Mysqli\MysqliQuery;
 
 /**
  * Model to get a list of category records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -28,14 +28,14 @@ class CategoriesModel extends AdminCategoriesModel
 {
   /**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
    * @since   4.0.0
    */
   function __construct($config = [])
-    {
+  {
         if(empty($config['filter_fields']))
         {
             $config['filter_fields'] = [
@@ -64,7 +64,7 @@ class CategoriesModel extends AdminCategoriesModel
         }
 
         parent::__construct($config);
-    }
+  }
 
     /**
      * Method to auto-populate the model state.

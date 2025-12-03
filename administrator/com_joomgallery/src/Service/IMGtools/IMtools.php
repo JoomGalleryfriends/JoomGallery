@@ -15,15 +15,15 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtools as BaseIMGtools;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsInterface;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Filesystem\File;
-use \Joomla\Filesystem\Path;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtools as BaseIMGtools;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsInterface;
+use Joomla\CMS\Language\Text;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Path;
 
 /**
  * IMGtools Class (IM)
- * 
+ *
  * Provides methods to do image processing and metadata handling
  *
  * Image processor
@@ -88,7 +88,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function __construct($keep_metadata=false, $keep_anim=false, $impath = '')
+  public function __construct($keep_metadata = false, $keep_anim = false, $impath = '')
   {
     parent::__construct($keep_metadata, $keep_anim);
 
@@ -117,7 +117,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Check availability and version of ImageMagick v7.x
-    @exec(trim($this->impath).'magick -version', $output);
+    @exec(trim($this->impath) . 'magick -version', $output);
 
     if($output)
     {
@@ -127,7 +127,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
 
       // Check availability and version of ImageMagick v6.x
-      @exec(trim($this->impath).'convert -version', $output);
+      @exec(trim($this->impath) . 'convert -version', $output);
 
       if($output)
       {
@@ -137,8 +137,6 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
 
         return false;
-
-
   }
 
   /**
@@ -161,7 +159,6 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
       $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_IM_NOTFOUND'));
 
       return;
-
   }
 
   /**
@@ -195,13 +192,13 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Check availability and version of ImageMagick
-    @exec(trim($this->impath).'convert -version', $output_convert);
-    @exec(trim($this->impath).'magick -version', $output_magick);
+    @exec(trim($this->impath) . 'convert -version', $output_convert);
+    @exec(trim($this->impath) . 'magick -version', $output_magick);
 
     if($output_magick)
     {
       // use new version (>= v7.x) if available
-      $this->convert_path = trim($this->impath).'magick convert';
+      $this->convert_path = trim($this->impath) . 'magick convert';
 
       $version = str_replace(['Version: ', ' http://www.imagemagick.org'], ['',''], $output_magick[0]);
     }
@@ -210,7 +207,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
       if($output_convert)
       {
         // otherwise use old version (<= v6.x)
-        $this->convert_path = trim($this->impath).'convert';
+        $this->convert_path = trim($this->impath) . 'convert';
 
         $version = str_replace(['Version: ', ' http://www.imagemagick.org'], ['',''], $output_convert[0]);
       }
@@ -229,7 +226,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
       if(!file_exists($file))
       {
-        $file = JPATH_ROOT.\DIRECTORY_SEPARATOR.$file;
+        $file = JPATH_ROOT . \DIRECTORY_SEPARATOR . $file;
 
         $file = Path::clean($file);
       }
@@ -279,7 +276,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function write($file, $quality=100): bool
+  public function write($file, $quality = 100): bool
   {
     // Check image availability
     if(empty($this->res_imginfo['width']) || empty($this->res_imginfo['height']))
@@ -290,8 +287,8 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Define image type to write
     $path_parts = pathinfo($file);
-    $type = $path_parts['extension'];
-    $type = strtoupper($type);
+    $type       = $path_parts['extension'];
+    $type       = strtoupper($type);
 
     if($type)
     {
@@ -310,7 +307,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     $file = Path::clean($file);
 
     // Set output quality
-    $this->commands['quality'] = ' -quality "'.$quality.'"';
+    $this->commands['quality'] = ' -quality "' . $quality . '"';
 
     // Rotate image, if needed (use auto-orient command)
     if($this->auto_orient)
@@ -347,7 +344,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     // Check that the resized image is valid
     if(!$this->checkValidImage($file))
     {
-      $filecheck  = false;
+      $filecheck = false;
     }
 
     // Workaround for servers with wwwrun problem
@@ -371,7 +368,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
       if($return_var != 0 || !$filecheck)
       {
-        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec('.$convert.');'));
+        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec(' . $convert . ');'));
         $this->rollback($this->src_file, $file);
 
         return false;
@@ -381,7 +378,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     // Debugoutput: shell command
     if($this->app->get('debug', false))
     {
-      $this->component->addDebug('<strong>Shell command:</strong><br />'.$convert);
+      $this->component->addDebug('<strong>Shell command:</strong><br />' . $convert);
     }
 
     // If there is watermarking perform this last
@@ -436,7 +433,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function stream($quality=100, $base64=false, $html=false, $type=false): string
+  public function stream($quality = 100, $base64 = false, $html = false, $type = false): string
   {
     // Check image availability
     if(empty($this->res_imginfo['width']) || empty($this->res_imginfo['height']))
@@ -460,16 +457,16 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
     if(\is_string($this->src_file) && strpos($this->src_file, '[0]') !== false)
     {
-      $this->src_file = str_replace('[0]', '', $this->src_file);
+      $this->src_file   = str_replace('[0]', '', $this->src_file);
       $first_frame_only = true;
     }
 
     // Define temporary image file to be created
     $tmp_folder   = $this->app->get('tmp_path');
-    $tmp_dst_file = $tmp_folder.'/tmp_dst_img_'.$this->rndNumber.'.'.strtolower($this->dst_type);
+    $tmp_dst_file = $tmp_folder . '/tmp_dst_img_' . $this->rndNumber . '.' . strtolower($this->dst_type);
 
     // Create temporary source file from stream
-    $tmp_src_file = $tmp_folder.'/tmp_src_img_'.$this->rndNumber.'.'.strtolower($this->src_type);
+    $tmp_src_file = $tmp_folder . '/tmp_src_img_' . $this->rndNumber . '.' . strtolower($this->src_type);
 
     if(\is_resource($this->src_file))
     {
@@ -536,26 +533,26 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Completing the image string
-    switch ($this->dst_type)
+    switch($this->dst_type)
     {
       case 'PNG':
-        $stream = 'data:image/png;base64,'.$stream;
-        break;
+        $stream = 'data:image/png;base64,' . $stream;
+          break;
 
       case 'GIF':
-        $stream = 'data:image/gif;base64,'.$stream;
-        break;
+        $stream = 'data:image/gif;base64,' . $stream;
+          break;
 
       case 'JPEG':
       case 'JPG':
       default:
-        $stream = 'data:image/jpeg;base64,'.$stream;
-        break;
+        $stream = 'data:image/jpeg;base64,' . $stream;
+          break;
     }
 
     if($html)
     {
-      return '<img src="'.$stream.'" />';
+      return '<img src="' . $stream . '" />';
     }
 
 
@@ -580,7 +577,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function resize($method, $width, $height, $cropposition=2, $unsharp=false): bool
+  public function resize($method, $width, $height, $cropposition = 2, $unsharp = false): bool
   {
     // Check image availability
     if(empty($this->res_imginfo['width']) || empty($this->res_imginfo['height']))
@@ -639,19 +636,19 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     {
       case 1:
         $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_RESIZE_TO_HEIGHT'));
-        break;
+          break;
       case 2:
         $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_RESIZE_TO_WIDTH'));
-        break;
+          break;
       case 3:
         $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_RESIZE_TO_MAX'));
-        break;
+          break;
       case 4:
         // Free resizing and cropping
         $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_RESIZE_TO_CROP'));
-        break;
+          break;
       default:
-        break;
+          break;
     }
 
     if($this->src_imginfo['animation']  && !$this->keep_anim)
@@ -674,13 +671,13 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     if($method == 4)
     {
       // Assembling the imagick command for cropping
-      $this->commands['crop'] = ' -crop "'.$this->dst_imginfo['src']['width'].'x'.$this->dst_imginfo['src']['height'].'+'.$this->dst_imginfo['offset_x'].'+'.$this->dst_imginfo['offset_y'].'" +repage';
+      $this->commands['crop'] = ' -crop "' . $this->dst_imginfo['src']['width'] . 'x' . $this->dst_imginfo['src']['height'] . '+' . $this->dst_imginfo['offset_x'] . '+' . $this->dst_imginfo['offset_y'] . '" +repage';
     }
 
     if(!$noResize)
     {
       // Assembling the imagick command for resizing if resizing is needed
-      $this->commands['resize'] = ' -resize "'.$this->dst_imginfo['width'].'x'.$this->dst_imginfo['height'].'"';
+      $this->commands['resize'] = ' -resize "' . $this->dst_imginfo['width'] . 'x' . $this->dst_imginfo['height'] . '"';
     }
 
     if($unsharp)
@@ -773,7 +770,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
     if(!$this->auto_orient && $this->dst_imginfo['angle'] > 0)
     {
-      $this->commands['rotate'] = ' -rotate "-'.$angle.'"';
+      $this->commands['rotate'] = ' -rotate "-' . $angle . '"';
       $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ROTATE_BY_ANGLE', $angle));
     }
 
@@ -816,23 +813,23 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Get info for destination frames
-    switch ($direction)
+    switch($direction)
     {
       case 1:
-        $this->dst_imginfo['flip']  = 'horizontally';
-        break;
+        $this->dst_imginfo['flip'] = 'horizontally';
+          break;
 
       case 2:
-        $this->dst_imginfo['flip']  = 'vertically';
-        break;
+        $this->dst_imginfo['flip'] = 'vertically';
+          break;
 
       case 3:
-        $this->dst_imginfo['flip']  = 'both';
-        break;
+        $this->dst_imginfo['flip'] = 'both';
+          break;
 
       default:
-        $this->dst_imginfo['flip']  = 'none';
-        break;
+        $this->dst_imginfo['flip'] = 'none';
+          break;
     }
     $this->dst_imginfo['width']       = $this->dst_imginfo['src']['width'] = $this->src_imginfo['width'];
     $this->dst_imginfo['height']      = $this->dst_imginfo['src']['height'] = $this->src_imginfo['height'];
@@ -938,7 +935,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
     if(!file_exists($wtm_file))
     {
-      $wtm_file = JPATH_ROOT.\DIRECTORY_SEPARATOR.$wtm_file;
+      $wtm_file = JPATH_ROOT . \DIRECTORY_SEPARATOR . $wtm_file;
 
       $wtm_file = Path::clean($wtm_file);
     }
@@ -977,12 +974,12 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     $this->watermarking = true;
 
     // Set watermarking settings
-    $this->wtm_imginfo = ['wtm_pos'=>$wtm_pos, 'wtm_resize'=>$wtm_resize, 'wtm_newSize'=>$wtm_newSize, 'imginfo'=>$this->src_imginfo];
+    $this->wtm_imginfo = ['wtm_pos' => $wtm_pos, 'wtm_resize' => $wtm_resize, 'wtm_newSize' => $wtm_newSize, 'imginfo' => $this->src_imginfo];
 
     if($this->res_imginfo['animation'] && $this->keep_anim && $this->dst_type == 'GIF')
     {
       // Resize watermark file
-      $this->commands['wtm-resize'] = ' -resize "{widthxheight}" "'.$wtm_file.'" "{tmp_wtm_file}"';
+      $this->commands['wtm-resize'] = ' -resize "{widthxheight}" "' . $wtm_file . '" "{tmp_wtm_file}"';
 
       // Positioning of the watermark
       $this->commands['wtm-pos'] = ' "{src_file}" -coalesce -gravity "northwest" -geometry "{+position[0]+$position[1]}" null:';
@@ -999,13 +996,13 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
       }
 
       // Resize watermark file
-      $this->commands['wtm-resize'] = ' "'.$wtm_file.'" -resize "{widthxheight}"';
+      $this->commands['wtm-resize'] = ' "' . $wtm_file . '" -resize "{widthxheight}"';
 
       // Positioning of the watermark
       $this->commands['wtm-pos'] = ' "{src_file}" +swap -gravity "northwest" -geometry "{+position[0]+$position[1]}"';
 
       // copy watermark on top of image
-      $this->commands['watermark'] = ' -define compose:args='.$opacity.',100 -compose dissolve -composite'.' "{dst_file}"';
+      $this->commands['watermark'] = ' -define compose:args=' . $opacity . ',100 -compose dissolve -composite' . ' "{dst_file}"';
     }
 
     return true;
@@ -1032,12 +1029,12 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Get supported types of ImageMagick v7.x
-    @exec(trim($this->impath).'magick -list format', $output);
+    @exec(trim($this->impath) . 'magick -list format', $output);
 
     if(!$output)
     {
       // Get supported types of ImageMagick v6.x
-      @exec(trim($this->impath).'convert -list format', $output);
+      @exec(trim($this->impath) . 'convert -list format', $output);
     }
 
     if(!$output)
@@ -1053,7 +1050,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
     $types = [];
 
-    foreach ($output as $key => $line)
+    foreach($output as $key => $line)
     {
       // skip empty line
       if($line === '')
@@ -1094,7 +1091,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
    * Supported image-types: depending on IM version
    *
    * @param   string   $file     Path to the destination file
-   * 
+   *
    * @return  string   Convert command
    *
    * @since   4.0.0
@@ -1155,7 +1152,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Assembling the shell code for the resize with imagick
-    $convert = $this->convert_path.' '.$commands.' "'.$this->src_file.'" "'.$file.'"';
+    $convert = $this->convert_path . ' ' . $commands . ' "' . $this->src_file . '" "' . $file . '"';
 
     return $convert;
   }
@@ -1165,7 +1162,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
    * -- A temporary watermarked image will be created if no path is given.
    * -- The global source file is used if no source if given
    * Supported image-types: depending on IM version
-   * 
+   *
    * @param   string   $src_file   File to be watermarked (default: $this->src_file)
    * @param   string   $dst_file   Path where the watermarked file is stored (default: temp-file creation)
    *
@@ -1173,7 +1170,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  protected function execWatermarking($src_file=false, $dst_file=false)
+  protected function execWatermarking($src_file = false, $dst_file = false)
   {
     // Check image availability
     if(empty($this->res_imginfo['width']) || empty($this->res_imginfo['height']))
@@ -1202,9 +1199,8 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
     if(isset($this->commands['wtm-resize']))
     {
-
-      $this->commands['wtm-resize'] = str_replace('{widthxheight}', $this->dst_imginfo['width'].'x'.$this->dst_imginfo['height'], $this->commands['wtm-resize']);
-      $commands .= $this->commands['wtm-resize'];
+      $this->commands['wtm-resize'] = str_replace('{widthxheight}', $this->dst_imginfo['width'] . 'x' . $this->dst_imginfo['height'], $this->commands['wtm-resize']);
+      $commands                    .= $this->commands['wtm-resize'];
     }
 
     if(isset($this->commands['wtm-pos']))
@@ -1212,14 +1208,14 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
       if(!$src_file)
       {
         // Use src_file if no other is given
-        $src_file   = $this->src_file;
+        $src_file = $this->src_file;
       }
 
       // Get watermarking source file
       Path::clean($src_file);
       $this->commands['wtm-pos'] = str_replace('{src_file}', $src_file, $this->commands['wtm-pos']);
 
-      $this->commands['wtm-pos'] = str_replace('{+position[0]+$position[1]}', '+'.$position[0].'+'.$position[1], $this->commands['wtm-pos']);
+      $this->commands['wtm-pos'] = str_replace('{+position[0]+$position[1]}', '+' . $position[0] . '+' . $position[1], $this->commands['wtm-pos']);
 
       $commands .= $this->commands['wtm-pos'];
     }
@@ -1231,7 +1227,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
       {
         // Define temporary image file to be created
         $tmp_folder = $this->app->get('tmp_path');
-        $dst_file   = $tmp_folder.'/tmp_wtm_img_'.$this->rndNumber.'.'.strtolower($this->src_type);
+        $dst_file   = $tmp_folder . '/tmp_wtm_img_' . $this->rndNumber . '.' . strtolower($this->src_type);
       }
 
       Path::clean($dst_file);
@@ -1241,7 +1237,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Assembling the shell code for the resize with imagick
-    $convert = $this->convert_path.' '.$commands;
+    $convert = $this->convert_path . ' ' . $commands;
 
     $return_var = null;
     $dummy      = null;
@@ -1253,7 +1249,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     // Check that the resized image is valid
     if(!$this->checkValidImage($dst_file))
     {
-      $filecheck  = false;
+      $filecheck = false;
     }
 
     // Workaround for servers with wwwrun problem
@@ -1277,8 +1273,8 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
       if($return_var != 0 || !$filecheck)
       {
-        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec('.$convert.');'));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec('.$convert.');'), 'error', 'jerror');
+        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec(' . $convert . ');'));
+        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec(' . $convert . ');'), 'error', 'jerror');
         $this->rollback($this->src_file, $dst_file);
 
         return false;
@@ -1288,10 +1284,10 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     // Debugoutput: shell command
     if($this->app->get('debug', false))
     {
-      $this->component->addDebug('<strong>Shell command (watermarking):</strong><br />'.$convert);
+      $this->component->addDebug('<strong>Shell command (watermarking):</strong><br />' . $convert);
     }
 
-    return ['dst_file'=>$dst_file, 'wtm_file'=>$wtm_file];
+    return ['dst_file' => $dst_file, 'wtm_file' => $wtm_file];
   }
 
   /**
@@ -1306,15 +1302,15 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
   {
     // Define temporary image file to be created
     $tmp_folder = $this->app->get('tmp_path');
-    $tmp_file   = $tmp_folder.'/tmp_wtm_'.$this->rndNumber.'.'.strtolower($this->wtm_type);
+    $tmp_file   = $tmp_folder . '/tmp_wtm_' . $this->rndNumber . '.' . strtolower($this->wtm_type);
 
     // Apply temp file to commands
     $this->commands['wtm-resize'] = str_replace('{tmp_wtm_file}', $tmp_file, $this->commands['wtm-resize']);
-    $this->commands['wtm-resize'] = str_replace('{widthxheight}', $this->dst_imginfo['width'].'x'.$this->dst_imginfo['height'], $this->commands['wtm-resize']);
-    $this->commands['watermark'] = str_replace('{tmp_wtm_file}', $tmp_file, $this->commands['watermark']);
+    $this->commands['wtm-resize'] = str_replace('{widthxheight}', $this->dst_imginfo['width'] . 'x' . $this->dst_imginfo['height'], $this->commands['wtm-resize']);
+    $this->commands['watermark']  = str_replace('{tmp_wtm_file}', $tmp_file, $this->commands['watermark']);
 
     // Assembling the shell code for the resize with imagick
-    $convert = $this->convert_path.' '.$this->commands['wtm-resize'];
+    $convert = $this->convert_path . ' ' . $this->commands['wtm-resize'];
 
     $return_var = null;
     $dummy      = null;
@@ -1326,7 +1322,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     // Check that the resized image is valid
     if(!$this->checkValidImage($tmp_file))
     {
-      $filecheck  = false;
+      $filecheck = false;
     }
 
     // Workaround for servers with wwwrun problem
@@ -1350,8 +1346,8 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
 
       if($return_var != 0 || !$filecheck)
       {
-        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec('.$convert.');'));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec('.$convert.');'), 'error', 'jerror');
+        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec(' . $convert . ');'));
+        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_SERVERPROBLEM_EXEC', 'exec(' . $convert . ');'), 'error', 'jerror');
         $this->rollback($this->src_file, $tmp_file);
 
         return false;
@@ -1361,7 +1357,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     // Debugoutput: shell command
     if($this->app->get('debug', false))
     {
-      $this->component->addDebug('<strong>Shell command (watermark-resize):</strong><br />'.$convert);
+      $this->component->addDebug('<strong>Shell command (watermark-resize):</strong><br />' . $convert);
     }
 
     // unset wtm-resize command
@@ -1380,7 +1376,7 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
   {
     if(strpos($this->src_file, '[0]') === false)
     {
-      $this->src_file = $this->src_file.'[0]';
+      $this->src_file = $this->src_file . '[0]';
     }
   }
 }

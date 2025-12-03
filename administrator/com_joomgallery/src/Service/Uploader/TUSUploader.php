@@ -14,13 +14,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
-use \Joomla\Filesystem\File as JFile;
-use \Joomla\Filesystem\Path as JPath;
+use Joomla\Filesystem\File as JFile;
+use Joomla\Filesystem\Path as JPath;
 
 /**
  * Uploader helper class (TUS Upload)
@@ -36,7 +36,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
 
   /**
    * Constructor
-   * 
+   *
    * @param   bool   $multiple     True, if it is a multiple upload  (default: false)
    * @param   bool   $async        True, if it is a asynchronous upload  (default: false)
    *
@@ -44,12 +44,12 @@ class TUSUploader extends BaseUploader implements UploaderInterface
    *
    * @since   4.0.0
    */
-  public function __construct($multiple=false, $async=false)
+  public function __construct($multiple = false, $async = false)
   {
         parent::__construct($multiple, $async);
 
         $this->component->createTusServer();
-    }
+  }
 
     /**
      * Method to retrieve an uploaded image. Step 1.
@@ -62,8 +62,8 @@ class TUSUploader extends BaseUploader implements UploaderInterface
      *
      * @since  4.0.0
      */
-    public function retrieveImage(&$data, $filename=True): bool
-  {
+    public function retrieveImage(&$data, $filename = true): bool
+    {
         $user = Factory::getUser();
 
     // Load tus upload
@@ -104,7 +104,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
 
     $this->src_name = $this->component->getTusServer()->getMetaDataValue('name');
     $this->src_size = $this->component->getTusServer()->getMetaDataValue('size');
-    $this->src_tmp  = JPath::clean($this->component->getTusServer()->getDirectory()).$uuid;
+    $this->src_tmp  = JPath::clean($this->component->getTusServer()->getDirectory()) . $uuid;
 
     // Perform the parent method
     // - check tag and size
@@ -116,7 +116,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     }
 
     // Upload file to temp file
-    $this->src_file = JPath::clean(\dirname($this->src_tmp).\DIRECTORY_SEPARATOR.$this->src_name);
+    $this->src_file = JPath::clean(\dirname($this->src_tmp) . \DIRECTORY_SEPARATOR . $this->src_name);
 
     if(!JFile::move($this->src_tmp, $this->src_file))
     {
@@ -140,9 +140,9 @@ class TUSUploader extends BaseUploader implements UploaderInterface
    * according to configuration. Step 2.
    *
    * @param   array   $data     The form data (as a reference)
-   * 
+   *
    * @return  bool    True on success, false otherwise
-   * 
+   *
    * @since   1.5.7
    */
   public function overrideData(&$data): bool
@@ -181,7 +181,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     }
 
     // Delete info file
-    JFile::delete($this->src_tmp.'.info');
+    JFile::delete($this->src_tmp . '.info');
 
     // Override form data with image metadata
     return parent::overrideData($data);
@@ -216,16 +216,15 @@ class TUSUploader extends BaseUploader implements UploaderInterface
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN')), 'error', 'jerror');
 
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
-
   }
 
   /**
    * Detect if there is an image uploaded
-   * 
+   *
    * @param   array    $data      Form data
-   * 
+   *
    * @return  bool     True if file is detected, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function isImgUploaded($data): bool
@@ -241,6 +240,5 @@ class TUSUploader extends BaseUploader implements UploaderInterface
 
 
       return false;
-
   }
 }

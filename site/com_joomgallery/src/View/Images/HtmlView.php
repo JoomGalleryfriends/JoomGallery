@@ -15,16 +15,16 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Images;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomgallery\Component\Joomgallery\Site\Model\ImagesModel;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\ImagesModel;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Router\Route;
 
 /**
  * View class for a list of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -57,9 +57,9 @@ class HtmlView extends JoomGalleryView
   /** @var ImagesModel $model */
   $model = $this->getModel();
 
-  $this->state         = $model->getState();
+  $this->state           = $model->getState();
     $this->params        = $model->getParams();
-  $this->items         = $model->getItems();
+  $this->items           = $model->getItems();
     $this->pagination    = $model->getPagination();
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
@@ -150,7 +150,7 @@ class HtmlView extends JoomGalleryView
     if(!$this->isMenuCurrentView($menu))
     {
       // Add Breadcrumbs
-      $pathway = $this->app->getPathway();
+      $pathway         = $this->app->getPathway();
       $breadcrumbTitle = Text::_('COM_JOOMGALLERY_IMAGES');
 
       if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))

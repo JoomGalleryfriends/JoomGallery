@@ -20,7 +20,7 @@ use Joomla\Component\Privacy\Administrator\Table\RequestTable;
 
 /**
  * Privacy plugin managing Joomla user image data
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -40,7 +40,7 @@ final class JoomgalleryPrivacy extends PrivacyPlugin
    */
   public function onPrivacyExportRequest(RequestTable $request, ?User $user = null)
   {
-    if (!$user)
+    if(!$user)
     {
       return [];
     }
@@ -49,7 +49,7 @@ final class JoomgalleryPrivacy extends PrivacyPlugin
     $domain    = $this->createDomain('user_image', 'joomla_user_image_data');
     $domains[] = $domain;
 
-    $db = $this->getDatabase();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true)
       ->select('*')
       ->from($db->quoteName('#__joomgallery'))
@@ -57,7 +57,7 @@ final class JoomgalleryPrivacy extends PrivacyPlugin
 
     $items = $db->setQuery($query)->loadObjectList();
 
-    foreach ($items as $item)
+    foreach($items as $item)
     {
       $domain->addItem($this->createItemFromArray((array) $item));
     }
@@ -82,7 +82,7 @@ final class JoomgalleryPrivacy extends PrivacyPlugin
   public function onPrivacyRemoveData(RequestTable $request, ?User $user = null)
   {
     // This plugin only processes data for registered user accounts
-    if (!$user)
+    if(!$user)
     {
       return;
     }

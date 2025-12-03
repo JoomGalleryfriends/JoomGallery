@@ -14,7 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Refresher;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\Refresher;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\Refresher;
 
 /**
  * Trait to implement RefresherServiceInterface
@@ -46,7 +46,7 @@ trait RefresherServiceTrait
 
     /**
      * Creates the refresher helper class
-     * 
+     *
      * @param   array  $params   An array with optional parameters
      *
      * @return  void

@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Session\Session;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS
 $wa = $this->document->getWebAssetManager();
@@ -40,7 +41,7 @@ $saveOrderingUrl = '';
 
 if($saveOrder && !empty($this->items))
 {
-  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
+  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
   HTMLHelper::_('draggablelist.draggable');
 }
 
@@ -66,7 +67,6 @@ $canDeleteFound = false;
           <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
         </div>
       <?php else : ?>
-
         <?php if(!empty($this->filterForm)) : ?>
           <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <?php endif; ?>
@@ -124,15 +124,16 @@ $canDeleteFound = false;
               </td>
             </tr>
             </tfoot>
-            <tbody <?php if($saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
+            <tbody <?php if($saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
+                   endif; ?>>
             <?php foreach($this->items as $i => $item) :
-              $ordering = ($listOrder == 'a.ordering');
-              $canEdit = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
-              $canDelete = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
+              $ordering        = ($listOrder == 'a.ordering');
+              $canEdit         = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
+              $canDelete       = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
               $canDeleteFound |= $canDelete;
-              $canChange = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
-              $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser()->id;
-              $disabled = ($item->checked_out > 0) ? 'disabled' : '';
+              $canChange       = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
+              $canCheckin      = $canChange || $item->checked_out == $this->getCurrentUser()->id;
+              $disabled        = ($item->checked_out > 0) ? 'disabled' : '';
               ?>
 
               <tr class="row<?php echo $i % 2; ?>">
@@ -148,7 +149,7 @@ $canDeleteFound = false;
                     }
                     elseif(!$saveOrder)
                     {
-                      $iconClass = ' inactive" title="'.Text::_('JORDERINGDISABLED');
+                      $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                     }
                     ?>
                     <?php if($canChange && $saveOrder) : ?>
@@ -253,17 +254,22 @@ $canDeleteFound = false;
 // Manuel: Do we need it
 if($canDeleteFound)
 {
-  $wa->addInlineScript("
+$wa->addInlineScript(
+    "
       jQuery(document).ready(function () {
         jQuery('.delete-button').click(deleteItem);
       });
 
       function deleteItem() {
 
-        if (!confirm(\"".Text::_('COM_JOOMGALLERY_DELETE_MESSAGE').'")) {
+        if (!confirm(\"" . Text::_('COM_JOOMGALLERY_DELETE_MESSAGE') . '")) {
           return false;
         }
       }
-    ', [], [], ['jquery']);
+    ',
+    [],
+    [],
+    ['jquery']
+);
 }
 ?>

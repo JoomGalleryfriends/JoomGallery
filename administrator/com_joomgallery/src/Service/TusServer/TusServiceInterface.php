@@ -14,7 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
 
 /**
  * The TUS server service
@@ -25,7 +25,7 @@ interface TusServiceInterface
 {
     /**
      * Creates the tus server class
-     * 
+     *
      * @param   string   Upload folder path
      * @param   string   TUS server implementation location (URI)
      * @param   bool     True if debug mode should be activated
@@ -34,7 +34,7 @@ interface TusServiceInterface
      *
      * @since  4.0.0
      */
-    public function createTusServer(string $folder='', string $location = '', bool $debug=false): void;
+    public function createTusServer(string $folder = '', string $location = '', bool $debug = false): void;
 
     /**
      * Returns the tus server class.

@@ -1,22 +1,23 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\FileLayout;
-use \Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -39,7 +40,7 @@ $imagesView     = Route::_('index.php?option=com_joomgallery&view=userimages');
 
 // return to userupload;
 $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userupload');
-$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return='.$returnURL);
+$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return=' . $returnURL);
 
 $config = $this->params['configs'];
 
@@ -91,7 +92,7 @@ Text::script('COM_JOOMGALLERY_ERROR_UPPY_FORM');
 Text::script('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD');
 Text::script('COM_JOOMGALLERY_ERROR_FILL_REQUIRED_FIELDS');
 
-$wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_vars).'\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
+$wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_vars) . '\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
 
 ?>
 
@@ -109,7 +110,6 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
     <?php if(empty($isHasAccess)): ?>
       <div>
         <?php if(!$this->isUserLoggedIn): ?>
-
           <div class="mb-2">
             <div class="alert alert-warning" role="alert">
               <span class="icon-key"></span>
@@ -118,7 +118,6 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
           </div>
 
         <?php else: ?>
-
           <!--          --><?php //if(!$this->isUserHasCategory): ?>
           <!--            <div class="alert alert-warning" role="alert">-->
           <!--              <span class="icon-images"></span>-->
@@ -138,7 +137,6 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
       </div>
 
     <?php else: ?>
-
       <div class="form-group">
 
         <div class="mb-2">
@@ -166,14 +164,12 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
       </div>
 
       <?php if(!$this->isUserHasCategory): ?>
-
         <div class="alert alert-warning" role="alert">
           <span class="icon-images"></span>
           <?php echo Text::_('COM_JOOMGALLERY_USER_UPLOAD_MISSING_CATEGORY'); ?>
         </div>
 
       <?php else: ?>
-
         <div class="form-group">
           <div class="row align-items-start">
             <div class="col-md-6 mb">
@@ -262,9 +258,14 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_var
  *
  * @since   4.2.0
  */
-function DisplaySystemSettings(int $UploadLimit, int $PostMaxSize, int $MemoryLimit,
-                               int $mediaSize, int $configSize, int $maxSize): void
-{
+function DisplaySystemSettings(
+    int $UploadLimit,
+    int $PostMaxSize,
+    int $MemoryLimit,
+    int $mediaSize,
+    int $configSize,
+    int $maxSize
+): void {
   $title  = Text::sprintf('COM_JOOMGALLERY_UPLOAD_LIMIT_CALCULATED', $maxSize);
   $id     = 127000;
   $itemId = 127001;

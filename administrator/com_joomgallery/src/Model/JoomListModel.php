@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\MVC\Model\ListModel;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Registry\Registry;
 
 /**
  * Base model class for JoomGallery list of items
@@ -87,7 +87,7 @@ abstract class JoomListModel extends ListModel
 
   /**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
@@ -110,7 +110,8 @@ abstract class JoomListModel extends ListModel
      */
     public function getParams(): array
     {
-        $params = ['component' => $this->getState('parameters.component'),
+        $params = [
+          'component' => $this->getState('parameters.component'),
           'menu'      => $this->getState('parameters.menu'),
           'configs'   => $this->getState('parameters.configs'),
         ];
@@ -150,7 +151,7 @@ abstract class JoomListModel extends ListModel
 
         if(isset($params_array['item_id']))
         {
-            $this->setState($this->type.'.id', $params_array['item_id']);
+            $this->setState($this->type . '.id', $params_array['item_id']);
         }
 
         $this->setState('parameters.component', $params);

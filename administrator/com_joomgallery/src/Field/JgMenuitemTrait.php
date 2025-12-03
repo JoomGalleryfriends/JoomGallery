@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Application\ApplicationHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Layout\FileLayout;
 
 /**
  * Trait to make Field available in Menuitem params

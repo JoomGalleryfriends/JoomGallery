@@ -10,8 +10,8 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Dispatcher;
 
-use \Joomla\CMS\Dispatcher\ComponentDispatcher;
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Dispatcher\ComponentDispatcher;
+use Joomla\CMS\Factory;
 
 /**
  * ComponentDispatcher class for com_joomgallery
@@ -36,7 +36,8 @@ class Dispatcher extends ComponentDispatcher
     {
       $config = Factory::getApplication()->bootComponent('com_joomgallery')->getConfig();
     }
-    catch(\Throwable $th){}
+    catch(\Throwable $th){
+    }
 
     // Handle stuff at the very last, when the runtime finishes
     // and the component gets destructed

@@ -26,9 +26,9 @@ interface MetadataInterface
    * Reads the metadata from an image.
    * (Current supported image formats: JPEG)
    * (Current supported metadata formats: EXIF/IPTC)
-   * 
-   * @param  string $file  Path to the file 
-   * 
+   *
+   * @param  string $file  Path to the file
+   *
    * @return array  Metadata as array
    */
   public function readMetadata(string $file);
@@ -51,35 +51,35 @@ interface MetadataInterface
 
   /**
    * Writes the stored metadata to the specified image
-   * 
+   *
    * @param  string $img          Path to source file or resource
    * @param  mixed  $imgmetadata  Stored image metadata
    * @param  bool   $local_source True if source is a file located in a local folder
-   * 
+   *
    * @return mixed                Image data to be stored with Filemanager
    */
-  public function writeMetadata($img, $imgmetadata, $local_source=true);
+  public function writeMetadata($img, $imgmetadata, $local_source = true);
 
   /**
    * Writes a list of values to the exif metadata of an image
-   * 
-   * @param   string $img    Path to the image 
+   *
+   * @param   string $img    Path to the image
    * @param   mixed  $edits  Exif object in imgmetadata
-   * 
+   *
    * @return  bool           True on success, false on failure
-   * 
+   *
    * @since   4.1.0
    */
   public function writeToExif(string $img, $edits): bool;
 
   /**
    * Saves an edit to the iptc metadata of an image
-   * 
-   * @param   string $img    Path to the image 
+   *
+   * @param   string $img    Path to the image
    * @param   mixed  $edits  Iptc object in imgmetadata
-   * 
+   *
    * @return  bool           True on success, false on failure
-   * 
+   *
    * @since   4.1.0
    */
   public function writeToIptc(string $img, $edits): bool;

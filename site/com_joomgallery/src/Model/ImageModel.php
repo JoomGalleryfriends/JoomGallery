@@ -15,20 +15,20 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
-use \Joomla\CMS\Access\Access;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Language\Associations;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Plugin\PluginHelper;
-use \Joomla\CMS\User\UserFactoryInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
+use Joomla\CMS\Access\Access;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Language\Associations;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\User\UserFactoryInterface;
 
 /**
  * Model to get an image record.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -197,7 +197,7 @@ class ImageModel extends JoomAdminModel
         if(!$catid && $this->item === null)
         {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
-    }
+        }
 
         // Get id
         $catid = $catid ? $catid : $this->item->catid;
@@ -220,7 +220,7 @@ class ImageModel extends JoomAdminModel
      * @param   int  $catid  Category id
      *
      * @return  bool  True if categories are protected, false otherwise
-     * 
+     *
      * @throws \Exception
      */
     public function getCategoryProtected(int $catid = 0)
@@ -228,7 +228,7 @@ class ImageModel extends JoomAdminModel
         if(!$catid && $this->item === null)
         {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
-    }
+        }
 
         if(!isset($this->item->protectedParents))
         {
@@ -256,7 +256,7 @@ class ImageModel extends JoomAdminModel
      * @param   int  $catid  Category id
      *
      * @return  bool  True if all categories are published, false otherwise
-     * 
+     *
      * @throws \Exception
      */
     public function getCategoryPublished(int $catid = 0, bool $approved = false)
@@ -264,7 +264,7 @@ class ImageModel extends JoomAdminModel
         if(!$catid && $this->item === null)
         {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
-    }
+        }
 
         if(!isset($this->item->unpublishedParents))
         {
@@ -292,7 +292,7 @@ class ImageModel extends JoomAdminModel
      * @param   int  $catid  Category id
      *
      * @return  bool  True if all categories are accessible, false otherwise
-     * 
+     *
      * @throws \Exception
      */
     public function getCategoryAccess(int $catid = 0)
@@ -300,7 +300,7 @@ class ImageModel extends JoomAdminModel
         if(!$catid && $this->item === null)
         {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
-    }
+        }
 
         if(!isset($this->item->accessibleParents))
         {
@@ -346,7 +346,7 @@ class ImageModel extends JoomAdminModel
     $id = (int) $this->getState('image.id', $this->app->getInput()->getInt('id', null));
 
     // Object uses for checking edit state permission of image
-    $record = new \stdClass();
+    $record     = new \stdClass();
     $record->id = $id;
 
     // Modify the form based on Edit State access controls.
@@ -394,7 +394,7 @@ class ImageModel extends JoomAdminModel
     $isAjax       = false;
     $aliasChanged = false;
 
-    $old_alias    = '';
+    $old_alias = '';
 
     $key = $table->getKeyName();
     $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
@@ -413,7 +413,7 @@ class ImageModel extends JoomAdminModel
     }
 
     // Change language to 'All' if multilangugae is not enabled
-    if (!Multilanguage::isEnabled())
+    if(!Multilanguage::isEnabled())
     {
       $data['language'] = '*';
     }
@@ -446,7 +446,7 @@ class ImageModel extends JoomAdminModel
         // Check if the state was changed
         if($table->published != $data['published'])
         {
-          if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION.'.image.'.$table->id, $table->id, $table->catid))
+          if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION . '.image.' . $table->id, $table->id, $table->catid))
           {
             // We are not allowed to change the published state
             $this->component->addWarning(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'));
@@ -456,10 +456,10 @@ class ImageModel extends JoomAdminModel
       }
 
       // Save form data in session
-      $app->setUserState(_JOOM_OPTION.'.image.upload', $data);
+      $app->setUserState(_JOOM_OPTION . '.image.upload', $data);
 
       // Detect uploader service
-      $upload_service  = 'html';
+      $upload_service = 'html';
 
       // if(isset($data['uploader']) && !empty($data['uploader']))
       if(!empty($data['uploader']))
@@ -468,7 +468,7 @@ class ImageModel extends JoomAdminModel
       }
 
       // Detect multiple upload service
-      $upload_multiple  = false;
+      $upload_multiple = false;
 
       //if(isset($data['multiple']) && !empty($data['multiple']))
       if(!empty($data['multiple']))
@@ -568,7 +568,7 @@ class ImageModel extends JoomAdminModel
         {
           $two_filesystems = [$src_img->filesystem, $table->filesystem];
         }
-}
+      }
       elseif($catMoved)
       {
         // Get filesystem for new category
@@ -771,8 +771,4 @@ class ImageModel extends JoomAdminModel
 
     return true;
   }
-
-
-
-
 } // class

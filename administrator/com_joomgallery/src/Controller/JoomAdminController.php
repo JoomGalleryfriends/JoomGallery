@@ -15,18 +15,18 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomla\CMS\Application\CMSApplication;
-use \Joomla\CMS\MVC\Controller\AdminController as BaseAdminController;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use \Joomla\CMS\MVC\View\ViewInterface;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\Input\Input;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\MVC\Controller\AdminController as BaseAdminController;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\View\ViewInterface;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Input\Input;
 
 /**
  * JoomGallery Base of Joomla Administrator Controller
- * 
+ *
  * Controller (controllers are where you put all the actual code) Provides basic
  * functionality, such as rendering views (aka displaying templates).
  *
@@ -76,7 +76,7 @@ class JoomAdminController extends BaseAdminController
         parent::__construct($config, $factory, $app, $input);
 
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
-  }
+    }
 
     /**
      * Method to get the access service class.
@@ -128,7 +128,7 @@ class JoomAdminController extends BaseAdminController
         $this->task = $task;
       }
 
-      $this->component->msgUserStateKey = 'com_joomgallery.'.$task.'.messages';
+      $this->component->msgUserStateKey = 'com_joomgallery.' . $task . '.messages';
     }
 
     // Guess context if needed

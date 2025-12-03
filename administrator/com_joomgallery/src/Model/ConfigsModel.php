@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Database\ParameterType;
+use Joomla\Database\ParameterType;
 
 /**
  * Methods supporting a list of Configs records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -35,7 +35,7 @@ class ConfigsModel extends JoomListModel
 
   /**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
@@ -77,13 +77,13 @@ class ConfigsModel extends JoomListModel
   $forcedLanguage = $this->app->input->get('forcedLanguage', '', 'cmd');
 
   // Adjust the context to support modal layouts.
-    if ($layout = $this->app->input->get('layout'))
+    if($layout = $this->app->input->get('layout'))
     {
       $this->context .= '.' . $layout;
     }
 
   // Adjust the context to support forced languages.
-    if ($forcedLanguage)
+    if($forcedLanguage)
     {
       $this->context .= '.' . $forcedLanguage;
     }
@@ -171,7 +171,7 @@ class ConfigsModel extends JoomListModel
       {
     $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
         )
           ->bind([':search1', ':search2'], $search);
       }
@@ -238,7 +238,7 @@ class ConfigsModel extends JoomListModel
       {
     $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
         )
           ->bind([':search1', ':search2'], $search);
       }
@@ -280,7 +280,7 @@ class ConfigsModel extends JoomListModel
         {
           if(!empty($value))
           {
-            $db = $this->getDatabase();
+            $db    = $this->getDatabase();
             $query = "SELECT id, title FROM #__usergroups HAVING id LIKE '" . $value . "'";
             $db->setQuery($query);
             $results = $db->loadObject();

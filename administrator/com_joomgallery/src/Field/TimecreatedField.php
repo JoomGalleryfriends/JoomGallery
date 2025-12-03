@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Date\Date;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\FormField;
-use \Joomla\CMS\Language\Text;
+use Joomla\CMS\Date\Date;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Language\Text;
 
 /**
  * Supports an HTML select list of categories
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -56,7 +56,7 @@ class TimecreatedField extends FormField
       $html[]       = '<input type="hidden" name="' . $this->name . '" value="' . $time_created . '" />';
     }
 
-    $hidden = (boolean) $this->element['hidden'];
+    $hidden = (bool) $this->element['hidden'];
 
     if($hidden == null || !$hidden)
     {

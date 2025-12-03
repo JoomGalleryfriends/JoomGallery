@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\Category\RawView as AdminRawView;
-use \Joomla\Language\Text;
+use Joomgallery\Component\Joomgallery\Administrator\View\Category\RawView as AdminRawView;
+use Joomla\Language\Text;
 
 /**
  * Raw view class for a single Category-Image.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -51,6 +51,6 @@ class RawView extends AdminRawView
       $this->output(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
 
       return;
+        }
     }
-  }
 }

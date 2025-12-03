@@ -15,18 +15,18 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
-use \Joomla\CMS\Application\CMSApplicationInterface;
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Helper\MediaHelper;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Server;
+use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Helper\MediaHelper;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Registry\Registry;
 
 /**
  * Model to get a list of category records.
@@ -93,7 +93,7 @@ class UseruploadModel extends JoomAdminModel
    *
    * @since   4.2.0
    */
-  protected function populateState():void
+  protected function populateState(): void
   {
     // List state information.
     parent::populateState();
@@ -115,8 +115,11 @@ class UseruploadModel extends JoomAdminModel
   public function getForm($data = [], $loadData = true): Form|bool
   {
     // Get the form.
-    $form = $this->loadForm($this->typeAlias, 'userupload',
-      ['control' => 'jform', 'load_data' => $loadData]);
+    $form = $this->loadForm(
+        $this->typeAlias,
+        'userupload',
+        ['control' => 'jform', 'load_data' => $loadData]
+    );
 
     if(empty($form))
     {
@@ -143,7 +146,7 @@ class UseruploadModel extends JoomAdminModel
 
     if(isset($params_array['item_id']))
     {
-      $this->setState($this->type.'.id', $params_array['item_id']);
+      $this->setState($this->type . '.id', $params_array['item_id']);
     }
 
     $this->setState('parameters.component', $params);
@@ -167,7 +170,8 @@ class UseruploadModel extends JoomAdminModel
    */
   public function getParams(): array
   {
-    $params = ['component' => $this->getState('parameters.component'),
+    $params = [
+      'component' => $this->getState('parameters.component'),
       'menu'      => $this->getState('parameters.menu'),
       'configs'   => $this->getState('parameters.configs'),
     ];
@@ -188,13 +192,13 @@ class UseruploadModel extends JoomAdminModel
   public function setParam(string $property, string $value, string $type = 'configs'): void
   {
     // Get params
-    $params = $this->getState('parameters.'.$type);
+    $params = $this->getState('parameters.' . $type);
 
     // Set new value
     $params->set($property, $value);
 
     // Set params to state
-    $this->setState('parameters.'.$type, $params);
+    $this->setState('parameters.' . $type, $params);
   }
 
   /**
@@ -239,7 +243,7 @@ class UseruploadModel extends JoomAdminModel
       $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('created_by').' = '.(int) $userId);
+        ->where($db->quoteName('created_by') . ' = ' . (int) $userId);
 
       $db->setQuery($query);
       $count = $db->loadResult();
@@ -248,11 +252,10 @@ class UseruploadModel extends JoomAdminModel
       {
         $isUserHasACategory = false;
       }
-
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
@@ -292,7 +295,7 @@ class UseruploadModel extends JoomAdminModel
     {
       if(substr($type, 0, 1) !== '.')
       {
-        $types[$key] = '.'.strtolower($type);
+        $types[$key] = '.' . strtolower($type);
       }
       else
       {
@@ -337,7 +340,7 @@ class UseruploadModel extends JoomAdminModel
    */
   public function limitsPhpConfig(mixed $joomGalleryConfig): array
   {
-    $mediaHelper = new MediaHelper;
+    $mediaHelper = new MediaHelper();
 
     // Maximum allowed size in MB
     $uploadLimit = round($mediaHelper->toBytes(\ini_get('upload_max_filesize')) / (1024 * 1024));
@@ -362,13 +365,12 @@ class UseruploadModel extends JoomAdminModel
       $maxSize = min($uploadLimit, $postMaxSize, $configSize, $mediaUploadMaxsize);
     }
 
-    return [$uploadLimit,
+    return [
+      $uploadLimit,
       $postMaxSize,
       $memoryLimit,
       $mediaSize,
       $maxSize,
       $configSize];
   }
-
-
 }

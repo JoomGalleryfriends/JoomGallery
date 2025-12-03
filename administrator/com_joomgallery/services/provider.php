@@ -13,20 +13,20 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
-use \Joomgallery\Component\Joomgallery\Administrator\MVC\MVCFactoryProvider as MVCFactory;
-use \Joomgallery\Component\Joomgallery\Administrator\Router\RouterFactoryProvider as RouterFactory;
-use \Joomgallery\Component\Joomgallery\Administrator\User\UserFactory;
-use \Joomla\CMS\Component\Router\RouterFactoryInterface;
-use \Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
-use \Joomla\CMS\Extension\ComponentInterface;
-use \Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
-use \Joomla\CMS\HTML\Registry;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\DI\Container;
-use \Joomla\DI\ServiceProviderInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use Joomgallery\Component\Joomgallery\Administrator\MVC\MVCFactoryProvider as MVCFactory;
+use Joomgallery\Component\Joomgallery\Administrator\Router\RouterFactoryProvider as RouterFactory;
+use Joomgallery\Component\Joomgallery\Administrator\User\UserFactory;
+use Joomla\CMS\Component\Router\RouterFactoryInterface;
+use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
+use Joomla\CMS\Extension\ComponentInterface;
+use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
+use Joomla\CMS\HTML\Registry;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
+use Joomla\DI\Container;
+use Joomla\DI\ServiceProviderInterface;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -55,17 +55,16 @@ return new class implements ServiceProviderInterface
 
   // Create the component class
     $container->set(
-      ComponentInterface::class,
-      function (Container $container)
-      {
-        $component = new JoomgalleryComponent($container->get(ComponentDispatcherFactoryInterface::class));
+        ComponentInterface::class,
+        function (Container $container) {
+          $component = new JoomgalleryComponent($container->get(ComponentDispatcherFactoryInterface::class));
 
-        $component->setRegistry($container->get(Registry::class));
-        $component->setMVCFactory($container->get(MVCFactoryInterface::class));
-        $component->setRouterFactory($container->get(RouterFactoryInterface::class));
+          $component->setRegistry($container->get(Registry::class));
+          $component->setMVCFactory($container->get(MVCFactoryInterface::class));
+          $component->setRouterFactory($container->get(RouterFactoryInterface::class));
 
-        return $component;
-      }
+          return $component;
+        }
     );
   }
 };

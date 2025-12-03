@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\Utilities\ArrayHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Utilities\ArrayHelper;
 
 extract($displayData);
 
@@ -54,7 +55,7 @@ extract($displayData);
  * @var   array    $dataAttributes  Miscellaneous data attribute for eg, data-*.
  */
 $modalHTML = '';
-$uri = new Uri('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
+$uri       = new Uri('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
 $uri->setVar('field', $this->escape($id));
 
 if(empty($value))
@@ -76,12 +77,12 @@ $uri->setVar('filter[created_by]', '');
 
 if(!empty($categories))
 {
-    $uri->setVar('filter[category]', '['.implode(',', $categories).']');
+    $uri->setVar('filter[category]', '[' . implode(',', $categories) . ']');
 }
 
 if(!empty($excluded))
 {
-    $uri->setVar('exclude', '['.implode(',', $excluded).']');
+    $uri->setVar('exclude', '[' . implode(',', $excluded) . ']');
 }
 
 // Invalidate the input value if no image selected
@@ -148,7 +149,7 @@ if(!$readonly)
   <div class="input-group">
     <img id="jform_thumbnail_img" class="jg_minithumb" src="<?php echo JoomHelper::getImg($value, 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
     <input <?php echo ArrayHelper::toString($inputAttributes), $dataAttribute; ?> readonly>
-    <?php if (!$readonly) : ?>
+    <?php if(!$readonly) : ?>
       <button type="button" class="btn btn-primary button-select" title="<?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?>">
         <span class="icon-image icon-white" aria-hidden="true"></span>
         <span class="visually-hidden"><?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?></span>
@@ -156,7 +157,7 @@ if(!$readonly)
     <?php endif; ?>
   </div>
   <?php // Create the real field, hidden, that stored the image id. ?>
-  <?php if (!$readonly) : ?>
+  <?php if(!$readonly) : ?>
     <input type="hidden" id="<?php echo $id; ?>_id" name="<?php echo $name; ?>" value="<?php echo $this->escape($value); ?>"
       class="field-image-input <?php echo $class ? (string) $class : ''?>"
       data-onchange="<?php echo $this->escape($onchange); ?>">

@@ -14,7 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
+use Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
 
 /**
  * Uploader Interface for the helper classes
@@ -54,16 +54,16 @@ interface UploaderInterface
      *
      * @since  4.0.0
      */
-    public function retrieveImage(&$data, $filename=True): bool;
+    public function retrieveImage(&$data, $filename = true): bool;
 
   /**
    * Override form data with image metadata
    * according to configuration. Step 2.
    *
    * @param   array   $data       The form data (as a reference)
-   * 
+   *
    * @return  bool    True on success, false otherwise
-   * 
+   *
    * @since   1.5.7
    */
   public function overrideData(&$data): bool;
@@ -82,31 +82,31 @@ interface UploaderInterface
 
   /**
    * Rollback an erroneous upload
-   * 
+   *
    * @param   CMSObject|\stdClass   $data_row     Image object containing at least catid and filename (default: false)
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
-  public function rollback($data_row=false);
+  public function rollback($data_row = false);
 
   /**
    * Detect if there is an image uploaded
-   * 
+   *
    * @param   array    $data      Form data
-   * 
+   *
    * @return  bool     True if file is detected, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function isImgUploaded($data): bool;
 
   /**
    * Delete all temporary created files which were created during upload
-   * 
+   *
    * @return  bool     True if files are deleted, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function deleteTmp(): bool;

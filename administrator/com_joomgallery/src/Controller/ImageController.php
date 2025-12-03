@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Response\JsonResponse;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Uri\Uri;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Response\JsonResponse;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Image controller class.
@@ -46,7 +46,7 @@ class ImageController extends JoomFormController
         $task = $this->getTask();
 
         // The save2copy task needs to be handled slightly differently.
-        if ($task === 'save2copy')
+        if($task === 'save2copy')
         {
             $this->input->set('origin_id', $this->input->getInt('id'));
         }
@@ -64,12 +64,13 @@ class ImageController extends JoomFormController
   public function multipleadd()
   {
     $this->view_item = 'image';
-    $layout = 'upload';
+    $layout          = 'upload';
 
     $context = "$this->option.upload.$this->context";
 
     // Access check.
-    if (!$this->allowAdd()) {
+    if(!$this->allowAdd())
+    {
         // Set the internal error and also the redirect error.
         $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error');
         $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error', 'jerror');
@@ -107,7 +108,7 @@ class ImageController extends JoomFormController
    */
   public function ajaxsave()
   {
-    $result  = ['error' => false];
+    $result = ['error' => false];
 
     try
     {
@@ -151,7 +152,7 @@ class ImageController extends JoomFormController
     // Check for request forgeries.
     $this->checkToken();
 
-    $app     = $this->app;
+    $app = $this->app;
     /** @var ImageModel $model */
     $model   = $this->getModel();
     $data    = $this->input->post->get('jform', [], 'array');
@@ -159,14 +160,14 @@ class ImageController extends JoomFormController
     $id      = \intval($data['id']);
 
     // Access check.
-    if (!$this->allowSave($data, $id))
+    if(!$this->allowSave($data, $id))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error');
       $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error', 'jerror');
 
-      $this->setRedirect(
+    $this->setRedirect(
         Route::_('index.php?option=' . _JOOM_OPTION . '&view=' . $this->view_list . $this->getRedirectToListAppend(), false)
-      );
+    );
 
       return false;
     }
@@ -197,7 +198,7 @@ class ImageController extends JoomFormController
       // Push up to three validation messages out to the user.
       for($i = 0, $n = \count($errors); $i < $n && $i < 3; $i++)
       {
-        if ($errors[$i] instanceof \Exception)
+        if($errors[$i] instanceof \Exception)
         {
           $this->setMessage($errors[$i]->getMessage(), 'warning');
         }
@@ -211,9 +212,9 @@ class ImageController extends JoomFormController
       $app->setUserState($context . '.data', $data);
 
       // Redirect back to the replace screen.
-      $this->setRedirect(
+    $this->setRedirect(
         Route::_('index.php?option=' . _JOOM_OPTION . '&view=image&layout=replace&id=' . $id, false)
-      );
+    );
 
       return false;
     }
@@ -228,9 +229,9 @@ class ImageController extends JoomFormController
       $this->setMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_REPLACE_IMAGETYPE', ucfirst($validData['replacetype']), $model->getError()), 'error');
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_REPLACE_IMAGETYPE', ucfirst($validData['replacetype']), $model->getError()), 'error', 'jerror');
 
-      $this->setRedirect(
-          Route::_('index.php?option=' . _JOOM_OPTION . '&view=image&layout=replace&id=' . $id, false)
-      );
+    $this->setRedirect(
+        Route::_('index.php?option=' . _JOOM_OPTION . '&view=image&layout=replace&id=' . $id, false)
+    );
 
       return false;
     }
@@ -248,7 +249,7 @@ class ImageController extends JoomFormController
     // Check if there is a return value
     $return = $this->input->get('return', null, 'base64');
 
-    if (!\is_null($return) && Uri::isInternal(base64_decode($return)))
+    if(!\is_null($return) && Uri::isInternal(base64_decode($return)))
     {
       $url = base64_decode($return);
     }
@@ -293,8 +294,8 @@ class ImageController extends JoomFormController
     // Check for request forgeries.
     $this->checkToken();
 
-    $model   = $this->getModel();
-    $data    = $this->input->post->get('jform', [], 'array');
+    $model = $this->getModel();
+    $data  = $this->input->post->get('jform', [], 'array');
 
     // Access check.
     if(!$this->allowSave($data, 'id'))

@@ -16,8 +16,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * Radio field with useglobal option based on config service 
- * 
+ * Radio field with useglobal option based on config service
+ *
  * @since  4.0.0
  */
 class JgradioField extends JglistField

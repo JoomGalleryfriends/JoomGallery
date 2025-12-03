@@ -14,10 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\FTPUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\HTMLUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\SingleUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\TUSUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\FTPUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\HTMLUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\SingleUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\TUSUploader;
 
 /**
  * Trait to implement UploaderServiceInterface
@@ -58,27 +58,27 @@ trait UploaderServiceTrait
      *
      * @since  4.0.0
      */
-    public function createUploader($uploadMethod, $multiple=false, $async=false): void
+    public function createUploader($uploadMethod, $multiple = false, $async = false): void
     {
-    switch ($uploadMethod)
+    switch($uploadMethod)
     {
       case 'TUS':
       case 'tus':
         $this->uploader = new TUSUploader($multiple, $async);
-        break;
+          break;
 
       case 'single':
         $this->uploader = new SingleUploader($multiple);
-        break;
+          break;
 
       case 'FTP':
       case 'ftp':
         $this->uploader = new FTPUploader($multiple, $async);
-        break;
+          break;
 
       default:
         $this->uploader = new HTMLUploader($multiple, $async);
-        break;
+          break;
     }
 
     return;

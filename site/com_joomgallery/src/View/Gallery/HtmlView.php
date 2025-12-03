@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Gallery;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 
 /**
  * View class for a gallery view of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -57,12 +57,12 @@ class HtmlView extends JoomGalleryView
   /** @var GalleryModel $model */
   $model = $this->getModel();
 
-  $this->state  = $model->getState();
+  $this->state    = $model->getState();
     $this->params = $model->getParams();
     $this->item   = $model->getItem();
 
   // Load images
-  $this->item->images = new \stdClass();
+  $this->item->images             = new \stdClass();
   $this->item->images->items      = $model->getImages();
   $this->item->images->pagination = $model->getImagesPagination();
 

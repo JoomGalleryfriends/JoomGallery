@@ -15,18 +15,18 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Form\FormFactory;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Form\FormFactoryInterface;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Plugin\PluginHelper;
-use \Joomla\Filesystem\File;
+use Joomgallery\Component\Joomgallery\Administrator\Form\FormFactory;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Filesystem\File;
 
 /**
  * Config model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -85,7 +85,7 @@ class ConfigModel extends JoomAdminModel
     }
 
         // Object uses for checking edit state permission of image
-        $record = new \stdClass();
+        $record     = new \stdClass();
         $record->id = $id;
 
         // Modify the form based on Edit State access controls.
@@ -118,7 +118,7 @@ class ConfigModel extends JoomAdminModel
    */
   public function getFormFactory(): FormFactoryInterface
   {
-    $formFactory = new FormFactory;
+    $formFactory = new FormFactory();
 
     return $formFactory;
   }
@@ -133,7 +133,7 @@ class ConfigModel extends JoomAdminModel
     protected function loadFormData()
     {
         // Check the session for previously entered form data.
-        $data = $this->app->getUserState(_JOOM_OPTION.'.edit.config.data', []);
+        $data = $this->app->getUserState(_JOOM_OPTION . '.edit.config.data', []);
 
     if($this->item === null)
     {
@@ -222,11 +222,12 @@ class ConfigModel extends JoomAdminModel
             $fieldset->level = $level;
             $fieldset->title = end($parts);
 
-            $this->setFieldset($key, ['this'=>$fieldset]);
+            $this->setFieldset($key, ['this' => $fieldset]);
         }
 
         // Add permissions fieldset to level 1 fieldsets
-        $permissions = ['name' => 'permissions',
+        $permissions                    = [
+          'name' => 'permissions',
           'label' => 'JGLOBAL_ACTION_PERMISSIONS_LABEL',
           'description' => '',
           'type' => 'tab',
@@ -255,7 +256,7 @@ class ConfigModel extends JoomAdminModel
 
     $pointer = &$this->fieldsets;
 
-    for ($i=0; $i < \sizeof($levels); $i++)
+    for($i = 0; $i < \sizeof($levels); $i++)
     {
       if(!isset($pointer[$levels[$i]]))
       {
@@ -266,7 +267,7 @@ class ConfigModel extends JoomAdminModel
     }
 
     $pointer = $value;
-  }
+    }
 
     /**
      * Method to duplicate an Config
@@ -393,7 +394,7 @@ class ConfigModel extends JoomAdminModel
           $path_parts = explode('/', $detail_path);
           array_pop($path_parts);
 
-          $imagetype_db->path = implode('/', $path_parts).'/'.$imagetype_db->typename;
+          $imagetype_db->path = implode('/', $path_parts) . '/' . $imagetype_db->typename;
         }
       }
 
@@ -403,7 +404,7 @@ class ConfigModel extends JoomAdminModel
       // unset current imagetype from imagetypes_db list
       foreach($imagetypes_list as $key => $imagetype)
       {
-        if ($imagetype->typename == $staticprocessing['jg_imgtypename'])
+        if($imagetype->typename == $staticprocessing['jg_imgtypename'])
         {
           unset($imagetypes_list[$key]);
         }
@@ -438,7 +439,7 @@ class ConfigModel extends JoomAdminModel
     }
 
     return parent::save($data);
-  }
+    }
 
     /**
      * Method to change the published state of one or more records.
@@ -463,18 +464,18 @@ class ConfigModel extends JoomAdminModel
     }
 
     parent::publish($pks, $value);
-  }
+    }
 
   /**
    * Initialize new stdObject with default config params of jg_staticprocessing.
    *
    * @param   string     $type    Imagetype (default:original)
-   * 
+   *
    * @return  \stdClass   Default config params of jg_staticprocessing
    *
    * @since   4.0.0
    */
-  protected function newStaticprocessing($type='original')
+  protected function newStaticprocessing($type = 'original')
   {
     $obj = [];
 
@@ -499,32 +500,32 @@ class ConfigModel extends JoomAdminModel
    * Initialize new stdObject with default config params of jg_staticprocessing.
    *
    * @param   string     $type    Imagetype (default:original)
-   * 
+   *
    * @return  string   Params json string
    *
    * @since   4.0.0
    */
-  protected function newImagetypeParams($type='original')
+  protected function newImagetypeParams($type = 'original')
   {
     switch($type)
     {
       case 'detail':
         $params = '{"jg_imgtype":"1","jg_imgtyperesize":"3","jg_imgtypewidth":"1000","jg_imgtypeheight":"1000","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":"80","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"{}"}';
-        break;
+          break;
 
       case 'thumbnail':
         $params = '{"jg_imgtype":"1","jg_imgtyperesize":"4","jg_imgtypewidth":"250","jg_imgtypeheight":"250","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"1","jg_imgtypequality":"60","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"{}"}';
-        break;
+          break;
 
       default:
         $params = '{"jg_imgtype":"1","jg_imgtyperesize":"0","jg_imgtypewidth":"2000","jg_imgtypeheight":"2000","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"1","jg_imgtypesharpen":"0","jg_imgtypequality":"100","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"{}"}';
-        break;
+          break;
     }
   }
 
   /**
    * Loads jg_staticprocessing data from imagetypes.
-   * 
+   *
    * @return  object   static processing data
    *
    * @since   4.0.0
@@ -539,18 +540,18 @@ class ConfigModel extends JoomAdminModel
     foreach($imagetypes as $key => $imagetype)
     {
       // initialize stdClass object
-      if(!isset($new_staticprocessing['jg_staticprocessing'.$key]))
+      if(!isset($new_staticprocessing['jg_staticprocessing' . $key]))
       {
-        $new_staticprocessing['jg_staticprocessing'.$key] = new \stdClass();
+        $new_staticprocessing['jg_staticprocessing' . $key] = new \stdClass();
       }
 
       // create staticprocessing array
-      $new_staticprocessing['jg_staticprocessing'.$key]->jg_imgtypename = $imagetype->typename;
-      $new_staticprocessing['jg_staticprocessing'.$key]->jg_imgtypepath = $imagetype->path;
+      $new_staticprocessing['jg_staticprocessing' . $key]->jg_imgtypename = $imagetype->typename;
+      $new_staticprocessing['jg_staticprocessing' . $key]->jg_imgtypepath = $imagetype->path;
 
       foreach($imagetype->params as $k => $param)
       {
-        $new_staticprocessing['jg_staticprocessing'.$key]->{$k} = $param;
+        $new_staticprocessing['jg_staticprocessing' . $key]->{$k} = $param;
       }
     }
 
@@ -562,7 +563,7 @@ class ConfigModel extends JoomAdminModel
    * Decode params string.
    *
    * @param   string      $params     Json string with params
-   * 
+   *
    * @return  CMSObject|stdClass   Params object
    *
    * @since   4.0.0
@@ -584,12 +585,12 @@ class ConfigModel extends JoomAdminModel
    *
    * @param   array    $data       New submitted params form data
    * @param   string   $old_data   JSON string of old params
-   * 
+   *
    * @return  string   Params JSON string
    *
    * @since   4.0.0
    */
-  protected function updateParams(array $data, string $old_data=''): string
+  protected function updateParams(array $data, string $old_data = ''): string
   {
     // Decode old params string
     if($old_data === '')
@@ -633,7 +634,7 @@ class ConfigModel extends JoomAdminModel
      * Method to reset form data to default values.
      *
      * @param   array  $data   Form data array
-     * 
+     *
      * @return  array  Form data array with default data
      *
      * @since   4.0.0
@@ -642,7 +643,7 @@ class ConfigModel extends JoomAdminModel
     {
         // Load config form
         $xmlfile = _JOOM_PATH_ADMIN . '/forms/config.xml';
-        $cform = new Form('configForm');
+        $cform   = new Form('configForm');
         $cform->loadFile($xmlfile);
 
         foreach($data['jform'] as $key => $value)
@@ -653,15 +654,15 @@ class ConfigModel extends JoomAdminModel
                 {
                     $default = '{"jg_replaceinfo0":{"target":"date","source":"EXIF-36867"}}';
                 }
-                else if($key == 'jg_dynamicprocessing')
+                elseif($key == 'jg_dynamicprocessing')
                 {
                     $default = '{"jg_dynamicprocessing0":{"jg_imgtype":"0","jg_imgtypename":"original","jg_imgtyperesize":"0","jg_imgtypewidth":"2000","jg_imgtypeheight":"2000","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"1","jg_imgtypesharpen":"0","jg_imgtypequality":100,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":{"jg_watermarkpos":"9","jg_watermarkzoom":"0","jg_watermarksize":15,"jg_watermarkopacity":80}},"jg_dynamicprocessing1":{"jg_imgtype":"0","jg_imgtypename":"detail","jg_imgtyperesize":"0","jg_imgtypewidth":"1000","jg_imgtypeheight":"1000","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":80,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":{"jg_watermarkpos":"9","jg_watermarkzoom":"0","jg_watermarksize":15,"jg_watermarkopacity":80}},"jg_dynamicprocessing2":{"jg_imgtype":"0","jg_imgtypename":"thumbnail","jg_imgtyperesize":"0","jg_imgtypewidth":"360","jg_imgtypeheight":"360","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":60,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":{"jg_watermarkpos":"9","jg_watermarkzoom":"0","jg_watermarksize":15,"jg_watermarkopacity":80}}}';
                 }
-                else if($key == 'jg_staticprocessing')
+                elseif($key == 'jg_staticprocessing')
                 {
                     // Load imageconvert subform
                     $xmlfile_subform = _JOOM_PATH_ADMIN . '/forms/subform_imageconvert.xml';
-                    $subform = new Form('imageconvertSubform');
+                    $subform         = new Form('imageconvertSubform');
                     $subform->loadFile($xmlfile_subform);
 
                     // load default from imageconvert subform xml
@@ -675,7 +676,7 @@ class ConfigModel extends JoomAdminModel
                                 {
                                     // Load imagewatermark subform
                                     $xmlfile_wtmsubform = _JOOM_PATH_ADMIN . '/forms/subform_imagewatermark.xml';
-                                    $wtm_subform = new Form('imagewatermarkSubform');
+                                    $wtm_subform        = new Form('imagewatermarkSubform');
                                     $wtm_subform->loadFile($xmlfile_wtmsubform);
 
                                     // initialize watermark array
@@ -688,14 +689,13 @@ class ConfigModel extends JoomAdminModel
 
                                         if($default_wtm === 'not found')
                                         {
-                                            $this->component->addLog('Watermark subform field with name '.$wtm_key.' does not have any default value!', 'error', 'jerror');
-                                            throw new \Exception('Watermark subform field with name '.$wtm_key.' does not have any default value!', 1);
+                                            $this->component->addLog('Watermark subform field with name ' . $wtm_key . ' does not have any default value!', 'error', 'jerror');
+                                            throw new \Exception('Watermark subform field with name ' . $wtm_key . ' does not have any default value!', 1);
                                         }
 
                                         // set default to watermark array
                                         $default[$wtm_key] = $default_wtm;
                                     }
-
                                 }
                                 else
                                 {
@@ -703,8 +703,8 @@ class ConfigModel extends JoomAdminModel
 
                                     if($default === 'not found')
                                     {
-                                        $this->component->addLog('Convert subform field with name '.$key.' does not have any reset value!', 'error', 'jerror');
-                                        throw new \Exception('Convert subform field with name '.$key.' does not have any reset value!', 1);
+                                        $this->component->addLog('Convert subform field with name ' . $key . ' does not have any reset value!', 'error', 'jerror');
+                                        throw new \Exception('Convert subform field with name ' . $key . ' does not have any reset value!', 1);
                                     }
 
                                     $reset_arr = $this->getResetArray($reset_str);
@@ -732,8 +732,8 @@ class ConfigModel extends JoomAdminModel
 
                 if($default === 'not found')
                 {
-                    $this->component->addLog('Config field with name '.$key.' does not have any default value!', 'error', 'jerror');
-                    throw new \Exception('Config field with name '.$key.' does not have any default value!', 1);
+                    $this->component->addLog('Config field with name ' . $key . ' does not have any default value!', 'error', 'jerror');
+                    throw new \Exception('Config field with name ' . $key . ' does not have any default value!', 1);
                 }
 
                 // set default to data array
@@ -749,7 +749,7 @@ class ConfigModel extends JoomAdminModel
      *
      * @param   array    $file        Uploaded file info
      * @param   string   $fieldname   Name of the form field
-     * 
+     *
      * @return  array    Associative array containing form data of json file
      *
      * @since   4.0.0
@@ -757,7 +757,7 @@ class ConfigModel extends JoomAdminModel
     public function getJSONfile($file, $fieldname)
     {
         // Get form field
-        $xml = _JOOM_PATH_ADMIN . '/forms/config.xml';
+        $xml  = _JOOM_PATH_ADMIN . '/forms/config.xml';
         $form = new Form('configForm');
         $form->loadFile($xml);
         $field = $form->getField($fieldname);
@@ -823,7 +823,7 @@ class ConfigModel extends JoomAdminModel
      * Method to create the imagetype reset array from string.
      *
      * @param   string  $string   String containing the reset values
-     * 
+     *
      * @return  array   Array with reset values for each image type
      *
      * @since   4.0.0

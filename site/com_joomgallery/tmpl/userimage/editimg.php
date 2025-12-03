@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Uri\Uri;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -33,8 +34,8 @@ HTMLHelper::_('bootstrap.tooltip', '.hasTip');
 // Load admin lang may be useful as edit is a copy of backend items
 $lang = Factory::getApplication()->getLanguage();
 $lang->load('joomla', JPATH_ADMINISTRATOR);
-$lang->load(_JOOM_OPTION.'.exif', JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION);
-$lang->load(_JOOM_OPTION.'.iptc', JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION);
+$lang->load(_JOOM_OPTION . '.exif', JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION);
+$lang->load(_JOOM_OPTION . '.iptc', JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION);
 
 if($this->item->catid)
 {
@@ -72,9 +73,9 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <?php else : ?>
     <!--          action="--><?php //echo Route::_('index.php?option=com_joomgallery&controller=userimage&id='.$this->item->id); ?><!--" -->
     <form id="adminForm"
-          action="<?php echo Route::_('index.php?option=com_joomgallery&view=userimage&layout=editImg&id='.$this->item->id); ?>"
+          action="<?php echo Route::_('index.php?option=com_joomgallery&view=userimage&layout=editImg&id=' . $this->item->id); ?>"
           method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data"
-          aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_'.((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>"
+          aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>"
     >
       <?php if($isShowTitle): ?>
         <h3><?php echo Text::_('COM_JOOMGALLERY_USER_IMAGE_EDIT'); ?></h3>
@@ -130,7 +131,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
             <div class="text-center">
               <div class="btn-group joom-imgtypes" role="group"
                    aria-label="<?php echo Text::_('COM_JOOMGALLERY_SHOWIMAGE_LBL'); ?>">
-                <?php if (false): ?>
+                <?php if(false): ?>
                   <?php foreach($this->imagetypes as $key => $imagetype) : ?>
                     <a class="btn btn-outline-primary" style="cursor:pointer;"
                        onclick="openModal('<?php echo $imagetype->typename; ?>')"><?php echo Text::sprintf('COM_JOOMGALLERY_SHOWIMAGE_IMGTYPE', ucfirst($imagetype->typename)); ?></a>
@@ -290,25 +291,26 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 </div>
 
 <?php
-$mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
+$mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT') . '</button></joomla-toolbar-button>';
 
 if(\in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
 {
   $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn btn-secondary hasTip"  disabled="disabled" readonly                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-     title="'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP').'"><s>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</s> </button></joomla-toolbar-button>';
+     title="' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP') . '"><s>' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT') . '</s> </button></joomla-toolbar-button>';
 }
 
 // Image preview modal
-$options = ['modal-dialog-scrollable' => true,
+$options = [
+  'modal-dialog-scrollable' => true,
   'title'                   => 'Test Title',
   'footer'                  => $mediaManagerBtn
-    .'<a id="replaceBtn" class="btn btn-outline-dark hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP')
-    .'" href="'.Route::_('index.php?option=com_joomgallery&view=userimage&layout=replace&id='.(int) $this->item->id).'">'
-    .Text::_('COM_JOOMGALLERY_REPLACE')
-    .'</a>'
-    .'<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">'
-    .Text::_('JCLOSE')
-    .'</button>',
+    . '<a id="replaceBtn" class="btn btn-outline-dark hasTip" title="' . Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP')
+    . '" href="' . Route::_('index.php?option=com_joomgallery&view=userimage&layout=replace&id=' . (int) $this->item->id) . '">'
+    . Text::_('COM_JOOMGALLERY_REPLACE')
+    . '</a>'
+    . '<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">'
+    . Text::_('JCLOSE')
+    . '</button>',
 ];
 
 echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
@@ -324,14 +326,14 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
     let mediaInput = document.getElementById('mediaManagerPath');
 
     <?php
-    $imgURL = '{';
-    $title = '{';
+    $imgURL   = '{';
+    $title    = '{';
     $mediaURL = '{';
 
     foreach($this->imagetypes as $key => $imagetype)
     {
-      $imgURL .= $imagetype->typename.':"'.JoomHelper::getImg($this->item, $imagetype->typename).'",';
-      $title  .= $imagetype->typename.':"'.Text::_('COM_JOOMGALLERY_'.strtoupper($imagetype->typename)).'",';
+      $imgURL .= $imagetype->typename . ':"' . JoomHelper::getImg($this->item, $imagetype->typename) . '",';
+      $title  .= $imagetype->typename . ':"' . Text::_('COM_JOOMGALLERY_' . strtoupper($imagetype->typename)) . '",';
 
       $img_path = str_replace('\\', '/', JoomHelper::getImg($this->item, $imagetype->typename, false, false));
 
@@ -341,11 +343,11 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
         $img_path = str_replace('/images/', '/', $img_path);
       }
 
-      $mediaURL .= $imagetype->typename.':"index.php?option=com_joomgallery&path='.$this->item->filesystem.':'.$img_path.'",';
+      $mediaURL .= $imagetype->typename . ':"index.php?option=com_joomgallery&path=' . $this->item->filesystem . ':' . $img_path . '",';
     }
 
-    $imgURL .= '}';
-    $title .= '}';
+    $imgURL   .= '}';
+    $title    .= '}';
     $mediaURL .= '}';
     ?>
     let imgURL = <?php echo $imgURL; ?>;

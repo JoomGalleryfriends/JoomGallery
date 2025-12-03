@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Trait implementing methods for URL manipulation.
@@ -35,14 +35,14 @@ trait RoutingTrait
   /**
    * Get the return URL.   *
    * If a "return" variable has been passed in the request
-   * 
+   *
    * @param   string $default Optional: A default view to return
    *
    * @return  string  The return URL.
    *
    * @since   4.0.0
    */
-  protected function getReturnPage(string $default=''): string
+  protected function getReturnPage(string $default = ''): string
   {
     $return = $this->input->get('return', null, 'base64');
 
@@ -50,19 +50,17 @@ trait RoutingTrait
     {
       if(!empty($default))
       {
-        return 'index.php?option='._JOOM_OPTION.'&view='.$default;
+        return 'index.php?option=' . _JOOM_OPTION . '&view=' . $default;
       }
 
 
-        return 'index.php?option='._JOOM_OPTION.'&view='.$this->default_view;
-
+        return 'index.php?option=' . _JOOM_OPTION . '&view=' . $this->default_view;
     }
 
 
     $this->useReturnPage = true;
 
       return base64_decode($return);
-
   }
 
   /**

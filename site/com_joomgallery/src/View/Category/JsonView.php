@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Site\Model\CategoryModel;
-use \Joomgallery\Component\Joomgallery\Site\View\JoomGalleryJsonView;
-use \Joomla\CMS\Language\Text;
+use Joomgallery\Component\Joomgallery\Site\Model\CategoryModel;
+use Joomgallery\Component\Joomgallery\Site\View\JoomGalleryJsonView;
+use Joomla\CMS\Language\Text;
 
 /**
  * Json view class for a category view of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -46,7 +46,7 @@ class JsonView extends JoomGalleryJsonView
   /** @var CategoryModel $model */
   $model = $this->getModel();
 
-  $this->state  = $model->getState();
+  $this->state = $model->getState();
 
   $loaded = true;
     try {
@@ -71,17 +71,17 @@ class JsonView extends JoomGalleryJsonView
     $this->output(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
 
     return;
-  }
+    }
 
   // Load parent category
   $this->item->parent = $model->getParent();
 
   // Load subcategories
-  $this->item->children = new \stdClass();
+  $this->item->children        = new \stdClass();
   $this->item->children->items = $model->getChildren();
 
   // Load images
-  $this->item->images = new \stdClass();
+  $this->item->images        = new \stdClass();
   $this->item->images->items = $model->getImages();
 
   // Check for errors.
@@ -91,7 +91,7 @@ class JsonView extends JoomGalleryJsonView
     $this->output($errors);
 
     return;
-  }
+    }
 
   $this->output($this->item);
   }

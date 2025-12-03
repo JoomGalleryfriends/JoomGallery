@@ -15,12 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Table;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\Database\DatabaseDriver;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
 
 /**
  * User table
@@ -43,7 +43,7 @@ class UserTable extends Table
     public function __construct(DatabaseDriver $db, bool $component_exists = true)
     {
         $this->component_exists = $component_exists;
-        $this->typeAlias = _JOOM_OPTION.'.user';
+        $this->typeAlias        = _JOOM_OPTION . '.user';
 
         parent::__construct(_JOOM_TABLE_USERS, 'id', $db);
     }
@@ -72,21 +72,21 @@ class UserTable extends Table
     if(!key_exists('cmsuser', $array) || empty($array['cmsuser']))
         {
             $array['cmsuser'] = Factory::getApplication()->getIdentity()->id;
-        }
+    }
 
     if(isset($array['params']) && \is_array($array['params']))
         {
-            $registry = new Registry;
+            $registry = new Registry();
             $registry->loadArray($array['params']);
             $array['params'] = (string) $registry;
-        }
+    }
 
     if(isset($array['files']) && \is_array($array['files']))
         {
-            $registry = new Registry;
+            $registry = new Registry();
             $registry->loadArray($array['files']);
             $array['files'] = (string) $registry;
-        }
+    }
 
     // Support for collections
     if(!isset($this->collections))
@@ -139,7 +139,7 @@ class UserTable extends Table
     }
 
     return parent::check();
-  }
+    }
 
     /**
      * Method to store a row in the database from the Table instance properties.
@@ -158,19 +158,19 @@ class UserTable extends Table
     // Support for params field
     if(isset($this->params) && !\is_string($this->params))
     {
-      $registry = new Registry($this->params);
+      $registry     = new Registry($this->params);
       $this->params = (string) $registry;
     }
 
     // Support for files field
     if(isset($this->files) && !\is_string($this->files))
     {
-      $registry = new Registry($this->files);
+      $registry    = new Registry($this->files);
       $this->files = (string) $registry;
     }
 
     return parent::store($updateNulls);
-  }
+    }
 
     /**
      * Method to return the title to use for the asset table.

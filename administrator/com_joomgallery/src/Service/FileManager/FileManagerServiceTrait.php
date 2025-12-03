@@ -14,7 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\FileManager;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManager;
+use Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManager;
 
 /**
  * Trait to implement FileManagerServiceInterface
@@ -54,7 +54,7 @@ trait FileManagerServiceTrait
      *
      * @since  4.0.0
      */
-    public function createFileManager($catid, $selection=False): void
+    public function createFileManager($catid, $selection = false): void
     {
     $this->fileManager = new FileManager($catid, $selection);
 

@@ -14,16 +14,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Console\Command\AbstractCommand;
-use \Joomla\Database\DatabaseAwareTrait;
-use \Joomla\Database\DatabaseInterface;
-use \Symfony\Component\Console\Command\Command;
-use \Symfony\Component\Console\Input\InputInterface;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\Console\Style\SymfonyStyle;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Console\Command\AbstractCommand;
+use Joomla\Database\DatabaseAwareTrait;
+use Joomla\Database\DatabaseInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ImageParams extends AbstractCommand
 {
@@ -115,7 +115,7 @@ class ImageParams extends AbstractCommand
 
     $imageId = $input->getOption('id') ?? '';
 
-    if (empty($imageId))
+    if(empty($imageId))
     {
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid (empty) !");
 
@@ -125,9 +125,8 @@ class ImageParams extends AbstractCommand
     $jsonParams = $this->getParamsAsJsonFromDB($imageId);
 
     // If no params returned  show a warning and set the exit code to 1.
-    if (empty($jsonParams))
+    if(empty($jsonParams))
     {
-
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid or parameters are empty !");
 
       return Command::FAILURE;
@@ -180,12 +179,12 @@ class ImageParams extends AbstractCommand
   {
     $items = [];
 
-    if (empty($max_len))
+    if(empty($max_len))
     {
       $max_len = 70;
     }
 
-    foreach ($imageAssoc as $key => $value)
+    foreach($imageAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }

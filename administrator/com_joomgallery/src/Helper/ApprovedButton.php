@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Button\ActionButton;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Button\ActionButton;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
 
 /**
  * The ApprovedButton class.
@@ -75,14 +75,14 @@ class ApprovedButton extends ActionButton
     {
       case 'approve':
         $identifier = 'publish';
-        break;
+          break;
 
       case 'unapprove':
         $identifier = 'unpublish';
-        break;
+          break;
 
       default:
-        break;
+          break;
     }
 
         return $layout->render(['icon' => $identifier]);

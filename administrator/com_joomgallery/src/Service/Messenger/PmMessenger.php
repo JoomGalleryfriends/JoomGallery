@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Mail\MailTemplate;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Mail\MailTemplate;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Mail Messenger Class
@@ -132,7 +132,7 @@ class PmMessenger extends Messenger implements MessengerInterface
     }
 
     // Check for locked inboxes would be better to have _cdf settings in the user_object or a filter in users model
-    $db = Factory::getContainer()->get(DatabaseInterface::class);
+    $db    = Factory::getContainer()->get(DatabaseInterface::class);
     $query = $db->getQuery(true);
 
     $query->select($db->quoteName('user_id'))

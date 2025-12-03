@@ -15,19 +15,19 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\MigrationTable;
-use \Joomla\CMS\Event\Model;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Form\FormFactoryInterface;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\Database\DatabaseFactory;
-use \Joomla\Filesystem\Folder;
-use \Joomla\Filesystem\Path;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Table\MigrationTable;
+use Joomla\CMS\Event\Model;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Database\DatabaseFactory;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
+use Joomla\Registry\Registry;
 
 /**
  * Migration model.
@@ -42,7 +42,7 @@ class MigrationModel extends JoomAdminModel
      *
      * @since  4.0.0
      */
-    public $typeAlias = _JOOM_OPTION.'.migration';
+    public $typeAlias = _JOOM_OPTION . '.migration';
 
   /**
    * Item type
@@ -116,7 +116,7 @@ class MigrationModel extends JoomAdminModel
   public function getParams(): array
   {
     // Try to load params from user state
-    $params = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->scriptName.'.params', []);
+    $params = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $this->scriptName . '.params', []);
 
     if(!$params || empty($params))
     {
@@ -214,12 +214,12 @@ class MigrationModel extends JoomAdminModel
   {
 
     // Retrieve script variable
-    $name = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $name = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
 
     if(!$name || \strlen($name) < 2 || \strlen($name) > 30)
     {
-      $tmp        = new \stdClass;
-      $tmp->name  = '';
+      $tmp              = new \stdClass();
+      $tmp->name        = '';
       $this->scriptName = '';
 
       return $tmp;
@@ -244,13 +244,13 @@ class MigrationModel extends JoomAdminModel
    */
   public function getScripts()
   {
-    $files = Folder::files(JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/src/Service/Migration/Scripts', '.php$', false, true);
+    $files = Folder::files(JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts', '.php$', false, true);
 
     $scripts = [];
 
     foreach($files as $path)
     {
-      $img = Uri::base().'components/'._JOOM_OPTION.'/src/Service/Migration/Scripts/'.basename($path, '.php').'.jpg';
+      $img = Uri::base() . 'components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts/' . basename($path, '.php') . '.jpg';
 
       $scripts[basename($path, '.php')] = ['name' => basename($path, '.php'), 'path' => $path, 'img' => $img];
     }
@@ -279,7 +279,7 @@ class MigrationModel extends JoomAdminModel
     $this->setParams();
 
     return $this->component->getMigration()->getMigrateables();
-  }
+    }
 
   /**
    * Method to get a migrateable record by id.
@@ -367,7 +367,7 @@ class MigrationModel extends JoomAdminModel
 
         $item->dst_table = JoomHelper::$content_types[$type_obj->get('recordName')];
       }
-      $item->dst_pk    = 'id';
+      $item->dst_pk = 'id';
     }
 
     // We can not go further without a properly loaded migration service
@@ -381,8 +381,8 @@ class MigrationModel extends JoomAdminModel
     {
       // Get table information
       list($src_table, $src_pk) = $this->component->getMigration()->getSourceTableInfo($type);
-      $item->src_table = $src_table;
-      $item->src_pk    = $src_pk;
+      $item->src_table          = $src_table;
+      $item->src_pk             = $src_pk;
     }
 
     // Add queue if empty
@@ -394,7 +394,7 @@ class MigrationModel extends JoomAdminModel
       // Calculate completed state
       if(!isset($item->completed) || ($item->completed == false && empty($item->queue)))
       {
-        $table = $this->getTable();
+        $table             = $this->getTable();
         $table->queue      = $item->queue;
         $table->successful = $item->successful;
         $table->failed     = $item->failed;
@@ -650,7 +650,7 @@ class MigrationModel extends JoomAdminModel
    *
    * @since   4.0.0
    */
-  public function getQueue($type, $table=null): array
+  public function getQueue($type, $table = null): array
   {
     return $this->component->getMigration()->getQueue($type, $table);
   }
@@ -676,8 +676,8 @@ class MigrationModel extends JoomAdminModel
     }
 
     // Add migration form paths
-    Form::addFormPath(JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/src/Service/Migration/Scripts');
-    Form::addFormPath(JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/forms');
+    Form::addFormPath(JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts');
+    Form::addFormPath(JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/forms');
 
     // Get the form file path
     $file = Path::find(Form::addFormPath(), strtolower($script->name) . '.xml');
@@ -696,8 +696,8 @@ class MigrationModel extends JoomAdminModel
     }
 
         // Get the form.
-    $name = _JOOM_OPTION.'.migration.'.$this->component->getMigration()->get('name');
-        $form = $this->loadForm($name, $file, ['control' => 'jform_'.$script->name, 'load_data' => true]);
+    $name     = _JOOM_OPTION . '.migration.' . $this->component->getMigration()->get('name');
+        $form = $this->loadForm($name, $file, ['control' => 'jform_' . $script->name, 'load_data' => true]);
 
         if(empty($form))
         {
@@ -727,8 +727,8 @@ class MigrationModel extends JoomAdminModel
     {
       if(!key_exists('joomla_path', $data) || !file_exists($data['joomla_path']))
       {
-        $this->setError(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_JOOMLA_PATH', $_SERVER['DOCUMENT_ROOT'].'/your-subdomain'));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_JOOMLA_PATH', $_SERVER['DOCUMENT_ROOT'].'/your-subdomain'), 'error', 'migration');
+        $this->setError(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_JOOMLA_PATH', $_SERVER['DOCUMENT_ROOT'] . '/your-subdomain'));
+        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_JOOMLA_PATH', $_SERVER['DOCUMENT_ROOT'] . '/your-subdomain'), 'error', 'migration');
 
         $return = false;
       }
@@ -746,11 +746,11 @@ class MigrationModel extends JoomAdminModel
 
         // Check provided db prefix
         $prefix = $data['dbprefix'];
-        $result = array_filter($tableList,
-          function($row) use($prefix)
-          {
-            return strpos($row, $prefix) !== False;
-          }
+        $result = array_filter(
+            $tableList,
+            function ($row) use ($prefix) {
+              return strpos($row, $prefix) !== false;
+            }
         );
 
         if(empty($result))
@@ -875,7 +875,7 @@ class MigrationModel extends JoomAdminModel
 
         if(!$data)
         {
-          $success = false;
+          $success   = false;
           $error_msg = Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_FAILED_CONVERT_DATA');
         }
         else
@@ -886,7 +886,7 @@ class MigrationModel extends JoomAdminModel
 
           if(!$record)
           {
-            $success = false;
+            $success   = false;
             $error_msg = Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_FAILED_INSERT_RECORD');
           }
           else
@@ -898,12 +898,12 @@ class MigrationModel extends JoomAdminModel
             switch($type)
             {
               case 'image':
-                $res = $this->component->getMigration()->migrateFiles($record, $src_data);
+                $res           = $this->component->getMigration()->migrateFiles($record, $src_data);
                 $error_msg_end = 'CREATE_IMGTYPE';
-                break;
+                  break;
 
               case 'category':
-                $res = $this->component->getMigration()->migrateFolder($record, $src_data);
+                $res           = $this->component->getMigration()->migrateFolder($record, $src_data);
                 $error_msg_end = 'CREATE_FOLDER';
 
                 if(!$res)
@@ -911,18 +911,18 @@ class MigrationModel extends JoomAdminModel
                   // Stop automatic migration if something went wrong in the filesystem
                   $this->component->getMigration()->set('continue', false);
                 }
-                break;
+                  break;
 
               default:
                 $res = true;
-                break;
+                  break;
             }
 
             if(!$res)
             {
-              $record  = $this->deleteRecord($type, $new_pk);
-              $success = false;
-              $error_msg = Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_FAILED_'.$error_msg_end);
+              $record    = $this->deleteRecord($type, $new_pk);
+              $success   = false;
+              $error_msg = Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_FAILED_' . $error_msg_end);
               $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_FAILED_' . $error_msg_end), 'error', 'migration');
               $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_LOG_CONCELLED', $new_pk), 'error', 'migration');
             }
@@ -931,7 +931,7 @@ class MigrationModel extends JoomAdminModel
       }
       else
       {
-        $success = false;
+        $success   = false;
         $error_msg = Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_FAILED_FETCH_DATA');
       }
     }
@@ -1080,7 +1080,7 @@ class MigrationModel extends JoomAdminModel
         {
           $table->successful->set($src_pk, $dest_pk);
         }
-        break;
+          break;
 
       // apply pending state
       case 2:
@@ -1107,7 +1107,7 @@ class MigrationModel extends JoomAdminModel
         // Reordering queue
         $table->queue = $this->getQueue($type, $table);
 
-        break;
+          break;
 
       // apply failed state
       default:
@@ -1130,7 +1130,7 @@ class MigrationModel extends JoomAdminModel
         {
           $table->failed->set($src_pk, $error);
         }
-        break;
+          break;
     }
 
     // Add errors
@@ -1214,8 +1214,8 @@ class MigrationModel extends JoomAdminModel
     }
 
         // Check the session for previously entered form data.
-    $name = _JOOM_OPTION.'.migration.'.$this->component->getMigration()->get('name');
-        $data = $this->app->getUserState($name.'.step2.data', []);
+    $name     = _JOOM_OPTION . '.migration.' . $this->component->getMigration()->get('name');
+        $data = $this->app->getUserState($name . '.step2.data', []);
 
     // Check the session for validated migration parameters
     $params = $this->getParams()['migration'];
@@ -1259,7 +1259,7 @@ class MigrationModel extends JoomAdminModel
     $query->where($db->quoteName('a.script') . ' = ' . $db->quote($script->name));
 
     return $query;
-  }
+    }
 
   /**
    * Method to insert a content type record from migration data.
@@ -1329,7 +1329,7 @@ class MigrationModel extends JoomAdminModel
     if($isNew && !Multilanguage::isEnabled())
         {
             $data['language'] = '*';
-        }
+    }
 
     // Reset task
     $tmp_task = $this->app->input->get('task', '', 'cmd');
@@ -1385,13 +1385,13 @@ class MigrationModel extends JoomAdminModel
       // Load form
       Form::addFormPath(_JOOM_PATH_ADMIN . '/forms');
       $formFactory = Factory::getContainer()->get(FormFactoryInterface::class);
-      $form        = $formFactory->createForm(_JOOM_OPTION.'.'.$type, ['control' => 'jform', 'load_data' => false]);
+      $form        = $formFactory->createForm(_JOOM_OPTION . '.' . $type, ['control' => 'jform', 'load_data' => false]);
 
       // Load form xml
       if($form->loadFile($type, false, null) == false)
       {
-        $this->component->setError('Form::loadFile('.$type.') could not load xml file');
-        $this->component->addLog('Form::loadFile('.$type.') could not load xml file', 'error', 'migration');
+        $this->component->setError('Form::loadFile(' . $type . ') could not load xml file');
+        $this->component->addLog('Form::loadFile(' . $type . ') could not load xml file', 'error', 'migration');
 
         return false;
       }
@@ -1406,19 +1406,20 @@ class MigrationModel extends JoomAdminModel
     if(version_compare(JVERSION, '5.0.0', '<'))
     {
       // Joomla 4
-      $event = new \Joomla\Event\Event('onMigrationBeforeSave', ['com_joomgallery.'.$recordType, $table]);
+      $event = new \Joomla\Event\Event('onMigrationBeforeSave', ['com_joomgallery.' . $recordType, $table]);
       $this->getDispatcher()->dispatch($event->getName(), $event);
       $results = $event->getArgument('result', []);
     }
     else
     {
       // Joomla 5
-      $options = ['context' => 'com_joomgallery.'.$recordType,
+      $options = [
+        'context' => 'com_joomgallery.' . $recordType,
         'subject' => $table,
         'isNew'   => $isNew,
         'data'    => $data,
       ];
-      $event = new Model\BeforeSaveEvent('onMigrationBeforeSave', $options);
+      $event   = new Model\BeforeSaveEvent('onMigrationBeforeSave', $options);
       $results = $this->getDispatcher()->dispatch($event->getName(), $event)->getArgument('result', []);
     }
 
@@ -1505,7 +1506,7 @@ class MigrationModel extends JoomAdminModel
     $date                = Factory::getDate();
 
     // Create and populate a dummy object.
-    $record = new \stdClass();
+    $record     = new \stdClass();
     $record->id = $key;
 
     $needed = ['category'];
@@ -1527,9 +1528,9 @@ class MigrationModel extends JoomAdminModel
 
     if(\in_array($type, $needed))
     {
-      $record->date = $date->toSql();
+      $record->date        = $date->toSql();
       $record->imgmetadata = '';
-      $record->filename = '';
+      $record->filename    = '';
     }
 
     $needed = ['user'];
@@ -1551,7 +1552,7 @@ class MigrationModel extends JoomAdminModel
     if(\in_array($type, $needed))
     {
       $record->metadesc = '';
-      $record->metakey = '';
+      $record->metakey  = '';
     }
 
     $needed = ['image', 'category', 'field', 'tag', 'collection', 'user', 'vote', 'comment'];
@@ -1579,7 +1580,6 @@ class MigrationModel extends JoomAdminModel
 
 
       return $key;
-
   }
 
   /**

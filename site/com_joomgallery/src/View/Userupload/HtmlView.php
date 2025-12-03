@@ -10,11 +10,11 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userupload;
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomgallery\Component\Joomgallery\Site\Model\UseruploadModel;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\HTML\Registry;
-use \Joomla\CMS\Language\Text;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\UseruploadModel;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\HTML\Registry;
+use Joomla\CMS\Language\Text;
 
 /**
  * HTML Contact View class for the Contact component
@@ -168,7 +168,8 @@ class HtmlView extends JoomGalleryView
 
     //--- Limits php.ini, config ----------------------------------------------------------------
 
-    [$this->uploadLimit,
+    [
+      $this->uploadLimit,
       $this->postMaxSize,
       $this->memoryLimit,
       $this->mediaSize,
@@ -252,5 +253,4 @@ class HtmlView extends JoomGalleryView
       }
     }
   }
-
 } // class

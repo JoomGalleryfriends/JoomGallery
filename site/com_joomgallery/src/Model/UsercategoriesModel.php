@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
-use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\Mysqli\MysqliQuery;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
+use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\Mysqli\MysqliQuery;
 
 /**
  * Model to get a list of category records.
@@ -148,7 +148,7 @@ class UsercategoriesModel extends AdminCategoriesModel
       $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('created_by').' = '.(int) $userId);
+        ->where($db->quoteName('created_by') . ' = ' . (int) $userId);
 
       $db->setQuery($query);
       $count = $db->loadResult();
@@ -157,16 +157,14 @@ class UsercategoriesModel extends AdminCategoriesModel
       {
         $isUserHasACategory = false;
       }
-
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
 
     return $isUserHasACategory;
   }
-
 }

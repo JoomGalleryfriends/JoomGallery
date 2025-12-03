@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Button\FeaturedButton;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Session\Session;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Button\FeaturedButton;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -38,12 +39,13 @@ $listDirn  = $this->state->get('list.direction');
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', 0, 1, true);
 $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
-$config    = $this->params['configs'];
+$config = $this->params['configs'];
 
 // Prevent any display if userspace is not enabled
 $isUserSpaceEnabled = $config->get('jg_userspace');
 
-if ( ! $isUserSpaceEnabled) {
+if( ! $isUserSpaceEnabled)
+{
   return;
 }
 
@@ -55,7 +57,7 @@ $saveOrderingUrl = '';
 
 if($saveOrder && !empty($this->items))
 {
-  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=userimages.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
+  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=userimages.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
   HTMLHelper::_('draggablelist.draggable');
 }
 
@@ -66,10 +68,10 @@ $categoriesView = Route::_('index.php?option=com_joomgallery&view=usercategories
 
 // return to userImages;
 $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userimages');
-$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return='.$returnURL);
+$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return=' . $returnURL);
 
-$baseLink_ImageEdit = 'index.php?option=com_joomgallery&task=userimage.edit&id=';
-$baseLink_ImagesFilter      = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
+$baseLink_ImageEdit    = 'index.php?option=com_joomgallery&task=userimage.edit&id=';
+$baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
 
 $canDelete = false;
 
@@ -97,7 +99,6 @@ $canDelete = false;
           </div>
 
         <?php else: ?>
-
 <!--          --><?php //if(!$this->isUserHasCategory): ?>
 <!--            <div class="alert alert-warning" role="alert">-->
 <!--              <span class="icon-images"></span>-->
@@ -118,7 +119,6 @@ $canDelete = false;
       </div>
 
     <?php else: ?>
-
       <div class="form-group">
 
         <div class="mb-4">
@@ -160,7 +160,6 @@ $canDelete = false;
             </div>
 
           <?php else : ?>
-
             <div class="clearfix"></div>
 
             <div class="table-responsive">
@@ -228,15 +227,16 @@ $canDelete = false;
                   </td>
                 </tr>
                 </tfoot>
-                <tbody <?php if($saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
+                <tbody <?php if($saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
+                       endif; ?>>
                 <?php foreach($this->items as $i => $item) :
                   // Access check
-                  $ordering = ($listOrder == 'a.ordering');
-                  $canEdit = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canDelete = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canChange = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
+                  $ordering   = ($listOrder == 'a.ordering');
+                  $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
+                  $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
+                  $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser->id;
-                  $disabled = ($item->checked_out > 0) ? 'disabled' : '';
+                  $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
                   ?>
 
                   <tr class="row<?php echo $i % 2; ?>">
@@ -252,7 +252,7 @@ $canDelete = false;
                         }
                         elseif(!$saveOrder)
                         {
-                          $iconClass = ' inactive" title="'.Text::_('JORDERINGDISABLED');
+                          $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                         }
                         ?>
                         <?php if($canChange && $saveOrder) : ?>
@@ -282,14 +282,14 @@ $canDelete = false;
                         </button>
                       <?php endif; ?>
                       <?php
-                      $route = Route::_($baseLink_ImageEdit.(int) $item->id);
+                      $route = Route::_($baseLink_ImageEdit . (int) $item->id);
                       ?>
                       <a href="<?php echo $route; ?>">
                         <?php echo $this->escape($item->title); ?>
                         <?php
                         if($this->isDebugSite)
                         {
-                          echo '&nbsp;('.$this->escape($item->id).')';
+                          echo '&nbsp;(' . $this->escape($item->id) . ')';
                         }
                         ?>
                       </a>
@@ -309,7 +309,7 @@ $canDelete = false;
 
                     <td class="d-none d-lg-table-cell text-center">
                       <a title="<?php echo Text::_('COM_JOOMGALLERY_CLICK_2_VIEW_IMG_LIST_OF_CAT'); ?>"
-                         href="<?php echo $baseLink_ImagesFilter.(int) $item->catid; ?>">
+                         href="<?php echo $baseLink_ImagesFilter . (int) $item->catid; ?>">
                         <?php echo $this->escape($item->cattitle); ?>
                       </a>
                     </td>
@@ -324,12 +324,11 @@ $canDelete = false;
                     <td class="d-none d-md-table-cell text-center">
                       <?php if($canEdit || $canDelete): ?>
                         <?php if($canEdit): ?>
-
                           <?php
                           $itemId    = $item->id;
                           $title     = $this->escape($item->title);
-                          $baseRoute = $baseLink_ImageEdit.(int) $item->id;
-                          $route     = Route::_($baseLink_ImageEdit.(int) $item->id);
+                          $baseRoute = $baseLink_ImageEdit . (int) $item->id;
+                          $route     = Route::_($baseLink_ImageEdit . (int) $item->id);
                           $test      = $route;
                           ?>
                           <a href="<?php echo $route; ?>">

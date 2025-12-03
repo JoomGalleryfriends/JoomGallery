@@ -1,25 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Button\PublishedButton;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Session\Session;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Button\PublishedButton;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -49,7 +50,7 @@ if($saveOrder && !empty($this->items))
     <div class="col-md-12">
       <div id="j-main-container" class="j-main-container">
         <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
-        <?php if (empty($this->items)) : ?>
+        <?php if(empty($this->items)) : ?>
           <div class="alert alert-info">
             <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
             <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
@@ -92,7 +93,7 @@ if($saveOrder && !empty($this->items))
                 <th scope="col" class="w-10 d-none d-md-table-cell">
                   <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_OWNER', 'a.created_by', $listDirn, $listOrder); ?>
                 </th>
-                <?php if (Multilanguage::isEnabled()) : ?>
+                <?php if(Multilanguage::isEnabled()) : ?>
                   <th scope="col" class="w-10 d-none d-md-table-cell">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
                   </th>
@@ -109,30 +110,31 @@ if($saveOrder && !empty($this->items))
                 </td>
               </tr>
             </tfoot>
-            <tbody <?php if ($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" data-nested="false"<?php endif; ?>>
-              <?php foreach ($this->items as $i => $item) :
+            <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" data-nested="false"<?php
+                   endif; ?>>
+              <?php foreach($this->items as $i => $item) :
                 $ordering   = ($listOrder == 'a.ordering');
-                $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION.'.category.'.$item->id);
-                $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION.'.category.'.$item->id);
+                $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION . '.category.' . $item->id);
+                $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION . '.category.' . $item->id);
                 $canCheckin = $user->authorise('core.admin', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
 
                 // Get the parents of item for sorting
-                                if ($item->level > 1)
+                                if($item->level > 1)
                                 {
-                                    $parentsStr = '';
+                                    $parentsStr       = '';
                                     $_currentParentId = $item->parent_id;
-                                    $parentsStr = ' ' . $_currentParentId;
+                                    $parentsStr       = ' ' . $_currentParentId;
 
-                                    for ($i2 = 0; $i2 < $item->level; $i2++)
+                                    for($i2 = 0; $i2 < $item->level; $i2++)
                                     {
-                                        foreach ($this->ordering as $k => $v)
+                                        foreach($this->ordering as $k => $v)
                                         {
                                             $v = implode('-', $v);
                                             $v = '-' . $v . '-';
 
-                                            if (strpos($v, '-' . $_currentParentId . '-') !== false)
+                                            if(strpos($v, '-' . $_currentParentId . '-') !== false)
                                             {
-                                                $parentsStr .= ' ' . $k;
+                                                $parentsStr      .= ' ' . $k;
                                                 $_currentParentId = $k;
                                                 break;
                                             }
@@ -156,11 +158,11 @@ if($saveOrder && !empty($this->items))
                   <?php
                   $iconClass = '';
 
-                  if (!$canChange)
+                  if(!$canChange)
                   {
                     $iconClass = ' inactive';
                   }
-                  elseif (!$saveOrder)
+                  elseif(!$saveOrder)
                   {
                     $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                   }
@@ -168,7 +170,7 @@ if($saveOrder && !empty($this->items))
                   <span class="sortable-handler<?php echo $iconClass ?>">
                     <span class="icon-ellipsis-v"></span>
                   </span>
-                  <?php if ($canChange && $saveOrder) : ?>
+                  <?php if($canChange && $saveOrder) : ?>
                     <input type="text" name="order[]" size="5" value="<?php echo $item->lft; ?>" class="hidden">
                   <?php endif; ?>
                 </td>
@@ -187,17 +189,17 @@ if($saveOrder && !empty($this->items))
                       'id' => 'state-' . $item->id,
                     ];
 
-                    echo (new PublishedButton)->render((int) $item->published, $i, $options);
+                    echo (new PublishedButton())->render((int) $item->published, $i, $options);
                   ?>
                 </td>
 
                 <th scope="row" class="has-context">
                     <?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
-                    <?php if (isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>
+                    <?php if(isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>
                       <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'categories.', $canCheckin); ?>
                     <?php endif; ?>
-                    <?php if ($canEdit) : ?>
-                      <a href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.edit&id='.(int) $item->id); ?>">
+                    <?php if($canEdit) : ?>
+                      <a href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.edit&id=' . (int) $item->id); ?>">
                         <?php echo $this->escape($item->title); ?>
                       </a>
                     <?php else : ?>
@@ -207,7 +209,7 @@ if($saveOrder && !empty($this->items))
                         <?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
                         <?php echo Text::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias)); ?>
                     </div>
-                    <?php if ($item->hidden === 1) : ?>
+                    <?php if($item->hidden === 1) : ?>
                       <div class="small">
                         <?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
                         <span class="badge bg-secondary">
@@ -223,7 +225,7 @@ if($saveOrder && !empty($this->items))
 
                 <td class="d-none d-md-table-cell">
                 <?php if($item->img_count > 0) : ?>
-                  <a href="<?php echo Route::_('index.php?option='._JOOM_OPTION.'&view=images&filter[category]='.$item->id); ?>">
+                  <a href="<?php echo Route::_('index.php?option=' . _JOOM_OPTION . '&view=images&filter[category]=' . $item->id); ?>">
                     <span class="badge bg-info"><?php echo (int) $item->img_count; ?></span>
                   </a>
                 <?php else : ?>
@@ -235,7 +237,7 @@ if($saveOrder && !empty($this->items))
                   <?php echo $item->access; ?>
                 </td>
                 <td class="small d-none d-md-table-cell">
-                  <?php if ($item->created_by) : ?>
+                  <?php if($item->created_by) : ?>
                     <a href="<?php echo Route::_('index.php?option=com_users&task=user.edit&id=' . (int) $item->created_by_id); ?>">
                       <?php echo $this->escape($item->created_by); ?>
                     </a>
@@ -243,7 +245,7 @@ if($saveOrder && !empty($this->items))
                     <?php echo Text::_('JNONE'); ?>
                   <?php endif; ?>
                 </td>
-                <?php if (Multilanguage::isEnabled()) : ?>
+                <?php if(Multilanguage::isEnabled()) : ?>
                   <td class="small d-none d-md-table-cell">
                     <?php echo LayoutHelper::render('joomla.content.language', $item); ?>
                   </td>

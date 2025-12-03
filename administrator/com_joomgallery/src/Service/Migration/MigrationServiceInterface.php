@@ -23,7 +23,7 @@ interface MigrationServiceInterface
 {
     /**
      * Creates the migration service class
-     * 
+     *
      * @param   string  $script   Name of the migration script to be used
      *
      * @return  void

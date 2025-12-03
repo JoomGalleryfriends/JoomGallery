@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Object\CMSObject;
-use \Joomla\Registry\Registry;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Imagetype model.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -63,7 +63,7 @@ class ImagetypeModel extends JoomAdminModel
    */
   public function getItem($pk = null)
   {
-  $pk = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
+  $pk      = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
     $table = $this->getTable();
 
     if($pk > 0 || \is_array($pk))
@@ -96,9 +96,9 @@ class ImagetypeModel extends JoomAdminModel
 
   if(property_exists($item, 'params'))
     {
-      $registry = new Registry($item->params);
+      $registry     = new Registry($item->params);
       $item->params = $registry->toArray();
-    }
+  }
 
   if(isset($item->params))
   {

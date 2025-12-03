@@ -100,7 +100,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     if(!$user->id)
     {
       $user_id = (int) $params->user;
-      $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($user_id);
+      $user    = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($user_id);
       $app->loadIdentity($user);
     }
 
@@ -147,7 +147,12 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $this->logTask('Attempt to recreate all available images...');
 
       $listModel = $app->bootComponent('com_joomgallery')->getMVCFactory()->createModel('images', 'administrator');
-      $ids       = array_map(function($item) { return $item->id;}, $listModel->getIDs());
+    $ids         = array_map(
+        function ($item) {
+        return $item->id;
+        },
+        $listModel->getIDs()
+    );
     }
 
     // Remove zero ids from list
@@ -187,7 +192,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     if(\count($ids) == \count($executed_ids))
     {
       // We finished the job
-      $willResume = false;
+      $willResume         = false;
       $params->successful = '';
     }
 
@@ -211,16 +216,16 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   }
 
   /**
-   * Performs the actual task with the model defined in the 
-   * 
+   * Performs the actual task with the model defined in the
+   *
    * @param   array   $ids         The id of the task
    * @param   array   $task_def    Task definition array in the form
    *                               ['model' => (object) Model, 'method' => (string) method-name, 'options' => (array) method-arguments]
    * @param   object  $params      The params object
    * @param   string  $error_msg   The message to be logged on error
-   * 
+   *
    * @return  array   List of ecexuted ids
-   * 
+   *
    * @since   4.2.0
    */
   private function performTask(array $ids, array $task_def, object $params, string $error_msg = ''): array
@@ -246,13 +251,13 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     }
 
     // Check that $task_def is correctly given
-    $model    = $task_def['model'];
-    $method   = $task_def['method'];
-    $options  = $task_def['options'];
+    $model   = $task_def['model'];
+    $method  = $task_def['method'];
+    $options = $task_def['options'];
 
     $assumed_duration = 1;
-    $successful   = \is_string($params->successful) ? $params->successful : '';
-    $executed_ids = $successful !== '' ? array_map('trim', explode(',', $successful)) : [];
+    $successful       = \is_string($params->successful) ? $params->successful : '';
+    $executed_ids     = $successful !== '' ? array_map('trim', explode(',', $successful)) : [];
 
     foreach($ids as $id)
     {
@@ -278,8 +283,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       if($execute_task)
       {
         // Continue execution
-        $start   = microtime(true);
-        $success = $model->{$method}($id, ...$options);
+        $start            = microtime(true);
+        $success          = $model->{$method}($id, ...$options);
         $assumed_duration = microtime(true) - $start;
 
         if(!$success && $error_msg)
@@ -303,12 +308,12 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
 
   /**
    * Writes the params to the database
-   * 
+   *
    * @param   int     $task_id  The id of the task
    * @param   object  $params   The params object
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.2.0
    */
   private function setParams($task_id, $params)

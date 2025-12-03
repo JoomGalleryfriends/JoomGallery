@@ -1,21 +1,22 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Uppy config
 $uppy_version = 'v3.5.0'; // Uppy version to use
@@ -42,7 +43,7 @@ $replaceType   = $app->input->get('type');
 
 <div class="jg jg-img-replace">
   <form id="image-form"
-        action="<?php echo Route::_('index.php?option=com_joomgallery&view=userimage&layout=editImg&id='.$this->item->id); ?>"
+        action="<?php echo Route::_('index.php?option=com_joomgallery&view=userimage&layout=editImg&id=' . $this->item->id); ?>"
         method="post" enctype="multipart/form-data" name="adminForm" class="form-validate form-horizontal"
         aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_EDIT'); ?>">
 

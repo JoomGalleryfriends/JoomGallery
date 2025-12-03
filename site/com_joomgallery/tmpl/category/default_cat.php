@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Session\Session;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Subcategory params
 $subcategory_class           = $this->params['configs']->get('jg_category_view_subcategory_class', 'masonry', 'STRING');
@@ -32,28 +33,28 @@ $subcategories_description   = $this->params['configs']->get('jg_category_view_s
 $subcategories_random_image  = $this->params['configs']->get('jg_category_view_subcategories_random_image', 1, 'INT');
 
 // Image params
-$category_class          = $this->params['configs']->get('jg_category_view_class', 'masonry', 'STRING');
-$num_columns             = $this->params['configs']->get('jg_category_view_num_columns', 6, 'INT');
-$image_type              = $this->params['configs']->get('jg_category_view_type_images', 'thumbnail', 'STRING');
-$caption_align           = $this->params['configs']->get('jg_category_view_caption_align', 'right', 'STRING');
-$image_class             = $this->params['configs']->get('jg_category_view_image_class', 0, 'INT');
-$justified_height        = $this->params['configs']->get('jg_category_view_justified_height', 320, 'INT');
-$justified_gap           = $this->params['configs']->get('jg_category_view_justified_gap', 5, 'INT');
-$show_title              = $this->params['configs']->get('jg_category_view_images_show_title', 0, 'INT');
-$numb_images             = $this->params['configs']->get('jg_category_view_numb_images', 12, 'INT');
-$use_pagination          = $this->params['configs']->get('jg_category_view_pagination', 0, 'INT');
-$reloaded_images         = $this->params['configs']->get('jg_category_view_number_of_reloaded_images', 3, 'INT');
-$image_link              = $this->params['configs']->get('jg_category_view_image_link', 'defaultview', 'STRING');
-$title_link              = $this->params['configs']->get('jg_category_view_title_link', 'defaultview', 'STRING');
-$show_description        = $this->params['configs']->get('jg_category_view_show_description', 0, 'INT');
-$show_description_label  = $this->params['configs']->get('jg_category_view_show_description_label', 0, 'INT');
-$show_imgdate            = $this->params['configs']->get('jg_category_view_show_imgdate', 0, 'INT');
-$show_imgauthor          = $this->params['configs']->get('jg_category_view_show_imgauthor', 0, 'INT');
-$show_tags               = $this->params['configs']->get('jg_category_view_show_tags', 0, 'INT');
-$browse_images_link      = $this->params['configs']->get('jg_category_view_browse_images_link', 1, 'INT');
-$lightbox_image          = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
-$lightbox_thumbnails     = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
-$lightbox_zoom           = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
+$category_class         = $this->params['configs']->get('jg_category_view_class', 'masonry', 'STRING');
+$num_columns            = $this->params['configs']->get('jg_category_view_num_columns', 6, 'INT');
+$image_type             = $this->params['configs']->get('jg_category_view_type_images', 'thumbnail', 'STRING');
+$caption_align          = $this->params['configs']->get('jg_category_view_caption_align', 'right', 'STRING');
+$image_class            = $this->params['configs']->get('jg_category_view_image_class', 0, 'INT');
+$justified_height       = $this->params['configs']->get('jg_category_view_justified_height', 320, 'INT');
+$justified_gap          = $this->params['configs']->get('jg_category_view_justified_gap', 5, 'INT');
+$show_title             = $this->params['configs']->get('jg_category_view_images_show_title', 0, 'INT');
+$numb_images            = $this->params['configs']->get('jg_category_view_numb_images', 12, 'INT');
+$use_pagination         = $this->params['configs']->get('jg_category_view_pagination', 0, 'INT');
+$reloaded_images        = $this->params['configs']->get('jg_category_view_number_of_reloaded_images', 3, 'INT');
+$image_link             = $this->params['configs']->get('jg_category_view_image_link', 'defaultview', 'STRING');
+$title_link             = $this->params['configs']->get('jg_category_view_title_link', 'defaultview', 'STRING');
+$show_description       = $this->params['configs']->get('jg_category_view_show_description', 0, 'INT');
+$show_description_label = $this->params['configs']->get('jg_category_view_show_description_label', 0, 'INT');
+$show_imgdate           = $this->params['configs']->get('jg_category_view_show_imgdate', 0, 'INT');
+$show_imgauthor         = $this->params['configs']->get('jg_category_view_show_imgauthor', 0, 'INT');
+$show_tags              = $this->params['configs']->get('jg_category_view_show_tags', 0, 'INT');
+$browse_images_link     = $this->params['configs']->get('jg_category_view_browse_images_link', 1, 'INT');
+$lightbox_image         = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
+$lightbox_thumbnails    = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
+$lightbox_zoom          = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -64,7 +65,7 @@ $wa->useStyle('com_joomgallery.jg-icon-font');
 
 <?php // Password protected category form ?>
 <?php if($this->item->pw_protected): ?>
-  <form action="<?php echo Route::_('index.php?task=category.unlock&catid='.$this->item->id);?>" method="post" class="form-inline" autocomplete="off">
+  <form action="<?php echo Route::_('index.php?task=category.unlock&catid=' . $this->item->id);?>" method="post" class="form-inline" autocomplete="off">
     <h3><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD_PROTECTED'); ?></h3>
     <label for="jg_password"><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD'); ?></label>
     <input type="password" name="password" id="jg_password" />
@@ -105,7 +106,7 @@ if(!empty($use_pagination))
 }
 
 // Add and initialize the grid script
-$iniJS  = 'window.joomGrid["1-'.$this->item->id.'"] = {';
+$iniJS  = 'window.joomGrid["1-' . $this->item->id . '"] = {';
 $iniJS .= '  itemid: "1-' . $this->item->id . '",';
 $iniJS .= '  pagination: ' . $use_pagination . ',';
 $iniJS .= '  layout: "' . $category_class . '",';
@@ -113,26 +114,26 @@ $iniJS .= '  num_columns: ' . $num_columns . ',';
 $iniJS .= '  numb_images: ' . $numb_images . ',';
 $iniJS .= '  reloaded_images: ' . $reloaded_images . ',';
 $iniJS .= '  lightbox: ' . ($lightbox ? 'true' : 'false') . ',';
-$iniJS .= '  lightbox_params: {container: "lightgallery-1-'.$this->item->id.'", selector: ".lightgallery-item"},';
+$iniJS .= '  lightbox_params: {container: "lightgallery-1-' . $this->item->id . '", selector: ".lightgallery-item"},';
 $iniJS .= '  thumbnails: ' . ($lightbox_thumbnails ? 'true' : 'false') . ',';
 $iniJS .= '  zoom: ' . ($lightbox_zoom ? 'true' : 'false') . ',';
-$iniJS .= '  justified: {height: '.$justified_height.', gap: '.$justified_gap.'}';
+$iniJS .= '  justified: {height: ' . $justified_height . ', gap: ' . $justified_gap . '}';
 $iniJS .= '};';
 
 $wa->useScript('com_joomgallery.joomgrid');
 $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joomgrid']);
 
 // Permission checks
-$canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $this->item->id);
-$canAdd     = $this->getAcl()->checkACL('add', 'com_joomgallery.category', 0, $this->item->id, true);
+$canEdit = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $this->item->id);
+$canAdd  = $this->getAcl()->checkACL('add', 'com_joomgallery.category', 0, $this->item->id, true);
 
 if($this->item->id > 1)
 {
-  $canAddImg  = $this->getAcl()->checkACL('add', 'com_joomgallery.image', 0, $this->item->id, true);
+  $canAddImg = $this->getAcl()->checkACL('add', 'com_joomgallery.image', 0, $this->item->id, true);
 }
 else
 {
-  $canAddImg  = true;
+  $canAddImg = true;
 }
 $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $this->item->id);
 $canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $this->item->id) || $this->item->checked_out == $this->getCurrentUser()->id;
@@ -148,7 +149,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 
 <?php // Back to parent category ?>
 <?php if($this->item->parent_id > 0) : ?>
-  <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.(int) $this->item->parent_id); ?>">
+  <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
     <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?></span>
   </a>
 <?php endif; ?>
@@ -177,7 +178,8 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php endif; ?>
 
   <?php // Display data array for layout
-    $subcatData = ['layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns, 'image_type' => $subcategory_image_type,
+    $subcatData = [
+      'layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns, 'image_type' => $subcategory_image_type,
       'caption_align' => $subcategories_caption_align, 'description' => $subcategories_description, 'image_class' => $subcategory_image_class, 'random_image' => (bool) $subcategories_random_image,
     ];
   ?>
@@ -195,13 +197,16 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <h3><?php echo Text::_('COM_JOOMGALLERY_IMAGES') ?></h3>
   <?php if(!empty($this->item->images->filterForm) && $use_pagination == '0') : ?>
     <?php // Show image filters ?>
-    <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.$this->item->id.'&Itemid='.$this->menu->id); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . $this->item->id . '&Itemid=' . $this->menu->id); ?>" method="post" name="adminForm" id="adminForm">
       <?php
         {
-          echo LayoutHelper::render('joomla.searchtools.default', [
+        echo LayoutHelper::render(
+            'joomla.searchtools.default',
+            [
             'view' => $this->item->images,
             'options' => ['showSelector' => false, 'filterButton' => false, 'showNoResults' => false, 'showSearch' => false, 'showList' => false, 'barClass' => 'flex-end'],
-          ]);
+            ]
+        );
         }
       ?>
       <input type="hidden" name="contenttype" value="image"/>
@@ -214,7 +219,8 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php endif; ?>
 
   <?php // Display data array for layout
-    $imgsData = ['id' => '1-'.$this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
+    $imgsData = [
+      'id' => '1-' . $this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
       'caption_align' => $caption_align, 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
       'image_title' => (bool) $show_title, 'title_link' => $title_link, 'image_desc' => (bool) $show_description, 'image_desc_label' => (bool) $show_description_label,
       'image_date' => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags,

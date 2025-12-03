@@ -31,7 +31,7 @@ interface FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function cleanPath(string $path, string $ds=\DIRECTORY_SEPARATOR): string;
+  public function cleanPath(string $path, string $ds = \DIRECTORY_SEPARATOR): string;
 
   /**
    * Cleaning of file/category name
@@ -46,7 +46,7 @@ interface FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function cleanFilename(string $file, int $with_ext=2, string $use_ext='jpg');
+  public function cleanFilename(string $file, int $with_ext = 2, string $use_ext = 'jpg');
 
   /**
    * Sets the permission of a given file or folder recursively.
@@ -59,15 +59,15 @@ interface FilesystemInterface
    *
    * @since   4.0.0
    */
-  public function chmod(string $path, string $val, bool $mode=true): bool;
+  public function chmod(string $path, string $val, bool $mode = true): bool;
 
   /**
    * Copies an index.html file into a specified folder
    *
    * @param   string   $path    The path where the index.html should be created
-   * 
+   *
    * @return  string
-   * 
+   *
    * @since   4.0.0
    * @throws  \Exception
    */

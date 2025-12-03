@@ -98,8 +98,8 @@ class GifCreator
   {
     if(!\is_array($dst_frames))
     {
-      $this->component->addLog($this->version.': '.$this->errors['ERR00'], 'error', 'jerror');
-      throw new \Exception($this->version.': '.$this->errors['ERR00']);
+      $this->component->addLog($this->version . ': ' . $this->errors['ERR00'], 'error', 'jerror');
+      throw new \Exception($this->version . ': ' . $this->errors['ERR00']);
     }
 
     $frames    = [];
@@ -145,8 +145,8 @@ class GifCreator
       else
       {
         // Fail
-        $this->component->addLog($this->version.': '.$this->errors['ERR02'].' ('.$mode.')', 'error', 'jerror');
-        throw new \Exception($this->version.': '.$this->errors['ERR02'].' ('.$mode.')');
+        $this->component->addLog($this->version . ': ' . $this->errors['ERR02'] . ' (' . $mode . ')', 'error', 'jerror');
+        throw new \Exception($this->version . ': ' . $this->errors['ERR02'] . ' (' . $mode . ')');
       }
 
       if($i == 0)
@@ -156,23 +156,24 @@ class GifCreator
 
       if(substr($this->frameSources[$i], 0, 6) != 'GIF87a' && substr($this->frameSources[$i], 0, 6) != 'GIF89a')
       {
-        $this->component->addLog($this->version.': '.$i.' '.$this->errors['ERR01'], 'error', 'jerror');
-        throw new \Exception($this->version.': '.$i.' '.$this->errors['ERR01']);
+        $this->component->addLog($this->version . ': ' . $i . ' ' . $this->errors['ERR01'], 'error', 'jerror');
+        throw new \Exception($this->version . ': ' . $i . ' ' . $this->errors['ERR01']);
       }
 
-      for($j = (13 + 3 * (2 << (\ord($this->frameSources[$i][10]) & 0x07))), $k = TRUE; $k; $j++)
+      for($j = (13 + 3 * (2 << (\ord($this->frameSources[$i][10]) & 0x07))), $k = true; $k; $j++)
       {
-        switch($this->frameSources[$i][$j]) {
+        switch($this->frameSources[$i][$j])
+        {
           case '!':
             if((substr($this->frameSources[$i], ($j + 3), 8)) == 'NETSCAPE')
             {
-              $this->component->addLog($this->version.': '.$this->errors['ERR03'].' ('.($i + 1).' source).', 'error', 'jerror');
-              throw new \Exception($this->version.': '.$this->errors['ERR03'].' ('.($i + 1).' source).');
+              $this->component->addLog($this->version . ': ' . $this->errors['ERR03'] . ' (' . ($i + 1) . ' source).', 'error', 'jerror');
+              throw new \Exception($this->version . ': ' . $this->errors['ERR03'] . ' (' . ($i + 1) . ' source).');
             }
-            break;
+              break;
           case ';':
               $k = false;
-            break;
+              break;
         }
       }
 
@@ -185,7 +186,7 @@ class GifCreator
     }
     else
     {
-      $red = $green = $blue = 0;
+      $red          = $green = $blue = 0;
       $this->colour = ($red > -1 && $green > -1 && $blue > -1) ? ($red | ($green << 8) | ($blue << 16)) : -1;
     }
 
@@ -217,7 +218,7 @@ class GifCreator
 
       $this->gif .= substr($this->frameSources[0], 6, 7);
       $this->gif .= substr($this->frameSources[0], 13, $cmap);
-      $this->gif .= "!\377\13NETSCAPE2.0\3\1".$this->encodeAsciiToChar($this->loop)."\0";
+      $this->gif .= "!\377\13NETSCAPE2.0\3\1" . $this->encodeAsciiToChar($this->loop) . "\0";
     }
   }
 
@@ -229,18 +230,18 @@ class GifCreator
    */
   public function addGifFrames($i, $d)
   {
-    $Locals_str = 13 + 3 * (2 << (\ord($this->frameSources[ $i ][10]) & 0x07));
+    $Locals_str = 13 + 3 * (2 << (\ord($this->frameSources[$i][10]) & 0x07));
 
     $Locals_end = \strlen($this->frameSources[$i]) - $Locals_str - 1;
     $Locals_tmp = substr($this->frameSources[$i], $Locals_str, $Locals_end);
 
-    $Global_len = 2 << (\ord($this->frameSources[0 ][10]) & 0x07);
+    $Global_len = 2 << (\ord($this->frameSources[0][10]) & 0x07);
     $Locals_len = 2 << (\ord($this->frameSources[$i][10]) & 0x07);
 
     $Global_rgb = substr($this->frameSources[0], 13, 3 * (2 << (\ord($this->frameSources[0][10]) & 0x07)));
     $Locals_rgb = substr($this->frameSources[$i], 13, 3 * (2 << (\ord($this->frameSources[$i][10]) & 0x07)));
 
-    $Locals_ext = "!\xF9\x04".\chr(($this->dis << 2) + 0).\chr(($d >> 0 ) & 0xFF).\chr(($d >> 8) & 0xFF)."\x0\x0";
+    $Locals_ext = "!\xF9\x04" . \chr(($this->dis << 2) + 0) . \chr(($d >> 0 ) & 0xFF) . \chr(($d >> 8) & 0xFF) . "\x0\x0";
 
     if($this->colour > -1 && \ord($this->frameSources[$i][10]) & 0x80)
     {
@@ -251,7 +252,7 @@ class GifCreator
             && \ord($Locals_rgb[3 * $j + 2]) == (($this->colour >> 0) & 0xFF)
           )
         {
-          $Locals_ext = "!\xF9\x04".\chr(($this->dis << 2) + 1).\chr(($d >> 0) & 0xFF).\chr(($d >> 8) & 0xFF).\chr($j)."\x0";
+          $Locals_ext = "!\xF9\x04" . \chr(($this->dis << 2) + 1) . \chr(($d >> 0) & 0xFF) . \chr(($d >> 8) & 0xFF) . \chr($j) . "\x0";
           break;
         }
       }
@@ -262,11 +263,11 @@ class GifCreator
       case '!':
          $Locals_img = substr($Locals_tmp, 8, 10);
          $Locals_tmp = substr($Locals_tmp, 18, \strlen($Locals_tmp) - 18);
-        break;
+          break;
       case ',':
          $Locals_img = substr($Locals_tmp, 0, 10);
          $Locals_tmp = substr($Locals_tmp, 10, \strlen($Locals_tmp) - 10);
-        break;
+          break;
     }
 
     if(\ord($this->frameSources[$i][10]) & 0x80 && $this->imgBuilt)
@@ -275,31 +276,31 @@ class GifCreator
       {
         if($this->gifBlockCompare($Global_rgb, $Locals_rgb, $Global_len))
         {
-          $this->gif .= $Locals_ext.$Locals_img.$Locals_tmp;
+          $this->gif .= $Locals_ext . $Locals_img . $Locals_tmp;
         }
         else
         {
-          $byte              = \ord($Locals_img[9]);
-          $byte             |= 0x80;
-          $byte             &= 0xF8;
-          $byte             |= (\ord($this->frameSources[0][10]) & 0x07);
-          $Locals_img[9]     = \chr($byte);
-          $this->gif        .= $Locals_ext.$Locals_img.$Locals_rgb.$Locals_tmp;
+          $byte          = \ord($Locals_img[9]);
+          $byte         |= 0x80;
+          $byte         &= 0xF8;
+          $byte         |= (\ord($this->frameSources[0][10]) & 0x07);
+          $Locals_img[9] = \chr($byte);
+          $this->gif    .= $Locals_ext . $Locals_img . $Locals_rgb . $Locals_tmp;
         }
       }
       else
       {
-        $byte = \ord($Locals_img[9]);
-        $byte             |= 0x80;
-        $byte             &= 0xF8;
-        $byte             |= (\ord($this->frameSources[$i][10]) & 0x07);
-        $Locals_img[9]     = \chr($byte);
-        $this->gif        .= $Locals_ext.$Locals_img.$Locals_rgb.$Locals_tmp;
+        $byte          = \ord($Locals_img[9]);
+        $byte         |= 0x80;
+        $byte         &= 0xF8;
+        $byte         |= (\ord($this->frameSources[$i][10]) & 0x07);
+        $Locals_img[9] = \chr($byte);
+        $this->gif    .= $Locals_ext . $Locals_img . $Locals_rgb . $Locals_tmp;
       }
     }
     else
     {
-      $this->gif .= $Locals_ext.$Locals_img.$Locals_tmp;
+      $this->gif .= $Locals_ext . $Locals_img . $Locals_tmp;
     }
 
     $this->imgBuilt = true;
@@ -347,7 +348,7 @@ class GifCreator
    */
   public function encodeAsciiToChar($char)
   {
-    return \chr($char & 0xFF).\chr(($char >> 8) & 0xFF);
+    return \chr($char & 0xFF) . \chr(($char >> 8) & 0xFF);
   }
 
   /**

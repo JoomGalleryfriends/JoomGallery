@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Configs list controller class.
@@ -70,7 +70,7 @@ class ConfigsController extends JoomAdminController
       $this->component->addLog($e->getMessage(), 'error', 'jerror');
     }
 
-    $this->setRedirect('index.php?option='._JOOM_OPTION.'&view=configs');
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=configs');
   }
 
   /**

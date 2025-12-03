@@ -15,18 +15,18 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
-use \Joomla\CMS\Application\CMSApplication;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\FormFactoryAwareInterface;
-use \Joomla\CMS\Form\FormFactoryAwareTrait;
-use \Joomla\CMS\Form\FormFactoryInterface;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\Controller\BaseController;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\Response\JsonResponse;
-use \Joomla\CMS\Router\Route;
-use \Joomla\Input\Input;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormFactoryAwareInterface;
+use Joomla\CMS\Form\FormFactoryAwareTrait;
+use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Response\JsonResponse;
+use Joomla\CMS\Router\Route;
+use Joomla\Input\Input;
 
 /**
  * Migration controller class.
@@ -52,7 +52,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
    * @var    string
    * @since  4.0.0
    */
-  protected $context = _JOOM_OPTION.'.migration';
+  protected $context = _JOOM_OPTION . '.migration';
 
   /**
    * The URL option for the component.
@@ -132,7 +132,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
         $this->task = $task;
       }
 
-      $this->component->msgUserStateKey = 'com_joomgallery.'.$task.'.messages';
+      $this->component->msgUserStateKey = 'com_joomgallery.' . $task . '.messages';
     }
 
     // Guess context if needed
@@ -186,7 +186,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->checkToken();
 
     $model   = $this->getModel();
-    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
     $scripts = $model->getScripts();
 
     // Check if requested script exists
@@ -233,17 +233,17 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     // Clean the session data and redirect.
-    $this->app->setUserState(_JOOM_OPTION.'.migration.script', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.params', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.noToken', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.resumed', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.step2.data', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.step2.results', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.step2.success', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.step3.results', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.step3.success', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.step4.results', null);
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.step4.success', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.script', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.params', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.noToken', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.resumed', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.data', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.results', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step3.results', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step3.success', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step4.results', null);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step4.success', null);
 
     // Redirect to the list screen.
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=migration', false));
@@ -263,7 +263,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->checkToken();
 
     $model   = $this->getModel();
-    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
     $scripts = $model->getScripts();
 
     // Check if requested script exists
@@ -316,7 +316,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     // Check if migration item is checked out
-    $user  = Factory::getUser();
+    $user = Factory::getUser();
 
     if(isset($item->checked_out) && !($item->checked_out == 0 || $item->checked_out == $user->id))
     {
@@ -329,13 +329,13 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     // Set params data to user state
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.params', $item->params);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.params', $item->params);
 
     // Set no token check to user state
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.noToken', true);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.noToken', true);
 
     // Set resumed to user state
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.resumed', true);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.resumed', true);
 
     // Redirect to the form screen (step 2).
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&task=migration.precheck&isNew=0', false));
@@ -355,7 +355,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->checkToken();
 
     $model   = $this->getModel();
-    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
     $scripts = $model->getScripts();
 
     // Check if requested script exists
@@ -405,7 +405,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       }
 
       // Check if migration item is checked out
-      $user  = Factory::getUser();
+      $user = Factory::getUser();
 
       if(isset($item->checked_out) && !($item->checked_out == 0 || $item->checked_out == $user->id))
       {
@@ -448,7 +448,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->checkToken();
 
     $model   = $this->getModel();
-    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
     $scripts = $model->getScripts();
 
     // Check if requested script exists
@@ -481,7 +481,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       return false;
     }
 
-    $postcheck = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$script.'.step4.success', false);
+    $postcheck = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.step4.success', false);
 
     // Check if no errors detected in postcheck (step 4)
     if(!$postcheck)
@@ -528,10 +528,10 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     public function precheck()
     {
     // Get script
-    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $script = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
 
     // No token (When precheck is called on reume, no token check is needed)
-    $noToken = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$script.'.noToken', false);
+    $noToken = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.noToken', false);
 
     // Check for request forgeries
     if(\is_null($noToken) && !$noToken)
@@ -550,8 +550,8 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       throw new \Exception('Requested migration script does not exist.', 1);
     }
 
-    $data    = $this->input->post->get('jform_'.$script, [], 'array');
-    $context = _JOOM_OPTION.'.migration.'.$script.'.step2';
+    $data    = $this->input->post->get('jform_' . $script, [], 'array');
+    $context = _JOOM_OPTION . '.migration.' . $script . '.step2';
     $task    = $this->getTask();
 
     // Access check.
@@ -611,17 +611,17 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
     else
     {
-      $validData = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$script.'.params', []);
+      $validData = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.params', []);
     }
 
     // Save the script name in the session.
-    $this->app->setUserState(_JOOM_OPTION.'.migration.script', $script);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.script', $script);
 
     // Save the migration parameters in the session.
-    $this->app->setUserState(_JOOM_OPTION.'.migration.'.$script.'.params', $validData);
+    $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.params', $validData);
 
     // Perform the pre migration checks
-    list($success, $res, $msg) = $model->precheck($validData, $this->app->getUserState(_JOOM_OPTION.'.migration.'.$script.'.resumed', false));
+    list($success, $res, $msg) = $model->precheck($validData, $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.resumed', false));
 
     if(!$success)
     {
@@ -651,7 +651,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=migration&layout=step2', false));
 
     return;
-  }
+    }
 
     /**
      * Step 3
@@ -680,7 +680,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     $model   = $this->getModel();
-    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
     $scripts = $model->getScripts();
 
     // Check if requested script exists
@@ -691,7 +691,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       throw new \Exception('Requested migration script does not exist.', 1);
     }
 
-    $precheck = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$script.'.step2.success', false);
+    $precheck = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', false);
 
     // Check if no errors detected in precheck (step 2)
     if(!$precheck)
@@ -706,7 +706,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
 
     // Redirect to the step 3 screen
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=migration&layout=step3', false));
-  }
+    }
 
     /**
      * Step 4
@@ -735,7 +735,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     $model   = $this->getModel();
-    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
     $scripts = $model->getScripts();
 
     // Check if requested script exists
@@ -746,7 +746,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       throw new \Exception('Requested migration script does not exist.', 1);
     }
 
-    $context = _JOOM_OPTION.'.migration.'.$script.'.step4';
+    $context = _JOOM_OPTION . '.migration.' . $script . '.step4';
     $task    = $this->getTask();
 
     // Perform the post migration checks
@@ -780,7 +780,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=migration&layout=step4', false));
 
     return;
-  }
+    }
 
     /**
      * Perform a migration
@@ -796,7 +796,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     $this->checkToken();
 
     // Get request format
-    $format  = strtolower($this->app->getInput()->getWord('format', 'json'));
+    $format = strtolower($this->app->getInput()->getWord('format', 'json'));
 
     // Access check.
     $acl = $this->component->getAccess();
@@ -811,7 +811,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     $model   = $this->getModel();
-    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
     $scripts = $model->getScripts();
 
     // Check if requested script exists
@@ -826,7 +826,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     // Check if no errors detected in precheck (step 2)
-    $precheck = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$script.'.step2.success', false);
+    $precheck = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', false);
 
     if(!$precheck)
     {
@@ -839,9 +839,9 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     // Get input params for migration
-    $type  = $this->app->getInput()->get('type', '', 'string');
-    $id    = $this->app->getInput()->get('id', '', 'cmd');
-    $json  = json_decode(base64_decode($this->app->getInput()->get('migrateable', '', 'string')), true);
+    $type = $this->app->getInput()->get('type', '', 'string');
+    $id   = $this->app->getInput()->get('id', '', 'cmd');
+    $json = json_decode(base64_decode($this->app->getInput()->get('migrateable', '', 'string')), true);
 
     // Check if json was decoded properly
     if($json === null)
@@ -919,7 +919,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
 
     // Send migration results
     $this->ajaxRespond($response, $format);
-  }
+    }
 
     /**
      * Apply a migration state for a specific record manually
@@ -929,7 +929,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
      * @since   4.0.0
      */
     public function applyState()
-  {
+    {
     // Check for request forgeries
     $this->checkToken();
 
@@ -946,7 +946,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     $model   = $this->getModel();
-    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION.'.migration.script', 'script', '', 'cmd');
+    $script  = $this->app->getUserStateFromRequest(_JOOM_OPTION . '.migration.script', 'script', '', 'cmd');
     $scripts = $model->getScripts();
 
     // Check if requested script exists
@@ -958,7 +958,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
     }
 
     // Check if no errors detected in precheck (step 2)
-    $precheck = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$script.'.step2.success', false);
+    $precheck = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', false);
 
     if(!$precheck)
     {
@@ -1014,20 +1014,20 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       // Mark the state of the specified record
       $model->applyState($type, $new_state, $src_pk, $dest_pk, $error_msg);
 
-      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_APPLYSTATE_SUCCESSFUL_'.$new_state, $type, $src_pk), 'message');
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_APPLYSTATE_SUCCESSFUL_'.$new_state, $type, $src_pk), 'info', 'jerror');
+      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_APPLYSTATE_SUCCESSFUL_' . $new_state, $type, $src_pk), 'message');
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_APPLYSTATE_SUCCESSFUL_' . $new_state, $type, $src_pk), 'info', 'jerror');
     }
 
     // Redirect to the list screen.
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=migration&layout=step3', false));
 
     return true;
-  }
+    }
 
   /**
    * Create a response object
    * {success: bool, data: mixed, continue: bool, error: string|array, debug: string|array, warning: string|array}
-   * 
+   *
    * @param   mixed   $data      The data returned to the frontend
    * @param   bool    $success   True if everything was good, false otherwise
    * @param   mixed   $error     One or multiple error messages to be printed in the frontend
@@ -1038,7 +1038,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
    */
   protected function createRespond($data, bool $success = true, $error = null): string
   {
-    $obj = new \stdClass;
+    $obj = new \stdClass();
 
     $obj->success  = $success;
     $obj->data     = $data;
@@ -1083,7 +1083,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
 
   /**
    * Returns an ajax response
-   * 
+   *
    * @param   mixed   $results  The result to be returned
    * @param   string  $format   The format in which the result should be returned
    *
@@ -1091,7 +1091,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
    *
    * @since   4.0.0
    */
-  protected function ajaxRespond($results, $format=null)
+  protected function ajaxRespond($results, $format = null)
   {
     $this->app->allowCache(false);
     $this->app->setHeader('X-Robots-Tag', 'noindex, nofollow');
@@ -1108,7 +1108,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       case 'json':
         echo new JsonResponse($results, null, false, $this->app->getInput()->get('ignoreMessages', true, 'bool'));
 
-        break;
+          break;
 
       // Raw format
       default:
@@ -1137,7 +1137,7 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
 
         echo $out;
 
-        break;
+          break;
     }
   }
 }

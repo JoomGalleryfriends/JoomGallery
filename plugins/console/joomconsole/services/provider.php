@@ -31,29 +31,29 @@ return new class implements ServiceProviderInterface {
     $container->registerServiceProvider(new MVCFactory('Joomgallery\\Component\\Joomgallery'));
 
     $container->set(
-      PluginInterface::class,
-      function (Container $container) {
-        $config = (array)PluginHelper::getPlugin('console', 'joomconsole');
-        $subject = $container->get(DispatcherInterface::class);
-        $mvcFactory = $container->get(MVCFactoryInterface::class);
-        $plugin = new JoomgalleryConsole($subject, $config);
+        PluginInterface::class,
+        function (Container $container) {
+          $config     = (array)PluginHelper::getPlugin('console', 'joomconsole');
+          $subject    = $container->get(DispatcherInterface::class);
+          $mvcFactory = $container->get(MVCFactoryInterface::class);
+          $plugin     = new JoomgalleryConsole($subject, $config);
 
-        $plugin->setApplication(Factory::getApplication());
+          $plugin->setApplication(Factory::getApplication());
 
-        $plugin->setMVCFactory($mvcFactory);
+          $plugin->setMVCFactory($mvcFactory);
 
 
-//                $config = (array)PluginHelper::getPlugin('system', 'joomconsole');
-//                $subject = $container->get(DispatcherInterface::class);
-//
-//                $plugin = new JoomConsole($subject, $config);
-//
-//                $plugin->setApplication(\Joomla\CMS\Factory::getApplication());
-//
-//                $plugin->init();
+        //                $config = (array)PluginHelper::getPlugin('system', 'joomconsole');
+        //                $subject = $container->get(DispatcherInterface::class);
+        //
+        //                $plugin = new JoomConsole($subject, $config);
+        //
+        //                $plugin->setApplication(\Joomla\CMS\Factory::getApplication());
+        //
+        //                $plugin->init();
 
-        return $plugin;
-      }
+          return $plugin;
+        }
     );
   }
 };

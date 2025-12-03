@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Session\Session;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -38,7 +39,7 @@ $saveOrderingUrl = '';
 
 if($saveOrder && !empty($this->items))
 {
-  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1');
+  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
   HTMLHelper::_('draggablelist.draggable');
 }
 ?>
@@ -112,15 +113,16 @@ if($saveOrder && !empty($this->items))
               </td>
             </tr>
             </tfoot>
-            <tbody <?php if($saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
+            <tbody <?php if($saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
+                   endif; ?>>
             <?php foreach($this->items as $i => $item) :
               // Access check
-              $ordering = ($listOrder == 'a.ordering');
-              $canEdit = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
-              $canDelete = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
-              $canChange = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
+              $ordering   = ($listOrder == 'a.ordering');
+              $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
+              $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
+              $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
               $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser()->id;
-              $disabled = ($item->checked_out > 0) ? 'disabled' : '';
+              $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
 
               // Get the parents of item for sorting
               $parentsStr = '';
@@ -128,18 +130,18 @@ if($saveOrder && !empty($this->items))
               if($item->level > 1)
               {
                 $_currentParentId = $item->parent_id;
-                $parentsStr       = ' '.$_currentParentId;
+                $parentsStr       = ' ' . $_currentParentId;
 
                 for($i2 = 0; $i2 < $item->level; $i2++)
                 {
                   foreach($this->ordering as $k => $v)
                   {
                     $v = implode('-', $v);
-                    $v = '-'.$v.'-';
+                    $v = '-' . $v . '-';
 
-                    if(strpos($v, '-'.$_currentParentId.'-') !== false)
+                    if(strpos($v, '-' . $_currentParentId . '-') !== false)
                     {
-                      $parentsStr       .= ' '.$k;
+                      $parentsStr      .= ' ' . $k;
                       $_currentParentId = $k;
                       break;
                     }
@@ -163,7 +165,7 @@ if($saveOrder && !empty($this->items))
                     }
                     elseif(!$saveOrder)
                     {
-                      $iconClass = ' inactive" title="'.Text::_('JORDERINGDISABLED');
+                      $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                     }
                     ?>
                     <?php if($canChange && $saveOrder) : ?>
@@ -189,7 +191,7 @@ if($saveOrder && !empty($this->items))
                     </button>
                   <?php endif; ?>
                   <a
-                    href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.(int) $item->id); ?>">
+                    href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $item->id); ?>">
                     <?php echo $this->escape($item->title); ?>
                   </a>
                 </th>
@@ -258,7 +260,7 @@ if($saveOrder && !empty($this->items))
           <a href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.add&return='.$returnURL, false, 0); ?>" class="btn btn-success btn-small">
             <i class="icon-plus"></i> <?php echo Text::_('JGLOBAL_ADD_CUSTOM_CATEGORY'); ?>
           </a>
-        </div>        
+        </div>
             <?php endif; */ ?>
     </div>
   </div>

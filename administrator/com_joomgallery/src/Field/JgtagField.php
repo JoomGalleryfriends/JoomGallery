@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Field\ListField;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\Database\ParameterType;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * List of Tags field.
@@ -55,9 +55,9 @@ class JgtagField extends ListField
     {
       $data = $this->getLayoutData();
 
-      if (!\is_array($this->value) && !empty($this->value))
+      if(!\is_array($this->value) && !empty($this->value))
       {
-        if (\is_object($this->value))
+        if(\is_object($this->value))
         {
           if(empty($this->value))
           {
@@ -65,7 +65,7 @@ class JgtagField extends ListField
           }
           else
           {
-            $tags = $this->value;
+            $tags        = $this->value;
             $this->value = [];
 
             foreach($tags as $tag)
@@ -76,13 +76,13 @@ class JgtagField extends ListField
         }
 
         // String in format 2,5,4
-        if (\is_string($this->value))
+        if(\is_string($this->value))
         {
           $this->value = explode(',', $this->value);
         }
 
         // Integer is given
-        if (\is_int($this->value))
+        if(\is_int($this->value))
         {
           $this->value = [$this->value];
         }
@@ -123,12 +123,14 @@ class JgtagField extends ListField
 
       $db    = $this->getDatabase();
       $query = $db->getQuery(true)
-          ->select([
+        ->select(
+            [
             $db->quoteName('a.id', 'value'),
             $db->quoteName('a.title', 'text'),
             $db->quoteName('a.published'),
             $db->quoteName('a.ordering'),
-          ])
+            ]
+        )
           ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
 
       // Limit Options in multilanguage
@@ -211,7 +213,7 @@ class JgtagField extends ListField
             }
 
             // Limit the main query to the missing amount of tags
-            $count = \count($options);
+            $count        = \count($options);
             $prefillLimit = $prefillLimit - $count;
             $query->setLimit($prefillLimit);
 
@@ -260,7 +262,7 @@ class JgtagField extends ListField
       {
         foreach($options as &$option)
         {
-          $repeat = (isset($option->level) && $option->level - 1 >= 0) ? $option->level - 1 : 0;
+          $repeat       = (isset($option->level) && $option->level - 1 >= 0) ? $option->level - 1 : 0;
           $option->text = str_repeat('- ', $repeat) . $option->text;
         }
       }
@@ -307,7 +309,7 @@ class JgtagField extends ListField
         // Get access service
           $comp = Factory::getApplication()->bootComponent('com_joomgallery');
           $comp->createAccess();
-        $acl  = $comp->getAccess();
+        $acl = $comp->getAccess();
 
       return $acl->checkACL('core.create', 'com_joomgallery.tag');
     }

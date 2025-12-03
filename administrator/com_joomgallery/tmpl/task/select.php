@@ -41,7 +41,7 @@ if(empty($this->tasks))
 }
 
 // Load scheduler template
-$path = JPATH_ADMINISTRATOR . '/components/com_scheduler/tmpl/select/default.php';
+$path            = JPATH_ADMINISTRATOR . '/components/com_scheduler/tmpl/select/default.php';
 $templateContent = file_get_contents($path);
 
 $templateContent = str_replace(

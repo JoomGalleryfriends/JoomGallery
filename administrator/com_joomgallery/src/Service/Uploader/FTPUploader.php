@@ -14,8 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 
 /**
  * Uploader helper class (FTP Upload)
@@ -32,7 +32,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
      * @since  4.0.0
      */
     public function upload(): string
-  {
+    {
     return 'FTP upload successfully!';
-  }
+    }
 }

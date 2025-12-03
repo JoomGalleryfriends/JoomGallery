@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\Model\ListModel;
-use \Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Pagination\Pagination;
 
 /**
  * Model for the gallery view.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -66,11 +66,11 @@ class GalleryModel extends JoomItemModel
         if($this->item === null)
         {
             $this->item = new \stdClass();
-      $this->item->id = 1;
+      $this->item->id   = 1;
         }
 
     // Get Gallery description
-    $params = $this->getParams();
+    $params                  = $this->getParams();
     $this->item->description = $params['configs']->get('jg_gallery_view_description', '', 'STRING');
 
         return $this->item;
@@ -88,7 +88,7 @@ class GalleryModel extends JoomItemModel
     public function checkin($id = null)
     {
     return true;
-  }
+    }
 
     /**
      * Method to check out an item for editing.
@@ -102,7 +102,7 @@ class GalleryModel extends JoomItemModel
     public function checkout($id = null)
     {
     return true;
-  }
+    }
 
   /**
    * Method to get the images to be viewed in the gallery view.
@@ -170,7 +170,7 @@ class GalleryModel extends JoomItemModel
 
   /**
    * Function to set the image list model state for the pre defined filter and fields selection
-   * 
+   *
    * @param   ListModel   $listModel    Images list model
    * @param   array       $fields       List of field names to be loaded (default: array())
    *
@@ -199,13 +199,13 @@ class GalleryModel extends JoomItemModel
       $listModel->setState('filter.language', $this->item->language);
     }
 
-    $imgform_list = [];
+    $imgform_list       = [];
     $imgform_limitstart = 0;
 
     if($this->app->input->get('contenttype', '') == 'image')
     {
       // Get query variables sent by the images form
-      $imgform_list = $this->app->input->get('list', []);
+      $imgform_list       = $this->app->input->get('list', []);
       $imgform_limitstart = $this->app->getUserStateFromRequest('joom.galleryview.limitstart', 'limitstart', 0, 'uint');
     }
 
@@ -241,7 +241,7 @@ class GalleryModel extends JoomItemModel
     {
       $field = (string) $field;
 
-      if(strpos($field, $prefix.'.') === false)
+      if(strpos($field, $prefix . '.') === false)
       {
         $fields[$key] = $prefix . '.' . $field;
       }

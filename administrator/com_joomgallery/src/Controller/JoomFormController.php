@@ -15,17 +15,17 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomla\CMS\Application\CMSApplication;
-use \Joomla\CMS\MVC\Controller\FormController as BaseFormController;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\Input\Input;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\MVC\Controller\FormController as BaseFormController;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Input\Input;
 
 /**
  * JoomGallery Base of Joomla Form Controller
- * 
+ *
  * Controller (controllers are where you put all the actual code) Provides basic
  * functionality, such as rendering views (aka displaying templates).
  *
@@ -117,7 +117,7 @@ class JoomFormController extends BaseFormController
         $this->task = $task;
       }
 
-      $this->component->msgUserStateKey = 'com_joomgallery.'.$task.'.messages';
+      $this->component->msgUserStateKey = 'com_joomgallery.' . $task . '.messages';
     }
 
     // Guess context if needed
@@ -225,7 +225,7 @@ class JoomFormController extends BaseFormController
         $parent_id = $data['parent_id'] ?: 1;
         $cat_id    = $data['id'] ?: 0;
 
-        return $this->getAcl()->checkACL('add', 'category', $cat_id, $parent_id, true);
+          return $this->getAcl()->checkACL('add', 'category', $cat_id, $parent_id, true);
         break;
 
       case 'image':
@@ -238,13 +238,13 @@ class JoomFormController extends BaseFormController
         $catid = $data['catid'] ?: 1;
         $imgid = $data['id'] ?: 0;
 
-        return $this->getAcl()->checkACL('add', 'image', $imgid, $catid, true);
+          return $this->getAcl()->checkACL('add', 'image', $imgid, $catid, true);
         break;
 
       default:
         $id = $data['id'] ?: 0;
 
-        return $this->getAcl()->checkACL('add', $this->context, $id);
+          return $this->getAcl()->checkACL('add', $this->context, $id);
         break;
     }
   }

@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Form\ConfigForm;
-use \Joomla\CMS\Form\Field\SubformField;
+use Joomgallery\Component\Joomgallery\Administrator\Form\ConfigForm;
+use Joomla\CMS\Form\Field\SubformField;
 
 /**
  * The Field to load the form inside current form

@@ -15,15 +15,15 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Image;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
-use \Joomgallery\Component\Joomgallery\Administrator\View\Image\RawView as AdminRawView;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Registry\Registry;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomgallery\Component\Joomgallery\Administrator\View\Image\RawView as AdminRawView;
+use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 
 /**
  * Raw view class for a single Image.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -115,11 +115,13 @@ class RawView extends AdminRawView
       if($params->get('jg_imgtyperesize', 0) > 0)
       {
         // Yes
-        if(!$this->component->getIMGtools()->resize($params->get('jg_imgtyperesize', 3),
-                                            $params->get('jg_imgtypewidth', 5000),
-                                            $params->get('jg_imgtypeheight', 5000),
-                                            $params->get('jg_cropposition', 2),
-                                            $params->get('jg_imgtypesharpen', 0))
+        if(!$this->component->getIMGtools()->resize(
+            $params->get('jg_imgtyperesize', 3),
+            $params->get('jg_imgtypewidth', 5000),
+            $params->get('jg_imgtypeheight', 5000),
+            $params->get('jg_cropposition', 2),
+            $params->get('jg_imgtypesharpen', 0)
+        )
           )
         {
           // Destroy the IMGtools service
@@ -136,11 +138,13 @@ class RawView extends AdminRawView
       if($params->get('jg_imgtypewatermark', 0) == 1 && $this->component->getConfig()->get('jg_dynamic_watermark', 0))
       {
         // Yes
-        if(!$this->component->getIMGtools()->watermark(JPATH_ROOT.\DIRECTORY_SEPARATOR.$this->component->getConfig()->get('jg_wmfile'),
-                                                $params->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
-                                                $params->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
-                                                $params->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
-                                                $params->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80))
+        if(!$this->component->getIMGtools()->watermark(
+            JPATH_ROOT . \DIRECTORY_SEPARATOR . $this->component->getConfig()->get('jg_wmfile'),
+            $params->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
+            $params->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
+            $params->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
+            $params->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80)
+        )
           )
         {
           // Destroy the IMGtools service
@@ -223,7 +227,7 @@ class RawView extends AdminRawView
         if(!$model->getCategoryAccess() || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
     {
       $access = false;
-    }
+        }
 
     return $access;
   }

@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Access\Access;
-use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Access\Access;
+use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Class that handles all access authorisation routines for own elements.
@@ -67,10 +67,10 @@ class AccessOwn extends Access
   public static function checkOwn($userId, $action, $assetKey = null, $preload = true, $key = 0)
   {
     // Sanitise inputs.
-    $userId  = (int) $userId;
-    $action  = strtolower(preg_replace('#[\s\-]+#', '.', trim($action)));
+    $userId = (int) $userId;
+    $action = strtolower(preg_replace('#[\s\-]+#', '.', trim($action)));
 
-    if (!isset(self::$identities[$userId]))
+    if(!isset(self::$identities[$userId]))
     {
       // Get all groups against which the user is mapped.
       self::$identities[$userId] = self::getGroupsByUser($userId);
@@ -111,7 +111,7 @@ class AccessOwn extends Access
       }
 
       // If not full recursive mode, but recursive parent mode, do not add other recursion rules.
-      if (
+      if(
           !$recursive && $recursiveParentAsset && self::$assetPermissionsParentIdMapping[$extensionName][$id]->name !== $extensionName
           && (int) self::$assetPermissionsParentIdMapping[$extensionName][$id]->id !== $assetId
           )
@@ -164,7 +164,7 @@ class AccessOwn extends Access
 
     $assetOwner = null;
 
-    if (isset(end($ancestors)->owner))
+    if(isset(end($ancestors)->owner))
     {
       $assetOwner = end($ancestors)->owner;
     }

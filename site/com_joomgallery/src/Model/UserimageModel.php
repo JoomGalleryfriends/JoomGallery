@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomla\Database\DatabaseInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Model to handle an image form.
@@ -107,8 +107,11 @@ class UserimageModel extends AdminImageModel
   public function getForm($data = [], $loadData = true): Form|CurrentUserInterface|false
   {
     // Get the form.
-    $form = $this->loadForm($this->typeAlias, 'userimage',
-      ['control' => 'jform', 'load_data' => $loadData]);
+    $form = $this->loadForm(
+        $this->typeAlias,
+        'userimage',
+        ['control' => 'jform', 'load_data' => $loadData]
+    );
 
 
     if(empty($form))
@@ -166,7 +169,7 @@ class UserimageModel extends AdminImageModel
       $query = $db->createQuery()
         ->select('title')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('id').' = '.(int) $id);
+        ->where($db->quoteName('id') . ' = ' . (int) $id);
 
       $db->setQuery($query);
       $item = $db->loadObject();
@@ -178,7 +181,7 @@ class UserimageModel extends AdminImageModel
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('categoryTitle-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('categoryTitle-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
@@ -207,11 +210,11 @@ class UserimageModel extends AdminImageModel
     $error = parent::getError($i, $toString);
 
     // error saved by $this->component->setError(...)
-    if (empty($error)){
+    if(empty($error))
+    {
       $error = $this->component->getError(true);
     }
 
     return $error;
   }
-
 }

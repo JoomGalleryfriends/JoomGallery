@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Registry\Registry;
+use Joomla\Registry\Registry;
 
 /**
  * Methods supporting a list of Image types records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -35,16 +35,16 @@ class ImagetypesModel extends JoomListModel
 
   /**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
    * @since   4.0.0
    */
   function __construct($config = [])
-    {
+  {
         parent::__construct($config);
-    }
+  }
 
     /**
      * Build an SQL query to load the list data.

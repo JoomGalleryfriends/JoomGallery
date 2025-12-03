@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Migration;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a single Tag.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -56,7 +56,7 @@ class HtmlView extends JoomGalleryView
     {
       $this->app->input->set('hidemainmenu', true);
       ToolbarHelper::cancel('migration.cancel', 'COM_JOOMGALLERY_MIGRATION_INERRUPT_MIGRATION');
-      ToolbarHelper::help('', false, Text::_('COM_JOOMGALLERY_WEBSITE_HELP_URL').'/migration/'. strtolower($this->script->name) . '?tmpl=component');
+      ToolbarHelper::help('', false, Text::_('COM_JOOMGALLERY_WEBSITE_HELP_URL') . '/migration/' . strtolower($this->script->name) . '?tmpl=component');
 
       // Check if requested script exists
       if(!\in_array($this->script->name, array_keys($this->scripts)))
@@ -82,27 +82,27 @@ class HtmlView extends JoomGalleryView
         case 'step1':
           // Load migration form
           $this->form = $model->getForm();
-          break;
+            break;
 
         case 'step2':
           // Load precheck results
-          $this->precheck = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step2.results', []);
-          $this->success  = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step2.success', false);
-          break;
+          $this->precheck = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $this->script->name . '.step2.results', []);
+          $this->success  = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $this->script->name . '.step2.success', false);
+            break;
 
         case 'step3':
           // Data for the migration view
-          $this->precheck     = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step2.success', false);
+          $this->precheck     = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $this->script->name . '.step2.success', false);
           $this->migrateables = $model->getMigrateables();
-          $this->migration    = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step3.results', []);
+          $this->migration    = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $this->script->name . '.step3.results', []);
           $this->dependencies = $model->getDependencies();
           $this->completed    = $model->getCompleted();
-          break;
+            break;
 
         case 'step4':
           // Load postcheck results
-          $this->postcheck      = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step4.results', []);
-          $this->success        = $this->app->getUserState(_JOOM_OPTION.'.migration.'.$this->script->name.'.step4.success', false);
+          $this->postcheck      = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $this->script->name . '.step4.results', []);
+          $this->success        = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $this->script->name . '.step4.success', false);
           $this->sourceDeletion = $model->getSourceDeletion();
 
           $this->openMigrations = $model->getIdList();
@@ -115,10 +115,10 @@ class HtmlView extends JoomGalleryView
           {
             $this->openMigrations = [];
           }
-          break;
+            break;
 
         default:
-          break;
+            break;
       }
     }
     else
@@ -126,7 +126,7 @@ class HtmlView extends JoomGalleryView
       // default view
       foreach($this->scripts as $script)
       {
-        $this->app->getLanguage()->load('com_joomgallery.migration.'.$script['name'], _JOOM_PATH_ADMIN);
+        $this->app->getLanguage()->load('com_joomgallery.migration.' . $script['name'], _JOOM_PATH_ADMIN);
       }
 
       // ID list of open migrations

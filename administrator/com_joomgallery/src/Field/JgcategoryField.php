@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\FormField;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\FileLayout;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
 
 /**
  * Field to select a JoomGallery category ID from a modal list.
@@ -80,12 +80,12 @@ class JgcategoryField extends FormField
         $return = parent::setup($element, $value, $group);
 
         // If user can't access com_joomgallery the field should be readonly.
-        if ($return && !$this->readonly)
+        if($return && !$this->readonly)
         {
             // Get access service
             $comp = Factory::getApplication()->bootComponent('com_joomgallery');
             $comp->createAccess();
-        $acl  = $comp->getAccess();
+        $acl = $comp->getAccess();
 
             $this->readonly = !$acl->checkACL('core.manage', 'com_joomgallery');
         }
@@ -102,7 +102,7 @@ class JgcategoryField extends FormField
      */
     protected function getInput()
     {
-        if (empty($this->layout))
+        if(empty($this->layout))
         {
             $this->component->addLog(\sprintf('%s has no layout assigned.', $this->name), 'error', 'jerror');
             throw new \UnexpectedValueException(\sprintf('%s has no layout assigned.', $this->name));
@@ -198,7 +198,7 @@ class JgcategoryField extends FormField
      */
     protected function getCat()
     {
-        if (isset($this->element['category']))
+        if(isset($this->element['category']))
         {
             return \intval($this->element['category']);
         }
@@ -213,7 +213,7 @@ class JgcategoryField extends FormField
      */
     protected function getExcluded()
     {
-        if (isset($this->element['exclude']))
+        if(isset($this->element['exclude']))
         {
             return \intval($this->element['exclude']);
         }

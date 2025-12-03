@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\ImagesModel as AdminImagesModel;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImagesModel as AdminImagesModel;
 
 /**
  * Model to get a list of image records.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -27,7 +27,7 @@ class ImagesModel extends AdminImagesModel
 {
   /**
    * Constructor
-   * 
+   *
    * @param   array  $config  An optional associative array of configuration settings.
    *
    * @return  void
@@ -122,7 +122,7 @@ class ImagesModel extends AdminImagesModel
       if(!$pages)
       {
         // Make sure $start=1 starts at the first image
-        $items = \array_slice($items, $start-1);
+        $items = \array_slice($items, $start - 1);
       }
     }
 

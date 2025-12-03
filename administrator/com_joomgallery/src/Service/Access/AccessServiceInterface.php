@@ -32,7 +32,7 @@ interface AccessServiceInterface
 
     /**
      * Creates the access service class
-     * 
+     *
      * @param   string   $option   Component option
      *
      * @return  void

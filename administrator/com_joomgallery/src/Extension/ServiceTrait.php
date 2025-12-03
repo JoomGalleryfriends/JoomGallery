@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
-use \Joomla\CMS\Application\CMSApplicationInterface;
-use \Joomla\CMS\Factory;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomla\CMS\Factory;
 
 /**
  * Trait to implement basic methods
@@ -29,7 +29,7 @@ trait ServiceTrait
 {
   /**
    * JoomGallery extension class
-   * 
+   *
    * @var JoomgalleryComponent|null
    */
   protected $component = null;
@@ -108,13 +108,13 @@ trait ServiceTrait
         if(property_exists($this, $property))
         {
             // Set the real property if exists
-            $previous = $this->$property ?? null;
+            $previous        = $this->$property ?? null;
             $this->$property = $value;
         }
         else
         {
             // Set dynamic property
-            $previous = $this->__data[$property] ?? null;
+            $previous                = $this->__data[$property] ?? null;
             $this->__data[$property] = $value;
         }
 
@@ -149,7 +149,7 @@ trait ServiceTrait
       $reflection = new \ReflectionObject($this);
       do {
         $nonPublicProps = $reflection->getProperties(
-          \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PRIVATE
+            \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PRIVATE
         );
 
         foreach($nonPublicProps as $prop)
@@ -162,8 +162,8 @@ trait ServiceTrait
           }
         }
       }
-      while ($reflection = $reflection->getParentClass());
-    }
+      while($reflection = $reflection->getParentClass());
+        }
 
         return $vars;
     }

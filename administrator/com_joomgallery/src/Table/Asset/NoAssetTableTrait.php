@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table\Asset;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Access\Rules;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Table\Asset;
-use \Joomla\CMS\Table\Table;
+use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Table\Asset;
+use Joomla\CMS\Table\Table;
 
 /**
  * Trait for Tables with no asset
@@ -36,9 +36,9 @@ trait NoAssetTableTrait
      * @see Joomla\CMS\Table\Table::_getAssetName
      */
     protected function _getAssetName($itemtype = null)
-  {
+    {
     return parent::_getAssetName($itemtype);
-  }
+    }
 
     /**
      * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
@@ -89,12 +89,11 @@ trait NoAssetTableTrait
 
 
       return $this->_getAssetName();
-
     }
 
   /**
    * Method to set empty rules for the record based on a form.
-   * 
+   *
    * @param   Form  $form  The form object where the rules gets extracted
    *
    * @return  void

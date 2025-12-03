@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Imageform;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomgallery\Component\Joomgallery\Site\Model\ImageformModel;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\ImageformModel;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 
 /**
  * View class for a list of Joomgallery.
@@ -82,7 +82,7 @@ class HtmlView extends JoomGalleryView
   /** @var ImageformModel $model */
   $model = $this->getModel();
 
-  $this->state  = $model->getState();
+  $this->state    = $model->getState();
     $this->params = $model->getParams();
     $this->item   = $model->getItem();
     $this->form   = $model->getForm();
@@ -100,7 +100,7 @@ class HtmlView extends JoomGalleryView
     if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
   {
     $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
-  }
+    }
 
     $this->_prepareDocument();
 
@@ -167,7 +167,7 @@ class HtmlView extends JoomGalleryView
     if(!$this->isMenuCurrentView($menu))
     {
       // Add Breadcrumbs
-      $pathway = $this->app->getPathway();
+      $pathway        = $this->app->getPathway();
       $breadcrumbList = Text::_('COM_JOOMGALLERY_IMAGES');
 
       if(!\in_array($breadcrumbList, $pathway->getPathwayNames()))

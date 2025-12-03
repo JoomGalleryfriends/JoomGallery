@@ -15,14 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 
 /**
  * View class for a category view of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
@@ -64,9 +64,9 @@ class HtmlView extends JoomGalleryView
   /** @var CategoryModel $model */
   $model = $this->getModel();
 
-  $this->state  = $model->getState();
+  $this->state    = $model->getState();
     $this->params = $model->getParams();
-  $this->menu   = $this->app->getMenu()->getActive();
+  $this->menu     = $this->app->getMenu()->getActive();
 
     $loaded = true;
     try {
@@ -91,7 +91,7 @@ class HtmlView extends JoomGalleryView
     $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
 
       return;
-  }
+    }
 
     // Load only if category is currently not protected
     if(!$this->item->pw_protected)
@@ -100,12 +100,12 @@ class HtmlView extends JoomGalleryView
       $this->item->parent = $model->getParent();
 
       // Load subcategories
-      $this->item->children = new \stdClass();
-      $this->item->children->items         = $model->getChildren();
-      $this->item->children->pagination    = $model->getChildrenPagination();
+      $this->item->children             = new \stdClass();
+      $this->item->children->items      = $model->getChildren();
+      $this->item->children->pagination = $model->getChildrenPagination();
 
       // Load images
-      $this->item->images = new \stdClass();
+      $this->item->images                = new \stdClass();
       $this->item->images->items         = $model->getImages();
       $this->item->images->pagination    = $model->getImagesPagination();
       $this->item->images->filterForm    = $model->getImagesFilterForm();

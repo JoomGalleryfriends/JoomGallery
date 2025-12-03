@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\Database\DatabaseInterface;
+use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Model to get a list of image records.
@@ -77,7 +77,7 @@ class UserimagesModel extends ImagesModel
       $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('created_by').' = '.(int) $userId);
+        ->where($db->quoteName('created_by') . ' = ' . (int) $userId);
 
       $db->setQuery($query);
       $count = $db->loadResult();
@@ -86,16 +86,14 @@ class UserimagesModel extends ImagesModel
       {
         $isUserHasACategory = false;
       }
-
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
 
     return $isUserHasACategory;
   }
-
 }

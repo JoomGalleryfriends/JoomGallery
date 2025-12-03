@@ -14,7 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * TUS server Interface
@@ -48,7 +48,7 @@ interface ServerInterface
    * Loads an upload into the object
    *
    * @param   string  $uuid  The uuid of the upload to load
-   * 
+   *
    * @return  bool    True on success, false otherwise
    */
   public function loadUpload(?string $uuid = null): bool;
@@ -73,7 +73,7 @@ interface ServerInterface
 
   /**
    * Sets the Access-Control-Allow-Origin header (CORS)
-   * 
+   *
    * @param  string  $domain  Domain to allow access from
    *
    * @return void
@@ -82,7 +82,7 @@ interface ServerInterface
 
   /**
    * Get the location (uri) of the TUS server
-   * 
+   *
    * @return string
    */
   public function getLocation(): string;
@@ -101,8 +101,8 @@ interface ServerInterface
    * @param bool   $throw  True if exception should be thrown
    *
    * @return mixed The value for the id-key, false on failure
-   * 
+   *
    * @throws \Exception key is not defined in medatada
    */
-  public function getMetaDataValue($key, $throw=false);
+  public function getMetaDataValue($key, $throw = false);
 }

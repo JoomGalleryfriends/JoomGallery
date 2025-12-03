@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\FileLayout;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Session\Session;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 
 // image params
 $image_type       = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
@@ -65,9 +66,9 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php endif; ?>
 
 <a class="jg-link btn btn-outline-primary"
-   href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.(int) $this->item->catid); ?>">
+   href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
   <i
-    class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_IMAGE_BACK_TO_CATEGORY').' '.$this->item->cattitle; ?></span>
+    class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_IMAGE_BACK_TO_CATEGORY') . ' ' . $this->item->cattitle; ?></span>
 </a>
 
 </br>
@@ -93,12 +94,12 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       <th><?php echo Text::_('JCATEGORY'); ?></th>
       <td>
         <a
-          href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.(int) $this->item->catid); ?>">
+          href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
           <?php echo $this->escape($this->item->cattitle); ?>
         </a>
       </td>
     </tr>
-    <?php endif; ?>
+      <?php endif; ?>
     <?php if($show_imgdate) : ?>
       <tr>
         <th><?php echo Text::_('COM_JOOMGALLERY_DATE'); ?></th>

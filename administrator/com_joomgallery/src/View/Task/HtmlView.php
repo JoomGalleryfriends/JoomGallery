@@ -15,17 +15,17 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Task;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomla\CMS\Toolbar\Toolbar;
-use \Joomla\CMS\Toolbar\ToolbarHelper;
-use \Joomla\Component\Scheduler\Administrator\Task\TaskOption;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\Component\Scheduler\Administrator\Task\TaskOption;
 
 /**
  * View class for a single Task.
- * 
+ *
  * @package JoomGallery
  * @since   4.2.0
  */
@@ -57,19 +57,19 @@ class HtmlView extends JoomGalleryView
     /** @var TaskModel $model */
     $model = $this->getModel();
 
-    $this->layout = $this->app->input->get('layout', 'edit', 'cmd');
-        $this->state  = $model->getState();
+    $this->layout    = $this->app->input->get('layout', 'edit', 'cmd');
+        $this->state = $model->getState();
 
     if($this->layout == 'select')
     {
       // Select view
-      $this->tasks  = $model->getTasks();
+      $this->tasks = $model->getTasks();
     }
     else
     {
       // Form view
-      $this->item   = $model->getItem();
-          $this->form   = $model->getForm();
+      $this->item     = $model->getItem();
+          $this->form = $model->getForm();
 
       // Apply tasktype to taskid field
       $this->form->setFieldAttribute('taskid', 'tasktype', $this->form->getValue('type'));
@@ -102,7 +102,7 @@ class HtmlView extends JoomGalleryView
     if($this->layout == 'select')
     {
       // Select view
-      ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TASKS').' :: '.Text::_('COM_JOOMGALLERY_TASK_SELECT'), 'play-circle');
+      ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TASKS') . ' :: ' . Text::_('COM_JOOMGALLERY_TASK_SELECT'), 'play-circle');
       $toolbar->linkButton('cancel')
             ->url('index.php?option=com_joomgallery&view=tasks')
             ->buttonClass('btn btn-danger')
@@ -112,7 +112,7 @@ class HtmlView extends JoomGalleryView
     else
     {
       // Form view
-      ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TASKS').' :: '.Text::_('COM_JOOMGALLERY_TASK_EDIT'), 'play-circle');
+      ToolbarHelper::title(Text::_('COM_JOOMGALLERY_TASKS') . ' :: ' . Text::_('COM_JOOMGALLERY_TASK_EDIT'), 'play-circle');
 
       $isNew = ($this->item->id == 0);
       $user  = Factory::getApplication()->getIdentity();

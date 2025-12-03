@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Field\ListField;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Database\DatabaseInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Database\DatabaseInterface;
 
 class UserdropdownField extends ListField
 {
@@ -59,25 +59,26 @@ class UserdropdownField extends ListField
     $query->from($db->quoteName('#__users', 'u'));
 
     // Don't compare usergroup when "all"-option is selected.
-    if ($usergroup != '') {
+    if($usergroup != '')
+    {
       $query->join('INNER', $db->quoteName('#__user_usergroup_map', 'm') . ' ON (' . $db->quoteName('u.id') . ' = ' . $db->quoteName('m.user_id') . ')');
-      $query->where(($db->quoteName('m.group_id')) .'='. $usergroup);
+      $query->where(($db->quoteName('m.group_id')) . '=' . $usergroup);
     }
     // Group by id to show user once in dropdown.
     $query->group($db->quoteName(['u.id']));
 
-    switch ($ordering)
+    switch($ordering)
     {
       case 'id':
         $query->order('u.id ASC');
-        break;
+          break;
       case 'username':
         $query->order('u.username ASC');
-        break;
+          break;
       case 'name':
       default:
         $query->order('u.name ASC');
-        break;
+          break;
     }
 
     // Reset the query using our newly populated query object.
@@ -101,18 +102,17 @@ class UserdropdownField extends ListField
         {
           case 'name':
             $options[] = HTMLHelper::_('select.option', $result->id, $result->name);
-            break;
+              break;
           case 'username':
             $options[] = HTMLHelper::_('select.option', $result->id, $result->username);
-            break;
+              break;
           case 'both':
           default:
-            $options[] = HTMLHelper::_('select.option', $result->id, $result->name.' ('. $result->username .')');
-            break;
-        }
+            $options[] = HTMLHelper::_('select.option', $result->id, $result->name . ' (' . $result->username . ')');
+              break;
+      }
     }
 
     return $options;
   }
-
 }

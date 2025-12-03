@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
 
 /**
  * Images list controller class.
@@ -63,7 +63,6 @@ class ImagesController extends JoomAdminController
       if($pk === 0)
       {
         unset($pks[$i], $order[$i]);
-
       }
     }
 

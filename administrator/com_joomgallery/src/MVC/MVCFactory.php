@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\MVC;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\User\User;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\MVC\Factory\MVCFactory as MVCFactoryBase;
+use Joomgallery\Component\Joomgallery\Administrator\User\User;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Factory\MVCFactory as MVCFactoryBase;
 
 /**
  * Factory to create MVC objects based on a namespace.
@@ -65,7 +65,7 @@ class MVCFactory extends MVCFactoryBase
     if(\is_null($identity))
     {
       $appUser = Factory::getApplication()->getIdentity();
-      $id = $appUser->id ?: 0;
+      $id      = $appUser->id ?: 0;
 
       $this->identity = $this->getUserFactory()->loadUserById($id);
     }

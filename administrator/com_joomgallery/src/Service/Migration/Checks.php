@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
+use Joomla\CMS\Language\Text;
 
 /**
  * Migration Checks Class
@@ -85,7 +85,7 @@ class Checks
     if(!\in_array($name, array_keys($this->assets)))
     {
       // Category not yet existing, create a new one
-      $cat = new \stdClass();
+      $cat           = new \stdClass();
       $cat->name     = $name;
       $cat->title    = $title;
       $cat->desc     = $desc;
@@ -141,9 +141,8 @@ class Checks
 
       if(!\is_null($desc))
       {
-        $this->objects[$key]->desc  = (string) $desc;
+        $this->objects[$key]->desc = (string) $desc;
       }
-
   }
 
   /**
@@ -168,7 +167,7 @@ class Checks
     // Make category and check name lowercase
     $category = strtolower(trim($category));
     $name     = strtolower(trim($name));
-    $asset    = $category.'.'.$name;
+    $asset    = $category . '.' . $name;
 
     // Check if category exists
     if(!\in_array($category, array_keys($this->assets)))
@@ -184,7 +183,7 @@ class Checks
       $catKey = $this->assets[$category];
 
       // Asset not yet existing, create a new one
-      $check = new \stdClass();
+      $check          = new \stdClass();
       $check->name    = $name;
       $check->result  = $result;
       $check->warning = $warning;
@@ -207,7 +206,7 @@ class Checks
       $key = $this->array_push($this->objects[$catKey]->checks, $check);
 
       // Add check to assets array
-      $this->assets[$asset] = $catKey.'.'.$key;
+      $this->assets[$asset] = $catKey . '.' . $key;
 
       // Modify the overall success if needed
       if($result === false)
@@ -257,7 +256,7 @@ class Checks
     // Make category and check name lowercase
     $category = strtolower(trim($category));
     $name     = strtolower(trim($name));
-    $asset    = $category.'.'.$name;
+    $asset    = $category . '.' . $name;
 
     // Check if category exists
     if(!\in_array($category, array_keys($this->assets)))
@@ -275,7 +274,7 @@ class Checks
     }
 
 
-      $key = $this->assets[$asset];
+      $key                     = $this->assets[$asset];
       list($catKey, $checkKey) = explode('.', $key, 2);
 
       // Modify the result
@@ -293,27 +292,26 @@ class Checks
       // Modify the warning status
       if(!\is_null($warning))
       {
-        $this->objects[$catKey]->checks[$checkKey]->warning  = \boolval($warning);
+        $this->objects[$catKey]->checks[$checkKey]->warning = \boolval($warning);
       }
 
       // Modify the title
       if(!\is_null($title))
       {
-        $this->objects[$catKey]->checks[$checkKey]->title  = (string) $title;
+        $this->objects[$catKey]->checks[$checkKey]->title = (string) $title;
       }
 
       // Modify the description
       if(!\is_null($desc))
       {
-        $this->objects[$catKey]->checks[$checkKey]->desc  = (string) $desc;
+        $this->objects[$catKey]->checks[$checkKey]->desc = (string) $desc;
       }
 
       // Modify the description
       if(!\is_null($help))
       {
-        $this->objects[$catKey]->checks[$checkKey]->help  = (string) $help;
+        $this->objects[$catKey]->checks[$checkKey]->help = (string) $help;
       }
-
   }
 
   /**
@@ -361,7 +359,7 @@ class Checks
    */
   protected function array_push(array &$array, $item): int
   {
-    $next = \count($array);
+    $next         = \count($array);
     $array[$next] = $item;
 
     return $next;

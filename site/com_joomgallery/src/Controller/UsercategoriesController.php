@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Controller\CategoriesController as AdminCategoriesController;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\CategoriesController as AdminCategoriesController;
 
 /**
  * Category controller class.
@@ -25,7 +25,6 @@ use \Joomgallery\Component\Joomgallery\Administrator\Controller\CategoriesContro
  */
 class UsercategoriesController extends AdminCategoriesController
 {
-
   /**
    * Constructor.
    *
@@ -44,6 +43,4 @@ class UsercategoriesController extends AdminCategoriesController
 
     $this->default_view = 'usercategories';
   }
-
-
 }

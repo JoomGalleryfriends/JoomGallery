@@ -13,7 +13,7 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 
 extract($displayData);
 
@@ -55,7 +55,7 @@ $attr = '';
 // Set global value in first option
 if(strpos($options[0]->text, '%s') !== false)
 {
-  $options[0]->text  = str_replace('%s', $globvalue ?? '', $options[0]->text);
+  $options[0]->text = str_replace('%s', $globvalue ?? '', $options[0]->text);
 }
 
 // Initialize the field attributes.
@@ -69,21 +69,26 @@ $attr .= !empty($description) ? ' aria-describedby="' . ($id ?: $name) . '-desc"
 $attr .= $dataAttribute;
 
 // To avoid user's confusion, readonly="readonly" should imply disabled="disabled".
-if ($readonly || $disabled) {
+if($readonly || $disabled)
+{
   $attr .= ' disabled="disabled"';
 }
 
 // Create a read-only list (no name) with hidden input(s) to store the value(s).
-if ($readonly) {
+if($readonly)
+{
   $html[] = HTMLHelper::_('select.genericlist', $options, '', trim($attr), 'value', 'text', $value, $id);
 
   // E.g. form field type tag sends $this->value as array
-  if ($multiple && \is_array($value)) {
-    if (!\count($value)) {
+  if($multiple && \is_array($value))
+  {
+    if(!\count($value))
+    {
       $value[] = '';
     }
 
-    foreach ($value as $val) {
+    foreach($value as $val)
+    {
       $html[] = '<input type="hidden" name="' . $name . '" value="' . htmlspecialchars($val, ENT_COMPAT, 'UTF-8') . '">';
     }
   }
@@ -93,15 +98,15 @@ if ($readonly) {
 }
 else // Create a regular list passing the arguments in an array.
 {
-  $listoptions = [];
-  $listoptions['option.key'] = 'value';
-  $listoptions['option.text'] = 'text';
-  $listoptions['list.select'] = $value;
-  $listoptions['id'] = $id;
+  $listoptions                   = [];
+  $listoptions['option.key']     = 'value';
+  $listoptions['option.text']    = 'text';
+  $listoptions['list.select']    = $value;
+  $listoptions['id']             = $id;
   $listoptions['list.translate'] = false;
-  $listoptions['option.attr'] = 'optionattr';
-  $listoptions['list.attr'] = trim($attr);
-  $html[] = HTMLHelper::_('select.genericlist', $options, $name, $listoptions);
+  $listoptions['option.attr']    = 'optionattr';
+  $listoptions['list.attr']      = trim($attr);
+  $html[]                        = HTMLHelper::_('select.genericlist', $options, $name, $listoptions);
 }
 
 echo implode($html);

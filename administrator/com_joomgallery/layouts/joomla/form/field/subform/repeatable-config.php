@@ -1,20 +1,21 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Language\Text;
 
 extract($displayData);
 
@@ -47,7 +48,7 @@ if($multiple)
 }
 
 // Get input variables
-$input  = Factory::getApplication()->input;
+$input = Factory::getApplication()->input;
 
 $option = $input->get('option');
 $view   = $input->get('view');
@@ -64,18 +65,18 @@ if($option == 'com_joomgallery' && $view == 'config' && $id === 1)
 $class = $class ? ' ' . $class : '';
 
 // Build heading
-$table_head = '';
+$table_head          = '';
 $subforms_with_popup = ['jg_staticprocessing', 'jg_dynamicprocessing'];
 
 $i = 0;
 
-foreach ($tmpl->getGroup('') as $field)
+foreach($tmpl->getGroup('') as $field)
 {
   if($i < 2)
   {
     $table_head .= '<th scope="col">' . strip_tags($field->label);
 
-    if ($field->description)
+    if($field->description)
     {
       $table_head .= '<span class="icon-info-circle" aria-hidden="true" tabindex="0"></span><div role="tooltip" id="tip-' . $field->id . '">' . Text::_($field->description) . '</div>';
     }
@@ -90,8 +91,8 @@ $section = 'section';
 
 if(\in_array($fieldname, $subforms_with_popup))
 {
-  $table_head .= '<th scope="col">'.Text::_('COM_JOOMGALLERY_SETTINGS').'</th>';
-  $section = 'sectionWithPopup';
+  $table_head .= '<th scope="col">' . Text::_('COM_JOOMGALLERY_SETTINGS') . '</th>';
+  $section     = 'sectionWithPopup';
 }
 
 $sublayout = 'section-byfieldsets';
@@ -115,9 +116,9 @@ Factory::getApplication()
         <thead>
           <tr>
             <?php echo $table_head; ?>
-            <?php if (!empty($buttons)) : ?>
+            <?php if(!empty($buttons)) : ?>
             <td style="width:8%;">
-              <?php if (!empty($buttons['add'])) : ?>
+              <?php if(!empty($buttons['add'])) : ?>
                 <div class="btn-group">
                   <button type="button" class="group-add btn btn-sm btn-success" aria-label="<?php echo Text::_('JGLOBAL_FIELD_ADD'); ?>">
                     <span class="icon-plus" aria-hidden="true"></span>
@@ -130,14 +131,14 @@ Factory::getApplication()
         </thead>
         <tbody class="subform-repeatable-container">
         <?php
-                foreach ($forms as $k => $form) :
+                foreach($forms as $k => $form) :
             echo $this->sublayout($section, ['label' => $label, 'form' => $form, 'basegroup' => $fieldname, 'group' => $fieldname . $k, 'buttons' => $buttons, 'is_global_config' => $is_global_config]);
                 endforeach;
                 ?>
         </tbody>
       </table>
     </div>
-    <?php if ($multiple) : ?>
+    <?php if($multiple) : ?>
     <template class="subform-repeatable-template-section hidden">
       <?php echo trim($this->sublayout($section, ['label' => $label, 'form' => $tmpl, 'basegroup' => $fieldname, 'group' => $fieldname . 'X', 'buttons' => $buttons, 'is_global_config' => $is_global_config])); ?>
     </template>

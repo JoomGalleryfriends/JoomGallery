@@ -83,7 +83,7 @@ interface IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function write($file, $quality=100): bool;
+  public function write($file, $quality = 100): bool;
 
   /**
    * Output the image as string (stream)
@@ -98,7 +98,7 @@ interface IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function stream($quality=100, $base64=false, $html=false, $type=false): string;
+  public function stream($quality = 100, $base64 = false, $html = false, $type = false): string;
 
   /**
    * Validation and analysis of an image-file
@@ -126,7 +126,7 @@ interface IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function resize($method, $width, $height, $cropposition=2, $unsharp=false): bool;
+  public function resize($method, $width, $height, $cropposition = 2, $unsharp = false): bool;
 
   /**
    * Rotate image

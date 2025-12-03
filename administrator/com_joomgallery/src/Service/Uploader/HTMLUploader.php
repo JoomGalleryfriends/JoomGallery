@@ -14,13 +14,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
-use \Joomla\Filesystem\File as JFile;
-use \Joomla\Filesystem\Path as JPath;
+use Joomla\Filesystem\File as JFile;
+use Joomla\Filesystem\Path as JPath;
 
 /**
  * Uploader helper class (Standard HTML Upload)
@@ -40,8 +40,8 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
      *
      * @since  4.0.0
      */
-    public function retrieveImage(&$data, $filename=True): bool
-  {
+    public function retrieveImage(&$data, $filename = true): bool
+    {
     $user = Factory::getUser();
     $app  = Factory::getApplication();
 
@@ -61,7 +61,7 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
       $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_IMAGE_NBR_PROCESSING', $this->filecounter + 1));
     }
 
-    $image = $data['images'][$this->filecounter-1];
+    $image = $data['images'][$this->filecounter - 1];
 
     // Check for upload error codes
     if($image['error'] > 0)
@@ -105,8 +105,8 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
     }
 
     // Upload file to temp file
-    $this->src_file = JPath::clean(\dirname($this->src_tmp).\DIRECTORY_SEPARATOR.$this->src_name);
-    $return = JFile::upload($this->src_tmp, $this->src_file);
+    $this->src_file = JPath::clean(\dirname($this->src_tmp) . \DIRECTORY_SEPARATOR . $this->src_name);
+    $return         = JFile::upload($this->src_tmp, $this->src_file);
 
     if(!$return)
     {
@@ -123,16 +123,16 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
     $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
 
     return true;
-  }
+    }
 
   /**
    * Override form data with image metadata
    * according to configuration. Step 2.
    *
    * @param   array   $data       The form data (as a reference)
-   * 
+   *
    * @return  bool    True on success, false otherwise
-   * 
+   *
    * @since   1.5.7
    */
   public function overrideData(&$data): bool
@@ -177,16 +177,15 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN')), 'error', 'jerror');
 
       return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
-
   }
 
   /**
    * Detect if there is an image uploaded
-   * 
+   *
    * @param   array    $data      Form data
-   * 
+   *
    * @return  bool     True if file is detected, false otherwise
-   * 
+   *
    * @since   4.0.0
    */
   public function isImgUploaded($data): bool
@@ -201,6 +200,5 @@ class HTMLUploader extends BaseUploader implements UploaderInterface
 
 
       return false;
-
   }
 }

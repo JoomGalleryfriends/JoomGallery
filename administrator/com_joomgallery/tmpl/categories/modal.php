@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -37,7 +38,7 @@ $catRequired = (int) $input->get('required', 0, 'int');
   <div class="row">
     <div class="col-md-12">
       <div id="j-main-container" class="j-main-container">
-        <?php if (!$catRequired) : ?>
+        <?php if(!$catRequired) : ?>
           <div>
             <button type="button" class="btn btn-primary button-select" data-category-value="1" data-category-title="<?php echo $this->escape('Root'); ?>" data-category-field="<?php echo $this->escape($field); ?>">
               <?php echo Text::_('COM_JOOMGALLERY_NO_CATEGORY'); ?>
@@ -76,7 +77,7 @@ $catRequired = (int) $input->get('required', 0, 'int');
                 <th scope="col" class="w-10 d-none d-md-table-cell">
                   <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_OWNER', 'a.created_by', $listDirn, $listOrder); ?>
                 </th>
-                <?php if (Multilanguage::isEnabled()) : ?>
+                <?php if(Multilanguage::isEnabled()) : ?>
                   <th scope="col" class="w-10 d-none d-md-table-cell">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
                   </th>
@@ -94,11 +95,11 @@ $catRequired = (int) $input->get('required', 0, 'int');
               </tr>
             </tfoot>
             <tbody>
-              <?php foreach ($this->items as $i => $item) : ?>
+              <?php foreach($this->items as $i => $item) : ?>
               <tr class="row<?php echo $i % 2; ?>">
                 <td class="text-center d-none d-md-table-cell">
                   <div class="small badge-list">
-                    <?php if ($item->published === 1) : ?>
+                    <?php if($item->published === 1) : ?>
                       <span class="badge bg-secondary">
                         <?php echo Text::_('JPUBLISHED'); ?>
                       </span>
@@ -122,7 +123,7 @@ $catRequired = (int) $input->get('required', 0, 'int');
                       <?php echo $this->escape($item->title); ?>
                     </a>
 
-                    <?php if ($item->hidden === 1) : ?>
+                    <?php if($item->hidden === 1) : ?>
                       <div class="small">
                         <span class="badge bg-secondary">
                           <?php echo Text::_('COM_JOOMGALLERY_HIDDEN'); ?>
@@ -143,13 +144,13 @@ $catRequired = (int) $input->get('required', 0, 'int');
                   <?php echo $item->access; ?>
                 </td>
                 <td class="small d-none d-md-table-cell">
-                  <?php if ($item->created_by) : ?>
+                  <?php if($item->created_by) : ?>
                     <?php echo $this->escape($item->created_by); ?>
                   <?php else : ?>
                     <?php echo Text::_('JNONE'); ?>
                   <?php endif; ?>
                 </td>
-                <?php if (Multilanguage::isEnabled()) : ?>
+                <?php if(Multilanguage::isEnabled()) : ?>
                   <td class="small d-none d-md-table-cell">
                     <?php echo LayoutHelper::render('joomla.content.language', $item); ?>
                   </td>

@@ -1,22 +1,23 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Layout\LayoutHelper;
-use \Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -68,7 +69,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     <?php Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error'); ?>
   <?php else : ?>
     <form id="adminForm"
-          action="<?php echo Route::_('index.php?option=com_joomgallery&controller=usercategory&id='.$this->item->id); ?>"
+          action="<?php echo Route::_('index.php?option=com_joomgallery&controller=usercategory&id=' . $this->item->id); ?>"
           method="post" name="adminForm" class="form-validate form-horizontal well" enctype="multipart/form-data">
 
       <?php if($isShowTitle): ?>
@@ -154,8 +155,8 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-        <?php foreach ($fieldSets as $name => $fieldSet) :?>
-          <?php if (strpos($name, 'fields-') !== 0) continue; ?>
+        <?php foreach($fieldSets as $name => $fieldSet) :?>
+          <?php if(strpos($name, 'fields-') !== 0) continue; ?>
           <?php echo HTMLHelper::_('uitab.addTab', 'myTab', $name, Text::_($fieldSet->label)); ?>
           <?php $this->fieldset = $name; ?>
           <?php echo LayoutHelper::render('joomla.edit.fieldset', $this); ?>

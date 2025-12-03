@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Usercategory;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use \Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 
 /**
  * View class for a category
@@ -89,8 +89,8 @@ class HtmlView extends JoomGalleryView
     $this->state  = $model->getState();
     $this->params = $model->getParams();
 
-    $this->item   = $model->getItem();
-    $this->form   = $model->getForm();
+    $this->item = $model->getItem();
+    $this->form = $model->getForm();
 
     // Get return page
     $this->return_page = $model->getReturnPage();

@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\User\CurrentUserInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\User\CurrentUserInterface;
 
 /**
  * Model to handle an image form.

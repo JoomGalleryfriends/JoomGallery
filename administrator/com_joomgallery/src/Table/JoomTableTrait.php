@@ -15,13 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Access\Rules;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Filter\OutputFilter;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Object\CMSObject;
-use \Joomla\Registry\Registry;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Trait for Table methods
@@ -79,7 +79,7 @@ trait JoomTableTrait
     {
       if(!$this->isUnique('alias'))
       {
-        $count = 2;
+        $count        = 2;
         $currentAlias =  $this->alias;
 
         while(!$this->isUnique('alias'))
@@ -196,13 +196,13 @@ trait JoomTableTrait
 
         if(\array_key_exists('params', $array) && isset($array['params']) && \is_array($array['params']))
         {
-            $registry = new Registry($array['params']);
+            $registry        = new Registry($array['params']);
             $array['params'] = (string) $registry;
         }
 
         if(\array_key_exists('metadata', $array) && isset($array['metadata']) && \is_array($array['metadata']))
         {
-            $registry = new Registry($array['metadata']);
+            $registry          = new Registry($array['metadata']);
             $array['metadata'] = (string) $registry;
         }
 
@@ -232,7 +232,7 @@ trait JoomTableTrait
    * Get an array of all record fields and their current values
    *
    * @param   array   $exclude   Array with properties to be excluded (default: [])
-   * 
+   *
    * @return  array  Fields with values
    *
    * @since   4.0.0
@@ -245,7 +245,7 @@ trait JoomTableTrait
 
         if(property_exists($item, 'params'))
         {
-            $registry = new Registry($item->params);
+            $registry     = new Registry($item->params);
             $item->params = $registry->toArray();
         }
 
@@ -271,9 +271,9 @@ trait JoomTableTrait
    * This is useful for placing a new item first in a group of items in the table.
    *
    * @param   string    $where  query WHERE clause for selecting MAX(ordering).
-   * 
+   *
    * @return  integer   The ordring number
-   * 
+   *
    * @since   4.0.0
    * @throws  \UnexpectedValueException
    */
@@ -311,7 +311,7 @@ trait JoomTableTrait
     if($this->component_exists)
         {
       $obj = Factory::getApplication()->bootComponent('com_joomgallery');
-        }
+    }
         else
         {
           $obj = $this->addMessageTrait();
@@ -329,9 +329,9 @@ trait JoomTableTrait
      *
      * @return  bool    True if unique
      */
-    protected function isUnique($field, $parent=null, $parentfield='parent_id')
+    protected function isUnique($field, $parent = null, $parentfield = 'parent_id')
     {
-        $db = $this->getDbo();
+        $db    = $this->getDbo();
         $query = $db->getQuery(true);
 
         $query
@@ -375,7 +375,7 @@ trait JoomTableTrait
             {
                 $data[$fieldName] = '';
             }
-        }
+    }
         else
         {
             $data[$fieldName] = '';
@@ -394,9 +394,9 @@ trait JoomTableTrait
   {
     if($data[$fieldName] === '')
         {
-            $data[$fieldName] = null;
+            $data[$fieldName]   = null;
             $this->{$fieldName} = null;
-        }
+    }
   }
 
   /**
@@ -423,7 +423,7 @@ trait JoomTableTrait
    *
    * @return  string
    */
-  protected function loadDefaultField($field, $form=null)
+  protected function loadDefaultField($field, $form = null)
   {
     // Get form name
     if(!$form)
@@ -457,7 +457,6 @@ trait JoomTableTrait
 
 
       return $this->form->getField($field)->getAttribute('default', '');
-
   }
 
   /**
@@ -470,14 +469,14 @@ trait JoomTableTrait
   protected function loadForm($form)
   {
     // Get xml file path
-    if(file_exists(_JOOM_PATH_ADMIN . '/forms/'.$form.'.xml'))
+    if(file_exists(_JOOM_PATH_ADMIN . '/forms/' . $form . '.xml'))
     {
-      $xml_file  = _JOOM_PATH_ADMIN . '/forms/'.$form.'.xml';
+      $xml_file  = _JOOM_PATH_ADMIN . '/forms/' . $form . '.xml';
       $form_name = $form;
     }
-    elseif(file_exists(_JOOM_PATH_ADMIN . '/forms/'.$form))
+    elseif(file_exists(_JOOM_PATH_ADMIN . '/forms/' . $form))
     {
-      $xml_file  = _JOOM_PATH_ADMIN . '/forms/'.$form;
+      $xml_file  = _JOOM_PATH_ADMIN . '/forms/' . $form;
       $form_name = str_replace('.xml', '', $form);
     }
 
@@ -499,7 +498,7 @@ trait JoomTableTrait
     {
       // We expect to be in a pre installed environement. Use a custom way of including the MessageTrait.
       $msgtraitClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Extension\\MessageTrait';
-      $msgtrait_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Extension'.DIRECTORY_SEPARATOR.'MessageTrait.php';
+      $msgtrait_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Extension' . DIRECTORY_SEPARATOR . 'MessageTrait.php';
 
       // Manually include the MessageTrait file if it's not already available
       if(!trait_exists($msgtraitClass))

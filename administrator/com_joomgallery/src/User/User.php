@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\User;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
-use \Joomla\CMS\Access\Access as AccessBase;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\User\User as BaseUser;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Access\Access as AccessBase;
+use Joomla\CMS\Factory;
+use Joomla\CMS\User\User as BaseUser;
 
 /**
  * User class.  Handles all component interaction with a user
@@ -86,7 +86,7 @@ class User extends BaseUser
       {
         $this->isRoot = true;
       }
-      elseif ($this->id > 0)
+      elseif($this->id > 0)
       {
         // Get all groups against which the user is mapped.
         $identities = $this->getAuthorisedGroups();
@@ -104,7 +104,7 @@ class User extends BaseUser
     if(strpos($assetname, 'joomgallery') !== false)
     {
       // For com_joomgallery
-      $asset_array  = explode('.', $assetname);
+      $asset_array = explode('.', $assetname);
 
       if(\count($asset_array) > 2 && \in_array($asset_array[1], $this->getAcl()->get('parent_dependent_types')))
       {
@@ -117,12 +117,10 @@ class User extends BaseUser
 
 
         return $this->getAcl()->checkACL($action, $assetname);
-
     }
 
 
       // For core components
       return $this->isRoot ? true : (bool) AccessBase::check($this->id, $action, $assetname);
-
   }
 }

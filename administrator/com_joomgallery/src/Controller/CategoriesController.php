@@ -15,10 +15,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Router\Route;
-use \Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Categories list controller class.
@@ -66,7 +66,7 @@ class CategoriesController extends JoomAdminController
 
     $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'));
     }
-  }
+    }
   catch (\Exception $e)
   {
     $this->component->addLog($e->getMessage(), 'warning', 'jerror');
@@ -74,7 +74,7 @@ class CategoriesController extends JoomAdminController
     Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
   }
 
-    $this->setRedirect('index.php?option='._JOOM_OPTION.'&view=categories');
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=categories');
   }
 
   /**
@@ -101,7 +101,7 @@ class CategoriesController extends JoomAdminController
   public function rebuild()
   {
     $this->checkToken();
-    $this->setRedirect(Route::_('index.php?option='._JOOM_OPTION.'&view=categories', false));
+    $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=categories', false));
     $model = $this->getModel();
 
   if($model->rebuild())
