@@ -244,7 +244,7 @@ class JgcategorydropdownField extends ListField
           $db->quoteName('a.lft'),
           $db->quoteName('a.language'),
           $db->quoteName('a.created_by'),
-          ]
+        ]
     )
       ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'a'));
 
@@ -420,10 +420,10 @@ class JgcategorydropdownField extends ListField
       $rowQuery = $db->getQuery(true)
         ->select(
             [
-            $db->quoteName('a.id', 'value'),
-            $db->quoteName('a.title', 'text'),
-            $db->quoteName('a.level'),
-            $db->quoteName('a.parent_id'),
+              $db->quoteName('a.id', 'value'),
+              $db->quoteName('a.title', 'text'),
+              $db->quoteName('a.level'),
+              $db->quoteName('a.parent_id'),
             ]
         )
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'a'))

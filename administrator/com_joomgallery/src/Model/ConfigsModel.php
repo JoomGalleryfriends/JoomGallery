@@ -46,14 +46,14 @@ class ConfigsModel extends JoomListModel
     if(empty($config['filter_fields']))
     {
     $config['filter_fields'] = [
-    'id', 'a.id',
-    'group_id', 'a.group_id',
-    'published', 'a.published',
-    'ordering', 'a.ordering',
-    'created_by', 'a.created_by',
-    'modified_by', 'a.modified_by',
-    'title', 'a.title',
-    'note', 'a.note',
+      'id', 'a.id',
+      'group_id', 'a.group_id',
+      'published', 'a.published',
+      'ordering', 'a.ordering',
+      'created_by', 'a.created_by',
+      'modified_by', 'a.modified_by',
+      'title', 'a.title',
+      'note', 'a.note',
     ];
     }
 

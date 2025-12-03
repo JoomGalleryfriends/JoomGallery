@@ -205,11 +205,11 @@ class HtmlView extends JoomGalleryView
   {
     // Fields with global_only attribute --> Not editable
     $field_data = [
-    'id' => $field->id,
-    'name' => $field->name,
-    'label' => LayoutHelper::render('joomla.form.renderlabel', ['text' => Text::_($field->getAttribute('label')), 'for' => $field->id, 'required' => false, 'classes' => [], 'sensitive' => $sensitive]),
-    'input' => LayoutHelper::render('joomla.form.field.value', ['id' => $field->id, 'value' => $field->value, 'class' => '']),
-    'description' => Text::_('COM_JOOMGALLERY_CONFIG_EDIT_ONLY_IN_GLOBAL'),
+      'id' => $field->id,
+      'name' => $field->name,
+      'label' => LayoutHelper::render('joomla.form.renderlabel', ['text' => Text::_($field->getAttribute('label')), 'for' => $field->id, 'required' => false, 'classes' => [], 'sensitive' => $sensitive]),
+      'input' => LayoutHelper::render('joomla.form.field.value', ['id' => $field->id, 'value' => $field->value, 'class' => '']),
+      'description' => Text::_('COM_JOOMGALLERY_CONFIG_EDIT_ONLY_IN_GLOBAL'),
     ];
     echo LayoutHelper::render('joomla.form.renderfield', $field_data);
   }

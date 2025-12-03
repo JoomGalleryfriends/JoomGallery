@@ -599,9 +599,9 @@ abstract class JoomAdminModel extends AdminModel
         ->insert($db->quoteName('#__associations'))
         ->columns(
             [
-            $db->quoteName('id'),
-            $db->quoteName('context'),
-            $db->quoteName('key'),
+              $db->quoteName('id'),
+              $db->quoteName('context'),
+              $db->quoteName('key'),
             ]
         );
 

@@ -203,8 +203,8 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
         echo LayoutHelper::render(
             'joomla.searchtools.default',
             [
-            'view' => $this->item->images,
-            'options' => ['showSelector' => false, 'filterButton' => false, 'showNoResults' => false, 'showSearch' => false, 'showList' => false, 'barClass' => 'flex-end'],
+              'view' => $this->item->images,
+              'options' => ['showSelector' => false, 'filterButton' => false, 'showNoResults' => false, 'showSearch' => false, 'showList' => false, 'barClass' => 'flex-end'],
             ]
         );
         }

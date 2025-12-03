@@ -227,11 +227,11 @@ if($saveOrder && !empty($this->items))
                     $i,
                     'unlock',
                     [
-                    'enabled' => $canChange, 'prefix' => 'tasks.',
-                    'active_class' => 'none fa fa-running border-dark text-body',
-                    'inactive_class' => 'none fa fa-running', 'tip' => true, 'translate' => false,
-                    'active_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
-                    'inactive_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
+                      'enabled' => $canChange, 'prefix' => 'tasks.',
+                      'active_class' => 'none fa fa-running border-dark text-body',
+                      'inactive_class' => 'none fa fa-running', 'tip' => true, 'translate' => false,
+                      'active_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
+                      'inactive_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
                     ]
                 ); ?>
                 <?php endif; ?>
