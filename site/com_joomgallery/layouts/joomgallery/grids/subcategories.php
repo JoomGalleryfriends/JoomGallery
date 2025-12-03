@@ -1,18 +1,19 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Router\Route;
 
 extract($displayData);
 
@@ -36,17 +37,20 @@ extract($displayData);
     <?php foreach($items as $key => $item) : ?>
       <?php
         $img_type = $image_type;
+
         if($item->thumbnail == 0 && $random_image)
         {
           $item->thumbnail = $item->id;
-          $img_type = 'rnd_cat:' . $image_type;
+          $img_type        = 'rnd_cat:' . $image_type;
         }
       ?>
 
       <div class="jg-image">
-        <div class="jg-image-thumbnail<?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php endif; ?>">
+        <div class="jg-image-thumbnail<?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php
+                                      endif; ?>">
           <a href="<?php echo Route::_(JoomHelper::getViewRoute('category', (int) $item->id)); ?>">
-            <img src="<?php echo JoomHelper::getImg($item->thumbnail, $img_type); ?>" class="jg-image-thumb" alt="<?php echo $this->escape($item->title); ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php endif; ?>>
+            <img src="<?php echo JoomHelper::getImg($item->thumbnail, $img_type); ?>" class="jg-image-thumb" alt="<?php echo $this->escape($item->title); ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php
+                      endif; ?>>
             <?php if($layout == 'justified') : ?>
               <div class="jg-image-caption-hover <?php echo $caption_align; ?>">
                 <?php echo $this->escape($item->title); ?>

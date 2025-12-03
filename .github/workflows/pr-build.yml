@@ -20,7 +20,7 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: composer install --no-dev --prefer-dist
+        run: composer install --prefer-dist
 
       - name: Clean up unnecessary files
         run: |

@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS
 $wa = $this->document->getWebAssetManager();
@@ -36,23 +37,26 @@ $returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->g
 
 if($saveOrder && !empty($this->items))
 {
-	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
-	HTMLHelper::_('draggablelist.draggable');
+  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  HTMLHelper::_('draggablelist.draggable');
 }
 ?>
 
-<?php if ($this->params['menu']->get('show_page_heading')) : ?>
+<?php if($this->params['menu']->get('show_page_heading')) : ?>
     <div class="page-header page-title">
         <h1> <?php echo $this->escape($this->params['menu']->get('page_heading')); ?> </h1>
     </div>
 <?php endif; ?>
 
 <form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post" name="adminForm" id="adminForm">
-	<?php if(!empty($this->filterForm)) { echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); } ?>
+  <?php if(!empty($this->filterForm))
+  {
+  echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
+  } ?>
   <div class="row">
-		<div class="col-md-12">
+    <div class="col-md-12">
 
-      <?php if (empty($this->items)) : ?>
+      <?php if(empty($this->items)) : ?>
         <div class="alert alert-info">
           <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
           <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
@@ -79,19 +83,19 @@ if($saveOrder && !empty($this->items))
                   <th></th>
 
                   <th scope="col" style="min-width:180px">
-                    <?php echo HTMLHelper::_('grid.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'JGLOBAL_HITS', 'a.hits', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_HITS', 'a.hits', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'COM_JOOMGALLERY_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JOOMGALLERY_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'JCATEGORY', 'a.catid', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'JCATEGORY', 'a.catid', $listDirn, $listOrder); ?>
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
@@ -99,19 +103,20 @@ if($saveOrder && !empty($this->items))
                   </th>
 
                   <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
-                    <?php echo HTMLHelper::_('grid.sort',  'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
                   </th>
               </tr>
             </thead>
             <tfoot>
               <tr>
-                <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+                <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                   <?php echo $this->pagination->getListFooter(); ?>
                 </td>
               </tr>
             </tfoot>
-            <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
-              <?php foreach ($this->items as $i => $item) :
+            <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
+                   endif; ?>>
+              <?php foreach($this->items as $i => $item) :
                   $ordering   = ($listOrder == 'a.ordering');
                   $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
@@ -122,10 +127,11 @@ if($saveOrder && !empty($this->items))
 
                 <tr class="row<?php echo $i % 2; ?>">
 
-                  <?php if (isset($this->items[0]->ordering)) : ?>
+                  <?php if(isset($this->items[0]->ordering)) : ?>
                     <td class="text-center d-none d-md-table-cell sort-cell">
                       <?php
                         $iconClass = '';
+
                         if(!$canChange)
                         {
                           $iconClass = ' inactive';
@@ -184,7 +190,7 @@ if($saveOrder && !empty($this->items))
                         <span class="icon-edit" aria-hidden="true"></span>
                       </button>
                     <?php endif; ?>
-                    <?php if ($canDelete): ?>
+                    <?php if($canDelete): ?>
                       <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>" data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="imageform.remove" <?php echo $disabled; ?>>
                         <span class="icon-trash" aria-hidden="true"></span>
                       </button>
@@ -194,12 +200,12 @@ if($saveOrder && !empty($this->items))
                   
                   <td class="d-none d-lg-table-cell text-center">
                     <?php if($canChange): ?>
-                      <?php $statetask = ((int) $item->published) ? 'unpublish': 'publish'; ?>
+                      <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                       <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="imageform.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
-                        <span class="icon-<?php echo (int) $item->published ? 'check': 'cancel'; ?>" aria-hidden="true"></span>
+                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" aria-hidden="true"></span>
                       </button>
                     <?php else : ?>
-                      <i class="icon-<?php echo (int) $item->published ? 'check': 'cancel'; ?>"></i>
+                      <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
                     <?php endif; ?>
                   </td>
 
@@ -222,18 +228,24 @@ if($saveOrder && !empty($this->items))
 </form>
 
 <?php
-	if($canDelete) {
-		$wa->addInlineScript("
-			jQuery(document).ready(function () {
-				jQuery('.delete-button').click(deleteItem);
-			});
+  if($canDelete)
+  {
+    $wa->addInlineScript(
+        "
+      jQuery(document).ready(function () {
+        jQuery('.delete-button').click(deleteItem);
+      });
 
-			function deleteItem() {
+      function deleteItem() {
 
-				if (!confirm(\"" . Text::_('COM_JOOMGALLERY_DELETE_MESSAGE') . "\")) {
-					return false;
-				}
-			}
-		", [], [], ["jquery"]);
-	}
+        if (!confirm(\"" . Text::_('COM_JOOMGALLERY_DELETE_MESSAGE') . '")) {
+          return false;
+        }
+      }
+    ',
+        [],
+        [],
+        ['jquery']
+    );
+  }
 ?>
