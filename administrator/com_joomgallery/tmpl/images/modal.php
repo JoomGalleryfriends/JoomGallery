@@ -166,7 +166,7 @@ $imgRequired  = (int) $input->get('required', 0, 'int');
                 <td class="small d-none d-md-table-cell text-center">
                   <?php
                     $date = $item->date;
-                    echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
+                    echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
                   ?>
                 </td>
 
