@@ -30,6 +30,8 @@
     <exclude name="PSR1.Methods.CamelCapsMethodName"/>
     <exclude name="Squiz.NamingConventions.ValidFunctionName"/>
     <exclude name="PSR12.Properties.ConstantVisibility"/>
+    <!-- Allow comments after closing brace -->
+    <exclude name="Squiz.WhiteSpace.ScopeClosingBrace.ContentAfterBrace"/>
   </rule>
 
   <!-- clean imports -->
