@@ -82,7 +82,7 @@ return (new PhpCsFixer\Config())
     'array_indentation' => true,
 
     // Operators, spacing & braces
-    'binary_operator_spaces' => ['operators' => ['=>' => 'align_single_space_minimal', '=' => 'align_single_space_minimal', '??=' => 'align_single_space_minimal']],
+    'binary_operator_spaces' => false,
     'blank_line_before_statement' => ['statements' => ['return', 'if', 'for', 'foreach', 'while']],
     'no_break_comment' => ['comment_text' => "'break' intentionally omitted"],
     'braces_position' => false,
