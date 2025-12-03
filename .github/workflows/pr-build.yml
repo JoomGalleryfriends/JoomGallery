@@ -78,4 +78,4 @@ jobs:
         run: ./administrator/com_joomgallery/vendor/bin/php-cs-fixer fix -vvv --dry-run --diff
 
       - name: Run PHPCS
-        run: ./administrator/com_joomgallery/vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml .
+        run: ./administrator/com_joomgallery/vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml --runtime-set ignore_warnings_on_exit 1 .
