@@ -1,24 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useScript('bootstrap.collapse')
    ->useScript('com_joomgallery.form-edit')
    ->useStyle('com_joomgallery.site');
@@ -32,24 +35,24 @@ $lang->load('joomla', JPATH_ADMINISTRATOR);
 if($this->item->catid)
 {
   // ID given -> edit
-  $canEdit  = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
+  $canEdit = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
 }
 else
 {
   // ID = null -> add
-  $canEdit  = true;
+  $canEdit = true;
 }
 $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
 ?>
 
 <div class="jg image-edit front-end-edit item-page">
-	<?php if(!$canEdit) : ?>
+  <?php if(!$canEdit) : ?>
     <?php Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error'); ?>
-	<?php else : ?>
-		<form id="adminForm" action="<?php echo Route::_('index.php?option=com_joomgallery&controller=imageform&id='.$this->item->id); ?>"
-			    method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data">
+  <?php else : ?>
+    <form id="adminForm" action="<?php echo Route::_('index.php?option=com_joomgallery&controller=imageform&id=' . $this->item->id); ?>"
+          method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data">
       <fieldset>
-        <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details')); ?>
+        <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'Details']); ?>
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('COM_JOOMGALLERY_IMAGES', true)); ?>
           <?php echo $this->form->renderField('title'); ?>
           <?php echo $this->form->renderField('alias'); ?>
@@ -108,8 +111,8 @@ $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
         
         <input type="hidden" name="type" id ="itemType" value="imageform"/>
         <input type="hidden" name="return" value="<?php echo $this->return_page; ?>"/>
-			  <input type="hidden" name="task" value=""/>
-			  <?php echo HTMLHelper::_('form.token'); ?>
+        <input type="hidden" name="task" value=""/>
+        <?php echo HTMLHelper::_('form.token'); ?>
       </fieldset>
 
       <div class="mb-2">
@@ -120,6 +123,6 @@ $canAdmin = $this->getAcl()->checkACL('admin', 'com_joomgallery');
           <span class="fas fa-times" aria-hidden="true"></span> <?php echo Text::_('JCANCEL'); ?>
         </button>
       </div>
-		</form>
-	<?php endif; ?>
+    </form>
+  <?php endif; ?>
 </div>

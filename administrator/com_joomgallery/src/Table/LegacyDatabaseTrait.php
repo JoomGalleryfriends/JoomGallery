@@ -1,23 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Database\DatabaseInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
-* Trait to bridge the transition between getDbo and getDatabse
-*
-* @since  4.1.0
-*/
+ * Trait to bridge the transition between getDbo and getDatabse
+ *
+ * @since  4.1.0
+ */
 trait LegacyDatabaseTrait
 {
   /**
@@ -34,14 +37,15 @@ trait LegacyDatabaseTrait
     $currentClass = \get_class($this);
 
     // Traverse up the class hierarchy and look for the method getDatabase()
-    while($parent = \get_parent_class($currentClass))
+    while($parent = get_parent_class($currentClass))
     {
-      if(\method_exists($parent, 'getDatabase'))
+      if(method_exists($parent, 'getDatabase'))
       {
         $method = new \ReflectionMethod($parent, 'getDatabase');
 
         // Avoid infinite recursion by ensuring we're not calling the trait version again
-        $avoid = [__TRAIT__, \get_class($this), \get_parent_class($this)];
+        $avoid = [__TRAIT__, \get_class($this), get_parent_class($this)];
+
         if(!\in_array($method->getDeclaringClass()->name, $avoid))
         {
           if($method->isPublic() || $method->isProtected())
@@ -55,7 +59,7 @@ trait LegacyDatabaseTrait
     }
 
     // If we havent found getDatabase(), we use getDbo()
-    if(\method_exists($this, 'getDbo'))
+    if(method_exists($this, 'getDbo'))
     {
       return $this->getDbo();
     }

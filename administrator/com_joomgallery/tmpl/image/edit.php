@@ -1,31 +1,34 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
-// No direct access 
-defined('_JEXEC') or die;
+// No direct access
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip', '.hasTip');
 
-$app = Factory::getApplication();
+$app       = Factory::getApplication();
 $form      = $this->getForm();
 $fieldSets = $form->getFieldsets();
 
@@ -36,8 +39,8 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 ?>
 
 <form
-	action="<?php echo Route::_('index.php?option=com_joomgallery&layout='.$layout.$tmpl.'&id=' . (int) $this->item->id); ?>"
-	method="post" enctype="multipart/form-data" name="adminForm" id="image-form" class="form-validate"
+  action="<?php echo Route::_('index.php?option=com_joomgallery&layout=' . $layout . $tmpl . '&id=' . (int) $this->item->id); ?>"
+  method="post" enctype="multipart/form-data" name="adminForm" id="image-form" class="form-validate"
   aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>" >
 
   <div class="row title-alias form-vertical mb-3">
@@ -49,41 +52,41 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     </div>
     <div class="col-12 col-md-4">
       <?php echo $this->form->renderField('image'); ?>
-			<?php echo $this->form->renderField('filename'); ?>
+      <?php echo $this->form->renderField('filename'); ?>
     </div>
   </div>
 
   <div class="main-card">
-	<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details', 'recall' => true, 'breakpoint' => 768)); ?>
+  <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'Details', 'recall' => true, 'breakpoint' => 768]); ?>
 
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>	
+  <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>  
   <div class="row">
-		<div class="col-lg-9">
-			<fieldset class="adminform">
+    <div class="col-lg-9">
+      <fieldset class="adminform">
         <?php echo $this->form->getLabel('description'); ?>
-				<?php echo $this->form->getInput('description'); ?>
-			</fieldset>
-		</div>
+        <?php echo $this->form->getInput('description'); ?>
+      </fieldset>
+    </div>
     <div class="col-lg-3">
       <fieldset class="form-vertical">
         <legend class="visually-hidden"><?php echo Text::_('JGLOBAL_FIELDSET_GLOBAL'); ?></legend>
         <?php echo $this->form->renderField('published'); ?>
-				<?php echo $this->form->renderField('catid'); ?>
+        <?php echo $this->form->renderField('catid'); ?>
         <?php echo $this->form->renderField('featured'); ?>
         <?php echo $this->form->renderField('hidden'); ?>
         <?php echo $this->form->renderField('access'); ?>
         <?php echo $this->form->renderField('tags'); ?>
-				<?php echo $this->form->renderField('language'); ?>
+        <?php echo $this->form->renderField('language'); ?>
       </fieldset>
     </div>
-	</div>
-	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+  </div>
+  <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
   <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Images', Text::_('COM_JOOMGALLERY_IMAGES', true)); ?>
-	<div class="row">
+  <div class="row">
     <div class="col-12 col-lg-6">
       <fieldset id="fieldset-images" class="options-form">
-				<legend><?php echo Text::_('JGLOBAL_PREVIEW'); ?></legend>
+        <legend><?php echo Text::_('JGLOBAL_PREVIEW'); ?></legend>
         <div class="text-center joom-image center">
           <div class="joom-loader"><img src="<?php echo Uri::root(true); ?>/media/system/images/ajax-loader.gif" alt="loading..."></div>
           <img src="<?php echo JoomHelper::getImg($this->item, 'thumbnail'); ?>" class="img-thumbnail" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
@@ -91,12 +94,12 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
         <div class="text-center">
           <div class="btn-group joom-imgtypes" role="group" aria-label="<?php echo Text::_('COM_JOOMGALLERY_SHOWIMAGE_LBL'); ?>">
             <?php foreach($this->imagetypes as $key => $imagetype) : ?>
-              <a class="btn btn-outline-primary" style="cursor:pointer;" onclick="openModal('<?php echo $imagetype->typename; ?>')"><?php echo Text::sprintf('COM_JOOMGALLERY_SHOWIMAGE_IMGTYPE', \ucfirst($imagetype->typename)); ?></a>
+              <a class="btn btn-outline-primary" style="cursor:pointer;" onclick="openModal('<?php echo $imagetype->typename; ?>')"><?php echo Text::sprintf('COM_JOOMGALLERY_SHOWIMAGE_IMGTYPE', ucfirst($imagetype->typename)); ?></a>
             <?php endforeach; ?>
           </div>
         </div>
         <div class="mt-5"><?php echo $this->form->renderField('filesystem'); ?></div>
-			</fieldset>
+      </fieldset>
     </div>
     <div class="col-12 col-lg-6">
       <fieldset id="fieldset-images-data" class="options-form">
@@ -111,22 +114,22 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
         </div>          
       </fieldset>
     </div>
-	</div>
-	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+  </div>
+  <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-  <?php foreach ($fieldSets as $name => $fieldSet) :?>
-    <?php if (strpos($name,'fields-') !== 0) continue; ?>
+  <?php foreach($fieldSets as $name => $fieldSet) :?>
+    <?php if(strpos($name, 'fields-') !== 0) continue; ?>
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', $name, Text::_($fieldSet->label)); ?>
     <?php $this->fieldset = $name; ?>
     <?php echo LayoutHelper::render('joomla.edit.fieldset', $this); ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
   <?php endforeach; ?>
 
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING', true)); ?>
-	<div class="row">
+  <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING', true)); ?>
+  <div class="row">
     <div class="col-12 col-lg-6">
-			<fieldset id="fieldset-publishingdata" class="options-form">
-				<legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
+      <fieldset id="fieldset-publishingdata" class="options-form">
+        <legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
         <div>
           <?php echo $this->form->renderField('approved'); ?>
           <?php echo $this->form->renderField('created_time'); ?>
@@ -134,42 +137,42 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
           <?php echo $this->form->renderField('modified_time'); ?>
           <?php echo $this->form->renderField('modified_by'); ?>
           <?php echo $this->form->renderField('id'); ?>
-        </div>				
-			</fieldset>
+        </div>        
+      </fieldset>
     </div>
     <div class="col-12 col-lg-6">
-			<fieldset id="fieldset-metadata" class="options-form">
-				<legend><?php echo Text::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'); ?></legend>
+      <fieldset id="fieldset-metadata" class="options-form">
+        <legend><?php echo Text::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'); ?></legend>
         <div>
           <?php echo $this->form->renderField('metadesc'); ?>
-				  <?php echo $this->form->renderField('metakey'); ?>
-				  <?php echo $this->form->renderField('robots'); ?>
+          <?php echo $this->form->renderField('metakey'); ?>
+          <?php echo $this->form->renderField('robots'); ?>
         </div>
-			</fieldset>
-		</div>
-	</div>
-	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+      </fieldset>
+    </div>
+  </div>
+  <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-	<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'DisplayParams', Text::_('COM_JOOMGALLERY_PARAMETERS', true)); ?>
-	<div class="row">
+  <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'DisplayParams', Text::_('COM_JOOMGALLERY_PARAMETERS', true)); ?>
+  <div class="row">
     <div class="col-12 <?php echo ($this->state->params->get('save_history', 1)) ? 'col-lg-6' : ''; ?>">
       <fieldset id="fieldset-images-params" class="options-form">
-				<legend><?php echo Text::_('COM_JOOMGALLERY_PARAMETERS'); ?></legend>
+        <legend><?php echo Text::_('COM_JOOMGALLERY_PARAMETERS'); ?></legend>
         <div class="control-group">
           <div class="controls"><?php echo $this->form->getInput('params'); ?></div>
         </div>
-			</fieldset>
+      </fieldset>
     </div>
-    <?php if ($this->state->params->get('save_history', 1)) : ?>
+    <?php if($this->state->params->get('save_history', 1)) : ?>
       <div class="col-12 col-lg-6">
         <fieldset id="fieldset-images-version" class="options-form">
           <legend><?php echo Text::_('JVERSION'); ?></legend>
           <?php echo $this->form->renderField('version_note'); ?>
         </fieldset>
-		  </div>
+      </div>
     <?php endif; ?>
-	</div>  
-	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+  </div>  
+  <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
   <?php if($this->item->id) : ?>
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Metadata', Text::_('COM_JOOMGALLERY_METADATA', true)); ?>
@@ -187,36 +190,38 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <?php endif; ?>
   <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
-	<input type="hidden" name="task" value=""/>
+  <input type="hidden" name="task" value=""/>
   <input type="hidden" id="mediaManagerPath" name="mediapath" value=""/>
   <input type="hidden" name="jform[uploader]" value="html" />
   <?php /* <input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
-	<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
-	<input type="hidden" name="jform[votes]" value="<?php echo $this->item->votes; ?>" />
-	<input type="hidden" name="jform[useruploaded]" value="<?php echo $this->item->useruploaded; ?>" /> */ ?>
-	<?php echo HTMLHelper::_('form.token'); ?>
+  <input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
+  <input type="hidden" name="jform[votes]" value="<?php echo $this->item->votes; ?>" />
+  <input type="hidden" name="jform[useruploaded]" value="<?php echo $this->item->useruploaded; ?>" /> */ ?>
+  <?php echo HTMLHelper::_('form.token'); ?>
 
 </form>
 
 <?php
-$mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
-if(!\is_null($this->item->filename) && in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
+$mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT') . '</button></joomla-toolbar-button>';
+
+if(!\is_null($this->item->filename) && \in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
 {
-  $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP').'">'.Text::_('COM_JOOMGALLERY_IMAGE_EDIT').'</button></joomla-toolbar-button>';
+  $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn hasTip" title="' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP') . '">' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT') . '</button></joomla-toolbar-button>';
 }
 
 // Image preview modal
-$options = array('modal-dialog-scrollable' => true,
-                  'title'  => 'Test Title',
-                  'footer' => $mediaManagerBtn.'<a id="replaceBtn" class="btn hasTip" title="'.Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP').'" href="'.Route::_('index.php?option=com_joomgallery&view=image&layout=replace&id='.(int) $this->item->id).'">'.Text::_('COM_JOOMGALLERY_REPLACE').'</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'.Text::_('JCLOSE').'</button>',
-                );
+$options = [
+  'modal-dialog-scrollable' => true,
+  'title'                             => 'Test Title',
+  'footer'                            => $mediaManagerBtn . '<a id="replaceBtn" class="btn hasTip" title="' . Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP') . '" href="' . Route::_('index.php?option=com_joomgallery&view=image&layout=replace&id=' . (int) $this->item->id) . '">' . Text::_('COM_JOOMGALLERY_REPLACE') . '</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
+];
 
 echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
 ?>
 
 <script>
   function openModal(typename)
-	{
+  {
     let modal = document.getElementById('image-modal-box');
 
     let modalTitle = modal.querySelector('.modal-title');
@@ -231,17 +236,18 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
 
       foreach($this->imagetypes as $key => $imagetype)
       {
-        $imgURL   .= $imagetype->typename.':"'.JoomHelper::getImg($this->item, $imagetype->typename).'",';
-        $title    .= $imagetype->typename.':"'.Text::_('COM_JOOMGALLERY_'.strtoupper($imagetype->typename)).'",';
+        $imgURL .= $imagetype->typename . ':"' . JoomHelper::getImg($this->item, $imagetype->typename) . '",';
+        $title  .= $imagetype->typename . ':"' . Text::_('COM_JOOMGALLERY_' . strtoupper($imagetype->typename)) . '",';
 
         $img_path = str_replace('\\', '/', JoomHelper::getImg($this->item, $imagetype->typename, false, false));
+
         if($this->item->filesystem == 'local-images')
         {
           // Adjust for local file adapter
           $img_path = str_replace('/images/', '/', $img_path);
         }
 
-        $mediaURL .= $imagetype->typename.':"index.php?option=com_joomgallery&path='.$this->item->filesystem.':'.$img_path.'",';
+        $mediaURL .= $imagetype->typename . ':"index.php?option=com_joomgallery&path=' . $this->item->filesystem . ':' . $img_path . '",';
       }
 
       $imgURL   .= '}';
@@ -264,5 +270,5 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
 
     let bsmodal = new bootstrap.Modal(document.getElementById('image-modal-box'), {keyboard: false});
     bsmodal.show();
-	};
+  };
 </script>

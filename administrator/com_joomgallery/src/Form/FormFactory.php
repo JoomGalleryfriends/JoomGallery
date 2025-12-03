@@ -1,23 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Form;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Form\FormFactoryInterface;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Database\DatabaseAwareTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Form\ConfigForm;
+use Joomgallery\Component\Joomgallery\Administrator\Form\ConfigForm;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\Database\DatabaseAwareTrait;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Custom factory for creating ConfigForm objects
@@ -38,9 +41,9 @@ class FormFactory implements FormFactoryInterface
      *
      * @since   4.0.0
      */
-    public function createForm(string $name, array $options = array()): Form
+    public function createForm(string $name, array $options = []): Form
     {
-      if(\strpos($name, 'config') !== false)
+      if(strpos($name, 'config') !== false)
       {
         // The config form needs a special form class
         $form = new ConfigForm($name, $options);

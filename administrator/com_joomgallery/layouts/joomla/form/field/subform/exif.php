@@ -1,14 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Form\Form;
 
@@ -40,7 +43,7 @@ $form = $forms[0];
 ?>
 
 <div class="subform-wrapper exif-form">
-    <?php foreach ($form->getGroup('') as $field) : ?>
-        <?php echo $field->renderField(); ?>
-    <?php endforeach; ?>
+  <?php foreach($form->getGroup('') as $field) : ?>
+    <?php echo $field->renderField(); ?>
+  <?php endforeach; ?>
 </div>

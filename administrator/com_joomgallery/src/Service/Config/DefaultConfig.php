@@ -1,20 +1,23 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 
 // No direct access
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Language\Text;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\Config;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Config\Config;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
+use Joomla\CMS\Language\Text;
 
 /**
  * Configuration Class
@@ -39,7 +42,7 @@ class DefaultConfig extends Config implements ConfigInterface
    *
    * @param   string   $context   Context of the content (default: com_joomgallery)
    * @param   int      $id        ID of the content if needed (default: null)
-   * @param   bool		 $inclOwn   True, if you want to include settings of current item (default: true)
+   * @param   bool     $inclOwn   True, if you want to include settings of current item (default: true)
    * @param   bool     $useCache  True, to load params from cache if available (default: true)
    *
    * @return  void
@@ -51,15 +54,16 @@ class DefaultConfig extends Config implements ConfigInterface
     parent::__construct($context, $id, $inclOwn, $useCache);
 
     // Check if we can use cached parameters
-    if($useCache && !empty(self::$cache) && \key_exists(\base64_encode($this->storeId), self::$cache))
+    if($useCache && !empty(self::$cache) && key_exists(base64_encode($this->storeId), self::$cache))
     {
       // The params for this context is available in the object cache.
       // Use cache instead.
-      $this->setProperties(self::$cache[\base64_encode($this->storeId)]);
+      $this->setProperties(self::$cache[base64_encode($this->storeId)]);
+
       return;
     }
-    
-    $context_array = \explode('.', $context);
+
+    $context_array = explode('.', $context);
 
     //-----Level 1: Global Config-----
 
@@ -111,7 +115,7 @@ class DefaultConfig extends Config implements ConfigInterface
       }
 
       // Override class properties based on category params
-      foreach ($parents as $key => $cat)
+      foreach($parents as $key => $cat)
       {
         if($context_array[1] == 'category' && $cat['id'] == $id && !$inclOwn)
         {
@@ -119,7 +123,7 @@ class DefaultConfig extends Config implements ConfigInterface
           continue;
         }
         $category   = $cat_model->getItem($cat['id']);
-        $cat_params = \json_decode($category->params);
+        $cat_params = json_decode($category->params);
         $this->setParamsToClass($cat_params);
       }
     }
@@ -129,8 +133,8 @@ class DefaultConfig extends Config implements ConfigInterface
     if(isset($this->ids['image']))
     {
       // Load image
-      $img_model  = $this->component->getMVCFactory()->createModel('Image', 'administrator');
-      $image      = $img_model->getItem($this->ids['image']);
+      $img_model = $this->component->getMVCFactory()->createModel('Image', 'administrator');
+      $image     = $img_model->getItem($this->ids['image']);
 
       if($image === false && empty($image))
       {
@@ -147,7 +151,7 @@ class DefaultConfig extends Config implements ConfigInterface
       else
       {
         // Override class properties based on image params
-        $img_params = \json_decode($image->params);
+        $img_params = json_decode($image->params);
         $this->setParamsToClass($img_params);
       }
     }
@@ -166,7 +170,7 @@ class DefaultConfig extends Config implements ConfigInterface
 
         return;
       }
-      
+
       // Override class properties based on menu item params
       $this->setParamsToClass($menu->getParams());
     }

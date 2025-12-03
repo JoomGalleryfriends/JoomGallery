@@ -1,20 +1,22 @@
 <?php
-
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 
 // No direct access
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Metadata\Metadata as BaseMetadata;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Metadata\Metadata as BaseMetadata;
 
 /**
  * ExifTools (CGI) implementation of Metadata Class
@@ -28,12 +30,12 @@ class MetadataExifTool extends BaseMetadata implements MetadataInterface
 
   /**
    * Writes a list of values to the exif metadata of an image
-   * 
-   * @param   string $img    Path to the image 
+   *
+   * @param   string $img    Path to the image
    * @param   mixed  $edits  Exif object in imgmetadata
-   * 
+   *
    * @return  bool           True on success, false on failure
-   * 
+   *
    * @since   4.1.0
    */
   public function writeToExif(string $img, $edits): bool
@@ -43,12 +45,12 @@ class MetadataExifTool extends BaseMetadata implements MetadataInterface
 
   /**
    * Saves an edit to the iptc metadata of an image
-   * 
-   * @param   string $img    Path to the image 
+   *
+   * @param   string $img    Path to the image
    * @param   mixed  $edits  Iptc object in imgmetadata
-   * 
+   *
    * @return  bool           True on success, false on failure
-   * 
+   *
    * @since   4.1.0
    */
   public function writeToIptc(string $img, $edits): bool

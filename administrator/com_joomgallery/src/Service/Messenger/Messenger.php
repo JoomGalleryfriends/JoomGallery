@@ -1,22 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 
 // No direct access
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\CMS\Language\LanguageFactoryInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\LanguageFactoryInterface;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Template Messenger Base Class
@@ -32,33 +35,33 @@ abstract class Messenger implements MessengerInterface
 
   /**
    * Number of messanges successfully sent
-   * 
+   *
    * @var integer
    */
   protected $sent = 0;
 
   /**
    * Language the message is written
-   * 
+   *
    * @var Language
    */
   protected $language = null;
 
   /**
    * Template id to use
-   * 
+   *
    * @var Language
    */
   protected $template_id = 'com_joomgallery.newimage';
 
   /**
    * List with variables available in the template
-   * 
+   *
    * @var array
    */
-  public $data = array();
+  public $data = [];
 
-  /** 
+  /**
    * Constructor
    *
    * @return  void
@@ -69,21 +72,21 @@ abstract class Messenger implements MessengerInterface
   {
     // Load application
     $this->getApp();
-    
+
     // Load component
     $this->getComponent();
 
     $this->language = $this->app->getLanguage();
-    $this->addTemplateData(array('sitename' => $this->app->get('sitename'), 'siteurl' => Uri::root()));
+    $this->addTemplateData(['sitename' => $this->app->get('sitename'), 'siteurl' => Uri::root()]);
   }
 
   /**
    * Method to select the template to be used for the message
    *
    * @param   string   $id   The id of the template to be used
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function selectTemplate(string $id)
@@ -98,9 +101,9 @@ abstract class Messenger implements MessengerInterface
    * Method to select the language of the message
    *
    * @param   string   $tag   The id of the template to be used
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function selectLanguage(string $tag)
@@ -112,24 +115,24 @@ abstract class Messenger implements MessengerInterface
    * Method to add one ore more variables to be used in the template
    *
    * @param   mixed   $data   An array of key value pairs with variables to be used in the template
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function addTemplateData($data)
   {
     if(\is_array($data))
     {
-      $this->data = \array_merge($this->data, $data);
+      $this->data = array_merge($this->data, $data);
     }
     else
     {
-      \array_push($this->data, $data);
+      array_push($this->data, $data);
     }
   }
 
-  /**
+    /**
      * Replace tags with their values recursively
      *
      * @param   string  $text  The template to process
@@ -145,9 +148,9 @@ abstract class Messenger implements MessengerInterface
       {
         if(\is_array($value))
         {
-          $matches = array();
+          $matches = [];
 
-          if(\preg_match_all('/{' . \strtoupper($key) . '}(.*?){\/' . \strtoupper($key) . '}/s', $text, $matches))
+          if(preg_match_all('/{' . strtoupper($key) . '}(.*?){\/' . strtoupper($key) . '}/s', $text, $matches))
           {
             foreach($matches[0] as $i => $match)
             {
@@ -155,17 +158,19 @@ abstract class Messenger implements MessengerInterface
 
               foreach($value as $subvalue)
               {
-                if (\is_array($subvalue))
+                if(\is_array($subvalue))
                 {
                   $replacement .= $this->replaceTags($matches[1][$i], $subvalue);
                 }
               }
 
-              $text = \str_replace($match, $replacement, $text);
+              $text = str_replace($match, $replacement, $text);
             }
           }
-        } else {
-            $text = \str_replace('{' . \strtoupper($key) . '}', $value, $text);
+        }
+        else
+        {
+            $text = str_replace('{' . strtoupper($key) . '}', $value, $text);
         }
       }
 

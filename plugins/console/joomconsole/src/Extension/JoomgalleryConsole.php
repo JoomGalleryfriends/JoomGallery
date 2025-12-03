@@ -1,18 +1,21 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // created by example of https://www.dionysopoulos.me/book/com-cli.html
 // code of commands (classes) live in /administrator/components/com_joomgallery/src/CliCommand
 
 namespace JoomGallery\Plugin\Console\Joomconsole\Extension;
 
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\Category;
 use Joomgallery\Component\Joomgallery\Administrator\CliCommand\CategoryAdd;
@@ -52,7 +55,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
    */
   private static $commands = [
     Category::class,
-//    CategoryAdd::class, // WIP: in development,
+    //    CategoryAdd::class, // WIP: in development,
     CategoryList::class,
     CategoryParams::class,
     Config::class,
@@ -112,11 +115,11 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
   public function registerCLICommands(ApplicationEvent $event): void
   {
     // all commands are class definitions
-    foreach (self::$commands as $commandFQN)
+    foreach(self::$commands as $commandFQN)
     {
       try
       {
-        if (!class_exists($commandFQN))
+        if(!class_exists($commandFQN))
         {
           continue;
         }
@@ -124,7 +127,7 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
         // create command (class)
         $command = new $commandFQN();
 
-        if (method_exists($command, 'setMVCFactory'))
+        if(method_exists($command, 'setMVCFactory'))
         {
           $command->setMVCFactory($this->getMVCFactory());
         }
@@ -134,11 +137,9 @@ class JoomgalleryConsole extends CMSPlugin implements SubscriberInterface
       }
       catch (\Throwable $e)
       {
-        print ($commandFQN . ': error ' . $e->getMessage());
+        print $commandFQN . ': error ' . $e->getMessage();
         continue;
       }
     }
   }
-
 }
-
