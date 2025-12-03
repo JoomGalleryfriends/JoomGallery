@@ -22,15 +22,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access;
 interface AccessServiceInterface
 {
     /**
-     * Storage for the access service class.
-     *
-     * @var AccessInterface
-     *
-     * @since  4.0.0
-     */
-    private $acl;
-
-    /**
      * Creates the access service class
      *
      * @param   string   $option   Component option
