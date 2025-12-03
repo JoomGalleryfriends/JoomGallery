@@ -95,14 +95,14 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
         'bootstrap.renderModal',
         'deleteModal',
         [
-                                  'title'  => Text::_('JACTION_DELETE'),
-                                  'height' => '50%',
-                                  'width'  => '20%',
+          'title'  => Text::_('JACTION_DELETE'),
+          'height' => '50%',
+          'width'  => '20%',
 
-                                  'modalWidth' => '50',
-                                  'bodyHeight' => '100',
-                                  'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=image.remove&id=' . $this->item->id . '&return=' . $returnURL . '&' . Session::getFormToken() . '=1', false, 2) . '" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_IMAGE_TIPCAPTION') . '</a>',
-                                ],
+          'modalWidth' => '50',
+          'bodyHeight' => '100',
+          'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=image.remove&id=' . $this->item->id . '&return=' . $returnURL . '&' . Session::getFormToken() . '=1', false, 2) . '" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_IMAGE_TIPCAPTION') . '</a>',
+        ],
         Text::_('COM_JOOMGALLERY_COMMON_ALERT_SURE_DELETE_SELECTED_ITEM')
     );
       ?>

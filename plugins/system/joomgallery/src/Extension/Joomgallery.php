@@ -477,8 +477,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
             ->from('#__extensions')
             ->where(
                 [
-                'type LIKE ' . $this->db->quote('component'),
-                'element LIKE ' . $this->db->quote('com_joomgallery'),
+                  'type LIKE ' . $this->db->quote('component'),
+                  'element LIKE ' . $this->db->quote('com_joomgallery'),
                 ]
             );
 

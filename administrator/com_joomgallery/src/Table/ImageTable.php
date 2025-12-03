@@ -468,10 +468,10 @@ class ImageTable extends Table implements VersionableTableInterface
     $event = AbstractEvent::create(
         'onTableBefore' . ucfirst($type),
         [
-        'subject' => $this,
-        'pks'     => $pks,
-        'state'   => $state,
-        'userId'  => $userId,
+          'subject' => $this,
+          'pks'     => $pks,
+          'state'   => $state,
+          'userId'  => $userId,
         ]
     );
     $this->getDispatcher()->dispatch('onTableBefore' . ucfirst($type), $event);
@@ -612,10 +612,10 @@ class ImageTable extends Table implements VersionableTableInterface
     $event = AbstractEvent::create(
         'onTableAfter' . ucfirst($type),
         [
-        'subject' => $this,
-        'pks'     => $pks,
-        'state'   => $state,
-        'userId'  => $userId,
+          'subject' => $this,
+          'pks'     => $pks,
+          'state'   => $state,
+          'userId'  => $userId,
         ]
     );
     $this->getDispatcher()->dispatch('onTableAfter' . ucfirst($type), $event);

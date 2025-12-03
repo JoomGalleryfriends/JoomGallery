@@ -1,12 +1,12 @@
 <?php
 /**
-  * *********************************************************************************
-  *    @package    com_joomgallery                                                 **
-  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
-  *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
-  *    @license    GNU General Public License version 3 or later                   **
-  * *********************************************************************************
-  */
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
@@ -21,22 +21,22 @@ use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 
 /**
-  * Faulty table
-  *
-  * @package JoomGallery
-  * @since   4.0.0
-  */
+ * Faulty table
+ *
+ * @package JoomGallery
+ * @since   4.0.0
+ */
 class FaultyTable extends Table
 {
     use JoomTableTrait;
     use AssetTableTrait;
 
     /**
-      * Constructor
-      *
-      * @param   JDatabase  &$db               A database connector object
-      * @param   bool       $component_exists  True if the component object class exists
-      */
+     * Constructor
+     *
+     * @param   JDatabase  &$db               A database connector object
+     * @param   bool       $component_exists  True if the component object class exists
+     */
     public function __construct(DatabaseDriver $db, bool $component_exists = true)
     {
         $this->component_exists = $component_exists;
@@ -46,17 +46,17 @@ class FaultyTable extends Table
     }
 
     /**
-      * Overloaded bind function to pre-process the params.
-      *
-      * @param   array  $array   Named array
-      * @param   mixed  $ignore  Optional array or list of parameters to ignore
-      *
-      * @return  boolean  True on success.
-      *
-      * @see     Table:bind
-      * @since   4.0.0
-      * @throws  \InvalidArgumentException
-      */
+     * Overloaded bind function to pre-process the params.
+     *
+     * @param   array  $array   Named array
+     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     *
+     * @return  boolean  True on success.
+     *
+     * @see     Table:bind
+     * @since   4.0.0
+     * @throws  \InvalidArgumentException
+     */
     public function bind($array, $ignore = '')
     {
         $date = Factory::getDate();

@@ -1,12 +1,12 @@
 <?php
 /**
-  * *********************************************************************************
-  *    @package    com_joomgallery                                                 **
-  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
-  *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
-  *    @license    GNU General Public License version 3 or later                   **
-  * *********************************************************************************
-  */
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
@@ -18,19 +18,19 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 
 /**
-  * Uploader helper class (FTP Upload)
-  *
-  * @since  4.0.0
-  */
+ * Uploader helper class (FTP Upload)
+ *
+ * @since  4.0.0
+ */
 class FTPUploader extends BaseUploader implements UploaderInterface
 {
     /**
-      * Method to upload a new image.
-      *
-      * @return  string   Message
-      *
-      * @since  4.0.0
-      */
+     * Method to upload a new image.
+     *
+     * @return  string   Message
+     *
+     * @since  4.0.0
+     */
     public function upload(): string
     {
         return 'FTP upload successfully!';

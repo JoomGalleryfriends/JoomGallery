@@ -150,10 +150,10 @@ class ConfigForm extends Form
     $event = AbstractEvent::create(
         'onJoomGetOptions',
         [
-                      'subject' => $this,
-                      'context' => 'com_joomgallery.config.form',
-                      'script'  => $script,
-                    ]
+          'subject' => $this,
+          'context' => 'com_joomgallery.config.form',
+          'script'  => $script,
+        ]
     );
       Factory::getApplication()->getDispatcher()->dispatch($event->getName(), $event);
       $options = $event->getArgument('result', []);

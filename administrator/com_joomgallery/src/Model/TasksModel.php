@@ -305,8 +305,8 @@ class TasksModel extends JoomListModel
           // Show only records with no failed tasks (empty or empty JSON array)
         $query->where(
             [
-            $db->quoteName('a.failed') . ' = ' . $db->quote(''),
-            $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
+              $db->quoteName('a.failed') . ' = ' . $db->quote(''),
+              $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
             ],
             'OR'
         );
@@ -415,8 +415,8 @@ class TasksModel extends JoomListModel
           // Show only records with no failed tasks (empty or empty JSON array)
         $query->where(
             [
-            $db->quoteName('a.failed') . ' = ' . $db->quote(''),
-            $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
+              $db->quoteName('a.failed') . ' = ' . $db->quote(''),
+              $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
             ],
             'OR'
         );

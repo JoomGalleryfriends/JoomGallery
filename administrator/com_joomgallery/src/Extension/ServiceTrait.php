@@ -1,12 +1,12 @@
 <?php
 /**
-  * *********************************************************************************
-  *    @package    com_joomgallery                                                 **
-  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
-  *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
-  *    @license    GNU General Public License version 3 or later                   **
-  * *********************************************************************************
-  */
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 
@@ -20,44 +20,44 @@ use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
 
 /**
-  * Trait to implement basic methods
-  * for JoomGallery services
-  *
-  * @since  4.0.0
-  */
+ * Trait to implement basic methods
+ * for JoomGallery services
+ *
+ * @since  4.0.0
+ */
 trait ServiceTrait
 {
     /**
-      * JoomGallery extension class
-      *
-      * @var JoomgalleryComponent|null
-      */
+     * JoomGallery extension class
+     *
+     * @var JoomgalleryComponent|null
+     */
     protected $component = null;
 
     /**
-      * Current application object
-      *
-      * @var    CMSApplicationInterface|null
-      */
+     * Current application object
+     *
+     * @var    CMSApplicationInterface|null
+     */
     protected $app = null;
 
     /**
-      * Internal store for dynamic properties.
-      *
-      * @var array<string, mixed>
-      */
+     * Internal store for dynamic properties.
+     *
+     * @var array<string, mixed>
+     */
     protected array $__data = [];
 
     /**
-      * Sets a default value if not already assigned
-      *
-      * @param   string  $property  The name of the property.
-      * @param   mixed   $default   The default value.
-      *
-      * @return  mixed
-      *
-      * @since   4.0.0
-      */
+     * Sets a default value if not already assigned
+     *
+     * @param   string  $property  The name of the property.
+     * @param   mixed   $default   The default value.
+     *
+     * @return  mixed
+     *
+     * @since   4.0.0
+     */
     public function def($property, $default = null)
     {
         $value = $this->get($property, $default);
@@ -66,15 +66,15 @@ trait ServiceTrait
     }
 
     /**
-      * Returns a property of the object or the default value if the property is not set.
-      *
-      * @param   string  $property  The name of the property.
-      * @param   mixed   $default   The default value.
-      *
-      * @return  mixed    The value of the property.
-      *
-      * @since   4.0.0
-      */
+     * Returns a property of the object or the default value if the property is not set.
+     *
+     * @param   string  $property  The name of the property.
+     * @param   mixed   $default   The default value.
+     *
+     * @return  mixed    The value of the property.
+     *
+     * @since   4.0.0
+     */
     public function get(string $property, $default = null)
     {
         // Get real property if exists
@@ -94,15 +94,15 @@ trait ServiceTrait
     }
 
     /**
-      * Modifies a property of the object, creating it if it does not already exist.
-      *
-      * @param   string  $property  The name of the property.
-      * @param   mixed   $value     The value of the property to set.
-      *
-      * @return  mixed  Previous value of the property.
-      *
-      * @since   4.0.0
-      */
+     * Modifies a property of the object, creating it if it does not already exist.
+     *
+     * @param   string  $property  The name of the property.
+     * @param   mixed   $value     The value of the property to set.
+     *
+     * @return  mixed  Previous value of the property.
+     *
+     * @since   4.0.0
+     */
     public function set(string $property, $value = null)
     {
         if(property_exists($this, $property))
@@ -122,14 +122,14 @@ trait ServiceTrait
     }
 
     /**
-      * Returns an associative array of object properties.
-      *
-      * @param   boolean  $public  If true, returns only the public properties.
-      *
-      * @return  array
-      *
-      * @since   4.0.0
-      */
+     * Returns an associative array of object properties.
+     *
+     * @param   boolean  $public  If true, returns only the public properties.
+     *
+     * @return  array
+     *
+     * @since   4.0.0
+     */
     public function getProperties(bool $public = true): array
     {
         $vars = array_merge(get_object_vars($this), $this->__data);
@@ -170,14 +170,14 @@ trait ServiceTrait
     }
 
     /**
-      * Set the object properties based on a named array/hash.
-      *
-      * @param   mixed  $properties  Either an associative array or another object.
-      *
-      * @return  boolean
-      *
-      * @since   4.0.0
-      */
+     * Set the object properties based on a named array/hash.
+     *
+     * @param   mixed  $properties  Either an associative array or another object.
+     *
+     * @return  boolean
+     *
+     * @since   4.0.0
+     */
     public function setProperties($properties)
     {
         if(\is_array($properties) || \is_object($properties))
@@ -195,24 +195,24 @@ trait ServiceTrait
     }
 
     /**
-      * Gets the JoomGallery component object
-      *
-      * @return  void
-      *
-      * @since   4.0.0
-      */
+     * Gets the JoomGallery component object
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     */
     public function getComponent()
     {
         $this->component = Factory::getApplication()->bootComponent('com_joomgallery');
     }
 
     /**
-      * Gets the current application object
-      *
-      * @return  void
-      *
-      * @since   4.0.0
-      */
+     * Gets the current application object
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     */
     public function getApp()
     {
         $this->app = Factory::getApplication();

@@ -1,12 +1,12 @@
 <?php
 /**
-  * *********************************************************************************
-  *    @package    com_joomgallery                                                 **
-  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
-  *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
-  *    @license    GNU General Public License version 3 or later                   **
-  * *********************************************************************************
-  */
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 
@@ -20,31 +20,31 @@ use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
 /**
-  * Trait to implement MigrationServiceInterface
-  *
-  * @since  4.0.0
-  */
+ * Trait to implement MigrationServiceInterface
+ *
+ * @since  4.0.0
+ */
 trait MigrationServiceTrait
 {
     /**
-      * Storage for the migration service class.
-      *
-      * @var MigrationInterface
-      *
-      * @since  4.0.0
-      */
+     * Storage for the migration service class.
+     *
+     * @var MigrationInterface
+     *
+     * @since  4.0.0
+     */
     private $migration = null;
 
     /**
-      * Creates the migration service class
-      *
-      * @param   string          $script    Name of the migration script to be used
-      *
-      * @return  void
-      *
-      * @since  4.0.0
-      * @throws Exception
-      */
+     * Creates the migration service class
+     *
+     * @param   string          $script    Name of the migration script to be used
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
     public function createMigration($script)
     {
         // Get list of scripts
@@ -69,24 +69,24 @@ trait MigrationServiceTrait
     }
 
     /**
-      * Returns the migration service class.
-      *
-      * @return  MigrationInterface
-      *
-      * @since  4.0.0
-      */
+     * Returns the migration service class.
+     *
+     * @return  MigrationInterface
+     *
+     * @since  4.0.0
+     */
     public function getMigration()
     {
         return $this->migration;
     }
 
     /**
-      * Method to get all available migration scripts.
-      *
-      * @return  array|boolean   List of paths of all available scripts.
-      *
-      * @since   4.0.0
-      */
+     * Method to get all available migration scripts.
+     *
+     * @return  array|boolean   List of paths of all available scripts.
+     *
+     * @since   4.0.0
+     */
     protected function getScripts()
     {
         $files = Folder::files(JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts', '.php$', false, true);

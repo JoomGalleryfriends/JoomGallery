@@ -129,7 +129,7 @@ $modalHTML = HTMLHelper::_(
       'modalWidth'  => 80,
       'bodyHeight'  => 60,
       'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCANCEL') . '</button>',
-      ]
+    ]
 );
 
   Factory::getApplication()->getDocument()->getWebAssetManager()

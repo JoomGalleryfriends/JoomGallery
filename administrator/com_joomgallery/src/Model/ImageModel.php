@@ -98,7 +98,7 @@ class ImageModel extends JoomAdminModel
     // Update events map
     $this->events_map = array_merge(
         [
-        'recreate' => 'joomgallery',
+          'recreate' => 'joomgallery',
         ],
         $this->events_map
     );
@@ -819,7 +819,7 @@ class ImageModel extends JoomAdminModel
                 [
                   'COUNT(*) AS ' . $db->quoteName('count'),
                   $db->quoteName('as1.key'),
-                  ]
+                ]
             )
               ->from($db->quoteName('#__associations', 'as1'))
               ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
@@ -827,7 +827,7 @@ class ImageModel extends JoomAdminModel
                 [
                   $db->quoteName('as1.context') . ' = :context',
                   $db->quoteName('as1.id') . ' = :pk',
-                  ]
+                ]
             )
               ->bind(':context', $this->associationsContext)
               ->bind(':pk', $pk, ParameterType::INTEGER)
@@ -842,8 +842,8 @@ class ImageModel extends JoomAdminModel
                 ->delete($db->quoteName('#__associations'))
                 ->where(
                     [
-                    $db->quoteName('context') . ' = :context',
-                    $db->quoteName('key') . ' = :key',
+                      $db->quoteName('context') . ' = :context',
+                      $db->quoteName('key') . ' = :key',
                     ]
                 )
                 ->bind(':context', $this->associationsContext)

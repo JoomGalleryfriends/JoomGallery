@@ -1,12 +1,12 @@
 <?php
 /**
-  * *********************************************************************************
-  *    @package    com_joomgallery                                                 **
-  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
-  *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
-  *    @license    GNU General Public License version 3 or later                   **
-  * *********************************************************************************
-  */
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
@@ -22,59 +22,59 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
 
 /**
-  * Field to select a JoomGallery category ID from a modal list.
-  *
-  * @since  4.0.0
-  */
+ * Field to select a JoomGallery category ID from a modal list.
+ *
+ * @since  4.0.0
+ */
 class JgcategoryField extends FormField
 {
     /**
-      * The form field type.
-      *
-      * @var    string
-      * @since  4.0.0
-      */
+     * The form field type.
+     *
+     * @var    string
+     * @since  4.0.0
+     */
     public $type = 'jgcategory';
 
     /**
-      * Filtering category
-      *
-      * @var   array
-      * @since 4.0.0
-      */
+     * Filtering category
+     *
+     * @var   array
+     * @since 4.0.0
+     */
     protected $category = null;
 
     /**
-      * Category to exclude from the list of categories
-      *
-      * @var   array
-      * @since 4.0.0
-      */
+     * Category to exclude from the list of categories
+     *
+     * @var   array
+     * @since 4.0.0
+     */
     protected $excluded = null;
 
     /**
-      * Layout to render
-      *
-      * @var   string
-      * @since 4.0.0
-      */
+     * Layout to render
+     *
+     * @var   string
+     * @since 4.0.0
+     */
     protected $layout = 'joomla.form.field.jgcategory';
 
     /**
-      * Method to attach a Form object to the field.
-      *
-      * @param   \SimpleXMLElement  $element  The SimpleXMLElement object representing the `<field>` tag for the form field object.
-      * @param   mixed              $value    The form field value to validate.
-      * @param   string             $group    The field name group control value. This acts as an array container for the field.
-      *                                       For example if the field has name="foo" and the group value is set to "bar" then the
-      *                                       full field name would end up being "bar[foo]".
-      *
-      * @return  boolean  True on success.
-      *
-      * @since   4.0.0
-      *
-      * @see     FormField::setup()
-      */
+     * Method to attach a Form object to the field.
+     *
+     * @param   \SimpleXMLElement  $element  The SimpleXMLElement object representing the `<field>` tag for the form field object.
+     * @param   mixed              $value    The form field value to validate.
+     * @param   string             $group    The field name group control value. This acts as an array container for the field.
+     *                                       For example if the field has name="foo" and the group value is set to "bar" then the
+     *                                       full field name would end up being "bar[foo]".
+     *
+     * @return  boolean  True on success.
+     *
+     * @since   4.0.0
+     *
+     * @see     FormField::setup()
+     */
     public function setup(\SimpleXMLElement $element, $value, $group = null)
     {
         $return = parent::setup($element, $value, $group);
@@ -94,12 +94,12 @@ class JgcategoryField extends FormField
     }
 
     /**
-      * Method to get the category field input markup.
-      *
-      * @return  string  The field input markup.
-      *
-      * @since   4.0.0
-      */
+     * Method to get the category field input markup.
+     *
+     * @return  string  The field input markup.
+     *
+     * @since   4.0.0
+     */
     protected function getInput()
     {
         if(empty($this->layout))
@@ -116,12 +116,12 @@ class JgcategoryField extends FormField
     }
 
     /**
-      * Get the data that is going to be passed to the layout
-      *
-      * @return  array
-      *
-      * @since   4.0.0
-      */
+     * Get the data that is going to be passed to the layout
+     *
+     * @return  array
+     *
+     * @since   4.0.0
+     */
     public function getLayoutData()
     {
         // Get the basic field data
@@ -160,21 +160,21 @@ class JgcategoryField extends FormField
         }
 
         $extraData = [
-            'categoryName' => $name,
-            'category'     => $this->getCat(),
-            'excluded'     => $this->getExcluded(),
+          'categoryName' => $name,
+          'category'     => $this->getCat(),
+          'excluded'     => $this->getExcluded(),
         ];
 
         return array_merge($data, $extraData);
     }
 
     /**
-      * Allow to override renderer include paths in child fields
-      *
-      * @return  array
-      *
-      * @since   4.0.0
-      */
+     * Allow to override renderer include paths in child fields
+     *
+     * @return  array
+     *
+     * @since   4.0.0
+     */
     protected function getLayoutPaths()
     {
         $renderer = new FileLayout('default');
@@ -190,12 +190,12 @@ class JgcategoryField extends FormField
     }
 
     /**
-      * Method to get the filtering categories (null means no filtering)
-      *
-      * @return  mixed  Array of filtering categories or null.
-      *
-      * @since   4.0.0
-      */
+     * Method to get the filtering categories (null means no filtering)
+     *
+     * @return  mixed  Array of filtering categories or null.
+     *
+     * @since   4.0.0
+     */
     protected function getCat()
     {
         if(isset($this->element['category']))
@@ -205,12 +205,12 @@ class JgcategoryField extends FormField
     }
 
     /**
-      * Method to get the images to exclude from the list of images
-      *
-      * @return  mixed  Array of images to exclude or null to to not exclude them
-      *
-      * @since   4.0.0
-      */
+     * Method to get the images to exclude from the list of images
+     *
+     * @return  mixed  Array of images to exclude or null to to not exclude them
+     *
+     * @since   4.0.0
+     */
     protected function getExcluded()
     {
         if(isset($this->element['exclude']))

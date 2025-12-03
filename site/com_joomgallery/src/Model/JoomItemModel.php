@@ -1,12 +1,12 @@
 <?php
 /**
-  * *********************************************************************************
-  *    @package    com_joomgallery                                                 **
-  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
-  *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
-  *    @license    GNU General Public License version 3 or later                   **
-  * *********************************************************************************
-  */
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
@@ -21,62 +21,62 @@ use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\Registry\Registry;
 
 /**
-  * Base model class for JoomGallery items
-  *
-  * @package JoomGallery
-  * @since   4.0.0
-  */
+ * Base model class for JoomGallery items
+ *
+ * @package JoomGallery
+ * @since   4.0.0
+ */
 abstract class JoomItemModel extends ItemModel
 {
     /**
-      * Joomla application class
-      *
-      * @access  protected
-      * @var     Joomla\CMS\Application\AdministratorApplication
-      */
+     * Joomla application class
+     *
+     * @access  protected
+     * @var     Joomla\CMS\Application\AdministratorApplication
+     */
     protected $app;
 
     /**
-      * JoomGallery extension class
-      *
-      * @access  protected
-      * @var     Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
-      */
+     * JoomGallery extension class
+     *
+     * @access  protected
+     * @var     Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
+     */
     protected $component;
 
     /**
-      * Item type
-      *
-      * @access  protected
-      * @var     string
-      */
+     * Item type
+     *
+     * @access  protected
+     * @var     string
+     */
     protected $type = 'image';
 
     /**
-      * Item object
-      *
-      * @access  protected
-      * @var     object
-      */
+     * Item object
+     *
+     * @access  protected
+     * @var     object
+     */
     protected $item = null;
 
     /**
-      * JoomGallery access service
-      *
-      * @access  protected
-      * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
-      */
+     * JoomGallery access service
+     *
+     * @access  protected
+     * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+     */
     protected $acl = null;
 
     /**
-      * Constructor
-      *
-      * @param   array                $config   An array of configuration options (name, state, dbo, table_path, ignore_request).
-      * @param   MVCFactoryInterface  $factory  The factory.
-      *
-      * @since   4.0.0
-      * @throws  \Exception
-      */
+     * Constructor
+     *
+     * @param   array                $config   An array of configuration options (name, state, dbo, table_path, ignore_request).
+     * @param   MVCFactoryInterface  $factory  The factory.
+     *
+     * @since   4.0.0
+     * @throws  \Exception
+     */
     public function __construct($config = [], $factory = null)
     {
         parent::__construct($config, $factory);
@@ -86,32 +86,32 @@ abstract class JoomItemModel extends ItemModel
     }
 
     /**
-      * Method to get parameters from model state.
-      *
-      * @return  Registry[]   List of parameters
-      * @since   4.0.0
-      */
+     * Method to get parameters from model state.
+     *
+     * @return  Registry[]   List of parameters
+     * @since   4.0.0
+     */
     public function getParams(): array
     {
         $params = [
-            'component' => $this->getState('parameters.component'),
-            'menu'               => $this->getState('parameters.menu'),
-            'configs'            => $this->getState('parameters.configs'),
+          'component' => $this->getState('parameters.component'),
+          'menu'               => $this->getState('parameters.menu'),
+          'configs'            => $this->getState('parameters.configs'),
         ];
 
         return $params;
     }
 
     /**
-      * Method to override a parameter in the model state
-      *
-      * @param   string  $property  The parameter name.
-      * @param   string  $value     The parameter value.
-      * @param   string  $type      The parameter type. Optional. Default='configs'
-      *
-      * @return  void
-      * @since   4.0.0
-      */
+     * Method to override a parameter in the model state
+     *
+     * @param   string  $property  The parameter name.
+     * @param   string  $value     The parameter value.
+     * @param   string  $type      The parameter type. Optional. Default='configs'
+     *
+     * @return  void
+     * @since   4.0.0
+     */
     public function setParam(string $property, string $value, $type = 'configs')
     {
         // Get params
@@ -126,11 +126,11 @@ abstract class JoomItemModel extends ItemModel
 
 
   /**
-    * Method to get the access service class.
-    *
-    * @return  AccessInterface   Object on success, false on failure.
-    * @since   4.0.0
-    */
+   * Method to get the access service class.
+   *
+   * @return  AccessInterface   Object on success, false on failure.
+   * @since   4.0.0
+   */
   public function getAcl(): AccessInterface
   {
       // Create access service
@@ -144,28 +144,28 @@ abstract class JoomItemModel extends ItemModel
   }
 
     /**
-      * Get an instance of Table class
-      *
-      * @param   string  $type     Name of the Table class to get an instance of.
-      * @param   string  $prefix   Prefix for the table class name. Optional.
-      * @param   array   $config   Array of configuration values for the Table object. Optional.
-      *
-      * @return  Table|bool Table if success, false on failure.
-      */
+     * Get an instance of Table class
+     *
+     * @param   string  $type     Name of the Table class to get an instance of.
+     * @param   string  $prefix   Prefix for the table class name. Optional.
+     * @param   array   $config   Array of configuration values for the Table object. Optional.
+     *
+     * @return  Table|bool Table if success, false on failure.
+     */
     public function getTable($type = 'Image', $prefix = 'Administrator', $config = [])
     {
         return parent::getTable($this->type, $prefix, $config);
     }
 
     /**
-      * Method to check in an item.
-      *
-      * @param   integer $id The id of the row to check out.
-      *
-      * @return  boolean True on success, false on failure.
-      *
-      * @since   4.0.0
-      */
+     * Method to check in an item.
+     *
+     * @param   integer $id The id of the row to check out.
+     *
+     * @return  boolean True on success, false on failure.
+     *
+     * @since   4.0.0
+     */
     public function checkin($id = null)
     {
         // Get the id.
@@ -190,14 +190,14 @@ abstract class JoomItemModel extends ItemModel
     }
 
     /**
-      * Method to check out an item for editing.
-      *
-      * @param   integer $id The id of the row to check out.
-      *
-      * @return  boolean True on success, false on failure.
-      *
-      * @since   4.0.0
-      */
+     * Method to check out an item for editing.
+     *
+     * @param   integer $id The id of the row to check out.
+     *
+     * @return  boolean True on success, false on failure.
+     *
+     * @since   4.0.0
+     */
     public function checkout($id = null)
     {
         // Get the user id.
@@ -227,13 +227,13 @@ abstract class JoomItemModel extends ItemModel
 
 
     /**
-      * Method to load component specific parameters into model state.
-      *
-      * @param   int   $id   ID of the content if needed (default: 0)
-      *
-      * @return  void
-      * @since   4.0.0
-      */
+     * Method to load component specific parameters into model state.
+     *
+     * @param   int   $id   ID of the content if needed (default: 0)
+     *
+     * @return  void
+     * @since   4.0.0
+     */
     protected function loadComponentParams(int $id = 0)
     {
         // Load the parameters.

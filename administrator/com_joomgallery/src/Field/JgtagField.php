@@ -124,10 +124,10 @@ class JgtagField extends ListField
       $query = $db->getQuery(true)
         ->select(
             [
-            $db->quoteName('a.id', 'value'),
-            $db->quoteName('a.title', 'text'),
-            $db->quoteName('a.published'),
-            $db->quoteName('a.ordering'),
+              $db->quoteName('a.id', 'value'),
+              $db->quoteName('a.title', 'text'),
+              $db->quoteName('a.published'),
+              $db->quoteName('a.ordering'),
             ]
         )
           ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));

@@ -158,7 +158,7 @@ class ImageList extends AbstractCommand
     // Display the images in a table and set the exit code to 0
     $this->ioStyle->table(
         [
-        'ID', 'Title', 'Published', 'Hidden', 'Created/Owner', 'Created', 'Modified by', 'Modified', 'Category',
+          'ID', 'Title', 'Published', 'Hidden', 'Created/Owner', 'Created', 'Modified by', 'Modified', 'Category',
         ],
         $images
     );

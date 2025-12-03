@@ -1,12 +1,12 @@
 <?php
 /**
-  * *********************************************************************************
-  *    @package    com_joomgallery                                                 **
-  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
-  *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
-  *    @license    GNU General Public License version 3 or later                   **
-  * *********************************************************************************
-  */
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
@@ -17,41 +17,41 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 use Joomla\Registry\Registry;
 
 /**
-  * Methods supporting a list of Image types records.
-  *
-  * @package JoomGallery
-  * @since   4.0.0
-  */
+ * Methods supporting a list of Image types records.
+ *
+ * @package JoomGallery
+ * @since   4.0.0
+ */
 class ImagetypesModel extends JoomListModel
 {
     /**
-      * Item type
-      *
-      * @access  protected
-      * @var     string
-      */
+     * Item type
+     *
+     * @access  protected
+     * @var     string
+     */
     protected $type = 'imagetype';
 
     /**
-      * Constructor
-      *
-      * @param   array  $config  An optional associative array of configuration settings.
-      *
-      * @return  void
-      * @since   4.0.0
-      */
+     * Constructor
+     *
+     * @param   array  $config  An optional associative array of configuration settings.
+     *
+     * @return  void
+     * @since   4.0.0
+     */
     function __construct($config = [])
     {
         parent::__construct($config);
     }
 
     /**
-      * Build an SQL query to load the list data.
-      *
-      * @return  DatabaseQuery
-      *
-      * @since   4.0.0
-      */
+     * Build an SQL query to load the list data.
+     *
+     * @return  DatabaseQuery
+     *
+     * @since   4.0.0
+     */
     protected function getListQuery()
     {
         // Create a new query object.
@@ -69,10 +69,10 @@ class ImagetypesModel extends JoomListModel
     }
 
     /**
-      * Get an array of data items
-      *
-      * @return mixed Array of data items on success, false on failure.
-      */
+     * Get an array of data items
+     *
+     * @return mixed Array of data items on success, false on failure.
+     */
     public function getItems()
     {
         $items = parent::getItems();

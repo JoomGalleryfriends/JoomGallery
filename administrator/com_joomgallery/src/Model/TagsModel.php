@@ -368,8 +368,8 @@ class TagsModel extends JoomListModel
     $query = $db->getQuery(true)
             ->select(
                 [
-                $db->quoteName('a.id', 'value'),
-                $db->quoteName('a.title', 'text'),
+                  $db->quoteName('a.id', 'value'),
+                  $db->quoteName('a.title', 'text'),
                 ]
             )
             ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
@@ -414,11 +414,11 @@ class TagsModel extends JoomListModel
 
     $query->group(
         [
-        $db->quoteName('a.id'),
-        $db->quoteName('a.title'),
-        $db->quoteName('a.ordering'),
-        $db->quoteName('a.published'),
-        $db->quoteName('a.access'),
+          $db->quoteName('a.id'),
+          $db->quoteName('a.title'),
+          $db->quoteName('a.ordering'),
+          $db->quoteName('a.published'),
+          $db->quoteName('a.access'),
         ]
     )
           ->order($db->quoteName('a.ordering') . ' ASC');

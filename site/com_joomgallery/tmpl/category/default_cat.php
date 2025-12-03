@@ -184,13 +184,13 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
         'bootstrap.renderModal',
         'deleteModal',
         [
-                                  'title'      => Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION'),
-                                  'height'     => '50%',
-                                  'width'      => '20%',
-                                  'modalWidth' => '50',
-                                  'bodyHeight' => '100',
-                                  'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=category.remove&id=' . $this->item->id . '&return=' . $returnURL . '&' . Session::getFormToken() . '=1', false, 2) . '" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION') . '</a>',
-                                ],
+          'title'      => Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION'),
+          'height'     => '50%',
+          'width'      => '20%',
+          'modalWidth' => '50',
+          'bodyHeight' => '100',
+          'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=category.remove&id=' . $this->item->id . '&return=' . $returnURL . '&' . Session::getFormToken() . '=1', false, 2) . '" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION') . '</a>',
+        ],
         Text::_('COM_JOOMGALLERY_COMMON_ALERT_SURE_DELETE_SELECTED_ITEM')
     );
       ?>
@@ -240,8 +240,8 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
         echo LayoutHelper::render(
             'joomla.searchtools.default',
             [
-            'view'    => $this->item->images,
-            'options' => ['showSelector' => false, 'filterButton' => false, 'showNoResults' => false, 'showSearch' => false, 'showList' => false, 'barClass' => 'flex-end'],
+              'view'    => $this->item->images,
+              'options' => ['showSelector' => false, 'filterButton' => false, 'showNoResults' => false, 'showSearch' => false, 'showList' => false, 'barClass' => 'flex-end'],
             ]
         );
         }

@@ -1,12 +1,12 @@
 <?php
 /**
-  * *********************************************************************************
-  *    @package    com_joomgallery                                                 **
-  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
-  *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
-  *    @license    GNU General Public License version 3 or later                   **
-  * *********************************************************************************
-  */
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
@@ -17,32 +17,32 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
 
 /**
-  * Model to handle an image form.
-  *
-  * @package JoomGallery
-  * @since   4.0.0
-  */
+ * Model to handle an image form.
+ *
+ * @package JoomGallery
+ * @since   4.0.0
+ */
 class ImageformModel extends AdminImageModel
 {
     /**
-      * Item type
-      *
-      * @access  protected
-      * @var     string
-      */
+     * Item type
+     *
+     * @access  protected
+     * @var     string
+     */
     protected $type = 'image';
 
     /**
-      * Method to auto-populate the model state.
-      *
-      * Note. Calling getState in this method will result in recursion.
-      *
-      * @return  void
-      *
-      * @since   4.0.0
-      *
-      * @throws  \Exception
-      */
+     * Method to auto-populate the model state.
+     *
+     * Note. Calling getState in this method will result in recursion.
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     *
+     * @throws  \Exception
+     */
     protected function populateState()
     {
         // Load state from the request userState on edit or from the passed variable on default
@@ -71,31 +71,31 @@ class ImageformModel extends AdminImageModel
     }
 
     /**
-      * Method to get an object.
-      *
-      * @param   integer $id The id of the object to get.
-      *
-      * @return  Object|boolean Object on success, false on failure.
-      *
-      * @throws  \Exception
-      */
+     * Method to get an object.
+     *
+     * @param   integer $id The id of the object to get.
+     *
+     * @return  Object|boolean Object on success, false on failure.
+     *
+     * @throws  \Exception
+     */
     public function getItem($id = null)
     {
         return parent::getItem($id);
     }
 
     /**
-      * Method to get the profile form.
-      *
-      * The base form is loaded from XML
-      *
-      * @param   array   $data     An optional array of data for the form to interogate.
-      * @param   boolean $loadData True if the form is to load its own data (default case), false if not.
-      *
-      * @return  Form    A Form object on success, false on failure
-      *
-      * @since   4.0.0
-      */
+     * Method to get the profile form.
+     *
+     * The base form is loaded from XML
+     *
+     * @param   array   $data     An optional array of data for the form to interogate.
+     * @param   boolean $loadData True if the form is to load its own data (default case), false if not.
+     *
+     * @return  Form    A Form object on success, false on failure
+     *
+     * @since   4.0.0
+     */
     public function getForm($data = [], $loadData = true)
     {
         // Get the form.
@@ -110,24 +110,24 @@ class ImageformModel extends AdminImageModel
     }
 
     /**
-      * Method to get the data that should be injected in the form.
-      *
-      * @return  array  The default data is an empty array.
-      *
-      * @since   4.0.0
-      */
+     * Method to get the data that should be injected in the form.
+     *
+     * @return  array  The default data is an empty array.
+     *
+     * @since   4.0.0
+     */
     protected function loadFormData()
     {
         return parent::loadFormData();
     }
 
     /**
-      * Get the return URL.
-      *
-      * @return  string  The return URL.
-      *
-      * @since   4.0.0
-      */
+     * Get the return URL.
+     *
+     * @return  string  The return URL.
+     *
+     * @since   4.0.0
+     */
     public function getReturnPage()
     {
         return base64_encode($this->getState('return_page', ''));
