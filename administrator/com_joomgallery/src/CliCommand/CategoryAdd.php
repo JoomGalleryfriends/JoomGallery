@@ -409,4 +409,4 @@ class CategoryAdd extends AbstractCommand
 
     return $db->loadResult();
   }
-} // class
+}
