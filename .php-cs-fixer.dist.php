@@ -85,7 +85,7 @@ return (new PhpCsFixer\Config())
     'binary_operator_spaces' => ['operators' => ['=>' => 'align_single_space_minimal', '=' => 'align_single_space_minimal', '??=' => 'align_single_space_minimal']],
     'blank_line_before_statement' => ['statements' => ['return', 'if', 'for', 'foreach', 'while']],
     'no_break_comment' => ['comment_text' => "'break' intentionally omitted"],
-    'braces_position' => ['control_structures_opening_brace' => 'next_line_unless_newline_at_signature_end'],
+    'braces_position' => false,
     'control_structure_continuation_position' => ['position' => 'next_line'],
     'type_declaration_spaces' => ['elements' => ['function', 'property']],
     'method_argument_space' => ['on_multiline' => 'ignore'],
