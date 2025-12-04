@@ -40,7 +40,7 @@ var callback = function() {
     }
 
     // Get the grid container
-    const grid = document.querySelector('.' + settings.gridclass);
+    const grid = document.getElementById(settings.lightbox_params.container);
 
     // Initialize lightGallery
     if(settings.lightbox) {
@@ -71,7 +71,7 @@ var callback = function() {
         },
         licenseKey: '1111-1111-111-1111',
       });
-      
+
       if(lightbox && settings.zoom === false) {
         window.joomGrid[itemid].lightbox_obj.outer.on('click', (e) => {
           const $item = window.joomGrid[itemid].lightbox_obj.outer.find('.lg-current .lg-image');

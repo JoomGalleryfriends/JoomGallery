@@ -1,15 +1,18 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use InvalidArgumentException;
 use Joomla\CMS\Factory;
@@ -87,11 +90,11 @@ class Category extends AbstractCommand
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'category ID');
     $this->addOption('max_line_length', null, InputOption::VALUE_OPTIONAL, 'trim lenght of variable for item keeps in one line');
 
-    $help = "<info>%command.name%</info> list variables of one category
+    $help = '<info>%command.name%</info> list variables of one category
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the category with the <info>--id<info> option. Otherwise, it will be requested
     * You may restrict the value string length using the <info>--max_line_length</info> option. A result line that is too long will confuse the output lines
-  ";
+  ';
     $this->setDescription(Text::_('List all variables of a category'));
     $this->setHelp($help);
   }
@@ -115,7 +118,7 @@ class Category extends AbstractCommand
     $categoryId      = $input->getOption('id') ?? '';
     $max_line_length = $input->getOption('max_line_length') ?? null;
 
-    if (empty ($categoryId))
+    if(empty($categoryId))
     {
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid (empty) !");
 
@@ -125,7 +128,7 @@ class Category extends AbstractCommand
     $categoryAssoc = $this->getItemAssocFromDB($categoryId);
 
     // If no categories are found show a warning and set the exit code to 1.
-    if (empty($categoryAssoc))
+    if(empty($categoryAssoc))
     {
       $this->ioStyle->error("The category id '" . $categoryId . "' is invalid, No category found matching your criteria!");
 
@@ -135,9 +138,9 @@ class Category extends AbstractCommand
     $strCategoryAssoc = $this->assoc2DefinitionList($categoryAssoc, $max_line_length);
 
     // ToDo: Use horizontal table again ;-)
-    foreach ($strCategoryAssoc as $value)
+    foreach($strCategoryAssoc as $value)
     {
-      if (!\is_array($value))
+      if(!\is_array($value))
       {
         throw new InvalidArgumentException('Value should be an array, string, or an instance of TableSeparator.');
       }
@@ -187,18 +190,16 @@ class Category extends AbstractCommand
   {
     $items = [];
 
-    if (empty($max_len))
+    if(empty($max_len))
     {
       $max_len = 70;
     }
 
-    foreach ($categoryAssoc as $key => $value)
+    foreach($categoryAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }
 
     return $items;
   }
-
 }
-

@@ -1,24 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Router;
 
 // No direct access
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Menu\AbstractMenu;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\CMS\Component\Router\RouterInterface;
-use \Joomla\CMS\Categories\CategoryFactoryInterface;
-use \Joomla\CMS\Application\CMSApplicationInterface;
-use \Joomla\CMS\Component\Router\RouterFactoryInterface;
-use \Joomla\CMS\Component\Router\RouterFactory as RouterFactoryBase;
+use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomla\CMS\Categories\CategoryFactoryInterface;
+use Joomla\CMS\Component\Router\RouterFactory as RouterFactoryBase;
+use Joomla\CMS\Component\Router\RouterFactoryInterface;
+use Joomla\CMS\Component\Router\RouterInterface;
+use Joomla\CMS\Menu\AbstractMenu;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Default router factory.
@@ -83,7 +86,7 @@ class RouterFactory extends RouterFactoryBase implements RouterFactoryInterface
     public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface
     {
         $routerName = $application->bootComponent('com_joomgallery')->getConfig()->get('jg_router', 'DefaultRouter');
-        $className  = 'Joomgallery\\Component\\Joomgallery\\Site\\Service\\' . \ucfirst($routerName);
+        $className  = 'Joomgallery\\Component\\Joomgallery\\Site\\Service\\' . ucfirst($routerName);
 
         if(!class_exists($className))
         {

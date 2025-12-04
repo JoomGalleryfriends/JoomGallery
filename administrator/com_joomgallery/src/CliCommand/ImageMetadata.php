@@ -1,15 +1,18 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -84,10 +87,10 @@ class ImageMetadata extends AbstractCommand
   {
     $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'image ID');
 
-    $help = "<info>%command.name%</info> display parameters of one image
+    $help = '<info>%command.name%</info> display parameters of one image
   Usage: <info>php %command.full_name%</info>
     * You must specify an ID of the image with the <info>--id<info> option. Otherwise, it will be requested
-  ";
+  ';
     $this->setDescription(Text::_('List all variables in imgmetadata field of selected joomgallery configuration'));
     $this->setHelp($help);
   }
@@ -110,7 +113,7 @@ class ImageMetadata extends AbstractCommand
 
     $imageId = $input->getOption('id') ?? '';
 
-    if (empty ($imageId))
+    if(empty($imageId))
     {
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid (empty) !");
 
@@ -120,9 +123,8 @@ class ImageMetadata extends AbstractCommand
     $jsonParams = $this->getParamsAsJsonFromDB($imageId);
 
     // If no params returned  show a warning and set the exit code to 1.
-    if (empty ($jsonParams))
+    if(empty($jsonParams))
     {
-
       $this->ioStyle->error("The image id '" . $imageId . "' is invalid or parameters are empty !");
 
       return Command::FAILURE;
@@ -175,18 +177,16 @@ class ImageMetadata extends AbstractCommand
   {
     $items = [];
 
-    if (empty($max_len))
+    if(empty($max_len))
     {
       $max_len = 70;
     }
 
-    foreach ($imageAssoc as $key => $value)
+    foreach($imageAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }
 
     return $items;
   }
-
 }
-

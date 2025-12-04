@@ -1,26 +1,29 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
-defined('_JEXEC') or die();
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\CMS\Log\Log;
-use \Joomla\CMS\Table\Table;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Filesystem\File;
-use \Joomla\CMS\Filesystem\Folder;
-use \Joomla\CMS\Installer\Installer;
-use \Joomla\CMS\Installer\InstallerScript;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\CMS\Language\LanguageFactoryInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Installer\InstallerScript;
+use Joomla\CMS\Language\LanguageFactoryInterface;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 
 /**
  * Install method
@@ -31,26 +34,26 @@ use \Joomla\CMS\Language\LanguageFactoryInterface;
  */
 class com_joomgalleryInstallerScript extends InstallerScript
 {
-	/**
-	 * The title of the component (printed on installation and uninstallation messages)
-	 *
-	 * @var string
-	 */
-	protected $extension = 'JoomGallery';
+  /**
+   * The title of the component (printed on installation and uninstallation messages)
+   *
+   * @var string
+   */
+  protected $extension = 'JoomGallery';
 
   /**
-	 * List of incompatible Joomla versions
-	 *
-	 * @var array
-	 */
-	protected $incompatible = array('4.4.0', '4.4.1', '5.0.0', '5.0.1');
+   * List of incompatible Joomla versions
+   *
+   * @var array
+   */
+  protected $incompatible = ['4.4.0', '4.4.1', '5.0.0', '5.0.1'];
 
   /**
-	 * Minimum PHP version required to install the extension
-	 *
-	 * @var  string
-	 */
-	protected $minPhp = '8.0.0';
+   * Minimum PHP version required to install the extension
+   *
+   * @var  string
+   */
+  protected $minPhp = '8.0.0';
 
   /**
    * Release code of the currently installed version
@@ -88,17 +91,24 @@ class com_joomgalleryInstallerScript extends InstallerScript
    */
   protected $fromOldJG = false;
 
+  /**
+   * Storage array to store whatever needed during the script runtime
+   *
+   * @var  array
+   */
+  protected $storage = [];
 
-	/**
-	 * Method called before install/update the component. Note: This method won't be called during uninstall process.
-	 *
-	 * @param   string   $type     Type of process [install | update | uninstall]
-	 * @param   mixed    $parent   Object who called this method
-	 *
-	 * @return  boolean  True if the process should continue, false otherwise
-	 */
-	public function preflight($type, $parent)
-	{
+
+  /**
+   * Method called before install/update the component. Note: This method won't be called during uninstall process.
+   *
+   * @param   string   $type     Type of process [install | update | uninstall]
+   * @param   mixed    $parent   Object who called this method
+   *
+   * @return  boolean  True if the process should continue, false otherwise
+   */
+  public function preflight($type, $parent)
+  {
     // Only proceed if Joomla version is correct
     if(version_compare(JVERSION, '4.4.0', '<'))
     {
@@ -110,7 +120,8 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     // Only proceed if it is not an incompatible Joomla version
     $jversion = explode('-', JVERSION);
-    if(in_array($jversion[0], $this->incompatible))
+
+    if(\in_array($jversion[0], $this->incompatible))
     {
       Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
       Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 8, 'joomgallery');
@@ -122,7 +133,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     if(version_compare(PHP_VERSION, $this->minPhp, '<='))
     {
       Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery'); 
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery');
 
       return false;
     }
@@ -133,31 +144,58 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         // use new uploaded defines.php
         $temp_dir = $parent->getParent()->getPath('source');
-        $defines  = $temp_dir.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'defines.php';
+        $defines  = $temp_dir . DIRECTORY_SEPARATOR . 'administrator' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'defines.php';
       }
       else
       {
         // use old defines.php
-        $defines = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'defines.php';
+        $defines = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'defines.php';
       }
-      
+
       require_once $defines;
     }
 
-		$result = parent::preflight($type, $parent);
+    $result = parent::preflight($type, $parent);
 
-		if (!$result)
-		{
-			return $result;
-		}
+    if(!$result)
+    {
+      return $result;
+    }
+
+    // Deactivate plugins that might interrupt install
+    $problemPlugins = ['versionable' => ['jversion' => '6.0.0', 'name' => 'plg_behaviour_versionable', 'type' => 'plugin', 'element' => 'versionable', 'folder' => 'behaviour']];
+
+    foreach($problemPlugins as $plugin)
+    {
+      if(version_compare($jversion[0], $plugin['jversion'], '>='))
+      {
+        if(!key_exists('problemPlugins', $this->storage))
+        {
+          $this->storage['problemPlugins'] = [];
+        }
+
+        if($id = $this->getExtensionID($plugin['name'], $plugin['type'], $plugin['element'], $plugin['folder'], false))
+        {
+          $language = Factory::getApplication()->getLanguage();
+          $language->load($plugin['name'], JPATH_ADMINISTRATOR);
+
+          Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_DEACTIVATE_PLUGIN', $plugin['folder'], Text::_(strtoupper($plugin['name']))), 'error');
+
+          //array_push($this->storage['problemPlugins'], $id);
+          //$this->deactivateExtension($id);
+
+          return false;
+        }
+      }
+    }
 
     if($type == 'update')
     {
       // save release code information
       //-------------------------------
-      if(File::exists(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml'))
+      if(is_file(JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'joomgallery.xml'))
       {
-        $xml = simplexml_load_file(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'joomgallery.xml');
+        $xml            = simplexml_load_file(JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'joomgallery.xml');
         $this->act_code = $xml->version;
       }
       else
@@ -174,40 +212,44 @@ class com_joomgalleryInstallerScript extends InstallerScript
     {
       // rename old JoomGallery tables (JGv1-3)
       $jgtables = $this->detectJGtables();
+
       if($jgtables)
       {
         $db = Factory::getContainer()->get(DatabaseInterface::class);
+
         foreach($jgtables as $oldTable)
         {
           if(strpos($oldTable, '_old') === false)
           {
             // Add '_old' to table names if not already there
-            $db->renameTable($oldTable, $oldTable.'_old');
-          }          
+            $db->renameTable($oldTable, $oldTable . '_old');
+          }
         }
       }
 
       // copy old XML file (JGv1-3) to temp folder
-      $xml_path   = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR;
+      $xml_path   = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR;
       $tmp_folder = Factory::getApplication()->get('tmp_path');
-      if(File::exists($xml_path.'joomgallery.xml'))
+
+      if(is_file($xml_path . 'joomgallery.xml'))
       {
-        File::copy($xml_path.'joomgallery.xml', $tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml');
+        File::copy($xml_path . 'joomgallery.xml', $tmp_folder . DIRECTORY_SEPARATOR . 'joomgallery_old.xml');
       }
 
       // remove old JoomGallery files and folders
       foreach($this->detectJGfolders() as $folder)
       {
-        if(Folder::exists($folder))
+        if(is_dir(Path::clean($folder)))
         {
-          Folder::delete($folder);
+          Folder::delete(Path::clean($folder));
         }
       }
+
       foreach($this->detectJGfiles() as $file)
       {
-        if(File::exists($file))
+        if(is_file(Path::clean($file)))
         {
-          File::delete($file);
+          File::delete(Path::clean($file));
         }
       }
 
@@ -227,29 +269,29 @@ class com_joomgalleryInstallerScript extends InstallerScript
         // remove records in #__content_types table
         $this->removeContentTypes();
         // remove JG3 modules
-        $this->uninstallModules(array('mod_joomgithub'));
+        $this->uninstallModules(['mod_joomgithub']);
       }
     }
 
-		// logic for preflight before install
-		return $result;
-	}
+      // logic for preflight before install
+      return $result;
+  }
 
-	/**
-	 * Method to install the component
-	 *
-	 * @param   mixed $parent Object who called this method.
-	 *
-	 * @return void
-	 *
-	 * @since 0.2b
-	 */
-	public function install($parent)
-	{
+  /**
+   * Method to install the component
+   *
+   * @param   mixed $parent Object who called this method.
+   *
+   * @return void
+   *
+   * @since 0.2b
+   */
+  public function install($parent)
+  {
     $app = Factory::getApplication();
 
-		$this->installPlugins($parent);
-		$this->installModules($parent);
+    $this->installPlugins($parent);
+    $this->installModules($parent);
 
     $this->copyImgFiles();
 
@@ -262,27 +304,29 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     // Create news feed module
     $subdomain = 'de';
-    $language = $app->getLanguage();
+    $language  = $app->getLanguage();
+
     if(strpos($language->getTag(), 'de-') === false)
     {
       $subdomain = 'en';
     }
-    $feed_params = array('cache'=>1,
-                         'cache_time'=>15,
-                         'moduleclass_sfx'=>'',
-                         'rssurl'=>'https://www.joomgalleryfriends.net/'.$subdomain.'/?format=feed&amp;type=rss',
-                         'rssrtl'=>0,
-                         'rssdate'=>0,
-                         'rssdesc'=>0,
-                         'rssimage'=>1,
-                         'rssitems'=>3,
-                         'rssitemdesc'=>1,
-                         'word_count'=>300);
+    $feed_params = [
+      'cache'           => 1,
+      'cache_time'      => 15,
+      'moduleclass_sfx' => '',
+      'rssurl'          => 'https://www.joomgalleryfriends.net/' . $subdomain . '/?format=feed&amp;type=rss',
+      'rssrtl'          => 0,
+      'rssdate'         => 0,
+      'rssdesc'         => 0,
+      'rssimage'        => 1,
+      'rssitems'        => 3,
+      'rssitemdesc'     => 1,
+      'word_count'      => 300];
     $feed_params = json_encode($feed_params);
     $this->createModule('JoomGallery News', 'joom_cpanel', 'mod_feed', 1, $app->getCfg('access'), 1, $feed_params, 1, '*');
 
-    $act_version = explode('.',$this->act_code);
-    $new_version = explode('.',$this->new_code);
+    $act_version = explode('.', $this->act_code);
+    $new_version = explode('.', $this->new_code);
 
     $install_message = $this->getInstallerMSG($act_version, $new_version, 'install');
     ?>
@@ -296,24 +340,24 @@ class com_joomgalleryInstallerScript extends InstallerScript
         <p>
           <a title="<?php echo Text::_('JLIB_HTML_START'); ?>" class="btn btn-success btn-lg" onclick="location.href='index.php?option=com_joomgallery&amp;view=control'; return false;" href="#"><?php echo Text::_('JLIB_HTML_START'); ?></a>
         </p>
-        <?php if ($install_message != '') : ?>
+        <?php if($install_message != '') : ?>
           <div><?php echo $install_message;?></div>
         <?php endif; ?>
       </div>
     </div>
 
     <?php
-	}
+  }
 
   /**
-	 * Method to update the component
-	 *
-	 * @param   mixed $parent Object who called this method.
-	 *
-	 * @return void
-	 */
-	public function update($parent)
-	{
+   * Method to update the component
+   *
+   * @param   mixed $parent Object who called this method.
+   *
+   * @return void
+   */
+  public function update($parent)
+  {
     if(preg_match('/^([1-3]\.)(\d+\.)(\d+)*(.+)/', $this->act_code))
     {
       // We update from an old version (JG 1-3)
@@ -325,20 +369,22 @@ class com_joomgalleryInstallerScript extends InstallerScript
     {
       // We update from a new version (JG 4.x)
       $this->installPlugins($parent);
-		  $this->installModules($parent);
+      $this->installModules($parent);
     }
 
-    $act_version = explode('.',$this->act_code);
-    $new_version = explode('.',$this->new_code);
+    $act_version = explode('.', $this->act_code);
+    $new_version = explode('.', $this->new_code);
 
     $update_message = $this->getInstallerMSG($act_version, $new_version, 'update');
 
-    $popupOptions = ['popupType'  => 'ajax',
-                     'textHeader' => Text::sprintf('COM_JOOMGALLERY_CHANGELOG_VERSION', $parent->getManifest()->version),
-                     'src'        => Route::_('index.php?option=com_installer&task=manage.loadChangelogRaw&eid=' . $parent->extension->extension_id . '&source=manage&format=raw', false),
-                     'width'      => '800px',
-                     'height'     => 'fit-content',
-                    ];
+    $popupOptions = [
+      'popupType'  => 'ajax',
+      'textHeader' => Text::sprintf('COM_JOOMGALLERY_CHANGELOG_VERSION', $parent->getManifest()->version),
+      'src'        => Route::_('index.php?option=com_installer&task=manage.loadChangelogRaw&eid=' . $parent->extension->extension_id . '&source=manage&format=raw', false),
+      'width'      => '800px',
+      'height'     => 'fit-content',
+    ];
+
     if(version_compare(JVERSION, '5.1.0', '>'))
     {
       /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
@@ -359,31 +405,31 @@ class com_joomgalleryInstallerScript extends InstallerScript
         <p>
           <a title="<?php echo Text::_('JLIB_HTML_START'); ?>" class="btn btn-success btn-lg" onclick="location.href='index.php?option=com_joomgallery&amp;view=control'; return false;" href="#"><?php echo Text::_('JLIB_HTML_START'); ?></a>
         </p>
-        <?php if ($update_message != '') : ?>
+        <?php if($update_message != '') : ?>
           <div><?php echo $update_message;?></div>
         <?php endif; ?>
       </div>
     </div>
     <?php
-	}
+  }
 
-	/**
-	 * Method to uninstall the component
-	 *
-	 * @param   mixed $parent Object who called this method.
-	 *
-	 * @return void
-	 */
-	public function uninstall($parent)
-	{
-    $app = Factory::getApplication();
-    $act_version = explode('.',$this->act_code);
-    $new_version = explode('.',$this->new_code);
+  /**
+   * Method to uninstall the component
+   *
+   * @param   mixed $parent Object who called this method.
+   *
+   * @return void
+   */
+  public function uninstall($parent)
+  {
+    $app         = Factory::getApplication();
+    $act_version = explode('.', $this->act_code);
+    $new_version = explode('.', $this->new_code);
 
     $uninstall_message = $this->getInstallerMSG($act_version, $new_version, 'uninstall');
 
-		$this->uninstallPlugins($parent);
-		$this->uninstallModules($parent);
+    $this->uninstallPlugins($parent);
+    $this->uninstallModules($parent);
 
     // Delete administrator module JoomGallery News
     $db    = Factory::getContainer()->get(DatabaseInterface::class);
@@ -393,17 +439,17 @@ class com_joomgalleryInstallerScript extends InstallerScript
       ->clear()
       ->delete('#__modules')
       ->where(
-        array(
+        [
           'position = ' . $db->quote('joom_cpanel'),
-          'module = ' . $db->quote('mod_feed')
-        )
-      );
+          'module = ' . $db->quote('mod_feed'),
+        ]
+    );
 
     $db->setQuery($query);
     $db->execute();
 
     // Delete directories
-    if(!Folder::delete(JPATH_ROOT.'/images/joomgallery'))
+    if(!Folder::delete(JPATH_ROOT . '/images/joomgallery'))
     {
       $app->enqueueMessage(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_DELETE_CATEGORY', '"/images/joomgallery"'), 'error');
       Log::add(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_DELETE_CATEGORY', '"/images/joomgallery"'), 8, 'joomgallery');
@@ -413,20 +459,18 @@ class com_joomgalleryInstallerScript extends InstallerScript
     <div class="alert alert-light">
       <h3><?php echo Text::_('COM_JOOMGALLERY_SUCCESS_UNINSTALL'); ?></h3>
       <p><?php echo Text::_('COM_JOOMGALLERY_SUCCESS_UNINSTALL_TXT'); ?></p>
-
-      <?php if ($uninstall_message != '') : ?>
+      <?php if($uninstall_message != '') : ?>
         <div><?php echo $uninstall_message;?></div>
       <?php endif; ?>
     </div>
-
     <?php
-	}
+  }
 
   /**
    * Runs right after any installation action is performed on the component.
    *
    * @param   string $type    Type of process [install | update | uninstall]
-	 * @param   mixed  $parent  Object who called this method
+   * @param   mixed  $parent  Object who called this method
    *
    * @return void
    */
@@ -439,11 +483,12 @@ class com_joomgalleryInstallerScript extends InstallerScript
       if($this->fromOldJG)
       {
         // copy old XML file (JGv1-3) back from temp folder
-        $xml_path   = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR;
+        $xml_path   = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR;
         $tmp_folder = Factory::getApplication()->get('tmp_path');
-        if(File::exists($tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml'))
+
+        if(is_file($tmp_folder . DIRECTORY_SEPARATOR . 'joomgallery_old.xml'))
         {
-          File::copy($tmp_folder.DIRECTORY_SEPARATOR.'joomgallery_old.xml', $xml_path.'joomgallery_old.xml');
+          File::copy($tmp_folder . DIRECTORY_SEPARATOR . 'joomgallery_old.xml', $xml_path . 'joomgallery_old.xml');
         }
       }
 
@@ -458,12 +503,14 @@ class com_joomgalleryInstallerScript extends InstallerScript
       }
 
       // Create image types
-      $img_types = array( 'original'  => array('path' => '/images/joomgallery/originals', 'alias' => 'orig'),
-                          'detail'    => array('path' => '/images/joomgallery/details', 'alias' => 'det'),
-                          'thumbnail' => array('path' => '/images/joomgallery/thumbnails', 'alias' => 'thumb')
-                        );
+      $img_types = [
+        'original'  => ['path' => '/images/joomgallery/originals', 'alias' => 'orig'],
+        'detail'    => ['path' => '/images/joomgallery/details', 'alias' => 'det'],
+        'thumbnail' => ['path' => '/images/joomgallery/thumbnails', 'alias' => 'thumb'],
+      ];
       $this->count = 0;
-      foreach ($img_types as $key => $type)
+
+      foreach($img_types as $key => $type)
       {
         // Create default Image types records
         if(!$this->addDefaultIMGtype($key, $type['alias'], $type['path']))
@@ -473,7 +520,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
         }
 
         // Create default Image types directories
-        if(!Folder::create(JPATH_ROOT.$type['path'].'/uncategorised'))
+        if(!Folder::create(JPATH_ROOT . $type['path'] . '/uncategorised'))
         {
           $app->enqueueMessage(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', 'Uncategorised'), 'error');
           Log::add(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY'), 8, 'joomgallery');
@@ -497,28 +544,48 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
       // Create default mail templates
       $suc_templates = true;
-      if(!$this->addMailTemplate('newimage', array('user_id', 'user_username', 'user_name', 'img_id', 'img_title', 'cat_id', 'cat_title')))
+
+      if(!$this->addMailTemplate('newimage', ['user_id', 'user_username', 'user_name', 'img_id', 'img_title', 'cat_id', 'cat_title']))
       {
         $suc_templates = false;
       }
+
       if(!$suc_templates)
       {
         $app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_CONFIG', 'error'));
         Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_CONFIG'), 8, 'joomgallery');
       }
     }
+
+    // Re-activate previously deactivated Plugins
+    if(key_exists('problemPlugins', $this->storage))
+    {
+      foreach($this->storage['problemPlugins'] as $plugin_id)
+      {
+        $this->activateExtension($plugin_id);
+      }
+    }
+
+    // remove old JoomGallery sql files
+    foreach($this->detectSQLfiles() as $file)
+    {
+      if(is_file($file))
+      {
+        File::delete($file);
+      }
+    }
   }
 
   /**
-	 * Add a mail template to the ´#__mail_templates´ table
+   * Add a mail template to the ´#__mail_templates´ table
    *
    * @param  string  context_id  Name of the mail template
    * @param  array   tags        List of tags that can be used as variables in this mail template
    * @param  string  language    Language tag to specify the language this template is used for (default='' : all languages)
-   * 
-	 * @return  bool  true on success
-	 */
-	public function addMailTemplate($context_id, $tags, $language='')
+   *
+   * @return  bool  true on success
+   */
+  public function addMailTemplate($context_id, $tags, $language = '')
   {
     $db = Factory::getContainer()->get(DatabaseInterface::class);
 
@@ -535,32 +602,35 @@ class com_joomgalleryInstallerScript extends InstallerScript
     }
 
     // add standard tags
-    $params = new stdClass();
-    $params->tags = array('sitename', 'siteurl');
+    $params       = new stdClass();
+    $params->tags = ['sitename', 'siteurl'];
 
-    // add provided tags    
-    if(is_array($tags) && count($tags) > 0)
+    // add provided tags
+    if(\is_array($tags) && \count($tags) > 0)
     {
       $params->tags = array_merge($params->tags, $tags);
     }
 
-    $data = array();
-    $data["id"] = null;
-    $data['template_id'] = 'com_joomgallery.'.strtolower($context_id);
-    $data['extension'] = 'com_joomgallery';
-    $data['language'] = $language;
-    $data['subject'] = 'COM_JOOMGALLERY_MAIL_'.strtoupper($context_id).'_SUBJECT';
-    $data['body'] = 'COM_JOOMGALLERY_MAIL_'.strtoupper($context_id).'_BODY';
-    $data['params'] = json_encode($params);
+    $data                = [];
+    $data['id']          = null;
+    $data['template_id'] = 'com_joomgallery.' . strtolower($context_id);
+    $data['extension']   = 'com_joomgallery';
+    $data['language']    = $language;
+    $data['subject']     = 'COM_JOOMGALLERY_MAIL_' . strtoupper($context_id) . '_SUBJECT';
+    $data['body']        = 'COM_JOOMGALLERY_MAIL_' . strtoupper($context_id) . '_BODY';
+    $data['htmlbody']    = '';
+    $data['attachments'] = '';
+    $data['params']      = json_encode($params);
 
-    if (!$table->bind($data))
+    if(!$table->bind($data))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Error bind mail template'), 'error');
       Log::add(Text::_('Error bind mail template'), 8, 'joomgallery');
 
       return false;
     }
-    if (!$table->store($data))
+
+    if(!$table->store($data))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Error store mail template'), 'error');
       Log::add(Text::_('Error store mail template'), 8, 'joomgallery');
@@ -572,48 +642,48 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
-	 * Add a category to the ´#__joomgallery_categories´ table
+   * Add a category to the ´#__joomgallery_categories´ table
    *
-	 * @return  bool  true on success
-	 */
-	public function addDefaultCategory()
-	{
+   * @return  bool  true on success
+   */
+  public function addDefaultCategory()
+  {
     // Since the joomgallery namespace is not yet loaded, we have to
     // manually add all involved classes and traits to initialize
     // the CategoryTable class
 
     // Load JoomTableTrait
-    $joomtabletrait_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'JoomTableTrait.php';
+    $joomtabletrait_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Table' . DIRECTORY_SEPARATOR . 'JoomTableTrait.php';
     $joomtabletraitClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\JoomTableTrait';
 
     require_once $joomtabletrait_path;
 
     // Load MigrationTableTrait
-    $migrationtabletrait_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'MigrationTableTrait.php';
+    $migrationtabletrait_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Table' . DIRECTORY_SEPARATOR . 'MigrationTableTrait.php';
     $migrationtabletraitClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\MigrationTableTrait';
 
     require_once $migrationtabletrait_path;
 
     // Load MultipleAssetsTableTrait
-    $multipleassetstabletrait_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'Asset'.DIRECTORY_SEPARATOR.'MultipleAssetsTableTrait.php';
+    $multipleassetstabletrait_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Table' . DIRECTORY_SEPARATOR . 'Asset' . DIRECTORY_SEPARATOR . 'MultipleAssetsTableTrait.php';
     $multipleassetstabletraitClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\Asset\\MultipleAssetsTableTrait';
 
     require_once $multipleassetstabletrait_path;
 
     // Load LegacyDatabaseTrait
-    $legacydatabasetrait_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'LegacyDatabaseTrait.php';
+    $legacydatabasetrait_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Table' . DIRECTORY_SEPARATOR . 'LegacyDatabaseTrait.php';
     $legacydatabasetraitClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\LegacyDatabaseTrait';
 
     require_once $legacydatabasetrait_path;
 
     // Load MultipleAssetsTable
-    $multipleassetstable_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'MultipleAssetsTable.php';
+    $multipleassetstable_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Table' . DIRECTORY_SEPARATOR . 'MultipleAssetsTable.php';
     $multipleassetstableClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\MultipleAssetsTable';
 
     require_once $multipleassetstable_path;
 
     // Load CategoryTable
-    $class_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'CategoryTable.php';
+    $class_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Table' . DIRECTORY_SEPARATOR . 'CategoryTable.php';
     $tableClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\CategoryTable';
 
     require_once $class_path;
@@ -621,7 +691,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     if(class_exists($tableClass))
     {
       $db = Factory::getContainer()->get(DatabaseInterface::class);
-      
+
       $tableClass::resetRootId();
       $table = new $tableClass($db, false);
     }
@@ -633,27 +703,30 @@ class com_joomgalleryInstallerScript extends InstallerScript
       return false;
     }
 
-    $data = array();
-    $data["id"] = null;
-    $data["asset_id"] = null;
-    $data["asset_id_image"] = null;
-    $data["parent_id"] = 1;
-    $data["level"] = 1;
-    $data["path"] = "uncategorised";
-    $data["title"] = "Uncategorised";
-    $data["alias"] = "uncategorised";
-    $data["description"] = "";
-    $data["access"] = 1;
-    $data["published"] = 1;
-    $data["thumbnail"] = "0";
-    $data["params"] = '{"allow_download":"-1","allow_comment":"-1","allow_rating":"-1","allow_watermark":"-1","allow_watermark_download":"-1"}';
-    $data["language"] = "*";
-    $data["metadesc"] = "";
-    $data["metakey"] = "";
-    $data["rules"] = "{}";
-    $data["rules-image"] = "{}";
+    $date = Factory::getDate();
 
-    if (!$table->bind($data))
+    $data                   = [];
+    $data['id']             = null;
+    $data['asset_id']       = null;
+    $data['asset_id_image'] = null;
+    $data['parent_id']      = 1;
+    $data['level']          = 1;
+    $data['path']           = 'uncategorised';
+    $data['title']          = 'Uncategorised';
+    $data['alias']          = 'uncategorised';
+    $data['description']    = '';
+    $data['access']         = 1;
+    $data['published']      = 1;
+    $data['thumbnail']      = '0';
+    $data['params']         = '{"allow_download":"-1","allow_comment":"-1","allow_rating":"-1","allow_watermark":"-1","allow_watermark_download":"-1"}';
+    $data['language']       = '*';
+    $data['modified_time']  = $date->toSql();
+    $data['metadesc']       = '';
+    $data['metakey']        = '';
+    $data['rules']          = '{}';
+    $data['rules-image']    = '{}';
+
+    if(!$table->bind($data))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Error bind default category'), 'error');
       Log::add(Text::_('Error bind default category'), 8, 'joomgallery');
@@ -663,7 +736,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     $table->setLocation(1, 'last-child');
 
-    if (!$table->store($data))
+    if(!$table->store($data))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Error store default category'), 'error');
       Log::add(Text::_('Error store default category'), 8, 'joomgallery');
@@ -675,28 +748,28 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
-	 * Add a category to the ´#__joomgallery_configs´ table
+   * Add a category to the ´#__joomgallery_configs´ table
    *
-	 * @return  bool  true on success
-	 */
-	public function addDefaultConfig()
-	{
+   * @return  bool  true on success
+   */
+  public function addDefaultConfig()
+  {
     $db = Factory::getContainer()->get(DatabaseInterface::class);
 
     // Load JoomTableTrait
-    $joomtabletrait_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'JoomTableTrait.php';
+    $joomtabletrait_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Table' . DIRECTORY_SEPARATOR . 'JoomTableTrait.php';
     $joomtabletraitClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\JoomTableTrait';
 
     require_once $joomtabletrait_path;
 
     // Load AssetsTableTrait
-    $assetstabletrait_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'Asset'.DIRECTORY_SEPARATOR.'AssetTableTrait.php';
+    $assetstabletrait_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Table' . DIRECTORY_SEPARATOR . 'Asset' . DIRECTORY_SEPARATOR . 'AssetTableTrait.php';
     $assetstabletraitClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\Asset\\AssetTableTrait';
 
     require_once $assetstabletrait_path;
 
     // Load ConfigTable
-    $class_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Table'.DIRECTORY_SEPARATOR.'ConfigTable.php';
+    $class_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Table' . DIRECTORY_SEPARATOR . 'ConfigTable.php';
     $tableClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Table\\ConfigTable';
 
     require_once $class_path;
@@ -713,37 +786,38 @@ class com_joomgalleryInstallerScript extends InstallerScript
       return false;
     }
 
-    $data = array();
-    $data["id"] = NULL;
-    $data["asset_id"] = NULL;
-    $data["group_id"] = 1;
-    $data["title"] = 'Global Configuration';
-    $data["published"] = 1;
-    $data["ordering"] = 0;
-    $data["checked_out"] = 0;
-    $data["created_by"] = 0;
-    $data["modified_by"] = 0;
-    $data["jg_filesystem"] = 'local-images';
-    $data["jg_wmfile"] = 'images/joomgallery/watermark.png';
-    $data["jg_replaceinfo"] = '{"jg_replaceinfo0":{"target":"date","source":"EXIF-36867"}}';
-    $data["jg_staticprocessing"] = '{}';
-    $data["jg_dynamicprocessing"] = '{"jg_dynamicprocessing0":{"jg_imgtype":"0","jg_imgtypename":"original","jg_imgtyperesize":"0","jg_imgtypewidth":"2000","jg_imgtypeheight":"2000","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"1","jg_imgtypesharpen":"0","jg_imgtypequality":100,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":{"jg_watermarkpos":"9","jg_watermarkzoom":"0","jg_watermarksize":15,"jg_watermarkopacity":80}},"jg_dynamicprocessing1":{"jg_imgtype":"0","jg_imgtypename":"detail","jg_imgtyperesize":"0","jg_imgtypewidth":"1000","jg_imgtypeheight":"1000","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":80,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":{"jg_watermarkpos":"9","jg_watermarkzoom":"0","jg_watermarksize":15,"jg_watermarkopacity":80}},"jg_dynamicprocessing2":{"jg_imgtype":"0","jg_imgtypename":"thumbnail","jg_imgtyperesize":"0","jg_imgtypewidth":"360","jg_imgtypeheight":"360","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":60,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":{"jg_watermarkpos":"9","jg_watermarkzoom":"0","jg_watermarksize":15,"jg_watermarkopacity":80}}}';
-    $data["jg_imgprocessor"] = 'gd';
-    $data["jg_maxusercat"] = 10;
-    $data["jg_maxuserimage"] = 500;
-    $data["jg_maxuserimage_timespan"] = 0;
-    $data["jg_maxfilesize"] = 2000000;
-    $data["jg_maxuploadfields"] = 3;
-    $data["jg_maxvoting"] = 5;
+    $data                             = [];
+    $data['id']                       = null;
+    $data['asset_id']                 = null;
+    $data['group_id']                 = 1;
+    $data['title']                    = 'Global Configuration';
+    $data['published']                = 1;
+    $data['ordering']                 = 0;
+    $data['checked_out']              = 0;
+    $data['created_by']               = 0;
+    $data['modified_by']              = 0;
+    $data['jg_filesystem']            = 'local-images';
+    $data['jg_wmfile']                = 'images/joomgallery/watermark.png';
+    $data['jg_replaceinfo']           = '{"jg_replaceinfo0":{"target":"date","source":"EXIF-36867"}}';
+    $data['jg_staticprocessing']      = '{}';
+    $data['jg_dynamicprocessing']     = '{"jg_dynamicprocessing0":{"jg_imgtype":"0","jg_imgtypename":"original","jg_imgtyperesize":"0","jg_imgtypewidth":"2000","jg_imgtypeheight":"2000","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"1","jg_imgtypesharpen":"0","jg_imgtypequality":100,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":{"jg_watermarkpos":"9","jg_watermarkzoom":"0","jg_watermarksize":15,"jg_watermarkopacity":80}},"jg_dynamicprocessing1":{"jg_imgtype":"0","jg_imgtypename":"detail","jg_imgtyperesize":"0","jg_imgtypewidth":"1000","jg_imgtypeheight":"1000","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":80,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":{"jg_watermarkpos":"9","jg_watermarkzoom":"0","jg_watermarksize":15,"jg_watermarkopacity":80}},"jg_dynamicprocessing2":{"jg_imgtype":"0","jg_imgtypename":"thumbnail","jg_imgtyperesize":"0","jg_imgtypewidth":"360","jg_imgtypeheight":"360","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":60,"jg_imgtypewatermark":"0","jg_imgtypewtmsettings":{"jg_watermarkpos":"9","jg_watermarkzoom":"0","jg_watermarksize":15,"jg_watermarkopacity":80}}}';
+    $data['jg_imgprocessor']          = 'gd';
+    $data['jg_maxusercat']            = 10;
+    $data['jg_maxuserimage']          = 500;
+    $data['jg_maxuserimage_timespan'] = 0;
+    $data['jg_maxfilesize']           = 2;
+    $data['jg_maxuploadfields']       = 3;
+    $data['jg_maxvoting']             = 5;
 
-    if (!$table->bind($data))
+    if(!$table->bind($data))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Error bind category'), 'error');
       Log::add(Text::_('Error bind category'), 8, 'joomgallery');
 
       return false;
     }
-    if (!$table->store($data))
+
+    if(!$table->store($data))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Error store category'), 'error');
       Log::add(Text::_('Error store category'), 8, 'joomgallery');
@@ -755,14 +829,14 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
-	 * Add the default menu items to the ´#__menu´ table
-   * 
+   * Add the default menu items to the ´#__menu´ table
+   *
    * @param   int   $com_id  Component ID (FK in #__extensions)
    *
-	 * @return  bool  true on success
-	 */
-	public function addDefaultMenuitems($com_id)
-	{
+   * @return  bool  true on success
+   */
+  public function addDefaultMenuitems($com_id)
+  {
     // Create the model
     $com_menu = Factory::getApplication()->bootComponent('com_menus');
     $table    = $com_menu->getMVCFactory()->createTable('menu', 'administrator');
@@ -776,21 +850,23 @@ class com_joomgalleryInstallerScript extends InstallerScript
     }
 
     // Gallery menuitem
-    $gallerydata = array();
-    $gallerydata['id'] = null;
-    $gallerydata['menutype'] = 'mainmenu';
-    $gallerydata['title'] = 'JoomGallery';
-    $gallerydata['alias'] = 'gallery';
-    $gallerydata['language'] = '*';
-    $gallerydata['link'] = 'index.php?option=com_joomgallery&view=gallery';
-    $gallerydata['type'] = 'component';
-    $gallerydata['published'] = 1;
-    $gallerydata['level'] = 1;
+    $gallerydata                 = [];
+    $gallerydata['id']           = null;
+    $gallerydata['menutype']     = 'mainmenu';
+    $gallerydata['title']        = 'JoomGallery';
+    $gallerydata['alias']        = 'gallery';
+    $gallerydata['path']         = 'gallery';
+    $gallerydata['language']     = '*';
+    $gallerydata['link']         = 'index.php?option=com_joomgallery&view=gallery';
+    $gallerydata['type']         = 'component';
+    $gallerydata['published']    = 1;
+    $gallerydata['level']        = 1;
     $gallerydata['component_id'] = $com_id;
-    $gallerydata['access'] = 1;
-    $gallerydata['params'] = '{"menu_show":1}';
+    $gallerydata['access']       = 1;
+    $gallerydata['img']          = 'class:component';
+    $gallerydata['params']       = '{"menu_show":1}';
 
-    if (!$table->bind($gallerydata))
+    if(!$table->bind($gallerydata))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Error bind default menuitem: gallery view'), 'error');
       Log::add(Text::_('Error bind default menuitem: gallery view'), 8, 'joomgallery');
@@ -800,7 +876,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     $table->setLocation(1, 'last-child');
 
-    if (!$table->store($gallerydata))
+    if(!$table->store($gallerydata))
     {
       Factory::getApplication()->enqueueMessage(Text::_('This default menu item could not be created: gallery view'), 'notice');
       Log::add(Text::_('This default menu item could not be created: gallery view'), 8, 'joomgallery');
@@ -816,22 +892,24 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $table->id = null;
 
     // Category menuitem
-    $catdata = array();
-    $catdata['id'] = null;
-    $catdata['menutype'] = 'mainmenu';
-    $catdata['title'] = 'Categories';
-    $catdata['alias'] = 'categories';
-    $catdata['language'] = '*';
-    $catdata['link'] = 'index.php?option=com_joomgallery&view=category&id=1';
-    $catdata['type'] = 'component';
-    $catdata['published'] = 1;
-    $catdata['parent_id'] = $gallery_menu_id;
-    $catdata['level'] = 2;
+    $catdata                 = [];
+    $catdata['id']           = null;
+    $catdata['menutype']     = 'mainmenu';
+    $catdata['title']        = 'Categories';
+    $catdata['alias']        = 'categories';
+    $catdata['path']         = 'gallery/categories';
+    $catdata['language']     = '*';
+    $catdata['link']         = 'index.php?option=com_joomgallery&view=category&id=1';
+    $catdata['type']         = 'component';
+    $catdata['published']    = 1;
+    $catdata['parent_id']    = $gallery_menu_id;
+    $catdata['level']        = 2;
     $catdata['component_id'] = $com_id;
-    $catdata['access'] = 1;
-    $catdata['params'] = '{"menu_show":0}';
+    $catdata['access']       = 1;
+    $catdata['img']          = 'class:component';
+    $catdata['params']       = '{"menu_show":0}';
 
-    if (!$table->bind($catdata))
+    if(!$table->bind($catdata))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Error bind default menuitem: category view'), 'error');
       Log::add(Text::_('Error bind default menuitem: category view'), 8, 'joomgallery');
@@ -841,7 +919,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     $table->setLocation($gallery_menu_id, 'last-child');
 
-    if (!$table->store($catdata))
+    if(!$table->store($catdata))
     {
       Factory::getApplication()->enqueueMessage(Text::_('This default menu item could not be created: category view'), 'notice');
       Log::add(Text::_('This default menu item could not be created: category view'), 8, 'joomgallery');
@@ -854,22 +932,24 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $table->id = null;
 
     // Images menuitem
-    $imgsdata = array();
-    $imgsdata['id'] = null;
-    $imgsdata['menutype'] = 'mainmenu';
-    $imgsdata['title'] = 'Images';
-    $imgsdata['alias'] = 'images';
-    $imgsdata['language'] = '*';
-    $imgsdata['link'] = 'index.php?option=com_joomgallery&view=images';
-    $imgsdata['type'] = 'component';
-    $imgsdata['published'] = 1;
-    $imgsdata['parent_id'] = $gallery_menu_id;
-    $imgsdata['level'] = 2;
+    $imgsdata                 = [];
+    $imgsdata['id']           = null;
+    $imgsdata['menutype']     = 'mainmenu';
+    $imgsdata['title']        = 'Images';
+    $imgsdata['alias']        = 'images';
+    $imgsdata['path']         = 'gallery/images';
+    $imgsdata['language']     = '*';
+    $imgsdata['link']         = 'index.php?option=com_joomgallery&view=images';
+    $imgsdata['type']         = 'component';
+    $imgsdata['published']    = 1;
+    $imgsdata['parent_id']    = $gallery_menu_id;
+    $imgsdata['level']        = 2;
     $imgsdata['component_id'] = $com_id;
-    $imgsdata['access'] = 1;
-    $imgsdata['params'] = '{"menu_show":0}';
+    $imgsdata['access']       = 1;
+    $imgsdata['img']          = 'class:component';
+    $imgsdata['params']       = '{"menu_show":0}';
 
-    if (!$table->bind($imgsdata))
+    if(!$table->bind($imgsdata))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Error bind default menuitem: images view'), 'error');
       Log::add(Text::_('Error bind default menuitem: images view'), 8, 'joomgallery');
@@ -879,7 +959,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     $table->setLocation($gallery_menu_id, 'last-child');
 
-    if (!$table->store($imgsdata))
+    if(!$table->store($imgsdata))
     {
       Factory::getApplication()->enqueueMessage(Text::_('This default menu item could not be created: images view'), 'notice');
       Log::add(Text::_('This default menu item could not be created: images view'), 8, 'joomgallery');
@@ -891,39 +971,39 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
-	 * Add a category to the ´#__joomgallery_img_types´ table
+   * Add a category to the ´#__joomgallery_img_types´ table
    *
    * @param   string $type Image type name
    * @param   string $type Image type alias
    * @param   string $path Path for the image type
    *
-	 * @return  bool  true on success
-	 */
-	public function addDefaultIMGtype($type, $alias, $path)
-	{
+   * @return  bool  true on success
+   */
+  public function addDefaultIMGtype($type, $alias, $path)
+  {
     $db = Factory::getContainer()->get(DatabaseInterface::class);
 
     switch($type)
     {
       case 'detail':
         $params = '{"jg_imgtype":"1","jg_imgtyperesize":"3","jg_imgtypewidth":"1000","jg_imgtypeheight":"1000","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"0","jg_imgtypequality":"80","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"[]"}';
-        break;
+          break;
 
       case 'thumbnail':
         $params = '{"jg_imgtype":"1","jg_imgtyperesize":"2","jg_imgtypewidth":"360","jg_imgtypeheight":"360","jg_cropposition":"2","jg_imgtypeorinet":"1","jg_imgtypeanim":"0","jg_imgtypesharpen":"1","jg_imgtypequality":"60","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"[]"}';
-        break;
-      
+          break;
+
       default:
         $params = '{"jg_imgtype":"1","jg_imgtyperesize":"0","jg_imgtypewidth":"2000","jg_imgtypeheight":"2000","jg_cropposition":"2","jg_imgtypeorinet":"0","jg_imgtypeanim":"1","jg_imgtypesharpen":"0","jg_imgtypequality":"100","jg_imgtypewatermark":"0","jg_imgtypewtmsettings":"[]"}';
-        break;
+          break;
     }
 
-    $record = new stdClass();
-    $record->typename = $type;
+    $record             = new stdClass();
+    $record->typename   = $type;
     $record->type_alias = $alias;
-    $record->path = $path;
-    $record->params = $params;
-    $record->ordering = $this->count;
+    $record->path       = $path;
+    $record->params     = $params;
+    $record->ordering   = $this->count;
 
     // Insert the object into the user profile table.
     if(!$db->insertObject(_JOOM_TABLE_IMG_TYPES, $record))
@@ -935,49 +1015,119 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
-	 * Deactivate an extension based on its id
-	 *
-	 * @param  int   $id  The ID of the extension to be deactivated
-	 *
-	 * @return void
-	 */
-	private function deactivateExtension($id)
-	{
+   * Tries to get an extension id based on information
+   *
+   * @param   string $name           Extension name
+   * @param   string $type           Extension type
+   * @param   string $element        Extension element
+   * @param   string $folder         Extension folder
+   * @param   bool   $get_disabled   True to load also disabled extensions (default: true)
+   *
+   * @return  int  Extension id
+   */
+  private function getExtensionID($name = null, $type = null, $element = null, $folder = null, $get_disabled = true)
+  {
+    $db    = Factory::getContainer()->get(DatabaseInterface::class);
+    $query = $db->getQuery(true);
+    $query->select('extension_id')->from('#__extensions');
+
+    if($name)
+    {
+      $query->where('name = ' . $db->quote($name));
+    }
+
+    if($type)
+    {
+      $query->where('type = ' . $db->quote($type));
+    }
+
+    if($element)
+    {
+      $query->where('element = ' . $db->quote($element));
+    }
+
+    if($folder)
+    {
+      $query->where('folder = ' . $db->quote($folder));
+    }
+
+    if(!$get_disabled)
+    {
+      $query->where('enabled = 1');
+    }
+
+    $db->setQuery($query);
+
+    $id = $db->loadResult();
+
+    return $id ? $id : 0;
+  }
+
+  /**
+   * Deactivate an extension based on its id
+   *
+   * @param  int   $id  The ID of the extension to be deactivated
+   *
+   * @return void
+   */
+  private function deactivateExtension($id)
+  {
     $db    = Factory::getContainer()->get(DatabaseInterface::class);
     $query = $db->getQuery(true);
 
     $query->update($db->quoteName('#__extensions'))
-          ->set($db->quoteName('enabled'). ' = 0')
-					->where($db->quoteName('extension_id') . ' = ' . $id);
-		
+          ->set($db->quoteName('enabled') . ' = 0')
+          ->where($db->quoteName('extension_id') . ' = ' . $id);
+
     $db->setQuery($query);
-		
+
     return $db->execute();
   }
 
-	/**
-	 * Installs plugins for this component
-	 *
-	 * @param   mixed $parent Object who called the install/update method
-	 *
-	 * @return void
-	 */
-	private function installPlugins($parent)
-	{
-		$installation_folder = $parent->getParent()->getPath('source');
-		$app                 = Factory::getApplication();
+  /**
+   * Activate an extension based on its id
+   *
+   * @param  int   $id  The ID of the extension to be activated
+   *
+   * @return void
+   */
+  private function activateExtension($id)
+  {
+    $db    = Factory::getContainer()->get(DatabaseInterface::class);
+    $query = $db->getQuery(true);
 
-		/* @var $plugins SimpleXMLElement */
-		if(method_exists($parent, 'getManifest'))
-		{
-			$plugins = $parent->getManifest()->plugins;
-		}
-		else
-		{
-			$plugins = $parent->get('manifest')->plugins;
-		}
+    $query->update($db->quoteName('#__extensions'))
+          ->set($db->quoteName('enabled') . ' = 1')
+          ->where($db->quoteName('extension_id') . ' = ' . $id);
 
-    if(!$plugins || empty($plugins->children()) || count($plugins->children()) <= 0)
+    $db->setQuery($query);
+
+    return $db->execute();
+  }
+
+  /**
+   * Installs plugins for this component
+   *
+   * @param   mixed $parent Object who called the install/update method
+   *
+   * @return void
+   */
+  private function installPlugins($parent)
+  {
+    $installation_folder = $parent->getParent()->getPath('source');
+    $app                 = Factory::getApplication();
+
+    /* @var $plugins SimpleXMLElement */
+    if(method_exists($parent, 'getManifest'))
+    {
+        $plugins = $parent->getManifest()->plugins;
+    }
+    else
+    {
+        $plugins = $parent->get('manifest')->plugins;
+    }
+
+    if(!$plugins || empty($plugins->children()) || \count($plugins->children()) <= 0)
     {
       return;
     }
@@ -990,9 +1140,10 @@ class com_joomgalleryInstallerScript extends InstallerScript
       $pluginName  = (string) $plugin['plugin'];
       $pluginGroup = (string) $plugin['group'];
       $path        = $installation_folder . '/plugins/' . $pluginGroup . '/' . $pluginName;
-      $installer   = new Installer;
+      $installer   = new Installer();
+      $installer->setDatabase($db);
 
-      if (!$this->isAlreadyInstalled('plugin', $pluginName, $pluginGroup))
+      if(!$this->isAlreadyInstalled('plugin', $pluginName, $pluginGroup))
       {
         $result = $installer->install($path);
       }
@@ -1001,7 +1152,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
         $result = $installer->update($path);
       }
 
-      if ($result)
+      if($result)
       {
         $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_INSTALL_EXT', 'Plugin', $pluginName));
       }
@@ -1016,65 +1167,66 @@ class com_joomgalleryInstallerScript extends InstallerScript
         ->update('#__extensions')
         ->set('enabled = 1')
         ->where(
-          array(
-            'type LIKE ' . $db->quote('plugin'),
-            'element LIKE ' . $db->quote($pluginName),
-            'folder LIKE ' . $db->quote($pluginGroup)
-          )
+            [
+              'type LIKE ' . $db->quote('plugin'),
+              'element LIKE ' . $db->quote($pluginName),
+              'folder LIKE ' . $db->quote($pluginGroup),
+            ]
         );
       $db->setQuery($query);
       $db->execute();
     }
-	}
+  }
 
-	/**
-	 * Check if an extension is already installed in the system
-	 *
-	 * @param   string $type   Extension type
-	 * @param   string $name   Extension name
-	 * @param   mixed  $folder Extension folder(for plugins)
-	 *
-	 * @return boolean
-	 */
-	private function isAlreadyInstalled($type, $name, $folder = null)
-	{
-		$result = false;
+  /**
+   * Check if an extension is already installed in the system
+   *
+   * @param   string $type   Extension type
+   * @param   string $name   Extension name
+   * @param   mixed  $folder Extension folder(for plugins)
+   *
+   * @return boolean
+   */
+  private function isAlreadyInstalled($type, $name, $folder = null)
+  {
+    $result = false;
 
-		switch ($type)
-		{
-			case 'plugin':
-				$result = file_exists(JPATH_PLUGINS . '/' . $folder . '/' . $name);
-				break;
-			case 'module':
-				$result = file_exists(JPATH_SITE . '/modules/' . $name);
-				break;
-		}
+    switch($type)
+    {
+      case 'plugin':
+        $result = file_exists(JPATH_PLUGINS . '/' . $folder . '/' . $name);
+        break;
+      case 'module':
+        $result = file_exists(JPATH_SITE . '/modules/' . $name);
+        break;
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * Installs modules for this component
-	 *
-	 * @param   mixed $parent Object who called the install/update method
-	 *
-	 * @return void
-	 */
-	private function installModules($parent)
-	{
-		$installation_folder = $parent->getParent()->getPath('source');
-		$app                 = Factory::getApplication();
+  /**
+   * Installs modules for this component
+   *
+   * @param   mixed $parent Object who called the install/update method
+   *
+   * @return void
+   */
+  private function installModules($parent)
+  {
+    $folder = $parent->getParent()->getPath('source');
+    $app    = Factory::getApplication();
+    $db     = Factory::getContainer()->get(DatabaseInterface::class);
 
-		if (method_exists($parent, 'getManifest'))
-		{
-			$modules = $parent->getManifest()->modules;
-		}
-		else
-		{
-			$modules = $parent->get('manifest')->modules;
-		}
+    if(method_exists($parent, 'getManifest'))
+    {
+      $modules = $parent->getManifest()->modules;
+    }
+    else
+    {
+      $modules = $parent->get('manifest')->modules;
+    }
 
-    if(!$modules || empty($modules->children()) || count($modules->children()) <= 0)
+    if(!$modules || empty($modules->children()) || \count($modules->children()) <= 0)
     {
       return;
     }
@@ -1082,10 +1234,11 @@ class com_joomgalleryInstallerScript extends InstallerScript
     foreach($modules->children() as $module)
     {
       $moduleName = (string) $module['module'];
-      $path       = $installation_folder . '/modules/' . $moduleName;
-      $installer  = new Installer;
+      $path       = $folder . '/modules/' . $moduleName;
+      $installer  = new Installer();
+      $installer->setDatabase($db);
 
-      if (!$this->isAlreadyInstalled('module', $moduleName))
+      if(!$this->isAlreadyInstalled('module', $moduleName))
       {
         $result = $installer->install($path);
       }
@@ -1094,7 +1247,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
         $result = $installer->update($path);
       }
 
-      if ($result)
+      if($result)
       {
         $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_INSTALL_EXT', 'Module', $moduleName));
       }
@@ -1104,20 +1257,20 @@ class com_joomgalleryInstallerScript extends InstallerScript
         Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_INSTALL_EXT', 'Module', $moduleName), 8, 'joomgallery');
       }
     }
-	}
+  }
 
-	/**
-	 * Uninstalls plugins
-	 *
-	 * @param   mixed  $parent  Object who called the uninstall method or array with plugin names
-	 *
-	 * @return  void
-	 */
-	private function uninstallPlugins($parent)
-	{
-		$app = Factory::getApplication();
+  /**
+   * Uninstalls plugins
+   *
+   * @param   mixed  $parent  Object who called the uninstall method or array with plugin names
+   *
+   * @return  void
+   */
+  private function uninstallPlugins($parent)
+  {
+    $app = Factory::getApplication();
 
-    if(is_array($parent))
+    if(\is_array($parent))
     {
       // We got an array of module names
       $plugins = $parent;
@@ -1134,13 +1287,13 @@ class com_joomgalleryInstallerScript extends InstallerScript
         $plugins = $parent->get('manifest')->plugins;
       }
 
-      if(!$plugins || empty($plugins->children()) || count($plugins->children()) <= 0)
+      if(!$plugins || empty($plugins->children()) || \count($plugins->children()) <= 0)
       {
         return;
       }
 
       $plugins = $plugins->children();
-    }		
+    }
 
     $db    = Factory::getContainer()->get(DatabaseInterface::class);
     $query = $db->getQuery(true);
@@ -1149,27 +1302,28 @@ class com_joomgalleryInstallerScript extends InstallerScript
     {
       $pluginName  = (string) $plugin['plugin'];
       $pluginGroup = (string) $plugin['group'];
-      
+
       $query
         ->clear()
         ->select('extension_id')
         ->from('#__extensions')
         ->where(
-          array(
-            'type LIKE ' . $db->quote('plugin'),
-            'element LIKE ' . $db->quote($pluginName),
-            'folder LIKE ' . $db->quote($pluginGroup)
-          )
+            [
+              'type LIKE ' . $db->quote('plugin'),
+              'element LIKE ' . $db->quote($pluginName),
+              'folder LIKE ' . $db->quote($pluginGroup),
+            ]
         );
       $db->setQuery($query);
       $extension = $db->loadResult();
 
-      if (!empty($extension))
+      if(!empty($extension))
       {
-        $installer = new Installer;
-        $result    = $installer->uninstall('plugin', $extension);
+        $installer = new Installer();
+        $installer->setDatabase($db);
+        $result = $installer->uninstall('plugin', $extension);
 
-        if ($result)
+        if($result)
         {
           $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_UNINSTALL_EXT', 'Plugin', $pluginName));
         }
@@ -1180,20 +1334,20 @@ class com_joomgalleryInstallerScript extends InstallerScript
         }
       }
     }
-	}
+  }
 
-	/**
-	 * Uninstalls modules
-	 *
-	 * @param   mixed  $parent  Object who called the uninstall method or array with module names
-	 *
-	 * @return void
-	 */
-	private function uninstallModules($parent)
-	{
-		$app = Factory::getApplication();
+  /**
+   * Uninstalls modules
+   *
+   * @param   mixed  $parent  Object who called the uninstall method or array with module names
+   *
+   * @return void
+   */
+  private function uninstallModules($parent)
+  {
+    $app = Factory::getApplication();
 
-    if(is_array($parent))
+    if(\is_array($parent))
     {
       // We got an array of module names
       $modules = $parent;
@@ -1210,20 +1364,20 @@ class com_joomgalleryInstallerScript extends InstallerScript
         $modules = $parent->get('manifest')->modules;
       }
 
-      if(!$modules || empty($modules->children()) || count($modules->children()) <= 0)
+      if(!$modules || empty($modules->children()) || \count($modules->children()) <= 0)
       {
         return;
       }
 
       $modules = $modules->children();
-    }    
+    }
 
     $db    = Factory::getContainer()->get(DatabaseInterface::class);
     $query = $db->getQuery(true);
 
     foreach($modules as $module)
     {
-      if(is_array($parent))
+      if(\is_array($parent))
       {
         $moduleName = (string) $module;
       }
@@ -1231,26 +1385,27 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         $moduleName = (string) $module['module'];
       }
-      
+
       $query
         ->clear()
         ->select('extension_id')
         ->from('#__extensions')
         ->where(
-          array(
-            'type LIKE ' . $db->quote('module'),
-            'element LIKE ' . $db->quote($moduleName)
-          )
+            [
+              'type LIKE ' . $db->quote('module'),
+              'element LIKE ' . $db->quote($moduleName),
+            ]
         );
       $db->setQuery($query);
       $extension = $db->loadResult();
 
-      if (!empty($extension))
+      if(!empty($extension))
       {
-        $installer = new Installer;
-        $result    = $installer->uninstall('module', $extension);
+        $installer = new Installer();
+        $installer->setDatabase($db);
+        $result = $installer->uninstall('module', $extension);
 
-        if ($result)
+        if($result)
         {
           $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_UNINSTALL_EXT', 'Module', $moduleName));
         }
@@ -1261,32 +1416,32 @@ class com_joomgalleryInstallerScript extends InstallerScript
         }
       }
     }
-	}
+  }
 
   /**
-	 * Copies important image files to /images/joomgallery/..
-	 *
-	 * @return   bool  True on success, false otherwise
-	 */
-	private function copyImgFiles()
-	{
+   * Copies important image files to /images/joomgallery/..
+   *
+   * @return   bool  True on success, false otherwise
+   */
+  private function copyImgFiles()
+  {
     // Define paths
-    $files = array('watermark.png', 'logo.png', 'no-image.png');
-    $src   = JPATH_ROOT.'/media/com_joomgallery/images/';
-    $dst   = JPATH_ROOT.'/images/joomgallery/';
+    $files = ['watermark.png', 'logo.png', 'no-image.png'];
+    $src   = JPATH_ROOT . '/media/com_joomgallery/images/';
+    $dst   = JPATH_ROOT . '/images/joomgallery/';
 
     $error = false;
 
     // Create destination folder if not exists
-    if(!Folder::exists($dst))
+    if(!is_dir(Path::clean($dst)))
     {
-      Folder::create($dst);
+      Folder::create(Path::clean($dst));
     }
 
     // Copy files
-    foreach ($files as $file)
+    foreach($files as $file)
     {
-      if(!File::copy($src.$file, $dst.$file))
+      if(!File::copy($src . $file, $dst . $file))
       {
         Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_COPY_IMAGETYPE', $file, 'Watermark'), 'error');
         Log::add(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_COPY_IMAGETYPE', $file, 'Watermark'), 8, 'joomgallery');
@@ -1321,51 +1476,52 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
-	 * Detect already installed joomgallery extensions (< v4.0.0)
-	 *
-	 * @return  array   List of extension id's
-	 */
-	private function detectJGExtensions()
-	{
+   * Detect already installed joomgallery extensions (< v4.0.0)
+   *
+   * @return  array   List of extension id's
+   */
+  private function detectJGExtensions()
+  {
     $db    = Factory::getContainer()->get(DatabaseInterface::class);
     $query = $db->getQuery(true);
 
     // List of all extensions that could negatively impact the JoomGallery (> v4.0.0) from running.
     // Plugins of group "joomgallery" don't have to be listed.
-    $extensions = array( 'plg_finderjoomgallery', 'plg_systemjgfinder', 'joomadditionalimagefields', 'joomadditionalcategoryfields', 'jgfinder',
-                         'joomplu', 'joombu', 'joomautocat', 'plg_quickicon_joomgallery', 'plg_search_joomgallery', 'joommediaformfield',
-                         'mod_joomstats', 'mod_joomadmstats', 'mod_joomfacebookcomments', 'mod_joomimg', 'mod_joomcat', 'mod_joomsearch',
-                         'mod_jgtreeview'
-                       );
+    $extensions = [
+      'plg_finderjoomgallery', 'plg_systemjgfinder', 'joomadditionalimagefields', 'joomadditionalcategoryfields', 'jgfinder',
+      'joomplu', 'joombu', 'joomautocat', 'plg_quickicon_joomgallery', 'plg_search_joomgallery', 'joommediaformfield',
+      'mod_joomstats', 'mod_joomadmstats', 'mod_joomfacebookcomments', 'mod_joomimg', 'mod_joomcat', 'mod_joomsearch',
+      'mod_jgtreeview',
+    ];
 
     $query->select('extension_id')
-					->from('#__extensions')
-					->where('folder LIKE ' . $db->quote('joomgallery'))
-          ->orWhere(array('element LIKE ' . $db->quote('joomgallery'), 'type != ' . $db->quote('component')));
-    
+          ->from('#__extensions')
+          ->where('folder LIKE ' . $db->quote('joomgallery'))
+          ->orWhere(['element LIKE ' . $db->quote('joomgallery'), 'type != ' . $db->quote('component')]);
+
     foreach($extensions as $key => $extName)
     {
-      $query->orWhere(array('element LIKE ' . $db->quote(strtolower($extName)), 'element LIKE ' . $db->quote(strtoupper($extName))), 'OR')
-            ->orWhere(array('name LIKE ' . $db->quote(strtolower($extName)), 'name LIKE ' . $db->quote(strtoupper($extName))), 'OR');
+      $query->orWhere(['element LIKE ' . $db->quote(strtolower($extName)), 'element LIKE ' . $db->quote(strtoupper($extName))], 'OR')
+            ->orWhere(['name LIKE ' . $db->quote(strtolower($extName)), 'name LIKE ' . $db->quote(strtoupper($extName))], 'OR');
     }
-		
+
     $db->setQuery($query);
-		
+
     return $db->loadColumn();
   }
 
   /**
-	 * Detect already installed joomgallery tables
-	 *
-	 * @return  array|bool   List of  table names or false if no tables detected
-	 */
-	private function detectJGtables()
-	{
+   * Detect already installed joomgallery tables
+   *
+   * @return  array|bool   List of  table names or false if no tables detected
+   */
+  private function detectJGtables()
+  {
     try
     {
       $db     = Factory::getContainer()->get(DatabaseInterface::class);
       $tables = $db->getTableList();
-      $prefix = Factory::getApplication()->get('dbprefix');
+      $prefix = strtolower(Factory::getApplication()->get('dbprefix'));
 
       if(empty($tables))
       {
@@ -1391,94 +1547,111 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
-	 * Detect old joomgallery folders (< v4.0.0)
-	 *
-	 * @return  array|bool   List of folder paths or false if no folders detected
-	 */
-	private function detectJGfolders()
-	{
+   * Detect old joomgallery folders (< v4.0.0)
+   *
+   * @return  array|bool   List of folder paths or false if no folders detected
+   */
+  private function detectJGfolders()
+  {
     $app = Factory::getApplication();
 
-    $folders = array(
-      JPATH_ROOT.'/components/com_joomgallery',
-      JPATH_ROOT.'/media/joomgallery',
-      JPATH_ROOT.'/administrator/components/com_joomgallery',
-      JPATH_ROOT.'/layouts/joomgallery',
-      JPATH_ROOT.'/views/vote',
-      $app->get('tmp_path').'/joomgallerychunks'
-    );
+    $folders = [
+      JPATH_ROOT . '/components/com_joomgallery',
+      JPATH_ROOT . '/media/joomgallery',
+      JPATH_ROOT . '/administrator/components/com_joomgallery',
+      JPATH_ROOT . '/layouts/joomgallery',
+      JPATH_ROOT . '/views/vote',
+      $app->get('tmp_path') . '/joomgallerychunks',
+    ];
 
     return $folders;
   }
 
   /**
-	 * Detect old joomgallery files (< v4.0.0)
-	 *
-	 * @return  array|bool   List of file paths or false if no folders detected
-	 */
-	private function detectJGfiles()
-	{
-    $files = array();
+   * Detect old joomgallery files (< v4.0.0)
+   *
+   * @return  array|bool   List of file paths or false if no folders detected
+   */
+  private function detectJGfiles()
+  {
+    $files = [];
 
-    $folders = array(
+    $folders = [
       '/administrator/language',
       '/administrator/logs',
-      '/language',      
-    );
+      '/language',
+    ];
 
     // Search folder for files containing "com_joomgallery"
     foreach($folders as $folder)
     {
-      $files = array_merge($files, glob(JPATH_ROOT.$folder.'/*com*[j,J]oomgallery*'));
-      $files = array_merge($files, glob(JPATH_ROOT.$folder.'/*/*com*[j,J]oomgallery*'));
-      $files = array_merge($files, glob(JPATH_ROOT.$folder.'/*/*/*com*[j,J]oomgallery*'));
+      $files = array_merge($files, glob(JPATH_ROOT . $folder . '/*com*[j,J]oomgallery*'));
+      $files = array_merge($files, glob(JPATH_ROOT . $folder . '/*/*com*[j,J]oomgallery*'));
+      $files = array_merge($files, glob(JPATH_ROOT . $folder . '/*/*/*com*[j,J]oomgallery*'));
     }
 
     // Cache file of the newsfeed for the update checker JoomGallery < 3.3.5
-    $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('http://www.joomgallery.net/components/com_newversion/rss/extensions2.rss').'.spc';
-    $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('http://www.en.joomgallery.net/components/com_newversion/rss/extensions2.rss').'.spc';
-    $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('http://www.joomgallery.net/components/com_newversion/rss/extensions3.rss').'.spc';
-    $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('http://www.en.joomgallery.net/components/com_newversion/rss/extensions3.rss').'.spc';
+    $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('http://www.joomgallery.net/components/com_newversion/rss/extensions2.rss') . '.spc';
+    $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('http://www.en.joomgallery.net/components/com_newversion/rss/extensions2.rss') . '.spc';
+    $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('http://www.joomgallery.net/components/com_newversion/rss/extensions3.rss') . '.spc';
+    $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('http://www.en.joomgallery.net/components/com_newversion/rss/extensions3.rss') . '.spc';
     // Cache file of the newsfeed for the update checker JoomGallery >= 3.3.5
-    $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.joomgalleryfriends.net/components/com_newversion/rss/extensions2.rss').'.spc';
-    $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions2.rss').'.spc';
-    $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss').'.spc';
-    $files[] = JPATH_ADMINISTRATOR.'/cache/'.md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss').'.spc';
+    $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('https://www.joomgalleryfriends.net/components/com_newversion/rss/extensions2.rss') . '.spc';
+    $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions2.rss') . '.spc';
+    $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('https://www.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss') . '.spc';
+    $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss') . '.spc';
 
     return $files;
   }
 
   /**
-	 * Get DB extension record of JoomGallery
-	 *
-	 * @return  object|bool   DB record on success, false otherwise
-	 */
+   * Detect old JoomGallery update sql files
+   *
+   * @return  array|bool   List of file paths or false if no files detected
+   */
+  private function detectSQLfiles()
+  {
+    $folder = JPATH_ADMINISTRATOR . '/components/com_joomgallery/sql/updates/mysql/';
+
+    $files = [];
+    // SQL file delete
+    $files[] = $folder . '4.0.0.sql';
+    $files[] = $folder . '4.1.0.sql';
+
+    return $files;
+  }
+
+  /**
+   * Get DB extension record of JoomGallery
+   *
+   * @return  object|bool   DB record on success, false otherwise
+   */
   private function getDBextension()
   {
     $db    = Factory::getContainer()->get(DatabaseInterface::class);
     $query = $db->getQuery(true);
 
     $query->select('*')
-					->from('#__extensions')
-					->where(
-						array(
-							'type LIKE ' . $db->quote('component'),
-							'element LIKE ' . $db->quote('com_joomgallery')
-						)
-					);
-		
+          ->from('#__extensions')
+          ->where(
+              [
+                'type LIKE ' . $db->quote('component'),
+                'element LIKE ' . $db->quote('com_joomgallery'),
+              ]
+          );
+
     $db->setQuery($query);
-		
+
     return $db->loadObject();
   }
 
   /**
-	 * Remove all schemas of a specific extension
-   * 
+   * Remove all schemas of a specific extension
+   *
    * @param   int           Extension id
-	 *
-	 * @return  object|bool   DB record on success, false otherwise
-	 */
+   *
+   * @return  object|bool   DB record on success, false otherwise
+   */
   private function removeSchemas($id)
   {
     $db    = Factory::getContainer()->get(DatabaseInterface::class);
@@ -1493,10 +1666,10 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
-	 * Remove all JoomGallery related assets
-	 *
-	 * @return  object|bool   DB record on success, false otherwise
-	 */
+   * Remove all JoomGallery related assets
+   *
+   * @return  object|bool   DB record on success, false otherwise
+   */
   private function removeAssets()
   {
     $db    = Factory::getContainer()->get(DatabaseInterface::class);
@@ -1512,10 +1685,10 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
-	 * Remove all JoomGallery related content_types
-	 *
-	 * @return  object|bool   DB record on success, false otherwise
-	 */
+   * Remove all JoomGallery related content_types
+   *
+   * @return  object|bool   DB record on success, false otherwise
+   */
   private function removeContentTypes()
   {
     $db    = Factory::getContainer()->get(DatabaseInterface::class);
@@ -1551,15 +1724,15 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $query = $db->getQuery(true)
                 ->select('id')
                 ->from($db->quoteName('#__modules'))
-                ->where($db->quoteName('position').' = '.$db->quote($position))
-                ->where($db->quoteName('module').' = '.$db->quote($module));
+                ->where($db->quoteName('position') . ' = ' . $db->quote($position))
+                ->where($db->quoteName('module') . ' = ' . $db->quote($module));
     $db->setQuery($query);
     $module_id = $db->loadResult();
 
     // create module if it is not yet created
-    if (empty($module_id))
+    if(empty($module_id))
     {
-      $row            = Table::getInstance('module');
+      $row            = $this->getTableInstance('\\Joomla\\CMS\\Table\\Module');
       $row->title     = $title;
       $row->ordering  = $ordering;
       $row->position  = $position;
@@ -1570,18 +1743,19 @@ class com_joomgalleryInstallerScript extends InstallerScript
       $row->params    = $params;
       $row->client_id = $client_id;
       $row->language  = $lang;
+
       if(!$row->store())
       {
-        Factory::getApplication()->enqueueMessage(Text::_('Unable to create "'.$title.'" module!'), 'error');
-        Log::add(Text::_('Unable to create "'.$title.'" module!'), 8, 'joomgallery');
+        Factory::getApplication()->enqueueMessage(Text::_('Unable to create "' . $title . '" module!'), 'error');
+        Log::add(Text::_('Unable to create "' . $title . '" module!'), 8, 'joomgallery');
 
         return false;
       }
 
       $db      = Factory::getContainer()->get(DatabaseInterface::class);
       $query   = $db->getQuery(true);
-      $columns = array('moduleid', 'menuid');
-      $values  = array($row->id, 0);
+      $columns = ['moduleid', 'menuid'];
+      $values  = [$row->id, 0];
 
       $query
           ->insert($db->quoteName('#__modules_menu'))
@@ -1593,5 +1767,32 @@ class com_joomgalleryInstallerScript extends InstallerScript
     }
 
     return true;
+  }
+
+  /**
+   * Returns a Table Object
+   *
+   * @param   string    $tableClass   The name of the table (e.g '\\Joomla\\CMS\\Table\\Module')
+   *
+   * @return  object|bool   Table object on success, false otherwise.
+   *
+   * @since   4.2.0
+   * NOTE:    Use Factory::getApplication()->bootComponent('...')->getMVCFactory()->createTable($name, $prefix, $config); instead
+   */
+  private static function getTableInstance(string $tableClass)
+  {
+    if(!class_exists($tableClass))
+    {
+      return false;
+    }
+
+    // Check for a possible service from the container otherwise manually instantiate the class
+    if(Factory::getContainer()->has($tableClass))
+    {
+      return Factory::getContainer()->get($tableClass);
+    }
+
+    // Instantiate a new table class and return it.
+    return new $tableClass(Factory::getContainer()->get(DatabaseInterface::class));
   }
 }

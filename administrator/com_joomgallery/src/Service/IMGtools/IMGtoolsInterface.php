@@ -1,21 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
-* Interface for the IMGtools class
-*
-* @since  4.0.0
-*/
+ * Interface for the IMGtools class
+ *
+ * @since  4.0.0
+ */
 interface IMGtoolsInterface
 {
   /**
@@ -80,7 +83,7 @@ interface IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function write($file, $quality=100): bool;
+  public function write($file, $quality = 100): bool;
 
   /**
    * Output the image as string (stream)
@@ -95,7 +98,7 @@ interface IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function stream($quality=100, $base64=false, $html=false, $type=false): string;
+  public function stream($quality = 100, $base64 = false, $html = false, $type = false): string;
 
   /**
    * Validation and analysis of an image-file
@@ -109,7 +112,7 @@ interface IMGtoolsInterface
    */
   public function analyse($img, $is_stream = false);
 
-	/**
+  /**
    * Resize image
    *
    * @param   int     $method         Resize to 0:noresize,1:height,2:width,3:proportional,4:crop
@@ -123,7 +126,7 @@ interface IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function resize($method, $width, $height, $cropposition=2, $unsharp=false): bool;
+  public function resize($method, $width, $height, $cropposition = 2, $unsharp = false): bool;
 
   /**
    * Rotate image

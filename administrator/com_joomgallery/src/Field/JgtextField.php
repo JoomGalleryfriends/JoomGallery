@@ -1,31 +1,34 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 // No direct access
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Form\Field\TextField;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\TextField;
+use Joomla\CMS\Language\Text;
 
 /**
- * Text field with useglobal option based on config service 
- * 
+ * Text field with useglobal option based on config service
+ *
  * @since  4.0.0
  */
 class JgtextField extends TextField
 {
   use JgMenuitemTrait;
-  
+
   /**
    * The form field type.
    *
@@ -51,8 +54,8 @@ class JgtextField extends TextField
    */
   protected function getInput()
   {
-    $fieldname = \preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
-    
+    $fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
+
     if($this->element['useglobal'])
     {
       // Guess form context
@@ -62,7 +65,7 @@ class JgtextField extends TextField
       {
         // Load JG config service
         $jg = Factory::getApplication()->bootComponent('com_joomgallery');
-        $jg->createConfig($context[0] , $context[1], false);
+        $jg->createConfig($context[0], $context[1], false);
 
         // Get inherited global config value
         $value = $jg->getConfig()->get($fieldname, '...');

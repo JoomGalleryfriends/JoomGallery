@@ -1,23 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 
 // No direct access
-\defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\User\UserFactoryInterface;
-use \Joomla\CMS\Mail\MailTemplate;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Mail\MailTemplate;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Mail Messenger Class
@@ -52,12 +56,12 @@ class PmMessenger extends Messenger implements MessengerInterface
 
     if(!\is_array($recipients))
     {
-      $recipients = array($recipients);
+      $recipients = [$recipients];
     }
 
     foreach($recipients as $recipient)
     {
-      if(\is_numeric($recipient))
+      if(is_numeric($recipient))
       {
         // CMS user id given
         $recipient = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($recipient);
@@ -88,10 +92,10 @@ class PmMessenger extends Messenger implements MessengerInterface
         $messageText = $this->replaceTags(Text::_($template->body), $this->data);
 
         $message = [
-            'id'         => 0,
-            'user_id_to' => $recipient->id,
-            'subject'    => $subject,
-            'message'    => $messageText,
+          'id'         => 0,
+          'user_id_to' => $recipient->id,
+          'subject'    => $subject,
+          'message'    => $messageText,
         ];
 
         // Get the model for private messages
@@ -128,7 +132,7 @@ class PmMessenger extends Messenger implements MessengerInterface
     }
 
     // Check for locked inboxes would be better to have _cdf settings in the user_object or a filter in users model
-    $db = Factory::getContainer()->get(DatabaseInterface::class);
+    $db    = Factory::getContainer()->get(DatabaseInterface::class);
     $query = $db->getQuery(true);
 
     $query->select($db->quoteName('user_id'))

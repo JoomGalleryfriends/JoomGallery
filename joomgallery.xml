@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="4.0" method="upgrade">
     <name>com_joomgallery</name>
-    <creationDate>2025-07-10</creationDate>
+    <creationDate>2025-10-27</creationDate>
     <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
     <license>GNU General Public License version 3 or later</license>
     <author>JoomGallery::ProjectTeam</author>
     <authorEmail>team@joomgalleryfriends.net</authorEmail>
     <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-    <version>4.2.0</version>
+    <version>4.3.0</version>
     <description>JoomGallery 4, a native gallery component for Joomla! 4.x, 5.x and 6.x</description>
     <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
 
@@ -78,18 +78,13 @@
       </fieldset>
     </fields>
   </config>
-  <api>
-    <files folder="api/components/com_joomgallery">
-      <folder>src</folder>
-    </files>
-  </api>
+
   <plugins>
+    <plugin group="console" plugin="joomconsole"/>
+    <plugin group="privacy" plugin="joomgallery"/>
     <plugin group="system" plugin="joomgallery"/>
     <plugin group="system" plugin="joomowner"/>
-    <plugin group="privacy" plugin="joomgallery"/>
-    <plugin group="console" plugin="joomconsole"/>
     <plugin group="task" plugin="joomgallery"/>
-    <plugin group="webservices" plugin="joomgallery"/>
   </plugins>
 
   <changelogurl>https://www.joomgalleryfriends.net/updates/changelog.xml</changelogurl>

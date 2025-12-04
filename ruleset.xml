@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<ruleset name="JoomGallery">
+  <description>The JoomGallery PSR-12 exceptions.</description>
+  <autoload>administrator/com_joomgallery/vendor/autoload.php</autoload>
+
+  <exclude-pattern type="relative">^docs/*</exclude-pattern>
+  <exclude-pattern type="relative">^media/*</exclude-pattern>
+  <exclude-pattern type="relative">^node_modules/*</exclude-pattern>
+  <exclude-pattern type="relative">^administrator/com_joomgallery/vendor/*</exclude-pattern>
+  <exclude-pattern type="relative">^administrator/com_joomgallery/includes/*</exclude-pattern>
+  <exclude-pattern type="relative">^tools/*</exclude-pattern>
+  <exclude-pattern type="relative">^script.php</exclude-pattern>
+
+  <rule ref="PSR12">
+    <!-- Disable automatic formatting of control structures -->
+    <exclude name="Squiz.ControlStructures.ControlSignature"/>
+    <exclude name="PEAR.ControlStructures.ControlSignature"/>
+    <exclude name="PSR12.ControlStructures.ControlStructureSpacing"/>
+    <exclude name="Generic.ControlStructures.InlineControlStructure"/>
+    <exclude name="Squiz.ControlStructures.InlineIfDeclaration"/>
+    <!-- Disable built-in PSR12 header -->
+    <exclude name="PSR12.Files.FileHeader"/>
+    <!-- Disable indentation (handled by PHP-CS-Fixer) -->
+    <exclude name="Generic.WhiteSpace.ScopeIndent"/>
+    <exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
+    <!-- Disable built-in PSR12 naming and visibility -->
+    <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
+    <exclude name="Squiz.Scope.MethodScope"/>
+    <exclude name="PSR2.Methods.MethodDeclaration.Underscore"/>
+    <exclude name="PSR1.Methods.CamelCapsMethodName"/>
+    <exclude name="Squiz.NamingConventions.ValidFunctionName"/>
+    <exclude name="PSR12.Properties.ConstantVisibility"/>
+    <!-- Allow comments after closing brace -->
+    <exclude name="Squiz.WhiteSpace.ScopeClosingBrace.ContentAfterBrace"/>
+  </rule>
+
+  <!-- clean imports -->
+  <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
+
+  <!-- arrays & commas -->
+  <rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
+  <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
+
+  <!-- operators/alignment -->
+  <rule ref="Generic.Formatting.MultipleStatementAlignment">
+    <properties>
+      <property name="maxPadding" value="50"/>
+    </properties>
+  </rule>
+
+  <!-- calls and declarations spacing -->
+  <rule ref="PEAR.Functions.FunctionCallSignature"/>
+  <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing"/>
+
+  <!-- apply JoomGallery specific sniffs -->
+  <rule ref="JG.Arrays.MultilineArrayFirstElementNewline"/>
+  <rule ref="JG.Commenting.FileHeader">
+    <properties>
+      <property name="headerFile" value="./header.txt"/>
+    </properties>
+  </rule>
+  <rule ref="JG.ControlStructures.ControlSignature"/>
+  <rule ref="JG.Whitespace.Indentation">
+    <properties>
+      <property name="indentSize" value="2"/>
+    </properties>
+  </rule>
+
+  <!-- temporary extend the line length -->
+  <rule ref="Generic.Files.LineLength">
+    <properties>
+      <property name="lineLimit" value="900"/>
+      <property name="absoluteLineLimit" value="900"/>
+    </properties>
+  </rule>
+
+  <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+    <exclude-pattern type="relative">includes/defines\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/exifarray\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/iptcarray\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/latinbased\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/rules\.php</exclude-pattern>
+    <exclude-pattern type="relative">includes/tusspecs\.php</exclude-pattern>
+  </rule>
+</ruleset>
