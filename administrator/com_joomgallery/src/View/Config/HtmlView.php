@@ -49,14 +49,14 @@ class HtmlView extends JoomGalleryView
    */
   public function display($tpl = null)
   {
-    /** @var ConfigModel $model */
-    $model = $this->getModel();
+  /** @var ConfigModel $model */
+  $model = $this->getModel();
 
-    $this->state            = $model->getState();
-    $this->item             = $model->getItem();
-    $this->form             = $model->getForm();
-    $this->fieldsets        = $model->getFieldsets();
-    $this->is_global_config = ($this->item->id === 1) ? true : false;
+    $this->state          = $model->getState();
+    $this->item           = $model->getItem();
+    $this->form           = $model->getForm();
+    $this->fieldsets      = $model->getFieldsets();
+  $this->is_global_config = ($this->item->id === 1) ? true : false;
 
     // Check for errors.
     if(\count($errors = $model->getErrors()))
@@ -79,8 +79,8 @@ class HtmlView extends JoomGalleryView
   {
     Factory::getApplication()->input->set('hidemainmenu', true);
 
-    /** @var Toolbar $model */
-    $toolbar = $this->getToolbar();
+  /** @var Toolbar $model */
+  $toolbar = $this->getToolbar();
 
     $user  = Factory::getApplication()->getIdentity();
     $isNew = ($this->item->id == 0);
@@ -155,12 +155,12 @@ class HtmlView extends JoomGalleryView
         ->listCheck(false);
 
       $import_modal_opt = [
-        'selector'       => 'import_modal',
-        'doTask'         => '',
-        'btnClass'       => 'button-import btn btn-primary',
+        'selector' => 'import_modal',
+        'doTask' => '',
+        'btnClass' => 'button-import btn btn-primary',
         'htmlAttributes' => '',
-        'class'          => 'icon-upload',
-        'text'           => Text::_('COM_JOOMGALLERY_IMPORT')];
+        'class' => 'icon-upload',
+        'text' => Text::_('COM_JOOMGALLERY_IMPORT')];
       $import_modal_btn = LayoutHelper::render('joomla.toolbar.popup', $import_modal_opt);
       $toolbar->appendButton('Custom', $import_modal_btn);
     }
@@ -175,7 +175,7 @@ class HtmlView extends JoomGalleryView
    */
   public function getFieldset($name)
   {
-    return $this->form->getFieldset($name);
+  return $this->form->getFieldset($name);
   }
 
   /**
@@ -187,35 +187,35 @@ class HtmlView extends JoomGalleryView
    */
   public function renderField($field)
   {
-    $global_only = false;
+  $global_only = false;
 
-    if(!$this->is_global_config && !empty($field->getAttribute('global_only')) && $field->getAttribute('global_only') == true)
-    {
-      $global_only = true;
-    }
+  if(!$this->is_global_config && !empty($field->getAttribute('global_only')) && $field->getAttribute('global_only') == true)
+  {
+    $global_only = true;
+  }
 
-    $sensitive = false;
+  $sensitive = false;
 
-    if(!empty($field->getAttribute('sensitive')) && $field->getAttribute('sensitive') == true)
-    {
-      $sensitive = true;
-    }
+  if(!empty($field->getAttribute('sensitive')) && $field->getAttribute('sensitive') == true)
+  {
+    $sensitive = true;
+  }
 
-    if($global_only)
-    {
-      // Fields with global_only attribute --> Not editable
-      $field_data = [
-        'id'          => $field->id,
-        'name'        => $field->name,
-        'label'       => LayoutHelper::render('joomla.form.renderlabel', ['text' => Text::_($field->getAttribute('label')), 'for' => $field->id, 'required' => false, 'classes' => [], 'sensitive' => $sensitive]),
-        'input'       => LayoutHelper::render('joomla.form.field.value', ['id' => $field->id, 'value' => $field->value, 'class' => '']),
-        'description' => Text::_('COM_JOOMGALLERY_CONFIG_EDIT_ONLY_IN_GLOBAL'),
-      ];
-      echo LayoutHelper::render('joomla.form.renderfield', $field_data);
-    }
-    else
-    {
-      echo $field->renderField(['sensitive' => $sensitive]);
-    }
+  if($global_only)
+  {
+    // Fields with global_only attribute --> Not editable
+    $field_data = [
+      'id' => $field->id,
+      'name' => $field->name,
+      'label' => LayoutHelper::render('joomla.form.renderlabel', ['text' => Text::_($field->getAttribute('label')), 'for' => $field->id, 'required' => false, 'classes' => [], 'sensitive' => $sensitive]),
+      'input' => LayoutHelper::render('joomla.form.field.value', ['id' => $field->id, 'value' => $field->value, 'class' => '']),
+      'description' => Text::_('COM_JOOMGALLERY_CONFIG_EDIT_ONLY_IN_GLOBAL'),
+    ];
+    echo LayoutHelper::render('joomla.form.renderfield', $field_data);
+  }
+  else
+  {
+    echo $field->renderField(['sensitive' => $sensitive]);
+  }
   }
 }

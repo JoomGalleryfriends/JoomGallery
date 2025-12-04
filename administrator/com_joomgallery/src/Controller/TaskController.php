@@ -26,7 +26,7 @@ use Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
  */
 class TaskController extends JoomFormController
 {
-  protected $view_list = 'tasks';
+    protected $view_list = 'tasks';
 
   /**
    * Method to add a new record.

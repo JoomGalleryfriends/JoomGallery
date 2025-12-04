@@ -10,6 +10,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
+// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -81,27 +82,27 @@ class ImagesModel extends AdminImagesModel
    */
   protected function populateState($ordering = 'a.ordering', $direction = 'ASC')
   {
-    // List state information.
+  // List state information.
     parent::populateState($ordering, $direction);
 
-    // Set filters based on how the view is used.
-    // e.g. user list of images: $this->setState('filter.created_by', Factory::getApplication()->getIdentity());
+  // Set filters based on how the view is used.
+  // e.g. user list of images: $this->setState('filter.created_by', Factory::getApplication()->getIdentity());
 
-    $this->loadComponentParams();
+  $this->loadComponentParams();
   }
 
   /**
    * Build an SQL query to load the list data.
    *
-   * @return  DatabaseQuery
+   * @return  \Joomla\Database\QueryInterface // MysqliQuery|
    *
    * @since   4.0.0
    */
-  protected function getListQuery()
+  protected function getListQuery(): \Joomla\Database\QueryInterface
   {
-    $query = parent::getListQuery();
+  $query = parent::getListQuery();
 
-    return $query;
+  return $query;
   }
 
   /**

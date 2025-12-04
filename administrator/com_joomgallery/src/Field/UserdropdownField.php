@@ -92,14 +92,14 @@ class UserdropdownField extends ListField
 
     // "Please select" option when parameter multiple is false.
     if($multiple == 'false')
-    {
+  {
       $options[] = HTMLHelper::_('select.option', '', Text::_('COM_JOOMGALLERY_FIELDS_SELECT_OWNER'));
     }
 
     foreach($results as $result)
     {
       switch($dropdownname)
-      {
+        {
           case 'name':
             $options[] = HTMLHelper::_('select.option', $result->id, $result->name);
               break;

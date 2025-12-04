@@ -31,41 +31,41 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
  */
 class HtmlView extends JoomGalleryView
 {
-  protected $items;
+    protected $items;
 
-  protected $pagination;
+    protected $pagination;
 
-  /**
-   * Display the view
-   *
-   * @param   string  $tpl  Template name
-   *
-   * @return void
-   *
-   * @throws Exception
-   */
-  public function display($tpl = null)
-  {
+    /**
+     * Display the view
+     *
+     * @param   string  $tpl  Template name
+     *
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function display($tpl = null)
+    {
     /** @var TagsModel $model */
     $model = $this->getModel();
 
-    $this->state         = $model->getState();
-    $this->items         = $model->getItems();
-    $this->pagination    = $model->getPagination();
-    $this->filterForm    = $model->getFilterForm();
-    $this->activeFilters = $model->getActiveFilters();
+    $this->state             = $model->getState();
+    $this->items             = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
-    // Check for errors.
-    if(\count($errors = $model->getErrors()))
-    {
-      throw new GenericDataException(implode("\n", $errors), 500);
+        // Check for errors.
+        if(\count($errors = $model->getErrors()))
+        {
+            throw new GenericDataException(implode("\n", $errors), 500);
+        }
+
+        $this->addToolbar();
+
+        $this->sidebar = Sidebar::render();
+        parent::display($tpl);
     }
-
-    $this->addToolbar();
-
-    $this->sidebar = Sidebar::render();
-    parent::display($tpl);
-  }
 
   /**
    * Add the page title and toolbar.
@@ -166,20 +166,20 @@ class HtmlView extends JoomGalleryView
     Sidebar::setAction('index.php?option=com_joomgallery&view=tags');
   }
 
-  /**
-   * Method to order fields
-   *
-   * @return void
-   */
-  protected function getSortFields()
-  {
-    return [
-      'a.`ordering`'  => Text::_('JGRID_HEADING_ORDERING'),
-      'a.`title`'     => Text::_('JGLOBAL_TITLE'),
-      'a.`published`' => Text::_('JSTATUS'),
-      'a.`access`'    => Text::_('JGRID_HEADING_ACCESS'),
-      'a.`language`'  => Text::_('JGRID_HEADING_LANGUAGE'),
-      'a.`id`'        => Text::_('JGRID_HEADING_ID'),
-    ];
-  }
+    /**
+     * Method to order fields
+     *
+     * @return void
+     */
+    protected function getSortFields()
+    {
+        return [
+          'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
+          'a.`title`' => Text::_('JGLOBAL_TITLE'),
+          'a.`published`' => Text::_('JSTATUS'),
+          'a.`access`' => Text::_('JGRID_HEADING_ACCESS'),
+          'a.`language`' => Text::_('JGRID_HEADING_LANGUAGE'),
+          'a.`id`' => Text::_('JGRID_HEADING_ID'),
+        ];
+    }
 }

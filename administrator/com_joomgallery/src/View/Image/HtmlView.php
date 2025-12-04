@@ -34,8 +34,8 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class HtmlView extends JoomGalleryView
 {
-  protected $item;
-  protected $form;
+    protected $item;
+    protected $form;
   protected $config;
   protected $imagetypes;
 
@@ -46,23 +46,23 @@ class HtmlView extends JoomGalleryView
   protected $mediaSize;
   protected $configSize;
 
-  /**
-   * Display the view
-   *
-   * @param   string  $tpl  Template name
-   *
-   * @return void
-   *
-   * @throws \Exception
-   */
-  public function display($tpl = null)
-  {
+    /**
+     * Display the view
+     *
+     * @param   string  $tpl  Template name
+     *
+     * @return void
+     *
+     * @throws \Exception
+     */
+    public function display($tpl = null)
+    {
     /** @var ImageModel $model */
     $model = $this->getModel();
 
-    $this->state      = $model->getState();
-    $this->item       = $model->getItem();
-    $this->form       = $model->getForm();
+        $this->state  = $model->getState();
+        $this->item   = $model->getItem();
+        $this->form   = $model->getForm();
     $this->config     = JoomHelper::getService('config');
     $this->imagetypes = JoomHelper::getRecords('imagetypes');
     $rating           = JoomHelper::getRating($this->item->id);
@@ -76,11 +76,11 @@ class HtmlView extends JoomGalleryView
       $this->form->setFieldAttribute('image', 'required', true);
     }
 
-    // Check for errors.
-    if(\count($errors = $model->getErrors()))
-    {
-      throw new GenericDataException(implode("\n", $errors), 500);
-    }
+        // Check for errors.
+        if(\count($errors = $model->getErrors()))
+        {
+            throw new GenericDataException(implode("\n", $errors), 500);
+        }
 
     if($this->_layout == 'upload')
     {
@@ -119,89 +119,89 @@ class HtmlView extends JoomGalleryView
       $this->addToolbarEdit();
     }
 
-    parent::display($tpl);
-  }
+        parent::display($tpl);
+    }
 
-  /**
-   * Add the page title and toolbar for the image edit form.
-   *
-   * @return void
-   *
-   * @throws \Exception
-   */
-  protected function addToolbarEdit()
-  {
-    Factory::getApplication()->input->set('hidemainmenu', true);
+    /**
+     * Add the page title and toolbar for the image edit form.
+     *
+     * @return void
+     *
+     * @throws \Exception
+     */
+    protected function addToolbarEdit()
+    {
+        Factory::getApplication()->input->set('hidemainmenu', true);
 
     /** @var Toolbar $model */
     $toolbar = $this->getToolbar();
 
-    $user  = Factory::getApplication()->getIdentity();
-    $isNew = ($this->item->id == 0);
+        $user  = Factory::getApplication()->getIdentity();
+        $isNew = ($this->item->id == 0);
 
-    if(isset($this->item->checked_out))
-    {
-      $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
-    }
-    else
-    {
-      $checkedOut = false;
-    }
-
-    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES') . ' :: ' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT'), 'image');
-
-    // If not checked out, can save the item.
-    if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || ($this->getAcl()->checkACL('core.create'))))
-    {
-      ToolbarHelper::apply('image.apply', 'JTOOLBAR_APPLY');
-    }
-
-    if(!$checkedOut && ($this->getAcl()->checkACL('core.create')))
-    {
-      $saveGroup = $toolbar->dropdownButton('save-group');
-
-    $saveGroup->configure(
-        function (Toolbar $childBar) use ($checkedOut, $isNew) {
-          $childBar->save('image.save', 'JTOOLBAR_SAVE');
-
-          if(!$checkedOut && ($this->getAcl()->checkACL('core.create')))
-          {
-            $childBar->save2new('image.save2new');
-          }
-
-          // If an existing item, can save to a copy.
-          if(!$isNew && $this->getAcl()->checkACL('core.create'))
-          {
-            $childBar->save2copy('image.save2copy');
-          }
+        if(isset($this->item->checked_out))
+        {
+            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
         }
-    );
+        else
+        {
+            $checkedOut = false;
+        }
+
+        ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES') . ' :: ' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT'), 'image');
+
+        // If not checked out, can save the item.
+        if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || ($this->getAcl()->checkACL('core.create'))))
+        {
+            ToolbarHelper::apply('image.apply', 'JTOOLBAR_APPLY');
+        }
+
+        if(!$checkedOut && ($this->getAcl()->checkACL('core.create')))
+        {
+            $saveGroup = $toolbar->dropdownButton('save-group');
+
+            $saveGroup->configure(
+                function (Toolbar $childBar) use ($checkedOut, $isNew) {
+                    $childBar->save('image.save', 'JTOOLBAR_SAVE');
+
+                    if(!$checkedOut && ($this->getAcl()->checkACL('core.create')))
+                    {
+                        $childBar->save2new('image.save2new');
+                    }
+
+                    // If an existing item, can save to a copy.
+                    if(!$isNew && $this->getAcl()->checkACL('core.create'))
+                    {
+                        $childBar->save2copy('image.save2copy');
+                    }
+                }
+            );
+        }
+
+        if(empty($this->item->id))
+        {
+            ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CANCEL');
+        }
+        else
+        {
+            ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CLOSE');
+        }
+
+        if(!empty($this->item->id))
+        {
+            ToolbarHelper::custom('image.savemetadata', 'save', '', 'Save metadata to file', false);
+        }
     }
 
-    if(empty($this->item->id))
+    /**
+     * Add the page title and toolbar for the upload form.
+     *
+     * @return void
+     *
+     * @throws \Exception
+     */
+    protected function addToolbarUpload()
     {
-      ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CANCEL');
-    }
-    else
-    {
-      ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CLOSE');
-    }
-
-    if(!empty($this->item->id))
-    {
-      ToolbarHelper::custom('image.savemetadata', 'save', '', 'Save metadata to file', false);
-    }
-  }
-
-  /**
-   * Add the page title and toolbar for the upload form.
-   *
-   * @return void
-   *
-   * @throws \Exception
-   */
-  protected function addToolbarUpload()
-  {
     Factory::getApplication()->input->set('hidemainmenu', true);
 
     ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES') . ' :: ' . Text::_('COM_JOOMGALLERY_IMAGES_UPLOAD'), 'image');
@@ -212,7 +212,7 @@ class HtmlView extends JoomGalleryView
     $server = $this->component->getTusServer();
 
     $this->item->tus_location = $server->getLocation();
-  }
+    }
 
   /**
    * Get array of all allowed filetypes based on the config parameter jg_imagetypes.
@@ -253,36 +253,36 @@ class HtmlView extends JoomGalleryView
     return $types;
   }
 
-  /**
-   * Add the page title and toolbar for the imagetype replace form.
-   *
-   * @return void
-   *
-   * @throws \Exception
-   */
-  protected function addToolbarReplace()
-  {
+    /**
+     * Add the page title and toolbar for the imagetype replace form.
+     *
+     * @return void
+     *
+     * @throws \Exception
+     */
+    protected function addToolbarReplace()
+    {
     Factory::getApplication()->input->set('hidemainmenu', true);
 
     ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES') . ' :: ' . Text::_('COM_JOOMGALLERY_REPLACE'), 'image');
 
     // Add replace button
-    if($this->getAcl()->checkACL('core.edit'))
-    {
-      ToolbarHelper::save('image.replace', 'COM_JOOMGALLERY_REPLACE');
-    }
+        if($this->getAcl()->checkACL('core.edit'))
+        {
+            ToolbarHelper::save('image.replace', 'COM_JOOMGALLERY_REPLACE');
+        }
 
     // Add cancel button
     ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CANCEL');
-  }
+    }
 
-  /**
-   * Modify form fields according to view needs.
-   *
-   * @return void
-   */
-  protected function modifyFieldsReplace()
-  {
+    /**
+     * Modify form fields according to view needs.
+     *
+     * @return void
+     */
+    protected function modifyFieldsReplace()
+    {
     $this->form->setFieldAttribute('title', 'required', false);
     $this->form->setFieldAttribute('replacetype', 'required', true);
     $this->form->setFieldAttribute('image', 'required', true);
@@ -300,7 +300,7 @@ class HtmlView extends JoomGalleryView
     }
 
     $this->form->setFieldAttribute('replacetype', 'default', $this->app->input->get('type', 'original', 'string'));
-  }
+    }
 
   /**
    * Reads php.ini values to determine the minimum size for upload
@@ -309,7 +309,7 @@ class HtmlView extends JoomGalleryView
    *
    * On UploadMaxsize = 0 (from com_media) the php.ini limits are used
    *
-   * @since version 4.2
+   * @since 4.2
    */
   public function limitsPhpConfig(): void
   {
@@ -331,8 +331,7 @@ class HtmlView extends JoomGalleryView
     {
       $this->maxSize = min($this->uploadLimit, $this->postMaxSize);
     }
-    else
-    {
+    else {
       $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $mediaUploadMaxsize);
     }
   }

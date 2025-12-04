@@ -24,7 +24,7 @@ $uppy_version = 'v3.5.0'; // Uppy version to use
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-   ->useScript('form.validate')
+     ->useScript('form.validate')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip');
 

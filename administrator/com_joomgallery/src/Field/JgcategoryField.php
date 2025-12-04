@@ -85,7 +85,7 @@ class JgcategoryField extends FormField
             // Get access service
             $comp = Factory::getApplication()->bootComponent('com_joomgallery');
             $comp->createAccess();
-            $acl = $comp->getAccess();
+        $acl = $comp->getAccess();
 
             $this->readonly = !$acl->checkACL('core.manage', 'com_joomgallery');
         }
@@ -160,9 +160,9 @@ class JgcategoryField extends FormField
         }
 
         $extraData = [
-          'categoryName' => $name,
-          'category'     => $this->getCat(),
-          'excluded'     => $this->getExcluded(),
+          'categoryName'  => $name,
+          'category' => $this->getCat(),
+          'excluded'   => $this->getExcluded(),
         ];
 
         return array_merge($data, $extraData);

@@ -66,7 +66,7 @@ class JoomGalleryView extends BaseHtmlView
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
@@ -111,14 +111,14 @@ class JoomGalleryView extends BaseHtmlView
     }
   }
 
-  /**
-   * Method to get the access service class.
-   *
-   * @return  AccessInterface   Object on success, false on failure.
-   * @since   4.0.0
-   */
-  public function getAcl(): AccessInterface
-  {
+    /**
+     * Method to get the access service class.
+     *
+     * @return  AccessInterface   Object on success, false on failure.
+     * @since   4.0.0
+     */
+    public function getAcl(): AccessInterface
+    {
     // Create access service
     if(\is_null($this->acl))
     {
@@ -126,20 +126,20 @@ class JoomGalleryView extends BaseHtmlView
       $this->acl = $this->component->getAccess();
     }
 
-    return $this->acl;
-  }
+        return $this->acl;
+    }
 
-  /**
-   * Check if state is set
-   *
-   * @param   mixed  $state  State
-   *
-   * @return bool
-   */
-  public function getState($state)
-  {
-    return isset($this->state->{$state}) ? $this->state->{$state} : false;
-  }
+    /**
+     * Check if state is set
+     *
+     * @param   mixed  $state  State
+     *
+     * @return bool
+     */
+    public function getState($state)
+    {
+        return isset($this->state->{$state}) ? $this->state->{$state} : false;
+    }
 
   /**
    * Returns the toolbar

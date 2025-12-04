@@ -54,27 +54,28 @@ class HtmlView extends JoomGalleryView
    */
   public function display($tpl = null)
   {
-    /** @var GalleryModel $model */
-    $model = $this->getModel();
+  /** @var GalleryModel $model */
+  $model = $this->getModel();
 
-    $this->state  = $model->getState();
+  $this->state    = $model->getState();
     $this->params = $model->getParams();
     $this->item   = $model->getItem();
 
-    // Load images
-    $this->item->images             = new \stdClass();
-    $this->item->images->items      = $model->getImages();
-    $this->item->images->pagination = $model->getImagesPagination();
+  // Load images
+  $this->item->images             = new \stdClass();
+  $this->item->images->items      = $model->getImages();
+  $this->item->images->pagination = $model->getImagesPagination();
 
-    // Check for errors.
+  // Check for errors.
     if(\count($errors = $model->getErrors()))
     {
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
-    $this->_prepareDocument();
+  // Prepares the document breadcrumbs
+  $this->_prepareDocument();
 
-    parent::display($tpl);
+  parent::display($tpl);
   }
 
   /**

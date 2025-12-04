@@ -101,17 +101,17 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     $this->fastgd2thumbcreation = $fastgd2thumbcreation;
   }
 
-  /**
-   * Destructor
-   *
-   * @return  void
-   *
-   * @since  4.0.0
-   */
-  public function __destruct()
-  {
+    /**
+     * Destructor
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     */
+    public function __destruct()
+    {
     $this->deleteFrames_GD(['src_frames', 'dst_frames', 'res_frames']);
-  }
+    }
 
   /**
    * Version notes
@@ -874,7 +874,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // Get info for destination frames
     $this->dst_imginfo['angle']     = $angle;
     $this->dst_imginfo['flip']      = 'none';
-    $this->dst_imginfo['width']     = $this->dst_imginfo['src']['width'] = $this->src_imginfo['width'];
+    $this->dst_imginfo['width']     = $this->dst_imginfo['src']['width']  = $this->src_imginfo['width'];
     $this->dst_imginfo['height']    = $this->dst_imginfo['src']['height'] = $this->src_imginfo['height'];
     $this->dst_imginfo['offset_x']  = 0;
     $this->dst_imginfo['offset_y']  = 0;
@@ -1031,7 +1031,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
         $this->dst_imginfo['flip'] = 'none';
           break;
     }
-    $this->dst_imginfo['width']       = $this->dst_imginfo['src']['width'] = $this->src_imginfo['width'];
+    $this->dst_imginfo['width']       = $this->dst_imginfo['src']['width']  = $this->src_imginfo['width'];
     $this->dst_imginfo['height']      = $this->dst_imginfo['src']['height'] = $this->src_imginfo['height'];
     $this->dst_imginfo['orientation'] = $this->src_imginfo['orientation'];
     $this->dst_imginfo['truecolor']   = $this->src_imginfo['truecolor'];
@@ -1171,7 +1171,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       $this->autoOrient($this->metadata['exif']['IFD0']['Orientation']);
     }
-    $this->dst_imginfo['width']     = $this->dst_imginfo['src']['width'] = $this->src_imginfo['width'];
+    $this->dst_imginfo['width']     = $this->dst_imginfo['src']['width']  = $this->src_imginfo['width'];
     $this->dst_imginfo['height']    = $this->dst_imginfo['src']['height'] = $this->src_imginfo['height'];
     $this->dst_imginfo['offset_x']  = 0;
     $this->dst_imginfo['offset_y']  = 0;

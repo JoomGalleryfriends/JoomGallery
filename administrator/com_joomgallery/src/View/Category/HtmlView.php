@@ -45,8 +45,8 @@ class HtmlView extends JoomGalleryView
    */
   public function display($tpl = null)
   {
-    /** @var CategoryModel $model */
-    $model = $this->getModel();
+  /** @var CategoryModel $model */
+  $model = $this->getModel();
 
     $this->state = $model->getState();
     $this->item  = $model->getItem();
@@ -54,9 +54,9 @@ class HtmlView extends JoomGalleryView
 
     // JS to deactivate filesystem form field
     $js                  = 'var callback = function() {';
-    $js                 .= 'let catid = document.getElementById("jform_id");';
-    $js                 .= 'let filesystem = document.getElementById("jform_params__jg_filesystem");';
-    $js                 .= 'if(catid && filesystem && catid.value > 1) {filesystem.setAttribute("disabled", "disabled"); filesystem.classList.add("readonly");};';
+    $js                 .=    'let catid = document.getElementById("jform_id");';
+    $js                 .=    'let filesystem = document.getElementById("jform_params__jg_filesystem");';
+    $js                 .=    'if(catid && filesystem && catid.value > 1) {filesystem.setAttribute("disabled", "disabled"); filesystem.classList.add("readonly");};';
     $js                 .= '};';
     $js                 .= 'if(document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)){callback();} else {document.addEventListener("DOMContentLoaded", callback);}';
     $this->filesystem_js = $js;
@@ -67,7 +67,9 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
+
     $this->addToolbar();
+
     parent::display($tpl);
   }
 
@@ -82,8 +84,8 @@ class HtmlView extends JoomGalleryView
   {
     Factory::getApplication()->input->set('hidemainmenu', true);
 
-    /** @var Toolbar $model */
-    $toolbar = $this->getToolbar();
+  /** @var Toolbar $model */
+  $toolbar = $this->getToolbar();
 
     $user  = Factory::getApplication()->getIdentity();
     $isNew = ($this->item->id == 0);

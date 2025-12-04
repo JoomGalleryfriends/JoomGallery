@@ -82,6 +82,7 @@
     <field name="catid"
            type="jgcategorydropdown"
            label="JCATEGORY"
+           categoriesOfUser="true"
            default=""
            show_root="false"
            required="true"

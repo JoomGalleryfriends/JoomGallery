@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fields name="filter">
+    <field name="search"
+           type="text"
+           label="JSEARCH_FILTER"
+           hint="JSEARCH_FILTER"
+           class="js-stools-search-string"/>
+
+    <field name="published"
+           type="list"
+           label="JOPTION_SELECT_PUBLISHED"
+           onchange="this.form.submit();">
+      <option value="*">JOPTION_SELECT_PUBLISHED</option>
+      <option value="1">PUBLISHED</option>
+      <option value="0">UNPUBLISHED</option>
+    </field>
+  </fields>
+
+  <fields name="list">
+    <field name="fullordering"
+           type="list"
+           label="JGLOBAL_SORT_BY"
+           onchange="this.form.submit();"
+           default="a.lft ASC"
+           validate="options">
+      <option value="*">JGLOBAL_SORT_BY</option>
+      <option value="a.lft ASC">JGRID_HEADING_ORDERING_ASC</option>
+      <option value="a.lft DESC">JGRID_HEADING_ORDERING_DESC</option>
+      <option value="a.created_time ASC">JDATE_ASC</option>
+      <option value="a.created_time DESC">JDATE_DESC</option>
+      <option value="a.title ASC">JGLOBAL_TITLE_ASC</option>
+      <option value="a.title DESC">JGLOBAL_TITLE_DESC</option>
+      <option value="img_count ASC">COM_JOOMGALLERY_IMAGES_ASC</option>
+      <option value="img_count DESC">COM_JOOMGALLERY_IMAGES_DESC</option>
+      <option value="parent_title ASC">COM_JOOMGALLERY_PARENT_CATEGORY_LABEL_ASC</option>
+      <option value="parent_title DESC">COM_JOOMGALLERY_PARENT_CATEGORY_LABEL_DESC</option>
+      <option value="a.published ASC">JSTATUS_ASC</option>
+      <option value="a.published DESC">JSTATUS_DESC</option>
+    </field>
+
+    <field name="limit"
+           type="limitbox"
+           label="JSEARCH_FILTER_LIMIT"
+           class="input-mini"
+           default="20"
+           onchange="this.form.submit();"/>
+  </fields>
+</form>

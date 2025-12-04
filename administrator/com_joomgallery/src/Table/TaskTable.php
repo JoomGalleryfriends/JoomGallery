@@ -51,101 +51,101 @@ class TaskTable extends Table
    */
   public $completed = false;
 
-  /**
-   * Constructor
-   *
-   * @param   JDatabase  &$db               A database connector object
-   * @param   bool       $component_exists  True if the component object class exists
-   */
-  public function __construct(DatabaseDriver $db, bool $component_exists = true)
-  {
-    $this->component_exists = $component_exists;
-    $this->typeAlias        = _JOOM_OPTION . '.task';
+    /**
+     * Constructor
+     *
+     * @param   JDatabase  &$db               A database connector object
+     * @param   bool       $component_exists  True if the component object class exists
+     */
+    public function __construct(DatabaseDriver $db, bool $component_exists = true)
+    {
+        $this->component_exists = $component_exists;
+        $this->typeAlias        = _JOOM_OPTION . '.task';
 
     parent::__construct(_JOOM_TABLE_TASKS, 'id', $db);
 
     // Initialize queue, successful and failed
-    $this->queue      = [];
-    $this->successful = new Registry();
-    $this->failed     = new Registry();
-    $this->counter    = new Registry();
-  }
+        $this->queue      = [];
+        $this->successful = new Registry();
+        $this->failed     = new Registry();
+    $this->counter        = new Registry();
+    }
 
-  /**
-   * Get the type alias for the history table
-   *
-   * @return  string  The alias as described above
-   *
-   * @since   4.2.0
-   */
-  public function getTypeAlias()
-  {
-    return $this->typeAlias;
-  }
+    /**
+     * Get the type alias for the history table
+     *
+     * @return  string  The alias as described above
+     *
+     * @since   4.2.0
+     */
+    public function getTypeAlias()
+    {
+        return $this->typeAlias;
+    }
 
-  /**
-   * Method to store a row in the database from the Table instance properties.
-   *
-   * If a primary key value is set the row with that primary key value will be updated with the instance property values.
-   * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
-   *
-   * @param   boolean  $updateNulls  True to update fields even if they are null.
-   *
-   * @return  boolean  True on success.
-   *
-   * @since   4.2.0
-   */
-  public function store($updateNulls = true)
-  {
+    /**
+     * Method to store a row in the database from the Table instance properties.
+     *
+     * If a primary key value is set the row with that primary key value will be updated with the instance property values.
+     * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
+     *
+     * @param   boolean  $updateNulls  True to update fields even if they are null.
+     *
+     * @return  boolean  True on success.
+     *
+     * @since   4.2.0
+     */
+    public function store($updateNulls = true)
+    {
     // Support for queue field
     if(isset($this->queue) && !\is_string($this->queue))
-    {
-      $this->queue = json_encode(array_values($this->queue), JSON_UNESCAPED_UNICODE);
+        {
+            $this->queue = json_encode(array_values($this->queue), JSON_UNESCAPED_UNICODE);
     }
 
-    // Support for successful field
+        // Support for successful field
     if(isset($this->successful) && !\is_string($this->successful))
-    {
-      $registry         = new Registry($this->successful);
-      $this->successful = (string) $registry;
+        {
+      $registry               = new Registry($this->successful);
+            $this->successful = (string) $registry;
     }
 
-    // Support for failed field
+        // Support for failed field
     if(isset($this->failed) && !\is_string($this->failed))
-    {
-      $registry     = new Registry($this->failed);
-      $this->failed = (string) $registry;
+        {
+            $registry     = new Registry($this->failed);
+            $this->failed = (string) $registry;
     }
 
     // Support for counter field
     if(isset($this->counter) && !\is_string($this->counter))
-    {
-      $registry      = new Registry($this->counter);
-      $this->counter = (string) $registry;
+        {
+            $registry      = new Registry($this->counter);
+            $this->counter = (string) $registry;
     }
 
     // Support for params field
     if(isset($this->params) && !\is_string($this->params))
-    {
-      $registry     = new Registry($this->params);
-      $this->params = (string) $registry;
+        {
+            $registry     = new Registry($this->params);
+            $this->params = (string) $registry;
     }
 
-    return parent::store($updateNulls);
-  }
+        return parent::store($updateNulls);
+    }
 
-  /**
-   * Overloaded bind function to pre-process the params.
-   *
-   * @param   array  $array   Named array
-   * @param   mixed  $ignore  Optional array or list of parameters to ignore
-   *
-   * @return  boolean  True on success.
-   *
-   * @since   4.2.0
-   */
-  public function bind($array, $ignore = '')
-  {
+    /**
+     * Overloaded bind function to pre-process the params.
+     *
+     * @param   array  $array   Named array
+     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     *
+     * @return  boolean  True on success.
+     *
+     * @since   4.2.0
+     */
+    public function bind($array, $ignore = '')
+    {
     $date = Factory::getDate();
 
     // Support for title field: title
@@ -161,49 +161,49 @@ class TaskTable extends Table
 
     // Support for queue field
     if(isset($array['queue']) && \is_array($array['queue']))
-    {
-      $array['queue'] = json_encode($array['queue'], JSON_UNESCAPED_UNICODE);
+        {
+            $array['queue'] = json_encode($array['queue'], JSON_UNESCAPED_UNICODE);
     }
 
-    // Support for successful field
+        // Support for successful field
     if(isset($array['successful']) && \is_array($array['successful']))
-    {
+        {
       $registry = new Registry();
-      $registry->loadArray($array['successful']);
-      $array['successful'] = (string) $registry;
+            $registry->loadArray($array['successful']);
+            $array['successful'] = (string) $registry;
     }
 
-    // Support for failed field
+        // Support for failed field
     if(isset($array['failed']) && \is_array($array['failed']))
-    {
-      $registry = new Registry();
-      $registry->loadArray($array['failed']);
-      $array['failed'] = (string) $registry;
+        {
+            $registry = new Registry();
+            $registry->loadArray($array['failed']);
+            $array['failed'] = (string) $registry;
     }
 
     // Support for counter field
     if(isset($array['counter']) && \is_array($array['counter']))
-    {
-      $registry = new Registry();
-      $registry->loadArray($array['counter']);
-      $array['counter'] = (string) $registry;
+        {
+            $registry = new Registry();
+            $registry->loadArray($array['counter']);
+            $array['counter'] = (string) $registry;
     }
 
     // Support for params field
     if(isset($array['params']) && \is_array($array['params']))
-    {
-      $registry = new Registry();
-      $registry->loadArray($array['params']);
-      $array['params'] = (string) $registry;
+        {
+            $registry = new Registry();
+            $registry->loadArray($array['params']);
+            $array['params'] = (string) $registry;
     }
 
     if($array['id'] == 0)
-    {
-      $array['created_time'] = $date->toSql();
+        {
+            $array['created_time'] = $date->toSql();
     }
 
     return parent::bind($array, ['progress', 'completed']);
-  }
+    }
 
   /**
    * Method to perform sanity checks on the Table instance properties to ensure they are safe to store in the database.
@@ -354,32 +354,32 @@ class TaskTable extends Table
     }
   }
 
-  /**
-   * Method to get a task object by id
-   *
-   * @param   int  $id  Task type
-   *
-   * @return  object    The task object.
-   *
-   * @since   4.2.0
-   */
-  protected function getSchedulerTask(int $id)
-  {
+    /**
+     * Method to get a task object by id
+     *
+     * @param   int  $id  Task type
+     *
+     * @return  object    The task object.
+     *
+     * @since   4.2.0
+     */
+    protected function getSchedulerTask(int $id)
+    {
     // Get a db connection.
-    $db = $this->getDatabase();
+        $db = $this->getDatabase();
 
-    // Create a new query object.
-    $query = $db->getQuery(true);
+        // Create a new query object.
+        $query = $db->getQuery(true);
 
-    // Select all records from the scheduler tasks table where type is matching.
-    $query->select('*');
-    $query->from($db->quoteName('#__scheduler_tasks'));
+        // Select all records from the scheduler tasks table where type is matching.
+        $query->select('*');
+        $query->from($db->quoteName('#__scheduler_tasks'));
     $query->where(($db->quoteName('id')) . '=' . $db->quote($id));
 
-    // Reset the query using our newly populated query object.
-    $db->setQuery($query);
+        // Reset the query using our newly populated query object.
+        $db->setQuery($query);
 
-    // Load the result as a stdClass object.
-    return $db->loadObject();
-  }
+        // Load the result as a stdClass object.
+        return $db->loadObject();
+    }
 }

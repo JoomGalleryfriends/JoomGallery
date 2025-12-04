@@ -56,8 +56,8 @@ trait FileManagerServiceTrait
      */
     public function createFileManager($catid, $selection = false): void
     {
-        $this->fileManager = new FileManager($catid, $selection);
+    $this->fileManager = new FileManager($catid, $selection);
 
-        return;
+    return;
     }
 }

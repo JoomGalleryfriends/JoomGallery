@@ -61,8 +61,7 @@ class PelDataEditor
         $entry = new PelEntryTime($tag, $data, PelEntryTime::EXIF_STRING);
         $ifd->addEntry($entry);
       }
-      else
-      {
+      else {
         $entry->setValue($data, PelEntryTime::EXIF_STRING);
       }
     }
@@ -73,8 +72,7 @@ class PelDataEditor
         $entry = new PelEntryCopyright($data[0], $data[1]);
         $ifd->addEntry($entry);
       }
-      else
-      {
+      else {
         $entry->setValue($data[0], $data[1]);
       }
     }
@@ -86,13 +84,11 @@ class PelDataEditor
         $entry = new PelEntryUserComment(substr($data, 8));
         $ifd->addEntry($entry);
       }
-      else
-      {
+      else {
         $entry->setValue($data);
       }
     }
-    else
-    {
+    else {
       $entryClass = '\lsolesen\pel\PelEntry' . PelFormat::getName($format);
 
       if($entry == null)
@@ -100,8 +96,7 @@ class PelDataEditor
         $entry = new $entryClass($tag, $data);
         $ifd->addEntry($entry);
       }
-      else
-      {
+      else {
         $entry->setValue($data);
       }
     }

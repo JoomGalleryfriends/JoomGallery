@@ -37,7 +37,7 @@ trait NoAssetTableTrait
      */
     protected function _getAssetName($itemtype = null)
     {
-        return parent::_getAssetName($itemtype);
+    return parent::_getAssetName($itemtype);
     }
 
     /**
@@ -55,8 +55,8 @@ trait NoAssetTableTrait
         // We will retrieve the parent-asset from the Asset-table
         $assetTable = new Asset($this->getDbo());
 
-        // Load the JoomGallery global asset
-        $assetTable->loadByName(_JOOM_OPTION);
+    // Load the JoomGallery global asset
+    $assetTable->loadByName(_JOOM_OPTION);
 
         // Return the found asset-parent-id
         if($assetTable->id)
@@ -82,28 +82,28 @@ trait NoAssetTableTrait
      */
     protected function _getAssetTitle($itemtype = null)
     {
-        if(property_exists($this, 'title'))
-        {
-            return $this->title;
-        }
-
-
-            return $this->_getAssetName();
+    if(property_exists($this, 'title'))
+    {
+      return $this->title;
     }
 
-    /**
-     * Method to set empty rules for the record based on a form.
-     *
-     * @param   Form  $form  The form object where the rules gets extracted
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    public function setEmptyRules(Form $form)
-    {
+
+      return $this->_getAssetName();
+    }
+
+  /**
+   * Method to set empty rules for the record based on a form.
+   *
+   * @param   Form  $form  The form object where the rules gets extracted
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
+  public function setEmptyRules(Form $form)
+  {
         // Add the rules for ACL
         $rules = new Rules('{}');
         $this->setRules($rules);
-    }
+  }
 }

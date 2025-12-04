@@ -10,6 +10,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
+// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -196,8 +197,8 @@ class ControlModel extends BaseDatabaseModel
       }
 
       // Get extension url
-      $url  = (string) $xml_extension->attributes()->detailsurl;
-      $name = (string) $xml_extension->attributes()->name;
+      $url  =  (string) $xml_extension->attributes()->detailsurl;
+      $name =  (string) $xml_extension->attributes()->name;
 
       try
       {

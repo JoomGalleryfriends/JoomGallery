@@ -20,6 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Component\Router\RouterInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
 use Joomla\Database\DatabaseInterface;
 
 /**
@@ -29,25 +30,25 @@ use Joomla\Database\DatabaseInterface;
  */
 class JG3LegacyRouter implements RouterInterface
 {
-  /**
-   * Name to be displayed
-   *
-   * @var    string
-   *
-   * @since  4.0.0
-   */
-  public static $displayName = 'JG3 Router';
+    /**
+     * Name to be displayed
+     *
+     * @var    string
+     *
+     * @since  4.0.0
+     */
+    public static $displayName = 'JG3 Router';
 
-  /**
-   * Type of the router
-   *
-   * @var    string
-   *
-   * @since  4.0.0
-   */
-  public static $type = 'legacy';
+    /**
+     * Type of the router
+     *
+     * @var    string
+     *
+     * @since  4.0.0
+     */
+    public static $type = 'legacy';
 
-  private $application;
+    private $application;
 
   private $menu;
 
@@ -198,7 +199,7 @@ class JG3LegacyRouter implements RouterInterface
     {
       $segments[] = 'edit';
 
-      $dbquery = $this->db->getQuery(true)
+      $dbquery = $this->db->createQuery()
               ->select('alias')
               ->from(_JOOM_TABLE_IMAGES)
               ->where('id = ' . (int) $query['id']);
@@ -219,7 +220,7 @@ class JG3LegacyRouter implements RouterInterface
       {
         $segments[] = 'editcategory';
 
-        $dbquery = $this->db->getQuery(true)
+        $dbquery = $this->db->createQuery()
                 ->select('alias')
                 ->from(_JOOM_TABLE_CATEGORIES)
                 ->where('cid = ' . (int) $query['catid']);
@@ -344,7 +345,7 @@ class JG3LegacyRouter implements RouterInterface
 
       //if($config->get('jg_image_sef') == 2)
       //{
-        $dbquery = $this->db->getQuery(true)
+        $dbquery = $this->db->createQuery()
                 ->select('alias')
                 ->from(_JOOM_TABLE_IMAGES)
                 ->where('id = ' . (int) $query['id']);
@@ -406,7 +407,7 @@ class JG3LegacyRouter implements RouterInterface
 
     if(isset($query['view']) && $query['view'] == 'category')
     {
-      $dbquery = $this->db->getQuery(true)
+      $dbquery = $this->db->createQuery()
               ->select('alias')
               ->from(_JOOM_TABLE_CATEGORIES)
               ->where('cid = ' . (int) $query['catid']);
@@ -421,9 +422,9 @@ class JG3LegacyRouter implements RouterInterface
       unset($query['catid'], $query['view']);
     }
 
-    if(isset($query['id'], $query['view']) && $query['view'] == 'detail')
+    if(isset($query['id'], $query['view'])   && $query['view'] == 'detail')
     {
-      $dbquery = $this->db->getQuery(true)
+      $dbquery = $this->db->createQuery()
               ->select('catid, alias')
               ->from(_JOOM_TABLE_IMAGES)
               ->where('id = ' . (int) $query['id']);
@@ -488,13 +489,13 @@ class JG3LegacyRouter implements RouterInterface
     $segment = str_replace(':', '-', $segments[0]);
 
     if(   $segment == ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_TOP_RATED'))
-      || $segment == ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_LAST_ADDED'))
-      || $segment == ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_LAST_COMMENTED'))
-      || $segment == ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_MOST_VIEWED'))
-      || $segment == 'top-rated'
-      || $segment == 'last-added'
-      || $segment == 'last-commented'
-      || $segment == 'most-viewed'
+      ||  $segment == ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_LAST_ADDED'))
+      ||  $segment == ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_LAST_COMMENTED'))
+      ||  $segment == ApplicationHelper::stringURLSafe(Text::_('COM_JOOMGALLERY_COMMON_TOPLIST_MOST_VIEWED'))
+      ||  $segment == 'top-rated'
+      ||  $segment == 'last-added'
+      ||  $segment == 'last-commented'
+      ||  $segment == 'most-viewed'
       )
     {
       $vars['view'] = 'toplist';

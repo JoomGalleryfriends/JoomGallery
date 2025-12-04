@@ -96,8 +96,8 @@ foreach($form->getGroup('') as $k => $field)
     <?php
       $modalData = [
         'selector' => $group . '_modal',
-        'params'   => ['title' => $label . ': ' . ucfirst($fieldname)],
-        'body'     => LayoutHelper::render('joomla.form.field.subform.repeatable-config.modal', $displayData),
+        'params'   => ['title'  => $label . ': ' . ucfirst($fieldname)],
+        'body' => LayoutHelper::render('joomla.form.field.subform.repeatable-config.modal', $displayData),
       ];
       echo LayoutHelper::render('libraries.html.bootstrap.modal.main', $modalData);
     ?>

@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
@@ -28,30 +29,30 @@ use Joomla\CMS\Uri\Uri;
  */
 class ImageController extends JoomFormController
 {
-  protected $view_list = 'images';
+    protected $view_list = 'images';
 
-  /**
-   * Method to save a record.
-   *
-   * @param   string  $key     The name of the primary key of the URL variable.
-   * @param   string  $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
-   *
-   * @return  boolean  True if successful, false otherwise.
-   *
-   * @since   4.0.0
-   */
-  public function save($key = null, $urlVar = null)
-  {
-    $task = $this->getTask();
-
-    // The save2copy task needs to be handled slightly differently.
-    if($task === 'save2copy')
+    /**
+     * Method to save a record.
+     *
+     * @param   string  $key     The name of the primary key of the URL variable.
+     * @param   string  $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
+     *
+     * @return  boolean  True if successful, false otherwise.
+     *
+     * @since   4.0.0
+     */
+    public function save($key = null, $urlVar = null)
     {
-      $this->input->set('origin_id', $this->input->getInt('id'));
-    }
+        $task = $this->getTask();
 
-    return parent::save($key, $urlVar);
-  }
+        // The save2copy task needs to be handled slightly differently.
+        if($task === 'save2copy')
+        {
+            $this->input->set('origin_id', $this->input->getInt('id'));
+        }
+
+        return parent::save($key, $urlVar);
+    }
 
   /**
    * Method to add multiple new image records.
@@ -132,7 +133,11 @@ class ImageController extends JoomFormController
       echo new JsonResponse($e);
 
       $this->app->close();
+
+      return false;
     }
+
+    return true;
   }
 
   /**
@@ -147,7 +152,8 @@ class ImageController extends JoomFormController
     // Check for request forgeries.
     $this->checkToken();
 
-    $app     = $this->app;
+    $app = $this->app;
+    /** @var ImageModel $model */
     $model   = $this->getModel();
     $data    = $this->input->post->get('jform', [], 'array');
     $context = (string) _JOOM_OPTION . '.' . $this->context . '.replace';
@@ -250,6 +256,8 @@ class ImageController extends JoomFormController
 
     // Redirect to the list screen.
     $this->setRedirect(Route::_($url, false));
+
+    return true;
   }
 
   /**
@@ -263,13 +271,15 @@ class ImageController extends JoomFormController
    */
   public function cancel($key = null)
   {
-    parent::cancel($key);
+    $isOk = parent::cancel($key);
 
     if($this->input->get('layout', 'edit', 'cmd') == 'replace')
     {
       // Redirect to the edit screen.
       $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=image&layout=edit&id=' . $this->input->getInt('id'), false));
     }
+
+    return $isOk;
   }
 
   /**
@@ -342,5 +352,7 @@ class ImageController extends JoomFormController
 
     // Redirect to media manager
     $this->setRedirect(Route::_('index.php?option=com_media&view=file&path=' . $path, false));
+
+    return true;
   }
 }

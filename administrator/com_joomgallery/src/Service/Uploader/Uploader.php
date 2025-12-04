@@ -15,13 +15,16 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Filesystem\File as JFile;
+use Joomla\Filesystem\Path as JPath;
 
 /**
  * Base class for the Uploader helper classes
@@ -121,19 +124,19 @@ abstract class Uploader implements UploaderInterface
     $this->component->addWarning($this->app->getUserStateFromRequest($this->userStateKey . '.warningoutput', 'warningoutput', '', 'string'));
   }
 
-  /**
-   * Base method to retrieve an uploaded image. Step 1.
-   * Method has to be extended! Do not use it in this way!
-   *
-   * @param   array    $data        Form data (as reference)
-   * @param   bool     $filename    True, if the filename has to be created (default: True)
-   *
-   * @return  bool     True on success, false otherwise
-   *
-   * @since  4.0.0
-   */
-  public function retrieveImage(&$data, $filename = true): bool
-  {
+    /**
+     * Base method to retrieve an uploaded image. Step 1.
+     * Method has to be extended! Do not use it in this way!
+     *
+     * @param   array    $data        Form data (as reference)
+     * @param   bool     $filename    True, if the filename has to be created (default: True)
+     *
+     * @return  bool     True on success, false otherwise
+     *
+     * @since  4.0.0
+     */
+    public function retrieveImage(&$data, $filename = true): bool
+    {
     // Create filesystem service
     $this->component->createFilesystem();
 
@@ -162,10 +165,13 @@ abstract class Uploader implements UploaderInterface
     $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_FILENAME', $this->src_name));
 
     // Image size must not exceed the setting in backend if we are in frontend
-    if($this->app->isClient('site') && $this->src_size > $this->component->getConfig()->get('jg_maxfilesize'))
+    $maxFileSizeMB    = $this->component->getConfig()->get('jg_maxfilesize');
+    $maxFileSizeBytes = $maxFileSizeMB * (1024 * 1024);
+
+    if($this->app->isClient('site') && $this->src_size > $maxFileSizeBytes)
     {
-      $this->component->addDebug(Text::sprintf('JGLOBAL_MAXIMUM_UPLOAD_SIZE_LIMIT', $this->component->getConfig()->get('jg_maxfilesize')));
-      $this->component->addLog(Text::sprintf('JGLOBAL_MAXIMUM_UPLOAD_SIZE_LIMIT', $this->component->getConfig()->get('jg_maxfilesize')), 'error', 'jerror');
+      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_MAXIMUM_USER_UPLOAD_LIMIT_EXCEEDED', $maxFileSizeMB));
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_MAXIMUM_USER_UPLOAD_LIMIT_EXCEEDED', $maxFileSizeMB), 'error', 'jerror');
       $this->error = true;
 
       return false;
@@ -218,7 +224,7 @@ abstract class Uploader implements UploaderInterface
     }
 
     return true;
-  }
+    }
 
   /**
    * Override form data with image metadata
@@ -408,7 +414,7 @@ abstract class Uploader implements UploaderInterface
         // Add #new# prefix to new tags
         $data['tags'] = array_map(
             function ($tag) use ($existing_tags) {
-            return isset($existing_tags[$tag]) ? $existing_tags[$tag] : '#new#' . $tag;
+              return isset($existing_tags[$tag]) ? $existing_tags[$tag] : '#new#' . $tag;
             },
             $tags
         );
@@ -466,18 +472,18 @@ abstract class Uploader implements UploaderInterface
   }
 
 
-  /**
-   * Method to create uploaded image files. Step 3.
-   * (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
-   *
-   * @param   ImageTable   $data_row     Image object
-   *
-   * @return  bool         True on success, false otherwise
-   *
-   * @since  4.0.0
-   */
-  public function createImage($data_row): bool
-  {
+    /**
+     * Method to create uploaded image files. Step 3.
+     * (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
+     *
+     * @param   ImageTable   $data_row     Image object
+     *
+     * @return  bool         True on success, false otherwise
+     *
+     * @since  4.0.0
+     */
+    public function createImage($data_row): bool
+    {
     // Check if filename was set
     if(!isset($data_row->filename) || empty($data_row->filename))
     {
@@ -514,12 +520,12 @@ abstract class Uploader implements UploaderInterface
       // Template variables
       $tpl_vars = [
         'user_id' => $user->id,
-        'user_username'      => $user->username,
-        'user_name'          => $user->name,
-        'img_id'             => $data_row->id,
-        'img_title'          => $data_row->title,
-        'cat_id'             => $cat->id,
-        'cat_title'          => $cat->title,
+        'user_username' => $user->username,
+        'user_name' => $user->name,
+        'img_id' => $data_row->id,
+        'img_title' => $data_row->title,
+        'cat_id' => $cat->id,
+        'cat_title' => $cat->title,
       ];
 
       // Setting up message template
@@ -543,7 +549,7 @@ abstract class Uploader implements UploaderInterface
     $this->resetUserStates();
 
     return !$this->error;
-  }
+    }
 
   /**
    * Rollback an erroneous upload
@@ -598,7 +604,7 @@ abstract class Uploader implements UploaderInterface
   /**
    * Returns the number of images of the current user
    *
-   * @param   $userid  Id of the current user
+   * @param   int $userid  Id of the current user
    *
    * @return  int      The number of images of the current user
    *
@@ -617,7 +623,9 @@ abstract class Uploader implements UploaderInterface
 
     if($timespan > 0)
     {
-      $query->where('date > (UTC_TIMESTAMP() - INTERVAL ' . $timespan . ' DAY)');
+      // image 'date' may be manipulated, use created time instead
+      // $query->where('date > (UTC_TIMESTAMP() - INTERVAL '. $timespan .' DAY)');
+      $query->where('created_time > (UTC_TIMESTAMP() - INTERVAL ' . $timespan . ' DAY)');
     }
 
     $db->setQuery($query);

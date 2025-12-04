@@ -31,8 +31,7 @@ extract($displayData);
 ?>
 
   <span id="<?php echo $id; ?>" class="<?php echo $class; ?> <?php if($hidden)
-  {
-  echo 'hidden';
+{echo 'hidden';
             }; ?>">
     <?php echo htmlspecialchars($value, ENT_COMPAT, 'UTF-8'); ?>
   </span>

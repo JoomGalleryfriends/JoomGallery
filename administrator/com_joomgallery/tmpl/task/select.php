@@ -31,8 +31,8 @@ $this->items = $this->tasks;
 if(empty($this->tasks))
 {
   $no_items  = '<div class="alert alert-info">';
-  $no_items .= '<span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden">' . Text::_('INFO') . '</span>';
-  $no_items .= ' ' . Text::_('No Tasks found');
+  $no_items .=   '<span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden">' . Text::_('INFO') . '</span>';
+  $no_items .=   ' ' . Text::_('No Tasks found');
   $no_items .= '</div>';
 
   echo $no_items;

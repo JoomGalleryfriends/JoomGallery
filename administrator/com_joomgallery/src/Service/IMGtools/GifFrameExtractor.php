@@ -469,7 +469,7 @@ class GifFrameExtractor
     ];
 
     $this->frameDimensions[$this->frameNumber] = [
-      'width'  => $this->frameSources[$this->frameNumber]['width'],
+      'width' => $this->frameSources[$this->frameNumber]['width'],
       'height' => $this->frameSources[$this->frameNumber]['height'],
     ];
 

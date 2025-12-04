@@ -113,19 +113,13 @@ Text::script('SUCCESS');
                   <?php endif; ?>
                 </div>
                 <button id="migrationBtn-<?php echo $type; ?>" class="btn btn-primary mb-3 btn-migration<?php if($dependentCompleted && !$migrateable->completed)
-                {
-                echo '';
+{echo '';
                                          }
-                      else
-                      {
-                      echo ' disabled';
+                      else{echo ' disabled';
                       }; ?>" onclick="Migrator.submitTask(event, this)" <?php if($dependentCompleted && !$migrateable->completed)
-                      {
-                      echo '';
+                      {echo '';
                       }
-                      else
-                      {
-                      echo ' disabled';
+                      else{echo ' disabled';
                       }; ?> data-type="<?php echo $type; ?>"><?php echo Text::_('COM_JOOMGALLERY_MIGRATION_START'); ?></button>
                 <button id="stopBtn-<?php echo $type; ?>" class="btn mb-3 btn-outline-secondary btn-stop disabled" onclick="Migrator.stopTask(event, this)" disabled="true" data-type="<?php echo $type; ?>"><?php echo Text::_('COM_JOOMGALLERY_MIGRATION_STOP'); ?></button>
                 <button id="repairBtn-<?php echo $type; ?>" class="btn mb-3 btn-outline-secondary<?php echo ($total > 0) ? '' : ' disabled'; ?>" onclick="Migrator.repairTask(event, this)" <?php echo ($total > 0) ? '' : 'disabled'; ?> data-type="<?php echo $type; ?>"><?php echo Text::_('COM_JOOMGALLERY_MIGRATION_MANUAL'); ?></button>
@@ -138,8 +132,7 @@ Text::script('SUCCESS');
                 <span id="dependent_of-<?php echo $type; ?>" style="display: none;"><?php echo json_encode($this->dependencies['of'][$key]); ?></span>
                 <div class="progress mb-2">
                   <div id="progress-<?php echo $type; ?>" class="progress-bar" style="width: <?php echo $migrateable->progress; ?>%" role="progressbar" aria-valuenow="<?php echo $migrateable->progress; ?>" aria-valuemin="0" aria-valuemax="100"><?php if($migrateable->progress > 0)
-                  {
-                  echo $migrateable->progress . '%';
+{echo $migrateable->progress . '%';
                                     }; ?></div>
                 </div>
                 <a class="collapse-arrow mb-2" data-bs-toggle="collapse" href="#collapseLog-<?php echo $type; ?>" role="button" aria-expanded="false" aria-controls="collapseLog">
@@ -189,8 +182,8 @@ Text::script('SUCCESS');
   // Migration repair modal box
   $options = [
     'modal-dialog-scrollable' => true,
-    'title'                             => Text::_('COM_JOOMGALLERY_MIGRATION_MANUAL'),
-    'footer'                            => '<input type="submit" form="migrepairForm" class="btn btn-primary" value="' . Text::_('COM_JOOMGALLERY_MIGRATION_MANUAL_BTN') . '"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
+    'title'  => Text::_('COM_JOOMGALLERY_MIGRATION_MANUAL'),
+    'footer' => '<input type="submit" form="migrepairForm" class="btn btn-primary" value="' . Text::_('COM_JOOMGALLERY_MIGRATION_MANUAL_BTN') . '"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
   ];
   $data    = ['script' => $this->script->name, 'form' => $migrepairForm];
   $layout  = new FileLayout('joomgallery.migrepair', null, ['component' => 'com_joomgallery', 'client' => 1]);
@@ -203,8 +196,8 @@ Text::script('SUCCESS');
   // Add sleeping mode info modal box
   $options = [
     'modal-dialog-scrollable' => true,
-    'title'                             => Text::_('JFIELD_NOTE_LABEL'),
-    'footer'                            => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JOOMGALLERY_CONFIRM') . '</button>',
+    'title'  => Text::_('JFIELD_NOTE_LABEL'),
+    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JOOMGALLERY_CONFIRM') . '</button>',
   ];
   $body    = Text::_('COM_JOOMGALLERY_MIGRATION_INFO_MODAL_TEXT');
 

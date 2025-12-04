@@ -32,14 +32,14 @@ class ConfigController extends JoomFormController
   /**
    * Method to restore a record to its default values.
    *
-   * @param   string  $key     The name of the primary key of the URL variable.
-   * @param   string  $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
+   * @param   string   $key     The name of the primary key of the URL variable.
+   * @param   string   $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
    *
    * @return  boolean  True if successful, false otherwise.
    *
    * @since   4.0.0
    */
-  public function reset($key = null, $urlVar = null)
+  public function reset($key = null, $urlVar = null): bool
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -96,7 +96,7 @@ class ConfigController extends JoomFormController
     $this->task = 'apply';
 
     // Perform save task
-      parent::save($key, $urlVar);
+    return parent::save($key, $urlVar);
   }
 
   /**
@@ -106,7 +106,7 @@ class ConfigController extends JoomFormController
    *
    * @since   4.0.0
    */
-  public function export()
+  public function export(): bool
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -175,6 +175,8 @@ class ConfigController extends JoomFormController
     echo json_encode($data);
 
     $this->app->close();
+
+    return true;
   }
 
   /**
@@ -184,7 +186,7 @@ class ConfigController extends JoomFormController
    *
    * @since   4.0.0
    */
-  public function import()
+  public function import(): bool
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -280,13 +282,13 @@ class ConfigController extends JoomFormController
     $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SUCCESS_IMPORT', $file['name']), 'info', 'jerror');
 
     // Perform save task
-      parent::save($key, $urlVar);
+    return parent::save($key, $urlVar);
   }
 
   /**
    * Analyses an error code and returns its text
    *
-   * @param   int      $uploaderror  The errorcode
+   * @param   int   $uploaderror  The errorcode
    *
    * @return  string   Error message
    *

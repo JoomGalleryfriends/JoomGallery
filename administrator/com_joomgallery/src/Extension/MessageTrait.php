@@ -57,14 +57,14 @@ trait MessageTrait
    */
   public $msgUserStateKey = 'com_joomgallery.messages';
 
-  /**
-   * Debug information storage
-   *
-   * @var array
-   *
-   * @since  4.0.0
-   */
-  protected $debug = [];
+    /**
+     * Debug information storage
+     *
+     * @var array
+     *
+     * @since  4.0.0
+     */
+    protected $debug = [];
 
   /**
    * Warnings and messages storage
@@ -149,11 +149,11 @@ trait MessageTrait
     {
       if(\is_null($name))
       {
-        Log::addLogger(['text_file' => 'com_joomgallery.log.php'], Log::ALL, ['com_joomgallery']);
+        Log::addLogger(['text_file' =>  'com_joomgallery.log.php'], Log::ALL, ['com_joomgallery']);
       }
       else
       {
-        Log::addLogger(['text_file' => 'com_joomgallery.' . $name . '.log.php'], Log::ALL, ['com_joomgallery.' . $name]);
+        Log::addLogger(['text_file' =>  'com_joomgallery.' . $name . '.log.php'], Log::ALL, ['com_joomgallery.' . $name]);
       }
     }
 
@@ -353,47 +353,47 @@ trait MessageTrait
     return $this->addError($txt, $new_line, $margin_top, $log, $name);
   }
 
-  /**
-   * Method to get the debugoutput
-   *
-   * @param   bool   $implode   True, if youi want to implode the array (optional)
-   *
-   * @return  string|array  Debugoutput
-   *
-   * @since  4.0.0
-   */
-  public function getDebug($implode = false)
-  {
+    /**
+     * Method to get the debugoutput
+     *
+     * @param   bool   $implode   True, if youi want to implode the array (optional)
+     *
+     * @return  string|array  Debugoutput
+     *
+     * @since  4.0.0
+     */
+    public function getDebug($implode = false)
+    {
     return $this->getMsg('debug', $implode);
-  }
+    }
 
-  /**
-   * Method to get the warningoutput
-   *
-   * @param   bool   $implode   True, if youi want to implode the array (optional)
-   *
-   * @return  string|array  Warningoutput
-   *
-   * @since  4.0.0
-   */
-  public function getWarning($implode = false)
-  {
+    /**
+     * Method to get the warningoutput
+     *
+     * @param   bool   $implode   True, if youi want to implode the array (optional)
+     *
+     * @return  string|array  Warningoutput
+     *
+     * @since  4.0.0
+     */
+    public function getWarning($implode = false)
+    {
     return $this->getMsg('warning', $implode);
-  }
+    }
 
-  /**
-   * Method to get the erroroutput
-   *
-   * @param   bool   $implode   True, if youi want to implode the array (optional)
-   *
-   * @return  string|array  Erroroutput
-   *
-   * @since  4.0.0
-   */
-  public function getError($implode = false)
-  {
+    /**
+     * Method to get the erroroutput
+     *
+     * @param   bool   $implode   True, if youi want to implode the array (optional)
+     *
+     * @return  string|array  Erroroutput
+     *
+     * @since  4.0.0
+     */
+    public function getError($implode = false)
+    {
     return $this->getMsg('error', $implode);
-  }
+    }
 
   /**
    * Add the debug to the message queue
@@ -508,17 +508,17 @@ trait MessageTrait
     array_push($storage, $txt);
   }
 
-  /**
-   * Get from storage
-   *
-   * @param   bool   $implode   True, if youi want to implode the array (optional)
-   *
-   * @return  string|array  Debugoutput
-   *
-   * @since  4.0.0
-   */
-  public function getMsg($storage, $implode = false)
-  {
+    /**
+     * Get from storage
+     *
+     * @param   bool   $implode   True, if youi want to implode the array (optional)
+     *
+     * @return  string|array  Debugoutput
+     *
+     * @since  4.0.0
+     */
+    public function getMsg($storage, $implode = false)
+    {
     $storage = &$this->selectMsgStorage($storage);
 
     if($implode)
@@ -528,7 +528,7 @@ trait MessageTrait
 
 
       return $storage;
-  }
+    }
 
   /**
    * Enqueue messages from storage to be printed

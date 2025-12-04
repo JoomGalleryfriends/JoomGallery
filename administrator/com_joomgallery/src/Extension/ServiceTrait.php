@@ -27,26 +27,26 @@ use Joomla\CMS\Factory;
  */
 trait ServiceTrait
 {
-    /**
-     * JoomGallery extension class
-     *
-     * @var JoomgalleryComponent|null
-     */
-    protected $component = null;
+  /**
+   * JoomGallery extension class
+   *
+   * @var JoomgalleryComponent|null
+   */
+  protected $component = null;
 
-    /**
-     * Current application object
-     *
-     * @var    CMSApplicationInterface|null
-     */
-    protected $app = null;
+  /**
+   * Current application object
+   *
+   * @var    CMSApplicationInterface|null
+   */
+  protected $app = null;
 
-    /**
-     * Internal store for dynamic properties.
-     *
-     * @var array<string, mixed>
-     */
-    protected array $__data = [];
+  /**
+   * Internal store for dynamic properties.
+   *
+   * @var array<string, mixed>
+   */
+  protected array $__data = [];
 
     /**
      * Sets a default value if not already assigned
@@ -132,38 +132,37 @@ trait ServiceTrait
      */
     public function getProperties(bool $public = true): array
     {
-        $vars = array_merge(get_object_vars($this), $this->__data);
+    $vars = array_merge(get_object_vars($this), $this->__data);
 
         if($public)
+    {
+      // Remove all properties starting with an underscore
+      foreach($vars as $key => $value)
+      {
+        if(str_starts_with($key, '_'))
         {
-            // Remove all properties starting with an underscore
-            foreach($vars as $key => $value)
-            {
-                if(str_starts_with($key, '_'))
-                {
-                    unset($vars[$key]);
-                }
-            }
+          unset($vars[$key]);
+        }
+      }
 
-            // Now remove protected/private props declared in this class or parents
-            $reflection = new \ReflectionObject($this);
-            do
-            {
-                $nonPublicProps = $reflection->getProperties(
-                    \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PRIVATE
-                );
+      // Now remove protected/private props declared in this class or parents
+      $reflection = new \ReflectionObject($this);
+      do {
+        $nonPublicProps = $reflection->getProperties(
+            \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PRIVATE
+        );
 
-                foreach($nonPublicProps as $prop)
-                {
-                    $propName = $prop->getName();
+        foreach($nonPublicProps as $prop)
+        {
+          $propName = $prop->getName();
 
-                    if(\array_key_exists($propName, $vars))
-                    {
-                        unset($vars[$propName]);
-                    }
-                }
-            }
-            while($reflection = $reflection->getParentClass());
+          if(\array_key_exists($propName, $vars))
+          {
+            unset($vars[$propName]);
+          }
+        }
+      }
+      while($reflection = $reflection->getParentClass());
         }
 
         return $vars;
@@ -194,27 +193,27 @@ trait ServiceTrait
         return false;
     }
 
-    /**
-     * Gets the JoomGallery component object
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    public function getComponent()
-    {
-        $this->component = Factory::getApplication()->bootComponent('com_joomgallery');
-    }
+  /**
+   * Gets the JoomGallery component object
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
+  public function getComponent()
+  {
+    $this->component = Factory::getApplication()->bootComponent('com_joomgallery');
+  }
 
-    /**
-     * Gets the current application object
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    public function getApp()
-    {
-        $this->app = Factory::getApplication();
-    }
+  /**
+   * Gets the current application object
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
+  public function getApp()
+  {
+    $this->app = Factory::getApplication();
+  }
 }

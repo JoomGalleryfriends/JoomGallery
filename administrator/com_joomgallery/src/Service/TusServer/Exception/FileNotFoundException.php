@@ -26,8 +26,7 @@ class FileNotFoundException extends IOException
       {
         $message = 'File could not be found.';
       }
-      else
-      {
+      else {
         $message = \sprintf('File "%s" could not be found.', $path);
       }
     }

@@ -32,9 +32,9 @@ extract($displayData);
 
 if(!empty($options['showonEnabled']))
 {
-  /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-  $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-  $wa->useScript('showon');
+    /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa->useScript('showon');
 }
 
 if(isset($id) && ($id == 'jform_jg_staticprocessing' || $id == 'jform_jg_dynamicprocessing'))
@@ -65,21 +65,21 @@ else
 
 if(!empty($parentclass))
 {
-  $class .= ' ' . $parentclass;
+    $class .= ' ' . $parentclass;
 }
 
 if(!empty($addClass))
 {
-  $class .= ' ' . $addClass;
+    $class .= ' ' . $addClass;
 }
 
 $tip = null;
 
 if(!empty($description) && strpos($description, '{tip}') !== false)
 {
-  $desc_arr    = explode('{tip}', $description);
-  $description = $desc_arr[0];
-  $tip         = $desc_arr[1];
+  $desc_arr      = explode('{tip}', $description);
+    $description = $desc_arr[0];
+    $tip         = $desc_arr[1];
 }
 
 $sensitiveBtn = '';
@@ -100,9 +100,9 @@ if($sensitive)
 
   Text::script('COM_JOOMGALLERY_CONFIG_ALERT_ENABLE_SENSITIVE_FIELD');
 
-  /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-  $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-  $wa->useScript('com_joomgallery.sensitiveField');
+    /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa->useScript('com_joomgallery.sensitiveField');
 }
 
 ?>

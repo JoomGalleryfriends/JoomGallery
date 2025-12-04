@@ -29,24 +29,24 @@ use Joomla\CMS\Plugin\PluginHelper;
  */
 class ImgProcessorListField extends ListField
 {
-  /**
-   * The form field type.
-   *
-   * @var    string
-   * @since  4.0.0
-   */
-  protected $type = 'imgprocessorlist';
+    /**
+     * The form field type.
+     *
+     * @var    string
+     * @since  4.0.0
+     */
+    protected $type = 'imgprocessorlist';
 
-  /**
-   * Method to get the field options.
-   *
-   * @return  array  The field option objects.
-   *
-   * @since   4.0.0
-   */
-  protected function getOptions()
-  {
-    $options = parent::getOptions();
+    /**
+     * Method to get the field options.
+     *
+     * @return  array  The field option objects.
+     *
+     * @since   4.0.0
+     */
+    protected function getOptions()
+    {
+        $options = parent::getOptions();
 
     // Load plugins in order to search for additional ImageProcessor plugins
     PluginHelper::importPlugin('joomgallery');
@@ -65,18 +65,18 @@ class ImgProcessorListField extends ListField
       }
     }
 
-    return $options;
-  }
+        return $options;
+    }
 
-  /**
-   * Method to get the field input markup.
-   *
-   * @return  string  The field input markup.
-   *
-   * @since   4.0.0
-   */
-  protected function getInput()
-  {
+    /**
+     * Method to get the field input markup.
+     *
+     * @return  string  The field input markup.
+     *
+     * @since   4.0.0
+     */
+    protected function getInput()
+    {
     $component = Factory::getApplication()->bootComponent('com_joomgallery');
     $descs     = [];
 
@@ -149,20 +149,20 @@ class ImgProcessorListField extends ListField
     }
 
     $js  = 'var changeImgProcessorDesc = function() {';
-    $js .= 'let select_val = document.getElementById("jform_jg_imgprocessor").value;';
-    $js .= 'let elem = document.getElementById("jg_imgprocessor_supplement_"+select_val);';
-    $js .= 'let elems = Array.from(document.getElementById("jg_imgprocessor_supplement").children);';
-    $js .= 'elems.forEach(child => {child.classList.add("hidden")});';
-    $js .= 'elem.classList.remove("hidden")';
+    $js .=      'let select_val = document.getElementById("jform_jg_imgprocessor").value;';
+    $js .=      'let elem = document.getElementById("jg_imgprocessor_supplement_"+select_val);';
+    $js .=      'let elems = Array.from(document.getElementById("jg_imgprocessor_supplement").children);';
+    $js .=      'elems.forEach(child => {child.classList.add("hidden")});';
+    $js .=      'elem.classList.remove("hidden")';
     $js .= '};';
 
     $js .= 'var callback = function(){';
-    $js .= 'document.getElementById("jg_imgprocessor_supplement").innerHTML = "' . $html_desc . '";';
+    $js .=      'document.getElementById("jg_imgprocessor_supplement").innerHTML = "' . $html_desc . '";';
     $js .= '};';
     $js .= 'if ( document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)){callback();} else {document.addEventListener("DOMContentLoaded", callback);}';
 
     $input = parent::getInput();
 
-    return $input . '<script>' . $js . '</script>';
-  }
+        return $input . '<script>' . $js . '</script>';
+    }
 }

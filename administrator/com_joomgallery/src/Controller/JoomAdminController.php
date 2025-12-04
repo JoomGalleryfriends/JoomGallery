@@ -19,6 +19,8 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterfa
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\MVC\Controller\AdminController as BaseAdminController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\View\ViewInterface;
 use Joomla\CMS\User\CurrentUserInterface;
 use Joomla\Input\Input;
 
@@ -45,7 +47,7 @@ class JoomAdminController extends BaseAdminController
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
@@ -57,33 +59,33 @@ class JoomAdminController extends BaseAdminController
    */
   protected $context;
 
-  /**
-   * Constructor.
-   *
-   * @param   array                $config   An optional associative array of configuration settings.
-   *                                         Recognized key values include 'name', 'default_task', 'model_path', and
-   *                                         'view_path' (this list is not meant to be comprehensive).
-   * @param   MVCFactoryInterface  $factory  The factory.
-   * @param   CMSApplication       $app      The Application for the dispatcher
-   * @param   Input                $input    The Input object for the request
-   *
-   * @since   4.0.0
-   */
-  public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
-  {
-    parent::__construct($config, $factory, $app, $input);
+    /**
+     * Constructor.
+     *
+     * @param   array                $config   An optional associative array of configuration settings.
+     *                                         Recognized key values include 'name', 'default_task', 'model_path', and
+     *                                         'view_path' (this list is not meant to be comprehensive).
+     * @param   MVCFactoryInterface  $factory  The factory.
+     * @param   CMSApplication       $app      The Application for the dispatcher
+     * @param   Input                $input    The Input object for the request
+     *
+     * @since   4.0.0
+     */
+    public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
+    {
+        parent::__construct($config, $factory, $app, $input);
 
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
-  }
+    }
 
-  /**
-   * Method to get the access service class.
-   *
-   * @return  AccessInterface   Object on success, false on failure.
-   * @since   4.0.0
-   */
-  public function getAcl(): AccessInterface
-  {
+    /**
+     * Method to get the access service class.
+     *
+     * @return  AccessInterface   Object on success, false on failure.
+     * @since   4.0.0
+     */
+    public function getAcl(): AccessInterface
+    {
     // Create access service
     if(\is_null($this->acl))
     {
@@ -91,8 +93,8 @@ class JoomAdminController extends BaseAdminController
       $this->acl = $this->component->getAccess();
     }
 
-    return $this->acl;
-  }
+        return $this->acl;
+    }
 
   /**
    * Execute a task by triggering a Method in the derived class.
@@ -102,7 +104,7 @@ class JoomAdminController extends BaseAdminController
    *
    * @return  mixed   The value returned by the called Method.
    *
-   * @throws  Exception
+   * @throws  \Exception
    * @since   4.0.0
    */
   public function execute($task)

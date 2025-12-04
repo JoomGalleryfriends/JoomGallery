@@ -24,7 +24,7 @@ use Joomla\CMS\Uri\Uri;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-   ->useScript('form.validate')
+     ->useScript('form.validate')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip', '.hasTip');
 
@@ -194,9 +194,9 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <input type="hidden" id="mediaManagerPath" name="mediapath" value=""/>
   <input type="hidden" name="jform[uploader]" value="html" />
   <?php /* <input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
-  <input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
-  <input type="hidden" name="jform[votes]" value="<?php echo $this->item->votes; ?>" />
-  <input type="hidden" name="jform[useruploaded]" value="<?php echo $this->item->useruploaded; ?>" /> */ ?>
+    <input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
+    <input type="hidden" name="jform[votes]" value="<?php echo $this->item->votes; ?>" />
+    <input type="hidden" name="jform[useruploaded]" value="<?php echo $this->item->useruploaded; ?>" /> */ ?>
   <?php echo HTMLHelper::_('form.token'); ?>
 
 </form>
@@ -212,8 +212,8 @@ if(!\is_null($this->item->filename) && \in_array(strtolower(pathinfo($this->item
 // Image preview modal
 $options = [
   'modal-dialog-scrollable' => true,
-  'title'                             => 'Test Title',
-  'footer'                            => $mediaManagerBtn . '<a id="replaceBtn" class="btn hasTip" title="' . Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP') . '" href="' . Route::_('index.php?option=com_joomgallery&view=image&layout=replace&id=' . (int) $this->item->id) . '">' . Text::_('COM_JOOMGALLERY_REPLACE') . '</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
+  'title'  => 'Test Title',
+  'footer' => $mediaManagerBtn . '<a id="replaceBtn" class="btn hasTip" title="' . Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP') . '" href="' . Route::_('index.php?option=com_joomgallery&view=image&layout=replace&id=' . (int) $this->item->id) . '">' . Text::_('COM_JOOMGALLERY_REPLACE') . '</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
 ];
 
 echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');

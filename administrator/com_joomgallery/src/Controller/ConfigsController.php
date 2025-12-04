@@ -55,14 +55,14 @@ class ConfigsController extends JoomAdminController
       $model = $this->getModel();
       $model->duplicate($pks);
 
-      if(\count($pks) > 1)
-      {
-        $this->setMessage(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'));
-      }
-      else
-      {
-        $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'));
-      }
+    if(\count($pks) > 1)
+    {
+    $this->setMessage(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'));
+    }
+    else
+    {
+    $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'));
+    }
     }
     catch(\Exception $e)
     {
@@ -133,22 +133,22 @@ class ConfigsController extends JoomAdminController
    */
   public function delete()
   {
-    // Get items to remove from the request.
+  // Get items to remove from the request.
     $cid = $this->input->get('cid', [], 'array');
 
-    if(\is_array($cid) && \in_array(1, $cid))
-    {
-      echo 'asd';
-      $glob_id = array_search(1, $cid);
-      unset($cid[$glob_id]);
+  if(\is_array($cid) && \in_array(1, $cid))
+  {
+    echo 'asd';
+    $glob_id = array_search(1, $cid);
+    unset($cid[$glob_id]);
 
-      $this->input->set('cid', $cid);
+    $this->input->set('cid', $cid);
 
-      $this->setMessage(Text::_('COM_JOOMGALLERY_ERROR_DELETE_GLOBCONFIG'), 'warning');
+    $this->setMessage(Text::_('COM_JOOMGALLERY_ERROR_DELETE_GLOBCONFIG'), 'warning');
 
-      $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_DELETE_GLOBCONFIG'), 'error', 'jerror');
-    }
+    $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_DELETE_GLOBCONFIG'), 'error', 'jerror');
+  }
 
-    return parent::delete();
+  return parent::delete();
   }
 }

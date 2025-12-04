@@ -71,19 +71,19 @@ class ApprovedButton extends ActionButton
         // It's an ugly hack, but this allows templates to define the icon classes for the toolbar
         $layout = new FileLayout('joomla.button.iconclass');
 
-        switch($identifier)
-        {
-            case 'approve':
-                $identifier = 'publish';
-                break;
+    switch($identifier)
+    {
+      case 'approve':
+        $identifier = 'publish';
+          break;
 
-            case 'unapprove':
-                $identifier = 'unpublish';
-                break;
+      case 'unapprove':
+        $identifier = 'unpublish';
+          break;
 
-            default:
-                break;
-        }
+      default:
+          break;
+    }
 
         return $layout->render(['icon' => $identifier]);
     }

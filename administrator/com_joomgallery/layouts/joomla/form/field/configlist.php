@@ -55,7 +55,7 @@ $attr = '';
 // Set global value in first option
 if(strpos($options[0]->text, '%s') !== false)
 {
-  $options[0]->text = str_replace('%s', $globvalue, $options[0]->text);
+  $options[0]->text = str_replace('%s', $globvalue ?? '', $options[0]->text);
 }
 
 // Initialize the field attributes.
@@ -92,8 +92,7 @@ if($readonly)
       $html[] = '<input type="hidden" name="' . $name . '" value="' . htmlspecialchars($val, ENT_COMPAT, 'UTF-8') . '">';
     }
   }
-  else
-  {
+  else {
     $html[] = '<input type="hidden" name="' . $name . '" value="' . htmlspecialchars($value, ENT_COMPAT, 'UTF-8') . '">';
   }
 }

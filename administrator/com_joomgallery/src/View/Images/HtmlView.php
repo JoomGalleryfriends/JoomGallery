@@ -32,44 +32,44 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
  */
 class HtmlView extends JoomGalleryView
 {
-  protected $items;
+    protected $items;
 
-  protected $pagination;
+    protected $pagination;
 
-  /**
-   * Display the view
-   *
-   * @param   string  $tpl  Template name
-   *
-   * @return void
-   *
-   * @throws Exception
-   */
-  public function display($tpl = null)
-  {
+    /**
+     * Display the view
+     *
+     * @param   string  $tpl  Template name
+     *
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function display($tpl = null)
+    {
     /** @var ImagesModel $model */
     $model = $this->getModel();
 
-    $this->state         = $model->getState();
-    $this->items         = $model->getItems();
-    $this->pagination    = $model->getPagination();
-    $this->filterForm    = $model->getFilterForm();
-    $this->activeFilters = $model->getActiveFilters();
+    $this->state             = $model->getState();
+    $this->items             = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
-    // Check if filesystem plugins are available
-    JoomHelper::checkFilesystems();
+        // Check if filesystem plugins are available
+        JoomHelper::checkFilesystems();
 
-    // Check for errors.
-    if(\count($errors = $model->getErrors()))
-    {
-      throw new GenericDataException(implode("\n", $errors), 500);
+        // Check for errors.
+        if(\count($errors = $model->getErrors()))
+        {
+            throw new GenericDataException(implode("\n", $errors), 500);
+        }
+
+        $this->addToolbar();
+
+        $this->sidebar = Sidebar::render();
+        parent::display($tpl);
     }
-
-    $this->addToolbar();
-
-    $this->sidebar = Sidebar::render();
-    parent::display($tpl);
-  }
 
   /**
    * Add the page title and toolbar.
@@ -199,27 +199,27 @@ class HtmlView extends JoomGalleryView
     Sidebar::setAction('index.php?option=com_joomgallery&view=images');
   }
 
-  /**
-   * Method to order fields
-   *
-   * @return void
-   */
-  protected function getSortFields()
-  {
-    return [
-      'a.`ordering`'   => Text::_('JGRID_HEADING_ORDERING'),
-      'a.`hits`'       => Text::_('COM_JOOMGALLERY_COMMON_HITS'),
-      'a.`downloads`'  => Text::_('COM_JOOMGALLERY_DOWNLOADS'),
-      'a.`approved`'   => Text::_('COM_JOOMGALLERY_APPROVED'),
-      'a.`title`'      => Text::_('JGLOBAL_TITLE'),
-      'a.`catid`'      => Text::_('JCATEGORY'),
-      'a.`published`'  => Text::_('JSTATUS'),
-      'a.`author`'     => Text::_('JAUTHOR'),
-      'a.`language`'   => Text::_('JGRID_HEADING_LANGUAGE'),
-      'a.`access`'     => Text::_('JGRID_HEADING_ACCESS'),
-      'a.`created_by`' => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
-      'a.`id`'         => Text::_('JGRID_HEADING_ID'),
-      'a.`date`'       => Text::_('JDATE'),
-    ];
-  }
+    /**
+     * Method to order fields
+     *
+     * @return void
+     */
+    protected function getSortFields()
+    {
+        return [
+          'a.`ordering`'   => Text::_('JGRID_HEADING_ORDERING'),
+          'a.`hits`'       => Text::_('COM_JOOMGALLERY_COMMON_HITS'),
+          'a.`downloads`'  => Text::_('COM_JOOMGALLERY_DOWNLOADS'),
+          'a.`approved`'   => Text::_('COM_JOOMGALLERY_APPROVED'),
+          'a.`title`'   => Text::_('JGLOBAL_TITLE'),
+          'a.`catid`'      => Text::_('JCATEGORY'),
+          'a.`published`'  => Text::_('JSTATUS'),
+          'a.`author`'  => Text::_('JAUTHOR'),
+          'a.`language`'   => Text::_('JGRID_HEADING_LANGUAGE'),
+          'a.`access`'     => Text::_('JGRID_HEADING_ACCESS'),
+          'a.`created_by`' => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
+          'a.`id`'         => Text::_('JGRID_HEADING_ID'),
+          'a.`date`'    => Text::_('JDATE'),
+        ];
+    }
 }

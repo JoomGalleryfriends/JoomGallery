@@ -41,14 +41,14 @@ abstract class Migration implements MigrationInterface
 {
   use ServiceTrait;
 
-  /**
-   * Storage for the migration form object.
-   *
-   * @var   Registry
-   *
-   * @since  4.0.0
-   */
-  protected $params = null;
+    /**
+     * Storage for the migration form object.
+     *
+     * @var   Registry
+     *
+     * @since  4.0.0
+     */
+    protected $params = null;
 
   /**
    * Storage for the source database driver object.
@@ -59,23 +59,23 @@ abstract class Migration implements MigrationInterface
    */
   protected $src_db = null;
 
-  /**
-   * Storage for the migration info object.
-   *
-   * @var   object
-   *
-   * @since  4.0.0
-   */
-  protected $info = null;
+    /**
+     * Storage for the migration info object.
+     *
+     * @var   object
+     *
+     * @since  4.0.0
+     */
+    protected $info = null;
 
-  /**
-   * Name of the migration script.
-   *
-   * @var   string
-   *
-   * @since  4.0.0
-   */
-  protected $name = '';
+    /**
+     * Name of the migration script.
+     *
+     * @var   string
+     *
+     * @since  4.0.0
+     */
+    protected $name = '';
 
   /**
    * True to offer the task migration.removesource for this script
@@ -152,18 +152,18 @@ abstract class Migration implements MigrationInterface
     $this->info->description = Text::_('FILES_JOOMGALLERY_MIGRATION_' . strtoupper($this->name) . '_DESC');
   }
 
-  /**
-   * Destructor
-   *
-   * @return  void
-   *
-   * @since  4.0.0
-   */
-  public function __destruct()
-  {
+    /**
+     * Destructor
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     */
+    public function __destruct()
+    {
     // Reset logger to default
     $this->component->setLogger();
-  }
+    }
 
   /**
    * A list of content type definitions depending on migration source
@@ -246,7 +246,7 @@ abstract class Migration implements MigrationInterface
   {
     if(\is_null($migrateable))
     {
-      if(!$migrateable = $this->getMigrateable($type))
+      if(!$migrateable  = $this->getMigrateable($type))
       {
         return [];
       }
@@ -262,7 +262,7 @@ abstract class Migration implements MigrationInterface
     list($db, $prefix) = $this->getDB('source');
 
     // Initialize query object
-    $query = $db->getQuery(true);
+        $query = $db->getQuery(true);
 
     // Create the query
     $query->select($db->quoteName($primarykey))
@@ -693,7 +693,7 @@ abstract class Migration implements MigrationInterface
       // Get database driver for the source joomla database
       if(\is_null($this->src_db))
       {
-        $options      = ['driver' => $this->params->get('dbtype'), 'host' => $this->params->get('dbhost'), 'user' => $this->params->get('dbuser'), 'password' => $this->params->get('dbpass'), 'database' => $this->params->get('dbname'), 'prefix' => $this->params->get('dbprefix')];
+        $options      =  ['driver' => $this->params->get('dbtype'), 'host' => $this->params->get('dbhost'), 'user' => $this->params->get('dbuser'), 'password' => $this->params->get('dbpass'), 'database' => $this->params->get('dbname'), 'prefix' => $this->params->get('dbprefix')];
         $dbFactory    = new DatabaseFactory();
         $this->src_db = $dbFactory->getDriver($this->params->get('dbtype'), $options);
       }

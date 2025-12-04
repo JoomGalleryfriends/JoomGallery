@@ -46,7 +46,7 @@ class CustomtextField extends TextField
         $data = parent::getLayoutData();
 
         $extraData = [
-          'sensitive' => $this->getAttribute('sensitive'),
+          'sensitive'   => $this->getAttribute('sensitive'),
         ];
 
         return array_merge($data, $extraData);

@@ -46,7 +46,7 @@ class JoomFormController extends BaseFormController
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
@@ -78,14 +78,14 @@ class JoomFormController extends BaseFormController
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
   }
 
-  /**
-   * Method to get the access service class.
-   *
-   * @return  AccessInterface   Object on success, false on failure.
-   * @since   4.0.0
-   */
-  public function getAcl(): AccessInterface
-  {
+    /**
+     * Method to get the access service class.
+     *
+     * @return  AccessInterface   Object on success, false on failure.
+     * @since   4.0.0
+     */
+    public function getAcl(): AccessInterface
+    {
     // Create access service
     if(\is_null($this->acl))
     {
@@ -93,8 +93,8 @@ class JoomFormController extends BaseFormController
       $this->acl = $this->component->getAccess();
     }
 
-    return $this->acl;
-  }
+        return $this->acl;
+    }
 
   /**
    * Execute a task by triggering a Method in the derived class.
@@ -104,7 +104,7 @@ class JoomFormController extends BaseFormController
    *
    * @return  mixed   The value returned by the called Method.
    *
-   * @throws  Exception
+   * @throws  \Exception
    * @since   4.0.0
    */
   public function execute($task)

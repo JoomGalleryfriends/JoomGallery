@@ -40,8 +40,8 @@ $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
 if($saveOrder && !empty($this->items))
 {
-  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
-  HTMLHelper::_('draggablelist.draggable');
+    $saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+    HTMLHelper::_('draggablelist.draggable');
 }
 ?>
 
@@ -167,8 +167,8 @@ if($saveOrder && !empty($this->items))
                   <?php
                     $options = [
                       'task_prefix' => 'images.',
-                      'disabled'    => !$canChange,
-                      'id'          => 'featured-' . $item->id,
+                      'disabled' => !$canChange,
+                      'id' => 'featured-' . $item->id,
                     ];
 
                     echo (new FeaturedButton())->render((int) $item->featured, $i, $options);
@@ -179,8 +179,8 @@ if($saveOrder && !empty($this->items))
                   <?php
                     $options = [
                       'task_prefix' => 'images.',
-                      'disabled'    => !$canChange,
-                      'id'          => 'state-' . $item->id,
+                      'disabled' => !$canChange,
+                      'id' => 'state-' . $item->id,
                     ];
 
                     echo (new PublishedButton())->render((int) $item->published, $i, $options);
@@ -241,8 +241,8 @@ if($saveOrder && !empty($this->items))
                   <?php
                     $options = [
                       'task_prefix' => 'images.',
-                      'disabled'    => !$canChange,
-                      'id'          => 'state-' . $item->id,
+                      'disabled' => !$canChange,
+                      'id' => 'state-' . $item->id,
                     ];
 
                     echo (new ApprovedButton())->render((int) $item->approved, $i, $options);

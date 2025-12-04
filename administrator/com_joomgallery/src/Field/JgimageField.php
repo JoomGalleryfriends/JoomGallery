@@ -84,7 +84,7 @@ class JgimageField extends FormField
             // Get access service
             $comp = Factory::getApplication()->bootComponent('com_joomgallery');
             $comp->createAccess();
-            $acl = $comp->getAccess();
+        $acl = $comp->getAccess();
 
             $this->readonly = !$acl->checkACL('core.manage', 'com_joomgallery');
         }
@@ -131,19 +131,19 @@ class JgimageField extends FormField
 
         if(is_numeric($this->value))
         {
-            if($this->value > 0)
-            {
-                $img = JoomHelper::getRecord('image', $this->value);
-            }
+      if($this->value > 0)
+      {
+        $img = JoomHelper::getRecord('image', $this->value);
+      }
 
-            if($this->value == 0 || !$img)
-            {
-                $name = '';
-            }
-            else
-            {
-                $name = $img->title;
-            }
+      if($this->value == 0 || !$img)
+      {
+        $name = '';
+      }
+      else
+      {
+        $name = $img->title;
+      }
         }
 
         // User lookup went wrong, we assign the value instead.

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fieldset name="general">
+    <field name="params_note"
+               type="note"
+               class="alert alert-info"
+               description="COM_JOOMGALLERY_CONFIG_TYPEPARAMS_INFO"
+        />
+    
+    <field name="jg_filesystem"
+           type="jgdynamiclist"
+           useglobal="true"
+           sensitive="true"
+           script="getFilesystemOptions"
+           label="COM_JOOMGALLERY_CONFIG_FILESYSTEM"
+           description="COM_JOOMGALLERY_CONFIG_FILESYSTEM_LONG"
+           class="readonly"
+           readonly="true"
+           >
+    </field>
+
+    <field name="jg_showrating"
+           groupByFieldset="false"
+           default="-1"
+           type="jgradio"
+           class="btn-group btn-group-yesno"
+           useglobal="true"
+           label="COM_JOOMGALLERY_CONFIG_RATING"
+           description="COM_JOOMGALLERY_CONFIG_RATING_CAT_LONG">
+      <option value="-1">JGLOBAL_USE_GLOBAL_VALUE</option>
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+
+    <field name="jg_showcomments"
+           groupByFieldset="false"
+           default="-1"
+           type="jgradio"
+           class="btn-group btn-group-yesno"
+           layout="joomla.form.field.radio.configbtns"
+           useglobal="true"
+           label="COM_JOOMGALLERY_CONFIG_COMMENT"
+           description="COM_JOOMGALLERY_CONFIG_COMMENT_CAT_LONG">
+      <option value="-1">JGLOBAL_USE_GLOBAL_VALUE</option>
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+
+    <field name="jg_dynamic_watermark"
+           groupByFieldset="false"
+           default="-1"
+           type="jgradio"
+           class="btn-group btn-group-yesno"
+           useglobal="true"
+           label="COM_JOOMGALLERY_CONFIG_ALLOW_WATERMARK"
+           description="COM_JOOMGALLERY_CONFIG_ALLOW_WATERMARK_CAT_LONG">
+      <option value="-1">JGLOBAL_USE_GLOBAL_VALUE</option>
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+
+    <field name="jg_download"
+           groupByFieldset="false"
+           default="-1"
+           type="jgradio"
+           class="btn-group btn-group-yesno"
+           useglobal="true"
+           label="COM_JOOMGALLERY_CONFIG_OFFER_DOWNLOAD"
+           description="COM_JOOMGALLERY_CONFIG_OFFER_DOWNLOAD_CAT_LONG">
+      <option value="-1">JGLOBAL_USE_GLOBAL_VALUE</option>
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+
+    <field name="jg_downloadwithwatermark"
+           groupByFieldset="false"
+           default="-1"
+           type="jgradio"
+           class="btn-group btn-group-yesno"
+           useglobal="true"
+           label="COM_JOOMGALLERY_CONFIG_ALLOW_WATERMARK_DOWNLOAD"
+           description="COM_JOOMGALLERY_CONFIG_ALLOW_WATERMARK_DOWNLOAD_CAT_LONG">
+      <option value="-1">JGLOBAL_USE_GLOBAL_VALUE</option>
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+  </fieldset>
+</form>

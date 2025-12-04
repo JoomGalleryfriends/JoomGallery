@@ -21,7 +21,7 @@ use Joomla\CMS\Router\Route;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-   ->useScript('form.validate')
+     ->useScript('form.validate')
    ->useScript('bootstrap.modal')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip');
@@ -30,24 +30,24 @@ HTMLHelper::_('bootstrap.tooltip');
 $importModal = [
   'selector' => 'import_modal',
   'params'   => [
-    'title' => $this->item->title . ': ' . Text::_($this->form->getField('import_json')->getAttribute('title')),
-    'footer'             => '<button class="btn btn-primary" onclick="submitImport(this, event)" aria-label="' . Text::_('COM_JOOMGALLERY_IMPORT') . '">' . Text::_('COM_JOOMGALLERY_IMPORT') . '</button>',
+    'title'  => $this->item->title . ': ' . Text::_($this->form->getField('import_json')->getAttribute('title')),
+    'footer' => '<button class="btn btn-primary" onclick="submitImport(this, event)" aria-label="' . Text::_('COM_JOOMGALLERY_IMPORT') . '">' . Text::_('COM_JOOMGALLERY_IMPORT') . '</button>',
   ],
-  'body' => $this->form->renderField('import_json'),
+  'body'     => $this->form->renderField('import_json'),
 ];
 $js          = 'var submitImport = function(element, event) {';
-$js         .= 'event.preventDefault();';
-$js         .= 'Joomla.submitform("config.import", document.getElementById("config-form"));';
+$js         .=     'event.preventDefault();';
+$js         .=     'Joomla.submitform("config.import", document.getElementById("config-form"));';
 $js         .= '};';
 
 // Note modal
 $noteModal = [
   'selector' => 'note_modal',
   'params'   => [
-    'title' => $this->item->title . ': ' . Text::_($this->form->getField('note')->getAttribute('title')),
-    'footer'             => '<button class="btn btn-primary" data-bs-dismiss="modal" onclick="event.preventDefault()" aria-label="' . Text::_('JCLOSE') . '">' . Text::_('JCLOSE') . '</button>',
+    'title'  => $this->item->title . ': ' . Text::_($this->form->getField('note')->getAttribute('title')),
+    'footer' => '<button class="btn btn-primary" data-bs-dismiss="modal" onclick="event.preventDefault()" aria-label="' . Text::_('JCLOSE') . '">' . Text::_('JCLOSE') . '</button>',
   ],
-  'body' => $this->form->renderField('note'),
+  'body'     => $this->form->renderField('note'),
 ];
 
 $this->document->addScriptDeclaration($js);

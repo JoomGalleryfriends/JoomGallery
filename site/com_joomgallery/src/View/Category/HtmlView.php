@@ -61,16 +61,15 @@ class HtmlView extends JoomGalleryView
    */
   public function display($tpl = null)
   {
-    /** @var CategoryModel $model */
-    $model = $this->getModel();
+  /** @var CategoryModel $model */
+  $model = $this->getModel();
 
-    $this->state  = $model->getState();
+  $this->state    = $model->getState();
     $this->params = $model->getParams();
-    $this->menu   = $this->app->getMenu()->getActive();
+  $this->menu     = $this->app->getMenu()->getActive();
 
     $loaded = true;
-    try
-    {
+    try {
       $this->item = $model->getItem();
     }
     catch (\Exception $e)
@@ -88,8 +87,8 @@ class HtmlView extends JoomGalleryView
 
     // Check access view level
     if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
-    {
-      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
+  {
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
 
       return;
     }
@@ -113,7 +112,7 @@ class HtmlView extends JoomGalleryView
       $this->item->images->activeFilters = $model->getImagesActiveFilters();
     }
 
-    // Check for errors.
+  // Check for errors.
     if(\count($errors = $model->getErrors()))
     {
       throw new GenericDataException(implode("\n", $errors), 500);
@@ -178,15 +177,15 @@ class HtmlView extends JoomGalleryView
       $this->document->setMetadata('robots', $this->params['menu']->get('robots'));
     }
 
-    // Get ID of the category from active menu item
-    if($this->menu && $this->menu->component == _JOOM_OPTION && isset($this->menu->query['view']) && \in_array($this->menu->query['view'], ['categories', 'category']))
-    {
-      $id = $this->menu->query['id'];
-    }
-    else
-    {
-      $id = 1;
-    }
+  // Get ID of the category from active menu item
+  if($this->menu && $this->menu->component == _JOOM_OPTION && isset($this->menu->query['view']) && \in_array($this->menu->query['view'], ['categories', 'category']))
+  {
+    $id = $this->menu->query['id'];
+  }
+  else
+  {
+    $id = 1;
+  }
 
     if(!$this->isMenuCurrentView($this->menu))
     {

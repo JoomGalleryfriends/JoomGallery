@@ -97,7 +97,7 @@ class ConfigDynprocessing extends AbstractCommand
   Usage: <info>php %command.full_name%</info>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
   ";
-    $this->setDescription(Text::_('List all variables in jg_dynamicprocessing field of selected joomgallery configuration'));
+      $this->setDescription(Text::_('List all variables in jg_dynamicprocessing field of selected joomgallery configuration'));
     $this->setHelp($help);
   }
 

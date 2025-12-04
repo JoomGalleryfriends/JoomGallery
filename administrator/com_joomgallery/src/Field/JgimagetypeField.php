@@ -30,27 +30,27 @@ class JgimagetypeField extends ListField
      */
     public $type = 'jgimagetype';
 
-    /**
-     * Method to get the field input markup for a generic list.
-     * Use the multiple attribute to enable multiselect.
-     *
-     * @return  string  The field input markup.
-     *
-     * @since   4.0.0
-     */
-    protected function getInput()
+  /**
+   * Method to get the field input markup for a generic list.
+   * Use the multiple attribute to enable multiselect.
+   *
+   * @return  string  The field input markup.
+   *
+   * @since   4.0.0
+   */
+  protected function getInput()
+  {
+    $data = $this->getLayoutData();
+
+    if(\is_object($data['value']))
     {
-        $data = $this->getLayoutData();
-
-        if(\is_object($data['value']))
-        {
-            $data['value'] = (array) $data['value'];
-        }
-
-        $data['options'] = (array) $this->getOptions();
-
-        return $this->getRenderer($this->layout)->render($data);
+      $data['value'] = (array) $data['value'];
     }
+
+    $data['options'] = (array) $this->getOptions();
+
+    return $this->getRenderer($this->layout)->render($data);
+  }
 
     /**
      * Method to get a list of categories that respects access controls and can be used for
@@ -63,7 +63,7 @@ class JgimagetypeField extends ListField
      */
     protected function getOptions()
     {
-        // Get all imagetypes
+    // Get all imagetypes
         $imagetypes = JoomHelper::getRecords('imagetypes');
 
         // Prepare the empty array
@@ -71,10 +71,10 @@ class JgimagetypeField extends ListField
 
         foreach($imagetypes as $imagetype)
         {
-            if($imagetype->params->get('jg_imgtype', '1'))
-            {
-                $options[] = HTMLHelper::_('select.option', $imagetype->typename, $imagetype->typename);
-            }
+      if($imagetype->params->get('jg_imgtype', '1'))
+      {
+        $options[] = HTMLHelper::_('select.option', $imagetype->typename, $imagetype->typename);
+      }
         }
 
         return $options;

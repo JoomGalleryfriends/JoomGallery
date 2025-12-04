@@ -28,19 +28,19 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class HtmlView extends JoomGalleryView
 {
-  protected $scripts;
+    protected $scripts;
 
-  /**
-   * Display the view
-   *
-   * @param   string  $tpl  Template name
-   *
-   * @return void
-   *
-   * @throws Exception
-   */
-  public function display($tpl = null)
-  {
+    /**
+     * Display the view
+     *
+     * @param   string  $tpl  Template name
+     *
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function display($tpl = null)
+    {
     /** @var MigrationModel $model */
     $model = $this->getModel();
 
@@ -133,12 +133,12 @@ class HtmlView extends JoomGalleryView
       $this->openMigrations = $model->getIdList();
     }
 
-    // Check for errors.
-    if(\count($errors = $model->getErrors()))
-    {
-      throw new GenericDataException(implode("\n", $errors), 500);
-    }
+        // Check for errors.
+        if(\count($errors = $model->getErrors()))
+        {
+            throw new GenericDataException(implode("\n", $errors), 500);
+        }
 
-    parent::display($tpl);
-  }
+        parent::display($tpl);
+    }
 }

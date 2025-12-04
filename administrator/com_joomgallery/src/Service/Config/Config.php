@@ -314,17 +314,17 @@ abstract class Config extends \stdClass implements ConfigInterface
     self::$cache[base64_encode($this->storeId)] = $this->getProperties();
   }
 
-  /**
-   * Writes params from database record to class properties
-   *
-   * @param   array  $params  Array of all configs
-   *
-   * @return  void
-   *
-   * @since   4.0.0
-   */
-  public function setParamsToClass($params)
-  {
+    /**
+     * Writes params from database record to class properties
+     *
+     * @param   array  $params  Array of all configs
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     */
+    public function setParamsToClass($params)
+    {
     foreach($params as $key => $value)
     {
       if(strncmp($key, 'jg_', \strlen('jg_')) === 0)
@@ -371,19 +371,19 @@ abstract class Config extends \stdClass implements ConfigInterface
         }
       }
     }
-  }
+    }
 
-  /**
-   * Read out a row by id from `#_joomgallery_configs` table
-   *
-   * @param   int    $id  id of param row to be loaded (default: 1)
-   *
-   * @return  array  record values
-   *
-   * @since   4.0.0
-   */
-  protected function getParamsByID($id = 1)
-  {
+    /**
+     * Read out a row by id from `#_joomgallery_configs` table
+     *
+     * @param   int    $id  id of param row to be loaded (default: 1)
+     *
+     * @return  array  record values
+     *
+     * @since   4.0.0
+     */
+    protected function getParamsByID($id = 1)
+    {
     $com_obj = $this->app->bootComponent('com_joomgallery');
     $model   = $com_obj->getMVCFactory()->createModel('Config', 'administrator');
 
@@ -400,7 +400,7 @@ abstract class Config extends \stdClass implements ConfigInterface
     }
 
     return $properties;
-  }
+    }
 
   /**
    * Read out the row from `#_joomgallery_configs` table

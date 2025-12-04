@@ -42,17 +42,17 @@ class JoomHelper
    * @var array
    */
   public static $content_types = [
-    'category' => _JOOM_TABLE_CATEGORIES,
-    'collection'                             => _JOOM_TABLE_COLLECTIONS,
-    'comment'                                => _JOOM_TABLE_COMMENTS,
-    'config'                                 => _JOOM_TABLE_CONFIGS,
-    'faulty'                                 => _JOOM_TABLE_FAULTIES,
-    'image'                                  => _JOOM_TABLE_IMAGES,
-    'imagetype'                              => _JOOM_TABLE_IMG_TYPES,
-    'tag'                                    => _JOOM_TABLE_TAGS,
-    'task'                                   => _JOOM_TABLE_TASKS,
-    'user'                                   => _JOOM_TABLE_USERS,
-    'vote'                                   => _JOOM_TABLE_VOTES,
+    'category'  => _JOOM_TABLE_CATEGORIES,
+    'collection' => _JOOM_TABLE_COLLECTIONS,
+    'comment'   => _JOOM_TABLE_COMMENTS,
+    'config'    => _JOOM_TABLE_CONFIGS,
+    'faulty'    => _JOOM_TABLE_FAULTIES,
+    'image'     => _JOOM_TABLE_IMAGES,
+    'imagetype' => _JOOM_TABLE_IMG_TYPES,
+    'tag'       => _JOOM_TABLE_TAGS,
+    'task'      => _JOOM_TABLE_TASKS,
+    'user'      => _JOOM_TABLE_USERS,
+    'vote'      => _JOOM_TABLE_VOTES,
   ];
 
   /**
@@ -368,20 +368,20 @@ class JoomHelper
     return $acl->checkACL($action, $asset, $pk);
   }
 
-  /**
-   * Gets a list of the actions that can be performed.
-   *
-   * @param   string  $type   The name of the content type of the item
-   * @param   int     $id     The item's id
-   *
-   * @return  Registry
-   *
-   * @since   4.0.0
-   */
-  public static function getActions($type = null, $id = null)
-  {
+    /**
+     * Gets a list of the actions that can be performed.
+     *
+     * @param   string  $type   The name of the content type of the item
+     * @param   int     $id     The item's id
+     *
+     * @return  Registry
+     *
+     * @since   4.0.0
+     */
+    public static function getActions($type = null, $id = null)
+    {
     // Create asset name
-    $assetName = _JOOM_OPTION;
+        $assetName = _JOOM_OPTION;
 
     if($type)
     {
@@ -401,13 +401,13 @@ class JoomHelper
     $result = new Registry();
 
     // Fill actions list based on access XML
-    foreach(self::getActionsList($type) as $action)
-    {
-      $result->set($action, $acl->checkACL($action, $assetName));
-    }
+        foreach(self::getActionsList($type) as $action)
+        {
+            $result->set($action, $acl->checkACL($action, $assetName));
+        }
 
-    return $result;
-  }
+        return $result;
+    }
 
   /**
    * Returns the URL or the path to an image
@@ -424,7 +424,7 @@ class JoomHelper
   public static function getImg($img, $type, $url = true, $root = true)
   {
     // Create file config service based on current user
-    $config = self::getService('Config');
+        $config = self::getService('Config');
 
     // Adjust type when in compatibility mode
     if($config->get('jg_compatibility_mode', 0))
@@ -525,9 +525,9 @@ class JoomHelper
 
 
         // Create file manager service
-        $manager = self::getService('FileManager', [$img->catid]);
+              $manager = self::getService('FileManager', [$img->catid]);
         // Create file manager service
-        $filesystem = self::getService('Filesystem', [$img->filesystem]);
+              $filesystem = self::getService('Filesystem', [$img->filesystem]);
 
         // Real URL
         // Example: https://www.example.org/images/joomgallery/orig/test.jpg
@@ -543,7 +543,7 @@ class JoomHelper
     else
     {
       // Create file manager service
-      $manager = self::getService('FileManager', [$img->catid]);
+            $manager = self::getService('FileManager', [$img->catid]);
 
       if($root)
       {
@@ -804,9 +804,9 @@ class JoomHelper
   public static function getRecordIDbyAliasOrFilename($record, $name)
   {
     $tables = [
-      'category' => _JOOM_TABLE_CATEGORIES,
-      'image'             => _JOOM_TABLE_IMAGES,
-      'imagetype'         => _JOOM_TABLE_IMG_TYPES,
+      'category'  => _JOOM_TABLE_CATEGORIES,
+      'image'     => _JOOM_TABLE_IMAGES,
+      'imagetype' => _JOOM_TABLE_IMG_TYPES,
     ];
 
     // Does imagetype support alias
@@ -905,7 +905,7 @@ class JoomHelper
 
 
       // Create file manager service
-      $manager = self::getService('FileManager', [1]);
+            $manager = self::getService('FileManager', [1]);
 
       return $manager->getImgPath(0, $type, false, false, $root);
   }
@@ -1228,7 +1228,7 @@ class JoomHelper
     // List of irregular words
     $irregularWords = [
       'child' => 'children', 'man' => 'men', 'woman' => 'women', 'tooth' => 'teeth',
-      'foot'                   => 'feet', 'person' => 'people', 'mouse' => 'mice',
+      'foot' => 'feet', 'person' => 'people', 'mouse' => 'mice',
     ];
 
     // If the word is in the irregular list, return the plural form

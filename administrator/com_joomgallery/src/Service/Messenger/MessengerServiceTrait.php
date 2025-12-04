@@ -44,18 +44,18 @@ trait MessengerServiceTrait
      */
     public function createMessenger($msgMethod)
     {
-        switch($msgMethod)
-        {
-            case 'pm':
-                $this->messenger = new PmMessenger();
-                break;
+    switch($msgMethod)
+    {
+      case 'pm':
+        $this->messenger = new PmMessenger();
+          break;
 
-            default:
-                $this->messenger = new MailMessenger();
-                break;
-        }
+      default:
+        $this->messenger = new MailMessenger();
+          break;
+    }
 
-        return;
+    return;
     }
 
     /**
@@ -67,6 +67,6 @@ trait MessengerServiceTrait
      */
     public function getMessenger()
     {
-        return $this->messenger;
+    return $this->messenger;
     }
 }

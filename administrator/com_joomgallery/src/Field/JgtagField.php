@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -306,9 +307,9 @@ class JgtagField extends ListField
       }
 
         // Get access service
-      $comp = Factory::getApplication()->bootComponent('com_joomgallery');
-      $comp->createAccess();
-      $acl = $comp->getAccess();
+          $comp = Factory::getApplication()->bootComponent('com_joomgallery');
+          $comp->createAccess();
+        $acl = $comp->getAccess();
 
       return $acl->checkACL('core.create', 'com_joomgallery.tag');
     }

@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Categoryform;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\CategoryformModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 
@@ -67,32 +68,32 @@ class HtmlView extends JoomGalleryView
    *
    * @return void
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function display($tpl = null)
   {
-    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_NOT_YET_AVAILABLE'), 'warning');
+//    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_NOT_YET_AVAILABLE'), 'warning');
 
     if(!$this->app->input->get('preview', 0))
     {
       return;
     }
 
-    /** @var CategoryfromModel $model */
-    $model = $this->getModel();
+  /** @var CategoryformModel $model */
+  $model = $this->getModel();
 
-    $this->state  = $model->getState();
+  $this->state    = $model->getState();
     $this->params = $model->getParams();
     $this->item   = $model->getItem();
     $this->form   = $model->getForm();
 
-    // Get return page
-    $this->return_page = $model->getReturnPage();
+  // Get return page
+  $this->return_page = $model->getReturnPage();
 
-    // Check access view level
+  // Check access view level
     if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
-    {
-      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
+  {
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
 
       return;
     }

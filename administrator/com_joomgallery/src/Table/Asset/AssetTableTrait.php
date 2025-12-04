@@ -53,12 +53,12 @@ trait AssetTableTrait
     protected function _getAssetTitle($itemtype = null)
     {
         if(property_exists($this, 'title'))
-        {
-            return $this->title;
+    {
+      return $this->title;
         }
 
 
-            return $this->_getAssetName();
+      return $this->_getAssetName();
     }
 
     /**
@@ -94,19 +94,19 @@ trait AssetTableTrait
         return $assetParentId;
     }
 
-    /**
-     * Method to set empty rules for the record based on a form.
-     *
-     * @param   Form  $form  The form object where the rules gets extracted
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    public function setEmptyRules(Form $form)
-    {
+  /**
+   * Method to set empty rules for the record based on a form.
+   *
+   * @param   Form  $form  The form object where the rules gets extracted
+   *
+   * @return  void
+   *
+   * @since   4.0.0
+   */
+  public function setEmptyRules(Form $form)
+  {
         // Add the rules for ACL
         $rules = new Rules('{}');
         $this->setRules($rules);
-    }
+  }
 }

@@ -8,6 +8,7 @@
  * *********************************************************************************
  */
 
+// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -20,7 +21,6 @@ use Joomla\CMS\Component\Router\RouterFactoryInterface;
 use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
 use Joomla\CMS\Extension\ComponentInterface;
 use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
-//use Joomla\CMS\Extension\Service\Provider\RouterFactory;
 use Joomla\CMS\HTML\Registry;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\User\UserFactoryInterface;
@@ -36,7 +36,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * @package JoomGallery
  * @since  4.0.0
  */
-return new class implements ServiceProviderInterface {
+return new class implements ServiceProviderInterface
+{
   /**
    * Registers the service provider with a DI container.
    *
@@ -52,7 +53,7 @@ return new class implements ServiceProviderInterface {
     $container->registerServiceProvider(new ComponentDispatcherFactory('\\Joomgallery\\Component\\Joomgallery'));
     $container->registerServiceProvider(new RouterFactory('\\Joomgallery\\Component\\Joomgallery'));
 
-    // Create the component class
+  // Create the component class
     $container->set(
         ComponentInterface::class,
         function (Container $container) {

@@ -17,7 +17,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
-
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
@@ -283,9 +282,9 @@ class Server implements ServerInterface
     }
 
     $this->app->sendHeaders();
-    echo $this->app->getBody();
+      echo $this->app->getBody();
 
-    // The process must only sent the HTTP headers and content: kill request after send
+    // The process only needs to send the HTTP headers and content: kill request after send
     exit;
   }
 
@@ -399,7 +398,7 @@ class Server implements ServerInterface
       return;
     }
 
-    // if file in storage does not exists
+    // if file in storage does not exist
     if(!file_exists($this->directory . $this->getFilename()))
     {
       // allow new upload
@@ -530,8 +529,7 @@ class Server implements ServerInterface
     $returnCode = 204;
     $returnMsg  = 'No Content';
 
-    try
-    {
+    try {
       while(true)
       {
         set_time_limit(self::TIMEOUT);
@@ -991,14 +989,14 @@ class Server implements ServerInterface
   private function readMetaData($filename): array
   {
     $refData = [
-      'id'        => '',
-      'size'      => 0,
-      'offset'    => 0,
+      'id' => '',
+      'size' => 0,
+      'offset' => 0,
       'extension' => '',
-      'filename'  => '',
-      'mimetype'  => '',
+      'filename' => '',
+      'mimetype' => '',
       'ispartial' => true,
-      'isfinal'   => false,
+      'isfinal' => false,
     ];
 
     $file = $this->directory . $filename . '.info';
@@ -1231,8 +1229,7 @@ class Server implements ServerInterface
     {
       $this->allowMaxSize = $value;
     }
-    else
-    {
+    else {
       $this->component->addLog('given $value must be integer, greater them 0', 'error', 'jerror');
       throw new \BadMethodCallException('given $value must be integer, greater them 0');
     }

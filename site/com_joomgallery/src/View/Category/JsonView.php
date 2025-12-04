@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Site\Model\CategoryModel;
 use Joomgallery\Component\Joomgallery\Site\View\JoomGalleryJsonView;
 use Joomla\CMS\Language\Text;
 
@@ -42,14 +43,13 @@ class JsonView extends JoomGalleryJsonView
    */
   public function display($tpl = null)
   {
-    /** @var CategoryModel $model */
-    $model = $this->getModel();
+  /** @var CategoryModel $model */
+  $model = $this->getModel();
 
-    $this->state = $model->getState();
+  $this->state = $model->getState();
 
-    $loaded = true;
-    try
-    {
+  $loaded = true;
+    try {
       $this->item = $model->getItem();
     }
     catch (\Exception $e)
@@ -57,7 +57,7 @@ class JsonView extends JoomGalleryJsonView
       $loaded = false;
     }
 
-    // Check published state
+  // Check published state
     if($loaded && $this->item->published !== 1)
     {
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
@@ -65,34 +65,34 @@ class JsonView extends JoomGalleryJsonView
       return;
     }
 
-    // Check access view level
+  // Check access view level
     if(!\in_array($this->item->access, $this->user->getAuthorisedViewLevels()))
-    {
-      $this->output(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
+  {
+    $this->output(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
 
-      return;
+    return;
     }
 
-    // Load parent category
-    $this->item->parent = $model->getParent();
+  // Load parent category
+  $this->item->parent = $model->getParent();
 
-    // Load subcategories
-    $this->item->children        = new \stdClass();
-    $this->item->children->items = $model->getChildren();
+  // Load subcategories
+  $this->item->children        = new \stdClass();
+  $this->item->children->items = $model->getChildren();
 
-    // Load images
-    $this->item->images        = new \stdClass();
-    $this->item->images->items = $model->getImages();
+  // Load images
+  $this->item->images        = new \stdClass();
+  $this->item->images->items = $model->getImages();
 
-    // Check for errors.
+  // Check for errors.
     if(\count($errors = $model->getErrors()))
     {
-      $this->error = true;
-      $this->output($errors);
+    $this->error = true;
+    $this->output($errors);
 
-      return;
+    return;
     }
 
-    $this->output($this->item);
+  $this->output($this->item);
   }
 }

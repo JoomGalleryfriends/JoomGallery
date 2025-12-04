@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+  <layout title="COM_JOOMGALLERY_MENU_VIEW_USER_IMAGES_TITLE" option="JDEFAULT">
+    <message>
+      <![CDATA[COM_JOOMGALLERY_MENU_VIEW_USER_IMAGES_DESC]]>
+    </message>
+  </layout>
+  <fields name="request">
+    <fieldset name="request"
+    >
+      <field
+        name="userNeedsSettings"
+        type="note"
+        label="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO"
+        description="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO_DESC"
+        readonly="true"
+        class="alert alert-info"
+      />
+    </fieldset>
+  </fields>
+  <fields name="params">
+    <fieldset name="basic">
+      <field name="showTitle"
+             type="radio"
+             default="1"
+             label="COM_JOOMGALLERY_MENU_SHOW_TITLE"
+             description="COM_JOOMGALLERY_MENU_SHOW_TITLE_DESC"
+             class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="0">JNO</option>
+      </field>
+    </fieldset>
+  </fields>
+
+</metadata>
