@@ -69,13 +69,13 @@ class ConfigController extends JoomFormController
 
       $this->component->addLog(Text::_('COM_JOOMGALLERY_INFO_IMPORT_EXPORT'), 'error', 'jerror');
 
-    $this->setRedirect(
+      $this->setRedirect(
         Route::_(
             'index.php?option=' . $this->option . '&view=' . $this->view_item
               . $this->getRedirectToItemAppend($recordId, $urlVar),
             false
         )
-    );
+      );
 
       return false;
     }
@@ -138,13 +138,13 @@ class ConfigController extends JoomFormController
 
       $this->component->addLog(Text::_('COM_JOOMGALLERY_INFO_IMPORT_EXPORT'), 'error', 'jerror');
 
-    $this->setRedirect(
+      $this->setRedirect(
         Route::_(
             'index.php?option=' . $this->option . '&view=' . $this->view_item
               . $this->getRedirectToItemAppend($recordId, $urlVar),
             false
         )
-    );
+      );
 
       return false;
     }
@@ -218,13 +218,13 @@ class ConfigController extends JoomFormController
 
       $this->component->addLog(Text::_('COM_JOOMGALLERY_INFO_IMPORT_EXPORT'), 'warning', 'jerror');
 
-    $this->setRedirect(
+      $this->setRedirect(
         Route::_(
             'index.php?option=' . $this->option . '&view=' . $this->view_item
               . $this->getRedirectToItemAppend($recordId, $urlVar),
             false
         )
-    );
+      );
 
       return false;
     }
@@ -244,13 +244,13 @@ class ConfigController extends JoomFormController
 
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_IMPORT_FAILED', $model->getError()), 'error', 'jerror');
 
-    $this->setRedirect(
+      $this->setRedirect(
         Route::_(
             'index.php?option=' . $this->option . '&view=' . $this->view_item
               . $this->getRedirectToItemAppend($recordId, $urlVar),
             false
         )
-    );
+      );
 
       return false;
     }
@@ -310,6 +310,6 @@ class ConfigController extends JoomFormController
     }
 
 
-      return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
+    return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
   }
 }

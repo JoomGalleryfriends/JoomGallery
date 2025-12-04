@@ -74,30 +74,30 @@ class ConfigsModel extends JoomListModel
    */
   protected function populateState($ordering = 'a.id', $direction = 'ASC')
   {
-  $forcedLanguage = $this->app->input->get('forcedLanguage', '', 'cmd');
+    $forcedLanguage = $this->app->input->get('forcedLanguage', '', 'cmd');
 
-  // Adjust the context to support modal layouts.
+    // Adjust the context to support modal layouts.
     if($layout = $this->app->input->get('layout'))
     {
       $this->context .= '.' . $layout;
     }
 
-  // Adjust the context to support forced languages.
+    // Adjust the context to support forced languages.
     if($forcedLanguage)
     {
       $this->context .= '.' . $forcedLanguage;
     }
 
-  // List state information.
+    // List state information.
     parent::populateState($ordering, $direction);
 
-  // Load the filter state.
-  $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+    // Load the filter state.
+    $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
     $this->setState('filter.search', $search);
     $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
     $this->setState('filter.published', $published);
 
-  // Force a language
+    // Force a language
     if(!empty($forcedLanguage))
     {
       $this->setState('filter.language', $forcedLanguage);
@@ -142,7 +142,7 @@ class ConfigsModel extends JoomListModel
 
     // Select the required fields from the table.
     $query->select($this->getState('list.select', 'a.*'));
-  $query->from($db->quoteName('#__joomgallery_configs', 'a'));
+    $query->from($db->quoteName('#__joomgallery_configs', 'a'));
 
     // Join over the users for the checked out user
     $query->select($db->quoteName('uc.name', 'uEditor'));
@@ -150,11 +150,11 @@ class ConfigsModel extends JoomListModel
 
     // Join over the user field 'created_by'
     $query->select([$db->quoteName('ua.name', 'created_by'), $db->quoteName('ua.id', 'created_by_id')]);
-  $query->join('LEFT', $db->quoteName('#__users', 'ua'), $db->quoteName('ua.id') . ' = ' . $db->quoteName('a.created_by'));
+    $query->join('LEFT', $db->quoteName('#__users', 'ua'), $db->quoteName('ua.id') . ' = ' . $db->quoteName('a.created_by'));
 
-  // Join over the user field 'modified_by'
+    // Join over the user field 'modified_by'
     $query->select([$db->quoteName('um.name', 'modified_by'), $db->quoteName('um.id', 'modified_by_id')]);
-  $query->join('LEFT', $db->quoteName('#__users', 'um'), $db->quoteName('um.id') . ' = ' . $db->quoteName('a.modified_by'));
+    $query->join('LEFT', $db->quoteName('#__users', 'um'), $db->quoteName('um.id') . ' = ' . $db->quoteName('a.modified_by'));
 
     // Filter by search
     $search = $this->getState('filter.search');
@@ -169,7 +169,7 @@ class ConfigsModel extends JoomListModel
       }
       else
       {
-    $search = '%' . str_replace(' ', '%', trim($search)) . '%';
+        $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
             '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
         )
@@ -177,7 +177,7 @@ class ConfigsModel extends JoomListModel
       }
     }
 
-  // Filter by published state
+    // Filter by published state
     $published = (string) $this->getState('filter.published');
 
     if($published !== '*')
@@ -194,14 +194,14 @@ class ConfigsModel extends JoomListModel
     $orderCol  = $this->state->get('list.ordering', 'id');
     $orderDirn = $this->state->get('list.direction', 'ASC');
 
-  if($orderCol && $orderDirn)
-  {
-    $query->order($db->escape($orderCol . ' ' . $orderDirn));
-  }
-  else
-  {
-    $query->order($db->escape($this->state->get('list.fullordering', 'a.lft ASC')));
-  }
+    if($orderCol && $orderDirn)
+    {
+      $query->order($db->escape($orderCol . ' ' . $orderDirn));
+    }
+    else
+    {
+      $query->order($db->escape($this->state->get('list.fullordering', 'a.lft ASC')));
+    }
 
     return $query;
   }
@@ -221,7 +221,7 @@ class ConfigsModel extends JoomListModel
 
     // Select the required fields from the table.
     $query->select('COUNT(*)');
-  $query->from($db->quoteName('#__joomgallery_configs', 'a'));
+    $query->from($db->quoteName('#__joomgallery_configs', 'a'));
 
     // Filter by search
     $search = $this->getState('filter.search');
@@ -236,7 +236,7 @@ class ConfigsModel extends JoomListModel
       }
       else
       {
-    $search = '%' . str_replace(' ', '%', trim($search)) . '%';
+        $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
             '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.note') . ' LIKE :search2)'
         )
@@ -244,7 +244,7 @@ class ConfigsModel extends JoomListModel
       }
     }
 
-  // Filter by published state
+    // Filter by published state
     $published = (string) $this->getState('filter.published');
 
     if($published !== '*')

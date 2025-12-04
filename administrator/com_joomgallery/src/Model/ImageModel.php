@@ -74,35 +74,35 @@ class ImageModel extends JoomAdminModel
    */
   public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?FormFactoryInterface $formFactory = null)
   {
-  parent::__construct($config, $factory, $formFactory);
+    parent::__construct($config, $factory, $formFactory);
 
-  // Set event after recreate
-  if(isset($config['event_after_recreate']))
-  {
-    $this->event_after_recreate = $config['event_after_recreate'];
-  }
-  elseif(empty($this->event_after_recreate))
-  {
-    $this->event_after_recreate = 'onJoomAfterRecreate';
-  }
+    // Set event after recreate
+    if(isset($config['event_after_recreate']))
+    {
+      $this->event_after_recreate = $config['event_after_recreate'];
+    }
+    elseif(empty($this->event_after_recreate))
+    {
+      $this->event_after_recreate = 'onJoomAfterRecreate';
+    }
 
-  // Set event before recreate
-  if(isset($config['event_before_recreate']))
-  {
-    $this->event_before_recreate = $config['event_before_recreate'];
-  }
-  elseif(empty($this->event_before_recreate))
-  {
-    $this->event_before_recreate = 'onJoomBeforeRecreate';
-  }
+    // Set event before recreate
+    if(isset($config['event_before_recreate']))
+    {
+      $this->event_before_recreate = $config['event_before_recreate'];
+    }
+    elseif(empty($this->event_before_recreate))
+    {
+      $this->event_before_recreate = 'onJoomBeforeRecreate';
+    }
 
-  // Update events map
-$this->events_map = array_merge(
-    [
-      'recreate' => 'joomgallery',
-    ],
-    $this->events_map
-);
+    // Update events map
+    $this->events_map = array_merge(
+      [
+        'recreate' => 'joomgallery',
+      ],
+      $this->events_map
+    );
   }
 
   /**
@@ -148,10 +148,10 @@ $this->events_map = array_merge(
     }
 
     // Don't allow to change the created_user_id user if not allowed to access com_users.
-  if(!$this->user->authorise('core.manage', 'com_users'))
-  {
-    $form->setFieldAttribute('created_by', 'filter', 'unset');
-  }
+    if(!$this->user->authorise('core.manage', 'com_users'))
+    {
+      $form->setFieldAttribute('created_by', 'filter', 'unset');
+    }
 
     return $form;
   }
@@ -189,7 +189,7 @@ $this->events_map = array_merge(
       }
 
       if(!empty($array))
-    {
+      {
         $data->robots = $array;
       }
     }
@@ -208,12 +208,12 @@ $this->events_map = array_merge(
    */
   public function getItem($pk = null)
   {
-  if(!\is_null($this->item) && !empty($this->item->id))
-  {
-    return $this->item;
-  }
+    if(!\is_null($this->item) && !empty($this->item->id))
+    {
+      return $this->item;
+    }
 
-  $pk      = (!empty($pk)) ? $pk : (int) $this->getState('image.id');
+    $pk      = (!empty($pk)) ? $pk : (int) $this->getState('image.id');
     $table = $this->getTable();
 
     if($pk > 0 || \is_array($pk))
@@ -238,7 +238,7 @@ $this->events_map = array_merge(
       }
     }
 
-  $this->item = $table->getFieldsValues();
+    $this->item = $table->getFieldsValues();
 
     return $this->item;
   }
@@ -300,8 +300,8 @@ $this->events_map = array_merge(
         // Copy images
         $manager->copyImages($table, $table->catid, $newFilename);
 
-    // Transfer new filename to table
-    $table->filename = $newFilename;
+        // Transfer new filename to table
+        $table->filename = $newFilename;
 
         // Output warning messages
         if(\count($this->component->getWarning()) > 1)
@@ -356,29 +356,29 @@ $this->events_map = array_merge(
     $catMoved    = false;
     $isNew       = true;
     $isCopy      = false;
-  $isAjax        = false;
-  $aliasChanged  = false;
+    $isAjax        = false;
+    $aliasChanged  = false;
 
     $key = $table->getKeyName();
     $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
     // Are we going to copy the image record?
-  if(strpos($app->input->get('task'), 'save2copy') !== false)
+    if(strpos($app->input->get('task'), 'save2copy') !== false)
     {
       $isCopy = true;
-  }
+    }
 
-  // Are we going to save image in an ajax request?
-  if(strpos($app->input->get('task'), 'ajaxsave') !== false)
+    // Are we going to save image in an ajax request?
+    if(strpos($app->input->get('task'), 'ajaxsave') !== false)
     {
       $isAjax = true;
-  }
+    }
 
-  // Change language to 'All' if multilangugae is not enabled
-  if(!Multilanguage::isEnabled())
+    // Change language to 'All' if multilangugae is not enabled
+    if(!Multilanguage::isEnabled())
     {
       $data['language'] = '*';
-  }
+    }
 
     // Include the plugins for the save events.
     PluginHelper::importPlugin($this->events_map['save']);
@@ -398,11 +398,11 @@ $this->events_map = array_merge(
           $catMoved = true;
         }
 
-    // Check if the alias was changed
+        // Check if the alias was changed
         if($table->alias != $data['alias'])
         {
           $aliasChanged = true;
-      $old_alias        = $table->alias;
+          $old_alias        = $table->alias;
         }
 
         // Check if the state was changed
@@ -420,27 +420,27 @@ $this->events_map = array_merge(
       // Save form data in session
       $app->setUserState(_JOOM_OPTION . '.image.upload', $data);
 
-    // Detect uploader service
-    $upload_service = 'html';
+      // Detect uploader service
+      $upload_service = 'html';
 
-    if(isset($data['uploader']) && !empty($data['uploader']))
-    {
-    $upload_service = $data['uploader'];
-    }
+      if(isset($data['uploader']) && !empty($data['uploader']))
+      {
+        $upload_service = $data['uploader'];
+      }
 
-    // Detect multiple upload service
-    $upload_multiple = false;
+      // Detect multiple upload service
+      $upload_multiple = false;
 
-    if(isset($data['multiple']) && !empty($data['multiple']))
-    {
-    $upload_multiple = \boolval($data['multiple']);
-    }
+      if(isset($data['multiple']) && !empty($data['multiple']))
+      {
+        $upload_multiple = \boolval($data['multiple']);
+      }
 
-    // Create uploader service
+      // Create uploader service
       $uploader = JoomHelper::getService('uploader', [$upload_service, $upload_multiple, $isAjax]);
 
-    // Detect uploaded file
-    $imgUploaded = $uploader->isImgUploaded($data);
+      // Detect uploaded file
+      $imgUploaded = $uploader->isImgUploaded($data);
 
       // Retrieve image from request
       if($imgUploaded)
@@ -458,7 +458,7 @@ $this->events_map = array_merge(
         if(!$uploader->retrieveImage($data, $createFilename))
         {
           $this->setError($this->component->getDebug(true));
-      $uploader->rollback();
+          $uploader->rollback();
 
           return false;
         }
@@ -467,23 +467,23 @@ $this->events_map = array_merge(
         if(!$uploader->overrideData($data))
         {
           $this->setError($this->component->getDebug(true));
-      $uploader->rollback();
+          $uploader->rollback();
 
           return false;
         }
       }
 
-    // Create file manager service
+      // Create file manager service
       $manager = JoomHelper::getService('FileManager', [$data['catid']]);
 
-    // Get source image id
+      // Get source image id
       $source_id = $app->input->get('origin_id', false, 'INT');
 
-    // Handle images if category was changed
+      // Handle images if category was changed
       if(!$isNew && ($catMoved || $aliasChanged))
       {
         // Douplicate old data
-    $old_table = clone $table;
+        $old_table = clone $table;
       }
 
       // Bind data to table object
@@ -515,70 +515,70 @@ $this->events_map = array_merge(
         return false;
       }
 
-    // Cancel if file needs two filesystems to be saved
-    // Can be deleted if filesystem service supports two filesystems
-    $two_filesystems = [];
+      // Cancel if file needs two filesystems to be saved
+      // Can be deleted if filesystem service supports two filesystems
+      $two_filesystems = [];
 
-    if($isCopy)
-    {
-    // Get source img object
-    $src_img = JoomHelper::getRecord('image', $source_id);
+      if($isCopy)
+      {
+        // Get source img object
+        $src_img = JoomHelper::getRecord('image', $source_id);
 
-    if($src_img->filesystem !== $table->filesystem)
-    {
-      $two_filesystems = [$src_img->filesystem, $table->filesystem];
-    }
-    }
-    elseif($catMoved)
-    {
-    // Get filesystem for new category
-    $tmp_config = new \Joomgallery\Component\Joomgallery\Administrator\Service\Config\DefaultConfig('com_joomgallery.category', $table->catid);
+        if($src_img->filesystem !== $table->filesystem)
+        {
+          $two_filesystems = [$src_img->filesystem, $table->filesystem];
+        }
+      }
+      elseif($catMoved)
+      {
+        // Get filesystem for new category
+        $tmp_config = new \Joomgallery\Component\Joomgallery\Administrator\Service\Config\DefaultConfig('com_joomgallery.category', $table->catid);
 
-    if($tmp_config->get('jg_filesystem', 'local-images') !== $table->filesystem)
-    {
-      $two_filesystems = [$table->filesystem, $tmp_config->get('jg_filesystem', 'local-images')];
-    }
-    }
+        if($tmp_config->get('jg_filesystem', 'local-images') !== $table->filesystem)
+        {
+          $two_filesystems = [$table->filesystem, $tmp_config->get('jg_filesystem', 'local-images')];
+        }
+      }
 
-    if(!empty($two_filesystems))
-    {
-    $this->component->addError(Text::sprintf('COM_JOOMGALLERY_ERROR_IMAGE_SAVE_TWO_FILESYSTEMS', $two_filesystems[0], $two_filesystems[1]));
+      if(!empty($two_filesystems))
+      {
+        $this->component->addError(Text::sprintf('COM_JOOMGALLERY_ERROR_IMAGE_SAVE_TWO_FILESYSTEMS', $two_filesystems[0], $two_filesystems[1]));
 
-    if($imgUploaded)
-    {
-      $uploader->rollback($table);
-    }
+        if($imgUploaded)
+        {
+          $uploader->rollback($table);
+        }
 
-    return false;
-    }
+        return false;
+      }
 
-    // Handle images if record gets copied
+      // Handle images if record gets copied
       if($isNew && $isCopy && !$imgUploaded)
       {
-    // Regenerate filename
-    $table->filename = $manager->regenFilename($data['filename']);
+        // Regenerate filename
+        $table->filename = $manager->regenFilename($data['filename']);
       }
 
-    // Handle images if alias has changed
+      // Handle images if alias has changed
       if(!$isNew && $aliasChanged && !$imgUploaded)
       {
-    if(!$this->component->getConfig()->get('jg_useorigfilename'))
-    {
-      // Replace alias in filename if filename is title dependent
-      $table->filename = str_replace($old_alias, $table->alias, $table->filename);
-    }
+        if(!$this->component->getConfig()->get('jg_useorigfilename'))
+        {
+          // Replace alias in filename if filename is title dependent
+          $table->filename = str_replace($old_alias, $table->alias, $table->filename);
+        }
       }
 
-    // Trigger the before save event.
+      // Trigger the before save event.
       $result = $app->triggerEvent($this->event_before_save, [$context, $table, $isNew, $data]);
 
-    // Stop storing data if one of the plugins returns false
+      // Stop storing data if one of the plugins returns false
       if(\in_array(false, $result, true))
       {
-    if($imgUploaded)
+        if($imgUploaded)
         {
-      $uploader->rollback($table);
-    }
+          $uploader->rollback($table);
+        }
         $this->setError($table->getError());
 
         return false;
@@ -587,7 +587,7 @@ $this->events_map = array_merge(
       // Filesystem changes
       $filesystem_success = true;
 
-    // Handle images if category was changed
+      // Handle images if category was changed
       if(!$isNew && $catMoved)
       {
         if($imgUploaded)
@@ -605,21 +605,21 @@ $this->events_map = array_merge(
       // Handle images if record gets copied
       if($isNew && $isCopy && !$imgUploaded)
       {
-    // Copy Images
-    $filesystem_success = $manager->copyImages($source_id, $table->catid, $table->filename);
+        // Copy Images
+        $filesystem_success = $manager->copyImages($source_id, $table->catid, $table->filename);
       }
 
-    // Handle images if alias has changed
+      // Handle images if alias has changed
       if(!$isNew && $aliasChanged && !$imgUploaded)
       {
-    if($catMoved)
-    {
-      // modify old_table object to fit with new image location
-      $old_table->catid = $table->catid;
-    }
+        if($catMoved)
+        {
+          // modify old_table object to fit with new image location
+          $old_table->catid = $table->catid;
+        }
 
-    // Rename files
-    $filesystem_success = $manager->renameImages($old_table, $table->filename);
+        // Rename files
+        $filesystem_success = $manager->renameImages($old_table, $table->filename);
       }
 
       // Don't store the table if filesystem changes was not successful
@@ -629,7 +629,7 @@ $this->events_map = array_merge(
 
         if($imgUploaded)
         {
-      $uploader->rollback($table);
+          $uploader->rollback($table);
         }
 
         return false;
@@ -640,10 +640,10 @@ $this->events_map = array_merge(
       {
         $this->setError($table->getError());
 
-    if($imgUploaded)
+        if($imgUploaded)
         {
-      $uploader->rollback($table);
-    }
+          $uploader->rollback($table);
+        }
 
         return false;
       }
@@ -656,29 +656,29 @@ $this->events_map = array_merge(
         if(!$uploader->createImage($table))
         {
           $this->setError($this->component->getDebug(true));
-      $uploader->rollback($table);
+          $uploader->rollback($table);
 
-      if($isNew)
-      {
-      // Delete the already stored new record if image creation failed
-      if(!$table->delete($table->$key))
-      {
-        $this->component->setError($table->getError());
-      }
-      }
+          if($isNew)
+          {
+            // Delete the already stored new record if image creation failed
+            if(!$table->delete($table->$key))
+            {
+              $this->component->setError($table->getError());
+            }
+          }
 
           return false;
         }
       }
 
-    // Handle ajax uploads
-    if($isAjax)
-    {
-    $this->component->cache->set('imgObj', $table->getFieldsValues(['form', 'imgmetadata', 'params', 'created_by', 'modified_by', 'checked_out']));
-    }
+      // Handle ajax uploads
+      if($isAjax)
+      {
+        $this->component->cache->set('imgObj', $table->getFieldsValues(['form', 'imgmetadata', 'params', 'created_by', 'modified_by', 'checked_out']));
+      }
 
-    // All done. Clean created temp files
-    $uploader->deleteTmp();
+      // All done. Clean created temp files
+      $uploader->deleteTmp();
 
       // Clean the cache.
       $this->cleanCache();
@@ -720,7 +720,7 @@ $this->events_map = array_merge(
     // Create/update associations
     if($this->associationsContext && Associations::isEnabled() && !empty($data['associations']))
     {
-    $this->createAssociations($table, $data['associations']);
+      $this->createAssociations($table, $data['associations']);
     }
 
     // Redirect to associations
@@ -782,7 +782,7 @@ $this->events_map = array_merge(
           $db    = $this->getDatabase();
           $query = $db->getQuery(true)
               ->delete($db->quoteName('#__joomgallery_comments'))
-            ->where(
+              ->where(
                 $db->quoteName('imgid') . ' = :pk',
             )
               ->bind(':pk', $pk, ParameterType::INTEGER);
@@ -793,7 +793,7 @@ $this->events_map = array_merge(
           // Delete corresponding votes
           $query = $db->getQuery(true)
               ->delete($db->quoteName('#__joomgallery_votes'))
-            ->where(
+              ->where(
                 $db->quoteName('imgid') . ' = :pk',
             )
               ->bind(':pk', $pk, ParameterType::INTEGER);
@@ -804,7 +804,7 @@ $this->events_map = array_merge(
           // Delete corresponding collection reference
           $query = $db->getQuery(true)
               ->delete($db->quoteName('#__joomgallery_collections_ref'))
-            ->where(
+              ->where(
                 $db->quoteName('imgid') . ' = :pk',
             )
               ->bind(':pk', $pk, ParameterType::INTEGER);
@@ -824,7 +824,7 @@ $this->events_map = array_merge(
             )
               ->from($db->quoteName('#__associations', 'as1'))
               ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
-            ->where(
+              ->where(
                 [
                   $db->quoteName('as1.context') . ' = :context',
                   $db->quoteName('as1.id') . ' = :pk',
@@ -1042,7 +1042,7 @@ $this->events_map = array_merge(
    */
   public function publish(&$pks, $value = 1)
   {
-  return $this->changeState($pks, 'publish', $value);
+    return $this->changeState($pks, 'publish', $value);
   }
 
   /**
@@ -1056,71 +1056,71 @@ $this->events_map = array_merge(
    */
   public function replace($data)
   {
-  $table = $this->getTable();
+    $table = $this->getTable();
     $app = Factory::getApplication();
     $key = $table->getKeyName();
     $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
     // Rertrieve request image file data
-  if(\array_key_exists('image', $app->input->files->get('jform')) && !empty($app->input->files->get('jform')['image'])
-  && $app->input->files->get('jform')['image']['error'] != 4 &&  $app->input->files->get('jform')['image']['size'] > 0)
+    if(\array_key_exists('image', $app->input->files->get('jform')) && !empty($app->input->files->get('jform')['image'])
+        && $app->input->files->get('jform')['image']['error'] != 4 &&  $app->input->files->get('jform')['image']['size'] > 0)
     {
-      $data['images'] = [];
-      array_push($data['images'], $app->input->files->get('jform')['image']);
-  }
-
-  try
-  {
-    // Load image table
-    $table->load($pk);
-
-    // Create uploader service
-    $uploader = JoomHelper::getService('uploader', ['single', false]);
-
-    // Set replacement settings
-    $uploader->type         = $data['replacetype'];
-    $uploader->processImage = \boolval($data['replaceprocess']);
-
-    // Set filename in data since it will not be new created during retrieveImage()
-    $data['filename'] = $table->filename;
-
-    // Retrieve image
-    // (check upload, check user upload limit, create filename, onJoomBeforeSave)
-    if(!$uploader->retrieveImage($data, false))
-    {
-    $this->setError($this->component->getDebug(true));
-
-    return false;
+        $data['images'] = [];
+        array_push($data['images'], $app->input->files->get('jform')['image']);
     }
 
-    // Create images
-    // (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
-    if(!$uploader->createImage($table))
+    try
     {
-    $uploader->rollback();
-    $this->setError($this->component->getDebug(true));
+      // Load image table
+      $table->load($pk);
 
-    return false;
-    }
+      // Create uploader service
+      $uploader = JoomHelper::getService('uploader', ['single', false]);
 
-    // Clean the cache.
+      // Set replacement settings
+      $uploader->type         = $data['replacetype'];
+      $uploader->processImage = \boolval($data['replaceprocess']);
+
+      // Set filename in data since it will not be new created during retrieveImage()
+      $data['filename'] = $table->filename;
+
+      // Retrieve image
+      // (check upload, check user upload limit, create filename, onJoomBeforeSave)
+      if(!$uploader->retrieveImage($data, false))
+      {
+        $this->setError($this->component->getDebug(true));
+
+        return false;
+      }
+
+      // Create images
+      // (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
+      if(!$uploader->createImage($table))
+      {
+        $uploader->rollback();
+        $this->setError($this->component->getDebug(true));
+
+        return false;
+      }
+
+      // Clean the cache.
       $this->cleanCache();
-  }
-  catch (\Exception $e)
+    }
+    catch (\Exception $e)
     {
       $uploader->rollback();
       $this->setError($e->getMessage());
 
       return false;
-  }
+    }
 
-  // Output debug data
+    // Output debug data
     if(\count($this->component->getDebug()) > 1)
     {
       $this->component->printDebug();
     }
 
-  return true;
+    return true;
   }
 
   /**
@@ -1141,84 +1141,84 @@ $this->events_map = array_merge(
     // Include the plugins for the recreate events.
     PluginHelper::importPlugin($this->events_map['recreate']);
 
-  if($table->load($pk))
-  {
-    if($this->canRecreate($table))
+    if($table->load($pk))
     {
-    $context = $this->option . '.' . $this->name . '.recreate';
+      if($this->canRecreate($table))
+      {
+        $context = $this->option . '.' . $this->name . '.recreate';
 
-    // Create file manager service
-    $this->component->createFileManager($table->catid);
+        // Create file manager service
+        $this->component->createFileManager($table->catid);
 
-    // Get imagetypes
-    $imagetypes      = $this->component->getFileManager()->get('imagetypes');
-    $imagetypes_dict = $this->component->getFileManager()->get('imagetypes_dict');
+        // Get imagetypes
+        $imagetypes      = $this->component->getFileManager()->get('imagetypes');
+        $imagetypes_dict = $this->component->getFileManager()->get('imagetypes_dict');
 
-    // Select image source
-    if(($type == 'original' || $type == 'orig') && $imagetypes[$imagetypes_dict['original']]->params->get('jg_imgtype', 1, 'int') > 0)
-    {
-      // Take original as source if available
-      $type = 'original';
+        // Select image source
+        if(($type == 'original' || $type == 'orig') && $imagetypes[$imagetypes_dict['original']]->params->get('jg_imgtype', 1, 'int') > 0)
+        {
+          // Take original as source if available
+          $type = 'original';
+        }
+        else
+        {
+          $type = 'detail';
+        }
+
+        // Get source file path
+        $source = $this->component->getFileManager()->getImgPath($table, $type);
+
+        // Trigger the before recreate event.
+        $result = Factory::getApplication()->triggerEvent($this->event_before_recreate, [$table, $imagetypes, $source]);
+
+        if(\in_array(false, $result, true))
+        {
+          $this->setError($table->getError());
+
+          return false;
+        }
+
+        // Add source type to the list of skiped types
+        if(!\in_array($type, $skip))
+        {
+          array_push($skip, $type);
+        }
+
+        // Perform the recreation
+        if(!$this->component->getFileManager()->createImages($source, $table->filename, $table->catid, true, false, $skip))
+        {
+          $this->setError($table->getError());
+
+          return false;
+        }
+
+        // Trigger the after event.
+        Factory::getApplication()->triggerEvent($this->event_after_recreate, [$context, $table]);
+      }
+      else
+      {
+        // Prune items that you can't change.
+        $error = $this->getError();
+
+        if($error)
+        {
+          $this->component->addLog($error, 'warning', 'jerror');
+
+          return false;
+        }
+
+
+        $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
+
+        return false;
+      }
     }
     else
-    {
-      $type = 'detail';
-    }
-
-    // Get source file path
-    $source = $this->component->getFileManager()->getImgPath($table, $type);
-
-    // Trigger the before recreate event.
-    $result = Factory::getApplication()->triggerEvent($this->event_before_recreate, [$table, $imagetypes, $source]);
-
-    if(\in_array(false, $result, true))
     {
       $this->setError($table->getError());
 
       return false;
     }
-
-    // Add source type to the list of skiped types
-    if(!\in_array($type, $skip))
-    {
-      array_push($skip, $type);
-    }
-
-    // Perform the recreation
-    if(!$this->component->getFileManager()->createImages($source, $table->filename, $table->catid, true, false, $skip))
-    {
-      $this->setError($table->getError());
-
-      return false;
-    }
-
-    // Trigger the after event.
-    Factory::getApplication()->triggerEvent($this->event_after_recreate, [$context, $table]);
-    }
-    else
-    {
-    // Prune items that you can't change.
-    $error = $this->getError();
-
-    if($error)
-    {
-      $this->component->addLog($error, 'warning', 'jerror');
-
-      return false;
-    }
-
-
-      $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
-
-      return false;
-    }
-  }
-  else
-  {
-    $this->setError($table->getError());
-
-    return false;
-  }
 
     // Clear the component's cache
     $this->cleanCache();
@@ -1237,20 +1237,21 @@ $this->events_map = array_merge(
    */
   protected function prepareTable($table)
   {
-  // Apply the ordering
-  if(property_exists($table, 'ordering') && $table->id == 0)
-  {
-    switch($this->component->getConfig()->get('jg_uploadorder', 2))
+    // Apply the ordering
+    if(property_exists($table, 'ordering') && $table->id == 0)
     {
-    case 1:
-      $table->ordering = $table->getPreviousOrder('catid = ' . $table->catid);
+      switch($this->component->getConfig()->get('jg_uploadorder', 2))
+      {
+      case 1:
+        $table->ordering = $table->getPreviousOrder('catid = ' . $table->catid);
         break;
-    case 2:
-    default:
-      $table->ordering = $table->getNextOrder('catid = ' . $table->catid);
+
+      case 2:
+      default:
+        $table->ordering = $table->getNextOrder('catid = ' . $table->catid);
         break;
+      }
     }
-  }
   }
 
   /**
@@ -1265,47 +1266,48 @@ $this->events_map = array_merge(
    */
   public function savemetadata(int $pk, $type = 'original'): bool
   {
-  $table = $this->getTable();
+    $table = $this->getTable();
 
-  if($table->load($pk))
-  {
-    // Create config service
-    $this->component->createConfig();
-
-    // Create filemanager service
-    $this->component->createFileManager($table->catid);
-    $path = $this->component->getFileManager()->getImgPath($table, $type);
-
-    // Get registry to be used in writeMetadata
-    $registry = new Registry($table->imgmetadata);
-
-    // Create the metadata service
-    $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
-
-    $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
-
-    // Perform the save using the metadata/filesystem service
-    if($filesystem != 'local-images')
+    if($table->load($pk))
     {
-    $data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
+      // Create config service
+      $this->component->createConfig();
+
+      // Create filemanager service
+      $this->component->createFileManager($table->catid);
+      $path = $this->component->getFileManager()->getImgPath($table, $type);
+
+      // Get registry to be used in writeMetadata
+      $registry = new Registry($table->imgmetadata);
+
+      // Create the metadata service
+      $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
+
+      $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
+
+      // Perform the save using the metadata/filesystem service
+      if($filesystem != 'local-images')
+      {
+        $data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
+      }
+      else
+      {
+        $data = $this->component->getMetadata()->writeMetadata($path, $registry);
+      }
+
+      $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
     }
     else
     {
-    $data = $this->component->getMetadata()->writeMetadata($path, $registry);
+      $this->setError($table->getError());
+
+      return false;
     }
-    $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
-  }
-  else
-  {
-    $this->setError($table->getError());
 
-    return false;
-  }
+    // Clear the component's cache
+    $this->cleanCache();
 
-  // Clear the component's cache
-  $this->cleanCache();
-
-  return true;
+    return true;
   }
 
   /**

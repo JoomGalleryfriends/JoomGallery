@@ -42,9 +42,9 @@ extract($displayData);
             if(!$is_global_config && !empty($field->getAttribute('global_only')) && $field->getAttribute('global_only') == true)
             {
               $field_data = [
-                'name' => $field->name,
-                'label' => LayoutHelper::render('joomla.form.renderlabel', ['text' => Text::_($field->getAttribute('label')), 'for' => $field->id, 'required' => false, 'classes' => []]),
-                'input' => LayoutHelper::render('joomla.form.field.value', ['id' => $field->id, 'value' => $field->value, 'class' => '']),
+                'name'        => $field->name,
+                'label'       => LayoutHelper::render('joomla.form.renderlabel', ['text' => Text::_($field->getAttribute('label')), 'for' => $field->id, 'required' => false, 'classes' => []]),
+                'input'       => LayoutHelper::render('joomla.form.field.value', ['id' => $field->id, 'value' => $field->value, 'class' => '']),
                 'description' => Text::_('COM_JOOMGALLERY_CONFIG_EDIT_ONLY_IN_GLOBAL'),
               ];
               echo LayoutHelper::render('joomla.form.renderfield', $field_data);

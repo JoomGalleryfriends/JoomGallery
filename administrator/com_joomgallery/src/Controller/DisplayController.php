@@ -46,13 +46,13 @@ class DisplayController extends BaseController
    */
   protected $context;
 
-    /**
-     * The default view.
-     *
-     * @var    string
-     * @since  4.0.0
-     */
-    protected $default_view = 'images';
+  /**
+   * The default view.
+   *
+   * @var    string
+   * @since  4.0.0
+   */
+  protected $default_view = 'images';
 
   /**
    * Constructor.
@@ -93,49 +93,49 @@ class DisplayController extends BaseController
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
   }
 
-    /**
-     * Method to display a view.
-     *
-     * @param   boolean  $cachable   If true, the view output will be cached
-     * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link InputFilter::clean()}.
-     *
-     * @return  BaseController|boolean  This object to support chaining.
-     *
-     * @since   4.0.0
-     */
-    public function display($cachable = false, $urlparams = [])
-    {
-    // Before execution of the task
-    if(!empty($task))
-    {
-      $this->component->msgUserStateKey = 'com_joomgallery.' . $task . '.messages';
-    }
+  /**
+   * Method to display a view.
+   *
+   * @param   boolean  $cachable   If true, the view output will be cached
+   * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link InputFilter::clean()}.
+   *
+   * @return  BaseController|boolean  This object to support chaining.
+   *
+   * @since   4.0.0
+   */
+  public function display($cachable = false, $urlparams = [])
+  {
+  // Before execution of the task
+  if(!empty($task))
+  {
+    $this->component->msgUserStateKey = 'com_joomgallery.' . $task . '.messages';
+  }
 
-    if(!$this->component->isRawTask($this->context))
+  if(!$this->component->isRawTask($this->context))
+  {
+    // Get messages from session
+    $this->component->msgFromSession();
+  }
+
+      $res = parent::display();
+
+  // After execution of the task
+  if(!$this->component->isRawTask($this->context))
+  {
+    // Print messages from session
+    if(!$this->component->msgWithhold && $res->component->error)
     {
-      // Get messages from session
-      $this->component->msgFromSession();
+      $this->component->printError();
     }
-
-        $res = parent::display();
-
-    // After execution of the task
-    if(!$this->component->isRawTask($this->context))
+    elseif(!$this->component->msgWithhold)
     {
-      // Print messages from session
-      if(!$this->component->msgWithhold && $res->component->error)
-      {
-        $this->component->printError();
-      }
-      elseif(!$this->component->msgWithhold)
-      {
-        $this->component->printWarning();
-        $this->component->printDebug();
-      }
+      $this->component->printWarning();
+      $this->component->printDebug();
     }
+  }
 
-    return $res;
-    }
+  return $res;
+  }
 
   /**
    * Method to get a list of available views based on the available folders in

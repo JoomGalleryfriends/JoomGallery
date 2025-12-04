@@ -663,10 +663,6 @@ class CategoryModel extends JoomAdminModel
         }
       }
 
-
-        // Action already perfromed
-
-
       // Handle folders if record gets copied
       if($isNew && $isCopy)
       {

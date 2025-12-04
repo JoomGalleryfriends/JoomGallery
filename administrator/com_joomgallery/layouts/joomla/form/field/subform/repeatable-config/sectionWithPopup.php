@@ -90,14 +90,14 @@ foreach($form->getGroup('') as $k => $field)
     <div class="control-group">
       <div class="visually-hidden"><label><?php echo Text::_('COM_JOOMGALLERY_SETTINGS_POPUP'); ?></label></div>
       <div class="controls">
-        <a href="#" data-bs-toggle="modal" class="btn btn-secondary" data-bs-target="#<?php echo $group; ?>_modal"><?php echo Text::_('COM_JOOMGALLERY_SETTINGS'); ?></a> 
+        <a href="#" data-bs-toggle="modal" class="btn btn-secondary" data-bs-target="#<?php echo $group; ?>_modal"><?php echo Text::_('COM_JOOMGALLERY_SETTINGS'); ?></a>
       </div>
     </div>
     <?php
       $modalData = [
         'selector' => $group . '_modal',
         'params'   => ['title'  => $label . ': ' . ucfirst($fieldname)],
-        'body' => LayoutHelper::render('joomla.form.field.subform.repeatable-config.modal', $displayData),
+        'body'     => LayoutHelper::render('joomla.form.field.subform.repeatable-config.modal', $displayData),
       ];
       echo LayoutHelper::render('libraries.html.bootstrap.modal.main', $modalData);
     ?>

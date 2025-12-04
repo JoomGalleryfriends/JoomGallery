@@ -64,7 +64,7 @@ if(empty($value))
 
 if($required)
 {
-    $uri->setVar('required', 1);
+  $uri->setVar('required', 1);
 }
 
 // Apply filter in categories list
@@ -80,7 +80,7 @@ $uri->setVar('filter[exclude]', (isset($excluded)) ? (string) $excluded : '');
 // Invalidate the input value if no image selected
 if($this->escape($categoryName) === Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'))
 {
-    $categoryName = '';
+  $categoryName = '';
 }
 
 $inputAttributes = [
@@ -89,43 +89,43 @@ $inputAttributes = [
 
 if($class)
 {
-    $inputAttributes['class'] .= ' ' . $class;
+  $inputAttributes['class'] .= ' ' . $class;
 }
 
 if($size)
 {
-    $inputAttributes['size'] = (int) $size;
+  $inputAttributes['size'] = (int) $size;
 }
 
 if($required)
 {
-    $inputAttributes['required'] = 'required';
+  $inputAttributes['required'] = 'required';
 }
 
 if(!$readonly)
 {
-    $inputAttributes['placeholder'] = Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY');
+  $inputAttributes['placeholder'] = Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY');
 }
 
 if(!$readonly)
 {
-    $modalHTML = HTMLHelper::_(
-        'bootstrap.renderModal',
-        'categoryModal_' . $id,
-        [
-          'url'         => $uri,
-          'title'       => Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'),
-          'closeButton' => true,
-          'height'      => '100%',
-          'width'       => '100%',
-          'modalWidth'  => 80,
-          'bodyHeight'  => 60,
-          'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCANCEL') . '</button>',
-        ]
-    );
+  $modalHTML = HTMLHelper::_(
+    'bootstrap.renderModal',
+    'categoryModal_' . $id,
+    [
+      'url'         => $uri,
+      'title'       => Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'),
+      'closeButton' => true,
+      'height'      => '100%',
+      'width'       => '100%',
+      'modalWidth'  => 80,
+      'bodyHeight'  => 60,
+      'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCANCEL') . '</button>',
+    ]
+  );
 
-    Factory::getApplication()->getDocument()->getWebAssetManager()
-        ->useScript('com_joomgallery.field-category');
+  Factory::getApplication()->getDocument()->getWebAssetManager()
+    ->useScript('com_joomgallery.field-category');
 }
 ?>
 <?php // Create a dummy text field with the category name. ?>

@@ -62,10 +62,10 @@ use Psr\Container\ContainerInterface;
 class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface
 {
   use MessageTrait;
-    use AssociationServiceTrait;
-    use HTMLRegistryAwareTrait;
+  use AssociationServiceTrait;
+  use HTMLRegistryAwareTrait;
   use RouterServiceTrait {
-RouterServiceTrait::createRouter as traitCreateRouter;
+    RouterServiceTrait::createRouter as traitCreateRouter;
   }
 
   /**
@@ -199,12 +199,12 @@ RouterServiceTrait::createRouter as traitCreateRouter;
         case 'image':
         case 'imageform':
         case 'userimage':
-            return 'image';
+          return 'image';
 
         case 'category':
         case 'categoryform':
         case 'usercategory':
-            return 'category';
+          return 'category';
       }
     }
 
@@ -230,9 +230,9 @@ RouterServiceTrait::createRouter as traitCreateRouter;
     $language->load('com_joomgallery', JPATH_ADMINISTRATOR);
 
     return [
-      'com_joomgallery.image' => $language->_('COM_JOOMGALLERY_IMAGES'),
-      'com_joomgallery.category' => $language->_('JCATEGORIES'),
-      'com_joomgallery.userimage' => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.image'        => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.category'     => $language->_('JCATEGORIES'),
+      'com_joomgallery.userimage'    => $language->_('COM_JOOMGALLERY_IMAGES'),
       'com_joomgallery.usercategory' => $language->_('JCATEGORIES'),
     ];
   }

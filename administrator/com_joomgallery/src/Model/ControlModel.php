@@ -197,8 +197,8 @@ class ControlModel extends BaseDatabaseModel
       }
 
       // Get extension url
-      $url  =  (string) $xml_extension->attributes()->detailsurl;
-      $name =  (string) $xml_extension->attributes()->name;
+      $url  = (string) $xml_extension->attributes()->detailsurl;
+      $name = (string) $xml_extension->attributes()->name;
 
       try
       {

@@ -28,307 +28,307 @@ use Joomla\Utilities\ArrayHelper;
  */
 class JgtagField extends ListField
 {
-    /**
-     * A flexible tag list that respects access controls
-     *
-     * @var    string
-     * @since  4.0.0
-     */
-    public $type = 'jgtag';
+  /**
+   * A flexible tag list that respects access controls
+   *
+   * @var    string
+   * @since  4.0.0
+   */
+  public $type = 'jgtag';
 
-    /**
-     * Name of the layout being used to render the field
-     *
-     * @var    string
-     * @since  4.0.0
-     */
-    protected $layout = 'joomla.form.field.jgtag';
+  /**
+   * Name of the layout being used to render the field
+   *
+   * @var    string
+   * @since  4.0.0
+   */
+  protected $layout = 'joomla.form.field.jgtag';
 
-    /**
-     * Method to get the field input for a tag field.
-     *
-     * @return  string  The field input.
-     *
-     * @since   4.0.0
-     */
-    protected function getInput()
+  /**
+   * Method to get the field input for a tag field.
+   *
+   * @return  string  The field input.
+   *
+   * @since   4.0.0
+   */
+  protected function getInput()
+  {
+    $data = $this->getLayoutData();
+
+    if(!\is_array($this->value) && !empty($this->value))
     {
-      $data = $this->getLayoutData();
-
-      if(!\is_array($this->value) && !empty($this->value))
+      if(\is_object($this->value))
       {
-        if(\is_object($this->value))
+        if(empty($this->value))
         {
-          if(empty($this->value))
-          {
-            $this->value = [];
-          }
-          else
-          {
-            $tags        = $this->value;
-            $this->value = [];
-
-            foreach($tags as $tag)
-            {
-              array_push($this->value, $tag->id);
-            }
-          }
-        }
-
-        // String in format 2,5,4
-        if(\is_string($this->value))
-        {
-          $this->value = explode(',', $this->value);
-        }
-
-        // Integer is given
-        if(\is_int($this->value))
-        {
-          $this->value = [$this->value];
-        }
-
-        $data['value'] = $this->value;
-      }
-
-      $data['remoteSearch']  = $this->isRemoteSearch();
-      $data['options']       = $this->getOptions();
-      $data['isNested']      = false;
-      $data['allowCustom']   = $this->allowCustom();
-      $data['minTermLength'] = 3;
-
-      // Make sure the component is correctly set
-      $renderer = $this->getRenderer($this->layout);
-      $renderer->setComponent('com_joomgallery');
-
-      return $renderer->render($data);
-    }
-
-    /**
-     * Method to get a list of tags
-     *
-     * @return  array  The field option objects.
-     *
-     * @since   4.0.0
-     */
-    protected function getOptions()
-    {
-      $published = (string) $this->element['published'] ?: [0, 1];
-      $app       = Factory::getApplication();
-      $language  = null;
-      $options   = [];
-
-      // This limit is only used with isRemoteSearch
-      $prefillLimit   = 30;
-      $isRemoteSearch = $this->isRemoteSearch();
-
-      $db    = $this->getDatabase();
-      $query = $db->getQuery(true)
-        ->select(
-            [
-              $db->quoteName('a.id', 'value'),
-              $db->quoteName('a.title', 'text'),
-              $db->quoteName('a.published'),
-              $db->quoteName('a.ordering'),
-            ]
-        )
-          ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
-
-      // Limit Options in multilanguage
-      if($app->isClient('site') && Multilanguage::isEnabled())
-      {
-        $language = [$app->getLanguage()->getTag(), '*'];
-      }
-      elseif(!empty($this->element['language']))
-      {
-        // Filter language
-        if(strpos($this->element['language'], ',') !== false)
-        {
-          $language = explode(',', $this->element['language']);
+          $this->value = [];
         }
         else
         {
-          $language = [$this->element['language']];
+          $tags        = $this->value;
+          $this->value = [];
+
+          foreach($tags as $tag)
+          {
+            array_push($this->value, $tag->id);
+          }
         }
       }
 
-      if($language)
+      // String in format 2,5,4
+      if(\is_string($this->value))
       {
-        $query->whereIn($db->quoteName('a.language'), $language, ParameterType::STRING);
+        $this->value = explode(',', $this->value);
       }
 
-      // Filter on the published state
-      if(is_numeric($published))
+      // Integer is given
+      if(\is_int($this->value))
       {
-        $published = (int) $published;
-        $query->where($db->quoteName('a.published') . ' = :published')
-              ->bind(':published', $published, ParameterType::INTEGER);
-      }
-      elseif(\is_array($published))
-      {
-        $published = ArrayHelper::toInteger($published);
-        $query->whereIn($db->quoteName('a.published'), $published);
+        $this->value = [$this->value];
       }
 
-      $query->order($db->quoteName('a.ordering') . ' ASC');
+      $data['value'] = $this->value;
+    }
 
-      // Preload only active values and 30 most used tags or fill up
-      if($isRemoteSearch)
+    $data['remoteSearch']  = $this->isRemoteSearch();
+    $data['options']       = $this->getOptions();
+    $data['isNested']      = false;
+    $data['allowCustom']   = $this->allowCustom();
+    $data['minTermLength'] = 3;
+
+    // Make sure the component is correctly set
+    $renderer = $this->getRenderer($this->layout);
+    $renderer->setComponent('com_joomgallery');
+
+    return $renderer->render($data);
+  }
+
+  /**
+   * Method to get a list of tags
+   *
+   * @return  array  The field option objects.
+   *
+   * @since   4.0.0
+   */
+  protected function getOptions()
+  {
+    $published = (string) $this->element['published'] ?: [0, 1];
+    $app       = Factory::getApplication();
+    $language  = null;
+    $options   = [];
+
+    // This limit is only used with isRemoteSearch
+    $prefillLimit   = 30;
+    $isRemoteSearch = $this->isRemoteSearch();
+
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select(
+          [
+            $db->quoteName('a.id', 'value'),
+            $db->quoteName('a.title', 'text'),
+            $db->quoteName('a.published'),
+            $db->quoteName('a.ordering'),
+          ]
+      )
+        ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
+
+    // Limit Options in multilanguage
+    if($app->isClient('site') && Multilanguage::isEnabled())
+    {
+      $language = [$app->getLanguage()->getTag(), '*'];
+    }
+    elseif(!empty($this->element['language']))
+    {
+      // Filter language
+      if(strpos($this->element['language'], ',') !== false)
       {
-          // Load the most $prefillLimit used tags
-          $topQuery = $db->getQuery(true)
-              ->select($db->quoteName('tagid'))
-              ->from($db->quoteName(_JOOM_TABLE_TAGS_REF))
-              ->group($db->quoteName('tagid'))
-              ->order('count(*)')
-              ->setLimit($prefillLimit);
+        $language = explode(',', $this->element['language']);
+      }
+      else
+      {
+        $language = [$this->element['language']];
+      }
+    }
 
-          $db->setQuery($topQuery);
-          $topIds = $db->loadColumn();
+    if($language)
+    {
+      $query->whereIn($db->quoteName('a.language'), $language, ParameterType::STRING);
+    }
 
-          // Merge the used values into the most used tags
-          if(!empty($this->value) && \is_array($this->value))
-          {
-              $topIds = array_merge($topIds, $this->value);
-              $topIds = array_keys(array_flip($topIds));
-          }
+    // Filter on the published state
+    if(is_numeric($published))
+    {
+      $published = (int) $published;
+      $query->where($db->quoteName('a.published') . ' = :published')
+            ->bind(':published', $published, ParameterType::INTEGER);
+    }
+    elseif(\is_array($published))
+    {
+      $published = ArrayHelper::toInteger($published);
+      $query->whereIn($db->quoteName('a.published'), $published);
+    }
 
-          // Set the default limit for the main query
-          $query->setLimit($prefillLimit);
+    $query->order($db->quoteName('a.ordering') . ' ASC');
 
-          if(!empty($topIds))
-          {
-            // Filter the ids to the most used tags and the selected tags
-            $preQuery = clone $query;
-            $preQuery->whereIn($db->quoteName('a.id'), $topIds);
+    // Preload only active values and 30 most used tags or fill up
+    if($isRemoteSearch)
+    {
+      // Load the most $prefillLimit used tags
+      $topQuery = $db->getQuery(true)
+          ->select($db->quoteName('tagid'))
+          ->from($db->quoteName(_JOOM_TABLE_TAGS_REF))
+          ->group($db->quoteName('tagid'))
+          ->order('count(*)')
+          ->setLimit($prefillLimit);
 
-            $db->setQuery($preQuery);
+      $db->setQuery($topQuery);
+      $topIds = $db->loadColumn();
 
-            try
-            {
-              $options = $db->loadObjectList();
-            }
-            catch(\RuntimeException $e)
-            {
-              return [];
-            }
-
-            // Limit the main query to the missing amount of tags
-            $count        = \count($options);
-            $prefillLimit = $prefillLimit - $count;
-            $query->setLimit($prefillLimit);
-
-            // Exclude the already loaded tags from the main query
-            if($count > 0)
-            {
-              $query->whereNotIn($db->quoteName('a.id'), ArrayHelper::getColumn($options, 'value'));
-            }
-          }
+      // Merge the used values into the most used tags
+      if(!empty($this->value) && \is_array($this->value))
+      {
+          $topIds = array_merge($topIds, $this->value);
+          $topIds = array_keys(array_flip($topIds));
       }
 
-      // Only execute the query if we need more tags not already loaded by the $preQuery query
-      if(!$isRemoteSearch || $prefillLimit > 0)
+      // Set the default limit for the main query
+      $query->setLimit($prefillLimit);
+
+      if(!empty($topIds))
       {
-        // Get the options.
-        $db->setQuery($query);
+        // Filter the ids to the most used tags and the selected tags
+        $preQuery = clone $query;
+        $preQuery->whereIn($db->quoteName('a.id'), $topIds);
+
+        $db->setQuery($preQuery);
 
         try
         {
-          $options = array_merge($options, $db->loadObjectList());
+          $options = $db->loadObjectList();
         }
-        catch (\RuntimeException $e)
+        catch(\RuntimeException $e)
         {
           return [];
         }
-      }
 
-      // Merge any additional options in the XML definition.
-      $options = array_merge(parent::getOptions(), $options);
+        // Limit the main query to the missing amount of tags
+        $count        = \count($options);
+        $prefillLimit = $prefillLimit - $count;
+        $query->setLimit($prefillLimit);
 
-      return $options;
-    }
-
-    /**
-     * Add "-" before nested tags, depending on level
-     *
-     * @param   array  &$options  Array of tags
-     *
-     * @return  array  The field option objects.
-     *
-     * @since   3.1
-     */
-    protected function prepareOptionsNested(&$options)
-    {
-      if($options)
-      {
-        foreach($options as &$option)
+        // Exclude the already loaded tags from the main query
+        if($count > 0)
         {
-          $repeat       = (isset($option->level) && $option->level - 1 >= 0) ? $option->level - 1 : 0;
-          $option->text = str_repeat('- ', $repeat) . $option->text;
+          $query->whereNotIn($db->quoteName('a.id'), ArrayHelper::getColumn($options, 'value'));
         }
       }
-
-      return $options;
     }
 
-    /**
-     * Determine if the field has to be tagnested
-     *
-     * @return  boolean
-     *
-     * @since   3.1
-     */
-    public function isNested()
+    // Only execute the query if we need more tags not already loaded by the $preQuery query
+    if(!$isRemoteSearch || $prefillLimit > 0)
     {
-      if($this->isNested === null)
+      // Get the options.
+      $db->setQuery($query);
+
+      try
       {
-        // If mode="nested" || ( mode not set & config = nested )
-        if(
-            isset($this->element['mode']) && (string) $this->element['mode'] === 'nested' ||
-            !isset($this->element['mode']) && $this->comParams->get('tag_field_ajax_mode', 1) == 0
-          )
-        {
-          $this->isNested = true;
-        }
+        $options = array_merge($options, $db->loadObjectList());
       }
-
-      return $this->isNested;
-    }
-
-    /**
-     * Determines if the field allows or denies custom values
-     *
-     * @return  boolean
-     */
-    public function allowCustom()
-    {
-      if($this->element['custom'] && \in_array((string) $this->element['custom'], ['0', 'false', 'deny']))
+      catch (\RuntimeException $e)
       {
-          return false;
+        return [];
       }
-
-        // Get access service
-          $comp = Factory::getApplication()->bootComponent('com_joomgallery');
-          $comp->createAccess();
-        $acl = $comp->getAccess();
-
-      return $acl->checkACL('core.create', 'com_joomgallery.tag');
     }
 
-    /**
-     * Check whether need to enable AJAX search
-     *
-     * @return  boolean
-     *
-     * @since   4.0.0
-     */
-    public function isRemoteSearch()
+    // Merge any additional options in the XML definition.
+    $options = array_merge(parent::getOptions(), $options);
+
+    return $options;
+  }
+
+  /**
+   * Add "-" before nested tags, depending on level
+   *
+   * @param   array  &$options  Array of tags
+   *
+   * @return  array  The field option objects.
+   *
+   * @since   3.1
+   */
+  protected function prepareOptionsNested(&$options)
+  {
+    if($options)
     {
-        if($this->element['remote-search'])
-        {
-            return !\in_array((string) $this->element['remote-search'], ['0', 'false', '']);
-        }
-
-        //return $this->comParams->get('tag_field_ajax_mode', 1) == 1;
-        return true;
+      foreach($options as &$option)
+      {
+        $repeat       = (isset($option->level) && $option->level - 1 >= 0) ? $option->level - 1 : 0;
+        $option->text = str_repeat('- ', $repeat) . $option->text;
+      }
     }
+
+    return $options;
+  }
+
+  /**
+   * Determine if the field has to be tagnested
+   *
+   * @return  boolean
+   *
+   * @since   3.1
+   */
+  public function isNested()
+  {
+    if($this->isNested === null)
+    {
+      // If mode="nested" || ( mode not set & config = nested )
+      if(
+          isset($this->element['mode']) && (string) $this->element['mode'] === 'nested' ||
+          !isset($this->element['mode']) && $this->comParams->get('tag_field_ajax_mode', 1) == 0
+        )
+      {
+        $this->isNested = true;
+      }
+    }
+
+    return $this->isNested;
+  }
+
+  /**
+   * Determines if the field allows or denies custom values
+   *
+   * @return  boolean
+   */
+  public function allowCustom()
+  {
+    if($this->element['custom'] && \in_array((string) $this->element['custom'], ['0', 'false', 'deny']))
+    {
+        return false;
+    }
+
+    // Get access service
+    $comp = Factory::getApplication()->bootComponent('com_joomgallery');
+    $comp->createAccess();
+    $acl = $comp->getAccess();
+
+    return $acl->checkACL('core.create', 'com_joomgallery.tag');
+  }
+
+  /**
+   * Check whether need to enable AJAX search
+   *
+   * @return  boolean
+   *
+   * @since   4.0.0
+   */
+  public function isRemoteSearch()
+  {
+    if($this->element['remote-search'])
+    {
+        return !\in_array((string) $this->element['remote-search'], ['0', 'false', '']);
+    }
+
+    //return $this->comParams->get('tag_field_ajax_mode', 1) == 1;
+    return true;
+  }
 }

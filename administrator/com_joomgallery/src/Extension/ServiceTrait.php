@@ -48,93 +48,93 @@ trait ServiceTrait
    */
   protected array $__data = [];
 
-    /**
-     * Sets a default value if not already assigned
-     *
-     * @param   string  $property  The name of the property.
-     * @param   mixed   $default   The default value.
-     *
-     * @return  mixed
-     *
-     * @since   4.0.0
-     */
-    public function def($property, $default = null)
-    {
-        $value = $this->get($property, $default);
+  /**
+   * Sets a default value if not already assigned
+   *
+   * @param   string  $property  The name of the property.
+   * @param   mixed   $default   The default value.
+   *
+   * @return  mixed
+   *
+   * @since   4.0.0
+   */
+  public function def($property, $default = null)
+  {
+    $value = $this->get($property, $default);
 
-        return $this->set($property, $value);
+    return $this->set($property, $value);
+  }
+
+  /**
+   * Returns a property of the object or the default value if the property is not set.
+   *
+   * @param   string  $property  The name of the property.
+   * @param   mixed   $default   The default value.
+   *
+   * @return  mixed    The value of the property.
+   *
+   * @since   4.0.0
+   */
+  public function get(string $property, $default = null)
+  {
+    // Get real property if exists
+    if(property_exists($this, $property) && isset($this->$property))
+    {
+      return $this->$property;
     }
 
-    /**
-     * Returns a property of the object or the default value if the property is not set.
-     *
-     * @param   string  $property  The name of the property.
-     * @param   mixed   $default   The default value.
-     *
-     * @return  mixed    The value of the property.
-     *
-     * @since   4.0.0
-     */
-    public function get(string $property, $default = null)
+    // Get dynamic property if exists
+    if(\array_key_exists($property, $this->__data) && isset($this->__data[$property]))
     {
-        // Get real property if exists
-        if(property_exists($this, $property) && isset($this->$property))
-        {
-            return $this->$property;
-        }
-
-        // Get dynamic property if exists
-        if(\array_key_exists($property, $this->__data) && isset($this->__data[$property]))
-        {
-            return $this->__data[$property];
-        }
-
-        // Return default value as fallback
-        return $default;
+      return $this->__data[$property];
     }
 
-    /**
-     * Modifies a property of the object, creating it if it does not already exist.
-     *
-     * @param   string  $property  The name of the property.
-     * @param   mixed   $value     The value of the property to set.
-     *
-     * @return  mixed  Previous value of the property.
-     *
-     * @since   4.0.0
-     */
-    public function set(string $property, $value = null)
-    {
-        if(property_exists($this, $property))
-        {
-            // Set the real property if exists
-            $previous        = $this->$property ?? null;
-            $this->$property = $value;
-        }
-        else
-        {
-            // Set dynamic property
-            $previous                = $this->__data[$property] ?? null;
-            $this->__data[$property] = $value;
-        }
+    // Return default value as fallback
+    return $default;
+  }
 
-        return $previous;
+  /**
+   * Modifies a property of the object, creating it if it does not already exist.
+   *
+   * @param   string  $property  The name of the property.
+   * @param   mixed   $value     The value of the property to set.
+   *
+   * @return  mixed  Previous value of the property.
+   *
+   * @since   4.0.0
+   */
+  public function set(string $property, $value = null)
+  {
+    if(property_exists($this, $property))
+    {
+      // Set the real property if exists
+      $previous        = $this->$property ?? null;
+      $this->$property = $value;
+    }
+    else
+    {
+      // Set dynamic property
+      $previous                = $this->__data[$property] ?? null;
+      $this->__data[$property] = $value;
     }
 
-    /**
-     * Returns an associative array of object properties.
-     *
-     * @param   boolean  $public  If true, returns only the public properties.
-     *
-     * @return  array
-     *
-     * @since   4.0.0
-     */
-    public function getProperties(bool $public = true): array
-    {
+    return $previous;
+  }
+
+  /**
+   * Returns an associative array of object properties.
+   *
+   * @param   boolean  $public  If true, returns only the public properties.
+   *
+   * @return  array
+   *
+   * @since   4.0.0
+   */
+  public function getProperties(bool $public = true): array
+  {
     $vars = array_merge(get_object_vars($this), $this->__data);
 
-        if($public)
+    if($public)
     {
       // Remove all properties starting with an underscore
       foreach($vars as $key => $value)
@@ -147,9 +147,10 @@ trait ServiceTrait
 
       // Now remove protected/private props declared in this class or parents
       $reflection = new \ReflectionObject($this);
-      do {
+      do
+      {
         $nonPublicProps = $reflection->getProperties(
-            \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PRIVATE
+          \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PRIVATE
         );
 
         foreach($nonPublicProps as $prop)
@@ -163,35 +164,35 @@ trait ServiceTrait
         }
       }
       while($reflection = $reflection->getParentClass());
-        }
-
-        return $vars;
     }
 
-    /**
-     * Set the object properties based on a named array/hash.
-     *
-     * @param   mixed  $properties  Either an associative array or another object.
-     *
-     * @return  boolean
-     *
-     * @since   4.0.0
-     */
-    public function setProperties($properties)
+    return $vars;
+  }
+
+  /**
+   * Set the object properties based on a named array/hash.
+   *
+   * @param   mixed  $properties  Either an associative array or another object.
+   *
+   * @return  boolean
+   *
+   * @since   4.0.0
+   */
+  public function setProperties($properties)
+  {
+    if(\is_array($properties) || \is_object($properties))
     {
-        if(\is_array($properties) || \is_object($properties))
-        {
-            foreach((array) $properties as $k => $v)
-            {
-                // Use the set function which might be overridden.
-                $this->set($k, $v);
-            }
+      foreach((array) $properties as $k => $v)
+      {
+        // Use the set function which might be overridden.
+        $this->set($k, $v);
+      }
 
-            return true;
-        }
-
-        return false;
+      return true;
     }
+
+    return false;
+  }
 
   /**
    * Gets the JoomGallery component object

@@ -147,9 +147,9 @@ class JgcategorydropdownField extends ListField
     switch($name)
     {
       case 'allowAdd':
-          return (bool) $this->$name;
+        return (bool) $this->$name;
       case 'customPrefix':
-          return $this->$name;
+        return $this->$name;
     }
 
     return parent::__get($name);
@@ -283,11 +283,11 @@ class JgcategorydropdownField extends ListField
     {
       // Prevent parenting to children of this item.
       // To rearrange parents and children move the children up, not the parents down.
-    $query->join(
+      $query->join(
         'LEFT',
         $db->quoteName(_JOOM_TABLE_CATEGORIES, 'p'),
         $db->quoteName('p.id') . ' = :oldcat'
-    )
+      )
         ->bind(':oldcat', $oldCat, ParameterType::INTEGER)
         ->where(
             'NOT(' . $db->quoteName('a.lft') . ' >= ' . $db->quoteName('p.lft')

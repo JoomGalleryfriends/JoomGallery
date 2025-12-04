@@ -54,25 +54,25 @@ class CategoriesController extends JoomAdminController
       $model = $this->getModel();
       $model->duplicate($pks);
 
-    if(\count($pks) > 1)
+      if(\count($pks) > 1)
+      {
+      $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'), 'info', 'jerror');
+
+      $this->setMessage(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'));
+      }
+      else
+      {
+      $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'), 'info', 'jerror');
+
+      $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'));
+      }
+      }
+    catch (\Exception $e)
     {
-    $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'), 'info', 'jerror');
+      $this->component->addLog($e->getMessage(), 'warning', 'jerror');
 
-    $this->setMessage(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'));
+      Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
     }
-    else
-    {
-    $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'), 'info', 'jerror');
-
-    $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'));
-    }
-    }
-  catch (\Exception $e)
-  {
-    $this->component->addLog($e->getMessage(), 'warning', 'jerror');
-
-    Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
-  }
 
     $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=categories');
   }
@@ -104,19 +104,16 @@ class CategoriesController extends JoomAdminController
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=categories', false));
     $model = $this->getModel();
 
-  if($model->rebuild())
-  {
-    $this->component->addLog(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_SUCCESS'), 'info', 'jerror');
+    if($model->rebuild())
+    {
+      $this->component->addLog(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_SUCCESS'), 'info', 'jerror');
+      $this->setMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_SUCCESS'));
 
-    $this->setMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_SUCCESS'));
+      return true;
+    }
 
-    return true;
-  }
-
-  $this->component->addLog(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_FAILURE'), 'error', 'jerror');
-
-  $this->setMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_FAILURE'));
-
+    $this->component->addLog(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_FAILURE'), 'error', 'jerror');
+    $this->setMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_FAILURE'));
 
     return false;
   }

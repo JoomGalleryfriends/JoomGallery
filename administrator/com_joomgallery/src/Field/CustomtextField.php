@@ -26,29 +26,29 @@ use Joomla\CMS\Form\Field\TextField;
  */
 class CustomtextField extends TextField
 {
-    /**
-     * The form field type.
-     *
-     * @var    string
-     * @since  4.0.0
-     */
-    protected $type = 'customtext';
+  /**
+   * The form field type.
+   *
+   * @var    string
+   * @since  4.0.0
+   */
+  protected $type = 'customtext';
 
-    /**
-     * Method to get the data to be passed to the layout for rendering.
-     *
-     * @return  array
-     *
-     * @since   4.0.0
-     */
-    protected function getLayoutData()
-    {
-        $data = parent::getLayoutData();
+  /**
+   * Method to get the data to be passed to the layout for rendering.
+   *
+   * @return  array
+   *
+   * @since   4.0.0
+   */
+  protected function getLayoutData()
+  {
+    $data = parent::getLayoutData();
 
-        $extraData = [
-          'sensitive'   => $this->getAttribute('sensitive'),
-        ];
+    $extraData = [
+      'sensitive' => $this->getAttribute('sensitive'),
+    ];
 
-        return array_merge($data, $extraData);
-    }
+    return array_merge($data, $extraData);
+  }
 }

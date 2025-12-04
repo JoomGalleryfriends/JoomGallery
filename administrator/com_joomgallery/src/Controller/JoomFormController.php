@@ -78,23 +78,23 @@ class JoomFormController extends BaseFormController
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
   }
 
-    /**
-     * Method to get the access service class.
-     *
-     * @return  AccessInterface   Object on success, false on failure.
-     * @since   4.0.0
-     */
-    public function getAcl(): AccessInterface
-    {
-    // Create access service
-    if(\is_null($this->acl))
-    {
-      $this->component->createAccess();
-      $this->acl = $this->component->getAccess();
-    }
+  /**
+   * Method to get the access service class.
+   *
+   * @return  AccessInterface   Object on success, false on failure.
+   * @since   4.0.0
+   */
+  public function getAcl(): AccessInterface
+  {
+  // Create access service
+  if(\is_null($this->acl))
+  {
+    $this->component->createAccess();
+    $this->acl = $this->component->getAccess();
+  }
 
-        return $this->acl;
-    }
+      return $this->acl;
+  }
 
   /**
    * Execute a task by triggering a Method in the derived class.

@@ -275,7 +275,7 @@
              buttons="add,remove"
              formsource="administrator/components/com_joomgallery/forms/subform_imageconvert.xml"
              layout="joomla.form.field.subform.repeatable-config"
-             label="COM_JOOMGALLERY_CONFIG_IP_STATIC" 
+             label="COM_JOOMGALLERY_CONFIG_IP_STATIC"
              description="COM_JOOMGALLERY_CONFIG_IP_STATIC_DESC" />
 
       <field name="jg_dynamic_watermark"
@@ -798,7 +798,7 @@
                label="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES_DESC" />
         <field name="jg_gallery_view_ordering"
-               type="list" 
+               type="list"
                label="COM_JOOMGALLERY_CONFIG_SORT_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_SORT_IMAGES_DESC"
                default="a.hits DESC"
@@ -967,16 +967,16 @@
             <option value="center">JGLOBAL_CENTER</option>
             <option value="right">JGLOBAL_RIGHT</option>
         </field>
-      <field name="jg_category_view_subcategories_category_description"
-             type="radio"
-             label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_DESCRIPTION"
-             default="0"
-             layout="joomla.form.field.radio.switcher"
-             validate="options"
-      >
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
-      </field>
+        <field name="jg_category_view_subcategories_category_description"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_DESCRIPTION"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
         <field name="jg_category_view_subcategories_random_image"
             type="radio"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_IMAGES"
@@ -1024,7 +1024,7 @@
             showon="jg_category_view_pagination:0[OR]jg_category_view_pagination:2"
         />
         <field name="jg_category_view_ord_images"
-               type="list" 
+               type="list"
                label="COM_JOOMGALLERY_CONFIG_SORT_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_SORT_IMAGES_DESC"
                default="a.date ASC"
@@ -1067,7 +1067,7 @@
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
-        </field> 
+        </field>
         <field name="jg_category_view_image_class"
             type="radio"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGE_CLASS"

@@ -53,7 +53,7 @@ return new class implements ServiceProviderInterface
     $container->registerServiceProvider(new ComponentDispatcherFactory('\\Joomgallery\\Component\\Joomgallery'));
     $container->registerServiceProvider(new RouterFactory('\\Joomgallery\\Component\\Joomgallery'));
 
-  // Create the component class
+    // Create the component class
     $container->set(
         ComponentInterface::class,
         function (Container $container) {
