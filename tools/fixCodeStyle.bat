@@ -1,6 +1,6 @@
 @ECHO OFF
 REM -----------------------------------------------------
-REM Fix joomgallery code style (jg_fixCodeStyle.bat)
+REM Fix joomgallery code style (fixCodeStyle.bat)
 REM -----------------------------------------------------
 REM This batch calls following task succession to apply
 REM JG defined codestyle
@@ -73,21 +73,24 @@ REM Composer housekeeping
 
 ECHO Install and update needed dependencies (composer)
 
-composer dump-autoload
+echo "--- composer dump-autoload"
+call composer dump-autoload
 IF errorlevel 1 (
     ECHO.
     ECHO ERROR: composer dump-autoload failed!
     GOTO :ErrorBack
 )
 
-composer install
+echo "--- composer install"
+call composer install
 IF errorlevel 1 (
     ECHO.
     ECHO ERROR: composer install failed!
     GOTO :ErrorBack
 )
 
-composer update
+echo "--- composer update"
+call composer update
 IF errorlevel 1 (
     ECHO.
     ECHO ERROR: composer update failed!

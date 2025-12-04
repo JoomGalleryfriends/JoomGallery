@@ -66,21 +66,24 @@ REM Composer housekeeping
 
 ECHO Install and update needed dependencies (composer)
 
-composer dump-autoload
+echo "--- composer dump-autoload"
+call composer dump-autoload
 IF errorlevel 1 (
     ECHO.
     ECHO ERROR: composer dump-autoload failed!
     GOTO :ErrorBack
 )
 
-composer install
+echo "--- composer install"
+call composer install
 IF errorlevel 1 (
     ECHO.
     ECHO ERROR: composer install failed!
     GOTO :ErrorBack
 )
 
-composer update
+echo "--- composer update"
+call composer update
 IF errorlevel 1 (
     ECHO.
     ECHO ERROR: composer update failed!
@@ -94,12 +97,12 @@ REM =====================================================
 REM call "phpcs"
 
 ECHO ----------------------------------------------
-ECHO call "phpcbf"
+ECHO call "phpcs"
 ECHO    may take some time 
 
 php ".\administrator\com_joomgallery\vendor\bin\phpcs" --standard=ruleset.xml .\
 REM if errorlevel 1 (
-REM 	ECHO Error on calling phpcbf (02)
+REM 	ECHO Error on calling phpcs (02)
 REM 	goto :ErrorBack
 REM )	
 ECHO.
