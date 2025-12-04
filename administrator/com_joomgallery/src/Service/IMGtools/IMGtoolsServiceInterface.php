@@ -1,51 +1,52 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
-* The IMGtools service
-*
-* @since  4.0.0
-*/
+ * The IMGtools service
+ *
+ * @since  4.0.0
+ */
 interface IMGtoolsServiceInterface
 {
-  /**
-	 * Creates the IMGtools class
-   *
-   * @param   string  $processor  Name of the image processor to be used
-	 *
-   * @return  void
-   *
-	 * @since  4.0.0
-	 */
-	public function createIMGtools($processor, $keep_metadata = false, $keep_anim = false): void;
+    /**
+     * Creates the IMGtools class
+     *
+     * @param   string  $processor  Name of the image processor to be used
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     */
+    public function createIMGtools($processor, $keep_metadata = false, $keep_anim = false): void;
 
-  /**
-	 * Destroys the IMGtools class
-	 *
-   * @return  void
-   *
-	 * @since  4.0.0
-	 */
-	public function delIMGtools(): void;
+    /**
+     * Destroys the IMGtools class
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     */
+    public function delIMGtools(): void;
 
-	/**
-	 * Returns the IMGtools class.
-	 *
-	 * @return  IMGtoolsInterface
-	 *
-	 * @since  4.0.0
-	 */
-	public function getIMGtools(): IMGtoolsInterface;
+    /**
+     * Returns the IMGtools class.
+     *
+     * @return  IMGtoolsInterface
+     *
+     * @since  4.0.0
+     */
+    public function getIMGtools(): IMGtoolsInterface;
 }

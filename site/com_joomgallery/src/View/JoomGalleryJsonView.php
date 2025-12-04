@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\JsonView;
-use \Joomla\CMS\Response\JsonResponse;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\JsonView;
+use Joomla\CMS\Response\JsonResponse;
 
 /**
  * Parent JSON View Class for JoomGallery
@@ -90,7 +91,7 @@ class JoomGalleryJsonView extends JsonView
    * @return  void
    * @since   1.5.5
    */
-  function __construct($config = array())
+  function __construct($config = [])
   {
     parent::__construct($config);
 
@@ -98,7 +99,7 @@ class JoomGalleryJsonView extends JsonView
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
     $this->user      = $this->app->getIdentity();
 
-    if(\strpos($this->component->version, 'dev'))
+    if(strpos($this->component->version, 'dev'))
     {
       // We are dealing with a development version (alpha or beta)
       $this->message = Text::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION');
@@ -106,13 +107,13 @@ class JoomGalleryJsonView extends JsonView
   }
 
   /**
-	 * Method to get the access service class.
-	 *
-	 * @return  AccessInterface   Object on success, false on failure.
+   * Method to get the access service class.
+   *
+   * @return  AccessInterface   Object on success, false on failure.
    * @since   4.0.0
-	 */
-	public function getAcl(): AccessInterface
-	{
+   */
+  public function getAcl(): AccessInterface
+  {
     // Create access service
     if(\is_null($this->acl))
     {
@@ -120,28 +121,28 @@ class JoomGalleryJsonView extends JsonView
       $this->acl = $this->component->getAccess();
     }
 
-		return $this->acl;
-	}
+    return $this->acl;
+  }
 
   /**
-	 * Check if state is set
-	 *
-	 * @param   mixed  $state  State
-	 *
-	 * @return bool
-	 */
-	public function getState($state)
-	{
-		return isset($this->state->{$state}) ? $this->state->{$state} : false;
-	}
+   * Check if state is set
+   *
+   * @param   mixed  $state  State
+   *
+   * @return bool
+   */
+  public function getState($state)
+  {
+    return isset($this->state->{$state}) ? $this->state->{$state} : false;
+  }
 
-   /**
-	 * Outputs the content as json string
-	 *
-	 * @param   mixed  $res  The output
-	 *
-	 * @return void
-	 */
+  /**
+   * Outputs the content as json string
+   *
+   * @param   mixed  $res  The output
+   *
+   * @return void
+   */
   protected function output($res)
   {
     // Prevent the api url from being indexed
@@ -151,7 +152,7 @@ class JoomGalleryJsonView extends JsonView
     $input = $this->app->getInput();
 
     // Serializing the output
-    $result = \json_encode($res);
+    $result = json_encode($res);
 
     // Pushing output to the document
     $this->getDocument()->setBuffer($result);

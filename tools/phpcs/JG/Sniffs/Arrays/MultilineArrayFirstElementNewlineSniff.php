@@ -1,4 +1,13 @@
 <?php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
 declare(strict_types=1);
 
 namespace PHP_CodeSniffer\Standards\JG\Sniffs\Arrays;
@@ -21,10 +30,10 @@ final class MultilineArrayFirstElementNewlineSniff implements Sniff
     // Determine array boundaries
     if($token['code'] === T_ARRAY)
     {
-      $openPtr = $tokens[$token['parenthesis_opener']]['code'] === T_OPEN_PARENTHESIS
+      $openPtr     = $tokens[$token['parenthesis_opener']]['code'] === T_OPEN_PARENTHESIS
         ? $token['parenthesis_opener']
         : null;
-      $openPtr = $openPtr === null ? $token['parenthesis_opener'] : $token['parenthesis_opener'];
+      $openPtr     = $openPtr === null ? $token['parenthesis_opener'] : $token['parenthesis_opener'];
       $openBracket = $tokens[$openPtr]['parenthesis_opener'];
     }
     else
@@ -64,7 +73,7 @@ final class MultilineArrayFirstElementNewlineSniff implements Sniff
     if($tokens[$firstContent]['line'] === $tokens[$open]['line'])
     {
       $error = 'Multiline array must place first element on a new line.';
-      $fix = $phpcsFile->addFixableError($error, $firstContent, 'FirstElementNewline');
+      $fix   = $phpcsFile->addFixableError($error, $firstContent, 'FirstElementNewline');
 
       if($fix === true)
       {
@@ -72,7 +81,7 @@ final class MultilineArrayFirstElementNewlineSniff implements Sniff
 
         // Detect indentation of the following line
         $indentation = '';
-        $lineAfter = $tokens[$open]['line'] + 1;
+        $lineAfter   = $tokens[$open]['line'] + 1;
 
         // Scan tokens until we find the first token on that line
         for($i = $open + 1; $i < $close; $i++)

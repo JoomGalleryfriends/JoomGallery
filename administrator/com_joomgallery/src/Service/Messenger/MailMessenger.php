@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Messenger;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Mail\Exception\MailDisabledException;
-use \Joomla\CMS\Mail\MailTemplate;
-use \PHPMailer\PHPMailer\Exception as phpMailerException;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\Messenger;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Messenger\MessengerInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Mail\Exception\MailDisabledException;
+use Joomla\CMS\Mail\MailTemplate;
+use PHPMailer\PHPMailer\Exception as phpMailerException;
 
 /**
  * Mail Template Messenger Class
@@ -55,7 +56,7 @@ class MailMessenger extends Messenger implements MessengerInterface
     $mailer = new MailTemplate($this->template_id, $this->language->getTag());
     $mailer->addTemplateData($this->data);
     $this->addRecipients($recipients, $mailer);
-    
+
     try
     {
       $mailer->send();
@@ -79,7 +80,7 @@ class MailMessenger extends Messenger implements MessengerInterface
       }
     }
 
-    $num = (\is_array($recipients)) ? \count($recipients) : 1;
+    $num        = (\is_array($recipients)) ? \count($recipients) : 1;
     $this->sent = $this->sent + $num;
 
     return true;
@@ -89,18 +90,18 @@ class MailMessenger extends Messenger implements MessengerInterface
    * Method to add one ore more recipients
    *
    * @param   array   $recipients  An array of email addresses or a single one as a string
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   protected function addRecipients($recipients, $mailer)
   {
-    if(is_array($recipients))
+    if(\is_array($recipients))
     {
-      foreach ($recipients as $recipient)
+      foreach($recipients as $recipient)
       {
-        if(\is_numeric($recipient))
+        if(is_numeric($recipient))
         {
           // CMS user id given
           $recipient = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($recipient);

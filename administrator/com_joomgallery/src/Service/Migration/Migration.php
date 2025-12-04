@@ -1,34 +1,35 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Table\Table;
-use \Joomla\Filesystem\Path;
-use \Joomla\Registry\Registry;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Database\DatabaseFactory;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\MigrationTable;
-use \Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Checks;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\Migration\MigrationInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Checks;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\MigrationInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
+use Joomgallery\Component\Joomgallery\Administrator\Table\MigrationTable;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
+use Joomla\Database\DatabaseFactory;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Filesystem\Path;
+use Joomla\Registry\Registry;
 
 /**
  * Migration Base Class
@@ -41,13 +42,13 @@ abstract class Migration implements MigrationInterface
   use ServiceTrait;
 
   /**
-	 * Storage for the migration form object.
-	 *
-	 * @var   Registry
-	 *
-	 * @since  4.0.0
-	 */
-	protected $params = null;
+   * Storage for the migration form object.
+   *
+   * @var   Registry
+   *
+   * @since  4.0.0
+   */
+  protected $params = null;
 
   /**
    * Storage for the source database driver object.
@@ -59,22 +60,22 @@ abstract class Migration implements MigrationInterface
   protected $src_db = null;
 
   /**
-	 * Storage for the migration info object.
-	 *
-	 * @var   object
-	 *
-	 * @since  4.0.0
-	 */
-	protected $info = null;
+   * Storage for the migration info object.
+   *
+   * @var   object
+   *
+   * @since  4.0.0
+   */
+  protected $info = null;
 
   /**
-	 * Name of the migration script.
-	 *
-	 * @var   string
-	 *
-	 * @since  4.0.0
-	 */
-	protected $name = '';
+   * Name of the migration script.
+   *
+   * @var   string
+   *
+   * @since  4.0.0
+   */
+  protected $name = '';
 
   /**
    * True to offer the task migration.removesource for this script
@@ -102,7 +103,7 @@ abstract class Migration implements MigrationInterface
    *
    * @since  4.0.0
    */
-  protected $types = array();
+  protected $types = [];
 
   /**
    * List of migrateables processed/migrated with this script
@@ -111,7 +112,7 @@ abstract class Migration implements MigrationInterface
    *
    * @since  4.0.0
    */
-  protected $migrateables = array();
+  protected $migrateables = [];
 
   /**
    * True, if the migration process of the current content type should be continued
@@ -139,30 +140,30 @@ abstract class Migration implements MigrationInterface
     $this->getComponent();
 
     // Try to load language file of the migration script
-    $this->app->getLanguage()->load('com_joomgallery.migration.'.$this->name, _JOOM_PATH_ADMIN);
+    $this->app->getLanguage()->load('com_joomgallery.migration.' . $this->name, _JOOM_PATH_ADMIN);
 
     // Set logger
     $this->component->setLogger('migration');
 
     // Fill info object
-    $this->info               = new \stdClass;
-    $this->info->name         = $this->name;
-    $this->info->title        = Text::_('FILES_JOOMGALLERY_MIGRATION_'.strtoupper($this->name).'_TITLE');
-    $this->info->description  = Text::_('FILES_JOOMGALLERY_MIGRATION_'.strtoupper($this->name).'_DESC');
+    $this->info              = new \stdClass();
+    $this->info->name        = $this->name;
+    $this->info->title       = Text::_('FILES_JOOMGALLERY_MIGRATION_' . strtoupper($this->name) . '_TITLE');
+    $this->info->description = Text::_('FILES_JOOMGALLERY_MIGRATION_' . strtoupper($this->name) . '_DESC');
   }
 
   /**
-	 * Destructor
-	 *
-	 * @return  void
+   * Destructor
    *
-	 * @since  4.0.0
-	 */
-	public function __destruct()
-	{
+   * @return  void
+   *
+   * @since  4.0.0
+   */
+  public function __destruct()
+  {
     // Reset logger to default
     $this->component->setLogger();
-	}
+  }
 
   /**
    * A list of content type definitions depending on migration source
@@ -191,7 +192,7 @@ abstract class Migration implements MigrationInterface
    *
    * @since   4.0.0
    */
-  public function defineTypes($names_only=false, &$type=null): array
+  public function defineTypes($names_only = false, &$type = null): array
   {
     /* Example:
     $types = array( 'category' => array('#__joomgallery_catg', 'cid', 'name', true, false, true),
@@ -199,7 +200,7 @@ abstract class Migration implements MigrationInterface
                   );
     */
 
-    return array();
+    return [];
   }
 
   /**
@@ -245,9 +246,9 @@ abstract class Migration implements MigrationInterface
   {
     if(\is_null($migrateable))
     {
-      if(!$migrateable  = $this->getMigrateable($type))
+      if(!$migrateable = $this->getMigrateable($type))
       {
-        return array();
+        return [];
       }
     }
 
@@ -261,7 +262,7 @@ abstract class Migration implements MigrationInterface
     list($db, $prefix) = $this->getDB('source');
 
     // Initialize query object
-		$query = $db->getQuery(true);
+    $query = $db->getQuery(true);
 
     // Create the query
     $query->select($db->quoteName($primarykey))
@@ -270,10 +271,10 @@ abstract class Migration implements MigrationInterface
 
     // Apply id filter
     // Reorder the queue if queue is not empty
-    if(\property_exists($migrateable, 'queue') && !empty($migrateable->queue))
+    if(property_exists($migrateable, 'queue') && !empty($migrateable->queue))
     {
-      $queue = (array) $migrateable->get('queue', array());
-      $query->where($db->quoteName($primarykey) . ' IN (' . implode(',', $queue) .')');
+      $queue = (array) $migrateable->get('queue', []);
+      $query->where($db->quoteName($primarykey) . ' IN (' . implode(',', $queue) . ')');
     }
 
     // Gather migration types info
@@ -299,7 +300,7 @@ abstract class Migration implements MigrationInterface
     {
       $this->component->setError($e->getMessage());
 
-      return array();
+      return [];
     }
   }
 
@@ -365,7 +366,7 @@ abstract class Migration implements MigrationInterface
     {
       $this->component->setError($e->getMessage());
 
-      return array();
+      return [];
     }
   }
 
@@ -374,9 +375,9 @@ abstract class Migration implements MigrationInterface
    *
    * @param   string   $type   Name of the content type
    * @param   array    $data   Source data received from getData()
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function getRulesData(string $type, array &$data)
@@ -442,6 +443,7 @@ abstract class Migration implements MigrationInterface
   {
     // Default: Create new folders
     $this->component->createFileManager($cat->id);
+
     return $this->component->getFileManager()->createCategory($cat->alias, $cat->parent_id);
   }
 
@@ -478,7 +480,7 @@ abstract class Migration implements MigrationInterface
    */
   public function getMigrateable(string $type, bool $withQueue = true)
   {
-    if( !\key_exists($type, $this->migrateables) || empty($this->migrateables[$type]) ||
+    if( !key_exists($type, $this->migrateables) || empty($this->migrateables[$type]) ||
         ($withQueue && empty($this->migrateables[$type]->queue))
       )
     {
@@ -492,6 +494,7 @@ abstract class Migration implements MigrationInterface
       {
         // Detect id of the requested type
         $id = 0;
+
         foreach($mig_ids[$this->name] as $key => $mig)
         {
           if($mig->type == $type)
@@ -508,7 +511,6 @@ abstract class Migration implements MigrationInterface
           return $this->migrateables[$type];
         }
       }
-
     }
 
     return false;
@@ -530,6 +532,7 @@ abstract class Migration implements MigrationInterface
 
     // Set the migration parameters
     $migrateableKey = 0;
+
     foreach($this->migrateables as $key => $migrateable)
     {
       if($migrateable->type == $type)
@@ -550,9 +553,9 @@ abstract class Migration implements MigrationInterface
    *
    * @param   string   $type    Name of the content type
    * @param   Table    $table   Table object to be inserted into destination
-   * 
+   *
    * @return  void
-   * 
+   *
    * @since   4.0.0
    */
   public function onBeforeSave(string $type, Table &$table): void
@@ -670,10 +673,10 @@ abstract class Migration implements MigrationInterface
    *
    * @since   4.0.0
    * @throws  \Exception
-  */
+   */
   public function getDB(string $target): array
   {
-    if(!in_array($target, array('source', 'destination')))
+    if(!\in_array($target, ['source', 'destination']))
     {
       $this->component->addLog('Target has to be either "source" or "destination". Given: ' . $target, 'error', 'jerror');
       throw new \Exception('Target has to be either "source" or "destination". Given: ' . $target, 1);
@@ -683,23 +686,23 @@ abstract class Migration implements MigrationInterface
     {
       // Get database driver of the current joomla application
       $db       = Factory::getContainer()->get(DatabaseInterface::class);
-      $dbPrefix = \strtolower($this->app->get('dbprefix'));
+      $dbPrefix = strtolower($this->app->get('dbprefix'));
     }
     else
     {
       // Get database driver for the source joomla database
       if(\is_null($this->src_db))
       {
-        $options      = array ('driver' => $this->params->get('dbtype'), 'host' => $this->params->get('dbhost'), 'user' => $this->params->get('dbuser'), 'password' => $this->params->get('dbpass'), 'database' => $this->params->get('dbname'), 'prefix' => $this->params->get('dbprefix'));
+        $options      = ['driver' => $this->params->get('dbtype'), 'host' => $this->params->get('dbhost'), 'user' => $this->params->get('dbuser'), 'password' => $this->params->get('dbpass'), 'database' => $this->params->get('dbname'), 'prefix' => $this->params->get('dbprefix')];
         $dbFactory    = new DatabaseFactory();
         $this->src_db = $dbFactory->getDriver($this->params->get('dbtype'), $options);
       }
 
-      $dbPrefix = \strtolower($this->params->get('dbprefix'));
+      $dbPrefix = strtolower($this->params->get('dbprefix'));
       $db       = $this->src_db;
     }
 
-    return array($db, $dbPrefix);
+    return [$db, $dbPrefix];
   }
 
   /**
@@ -708,7 +711,7 @@ abstract class Migration implements MigrationInterface
    * @param   mixed   $params   Array or object of params
    *
    * @since   4.0.0
-  */
+   */
   public function setParams($params)
   {
     $this->params = new Registry($params);
@@ -731,7 +734,7 @@ abstract class Migration implements MigrationInterface
     {
       $root = Path::clean($this->params->get('joomla_path'));
 
-      if(\substr($root, -1) != '/')
+      if(substr($root, -1) != '/')
       {
         $root = Path::clean($root . '/');
       }
@@ -793,7 +796,8 @@ abstract class Migration implements MigrationInterface
   {
     $this->loadTypes();
 
-    $tables = array();
+    $tables = [];
+
     foreach($this->types as $key => $type)
     {
       $tables[$key] = $this->types[$key]->get('queueTablename');
@@ -821,7 +825,7 @@ abstract class Migration implements MigrationInterface
   {
     $this->loadTypes();
 
-    return array($this->types[$type]->get('tablename'), $this->types[$type]->get('pk'));
+    return [$this->types[$type]->get('tablename'), $this->types[$type]->get('pk')];
   }
 
   /**
@@ -936,18 +940,18 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkLogFile(Checks &$checks, string $category)
   {
-    $log_dir  = Path::clean($this->app->get('log_path'));
+    $log_dir = Path::clean($this->app->get('log_path'));
 
-    if(\is_dir($log_dir))
+    if(is_dir($log_dir))
     {
       $log_file = Path::clean($log_dir . '/' . 'com_joomgallery.log.php');
 
-      if(\is_file($log_file))
+      if(is_file($log_file))
       {
-        if(\is_writable($log_dir))
+        if(is_writable($log_dir))
         {
           $checks->addCheck($category, 'log_file', true, false, Text::_('COM_JOOMGALLERY_LOGFILE'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_LOGFILE_SUCCESS', $log_file));
         }
@@ -959,7 +963,7 @@ abstract class Migration implements MigrationInterface
       }
       else
       {
-        if(\is_writable($log_dir))
+        if(is_writable($log_dir))
         {
           $checks->addCheck($category, 'log_dir', true, false, Text::_('COM_JOOMGALLERY_LOGDIRECTORY'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_LOGDIR_SUCCESS', $log_dir));
         }
@@ -975,7 +979,6 @@ abstract class Migration implements MigrationInterface
       $checks->addCheck($category, 'log_dir', false, false, Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_LOG_DIR_LABEL'), Text::_('Logging directory not existent.'));
       $this->component->addLog(Text::_('Logging directory not existent.'), 'error', 'jerror');
     }
-
   }
 
   /**
@@ -987,7 +990,7 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkSourceExtension(Checks &$checks, string $category)
   {
     $src_info = $this->getTargetinfo('source');
@@ -997,10 +1000,11 @@ abstract class Migration implements MigrationInterface
       // Source XML not found
       $checks->addCheck($category, 'src_xml', false, false, Text::_('COM_JOOMGALLERY_FIELDS_SRC_EXTENSION_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_SOURCE_XML', $src_xml));
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_SOURCE_XML', $src_xml), 'error', 'jerror');
+
       return;
     }
 
-    if(\version_compare(PHP_VERSION, $src_info->get('php_min'), '<'))
+    if(version_compare(PHP_VERSION, $src_info->get('php_min'), '<'))
     {
       // PHP version not supported
       $checks->addCheck($category, 'src_extension', false, false, Text::_('COM_JOOMGALLERY_FIELDS_SRC_EXTENSION_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_PHP_WRONG_VERSION', PHP_VERSION, $src_info->get('php_min')));
@@ -1012,7 +1016,7 @@ abstract class Migration implements MigrationInterface
       $checks->addCheck($category, 'src_extension', false, false, Text::_('COM_JOOMGALLERY_FIELDS_SRC_EXTENSION_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_EXTENSION_NOT_SUPPORTED', \strval($src_xml->name)));
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_EXTENSION_NOT_SUPPORTED', \strval($src_xml->name)), 'error', 'jerror');
     }
-    elseif(\version_compare($src_xml->version, $src_info->get('min'), '<') || \version_compare($src_xml->version, $src_info->get('max'), '>'))
+    elseif(version_compare($src_xml->version, $src_info->get('min'), '<') || version_compare($src_xml->version, $src_info->get('max'), '>'))
     {
       // Version not correct
       $checks->addCheck($category, 'src_extension', false, false, Text::_('COM_JOOMGALLERY_FIELDS_SRC_EXTENSION_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_EXTENSION_WRONG_VERSION', $src_xml->version, $src_info->get('min') . ' - ' . $src_info->get('max')));
@@ -1034,13 +1038,13 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkDestExtension(Checks &$checks, string $category)
   {
     $dest_info = $this->getTargetinfo('destination');
-    $version   = \str_replace('-dev', '', $this->component->version);
+    $version   = str_replace('-dev', '', $this->component->version);
 
-    if(\version_compare(PHP_VERSION, $dest_info->get('php_min'), '<'))
+    if(version_compare(PHP_VERSION, $dest_info->get('php_min'), '<'))
     {
       // PHP version not supported
       $checks->addCheck($category, 'dest_extension', false, false, Text::_('COM_JOOMGALLERY_FIELDS_SRC_EXTENSION_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_PHP_WRONG_VERSION', PHP_VERSION, $dest_info->get('php_min')));
@@ -1052,7 +1056,7 @@ abstract class Migration implements MigrationInterface
       $checks->addCheck($category, 'dest_extension', false, false, Text::_('COM_JOOMGALLERY_FIELDS_DEST_EXTENSION_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_EXTENSION_NOT_SUPPORTED', \strval($this->component->xml->name)));
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_EXTENSION_NOT_SUPPORTED', \strval($this->component->xml->name)), 'error', 'jerror');
     }
-    elseif(\version_compare($version, $dest_info->get('min'), '<') || \version_compare($version, $dest_info->get('max'), '>'))
+    elseif(version_compare($version, $dest_info->get('min'), '<') || version_compare($version, $dest_info->get('max'), '>'))
     {
       // Version not correct
       $checks->addCheck($category, 'dest_extension', false, false, Text::_('COM_JOOMGALLERY_FIELDS_DEST_EXTENSION_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_EXTENSION_WRONG_VERSION', $this->component->version, $dest_info->get('min') . ' - ' . $dest_info->get('max')));
@@ -1074,7 +1078,7 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkSiteState(Checks &$checks, string $category)
   {
     // Check that site is offline
@@ -1091,7 +1095,7 @@ abstract class Migration implements MigrationInterface
     if($this->app->get('lifetime') < 30)
     {
       $time_min = $this->app->get('lifetime');
-      $time_hr  = \round($time_min / 60, 1);
+      $time_hr  = round($time_min / 60, 1);
       $checks->addCheck($category, 'lifetime', true, true, Text::_('COM_JOOMGALLERY_SITE_LIFETIME'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_LIFETIME_ERROR', $time_min, $time_hr));
     }
   }
@@ -1105,20 +1109,21 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkSourceDir(Checks &$checks, string $category)
   {
     // Retrieve a list of source directories involved in migration
     $directories = $this->getSourceDirs();
     $root        = $this->getSourceRootPath();
 
-    $dirs_checked = array();
+    $dirs_checked = [];
+
     foreach($directories as $dir)
     {
       // Make sure, we check each directory only once
       if(!\in_array($dir, $dirs_checked))
       {
-        \array_push($dirs_checked, $dir);
+        array_push($dirs_checked, $dir);
       }
       else
       {
@@ -1126,9 +1131,9 @@ abstract class Migration implements MigrationInterface
         continue;
       }
 
-      $check_name = 'src_dir_' . \basename($dir);
+      $check_name = 'src_dir_' . basename($dir);
 
-      if(!\is_dir($root . $dir))
+      if(!is_dir($root . $dir))
       {
         // Path is not a directory
         $checks->addCheck($category, $check_name, false, false, Text::_('COM_JOOMGALLERY_DIRECTORY') . ': ' . $dir, Text::_('COM_JOOMGALLERY_SERVICE_ERROR_FILESYSTEM_NOT_A_DIRECTORY'));
@@ -1150,22 +1155,23 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkDestDir(Checks &$checks, string $category)
   {
     // Instantiate filesystem service
-    $this->component->createFilesystem($this->component->getConfig()->get('jg_filesystem','local-images'));
+    $this->component->createFilesystem($this->component->getConfig()->get('jg_filesystem', 'local-images'));
 
     // Get all imagetypes
     $imagetypes = JoomHelper::getRecords('imagetypes', $this->component);
 
-    $dirs_checked = array();
+    $dirs_checked = [];
+
     foreach($imagetypes as $imagetype)
     {
       // Make sure, we check each directory only once
       if(!\in_array($imagetype, $dirs_checked))
       {
-        \array_push($dirs_checked, $imagetype);
+        array_push($dirs_checked, $imagetype);
       }
       else
       {
@@ -1220,7 +1226,7 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkSourceTable(Checks &$checks, string $category)
   {
     list($db, $dbPrefix) = $this->getDB('source');
@@ -1234,18 +1240,20 @@ abstract class Migration implements MigrationInterface
     {
       $checks->addCheck($category, 'src_table_connect', true, Text::_('JLIB_FORM_VALUE_SESSION_DATABASE'), Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_TABLE_CONN_ERROR'));
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_TABLE_CONN_ERROR'), 'error', 'jerror');
+
       return;
     }
 
     // Check required tables
-    $tables = $this->getSourceTables();
-    $tables_checked = array();
+    $tables         = $this->getSourceTables();
+    $tables_checked = [];
+
     foreach($tables as $tablename)
     {
       // Make sure, we check each table only once
       if(!\in_array($tablename, $tables_checked))
       {
-        \array_push($tables_checked, $tablename);
+        array_push($tables_checked, $tablename);
       }
       else
       {
@@ -1256,7 +1264,7 @@ abstract class Migration implements MigrationInterface
       $check_name = 'src_table_' . $tablename;
 
       // Check if required tables exists
-      if(!\in_array(\str_replace('#__', $dbPrefix, $tablename), $tableList))
+      if(!\in_array(str_replace('#__', $dbPrefix, $tablename), $tableList))
       {
         $checks->addCheck($category, $check_name, false, false, Text::_('COM_JOOMGALLERY_TABLE') . ': ' . $tablename, Text::_('COM_JOOMGALLERY_ERROR_TABLE_NOT_EXISTING'));
         $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_TABLE_NOT_EXISTING'), 'error', 'jerror');
@@ -1272,6 +1280,7 @@ abstract class Migration implements MigrationInterface
 
       // Check number of records in tables
       $check_name = 'dest_table_' . $tablename . '_count';
+
       if($count == 0)
       {
         $checks->addCheck($category, $check_name, true, false, Text::_('COM_JOOMGALLERY_TABLE') . ': ' . $tablename, Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_COUNT_TABLES_EMPTY'));
@@ -1295,7 +1304,7 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkDestTable(Checks &$checks, string $category, bool $resumed = false)
   {
     // Get table info
@@ -1364,13 +1373,14 @@ abstract class Migration implements MigrationInterface
     }
 
     // Check required tables
-    $tables_checked = array();
+    $tables_checked = [];
+
     foreach($tables as $tablename)
     {
       // Make sure, we check each table only once
       if(!\in_array($tablename, $tables_checked))
       {
-        \array_push($tables_checked, $tablename);
+        array_push($tables_checked, $tablename);
       }
       else
       {
@@ -1381,7 +1391,7 @@ abstract class Migration implements MigrationInterface
       $check_name = 'dest_table_' . $tablename;
 
       // Check if required tables exists
-      if(!\in_array( \str_replace('#__', $dbPrefix, $tablename), $tableList))
+      if(!\in_array(str_replace('#__', $dbPrefix, $tablename), $tableList))
       {
         $checks->addCheck($category, $check_name, false, false, Text::_('COM_JOOMGALLERY_TABLE') . ': ' . $tablename, Text::_('COM_JOOMGALLERY_ERROR_TABLE_NOT_EXISTING'));
         $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_TABLE_NOT_EXISTING'), 'error', 'jerror');
@@ -1402,6 +1412,7 @@ abstract class Migration implements MigrationInterface
       }
 
       $check_name = 'dest_table_' . $tablename . '_count';
+
       if($count == 0)
       {
         $checks->addCheck($category, $check_name, true, false, Text::_('COM_JOOMGALLERY_TABLE') . ': ' . $tablename, Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_COUNT_TABLES_EMPTY'));
@@ -1428,11 +1439,12 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkDestTableIdAvailability(Checks &$checks, string $category, string $tablename)
   {
     // Get content type to check
     $type = '';
+
     foreach(JoomHelper::$content_types as $type => $table)
     {
       if($table === $tablename)
@@ -1446,6 +1458,7 @@ abstract class Migration implements MigrationInterface
     // Get migrateable to check
     $this->getMigrateables();
     $migrateable = null;
+
     foreach($this->migrateables as $key => $migrateable)
     {
       if($migrateable->get('type', false) === $type)
@@ -1469,7 +1482,7 @@ abstract class Migration implements MigrationInterface
     $destQuery = $db->getQuery(true);
     $destQuery->select($db->quoteName('id'))
               ->from($db->quoteName($tablename));
-    $destQuery_string = \trim($destQuery->__toString());
+    $destQuery_string = trim($destQuery->__toString());
 
     if($this->params->get('same_db', 1))
     {
@@ -1477,7 +1490,7 @@ abstract class Migration implements MigrationInterface
       $srcQuery = $db->getQuery(true);
       $srcQuery->select($db->quoteName($migrateable->get('src_pk'), 'id'))
                ->from($db->quoteName($migrateable->get('src_table')));
-      $srcQuery_string = \trim($srcQuery->__toString());
+      $srcQuery_string = trim($srcQuery->__toString());
 
       // Get a list of ids used in both source and destination
       $query = $db->getQuery(true);
@@ -1511,12 +1524,13 @@ abstract class Migration implements MigrationInterface
       {
         ${'query' . $i} = $db->getQuery(true);
         ${'query' . $i}->select($db->quote($id) . ' AS ' . $db->quoteName('id'));
+
         if($i > 0)
         {
           $query0->unionAll(${'query' . $i});
         }
       }
-      $srcQuery_string = \trim($query0->__toString());
+      $srcQuery_string = trim($query0->__toString());
 
       // Get a list of ids used in both source and destination
       $query = $db->getQuery(true);
@@ -1532,12 +1546,12 @@ abstract class Migration implements MigrationInterface
     // Exception for root category
     if($tablename == _JOOM_TABLE_CATEGORIES)
     {
-      $list = \array_diff($list, array(1, '1'));
+      $list = array_diff($list, [1, '1']);
     }
 
     if(!empty($list))
     {
-      $checks->addCheck($category, 'dest_table_' . $tablename . '_ids', false, false, Text::_('COM_JOOMGALLERY_TABLE') . ': ' . $tablename, Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_COUNT_TABLES_USE_IDS_HINT', \implode(',', $list)));
+      $checks->addCheck($category, 'dest_table_' . $tablename . '_ids', false, false, Text::_('COM_JOOMGALLERY_TABLE') . ': ' . $tablename, Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_COUNT_TABLES_USE_IDS_HINT', implode(',', $list)));
     }
   }
 
@@ -1550,35 +1564,37 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkImageMapping(Checks &$checks, string $category)
   {
     $mapping         = $this->params->get('image_mapping');
     $dest_imagetypes = JoomHelper::getRecords('imagetypes', $this->component);
-    $src_imagetypes  = array();
+    $src_imagetypes  = [];
 
     // Check if mapping contains enough elements
     if(\count((array)$mapping) != \count($dest_imagetypes))
     {
       $checks->addCheck($category, 'mapping_count', false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_COUNT_MAPPING_ERROR'));
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_COUNT_MAPPING_ERROR'), 'error', 'jerror');
+
       return;
     }
 
     // Load source imagetypes from xml file
-    $xml     = \simplexml_load_file(JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/src/Service/Migration/Scripts/'. $this->name . '.xml');
+    $xml     = simplexml_load_file(JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts/' . $this->name . '.xml');
     $element = $xml->xpath('/form/fieldset/field[@name="image_mapping"]/form/field[@name="source"]');
 
     foreach($element[0]->option as $option)
     {
-      \array_push($src_imagetypes, (string) $option['value']);
+      array_push($src_imagetypes, (string) $option['value']);
     }
 
     // Prepare destination imagetypes
-    $tmp_dest_imagetypes = array();
+    $tmp_dest_imagetypes = [];
+
     foreach($dest_imagetypes as $key => $type)
     {
-      \array_push($tmp_dest_imagetypes, (string) $type->typename);
+      array_push($tmp_dest_imagetypes, (string) $type->typename);
     }
 
     // Check if all imagetypes are correctly set in the mapping
@@ -1587,21 +1603,23 @@ abstract class Migration implements MigrationInterface
       if(\in_array($mapVal->destination, $tmp_dest_imagetypes))
       {
         // Remove imagetype from tmp_dest_imagetypes array
-        $tmp_dest_imagetypes = \array_diff($tmp_dest_imagetypes, array($mapVal->destination));
+        $tmp_dest_imagetypes = array_diff($tmp_dest_imagetypes, [$mapVal->destination]);
       }
       else
       {
         // Destination imagetype in mapping does not exist
-        $checks->addCheck($category, 'mapping_dest_types_'.$mapVal->destination, false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_DEST_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . \strtoupper($mapVal->destination))));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_DEST_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . \strtoupper($mapVal->destination))), 'error', 'jerror');
+        $checks->addCheck($category, 'mapping_dest_types_' . $mapVal->destination, false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_DEST_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->destination))));
+        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_DEST_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->destination))), 'error', 'jerror');
+
         return;
       }
 
       if(!\in_array($mapVal->source, $src_imagetypes))
       {
         // Source imagetype in mapping does not exist
-        $checks->addCheck($category, 'mapping_src_types_'.$mapVal->source, false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . \strtoupper($mapVal->source))));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . \strtoupper($mapVal->source))), 'error', 'jerror');
+        $checks->addCheck($category, 'mapping_src_types_' . $mapVal->source, false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->source))));
+        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_EXIST', Text::_('COM_JOOMGALLERY_' . strtoupper($mapVal->source))), 'error', 'jerror');
+
         return;
       }
     }
@@ -1609,8 +1627,8 @@ abstract class Migration implements MigrationInterface
     if(!empty($tmp_dest_imagetypes))
     {
       // Destination imagetype not used in the mapping
-      $checks->addCheck($category, 'mapping_dest_types', false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_USED', \implode(', ', $tmp_dest_imagetypes)));
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_USED', \implode(', ', $tmp_dest_imagetypes)), 'warning', 'jerror');
+      $checks->addCheck($category, 'mapping_dest_types', false, false, Text::_('COM_JOOMGALLERY_FIELDS_IMAGEMAPPING_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_USED', implode(', ', $tmp_dest_imagetypes)));
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_MAPPING_IMAGETYPE_NOT_USED', implode(', ', $tmp_dest_imagetypes)), 'warning', 'jerror');
     }
   }
 
@@ -1623,22 +1641,24 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkMigrationQueues(Checks &$checks, string $category)
   {
     $types        = $this->getTypeNames();
     $migrateables = $this->getMigrateables();
 
     // Check if all types are existent in migrateables
-    if(\count(\array_diff($types, \array_keys($migrateables))) > 0)
+    if(\count(array_diff($types, array_keys($migrateables))) > 0)
     {
       $checks->addCheck($category, 'types_migrated', false, false, Text::_('COM_JOOMGALLERY_MIGRATIONS'), Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_COUNT_MIGRATIONS_ERROR'));
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_COUNT_MIGRATIONS_ERROR'), 'error', 'jerror');
+
       return;
     }
 
     // Check if all queues in migrateables are empty
     $empty = true;
+
     foreach($migrateables as $key => $mig)
     {
       if(\count($mig->queue) > 0)
@@ -1664,18 +1684,19 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   protected function checkMigrationErrors(Checks &$checks, string $category)
   {
     $migrateables = $this->getMigrateables();
 
     // Check if all migrateables are error free
     $errors = false;
+
     foreach($migrateables as $key => $mig)
     {
       if($mig->failed->count() > 0)
       {
-        foreach($mig->failed->toArray()as $id => $error)
+        foreach($mig->failed->toArray() as $id => $error)
         {
           $checks->addCheck($category, 'error_' . $mig->type . '_' . $id, false, false, Text::_('ERROR') . ': ' . $mig->type, Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERRORS_ERROR', $mig->type, $id, $error));
           $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERRORS_ERROR', $mig->type, $id, $error), 'error', 'jerror');
@@ -1700,7 +1721,7 @@ abstract class Migration implements MigrationInterface
    * @return  void
    *
    * @since   4.0.0
-  */
+   */
   public function scriptSpecificChecks(string $type, Checks &$checks, string $category)
   {
     return;
@@ -1729,7 +1750,7 @@ abstract class Migration implements MigrationInterface
     foreach($data as $key => $value)
     {
       // Key not in the mapping array --> Nothing to do.
-      if(!\key_exists($key, $mapping))
+      if(!key_exists($key, $mapping))
       {
         continue;
       }
@@ -1762,7 +1783,7 @@ abstract class Migration implements MigrationInterface
         $destFieldName = $mapping[$key][0];
 
         // Prepare destField
-        if(!\key_exists($destFieldName, $data) || empty($data[$destFieldName]))
+        if(!key_exists($destFieldName, $data) || empty($data[$destFieldName]))
         {
           // Field does not exist or is empty
           $data[$destFieldName] = new Registry();
@@ -1775,6 +1796,7 @@ abstract class Migration implements MigrationInterface
 
         // Create new field name
         $newKey = $key;
+
         if(\count($mapping[$key]) > 1 && !empty($mapping[$key][1]))
         {
           $newKey = $mapping[$key][1];
@@ -1785,7 +1807,7 @@ abstract class Migration implements MigrationInterface
         {
           // Add as a child node
           $child = new Registry($value);
-          $value = new Registry(array($newKey=> $child));
+          $value = new Registry([$newKey => $child]);
         }
         else
         {
@@ -1796,7 +1818,8 @@ abstract class Migration implements MigrationInterface
           // Detect we have a json string
           if(\is_string($value))
           {
-            \json_decode($value);
+            json_decode($value);
+
             if(json_last_error() === JSON_ERROR_NONE)
             {
               $isJson = true;
@@ -1816,7 +1839,7 @@ abstract class Migration implements MigrationInterface
             }
             else
             {
-              $srclength = \count(\get_object_vars($value));
+              $srclength = \count(get_object_vars($value));
             }
           }
 
@@ -1834,12 +1857,12 @@ abstract class Migration implements MigrationInterface
             }
             elseif(\is_object($value))
             {
-              $keys = \array_keys(\get_object_vars($value));
+              $keys  = array_keys(get_object_vars($value));
               $value = $value[$keys[0]];
             }
 
             // Create registry with only one key value pair
-            $value = new Registry(array($newKey=> $value));
+            $value = new Registry([$newKey => $value]);
           }
         }
 
@@ -1855,7 +1878,7 @@ abstract class Migration implements MigrationInterface
       }
 
       // Add a static content
-      if(\is_string($mapping[$key]) || \is_numeric($mapping[$key]))
+      if(\is_string($mapping[$key]) || is_numeric($mapping[$key]))
       {
         $data[$key] = $mapping[$key];
 

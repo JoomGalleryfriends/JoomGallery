@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Button\PublishedButton;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -33,21 +34,21 @@ $listDirn  = $this->state->get('list.direction');
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery');
 $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
-if ($saveOrder && !empty($this->items))
+if($saveOrder && !empty($this->items))
 {
-	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=configs.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
-	HTMLHelper::_('draggablelist.draggable');
+  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=configs.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  HTMLHelper::_('draggablelist.draggable');
 }
 
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=configs'); ?>" method="post"
-	  name="adminForm" id="adminForm">
-	<div class="row">
-		<div class="col-md-12">
-			<div id="j-main-container" class="j-main-container">
-			<?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
-				<div class="clearfix"></div>
+    name="adminForm" id="adminForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div id="j-main-container" class="j-main-container">
+      <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+        <div class="clearfix"></div>
         <div class="table-responsive">
           <table class="table table-striped" id="configList">
             <caption class="visually-hidden">
@@ -60,56 +61,58 @@ if ($saveOrder && !empty($this->items))
                 <td class="w-1 text-center">
                   <?php echo HTMLHelper::_('grid.checkall'); ?>
                 </td>
-                <?php if (isset($this->items[0]->ordering)): ?>
+                <?php if(isset($this->items[0]->ordering)): ?>
                   <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                     <?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
                   </th>
                 <?php endif; ?>
                 <th scope="col" class="w-1 text-center">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" style="min-width:140px">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-25 d-none d-md-table-cell">
                   <?php echo Text::_('JFIELD_NOTE_LABEL'); ?>
                 </th>
                 <th scope="col" class="w-25 d-none d-md-table-cell">
-                <?php echo HTMLHelper::_('searchtools.sort',  'COM_JOOMGALLERY_USER_GROUP', 'a.group_id', $listDirn, $listOrder); ?>
+                <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_USER_GROUP', 'a.group_id', $listDirn, $listOrder); ?>
                 </th>
                 <th scope="col" class="w-3 d-none d-lg-table-cell">
-                  <?php echo HTMLHelper::_('searchtools.sort',  'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
+                  <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
                 </th>
               </tr>
             </thead>
             <tfoot>
             <tr>
-              <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+              <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                 <?php echo $this->pagination->getListFooter(); ?>
               </td>
             </tr>
             </tfoot>
-            <tbody <?php if ($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php endif; ?>>
-              <?php foreach ($this->items as $i => $item) :
+            <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
+                   endif; ?>>
+              <?php foreach($this->items as $i => $item) :
                 $ordering   = ($listOrder == 'a.ordering');
-                $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION.'.config.'.$item->id);
-                $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION.'.config.'.$item->id);
-                $canCheckin = $user->authorise('core.admin', 'com_checkin') || $item->checked_out == $userId || is_null($item->checked_out);
+                $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION . '.config.' . $item->id);
+                $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION . '.config.' . $item->id);
+                $canCheckin = $user->authorise('core.admin', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
               ?>
               <tr class="row<?php echo $i % 2; ?>">
               <td >
                   <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                 </td>
 
-                <?php if (isset($this->items[0]->ordering)) : ?>
+                <?php if(isset($this->items[0]->ordering)) : ?>
                 <td class="text-center d-none d-md-table-cell">
                 <?php
                   $iconClass = '';
-                  if (!$canChange)
+
+                  if(!$canChange)
                   {
                     $iconClass = ' inactive';
                   }
-                  elseif (!$saveOrder)
+                  elseif(!$saveOrder)
                   {
                     $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                   }
@@ -117,33 +120,33 @@ if ($saveOrder && !empty($this->items))
                 <span class="sortable-handler<?php echo $iconClass ?>">
                   <span class="icon-ellipsis-v" aria-hidden="true"></span>
                 </span>
-                <?php if ($canChange && $saveOrder) : ?>
+                <?php if($canChange && $saveOrder) : ?>
                   <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>" class="width-20 text-area-order hidden">
                 <?php endif; ?>
                 </td>
                 <?php endif; ?>
 
                 <td class="image-status text-center">
-                  <?php 
+                  <?php
                     $options = [
                       'task_prefix' => 'configs.',
-                      'disabled' => !$canChange,
-                      'id' => 'state-' . $item->id
+                      'disabled'    => !$canChange,
+                      'id'          => 'state-' . $item->id,
                     ];
 
-                    echo (new PublishedButton)->render((int) $item->published, $i, $options); 
+                    echo (new PublishedButton())->render((int) $item->published, $i, $options);
                   ?>
                 </td>
 
                 <th scope="row" class="has-context">
                   <div class="break-word">
-                    <?php if (isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>
+                    <?php if(isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>
                       <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'configs.', $canCheckin); ?>
                     <?php endif; ?>
 
-                    <?php if ($canEdit) : ?>
+                    <?php if($canEdit) : ?>
                       <?php
-                        $ConfigUrl     = Route::_('index.php?option=com_joomgallery&task=config.edit&id='.(int) $item->id);
+                        $ConfigUrl     = Route::_('index.php?option=com_joomgallery&task=config.edit&id=' . (int) $item->id);
                         $EditConfigTxt = Text::_('COM_JOOMGALLERY_CONFIG_EDIT');
                       ?>
                       <a href="<?php echo $ConfigUrl; ?>" title="<?php echo $EditConfigTxt; ?>">
@@ -164,17 +167,17 @@ if ($saveOrder && !empty($this->items))
                   <?php echo (int) $item->id; ?>
                 </td>
               </tr>
-            <?php endforeach; ?>
+              <?php endforeach; ?>
             </tbody>
           </table>
         </div>
 
-				<input type="hidden" name="task" value=""/>
-				<input type="hidden" name="boxchecked" value="0"/>
+        <input type="hidden" name="task" value=""/>
+        <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="form_submited" value="1"/>
-				<input type="hidden" name="list[fullorder]" value="<?php echo $listOrder; ?> <?php echo $listDirn; ?>"/>
-				<?php echo HTMLHelper::_('form.token'); ?>
-			</div>
-		</div>
-	</div>
+        <input type="hidden" name="list[fullorder]" value="<?php echo $listOrder; ?> <?php echo $listDirn; ?>"/>
+        <?php echo HTMLHelper::_('form.token'); ?>
+      </div>
+    </div>
+  </div>
 </form>

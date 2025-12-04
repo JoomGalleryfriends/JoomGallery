@@ -1,16 +1,17 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
@@ -88,7 +89,7 @@ class ConfigGet extends AbstractCommand
     $help = "<info>%command.name%</info> display one field value in configuration (Table)
   Usage: <info>php %command.full_name%</info> <option>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
-		";
+    ";
     $this->setDescription('Display the current value of a configuration option');
     $this->setHelp($help);
   }
@@ -106,21 +107,21 @@ class ConfigGet extends AbstractCommand
   protected function doExecute(InputInterface $input, OutputInterface $output): int
   {
     $this->configureIO($input, $output);
-    $this->ioStyle->title("JoomGallery Configuration Value (table)");
+    $this->ioStyle->title('JoomGallery Configuration Value (table)');
 
     $option   = $this->cliInput->getArgument('option');
     $configId = $input->getOption('id') ?? '1';
 
     $configurationAssoc = $this->getItemAssocFromDB($configId);
 
-    if (empty ($configurationAssoc))
+    if(empty($configurationAssoc))
     {
       $this->ioStyle->error("The configuration id '" . $configId . "' is invalid, No configuration found matching your criteria!");
 
       return Command::FAILURE;
     }
 
-    if (!\array_key_exists($option, $configurationAssoc))
+    if(!\array_key_exists($option, $configurationAssoc))
     {
       $this->ioStyle->error("Can't find option '$option' in configuration list");
 
@@ -167,27 +168,27 @@ class ConfigGet extends AbstractCommand
    */
   protected function formatConfigValue($value): string
   {
-    if ($value === false)
+    if($value === false)
     {
       return 'false';
     }
 
-    if ($value === true)
+    if($value === true)
     {
       return 'true';
     }
 
-    if ($value === null)
+    if($value === null)
     {
       return 'Not Set';
     }
 
-    if (\is_array($value))
+    if(\is_array($value))
     {
       return json_encode($value);
     }
 
-    if (\is_object($value))
+    if(\is_object($value))
     {
       return json_encode(get_object_vars($value));
     }

@@ -1,41 +1,40 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\DI\Container;
-use Joomla\CMS\Plugin\PluginHelper;
+use Joomgallery\Plugin\System\Joomowner\Extension\JoomgalleryOwner;
 use Joomla\CMS\Extension\PluginInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use Joomgallery\Plugin\System\Joomowner\Extension\JoomgalleryOwner;
 
-return new class implements ServiceProviderInterface
-{
+return new class implements ServiceProviderInterface {
   public function register(Container $container)
   {
     $container->set(
-      PluginInterface::class,
-      function (Container $container)
-      {
-        $plugin     = PluginHelper::getPlugin('system', 'joomowner');
-        $dispatcher = $container->get(DispatcherInterface::class);
+        PluginInterface::class,
+        function (Container $container) {
+          $plugin     = PluginHelper::getPlugin('system', 'joomowner');
+          $dispatcher = $container->get(DispatcherInterface::class);
 
-        /** @var \Joomla\CMS\Plugin\CMSPlugin $plugin */
-        $plugin = new JoomgalleryOwner($dispatcher, (array) $plugin);
-        $plugin->setApplication(Factory::getApplication());
+          /** @var \Joomla\CMS\Plugin\CMSPlugin $plugin */
+          $plugin = new JoomgalleryOwner($dispatcher, (array) $plugin);
+          $plugin->setApplication(Factory::getApplication());
 
-        return $plugin;
-      }
+          return $plugin;
+        }
     );
   }
 };

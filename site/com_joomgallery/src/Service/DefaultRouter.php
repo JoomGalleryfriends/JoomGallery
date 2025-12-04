@@ -1,93 +1,93 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Service;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Menu\AbstractMenu;
-use \Joomla\Database\ParameterType;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\CMS\Application\SiteApplication;
-use \Joomla\CMS\Categories\CategoryFactoryInterface;
-use \Joomla\CMS\Component\Router\RouterView;
-use \Joomla\CMS\Component\Router\RouterViewConfiguration;
-use \Joomla\CMS\Component\Router\Rules\MenuRules;
-use \Joomla\CMS\Component\Router\Rules\NomenuRules;
-use \Joomla\CMS\Component\Router\Rules\StandardRules;
-use \Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use Joomla\CMS\Application\SiteApplication;
+use Joomla\CMS\Categories\CategoryFactoryInterface;
+use Joomla\CMS\Component\Router\RouterView;
+use Joomla\CMS\Component\Router\RouterViewConfiguration;
+use Joomla\CMS\Component\Router\Rules\MenuRules;
+use Joomla\CMS\Component\Router\Rules\NomenuRules;
+use Joomla\CMS\Component\Router\Rules\StandardRules;
+use Joomla\CMS\Menu\AbstractMenu;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 
 /**
  * Joomgallery Router class
- *
  */
 class DefaultRouter extends RouterView
 {
   /**
-	 * Name to be displayed
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $displayName = 'COM_JOOMGALLERY_DEFAULT_ROUTER';
+   * Name to be displayed
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $displayName = 'COM_JOOMGALLERY_DEFAULT_ROUTER';
 
   /**
-	 * Type of the router
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $type = 'modern';
+   * Type of the router
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $type = 'modern';
 
   /**
-	 * ID of the parent of the image view. Empty if none.
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	public static $image_parentID = '';
+   * ID of the parent of the image view. Empty if none.
+   *
+   * @var    string
+   *
+   * @since  4.0.0
+   */
+  public static $image_parentID = '';
 
   /**
-	 * Param to use ids in URLs
-	 *
-	 * @var    bool
-	 *
-	 * @since  4.0.0
-	 */
-	private $noIDs;
+   * Param to use ids in URLs
+   *
+   * @var    bool
+   *
+   * @since  4.0.0
+   */
+  private $noIDs;
 
   /**
-	 * Database object
-	 *
-	 * @var    DatabaseInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $db;
+   * Database object
+   *
+   * @var    DatabaseInterface
+   *
+   * @since  4.0.0
+   */
+  private $db;
 
   /**
-	 * The category cache
-	 *
-	 * @var    array
-	 *
-	 * @since  4.0.0
-	 */
-	private $categoryCache = [];
+   * The category cache
+   *
+   * @var    array
+   *
+   * @since  4.0.0
+   */
+  private $categoryCache = [];
 
-	public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db , $skipSelf = false)
-	{
+  public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db, $skipSelf = false)
+  {
     parent::__construct($app, $menu);
 
     // Get router config value
@@ -113,9 +113,9 @@ class DefaultRouter extends RouterView
     $categoryform->setKey('id');
     $this->registerView($categoryform);
 
-		$images = new RouterViewConfiguration('images');
+    $images = new RouterViewConfiguration('images');
     $images->setParent($gallery);
-		$this->registerView($images);
+    $this->registerView($images);
 
     $image = new RouterViewConfiguration('image');
     $image->setKey('id')->setParent($images);
@@ -125,10 +125,10 @@ class DefaultRouter extends RouterView
     $imageform->setKey('id');
     $this->registerView($imageform);
 
-		$this->attachRule(new MenuRules($this));
-		$this->attachRule(new StandardRules($this));
-		$this->attachRule(new NomenuRules($this));
-	}
+    $this->attachRule(new MenuRules($this));
+    $this->attachRule(new StandardRules($this));
+    $this->attachRule(new NomenuRules($this));
+  }
 
   /**
    * Method to get the segment for a gallery view
@@ -140,9 +140,9 @@ class DefaultRouter extends RouterView
    */
   public function getGallerySegment($id, $query)
   {
-    return array('');
+    return [''];
   }
-	
+
   /**
    * Method to get the segment for an image view
    *
@@ -153,7 +153,7 @@ class DefaultRouter extends RouterView
    */
   public function getImageSegment($id, $query)
   {
-    if(!\strpos($id, ':'))
+    if(!strpos($id, ':'))
     {
       $dbquery = $this->db->getQuery(true);
 
@@ -167,7 +167,7 @@ class DefaultRouter extends RouterView
       $id .= ':' . $this->db->loadResult();
     }
 
-    return array((int) $id => $id);
+    return [(int) $id => $id];
   }
 
   /**
@@ -183,7 +183,7 @@ class DefaultRouter extends RouterView
     if(!$id)
     {
       // Load empty form view
-      return array('');
+      return [''];
     }
 
     return $this->getImageSegment($id, $query);
@@ -201,7 +201,7 @@ class DefaultRouter extends RouterView
   {
     if(!$id)
     {
-      return array('');
+      return [''];
     }
 
     return $this->getImageSegment($id, $query);
@@ -223,23 +223,23 @@ class DefaultRouter extends RouterView
     if($category)
     {
       // Replace root with categories
-      if($root_key = \key(\preg_grep('/\broot\b/i', $category->route_path)))
+      if($root_key = key(preg_grep('/\broot\b/i', $category->route_path)))
       {
-        $category->route_path[$root_key] = \str_replace('root', 'categories', $category->route_path[$root_key]);
+        $category->route_path[$root_key] = str_replace('root', 'categories', $category->route_path[$root_key]);
       }
 
-      if($this->noIDs && \strpos(\reset($category->route_path), ':') !== false)
+      if($this->noIDs && strpos(reset($category->route_path), ':') !== false)
       {
         foreach($category->route_path as &$segment)
         {
-          list($id, $segment) = \explode(':', $segment, 2);
+          list($id, $segment) = explode(':', $segment, 2);
         }
       }
 
       return $category->route_path;
     }
 
-    return array();
+    return [];
   }
 
   /**
@@ -255,7 +255,7 @@ class DefaultRouter extends RouterView
     if(!$id)
     {
       // Load empty form view
-      return array('');
+      return [''];
     }
 
     return $this->getCategorySegment($id, $query);
@@ -273,7 +273,7 @@ class DefaultRouter extends RouterView
   {
     if(!$id)
     {
-      return array('');
+      return [''];
     }
 
     return $this->getCategorySegment($id, $query);
@@ -291,7 +291,7 @@ class DefaultRouter extends RouterView
   {
     return 0;
   }
-	
+
   /**
    * Method to get the segment for an image view
    *
@@ -309,10 +309,11 @@ class DefaultRouter extends RouterView
     }
 
     $img_id = 0;
-    if(\is_numeric(\explode('-', $segment, 2)[0]))
+
+    if(is_numeric(explode('-', $segment, 2)[0]))
     {
       // For a segment in the form: id-alias
-      $img_id = (int) \explode('-', $segment, 2)[0];
+      $img_id = (int) explode('-', $segment, 2)[0];
     }
 
     if($img_id < 1)
@@ -331,7 +332,7 @@ class DefaultRouter extends RouterView
         $dbquery->bind(':catid', $cat, ParameterType::INTEGER);
       }
 
-      if(\key_exists('view', $query) && $query['view'] == 'category' && \key_exists('id', $query))
+      if(key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
       {
         // We can identify the image via menu item of type category
         $dbquery->where($this->db->quoteName('catid') . ' = :catid');
@@ -389,10 +390,10 @@ class DefaultRouter extends RouterView
       $query['id'] = 1;
     }
 
-    if(\strpos($segment, 'categories'))
+    if(strpos($segment, 'categories'))
     {
       // If 'categories' is in the segment, means that we are looking for the root category
-      $segment = \str_replace('categories', 'root', $segment);
+      $segment = str_replace('categories', 'root', $segment);
     }
 
     if(isset($query['id']))
@@ -418,7 +419,7 @@ class DefaultRouter extends RouterView
             }
           }
         }
-      }  
+      }
     }
 
     return false;
@@ -450,49 +451,50 @@ class DefaultRouter extends RouterView
     return $this->getCategoryId($segment, $query);
   }
 
-	/**
-	 * Method to get categories from cache
-	 *
-	 * @param   int             $id         It of the category
+  /**
+   * Method to get categories from cache
+   *
+   * @param   int             $id         It of the category
    * @param   string          $available  The property to make available in the category
-	 *
-	 * @return  CategoryTable   The category table object
-	 *
-	 * @since   4.0.0
+   *
+   * @return  CategoryTable   The category table object
+   *
+   * @since   4.0.0
    * @throws  \UnexpectedValueException
-	 */
-	private function getCategory($id, $available = null, $root = true): CategoryTable
-	{
+   */
+  private function getCategory($id, $available = null, $root = true): CategoryTable
+  {
     // Load the category table
-		if(!isset($this->categoryCache[$id]))
-		{
+    if(!isset($this->categoryCache[$id]))
+    {
       $table = $this->app->bootComponent('com_joomgallery')->getMVCFactory()->createTable('Category', 'administrator');
       $table->load($id);
       $this->categoryCache[$id] = $table;
-		}
+    }
 
     // Make node tree available in cache
     if(!\is_null($available) && !isset($this->categoryCache[$id]->{$available}))
     {
-      switch ($available) {
+      switch($available)
+      {
         case 'route_path':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getRoutePath($root, 'route_path');
-          break;
-        
+            break;
+
         case 'children':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-          break;
+            break;
 
         case 'parents':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-          break;
-        
+            break;
+
         default:
-          throw new \UnexpectedValueException('Requested property ('.$available.') can to be made available in a category.');
+            throw new \UnexpectedValueException('Requested property (' . $available . ') can to be made available in a category.');
           break;
       }
     }
 
-		return $this->categoryCache[$id];
-	}
+    return $this->categoryCache[$id];
+  }
 }

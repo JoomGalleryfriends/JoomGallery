@@ -1,18 +1,19 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later            ToDo: Format  **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // WIP: in development, but can not be called from caommand line (plugin)
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel;
@@ -132,15 +133,14 @@ class CategoryAdd extends AbstractCommand
     $this->addOption('created_by', 'c', InputOption::VALUE_REQUIRED, 'Created by (owner)');
     $this->addOption('modified_time', null, InputOption::VALUE_OPTIONAL, 'Modified time');
     $this->addOption('modified_by', 'm', InputOption::VALUE_OPTIONAL, 'Modified by');
-//    $this->addOption('parent_title', 'p', InputOption::VALUE_OPTIONAL, 'parent title');
+    // $this->addOption('parent_title', 'p', InputOption::VALUE_OPTIONAL, 'parent title');
     $this->addOption('parent_id', 'p', InputOption::VALUE_OPTIONAL, 'parent id (1=no parent)');
 
-    $help = "<info>%command.name%</info> add a category
-	Usage: <info>php %command.full_name%</info>";
+    $help = '<info>%command.name%</info> add a category
+  Usage: <info>php %command.full_name%</info>';
 
     $this->setDescription(Text::_('WIP, not finished: Add category'));
     $this->setHelp($help);
-
   }
 
   /**
@@ -176,13 +176,17 @@ class CategoryAdd extends AbstractCommand
 
     //--- created_by -----------------------
 
-    $this->created_by = $filter->clean($this->getStringFromOption(
-      'created_by', 'Please enter a username (owner)'));
+    $this->created_by = $filter->clean(
+        $this->getStringFromOption(
+            'created_by',
+            'Please enter a username (owner)'
+        )
+    );
     $created_by_Id    = $this->getUserId($this->created_by);
 
-    if (empty($created_by_Id))
+    if(empty($created_by_Id))
     {
-      $this->ioStyle->error("The user (owner)" . $this->created_by . " does not exist!");
+      $this->ioStyle->error('The user (owner)' . $this->created_by . ' does not exist!');
 
       return Command::FAILURE;
     }
@@ -197,18 +201,17 @@ class CategoryAdd extends AbstractCommand
     $this->modified_by = $filter->clean($input->getOption('modified_by')) ?? null;
 
     // not given by input use created by
-    if (empty($this->modified_by))
+    if(empty($this->modified_by))
     {
       $this->modified_by = $this->created_by;
     }
     else
     {
-
       $modified_by_Id = $this->getUserId($this->modified_by);
 
-      if (empty($modified_by_Id))
+      if(empty($modified_by_Id))
       {
-        $this->ioStyle->error("The user (author)" . $this->modified_by . " does not exist!");
+        $this->ioStyle->error('The user (author)' . $this->modified_by . ' does not exist!');
 
         return Command::FAILURE;
       }
@@ -216,7 +219,7 @@ class CategoryAdd extends AbstractCommand
 
     //--- validate -----------------------------------
 
-    if (!is_numeric($this->published))
+    if(!is_numeric($this->published))
     {
       $this->ioStyle->error('Invalid published value passed! (0/1) ? ');
 
@@ -240,9 +243,9 @@ class CategoryAdd extends AbstractCommand
     /** @var  CategoryModel $categoryModel */
     $categoryModel = $this->getMVCFactory()->createModel('Category', 'Administrator');
 
-    echo "add:save 01" . "\n";
+    echo 'add:save 01' . "\n";
 
-    if (!$categoryModel->save($category))
+    if(!$categoryModel->save($category))
     {
 //      switch ($categoryModel->getError()) {
 //        case "JLIB_DATABASE_ERROR_USERNAME_INUSE":
@@ -255,16 +258,16 @@ class CategoryAdd extends AbstractCommand
 //          $this->ioStyle->error("The email address is invalid!");
 //          break;
 //      }
-      echo "add:save error 02" . "\n";
+      echo 'add:save error 02' . "\n";
 
       $this->ioStyle->error($categoryModel->getError());
 
       return Command::FAILURE;
     }
 
-    echo "add:after save 01" . "\n";
+    echo 'add:after save 01' . "\n";
 
-    $this->ioStyle->success("User created!");
+    $this->ioStyle->success('User created!');
 
     return Command::SUCCESS;
 
@@ -376,7 +379,7 @@ class CategoryAdd extends AbstractCommand
   {
     $answer = (string) $this->getApplication()->getConsoleInput()->getOption($option);
 
-    while (!$answer)
+    while(!$answer)
     {
       $answer = (string) $this->ioStyle->ask($question);
     }
@@ -406,7 +409,4 @@ class CategoryAdd extends AbstractCommand
 
     return $db->loadResult();
   }
-
-
-} // class
-
+}

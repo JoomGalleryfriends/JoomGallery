@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\Filesystem\File;
-use \Joomla\Filesystem\Path;
-use \Joomla\CMS\Language\Text;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifFrameExtractor;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifCreator;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtools as BaseIMGtools;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifCreator;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\GifFrameExtractor;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtools as BaseIMGtools;
+use Joomgallery\Component\Joomgallery\Administrator\Service\IMGtools\IMGtoolsInterface;
+use Joomla\CMS\Language\Text;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Path;
 
 /**
  * IMGtools Class (GD)
@@ -60,7 +61,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @var array
    */
-  protected $src_frames = array(array('duration' => 0,'image' => null));
+  protected $src_frames = [['duration' => 0,'image' => null]];
 
   /**
    * Holds the working GD-Objects (image) and its duration (hundredths of a second) of each frame
@@ -68,7 +69,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @var array
    */
-  protected $dst_frames = array(array('duration' => 0,'image' => null));
+  protected $dst_frames = [['duration' => 0,'image' => null]];
 
   /**
    * Holds the finished GD-Objects (image) and its duration (hundredths of a second) of each frame
@@ -76,7 +77,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @var array
    */
-  protected $res_frames = array(array('duration' => 0,'image' => null));
+  protected $res_frames = [['duration' => 0,'image' => null]];
 
   /**
    * Switch to true, when a image manipulation was performed
@@ -93,7 +94,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function __construct($keep_metadata=false, $keep_anim=false, $fastgd2thumbcreation = true)
+  public function __construct($keep_metadata = false, $keep_anim = false, $fastgd2thumbcreation = true)
   {
     parent::__construct($keep_metadata, $keep_anim);
 
@@ -101,16 +102,16 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
   }
 
   /**
-	 * Destructor
-	 *
-	 * @return  void
+   * Destructor
    *
-	 * @since  4.0.0
-	 */
-	public function __destruct()
-	{
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames', 'res_frames'));
-	}
+   * @return  void
+   *
+   * @since  4.0.0
+   */
+  public function __destruct()
+  {
+    $this->deleteFrames_GD(['src_frames', 'dst_frames', 'res_frames']);
+  }
 
   /**
    * Version notes
@@ -123,14 +124,13 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
   {
     if(\function_exists('gd_info'))
     {
-      $version = \str_replace(array('bundled (', ')'), array('',''), gd_info()['GD Version']);
+      $version = str_replace(['bundled (', ')'], ['',''], gd_info()['GD Version']);
 
-      return 'GD '.$version;
+      return 'GD ' . $version;
     }
-    else
-    {
+
+
       return false;
-    }
   }
 
   /**
@@ -148,13 +148,12 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
       return;
     }
-    else
-    {
+
+
       $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_GD_NOTFOUND'));
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_GD_NOTFOUND'), 'info', 'jerror');
 
       return;
-    }
   }
 
   /**
@@ -175,9 +174,9 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       $file = Path::clean($file);
 
-      if(!\file_exists($file))
+      if(!file_exists($file))
       {
-        $file = JPATH_ROOT.\DIRECTORY_SEPARATOR.$file;
+        $file = JPATH_ROOT . \DIRECTORY_SEPARATOR . $file;
 
         $file = Path::clean($file);
       }
@@ -185,7 +184,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     if($is_stream && $base64)
     {
-      $file = \base64_decode($file);
+      $file = base64_decode($file);
     }
 
     // Analysis and validation of the source image
@@ -218,21 +217,21 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // Check for supported imge files
     if(!\in_array($this->src_type, $this->supported_types))
     {
-      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', \implode(',', $this->supported_types)));
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', \implode(',', $this->supported_types)), 'error', 'jerror');
+      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', implode(',', $this->supported_types)));
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', implode(',', $this->supported_types)), 'error', 'jerror');
 
       return false;
     }
 
     // Prepare frames and imginfo
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames', 'res_frames'));
+    $this->deleteFrames_GD(['src_frames', 'dst_frames', 'res_frames']);
 
     // Create GD Objects from source
       if($this->keep_anim && $this->res_imginfo['animation'] && $this->src_type == 'GIF')
       {
         // Animated GIF image (image with more than one frame)
         // Create GD-Objects from gif-file
-        $gfe = new GifFrameExtractor();
+        $gfe              = new GifFrameExtractor();
         $this->res_frames = $gfe->extract($file);
       }
       else
@@ -269,7 +268,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function write($file, $quality=100): bool
+  public function write($file, $quality = 100): bool
   {
     // Check working area (frames and imginfo)
     if(empty($this->res_imginfo['width']) || empty($this->res_imginfo['height']) ||
@@ -281,16 +280,18 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Clean path to file
     $file = Path::clean($file);
-    if(\strpos($file, JPATH_ROOT) === false)
+
+    if(strpos($file, JPATH_ROOT) === false)
     {
-      $file = JPATH_ROOT.\DIRECTORY_SEPARATOR.$file;
+      $file = JPATH_ROOT . \DIRECTORY_SEPARATOR . $file;
 
       $file = Path::clean($file);
     }
 
     // Define image type to write
     $filesystem = JoomHelper::getService('Filesystem');
-    $type = \strtoupper($filesystem->getExt($file));
+    $type       = strtoupper($filesystem->getExt($file));
+
     if(!empty($type))
     {
       if(\in_array($type, $this->supported_types))
@@ -300,8 +301,8 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       else
       {
         // unsupported file type
-        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', \implode(',', $this->supported_types)));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', \implode(',', $this->supported_types)), 'error', 'jerror');
+        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', implode(',', $this->supported_types)));
+        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', implode(',', $this->supported_types)), 'error', 'jerror');
 
         return false;
       }
@@ -314,16 +315,17 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // copy transparent and animated images not to loose transparency
     if(!$this->manipulated && $this->res_imginfo['transparency'] && $this->res_imginfo['animation'])
     {
-      $tmp_frames  = $this->copyFrames_GD($this->res_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
-      $this->deleteFrames_GD(array('res_frames'));
+      $tmp_frames = $this->copyFrames_GD($this->res_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
+      $this->deleteFrames_GD(['res_frames']);
 
-      $this->res_frames  = $this->copyFrames_GD($tmp_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
+      $this->res_frames = $this->copyFrames_GD($tmp_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
+
       // Destroy GD-Objects if there are any
       foreach($tmp_frames as $key => $frame)
       {
         if($this->isImage_GD($tmp_frames[$key]['image']))
         {
-          \imagedestroy($tmp_frames[$key]['image']);
+          imagedestroy($tmp_frames[$key]['image']);
         }
       }
     }
@@ -335,14 +337,14 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // Create backup file, if source and destination are the same
     if($this->src_file == $file)
     {
-      $bak_file = $this->src_file.'bak';
+      $bak_file = $this->src_file . 'bak';
       $success  = File::copy($this->src_file, $bak_file);
     }
     else
     {
-      if(\is_file(Path::clean($file)))
+      if(is_file(Path::clean($file)))
       {
-        $bak_file = $file.'bak';
+        $bak_file = $file . 'bak';
         $success  = File::copy($file, $bak_file);
       }
       else
@@ -357,7 +359,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       // Animated GIF image (image with more than one frame)
       $gc = new GifCreator();
       $gc->create($this->res_frames, 0);
-      $success = \file_put_contents($file, $gc->getGif());
+      $success = file_put_contents($file, $gc->getGif());
     }
     else
     {
@@ -375,14 +377,14 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       // Create backup file, if source and destination are the same
       if($this->src_file == $file)
       {
-        $bak_file = $this->src_file.'bak';
+        $bak_file = $this->src_file . 'bak';
         $success  = File::copy($this->src_file, $bak_file);
       }
       else
       {
-        if(\is_file(Path::clean($file)))
+        if(is_file(Path::clean($file)))
         {
-          $bak_file = $file.'bak';
+          $bak_file = $file . 'bak';
           $success  = File::copy($file, $bak_file);
         }
         else
@@ -397,7 +399,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
         // Animated GIF image (image with more than one frame)
         $gc = new GifCreator();
         $gc->create($this->res_frames, 0);
-        $success = \file_put_contents($file, $gc->getGif());
+        $success = file_put_contents($file, $gc->getGif());
       }
       else
       {
@@ -429,7 +431,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
         if($this->src_file == $file)
         {
-          $quelle = $this->src_file.'bak';
+          $quelle = $this->src_file . 'bak';
         }
         else
         {
@@ -497,7 +499,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Clean up working area (frames and imginfo)
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames', 'res_frames'));
+    $this->deleteFrames_GD(['src_frames', 'dst_frames', 'res_frames']);
     $this->clearVariables();
 
     // Delete backup files
@@ -519,7 +521,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function stream($quality=100, $base64=false, $html=false, $type=false): string
+  public function stream($quality = 100, $base64 = false, $html = false, $type = false): string
   {
     // Check working area (frames and imginfo)
     if(empty($this->res_imginfo['width']) || empty($this->res_imginfo['height']) ||
@@ -539,8 +541,8 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       else
       {
         // unsupported file type
-        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', \implode(',', $this->supported_types)));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', \implode(',', $this->supported_types)), 'error', 'jerror');
+        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', implode(',', $this->supported_types)));
+        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_GD_SUPPORTED_TYPES', implode(',', $this->supported_types)), 'error', 'jerror');
 
         return false;
       }
@@ -553,16 +555,17 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // copy transparent and animated images not to loose transparency
     if(!$this->manipulated && $this->res_imginfo['transparency'] && $this->res_imginfo['animation'])
     {
-      $tmp_frames  = $this->copyFrames_GD($this->res_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
-      $this->deleteFrames_GD(array('res_frames'));
+      $tmp_frames = $this->copyFrames_GD($this->res_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
+      $this->deleteFrames_GD(['res_frames']);
 
-      $this->res_frames  = $this->copyFrames_GD($tmp_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
+      $this->res_frames = $this->copyFrames_GD($tmp_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
+
       // Destroy GD-Objects if there are any
       foreach($tmp_frames as $key => $frame)
       {
         if($this->isImage_GD($tmp_frames[$key]['image']))
         {
-          \imagedestroy($tmp_frames[$key]['image']);
+          imagedestroy($tmp_frames[$key]['image']);
         }
       }
     }
@@ -604,7 +607,8 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Base64 encoding
-    $stream = \base64_encode($stream);
+    $stream = base64_encode($stream);
+
     if($stream === false)
     {
       // Error
@@ -612,35 +616,34 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Completing the image string
-    switch ($this->dst_type)
+    switch($this->dst_type)
     {
       case 'PNG':
-        $stream = 'data:image/png;base64,'.$stream;
-        break;
+        $stream = 'data:image/png;base64,' . $stream;
+          break;
 
       case 'GIF':
-        $stream = 'data:image/gif;base64,'.$stream;
-        break;
+        $stream = 'data:image/gif;base64,' . $stream;
+          break;
 
       case 'WEBP':
-        $stream = 'data:image/webp;base64,'.$stream;
-        break;
+        $stream = 'data:image/webp;base64,' . $stream;
+          break;
 
       case 'JPEG':
       case 'JPG':
       default:
-        $stream = 'data:image/jpeg;base64,'.$stream;
-        break;
+        $stream = 'data:image/jpeg;base64,' . $stream;
+          break;
     }
 
     if($html)
     {
-      return '<img src="'.$stream.'" />';
+      return '<img src="' . $stream . '" />';
     }
-    else
-    {
+
+
       return $stream;
-    }
   }
 
   /**
@@ -658,7 +661,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   4.0.0
    */
-  public function resize($method, $width, $height, $cropposition=2, $unsharp=false): bool
+  public function resize($method, $width, $height, $cropposition = 2, $unsharp = false): bool
   {
     // Check working area (frames and imginfo)
     if(empty($this->res_imginfo['width']) || empty($this->res_imginfo['height']) ||
@@ -672,13 +675,13 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       // Nothing to do
       $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_RESIZE_NOT_NEEDED'));
-      $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+      $this->deleteFrames_GD(['src_frames', 'dst_frames']);
 
       return true;
     }
 
     // Prepare working area (frames and imginfo)
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
     $this->src_frames  = $this->copyFrames_GD($this->res_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
     $this->src_imginfo = $this->res_imginfo;
 
@@ -697,10 +700,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Check if there is enough memory for the manipulation
     $memory = $this->checkMemory($this->memory_needed);
+
     if(!$memory['success'])
     {
-      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'].' MByte, Serverlimit: '.$memory['limit'].' MByte'));
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'].' MByte, Serverlimit: '.$memory['limit'].' MByte'), 'error', 'jerror');
+      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'] . ' MByte, Serverlimit: ' . $memory['limit'] . ' MByte'));
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'] . ' MByte, Serverlimit: ' . $memory['limit'] . ' MByte'), 'error', 'jerror');
       $this->rollback('', '');
 
       return false;
@@ -711,19 +715,19 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       case 1:
         $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_RESIZE_TO_HEIGHT'));
-        break;
+          break;
       case 2:
         $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_RESIZE_TO_WIDTH'));
-        break;
+          break;
       case 3:
         $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_RESIZE_TO_MAX'));
-        break;
+          break;
       case 4:
         // Free resizing and cropping
         $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_RESIZE_TO_CROP'));
-        break;
+          break;
       default:
-        break;
+          break;
     }
 
     // Create empty destination GD-Objects of specified size
@@ -735,8 +739,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       {
         // Create empty GD-Objects for the resized frames
         $this->dst_frames[$key]['duration'] = $this->src_frames[$key]['duration'];
-        $this->dst_frames[$key]['image']    = $this->imageCreateEmpty_GD($this->src_frames[$key]['image'], $this->dst_imginfo,
-                                                                         $this->src_imginfo['transparency']);
+        $this->dst_frames[$key]['image']    = $this->imageCreateEmpty_GD(
+            $this->src_frames[$key]['image'],
+            $this->dst_imginfo,
+            $this->src_imginfo['transparency']
+        );
       }
     }
     else
@@ -744,8 +751,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       // Normal image (image with one frame)
       // Create empty GD-Object for the resized image
       $this->dst_frames[0]['duration'] = 0;
-      $this->dst_frames[0]['image']    = $this->imageCreateEmpty_GD($this->src_frames[0]['image'], $this->dst_imginfo,
-                                                                    $this->src_imginfo['transparency']);
+    $this->dst_frames[0]['image']      = $this->imageCreateEmpty_GD(
+        $this->src_frames[0]['image'],
+        $this->dst_imginfo,
+        $this->src_imginfo['transparency']
+    );
     }
 
     // Check for failures
@@ -762,13 +772,20 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     foreach($this->src_frames as $key => $frame)
     {
       $fast_resize = false;
+
       if($this->fastgd2thumbcreation == 1)
       {
         $fast_resize = true;
       }
 
-      $this->imageResize_GD($this->dst_frames[$key]['image'], $this->src_frames[$key]['image'], $this->src_imginfo,
-                            $this->dst_imginfo, $fast_resize, 3);
+    $this->imageResize_GD(
+        $this->dst_frames[$key]['image'],
+        $this->src_frames[$key]['image'],
+        $this->src_imginfo,
+        $this->dst_imginfo,
+        $fast_resize,
+        3
+    );
     }
 
     // Check for failures
@@ -814,8 +831,8 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     $this->res_imginfo['height']      = $this->dst_imginfo['height'];
     $this->res_imginfo['orientation'] = $this->dst_imginfo['orientation'];
 
-    $this->clearImginfo(array('src', 'dst'));
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->clearImginfo(['src', 'dst']);
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
 
     return true;
   }
@@ -844,20 +861,20 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       // Nothing to do
       $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_ROTATE_NOT_NEEDED'));
-      $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+      $this->deleteFrames_GD(['src_frames', 'dst_frames']);
 
       return true;
     }
 
     // Prepare working area (frames and imginfo)
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
     $this->src_frames  = $this->copyFrames_GD($this->res_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
     $this->src_imginfo = $this->res_imginfo;
 
     // Get info for destination frames
     $this->dst_imginfo['angle']     = $angle;
     $this->dst_imginfo['flip']      = 'none';
-    $this->dst_imginfo['width']     = $this->dst_imginfo['src']['width']  = $this->src_imginfo['width'];
+    $this->dst_imginfo['width']     = $this->dst_imginfo['src']['width'] = $this->src_imginfo['width'];
     $this->dst_imginfo['height']    = $this->dst_imginfo['src']['height'] = $this->src_imginfo['height'];
     $this->dst_imginfo['offset_x']  = 0;
     $this->dst_imginfo['offset_y']  = 0;
@@ -868,10 +885,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Check if there is enough memory for the manipulation (assuming one frame)
     $memory = $this->checkMemory($this->memory_needed);
+
     if(!$memory['success'])
     {
-      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'].' MByte, Serverlimit: '.$memory['limit'].' MByte'));
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'].' MByte, Serverlimit: '.$memory['limit'].' MByte'), 'error', 'jerror');
+      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'] . ' MByte, Serverlimit: ' . $memory['limit'] . ' MByte'));
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'] . ' MByte, Serverlimit: ' . $memory['limit'] . ' MByte'), 'error', 'jerror');
 
       return false;
     }
@@ -885,8 +903,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       {
         // Create empty GD-Objects for the resized frames
         $this->dst_frames[$key]['duration'] = $this->src_frames[$key]['duration'];
-        $this->dst_frames[$key]['image']    = $this->imageCreateEmpty_GD($this->src_frames[$key]['image'], $this->dst_imginfo,
-                                                                         $this->src_imginfo['transparency']);
+        $this->dst_frames[$key]['image']    = $this->imageCreateEmpty_GD(
+            $this->src_frames[$key]['image'],
+            $this->dst_imginfo,
+            $this->src_imginfo['transparency']
+        );
       }
     }
     else
@@ -894,8 +915,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       // Normal image (image with one frame)
       // Create empty GD-Object for the resized image
       $this->dst_frames[0]['duration'] = 0;
-      $this->dst_frames[0]['image']    = $this->imageCreateEmpty_GD($this->src_frames[0]['image'], $this->dst_imginfo,
-                                                                    $this->src_imginfo['transparency']);
+    $this->dst_frames[0]['image']      = $this->imageCreateEmpty_GD(
+        $this->src_frames[0]['image'],
+        $this->dst_imginfo,
+        $this->src_imginfo['transparency']
+    );
     }
 
     // Check for failures
@@ -911,11 +935,15 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // Rotate image
     foreach($this->src_frames as $key => $frame)
     {
-      $this->dst_frames[$key]['image'] = $this->imageRotate_GD($this->src_frames[$key]['image'], $this->src_type,
-                                                                $this->dst_imginfo['angle'], $this->src_imginfo['transparency']);
+    $this->dst_frames[$key]['image'] = $this->imageRotate_GD(
+        $this->src_frames[$key]['image'],
+        $this->src_type,
+        $this->dst_imginfo['angle'],
+        $this->src_imginfo['transparency']
+    );
 
-      $this->dst_imginfo['width']      = \imagesx($this->dst_frames[$key]['image']);
-      $this->dst_imginfo['height']     = \imagesy($this->dst_frames[$key]['image']);
+      $this->dst_imginfo['width']  = imagesx($this->dst_frames[$key]['image']);
+      $this->dst_imginfo['height'] = imagesy($this->dst_frames[$key]['image']);
     }
 
     $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ROTATE_BY_ANGLE', $this->dst_imginfo['angle']));
@@ -944,8 +972,8 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     $this->res_imginfo['height']      = $this->dst_imginfo['height'];
     $this->res_imginfo['orientation'] = $this->dst_imginfo['orientation'];
 
-    $this->clearImginfo(array('src', 'dst'));
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->clearImginfo(['src', 'dst']);
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
 
     return true;
   }
@@ -974,36 +1002,36 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       // Nothing to do
       $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_FLIP_NOT_NEEDED'));
-      $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+      $this->deleteFrames_GD(['src_frames', 'dst_frames']);
 
       return true;
     }
 
     // Prepare working area (frames and imginfo)
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
     $this->src_frames  = $this->copyFrames_GD($this->res_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
     $this->src_imginfo = $this->res_imginfo;
 
     // Get info for destination frames
-    switch ($direction)
+    switch($direction)
     {
       case 1:
-        $this->dst_imginfo['flip']  = 'horizontally';
-        break;
+        $this->dst_imginfo['flip'] = 'horizontally';
+          break;
 
       case 2:
-        $this->dst_imginfo['flip']  = 'vertically';
-        break;
+        $this->dst_imginfo['flip'] = 'vertically';
+          break;
 
       case 3:
-        $this->dst_imginfo['flip']  = 'both';
-        break;
+        $this->dst_imginfo['flip'] = 'both';
+          break;
 
       default:
-        $this->dst_imginfo['flip']  = 'none';
-        break;
+        $this->dst_imginfo['flip'] = 'none';
+          break;
     }
-    $this->dst_imginfo['width']       = $this->dst_imginfo['src']['width']  = $this->src_imginfo['width'];
+    $this->dst_imginfo['width']       = $this->dst_imginfo['src']['width'] = $this->src_imginfo['width'];
     $this->dst_imginfo['height']      = $this->dst_imginfo['src']['height'] = $this->src_imginfo['height'];
     $this->dst_imginfo['orientation'] = $this->src_imginfo['orientation'];
     $this->dst_imginfo['truecolor']   = $this->src_imginfo['truecolor'];
@@ -1017,10 +1045,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Check if there is enough memory for the manipulation (assuming one frame)
     $memory = $this->checkMemory($this->memory_needed);
+
     if(!$memory['success'])
     {
-      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'].' MByte, Serverlimit: '.$memory['limit'].' MByte'));
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'].' MByte, Serverlimit: '.$memory['limit'].' MByte'), 'error', 'jerror');
+      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'] . ' MByte, Serverlimit: ' . $memory['limit'] . ' MByte'));
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'] . ' MByte, Serverlimit: ' . $memory['limit'] . ' MByte'), 'error', 'jerror');
 
       return false;
     }
@@ -1034,8 +1063,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       {
         // Create empty GD-Objects for the resized frames
         $this->dst_frames[$key]['duration'] = $this->src_frames[$key]['duration'];
-        $this->dst_frames[$key]['image']    = $this->imageCreateEmpty_GD($this->src_frames[$key]['image'], $this->dst_imginfo,
-                                                                         $this->src_imginfo['transparency']);
+        $this->dst_frames[$key]['image']    = $this->imageCreateEmpty_GD(
+            $this->src_frames[$key]['image'],
+            $this->dst_imginfo,
+            $this->src_imginfo['transparency']
+        );
       }
     }
     else
@@ -1043,8 +1075,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       // Normal image (image with one frame)
       // Create empty GD-Object for the resized image
       $this->dst_frames[0]['duration'] = 0;
-      $this->dst_frames[0]['image']    = $this->imageCreateEmpty_GD($this->src_frames[0]['image'], $this->dst_imginfo,
-                                                                    $this->src_imginfo['transparency']);
+    $this->dst_frames[0]['image']      = $this->imageCreateEmpty_GD(
+        $this->src_frames[0]['image'],
+        $this->dst_imginfo,
+        $this->src_imginfo['transparency']
+    );
     }
 
     // Check for failures
@@ -1084,16 +1119,16 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     $this->manipulated = true;
 
     // Clean up working area (frames and imginfo)
-    $this->res_frames= $this->copyFrames_GD($this->dst_frames, $this->dst_imginfo, $this->src_imginfo['transparency']);
+    $this->res_frames = $this->copyFrames_GD($this->dst_frames, $this->dst_imginfo, $this->src_imginfo['transparency']);
 
-    $this->clearImginfo(array('res'));
+    $this->clearImginfo(['res']);
     $this->res_imginfo                = $this->src_imginfo;
     $this->res_imginfo['width']       = $this->dst_imginfo['width'];
     $this->res_imginfo['height']      = $this->dst_imginfo['height'];
     $this->res_imginfo['orientation'] = $this->dst_imginfo['orientation'];
 
-    $this->clearImginfo(array('src', 'dst'));
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->clearImginfo(['src', 'dst']);
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
 
     return true;
   }
@@ -1121,13 +1156,13 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       // Nothing to do
       $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_AUTOORIENT_ONLY_JPG'));
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_AUTOORIENT_ONLY_JPG'), 'info', 'jerror');
-      $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+      $this->deleteFrames_GD(['src_frames', 'dst_frames']);
 
       return true;
     }
 
     // Prepare working area (frames and imginfo)
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
     $this->src_frames  = $this->copyFrames_GD($this->res_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
     $this->src_imginfo = $this->res_imginfo;
 
@@ -1136,7 +1171,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       $this->autoOrient($this->metadata['exif']['IFD0']['Orientation']);
     }
-    $this->dst_imginfo['width']     = $this->dst_imginfo['src']['width']  = $this->src_imginfo['width'];
+    $this->dst_imginfo['width']     = $this->dst_imginfo['src']['width'] = $this->src_imginfo['width'];
     $this->dst_imginfo['height']    = $this->dst_imginfo['src']['height'] = $this->src_imginfo['height'];
     $this->dst_imginfo['offset_x']  = 0;
     $this->dst_imginfo['offset_y']  = 0;
@@ -1151,8 +1186,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       {
         // Create empty GD-Objects for the resized frames
         $this->dst_frames[$key]['duration'] = $this->src_frames[$key]['duration'];
-        $this->dst_frames[$key]['image']    = $this->imageCreateEmpty_GD($this->src_frames[$key]['image'], $this->dst_imginfo,
-                                                                         $this->src_imginfo['transparency']);
+        $this->dst_frames[$key]['image']    = $this->imageCreateEmpty_GD(
+            $this->src_frames[$key]['image'],
+            $this->dst_imginfo,
+            $this->src_imginfo['transparency']
+        );
       }
     }
     else
@@ -1160,8 +1198,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       // Normal image (image with one frame)
       // Create empty GD-Object for the resized image
       $this->dst_frames[0]['duration'] = 0;
-      $this->dst_frames[0]['image']    = $this->imageCreateEmpty_GD($this->src_frames[0]['image'], $this->dst_imginfo,
-                                                                    $this->src_imginfo['transparency']);
+    $this->dst_frames[0]['image']      = $this->imageCreateEmpty_GD(
+        $this->src_frames[0]['image'],
+        $this->dst_imginfo,
+        $this->src_imginfo['transparency']
+    );
     }
 
     // Check for failures
@@ -1201,8 +1242,12 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       // ... and rotating
       foreach($this->src_frames as $key => $frame)
       {
-        $this->dst_frames[$key]['image'] = $this->imageRotate_GD($this->src_frames[$key]['image'], $this->src_type,
-                                                                 $this->dst_imginfo['angle'], $this->src_imginfo['transparency']);
+        $this->dst_frames[$key]['image'] = $this->imageRotate_GD(
+            $this->src_frames[$key]['image'],
+            $this->src_type,
+            $this->dst_imginfo['angle'],
+            $this->src_imginfo['transparency']
+        );
 
         $this->dst_imginfo['width']       = imagesx($this->dst_frames[$key]['image']);
         $this->dst_imginfo['height']      = imagesy($this->dst_frames[$key]['image']);
@@ -1230,14 +1275,14 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // Clean up working area (frames and imginfo)
     $this->res_frames = $this->copyFrames_GD($this->dst_frames, $this->dst_imginfo, $this->src_imginfo['transparency']);
 
-    $this->clearImginfo(array('res'));
+    $this->clearImginfo(['res']);
     $this->res_imginfo                = $this->src_imginfo;
     $this->res_imginfo['width']       = $this->dst_imginfo['width'];
     $this->res_imginfo['height']      = $this->dst_imginfo['height'];
     $this->res_imginfo['orientation'] = $this->dst_imginfo['orientation'];
 
-    $this->clearImginfo(array('src', 'dst'));
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->clearImginfo(['src', 'dst']);
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
 
     return true;
   }
@@ -1270,15 +1315,16 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Ensure that the watermark path is valid and clean
     $wtm_file = Path::clean($wtm_file);
-    if(!\file_exists($wtm_file))
+
+    if(!file_exists($wtm_file))
     {
-      $wtm_file = JPATH_ROOT.\DIRECTORY_SEPARATOR.$wtm_file;
+      $wtm_file = JPATH_ROOT . \DIRECTORY_SEPARATOR . $wtm_file;
 
       $wtm_file = Path::clean($wtm_file);
     }
 
     // Checks if watermark file is existent
-    if(!\file_exists($wtm_file))
+    if(!file_exists($wtm_file))
     {
       $this->component->addDebug(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_WATERMARK_NOT_EXIST'));
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_WATERMARK_NOT_EXIST'), 'error', 'jerror');
@@ -1287,7 +1333,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     }
 
     // Prepare working area (frames and imginfo)
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
     $bkg_frames  = $this->copyFrames_GD($this->res_frames, $this->res_imginfo, $this->res_imginfo['transparency']);
     $bkg_imginfo = $this->res_imginfo;
     $bkg_type    = $this->src_type;
@@ -1315,10 +1361,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Check if there is enough memory for the manipulation
     $memory = $this->checkMemory($this->memory_needed);
+
     if(!$memory['success'])
     {
-      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'].' MByte, Serverlimit: '.$memory['limit'].' MByte'));
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'].' MByte, Serverlimit: '.$memory['limit'].' MByte'), 'error', 'jerror');
+      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'] . ' MByte, Serverlimit: ' . $memory['limit'] . ' MByte'));
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MEMORY_EXCEED', $memory['needed'] . ' MByte, Serverlimit: ' . $memory['limit'] . ' MByte'), 'error', 'jerror');
       $this->rollback('', '');
 
       return false;
@@ -1332,8 +1379,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Create GD Object for the resized watermark
     $this->dst_frames[0]['duration'] = 0;
-    $this->dst_frames[0]['image']    = $this->imageCreateEmpty_GD($this->src_frames[0]['image'], $this->dst_imginfo,
-                                                                  $this->src_imginfo['transparency']);
+    $this->dst_frames[0]['image']    = $this->imageCreateEmpty_GD(
+        $this->src_frames[0]['image'],
+        $this->dst_imginfo,
+        $this->src_imginfo['transparency']
+    );
 
     // Check for failures
     if($this->checkError($this->src_frames) || $this->checkError($this->dst_frames))
@@ -1347,7 +1397,8 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Check if resize is needed
     $resizeWatermark = false;
-    if ($wtm_resize != 0 || $this->src_imginfo['width'] != $this->dst_imginfo['width'] || $this->src_imginfo['height'] != $this->dst_imginfo['height'])
+
+    if($wtm_resize != 0 || $this->src_imginfo['width'] != $this->dst_imginfo['width'] || $this->src_imginfo['height'] != $this->dst_imginfo['height'])
     {
       $resizeWatermark = true;
     }
@@ -1355,8 +1406,14 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // Resizing with GD
     if($resizeWatermark)
     {
-      $this->imageResize_GD($this->dst_frames[0]['image'], $this->src_frames[0]['image'], $this->src_imginfo,
-                            $this->dst_imginfo, $this->fastgd2thumbcreation, 3);
+    $this->imageResize_GD(
+        $this->dst_frames[0]['image'],
+        $this->src_frames[0]['image'],
+        $this->src_imginfo,
+        $this->dst_imginfo,
+        $this->fastgd2thumbcreation,
+        3
+    );
     }
     else
     {
@@ -1376,7 +1433,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // src_frames will not be used anymore
     // Destroy GD-Objects if there are any
-    $this->deleteFrames_GD(array('src_frames'));
+    $this->deleteFrames_GD(['src_frames']);
 
     // Copy background image back to source working area
     $this->src_frames  = $this->copyFrames_GD($bkg_frames, $bkg_imginfo, $bkg_imginfo['transparency']);
@@ -1387,15 +1444,21 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       if($this->isImage_GD($bkg_frames[$key]['image']))
       {
-        \imagedestroy($bkg_frames[$key]['image']);
+        imagedestroy($bkg_frames[$key]['image']);
       }
     }
 
     // Watermarking with GD
     foreach($this->src_frames as $key => $frame)
     {
-      $this->imageWatermark_GD($this->src_frames[$key]['image'], $this->dst_frames[0]['image'], $this->src_imginfo,
-                               $this->dst_imginfo, $position, $opacity);
+    $this->imageWatermark_GD(
+        $this->src_frames[$key]['image'],
+        $this->dst_frames[0]['image'],
+        $this->src_imginfo,
+        $this->dst_imginfo,
+        $position,
+        $opacity
+    );
     }
 
     // Check for failures
@@ -1416,12 +1479,12 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // Clean up working area (frames and imginfo)
     $this->res_frames = $this->copyFrames_GD($this->src_frames, $this->src_imginfo, $this->src_imginfo['transparency']);
 
-    $this->clearImginfo(array('res'));
+    $this->clearImginfo(['res']);
     $this->res_imginfo = $this->src_imginfo;
     $this->src_type    = $bkg_type;
 
-    $this->clearImginfo(array('src', 'dst'));
-    $this->deleteFrames_GD(array('src_frames', 'dst_frames'));
+    $this->clearImginfo(['src', 'dst']);
+    $this->deleteFrames_GD(['src_frames', 'dst_frames']);
 
     return true;
   }
@@ -1437,17 +1500,17 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
   {
     if(\function_exists('gd_info'))
     {
-      $types = array();
+      $types = [];
 
-      foreach (gd_info() as $key => $value)
+      foreach(gd_info() as $key => $value)
       {
         if($value === true)
         {
-          $arr = \explode(' ', $key);
+          $arr = explode(' ', $key);
 
           if(!\in_array($arr[0], $types))
           {
-            \array_push($types, \strtoupper($arr[0]));
+            array_push($types, strtoupper($arr[0]));
           }
         }
       }
@@ -1456,10 +1519,9 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
       return $types;
     }
-    else
-    {
-      return array();
-    }
+
+
+      return [];
   }
 
   //////////////////////////////////////////////////
@@ -1481,7 +1543,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
   protected function calculateMemory($src_imginfo, $dst_imginfo, $method)
   {
     // Quantify number of bits per channel
-    if(\key_exists('bits',$src_imginfo))
+    if(key_exists('bits', $src_imginfo))
     {
       $bits = $src_imginfo['bits'];
     }
@@ -1492,6 +1554,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Check, if it is a special image (transparency or animation)
     $special = false;
+
     if($src_imginfo['animation'] || $src_imginfo['transparency'])
     {
       $special = true;
@@ -1499,6 +1562,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Check, if GD2 is available
     $gd2 = false;
+
     if(\function_exists('imagecopyresampled'))
     {
       $gd2 = true;
@@ -1525,7 +1589,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
               $m = -0.000000030872;
               $c = 1.9125;
             }
-            break;
+              break;
           case 'rotate':
             if(!$src_imginfo['animation'])
             {
@@ -1539,17 +1603,17 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
               $m = -0.00000006174;
               $c = 2.41248;
             }
-            break;
+              break;
           default:
             // Constant tweakfactor of 0.5
             $m = 0;
             $c = 0.5;
-            break;
+              break;
         }
 
         // GIF has always 3 channels (RGB)
         $channels = 3;
-        break;
+          break;
       case 'JPG':
       case 'JPEG':
       case 'JPE':
@@ -1568,22 +1632,22 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
               $m = -0.000000003579;
               $c = 1.60097;
             }
-            break;
+              break;
           case 'rotate':
             // Tweakfactor dependent on number of pixels (~3.0)
             $m = -0.000000007157;
             $c = 3.2019;
-            break;
+              break;
           default:
             // Constant tweakfactor of 1.5
             $m = 0;
             $c = 1.5;
-            break;
+              break;
         }
 
         // Get channel number from imginfo
         $channels = $src_imginfo['channels'];
-        break;
+          break;
       case 'PNG':
         switch($method)
         {
@@ -1591,22 +1655,22 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
             // Tweakfactor dependent on number of pixels (~2.5)
             $m = -0.000000007157;
             $c = 2.70193;
-            break;
+              break;
           case 'rotate':
             // Tweakfactor dependent on number of pixels (~3.3)
             $m = -0.000000011928;
             $c = 3.50322;
-            break;
+              break;
           default:
             // Constant tweakfactor of 2.5
             $m = 0;
             $c = 2.5;
-            break;
+              break;
         }
 
         // PNG has always 3 channels (RGB)
         $channels = 3;
-        break;
+          break;
       case 'WEBP':
         // Todo
         switch($method)
@@ -1615,22 +1679,22 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
             // Tweakfactor dependent on number of pixels (~2.5)
             $m = -0.000000007157;
             $c = 2.70193;
-            break;
+              break;
           case 'rotate':
             // Tweakfactor dependent on number of pixels (~3.3)
             $m = -0.000000011928;
             $c = 3.50322;
-            break;
+              break;
           default:
             // Constant tweakfactor of 2.5
             $m = 0;
             $c = 2.5;
-            break;
+              break;
         }
 
         // WEBP has always ??
         $channels = 3;
-        break;
+          break;
     }
 
     // Pixel calculation for source and destination GD-Frame
@@ -1643,9 +1707,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     $oneMB = 1048576;
 
-    $memoryUsage = \round(( ((($bits * $channels) / 8) * $src_pixel * $tweakfactor + (($bits * $channels) / 8) * $dst_pixel * $tweakfactor)
-                           * \pow($src_imginfo['frames'], $powerfactor) + 2 * $oneMB
-                          ) * $securityfactor);
+    $memoryUsage = round(
+        ( ((($bits * $channels) / 8) * $src_pixel * $tweakfactor + (($bits * $channels) / 8) * $dst_pixel * $tweakfactor)
+                           * pow($src_imginfo['frames'], $powerfactor) + 2 * $oneMB
+        ) * $securityfactor
+    );
 
     // Calculate needed memory in bytes (1byte = 8bits).
     // We need to calculate the usage for both source and destination GD-Frame
@@ -1680,30 +1746,31 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    */
   protected function checkMemory($memory_needed)
   {
-    $byte_values = array('K' => 1024, 'M' => 1048576, 'G' => 1073741824);
+    $byte_values = ['K' => 1024, 'M' => 1048576, 'G' => 1073741824];
 
     if((\function_exists('memory_get_usage')) && (\ini_get('memory_limit')))
     {
-      $memoryNeeded = \memory_get_usage() + $memory_needed;
+      $memoryNeeded = memory_get_usage() + $memory_needed;
 
       // Get memory limit in bytes
       $memory_limit = @\ini_get('memory_limit');
+
       if(!empty($memory_limit) && !is_numeric($memory_limit))
       {
-        $val          = \substr($memory_limit, -1);
-        $memory_limit = \substr($memory_limit, 0, -1) * $byte_values[$val];
+        $val          = substr($memory_limit, -1);
+        $memory_limit = substr($memory_limit, 0, -1) * $byte_values[$val];
       }
 
       if($memory_limit >= 0 && $memoryNeeded > $memory_limit)
       {
-        $memoryNeededMB = \round($memoryNeeded / $byte_values['M'], 0);
-        $memoryLimitMB  = \round(intval($memory_limit) / $byte_values['M'], 0);
+        $memoryNeededMB = round($memoryNeeded / $byte_values['M'], 0);
+        $memoryLimitMB  = round(\intval($memory_limit) / $byte_values['M'], 0);
 
-        return array('success' => false, 'needed' => $memoryNeededMB, 'limit' => $memoryLimitMB);
+        return ['success' => false, 'needed' => $memoryNeededMB, 'limit' => $memoryLimitMB];
       }
     }
 
-    return array('success' => true);
+    return ['success' => true];
   }
 
   /**
@@ -1719,11 +1786,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    */
   protected function rollback($src_file, $dst_file, $cpl = false)
   {
-    $del_frames = array('src_frames', 'dst_frames');
+    $del_frames = ['src_frames', 'dst_frames'];
 
     if($cpl)
     {
-      \array_push($del_frames,'res_frames');
+      array_push($del_frames, 'res_frames');
     }
 
     // Destroy GD-Objects id there are any
@@ -1747,7 +1814,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    */
   protected function isImage_GD($frame)
   {
-    if(\is_resource($frame) && 'gd' === \get_resource_type($frame) || \is_object($frame) && $frame instanceof \GdImage)
+    if(\is_resource($frame) && 'gd' === get_resource_type($frame) || \is_object($frame) && $frame instanceof \GdImage)
     {
       return true;
     }
@@ -1773,11 +1840,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       {
         if($this->isImage_GD($this->src_frames[$key]['image']))
         {
-          \imagedestroy($this->src_frames[$key]['image']);
+          imagedestroy($this->src_frames[$key]['image']);
         }
       }
 
-      $this->src_frames = array(array('duration' => 0,'image' => null));
+      $this->src_frames = [['duration' => 0,'image' => null]];
     }
 
     if(\in_array('dst_frames', $frames))
@@ -1787,11 +1854,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       {
         if($this->isImage_GD($this->dst_frames[$key]['image']))
         {
-          \imagedestroy($this->dst_frames[$key]['image']);
+          imagedestroy($this->dst_frames[$key]['image']);
         }
       }
 
-      $this->dst_frames = array(array('duration' => 0,'image' => null));
+      $this->dst_frames = [['duration' => 0,'image' => null]];
     }
 
     if(\in_array('res_frames', $frames))
@@ -1801,11 +1868,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       {
         if($this->isImage_GD($this->res_frames[$key]['image']))
         {
-          \imagedestroy($this->res_frames[$key]['image']);
+          imagedestroy($this->res_frames[$key]['image']);
         }
       }
 
-      $this->res_frames = array(array('duration' => 0,'image' => null));
+      $this->res_frames = [['duration' => 0,'image' => null]];
     }
   }
 
@@ -1822,18 +1889,18 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    */
   protected function copyFrames_GD($src_frames, $imginfo, $transparency = true)
   {
-    $dst_frames = array();
+    $dst_frames = [];
 
     // Loop through all frames
     foreach($src_frames as $key => $frame)
     {
-      $new_frame = array('duration' => 0, 'image' => null);
+      $new_frame = ['duration' => 0, 'image' => null];
 
       $new_frame['duration'] = $frame['duration'];
       $new_frame['image']    = $this->imageCreateEmpty_GD($new_frame['image'], $imginfo, $transparency);
       $new_frame['image']    = $this->imageCopy_GD($new_frame['image'], $frame['image']);
 
-      \array_push($dst_frames,$new_frame);
+      array_push($dst_frames, $new_frame);
     }
 
     return $dst_frames;
@@ -1852,38 +1919,38 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    */
   protected function imageCreateFrom_GD($src_file, $src_imginfo)
   {
-    $src_frame = array(array('duration'=>0));
+    $src_frame = [['duration' => 0]];
 
     if(\is_resource($src_file))
     {
-      if(\get_resource_type($src_file) == 'stream')
+      if(get_resource_type($src_file) == 'stream')
       {
-        $src_file              = \stream_get_contents($src_file, null, 0);
-        $src_frame[0]['image'] = \imagecreatefromstring($src_file);
+        $src_file              = stream_get_contents($src_file, null, 0);
+        $src_frame[0]['image'] = imagecreatefromstring($src_file);
       }
-      elseif(\get_resource_type($src_file) == 'gd')
+      elseif(get_resource_type($src_file) == 'gd')
       {
         $src_frame[0]['image'] = $src_file;
       }
     }
     else
     {
-      switch ($this->src_type)
+      switch($this->src_type)
       {
         case 'PNG':
-          $src_frame[0]['image'] = \imagecreatefrompng($src_file);
-          break;
+          $src_frame[0]['image'] = imagecreatefrompng($src_file);
+            break;
         case 'GIF':
-          $src_frame[0]['image'] = \imagecreatefromgif($src_file);
-          break;
+          $src_frame[0]['image'] = imagecreatefromgif($src_file);
+            break;
         case 'JPG':
-          $src_frame[0]['image'] = \imagecreatefromjpeg($src_file);
-          break;
+          $src_frame[0]['image'] = imagecreatefromjpeg($src_file);
+            break;
         case 'WEBP':
-          $src_frame[0]['image'] = \imagecreatefromwebp($src_file);
-          break;
+          $src_frame[0]['image'] = imagecreatefromwebp($src_file);
+            break;
         default:
-          return false;
+            return false;
           break;
       }
     }
@@ -1891,7 +1958,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // Convert palette images to true color images
     if(\function_exists('imagepalettetotruecolor') && $this->src_type != 'GIF')
     {
-      \imagepalettetotruecolor($src_frame[0]['image']);
+      imagepalettetotruecolor($src_frame[0]['image']);
     }
 
     return $src_frame;
@@ -1908,17 +1975,17 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    *
    * @since   3.5.0
    */
-  protected function imageCreateEmpty_GD($src_frame, $dst_imginfo, $transparency=true)
+  protected function imageCreateEmpty_GD($src_frame, $dst_imginfo, $transparency = true)
   {
     // Create empty GD-Object
     if(\function_exists('imagecreatetruecolor'))
     {
       // Needs at least php v4.0.6
-      $src_frame = \imagecreatetruecolor($dst_imginfo['width'], $dst_imginfo['height']);
+      $src_frame = imagecreatetruecolor($dst_imginfo['width'], $dst_imginfo['height']);
     }
     else
     {
-      $src_frame = \imagecreate($dst_imginfo['width'], $dst_imginfo['height']);
+      $src_frame = imagecreate($dst_imginfo['width'], $dst_imginfo['height']);
     }
 
     if($transparency)
@@ -1929,7 +1996,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     else
     {
       // Set black background
-      \imagefill($src_frame, 0, 0, \imagecolorallocate($src_frame, 0, 0, 0));
+      imagefill($src_frame, 0, 0, imagecolorallocate($src_frame, 0, 0, 0));
     }
 
     return $src_frame;
@@ -1949,16 +2016,16 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    */
   protected function imageWriteFrom_GD($dst_file, $dst_frame, $quality)
   {
-    switch ($this->dst_type)
+    switch($this->dst_type)
     {
       case 'PNG':
         // Calculate png quality, since it should be between 1 and 9
         $png_qual = ($quality - 100) / 11.111111;
-        $png_qual = \round(\abs($png_qual));
+        $png_qual = round(abs($png_qual));
 
         // Save transparency -- needs at least php v4.3.2
-        \imagealphablending($dst_frame[0]['image'], false);
-        \imagesavealpha($dst_frame[0]['image'], true);
+        imagealphablending($dst_frame[0]['image'], false);
+        imagesavealpha($dst_frame[0]['image'], true);
 
         // Enable interlancing (progressive image transmission)
         //imageinterlace($im, true);
@@ -1966,36 +2033,36 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
         if(\is_null($dst_file))
         {
           // Begin capturing the byte stream
-          \ob_start();
+          ob_start();
         }
 
         // Write file
-        $success = \imagepng($dst_frame[0]['image'], $dst_file, $png_qual);
+        $success = imagepng($dst_frame[0]['image'], $dst_file, $png_qual);
 
         if(\is_null($dst_file))
         {
           // retrieve the byte stream
-          $rawImageBytes = \ob_get_contents();
-          \ob_end_clean();
+          $rawImageBytes = ob_get_contents();
+          ob_end_clean();
         }
-        break;
+          break;
       case 'GIF':
         if(\is_null($dst_file))
         {
           // Begin capturing the byte stream
-          \ob_start();
+          ob_start();
         }
 
         // Write file
-        $success = \imagegif($dst_frame[0]['image'], $dst_file);
+        $success = imagegif($dst_frame[0]['image'], $dst_file);
 
         if(\is_null($dst_file))
         {
           // retrieve the byte stream
-          $rawImageBytes = \ob_get_contents();
-          \ob_end_clean();
+          $rawImageBytes = ob_get_contents();
+          ob_end_clean();
         }
-        break;
+          break;
       case 'JPG':
         // Enable interlancing (progressive image transmission)
         //imageinterlace($im, true);
@@ -2003,49 +2070,48 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
         if(\is_null($dst_file))
         {
           // Begin capturing the byte stream
-          \ob_start();
+          ob_start();
         }
 
         // Write file
-        $success = \imagejpeg($dst_frame[0]['image'], $dst_file, $quality);
+        $success = imagejpeg($dst_frame[0]['image'], $dst_file, $quality);
 
         if(\is_null($dst_file))
         {
           // retrieve the byte stream
-          $rawImageBytes = \ob_get_contents();
-          \ob_end_clean();
+          $rawImageBytes = ob_get_contents();
+          ob_end_clean();
         }
-        break;
+          break;
       case 'WEBP':
         if(\is_null($dst_file))
         {
           // Begin capturing the byte stream
-          \ob_start();
+          ob_start();
         }
 
         // Write file
-        $success = \imagewebp($dst_frame[0]['image'], $dst_file, $quality);
+        $success = imagewebp($dst_frame[0]['image'], $dst_file, $quality);
 
         if(\is_null($dst_file))
         {
           // retrieve the byte stream
-          $rawImageBytes = \ob_get_contents();
-          \ob_end_clean();
+          $rawImageBytes = ob_get_contents();
+          ob_end_clean();
         }
-        break;
+          break;
       default:
         $success = false;
-        break;
+          break;
     }
 
     if(\is_null($dst_file))
     {
       return $rawImageBytes;
     }
-    else
-    {
+
+
       return $success;
-    }
   }
 
   /**
@@ -2057,35 +2123,33 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    * @return  mixed    flipped GDobject on success, false otherwise
    *
    * @since   3.5.0
-  */
+   */
   protected function imageFlip_GD($img_frame, $direction)
   {
     switch($direction)
     {
       case 'horizontally':
-        $success = \imageflip($img_frame, IMG_FLIP_HORIZONTAL);
-        break;
+        $success = imageflip($img_frame, IMG_FLIP_HORIZONTAL);
+          break;
       case 'vertically':
-        $success = \imageflip($img_frame, IMG_FLIP_VERTICAL);
-        break;
+        $success = imageflip($img_frame, IMG_FLIP_VERTICAL);
+          break;
       case 'both':
-        $success = \imageflip($img_frame, IMG_FLIP_BOTH);
-        break;
+        $success = imageflip($img_frame, IMG_FLIP_BOTH);
+          break;
       case 'none':
-        // 'break' intentionally omitted
       default:
         $success = true;
-        break;
+          break;
     }
 
     if($success)
     {
       return $img_frame;
     }
-    else
-    {
+
+
       return false;
-    }
   }
 
   /**
@@ -2101,13 +2165,13 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
   protected function imageCopy_GD($dst_img, $src_img)
   {
     // Get width from image.
-    $w = \imagesx($src_img);
+    $w = imagesx($src_img);
 
     // Get height from image.
-    $h = \imagesy($src_img);
+    $h = imagesy($src_img);
 
     // Copy the image
-    \imagecopy($dst_img, $src_img, 0, 0, 0, 0, $w, $h);
+    imagecopy($dst_img, $src_img, 0, 0, 0, 0, $w, $h);
 
     return $dst_img;
   }
@@ -2136,36 +2200,36 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       if(\function_exists('imagecolorallocatealpha'))
       {
-        $backgroundColor = \imagecolorallocatealpha($img_frame, 0, 0, 0, 127);
+        $backgroundColor = imagecolorallocatealpha($img_frame, 0, 0, 0, 127);
       }
     }
     else
     {
-      $backgroundColor = \imagecolorallocate($img_frame, 0, 0, 0);
+      $backgroundColor = imagecolorallocate($img_frame, 0, 0, 0);
     }
 
     // Rotate image
-    $new_img = \imagerotate($img_frame, $angle, $backgroundColor);
+    $new_img = imagerotate($img_frame, $angle, $backgroundColor);
 
     // Keeping transparency
     if($transparency)
     {
-      switch ($type)
+      switch($type)
       {
         case 'PNG':
           // Special treatment for png files
           if(\function_exists('imagealphablending'))
           {
-            \imagealphablending($new_img, false);
-            \imagesavealpha($new_img, true);
+            imagealphablending($new_img, false);
+            imagesavealpha($new_img, true);
           }
-          break;
+            break;
         default:
           if(\function_exists('imagecolorallocatealpha'))
           {
-            \imagecolortransparent($new_img, \imagecolorallocatealpha($new_img, 0, 0, 0, 127));
+            imagecolortransparent($new_img, imagecolorallocatealpha($new_img, 0, 0, 0, 127));
           }
-          break;
+            break;
       }
     }
 
@@ -2189,10 +2253,10 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       if(\function_exists('imagecolorallocatealpha'))
       {
         // Needs at least php v4.3.2
-        \imagealphablending($img_frame, false);
-        \imagesavealpha($img_frame, true);
-        $trnprt_color = \imagecolorallocatealpha($img_frame, 0, 0, 0, 127);
-        \imagefill($img_frame, 0, 0, $trnprt_color);
+        imagealphablending($img_frame, false);
+        imagesavealpha($img_frame, true);
+        $trnprt_color = imagecolorallocatealpha($img_frame, 0, 0, 0, 127);
+        imagefill($img_frame, 0, 0, $trnprt_color);
       }
       else
       {
@@ -2205,21 +2269,21 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       if(\function_exists('imagecolorallocatealpha'))
       {
         // Needs at least php v4.3.2
-        $trnprt_color = \imagecolorallocatealpha($img_frame, 0, 0, 0, 127);
-        \imagefill($img_frame, 0, 0, $trnprt_color);
-        \imagecolortransparent($img_frame, $trnprt_color);
+        $trnprt_color = imagecolorallocatealpha($img_frame, 0, 0, 0, 127);
+        imagefill($img_frame, 0, 0, $trnprt_color);
+        imagecolortransparent($img_frame, $trnprt_color);
       }
       else
       {
-        $trnprt_indx = \imagecolortransparent($img_frame);
-        $palletsize  = \imagecolorstotal($img_frame);
+        $trnprt_indx = imagecolortransparent($img_frame);
+        $palletsize  = imagecolorstotal($img_frame);
 
         if($trnprt_indx >= 0 && $trnprt_indx < $palletsize)
         {
-          $trnprt_color = \imagecolorsforindex($img_frame, $trnprt_indx);
-          $trnprt_indx  = \imagecolorallocate($img_frame, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-          \imagefill($img_frame, 0, 0, $trnprt_indx);
-          \imagecolortransparent($img_frame, $trnprt_indx);
+          $trnprt_color = imagecolorsforindex($img_frame, $trnprt_indx);
+          $trnprt_indx  = imagecolorallocate($img_frame, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+          imagefill($img_frame, 0, 0, $trnprt_indx);
+          imagecolortransparent($img_frame, $trnprt_indx);
         }
       }
     }
@@ -2244,11 +2308,12 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
   protected function imageWatermark_GD($img_frame, $wtm_frame, $imginfo, $wtminfo, $position, $opacity)
   {
     // temporary transparent empty plane in the size of the image
-    $tmp = null;
-    $tmpinfo = $imginfo;
+    $tmp             = null;
+    $tmpinfo         = $imginfo;
     $tmpinfo['type'] = $this->src_type;
 
     $tmpinfo['truecolor'] = true;
+
     if($this->src_type == 'GIF')
     {
       $tmpinfo['truecolor'] = false;
@@ -2260,11 +2325,11 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // positioning watermark
     if(\function_exists('imagecopyresampled'))
     {
-      \imagecopyresampled($tmp, $wtm_frame, $position[0], $position[1], 0, 0, $wtminfo['width'], $wtminfo['height'],$wtminfo['width'], $wtminfo['height']);
+      imagecopyresampled($tmp, $wtm_frame, $position[0], $position[1], 0, 0, $wtminfo['width'], $wtminfo['height'], $wtminfo['width'], $wtminfo['height']);
     }
     else
     {
-      \imagecopy($tmp, $wtm_frame, $position[0], $position[1], 0, 0, $wtminfo['width'], $wtminfo['height']);
+      imagecopy($tmp, $wtm_frame, $position[0], $position[1], 0, 0, $wtminfo['width'], $wtminfo['height']);
     }
 
     // make sure background is still transparent
@@ -2278,7 +2343,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
   /**
    * Resize GD image based on infos from $dst_imginfo
-  *
+   *
    * Fast resizing of images with GD2
    * Notice: need up to 3/4 times more memory
    * http://de.php.net/manual/en/function.imagecopyresampled.php#77679
@@ -2325,6 +2390,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     // Check, if GD2 is available
     $gd2 = false;
+
     if(\function_exists('imagecopyresampled'))
     {
       $gd2 = true;
@@ -2345,21 +2411,21 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     if($gd2 && $fast_resize && !$special && $fast_quality < 5 && (($dst_w * $fast_quality) < $src_w || ($dst_h * $fast_quality) < $src_h))
     {
       // fastimagecopyresampled
-      $temp = \imagecreatetruecolor($dst_w * $fast_quality + 1, $dst_h * $fast_quality + 1);
-      \imagecopyresized($temp, $src_frame, 0, 0, $src_x, $src_y, $dst_w * $fast_quality + 1,$dst_h * $fast_quality + 1, $src_w, $src_h);
-      \imagecopyresampled($dst_frame, $temp, $dst_x, $dst_y, 0, 0, $dst_w,$dst_h, $dst_w * $fast_quality, $dst_h * $fast_quality);
-      \imagedestroy($temp);
+      $temp = imagecreatetruecolor($dst_w * $fast_quality + 1, $dst_h * $fast_quality + 1);
+      imagecopyresized($temp, $src_frame, 0, 0, $src_x, $src_y, $dst_w * $fast_quality + 1, $dst_h * $fast_quality + 1, $src_w, $src_h);
+      imagecopyresampled($dst_frame, $temp, $dst_x, $dst_y, 0, 0, $dst_w, $dst_h, $dst_w * $fast_quality, $dst_h * $fast_quality);
+      imagedestroy($temp);
     }
     else
     {
       // Normal resizing
       if($gd2)
       {
-        \imagecopyresampled($dst_frame, $src_frame, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
+        imagecopyresampled($dst_frame, $src_frame, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
       }
       else
       {
-        \imagecopyresized($dst_frame, $src_frame, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
+        imagecopyresized($dst_frame, $src_frame, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
       }
     }
 
@@ -2390,8 +2456,8 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     if($pct < 100 && \function_exists('imagefilter'))
     {
       // Disable alpha blending and "colorize" the image using a transparent color
-      \imagealphablending($srcIm, false);
-      \imagefilter($srcIm, IMG_FILTER_COLORIZE, 0, 0, 0, 127 * ((100 - $pct) / 100));
+      imagealphablending($srcIm, false);
+      imagefilter($srcIm, IMG_FILTER_COLORIZE, 0, 0, 0, 127 * ((100 - $pct) / 100));
     }
 
     // if(\function_exists('imagecopyresampled'))
@@ -2400,7 +2466,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     // }
     // else
     // {
-      \imagecopy($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH);
+      imagecopy($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH);
     // }
 
     return true;
@@ -2423,31 +2489,31 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
   {
     // Attempt to calibrate the parameters to Photoshop:
     if($amount > 500) $amount = 500;
-    $amount = $amount * 0.016;
+    $amount                   = $amount * 0.016;
 
     if($radius > 50) $radius = 50;
-    $radius = $radius * 2;
+    $radius                  = $radius * 2;
 
     if($threshold > 255) $threshold = 255;
-    $radius = \abs(\round($radius));     // Only integers make sense.
+    $radius                         = abs(round($radius));     // Only integers make sense.
 
     if($radius == 0)
     {
       return $img;
     }
 
-    $w = \imagesx($img);
-    $h = \imagesy($img);
+    $w = imagesx($img);
+    $h = imagesy($img);
 
     if(\function_exists('imagecreatetruecolor'))
     {
-      $imgCanvas = \imagecreatetruecolor($w, $h);
-      $imgBlur   = \imagecreatetruecolor($w, $h);
+      $imgCanvas = imagecreatetruecolor($w, $h);
+      $imgBlur   = imagecreatetruecolor($w, $h);
     }
     else
     {
-      $imgCanvas = \imagecreate($w, $h);
-      $imgBlur   = \imagecreate($w, $h);
+      $imgCanvas = imagecreate($w, $h);
+      $imgBlur   = imagecreate($w, $h);
     }
 
 
@@ -2462,47 +2528,47 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
     if(\function_exists('imageconvolution'))
     { // PHP >= 5.1
-      $matrix = array(
-        array(1, 2, 1),
-        array(2, 4, 2),
-        array(1, 2, 1)
-      );
+      $matrix = [
+        [1, 2, 1],
+        [2, 4, 2],
+        [1, 2, 1],
+      ];
 
       if(\function_exists('imagecopyresampled'))
       {
-        \imagecopyresampled($imgBlur, $img, 0, 0, 0, 0, $w, $h, $w, $h);
+        imagecopyresampled($imgBlur, $img, 0, 0, 0, 0, $w, $h, $w, $h);
       }
       else
       {
-        \imagecopy($imgBlur, $img, 0, 0, 0, 0, $w, $h);
+        imagecopy($imgBlur, $img, 0, 0, 0, 0, $w, $h);
       }
 
-      \imageconvolution($imgBlur, $matrix, 16, 0);
+      imageconvolution($imgBlur, $matrix, 16, 0);
     }
     else
     {
-
       // Move copies of the image around one pixel at the time and merge them with weight
       // according to the matrix. The same matrix is simply repeated for higher radii.
       for($i = 0; $i < $radius; $i++)
       {
         if(\function_exists('imagecopyresampled'))
         {
-          \imagecopyresampled($imgBlur, $img, 0, 0, 1, 0, $w - 1, $h, $w - 1, $h); // left
+          imagecopyresampled($imgBlur, $img, 0, 0, 1, 0, $w - 1, $h, $w - 1, $h); // left
         }
         else
         {
-          \imagecopy($imgBlur, $img, 0, 0, 1, 0, $w - 1, $h); // left
+          imagecopy($imgBlur, $img, 0, 0, 1, 0, $w - 1, $h); // left
         }
         $this->imageCopyMergeAlpha_GD($imgBlur, $img, 1, 0, 0, 0, $w, $h, 50); // right
         $this->imageCopyMergeAlpha_GD($imgBlur, $img, 0, 0, 0, 0, $w, $h, 50); // center
+
         if(\function_exists('imagecopyresampled'))
         {
-          \imagecopyresampled($imgCanvas, $imgBlur, 0, 0, 0, 0, $w, $h, $w, $h);
+          imagecopyresampled($imgCanvas, $imgBlur, 0, 0, 0, 0, $w, $h, $w, $h);
         }
         else
         {
-          \imagecopy($imgCanvas, $imgBlur, 0, 0, 0, 0, $w, $h);
+          imagecopy($imgCanvas, $imgBlur, 0, 0, 0, 0, $w, $h);
         }
         $this->imageCopyMergeAlpha_GD($imgBlur, $imgCanvas, 0, 0, 0, 1, $w, $h - 1, 33.33333); // up
         $this->imageCopyMergeAlpha_GD($imgBlur, $imgCanvas, 0, 1, 0, 0, $w, $h, 25); // down
@@ -2517,12 +2583,12 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       { // each row
         for($y = 0; $y < $h; $y++)
         { // each pixel
-          $rgbOrig = \imageColorAt($img, $x, $y);
-          $rOrig = (($rgbOrig >> 16) & 0xFF);
-          $gOrig = (($rgbOrig >> 8) & 0xFF);
-          $bOrig = ($rgbOrig & 0xFF);
+          $rgbOrig = imageColorAt($img, $x, $y);
+          $rOrig   = (($rgbOrig >> 16) & 0xFF);
+          $gOrig   = (($rgbOrig >> 8) & 0xFF);
+          $bOrig   = ($rgbOrig & 0xFF);
 
-          $rgbBlur = \imageColorAt($imgBlur, $x, $y);
+          $rgbBlur = imageColorAt($imgBlur, $x, $y);
 
           $rBlur = (($rgbBlur >> 16) & 0xFF);
           $gBlur = (($rgbBlur >> 8) & 0xFF);
@@ -2530,16 +2596,16 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
 
           // When the masked pixels differ less from the original
           // than the threshold specifies, they are set to their original value.
-          $rNew = (\abs($rOrig - $rBlur) >= $threshold) ? \max(0, \min(255, ($amount * ($rOrig - $rBlur)) + $rOrig)) : $rOrig;
-          $gNew = (\abs($gOrig - $gBlur) >= $threshold) ? \max(0, \min(255, ($amount * ($gOrig - $gBlur)) + $gOrig)) : $gOrig;
-          $bNew = (\abs($bOrig - $bBlur) >= $threshold) ? \max(0, \min(255, ($amount * ($bOrig - $bBlur)) + $bOrig)) : $bOrig;
+          $rNew = (abs($rOrig - $rBlur) >= $threshold) ? max(0, min(255, ($amount * ($rOrig - $rBlur)) + $rOrig)) : $rOrig;
+          $gNew = (abs($gOrig - $gBlur) >= $threshold) ? max(0, min(255, ($amount * ($gOrig - $gBlur)) + $gOrig)) : $gOrig;
+          $bNew = (abs($bOrig - $bBlur) >= $threshold) ? max(0, min(255, ($amount * ($bOrig - $bBlur)) + $bOrig)) : $bOrig;
 
 
 
           if(($rOrig != $rNew) || ($gOrig != $gNew) || ($bOrig != $bNew))
           {
-            $pixCol = \imageColorAllocate($img, (int) $rNew, (int) $gNew, (int) $bNew);
-            \imageSetPixel($img, $x, $y, $pixCol);
+            $pixCol = imageColorAllocate($img, (int) $rNew, (int) $gNew, (int) $bNew);
+            imageSetPixel($img, $x, $y, $pixCol);
           }
         }
       }
@@ -2550,18 +2616,19 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       { // each row
         for($y = 0; $y < $h; $y++)
         { // each pixel
-          $rgbOrig = \imageColorAt($img, $x, $y);
-          $rOrig = (($rgbOrig >> 16) & 0xFF);
-          $gOrig = (($rgbOrig >> 8) & 0xFF);
-          $bOrig = ($rgbOrig & 0xFF);
+          $rgbOrig = imageColorAt($img, $x, $y);
+          $rOrig   = (($rgbOrig >> 16) & 0xFF);
+          $gOrig   = (($rgbOrig >> 8) & 0xFF);
+          $bOrig   = ($rgbOrig & 0xFF);
 
-          $rgbBlur = \imageColorAt($imgBlur, $x, $y);
+          $rgbBlur = imageColorAt($imgBlur, $x, $y);
 
           $rBlur = (($rgbBlur >> 16) & 0xFF);
           $gBlur = (($rgbBlur >> 8) & 0xFF);
           $bBlur = ($rgbBlur & 0xFF);
 
           $rNew = ($amount * ($rOrig - $rBlur)) + $rOrig;
+
           if($rNew > 255)
           {
             $rNew = 255;
@@ -2571,6 +2638,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
             $rNew = 0;
           }
           $gNew = ($amount * ($gOrig - $gBlur)) + $gOrig;
+
           if($gNew > 255)
           {
             $gNew = 255;
@@ -2580,6 +2648,7 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
             $gNew = 0;
           }
           $bNew = ($amount * ($bOrig - $bBlur)) + $bOrig;
+
           if($bNew > 255)
           {
             $bNew = 255;
@@ -2589,13 +2658,13 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
             $bNew = 0;
           }
           $rgbNew = ($rNew << 16) + ($gNew << 8) + $bNew;
-          \imageSetPixel($img, $x, $y, (int) $rgbNew);
+          imageSetPixel($img, $x, $y, (int) $rgbNew);
         }
       }
     }
 
-    \imagedestroy($imgCanvas);
-    \imagedestroy($imgBlur);
+    imagedestroy($imgCanvas);
+    imagedestroy($imgBlur);
 
     return $img;
   }
@@ -2613,40 +2682,40 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
    */
   protected function dump_GD($img, $type)
   {
-    \ob_start();
+    ob_start();
 
-    switch ($type)
+    switch($type)
     {
       case 'PNG':
         // Save transparency -- needs at least php v4.3.2
-        \imagealphablending($img, false);
-        \imagesavealpha($img, true);
+        imagealphablending($img, false);
+        imagesavealpha($img, true);
 
         $src = 'image/png';
-        \imagepng($img);
-        break;
+        imagepng($img);
+          break;
       case 'GIF':
         $src = 'image/gif';
-        \imagegif($img);
-        break;
+        imagegif($img);
+          break;
       case 'JPG':
         $src = 'image/jpeg';
-        \imagejpeg($img);
-        break;
+        imagejpeg($img);
+          break;
       case 'WEBP':
         $src = 'image/webp';
-        \imagejpeg($img);
-        break;
+        imagejpeg($img);
+          break;
       default:
         $src = 'image/jpeg';
-        \imagejpeg($img);
-        break;
+        imagejpeg($img);
+          break;
     }
 
-    \imagedestroy($img);
-    $i = \ob_get_clean();
+    imagedestroy($img);
+    $i = ob_get_clean();
 
-    echo "<img src='data:".$src.";base64," . \base64_encode( $i )."'>";
+    echo "<img src='data:" . $src . ';base64,' . base64_encode($i) . "'>";
 
     die;
   }

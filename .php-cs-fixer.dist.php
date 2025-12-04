@@ -39,6 +39,11 @@ $finder = PhpCsFixer\Finder::create()
     ]
   )
   ->notPath('administrator/com_joomgallery/vendor')
+  ->notPath('administrator/com_joomgallery/includes')
+  ->notPath('tools/phpcs')
+  ->exclude('vendor')
+  ->exclude('includes')
+  ->exclude('tools')
   ->name('*.php')
   ->ignoreDotFiles(true)
   ->ignoreVCS(true);
@@ -77,12 +82,12 @@ return (new PhpCsFixer\Config())
     'array_indentation' => true,
 
     // Operators, spacing & braces
-    'binary_operator_spaces' => ['operators' => ['=>' => 'align_single_space_minimal', '=' => 'align_single_space_minimal', '??=' => 'align_single_space_minimal']],
+    'binary_operator_spaces' => false,
     'blank_line_before_statement' => ['statements' => ['return', 'if', 'for', 'foreach', 'while']],
     'no_break_comment' => ['comment_text' => "'break' intentionally omitted"],
-    'braces_position' => ['control_structures_opening_brace' => 'next_line_unless_newline_at_signature_end'],
+    'braces_position' => false,
     'control_structure_continuation_position' => ['position' => 'next_line'],
-    'function_typehint_space' => true,
+    'type_declaration_spaces' => ['elements' => ['function', 'property']],
     'method_argument_space' => ['on_multiline' => 'ignore'],
 
     // Imports
