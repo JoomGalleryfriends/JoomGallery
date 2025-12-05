@@ -414,7 +414,7 @@ class ImagesModel extends JoomListModel
 
     if(!empty($catId))
     {
-      if(\is_numeric($catId))
+      if(is_numeric($catId))
       {
         $catId = (int) $catId;
         $query->where($db->quoteName('a.catid') . ' = :catId')
