@@ -31,9 +31,9 @@ use Joomla\Component\Scheduler\Administrator\Task\TaskOption;
  */
 class HtmlView extends JoomGalleryView
 {
-    protected $item;
+  protected $item;
 
-    protected $form;
+  protected $form;
 
   /**
    * An array of items
@@ -43,22 +43,22 @@ class HtmlView extends JoomGalleryView
    */
   protected $tasks;
 
-    /**
-     * Display the view
-     *
-     * @param   string  $tpl  Template name
-     *
-     * @return void
-     *
-     * @throws Exception
-     */
-    public function display($tpl = null)
-    {
+  /**
+   * Display the view
+   *
+   * @param   string  $tpl  Template name
+   *
+   * @return void
+   *
+   * @throws Exception
+   */
+  public function display($tpl = null)
+  {
     /** @var TaskModel $model */
     $model = $this->getModel();
 
-    $this->layout    = $this->app->input->get('layout', 'edit', 'cmd');
-        $this->state = $model->getState();
+    $this->layout = $this->app->input->get('layout', 'edit', 'cmd');
+    $this->state  = $model->getState();
 
     if($this->layout == 'select')
     {
@@ -68,33 +68,33 @@ class HtmlView extends JoomGalleryView
     else
     {
       // Form view
-      $this->item     = $model->getItem();
-          $this->form = $model->getForm();
+      $this->item = $model->getItem();
+      $this->form = $model->getForm();
 
       // Apply tasktype to taskid field
       $this->form->setFieldAttribute('taskid', 'tasktype', $this->form->getValue('type'));
     }
 
-        // Check for errors.
-        if(\count($errors = $model->getErrors()))
-        {
-            throw new GenericDataException(implode("\n", $errors), 500);
-        }
-
-        $this->addToolbar();
-        parent::display($tpl);
+    // Check for errors.
+    if(\count($errors = $model->getErrors()))
+    {
+      throw new GenericDataException(implode("\n", $errors), 500);
     }
 
-    /**
-     * Add the page title and toolbar.
-     *
-     * @return void
-     *
-     * @throws \Exception
-     */
-    protected function addToolbar()
-    {
-        Factory::getApplication()->input->set('hidemainmenu', true);
+    $this->addToolbar();
+    parent::display($tpl);
+  }
+
+  /**
+   * Add the page title and toolbar.
+   *
+   * @return void
+   *
+   * @throws \Exception
+   */
+  protected function addToolbar()
+  {
+    Factory::getApplication()->input->set('hidemainmenu', true);
 
     /** @var Toolbar $model */
     $toolbar = $this->getToolbar();
@@ -145,5 +145,5 @@ class HtmlView extends JoomGalleryView
         ToolbarHelper::cancel('task.cancel', 'JTOOLBAR_CLOSE');
       }
     }
-    }
+  }
 }

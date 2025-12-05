@@ -99,7 +99,7 @@ class UserdropdownField extends ListField
     foreach($results as $result)
     {
       switch($dropdownname)
-        {
+      {
           case 'name':
             $options[] = HTMLHelper::_('select.option', $result->id, $result->name);
               break;

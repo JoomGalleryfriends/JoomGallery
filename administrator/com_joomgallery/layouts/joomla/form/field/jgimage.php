@@ -117,7 +117,7 @@ if(!$readonly)
 
 if(!$readonly)
 {
-  $modalHTML = HTMLHelper::_(
+$modalHTML = HTMLHelper::_(
     'bootstrap.renderModal',
     'imageModal_' . $id,
     [
@@ -130,7 +130,7 @@ if(!$readonly)
       'bodyHeight'  => 60,
       'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCANCEL') . '</button>',
     ]
-  );
+);
 
   Factory::getApplication()->getDocument()->getWebAssetManager()
     ->useScript('com_joomgallery.field-image');

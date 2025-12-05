@@ -56,17 +56,17 @@ class CategoriesController extends JoomAdminController
 
       if(\count($pks) > 1)
       {
-      $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'), 'info', 'jerror');
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'), 'info', 'jerror');
 
-      $this->setMessage(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'));
+        $this->setMessage(Text::_('COM_JOOMGALLERY_ITEMS_SUCCESS_DUPLICATED'));
       }
       else
       {
-      $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'), 'info', 'jerror');
+        $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'), 'info', 'jerror');
 
-      $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'));
+        $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'));
       }
-      }
+    }
     catch (\Exception $e)
     {
       $this->component->addLog($e->getMessage(), 'warning', 'jerror');
@@ -107,13 +107,16 @@ class CategoriesController extends JoomAdminController
     if($model->rebuild())
     {
       $this->component->addLog(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_SUCCESS'), 'info', 'jerror');
+
       $this->setMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_SUCCESS'));
 
       return true;
     }
 
     $this->component->addLog(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_FAILURE'), 'error', 'jerror');
+
     $this->setMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_REBUILD_FAILURE'));
+
 
     return false;
   }

@@ -36,7 +36,7 @@ $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
 if($saveOrder && !empty($this->items))
 {
-    $saveOrderingUrl = 'index.php?option=com_joomgallery&task=tags.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=tags.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
   HTMLHelper::_('draggablelist.draggable');
 }
 ?>
@@ -141,8 +141,8 @@ if($saveOrder && !empty($this->items))
                   <?php
                     $options = [
                       'task_prefix' => 'tags.',
-                      'disabled' => !$canChange,
-                      'id' => 'state-' . $item->id,
+                      'disabled'    => !$canChange,
+                      'id'          => 'state-' . $item->id,
                     ];
 
                     echo (new PublishedButton())->render((int) $item->published, $i, $options);

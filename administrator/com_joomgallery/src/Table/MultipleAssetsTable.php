@@ -254,7 +254,8 @@ class MultipleAssetsTable extends Table
                 return false;
             }
           }
-          else {
+          else
+          {
               $this->setError($asset->getError());
 
               return false;

@@ -103,8 +103,9 @@ class ConfigHelper
       return $options;
     }
 
-    $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'), 'error', 'jerror');
-    throw new \Exception(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'));
+
+      $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'), 'error', 'jerror');
+      throw new \Exception(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'));
   }
 
   /**
@@ -149,8 +150,9 @@ class ConfigHelper
       return $options;
     }
 
-    $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'), 'error', 'jerror');
-    throw new \Exception(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'));
+
+      $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'), 'error', 'jerror');
+      throw new \Exception(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'));
   }
 
   /**

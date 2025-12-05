@@ -53,17 +53,17 @@ trait MetadataServiceTrait
      */
     public function createMetadata(string $processor)
     {
-    switch($processor)
-    {
-      case 'exiftools':
-        $this->metadata = new MetadataExifTool();
-          break;
+        switch($processor)
+        {
+            case 'exiftools':
+                $this->metadata = new MetadataExifTool();
+                break;
 
-      default:
-        $this->metadata = new MetadataPHP();
-          break;
-    }
+            default:
+                $this->metadata = new MetadataPHP();
+                break;
+        }
 
-    return;
+        return;
     }
 }

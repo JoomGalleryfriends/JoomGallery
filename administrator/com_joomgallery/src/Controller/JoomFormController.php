@@ -46,7 +46,7 @@ class JoomFormController extends BaseFormController
    * JoomGallery access service
    *
    * @access  protected
-   * @var     AccessInterface
+   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
    */
   protected $acl = null;
 
@@ -86,14 +86,14 @@ class JoomFormController extends BaseFormController
    */
   public function getAcl(): AccessInterface
   {
-  // Create access service
-  if(\is_null($this->acl))
-  {
-    $this->component->createAccess();
-    $this->acl = $this->component->getAccess();
-  }
+    // Create access service
+    if(\is_null($this->acl))
+    {
+      $this->component->createAccess();
+      $this->acl = $this->component->getAccess();
+    }
 
-      return $this->acl;
+    return $this->acl;
   }
 
   /**
@@ -104,7 +104,7 @@ class JoomFormController extends BaseFormController
    *
    * @return  mixed   The value returned by the called Method.
    *
-   * @throws  \Exception
+   * @throws  Exception
    * @since   4.0.0
    */
   public function execute($task)

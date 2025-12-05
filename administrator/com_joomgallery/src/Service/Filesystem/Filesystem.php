@@ -22,6 +22,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Filesyste
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
+
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Component\Media\Administrator\Adapter\AdapterInterface;
@@ -30,6 +31,7 @@ use Joomla\Component\Media\Administrator\Event\FetchMediaItemsEvent;
 use Joomla\Component\Media\Administrator\Event\FetchMediaItemUrlEvent;
 use Joomla\Component\Media\Administrator\Exception\FileExistsException;
 use Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
+
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
 use Joomla\Filesystem\File as JFile;
@@ -931,7 +933,7 @@ class Filesystem implements AdapterInterface, FilesystemInterface
     array_map(
         function ($fileType) use (&$types) {
           switch($fileType)
-        {
+          {
             case '0':
               $types[] = 'images';
                 break;

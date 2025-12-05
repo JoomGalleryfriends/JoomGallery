@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -71,41 +70,41 @@ class TasksModel extends JoomListModel
    */
   public function getScheduledTasks()
   {
-  // Load scheduler tasks model
-  $listModel = $this->app->bootComponent('com_scheduler')->getMVCFactory()->createModel('tasks', 'administrator', ['ignore_request' => true]);
-  $listModel->getState();
+    // Load scheduler tasks model
+    $listModel = $this->app->bootComponent('com_scheduler')->getMVCFactory()->createModel('tasks', 'administrator', ['ignore_request' => true]);
+    $listModel->getState();
 
-  // Select fields to load
-  $fields = ['id', 'title', 'type', 'safeTypeTitle', 'state', 'last_exit_code', 'last_execution', 'times_executed', 'locked', 'params', 'note'];
-  $fields = $this->addColumnPrefix('a', $fields);
+    // Select fields to load
+    $fields = ['id', 'title', 'type', 'safeTypeTitle', 'state', 'last_exit_code', 'last_execution', 'times_executed', 'locked', 'params', 'note'];
+    $fields = $this->addColumnPrefix('a', $fields);
 
-  // Apply preselected filters and fields selection for images
-  $this->setTasksModelState($listModel, $fields);
+    // Apply preselected filters and fields selection for images
+    $this->setTasksModelState($listModel, $fields);
 
-  // Get images
-  $items = $listModel->getItems();
+    // Get images
+    $items = $listModel->getItems();
 
-  if(!empty($listModel->getError()))
-  {
-    $this->setError($listModel->getError());
-  }
+    if(!empty($listModel->getError()))
+    {
+      $this->setError($listModel->getError());
+    }
 
-  // Apply type filter
-  try
-  {
+    // Apply type filter
+    try
+    {
     $filteredItems = array_filter(
         $items,
         function ($obj) {
         return isset($obj->type) && stripos($obj->type, 'joomgallery') !== false;
         }
     );
-  }
-  catch(\Exception $e)
-  {
-    return false;
-  }
+    }
+    catch(\Exception $e)
+    {
+      return false;
+    }
 
-  return $filteredItems;
+    return $filteredItems;
   }
 
   /**
@@ -117,39 +116,39 @@ class TasksModel extends JoomListModel
    */
   public function getItems()
   {
-  $std_items = parent::getItems();
+    $std_items = parent::getItems();
 
-  if($std_items)
-  {
-    // Initialize
-    $items      = [];
-    $table_base = $this->component->getMVCFactory()->createTable('Task', 'Administrator');
-
-    // Turn items to table objects
-    foreach($std_items as $item)
+    if($std_items)
     {
-    $table = clone $table_base;
-    $table->reset();
+      // Initialize
+      $items      = [];
+      $table_base = $this->component->getMVCFactory()->createTable('Task', 'Administrator');
 
-    if(\is_object($item))
-    {
-      $table->bind(get_object_vars($item));
+      // Turn items to table objects
+      foreach($std_items as $item)
+      {
+        $table = clone $table_base;
+        $table->reset();
+
+        if(\is_object($item))
+        {
+          $table->bind(get_object_vars($item));
+        }
+        else
+        {
+          $table->bind($item);
+        }
+
+        $table->check();
+        $table->clcProgress();
+
+        array_push($items, $table);
+      }
+
+      return $items;
     }
-    else
-    {
-      $table->bind($item);
-    }
 
-    $table->check();
-    $table->clcProgress();
-
-    array_push($items, $table);
-    }
-
-    return $items;
-  }
-
-  return false;
+    return false;
   }
 
   /**
@@ -162,12 +161,12 @@ class TasksModel extends JoomListModel
    */
   protected function setTasksModelState(ListModel &$listModel, array $fields = [])
   {
-  // Apply filters
-  $listModel->setState('filter.state', 1);
+    // Apply filters
+    $listModel->setState('filter.state', 1);
 
-  // Apply limit & ordering
-  $listModel->setState('list.limit', 20);
-  $listModel->setState('list.ordering', 'a.ordering');
+    // Apply limit & ordering
+    $listModel->setState('list.limit', 20);
+    $listModel->setState('list.ordering', 'a.ordering');
   }
 
   /**
@@ -184,25 +183,25 @@ class TasksModel extends JoomListModel
    */
   protected function populateState($ordering = 'a.ordering', $direction = 'ASC')
   {
-  $app = Factory::getApplication();
+    $app = Factory::getApplication();
 
-  // Adjust the context to support modal layouts.
+    // Adjust the context to support modal layouts.
     if($layout = $app->input->get('layout'))
     {
       $this->context .= '.' . $layout;
     }
 
-  // List state information.
+    // List state information.
     parent::populateState($ordering, $direction);
 
-  // Load the filter state.
-  $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+    // Load the filter state.
+    $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
     $this->setState('filter.search', $search);
-  $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+    $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
     $this->setState('filter.published', $published);
-  $failed = $this->getUserStateFromRequest($this->context . '.filter.failed', 'filter_failed', '');
+    $failed = $this->getUserStateFromRequest($this->context . '.filter.failed', 'filter_failed', '');
     $this->setState('filter.failed', $failed);
-  $completed = $this->getUserStateFromRequest($this->context . '.filter.completed', 'filter_completed', '');
+    $completed = $this->getUserStateFromRequest($this->context . '.filter.completed', 'filter_completed', '');
     $this->setState('filter.completed', $completed);
   }
 
@@ -224,8 +223,8 @@ class TasksModel extends JoomListModel
     // Compile the store id.
     $id .= ':' . $this->getState('filter.search');
     $id .= ':' . $this->getState('filter.published');
-  $id   .= ':' . $this->getState('filter.failed');
-  $id   .= ':' . $this->getState('filter.completed');
+    $id .= ':' . $this->getState('filter.failed');
+    $id .= ':' . $this->getState('filter.completed');
 
     return parent::getStoreId($id);
   }
@@ -244,12 +243,12 @@ class TasksModel extends JoomListModel
     $query = $db->getQuery(true);
 
     // Select the required fields from the table.
-  $query->select($this->getState('list.select', 'a.*'));
-  $query->from($db->quoteName('#__joomgallery_tasks', 'a'));
+    $query->select($this->getState('list.select', 'a.*'));
+    $query->from($db->quoteName('#__joomgallery_tasks', 'a'));
 
     // Join over the users for the checked out user
-  $query->select($db->quoteName('uc.name', 'uEditor'));
-  $query->join('LEFT', $db->quoteName('#__users', 'uc'), $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.checked_out'));
+    $query->select($db->quoteName('uc.name', 'uEditor'));
+    $query->join('LEFT', $db->quoteName('#__users', 'uc'), $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.checked_out'));
 
     // Filter by search
     $search = $this->getState('filter.search');
@@ -264,7 +263,7 @@ class TasksModel extends JoomListModel
       }
       else
       {
-    $search = '%' . str_replace(' ', '%', trim($search)) . '%';
+        $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
             '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
@@ -273,7 +272,7 @@ class TasksModel extends JoomListModel
       }
     }
 
-  // Filter by published state
+    // Filter by published state
     $published = (string) $this->getState('filter.published');
 
     if($published !== '*')
@@ -286,7 +285,7 @@ class TasksModel extends JoomListModel
       }
     }
 
-  // Filter by failed state
+    // Filter by failed state
     $failed = (string) $this->getState('filter.failed');
 
     if($failed !== '*')
@@ -295,27 +294,27 @@ class TasksModel extends JoomListModel
       {
         $failed = (int) $failed;
 
-    if($failed > 0)
-    {
-      // Show only records with failed tasks (non-empty JSON arrays)
-      $query->where($db->quoteName('a.failed') . ' != ' . $db->quote(''))
-            ->where($db->quoteName('a.failed') . ' != ' . $db->quote('{}'));
-    }
-    else
-    {
-      // Show only records with no failed tasks (empty or empty JSON array)
-    $query->where(
-        [
-          $db->quoteName('a.failed') . ' = ' . $db->quote(''),
-          $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
-        ],
-        'OR'
-    );
-    }
+        if($failed > 0)
+        {
+          // Show only records with failed tasks (non-empty JSON arrays)
+          $query->where($db->quoteName('a.failed') . ' != ' . $db->quote(''))
+                ->where($db->quoteName('a.failed') . ' != ' . $db->quote('{}'));
+        }
+        else
+        {
+          // Show only records with no failed tasks (empty or empty JSON array)
+        $query->where(
+            [
+              $db->quoteName('a.failed') . ' = ' . $db->quote(''),
+              $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
+            ],
+            'OR'
+        );
+        }
       }
     }
 
-  // Filter by completed state
+    // Filter by completed state
     $completed = (string) $this->getState('filter.completed');
 
     if($completed !== '*')
@@ -332,14 +331,14 @@ class TasksModel extends JoomListModel
     $orderCol  = $this->state->get('list.ordering', 'a.ordering');
     $orderDirn = $this->state->get('list.direction', 'ASC');
 
-  if($orderCol && $orderDirn)
-  {
-    $query->order($db->escape($orderCol . ' ' . $orderDirn));
-  }
-  else
-  {
-    $query->order($db->escape($this->state->get('list.fullordering', 'a.ordering ASC')));
-  }
+    if($orderCol && $orderDirn)
+    {
+      $query->order($db->escape($orderCol . ' ' . $orderDirn));
+    }
+    else
+    {
+      $query->order($db->escape($this->state->get('list.fullordering', 'a.ordering ASC')));
+    }
 
     return $query;
   }
@@ -358,8 +357,8 @@ class TasksModel extends JoomListModel
     $query = $db->getQuery(true);
 
     // Select the required fields from the table.
-  $query->select('COUNT(*)');
-  $query->from($db->quoteName('#__joomgallery_tasks', 'a'));
+    $query->select('COUNT(*)');
+    $query->from($db->quoteName('#__joomgallery_tasks', 'a'));
 
     // Filter by search
     $search = $this->getState('filter.search');
@@ -374,7 +373,7 @@ class TasksModel extends JoomListModel
       }
       else
       {
-    $search = '%' . str_replace(' ', '%', trim($search)) . '%';
+        $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
             '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
             . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
@@ -383,7 +382,7 @@ class TasksModel extends JoomListModel
       }
     }
 
-  // Filter by published state
+    // Filter by published state
     $published = (string) $this->getState('filter.published');
 
     if($published !== '*')
@@ -396,7 +395,7 @@ class TasksModel extends JoomListModel
       }
     }
 
-  // Filter by failed state
+    // Filter by failed state
     $failed = (string) $this->getState('filter.failed');
 
     if($failed !== '*')
@@ -405,27 +404,27 @@ class TasksModel extends JoomListModel
       {
         $failed = (int) $failed;
 
-    if($failed > 0)
-    {
-      // Show only records with failed tasks (non-empty JSON arrays)
-      $query->where($db->quoteName('a.failed') . ' != ' . $db->quote(''))
-            ->where($db->quoteName('a.failed') . ' != ' . $db->quote('{}'));
-    }
-    else
-    {
-      // Show only records with no failed tasks (empty or empty JSON array)
-    $query->where(
-        [
-          $db->quoteName('a.failed') . ' = ' . $db->quote(''),
-          $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
-        ],
-        'OR'
-    );
-    }
+        if($failed > 0)
+        {
+          // Show only records with failed tasks (non-empty JSON arrays)
+          $query->where($db->quoteName('a.failed') . ' != ' . $db->quote(''))
+                ->where($db->quoteName('a.failed') . ' != ' . $db->quote('{}'));
+        }
+        else
+        {
+          // Show only records with no failed tasks (empty or empty JSON array)
+        $query->where(
+            [
+              $db->quoteName('a.failed') . ' = ' . $db->quote(''),
+              $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
+            ],
+            'OR'
+        );
+        }
       }
     }
 
-  // Filter by completed state
+    // Filter by completed state
     $completed = (string) $this->getState('filter.completed');
 
     if($completed !== '*')
@@ -451,16 +450,16 @@ class TasksModel extends JoomListModel
    */
   protected function addColumnPrefix(string $prefix, array $fields): array
   {
-  foreach($fields as $key => $field)
-  {
-    $field = (string) $field;
-
-    if(strpos($field, $prefix . '.') === false)
+    foreach($fields as $key => $field)
     {
-    $fields[$key] = $prefix . '.' . $field;
-    }
-  }
+      $field = (string) $field;
 
-  return $fields;
+      if(strpos($field, $prefix . '.') === false)
+      {
+        $fields[$key] = $prefix . '.' . $field;
+      }
+    }
+
+    return $fields;
   }
 }

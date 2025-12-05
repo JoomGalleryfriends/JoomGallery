@@ -68,10 +68,10 @@ class HtmlView extends JoomGalleryView
       'max_execution_time'  => \ini_get('max_execution_time'),
       'max_input_vars'      => \ini_get('max_input_vars'),
       // 'zlib'                => \extension_loaded('zlib'),
-      'zip'                 => \function_exists('zip_open') && \function_exists('zip_read'),
-      'gd'                  => \extension_loaded('gd'),
-      'exif'                => \extension_loaded('exif'),
-      'iconv'               => \function_exists('iconv'),
+      'zip'   => \function_exists('zip_open') && \function_exists('zip_read'),
+      'gd'    => \extension_loaded('gd'),
+      'exif'  => \extension_loaded('exif'),
+      'iconv' => \function_exists('iconv'),
     ];
 
     $this->addToolbar();

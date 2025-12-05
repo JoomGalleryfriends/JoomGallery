@@ -45,8 +45,8 @@ class HtmlView extends JoomGalleryView
    */
   public function display($tpl = null)
   {
-  /** @var ImageModel $model */
-  $model = $this->getModel();
+    /** @var ImageModel $model */
+    $model = $this->getModel();
 
     $this->state = $model->getState();
     $this->item  = $model->getItem();
@@ -73,8 +73,8 @@ class HtmlView extends JoomGalleryView
   {
     Factory::getApplication()->input->set('hidemainmenu', true);
 
-  /** @var Toolbar $model */
-  $toolbar = $this->getToolbar();
+    /** @var Toolbar $model */
+    $toolbar = $this->getToolbar();
 
     $user  = Factory::getApplication()->getIdentity();
     $isNew = ($this->item->id == 0);

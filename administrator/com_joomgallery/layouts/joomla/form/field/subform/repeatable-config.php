@@ -130,9 +130,11 @@ Factory::getApplication()
           </tr>
         </thead>
         <tbody class="subform-repeatable-container">
-          <?php foreach($forms as $k => $form) :
+        <?php
+        foreach($forms as $k => $form) :
             echo $this->sublayout($section, ['label' => $label, 'form' => $form, 'basegroup' => $fieldname, 'group' => $fieldname . $k, 'buttons' => $buttons, 'is_global_config' => $is_global_config]);
-          endforeach;?>
+        endforeach;
+        ?>
         </tbody>
       </table>
     </div>

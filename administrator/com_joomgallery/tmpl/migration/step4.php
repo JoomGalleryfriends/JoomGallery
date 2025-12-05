@@ -113,9 +113,11 @@ $wa->useStyle('com_joomgallery.admin')
                       <td><span class="badge bg-<?php echo $badgeClass; ?>"><?php echo $badgeText; ?></span></td>
                       <td>
                         <button class="btn btn-outline-secondary<?php if(empty($check->help))
-{ echo ' disabled';
+                        {
+                        echo ' disabled';
                                                                 };?>" <?php if(empty($check->help))
-{ echo 'disabled';
+                        {
+                        echo 'disabled';
                                                                 };?>
                                 data-title="<?php echo $check->title; ?>" data-text="<?php echo $check->help; ?>" onclick="openModal(event, this)">
                           <span class="icon-question" aria-hidden="true"></span>
@@ -178,8 +180,8 @@ $wa->useStyle('com_joomgallery.admin')
   // Help modal box
   $options = [
     'modal-dialog-scrollable' => true,
-    'title'  => 'Test Title',
-    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
+    'title'                             => 'Test Title',
+    'footer'                            => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
   ];
 
   echo HTMLHelper::_('bootstrap.renderModal', 'help-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
@@ -237,5 +239,5 @@ $wa->useStyle('com_joomgallery.admin')
 
     let bsmodal = new bootstrap.Modal(modal, {keyboard: false});
     bsmodal.show();
-  }
+  };
 </script>

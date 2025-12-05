@@ -77,7 +77,7 @@ $tip = null;
 
 if(!empty($description) && strpos($description, '{tip}') !== false)
 {
-  $desc_arr      = explode('{tip}', $description);
+  $desc_arr    = explode('{tip}', $description);
   $description = $desc_arr[0];
   $tip         = $desc_arr[1];
 }
@@ -135,7 +135,7 @@ if($sensitive)
         <?php if($name == 'jform[jg_imgprocessor]') : ?>
           <div class="mt">
             <small id="jg_imgprocessor_supplement" class="form-text"></small>
-          </div>
+          </div>          
         <?php endif; ?>
       </div>
     <?php endif; ?>

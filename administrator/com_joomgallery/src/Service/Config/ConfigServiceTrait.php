@@ -60,15 +60,15 @@ trait ConfigServiceTrait
      */
     public function createConfig($context = 'com_joomgallery', $id = null, $inclOwn = true, $useCache = true): void
     {
-    $inheritance = ComponentHelper::getParams(_JOOM_OPTION)->get('inheritance_config', 'default');
+        $inheritance = ComponentHelper::getParams(_JOOM_OPTION)->get('inheritance_config', 'default');
 
-    switch($inheritance)
-    {
-      default:
-        $this->config = new DefaultConfig($context, $id, $inclOwn, $useCache);
-          break;
-    }
+        switch($inheritance)
+        {
+            default:
+                $this->config = new DefaultConfig($context, $id, $inclOwn, $useCache);
+                break;
+        }
 
-    return;
+        return;
     }
 }

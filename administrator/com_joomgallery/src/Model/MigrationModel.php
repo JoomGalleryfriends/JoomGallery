@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -37,12 +36,12 @@ use Joomla\Registry\Registry;
  */
 class MigrationModel extends JoomAdminModel
 {
-    /**
-     * @var    string  Alias to manage history control
-     *
-     * @since  4.0.0
-     */
-    public $typeAlias = _JOOM_OPTION . '.migration';
+  /**
+   * @var    string  Alias to manage history control
+   *
+   * @since  4.0.0
+   */
+  public $typeAlias = _JOOM_OPTION . '.migration';
 
   /**
    * Item type
@@ -52,30 +51,30 @@ class MigrationModel extends JoomAdminModel
    */
   protected $type = 'migration';
 
-    /**
-     * @var    string  The prefix to use with controller messages
-     *
-     * @since  4.0.0
-     */
-    protected $text_prefix = _JOOM_OPTION_UC;
+  /**
+   * @var    string  The prefix to use with controller messages
+   *
+   * @since  4.0.0
+   */
+  protected $text_prefix = _JOOM_OPTION_UC;
 
-    /**
-     * Storage for the migration form object.
-     *
-     * @var   Registry
-     *
-     * @since  4.0.0
-     */
-    protected $params = null;
+  /**
+   * Storage for the migration form object.
+   *
+   * @var   Registry
+   *
+   * @since  4.0.0
+   */
+  protected $params = null;
 
-    /**
-     * Name of the migration script.
-     *
-     * @var   string
-     *
-     * @since  4.0.0
-     */
-    protected $scriptName = '';
+  /**
+   * Name of the migration script.
+   *
+   * @var   string
+   *
+   * @since  4.0.0
+   */
+  protected $scriptName = '';
 
   /**
    * Temporary storage of type name.
@@ -258,15 +257,15 @@ class MigrationModel extends JoomAdminModel
     return $scripts;
   }
 
-    /**
-     * Method to fetch a list of content types which can be migrated using the selected script.
-     *
-     * @return  array|boolean  List of content types on success, false otherwise
-     *
-     * @since   4.0.0
-     */
-    public function getMigrateables()
-    {
+  /**
+   * Method to fetch a list of content types which can be migrated using the selected script.
+   *
+   * @return  array|boolean  List of content types on success, false otherwise
+   *
+   * @since   4.0.0
+   */
+  public function getMigrateables()
+  {
     // Retrieve script
     $script = $this->getScript();
 
@@ -279,7 +278,7 @@ class MigrationModel extends JoomAdminModel
     $this->setParams();
 
     return $this->component->getMigration()->getMigrateables();
-    }
+  }
 
   /**
    * Method to get a migrateable record by id.
@@ -655,18 +654,18 @@ class MigrationModel extends JoomAdminModel
     return $this->component->getMigration()->getQueue($type, $table);
   }
 
-    /**
-     * Method to get the migration form.
-     *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
-     *
-     * @return  Form|boolean  A \JForm object on success, false on failure
-     *
-     * @since   4.0.0
-     */
-    public function getForm($data = [], $loadData = true)
-    {
+  /**
+   * Method to get the migration form.
+   *
+   * @param   array    $data      An optional array of data for the form to interogate.
+   * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+   *
+   * @return  Form|boolean  A \JForm object on success, false on failure
+   *
+   * @since   4.0.0
+   */
+  public function getForm($data = [], $loadData = true)
+  {
     // Retrieve script
     $script = $this->getScript();
 
@@ -695,17 +694,17 @@ class MigrationModel extends JoomAdminModel
       return false;
     }
 
-        // Get the form.
-    $name     = _JOOM_OPTION . '.migration.' . $this->component->getMigration()->get('name');
-        $form = $this->loadForm($name, $file, ['control' => 'jform_' . $script->name, 'load_data' => true]);
+    // Get the form.
+    $name = _JOOM_OPTION . '.migration.' . $this->component->getMigration()->get('name');
+    $form = $this->loadForm($name, $file, ['control' => 'jform_' . $script->name, 'load_data' => true]);
 
-        if(empty($form))
-        {
-            return false;
-        }
+    if(empty($form))
+    {
+      return false;
+    }
 
     return $form;
-    }
+  }
 
   /**
    * Method to validate the form data.
@@ -739,7 +738,7 @@ class MigrationModel extends JoomAdminModel
     {
       try
       {
-        $options   =  ['driver' => $data['dbtype'], 'host' => $data['dbhost'], 'user' => $data['dbuser'], 'password' => $data['dbpass'], 'database' => $data['dbname'], 'prefix' => $data['dbprefix']];
+        $options   = ['driver' => $data['dbtype'], 'host' => $data['dbhost'], 'user' => $data['dbuser'], 'password' => $data['dbpass'], 'database' => $data['dbname'], 'prefix' => $data['dbprefix']];
         $dbFactory = new DatabaseFactory();
         $db        = $dbFactory->getDriver($data['dbtype'], $options);
         $tableList = $db->getTableList();
@@ -985,7 +984,7 @@ class MigrationModel extends JoomAdminModel
     $table->clcProgress();
 
     // Prepare the row for saving
-        $this->prepareTable($table);
+    $this->prepareTable($table);
 
     // Check the data.
     if(!$table->check())
@@ -1150,7 +1149,7 @@ class MigrationModel extends JoomAdminModel
     $table->clcProgress();
 
     // Prepare the row for saving
-        $this->prepareTable($table);
+    $this->prepareTable($table);
 
     // Check the data.
     if(!$table->check())
@@ -1199,23 +1198,23 @@ class MigrationModel extends JoomAdminModel
     return $this->component->getMigration()->deleteSource();
   }
 
-    /**
-     * Method to get the data that should be injected in the form.
-     *
-     * @return  mixed  The data for the form.
-     *
-     * @since   4.0.0
-     */
-    protected function loadFormData()
-    {
+  /**
+   * Method to get the data that should be injected in the form.
+   *
+   * @return  mixed  The data for the form.
+   *
+   * @since   4.0.0
+   */
+  protected function loadFormData()
+  {
     if(!$this->component->getMigration())
     {
       $this->getScript();
     }
 
-        // Check the session for previously entered form data.
-    $name     = _JOOM_OPTION . '.migration.' . $this->component->getMigration()->get('name');
-        $data = $this->app->getUserState($name . '.step2.data', []);
+    // Check the session for previously entered form data.
+    $name = _JOOM_OPTION . '.migration.' . $this->component->getMigration()->get('name');
+    $data = $this->app->getUserState($name . '.step2.data', []);
 
     // Check the session for validated migration parameters
     $params = $this->getParams()['migration'];
@@ -1226,18 +1225,18 @@ class MigrationModel extends JoomAdminModel
       $params = $params->toArray();
     }
 
-        return (empty($params)) ? $data : $params;
-    }
+    return (empty($params)) ? $data : $params;
+  }
 
-    /**
-     * Build an SQL query to load the list data.
-     *
-     * @return  DatabaseQuery
-     *
-     * @since   4.0.0
-     */
-    protected function getListQuery()
-    {
+  /**
+   * Build an SQL query to load the list data.
+   *
+   * @return  DatabaseQuery
+   *
+   * @since   4.0.0
+   */
+  protected function getListQuery()
+  {
     // Retrieve script
     $script = $this->getScript();
 
@@ -1248,18 +1247,18 @@ class MigrationModel extends JoomAdminModel
     }
 
     // Create a new query object.
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true);
 
     // Select the required fields from the table.
-        $query->select(['a.id', 'a.type']);
+    $query->select(['a.id', 'a.type']);
     $query->from($db->quoteName(_JOOM_TABLE_MIGRATION, 'a'));
 
     // Filter for the current script
     $query->where($db->quoteName('a.script') . ' = ' . $db->quote($script->name));
 
     return $query;
-    }
+  }
 
   /**
    * Method to insert a content type record from migration data.
@@ -1327,8 +1326,8 @@ class MigrationModel extends JoomAdminModel
 
     // Change language to 'All' if multilanguage is not enabled
     if($isNew && !Multilanguage::isEnabled())
-        {
-            $data['language'] = '*';
+    {
+      $data['language'] = '*';
     }
 
     // Reset task
@@ -1357,7 +1356,7 @@ class MigrationModel extends JoomAdminModel
     }
 
     // Prepare the row for saving
-        $this->prepareTable($table);
+    $this->prepareTable($table);
 
     // Disable the alias check if supported
     if(!$this->component->getMigration()->get('params')->get('unique_alias', 1) && property_exists($table, '_checkAliasUniqueness'))
@@ -1415,9 +1414,9 @@ class MigrationModel extends JoomAdminModel
       // Joomla 5
       $options = [
         'context' => 'com_joomgallery.' . $recordType,
-        'subject' => $table,
-        'isNew'   => $isNew,
-        'data'    => $data,
+        'subject'           => $table,
+        'isNew'             => $isNew,
+        'data'              => $data,
       ];
       $event   = new Model\BeforeSaveEvent('onMigrationBeforeSave', $options);
       $results = $this->getDispatcher()->dispatch($event->getName(), $event)->getArgument('result', []);

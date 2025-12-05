@@ -40,14 +40,14 @@ use Joomla\Filesystem\Path;
  */
 class Jg3ToJg4 extends Migration implements MigrationInterface
 {
-    /**
-     * Name of the migration script to be used.
-     *
-     * @var   string
-     *
-     * @since  4.0.0
-     */
-    protected $name = 'Jg3ToJg4';
+  /**
+   * Name of the migration script to be used.
+   *
+   * @var   string
+   *
+   * @since  4.0.0
+   */
+  protected $name = 'Jg3ToJg4';
 
   /**
    * True to offer the task migration.removesource for this script
@@ -124,7 +124,8 @@ class Jg3ToJg4 extends Migration implements MigrationInterface
       $xml  = simplexml_load_file($path);
 
       if($xml)
-      {return $xml;
+      {
+      return $xml;
       }
 
 return $path;
@@ -145,7 +146,8 @@ return $path;
         $xml  = simplexml_load_file($path);
 
         if($xml)
-        {return $xml;
+        {
+        return $xml;
         }
 
 return $path;
@@ -156,7 +158,8 @@ return $path;
         $xml  = simplexml_load_file($path);
 
         if($xml)
-        {return $xml;
+        {
+        return $xml;
         }
 
 return $path;
@@ -210,13 +213,13 @@ return $path;
   public function defineTypes($names_only = false, &$type = null): array
   {
     $types = [
-      'category'  => ['#__joomgallery_catg', 'cid', 'name', true, false, true],
-      'image'     => ['#__joomgallery', 'id', 'imgtitle', false, true, true],
-      'catimage'  => [_JOOM_TABLE_CATEGORIES, 'cid', 'name', false, false, false],
-      'user'      => ['#__joomgallery_users', 'uid', '', false, false, true],
-      'collection' => ['#__joomgallery_users', 'uid', '', false, false, true],
-      'vote'      => ['#__joomgallery_votes', 'voteid', '', false, false, true],
-      'comment'   => ['#__joomgallery_comments', 'cmtid', 'cmtname', false, false, true],
+      'category' => ['#__joomgallery_catg', 'cid', 'name', true, false, true],
+      'image'            => ['#__joomgallery', 'id', 'imgtitle', false, true, true],
+      'catimage'         => [_JOOM_TABLE_CATEGORIES, 'cid', 'name', false, false, false],
+      'user'             => ['#__joomgallery_users', 'uid', '', false, false, true],
+      'collection'       => ['#__joomgallery_users', 'uid', '', false, false, true],
+      'vote'             => ['#__joomgallery_votes', 'voteid', '', false, false, true],
+      'comment'          => ['#__joomgallery_comments', 'cmtid', 'cmtname', false, false, true],
     ];
 
     if($this->params->get('source_ids', 0) == 1)
@@ -334,10 +337,10 @@ return $path;
       case 'category':
         // Apply mapping for category table
         $mapping = [
-          'cid' => $id, 'asset_id' => 0, 'name' => 'title', 'alias' => false, 'lft' => false, 'rgt' => false, 'level' => false,
-          'owner' => $owner, 'img_position' => false, 'catpath' => 'static_path', 'params' => ['params', false, false],
-          'allow_download' => ['params', 'jg_download', false], 'allow_comment' => ['params', 'jg_showcomment', false],
-          'allow_rating' => ['params', 'jg_showrating', false], 'allow_watermark' => ['params', 'jg_dynamic_watermark', false],
+          'cid'           => $id, 'asset_id' => 0, 'name' => 'title', 'alias' => false, 'lft' => false, 'rgt' => false, 'level' => false,
+          'owner'                    => $owner, 'img_position' => false, 'catpath' => 'static_path', 'params' => ['params', false, false],
+          'allow_download'           => ['params', 'jg_download', false], 'allow_comment' => ['params', 'jg_showcomment', false],
+          'allow_rating'             => ['params', 'jg_showrating', false], 'allow_watermark' => ['params', 'jg_dynamic_watermark', false],
           'allow_watermark_download' => ['params', 'jg_downloadwithwatermark', false],
         ];
 
@@ -353,8 +356,8 @@ return $path;
         // Apply mapping for image table
         $mapping = [
           'id' => $id, 'asset_id' => 0, 'alias' => false, 'imgtitle' => 'title', 'imgtext' => 'description', 'imgauthor' => 'author',
-          'imgdate' => 'date', 'imgfilename' => 'filename', 'imgvotes' => 'votes', 'imgvotesum' => 'votesum', 'imgthumbname' => false,
-          'owner' => $owner, 'params' => ['params', false, false],
+          'imgdate'       => 'date', 'imgfilename' => 'filename', 'imgvotes' => 'votes', 'imgvotesum' => 'votesum', 'imgthumbname' => false,
+          'owner'         => $owner, 'params' => ['params', false, false],
         ];
 
         // Check difference between imgfilename and imgthumbname
@@ -399,7 +402,7 @@ return $path;
         // Apply mapping for users table
         $mapping = [
           'uid' => $id, 'uuserid' => $owner, 'piclist' => false, 'time' => 'created_time',
-          'zipname' => ['params', false, false], 'layout' => ['params', false, false],
+          'zipname'        => ['params', false, false], 'layout' => ['params', false, false],
         ];
 
           break;
@@ -408,7 +411,7 @@ return $path;
         // Apply mapping for votes table
         $mapping = [
           'voteid' => $id, 'picid' => 'imgid', 'userid' => $owner,
-          'userip' => 'identication', 'datevoted' => 'created_time', 'vote' => 'score',
+          'userip'            => 'identication', 'datevoted' => 'created_time', 'vote' => 'score',
         ];
 
         // Adjust imgid with new created images
@@ -423,7 +426,7 @@ return $path;
         // Apply mapping for comments table
         $mapping = [
           'cmtid' => $id, 'cmtpic' => 'imgid', 'cmtip' => false, 'userid' => $owner,
-          'cmtname' => 'title', 'cmttext' => 'description', 'cmtdate' => 'created_time',
+          'cmtname'          => 'title', 'cmttext' => 'description', 'cmtdate' => 'created_time',
         ];
 
         // Adjust imgid with new created images
@@ -438,7 +441,7 @@ return $path;
         // Apply mapping for collections table
         $mapping = [
           'uid' => false, 'uuserid' => 'userid', 'piclist' => 'images', 'layout' => false,
-          'time' => false, 'zipname' => false,
+          'time'           => false, 'zipname' => false,
         ];
 
         // Convert piclist to array
@@ -498,7 +501,7 @@ return $path;
   {
     if(\is_null($migrateable))
     {
-      if(!$migrateable  = $this->getMigrateable($type))
+      if(!$migrateable = $this->getMigrateable($type))
       {
         return [];
       }
@@ -514,7 +517,7 @@ return $path;
     list($db, $prefix) = $this->getDB('source');
 
     // Initialize query object
-        $query = $db->getQuery(true);
+    $query = $db->getQuery(true);
 
     // Create selection
     $selection = [$db->quoteName($primarykey)];

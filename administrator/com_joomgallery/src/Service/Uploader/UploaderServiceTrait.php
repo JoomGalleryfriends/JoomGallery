@@ -60,27 +60,27 @@ trait UploaderServiceTrait
      */
     public function createUploader($uploadMethod, $multiple = false, $async = false): void
     {
-    switch($uploadMethod)
-    {
-      case 'TUS':
-      case 'tus':
-        $this->uploader = new TUSUploader($multiple, $async);
-          break;
+        switch($uploadMethod)
+        {
+            case 'TUS':
+            case 'tus':
+                $this->uploader = new TUSUploader($multiple, $async);
+                break;
 
-      case 'single':
-        $this->uploader = new SingleUploader($multiple);
-          break;
+            case 'single':
+                $this->uploader = new SingleUploader($multiple);
+                break;
 
-      case 'FTP':
-      case 'ftp':
-        $this->uploader = new FTPUploader($multiple, $async);
-          break;
+            case 'FTP':
+            case 'ftp':
+                $this->uploader = new FTPUploader($multiple, $async);
+                break;
 
-      default:
-        $this->uploader = new HTMLUploader($multiple, $async);
-          break;
-    }
+            default:
+                $this->uploader = new HTMLUploader($multiple, $async);
+                break;
+        }
 
-    return;
+        return;
     }
 }

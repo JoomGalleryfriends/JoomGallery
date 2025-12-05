@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -44,10 +43,10 @@ class ImagetypeModel extends JoomAdminModel
    */
   protected function loadFormData()
   {
-  if($this->item === null)
-  {
-    $this->item = $this->getItem();
-  }
+    if($this->item === null)
+    {
+      $this->item = $this->getItem();
+    }
 
     return $this->item;
   }
@@ -63,7 +62,7 @@ class ImagetypeModel extends JoomAdminModel
    */
   public function getItem($pk = null)
   {
-  $pk      = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
+    $pk    = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
     $table = $this->getTable();
 
     if($pk > 0 || \is_array($pk))
@@ -78,14 +77,14 @@ class ImagetypeModel extends JoomAdminModel
         if(!$table->getError())
         {
           // Create new row
-      $table->load(0);
+          $table->load(0);
         }
         else
         {
           $this->setError($table->getError());
           $this->component->addLog($table->getError(), 'error', 'jerror');
 
-      return false;
+          return false;
         }
       }
     }
@@ -94,16 +93,16 @@ class ImagetypeModel extends JoomAdminModel
     $properties = get_object_vars($table);
     $item       = ArrayHelper::toObject($properties);
 
-  if(property_exists($item, 'params'))
+    if(property_exists($item, 'params'))
     {
       $registry     = new Registry($item->params);
       $item->params = $registry->toArray();
-  }
+    }
 
-  if(isset($item->params))
-  {
-    $item->params = json_encode($item->params);
-  }
+    if(isset($item->params))
+    {
+      $item->params = json_encode($item->params);
+    }
 
     return $item;
   }

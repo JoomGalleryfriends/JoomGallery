@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -122,7 +121,7 @@ class CategoriesModel extends JoomListModel
     $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '*');
     $this->setState('filter.published', $published);
     $level = $this->getUserStateFromRequest($this->context . '.filter.level', 'filter_level', '*');
-      $this->setState('filter.level', $level);
+    $this->setState('filter.level', $level);
     $language = $this->getUserStateFromRequest($this->context . '.filter.language', 'filter_language', '');
     $this->setState('filter.language', $language);
     $showself = $this->getUserStateFromRequest($this->context . '.filter.showself', 'filter_showself', '1');
@@ -220,15 +219,15 @@ class CategoriesModel extends JoomListModel
     // Get img_count
     $imgQuery = $db->getQuery(true);
     $imgQuery->select('COUNT(`img`.id)')
-              ->from($db->quoteName('#__joomgallery', 'img'))
-              ->where($db->quoteName('img.catid') . ' = ' . $db->quoteName('a.id'));
+             ->from($db->quoteName('#__joomgallery', 'img'))
+             ->where($db->quoteName('img.catid') . ' = ' . $db->quoteName('a.id'));
     $query->select('(' . $imgQuery->__toString() . ') AS ' . $db->quoteName('img_count'));
 
     // Get child_count
     $subQuery = $db->getQuery(true);
     $subQuery->select('COUNT(`child`.id)')
-              ->from($db->quoteName('#__joomgallery_categories', 'child'))
-              ->where($db->quoteName('child.parent_id') . ' = ' . $db->quoteName('a.id'));
+             ->from($db->quoteName('#__joomgallery_categories', 'child'))
+             ->where($db->quoteName('child.parent_id') . ' = ' . $db->quoteName('a.id'));
     $query->select('(' . $subQuery->__toString() . ') AS ' . $db->quoteName('child_count'));
 
     // Join over the language fields 'language_title' and 'language_image'
@@ -237,6 +236,7 @@ class CategoriesModel extends JoomListModel
 
     // Filter by access level.
     $access = $this->getState('filter.access');
+
     if(!empty($access))
     {
       if(is_numeric($access))
@@ -254,6 +254,7 @@ class CategoriesModel extends JoomListModel
 
     // Filter by owner
     $userId = $this->getState('filter.created_by');
+
     if(!empty($userId))
     {
       if(is_numeric($userId))
@@ -272,20 +273,21 @@ class CategoriesModel extends JoomListModel
 
     // Filter by search
     $search = $this->getState('filter.search');
+
     if(!empty($search))
     {
       if(stripos($search, 'id:') === 0)
       {
         $search = (int) substr($search, 3);
         $query->where($db->quoteName('a.id') . ' = :search')
-              ->bind(':search', $search, ParameterType::INTEGER);
+          ->bind(':search', $search, ParameterType::INTEGER);
       }
       else
       {
         $search = '%' . str_replace(' ', '%', trim($search)) . '%';
         $query->where(
-          '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
-              . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
+            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
+            . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
       }
@@ -293,18 +295,20 @@ class CategoriesModel extends JoomListModel
 
     // Filter by published state
     $published = (string) $this->getState('filter.published');
+
     if($published !== '*')
     {
       if(is_numeric($published))
       {
-          $state = (int) $published;
-          $query->where($db->quoteName('a.published') . ' = :state')
-              ->bind(':state', $state, ParameterType::INTEGER);
+        $state = (int) $published;
+        $query->where($db->quoteName('a.published') . ' = :state')
+          ->bind(':state', $state, ParameterType::INTEGER);
       }
     }
 
     // Filter by hidden categories
     $showhidden = (bool) $this->getState('filter.showhidden');
+
     if(!$showhidden)
     {
       $query->where($db->quoteName('a.hidden') . ' = 0');
@@ -312,6 +316,7 @@ class CategoriesModel extends JoomListModel
 
     // Filter by empty categories
     $showempty = (bool) $this->getState('filter.showempty');
+
     if(!$showempty)
     {
       // Add EXISTS subquery
@@ -326,6 +331,7 @@ class CategoriesModel extends JoomListModel
     // Filter by categories and by level
     $categoryId = $this->getState('filter.category', []);
     $level      = (int) $this->getState('filter.level');
+
     if(!\is_array($categoryId))
     {
       $categoryId = $categoryId ? [$categoryId] : [];
@@ -340,7 +346,7 @@ class CategoriesModel extends JoomListModel
     elseif($level = (int) $level)
     {
       $query->where($db->quoteName('a.level') . ' <= :level')
-            ->bind(':level', $level, ParameterType::INTEGER);
+        ->bind(':level', $level, ParameterType::INTEGER);
     }
 
     // Filter: Exclude categories
@@ -348,12 +354,12 @@ class CategoriesModel extends JoomListModel
 
     if(!\is_array($excludeId))
     {
-            $excludeId = $excludeId ? [$excludeId] : [];
+      $excludeId = $excludeId ? [$excludeId] : [];
     }
 
     // Case: Exclude categories filter
     if(\count($excludeId))
-        {
+    {
       $this->categoriesFilterQuery($query, $excludeId, false, true);
     }
 
@@ -373,8 +379,9 @@ class CategoriesModel extends JoomListModel
     if($language = $this->getState('filter.language'))
     {
       $query->where($db->quoteName('a.language') . ' = :language')
-            ->bind(':language', $language);
+        ->bind(':language', $language);
     }
+
     // Add the list ordering clause.
     $orderCol  = $this->state->get('list.ordering', 'a.lft');
     $orderDirn = $this->state->get('list.direction', 'ASC');

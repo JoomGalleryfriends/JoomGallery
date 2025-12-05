@@ -42,17 +42,17 @@ class JoomHelper
    * @var array
    */
   public static $content_types = [
-    'category'   => _JOOM_TABLE_CATEGORIES,
-    'collection' => _JOOM_TABLE_COLLECTIONS,
-    'comment'    => _JOOM_TABLE_COMMENTS,
-    'config'     => _JOOM_TABLE_CONFIGS,
-    'faulty'     => _JOOM_TABLE_FAULTIES,
-    'image'      => _JOOM_TABLE_IMAGES,
-    'imagetype'  => _JOOM_TABLE_IMG_TYPES,
-    'tag'        => _JOOM_TABLE_TAGS,
-    'task'       => _JOOM_TABLE_TASKS,
-    'user'       => _JOOM_TABLE_USERS,
-    'vote'       => _JOOM_TABLE_VOTES,
+    'category' => _JOOM_TABLE_CATEGORIES,
+    'collection'                             => _JOOM_TABLE_COLLECTIONS,
+    'comment'                                => _JOOM_TABLE_COMMENTS,
+    'config'                                 => _JOOM_TABLE_CONFIGS,
+    'faulty'                                 => _JOOM_TABLE_FAULTIES,
+    'image'                                  => _JOOM_TABLE_IMAGES,
+    'imagetype'                              => _JOOM_TABLE_IMG_TYPES,
+    'tag'                                    => _JOOM_TABLE_TAGS,
+    'task'                                   => _JOOM_TABLE_TASKS,
+    'user'                                   => _JOOM_TABLE_USERS,
+    'vote'                                   => _JOOM_TABLE_VOTES,
   ];
 
   /**
@@ -433,18 +433,18 @@ class JoomHelper
       {
         case 'thumb':
           $type = 'thumbnail';
-          break;
+            break;
 
         case 'img':
           $type = 'detail';
-          break;
+            break;
 
         case 'orig':
           $type = 'original';
-          break;
+            break;
 
         default:
-          break;
+            break;
       }
     }
 
@@ -477,8 +477,9 @@ class JoomHelper
           return self::getImgZero($type, $url, $root);
         }
 
-        // get image based on ID
-        $img = self::getRecord('image', $img);
+
+          // get image based on ID
+          $img = self::getRecord('image', $img);
       }
       elseif(\is_string($img))
       {
@@ -491,11 +492,13 @@ class JoomHelper
             return Uri::root(true) . $img;
           }
 
-          return Uri::root(true) . '/' . $img;
+
+            return Uri::root(true) . '/' . $img;
         }
 
-        // get image id based on filename
-        $img = self::getRecord('image', ['filename' => $img]);
+
+          // get image id based on filename
+          $img = self::getRecord('image', ['filename' => $img]);
       }
       else
       {
@@ -519,6 +522,7 @@ class JoomHelper
         // Example: https://www.example.org/index.php?option=com_joomgallery&controller=images&view=image&format=raw&type=orig&id=3&catid=1
         return Route::_(self::getViewRoute('image', $img->id, $img->catid, 'raw', $type));
       }
+
 
         // Create file manager service
         $manager = self::getService('FileManager', [$img->catid]);
@@ -548,9 +552,10 @@ class JoomHelper
         return $manager->getImgPath($img, $type, false, false, true);
       }
 
-      // Relative system path
-      // Example: /images/joomgallery/orig/test.jpg
-      return $manager->getImgPath($img, $type, false, false, false);
+
+        // Relative system path
+        // Example: /images/joomgallery/orig/test.jpg
+        return $manager->getImgPath($img, $type, false, false, false);
     }
   }
 
@@ -799,9 +804,9 @@ class JoomHelper
   public static function getRecordIDbyAliasOrFilename($record, $name)
   {
     $tables = [
-      'category'  => _JOOM_TABLE_CATEGORIES,
-      'image'     => _JOOM_TABLE_IMAGES,
-      'imagetype' => _JOOM_TABLE_IMG_TYPES,
+      'category' => _JOOM_TABLE_CATEGORIES,
+      'image'             => _JOOM_TABLE_IMAGES,
+      'imagetype'         => _JOOM_TABLE_IMG_TYPES,
     ];
 
     // Does imagetype support alias
@@ -858,7 +863,8 @@ class JoomHelper
       return $result;
     }
 
-    return false;
+
+      return false;
   }
 
   /**
@@ -897,10 +903,11 @@ class JoomHelper
       return Route::_(self::getViewRoute('image', 0, 1, 'raw', $type));
     }
 
-    // Create file manager service
-    $manager = self::getService('FileManager', [1]);
 
-    return $manager->getImgPath(0, $type, false, false, $root);
+      // Create file manager service
+      $manager = self::getService('FileManager', [1]);
+
+      return $manager->getImgPath(0, $type, false, false, $root);
   }
 
   /**
@@ -1221,7 +1228,7 @@ class JoomHelper
     // List of irregular words
     $irregularWords = [
       'child' => 'children', 'man' => 'men', 'woman' => 'women', 'tooth' => 'teeth',
-      'foot'  => 'feet', 'person' => 'people', 'mouse' => 'mice',
+      'foot'                   => 'feet', 'person' => 'people', 'mouse' => 'mice',
     ];
 
     // If the word is in the irregular list, return the plural form

@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -54,18 +53,18 @@ class TaskModel extends JoomAdminModel
     $this->setState($this->getName() . '.option', $taskOption);
   }
 
-    /**
-     * Method to get the record form.
-     *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
-     *
-     * @return  Form|boolean  A \JForm object on success, false on failure
-     *
-     * @since   4.2.0
-     */
-    public function getForm($data = [], $loadData = true)
-    {
+  /**
+   * Method to get the record form.
+   *
+   * @param   array    $data      An optional array of data for the form to interogate.
+   * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+   *
+   * @return  Form|boolean  A \JForm object on success, false on failure
+   *
+   * @since   4.2.0
+   */
+  public function getForm($data = [], $loadData = true)
+  {
     $form = parent::getForm($data, $loadData);
 
     // If new entry, set task type from state
@@ -79,35 +78,35 @@ class TaskModel extends JoomAdminModel
     }
 
     return $form;
-    }
+  }
 
-    /**
-     * Method to get the data that should be injected in the form.
-     *
-     * @return  mixed  The data for the form.
-     *
-     * @since   4.2.0
-     */
-    protected function loadFormData()
+  /**
+   * Method to get the data that should be injected in the form.
+   *
+   * @return  mixed  The data for the form.
+   *
+   * @since   4.2.0
+   */
+  protected function loadFormData()
+  {
+    // Check the session for previously entered form data.
+    $data = $this->app->getUserState(_JOOM_OPTION . '.edit.task.data', []);
+
+    if(empty($data))
     {
-        // Check the session for previously entered form data.
-        $data = $this->app->getUserState(_JOOM_OPTION . '.edit.task.data', []);
+      if($this->item === null)
+      {
+        $this->item = $this->getItem();
+      }
 
-        if(empty($data))
-        {
-            if($this->item === null)
-            {
-                $this->item = $this->getItem();
-            }
-
-            $data = $this->item;
-        }
+      $data = $this->item;
+    }
 
     // Add support for queue
     $data->queue = implode(',', $data->queue);
 
-        return $data;
-    }
+    return $data;
+  }
 
   /**
    * Method to get a migrateable record by id.

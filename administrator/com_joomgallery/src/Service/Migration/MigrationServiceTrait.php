@@ -47,25 +47,25 @@ trait MigrationServiceTrait
      */
     public function createMigration($script)
     {
-    // Get list of scripts
-    $scripts = $this->getScripts();
+        // Get list of scripts
+        $scripts = $this->getScripts();
 
-    // Check if selected script exists
-    if(!\in_array($script, array_keys($scripts)))
-    {
-      // Requested script does not exists
-      $this->component->addLog(Text::_('COM_JOOMGALLERY_MIGRATION_SCRIPT_NOT_EXIST'), 'error', 'jerror');
-      throw new \Exception(Text::_('COM_JOOMGALLERY_MIGRATION_SCRIPT_NOT_EXIST'), 1);
-    }
+        // Check if selected script exists
+        if(!\in_array($script, array_keys($scripts)))
+        {
+            // Requested script does not exists
+            $this->component->addLog(Text::_('COM_JOOMGALLERY_MIGRATION_SCRIPT_NOT_EXIST'), 'error', 'jerror');
+            throw new \Exception(Text::_('COM_JOOMGALLERY_MIGRATION_SCRIPT_NOT_EXIST'), 1);
+        }
 
-    // Create migration service based on provided migration script name
-    require_once $scripts[$script]['path'];
+        // Create migration service based on provided migration script name
+        require_once $scripts[$script]['path'];
 
-    $namespace                  = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Service\\Migration\\Scripts';
-    $fully_qualified_class_name = $namespace . '\\' . $script;
-    $this->migration            = new $fully_qualified_class_name();
+        $namespace                  = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Service\\Migration\\Scripts';
+        $fully_qualified_class_name = $namespace . '\\' . $script;
+        $this->migration            = new $fully_qualified_class_name();
 
-    return;
+        return;
     }
 
     /**
@@ -77,29 +77,29 @@ trait MigrationServiceTrait
      */
     public function getMigration()
     {
-    return $this->migration;
+        return $this->migration;
     }
 
-  /**
-   * Method to get all available migration scripts.
-   *
-   * @return  array|boolean   List of paths of all available scripts.
-   *
-   * @since   4.0.0
-   */
-  protected function getScripts()
-  {
-    $files = Folder::files(JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts', '.php$', false, true);
-
-    $scripts = [];
-
-    foreach($files as $path)
+    /**
+     * Method to get all available migration scripts.
+     *
+     * @return  array|boolean   List of paths of all available scripts.
+     *
+     * @since   4.0.0
+     */
+    protected function getScripts()
     {
-      $img = Uri::base() . 'components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts/' . basename($path, '.php') . '.jpg';
+        $files = Folder::files(JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts', '.php$', false, true);
 
-      $scripts[basename($path, '.php')] = ['path' => Path::clean($path), 'img' => $img];
+        $scripts = [];
+
+        foreach($files as $path)
+        {
+            $img = Uri::base() . 'components/' . _JOOM_OPTION . '/src/Service/Migration/Scripts/' . basename($path, '.php') . '.jpg';
+
+            $scripts[basename($path, '.php')] = ['path' => Path::clean($path), 'img' => $img];
+        }
+
+        return $scripts;
     }
-
-    return $scripts;
-  }
 }

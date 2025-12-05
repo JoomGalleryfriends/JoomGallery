@@ -39,8 +39,8 @@ $saveOrder = ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 
 if($saveOrder && !empty($this->items))
 {
-    $saveOrderingUrl = 'index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
-    HTMLHelper::_('draggablelist.draggable');
+  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  HTMLHelper::_('draggablelist.draggable');
 }
 ?>
 
@@ -119,32 +119,32 @@ if($saveOrder && !empty($this->items))
                 $canCheckin = $user->authorise('core.admin', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
 
                 // Get the parents of item for sorting
-                                if($item->level > 1)
-                                {
-                                    $parentsStr       = '';
-                                    $_currentParentId = $item->parent_id;
-                                    $parentsStr       = ' ' . $_currentParentId;
+                if($item->level > 1)
+                {
+                  $parentsStr       = '';
+                  $_currentParentId = $item->parent_id;
+                  $parentsStr       = ' ' . $_currentParentId;
 
-                                    for($i2 = 0; $i2 < $item->level; $i2++)
-                                    {
-                                        foreach($this->ordering as $k => $v)
-                                        {
-                                            $v = implode('-', $v);
-                                            $v = '-' . $v . '-';
+                  for($i2 = 0; $i2 < $item->level; $i2++)
+                  {
+                    foreach($this->ordering as $k => $v)
+                    {
+                      $v = implode('-', $v);
+                      $v = '-' . $v . '-';
 
-                                            if(strpos($v, '-' . $_currentParentId . '-') !== false)
-                                            {
-                                                $parentsStr      .= ' ' . $k;
-                                                $_currentParentId = $k;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    $parentsStr = '';
-                                }
+                      if(strpos($v, '-' . $_currentParentId . '-') !== false)
+                      {
+                        $parentsStr      .= ' ' . $k;
+                        $_currentParentId = $k;
+                        break;
+                      }
+                    }
+                  }
+                }
+                else
+                {
+                  $parentsStr = '';
+                }
               ?>
               <tr class="row<?php echo $i % 2; ?>" data-draggable-group="<?php echo $item->parent_id; ?>"
                 data-item-id="<?php echo $item->id ?>" data-parents="<?php echo $parentsStr ?>"
@@ -185,8 +185,8 @@ if($saveOrder && !empty($this->items))
                   <?php
                     $options = [
                       'task_prefix' => 'categories.',
-                      'disabled' => !$canChange,
-                      'id' => 'state-' . $item->id,
+                      'disabled'    => !$canChange,
+                      'id'          => 'state-' . $item->id,
                     ];
 
                     echo (new PublishedButton())->render((int) $item->published, $i, $options);

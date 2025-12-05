@@ -22,7 +22,7 @@ use Joomla\CMS\Router\Route;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-     ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useStyle('com_joomgallery.admin');
 
 // Add javascript to deactivate filesystem dropdown field

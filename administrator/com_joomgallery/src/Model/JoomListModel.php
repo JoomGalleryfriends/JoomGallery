@@ -57,7 +57,7 @@ abstract class JoomListModel extends ListModel
    * JoomGallery access service
    *
    * @access  protected
-   * @var     AccessInterface
+   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
    */
   protected $acl = null;
 
@@ -102,31 +102,31 @@ abstract class JoomListModel extends ListModel
     $this->user      = $this->component->getMVCFactory()->getIdentity();
   }
 
-    /**
-     * Method to get parameters from model state.
-     *
-     * @return  Registry[]   List of parameters
-     * @since   4.0.0
-     */
-    public function getParams(): array
-    {
-        $params = [
-          'component' => $this->getState('parameters.component'),
-          'menu'      => $this->getState('parameters.menu'),
-          'configs'   => $this->getState('parameters.configs'),
-        ];
+  /**
+   * Method to get parameters from model state.
+   *
+   * @return  Registry[]   List of parameters
+   * @since   4.0.0
+   */
+  public function getParams(): array
+  {
+    $params = [
+      'component' => $this->getState('parameters.component'),
+      'menu'               => $this->getState('parameters.menu'),
+      'configs'            => $this->getState('parameters.configs'),
+    ];
 
-        return $params;
-    }
+    return $params;
+  }
 
-    /**
-     * Method to get the access service class.
-     *
-     * @return  AccessInterface   Object on success, false on failure.
-     * @since   4.0.0
-     */
-    public function getAcl(): AccessInterface
-    {
+  /**
+   * Method to get the access service class.
+   *
+   * @return  AccessInterface   Object on success, false on failure.
+   * @since   4.0.0
+   */
+  public function getAcl(): AccessInterface
+  {
     // Create access service
     if(\is_null($this->acl))
     {
@@ -134,8 +134,8 @@ abstract class JoomListModel extends ListModel
       $this->acl = $this->component->getAccess();
     }
 
-        return $this->acl;
-    }
+    return $this->acl;
+  }
 
   /**
    * Method to load component specific parameters into model state.
@@ -146,22 +146,22 @@ abstract class JoomListModel extends ListModel
   protected function loadComponentParams()
   {
     // Load the componen parameters.
-        $params       = Factory::getApplication('com_joomgallery')->getParams();
-        $params_array = $params->toArray();
+    $params       = Factory::getApplication('com_joomgallery')->getParams();
+    $params_array = $params->toArray();
 
-        if(isset($params_array['item_id']))
-        {
-            $this->setState($this->type . '.id', $params_array['item_id']);
-        }
+    if(isset($params_array['item_id']))
+    {
+      $this->setState($this->type . '.id', $params_array['item_id']);
+    }
 
-        $this->setState('parameters.component', $params);
+    $this->setState('parameters.component', $params);
 
-        // Load the configs from config service
-        $this->component->createConfig('com_joomgallery');
-        $configArray = $this->component->getConfig()->getProperties();
-        $configs     = new Registry($configArray);
+    // Load the configs from config service
+    $this->component->createConfig('com_joomgallery');
+    $configArray = $this->component->getConfig()->getProperties();
+    $configs     = new Registry($configArray);
 
-        $this->setState('parameters.configs', $configs);
+    $this->setState('parameters.configs', $configs);
   }
 
   /**
