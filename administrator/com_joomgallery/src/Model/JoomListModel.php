@@ -314,10 +314,12 @@ abstract class JoomListModel extends ListModel
     if($table instanceof CurrentUserInterface)
     {
         $app = Factory::getApplication();
-        if (! $app->isClient('api')) 
+
+        if (! $app->isClient('api'))
         {
             $table->setCurrentUser($this->component->getMVCFactory()->getIdentity());
-        } else 
+        }
+        else
         {
             $table->setCurrentUser($app->getIdentity());
         }
