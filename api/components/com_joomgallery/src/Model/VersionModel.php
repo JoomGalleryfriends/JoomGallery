@@ -1,10 +1,11 @@
 <?php
 /**
- * @package     Joomgallery\Component\Joomgallery\Api\Model
- * @subpackage
- *
- * @copyright   A copyright
- * @license     A "Slug" license name e.g. GPL2
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\Model;
@@ -16,8 +17,6 @@ use Joomla\Component\Media\Administrator\Model\ApiModel;
 use Joomla\Database\DatabaseInterface;
 
 /**
- *
- *
  * @since  4.2.0
  */
 class VersionModel extends BaseModel
@@ -38,22 +37,21 @@ class VersionModel extends BaseModel
     }
 
     /**
-     *
      * @return  \stdClass  A file or folder object.
      *
      * @since   4.1.0
      * @throws  ResourceNotFound
      */
-    public function getItem() {
+    public function getItem()
+    {
 
         $componentName = 'com_joomgallery';
 
-        $oVersion = new \stdClass();
-        $oVersion->version = "xx.xx.xx";
-        $oVersion->creationDate = "2025.xx.xx";
+        $oVersion               = new \stdClass();
+        $oVersion->version      = 'xx.xx.xx';
+        $oVersion->creationDate = '2025.xx.xx';
 
         try {
-
             //$db = Factory::getDbo();
             $db = Factory::getContainer()->get(DatabaseInterface::class);
 
@@ -65,10 +63,10 @@ class VersionModel extends BaseModel
 
             $manifest = json_decode($db->loadResult(), true);
 
-            $oVersion->version = $manifest['version'];
+            $oVersion->version      = $manifest['version'];
             $oVersion->creationDate = $manifest['creationDate'];
-
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
 

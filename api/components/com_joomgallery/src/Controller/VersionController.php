@@ -1,22 +1,23 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
+use Joomgallery\Component\Joomgallery\Api\View\Version\JsonapiView;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\ApiController;
 use Joomla\String\Inflector;
-use Joomgallery\Component\Joomgallery\Api\View\Version\JsonapiView;
 //use Joomla\CMS\MVC\View\JsonApiView;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -65,7 +66,8 @@ class VersionController extends ApiController
                 '',
                 ['base_path' => $this->basePath, 'layout' => $viewLayout, 'contentType' => $this->contentType]
             );
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
 
@@ -74,14 +76,16 @@ class VersionController extends ApiController
         // Create the model, ignoring request data so we can safely set the state in the request from the controller
         $model = $this->getModel($modelName, '', ['ignore_request' => true, 'state' => $this->modelState]);
 
-        if (!$model) {
+        if(!$model)
+        {
             throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
         }
 
         // test if model is valid
         try {
             $modelName = $model->getName();
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
 
@@ -93,5 +97,4 @@ class VersionController extends ApiController
 
         return $this;
     }
-
 }

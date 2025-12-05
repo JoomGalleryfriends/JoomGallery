@@ -1,11 +1,11 @@
 <?php
-
 /**
- * @package     
- * @subpackage  
- *
- * @copyright   
- * @license     
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\View\Configs;
@@ -22,7 +22,7 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -39,131 +39,131 @@ class JsonapiView extends BaseApiView
      * @since  4.0.0
      */
     protected $fieldsToRenderItem = [
-	    'id',
-	    'asset_id',
-	    'title',
-	    'note',
-	    'group_id',
-	    'published',
-	    'ordering',
-	    'checked_out',
-	    'checked_out_time',
-	    'created_by',
-	    'modified_by',
-	    'jg_filesystem',
-	    'jg_imagetypes',
-	    'jg_pathftpupload',
-	    'jg_wmfile',
-	    'jg_use_real_paths',
-	    'jg_router',
-	    'jg_router_ids',
-	    'jg_compatibility_mode',
-	    'jg_replaceinfo',
-	    'jg_replaceshowwarning',
-	    'jg_useorigfilename',
-	    'jg_uploadorder',
-	    'jg_filenamenumber',
-	    'jg_parallelprocesses',
-	    'jg_imgprocessor',
-	    'jg_fastgd2creation',
-	    'jg_impath',
-	    'jg_staticprocessing',
-	    'jg_dynamicprocessing',
-	    'jg_dynamic_watermark',
-	    'jg_record_hits',
-	    'jg_record_hits_select',
-	    'jg_gallery_view_browse_categories_link',
-	    'jg_gallery_view_class',
-	    'jg_gallery_view_num_columns',
-	    'jg_gallery_view_image_class',
-	    'jg_gallery_view_justified_height',
-	    'jg_gallery_view_justified_gap',
-	    'jg_gallery_view_numb_images',
-	    'jg_gallery_view_ordering',
-	    'jg_gallery_view_type_image',
-	    'jg_gallery_view_image_link',
-	    'jg_category_view_browse_images_link',
-	    'jg_category_view_subcategory_class',
-	    'jg_category_view_subcategory_num_columns',
-	    'jg_category_view_subcategory_image_class',
-	    'jg_category_view_numb_subcategories',
-	    'jg_category_view_subcategory_type_images',
-	    'jg_category_view_subcategories_pagination',
-	    'jg_category_view_subcategories_random_image',
-	    'jg_category_view_subcategories_random_subimages',
-	    'jg_category_view_class',
-	    'jg_category_view_num_columns',
-	    'jg_category_view_image_class',
-	    'jg_category_view_justified_height',
-	    'jg_category_view_justified_gap',
-	    'jg_category_view_numb_images',
-	    'jg_category_view_ord_images',
-	    'jg_category_view_type_images',
-	    'jg_category_view_pagination',
-	    'jg_category_view_number_of_reloaded_images',
-	    'jg_category_view_image_link',
-	    'jg_category_view_caption_align',
-	    'jg_category_view_images_show_title',
-	    'jg_category_view_title_link',
-	    'jg_category_view_lightbox_image',
-	    'jg_category_view_lightbox_thumbnails',
-	    'jg_category_view_show_description',
-	    'jg_category_view_show_imgdate',
-	    'jg_category_view_show_imgauthor',
-	    'jg_category_view_show_tags',
-	    'jg_detail_view_type_image',
-	    'jg_detail_view_show_title',
-	    'jg_detail_view_show_category',
-	    'jg_detail_view_show_description',
-	    'jg_detail_view_show_imgdate',
-	    'jg_detail_view_show_imgauthor',
-	    'jg_detail_view_show_created_by',
-	    'jg_detail_view_show_votes',
-	    'jg_detail_view_show_rating',
-	    'jg_detail_view_show_hits',
-	    'jg_detail_view_show_downloads',
-	    'jg_detail_view_show_tags',
-	    'jg_detail_view_show_metadata',
-	    'jg_msg_upload_type',
-	    'jg_msg_upload_recipients',
-	    'jg_msg_download_type',
-	    'jg_msg_download_recipients',
-	    'jg_msg_zipdownload',
-	    'jg_msg_comment_type',
-	    'jg_msg_comment_recipients',
-	    'jg_msg_comment_toowner',
-	    'jg_msg_report_type',
-	    'jg_msg_report_recipients',
-	    'jg_msg_report_toowner',
-	    'jg_msg_rejectimg_type',
-	    'jg_msg_global_from',
-	    'jg_userspace',
-	    'jg_approve',
-	    'jg_maxusercat',
-	    'jg_maxuserimage',
-	    'jg_maxuserimage_timespan',
-	    'jg_maxfilesize',
-	    'jg_userupload',
-	    'jg_newpiccopyright',
-	    'jg_uploaddefaultcat',
-	    'jg_useruploadsingle',
-	    'jg_maxuploadfields',
-	    'jg_useruploadajax',
-	    'jg_useruploadbatch',
-	    'jg_special_upload',
-	    'jg_newpicnote',
-	    'jg_redirect_after_upload',
-	    'jg_download',
-	    'jg_download_hint',
-	    'jg_downloadfile',
-	    'jg_downloadwithwatermark',
-	    'jg_showrating',
-	    'jg_maxvoting',
-	    'jg_ratingcalctype',
-	    'jg_votingonlyonce',
-	    'jg_report_images',
-	    'jg_report_hint',
-	    'jg_showcomments',
+      'id',
+      'asset_id',
+      'title',
+      'note',
+      'group_id',
+      'published',
+      'ordering',
+      'checked_out',
+      'checked_out_time',
+      'created_by',
+      'modified_by',
+      'jg_filesystem',
+      'jg_imagetypes',
+      'jg_pathftpupload',
+      'jg_wmfile',
+      'jg_use_real_paths',
+      'jg_router',
+      'jg_router_ids',
+      'jg_compatibility_mode',
+      'jg_replaceinfo',
+      'jg_replaceshowwarning',
+      'jg_useorigfilename',
+      'jg_uploadorder',
+      'jg_filenamenumber',
+      'jg_parallelprocesses',
+      'jg_imgprocessor',
+      'jg_fastgd2creation',
+      'jg_impath',
+      'jg_staticprocessing',
+      'jg_dynamicprocessing',
+      'jg_dynamic_watermark',
+      'jg_record_hits',
+      'jg_record_hits_select',
+      'jg_gallery_view_browse_categories_link',
+      'jg_gallery_view_class',
+      'jg_gallery_view_num_columns',
+      'jg_gallery_view_image_class',
+      'jg_gallery_view_justified_height',
+      'jg_gallery_view_justified_gap',
+      'jg_gallery_view_numb_images',
+      'jg_gallery_view_ordering',
+      'jg_gallery_view_type_image',
+      'jg_gallery_view_image_link',
+      'jg_category_view_browse_images_link',
+      'jg_category_view_subcategory_class',
+      'jg_category_view_subcategory_num_columns',
+      'jg_category_view_subcategory_image_class',
+      'jg_category_view_numb_subcategories',
+      'jg_category_view_subcategory_type_images',
+      'jg_category_view_subcategories_pagination',
+      'jg_category_view_subcategories_random_image',
+      'jg_category_view_subcategories_random_subimages',
+      'jg_category_view_class',
+      'jg_category_view_num_columns',
+      'jg_category_view_image_class',
+      'jg_category_view_justified_height',
+      'jg_category_view_justified_gap',
+      'jg_category_view_numb_images',
+      'jg_category_view_ord_images',
+      'jg_category_view_type_images',
+      'jg_category_view_pagination',
+      'jg_category_view_number_of_reloaded_images',
+      'jg_category_view_image_link',
+      'jg_category_view_caption_align',
+      'jg_category_view_images_show_title',
+      'jg_category_view_title_link',
+      'jg_category_view_lightbox_image',
+      'jg_category_view_lightbox_thumbnails',
+      'jg_category_view_show_description',
+      'jg_category_view_show_imgdate',
+      'jg_category_view_show_imgauthor',
+      'jg_category_view_show_tags',
+      'jg_detail_view_type_image',
+      'jg_detail_view_show_title',
+      'jg_detail_view_show_category',
+      'jg_detail_view_show_description',
+      'jg_detail_view_show_imgdate',
+      'jg_detail_view_show_imgauthor',
+      'jg_detail_view_show_created_by',
+      'jg_detail_view_show_votes',
+      'jg_detail_view_show_rating',
+      'jg_detail_view_show_hits',
+      'jg_detail_view_show_downloads',
+      'jg_detail_view_show_tags',
+      'jg_detail_view_show_metadata',
+      'jg_msg_upload_type',
+      'jg_msg_upload_recipients',
+      'jg_msg_download_type',
+      'jg_msg_download_recipients',
+      'jg_msg_zipdownload',
+      'jg_msg_comment_type',
+      'jg_msg_comment_recipients',
+      'jg_msg_comment_toowner',
+      'jg_msg_report_type',
+      'jg_msg_report_recipients',
+      'jg_msg_report_toowner',
+      'jg_msg_rejectimg_type',
+      'jg_msg_global_from',
+      'jg_userspace',
+      'jg_approve',
+      'jg_maxusercat',
+      'jg_maxuserimage',
+      'jg_maxuserimage_timespan',
+      'jg_maxfilesize',
+      'jg_userupload',
+      'jg_newpiccopyright',
+      'jg_uploaddefaultcat',
+      'jg_useruploadsingle',
+      'jg_maxuploadfields',
+      'jg_useruploadajax',
+      'jg_useruploadbatch',
+      'jg_special_upload',
+      'jg_newpicnote',
+      'jg_redirect_after_upload',
+      'jg_download',
+      'jg_download_hint',
+      'jg_downloadfile',
+      'jg_downloadwithwatermark',
+      'jg_showrating',
+      'jg_maxvoting',
+      'jg_ratingcalctype',
+      'jg_votingonlyonce',
+      'jg_report_images',
+      'jg_report_hint',
+      'jg_showcomments',
     ];
 
     /**
@@ -173,131 +173,131 @@ class JsonapiView extends BaseApiView
      * @since  4.0.0
      */
     protected $fieldsToRenderList = [
-	    'id',
-	    'asset_id',
-	    'title',
-	    'note',
-	    'group_id',
-	    'published',
-	    'ordering',
-	    'checked_out',
-	    'checked_out_time',
-	    'created_by',
-	    'modified_by',
-	    'jg_filesystem',
-	    'jg_imagetypes',
-	    'jg_pathftpupload',
-//	    'jg_wmfile',
-//	    'jg_use_real_paths',
-//	    'jg_router',
-//	    'jg_router_ids',
-//	    'jg_compatibility_mode',
-//	    'jg_replaceinfo',
-//	    'jg_replaceshowwarning',
-//	    'jg_useorigfilename',
-//	    'jg_uploadorder',
-//	    'jg_filenamenumber',
-//	    'jg_parallelprocesses',
-//	    'jg_imgprocessor',
-//	    'jg_fastgd2creation',
-//	    'jg_impath',
-//	    'jg_staticprocessing',
-//	    'jg_dynamicprocessing',
-//	    'jg_dynamic_watermark',
-//	    'jg_record_hits',
-//	    'jg_record_hits_select',
-//	    'jg_gallery_view_browse_categories_link',
-//	    'jg_gallery_view_class',
-//	    'jg_gallery_view_num_columns',
-//	    'jg_gallery_view_image_class',
-//	    'jg_gallery_view_justified_height',
-//	    'jg_gallery_view_justified_gap',
-//	    'jg_gallery_view_numb_images',
-//	    'jg_gallery_view_ordering',
-//	    'jg_gallery_view_type_image',
-//	    'jg_gallery_view_image_link',
-//	    'jg_category_view_browse_images_link',
-//	    'jg_category_view_subcategory_class',
-//	    'jg_category_view_subcategory_num_columns',
-//	    'jg_category_view_subcategory_image_class',
-//	    'jg_category_view_numb_subcategories',
-//	    'jg_category_view_subcategory_type_images',
-//	    'jg_category_view_subcategories_pagination',
-//	    'jg_category_view_subcategories_random_image',
-//	    'jg_category_view_subcategories_random_subimages',
-//	    'jg_category_view_class',
-//	    'jg_category_view_num_columns',
-//	    'jg_category_view_image_class',
-//	    'jg_category_view_justified_height',
-//	    'jg_category_view_justified_gap',
-//	    'jg_category_view_numb_images',
-//	    'jg_category_view_ord_images',
-//	    'jg_category_view_type_images',
-//	    'jg_category_view_pagination',
-//	    'jg_category_view_number_of_reloaded_images',
-//	    'jg_category_view_image_link',
-//	    'jg_category_view_caption_align',
-//	    'jg_category_view_images_show_title',
-//	    'jg_category_view_title_link',
-//	    'jg_category_view_lightbox_image',
-//	    'jg_category_view_lightbox_thumbnails',
-//	    'jg_category_view_show_description',
-//	    'jg_category_view_show_imgdate',
-//	    'jg_category_view_show_imgauthor',
-//	    'jg_category_view_show_tags',
-//	    'jg_detail_view_type_image',
-//	    'jg_detail_view_show_title',
-//	    'jg_detail_view_show_category',
-//	    'jg_detail_view_show_description',
-//	    'jg_detail_view_show_imgdate',
-//	    'jg_detail_view_show_imgauthor',
-//	    'jg_detail_view_show_created_by',
-//	    'jg_detail_view_show_votes',
-//	    'jg_detail_view_show_rating',
-//	    'jg_detail_view_show_hits',
-//	    'jg_detail_view_show_downloads',
-//	    'jg_detail_view_show_tags',
-//	    'jg_detail_view_show_metadata',
-//	    'jg_msg_upload_type',
-//	    'jg_msg_upload_recipients',
-//	    'jg_msg_download_type',
-//	    'jg_msg_download_recipients',
-//	    'jg_msg_zipdownload',
-//	    'jg_msg_comment_type',
-//	    'jg_msg_comment_recipients',
-//	    'jg_msg_comment_toowner',
-//	    'jg_msg_report_type',
-//	    'jg_msg_report_recipients',
-//	    'jg_msg_report_toowner',
-//	    'jg_msg_rejectimg_type',
-//	    'jg_msg_global_from',
-//	    'jg_userspace',
-//	    'jg_approve',
-//	    'jg_maxusercat',
-//	    'jg_maxuserimage',
-//	    'jg_maxuserimage_timespan',
-//	    'jg_maxfilesize',
-//	    'jg_userupload',
-//	    'jg_newpiccopyright',
-//	    'jg_uploaddefaultcat',
-//	    'jg_useruploadsingle',
-//	    'jg_maxuploadfields',
-//	    'jg_useruploadajax',
-//	    'jg_useruploadbatch',
-//	    'jg_special_upload',
-//	    'jg_newpicnote',
-//	    'jg_redirect_after_upload',
-//	    'jg_download',
-//	    'jg_download_hint',
-//	    'jg_downloadfile',
-//	    'jg_downloadwithwatermark',
-//	    'jg_showrating',
-//	    'jg_maxvoting',
-//	    'jg_ratingcalctype',
-//	    'jg_votingonlyonce',
-//	    'jg_report_images',
-//	    'jg_report_hint',
-//	    'jg_showcomments',
+      'id',
+      'asset_id',
+      'title',
+      'note',
+      'group_id',
+      'published',
+      'ordering',
+      'checked_out',
+      'checked_out_time',
+      'created_by',
+      'modified_by',
+      'jg_filesystem',
+      'jg_imagetypes',
+      'jg_pathftpupload',
+      //	    'jg_wmfile',
+      //	    'jg_use_real_paths',
+      //	    'jg_router',
+      //	    'jg_router_ids',
+      //	    'jg_compatibility_mode',
+      //	    'jg_replaceinfo',
+      //	    'jg_replaceshowwarning',
+      //	    'jg_useorigfilename',
+      //	    'jg_uploadorder',
+      //	    'jg_filenamenumber',
+      //	    'jg_parallelprocesses',
+      //	    'jg_imgprocessor',
+      //	    'jg_fastgd2creation',
+      //	    'jg_impath',
+      //	    'jg_staticprocessing',
+      //	    'jg_dynamicprocessing',
+      //	    'jg_dynamic_watermark',
+      //	    'jg_record_hits',
+      //	    'jg_record_hits_select',
+      //	    'jg_gallery_view_browse_categories_link',
+      //	    'jg_gallery_view_class',
+      //	    'jg_gallery_view_num_columns',
+      //	    'jg_gallery_view_image_class',
+      //	    'jg_gallery_view_justified_height',
+      //	    'jg_gallery_view_justified_gap',
+      //	    'jg_gallery_view_numb_images',
+      //	    'jg_gallery_view_ordering',
+      //	    'jg_gallery_view_type_image',
+      //	    'jg_gallery_view_image_link',
+      //	    'jg_category_view_browse_images_link',
+      //	    'jg_category_view_subcategory_class',
+      //	    'jg_category_view_subcategory_num_columns',
+      //	    'jg_category_view_subcategory_image_class',
+      //	    'jg_category_view_numb_subcategories',
+      //	    'jg_category_view_subcategory_type_images',
+      //	    'jg_category_view_subcategories_pagination',
+      //	    'jg_category_view_subcategories_random_image',
+      //	    'jg_category_view_subcategories_random_subimages',
+      //	    'jg_category_view_class',
+      //	    'jg_category_view_num_columns',
+      //	    'jg_category_view_image_class',
+      //	    'jg_category_view_justified_height',
+      //	    'jg_category_view_justified_gap',
+      //	    'jg_category_view_numb_images',
+      //	    'jg_category_view_ord_images',
+      //	    'jg_category_view_type_images',
+      //	    'jg_category_view_pagination',
+      //	    'jg_category_view_number_of_reloaded_images',
+      //	    'jg_category_view_image_link',
+      //	    'jg_category_view_caption_align',
+      //	    'jg_category_view_images_show_title',
+      //	    'jg_category_view_title_link',
+      //	    'jg_category_view_lightbox_image',
+      //	    'jg_category_view_lightbox_thumbnails',
+      //	    'jg_category_view_show_description',
+      //	    'jg_category_view_show_imgdate',
+      //	    'jg_category_view_show_imgauthor',
+      //	    'jg_category_view_show_tags',
+      //	    'jg_detail_view_type_image',
+      //	    'jg_detail_view_show_title',
+      //	    'jg_detail_view_show_category',
+      //	    'jg_detail_view_show_description',
+      //	    'jg_detail_view_show_imgdate',
+      //	    'jg_detail_view_show_imgauthor',
+      //	    'jg_detail_view_show_created_by',
+      //	    'jg_detail_view_show_votes',
+      //	    'jg_detail_view_show_rating',
+      //	    'jg_detail_view_show_hits',
+      //	    'jg_detail_view_show_downloads',
+      //	    'jg_detail_view_show_tags',
+      //	    'jg_detail_view_show_metadata',
+      //	    'jg_msg_upload_type',
+      //	    'jg_msg_upload_recipients',
+      //	    'jg_msg_download_type',
+      //	    'jg_msg_download_recipients',
+      //	    'jg_msg_zipdownload',
+      //	    'jg_msg_comment_type',
+      //	    'jg_msg_comment_recipients',
+      //	    'jg_msg_comment_toowner',
+      //	    'jg_msg_report_type',
+      //	    'jg_msg_report_recipients',
+      //	    'jg_msg_report_toowner',
+      //	    'jg_msg_rejectimg_type',
+      //	    'jg_msg_global_from',
+      //	    'jg_userspace',
+      //	    'jg_approve',
+      //	    'jg_maxusercat',
+      //	    'jg_maxuserimage',
+      //	    'jg_maxuserimage_timespan',
+      //	    'jg_maxfilesize',
+      //	    'jg_userupload',
+      //	    'jg_newpiccopyright',
+      //	    'jg_uploaddefaultcat',
+      //	    'jg_useruploadsingle',
+      //	    'jg_maxuploadfields',
+      //	    'jg_useruploadajax',
+      //	    'jg_useruploadbatch',
+      //	    'jg_special_upload',
+      //	    'jg_newpicnote',
+      //	    'jg_redirect_after_upload',
+      //	    'jg_download',
+      //	    'jg_download_hint',
+      //	    'jg_downloadfile',
+      //	    'jg_downloadwithwatermark',
+      //	    'jg_showrating',
+      //	    'jg_maxvoting',
+      //	    'jg_ratingcalctype',
+      //	    'jg_votingonlyonce',
+      //	    'jg_report_images',
+      //	    'jg_report_hint',
+      //	    'jg_showcomments',
     ];
 
 //    /**
@@ -322,7 +322,8 @@ class JsonapiView extends BaseApiView
      */
     public function __construct($config = [])
     {
-        if (\array_key_exists('contentType', $config)) {
+        if(\array_key_exists('contentType', $config))
+        {
             $this->serializer = new JoomgallerySerializer($config['contentType']);
         }
 
@@ -340,7 +341,8 @@ class JsonapiView extends BaseApiView
      */
     public function displayList(?array $items = null)
     {
-        foreach (FieldsHelper::getFields('com_joomgallery.configs') as $field) {
+        foreach(FieldsHelper::getFields('com_joomgallery.configs') as $field)
+        {
             $this->fieldsToRenderList[] = $field->name;
         }
 
@@ -360,11 +362,13 @@ class JsonapiView extends BaseApiView
     {
         $this->relationship[] = 'modified_by';
 
-        foreach (FieldsHelper::getFields('com_joomgallery.subproject') as $field) {
+        foreach(FieldsHelper::getFields('com_joomgallery.subproject') as $field)
+        {
             $this->fieldsToRenderItem[] = $field->name;
         }
 
-        if (Multilanguage::isEnabled()) {
+        if(Multilanguage::isEnabled())
+        {
             $this->fieldsToRenderItem[] = 'languageAssociations';
             $this->relationship[]       = 'languageAssociations';
         }
@@ -383,7 +387,8 @@ class JsonapiView extends BaseApiView
      */
     protected function prepareItem($item)
     {
-        if (!$item) {
+        if(!$item)
+        {
             return $item;
         }
 
@@ -393,34 +398,40 @@ class JsonapiView extends BaseApiView
         PluginHelper::importPlugin('joomgallery');
         Factory::getApplication()->triggerEvent('onContentPrepare', ['com_joomgallery.subproject', &$item, &$item->params]);
 
-        foreach (FieldsHelper::getFields('com_joomgallery.subproject', $item, true) as $field) {
+        foreach(FieldsHelper::getFields('com_joomgallery.subproject', $item, true) as $field)
+        {
             $item->{$field->name} = $field->apivalue ?? $field->rawvalue;
         }
 
-        if (Multilanguage::isEnabled() && !empty($item->associations)) {
+        if(Multilanguage::isEnabled() && !empty($item->associations))
+        {
             $associations = [];
 
-            foreach ($item->associations as $language => $association) {
+            foreach($item->associations as $language => $association)
+            {
                 $itemId = explode(':', $association)[0];
 
                 $associations[] = (object) [
-                    'id'       => $itemId,
-                    'language' => $language,
+                  'id'       => $itemId,
+                  'language' => $language,
                 ];
             }
 
             $item->associations = $associations;
         }
 
-        if (!empty($item->tags->tags)) {
+        if(!empty($item->tags->tags))
+        {
             $tagsIds    = explode(',', $item->tags->tags);
             $item->tags = $item->tagsHelper->getTags($tagsIds);
-        } else {
+        }
+        else {
             $item->tags = [];
             $tags       = new TagsHelper();
             $tagsIds    = $tags->getTagIds($item->id, 'com_joomgallery.subproject');
 
-            if (!empty($tagsIds)) {
+            if(!empty($tagsIds))
+            {
                 $tagsIds    = explode(',', $tagsIds);
                 $item->tags = $tags->getTags($tagsIds);
             }
@@ -443,6 +454,4 @@ class JsonapiView extends BaseApiView
     }
 
 // ToDo: Later The hidden gem of the API view is another string array property, $relationship. In that view you list all the field names returned by your model which refer to related data.
-
-
 }

@@ -1,11 +1,11 @@
 <?php
-
 /**
- * @package     
- * @subpackage  
- *
- * @copyright   
- * @license     
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\View\Categories;
@@ -22,7 +22,7 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -39,42 +39,42 @@ class JsonapiView extends BaseApiView
      * @since  4.0.0
      */
     protected $fieldsToRenderItem = [
-	    'id',
-	    'asset_id',
-	    'asset_id_image',
-	    'parent_id',
+      'id',
+      'asset_id',
+      'asset_id_image',
+      'parent_id',
 
-	    'lft',
-	    'rgt',
-	    'level',
+      'lft',
+      'rgt',
+      'level',
 
-	    'path',
-	    'title',
-	    'alias',
-	    'description',
-      
-	    'description',
-	    'hidden',
-	    'in_hidden',
-	    'password',
-      
-	    'exclude_toplist',
-	    'exclude_search',
-	    'thumbnail',
-	    'static_path',
-	    'params',
-	    'language',
-      
-	    'created_time',
-	    'created_by',
-	    'modified_time',
-	    'modified_by',
+      'path',
+      'title',
+      'alias',
+      'description',
+
+      'description',
+      'hidden',
+      'in_hidden',
+      'password',
+
+      'exclude_toplist',
+      'exclude_search',
+      'thumbnail',
+      'static_path',
+      'params',
+      'language',
+
+      'created_time',
+      'created_by',
+      'modified_time',
+      'modified_by',
       'checked_out',
       'checked_out_time',
 
-	    'metadesc',
-	    'metakey',
-	    'robots',
+      'metadesc',
+      'metakey',
+      'robots',
     ];
 
     /**
@@ -144,7 +144,8 @@ class JsonapiView extends BaseApiView
      */
     public function __construct($config = [])
     {
-        if (\array_key_exists('contentType', $config)) {
+        if(\array_key_exists('contentType', $config))
+        {
             $this->serializer = new JoomgallerySerializer($config['contentType']);
         }
 
@@ -162,7 +163,8 @@ class JsonapiView extends BaseApiView
      */
     public function displayList(?array $items = null)
     {
-        foreach (FieldsHelper::getFields('com_joomgallery.categories') as $field) {
+        foreach(FieldsHelper::getFields('com_joomgallery.categories') as $field)
+        {
             $this->fieldsToRenderList[] = $field->name;
         }
 
@@ -182,11 +184,13 @@ class JsonapiView extends BaseApiView
     {
         $this->relationship[] = 'modified_by';
 
-        foreach (FieldsHelper::getFields('com_joomgallery.categories') as $field) {
+        foreach(FieldsHelper::getFields('com_joomgallery.categories') as $field)
+        {
             $this->fieldsToRenderItem[] = $field->name;
         }
 
-        if (Multilanguage::isEnabled()) {
+        if(Multilanguage::isEnabled())
+        {
             $this->fieldsToRenderItem[] = 'languageAssociations';
             $this->relationship[]       = 'languageAssociations';
         }
@@ -205,7 +209,8 @@ class JsonapiView extends BaseApiView
      */
     protected function prepareItem($item)
     {
-        if (!$item) {
+        if(!$item)
+        {
             return $item;
         }
 
@@ -215,48 +220,57 @@ class JsonapiView extends BaseApiView
         PluginHelper::importPlugin('joomgallery');
 //        Factory::getApplication()->triggerEvent('onContentPrepare', ['com_joomgallery.categories', &$item, &$item->params]);
 
-        foreach (FieldsHelper::getFields('com_joomgallery.project', $item, true) as $field) {
+        foreach(FieldsHelper::getFields('com_joomgallery.project', $item, true) as $field)
+        {
             $item->{$field->name} = $field->apivalue ?? $field->rawvalue;
         }
 
-        if (Multilanguage::isEnabled() && !empty($item->associations)) {
+        if(Multilanguage::isEnabled() && !empty($item->associations))
+        {
             $associations = [];
 
-            foreach ($item->associations as $language => $association) {
+            foreach($item->associations as $language => $association)
+            {
                 $itemId = explode(':', $association)[0];
 
                 $associations[] = (object) [
-                    'id'       => $itemId,
-                    'language' => $language,
+                  'id'       => $itemId,
+                  'language' => $language,
                 ];
             }
 
             $item->associations = $associations;
         }
 
-        if (!empty($item->tags->tags)) {
+        if(!empty($item->tags->tags))
+        {
             $tagsIds    = explode(',', $item->tags->tags);
             $item->tags = $item->tagsHelper->getTags($tagsIds);
-        } else {
+        }
+        else {
             $item->tags = [];
             $tags       = new TagsHelper();
             $tagsIds    = $tags->getTagIds($item->id, 'com_joomgallery.project');
 
-            if (!empty($tagsIds)) {
+            if(!empty($tagsIds))
+            {
                 $tagsIds    = explode(',', $tagsIds);
                 $item->tags = $tags->getTags($tagsIds);
             }
         }
 
-        if (isset($item->images)) {
+        if(isset($item->images))
+        {
             $registry     = new Registry($item->images);
             $item->images = $registry->toArray();
 
-            if (!empty($item->images['image_intro'])) {
+            if(!empty($item->images['image_intro']))
+            {
                 $item->images['image_intro'] = JoomgalleryHelper::resolve($item->images['image_intro']);
             }
 
-            if (!empty($item->images['image_fulltext'])) {
+            if(!empty($item->images['image_fulltext']))
+            {
                 $item->images['image_fulltext'] = JoomgalleryHelper::resolve($item->images['image_fulltext']);
             }
         }
@@ -265,6 +279,4 @@ class JsonapiView extends BaseApiView
     }
 
 // ToDo: Later The hidden gem of the API view is another string array property, $relationship. In that view you list all the field names returned by your model which refer to related data.
-
-
 }

@@ -1,10 +1,11 @@
 <?php
 /**
- * @package     Joomgallery\Component\Joomgallery\Api\Model
- * @subpackage
- *
- * @copyright   A copyright
- * @license     A "Slug" license name e.g. GPL2
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\Model;
@@ -16,8 +17,6 @@ use Joomla\Component\Media\Administrator\Model\ApiModel;
 use Joomla\Database\DatabaseInterface;
 
 /**
- *
- *
  * @since  4.2.0
  */
 class ConfiginjModel extends BaseModel
@@ -45,14 +44,14 @@ class ConfiginjModel extends BaseModel
      * @since   4.1.0
      * @throws  ResourceNotFound
      */
-    public function getItem() {
+    public function getItem()
+    {
 
         $componentName = 'com_joomgallery';
 
         $oConfig = new \stdClass();
 
         try {
-
             $db = Factory::getContainer()->get(DatabaseInterface::class);
 //            $db = $this->database;
 
@@ -63,18 +62,18 @@ class ConfiginjModel extends BaseModel
             $db->setQuery($query);
 
             $jsonStr = $db->loadResult();
-            if (!empty ($jsonStr)) {
+
+            if(!empty($jsonStr))
+            {
                 $params = json_decode($jsonStr, true);
             }
 
             $oConfig = (object) $params;
-
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
 
         return $oConfig;
     }
-
-
 }
