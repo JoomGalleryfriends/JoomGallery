@@ -57,23 +57,23 @@ class JsonapiView extends BaseApiView
      */
     public function displayItem($item = null)
     {
-//		$testJoomgalleryText = "testJoomgalleryText";
+//      $testJoomgalleryText = "testJoomgalleryText";
 //
-//		// Serializing the output
-//		//$result = json_encode($this->_output);
-//		$result = json_encode($testJoomgalleryText);
+//      // Serializing the output
+//      //$result = json_encode($this->_output);
+//      $result = json_encode($testJoomgalleryText);
 //
-//		// Pushing output to the document
-//		$this->getDocument()->setBuffer($result);
+//      // Pushing output to the document
+//      $this->getDocument()->setBuffer($result);
 //
-//		return $this->getDocument()->render();
+//      return $this->getDocument()->render();
     }
 
     public function display($tpl = null)
     {
         $testJoomgalleryText = 'testJoomgalleryText';
 
-//		zzzz();
+//      zzzz();
 
         // Serializing the output
         //$result = json_encode($this->_output);

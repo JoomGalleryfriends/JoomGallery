@@ -58,8 +58,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         // $getDefaults = array_merge(['public' => false], $defaults);
         $getDefaults = array_merge(['public' => false], $defaults); // ToDo: Remove when tests finished, enables access without token
 
-//		    new Route(['GET'], 'v1/example/items/:slug', 'item.displayItem',
-//			    ['slug' => '(.*)'], ['option' => 'com_example']),
+//          new Route(['GET'], 'v1/example/items/:slug', 'item.displayItem',
+//              ['slug' => '(.*)'], ['option' => 'com_example']),
 
       $router->addRoutes([
         new Route(['GET'], 'v1/joomgallery/version', 'version.display', [], $getDefaults),
@@ -71,8 +71,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         ]);
 
 //      $router->addRoutes([
-//		    new Route(['GET'], 'v1/joomgallery', 'joomgallery.displayItem', [], $getDefaults),
-//	    ]);
+//          new Route(['GET'], 'v1/joomgallery', 'joomgallery.displayItem', [], $getDefaults),
+//      ]);
 
          $router->createCRUDRoutes(
              'v1/joomgallery/categories',
