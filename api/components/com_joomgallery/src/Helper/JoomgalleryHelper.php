@@ -1,11 +1,11 @@
 <?php
-
 /**
- * @package     Joomla.Api
- * @subpackage  com_content
- *
- * @copyright   (C) 2020 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\Helper;
@@ -13,7 +13,7 @@ namespace Joomgallery\Component\Joomgallery\Api\Helper;
 use Joomla\CMS\Uri\Uri;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -33,7 +33,8 @@ class JoomgalleryHelper
     public static function resolve(string $uri): string
     {
         // Check if external URL.
-        if (stripos($uri, 'http') !== 0) {
+        if(stripos($uri, 'http') !== 0)
+        {
             return Uri::root() . $uri;
         }
 

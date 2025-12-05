@@ -1,10 +1,11 @@
 <?php
 /**
- * @package        RSGallery2
- * @subpackage     com_rsgallery2
- * @author         RSGallery2 Team <team2@rsgallery2.org>
- * @copyright  (c) 2005-2025 RSGallery2 Team
- * @license        GNU General Public License version 2 or later
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\View\Configinj;
@@ -20,7 +21,7 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\DatabaseInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -56,7 +57,8 @@ class JsonapiView extends BaseApiView
      */
     public function __construct($config = [])
     {
-        if (\array_key_exists('contentType', $config)) {
+        if(\array_key_exists('contentType', $config))
+        {
             $this->serializer = new JoomgallerySerializer($config['contentType']);
         }
 
@@ -91,16 +93,16 @@ class JsonapiView extends BaseApiView
      * @since   4.1.0
      * @throws  ResourceNotFound
      */
-    public function getConfigParameterNames() {
+    public function getConfigParameterNames()
+    {
 
         $componentName = 'com_joomgallery';
 
-        $params = [];
-        $params[] = "img size";
-        $params[] = "set";
+        $params   = [];
+        $params[] = 'img size';
+        $params[] = 'set';
 
         try {
-
             $db = Factory::getContainer()->get(DatabaseInterface::class);
 //            $db = $this->database;
 
@@ -111,19 +113,21 @@ class JsonapiView extends BaseApiView
             $db->setQuery($query);
 
             $jsonStr = $db->loadResult();
-            if (!empty ($jsonStr)) {
+
+            if(!empty($jsonStr))
+            {
                 $params = json_decode($jsonStr, true);
             }
 
-            foreach($params as $name=>$value) {
+            foreach($params as $name => $value)
+            {
                 $params[] = $name;
             }
-
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
 
         return $params;
     }
-
 }

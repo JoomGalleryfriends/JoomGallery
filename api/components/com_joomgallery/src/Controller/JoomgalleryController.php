@@ -1,11 +1,12 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
@@ -18,7 +19,7 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\String\Inflector;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -79,53 +80,51 @@ class JoomgalleryController extends ApiController
 
 
   public function displayItem($id = null)
-	{
-		$viewType   = $this->app->getDocument()->getType();
-		$viewName   = $this->input->get('view', $this->default_view);
-		$viewLayout = $this->input->get('layout', 'default', 'string');
+  {
+        $viewType   = $this->app->getDocument()->getType();
+        $viewName   = $this->input->get('view', $this->default_view);
+        $viewLayout = $this->input->get('layout', 'default', 'string');
 
-		try {
-			/** @var JsonApiView $view */
-			$view = $this->getView(
-				$viewName,
-				$viewType,
-				'',
-				['base_path' => $this->basePath, 'layout' => $viewLayout, 'contentType' => $this->contentType]
-			);
-		} catch (\Exception $e) {
-			throw new \RuntimeException($e->getMessage());
-		}
+        try {
+            /** @var JsonApiView $view */
+            $view = $this->getView(
+                $viewName,
+                $viewType,
+                '',
+                ['base_path' => $this->basePath, 'layout' => $viewLayout, 'contentType' => $this->contentType]
+            );
+        }
+        catch (\Exception $e) {
+            throw new \RuntimeException($e->getMessage());
+        }
 
-		$modelName = $this->input->get('model', Inflector::singularize($this->contentType));
+        $modelName = $this->input->get('model', Inflector::singularize($this->contentType));
 
-		// Create the model, ignoring request data so we can safely set the state in the request from the controller
-		$model = $this->getModel($modelName, '', ['ignore_request' => true, 'state' => $this->modelState]);
+        // Create the model, ignoring request data so we can safely set the state in the request from the controller
+        $model = $this->getModel($modelName, '', ['ignore_request' => true, 'state' => $this->modelState]);
 
-		if (!$model) {
-			throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
-		}
+        if(!$model)
+        {
+            throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
+        }
 
         // test if model is valid
-		try {
-			$modelName = $model->getName();
-		} catch (\Exception $e) {
-			throw new \RuntimeException($e->getMessage());
-		}
+        try {
+            $modelName = $model->getName();
+        }
+        catch (\Exception $e) {
+            throw new \RuntimeException($e->getMessage());
+        }
 
-		// Push the model into the view (as default)
-		$view->setModel($model, true);
+        // Push the model into the view (as default)
+        $view->setModel($model, true);
 
-		$view->setDocument($this->app->getDocument());
-		// works if function in jsonapi is set
-		// $view->displayItem();
-		// works if function in jsonapi is set
-		$view->display();
+        $view->setDocument($this->app->getDocument());
+        // works if function in jsonapi is set
+        // $view->displayItem();
+        // works if function in jsonapi is set
+        $view->display();
 
-		return $this;
-	}
-
-
-
-
-
+        return $this;
+  }
 }

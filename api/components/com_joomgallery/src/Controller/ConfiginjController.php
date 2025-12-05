@@ -1,12 +1,13 @@
 <?php
 /**
- * @package        RSGallery2
- * @subpackage     com_rsgallery2
- * @author         RSGallery2 Team <team2@rsgallery2.org>
- * @copyright  (c) 2005-2025 RSGallery2 Team
- * @license        GNU General Public License version 2 or later
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
- 
+
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
 use Joomla\CMS\Filter\InputFilter;
@@ -16,7 +17,7 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\String\Inflector;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -66,13 +67,16 @@ class ConfiginjController extends ApiController
                 '',
                 ['base_path' => $this->basePath, 'layout' => $viewLayout, 'contentType' => $this->contentType]
             );
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             // throw new \RuntimeException($e->getMessage());
-            throw new \RuntimeException(''
-//                . "type: '" . $viewType ?? '' . "' "
+            throw new \RuntimeException(
+                ''
+                //                . "type: '" . $viewType ?? '' . "' "
                 . "name: '" . $viewName ?? ''  . "' "
                 . "layout: '" . $viewLayout ?? ''  . "' "
-                . $e->getMessage());
+                . $e->getMessage()
+            );
         }
 
         $modelName = $this->input->get('model', Inflector::singularize($this->contentType));
@@ -80,14 +84,16 @@ class ConfiginjController extends ApiController
         // Create the model, ignoring request data so we can safely set the state in the request from the controller
         $model = $this->getModel($modelName, '', ['ignore_request' => true, 'state' => $this->modelState]);
 
-        if (!$model) {
+        if(!$model)
+        {
             throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
         }
 
         // test if model is valid
         try {
             $modelName = $model->getName();
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
 
