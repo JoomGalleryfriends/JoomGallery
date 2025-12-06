@@ -44,7 +44,7 @@ ECHO  - 'actualPath %actualPath%'
 
 REM -----------------------------------------------------
 REM jg_basePath to the repository
-REM 
+REM
 set "jg_basePath=..\"
 IF NOT  "%~1"=="" (
  	set "jg_basePath=%~1"
@@ -73,27 +73,11 @@ REM Composer housekeeping
 
 ECHO Install and update needed dependencies (composer)
 
-echo "--- composer dump-autoload"
-call composer dump-autoload
-IF errorlevel 1 (
-    ECHO.
-    ECHO ERROR: composer dump-autoload failed!
-    GOTO :ErrorBack
-)
-
 echo "--- composer install"
-call composer install
+call composer install --prefer-dist --no-ansi --no-interaction --no-progress
 IF errorlevel 1 (
     ECHO.
     ECHO ERROR: composer install failed!
-    GOTO :ErrorBack
-)
-
-echo "--- composer update"
-call composer update
-IF errorlevel 1 (
-    ECHO.
-    ECHO ERROR: composer update failed!
     GOTO :ErrorBack
 )
 
@@ -112,36 +96,51 @@ php ".\administrator\com_joomgallery\vendor\bin\php-cs-fixer" --verbose --config
 REM if errorlevel 1 (
 REM 	ECHO Error on calling php-cs-fixer (01)
 REM 	goto :ErrorBack
-REM )	
+REM )
 ECHO.
 
 REM =====================================================
-REM 02 call "phpcbf"
+REM 02 call "fixindent"
 
 ECHO ----------------------------------------------
-ECHO 02 call "phpcbf"
-ECHO    log file 02.phpcbf.log
+ECHO 02 call "fixindent"
+ECHO    log file 02.fixindent.log
 ECHO    may take some time
 
-php ".\administrator\com_joomgallery\vendor\bin\phpcbf" -v --standard=ruleset.xml .\ >"%actualPath%\02.phpcbf.log"
+php ".\tools\fixindent.php" fix >"%actualPath%\02.fixindent.log"
 REM if errorlevel 1 (
-REM 	ECHO Error on calling phpcbf (02)
+REM 	ECHO Error on calling fixindent (02)
 REM 	goto :ErrorBack
-REM )	
+REM )
 ECHO.
 
 REM =====================================================
-REM 03 call "php-cs-fixer" 
+REM 03 call "phpcbf"
 
 ECHO ----------------------------------------------
-ECHO 03 call "php-cs-fixer"
-ECHO    log file 03.php-cs-fixer.log
+ECHO 03 call "phpcbf"
+ECHO    log file 03.phpcbf.log
 ECHO    may take some time
 
-php ".\administrator\com_joomgallery\vendor\bin\php-cs-fixer" --verbose --config=.\.php-cs-fixer.dist.php fix .\ >"%actualPath%\03.php-cs-fixer.log"
+php ".\administrator\com_joomgallery\vendor\bin\phpcbf" -v --standard=ruleset.xml .\ >"%actualPath%\03.phpcbf.log"
+REM if errorlevel 1 (
+REM 	ECHO Error on calling phpcbf (03)
+REM 	goto :ErrorBack
+REM )
+ECHO.
+
+REM =====================================================
+REM 04 call "php-cs-fixer"
+
+ECHO ----------------------------------------------
+ECHO 04 call "php-cs-fixer"
+ECHO    log file 04.php-cs-fixer.log
+ECHO    may take some time
+
+php ".\administrator\com_joomgallery\vendor\bin\php-cs-fixer" --verbose --config=.\.php-cs-fixer.dist.php fix .\ >"%actualPath%\04.php-cs-fixer.log"
 REM may not be needed but for additional code added later
 REM if errorlevel 1 (
-REM 	ECHO Error on calling php-cs-fixer (03)
+REM 	ECHO Error on calling php-cs-fixer (04)
 REM 	goto :ErrorBack
 REM )
 ECHO.
