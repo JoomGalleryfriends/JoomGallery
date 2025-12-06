@@ -172,6 +172,7 @@ class ControlModel extends BaseDatabaseModel
     try
     {
       $xml = @JoomHelper::fetchXML($extensions_url);
+
       foreach($xml->extension as $extension)
       {
         $extensionsArray[] = $extension;
@@ -180,8 +181,8 @@ class ControlModel extends BaseDatabaseModel
     catch(\Exception $e)
     {
       JoomHelper::getComponent()->setWarning(Text::_('COM_JOOMGALLERY_ERROR_LIST_OF_EXTENSIONS'));
-      \trigger_error('Error fetching list of extensions.', E_USER_WARNING);
-      \trigger_error('Detailed info: ' . $e, E_USER_WARNING);
+      trigger_error('Error fetching list of extensions.', E_USER_WARNING);
+      trigger_error('Detailed info: ' . $e, E_USER_WARNING);
     }
 
     // Get the list of extensions
@@ -205,8 +206,10 @@ class ControlModel extends BaseDatabaseModel
 
       try
       {
-        $xml = @JoomHelper::fetchXML($url);
+        $xml            = @JoomHelper::fetchXML($url);
         $info_extension = $this->getBestUpdate($xml);
+
+        throw new \Exception('Test trigger...', 1);
 
         if($info_extension)
         {
@@ -218,8 +221,8 @@ class ControlModel extends BaseDatabaseModel
         $ext_url = $xml_extension->attributes()->infourl ? (string) $xml_extension->attributes()->infourl : '#';
         JoomHelper::getComponent()->setWarning(Text::sprintf('COM_JOOMGALLERY_ERROR_LIST_OF_EXTENSIONS_EXTENSION', $ext_url, (string) $xml_extension->attributes()->name));
 
-        \trigger_error('Error fetching extension info (' . (string) $xml_extension->attributes()->name . ').', E_USER_WARNING);
-        \trigger_error('Detailed info: ' . $e, E_USER_WARNING);
+        trigger_error('Error fetching extension info (' . (string) $xml_extension->attributes()->name . ').', E_USER_WARNING);
+        trigger_error('Detailed info: ' . $e, E_USER_WARNING);
       }
     }
 
