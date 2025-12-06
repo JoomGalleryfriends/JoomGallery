@@ -1,6 +1,8 @@
 <?php
-require_once '../administrator/com_joomgallery/vendor/colinodell/indentation/src/Indentation.php';
+require_once __DIR__ . '/../administrator/com_joomgallery/vendor/autoload.php';
 use ColinODell\Indentation\Indentation;
+
+$rootDir = realpath(__DIR__ . '/..');
 
 // Setting
 //----------------------
@@ -102,7 +104,6 @@ echo PHP_EOL;
 echo "Mode: " . ($doFix ? "FIXING files" : "ANALYZE only (no changes written)") . PHP_EOL;
 echo PHP_EOL;
 
-$rootDir = dirname(__DIR__);
 $stats = ['total' => 0, 'tobeFixed' => 0, 'good' => 0, 'successful' => 0, 'error' => 0];
 foreach($folders as $folder)
 {
@@ -236,3 +237,19 @@ if($stats['tobeFixed'] > 0)
 }
 echo '-----------------------' . PHP_EOL;
 echo PHP_EOL;
+
+// EXIT CODE HANDLING
+$exitCode = 0;
+
+if($stats['error'] > 0)
+{
+  // Error during fixing
+  $exitCode = 1;
+}
+elseif(!$doFix && $stats['tobeFixed'] > 0)
+{
+  // Found something that needs to be fixed
+  $exitCode = 1;
+}
+
+exit($exitCode);

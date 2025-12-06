@@ -3,7 +3,7 @@ REM -----------------------------------------------------
 REM Check joomgallery code style by php-cs-fixer
 REM calling cbf (jg_checkCodeBy_cs_fixer.bat)
 REM -----------------------------------------------------
-REM 
+REM
 REM -----------------------------------------------------
 
 CLS
@@ -24,7 +24,7 @@ if errorlevel 1 (
 	ECHO Actual environment PATH:
 	ECHO "%path%"
 	ECHO.
-	ECHO Please add the path to php.exe to path variable  
+	ECHO Please add the path to php.exe to path variable
 	ECHO using "set PATH=%%PATH%%;C:\your\path\here\"
 	GOTO :EOF
 	ECHO.
@@ -37,7 +37,7 @@ ECHO  - 'actualPath %actualPath%'
 
 REM -----------------------------------------------------
 REM jg_basePath to the repository
-REM 
+REM
 set "jg_basePath=..\"
 IF NOT  "%~1"=="" (
  	set "jg_basePath=%~1"
@@ -45,10 +45,10 @@ IF NOT  "%~1"=="" (
 ECHO  - 'jg base path %jg_basePath%'
 
 REM -----------------------------------------------------
-REM Move to jg_basePath 
+REM Move to jg_basePath
 
 pushd  "%jg_basePath%"
-ECHO Moved to path: %cd% 
+ECHO Moved to path: %cd%
 
 REM -----------------------------------------------------
 REM Verify that we are in the correct working directory
@@ -66,27 +66,11 @@ REM Composer housekeeping
 
 ECHO Install and update needed dependencies (composer)
 
-echo "--- composer dump-autoload"
-call composer dump-autoload
-IF errorlevel 1 (
-    ECHO.
-    ECHO ERROR: composer dump-autoload failed!
-    GOTO :ErrorBack
-)
-
 echo "--- composer install"
-call composer install
+call composer install --prefer-dist --no-ansi --no-interaction --no-progress
 IF errorlevel 1 (
     ECHO.
     ECHO ERROR: composer install failed!
-    GOTO :ErrorBack
-)
-
-echo "--- composer update"
-call composer update
-IF errorlevel 1 (
-    ECHO.
-    ECHO ERROR: composer update failed!
     GOTO :ErrorBack
 )
 
@@ -98,22 +82,22 @@ REM call "php-cs-fixer"
 
 ECHO ----------------------------------------------
 ECHO call "php-cs-fixer"
-ECHO    may take some time 
+ECHO    may take some time
 
 php ".\administrator\com_joomgallery\vendor\bin\php-cs-fixer" --dry-run --verbose --config=.\.php-cs-fixer.dist.php .\
 REM if errorlevel 1 (
 REM 	ECHO Error on calling php-cs-fixer (01)
 REM 	goto :ErrorBack
-REM )	
+REM )
 ECHO.
 
 REM -----------------------------------------------------
-REM Move back 
+REM Move back
 
 :MoveBack
 popd
 ECHO.
-ECHO Done and moved back to path: %cd% 
+ECHO Done and moved back to path: %cd%
 ECHO.
 GOTO :EOF
 
@@ -121,7 +105,7 @@ GOTO :EOF
 popd
 ECHO.
 ECHO !!! Error found !!!
-ECHO and moved back to path: %cd% 
+ECHO and moved back to path: %cd%
 ECHO.
 GOTO :EOF
 
