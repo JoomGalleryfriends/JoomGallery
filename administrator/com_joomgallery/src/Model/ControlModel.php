@@ -209,8 +209,6 @@ class ControlModel extends BaseDatabaseModel
         $xml            = @JoomHelper::fetchXML($url);
         $info_extension = $this->getBestUpdate($xml);
 
-        throw new \Exception('Test trigger...', 1);
-
         if($info_extension)
         {
           $extensions[$name] = json_decode(json_encode($info_extension), true);
