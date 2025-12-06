@@ -134,7 +134,7 @@ extract($displayData);
               </div>
             <?php endif; ?>
             <?php if($image_date) : ?>
-              <div><?php echo Text::_('COM_JOOMGALLERY_DATE') . ': ' . HTMLHelper::_('date', $item->date, Text::_('DATE_FORMAT_LC4')); ?></div>
+              <div><?php echo Text::_('COM_JOOMGALLERY_DATE') . ': ' . HTMLHelper::_('date', $item->date, Text::_('DATE_FORMAT_LC6')); ?></div>
             <?php endif; ?>
             <?php if($image_author) : ?>
               <div><?php echo Text::_('JAUTHOR') . ': ' . $this->escape($item->author); ?></div>
