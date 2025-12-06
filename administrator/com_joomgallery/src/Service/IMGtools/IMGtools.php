@@ -114,12 +114,12 @@ abstract class IMGtools implements IMGtoolsInterface
    */
   protected $src_imginfo = [
     'width' => 0,
-    'height'                        => 0,
-    'orientation'                   => '',
-    'transparency'                  => false,
-    'animation'                     => false,
-    'truecolor'                     => true,
-    'frames'                        => 1];
+    'height' => 0,
+    'orientation' => '',
+    'transparency' => false,
+    'animation' => false,
+    'truecolor' => true,
+    'frames' => 1];
 
    /**
     * Holds all image information of the destination image, which are relevant for
@@ -129,16 +129,16 @@ abstract class IMGtools implements IMGtoolsInterface
     */
    protected $dst_imginfo = [
      'width' => 0,
-     'height'                        => 0,
-     'orientation'                   => '',
-     'truecolor'                     => true,
-     'ratio'                         => 1,
-     'offset_x'                      => 0,
-     'offset_y'                      => 0,
-     'angle'                         => 0,
-     'flip'                          => 'none',
-     'quality'                       => 100,
-     'src'                           => ['width' => 0,'height' => 0]];
+     'height' => 0,
+     'orientation' => '',
+     'truecolor' => true,
+     'ratio' => 1,
+     'offset_x' => 0,
+     'offset_y' => 0,
+     'angle' => 0,
+     'flip' => 'none',
+     'quality' => 100,
+     'src' => ['width' => 0,'height' => 0]];
 
    /**
     * Holds all image information of finished processed file
@@ -147,12 +147,12 @@ abstract class IMGtools implements IMGtoolsInterface
     */
    protected $res_imginfo = [
      'width' => 0,
-     'height'                        => 0,
-     'orientation'                   => '',
-     'transparency'                  => false,
-     'animation'                     => false,
-     'truecolor'                     => true,
-     'frames'                        => 1];
+     'height' => 0,
+     'orientation' => '',
+     'transparency' => false,
+     'animation' => false,
+     'truecolor' => true,
+     'frames' => 1];
 
   /**
    * Constructor
@@ -251,9 +251,9 @@ abstract class IMGtools implements IMGtoolsInterface
     // Decrypt the imagetype
     $imagetype = [
       0 => 'UNKNOWN', 1 => 'GIF', 2 => 'JPG', 3 => 'PNG', 4 => 'SWF',
-      5             => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
-      10            => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
-      15            => 'WBMP', 16 => 'XBM', 17 => 'ICO', 18 => 'WEBP', 19 => 'COUNT'];
+      5 => 'PSD', 6 => 'BMP', 7 => 'TIFF', 8 => 'TIFF', 9 => 'JPC',
+      10 => 'JP2', 11 => 'JPX', 12 => 'JB2', 13 => 'SWC', 14 => 'IFF',
+      15 => 'WBMP', 16 => 'XBM', 17 => 'ICO', 18 => 'WEBP', 19 => 'COUNT'];
 
     $this->src_type = $imagetype[$info[2]];
 
@@ -593,7 +593,7 @@ abstract class IMGtools implements IMGtoolsInterface
     // Image width and height as to be between 1 and 1'000'000 pixel
     if( $width < 1 || $height < 1 || $imginfo[0] < 1 || $imginfo[1] < 1
         ||
-        $width > 1000000 || $height > 1000000 || $imginfo[0] > 1000000 || $imginfo[1] > 1000000
+        $width > 1000000 || $height > 1000000 || $imginfo[0] > 1000000  || $imginfo[1] > 1000000
       )
     {
       return false;
@@ -1346,7 +1346,7 @@ abstract class IMGtools implements IMGtoolsInterface
 
         $_src_chunks[$chunk['type']][] = [
           'offset' => ftell($_fp),
-          'size'   => $chunk['size'],
+          'size' => $chunk['size'],
         ];
 
         // Skip to next chunk (over body and CRC)
@@ -1441,17 +1441,17 @@ abstract class IMGtools implements IMGtoolsInterface
   {
     $IFD_Data_Sizes = [
       1 => 1,         // Unsigned Byte
-      2                  => 1,         // ASCII String
-      3                  => 2,         // Unsigned Short
-      4                  => 4,         // Unsigned Long
-      5                  => 8,         // Unsigned Rational
-      6                  => 1,         // Signed Byte
-      7                  => 1,         // Undefined
-      8                  => 2,         // Signed Short
-      9                  => 4,         // Signed Long
-      10                 => 8,        // Signed Rational
-      11                 => 4,        // Float
-      12                 => 8];      // Double
+      2 => 1,         // ASCII String
+      3 => 2,         // Unsigned Short
+      4 => 4,         // Unsigned Long
+      5 => 8,         // Unsigned Rational
+      6 => 1,         // Signed Byte
+      7 => 1,         // Undefined
+      8 => 2,         // Signed Short
+      9 => 4,         // Signed Long
+      10 => 8,        // Signed Rational
+      11 => 4,        // Float
+      12 => 8];      // Double
 
     $tmp_folder = $this->app->get('tmp_path');
     $tmp_file   = $tmp_folder . '/tmp.txt';

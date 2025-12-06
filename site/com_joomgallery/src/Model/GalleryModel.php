@@ -10,6 +10,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
+// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -17,6 +18,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Pagination\Pagination;
 
 /**
  * Model for the gallery view.
@@ -34,85 +36,85 @@ class GalleryModel extends JoomItemModel
    */
   protected $type = 'gallery';
 
-  /**
-   * Method to auto-populate the model state.
-   *
-   * Note. Calling getState in this method will result in recursion.
-   *
-   * @return  void
-   *
-   * @since   4.0.0
-   *
-   * @throws \Exception
-   */
-  protected function populateState()
-  {
-    $this->loadComponentParams();
-  }
-
-  /**
-   * Method to get an object.
-   *
-   * @param   integer $id The id of the object to get.
-   *
-   * @return  mixed    Object on success, false on failure.
-   *
-   * @throws \Exception
-   */
-  public function getItem($id = null)
-  {
-    if($this->item === null)
+    /**
+     * Method to auto-populate the model state.
+     *
+     * Note. Calling getState in this method will result in recursion.
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     *
+     * @throws \Exception
+     */
+    protected function populateState()
     {
-      $this->item     = new \stdClass();
-      $this->item->id = 1;
+        $this->loadComponentParams();
     }
+
+    /**
+     * Method to get an object.
+     *
+     * @param   integer $id The id of the object to get.
+     *
+     * @return  object    Object on success, false on failure.
+     *
+     * @throws \Exception
+     */
+    public function getItem($id = null): object
+    {
+        if($this->item === null)
+        {
+            $this->item = new \stdClass();
+      $this->item->id   = 1;
+        }
 
     // Get Gallery description
     $params                  = $this->getParams();
     $this->item->description = $params['configs']->get('jg_gallery_view_description', '', 'STRING');
 
-    return $this->item;
-  }
+        return $this->item;
+    }
 
-  /**
-   * Method to check in an item.
-   *
-   * @param   integer $id The id of the row to check out.
-   *
-   * @return  boolean True on success, false on failure.
-   *
-   * @since   4.0.0
-   */
-  public function checkin($id = null)
-  {
+    /**
+     * Method to check in an item.
+     *
+     * @param   integer $id The id of the row to check out.
+     *
+     * @return  boolean True on success, false on failure.
+     *
+     * @since   4.0.0
+     */
+    public function checkin($id = null)
+    {
     return true;
-  }
+    }
 
-  /**
-   * Method to check out an item for editing.
-   *
-   * @param   integer $id The id of the row to check out.
-   *
-   * @return  boolean True on success, false on failure.
-   *
-   * @since   4.0.0
-   */
-  public function checkout($id = null)
-  {
+    /**
+     * Method to check out an item for editing.
+     *
+     * @param   integer $id The id of the row to check out.
+     *
+     * @return  boolean True on success, false on failure.
+     *
+     * @since   4.0.0
+     */
+    public function checkout($id = null)
+    {
     return true;
-  }
+    }
 
   /**
    * Method to get the images to be viewed in the gallery view.
    *
    * @return  array|false    Array of images on success, false on failure.
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function getImages()
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -146,11 +148,11 @@ class GalleryModel extends JoomItemModel
   public function getImagesPagination()
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load categories list model
+    // Load images list model
     $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
     $listModel->getState();
 

@@ -60,19 +60,25 @@ trait TusServiceTrait
      */
     public function createTusServer(string $folder = '', string $location = '', bool $debug = false): void
     {
-        // Create and configure server
-        if(empty($folder))
-        {
-            $folder = Factory::getApplication()->get('tmp_path');
+    // Create and configure server
+    if(empty($folder))
+    {
+      $folder = Factory::getApplication()->get('tmp_path');
+    }
+
+    if(empty($location))
+    {
+      if(factory::getapplication()->isclient('site'))
+      {
+        $location = uri::root(true) . '/index.php?option=com_joomgallery&task=userupload.tusupload';
+      }
+        else {
+        $location = uri::root(true) . '/administrator/index.php?option=com_joomgallery&task=images.tusupload';
         }
+    }
 
-        if(empty($location))
-        {
-            $location = Uri::root(true) . '/administrator/index.php?option=com_joomgallery&task=images.tusupload';
-        }
+    $this->tus = new Server($folder, $location, $debug);
 
-        $this->tus = new Server($folder, $location, $debug);
-
-        return;
+    return;
     }
 }

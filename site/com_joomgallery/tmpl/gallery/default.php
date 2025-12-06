@@ -91,7 +91,8 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
   <?php // Link to category overview ?>
   <?php if($browse_categories_link == '1') : ?>
     <div class="center text-center">
-      <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=1'); ?>">
+      <a class="jg-link btn btn-outline-primary"
+         href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=1'); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_GALLERY_VIEW_BROWSE_CATEGORIES'); ?>
       </a>
     </div>
@@ -103,7 +104,7 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
   <?php else: ?>
     <?php // Display data array for grid layout
     $imgsData = [
-      'id' => '1-' . $this->item->id, 'layout' => $gallery_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
+      'id'            => '1-' . $this->item->id, 'layout' => $gallery_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
       'caption_align' => 'center', 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
       'image_title'   => false, 'title_link' => 'defaultview', 'image_desc' => false, 'image_date' => false,
       'image_author'  => false, 'image_tags' => false,
@@ -119,16 +120,17 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
   <?php // Link to category overview ?>
   <?php if($browse_categories_link == '2') : ?>
     <div class="center text-center">
-      <p><a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=1'); ?>">
-        <?php echo Text::_('COM_JOOMGALLERY_GALLERY_VIEW_BROWSE_CATEGORIES'); ?>
-      </a></p>
+      <p><a class="jg-link btn btn-outline-primary"
+            href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=1'); ?>">
+          <?php echo Text::_('COM_JOOMGALLERY_GALLERY_VIEW_BROWSE_CATEGORIES'); ?>
+        </a></p>
     </div>
   <?php endif; ?>
 </div>
 
 <script>
   // Add event listener to images
-  let loadImg = function() {
+  let loadImg = function () {
     this.closest('.jg-image').classList.add('loaded');
   }
   let images = Array.from(document.getElementsByClassName('jg-image-thumb'));

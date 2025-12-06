@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Image;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\ImageModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Router\Route;
@@ -56,15 +57,14 @@ class HtmlView extends JoomGalleryView
    */
   public function display($tpl = null)
   {
-    /** @var ImageModel $model */
-    $model = $this->getModel();
+  /** @var ImageModel $model */
+  $model = $this->getModel();
 
-    $this->state  = $model->getState();
+  $this->state    = $model->getState();
     $this->params = $model->getParams();
 
     $loaded = true;
-    try
-    {
+    try {
       $this->item = $model->getItem();
     }
     catch (\Exception $e)
@@ -93,10 +93,10 @@ class HtmlView extends JoomGalleryView
 
     $temp = $model->getCategoryAccess();
 
-    // Check access view level
+  // Check access view level
     if(!$model->getCategoryAccess() || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
-    {
-      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
+  {
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
 
       return;
     }

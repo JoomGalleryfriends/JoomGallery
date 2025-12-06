@@ -71,8 +71,7 @@ class FileToolsService
       header('Content-Type: application/force-download');
       header('Content-Type: application/octet-stream');
     }
-    else
-    {
+    else {
       if(\is_null($mime))
       {
         $mime = self::detectMimeType($filePath, $fileName);
@@ -84,8 +83,7 @@ class FileToolsService
     {
       header('Content-Disposition: ' . $openMode . '; filename=' . urlencode($fileName) . '; modification-date="' . date('r', $mtime) . '";');
     }
-    else
-    {
+    else {
       header('Content-Disposition: ' . $openMode . '; filename="' . $fileName . '"; modification-date="' . date('r', $mtime) . '";');
     }
 
@@ -94,8 +92,7 @@ class FileToolsService
       // Sending file via mod_xsendfile
       header('X-Sendfile: ' . $filePath);
     }
-    else
-    {
+    else {
       // Sending file directly via script
       // according memory_limit byt not higher than 1GB
       $memory_limit = \ini_get('memory_limit');
@@ -146,8 +143,7 @@ class FileToolsService
         }
         fclose($handle);
       }
-      else
-      {
+      else {
         // Streaming whole file for download
         readfile($filePath);
       }
@@ -301,8 +297,9 @@ class FileToolsService
 
     $precision = 2;
 
-    if($size == (int) $size && $size < 1024) // < 1MB
-    {$precision = 0;
+    if($size == (int) $size && $size < 1024)
+    { // < 1MB
+      $precision = 0;
     }
 
     $size = round($size / pow(1024, ($i = floor(log($size, 1024)))), $precision);

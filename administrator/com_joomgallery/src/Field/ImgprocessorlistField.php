@@ -149,15 +149,15 @@ class ImgProcessorListField extends ListField
     }
 
     $js  = 'var changeImgProcessorDesc = function() {';
-    $js .= 'let select_val = document.getElementById("jform_jg_imgprocessor").value;';
-    $js .= 'let elem = document.getElementById("jg_imgprocessor_supplement_"+select_val);';
-    $js .= 'let elems = Array.from(document.getElementById("jg_imgprocessor_supplement").children);';
-    $js .= 'elems.forEach(child => {child.classList.add("hidden")});';
-    $js .= 'elem.classList.remove("hidden")';
+    $js .=      'let select_val = document.getElementById("jform_jg_imgprocessor").value;';
+    $js .=      'let elem = document.getElementById("jg_imgprocessor_supplement_"+select_val);';
+    $js .=      'let elems = Array.from(document.getElementById("jg_imgprocessor_supplement").children);';
+    $js .=      'elems.forEach(child => {child.classList.add("hidden")});';
+    $js .=      'elem.classList.remove("hidden")';
     $js .= '};';
 
     $js .= 'var callback = function(){';
-    $js .= 'document.getElementById("jg_imgprocessor_supplement").innerHTML = "' . $html_desc . '";';
+    $js .=      'document.getElementById("jg_imgprocessor_supplement").innerHTML = "' . $html_desc . '";';
     $js .= '};';
     $js .= 'if ( document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)){callback();} else {document.addEventListener("DOMContentLoaded", callback);}';
 

@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Categories;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\CategoriesModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Router\Route;
@@ -31,6 +32,12 @@ class HtmlView extends JoomGalleryView
   protected $items;
 
   protected $pagination;
+
+  /**
+   * @var array
+   * @since 4.2
+   */
+  protected array $ordering = [];
 
   /**
    * The page parameters
@@ -52,12 +59,12 @@ class HtmlView extends JoomGalleryView
    */
   public function display($tpl = null)
   {
-    /** @var CategoriesModel $model */
-    $model = $this->getModel();
+  /** @var CategoriesModel $model */
+  $model = $this->getModel();
 
-    $this->state         = $model->getState();
+  $this->state           = $model->getState();
     $this->params        = $model->getParams();
-    $this->items         = $model->getItems();
+  $this->items           = $model->getItems();
     $this->pagination    = $model->getPagination();
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
@@ -68,20 +75,20 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
-    // Check if is userspace is enabled
-    // Check access permission (ACL)
-    if($this->params['configs']->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
+  // Check if is userspace is enabled
+  // Check access permission (ACL)
+  if($this->params['configs']->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
+  {
+    if($this->params['configs']->get('jg_userspace', 1, 'int') == 0)
     {
-      if($this->params['configs']->get('jg_userspace', 1, 'int') == 0)
-      {
-        $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_VIEW_NO_ACCESS'), 'message');
-      }
-
-      // Redirect to category view
-      $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=1'));
-
-      return false;
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_CATEGORIES_VIEW_NO_ACCESS'), 'message');
     }
+
+    // Redirect to category view
+    $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=1'));
+
+    return;
+  }
 
     // Preprocess the list of items to find ordering divisions.
     foreach($this->items as &$item)
@@ -127,11 +134,11 @@ class HtmlView extends JoomGalleryView
     }
     elseif($this->app->get('sitename_pagetitles', 0) == 1)
     {
-      $title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+      $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
     }
     elseif($this->app->get('sitename_pagetitles', 0) == 2)
     {
-      $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
+      $title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
     }
 
     $this->document->setTitle($title);

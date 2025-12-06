@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Imageform;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\ImageformModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 
@@ -78,16 +79,16 @@ class HtmlView extends JoomGalleryView
       return;
     }
 
-    /** @var ImagefromModel $model */
-    $model = $this->getModel();
+  /** @var ImageformModel $model */
+  $model = $this->getModel();
 
-    $this->state  = $model->getState();
+  $this->state    = $model->getState();
     $this->params = $model->getParams();
     $this->item   = $model->getItem();
     $this->form   = $model->getForm();
 
-    // Get return page
-    $this->return_page = $model->getReturnPage();
+  // Get return page
+  $this->return_page = $model->getReturnPage();
 
     // Check for errors.
     if(\count($errors = $model->getErrors()))
@@ -95,10 +96,10 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
-    // Check access view level
+  // Check access view level
     if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
-    {
-      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
+  {
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
     }
 
     $this->_prepareDocument();

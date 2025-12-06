@@ -28,8 +28,8 @@ use Joomla\Database\DatabaseDriver;
  */
 class FaultyTable extends Table
 {
-    use JoomTableTrait;
-    use AssetTableTrait;
+  use JoomTableTrait;
+  use AssetTableTrait;
 
     /**
      * Constructor

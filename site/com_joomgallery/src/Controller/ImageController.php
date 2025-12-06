@@ -15,8 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
 
 /**
@@ -25,86 +26,20 @@ use Joomla\CMS\Router\Route;
  * @package JoomGallery
  * @since   4.0.0
  */
-class ImageController extends JoomBaseController
+class ImageController extends JoomFormController
 {
-  /**
-   * Edit an existing image.
-   * Redirect to form view.
-   *
-   * @return  void
-   *
-   * @since   4.0.0
-   */
-  public function edit()
-  {
-    // Get the previous edit id (if any) and the current edit id.
-    $previousId = (int) $this->app->getUserState(_JOOM_OPTION . '.edit.image.id');
-    $cid        = (array) $this->input->post->get('cid', [], 'int');
-    $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+  use RoutingTrait;
 
-    if($boxchecked)
-    {
-      $editId = (int) $cid[0];
-    }
-    else
-    {
-      $editId = $this->input->getInt('id', 0);
-    }
-
-    // ID check
-    if(!$editId)
-    {
-      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
-
-      return false;
-    }
-
-    // Access check
-    $parent_id = JoomHelper::getParent('image', $editId);
-
-    if(!$this->acl->checkACL('edit', 'image', $editId, $parent_id, true))
-    {
-      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
-
-      return false;
-    }
-
-    // Set the current edit id in the session.
-    $this->app->setUserState(_JOOM_OPTION . '.edit.image.id', $editId);
-
-    // Get the model.
-    $model = $this->getModel('Image', 'Site');
-
-    // Check out the item
-    if(!$model->checkout($editId))
-    {
-      // Check-out failed, display a notice but allow the user to see the record.
-      $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKOUT_FAILED', $model->getError()), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
-
-      return false;
-    }
-
-    // Check in the previous user.
-    if($previousId && $previousId !== $editId)
-    {
-      $model->checkin($previousId);
-    }
-
-    // Redirect to the form screen.
-    $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=imageform&' . $this->getItemAppend($editId), false));
-  }
+  protected $view_list = 'images';
 
   /**
    * Add a new image: Not available
    *
-   * @return  void
+   * @return  bool
    *
    * @since   4.0.0
    */
-  public function add()
+  public function add(): bool
   {
     // Get the previous edit id (if any) and the current edit id.
     $previousId = (int) $this->app->getUserState(_JOOM_OPTION . '.add.image.id');
@@ -116,7 +51,7 @@ class ImageController extends JoomBaseController
     if(!$this->acl->checkACL('add', 'image', $editId, $addCatId, true))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
+      $this->setRedirect(Route::_($this->getReturnPage() . $this->getItemAppend($editId), false));
 
       return false;
     }
@@ -139,6 +74,47 @@ class ImageController extends JoomBaseController
 
     // Redirect to the form screen.
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=imageform&' . $this->getItemAppend(0, $addCatId), false));
+
+    return true;
+  }
+
+  /**
+   * Method to add multiple new image records.
+   *
+   * @return  boolean  True if the record can be added, false if not.
+   *
+   * @since   4.0
+   */
+  public function ajaxsave(): bool
+  {
+    $result = ['error' => false];
+
+    try
+    {
+      if(!parent::save())
+      {
+        $result['success'] = false;
+        $result['error']   = $this->message;
+      }
+      else
+      {
+        $result['success'] = true;
+        $result['record']  = $this->component->cache->get('imgObj');
+      }
+
+      $json = json_encode($result, JSON_FORCE_OBJECT);
+      echo new JsonResponse($json);
+
+      $this->app->close();
+    }
+    catch(\Exception $e)
+    {
+      echo new JsonResponse($e);
+
+      $this->app->close();
+    }
+
+    return true;
   }
 
   /**

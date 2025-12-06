@@ -56,12 +56,12 @@ class JoomGalleryJsonView extends JsonView
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
   /**
-   * JUser object, holds the current user data
+   * User object, holds the current user data
    *
    * @access  protected
    * @var     object
@@ -106,14 +106,14 @@ class JoomGalleryJsonView extends JsonView
     }
   }
 
-  /**
-   * Method to get the access service class.
-   *
-   * @return  AccessInterface   Object on success, false on failure.
-   * @since   4.0.0
-   */
-  public function getAcl(): AccessInterface
-  {
+    /**
+     * Method to get the access service class.
+     *
+     * @return  AccessInterface   Object on success, false on failure.
+     * @since   4.0.0
+     */
+    public function getAcl(): AccessInterface
+    {
     // Create access service
     if(\is_null($this->acl))
     {
@@ -121,20 +121,20 @@ class JoomGalleryJsonView extends JsonView
       $this->acl = $this->component->getAccess();
     }
 
-    return $this->acl;
-  }
+        return $this->acl;
+    }
 
-  /**
-   * Check if state is set
-   *
-   * @param   mixed  $state  State
-   *
-   * @return bool
-   */
-  public function getState($state)
-  {
-    return isset($this->state->{$state}) ? $this->state->{$state} : false;
-  }
+    /**
+     * Check if state is set
+     *
+     * @param   mixed  $state  State
+     *
+     * @return bool
+     */
+    public function getState($state)
+    {
+        return isset($this->state->{$state}) ? $this->state->{$state} : false;
+    }
 
   /**
    * Outputs the content as json string
@@ -148,7 +148,7 @@ class JoomGalleryJsonView extends JsonView
     // Prevent the api url from being indexed
     $this->app->setHeader('X-Robots-Tag', 'noindex, nofollow');
 
-    // JInput object
+    // Input object
     $input = $this->app->getInput();
 
     // Serializing the output

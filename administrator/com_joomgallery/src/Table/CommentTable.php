@@ -63,16 +63,16 @@ class CommentTable extends Table
     $date = Factory::getDate();
     $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
-    // Support for title field: title
-    if(\array_key_exists('title', $array))
-    {
-      $array['title'] = trim($array['title']);
+  // Support for title field: title
+  if(\array_key_exists('title', $array))
+  {
+    $array['title'] = trim($array['title']);
 
-      if(empty($array['title']))
-      {
-        $array['title'] = 'Unknown';
-      }
+    if(empty($array['title']))
+    {
+    $array['title'] = 'Unknown';
     }
+  }
 
     if($array['id'] == 0)
     {
@@ -111,8 +111,8 @@ class CommentTable extends Table
    */
   public function delete($pk = null)
   {
-    $this->_trackAssets = false;
+  $this->_trackAssets = false;
 
-    return parent::delete($pk);
+  return parent::delete($pk);
   }
 }

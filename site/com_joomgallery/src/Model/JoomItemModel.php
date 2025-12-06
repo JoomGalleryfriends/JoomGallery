@@ -15,9 +15,13 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ItemModel;
+use Joomla\CMS\User\CurrentUserInterface;
 use Joomla\Registry\Registry;
 
 /**
@@ -28,29 +32,29 @@ use Joomla\Registry\Registry;
  */
 abstract class JoomItemModel extends ItemModel
 {
-    /**
-     * Joomla application class
-     *
-     * @access  protected
-     * @var     Joomla\CMS\Application\AdministratorApplication
-     */
-    protected $app;
+  /**
+   * Joomla application class
+   *
+   * @access  protected
+   * @var     CMSApplicationInterface
+   */
+  protected $app;
 
-    /**
-     * JoomGallery extension class
-     *
-     * @access  protected
-     * @var     Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
-     */
-    protected $component;
+  /**
+   * JoomGallery extension class
+   *
+   * @access  protected
+   * @var     JoomgalleryComponent
+   */
+  protected $component;
 
-    /**
-     * Item type
-     *
-     * @access  protected
-     * @var     string
-     */
-    protected $type = 'image';
+  /**
+   * Item type
+   *
+   * @access  protected
+   * @var     string
+   */
+  protected $type = 'image';
 
     /**
      * Item object
@@ -60,13 +64,13 @@ abstract class JoomItemModel extends ItemModel
      */
     protected $item = null;
 
-    /**
-     * JoomGallery access service
-     *
-     * @access  protected
-     * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
-     */
-    protected $acl = null;
+  /**
+   * JoomGallery access service
+   *
+   * @access  protected
+   * @var     AccessInterface
+   */
+  protected $acl = null;
 
     /**
      * Constructor
@@ -79,10 +83,10 @@ abstract class JoomItemModel extends ItemModel
      */
     public function __construct($config = [], $factory = null)
     {
-        parent::__construct($config, $factory);
+    parent::__construct($config, $factory);
 
-        $this->app       = Factory::getApplication('site');
-        $this->component = $this->app->bootComponent(_JOOM_OPTION);
+    $this->app       = Factory::getApplication();
+    $this->component = $this->app->bootComponent(_JOOM_OPTION);
     }
 
     /**
@@ -95,53 +99,53 @@ abstract class JoomItemModel extends ItemModel
     {
         $params = [
           'component' => $this->getState('parameters.component'),
-          'menu'               => $this->getState('parameters.menu'),
-          'configs'            => $this->getState('parameters.configs'),
+          'menu'      => $this->getState('parameters.menu'),
+          'configs'   => $this->getState('parameters.configs'),
         ];
 
         return $params;
     }
 
-    /**
-     * Method to override a parameter in the model state
-     *
-     * @param   string  $property  The parameter name.
-     * @param   string  $value     The parameter value.
-     * @param   string  $type      The parameter type. Optional. Default='configs'
-     *
-     * @return  void
-     * @since   4.0.0
-     */
-    public function setParam(string $property, string $value, $type = 'configs')
-    {
-        // Get params
-        $params = $this->getState('parameters.' . $type);
-
-        // Set new value
-        $params->set($property, $value);
-
-        // Set params to state
-        $this->setState('parameters.' . $type, $params);
-    }
-
-
   /**
-   * Method to get the access service class.
+   * Method to override a parameter in the model state
    *
-   * @return  AccessInterface   Object on success, false on failure.
+   * @param   string  $property  The parameter name.
+   * @param   string  $value     The parameter value.
+   * @param   string  $type      The parameter type. Optional. Default='configs'
+   *
+   * @return  void
    * @since   4.0.0
    */
-  public function getAcl(): AccessInterface
+  public function setParam(string $property, string $value, $type = 'configs')
   {
-      // Create access service
-      if(\is_null($this->acl))
-      {
-          $this->component->createAccess();
-          $this->acl = $this->component->getAccess();
-      }
+    // Get params
+    $params = $this->getState('parameters.' . $type);
 
-      return $this->acl;
+    // Set new value
+    $params->set($property, $value);
+
+    // Set params to state
+    $this->setState('parameters.' . $type, $params);
   }
+
+
+ /**
+  * Method to get the access service class.
+  *
+  * @return  AccessInterface   Object on success, false on failure.
+  * @since   4.0.0
+  */
+ public function getAcl(): AccessInterface
+ {
+   // Create access service
+   if(\is_null($this->acl))
+   {
+     $this->component->createAccess();
+     $this->acl = $this->component->getAccess();
+   }
+
+   return $this->acl;
+ }
 
     /**
      * Get an instance of Table class
@@ -150,7 +154,7 @@ abstract class JoomItemModel extends ItemModel
      * @param   string  $prefix   Prefix for the table class name. Optional.
      * @param   array   $config   Array of configuration values for the Table object. Optional.
      *
-     * @return  Table|bool Table if success, false on failure.
+     * @return  bool|Table|CurrentUserInterface Table if success, false on failure.
      */
     public function getTable($type = 'Image', $prefix = 'Administrator', $config = [])
     {
@@ -226,17 +230,17 @@ abstract class JoomItemModel extends ItemModel
 
 
 
-    /**
-     * Method to load component specific parameters into model state.
-     *
-     * @param   int   $id   ID of the content if needed (default: 0)
-     *
-     * @return  void
-     * @since   4.0.0
-     */
-    protected function loadComponentParams(int $id = 0)
-    {
-        // Load the parameters.
+  /**
+   * Method to load component specific parameters into model state.
+   *
+   * @param   int   $id   ID of the content if needed (default: 0)
+   *
+   * @return  void
+   * @since   4.0.0
+   */
+  protected function loadComponentParams(int $id = 0)
+  {
+    // Load the parameters.
         $params       = Factory::getApplication('com_joomgallery')->getParams();
         $params_array = $params->toArray();
 
@@ -247,13 +251,13 @@ abstract class JoomItemModel extends ItemModel
 
         $this->setState('parameters.component', $params);
 
-        // Load the configs from config service
-        $id = ($id === 0) ? null : $id;
+    // Load the configs from config service
+    $id = ($id === 0) ? null : $id;
 
         $this->component->createConfig(_JOOM_OPTION . '.' . $this->type, $id, true);
         $configArray = $this->component->getConfig()->getProperties();
         $configs     = new Registry($configArray);
 
         $this->setState('parameters.configs', $configs);
-    }
+  }
 }

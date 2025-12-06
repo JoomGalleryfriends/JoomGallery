@@ -10,14 +10,17 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
+// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\CMS\User\UserHelper;
 
@@ -37,100 +40,100 @@ class CategoryModel extends JoomItemModel
    */
   protected $type = 'category';
 
-  /**
-   * Method to auto-populate the model state.
-   *
-   * Note. Calling getState in this method will result in recursion.
-   *
-   * @return  void
-   *
-   * @since   4.0.0
-   *
-   * @throws Exception
-   */
-  protected function populateState()
-  {
-    // Check published state
-    if((!$this->getAcl()->checkACL('core.edit.state', 'com_joomgallery')) && (!$this->getAcl()->checkACL('core.edit', 'com_joomgallery')))
+    /**
+     * Method to auto-populate the model state.
+     *
+     * Note. Calling getState in this method will result in recursion.
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     *
+     * @throws \Exception
+     */
+    protected function populateState()
     {
-      $this->setState('filter.published', 1);
-      $this->setState('filter.archived', 2);
-    }
+        // Check published state
+        if((!$this->getAcl()->checkACL('core.edit.state', 'com_joomgallery')) && (!$this->getAcl()->checkACL('core.edit', 'com_joomgallery')))
+        {
+            $this->setState('filter.published', 1);
+            $this->setState('filter.archived', 2);
+        }
 
-    // Load state from the request userState on edit or from the passed variable on default
-    $id = $this->app->input->getInt('id', null);
+        // Load state from the request userState on edit or from the passed variable on default
+        $id = $this->app->input->getInt('id', null);
 
-    if($id)
-    {
-      $this->app->setUserState('com_joomgallery.edit.image.id', $id);
-    }
-    else
-    {
-      $id = (int) $this->app->getUserState('com_joomgallery.edit.image.id', null);
-    }
+        if($id)
+        {
+            $this->app->setUserState('com_joomgallery.edit.image.id', $id);
+        }
+        else
+        {
+            $id = (int) $this->app->getUserState('com_joomgallery.edit.image.id', null);
+        }
 
-    if(\is_null($id))
-    {
-      throw new \Exception('No ID provided to the model!', 500);
-    }
+        if(\is_null($id))
+        {
+            throw new \Exception('No ID provided to the model!', 500);
+        }
 
-    $this->setState('category.id', $id);
+        $this->setState('category.id', $id);
 
     $this->loadComponentParams($id);
-  }
-
-  /**
-   * Method to get the category item object.
-   *
-   * @param   integer  $id   The id of the object to get.
-   *
-   * @return  mixed    Object on success, false on failure.
-   *
-   * @throws \Exception
-   */
-  public function getItem($id = null)
-  {
-    if($this->item === null || $this->item->id != $id)
-    {
-      $this->item = false;
-
-      if(empty($id))
-      {
-        $id = $this->getState('category.id');
-      }
-
-      // Attempt to load the item
-      $adminModel = $this->component->getMVCFactory()->createModel('category', 'administrator');
-      $this->item = $adminModel->getItem($id);
-
-      if(empty($this->item))
-      {
-        throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 404);
-      }
     }
 
-    // Add created by name
-    if(isset($this->item->created_by) && !isset($this->item->created_by_name))
+    /**
+     * Method to get the category item object.
+     *
+     * @param   integer  $id   The id of the object to get.
+     *
+     * @return  mixed    Object on success, false on failure.
+     *
+     * @throws \Exception
+     */
+    public function getItem($id = null)
     {
-      $this->item->created_by_name = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->item->created_by)->name;
+        if($this->item === null || $this->item->id != $id)
+        {
+            $this->item = false;
+
+            if(empty($id))
+            {
+                $id = $this->getState('category.id');
+            }
+
+            // Attempt to load the item
+            $adminModel = $this->component->getMVCFactory()->createModel('category', 'administrator');
+            $this->item = $adminModel->getItem($id);
+
+            if(empty($this->item))
+            {
+                throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 404);
+            }
+        }
+
+        // Add created by name
+        if(isset($this->item->created_by) && !isset($this->item->created_by_name))
+        {
+            $this->item->created_by_name = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->item->created_by)->name;
+        }
+
+        // Add modified by name
+        if(isset($this->item->modified_by) && !isset($this->item->modified_by_name))
+        {
+            $this->item->modified_by_name = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->item->modified_by)->name;
+        }
+
+        // Delete unnecessary properties
+        $toDelete = ['asset_id', 'password', 'params'];
+
+        foreach($toDelete as $property)
+        {
+            unset($this->item->{$property});
+        }
+
+        return $this->item;
     }
-
-    // Add modified by name
-    if(isset($this->item->modified_by) && !isset($this->item->modified_by_name))
-    {
-      $this->item->modified_by_name = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->item->modified_by)->name;
-    }
-
-    // Delete unnecessary properties
-    $toDelete = ['asset_id', 'password', 'params'];
-
-    foreach($toDelete as $property)
-    {
-      unset($this->item->{$property});
-    }
-
-    return $this->item;
-  }
 
   /**
    * Method to unlock a password protected category
@@ -156,8 +159,8 @@ class CategoryModel extends JoomItemModel
     }
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+        $db    = $this->getDatabase();
+        $query = $db->createQuery();
 
     $query->select('id, password')
           ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
@@ -166,12 +169,7 @@ class CategoryModel extends JoomItemModel
 
     if(!$category = $db->loadObject())
     {
-      throw new \Exception($db->getErrorMsg());
-    }
-
-    if(!$category)
-    {
-      throw new \Exception('Provided category not found.');
+      throw new \Exception('Provided category not found. ' . $db->getErrorMsg());
     }
 
     if(!$category->password)
@@ -205,7 +203,7 @@ class CategoryModel extends JoomItemModel
   public function getParent($id = null)
   {
     if($id === null && $this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -226,12 +224,12 @@ class CategoryModel extends JoomItemModel
    *
    * @return  array|false    Array of children on success, false on failure.
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function getChildren()
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -265,7 +263,7 @@ class CategoryModel extends JoomItemModel
   public function getChildrenPagination()
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -291,12 +289,12 @@ class CategoryModel extends JoomItemModel
    * @param   array    $data      data
    * @param   boolean  $loadData  load current data
    *
-   * @return  Form|null  The \JForm object or null if the form can't be found
+   * @return  Form|null  The Joomla Form object or null if the form can't be found
    */
   public function getChildrenFilterForm($data = [], $loadData = true)
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -318,7 +316,7 @@ class CategoryModel extends JoomItemModel
   public function getChildrenActiveFilters()
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -337,12 +335,12 @@ class CategoryModel extends JoomItemModel
    *
    * @return  array|false    Array of images on success, false on failure.
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function getImages()
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -376,7 +374,7 @@ class CategoryModel extends JoomItemModel
   public function getImagesPagination()
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -402,12 +400,12 @@ class CategoryModel extends JoomItemModel
    * @param   array    $data      data
    * @param   boolean  $loadData  load current data
    *
-   * @return  Form|null  The \JForm object or null if the form can't be found
+   * @return  Form|null  The \Form object or null if the form can't be found
    */
   public function getImagesFilterForm($data = [], $loadData = true)
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -429,7 +427,7 @@ class CategoryModel extends JoomItemModel
   public function getImagesActiveFilters()
   {
     if($this->item === null)
-    {
+        {
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
@@ -476,13 +474,13 @@ class CategoryModel extends JoomItemModel
     }
 
     $imgform_list       = [];
-    $imgform_limitstart = $this->app->getUserState('joom.categoryview.' . $this->item->id . '.image.limitstart', 0);
+    $imgform_limitstart = $this->app->getUserState('joom.categoryview.image.limitstart', 0);
 
     if($this->app->input->get('contenttype', '') == 'image')
     {
       // Get query variables sent by the images form
       $imgform_list       = $this->app->input->get('list', []);
-      $imgform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.' . $this->item->id . '.image.limitstart', 'limitstart', 0, 'uint');
+      $imgform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.image.limitstart', 'limitstart', 0, 'uint');
     }
 
     // Override number of images being loaded
@@ -551,13 +549,13 @@ class CategoryModel extends JoomItemModel
     }
 
     $catform_list       = [];
-    $catform_limitstart = $this->app->getUserState('joom.categoryview.' . $this->item->id . '.category.limitstart', 0);
+    $catform_limitstart = $this->app->getUserState('joom.categoryview.category.limitstart', 0);
 
     if($this->app->input->get('contenttype', '') == 'category')
     {
       // Get query variables sent by the subcategories form
       $catform_list       = $this->app->input->get('list', []);
-      $catform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.' . $this->item->id . '.category.limitstart', 'limitstart', 0, 'uint');
+      $catform_limitstart = $this->app->getUserStateFromRequest('joom.categoryview.category.limitstart', 'limitstart', 0, 'uint');
     }
 
     // Override number of subcategories being loaded
@@ -612,13 +610,13 @@ class CategoryModel extends JoomItemModel
   /**
    * Get a list of parent categories that are not published (state = 1)
    *
-   * @param   int    $pk         Primary key of the category
+   * @param   ?int    $pk         Primary key of the category
    * @param   bool   $approved   True if the parents also have to be approved
    *
    * @return  array  List of all parents that are published
    *
    * @since   4.0.0
-   * @throws Exception
+   * @throws \Exception
    */
   public function getUnpublishedParents(?int $pk = null, bool $approved = false): array
   {
@@ -637,8 +635,8 @@ class CategoryModel extends JoomItemModel
     }
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+        $db    = $this->getDatabase();
+        $query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');
@@ -702,8 +700,8 @@ class CategoryModel extends JoomItemModel
     }
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+        $db    = $this->getDatabase();
+        $query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');
@@ -762,8 +760,8 @@ class CategoryModel extends JoomItemModel
     $user = $this->app->getIdentity();
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+        $db    = $this->getDatabase();
+        $query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');

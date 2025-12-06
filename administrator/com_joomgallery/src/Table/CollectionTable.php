@@ -50,38 +50,38 @@ class CollectionTable extends Table
    */
   public $approveImages = false;
 
-  /**
-   * Constructor
-   *
-   * @param   JDatabase  &$db               A database connector object
-   * @param   bool       $component_exists  True if the component object class exists
-   */
-  public function __construct(DatabaseDriver $db, bool $component_exists = true)
-  {
-    $this->component_exists = $component_exists;
-    $this->typeAlias        = _JOOM_OPTION . '.collection';
+    /**
+     * Constructor
+     *
+     * @param   JDatabase  &$db               A database connector object
+     * @param   bool       $component_exists  True if the component object class exists
+     */
+    public function __construct(DatabaseDriver $db, bool $component_exists = true)
+    {
+        $this->component_exists = $component_exists;
+        $this->typeAlias        = _JOOM_OPTION . '.collection';
 
-    parent::__construct(_JOOM_TABLE_COLLECTIONS, 'id', $db);
+        parent::__construct(_JOOM_TABLE_COLLECTIONS, 'id', $db);
 
     $this->setColumnAlias('published', 'published');
-  }
+    }
 
-  /**
-   * Overloaded bind function to pre-process the params.
-   *
-   * @param   array  $array   Named array
-   * @param   mixed  $ignore  Optional array or list of parameters to ignore
-   *
-   * @return  boolean  True on success.
-   *
-   * @see     Table:bind
-   * @since   4.0.0
-   * @throws  \InvalidArgumentException
-   */
-  public function bind($array, $ignore = '')
-  {
-    $date = Factory::getDate();
-    $task = Factory::getApplication()->input->get('task', '', 'cmd');
+    /**
+     * Overloaded bind function to pre-process the params.
+     *
+     * @param   array  $array   Named array
+     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     *
+     * @return  boolean  True on success.
+     *
+     * @see     Table:bind
+     * @since   4.0.0
+     * @throws  \InvalidArgumentException
+     */
+    public function bind($array, $ignore = '')
+    {
+        $date = Factory::getDate();
+        $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
     // Support for title field: title
     if(\array_key_exists('title', $array))
@@ -94,25 +94,25 @@ class CollectionTable extends Table
       }
     }
 
-    // Support for alias field: alias
-    if(empty($array['alias']))
-    {
-      if(empty($array['title']))
-      {
-        $array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
-      }
-      else
-      {
-        if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
+        // Support for alias field: alias
+        if(empty($array['alias']))
         {
-          $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
+            if(empty($array['title']))
+            {
+                $array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
+            }
+            else
+            {
+                if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
+                {
+                    $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
+                }
+                else
+                {
+                    $array['alias'] = OutputFilter::stringURLSafe(trim($array['title']));
+                }
+            }
         }
-        else
-        {
-          $array['alias'] = OutputFilter::stringURLSafe(trim($array['title']));
-        }
-      }
-    }
     else
     {
       if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
@@ -125,35 +125,35 @@ class CollectionTable extends Table
       }
     }
 
-    if($array['id'] == 0)
-    {
-      $array['created_time'] = $date->toSql();
-    }
+        if($array['id'] == 0)
+        {
+            $array['created_time'] = $date->toSql();
+        }
 
-    if(!key_exists('created_by', $array) || empty($array['created_by']))
-    {
-      $array['created_by'] = Factory::getApplication()->getIdentity()->id;
-    }
+        if(!key_exists('created_by', $array) || empty($array['created_by']))
+        {
+            $array['created_by'] = Factory::getApplication()->getIdentity()->id;
+        }
 
-    if($task == 'apply' || strpos($task, 'save') !== false)
-    {
-      $array['modified_time'] = $date->toSql();
-    }
+        if($task == 'apply' || strpos($task, 'save') !== false)
+        {
+            $array['modified_time'] = $date->toSql();
+        }
 
-    if($array['id'] == 0 && (!key_exists('modified_by', $array) || empty($array['modified_by'])))
-    {
-      $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-    }
+        if($array['id'] == 0 && (!key_exists('modified_by', $array) || empty($array['modified_by'])))
+        {
+            $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+        }
 
-    if($task == 'apply' || strpos($task, 'save') !== false)
-    {
-      $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-    }
+        if($task == 'apply' || strpos($task, 'save') !== false)
+        {
+            $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+        }
 
     // Support for list of images to be mapped
     if(isset($array['images']) && !\is_array($array['images']))
-    {
-      // Try to convert from json string
+        {
+            // Try to convert from json string
       $decoded = json_decode($array['images'], true);
 
       if(json_last_error() === JSON_ERROR_NONE)
@@ -167,20 +167,20 @@ class CollectionTable extends Table
     }
 
     return parent::bind($array, $ignore);
-  }
+    }
 
-  /**
-   * Overloaded check function
-   *
-   * @return bool
-   */
-  public function check()
-  {
-    // Check if alias is unique inside this user
+    /**
+     * Overloaded check function
+     *
+     * @return bool
+     */
+    public function check()
+    {
+        // Check if alias is unique inside this user
     if(!$this->isUnique('alias', $this->userid, 'userid'))
     {
       $count        = 2;
-      $currentAlias = $this->alias;
+      $currentAlias =  $this->alias;
 
       while(!$this->isUnique('alias', $this->userid, 'userid'))
       {
@@ -188,7 +188,7 @@ class CollectionTable extends Table
       }
     }
 
-    // Support for field description
+        // Support for field description
     if(empty($this->description))
     {
       $this->description = $this->loadDefaultField('description');
@@ -206,20 +206,20 @@ class CollectionTable extends Table
       $this->metakey = $this->loadDefaultField('metakey');
     }
 
-    return parent::check();
-  }
+        return parent::check();
+    }
 
-  /**
-   * Method to store a row in the database from the Table instance properties.
-   *
-   * @param   boolean  $updateNulls  True to update fields even if they are null.
-   *
-   * @return  boolean  True on success.
-   *
-   * @since   4.0.0
-   */
-  public function store($updateNulls = true)
-  {
+    /**
+     * Method to store a row in the database from the Table instance properties.
+     *
+     * @param   boolean  $updateNulls  True to update fields even if they are null.
+     *
+     * @return  boolean  True on success.
+     *
+     * @since   4.0.0
+     */
+    public function store($updateNulls = true)
+    {
     $images = null;
 
     if(property_exists($this, 'images') && !empty($this->images))
@@ -244,7 +244,7 @@ class CollectionTable extends Table
     }
 
     return $success;
-  }
+    }
 
   /**
    * Delete a record by id

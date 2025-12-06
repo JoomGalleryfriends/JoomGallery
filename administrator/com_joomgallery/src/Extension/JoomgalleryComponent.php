@@ -65,7 +65,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
   use AssociationServiceTrait;
   use HTMLRegistryAwareTrait;
   use RouterServiceTrait {
-RouterServiceTrait::createRouter as traitCreateRouter;
+    RouterServiceTrait::createRouter as traitCreateRouter;
   }
 
   /**
@@ -198,11 +198,13 @@ RouterServiceTrait::createRouter as traitCreateRouter;
       {
         case 'image':
         case 'imageform':
-            return 'image';
+        case 'userimage':
+          return 'image';
 
         case 'category':
         case 'categoryform':
-            return 'category';
+        case 'usercategory':
+          return 'category';
       }
     }
 
@@ -228,8 +230,10 @@ RouterServiceTrait::createRouter as traitCreateRouter;
     $language->load('com_joomgallery', JPATH_ADMINISTRATOR);
 
     return [
-      'com_joomgallery.image' => $language->_('COM_JOOMGALLERY_IMAGES'),
-      'com_joomgallery.category'    => $language->_('JCATEGORIES'),
+      'com_joomgallery.image'        => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.category'     => $language->_('JCATEGORIES'),
+      'com_joomgallery.userimage'    => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.usercategory' => $language->_('JCATEGORIES'),
     ];
   }
 }

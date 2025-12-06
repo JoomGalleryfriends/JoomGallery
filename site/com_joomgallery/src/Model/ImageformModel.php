@@ -10,11 +10,14 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
+// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\User\CurrentUserInterface;
 
 /**
  * Model to handle an image form.
@@ -24,13 +27,13 @@ use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminIma
  */
 class ImageformModel extends AdminImageModel
 {
-    /**
-     * Item type
-     *
-     * @access  protected
-     * @var     string
-     */
-    protected $type = 'image';
+  /**
+   * Item type
+   *
+   * @access  protected
+   * @var     string
+   */
+  protected $type = 'image';
 
     /**
      * Method to auto-populate the model state.
@@ -62,8 +65,8 @@ class ImageformModel extends AdminImageModel
             throw new \Exception('No ID provided to the model!', 500);
         }
 
-        $return = $this->app->input->get('return', '', 'base64');
-        $this->setState('return_page', base64_decode($return));
+    $return = $this->app->input->get('return', '', 'base64');
+    $this->setState('return_page', base64_decode($return));
 
         $this->setState('image.id', $id);
 
@@ -92,14 +95,14 @@ class ImageformModel extends AdminImageModel
      * @param   array   $data     An optional array of data for the form to interogate.
      * @param   boolean $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form    A Form object on success, false on failure
+     * @return  Form|CurrentUserInterface|false    A Form object on success, false on failure
      *
      * @since   4.0.0
      */
-    public function getForm($data = [], $loadData = true)
+    public function getForm($data = [], $loadData = true): Form|CurrentUserInterface|false
     {
         // Get the form.
-        $form = $this->loadForm($this->typeAlias, 'imageform', ['control' => 'jform', 'load_data' => $loadData]);
+        $form = $this->loadForm($this->typeAlias, 'imageform', ['control'   => 'jform', 'load_data' => $loadData]);
 
         if(empty($form))
         {
@@ -121,15 +124,15 @@ class ImageformModel extends AdminImageModel
         return parent::loadFormData();
     }
 
-    /**
-     * Get the return URL.
-     *
-     * @return  string  The return URL.
-     *
-     * @since   4.0.0
-     */
-    public function getReturnPage()
-    {
-        return base64_encode($this->getState('return_page', ''));
-    }
+  /**
+   * Get the return URL.
+   *
+   * @return  string  The return URL.
+   *
+   * @since   4.0.0
+   */
+  public function getReturnPage(): string
+  {
+    return base64_encode($this->getState('return_page', ''));
+  }
 }

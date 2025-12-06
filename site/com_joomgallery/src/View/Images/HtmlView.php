@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Images;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\ImagesModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Router\Route;
@@ -49,16 +50,16 @@ class HtmlView extends JoomGalleryView
    *
    * @return void
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function display($tpl = null)
   {
-    /** @var ImagesModel $model */
-    $model = $this->getModel();
+  /** @var ImagesModel $model */
+  $model = $this->getModel();
 
-    $this->state         = $model->getState();
+  $this->state           = $model->getState();
     $this->params        = $model->getParams();
-    $this->items         = $model->getItems();
+  $this->items           = $model->getItems();
     $this->pagination    = $model->getPagination();
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
@@ -69,20 +70,20 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
-    // Check if is userspace is enabled
-    // Check access permission (ACL)
-    if($this->params['configs']->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
+  // Check if is userspace is enabled
+  // Check access permission (ACL)
+  if($this->params['configs']->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
+  {
+    if($this->params['configs']->get('jg_userspace', 1, 'int') == 0)
     {
-      if($this->params['configs']->get('jg_userspace', 1, 'int') == 0)
-      {
-        $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_IMAGES_VIEW_NO_ACCESS'), 'message');
-      }
-
-      // Redirect to gallery view
-      $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
-
-      return false;
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_IMAGES_VIEW_NO_ACCESS'), 'message');
     }
+
+    // Redirect to gallery view
+    $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
+
+    return;
+  }
 
     $this->_prepareDocument();
 

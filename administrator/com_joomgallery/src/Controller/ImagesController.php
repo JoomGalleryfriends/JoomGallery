@@ -15,7 +15,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -35,12 +34,12 @@ class ImagesController extends JoomAdminController
   /**
    * Constructor.
    *
-   * @param   array                $config   An optional associative array of configuration settings.
-   *                                         Recognized key values include 'name', 'default_task', 'model_path', and
-   *                                         'view_path' (this list is not meant to be comprehensive).
-   * @param   MVCFactoryInterface  $factory  The factory.
-   * @param   CMSApplication       $app      The Application for the dispatcher
-   * @param   Input                $input    The Input object for the request
+   * @param   array                 $config   An optional associative array of configuration settings.
+   *                                          Recognized key values include 'name', 'default_task', 'model_path', and
+   *                                          'view_path' (this list is not meant to be comprehensive).
+   * @param   MVCFactoryInterface   $factory  The factory.
+   * @param   CMSApplication        $app      The Application for the dispatcher
+   * @param   Input                 $input    The Input object for the request
    *
    * @since   4.0.0
    */
@@ -97,7 +96,7 @@ class ImagesController extends JoomAdminController
    *
    * @return  void
    *
-   * @throws  Exception
+   * @throws  \Exception
    */
   public function duplicate()
   {
@@ -129,7 +128,7 @@ class ImagesController extends JoomAdminController
         $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'), 'info', 'jerror');
       }
     }
-    catch (\Exception $e)
+    catch(\Exception $e)
     {
       $this->component->addLog($e->getMessage(), 'warning', 'jerror');
 
@@ -144,7 +143,7 @@ class ImagesController extends JoomAdminController
    *
    * @return  void
    *
-   * @throws  Exception
+   * @throws  \Exception
    */
   public function recreate()
   {
@@ -175,10 +174,10 @@ class ImagesController extends JoomAdminController
       // Create refresher
       $options = [
         'controller' => 'images',
-        'task'                 => 'recreate',
-        'name'                 => Text::_('COM_JOOMGALLERY_RECREATE_IMAGES'),
-        'remaining'            => \count($pks),
-        'start'                => $this->input->getBool('cid'),
+        'task'       => 'recreate',
+        'name'       => Text::_('COM_JOOMGALLERY_RECREATE_IMAGES'),
+        'remaining'  => \count($pks),
+        'start'      => $this->input->getBool('cid'),
       ];
       $this->component->createRefresher($options);
       $refresher = $this->component->getRefresher();
@@ -245,9 +244,9 @@ class ImagesController extends JoomAdminController
   /**
    * Proxy for getModel.
    *
-   * @param   string  $name    Optional. Model name
-   * @param   string  $prefix  Optional. Class prefix
-   * @param   array   $config  Optional. Configuration array for model
+   * @param   string   $name    Optional. Model name
+   * @param   string   $prefix  Optional. Class prefix
+   * @param   array    $config  Optional. Configuration array for model
    *
    * @return  object  The Model
    *
@@ -263,9 +262,8 @@ class ImagesController extends JoomAdminController
    *
    * @return  void
    *
-   * @since   4.0.0
-   *
    * @throws  \Exception
+   * @since   4.0.0
    */
   public function saveOrderAjax()
   {
@@ -296,7 +294,7 @@ class ImagesController extends JoomAdminController
   /**
    * Method to change the state of a list of items
    *
-   * @param   string   $type   Name of the state to be changed
+   * @param   string   $type  Name of the state to be changed
    *
    * @return  void
    *
@@ -335,6 +333,7 @@ class ImagesController extends JoomAdminController
     if(empty($cid))
     {
       $this->app->getLogger()->warning(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), ['image' => 'jerror']);
+      // ToDo Manuel: Fix array to string conversion
       $this->component->addLog(Text::_($this->text_prefix . '_NO_ITEM_SELECTED' . ['image' => 'jerror']), 'warning', 'jerror');
     }
     else
@@ -348,7 +347,7 @@ class ImagesController extends JoomAdminController
       // Change the state of the items.
       try
       {
-        $model->changeSate($cid, $type, $value);
+        $model->changeState($cid, $type, $value);
         $errors = $model->getErrors();
         $ntext  = null;
 
@@ -382,7 +381,7 @@ class ImagesController extends JoomAdminController
           $this->setMessage(Text::plural($ntext, \count($cid)));
         }
       }
-      catch (\Exception $e)
+      catch(\Exception $e)
       {
         $this->component->addLog($e->getMessage(), 'warning', 'jerror');
         $this->setMessage($e->getMessage(), 'error');

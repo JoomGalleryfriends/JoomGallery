@@ -67,16 +67,16 @@ class ConfigTable extends Table
     $date = Factory::getDate();
     $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
-    // Support for title field: title
-    if(\array_key_exists('title', $array))
-    {
-      $array['title'] = trim($array['title']);
+  // Support for title field: title
+  if(\array_key_exists('title', $array))
+  {
+    $array['title'] = trim($array['title']);
 
-      if(empty($array['title']))
-      {
-        $array['title'] = 'Unknown';
-      }
+    if(empty($array['title']))
+    {
+    $array['title'] = 'Unknown';
     }
+  }
 
     if($array['id'] == 0 && (!key_exists('created_by', $array) || empty($array['created_by'])))
     {
@@ -93,11 +93,11 @@ class ConfigTable extends Table
       $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
     }
 
-    // Support for multiple field: jg_replaceshowwarning
-    $this->multipleFieldSupport($array, 'jg_replaceshowwarning');
+  // Support for multiple field: jg_replaceshowwarning
+  $this->multipleFieldSupport($array, 'jg_replaceshowwarning');
 
     // Support for multiple field: jg_uploadorder
-    $this->multipleFieldSupport($array, 'jg_uploadorder');
+  $this->multipleFieldSupport($array, 'jg_uploadorder');
 
     // Support for multiple field: jg_delete_original
     $this->multipleFieldSupport($array, 'jg_delete_original');
@@ -144,40 +144,40 @@ class ConfigTable extends Table
     // Support for multiple field: jg_downloadfile
     $this->multipleFieldSupport($array, 'jg_downloadfile');
 
-    // Support for multiple field: jg_ratingcalctype
+  // Support for multiple field: jg_ratingcalctype
     $this->multipleFieldSupport($array, 'jg_ratingcalctype');
 
-    // Support for number field: jg_maxusercat
-    $this->numberFieldSupport($array, 'jg_maxusercat');
+  // Support for number field: jg_maxusercat
+  $this->numberFieldSupport($array, 'jg_maxusercat');
 
-    // Support for number field: jg_maxuserimage
-    $this->numberFieldSupport($array, 'jg_maxuserimage');
+  // Support for number field: jg_maxuserimage
+  $this->numberFieldSupport($array, 'jg_maxuserimage');
 
-    // Support for number field: jg_maxuserimage_timespan
-    $this->numberFieldSupport($array, 'jg_maxuserimage_timespan');
+  // Support for number field: jg_maxuserimage_timespan
+  $this->numberFieldSupport($array, 'jg_maxuserimage_timespan');
 
-    // Support for number field: jg_maxfilesize
-    $this->numberFieldSupport($array, 'jg_maxfilesize');
+  // Support for number field: jg_maxfilesize
+  $this->numberFieldSupport($array, 'jg_maxfilesize');
 
-    // Support for number field: jg_maxuploadfields
-    $this->numberFieldSupport($array, 'jg_maxuploadfields');
+  // Support for number field: jg_maxuploadfields
+  $this->numberFieldSupport($array, 'jg_maxuploadfields');
 
-    // Support for number field: jg_maxvoting
-    $this->numberFieldSupport($array, 'jg_maxvoting');
+  // Support for number field: jg_maxvoting
+  $this->numberFieldSupport($array, 'jg_maxvoting');
 
-    // Support for multiple subform field: jg_replaceinfo
-    $this->subformFieldSupport($array, 'jg_replaceinfo');
+  // Support for multiple subform field: jg_replaceinfo
+  $this->subformFieldSupport($array, 'jg_replaceinfo');
 
-    // Support for multiple subform field: jg_staticprocessing
-    $this->subformFieldSupport($array, 'jg_staticprocessing');
+  // Support for multiple subform field: jg_staticprocessing
+  $this->subformFieldSupport($array, 'jg_staticprocessing');
 
-    // Support for multiple subform field: jg_dynamicprocessing
-    $this->subformFieldSupport($array, 'jg_dynamicprocessing');
+  // Support for multiple subform field: jg_dynamicprocessing
+  $this->subformFieldSupport($array, 'jg_dynamicprocessing');
 
-    // Support for multiple field: jg_record_hits_select
+  // Support for multiple field: jg_record_hits_select
     $this->multipleFieldSupport($array, 'jg_record_hits_select');
 
-    //
+  //
     if(isset($array['params']) && \is_array($array['params']))
     {
       $registry = new Registry();
@@ -195,7 +195,7 @@ class ConfigTable extends Table
     // Bind the rules for ACL where supported.
     if(isset($array['rules']))
     {
-      $rules = new Rules($array['rules']);
+    $rules = new Rules($array['rules']);
       $this->setRules($rules);
     }
 
@@ -248,11 +248,11 @@ class ConfigTable extends Table
       $this->jg_dynamicprocessing = '{}';
     }
 
-    // Support for media manager image select
-    if(!empty($this->jg_wmfile) && strpos($this->jg_wmfile, '#') !== false)
-    {
-      $this->jg_wmfile = explode('#', $this->jg_wmfile)[0];
-    }
+  // Support for media manager image select
+  if(!empty($this->jg_wmfile) && strpos($this->jg_wmfile, '#') !== false)
+  {
+    $this->jg_wmfile = explode('#', $this->jg_wmfile)[0];
+  }
 
 
     return parent::check();

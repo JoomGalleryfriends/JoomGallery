@@ -53,8 +53,8 @@ trait AccessServiceTrait
      */
     public function createAccess($option = '')
     {
-        $this->acl = new Access($option);
+    $this->acl = new Access($option);
 
-        return;
+    return;
     }
 }
