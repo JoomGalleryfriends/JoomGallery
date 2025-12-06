@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Feed\FeedFactory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Database\DatabaseInterface;
 
@@ -170,14 +171,18 @@ class ControlModel extends BaseDatabaseModel
     $extensionsArray = [];
     try
     {
-      foreach(JoomHelper::fetchXML($extensions_url)->extension as $extension)
+      $xml = @JoomHelper::fetchXML($extensions_url);
+
+      foreach($xml->extension as $extension)
       {
         $extensionsArray[] = $extension;
       }
     }
-    catch (\Exception $e)
+    catch(\Exception $e)
     {
-      JoomHelper::getComponent()->setWarning('Error fetching list of extensions: ' . $e);
+      JoomHelper::getComponent()->setWarning(Text::_('COM_JOOMGALLERY_ERROR_LIST_OF_EXTENSIONS'));
+      trigger_error('Error fetching list of extensions.', E_USER_WARNING);
+      trigger_error('Detailed info: ' . $e, E_USER_WARNING);
     }
 
     // Get the list of extensions
@@ -201,16 +206,21 @@ class ControlModel extends BaseDatabaseModel
 
       try
       {
-        $info_extension = $this->getBestUpdate(JoomHelper::fetchXML($url));
+        $xml            = @JoomHelper::fetchXML($url);
+        $info_extension = $this->getBestUpdate($xml);
 
         if($info_extension)
         {
           $extensions[$name] = json_decode(json_encode($info_extension), true);
         }
       }
-      catch (\Exception $e)
+      catch(\Exception $e)
       {
-        JoomHelper::getComponent()->setWarning('Error fetching extension info (' . (string) $xml_extension->attributes()->name . '): ' . $e);
+        $ext_url = $xml_extension->attributes()->infourl ? (string) $xml_extension->attributes()->infourl : '#';
+        JoomHelper::getComponent()->setWarning(Text::sprintf('COM_JOOMGALLERY_ERROR_LIST_OF_EXTENSIONS_EXTENSION', $ext_url, (string) $xml_extension->attributes()->name));
+
+        trigger_error('Error fetching extension info (' . (string) $xml_extension->attributes()->name . ').', E_USER_WARNING);
+        trigger_error('Detailed info: ' . $e, E_USER_WARNING);
       }
     }
 
