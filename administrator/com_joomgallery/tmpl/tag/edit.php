@@ -1,26 +1,27 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip');
 
@@ -33,8 +34,8 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 ?>
 
 <form
-	action="<?php echo Route::_('index.php?option=com_joomgallery&layout='.$layout.$tmpl.'&id=' . (int) $this->item->id); ?>"
-	method="post" enctype="multipart/form-data" name="adminForm" id="tag-form" class="form-validate"
+  action="<?php echo Route::_('index.php?option=com_joomgallery&layout=' . $layout . $tmpl . '&id=' . (int) $this->item->id); ?>"
+  method="post" enctype="multipart/form-data" name="adminForm" id="tag-form" class="form-validate"
   aria-label="<?php echo Text::_('COM_JOOMGALLERY_TAG_FORM_TITLE_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>" >
 
   <div class="row title-alias form-vertical mb-3">
@@ -45,9 +46,9 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
       <?php echo $this->form->renderField('alias'); ?>
     </div>
   </div>
-	
+  
   <div class="main-card">
-    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details', 'recall' => true, 'breakpoint' => 768)); ?>
+    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'Details', 'recall' => true, 'breakpoint' => 768]); ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>
     <div class="row">
@@ -85,7 +86,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     </div>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-    <?php if($this->getAcl()->checkACL('core.admin','joomgallery')) : ?>
+    <?php if($this->getAcl()->checkACL('core.admin', 'joomgallery')) : ?>
       <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'permissions', Text::_('JGLOBAL_ACTION_PERMISSIONS_LABEL', true)); ?>
         <div class="alert alert-primary" role="alert"><?php echo Text::sprintf('COM_JOOMGALLERY_ACTION_GLOBAL_ASSET_MESSAGE', Text::_('COM_JOOMGALLERY_TAGS'), Text::_('COM_JOOMGALLERY_TAG')); ?></div>
         <?php echo $this->form->getInput('rules'); ?>
@@ -95,7 +96,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
   </div>
 
-	<input type="hidden" name="task" value=""/>
-	<?php echo HTMLHelper::_('form.token'); ?>
+  <input type="hidden" name="task" value=""/>
+  <?php echo HTMLHelper::_('form.token'); ?>
 
 </form>

@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
@@ -96,7 +97,7 @@ class ConfigDynprocessing extends AbstractCommand
   Usage: <info>php %command.full_name%</info>
     * You may specify an ID of the configuration with the <info>--id<info> option. Otherwise, it will be '1'
   ";
-	  $this->setDescription(Text::_('List all variables in jg_dynamicprocessing field of selected joomgallery configuration'));
+    $this->setDescription(Text::_('List all variables in jg_dynamicprocessing field of selected joomgallery configuration'));
     $this->setHelp($help);
   }
 
@@ -121,9 +122,8 @@ class ConfigDynprocessing extends AbstractCommand
     $jsonParams = $this->getParamsAsJsonFromDB($configId);
 
     // If no params returned  show a warning and set the exit code to 1.
-    if (empty ($jsonParams))
+    if(empty($jsonParams))
     {
-
       $this->ioStyle->error("The config id '" . $configId . "' is invalid or parameters are empty !");
 
       return Command::FAILURE;
@@ -176,17 +176,16 @@ class ConfigDynprocessing extends AbstractCommand
   {
     $items = [];
 
-    if (empty($max_len))
+    if(empty($max_len))
     {
       $max_len = 70;
     }
 
-    foreach ($configAssoc as $key => $value)
+    foreach($configAssoc as $key => $value)
     {
       $items[] = [$key => mb_strimwidth((string) $value, 0, $max_len, '...')];
     }
 
     return $items;
   }
-
 }

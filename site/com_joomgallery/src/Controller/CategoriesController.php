@@ -1,20 +1,21 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Categories list controller class.
@@ -27,17 +28,17 @@ class CategoriesController extends FormController
   /**
    * Proxy for getModel.
    *
-   * @param   string   $name    The model name. Optional.
-   * @param   string   $prefix  The class prefix. Optional
-   * @param   array    $config  Configuration array for model. Optional
+   * @param   string  $name    The model name. Optional.
+   * @param   string  $prefix  The class prefix. Optional
+   * @param   array   $config  Configuration array for model. Optional
    *
    * @return  object  The model
    *
    * @since   4.0.0
    */
-  public function getModel($name = 'Categories', $prefix = 'Site', $config = ['ignore_request' => true])
+  public function getModel($name = 'Categories', $prefix = 'Site', $config = [])
   {
-    return parent::getModel($name, $prefix, $config);
+    return parent::getModel($name, $prefix, ['ignore_request' => true]);
   }
 
   /**
@@ -61,8 +62,7 @@ class CategoriesController extends FormController
     {
       if($pk === 0)
       {
-        unset($pks[$i]);
-        unset($order[$i]);
+        unset($pks[$i], $order[$i]);
       }
     }
 

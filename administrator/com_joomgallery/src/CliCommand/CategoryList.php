@@ -1,16 +1,17 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\CliCommand;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use \Joomla\CMS\Factory;
@@ -90,12 +91,12 @@ class CategoryList extends AbstractCommand
 
     // ToDo: option to limit by user (owner), ?parent ...
 
-    $help = "<info>%command.name%</info> list all categories
+    $help = '<info>%command.name%</info> list all categories
   Usage: <info>php %command.full_name%</info>
     * You may filter on the user id of category using the <info>--owner</info> option.
     * You may filter on created_by of category using the <info>--created</info> option.
     * You may filter on the parent id of category using the <info>--parent_id</info> option.
-    Example: <info>php %command.full_name% --created_by=291</info>";
+    Example: <info>php %command.full_name% --created_by=291</info>';
     $this->setDescription(Text::_('List all categories'));
     $this->setHelp($help);
   }
@@ -118,7 +119,8 @@ class CategoryList extends AbstractCommand
     $this->ioStyle->title('JoomGallery Category list');
 
     $created_by_id = $input->getOption('created') ?? '';
-    if (empty ($created_by_id))
+
+    if(empty($created_by_id))
     {
       $created_by_id = $input->getOption('owner') ?? '';
     }
@@ -127,7 +129,7 @@ class CategoryList extends AbstractCommand
     $categories = $this->getItemsFromDB($created_by_id, $parent_id);
 
     // If no categories are found show a warning and set the exit code to 1.
-    if (empty($categories))
+    if(empty($categories))
     {
       $this->ioStyle->warning('No categories found matching your criteria');
 
@@ -136,31 +138,30 @@ class CategoryList extends AbstractCommand
 
     // Reshape the categories into something humans can read.
     $categories = array_map(
-      function (object $item): array {
-        return [
-          $item->id,
-          $item->title,
-          $item->published ? Text::_('JYES') : Text::_('JNO'),
-          $item->hidden ? Text::_('JYES') : Text::_('JNO'),
-          $item->created_by,
-          $item->created_time,
-          $item->modified_by,
-          $item->modified_time,
-          $item->parent_id, // JGLOBAL_ROOT
-          empty($item->password) ? 'no' : 'yes'
-          // $item->,
+        function (object $item): array {
+          return [
+            $item->id,
+            $item->title,
+            $item->published ? Text::_('JYES') : Text::_('JNO'),
+            $item->hidden ? Text::_('JYES') : Text::_('JNO'),
+            $item->created_by,
+            $item->created_time,
+            $item->modified_by,
+            $item->modified_time,
+            $item->parent_id, // JGLOBAL_ROOT
+            // $item->,
 
-        ];
-      },
-      $categories
+          ];
+        },
+        $categories
     );
 
     // Display the categories in a table and set the exit code to 0
     $this->ioStyle->table(
-      [
-        'ID', 'Title', 'Published', 'Hidden', 'Created', 'Created time', 'Modified', 'Modified time', 'Parent', 'Password',
-      ],
-      $categories
+        [
+          'ID', 'Title', 'Published', 'Hidden', 'Created/Owner', 'Created', 'Modified by', 'Modified', 'Parent',
+        ],
+        $categories
     );
 
     return Command::SUCCESS;
@@ -181,12 +182,12 @@ class CategoryList extends AbstractCommand
       ->select('*')
       ->from('#__joomgallery_categories');
 
-    if (!empty ($userId))
+    if(!empty($userId))
     {
       $query->where($db->quoteName('created_by') . ' = ' . (int) $userId);
     }
 
-    if (!empty ($parent_id))
+    if(!empty($parent_id))
     {
       $query->where($db->quoteName('parent_id') . ' = ' . (int) $parent_id);
     }

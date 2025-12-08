@@ -1,23 +1,24 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Access\Access;
-use \Joomla\Database\DatabaseInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Access\Access;
+use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Class that handles all access authorisation routines for own elements.
@@ -31,7 +32,7 @@ class AccessOwn extends Access
    *
    * @var    array
    */
-  protected static $viewLevelsList = array();
+  protected static $viewLevelsList = [];
 
   /**
    * List of content types which do not have their own assets but uses assets
@@ -40,7 +41,7 @@ class AccessOwn extends Access
    *
    * @var array
    */
-  public static $parent_dependent_types = array();
+  public static $parent_dependent_types = [];
 
   /**
    * List of content types which have only one global asset
@@ -48,7 +49,7 @@ class AccessOwn extends Access
    *
    * @var array
    */
-  public static $global_types = array();
+  public static $global_types = [];
 
   /**
    * Method to check against own access.
@@ -66,10 +67,10 @@ class AccessOwn extends Access
   public static function checkOwn($userId, $action, $assetKey = null, $preload = true, $key = 0)
   {
     // Sanitise inputs.
-    $userId  = (int) $userId;
-    $action  = strtolower(preg_replace('#[\s\-]+#', '.', trim($action)));
+    $userId = (int) $userId;
+    $action = strtolower(preg_replace('#[\s\-]+#', '.', trim($action)));
 
-    if (!isset(self::$identities[$userId]))
+    if(!isset(self::$identities[$userId]))
     {
       // Get all groups against which the user is mapped.
       self::$identities[$userId] = self::getGroupsByUser($userId);
@@ -85,14 +86,14 @@ class AccessOwn extends Access
     $assetKey      = self::cleanAssetKey($assetKey);
     $assetId       = self::getAssetId($assetKey);
     $assetName     = self::getAssetName($assetKey);
-    $assetArray    = \explode('.', $assetName);
+    $assetArray    = explode('.', $assetName);
     $extensionName = self::getExtensionNameFromAsset($assetName);
 
     // Collects permissions for each asset
-    $collected = array();
+    $collected = [];
 
     // Get all asset ancestors
-    $ancestors = array_reverse(self::getAssetAncestors($extensionName, $assetId));      
+    $ancestors = array_reverse(self::getAssetAncestors($extensionName, $assetId));
 
     // Get roles for all asset ancestors
     foreach($ancestors as $i => $id)
@@ -110,7 +111,7 @@ class AccessOwn extends Access
       }
 
       // If not full recursive mode, but recursive parent mode, do not add other recursion rules.
-      if (
+      if(
           !$recursive && $recursiveParentAsset && self::$assetPermissionsParentIdMapping[$extensionName][$id]->name !== $extensionName
           && (int) self::$assetPermissionsParentIdMapping[$extensionName][$id]->id !== $assetId
           )
@@ -121,7 +122,8 @@ class AccessOwn extends Access
       $collected[$i] = self::$assetPermissionsParentIdMapping[$extensionName][$id];
 
       // Add owner to collection
-      $ancArray = \explode('.', $collected[$i]->name);
+      $ancArray = explode('.', $collected[$i]->name);
+
       if(\count($ancArray) >= 3)
       {
         // check if it is a parent dependent type
@@ -161,21 +163,23 @@ class AccessOwn extends Access
     $groupsOfUser = self::$identities[$userId];
 
     $assetOwner = null;
-    if (isset(\end($ancestors)->owner))
+
+    if(isset(end($ancestors)->owner))
     {
-      $assetOwner = \end($ancestors)->owner;
+      $assetOwner = end($ancestors)->owner;
     }
 
     foreach($ancestors as $key => $ancestor)
     {
       // Get rules
-      $rules = \json_decode($ancestor->rules);
-      if(!\in_array($action, \array_keys(\get_object_vars($rules))))
+      $rules = json_decode($ancestor->rules);
+
+      if(!\in_array($action, array_keys(get_object_vars($rules))))
       {
         // This ancestor does not contain any rule for the current action
         continue;
       }
-    
+
       if($assetOwner == $userId)
       {
         // User is owner of this ancestor

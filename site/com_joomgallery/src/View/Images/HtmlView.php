@@ -1,74 +1,73 @@
 <?php
-
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Images;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Site\Model\ImagesModel;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Router\Route;
 
 /**
  * View class for a list of Joomgallery.
- * 
+ *
  * @package JoomGallery
  * @since   4.0.0
  */
 class HtmlView extends JoomGalleryView
 {
-	protected $items;
+  protected $items;
 
-	protected $pagination;
+  protected $pagination;
 
-	/**
-	 * The page parameters
-	 *
-	 * @var    array
-	 *
-	 * @since  4.0.0
-	 */
-	protected $params = array();
+  /**
+   * The page parameters
+   *
+   * @var    array
+   *
+   * @since  4.0.0
+   */
+  protected $params = [];
 
-	/**
-	 * Display the view
-	 *
-	 * @param   string  $tpl  Template name
-	 *
-	 * @return void
-	 *
-	 * @throws \Exception
-	 */
-	public function display($tpl = null)
-	{
-		/** @var ImagesModel $model */
+  /**
+   * Display the view
+   *
+   * @param   string  $tpl  Template name
+   *
+   * @return void
+   *
+   * @throws Exception
+   */
+  public function display($tpl = null)
+  {
+    /** @var ImagesModel $model */
     $model = $this->getModel();
 
     $this->state         = $model->getState();
-		$this->params        = $model->getParams();
-    $this->items         = $model->getItems();		
-		$this->pagination    = $model->getPagination();
-		$this->filterForm    = $model->getFilterForm();
-		$this->activeFilters = $model->getActiveFilters();
+    $this->params        = $model->getParams();
+    $this->items         = $model->getItems();
+    $this->pagination    = $model->getPagination();
+    $this->filterForm    = $model->getFilterForm();
+    $this->activeFilters = $model->getActiveFilters();
 
-		// Check for errors.
-		if(\count($errors = $model->getErrors()))
-		{
-			throw new GenericDataException(implode("\n", $errors), 500);
-		}
+    // Check for errors.
+    if(\count($errors = $model->getErrors()))
+    {
+      throw new GenericDataException(implode("\n", $errors), 500);
+    }
 
     // Check if is userspace is enabled
     // Check access permission (ACL)
@@ -81,82 +80,82 @@ class HtmlView extends JoomGalleryView
 
       // Redirect to gallery view
       $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
-      
-      return;
+
+      return false;
     }
 
-		$this->_prepareDocument();
+    $this->_prepareDocument();
 
-		parent::display($tpl);
-	}
+    parent::display($tpl);
+  }
 
-	/**
-	 * Prepares the document
-	 *
-	 * @return void
-	 *
-	 * @throws \Exception
-	 */
-	protected function _prepareDocument()
-	{
-		$menus = $this->app->getMenu();
-		$title = null;
+  /**
+   * Prepares the document
+   *
+   * @return void
+   *
+   * @throws \Exception
+   */
+  protected function _prepareDocument()
+  {
+    $menus = $this->app->getMenu();
+    $title = null;
 
-		// Because the application sets a default page title,
-		// we need to get it from the menu item itself
-		$menu = $menus->getActive();
+    // Because the application sets a default page title,
+    // we need to get it from the menu item itself
+    $menu = $menus->getActive();
 
-		if($menu)
-		{
-			$this->params['menu']->def('page_heading', $this->params['menu']->get('page_title', $menu->title));
-		}
-		else
-		{
-			$this->params['menu']->def('page_heading', Text::_('JoomGallery'));
-		}
+    if($menu)
+    {
+      $this->params['menu']->def('page_heading', $this->params['menu']->get('page_title', $menu->title));
+    }
+    else
+    {
+      $this->params['menu']->def('page_heading', Text::_('JoomGallery'));
+    }
 
-		$title = $this->params['menu']->get('page_title', '');
+    $title = $this->params['menu']->get('page_title', '');
 
-		if(empty($title))
-		{
-			$title = $this->app->get('sitename');
-		}
-		elseif($this->app->get('sitename_pagetitles', 0) == 1)
-		{
-			$title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
-		}
-		elseif($this->app->get('sitename_pagetitles', 0) == 2)
-		{
-			$title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
-		}
+    if(empty($title))
+    {
+      $title = $this->app->get('sitename');
+    }
+    elseif($this->app->get('sitename_pagetitles', 0) == 1)
+    {
+      $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
+    }
+    elseif($this->app->get('sitename_pagetitles', 0) == 2)
+    {
+      $title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
+    }
 
-		$this->document->setTitle($title);
+    $this->document->setTitle($title);
 
-		if($this->params['menu']->get('menu-meta_description'))
-		{
-			$this->document->setDescription($this->params['menu']->get('menu-meta_description'));
-		}
+    if($this->params['menu']->get('menu-meta_description'))
+    {
+      $this->document->setDescription($this->params['menu']->get('menu-meta_description'));
+    }
 
-		if($this->params['menu']->get('menu-meta_keywords'))
-		{
-			$this->document->setMetadata('keywords', $this->params['menu']->get('menu-meta_keywords'));
-		}
+    if($this->params['menu']->get('menu-meta_keywords'))
+    {
+      $this->document->setMetadata('keywords', $this->params['menu']->get('menu-meta_keywords'));
+    }
 
-		if($this->params['menu']->get('robots'))
-		{
-			$this->document->setMetadata('robots', $this->params['menu']->get('robots'));
-		}
+    if($this->params['menu']->get('robots'))
+    {
+      $this->document->setMetadata('robots', $this->params['menu']->get('robots'));
+    }
 
-		if(!$this->isMenuCurrentView($menu))
-		{
-			// Add Breadcrumbs
-			$pathway = $this->app->getPathway();
-			$breadcrumbTitle = Text::_('COM_JOOMGALLERY_IMAGES');
+    if(!$this->isMenuCurrentView($menu))
+    {
+      // Add Breadcrumbs
+      $pathway         = $this->app->getPathway();
+      $breadcrumbTitle = Text::_('COM_JOOMGALLERY_IMAGES');
 
-			if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
-			{
-				$pathway->addItem($breadcrumbTitle, '');
-			}
-		}
-	}
+      if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
+      {
+        $pathway->addItem($breadcrumbTitle, '');
+      }
+    }
+  }
 }

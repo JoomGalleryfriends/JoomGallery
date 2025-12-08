@@ -1,26 +1,26 @@
 <?php
-
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\Input\Input;
-use \Joomla\Filesystem\Path;
-use \Joomla\CMS\Application\CMSApplication;
-use \Joomla\CMS\MVC\Controller\BaseController;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\Filesystem\Path;
+use Joomla\Input\Input;
 
 /**
  * Joomgallery master display controller.
@@ -46,13 +46,13 @@ class DisplayController extends BaseController
    */
   protected $context;
 
-	/**
-	 * The default view.
-	 *
-	 * @var    string
-	 * @since  4.0.0
-	 */
-	protected $default_view = 'images';
+  /**
+   * The default view.
+   *
+   * @var    string
+   * @since  4.0.0
+   */
+  protected $default_view = 'images';
 
   /**
    * Constructor.
@@ -66,7 +66,7 @@ class DisplayController extends BaseController
    *
    * @since   4.0.0
    */
-  public function __construct($config = array(), ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
+  public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
   {
     parent::__construct($config, $factory, $app, $input);
 
@@ -74,7 +74,7 @@ class DisplayController extends BaseController
     if(empty($this->context))
     {
       // Get view variable
-      $view  = Factory::getApplication()->input->get('view', $this->default_view);
+      $view = Factory::getApplication()->input->get('view', $this->default_view);
 
       // Check if view exists
       if(!\in_array($view, $this->getAvailableViews()))
@@ -87,37 +87,37 @@ class DisplayController extends BaseController
       }
 
       // Conduct the context
-      $this->context = _JOOM_OPTION.'.'.$view.'.display';
+      $this->context = _JOOM_OPTION . '.' . $view . '.display';
     }
 
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
   }
 
-	/**
-	 * Method to display a view.
-	 *
-	 * @param   boolean  $cachable   If true, the view output will be cached
-	 * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link InputFilter::clean()}.
-	 *
-	 * @return  BaseController|boolean  This object to support chaining.
-	 *
-	 * @since   4.0.0
-	 */
-	public function display($cachable = false, $urlparams = array())
-	{
+  /**
+   * Method to display a view.
+   *
+   * @param   boolean  $cachable   If true, the view output will be cached
+   * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link InputFilter::clean()}.
+   *
+   * @return  BaseController|boolean  This object to support chaining.
+   *
+   * @since   4.0.0
+   */
+  public function display($cachable = false, $urlparams = [])
+  {
     // Before execution of the task
     if(!empty($task))
     {
-      $this->component->msgUserStateKey = 'com_joomgallery.'.$task.'.messages';
+      $this->component->msgUserStateKey = 'com_joomgallery.' . $task . '.messages';
     }
-    
+
     if(!$this->component->isRawTask($this->context))
     {
       // Get messages from session
       $this->component->msgFromSession();
     }
 
-		$res = parent::display();
+    $res = parent::display();
 
     // After execution of the task
     if(!$this->component->isRawTask($this->context))
@@ -135,16 +135,16 @@ class DisplayController extends BaseController
     }
 
     return $res;
-	}
+  }
 
   /**
-	 * Method to get a list of available views based on the available folders in
+   * Method to get a list of available views based on the available folders in
    * Joomgallery\Component\Joomgallery\<App>\View.
-   * 
-	 * @return  array  List of available views.
-	 *
-	 * @since   4.0.0
-	 */
+   *
+   * @return  array  List of available views.
+   *
+   * @since   4.0.0
+   */
   protected function getAvailableViews(): array
   {
     $appName = Factory::getApplication()->getName();
@@ -156,16 +156,16 @@ class DisplayController extends BaseController
     }
     else
     {
-      $path = Path::clean(JPATH_ROOT . '/' . \strtolower($appName) . '/components/com_joomgallery/src/View');
+      $path = Path::clean(JPATH_ROOT . '/' . strtolower($appName) . '/components/com_joomgallery/src/View');
     }
 
     // Get directories
-    $dirs = glob($path . '/*' , GLOB_ONLYDIR);
+    $dirs = glob($path . '/*', GLOB_ONLYDIR);
 
     // Convert directory paths to view names
     foreach($dirs as $key => $dir)
     {
-      $dirs[$key] = \trim(\strtolower(\basename($dir)));
+      $dirs[$key] = trim(strtolower(basename($dir)));
     }
 
     return $dirs;

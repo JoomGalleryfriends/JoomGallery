@@ -1,25 +1,26 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Utilities\ArrayHelper;
-use \Joomla\CMS\Plugin\PluginHelper;
-use \Joomla\CMS\Language\Multilanguage;
-use \Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Category model.
@@ -48,17 +49,17 @@ class CategoryModel extends JoomAdminModel
   /**
    * Method to get the record form.
    *
-   * @param   array     $data      An optional array of data for the form to interogate.
-   * @param   boolean   $loadData  True if the form is to load its own data (default case), false if not.
+   * @param   array    $data      An optional array of data for the form to interogate.
+   * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
    *
    * @return  \JForm|boolean  A \JForm object on success, false on failure
    *
    * @since   4.0.0
    */
-  public function getForm($data = array(), $loadData = true)
+  public function getForm($data = [], $loadData = true)
   {
     // Get the form.
-    $form = $this->loadForm($this->typeAlias, 'category', array('control' => 'jform', 'load_data' => $loadData));
+    $form = $this->loadForm($this->typeAlias, 'category', ['control' => 'jform', 'load_data' => $loadData]);
 
     if(empty($form))
     {
@@ -74,7 +75,8 @@ class CategoryModel extends JoomAdminModel
 
     // Apply filter to exclude child categories
     $children = $form->getFieldAttribute('parent_id', 'children', 'true');
-    $children = \filter_var($children, FILTER_VALIDATE_BOOLEAN);
+    $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
+
     if(!$children)
     {
       $form->setFieldAttribute('parent_id', 'exclude', $id);
@@ -90,8 +92,6 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('rm_password', 'filter', 'unset');
       $form->setFieldAttribute('rm_password', 'hidden', 'true');
       $form->setFieldAttribute('rm_password', 'class', 'hidden');
-
-      $form->setFieldAttribute('password', 'lock', 'false');
     }
 
     // Modify the form based on Edit State access controls.
@@ -119,14 +119,14 @@ class CategoryModel extends JoomAdminModel
   /**
    * Method to get the data that should be injected in the form.
    *
-   * @return  mixed  The data for the form. (\Joomla\CMS\Object\CMSObject|stdClass)
+   * @return  mixed  The data for the form.
    *
    * @since   4.0.0
    */
   protected function loadFormData()
   {
     // Check the session for previously entered form data.
-    $data = Factory::getApplication()->getUserState(_JOOM_OPTION.'.edit.category.data', array());
+    $data = Factory::getApplication()->getUserState(_JOOM_OPTION . '.edit.category.data', []);
 
     if(empty($data))
     {
@@ -138,8 +138,7 @@ class CategoryModel extends JoomAdminModel
       $data = $this->item;
 
       // Support for password field
-      $this->is_password = false;
-      if(!empty($data->password))
+      if(property_exists($data, 'password') && empty($data->password))
       {
         $this->is_password = true;
       }
@@ -147,11 +146,11 @@ class CategoryModel extends JoomAdminModel
       $data->password = '';
 
       // Support for multiple or not foreign key field: robots
-      $array = array();
+      $array = [];
 
       foreach((array) $data->robots as $value)
       {
-        if(!is_array($value))
+        if(!\is_array($value))
         {
           $array[] = $value;
         }
@@ -167,21 +166,9 @@ class CategoryModel extends JoomAdminModel
   }
 
   /**
-   * Does the category has a password in the database.
-   * Attention: $data->password variable may be already overwritten to ''.
-   * @return bool true when password was set on loadFormData ()
-   *
-   * @since  4.2
-   */
-  public function hasPassword(): bool
-  {
-    return $this->is_password;
-  }
-
-  /**
    * Method to get a single record.
    *
-   * @param   integer   $pk  The id of the primary key.
+   * @param   integer  $pk  The id of the primary key.
    *
    * @return  Object|boolean Object on success, false on failure.
    *
@@ -239,10 +226,10 @@ class CategoryModel extends JoomAdminModel
       {
         if($this->canDelete($table))
         {
-          $context = $this->option.'.'.$this->name;
+          $context = $this->option . '.' . $this->name;
 
           // Trigger the before delete event.
-          $result = Factory::getApplication()->triggerEvent($this->event_before_delete, array($context, $table));
+          $result = Factory::getApplication()->triggerEvent($this->event_before_delete, [$context, $table]);
 
           if(\in_array(false, $result, true))
           {
@@ -253,13 +240,13 @@ class CategoryModel extends JoomAdminModel
           }
 
           // Create file manager service
-          $manager = JoomHelper::getService('FileManager', array($table->id));
+          $manager = JoomHelper::getService('FileManager', [$table->id]);
 
           // Delete corresponding folders
           if(!$manager->deleteCategory($table, $force_delete))
           {
             $this->setError($this->component->getDebug(true));
-            $this->component->addLog($this->component->getDebug(true).'; Category ID: '.$pk, 'error', 'jerror');
+            $this->component->addLog($this->component->getDebug(true) . '; Category ID: ' . $pk, 'error', 'jerror');
 
             return false;
           }
@@ -269,20 +256,20 @@ class CategoryModel extends JoomAdminModel
           {
             $db    = $this->getDbo();
             $query = $db->getQuery(true)
-              ->select(
+            ->select(
                 [
-                  'COUNT(*) AS '.$db->quoteName('count'),
+                  'COUNT(*) AS ' . $db->quoteName('count'),
                   $db->quoteName('as1.key'),
                 ]
-              )
+            )
               ->from($db->quoteName('#__associations', 'as1'))
-              ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key').' = '.$db->quoteName('as2.key'))
-              ->where(
+              ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
+            ->where(
                 [
-                  $db->quoteName('as1.context').' = :context',
-                  $db->quoteName('as1.id').' = :pk',
+                  $db->quoteName('as1.context') . ' = :context',
+                  $db->quoteName('as1.id') . ' = :pk',
                 ]
-              )
+            )
               ->bind(':context', $this->associationsContext)
               ->bind(':pk', $pk, ParameterType::INTEGER)
               ->group($db->quoteName('as1.key'));
@@ -295,17 +282,17 @@ class CategoryModel extends JoomAdminModel
               $query = $db->getQuery(true)
                 ->delete($db->quoteName('#__associations'))
                 ->where(
-                  [
-                    $db->quoteName('context').' = :context',
-                    $db->quoteName('key').' = :key',
-                  ]
+                    [
+                      $db->quoteName('context') . ' = :context',
+                      $db->quoteName('key') . ' = :key',
+                    ]
                 )
                 ->bind(':context', $this->associationsContext)
                 ->bind(':key', $row['key']);
 
               if($row['count'] > 2)
               {
-                $query->where($db->quoteName('id').' = :pk')
+                $query->where($db->quoteName('id') . ' = :pk')
                   ->bind(':pk', $pk, ParameterType::INTEGER);
               }
 
@@ -323,7 +310,7 @@ class CategoryModel extends JoomAdminModel
           }
 
           // Trigger the after event.
-          Factory::getApplication()->triggerEvent($this->event_after_delete, array($context, $table));
+          Factory::getApplication()->triggerEvent($this->event_after_delete, [$context, $table]);
         }
         else
         {
@@ -337,12 +324,11 @@ class CategoryModel extends JoomAdminModel
 
             return false;
           }
-          else
-          {
+
+
             $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
 
             return false;
-          }
         }
       }
       else
@@ -395,7 +381,7 @@ class CategoryModel extends JoomAdminModel
     $adapterChanged = false;
 
     $key = $table->getKeyName();
-    $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName().'.id');
+    $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
     // Are we going to copy the image record?
     if($app->input->get('task') == 'save2copy')
@@ -418,8 +404,8 @@ class CategoryModel extends JoomAdminModel
     {
       $table->new_pw = $data['password'];
     }
-    unset($data['rm_password']);
-    unset($data['password']);
+    unset($data['rm_password'], $data['password']);
+
 
     // Change language to 'All' if multilangugae is not enabled
     if(!Multilanguage::isEnabled())
@@ -456,119 +442,54 @@ class CategoryModel extends JoomAdminModel
         {
           if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION.'.category.'.$table->id))
           {
-            // We are not allowed to change the published state
-            $this->component->addWarning(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'));
-            $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 'warning', 'jerror');
-            $data['published'] = $table->published;
+            $aliasChanged = true;
+          }
+
+          // Check if the state was changed
+          if($table->published != $data['published'])
+          {
+            if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION . '.category.' . $table->id))
+            {
+              // We are not allowed to change the published state
+              $this->component->addWarning(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'));
+              $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 'warning', 'jerror');
+              $data['published'] = $table->published;
+            }
+          }
+
+          // Check if category has subcategories (children)
+          if($this->getChildren($pk))
+          {
+            $hasChildren = true;
+          }
+
+          // Check if category has images
+          if($this->getNumImages($pk) != 0)
+          {
+            $hasImages = true;
+          }
+
+          // Check if filesystem adapter has changed
+          $old_params = json_decode($table->params);
+
+          if($old_params->{'jg_filesystem'} != $data['params']['jg_filesystem'])
+          {
+            $adapterChanged = true;
           }
         }
 
         // Check if category has subcategories (children)
         if($this->getChildren($pk))
         {
-          $hasChildren = true;
+          // Only allowed in toplevel categories
+          $this->setError(Text::_('COM_JOOMGALLERY_ERROR_FILESYSTEM_ONLY_TOP_LEVEL_CAT'));
+
+          return false;
         }
-
-        // Check if category has images
-        if($this->getNumImages($pk) != 0)
+        elseif($adapterChanged && ($hasChildren || $hasImages))
         {
-          $hasImages = true;
-        }
-
-        // Check if filesystem adapter has changed
-        $old_params = \json_decode($table->params);
-        if($old_params->{'jg_filesystem'} != $data['params']['jg_filesystem'])
-        {
-          $adapterChanged = true;
-        }
-      }
-
-      // Check that filesystem field content is allowed
-      if($adapterChanged && $data['parent_id'] != 1)
-      {
-        // Only allowed in toplevel categories
-        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_FILESYSTEM_ONLY_TOP_LEVEL_CAT'));
-
-        return false;
-      }
-      elseif($adapterChanged && ($hasChildren || $hasImages))
-      {
-        // Only allowed if there are no images and no subcategories
-        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_FILESYSTEM_ONLY_EMPTY_CAT'));
-
-        return false;
-      }
-
-      // Handle folders if category was changed
-      if(!$isNew && ($catMoved || $aliasChanged))
-      {
-        // Douplicate old data
-        $old_table = clone $table;
-      }
-
-      if($catMoved || $isNew)
-      {
-        $table->setLocation($data['parent_id'], 'last-child');
-      }
-      elseif($aliasChanged)
-      {
-        // Make sure paths get updated correctly when alias is changed
-        $table->setLocation($data['parent_id'], '');
-      }
-
-      // Create file manager service
-      $manager = JoomHelper::getService('FileManager', array($data['parent_id']));
-
-      // Bind the data.
-      if(!$table->bind($data))
-      {
-        $this->setError($table->getError());
-
-        return false;
-      }
-
-      // Prepare the row for saving
-      $this->prepareTable($table);
-
-      // Check the data.
-      if(!$table->check())
-      {
-        $this->setError($table->getError());
-
-        return false;
-      }
-
-      // Check that there are rules set for new categories
-      // It can happen for users without 'core.admin' permission that there are no rules in the request
-      if($isNew && empty($table->getRules('all')))
-      {
-        $form = $this->getForm();
-        $table->setEmptyRules($form);
-      }
-
-      // Trigger the before save event.
-      $result = $app->triggerEvent($this->event_before_save, array($context, $table, $isNew, $data));
-
-      // Stop storing data if one of the plugins returns false
-      if(\in_array(false, $result, true))
-      {
-        $this->setError($table->getError());
-        $this->component->addLog($table->getError(), 'error', 'jerror');
-
-        return false;
-      }
-
-      // Filesystem changes
-      $filesystem_success = true;
-
-      if(!$isNew && ($catMoved || $aliasChanged))
-      {
-        // Moving and renaming of folders will happen after storing the DB
-        if($catMoved && ($aliasChanged || ($table->alias != $old_table->alias)))
-        {
-          // Moving and renaming folders at the same time is not possible
-          $this->setError(Text::_('COM_JOOMGALLERY_ERROR_CAT_RENAME_AND_MOVE'));
-          $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_CAT_RENAME_AND_MOVE'), 'error', 'jerror');
+          // Only allowed if there are no images and no subcategories
+          $this->setError(Text::_('COM_JOOMGALLERY_ERROR_FILESYSTEM_ONLY_EMPTY_CAT'));
 
           return false;
         }
@@ -587,11 +508,8 @@ class CategoryModel extends JoomAdminModel
         return false;
       }
 
-      // Store the data.
-      if(!$table->store())
-      {
-        $this->setError($table->getError());
-        $this->component->addLog($table->getError(), 'error', 'jerror');
+        // Create file manager service
+        $manager = JoomHelper::getService('FileManager', [$data['parent_id']]);
 
         return false;
       }
@@ -654,6 +572,19 @@ class CategoryModel extends JoomAdminModel
         // Adjust path of subcategory records
         if(!$this->fixChildrenPath($table, $old_table))
         {
+          $form = $this->getForm();
+          $table->setEmptyRules($form);
+        }
+
+        // Trigger the before save event.
+        $result = $app->triggerEvent($this->event_before_save, [$context, $table, $isNew, $data]);
+
+        // Stop storing data if one of the plugins returns false
+        if(\in_array(false, $result, true))
+        {
+          $this->setError($table->getError());
+          $this->component->addLog($table->getError(), 'error', 'jerror');
+
           return false;
         }
       }
@@ -662,11 +593,8 @@ class CategoryModel extends JoomAdminModel
         // Action already perfromed
       }
 
-      // Handle folders if record gets copied
-      if($isNew && $isCopy)
-      {
-        // Get source image id
-        $source_id = $app->input->get('origin_id', false, 'INT');
+        // Filesystem changes
+        $filesystem_success = true;
 
         // Copy folder (including files and subfolders)
         //$manager->copyCategory($source_id, $table);
@@ -675,8 +603,106 @@ class CategoryModel extends JoomAdminModel
       // Clean the cache.
       $this->cleanCache();
 
-      // Trigger the after save event.
-      $app->triggerEvent($this->event_after_save, array($context, $table, $isNew, $data));
+        // Dont store the table if filesystem changes was not successful
+        if(!$filesystem_success)
+        {
+          $this->component->addError(Text::_('COM_JOOMGALLERY_ERROR_SAVE_FILESYSTEM_ERROR'));
+
+          return false;
+        }
+
+        // Store the data.
+        if(!$table->store())
+        {
+          $this->setError($table->getError());
+          $this->component->addLog($table->getError(), 'error', 'jerror');
+
+          return false;
+        }
+
+        // Handle folders if parent category was changed
+        if(!$isNew && $catMoved)
+        {
+          // Get path back from old location temporarily
+          $table->setPathWithLocation(true);
+
+          // Move folder (including files and subfolders)
+          if(!$manager->moveCategory($old_table, $table->parent_id))
+          {
+            $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_ERROR_MOVE_CATEGORY', $manager->paths['src'], $manager->paths['dest']));
+            $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_MOVE_CATEGORY', $manager->paths['src'], $manager->paths['dest']), 'error', 'jerror');
+
+            return false;
+          }
+
+          // Reset path
+          $table->setPathWithLocation(false);
+
+          // Adjust path of subcategory records
+          if(!$this->fixChildrenPath($table, $old_table))
+          {
+            return false;
+          }
+        }
+        // Handle folders if alias was changed
+        elseif(!$isNew && $aliasChanged)
+        {
+          // Get path back from old location temporarily
+          $table->setPathWithLocation(true);
+
+          // Get new folder name
+          $folder_name = $table->alias;
+
+          if($this->component->getConfig()->get('jg_compatibility_mode', 0))
+          {
+            $static_name = basename($table->static_path);
+
+            if(preg_match('/_([0-9]+)$/', $static_name))
+            {
+              // We found a numeric value at the end of the folder name: e.g alias_6
+              // Therefore we use the static folder name instead
+              $folder_name = $static_name;
+            }
+          }
+
+          // Rename folder
+          if(!$manager->renameCategory($old_table, $folder_name))
+          {
+            $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_ERROR_RENAME_CATEGORY', $manager->paths['src'], $manager->paths['dest']));
+            $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_RENAME_CATEGORY', $manager->paths['src'], $manager->paths['dest']), 'error', 'jerror');
+
+            return false;
+          }
+
+          // Reset path
+          $table->setPathWithLocation(false);
+
+          // Adjust path of subcategory records
+          if(!$this->fixChildrenPath($table, $old_table))
+          {
+            return false;
+          }
+        }
+
+
+          // Action already perfromed
+
+
+        // Handle folders if record gets copied
+        if($isNew && $isCopy)
+        {
+          // Get source image id
+          $source_id = $app->input->get('origin_id', false, 'INT');
+
+          // Copy folder (including files and subfolders)
+          //$manager->copyCategory($source_id, $table);
+        }
+
+        // Clean the cache.
+        $this->cleanCache();
+
+        // Trigger the after save event.
+        $app->triggerEvent($this->event_after_save, [$context, $table, $isNew, $data]);
     }
     catch(\Exception $e)
     {
@@ -748,8 +774,8 @@ class CategoryModel extends JoomAdminModel
    * First we save the new order values in the lft values of the changed ids.
    * Then we invoke the table rebuild to implement the new ordering.
    *
-   * @param   array     $idArray   An array of primary key ids.
-   * @param   integer   $lftArray  The lft value
+   * @param   array    $idArray   An array of primary key ids.
+   * @param   integer  $lftArray  The lft value
    *
    * @return  boolean  False on failure or error, True otherwise
    *
@@ -848,8 +874,8 @@ class CategoryModel extends JoomAdminModel
   /**
    * Method to adjust path of child categories based on new path
    *
-   * @param   Table   $table      Table object of the current category.
-   * @param   Table   $old_table  Old table object of the current category.
+   * @param   Table    $table      Table object of the current category.
+   * @param   Table    $old_table  Old table object of the current category.
    *
    * @return  boolean  True if successful.
    *
@@ -872,27 +898,29 @@ class CategoryModel extends JoomAdminModel
       $child_table->load($cat['id']);
 
       // Change path
-      $pos = \strpos($child_table->path, $old_table->path);
+      $pos = strpos($child_table->path, $old_table->path);
+
       if($pos !== false)
       {
-        $child_table->path = \substr_replace($child_table->path, $table->path, $pos, \strlen($old_table->path));
+        $child_table->path = substr_replace($child_table->path, $table->path, $pos, \strlen($old_table->path));
       }
 
       // Change static path
       if($this->component->getConfig()->get('jg_compatibility_mode', 0))
       {
-        $static_pos = \strpos($child_table->static_path, $old_table->static_path);
+        $static_pos = strpos($child_table->static_path, $old_table->static_path);
+
         if($static_pos !== false)
         {
-          $child_table->static_path = \substr_replace($child_table->static_path, $table->static_path, $static_pos, \strlen($old_table->static_path));
+          $child_table->static_path = substr_replace($child_table->static_path, $table->static_path, $static_pos, \strlen($old_table->static_path));
         }
       }
 
       // Store the data.
       if(!$child_table->store())
       {
-        $this->setError('Child category (ID='.$cat['id'].') tells: '.$child_table->getError());
-        $this->component->addLog('Child category (ID='.$cat['id'].') tells: '.$child_table->getError(), 'error', 'jerror');
+        $this->setError('Child category (ID=' . $cat['id'] . ') tells: ' . $child_table->getError());
+        $this->component->addLog('Child category (ID=' . $cat['id'] . ') tells: ' . $child_table->getError(), 'error', 'jerror');
 
         return false;
       }
@@ -904,9 +932,9 @@ class CategoryModel extends JoomAdminModel
   /**
    * Get children categories.
    *
-   * @param   integer   $pk        The id of the primary key.
-   * @param   bool      $self      Include current node id (default: false)
-   * @param   bool      $setError  True to set an Error if no children found (default: false)
+   * @param   integer  $pk        The id of the primary key.
+   * @param   bool     $self      Include current node id (default: false)
+   * @param   bool     $setError  True to set an Error if no children found (default: false)
    *
    * @return  mixed    An array of categories or false if an error occurs.
    *
@@ -916,10 +944,11 @@ class CategoryModel extends JoomAdminModel
   {
     if(\is_null($pk) && !\is_null($this->item) && isset($this->item->id))
     {
-      $pk = intval($this->item->id);
+      $pk = \intval($this->item->id);
     }
 
     $table = $this->getTable();
+
     if($table->load($pk) === false)
     {
       $this->setError(Text::sprintf('COM_JOOMGALLERY_ERROR_CATEGORY_NOT_EXIST', $pk));
@@ -930,12 +959,14 @@ class CategoryModel extends JoomAdminModel
 
     // add root category
     $root = false;
+
     if($pk == 1 && $self)
     {
       $root = true;
     }
 
     $children = $table->getNodeTree('children', $self, $root);
+
     if(!$children)
     {
       if($setError)
@@ -953,10 +984,10 @@ class CategoryModel extends JoomAdminModel
   /**
    * Get parent categories.
    *
-   * @param   integer   $pk        The id of the primary key.
-   * @param   bool      $self      Include current node id (default: false)
-   * @param   bool      $root      Include root node (default: false)
-   * @param   bool      $setError  True to set an Error if no parents found (default: false)
+   * @param   integer  $pk        The id of the primary key.
+   * @param   bool     $self      Include current node id (default: false)
+   * @param   bool     $root      Include root node (default: false)
+   * @param   bool     $setError  True to set an Error if no parents found (default: false)
    *
    * @return  mixed    An array of categories or false if an error occurs.
    *
@@ -966,10 +997,11 @@ class CategoryModel extends JoomAdminModel
   {
     if(\is_null($pk) && !\is_null($this->item) && isset($this->item->id))
     {
-      $pk = intval($this->item->id);
+      $pk = \intval($this->item->id);
     }
 
     $table = $this->getTable();
+
     if($table->load($pk) === false)
     {
       $this->setError(Text::sprintf('COM_JOOMGALLERY_ERROR_CATEGORY_NOT_EXIST', $pk));
@@ -979,6 +1011,7 @@ class CategoryModel extends JoomAdminModel
     }
 
     $parents = $table->getNodeTree('parents', $self, $root);
+
     if(!$parents)
     {
       if($setError)
@@ -996,10 +1029,10 @@ class CategoryModel extends JoomAdminModel
   /**
    * Get category tree
    *
-   * @param   integer   $pk        The id of the primary key.
-   * @param   bool      $self      Include current node id (default: false)
-   * @param   bool      $root      Include root node (default: false)
-   * @param   bool      $setError  True to set an Error if tree is empty (default: false)
+   * @param   integer  $pk        The id of the primary key.
+   * @param   bool     $self      Include current node id (default: false)
+   * @param   bool     $root      Include root node (default: false)
+   * @param   bool     $setError  True to set an Error if tree is empty (default: false)
    *
    * @return  mixed    An array of categories or false if an error occurs.
    *
@@ -1009,10 +1042,11 @@ class CategoryModel extends JoomAdminModel
   {
     if(\is_null($pk) && !\is_null($this->item) && isset($this->item->id))
     {
-      $pk = intval($this->item->id);
+      $pk = \intval($this->item->id);
     }
 
     $table = $this->getTable();
+
     if($table->load($pk) === false)
     {
       $this->setError(Text::sprintf('COM_JOOMGALLERY_ERROR_CATEGORY_NOT_EXIST', $pk));
@@ -1022,6 +1056,7 @@ class CategoryModel extends JoomAdminModel
     }
 
     $tree = $table->getNodeTree('cpl', true, $root);
+
     if(!$tree)
     {
       if($setError)
@@ -1039,9 +1074,9 @@ class CategoryModel extends JoomAdminModel
   /**
    * Get direct left or right sibling (adjacent) of the category.
    *
-   * @param   integer   $pk        The id of the primary key.
-   * @param   string    $side      Left or right side ribling.
-   * @param   bool      $setError  True to set an Error if no sibling found (default: false)
+   * @param   integer  $pk        The id of the primary key.
+   * @param   string   $side      Left or right side ribling.
+   * @param   bool     $setError  True to set an Error if no sibling found (default: false)
    *
    * @return  mixed    List of sibling or false if an error occurs.
    *
@@ -1051,10 +1086,11 @@ class CategoryModel extends JoomAdminModel
   {
     if(\is_null($pk) && !\is_null($this->item) && isset($this->item->id))
     {
-      $pk = intval($this->item->id);
+      $pk = \intval($this->item->id);
     }
 
     $table = $this->getTable();
+
     if($table->load($pk) === false)
     {
       $this->setError(Text::sprintf('COM_JOOMGALLERY_ERROR_CATEGORY_NOT_EXIST', $pk));
@@ -1082,9 +1118,9 @@ class CategoryModel extends JoomAdminModel
   /**
    * Get all left and/or right siblings (adjacent) of the category.
    *
-   * @param   integer   $pk        The id of the primary key.
-   * @param   string    $side      Left, right or both sides siblings.
-   * @param   bool      $setError  True to set an Error if no siblings found (default: false)
+   * @param   integer  $pk        The id of the primary key.
+   * @param   string   $side      Left, right or both sides siblings.
+   * @param   bool     $setError  True to set an Error if no siblings found (default: false)
    *
    * @return  mixed    List of siblings or false if an error occurs.
    *
@@ -1093,14 +1129,16 @@ class CategoryModel extends JoomAdminModel
   public function getSiblings($pk, $side, $setError = false)
   {
     $parent_id = null;
+
     if(\is_null($pk) && !\is_null($this->item) && isset($this->item->id))
     {
-      $pk        = intval($this->item->id);
-      $parent_id = intval($this->item->parent_id);
+      $pk        = \intval($this->item->id);
+      $parent_id = \intval($this->item->parent_id);
     }
 
     // Load category table
     $table = $this->getTable();
+
     if($table->load($pk) === false)
     {
       $this->setError(Text::sprintf('COM_JOOMGALLERY_ERROR_CATEGORY_NOT_EXIST', $pk));
@@ -1111,11 +1149,12 @@ class CategoryModel extends JoomAdminModel
 
     if(\is_null($parent_id))
     {
-      $parent_id = intval($table->parent_id);
+      $parent_id = \intval($table->parent_id);
     }
 
     // Load parent table
     $ptable = $this->getTable();
+
     if($ptable->load($parent_id) === false)
     {
       $this->setError(Text::sprintf('COM_JOOMGALLERY_ERROR_CATEGORY_NOT_EXIST', $parent_id));
@@ -1143,8 +1182,8 @@ class CategoryModel extends JoomAdminModel
   /**
    * Get the number of images in this category
    *
-   * @param   integer   $pk        The id of the primary key.
-   * @param   bool      $setError  True to set an Error if no images are found (default: false)
+   * @param   integer  $pk        The id of the primary key.
+   * @param   bool     $setError  True to set an Error if no images are found (default: false)
    *
    * @return  integer  Number of images in this category
    *
@@ -1162,8 +1201,8 @@ class CategoryModel extends JoomAdminModel
     $query = $db->getQuery(true);
 
     $query->select('COUNT(*)')
-      ->from($db->quoteName(_JOOM_TABLE_IMAGES))
-      ->where($db->quoteName('catid')." = ".$db->quote($pk));
+          ->from($db->quoteName(_JOOM_TABLE_IMAGES))
+          ->where($db->quoteName('catid') . ' = ' . $db->quote($pk));
 
     try
     {

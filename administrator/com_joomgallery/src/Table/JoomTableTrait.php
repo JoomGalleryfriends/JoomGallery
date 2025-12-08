@@ -1,46 +1,47 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Access\Rules;
-use \Joomla\Registry\Registry;
-use \Joomla\CMS\Object\CMSObject;
-use \Joomla\Utilities\ArrayHelper;
-use \Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 /**
-* Trait for Table methods
-*
-* @since  4.0.0
-*/
+ * Trait for Table methods
+ *
+ * @since  4.0.0
+ */
 trait JoomTableTrait
 {
   /**
    * Form element to the table
    *
    * @var Form
-  */
+   */
   public $form = false;
 
   /**
    * True if we are in an environement where the component class exists
    *
    * @var bool
-  */
+   */
   protected $component_exists = true;
 
   /**
@@ -59,27 +60,27 @@ trait JoomTableTrait
   }
 
   /**
-	 * Overloaded check function
-	 *
-	 * @return bool
-	 */
-	public function check()
-	{
-		// If there is an ordering column and this is a new row then get the next ordering value
-		if(\property_exists($this, 'ordering') && $this->id == 0 && \is_null($this->ordering))
-		{
-			$this->ordering = self::getNextOrder();
-		}
+   * Overloaded check function
+   *
+   * @return bool
+   */
+  public function check()
+  {
+    // If there is an ordering column and this is a new row then get the next ordering value
+    if(property_exists($this, 'ordering') && $this->id == 0 && \is_null($this->ordering))
+    {
+      $this->ordering = self::getNextOrder();
+    }
 
-		// Check if alias is unique
-    if( \property_exists($this, 'alias') &&
-        (\property_exists($this, '_checkAliasUniqueness') ? $this->_checkAliasUniqueness : true)
+    // Check if alias is unique
+    if( property_exists($this, 'alias') &&
+        (property_exists($this, '_checkAliasUniqueness') ? $this->_checkAliasUniqueness : true)
       )
     {
       if(!$this->isUnique('alias'))
       {
-        $count = 2;
-        $currentAlias =  $this->alias;
+        $count        = 2;
+        $currentAlias = $this->alias;
 
         while(!$this->isUnique('alias'))
         {
@@ -89,7 +90,7 @@ trait JoomTableTrait
     }
 
     // Support for field description
-    if(\property_exists($this, 'description'))
+    if(property_exists($this, 'description'))
     {
       if(empty($this->description))
       {
@@ -97,8 +98,8 @@ trait JoomTableTrait
       }
     }
 
-		// Support for subform field params
-    if(\property_exists($this, 'params'))
+    // Support for subform field params
+    if(property_exists($this, 'params'))
     {
       if(empty($this->params))
       {
@@ -106,12 +107,12 @@ trait JoomTableTrait
       }
       elseif(\is_array($this->params))
       {
-        $this->params = \json_encode($this->params, JSON_UNESCAPED_UNICODE);
+        $this->params = json_encode($this->params, JSON_UNESCAPED_UNICODE);
       }
     }
 
     // Support for field metadesc
-    if(\property_exists($this, 'metadesc'))
+    if(property_exists($this, 'metadesc'))
     {
       if(empty($this->metadesc))
       {
@@ -120,7 +121,7 @@ trait JoomTableTrait
     }
 
     // Support for field metakey
-    if(\property_exists($this, 'metakey'))
+    if(property_exists($this, 'metakey'))
     {
       if(empty($this->metakey))
       {
@@ -128,30 +129,31 @@ trait JoomTableTrait
       }
     }
 
-		return parent::check();
-	}
+    return parent::check();
+  }
 
   /**
-	 * Overloaded bind function to pre-process the params.
-	 *
-	 * @param   array  $array   Named array
-	 * @param   mixed  $ignore  Optional array or list of parameters to ignore
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @see     Table:bind
-	 * @since   4.0.0
-	 * @throws  \InvalidArgumentException
-	 */
-	public function bind($array, $ignore = '')
-	{
-		$date = Factory::getDate();
-		$task = Factory::getApplication()->input->get('task', '', 'cmd');
+   * Overloaded bind function to pre-process the params.
+   *
+   * @param   array  $array   Named array
+   * @param   mixed  $ignore  Optional array or list of parameters to ignore
+   *
+   * @return  boolean  True on success.
+   *
+   * @see     Table:bind
+   * @since   4.0.0
+   * @throws  \InvalidArgumentException
+   */
+  public function bind($array, $ignore = '')
+  {
+    $date = Factory::getDate();
+    $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
     // Support for title field: title
     if(\array_key_exists('title', $array))
     {
-      $array['title'] = \trim($array['title']);
+      $array['title'] = trim($array['title']);
+
       if(empty($array['title']))
       {
         $array['title'] = 'Unknown';
@@ -192,65 +194,65 @@ trait JoomTableTrait
       }
     }
 
-		if(\array_key_exists('params', $array) && isset($array['params']) && \is_array($array['params']))
-		{
-			$registry = new Registry($array['params']);
-			$array['params'] = (string) $registry;
-		}
+    if(\array_key_exists('params', $array) && isset($array['params']) && \is_array($array['params']))
+    {
+      $registry        = new Registry($array['params']);
+      $array['params'] = (string) $registry;
+    }
 
-		if(\array_key_exists('metadata', $array) && isset($array['metadata']) && \is_array($array['metadata']))
-		{
-			$registry = new Registry($array['metadata']);
-			$array['metadata'] = (string) $registry;
-		}
+    if(\array_key_exists('metadata', $array) && isset($array['metadata']) && \is_array($array['metadata']))
+    {
+      $registry          = new Registry($array['metadata']);
+      $array['metadata'] = (string) $registry;
+    }
 
     // Bind the rules for ACL where supported.
-		if(isset($array['rules']))
-		{
+    if(isset($array['rules']))
+    {
       $rules = new Rules($array['rules']);
-			$this->setRules($rules);
-		}
+      $this->setRules($rules);
+    }
 
-		return parent::bind($array, $ignore);
-	}
-
-  /**
-	 * Get the type alias for the history table
-	 *
-	 * @return  string  The alias as described above
-	 *
-	 * @since   4.0.0
-	 */
-	public function getTypeAlias()
-	{
-		return $this->typeAlias;
-	}
+    return parent::bind($array, $ignore);
+  }
 
   /**
-	 * Get an array of all record fields and their current values
-	 *
+   * Get the type alias for the history table
+   *
+   * @return  string  The alias as described above
+   *
+   * @since   4.0.0
+   */
+  public function getTypeAlias()
+  {
+    return $this->typeAlias;
+  }
+
+  /**
+   * Get an array of all record fields and their current values
+   *
    * @param   array   $exclude   Array with properties to be excluded (default: [])
-   * 
-	 * @return  array  Fields with values
-	 *
-	 * @since   4.0.0
-	 */
-  public function getFieldsValues($exclude = array())
+   *
+   * @return  array  Fields with values
+   *
+   * @since   4.0.0
+   */
+  public function getFieldsValues($exclude = [])
   {
     // Convert to \stdClass before adding other data
-		$properties = $this->getProperties(1);
-		$item       = ArrayHelper::toObject($properties);
+    $properties = $this->getProperties(1);
+    $item       = ArrayHelper::toObject($properties);
 
-		if(\property_exists($item, 'params'))
-		{
-			$registry = new Registry($item->params);
-			$item->params = $registry->toArray();
-		}
+    if(property_exists($item, 'params'))
+    {
+      $registry     = new Registry($item->params);
+      $item->params = $registry->toArray();
+    }
 
-		if(isset($item->params))
-		{
-		  $item->params = \json_encode($item->params);
-		}
+    if(isset($item->params))
+    {
+      $item->params = json_encode($item->params);
+    }
 
     // Delete excluded properties
     if(\count($exclude) > 0)
@@ -261,7 +263,7 @@ trait JoomTableTrait
       }
     }
 
-		return $item;
+    return $item;
   }
 
   /**
@@ -269,9 +271,9 @@ trait JoomTableTrait
    * This is useful for placing a new item first in a group of items in the table.
    *
    * @param   string    $where  query WHERE clause for selecting MAX(ordering).
-   * 
+   *
    * @return  integer   The ordring number
-   * 
+   *
    * @since   4.0.0
    * @throws  \UnexpectedValueException
    */
@@ -280,7 +282,7 @@ trait JoomTableTrait
     // Check if there is an ordering field set
     if(!$this->hasField('ordering'))
     {
-      throw new \UnexpectedValueException(sprintf('%s does not support ordering.', \get_class($this)));
+      throw new \UnexpectedValueException(\sprintf('%s does not support ordering.', \get_class($this)));
     }
 
     // Get the largest ordering value for a given where clause.
@@ -307,47 +309,47 @@ trait JoomTableTrait
   protected function getComponent(): object
   {
     if($this->component_exists)
-		{
+    {
       $obj = Factory::getApplication()->bootComponent('com_joomgallery');
-		}
-		else
-		{
-		  $obj = $this->addMessageTrait();
-		}
+    }
+    else
+    {
+      $obj = $this->addMessageTrait();
+    }
 
     return $obj;
   }
 
   /**
-	 * Check if a field is unique
-	 *
-	 * @param   string   $field         Name of the field
+   * Check if a field is unique
+   *
+   * @param   string   $field         Name of the field
    * @param   integer  $parent        Parent id (default=null)
    * @param   string   $parentfield   Field name of parent id (default='parent_id')
-	 *
-	 * @return  bool    True if unique
-	 */
-	protected function isUnique($field, $parent=null, $parentfield='parent_id')
-	{
-		$db = $this->getDbo();
-		$query = $db->getQuery(true);
+   *
+   * @return  bool    True if unique
+   */
+  protected function isUnique($field, $parent = null, $parentfield = 'parent_id')
+  {
+    $db    = $this->getDbo();
+    $query = $db->getQuery(true);
 
-		$query
-			->select($db->quoteName($field))
-			->from($db->quoteName($this->_tbl))
-			->where($db->quoteName($field) . ' = ' . $db->quote($this->$field))
-			->where($db->quoteName('id') . ' <> ' . (int) $this->{$this->_tbl_key});
+    $query
+      ->select($db->quoteName($field))
+      ->from($db->quoteName($this->_tbl))
+      ->where($db->quoteName($field) . ' = ' . $db->quote($this->$field))
+      ->where($db->quoteName('id') . ' <> ' . (int) $this->{$this->_tbl_key});
 
     if($parent > 0)
     {
       $query->where($db->quoteName($parentfield) . ' = ' . $db->quote($parent));
     }
 
-		$db->setQuery($query);
-		$db->execute();
+    $db->setQuery($query);
+    $db->execute();
 
-		return ($db->getNumRows() == 0) ? true : false;
-	}
+    return ($db->getNumRows() == 0) ? true : false;
+  }
 
   /**
    * Support for multiple field
@@ -360,24 +362,24 @@ trait JoomTableTrait
   protected function multipleFieldSupport(&$data, $fieldName)
   {
     if(isset($data[$fieldName]))
-		{
-			if(\is_array($data[$fieldName]))
-			{
-				$data[$fieldName] = \implode(',',$data[$fieldName]);
-			}
-			elseif(\strpos($data[$fieldName], ',') != false)
-			{
-				$data[$fieldName] = \explode(',',$data[$fieldName]);
-			}
-			elseif(\strlen($data[$fieldName]) == 0)
-			{
-				$data[$fieldName] = '';
-			}
-		}
-		else
-		{
-			$data[$fieldName] = '';
-		}
+    {
+      if(\is_array($data[$fieldName]))
+      {
+        $data[$fieldName] = implode(',', $data[$fieldName]);
+      }
+      elseif(strpos($data[$fieldName], ',') != false)
+      {
+        $data[$fieldName] = explode(',', $data[$fieldName]);
+      }
+      elseif(\strlen($data[$fieldName]) == 0)
+      {
+        $data[$fieldName] = '';
+      }
+    }
+    else
+    {
+      $data[$fieldName] = '';
+    }
   }
 
   /**
@@ -391,10 +393,10 @@ trait JoomTableTrait
   protected function numberFieldSupport(&$data, $fieldName)
   {
     if($data[$fieldName] === '')
-		{
-			$data[$fieldName] = null;
-			$this->{$fieldName} = null;
-		}
+    {
+      $data[$fieldName]   = null;
+      $this->{$fieldName} = null;
+    }
   }
 
   /**
@@ -409,24 +411,24 @@ trait JoomTableTrait
   {
     if((!empty($data[$fieldName]) && (\is_array($data[$fieldName]))))
     {
-      \array_push($this->_jsonEncode, $fieldName);
+      array_push($this->_jsonEncode, $fieldName);
     }
   }
 
   /**
-	 * Method to load the default value of a field in a xml form
-	 *
+   * Method to load the default value of a field in a xml form
+   *
    * @param   string  $field  The name of the field to get the default value from.
-	 * @param   string  $form   The filename of the xml form.
-	 *
-	 * @return  string
-	 */
-  protected function loadDefaultField($field, $form=null)
+   * @param   string  $form   The filename of the xml form.
+   *
+   * @return  string
+   */
+  protected function loadDefaultField($field, $form = null)
   {
     // Get form name
     if(!$form)
     {
-      $typeArr = \explode('.', $this->typeAlias);
+      $typeArr = explode('.', $this->typeAlias);
       $form    = $typeArr[1];
     }
 
@@ -443,39 +445,39 @@ trait JoomTableTrait
       $subform = $this->form->getField($field)->loadSubForm();
 
       // Load array with defaults
-      $defaults = array();
+      $defaults = [];
+
       foreach($subform->getFieldset('general') as $key => $field)
       {
         $defaults[$field->getAttribute('name')] = $field->getAttribute('default', '');
       }
 
-      return \json_encode($defaults, JSON_FORCE_OBJECT);
+      return json_encode($defaults, JSON_FORCE_OBJECT);
     }
-    else
-    {
+
+
       return $this->form->getField($field)->getAttribute('default', '');
-    }
   }
 
   /**
-	 * Method to load a Form object coupled to an xml form
-	 *
-	 * @param   string  $form   The filename of the xml form.
-	 *
-	 * @return  void
-	 */
+   * Method to load a Form object coupled to an xml form
+   *
+   * @param   string  $form   The filename of the xml form.
+   *
+   * @return  void
+   */
   protected function loadForm($form)
   {
     // Get xml file path
-    if(\file_exists(_JOOM_PATH_ADMIN . '/forms/'.$form.'.xml'))
+    if(file_exists(_JOOM_PATH_ADMIN . '/forms/' . $form . '.xml'))
     {
-      $xml_file  = _JOOM_PATH_ADMIN . '/forms/'.$form.'.xml';
+      $xml_file  = _JOOM_PATH_ADMIN . '/forms/' . $form . '.xml';
       $form_name = $form;
     }
-    elseif(\file_exists(_JOOM_PATH_ADMIN . '/forms/'.$form))
+    elseif(file_exists(_JOOM_PATH_ADMIN . '/forms/' . $form))
     {
-      $xml_file  = _JOOM_PATH_ADMIN . '/forms/'.$form;
-      $form_name = \str_replace('.xml', '', $form);
+      $xml_file  = _JOOM_PATH_ADMIN . '/forms/' . $form;
+      $form_name = str_replace('.xml', '', $form);
     }
 
     // Load form
@@ -484,22 +486,22 @@ trait JoomTableTrait
   }
 
   /**
-	 * Method to add a fake JoomGallery component class in order to use the Message functions
-	 *
-	 * @return  object
-	 */
+   * Method to add a fake JoomGallery component class in order to use the Message functions
+   *
+   * @return  object
+   */
   protected function addMessageTrait(): object
   {
     $jgobjectClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Extension\\JoomgalleryComponent';
 
-    if(!\class_exists($jgobjectClass))
+    if(!class_exists($jgobjectClass))
     {
       // We expect to be in a pre installed environement. Use a custom way of including the MessageTrait.
       $msgtraitClass = '\\Joomgallery\\Component\\Joomgallery\\Administrator\\Extension\\MessageTrait';
-      $msgtrait_path = JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_joomgallery'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Extension'.DIRECTORY_SEPARATOR.'MessageTrait.php';
+      $msgtrait_path = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Extension' . DIRECTORY_SEPARATOR . 'MessageTrait.php';
 
       // Manually include the MessageTrait file if it's not already available
-      if(!\trait_exists($msgtraitClass))
+      if(!trait_exists($msgtraitClass))
       {
         require_once $msgtrait_path;
       }

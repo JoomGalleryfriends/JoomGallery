@@ -1,26 +1,28 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\Input\Input;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\Utilities\ArrayHelper;
-use \Joomla\CMS\Application\CMSApplication;
-use \Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Router\Route;
+use Joomla\Input\Input;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Images list controller class.
@@ -33,16 +35,16 @@ class ImagesController extends JoomAdminController
   /**
    * Constructor.
    *
-   * @param   array                 $config   An optional associative array of configuration settings.
-   *                                          Recognized key values include 'name', 'default_task', 'model_path', and
-   *                                          'view_path' (this list is not meant to be comprehensive).
-   * @param   MVCFactoryInterface   $factory  The factory.
-   * @param   CMSApplication        $app      The Application for the dispatcher
-   * @param   Input                 $input    The Input object for the request
+   * @param   array                $config   An optional associative array of configuration settings.
+   *                                         Recognized key values include 'name', 'default_task', 'model_path', and
+   *                                         'view_path' (this list is not meant to be comprehensive).
+   * @param   MVCFactoryInterface  $factory  The factory.
+   * @param   CMSApplication       $app      The Application for the dispatcher
+   * @param   Input                $input    The Input object for the request
    *
    * @since   4.0.0
    */
-  public function __construct($config = array(), ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
+  public function __construct($config = [], ?MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
   {
     parent::__construct($config, $factory, $app, $input);
 
@@ -95,7 +97,7 @@ class ImagesController extends JoomAdminController
    *
    * @return  void
    *
-   * @throws  \Exception
+   * @throws  Exception
    */
   public function duplicate()
   {
@@ -103,7 +105,7 @@ class ImagesController extends JoomAdminController
     $this->checkToken();
 
     // Get id(s)
-    $pks = $this->input->post->get('cid', array(), 'array');
+    $pks = $this->input->post->get('cid', [], 'array');
 
     try
     {
@@ -127,14 +129,14 @@ class ImagesController extends JoomAdminController
         $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'), 'info', 'jerror');
       }
     }
-    catch(\Exception $e)
+    catch (\Exception $e)
     {
       $this->component->addLog($e->getMessage(), 'warning', 'jerror');
 
       Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
     }
 
-    $this->setRedirect('index.php?option='._JOOM_OPTION.'&view=images');
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=images');
   }
 
   /**
@@ -142,16 +144,16 @@ class ImagesController extends JoomAdminController
    *
    * @return  void
    *
-   * @throws  \Exception
+   * @throws  Exception
    */
   public function recreate()
   {
     // Get inputs
-    $pks     = $this->app->getUserStateFromRequest('joom.recreate.cid', 'cid', array(), 'array');
+    $pks     = $this->app->getUserStateFromRequest('joom.recreate.cid', 'cid', [], 'array');
     $type    = $this->app->getUserStateFromRequest('joom.recreate.type', 'type', 'original', 'cmd');
     $count   = $this->app->getUserState('joom.recreate.count', 0);
-    $created = $this->app->getUserState('joom.recreate.created', array());
-    $error   = $this->app->getUserState('joom.recreate.error', array());
+    $created = $this->app->getUserState('joom.recreate.created', []);
+    $error   = $this->app->getUserState('joom.recreate.error', []);
 
     if($count === 0)
     {
@@ -171,12 +173,13 @@ class ImagesController extends JoomAdminController
       $pks = ArrayHelper::toInteger($pks);
 
       // Create refresher
-      $options = array('controller' => 'images',
-                       'task'       => 'recreate',
-                       'name'       => Text::_('COM_JOOMGALLERY_RECREATE_IMAGES'),
-                       'remaining'  => count($pks),
-                       'start'      => $this->input->getBool('cid')
-      );
+      $options = [
+        'controller' => 'images',
+        'task'                 => 'recreate',
+        'name'                 => Text::_('COM_JOOMGALLERY_RECREATE_IMAGES'),
+        'remaining'            => \count($pks),
+        'start'                => $this->input->getBool('cid'),
+      ];
       $this->component->createRefresher($options);
       $refresher = $this->component->getRefresher();
 
@@ -184,15 +187,16 @@ class ImagesController extends JoomAdminController
       foreach($pks as $key => $pk)
       {
         $model = $this->getModel('image');
+
         if($model->recreate($pk, $type))
         {
           // Success
-          \array_push($created, $pk);
+          array_push($created, $pk);
         }
         else
         {
           // Error
-          \array_push($error, $pk);
+          array_push($error, $pk);
         }
 
         // Remove item from todo-list
@@ -208,7 +212,7 @@ class ImagesController extends JoomAdminController
           $this->app->setUserState('joom.recreate.count', $count);
           $this->app->setUserState('joom.recreate.created', $created);
           $this->app->setUserState('joom.recreate.error', $error);
-          $refresher->refresh(count($pks));
+          $refresher->refresh(\count($pks));
         }
       }
     }
@@ -220,38 +224,38 @@ class ImagesController extends JoomAdminController
     // Output success message
     if(\count($created) > 0)
     {
-      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_IMAGES_RECREATED_SUCCESS', \implode(', ', $created)));
+      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_IMAGES_RECREATED_SUCCESS', implode(', ', $created)));
     }
 
     // Output error message
     if(\count($error) > 0)
     {
-      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_IMAGES_RECREATED_ERROR', \implode(', ', $error)), 'error');
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_IMAGES_RECREATED_ERROR', \implode(', ', $error)), 'error', 'jerror');
+      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_IMAGES_RECREATED_ERROR', implode(', ', $error)), 'error');
+      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_IMAGES_RECREATED_ERROR', implode(', ', $error)), 'error', 'jerror');
     }
 
-    $this->app->setUserState('joom.recreate.cid', array());
+    $this->app->setUserState('joom.recreate.cid', []);
     $this->app->setUserState('joom.recreate.count', 0);
-    $this->app->setUserState('joom.recreate.created', array());
-    $this->app->setUserState('joom.recreate.error', array());
+    $this->app->setUserState('joom.recreate.created', []);
+    $this->app->setUserState('joom.recreate.error', []);
 
-    $this->setRedirect('index.php?option='._JOOM_OPTION.'&view=images');
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=images');
   }
 
   /**
    * Proxy for getModel.
    *
-   * @param   string   $name    Optional. Model name
-   * @param   string   $prefix  Optional. Class prefix
-   * @param   array    $config  Optional. Configuration array for model
+   * @param   string  $name    Optional. Model name
+   * @param   string  $prefix  Optional. Class prefix
+   * @param   array   $config  Optional. Configuration array for model
    *
    * @return  object  The Model
    *
    * @since   4.0.0
    */
-  public function getModel($name = 'Image', $prefix = 'Administrator', $config = array())
+  public function getModel($name = 'Image', $prefix = 'Administrator', $config = [])
   {
-    return parent::getModel($name, $prefix, array('ignore_request' => true));
+    return parent::getModel($name, $prefix, ['ignore_request' => true]);
   }
 
   /**
@@ -259,16 +263,16 @@ class ImagesController extends JoomAdminController
    *
    * @return  void
    *
-   * @throws  \Exception
    * @since   4.0.0
    *
+   * @throws  \Exception
    */
   public function saveOrderAjax()
   {
     // Get the input
     $input = Factory::getApplication()->input;
-    $pks   = $input->post->get('cid', array(), 'array');
-    $order = $input->post->get('order', array(), 'array');
+    $pks   = $input->post->get('cid', [], 'array');
+    $order = $input->post->get('order', [], 'array');
 
     // Sanitize the input
     ArrayHelper::toInteger($pks);
@@ -282,7 +286,7 @@ class ImagesController extends JoomAdminController
 
     if($return)
     {
-      echo "1";
+      echo '1';
     }
 
     // Close the application
@@ -292,7 +296,7 @@ class ImagesController extends JoomAdminController
   /**
    * Method to change the state of a list of items
    *
-   * @param   string   $type  Name of the state to be changed
+   * @param   string   $type   Name of the state to be changed
    *
    * @return  void
    *
@@ -304,35 +308,34 @@ class ImagesController extends JoomAdminController
     $this->checkToken();
 
     // Get items to publish from the request.
-    $cid  = $this->input->get('cid', array(), 'array');
+    $cid  = $this->input->get('cid', [], 'array');
     $task = $this->getTask();
 
     switch($type)
     {
       case 'feature':
-        $data = array('featured' => 1, 'unfeatured' => 0);
-        $msgs = array('FEATURING', 'FEATURED', 'UNFEATURED', '', '');
-        break;
+        $data = ['featured' => 1, 'unfeatured' => 0];
+        $msgs = ['FEATURING', 'FEATURED', 'UNFEATURED', '', ''];
+          break;
 
       case 'approve':
-        $data = array('approved' => 1, 'unapproved' => 0);
-        $msgs = array('APPROVING', 'APPROVED', 'UNAPPROVED', '', '');
-        break;
+        $data = ['approved' => 1, 'unapproved' => 0];
+        $msgs = ['APPROVING', 'APPROVED', 'UNAPPROVED', '', ''];
+          break;
 
       case 'publish':
       default:
-        $data = array('publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3);
-        $msgs = array('PUBLISHING', 'PUBLISHED', 'UNPUBLISHED', 'ARCHIVED', 'TRASHED');
-        break;
+        $data = ['publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3];
+        $msgs = ['PUBLISHING', 'PUBLISHED', 'UNPUBLISHED', 'ARCHIVED', 'TRASHED'];
+          break;
     }
 
     $value = ArrayHelper::getValue($data, $task, 0, 'int');
 
     if(empty($cid))
     {
-      $this->app->getLogger()->warning(Text::_($this->text_prefix.'_NO_ITEM_SELECTED'), array('image' => 'jerror'));
-      // ToDo Manuel: Fix array to string conversion
-      $this->component->addLog(Text::_($this->text_prefix.'_NO_ITEM_SELECTED'.array('image' => 'jerror')), 'warning', 'jerror');
+      $this->app->getLogger()->warning(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), ['image' => 'jerror']);
+      $this->component->addLog(Text::_($this->text_prefix . '_NO_ITEM_SELECTED' . ['image' => 'jerror']), 'warning', 'jerror');
     }
     else
     {
@@ -345,7 +348,7 @@ class ImagesController extends JoomAdminController
       // Change the state of the items.
       try
       {
-        $model->changeState($cid, $type, $value);
+        $model->changeSate($cid, $type, $value);
         $errors = $model->getErrors();
         $ntext  = null;
 
@@ -353,25 +356,25 @@ class ImagesController extends JoomAdminController
         {
           if($errors)
           {
-            $this->app->enqueueMessage(Text::plural($this->text_prefix.'_N_ITEMS_FAILED_'.$msgs[0], \count($cid)), 'error');
-            $this->component->addLog(Text::plural($this->text_prefix.'_N_ITEMS_FAILED_'.$msgs[0], \count($cid)), 'error', 'jerror');
+            $this->app->enqueueMessage(Text::plural($this->text_prefix . '_N_ITEMS_FAILED_' . $msgs[0], \count($cid)), 'error');
+            $this->component->addLog(Text::plural($this->text_prefix . '_N_ITEMS_FAILED_' . $msgs[0], \count($cid)), 'error', 'jerror');
           }
           else
           {
-            $ntext = $this->text_prefix.'_N_ITEMS_'.$msgs[1];
+            $ntext = $this->text_prefix . '_N_ITEMS_' . $msgs[1];
           }
         }
         elseif($value === 0)
         {
-          $ntext = $this->text_prefix.'_N_ITEMS_'.$msgs[2];
+          $ntext = $this->text_prefix . '_N_ITEMS_' . $msgs[2];
         }
         elseif($value === 2)
         {
-          $ntext = $this->text_prefix.'_N_ITEMS_'.$msgs[3];
+          $ntext = $this->text_prefix . '_N_ITEMS_' . $msgs[3];
         }
         else
         {
-          $ntext = $this->text_prefix.'_N_ITEMS_'.$msgs[4];
+          $ntext = $this->text_prefix . '_N_ITEMS_' . $msgs[4];
         }
 
         if(\count($cid))
@@ -379,7 +382,7 @@ class ImagesController extends JoomAdminController
           $this->setMessage(Text::plural($ntext, \count($cid)));
         }
       }
-      catch(\Exception $e)
+      catch (\Exception $e)
       {
         $this->component->addLog($e->getMessage(), 'warning', 'jerror');
         $this->setMessage($e->getMessage(), 'error');
@@ -387,10 +390,11 @@ class ImagesController extends JoomAdminController
     }
 
     $this->setRedirect(
-      Route::_(
-        'index.php?option='.$this->option.'&view='.$this->view_list
-        .$this->getRedirectToListAppend(), false
-      )
+        Route::_(
+            'index.php?option=' . $this->option . '&view=' . $this->view_list
+            . $this->getRedirectToListAppend(),
+            false
+        )
     );
   }
 }

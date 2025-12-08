@@ -1,27 +1,28 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
-// No direct access 
+// No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-	 ->useScript('form.validate')
+   ->useScript('form.validate')
    ->useScript('com_joomgallery.uppy-uploader')
    ->useScript('bootstrap.modal')
    ->useStyle('com_joomgallery.uppy')
@@ -44,7 +45,7 @@ Text::script('JGLOBAL_VALIDATION_FORM_FAILED');
 Text::script('COM_JOOMGALLERY_UPLOADING');
 Text::script('COM_JOOMGALLERY_SAVING');
 Text::script('COM_JOOMGALLERY_WAITING');
-Text::script('COM_JOOMGALLERY_DEBUG_INFORMATION'); 
+Text::script('COM_JOOMGALLERY_DEBUG_INFORMATION');
 Text::script('COM_JOOMGALLERY_FILE_TITLE_HINT');
 Text::script('COM_JOOMGALLERY_FILE_DESCRIPTION_HINT');
 Text::script('COM_JOOMGALLERY_FILE_AUTHOR_HINT');
@@ -54,7 +55,7 @@ Text::script('COM_JOOMGALLERY_ERROR_UPPY_FORM');
 Text::script('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD');
 Text::script('COM_JOOMGALLERY_ERROR_FILL_REQUIRED_FIELDS');
 
-$wa->addInlineScript('window.uppyVars = JSON.parse(\''. json_encode($this->js_vars) . '\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
+$wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_vars) . '\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
 ?>
 
 <div class="jg jg-upload">
@@ -89,11 +90,11 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\''. json_encode($this->js_va
           <p>
             <?php
               $displayData = [
-                  'description' => Text::_('COM_JOOMGALLERY_GENERIC_UPLOAD_DATA'),
-                  'id'          => 'adminForm-desc',
-                  'small'       => true
+                'description' => Text::_('COM_JOOMGALLERY_GENERIC_UPLOAD_DATA'),
+                'id'          => 'adminForm-desc',
+                'small'       => true,
               ];
-              $renderer = new FileLayout('joomgallery.tip');
+              $renderer    = new FileLayout('joomgallery.tip');
             ?>
             <?php echo $renderer->render($displayData); ?>
           </p>
