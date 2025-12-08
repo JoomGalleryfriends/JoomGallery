@@ -1,19 +1,20 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userupload;
 
-use \Joomla\CMS\Form\Form;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\HTML\Registry;
-use \Joomgallery\Component\Joomgallery\Site\Model\UseruploadModel;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\UseruploadModel;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\HTML\Registry;
+use Joomla\CMS\Language\Text;
 
 /**
  * HTML Contact View class for the Contact component
@@ -129,6 +130,7 @@ class HtmlView extends JoomGalleryView
 
     //	user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
+
     if($user->guest)
     {
       $this->isUserLoggedIn = false;
@@ -157,7 +159,7 @@ class HtmlView extends JoomGalleryView
 
     $js_vars->uppyTarget = '#drag-drop-area';          // Id of the DOM element to apply the uppy form
     $js_vars->uppyLimit  = 5;                          // Number of concurrent tus uploads (only file upload)
-    $js_vars->uppyDelays = array(0, 1000, 3000, 5000); // Delay in ms between upload retries
+    $js_vars->uppyDelays = [0, 1000, 3000, 5000]; // Delay in ms between upload retries
 
     $js_vars->semaCalls  = $config->get('jg_parallelprocesses', 1); // Number of concurrent async calls to save the record to DB (including image processing)
     $js_vars->semaTokens = 100;                                           // Pre alloc space for 100 tokens
@@ -166,7 +168,8 @@ class HtmlView extends JoomGalleryView
 
     //--- Limits php.ini, config ----------------------------------------------------------------
 
-    [$this->uploadLimit,
+    [
+      $this->uploadLimit,
       $this->postMaxSize,
       $this->memoryLimit,
       $this->mediaSize,
@@ -250,5 +253,4 @@ class HtmlView extends JoomGalleryView
       }
     }
   }
-
 } // class

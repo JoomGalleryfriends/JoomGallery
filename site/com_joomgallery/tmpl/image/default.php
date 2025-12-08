@@ -113,7 +113,8 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php // Image ?>
 <figure class="figure joom-image text-center center">
   <div id="jg-loader"></div>
-  <img src="<?php echo JoomHelper::getImg($this->item, $image_type); ?>" class="figure-img img-fluid rounded" alt="<?php echo $this->item->title; ?>" style="width:auto;" itemprop="image" loading="lazy">
+  <img src="<?php echo JoomHelper::getImg($this->item, $image_type); ?>" class="figure-img img-fluid rounded" 
+       alt="<?php echo $this->item->title; ?>" style="width:auto;" itemprop="image" loading="lazy">
   <?php if($show_description) : ?>
     <figcaption class="figure-caption"><?php echo $this->item->description; ?></figcaption>
   <?php endif; ?>
@@ -128,25 +129,12 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
     <tr>
       <th><?php echo Text::_('JCATEGORY'); ?></th>
       <td>
-        <a
-          href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id='.(int) $this->item->catid); ?>">
-          <?php echo $this->escape($this->item->cattitle); ?>
-        </a>
-      </td>
-    </tr>
-    <?php endif; ?>
-    <?php if($show_imgdate) : ?>
-      <tr>
-        <?php if($show_category) : ?>
-          <tr>
-            <th><?php echo Text::_('JCATEGORY'); ?></th>
-            <td>
               <a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
                 <?php echo $this->escape($this->item->cattitle); ?>
               </a>
             </td>
           </tr>
-        <?php endif; ?>
+      <?php endif; ?>
         <?php if($show_imgdate) : ?>
           <tr>
             <th><?php echo Text::_('COM_JOOMGALLERY_DATE'); ?></th>

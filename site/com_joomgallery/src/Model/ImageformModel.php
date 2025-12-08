@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
+use Joomla\CMS\Form\Form;
 
 /**
  * Model to handle an image form.
@@ -121,15 +122,15 @@ class ImageformModel extends AdminImageModel
         return parent::loadFormData();
     }
 
-    /**
-     * Get the return URL.
-     *
-     * @return  string  The return URL.
-     *
-     * @since   4.0.0
-     */
-    public function getReturnPage()
-    {
+  /**
+   * Get the return URL.
+   *
+   * @return  string  The return URL.
+   *
+   * @since   4.0.0
+   */
+  public function getReturnPage(): string
+  {
         return base64_encode($this->getState('return_page', ''));
-    }
+  }
 }

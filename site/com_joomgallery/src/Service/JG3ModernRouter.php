@@ -27,6 +27,8 @@ use Joomla\Database\ParameterType;
 
 /**
  * Joomgallery Router class (JG3 flavor)
+ *
+ * @since   4.0.0
  */
 class JG3ModernRouter extends DefaultRouter
 {
@@ -37,7 +39,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  public static $displayName = 'COM_JOOMGALLERY_JG3_ROUTER';
+  public static string $displayName = 'COM_JOOMGALLERY_JG3_ROUTER';
 
   /**
    * Type of the router
@@ -46,7 +48,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  public static $type = 'modern';
+  public static string $type = 'modern';
 
   /**
    * ID of the parent of the image view. Empty if none.
@@ -55,7 +57,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  public static $image_parentID = 'catid';
+  public static string $image_parentID = 'catid';
 
   /**
    * Param to use ids in URLs
@@ -64,7 +66,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  private $noIDs;
+  private bool $noIDs;
 
   /**
    * Database object
@@ -88,8 +90,6 @@ class JG3ModernRouter extends DefaultRouter
   {
     parent::__construct($app, $menu, $categoryFactory, $db, true);
 
-  public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db)
-  {
     // Get router config value
     $this->noIDs = (bool) $app->bootComponent('com_joomgallery')->getConfig()->get('jg_router_ids', '0');
     $this->db    = $db;
@@ -121,6 +121,30 @@ class JG3ModernRouter extends DefaultRouter
     $imageform->setKey('id')->setParent($gallery);
     $this->registerView($imageform);
 
+    $userpanel = new RouterViewConfiguration('userpanel');
+    $this->registerView($userpanel);
+
+    $userupload = new RouterViewConfiguration('userupload');
+    //$userupload->setKey('id');
+    $this->registerView($userupload);
+
+    $usercategories = new RouterViewConfiguration('usercategories');
+    $this->registerView($usercategories);
+
+    $usercategory = new RouterViewConfiguration('usercategory');
+    $usercategory->setKey('id');
+    $this->registerView($usercategory);
+
+    $userimages = new RouterViewConfiguration('userimages');
+//    $userimages->setParent($usercategory);
+    $this->registerView($userimages);
+
+    $userimage = new RouterViewConfiguration('userimage');
+    $userimage->setKey('id');
+    $this->registerView($userimage);
+
+    parent::__construct($app, $menu, $categoryFactory, $db, true);
+
     $this->attachRule(new MenuRules($this));
     $this->attachRule(new StandardRules($this));
     $this->attachRule(new NomenuRules($this));
@@ -144,12 +168,12 @@ class JG3ModernRouter extends DefaultRouter
 
       $dbquery->select($this->db->quoteName('alias'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($this->db->quoteName('id').' = :id')
+        ->where($this->db->quoteName('id') . ' = :id')
         ->bind(':id', $id, ParameterType::INTEGER);
       $this->db->setQuery($dbquery);
 
       // To create a segment in the form: alias-id
-      $id = $this->db->loadResult().':'.$id;
+      $id = $this->db->loadResult() . ':' . $id;
     }
 
     return [(int) $id => $id];
@@ -167,7 +191,8 @@ class JG3ModernRouter extends DefaultRouter
   public function getImageId($segment, $query): int
   {
     $img_id = 0;
-    $parts  = explode('-', $segment);
+
+    $parts = explode('-', $segment);
 
     if(is_numeric(end($parts)))
     {
@@ -181,20 +206,20 @@ class JG3ModernRouter extends DefaultRouter
 
       $dbquery->select($this->db->quoteName('id'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($this->db->quoteName('alias').' = :alias')
+        ->where($this->db->quoteName('alias') . ' = :alias')
         ->bind(':alias', $segment);
 
       if($cat = $this->app->input->get('catid', 0, 'int'))
       {
         // We can identify the image via a request query variable of type catid
-        $dbquery->where($this->db->quoteName('catid').' = :catid');
+        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
         $dbquery->bind(':catid', $cat, ParameterType::INTEGER);
       }
 
       if(key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
       {
         // We can identify the image via menu item of type category
-        $dbquery->where($this->db->quoteName('catid').' = :catid');
+        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
         $dbquery->bind(':catid', $query['id'], ParameterType::INTEGER);
       }
 

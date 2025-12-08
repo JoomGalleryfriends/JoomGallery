@@ -1,19 +1,20 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Userpanel;
 
-use \Joomla\Registry\Registry;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Pagination\Pagination;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\Registry\Registry;
 
 /**
  * HTML Contact View class for the Contact component
@@ -23,7 +24,6 @@ use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
  */
 class HtmlView extends JoomGalleryView
 {
-
   /**
    * @var    array
    * @since   4.2.0
@@ -156,7 +156,6 @@ class HtmlView extends JoomGalleryView
 
     if($isShowLatestCategoryList)
     {
-
       $limitLatestCategories  = (int) $menuParam->get('latestCategoryListCount', 11);
       $this->latestCategories = $modUserPanel->dbLatestUserCategories($user->id, $limitLatestCategories);
 
@@ -165,7 +164,6 @@ class HtmlView extends JoomGalleryView
       {
         $this->orderingCatLatest[$item->parent_id][] = $item->id;
       }
-
     }
 
     //--- latest images area ---------------------------------------------------
@@ -174,17 +172,17 @@ class HtmlView extends JoomGalleryView
     {
       $limitLatestImages  = (int) $menuParam->get('latestImagesListCount', 22);
       $this->latestImages = $modUserPanel->dbLatestUserImages($user->id, $limitLatestImages);
-
     }
 
     // Check for errors.
     if(\count($errors = $modUserPanel->getErrors()))
     {
-      throw new GenericDataException(\implode("\n", $errors), 500);
+      throw new GenericDataException(implode("\n", $errors), 500);
     }
 
     //	user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
+
     if($user->guest)
     {
       $this->isUserLoggedIn = false;
@@ -282,5 +280,4 @@ class HtmlView extends JoomGalleryView
       }
     }
   }
-
 }

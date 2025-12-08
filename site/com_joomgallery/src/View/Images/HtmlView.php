@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Images;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\ImagesModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Router\Route;
@@ -49,7 +50,7 @@ class HtmlView extends JoomGalleryView
    *
    * @return void
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function display($tpl = null)
   {

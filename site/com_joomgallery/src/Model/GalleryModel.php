@@ -107,7 +107,7 @@ class GalleryModel extends JoomItemModel
    *
    * @return  array|false    Array of images on success, false on failure.
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function getImages()
   {

@@ -35,7 +35,8 @@ $listDirn    = $this->state->get('list.direction');
 $imgRequired = (int) $input->get('required', 0, 'int');
 ?>
 
-<form action="<?php echo Route::_('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component'); ?>" method="post"
+<form action="<?php echo Route::_('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component'); ?>" 
+    method="post"
     name="adminForm" id="adminForm">
   <div class="row">
     <div class="col-md-12">
@@ -43,7 +44,9 @@ $imgRequired = (int) $input->get('required', 0, 'int');
 
       <?php if(!$imgRequired) : ?>
         <div>
-          <button type="button" class="btn btn-primary button-select" data-image-value="0" data-image-title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE')); ?>" data-image-field="<?php echo $this->escape($field); ?>">
+          <button type="button" class="btn btn-primary button-select" data-image-value="0" 
+data-image-title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE')); ?>" 
+data-image-field="<?php echo $this->escape($field); ?>">
             <?php echo Text::_('COM_JOOMGALLERY_NO_IMAGE'); ?>
           </button>
         </div>
@@ -142,7 +145,7 @@ $imgRequired = (int) $input->get('required', 0, 'int');
                     </a>
 
                     <div class="small">
-                      <?php echo Text::_('JCATEGORY').': '; ?>
+                      <?php echo Text::_('JCATEGORY') . ': '; ?>
                       <?php echo $this->escape($item->cattitle); ?>
                     </div>
 

@@ -29,6 +29,10 @@ use Joomla\Database\ParameterType;
 
 /**
  * Joomgallery Router class
+ *
+ * @package     Joomgallery\Component\Joomgallery\Site\Service
+ *
+ * @since  4.0.0
  */
 class DefaultRouter extends RouterView
 {
@@ -40,7 +44,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  public static $displayName = 'COM_JOOMGALLERY_DEFAULT_ROUTER';
+  public static string $displayName = 'COM_JOOMGALLERY_DEFAULT_ROUTER';
 
   /**
    * Type of the router
@@ -49,7 +53,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  public static $type = 'modern';
+  public static string $type = 'modern';
 
   /**
    * ID of the parent of the image view. Empty if none.
@@ -58,7 +62,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  public static $image_parentID = '';
+  public static string $image_parentID = '';
 
   /**
    * Param to use ids in URLs
@@ -67,7 +71,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  private $noIDs;
+  private bool $noIDs;
 
   /**
    * Database object
@@ -85,19 +89,20 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  private $categoryCache = [];
+  private array $categoryCache = [];
+
+  // ToDo: Fith/Manuel: Get...Id should return 'int|bool' see com_content router. Why do we have array ?
+  // ToDo: Fith/Manuel: Get...Segment should return 'array|string' see com_content router. Why do we have array ?
 
   public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db, $skipSelf = false)
   {
     parent::__construct($app, $menu);
 
-  public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db, $skipSelf = false)
-  {
     // Get router config value
     $this->noIDs = (bool) $app->bootComponent('com_joomgallery')->getConfig()->get('jg_router_ids', '0');
     $this->db    = $db;
 
-    if($skipSelf)
+    if ($skipSelf)
     {
       return;
     }
@@ -128,6 +133,30 @@ class DefaultRouter extends RouterView
     $imageform->setKey('id');
     $this->registerView($imageform);
 
+    $userpanel = new RouterViewConfiguration('userpanel');
+    $this->registerView($userpanel);
+
+    $userupload = new RouterViewConfiguration('userupload');
+    //$userupload->setKey('id');
+    $this->registerView($userupload);
+
+    $usercategories = new RouterViewConfiguration('usercategories');
+    $this->registerView($usercategories);
+
+    $usercategory = new RouterViewConfiguration('usercategory');
+    $usercategory->setKey('id');
+    $this->registerView($usercategory);
+
+    $userimages = new RouterViewConfiguration('userimages');
+//    $userimages->setParent($usercategory);
+    $this->registerView($userimages);
+
+    $userimage = new RouterViewConfiguration('userimage');
+    $userimage->setKey('id');
+    $this->registerView($userimage);
+
+    parent::__construct($app, $menu);
+
     $this->attachRule(new MenuRules($this));
     $this->attachRule(new StandardRules($this));
     $this->attachRule(new NomenuRules($this));
@@ -136,8 +165,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment for a gallery view
    *
-   * @param   string   $id     ID of the image to retrieve the segments for
-   * @param   array    $query  The request that is built right now
+   * @param   string  $id     ID of the image to retrieve the segments for
+   * @param   array   $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
    * @since   4.2.0
@@ -150,31 +179,24 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment for an image view
    *
-   * @param   string   $id     ID of the image to retrieve the segments for
-   * @param   array    $query  The request that is built right now
+   * @param   string  $id     ID of the image to retrieve the segments for
+   * @param   array   $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
    *
    * @since   4.2.0
    */
-  public function getImageSegment(string $id, $query) : array|string
+  public function getImageSegment($id, $query)
   {
-    if(!strpos($id, ':'))
+    if (!strpos($id, ':'))
     {
-      if(!$id)
-      {
-        // Load empty form view
-        return array('');
-      }
+      $dbquery = $this->db->createQuery();
 
-      $id .= ':'.$this->getImageAliasDb($id);
-    }
+      $dbquery->select($this->db->quoteName('alias'))->from($this->db->quoteName(_JOOM_TABLE_IMAGES))->where($this->db->quoteName('id') . ' = :id')->bind(':id', $id, ParameterType::INTEGER);
+      $this->db->setQuery($dbquery);
 
-    if($this->noIDs)
-    {
-      list($void, $segment) = explode(':', $id, 2);
-
-      return [$void => $segment];
+      // To create a segment in the form: id-alias
+      $id .= ':' . $this->db->loadResult();
     }
 
     return [(int) $id => $id];
@@ -183,8 +205,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment(s) for an imageform
    *
-   * @param   string   $id     ID of the imageform to retrieve the segments for
-   * @param   array    $query  The request that is built right now
+   * @param   string  $id     ID of the imageform to retrieve the segments for
+   * @param   array   $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
    *
@@ -192,7 +214,7 @@ class DefaultRouter extends RouterView
    */
   public function getImageformSegment($id, $query): array|string
   {
-    if(!strpos($id, ':'))
+    if (!strpos($id, ':'))
     {
       // Load empty form view
       return [''];
@@ -204,58 +226,108 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment(s) for an image
    *
-   * @param   string   $id     ID of the image to retrieve the segments for
-   * @param   array    $query  The request that is built right now
+   * @param   string  $id     ID of the image to retrieve the segments for
+   * @param   array   $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
    *
    * @since   4.2.0
    */
-  public function getImagesSegment($id, $query): array|string
+  public function getImagesSegment($id, $query)
   {
-    if(!strpos($id, ':'))
+    if (!$id)
     {
       return [''];
     }
 
-    return array((int) $id => $id);
+    return $this->getImageSegment($id, $query);
   }
 
   /**
    * Method to get the segment(s) for an category
    *
-   * @param   string   $id     ID of the category to retrieve the segments for
-   * @param   array    $query  The request that is built right now
+   * @param   string  $id      ID of the category to retrieve the segments for
+   * @param   array   $query   The request that is built right now
    *                           array(id = id:alias, parentid: parentid:parentalias)
    *
    * @return  array|string  The segments of this item
    *
    * @since   4.2.0
    */
-  // ToDo: fith/Manuel may need a parent in above definition categoryForm
-  public function getCategorySegment($id, $query): array|string
-  {
-    if(!strpos($id, ':'))
-    {
-      // Replace root with categories
-      if($root_key = key(preg_grep('/\broot\b/i', $category->route_path)))
-      {
-        $category->route_path[$root_key] = str_replace('root', 'categories', $category->route_path[$root_key]);
-      }
 
-      if($this->noIDs && strpos(reset($category->route_path), ':') !== false)
+  /**
+   * // ToDo: fith/Manuel may need a parent in above definition categoryForm
+   * public function getCategorySegment($id, $query): array|string
+   * {
+   * if(!strpos($id, ':'))
+   * {
+   * // Replace root with categories
+   * if($root_key = key(preg_grep('/\broot\b/i', $category->route_path)))
+   * {
+   * $category->route_path[$root_key] = str_replace('root', 'categories', $category->route_path[$root_key]);
+   * }
+   *
+   * if($this->noIDs && strpos(reset($category->route_path), ':') !== false)
+   * {
+   * // Replace root with categories
+   * if($root_key = \key(\preg_grep('/\broot\b/i', $category->route_path)))
+   * {
+   * list($id, $segment) = explode(':', $segment, 2);
+   * }
+   *
+   * if($this->noIDs && \strpos(\reset($category->route_path), ':') !== false)
+   * {
+   * foreach($category->route_path as &$segment)
+   * {
+   * list($id, $segment) = \explode(':', $segment, 2);
+   * }
+   * }
+   *
+   * return $category->route_path;
+   * }
+   * }
+   *
+   * if($this->noIDs)
+   * {
+   * list($void, $segment) = explode(':', $id, 2);
+   *
+   * return [$void => $segment];
+   * }
+   *
+   * return [(int) $id => $id];
+   * }
+   *
+   * /**
+   * Method to get the segment(s) for an category
+   *
+   * @param   string  $id     ID of the category to retrieve the segments for
+   * @param   array   $query  The request that is built right now
+   *                          array(id = id:alias, parentid: parentid:parentalias)
+   *
+   * @return  array|string  The segments of this item
+   *
+   * @since   4.2.0
+   */
+  // ToDo: fith/Manuel may need a parent in above definition categoryForm
+  public function getCategorySegment($id, $query)
+  {
+    if (!strpos($id, ':'))
+    {
+      $category = $this->getCategory((int) $id, 'route_path', true);
+
+      if ($category)
       {
         // Replace root with categories
-        if($root_key = \key(\preg_grep('/\broot\b/i', $category->route_path)))
+        if ($root_key = key(preg_grep('/\broot\b/i', $category->route_path)))
         {
-          list($id, $segment) = explode(':', $segment, 2);
+          $category->route_path[$root_key] = str_replace('root', 'categories', $category->route_path[$root_key]);
         }
 
-        if($this->noIDs && \strpos(\reset($category->route_path), ':') !== false)
+        if ($this->noIDs && strpos(reset($category->route_path), ':') !== false)
         {
-          foreach($category->route_path as &$segment)
+          foreach ($category->route_path as &$segment)
           {
-            list($id, $segment) = \explode(':', $segment, 2);
+            list($id, $segment) = explode(':', $segment, 2);
           }
         }
 
@@ -263,7 +335,7 @@ class DefaultRouter extends RouterView
       }
     }
 
-    if($this->noIDs)
+    if ($this->noIDs)
     {
       list($void, $segment) = explode(':', $id, 2);
 
@@ -276,8 +348,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment(s) for an categoryform
    *
-   * @param   string   $id     ID of the categoryform to retrieve the segments for
-   * @param   array    $query  The request that is built right now
+   * @param   string  $id     ID of the categoryform to retrieve the segments for
+   * @param   array   $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
    *
@@ -286,10 +358,20 @@ class DefaultRouter extends RouterView
   // ToDo: fith/Manuel may need a parent in above definition categoryForm
   public function getCategoryformSegment($id, $query): array|string
   {
-    if(!strpos($id, ':'))
+    if (!strpos($id, ':'))
     {
-      // Load empty form view
-      return [''];
+      if (!$id)
+      {
+        // Load empty form view
+        return [''];
+      }
+    }
+
+    if ($this->noIDs)
+    {
+      list($void, $segment) = explode(':', $id, 2);
+
+      return [$void => $segment];
     }
 
     return $this->getCategorySegment($id, $query);
@@ -298,8 +380,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment(s) for an usercategory
    *
-   * @param   string   $id     ID of the category to retrieve the segments for
-   * @param   array    $query  The request that is built right now
+   * @param   string  $id     ID of the category to retrieve the segments for
+   * @param   array   $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
    *
@@ -307,24 +389,25 @@ class DefaultRouter extends RouterView
    */
   public function getUsercategorySegment($id, $query): array|string
   {
-    $alias = "";
+    $alias = '';
 
-    if(!strpos($id, ':'))
+    if (!strpos($id, ':'))
     {
-      if(empty($id))
+      if (empty($id))
       {
         // Load empty form view
-        return array('');
+        return [''];
       }
 
       $category = $this->getCategory((int) $query['id'], 'children', true);
-      if(!empty ($category))
+
+      if (!empty($category))
       {
-        $id .= ':'.$category->alias;
+        $id .= ':' . $category->alias;
       }
     }
 
-    if($this->noIDs)
+    if ($this->noIDs)
     {
       list($void, $segment) = explode(':', $id, 2);
 
@@ -337,8 +420,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment(s) for an userimage
    *
-   * @param   string   $id     ID of the category to retrieve the segments for
-   * @param   array    $query  The request that is built right now
+   * @param   string  $id     ID of the category to retrieve the segments for
+   * @param   array   $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
    *
@@ -346,7 +429,7 @@ class DefaultRouter extends RouterView
    */
   public function getUserimageSegment($id, $query): array|string
   {
-    if(!strpos($id, ':'))
+    if (!strpos($id, ':'))
     {
 //      if (!$id)
 //      {
@@ -354,24 +437,24 @@ class DefaultRouter extends RouterView
 //        return array('');
 //      }
 
-      $id .= ':'.$this->getImageAliasDb($id);
+      $id .= ':' . $this->getImageAliasDb($id);
     }
 
-    if($this->noIDs)
+    if ($this->noIDs)
     {
       list($void, $segment) = explode(':', $id, 2);
 
       return [$void => $segment];
     }
 
-    return array((int) $id => $id);
+    return [(int) $id => $id];
   }
 
   /**
    * Method to get the segment(s) for a category
    *
-   * @param   string   $id     ID of the category to retrieve the segments for
-   * @param   array    $query  The request that is built right now
+   * @param   string  $id     ID of the category to retrieve the segments for
+   * @param   array   $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
    *
@@ -379,7 +462,7 @@ class DefaultRouter extends RouterView
    */
   public function getCategoriesSegment($id, $query): array|string
   {
-    if(!$id)
+    if (!$id)
     {
       return [''];
     }
@@ -390,8 +473,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment for a gallery view
    *
-   * @param   string   $segment  Segment of the image to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
+   * @param   string  $segment  Segment of the image to retrieve the ID for
+   * @param   array   $query    The request that is parsed right now
    *
    * @return  int|false   The id of this item or false
    *
@@ -405,8 +488,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment for an image view
    *
-   * @param   string   $segment  Segment of the image to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
+   * @param   string  $segment  Segment of the image to retrieve the ID for
+   * @param   array   $query    The request that is parsed right now
    *
    * @return  int|false   The id of this item or false
    *
@@ -414,10 +497,9 @@ class DefaultRouter extends RouterView
    */
   public function getImageId($segment, $query): int|false
   {
-    if($this->noIDs)
+    if ($this->noIDs)
     {
-
-      if($segment == '0-' || $segment == 'noimage' || $segment == '0-noimage')
+      if ($segment == '0-' || $segment == 'noimage' || $segment == '0-noimage')
       {
         // Special case: No image with id=0
         // return 'null'; wrong
@@ -434,129 +516,10 @@ class DefaultRouter extends RouterView
   }
 
   /**
-   * Method to get the segment(s) for an imageform
-   *
-   * @param   string   $segment  Segment of the imageform to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
-   *
-   * @return  int|false   The id of this item or false
-   *
-   * @since   4.2.0
-   */
-  public function getImageformId($segment, $query): int|false
-  {
-    if($this->noIDs)
-    {
-      return $this->getImageId($segment, $query);
-    }
-
-    return (int) $segment;
-  }
-
-  /**
-   * Method to get the segment(s) for an image
-   *
-   * @param   string   $segment  Segment of the image to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
-   *
-   * @return  int|false   The id of this item or false
-   *
-   * @since   4.2.0
-   */
-  public function getImagesId($segment, $query): int|false
-  {
-    if($this->noIDs)
-    {
-      return $this->getImageId($segment, $query);
-    }
-
-    return (int) $segment;
-  }
-
-  /**
-   * Method to get the segment(s) for a category
-   *
-   * @param   string   $segment  Segment of the category to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
-   *
-   * @return  int|false   The id of this item or false
-   *
-   * @since   4.2.0
-   */
-  public function getCategoryId($segment, $query): int|false
-  {
-    if($this->noIDs)
-    {
-      if(isset($query['id']) && ($query['id'] === 0 || $query['id'] === '0'))
-      {
-        // Root element of nestable content in core must have the id=0
-        // But JoomGallery category root has id=1
-        $query['id'] = 1;
-      }
-
-      if(\strpos($segment, 'categories'))
-      {
-        // If 'categories' is in the segment, means that we are looking for the root category
-        $segment = \str_replace('categories', 'root', $segment);
-      }
-
-      if(isset($query['id']))
-      {
-        $category = $this->getCategory((int) $query['id'], 'children', true);
-
-        if($category)
-        {
-          foreach($category->children as $child)
-          {
-            if($this->noIDs)
-            {
-              if($child['alias'] == $segment)
-              {
-                return $child['id'];
-              }
-            }
-            else
-            {
-              if($child['id'] == (int) $segment)
-              {
-                return $child['id'];
-              }
-            }
-          }
-        }
-      }
-
-      return false;
-    }
-
-    return (int) $segment;
-  }
-
-  /**
-   * Method to get the segment(s) for an categoryform
-   *
-   * @param   string   $segment  Segment of the categoryform to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
-   *
-   * @return  int|false   The id of this item or false
-   *
-   * @since   4.2.0
-   */
-  public function getCategoryformId($segment, $query): int|false
-  {
-    if($this->noIDs)
-    {
-      return $this->getCategoryId($segment, $query);
-    }
-
-    return (int) $segment;
-  }
-
-  /**
    * Method to get the segment(s) for an usercategory
    *
-   * @param   string   $segment  Segment of the usercategory to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
+   * @param   string  $segment  Segment of the usercategory to retrieve the ID for
+   * @param   array   $query    The request that is parsed right now
    *
    * @return  int   The id of this item or false
    *
@@ -566,22 +529,18 @@ class DefaultRouter extends RouterView
   {
     // ToDo: same alias but different parent.  Bsp. Paris mit jahrnamen -> url hat jahr
 
-    if($this->noIDs)
+    if ($this->noIDs)
     {
       // ToDo: manuel why is this used in other functions
 //    $id = (int) $query['id'];
 //    $id = (int) $segment;
       $id = 0;
 
-      if(!empty($segment))
+      if (!empty($segment))
       {
-
         $dbquery = $this->db->createQuery();
 
-        $dbquery->select($this->db->quoteName('id'))
-          ->from($this->db->quoteName(_JOOM_TABLE_CATEGORIES))
-          ->where($this->db->quoteName('alias').' = :alias')
-          ->bind(':alias', $segment);
+        $dbquery->select($this->db->quoteName('id'))->from($this->db->quoteName(_JOOM_TABLE_CATEGORIES))->where($this->db->quoteName('alias') . ' = :alias')->bind(':alias', $segment);
 
         $this->db->setQuery($dbquery);
 
@@ -597,8 +556,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment(s) for an userimage
    *
-   * @param   string   $segment  Segment of the userimage to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
+   * @param   string  $segment  Segment of the userimage to retrieve the ID for
+   * @param   array   $query    The request that is parsed right now
    *
    * @return  int|false   The id of this item or false
    *
@@ -606,7 +565,7 @@ class DefaultRouter extends RouterView
    */
   public function getUserimageId($segment, $query): int|false
   {
-    if($this->noIDs)
+    if ($this->noIDs)
     {
       return $this->getImageId($segment, $query);
     }
@@ -617,8 +576,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get the segment(s) for a category
    *
-   * @param   string   $segment  Segment of the category to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
+   * @param   string  $segment  Segment of the category to retrieve the ID for
+   * @param   array   $query    The request that is parsed right now
    *
    * @return  int|false   The id of this item or false
    *
@@ -626,7 +585,7 @@ class DefaultRouter extends RouterView
    */
   public function getCategoriesId($segment, $query): int|false
   {
-    if($this->noIDs)
+    if ($this->noIDs)
     {
       return $this->getCategoryId($segment, $query);
     }
@@ -637,8 +596,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get categories from cache
    *
-   * @param   int      $id         It of the category
-   * @param   string   $available  The property to make available in the category
+   * @param   int     $id         It of the category
+   * @param   string  $available  The property to make available in the category
    *
    * @return  CategoryTable   The category table object
    *
@@ -648,7 +607,7 @@ class DefaultRouter extends RouterView
   private function getCategory($id, $available = null, $root = true): CategoryTable
   {
     // Load the category table
-    if(!isset($this->categoryCache[$id]))
+    if (!isset($this->categoryCache[$id]))
     {
       $table = $this->app->bootComponent('com_joomgallery')->getMVCFactory()->createTable('Category', 'administrator');
       $table->load($id);
@@ -656,9 +615,9 @@ class DefaultRouter extends RouterView
     }
 
     // Make node tree available in cache
-    if(!\is_null($available) && !isset($this->categoryCache[$id]->{$available}))
+    if (!\is_null($available) && !isset($this->categoryCache[$id]->{$available}))
     {
-      switch($available)
+      switch ($available)
       {
         case 'route_path':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getRoutePath($root, 'route_path');
@@ -673,7 +632,7 @@ class DefaultRouter extends RouterView
           break;
 
         default:
-          throw new \UnexpectedValueException('Requested property ('.$available.') can to be made available in a category.');
+          throw new \UnexpectedValueException('Requested property (' . $available . ') can to be made available in a category.');
           break;
       }
     }
@@ -683,7 +642,8 @@ class DefaultRouter extends RouterView
 
   /**
    * Fetches alias of image by image ID
-   * @param   string   $id image ID
+   *
+   * @param   string  $id  image ID
    *
    * @return string alias
    *
@@ -691,13 +651,10 @@ class DefaultRouter extends RouterView
    */
   public function getImageAliasDb(string $id): string
   {
-    $alias = '';
+    $alias   = '';
     $dbquery = $this->db->createQuery();
 
-    $dbquery->select($this->db->quoteName('alias'))
-      ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-      ->where($this->db->quoteName('id').' = :id')
-      ->bind(':id', $id, ParameterType::INTEGER);
+    $dbquery->select($this->db->quoteName('alias'))->from($this->db->quoteName(_JOOM_TABLE_IMAGES))->where($this->db->quoteName('id') . ' = :id')->bind(':id', $id, ParameterType::INTEGER);
     $this->db->setQuery($dbquery);
 
     // To create a segment in the form: id-alias
@@ -709,8 +666,8 @@ class DefaultRouter extends RouterView
   /**
    * Method to get categories from cache
    *
-   * @param   int      $id         It of the category
-   * @param   string   $available  The property to make available in the category
+   * @param   int     $id         It of the category
+   * @param   string  $available  The property to make available in the category
    *
    * @return  CategoryTable   The category table object
    *
@@ -720,7 +677,7 @@ class DefaultRouter extends RouterView
   private function getImage($id, $available = null, $root = true): CategoryTable
   {
     // Load the category table
-    if(!isset($this->categoryCache[$id]))
+    if (!isset($this->categoryCache[$id]))
     {
       $table = $this->app->bootComponent('com_joomgallery')->getMVCFactory()->createTable('Category', 'administrator');
       $table->load($id);
@@ -728,9 +685,9 @@ class DefaultRouter extends RouterView
     }
 
     // Make node tree available in cache
-    if(!\is_null($available) && !isset($this->categoryCache[$id]->{$available}))
+    if (!\is_null($available) && !isset($this->categoryCache[$id]->{$available}))
     {
-      switch($available)
+      switch ($available)
       {
         case 'route_path':
           $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getRoutePath($root, 'route_path');
@@ -745,7 +702,7 @@ class DefaultRouter extends RouterView
           break;
 
         default:
-          throw new \UnexpectedValueException('Requested property ('.$available.') can to be made available in a category.');
+          throw new \UnexpectedValueException('Requested property (' . $available . ') can to be made available in a category.');
           break;
       }
     }
@@ -770,32 +727,30 @@ class DefaultRouter extends RouterView
   {
     $img_id = 0;
 
-    if(is_numeric(explode('-', $segment, 2)[0]))
+    // ToDo: FiTh/Manuel where else do i need to distinguish with '-' ? documentation
+    if (is_numeric(explode('-', $segment, 2)[0]))
     {
       // For a segment in the form: id-alias
       $img_id = (int) explode('-', $segment, 2)[0];
     }
 
-    if($img_id < 1)
+    if ($img_id < 1)
     {
       $dbquery = $this->db->createQuery();
 
-      $dbquery->select($this->db->quoteName('id'))
-        ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($this->db->quoteName('alias').' = :alias')
-        ->bind(':alias', $segment);
+      $dbquery->select($this->db->quoteName('id'))->from($this->db->quoteName(_JOOM_TABLE_IMAGES))->where($this->db->quoteName('alias') . ' = :alias')->bind(':alias', $segment);
 
-      if($cat = $this->app->input->get('catid', 0, 'int'))
+      if ($cat = $this->app->input->get('catid', 0, 'int'))
       {
         // We can identify the image via a request query variable of type catid
-        $dbquery->where($this->db->quoteName('catid').' = :catid');
+        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
         $dbquery->bind(':catid', $cat, ParameterType::INTEGER);
       }
 
-      if(key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
+      if (key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
       {
         // We can identify the image via menu item of type category
-        $dbquery->where($this->db->quoteName('catid').' = :catid');
+        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
         $dbquery->bind(':catid', $query['id'], ParameterType::INTEGER);
       }
 
@@ -813,11 +768,18 @@ class DefaultRouter extends RouterView
    * @param   string  $segment  Segment of the imageform to retrieve the ID for
    * @param   array   $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getImageformId($segment, $query)
+  public function getImageformId($segment, $query): int|false
   {
-    return $this->getImageId($segment, $query);
+    if ($this->noIDs)
+    {
+      return $this->getImageId($segment, $query);
+    }
+
+    return (int) $segment;
   }
 
   /**
@@ -826,11 +788,18 @@ class DefaultRouter extends RouterView
    * @param   string  $segment  Segment of the image to retrieve the ID for
    * @param   array   $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getImagesId($segment, $query)
+  public function getImagesId($segment, $query): int|false
   {
-    return $this->getImageId($segment, $query);
+    if ($this->noIDs)
+    {
+      return $this->getImageId($segment, $query);
+    }
+
+    return (int) $segment;
   }
 
   /**
@@ -843,37 +812,37 @@ class DefaultRouter extends RouterView
    */
   public function getCategoryId($segment, $query)
   {
-    if(isset($query['id']) && ($query['id'] === 0 || $query['id'] === '0'))
+    if (isset($query['id']) && ($query['id'] === 0 || $query['id'] === '0'))
     {
       // Root element of nestable content in core must have the id=0
       // But JoomGallery category root has id=1
       $query['id'] = 1;
     }
 
-    if(strpos($segment, 'categories'))
+    if (strpos($segment, 'categories'))
     {
       // If 'categories' is in the segment, means that we are looking for the root category
       $segment = str_replace('categories', 'root', $segment);
     }
 
-    if(isset($query['id']))
+    if (isset($query['id']))
     {
       $category = $this->getCategory((int) $query['id'], 'children', true);
 
-      if($category)
+      if ($category)
       {
-        foreach($category->children as $child)
+        foreach ($category->children as $child)
         {
-          if($this->noIDs)
+          if ($this->noIDs)
           {
-            if($child['alias'] == $segment)
+            if ($child['alias'] == $segment)
             {
               return $child['id'];
             }
           }
           else
           {
-            if($child['id'] == (int) $segment)
+            if ($child['id'] == (int) $segment)
             {
               return $child['id'];
             }
@@ -891,70 +860,17 @@ class DefaultRouter extends RouterView
    * @param   string  $segment  Segment of the categoryform to retrieve the ID for
    * @param   array   $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int|false   The id of this item or false
+   *
+   * @since   4.2.0
    */
-  public function getCategoryformId($segment, $query)
+  public function getCategoryformId($segment, $query): int|false
   {
-    return $this->getCategoryId($segment, $query);
-  }
-
-  /**
-   * Method to get the segment(s) for an category
-   *
-   * @param   string  $segment  Segment of the category to retrieve the ID for
-   * @param   array   $query    The request that is parsed right now
-   *
-   * @return  mixed   The id of this item or false
-   */
-  public function getCategoriesId($segment, $query)
-  {
-    return $this->getCategoryId($segment, $query);
-  }
-
-  /**
-   * Method to get categories from cache
-   *
-   * @param   int             $id         It of the category
-   * @param   string          $available  The property to make available in the category
-   *
-   * @return  CategoryTable   The category table object
-   *
-   * @since   4.0.0
-   * @throws  \UnexpectedValueException
-   */
-  private function getCategory($id, $available = null, $root = true): CategoryTable
-  {
-    // Load the category table
-    if(!isset($this->categoryCache[$id]))
+    if ($this->noIDs)
     {
-      $table = $this->app->bootComponent('com_joomgallery')->getMVCFactory()->createTable('Category', 'administrator');
-      $table->load($id);
-      $this->categoryCache[$id] = $table;
+      return $this->getCategoryId($segment, $query);
     }
 
-    // Make node tree available in cache
-    if(!\is_null($available) && !isset($this->categoryCache[$id]->{$available}))
-    {
-      switch($available)
-      {
-        case 'route_path':
-          $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getRoutePath($root, 'route_path');
-            break;
-
-        case 'children':
-          $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-            break;
-
-        case 'parents':
-          $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-            break;
-
-        default:
-            throw new \UnexpectedValueException('Requested property (' . $available . ') can to be made available in a category.');
-          break;
-      }
-    }
-
-    return $this->categoryCache[$id];
+    return (int) $segment;
   }
 }

@@ -1,20 +1,21 @@
 <?php
 /**
- ******************************************************************************************
- **   @package    com_joomgallery                                                        **
- **   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
- **   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
- **   @license    GNU General Public License version 3 or later                          **
- *****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 /**
  * Model prepares latest categories, latest images and image list of user
@@ -75,20 +76,19 @@ class UserpanelModel extends ImagesModel
       $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('created_by').' = '.(int) $userId);
+        ->where($db->quoteName('created_by') . ' = ' . (int) $userId);
 
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(empty ($count))
+      if(empty($count))
       {
         $isUserHasACategory = false;
       }
-
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('getUserHasACategory-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
@@ -114,7 +114,6 @@ class UserpanelModel extends ImagesModel
     $userData['userCatCount']    = $this->dbUserCategoryCount($userId); // COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG
     $userData['userImgCount']    = $this->dbUserImageCount($userId);
     $userData['userImgTimeSpan'] = $this->dbUserImgTimeSpan($userId);
-
   }
 
   /**
@@ -139,20 +138,19 @@ class UserpanelModel extends ImagesModel
       $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('created_by').' = '.(int) $userId);
+        ->where($db->quoteName('created_by') . ' = ' . (int) $userId);
 
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(!empty ($count))
+      if(!empty($count))
       {
         $categoryCount = $count;
       }
-
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('dbUserCategoryCount-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('dbUserCategoryCount-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
@@ -182,20 +180,19 @@ class UserpanelModel extends ImagesModel
       $query = $db->createQuery()
         ->select('COUNT(*)')
         ->from($db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($db->quoteName('created_by').' = '.(int) $userId);
+        ->where($db->quoteName('created_by') . ' = ' . (int) $userId);
 
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(!empty ($count))
+      if(!empty($count))
       {
         $imageCount = $count;
       }
-
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('dbUserImageCount-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('dbUserImageCount-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
@@ -225,26 +222,26 @@ class UserpanelModel extends ImagesModel
       $query = $db->createQuery()
         ->select('COUNT(id)')
         ->from($db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($db->quoteName('created_by').' = '.(int) $userId);
+        ->where($db->quoteName('created_by') . ' = ' . (int) $userId);
 
       $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
+
       if($timespan > 0)
       {
-        $query->where('created_time > (UTC_TIMESTAMP() - INTERVAL '.$timespan.' DAY)');
+        $query->where('created_time > (UTC_TIMESTAMP() - INTERVAL ' . $timespan . ' DAY)');
       }
 
       $db->setQuery($query);
       $count = $db->loadResult();
 
-      if(!empty ($count))
+      if(!empty($count))
       {
         $imageCount = $count;
       }
-
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('dbUserImageCount-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('dbUserImageCount-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
@@ -275,8 +272,8 @@ class UserpanelModel extends ImagesModel
       $query = $db->createQuery()
         ->select('*')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'a'))
-        ->where($db->quoteName('a.created_by').' = '.(int) $userId)
-        ->order($db->quoteName('a.lft').' DESC')
+        ->where($db->quoteName('a.created_by') . ' = ' . (int) $userId)
+        ->order($db->quoteName('a.lft') . ' DESC')
         ->setLimit($limit);
 
       // assign parent category title
@@ -296,14 +293,14 @@ class UserpanelModel extends ImagesModel
       $db->setQuery($query);
       $dbCategories = $db->loadObjectList();
 
-      if(!empty ($dbCategories))
+      if(!empty($dbCategories))
       {
         $categories = $dbCategories;
       }
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('dbUserCategoryCount-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('dbUserCategoryCount-Error: ' . $e->getMessage(), 'error');
 
       return [];
     }
@@ -335,8 +332,8 @@ class UserpanelModel extends ImagesModel
       $query = $db->createQuery()
         ->select('*')
         ->from($db->quoteName(_JOOM_TABLE_IMAGES, 'a'))
-        ->where($db->quoteName('created_by').' = '.(int) $userId)
-        ->order($db->quoteName('ordering').' DESC')
+        ->where($db->quoteName('created_by') . ' = ' . (int) $userId)
+        ->order($db->quoteName('ordering') . ' DESC')
         ->setLimit($limit);
 
       // assign category title
@@ -349,15 +346,14 @@ class UserpanelModel extends ImagesModel
       $db->setQuery($query);
       $dbImages = $db->loadObjectList();
 
-      if(!empty ($dbImages))
+      if(!empty($dbImages))
       {
         $images = $dbImages;
       }
-
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('dbUserImageCount-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('dbUserImageCount-Error: ' . $e->getMessage(), 'error');
 
       return [];
     }

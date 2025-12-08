@@ -15,9 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\CMS\User\UserHelper;
 
@@ -46,7 +48,7 @@ class CategoryModel extends JoomItemModel
    *
    * @since   4.0.0
    *
-   * @throws Exception
+   * @throws \Exception
    */
   protected function populateState()
   {
@@ -156,8 +158,8 @@ class CategoryModel extends JoomItemModel
     }
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $db        = $this->getDatabase();
+        $query = $db->createQuery();
 
     $query->select('id, password')
           ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
@@ -166,7 +168,7 @@ class CategoryModel extends JoomItemModel
 
     if(!$category = $db->loadObject())
     {
-      throw new \Exception('Provided category not found. '. $db->getErrorMsg());
+      throw new \Exception('Provided category not found. ' . $db->getErrorMsg());
     }
 
     if(!$category->password)
@@ -221,7 +223,7 @@ class CategoryModel extends JoomItemModel
    *
    * @return  array|false    Array of children on success, false on failure.
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function getChildren()
   {
@@ -332,7 +334,7 @@ class CategoryModel extends JoomItemModel
    *
    * @return  array|false    Array of images on success, false on failure.
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function getImages()
   {
@@ -632,8 +634,8 @@ class CategoryModel extends JoomItemModel
     }
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $db        = $this->getDatabase();
+        $query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');
@@ -698,7 +700,7 @@ class CategoryModel extends JoomItemModel
 
     // Create a new query object.
     $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');
@@ -757,8 +759,8 @@ class CategoryModel extends JoomItemModel
     $user = $this->app->getIdentity();
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $db        = $this->getDatabase();
+        $query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');

@@ -13,7 +13,7 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\Form;
 
 extract($displayData);
 

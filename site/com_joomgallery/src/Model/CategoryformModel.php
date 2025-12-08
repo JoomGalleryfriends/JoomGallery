@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
+use Joomla\CMS\Form\Form;
 
 /**
  * Model to handle a category form.
@@ -41,7 +42,7 @@ class CategoryformModel extends AdminCategoryModel
      *
      * @since   4.0.0
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
     protected function populateState()
     {
@@ -73,7 +74,7 @@ class CategoryformModel extends AdminCategoryModel
     /**
      * Method to get a single record.
      *
-     * @param   integer  $pk  The id of the primary key.
+     * @param   integer  $id  The id of the primary key.
      *
      * @return  Object|boolean Object on success, false on failure.
      *
@@ -101,6 +102,11 @@ class CategoryformModel extends AdminCategoryModel
         // Get the form.
         $form = $this->loadForm($this->typeAlias, 'categoryform', ['control' => 'jform',  'load_data' => $loadData]);
 
+    if(empty($form))
+    {
+      return false;
+    }
+
         // Apply filter to exclude child categories
         $children = $form->getFieldAttribute('parent_id', 'children', 'true');
         $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
@@ -112,11 +118,6 @@ class CategoryformModel extends AdminCategoryModel
 
         // Apply filter for current category on thumbnail field
         $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
-
-        if(empty($form))
-        {
-            return false;
-        }
 
         return $form;
     }
@@ -133,15 +134,15 @@ class CategoryformModel extends AdminCategoryModel
         return parent::loadFormData();
     }
 
-    /**
-     * Get the return URL.
-     *
-     * @return  string  The return URL.
-     *
-     * @since   4.0.0
-     */
-    public function getReturnPage()
-    {
+  /**
+   * Get the return URL.
+   *
+   * @return  string  The return URL.
+   *
+   * @since   4.0.0
+   */
+  public function getReturnPage(): string
+  {
         return base64_encode($this->getState('return_page', ''));
-    }
+  }
 }

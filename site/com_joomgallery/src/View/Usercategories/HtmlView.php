@@ -1,20 +1,21 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Usercategories;
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Pagination\Pagination;
-use \Joomla\CMS\MVC\View\GenericDataException;
-use \Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Router\Route;
 
 /**
  * View class for a list of categories.
@@ -102,7 +103,7 @@ class HtmlView extends JoomGalleryView
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
 
-    if (empty($this->params['configs']))
+    if(empty($this->params['configs']))
     {
       Factory::getApplication()->enqueueMessage(Text::_('Attention: $this->params[\'configs\'] is null'), 'error');
     }
@@ -113,11 +114,12 @@ class HtmlView extends JoomGalleryView
     // Check for errors.
     if(\count($errors = $model->getErrors()))
     {
-      throw new GenericDataException(\implode("\n", $errors), 500);
+      throw new GenericDataException(implode("\n", $errors), 500);
     }
 
     //	user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
+
     if($user->guest)
     {
       $this->isUserLoggedIn = false;
@@ -144,7 +146,7 @@ class HtmlView extends JoomGalleryView
       }
 
       // Redirect to user panel view
-      $this->app->redirect(Route::_('index.php?option='._JOOM_OPTION.'&view=userpanel'));
+      $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=userpanel'));
 
       return;
     }

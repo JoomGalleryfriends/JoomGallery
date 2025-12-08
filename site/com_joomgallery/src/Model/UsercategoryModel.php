@@ -1,24 +1,25 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Form\Form;
-use \Joomla\Database\DatabaseInterface;
-use \Joomla\CMS\User\CurrentUserInterface;
-use \Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoryModel as AdminCategoryModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Model to handle a user category form.
@@ -56,12 +57,12 @@ class UsercategoryModel extends AdminCategoryModel
    *
    * @throws  \Exception
    * @since   4.2.0
-   *
    */
   protected function populateState(): void
   {
     // Load state from the request userState on edit or from the passed variable on default
     $id = $this->app->input->getInt('id', null);
+
     if(!empty($id))
     {
       $this->app->setUserState('com_joomgallery.edit.category.id', $id);
@@ -78,7 +79,7 @@ class UsercategoryModel extends AdminCategoryModel
       $this->app->setUserState('com_joomgallery.edit.category.data', null);
     }
 
-    if(is_null($id))
+    if(\is_null($id))
     {
       throw new \Exception('No ID provided to the model!', 500);
     }
@@ -127,7 +128,7 @@ class UsercategoryModel extends AdminCategoryModel
       $query = $db->createQuery()
         ->select('id, parent_id')
         ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
-        ->where($db->quoteName('id').' = '.(int) $id);
+        ->where($db->quoteName('id') . ' = ' . (int) $id);
 
       $db->setQuery($query);
       $item = $db->loadObject();
@@ -139,7 +140,7 @@ class UsercategoryModel extends AdminCategoryModel
     }
     catch(\RuntimeException $e)
     {
-      Factory::getApplication()->enqueueMessage('isUserRootCategory-Error: '.$e->getMessage(), 'error');
+      Factory::getApplication()->enqueueMessage('isUserRootCategory-Error: ' . $e->getMessage(), 'error');
 
       return false;
     }
@@ -160,10 +161,10 @@ class UsercategoryModel extends AdminCategoryModel
    * @throws \Exception
    * @since   4.2.0
    */
-  public function getForm($data = array(), $loadData = true): Form|CurrentUserInterface|false
+  public function getForm($data = [], $loadData = true): Form|CurrentUserInterface|false
   {
     // Get the form.
-    $form = $this->loadForm($this->typeAlias, 'usercategory', array('control' => 'jform', 'load_data' => $loadData));
+    $form = $this->loadForm($this->typeAlias, 'usercategory', ['control' => 'jform', 'load_data' => $loadData]);
 
     if(empty($form))
     {
@@ -194,7 +195,7 @@ class UsercategoryModel extends AdminCategoryModel
    */
   public function getReturnPage(): string
   {
-    return \base64_encode($this->getState('return_page', ''));
+    return base64_encode($this->getState('return_page', ''));
   }
 
   /**
@@ -218,11 +219,11 @@ class UsercategoryModel extends AdminCategoryModel
     $error = parent::getError($i, $toString);
 
     // error saved by $this->component->setError(...)
-    if (empty($error)){
+    if(empty($error))
+    {
       $error = $this->component->getError(true);
     }
 
     return $error;
   }
-
 }

@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
@@ -151,7 +152,7 @@ class ImageController extends JoomFormController
     // Check for request forgeries.
     $this->checkToken();
 
-    $app     = $this->app;
+    $app = $this->app;
     /** @var ImageModel $model */
     $model   = $this->getModel();
     $data    = $this->input->post->get('jform', [], 'array');

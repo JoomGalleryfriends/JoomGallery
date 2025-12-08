@@ -44,7 +44,7 @@ if($gallery_class == 'masonry')
 if($gallery_class == 'justified')
 {
   $wa->useScript('com_joomgallery.justified');
-  $wa->addInlineStyle('.jg-images[class*=" justified-"] .jg-image-caption-hover { right: '.$justified_gap.'px; }');
+  $wa->addInlineStyle('.jg-images[class*=" justified-"] .jg-image-caption-hover { right: ' . $justified_gap . 'px; }');
 }
 
 $lightbox = false;

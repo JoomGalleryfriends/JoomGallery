@@ -14,7 +14,6 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -39,9 +38,10 @@ $returnURL = base64_encode(JoomHelper::getListRoute('images', null, $this->getLa
 // $baseLink_ImageEdit = 'index.php?option=com_joomgallery&task=userimage.edit&id=';
 
 $saveOrderingUrl = '';
+
 if($saveOrder && !empty($this->items))
 {
-  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=images.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
   HTMLHelper::_('draggablelist.draggable');
 }
 
@@ -55,11 +55,14 @@ $canDeleteFound = false;
     </div>
 <?php endif; ?>
 
-<form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post" name="adminForm" id="adminForm">
+<form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post" 
+      name="adminForm" id="adminForm">
+
   <?php if(!empty($this->filterForm))
   {
   echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
   } ?>
+
   <div class="row">
     <div class="col-md-12">
 
@@ -70,9 +73,8 @@ $canDeleteFound = false;
           <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
         </div>
       <?php else : ?>
-
         <?php if(!empty($this->filterForm)) : ?>
-          <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+          <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <?php endif; ?>
 
         <div class="clearfix"></div>
@@ -131,12 +133,13 @@ $canDeleteFound = false;
             <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
                    endif; ?>>
               <?php foreach($this->items as $i => $item) :
-                  $ordering   = ($listOrder == 'a.ordering');
-                  $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser()->id;
-                  $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
+                  $ordering    = ($listOrder == 'a.ordering');
+                  $canEdit     = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
+                  $canDelete   = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
+              $canDeleteFound |= $canDelete;
+                  $canChange   = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
+                  $canCheckin  = $canChange || $item->checked_out == $this->getCurrentUser()->id;
+                  $disabled    = ($item->checked_out > 0) ? 'disabled' : '';
                 ?>
 
               <tr class="row<?php echo $i % 2; ?>">
@@ -161,11 +164,11 @@ $canDeleteFound = false;
                         </span>
                       <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
                              class="width-20 text-area-order hidden">
-                    <?php endif; ?>
+                      <?php endif; ?>
 
                     <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                   </td>
-                <?php endif; ?>
+                  <?php endif; ?>
 
                 <td class="small d-none d-md-table-cell">
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>"
@@ -210,7 +213,10 @@ $canDeleteFound = false;
                       </button>
                     <?php endif; ?>
                     <?php if($canDelete): ?>
-                      <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>" data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="imageform.remove" <?php echo $disabled; ?>>
+                      <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>" 
+                              data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>" 
+                              data-item-id="cb<?php echo $i; ?>" 
+                              data-item-task="imageform.remove" <?php echo $disabled; ?>>
                         <span class="icon-trash" aria-hidden="true"></span>
                       </button>
                     <?php endif; ?>
@@ -243,7 +249,7 @@ $canDeleteFound = false;
                 </td>
 
               </tr>
-            <?php endforeach; ?>
+              <?php endforeach; ?>
             </tbody>
           </table>
         </div>
@@ -261,7 +267,9 @@ $canDeleteFound = false;
 </form>
 
 <?php
-  if($canDelete)
+
+// Manuel: Do we need it
+if($canDeleteFound)
   {
     $wa->addInlineScript(
         "
@@ -280,5 +288,5 @@ $canDeleteFound = false;
         [],
         ['jquery']
     );
-  }
+}
 ?>
