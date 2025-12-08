@@ -78,7 +78,7 @@ fi
 echo "Install and update needed dependencies (composer)"
 echo
 
-echo "composer dump-autoload"
+echo "--- composer dump-autoload"
 composer dump-autoload
 if [ $? -ne 0 ]; then
     echo
@@ -87,7 +87,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "composer install"
+echo "--- composer install"
 composer install
 if [ $? -ne 0 ]; then
     echo
@@ -96,7 +96,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "composer update"
+echo "--- composer update"
 composer update
 if [ $? -ne 0 ]; then
     echo
