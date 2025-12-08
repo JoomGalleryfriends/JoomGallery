@@ -67,32 +67,14 @@ fi
 # -----------------------------------------------------
 # Composer housekeeping
 
-echo "Install and update needed dependencies (composer)"
+echo "Install needed dependencies (composer)"
 echo
 
-echo "--- composer dump-autoload"
-composer dump-autoload
-if [ $? -ne 0 ]; then
-    echo
-    echo "ERROR: composer dump-autoload failed!"
-    popd > /dev/null
-    exit 1
-fi
-
 echo "--- composer install"
-composer install
+composer install --prefer-dist --no-ansi --no-interaction --no-progress
 if [ $? -ne 0 ]; then
     echo
     echo "ERROR: composer install failed!"
-    popd > /dev/null
-    exit 1
-fi
-
-echo "--- composer update"
-composer update
-if [ $? -ne 0 ]; then
-    echo
-    echo "ERROR: composer update failed!"
     popd > /dev/null
     exit 1
 fi

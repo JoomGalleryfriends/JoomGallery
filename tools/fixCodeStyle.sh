@@ -75,32 +75,14 @@ fi
 # -----------------------------------------------------
 # Composer housekeeping
 
-echo "Install and update needed dependencies (composer)"
+echo "Install needed dependencies (composer)"
 echo
 
-echo "--- composer dump-autoload"
-composer dump-autoload
-if [ $? -ne 0 ]; then
-    echo
-    echo "ERROR: composer dump-autoload failed!"
-    popd > /dev/null
-    exit 1
-fi
-
 echo "--- composer install"
-composer install
+composer install --prefer-dist --no-ansi --no-interaction --no-progress
 if [ $? -ne 0 ]; then
     echo
     echo "ERROR: composer install failed!"
-    popd > /dev/null
-    exit 1
-fi
-
-echo "--- composer update"
-composer update
-if [ $? -ne 0 ]; then
-    echo
-    echo "ERROR: composer update failed!"
     popd > /dev/null
     exit 1
 fi
@@ -124,32 +106,45 @@ php "./administrator/com_joomgallery/vendor/bin/php-cs-fixer" \
 echo
 
 # =====================================================
-# 02 call "phpcbf"
+# 02 call "fixindent"
 
 echo "----------------------------------------------"
-echo "02 call \"phpcbf\""
-echo "   log file 02.phpcbf.log"
+echo "02 call \"fixindent\""
+echo "   log file 02.fixindent.log"
+echo "   may take some time"
+echo
+
+php "./tools/fixindent.php fix" > "${actualPath}/02.fixindent.log"
+
+echo
+
+# =====================================================
+# 03 call "phpcbf"
+
+echo "----------------------------------------------"
+echo "03 call \"phpcbf\""
+echo "   log file 03.phpcbf.log"
 echo "   may take some time"
 echo
 
 php "./administrator/com_joomgallery/vendor/bin/phpcbf" \
     -v --standard=ruleset.xml ./ \
-    > "${actualPath}/02.phpcbf.log"
+    > "${actualPath}/03.phpcbf.log"
 
 echo
 
 # =====================================================
-# 03 call "php-cs-fixer" again
+# 04 call "php-cs-fixer" again
 
 echo "----------------------------------------------"
-echo "03 call \"php-cs-fixer\""
-echo "   log file 03.php-cs-fixer.log"
+echo "04 call \"php-cs-fixer\""
+echo "   log file 04.php-cs-fixer.log"
 echo "   may take some time"
 echo
 
 php "./administrator/com_joomgallery/vendor/bin/php-cs-fixer" \
     --verbose --config=./.php-cs-fixer.dist.php fix ./ \
-    > "${actualPath}/03.php-cs-fixer.log"
+    > "${actualPath}/04.php-cs-fixer.log"
 
 echo
 
