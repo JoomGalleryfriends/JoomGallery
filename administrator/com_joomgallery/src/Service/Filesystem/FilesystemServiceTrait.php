@@ -55,8 +55,8 @@ trait FilesystemServiceTrait
      */
     public function createFilesystem($filesystem = ''): void
     {
-    $this->filesystem = new Filesystem($filesystem);
+        $this->filesystem = new Filesystem($filesystem);
 
-    return;
+        return;
     }
 }

@@ -337,8 +337,8 @@ class Refresher implements RefresherInterface
     // Fill head of document
     $head = [
       'title' => Text::_('COM_JOOMGALLERY_WORK_IN_PROGRESS'),
-      'description' => '',
-      'link' => '',
+      'description'  => '',
+      'link'         => '',
       'assetManager' => ['registryFiles' => [$tmpAssetFile, $compAssetFile]]];
     $doc->setHeadData($head);
     $doc->setHtml5(true);
@@ -359,8 +359,8 @@ class Refresher implements RefresherInterface
     // Render the html document
     $tmpl = [
       'directory' => $tmpDir,
-      'template' => $tmpName,
-      'file' => $tmpIndexFile,
+      'template'         => $tmpName,
+      'file'             => $tmpIndexFile,
     ];
     echo $doc->render(false, $tmpl);
 

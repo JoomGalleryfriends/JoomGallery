@@ -33,6 +33,6 @@ class FTPUploader extends BaseUploader implements UploaderInterface
      */
     public function upload(): string
     {
-    return 'FTP upload successfully!';
+        return 'FTP upload successfully!';
     }
 }

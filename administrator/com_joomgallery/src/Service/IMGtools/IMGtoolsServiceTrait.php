@@ -54,18 +54,18 @@ trait IMGtoolsServiceTrait
      */
     public function createIMGtools($processor, $keep_metadata = false, $keep_anim = false): void
     {
-    switch($processor)
-    {
-      case 'im':
-        $this->IMGtools = new IMtools($keep_metadata, $keep_anim);
-          break;
+        switch($processor)
+        {
+            case 'im':
+                $this->IMGtools = new IMtools($keep_metadata, $keep_anim);
+                break;
 
-      default:
-        $this->IMGtools = new GDtools($keep_metadata, $keep_anim);
-          break;
-    }
+            default:
+                $this->IMGtools = new GDtools($keep_metadata, $keep_anim);
+                break;
+        }
 
-    return;
+        return;
     }
 
     /**
@@ -77,8 +77,8 @@ trait IMGtoolsServiceTrait
      */
     public function delIMGtools(): void
     {
-    unset($this->IMGtools);
+        unset($this->IMGtools);
 
-    return;
+        return;
     }
 }

@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -45,16 +44,16 @@ class ConfigsModel extends JoomListModel
   {
     if(empty($config['filter_fields']))
     {
-    $config['filter_fields'] = [
-      'id', 'a.id',
-      'group_id', 'a.group_id',
-      'published', 'a.published',
-      'ordering', 'a.ordering',
-      'created_by', 'a.created_by',
-      'modified_by', 'a.modified_by',
-      'title', 'a.title',
-      'note', 'a.note',
-    ];
+      $config['filter_fields'] = [
+        'id', 'a.id',
+        'group_id', 'a.group_id',
+        'published', 'a.published',
+        'ordering', 'a.ordering',
+        'created_by', 'a.created_by',
+        'modified_by', 'a.modified_by',
+        'title', 'a.title',
+        'note', 'a.note',
+      ];
     }
 
     parent::__construct($config);

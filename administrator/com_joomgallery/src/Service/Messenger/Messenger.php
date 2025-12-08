@@ -168,7 +168,8 @@ abstract class Messenger implements MessengerInterface
             }
           }
         }
-        else {
+        else
+        {
             $text = str_replace('{' . strtoupper($key) . '}', $value, $text);
         }
       }

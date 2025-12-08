@@ -105,36 +105,36 @@ class DisplayController extends BaseController
    */
   public function display($cachable = false, $urlparams = [])
   {
-  // Before execution of the task
-  if(!empty($task))
-  {
-    $this->component->msgUserStateKey = 'com_joomgallery.' . $task . '.messages';
-  }
-
-  if(!$this->component->isRawTask($this->context))
-  {
-    // Get messages from session
-    $this->component->msgFromSession();
-  }
-
-      $res = parent::display();
-
-  // After execution of the task
-  if(!$this->component->isRawTask($this->context))
-  {
-    // Print messages from session
-    if(!$this->component->msgWithhold && $res->component->error)
+    // Before execution of the task
+    if(!empty($task))
     {
-      $this->component->printError();
+      $this->component->msgUserStateKey = 'com_joomgallery.' . $task . '.messages';
     }
-    elseif(!$this->component->msgWithhold)
-    {
-      $this->component->printWarning();
-      $this->component->printDebug();
-    }
-  }
 
-  return $res;
+    if(!$this->component->isRawTask($this->context))
+    {
+      // Get messages from session
+      $this->component->msgFromSession();
+    }
+
+    $res = parent::display();
+
+    // After execution of the task
+    if(!$this->component->isRawTask($this->context))
+    {
+      // Print messages from session
+      if(!$this->component->msgWithhold && $res->component->error)
+      {
+        $this->component->printError();
+      }
+      elseif(!$this->component->msgWithhold)
+      {
+        $this->component->printWarning();
+        $this->component->printDebug();
+      }
+    }
+
+    return $res;
   }
 
   /**

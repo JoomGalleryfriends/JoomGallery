@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -98,10 +97,10 @@ class ImageModel extends JoomAdminModel
 
     // Update events map
     $this->events_map = array_merge(
-      [
-        'recreate' => 'joomgallery',
-      ],
-      $this->events_map
+        [
+          'recreate' => 'joomgallery',
+        ],
+        $this->events_map
     );
   }
 
@@ -213,7 +212,7 @@ class ImageModel extends JoomAdminModel
       return $this->item;
     }
 
-    $pk      = (!empty($pk)) ? $pk : (int) $this->getState('image.id');
+    $pk    = (!empty($pk)) ? $pk : (int) $this->getState('image.id');
     $table = $this->getTable();
 
     if($pk > 0 || \is_array($pk))
@@ -349,15 +348,15 @@ class ImageModel extends JoomAdminModel
    */
   public function save($data)
   {
-    $table       = $this->getTable();
-    $context     = $this->option . '.' . $this->name;
-    $app         = Factory::getApplication();
-    $imgUploaded = false;
-    $catMoved    = false;
-    $isNew       = true;
-    $isCopy      = false;
-    $isAjax        = false;
-    $aliasChanged  = false;
+    $table        = $this->getTable();
+    $context      = $this->option . '.' . $this->name;
+    $app          = Factory::getApplication();
+    $imgUploaded  = false;
+    $catMoved     = false;
+    $isNew        = true;
+    $isCopy       = false;
+    $isAjax       = false;
+    $aliasChanged = false;
 
     $key = $table->getKeyName();
     $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
@@ -402,7 +401,7 @@ class ImageModel extends JoomAdminModel
         if($table->alias != $data['alias'])
         {
           $aliasChanged = true;
-          $old_alias        = $table->alias;
+          $old_alias    = $table->alias;
         }
 
         // Check if the state was changed
@@ -782,7 +781,7 @@ class ImageModel extends JoomAdminModel
           $db    = $this->getDatabase();
           $query = $db->getQuery(true)
               ->delete($db->quoteName('#__joomgallery_comments'))
-              ->where(
+            ->where(
                 $db->quoteName('imgid') . ' = :pk',
             )
               ->bind(':pk', $pk, ParameterType::INTEGER);
@@ -793,7 +792,7 @@ class ImageModel extends JoomAdminModel
           // Delete corresponding votes
           $query = $db->getQuery(true)
               ->delete($db->quoteName('#__joomgallery_votes'))
-              ->where(
+            ->where(
                 $db->quoteName('imgid') . ' = :pk',
             )
               ->bind(':pk', $pk, ParameterType::INTEGER);
@@ -804,7 +803,7 @@ class ImageModel extends JoomAdminModel
           // Delete corresponding collection reference
           $query = $db->getQuery(true)
               ->delete($db->quoteName('#__joomgallery_collections_ref'))
-              ->where(
+            ->where(
                 $db->quoteName('imgid') . ' = :pk',
             )
               ->bind(':pk', $pk, ParameterType::INTEGER);
@@ -824,7 +823,7 @@ class ImageModel extends JoomAdminModel
             )
               ->from($db->quoteName('#__associations', 'as1'))
               ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
-              ->where(
+            ->where(
                 [
                   $db->quoteName('as1.context') . ' = :context',
                   $db->quoteName('as1.id') . ' = :pk',
@@ -965,21 +964,21 @@ class ImageModel extends JoomAdminModel
           return false;
         }
 
-    switch($type)
-    {
-      case 'feature':
-      $stateColumnName = 'featured';
-          break;
+        switch($type)
+        {
+          case 'feature':
+            $stateColumnName = 'featured';
+              break;
 
-      case 'approve':
-      $stateColumnName = 'approved';
-          break;
+          case 'approve':
+            $stateColumnName = 'approved';
+              break;
 
-      case 'publish':
-      default:
-      $stateColumnName = 'published';
-          break;
-    }
+          case 'publish':
+          default:
+            $stateColumnName = 'published';
+              break;
+        }
 
         if(property_exists($table, $stateColumnName) && $table->get($stateColumnName, $value) == $value)
         {
@@ -1057,16 +1056,16 @@ class ImageModel extends JoomAdminModel
   public function replace($data)
   {
     $table = $this->getTable();
-    $app = Factory::getApplication();
-    $key = $table->getKeyName();
-    $pk  = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
+    $app   = Factory::getApplication();
+    $key   = $table->getKeyName();
+    $pk    = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
     // Rertrieve request image file data
     if(\array_key_exists('image', $app->input->files->get('jform')) && !empty($app->input->files->get('jform')['image'])
-        && $app->input->files->get('jform')['image']['error'] != 4 &&  $app->input->files->get('jform')['image']['size'] > 0)
+    && $app->input->files->get('jform')['image']['error'] != 4 && $app->input->files->get('jform')['image']['size'] > 0)
     {
-        $data['images'] = [];
-        array_push($data['images'], $app->input->files->get('jform')['image']);
+      $data['images'] = [];
+      array_push($data['images'], $app->input->files->get('jform')['image']);
     }
 
     try
@@ -1208,9 +1207,9 @@ class ImageModel extends JoomAdminModel
         }
 
 
-        $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
+          $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
 
-        return false;
+          return false;
       }
     }
     else
@@ -1242,14 +1241,13 @@ class ImageModel extends JoomAdminModel
     {
       switch($this->component->getConfig()->get('jg_uploadorder', 2))
       {
-      case 1:
-        $table->ordering = $table->getPreviousOrder('catid = ' . $table->catid);
-        break;
-
-      case 2:
-      default:
-        $table->ordering = $table->getNextOrder('catid = ' . $table->catid);
-        break;
+        case 1:
+          $table->ordering = $table->getPreviousOrder('catid = ' . $table->catid);
+            break;
+        case 2:
+        default:
+          $table->ordering = $table->getNextOrder('catid = ' . $table->catid);
+            break;
       }
     }
   }
@@ -1273,29 +1271,28 @@ class ImageModel extends JoomAdminModel
       // Create config service
       $this->component->createConfig();
 
-      // Create filemanager service
-      $this->component->createFileManager($table->catid);
-      $path = $this->component->getFileManager()->getImgPath($table, $type);
+    // Create filemanager service
+    $this->component->createFileManager($table->catid);
+    $path = $this->component->getFileManager()->getImgPath($table, $type);
 
-      // Get registry to be used in writeMetadata
-      $registry = new Registry($table->imgmetadata);
+    // Get registry to be used in writeMetadata
+    $registry = new Registry($table->imgmetadata);
 
       // Create the metadata service
       $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
 
-      $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
+    $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
 
-      // Perform the save using the metadata/filesystem service
-      if($filesystem != 'local-images')
-      {
-        $data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
-      }
-      else
-      {
-        $data = $this->component->getMetadata()->writeMetadata($path, $registry);
-      }
-
-      $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
+    // Perform the save using the metadata/filesystem service
+    if($filesystem != 'local-images')
+    {
+    $data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
+    }
+    else
+    {
+    $data = $this->component->getMetadata()->writeMetadata($path, $registry);
+    }
+    $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
     }
     else
     {

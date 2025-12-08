@@ -28,9 +28,9 @@ use Joomla\Database\DatabaseDriver;
  */
 class VoteTable extends Table
 {
-  use JoomTableTrait;
-  use GlobalAssetTableTrait;
-  use MigrationTableTrait;
+    use JoomTableTrait;
+    use GlobalAssetTableTrait;
+    use MigrationTableTrait;
 
     /**
      * Constructor
@@ -67,25 +67,25 @@ class VoteTable extends Table
             $array['created_time'] = $date->toSql();
         }
 
-    if($array['id'] == 0 && (!key_exists('created_by', $array) || empty($array['created_by'])))
+        if($array['id'] == 0 && (!key_exists('created_by', $array) || empty($array['created_by'])))
         {
             $array['created_by'] = Factory::getApplication()->getIdentity()->id;
-    }
+        }
 
         return parent::bind($array, $ignore);
     }
 
-  /**
-   * Delete a record by id
-   *
-   * @param   mixed  $pk  Primary key value to delete. Optional
-   *
-   * @return bool
-   */
-  public function delete($pk = null)
-  {
-    $this->_trackAssets = false;
+    /**
+     * Delete a record by id
+     *
+     * @param   mixed  $pk  Primary key value to delete. Optional
+     *
+     * @return bool
+     */
+    public function delete($pk = null)
+    {
+        $this->_trackAssets = false;
 
-    return parent::delete($pk);
-  }
+        return parent::delete($pk);
+    }
 }

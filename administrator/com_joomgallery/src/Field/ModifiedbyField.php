@@ -26,33 +26,33 @@ use Joomla\CMS\Form\FormField;
  */
 class ModifiedbyField extends FormField
 {
-  /**
-   * The form field type.
-   *
-   * @var    string
-   * @since  4.0.0
-   */
-  protected $type = 'modifiedby';
+    /**
+     * The form field type.
+     *
+     * @var    string
+     * @since  4.0.0
+     */
+    protected $type = 'modifiedby';
 
-  /**
-   * Method to get the field input markup.
-   *
-   * @return  string    The field input markup.
-   *
-   * @since   4.0.0
-   */
-  protected function getInput()
-  {
-    // Initialize variables.
-    $html   = [];
-    $user   = Factory::getApplication()->getIdentity();
-    $html[] = '<input type="hidden" name="' . $this->name . '" value="' . $user->id . '" />';
-
-    if(!$this->hidden)
+    /**
+     * Method to get the field input markup.
+     *
+     * @return  string    The field input markup.
+     *
+     * @since   4.0.0
+     */
+    protected function getInput()
     {
-      $html[] = '<div>' . $user->name . ' (' . $user->username . ')</div>';
-    }
+        // Initialize variables.
+        $html   = [];
+        $user   = Factory::getApplication()->getIdentity();
+        $html[] = '<input type="hidden" name="' . $this->name . '" value="' . $user->id . '" />';
 
-    return implode($html);
-  }
+        if(!$this->hidden)
+        {
+            $html[] = '<div>' . $user->name . ' (' . $user->username . ')</div>';
+        }
+
+        return implode($html);
+    }
 }

@@ -28,14 +28,14 @@ use Joomla\CMS\Table\Table;
 interface MigrationInterface
 {
   // /**
-    //  * Name of the migration script to be used.
+  //  * Name of the migration script to be used.
   //  * (Required in migration scripts.)
-    //  *
-    //  * @var   string
-    //  *
-    //  * @since  4.0.0
-    //  */
-    // protected $name = 'scriptName';
+  //  *
+  //  * @var   string
+  //  *
+  //  * @since  4.0.0
+  //  */
+  // protected $name = 'scriptName';
 
   // /**
   //  * True to offer the task migration.removesource for this script

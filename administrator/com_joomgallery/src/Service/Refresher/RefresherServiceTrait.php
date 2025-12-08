@@ -55,8 +55,8 @@ trait RefresherServiceTrait
      */
     public function createRefresher($params = []): void
     {
-    $this->refresher = new Refresher($params);
+        $this->refresher = new Refresher($params);
 
-    return;
+        return;
     }
 }

@@ -124,19 +124,19 @@ abstract class Uploader implements UploaderInterface
     $this->component->addWarning($this->app->getUserStateFromRequest($this->userStateKey . '.warningoutput', 'warningoutput', '', 'string'));
   }
 
-    /**
-     * Base method to retrieve an uploaded image. Step 1.
-     * Method has to be extended! Do not use it in this way!
-     *
-     * @param   array    $data        Form data (as reference)
-     * @param   bool     $filename    True, if the filename has to be created (default: True)
-     *
-     * @return  bool     True on success, false otherwise
-     *
-     * @since  4.0.0
-     */
-    public function retrieveImage(&$data, $filename = true): bool
-    {
+  /**
+   * Base method to retrieve an uploaded image. Step 1.
+   * Method has to be extended! Do not use it in this way!
+   *
+   * @param   array    $data        Form data (as reference)
+   * @param   bool     $filename    True, if the filename has to be created (default: True)
+   *
+   * @return  bool     True on success, false otherwise
+   *
+   * @since  4.0.0
+   */
+  public function retrieveImage(&$data, $filename = true): bool
+  {
     // Create filesystem service
     $this->component->createFilesystem();
 
@@ -224,7 +224,7 @@ abstract class Uploader implements UploaderInterface
     }
 
     return true;
-    }
+  }
 
   /**
    * Override form data with image metadata
@@ -472,18 +472,18 @@ abstract class Uploader implements UploaderInterface
   }
 
 
-    /**
-     * Method to create uploaded image files. Step 3.
-     * (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
-     *
-     * @param   ImageTable   $data_row     Image object
-     *
-     * @return  bool         True on success, false otherwise
-     *
-     * @since  4.0.0
-     */
-    public function createImage($data_row): bool
-    {
+  /**
+   * Method to create uploaded image files. Step 3.
+   * (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
+   *
+   * @param   ImageTable   $data_row     Image object
+   *
+   * @return  bool         True on success, false otherwise
+   *
+   * @since  4.0.0
+   */
+  public function createImage($data_row): bool
+  {
     // Check if filename was set
     if(!isset($data_row->filename) || empty($data_row->filename))
     {
@@ -519,13 +519,13 @@ abstract class Uploader implements UploaderInterface
 
       // Template variables
       $tpl_vars = [
-        'user_id' => $user->id,
+        'user_id'       => $user->id,
         'user_username' => $user->username,
-        'user_name' => $user->name,
-        'img_id' => $data_row->id,
-        'img_title' => $data_row->title,
-        'cat_id' => $cat->id,
-        'cat_title' => $cat->title,
+        'user_name'     => $user->name,
+        'img_id'        => $data_row->id,
+        'img_title'     => $data_row->title,
+        'cat_id'        => $cat->id,
+        'cat_title'     => $cat->title,
       ];
 
       // Setting up message template
@@ -549,7 +549,7 @@ abstract class Uploader implements UploaderInterface
     $this->resetUserStates();
 
     return !$this->error;
-    }
+  }
 
   /**
    * Rollback an erroneous upload
@@ -606,7 +606,7 @@ abstract class Uploader implements UploaderInterface
    *
    * @param   int $userid  Id of the current user
    *
-   * @return  int      The number of images of the current user
+   * @return  int The number of images of the current user
    *
    * @since   1.5.5
    */

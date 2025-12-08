@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
-// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -25,26 +24,26 @@ use Joomla\Registry\Registry;
  */
 class ImagetypesModel extends JoomListModel
 {
-  /**
-   * Item type
-   *
-   * @access  protected
-   * @var     string
-   */
-  protected $type = 'imagetype';
+    /**
+     * Item type
+     *
+     * @access  protected
+     * @var     string
+     */
+    protected $type = 'imagetype';
 
-  /**
-   * Constructor
-   *
-   * @param   array  $config  An optional associative array of configuration settings.
-   *
-   * @return  void
-   * @since   4.0.0
-   */
-  function __construct($config = [])
-  {
+    /**
+     * Constructor
+     *
+     * @param   array  $config  An optional associative array of configuration settings.
+     *
+     * @return  void
+     * @since   4.0.0
+     */
+    function __construct($config = [])
+    {
         parent::__construct($config);
-  }
+    }
 
     /**
      * Build an SQL query to load the list data.
@@ -64,7 +63,7 @@ class ImagetypesModel extends JoomListModel
         $query->from($db->quoteName(_JOOM_TABLE_IMG_TYPES, 'a'));
 
         // Add the list ordering clause.
-    $query->order($db->escape('a.id ASC'));
+        $query->order($db->escape('a.id ASC'));
 
         return $query;
     }
@@ -78,13 +77,13 @@ class ImagetypesModel extends JoomListModel
     {
         $items = parent::getItems();
 
-    foreach($items as $key => $item)
-    {
-      if(property_exists($item, 'params'))
-      {
-        $items[$key]->params = new Registry($item->params);
-      }
-    }
+        foreach($items as $key => $item)
+        {
+            if(property_exists($item, 'params'))
+            {
+                $items[$key]->params = new Registry($item->params);
+            }
+        }
 
         return $items;
     }

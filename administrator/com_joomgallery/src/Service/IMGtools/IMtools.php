@@ -651,14 +651,14 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
           break;
     }
 
-    if($this->src_imginfo['animation']  && !$this->keep_anim)
+    if($this->src_imginfo['animation'] && !$this->keep_anim)
     {
       // If resizing an animation but not preserving the animation, consider only first frame
       $this->onlyFirstFrame();
     }
     else
     {
-      if($this->src_imginfo['animation']  && $this->keep_anim && $this->src_type == 'GIF')
+      if($this->src_imginfo['animation'] && $this->keep_anim && $this->src_type == 'GIF')
       {
         // If resizing an animation, use coalesce for better results
         $this->commands['coalesce'] = ' -coalesce';
@@ -754,14 +754,14 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
       $this->dst_imginfo['flip']  = 'none';
 
 
-    if($this->src_imginfo['animation']  && !$this->keep_anim)
+    if($this->src_imginfo['animation'] && !$this->keep_anim)
     {
       // If resizing an animation but not preserving the animation, consider only first frame
       $this->onlyFirstFrame();
     }
     else
     {
-      if($this->src_imginfo['animation']  && $this->keep_anim && $this->src_type == 'GIF')
+      if($this->src_imginfo['animation'] && $this->keep_anim && $this->src_type == 'GIF')
       {
         // If resizing an animation, use coalesce for better results
         $this->commands['coalesce'] = ' -coalesce';
@@ -839,14 +839,14 @@ class IMtools extends BaseIMGtools implements IMGtoolsInterface
     $this->dst_imginfo['angle']       = 0;
     $this->dst_imginfo['quality']     = 100;
 
-    if($this->src_imginfo['animation']  && !$this->keep_anim)
+    if($this->src_imginfo['animation'] && !$this->keep_anim)
     {
       // If resizing an animation but not preserving the animation, consider only first frame
       $this->onlyFirstFrame();
     }
     else
     {
-      if($this->src_imginfo['animation']  && $this->keep_anim && $this->src_type == 'GIF')
+      if($this->src_imginfo['animation'] && $this->keep_anim && $this->src_type == 'GIF')
       {
         // If resizing an animation, use coalesce for better results
         $this->commands['coalesce'] = ' -coalesce';

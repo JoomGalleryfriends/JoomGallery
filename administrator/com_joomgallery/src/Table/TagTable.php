@@ -43,38 +43,38 @@ class TagTable extends Table
    */
   public $images = null;
 
-    /**
-     * Constructor
-     *
-     * @param   JDatabase  &$db               A database connector object
-     * @param   bool       $component_exists  True if the component object class exists
-     */
-    public function __construct(DatabaseDriver $db, bool $component_exists = true)
-    {
-        $this->component_exists = $component_exists;
-        $this->typeAlias        = _JOOM_OPTION . '.tag';
+  /**
+   * Constructor
+   *
+   * @param   JDatabase  &$db               A database connector object
+   * @param   bool       $component_exists  True if the component object class exists
+   */
+  public function __construct(DatabaseDriver $db, bool $component_exists = true)
+  {
+    $this->component_exists = $component_exists;
+    $this->typeAlias        = _JOOM_OPTION . '.tag';
 
-        parent::__construct(_JOOM_TABLE_TAGS, 'id', $db);
+    parent::__construct(_JOOM_TABLE_TAGS, 'id', $db);
 
-        $this->setColumnAlias('published', 'published');
-    }
+    $this->setColumnAlias('published', 'published');
+  }
 
-    /**
-     * Overloaded bind function to pre-process the params.
-     *
-     * @param   array  $array   Named array
-     * @param   mixed  $ignore  Optional array or list of parameters to ignore
-     *
-     * @return  boolean  True on success.
-     *
-     * @see     Table:bind
-     * @since   4.0.0
-     * @throws  \InvalidArgumentException
-     */
-    public function bind($array, $ignore = '')
-    {
-        $date = Factory::getDate();
-        $task = Factory::getApplication()->input->get('task', '', 'cmd');
+  /**
+   * Overloaded bind function to pre-process the params.
+   *
+   * @param   array  $array   Named array
+   * @param   mixed  $ignore  Optional array or list of parameters to ignore
+   *
+   * @return  boolean  True on success.
+   *
+   * @see     Table:bind
+   * @since   4.0.0
+   * @throws  \InvalidArgumentException
+   */
+  public function bind($array, $ignore = '')
+  {
+    $date = Factory::getDate();
+    $task = Factory::getApplication()->input->get('task', '', 'cmd');
 
     // Support for title field: title
     if(\array_key_exists('title', $array))
@@ -88,24 +88,24 @@ class TagTable extends Table
     }
 
     // Support for alias field: alias
-        if(empty($array['alias']))
+    if(empty($array['alias']))
+    {
+      if(empty($array['title']))
+      {
+        $array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
+      }
+      else
+      {
+        if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
         {
-            if(empty($array['title']))
-            {
-                $array['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
-            }
-            else
-            {
-                if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
-                {
-                    $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
-                }
-                else
-                {
-                    $array['alias'] = OutputFilter::stringURLSafe(trim($array['title']));
-                }
-            }
+          $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['title']));
         }
+        else
+        {
+          $array['alias'] = OutputFilter::stringURLSafe(trim($array['title']));
+        }
+      }
+    }
     else
     {
       if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
@@ -118,47 +118,47 @@ class TagTable extends Table
       }
     }
 
-        if($array['id'] == 0)
-        {
-            $array['created_time'] = $date->toSql();
-        }
+    if($array['id'] == 0)
+    {
+      $array['created_time'] = $date->toSql();
+    }
 
-        if(!key_exists('created_by', $array) || empty($array['created_by']))
-        {
-            $array['created_by'] = Factory::getApplication()->getIdentity()->id;
-        }
+    if(!key_exists('created_by', $array) || empty($array['created_by']))
+    {
+      $array['created_by'] = Factory::getApplication()->getIdentity()->id;
+    }
 
-        if($task == 'apply' || strpos($task, 'save') !== false)
-        {
-            $array['modified_time'] = $date->toSql();
-        }
+    if($task == 'apply' || strpos($task, 'save') !== false)
+    {
+      $array['modified_time'] = $date->toSql();
+    }
 
-        if($array['id'] == 0 && empty($array['modified_by']))
-        {
-            $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-        }
+    if($array['id'] == 0 && empty($array['modified_by']))
+    {
+      $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+    }
 
-        if($task == 'apply' || strpos($task, 'save') !== false)
-        {
-            $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
-        }
+    if($task == 'apply' || strpos($task, 'save') !== false)
+    {
+      $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
+    }
 
-        if(isset($array['params']) && \is_array($array['params']))
-        {
-            $registry        = new Registry($array['params']);
-            $array['params'] = (string) $registry;
-        }
+    if(isset($array['params']) && \is_array($array['params']))
+    {
+      $registry        = new Registry($array['params']);
+      $array['params'] = (string) $registry;
+    }
 
-        if(isset($array['metadata']) && \is_array($array['metadata']))
-        {
-            $registry          = new Registry($array['metadata']);
-            $array['metadata'] = (string) $registry;
-        }
+    if(isset($array['metadata']) && \is_array($array['metadata']))
+    {
+      $registry          = new Registry($array['metadata']);
+      $array['metadata'] = (string) $registry;
+    }
 
     // Support for list of images to be mapped
     if(isset($array['images']) && !\is_array($array['images']))
-        {
-            // Try to convert from json string
+    {
+      // Try to convert from json string
       $decoded = json_decode($array['images'], true);
 
       if(json_last_error() === JSON_ERROR_NONE)
@@ -171,27 +171,27 @@ class TagTable extends Table
       }
     }
 
-        // Bind the rules for ACL where supported.
-        if(isset($array['rules']))
-        {
+    // Bind the rules for ACL where supported.
+    if(isset($array['rules']))
+    {
       $rules = new Rules($array['rules']);
-            $this->setRules($rules);
-        }
-
-        return parent::bind($array, $ignore);
+      $this->setRules($rules);
     }
 
-    /**
-     * Method to store a row in the database from the Table instance properties.
-     *
-     * @param   boolean  $updateNulls  True to update fields even if they are null.
-     *
-     * @return  boolean  True on success.
-     *
-     * @since   4.0.0
-     */
-    public function store($updateNulls = true)
-    {
+    return parent::bind($array, $ignore);
+  }
+
+  /**
+   * Method to store a row in the database from the Table instance properties.
+   *
+   * @param   boolean  $updateNulls  True to update fields even if they are null.
+   *
+   * @return  boolean  True on success.
+   *
+   * @since   4.0.0
+   */
+  public function store($updateNulls = true)
+  {
     $images = null;
 
     if(property_exists($this, 'images') && !empty($this->images))
@@ -209,7 +209,7 @@ class TagTable extends Table
     }
 
     return $success;
-    }
+  }
 
   /**
    * Delete a record by id

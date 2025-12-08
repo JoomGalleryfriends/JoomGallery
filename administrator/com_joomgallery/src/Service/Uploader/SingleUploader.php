@@ -43,19 +43,19 @@ class SingleUploader extends BaseUploader implements UploaderInterface
    */
   public $processImage = false;
 
-    /**
-     * Method to retrieve an uploaded image. Step 1.
-     * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
-     *
-     * @param   array    $data        Form data (as reference)
-     * @param   bool     $filename    True, if the filename has to be created (default: True)
-     *
-     * @return  bool     True on success, false otherwise
-     *
-     * @since  4.0.0
-     */
-    public function retrieveImage(&$data, $filename = true): bool
-    {
+  /**
+   * Method to retrieve an uploaded image. Step 1.
+   * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
+   *
+   * @param   array    $data        Form data (as reference)
+   * @param   bool     $filename    True, if the filename has to be created (default: True)
+   *
+   * @return  bool     True on success, false otherwise
+   *
+   * @since  4.0.0
+   */
+  public function retrieveImage(&$data, $filename = true): bool
+  {
     $user = Factory::getUser();
 
     if(\count($data['images']) > 1)
@@ -143,7 +143,7 @@ class SingleUploader extends BaseUploader implements UploaderInterface
     $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
 
     return true;
-    }
+  }
 
   /**
    * Override form data with image metadata
@@ -160,18 +160,18 @@ class SingleUploader extends BaseUploader implements UploaderInterface
     return true;
   }
 
-    /**
-     * Method to create uploaded image files. Step 3.
-     * (create imagetype, upload imagetypes to storage, onJoomAfterUpload)
-     *
-     * @param   ImageTable   $data_row     Image object
-     *
-     * @return  bool         True on success, false otherwise
-     *
-     * @since  4.0.0
-     */
-    public function createImage($data_row): bool
-    {
+  /**
+   * Method to create uploaded image files. Step 3.
+   * (create imagetype, upload imagetypes to storage, onJoomAfterUpload)
+   *
+   * @param   ImageTable   $data_row     Image object
+   *
+   * @return  bool         True on success, false otherwise
+   *
+   * @since  4.0.0
+   */
+  public function createImage($data_row): bool
+  {
     // Check if filename was set
     if(!isset($data_row->filename) || empty($data_row->filename))
     {
@@ -201,7 +201,7 @@ class SingleUploader extends BaseUploader implements UploaderInterface
     $this->resetUserStates();
 
     return !$this->error;
-    }
+  }
 
   /**
    * Analyses an error code and returns its text
@@ -249,8 +249,8 @@ class SingleUploader extends BaseUploader implements UploaderInterface
     $app = Factory::getApplication();
 
     if(\array_key_exists('image', $app->input->files->get('jform')) && !empty($app->input->files->get('jform')['image'])
-    && $app->input->files->get('jform')['image']['error'] != 4 &&  $app->input->files->get('jform')['image']['size'] > 0)
-        {
+    && $app->input->files->get('jform')['image']['error'] != 4 && $app->input->files->get('jform')['image']['size'] > 0)
+    {
       return true;
     }
 

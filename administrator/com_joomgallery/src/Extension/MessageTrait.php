@@ -149,11 +149,11 @@ trait MessageTrait
     {
       if(\is_null($name))
       {
-        Log::addLogger(['text_file' =>  'com_joomgallery.log.php'], Log::ALL, ['com_joomgallery']);
+        Log::addLogger(['text_file' => 'com_joomgallery.log.php'], Log::ALL, ['com_joomgallery']);
       }
       else
       {
-        Log::addLogger(['text_file' =>  'com_joomgallery.' . $name . '.log.php'], Log::ALL, ['com_joomgallery.' . $name]);
+        Log::addLogger(['text_file' => 'com_joomgallery.' . $name . '.log.php'], Log::ALL, ['com_joomgallery.' . $name]);
       }
     }
 
@@ -526,7 +526,8 @@ trait MessageTrait
       return implode('<br />', $storage);
     }
 
-    return $storage;
+
+      return $storage;
   }
 
   /**

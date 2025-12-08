@@ -126,19 +126,19 @@ class ImageTable extends Table implements VersionableTableInterface
    */
   public function load($keys = null, $reset = true)
   {
-  $success = parent::load($keys, $reset);
+    $success = parent::load($keys, $reset);
 
-  if($success)
-  {
-    // Record successfully loaded
-    // load Tags
-    $com_obj    = Factory::getApplication()->bootComponent('com_joomgallery');
-    $tags_model = $com_obj->getMVCFactory()->createModel('Tags', 'administrator');
+    if($success)
+    {
+      // Record successfully loaded
+      // load Tags
+      $com_obj    = Factory::getApplication()->bootComponent('com_joomgallery');
+      $tags_model = $com_obj->getMVCFactory()->createModel('Tags', 'administrator');
 
-    $this->tags = $tags_model->getMappedItems($this->id);
-  }
+      $this->tags = $tags_model->getMappedItems($this->id);
+    }
 
-  return $success;
+    return $success;
   }
 
   /**
@@ -159,22 +159,22 @@ class ImageTable extends Table implements VersionableTableInterface
     $task      = Factory::getApplication()->input->get('task', '', 'cmd');
     $component = Factory::getApplication()->bootComponent('com_joomgallery');
 
-  // Support for id field
-  if(!key_exists('id', $array))
-  {
-    $array['id'] = 0;
-  }
-
-  // Support for title field: title
-  if(\array_key_exists('title', $array))
-  {
-    $array['title'] = trim($array['title']);
-
-    if(empty($array['title']))
+    // Support for id field
+    if(!key_exists('id', $array))
     {
-    $array['title'] = 'Unknown';
+      $array['id'] = 0;
     }
-  }
+
+    // Support for title field: title
+    if(\array_key_exists('title', $array))
+    {
+      $array['title'] = trim($array['title']);
+
+      if(empty($array['title']))
+      {
+        $array['title'] = 'Unknown';
+      }
+    }
 
     // Support for alias field: alias
     if(empty($array['alias']))
@@ -195,32 +195,32 @@ class ImageTable extends Table implements VersionableTableInterface
         }
       }
     }
-  else
-  {
-    if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
-    {
-    $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['alias']));
-    }
     else
     {
-    $array['alias'] = OutputFilter::stringURLSafe(trim($array['alias']));
+      if(Factory::getApplication()->getConfig()->get('unicodeslugs') == 1)
+      {
+        $array['alias'] = OutputFilter::stringURLUnicodeSlug(trim($array['alias']));
+      }
+      else
+      {
+        $array['alias'] = OutputFilter::stringURLSafe(trim($array['alias']));
+      }
     }
-  }
 
     // Support for multiple or not foreign key field: catid
       if(!empty($array['catid']))
       {
         if(\is_array($array['catid']))
-    {
+        {
           $array['catid'] = implode(',', $array['catid']);
         }
         elseif(strrpos($array['catid'], ',') != false)
-    {
+        {
           $array['catid'] = explode(',', $array['catid']);
         }
       }
       else
-    {
+      {
         $array['catid'] = 0;
       }
 
@@ -283,11 +283,11 @@ class ImageTable extends Table implements VersionableTableInterface
       $array['imgmetadata'] = (string) $registry;
     }
 
-  // Support for tags
-  if(!isset($this->tags))
-  {
-    $this->tags = [];
-  }
+    // Support for tags
+    if(!isset($this->tags))
+    {
+      $this->tags = [];
+    }
 
     return parent::bind($array, $ignore);
   }
@@ -306,42 +306,42 @@ class ImageTable extends Table implements VersionableTableInterface
    */
   public function store($updateNulls = true)
   {
-  // Support for params field
-  if(isset($this->params) && !\is_string($this->params))
+    // Support for params field
+    if(isset($this->params) && !\is_string($this->params))
     {
       $registry     = new Registry($this->params);
       $this->params = (string) $registry;
-  }
-
-  $success = parent::store($updateNulls);
-
-  if($success)
-  {
-    // Record successfully stored
-     // Store Tags
-    $com_obj    = Factory::getApplication()->bootComponent('com_joomgallery');
-    $tags_model = $com_obj->getMVCFactory()->createModel('Tags', 'administrator');
-
-    // Create tags
-    $this->tags = $tags_model->storeTagsList($this->tags);
-
-    if($this->tags === false)
-    {
-    $this->setError('Tags Model reports ' . $tags_model->getError());
-    $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
-    $success = false;
     }
 
-    // Update tags mapping
-    if(!$tags_model->updateMapping($this->tags, $this->id))
-    {
-    $this->setError('Tags Model reports ' . $tags_model->getError());
-    $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
-    $success = false;
-    }
-  }
+    $success = parent::store($updateNulls);
 
-  return $success;
+    if($success)
+    {
+      // Record successfully stored
+       // Store Tags
+      $com_obj    = Factory::getApplication()->bootComponent('com_joomgallery');
+      $tags_model = $com_obj->getMVCFactory()->createModel('Tags', 'administrator');
+
+      // Create tags
+      $this->tags = $tags_model->storeTagsList($this->tags);
+
+      if($this->tags === false)
+      {
+        $this->setError('Tags Model reports ' . $tags_model->getError());
+        $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
+        $success = false;
+      }
+
+      // Update tags mapping
+      if(!$tags_model->updateMapping($this->tags, $this->id))
+      {
+        $this->setError('Tags Model reports ' . $tags_model->getError());
+        $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
+        $success = false;
+      }
+    }
+
+    return $success;
   }
 
   /**
@@ -359,11 +359,11 @@ class ImageTable extends Table implements VersionableTableInterface
 
     // Check if alias is unique inside this category
     if($this->_checkAliasUniqueness)
-  {
+    {
       if(!$this->isUnique('alias', $this->catid, 'catid'))
       {
         $count        = 2;
-        $currentAlias =  $this->alias;
+        $currentAlias = $this->alias;
 
         while(!$this->isUnique('alias', $this->catid, 'catid'))
         {
@@ -373,39 +373,39 @@ class ImageTable extends Table implements VersionableTableInterface
     }
 
     // Support for subform field params
-  if(empty($this->params))
-  {
-    $this->params = $this->loadDefaultField('params');
-  }
+    if(empty($this->params))
+    {
+      $this->params = $this->loadDefaultField('params');
+    }
 
-  if(isset($this->params))
-  {
-    $this->params = new Registry($this->params);
-  }
+    if(isset($this->params))
+    {
+      $this->params = new Registry($this->params);
+    }
 
     // Support for field description
-  if(empty($this->description))
-  {
-    $this->description = $this->loadDefaultField('description');
-  }
+    if(empty($this->description))
+    {
+      $this->description = $this->loadDefaultField('description');
+    }
 
-  // Support for field metadesc
-  if(empty($this->metadesc))
-  {
-    $this->metadesc = $this->loadDefaultField('metadesc');
-  }
+    // Support for field metadesc
+    if(empty($this->metadesc))
+    {
+      $this->metadesc = $this->loadDefaultField('metadesc');
+    }
 
-  // Support for field metakey
-  if(empty($this->metakey))
-  {
-    $this->metakey = $this->loadDefaultField('metakey');
-  }
+    // Support for field metakey
+    if(empty($this->metakey))
+    {
+      $this->metakey = $this->loadDefaultField('metakey');
+    }
 
-  // Support for field imgmetadata
-  if(empty($this->imgmetadata))
-  {
-    $this->imgmetadata = $this->loadDefaultField('imgmetadata');
-  }
+    // Support for field imgmetadata
+    if(empty($this->imgmetadata))
+    {
+      $this->imgmetadata = $this->loadDefaultField('imgmetadata');
+    }
 
     return parent::check();
   }
@@ -419,29 +419,29 @@ class ImageTable extends Table implements VersionableTableInterface
    */
   public function delete($pk = null)
   {
-  $this->load($pk);
-  $success = parent::delete($pk);
+    $this->load($pk);
+    $success = parent::delete($pk);
 
-  if($success)
-  {
-    // Record successfully deleted
-    // Delete Tag mapping
-    $com_obj   = Factory::getApplication()->bootComponent('com_joomgallery');
-    $tag_model = $com_obj->getMVCFactory()->createModel('Tag', 'administrator');
-
-    // remove tag from mapping
-    foreach($this->tags as $tag)
+    if($success)
     {
-    if(!$tag_model->removeMapping($tag->id, $this->id))
-    {
-      $this->setError($tag_model->getError());
-      $this->getComponent()->addLog($tag_model->getError(), 'error', 'jerror');
-      $success = false;
-    }
-    }
-  }
+      // Record successfully deleted
+      // Delete Tag mapping
+      $com_obj   = Factory::getApplication()->bootComponent('com_joomgallery');
+      $tag_model = $com_obj->getMVCFactory()->createModel('Tag', 'administrator');
 
-  return $success;
+      // remove tag from mapping
+      foreach($this->tags as $tag)
+      {
+        if(!$tag_model->removeMapping($tag->id, $this->id))
+        {
+          $this->setError($tag_model->getError());
+          $this->getComponent()->addLog($tag_model->getError(), 'error', 'jerror');
+          $success = false;
+        }
+      }
+    }
+
+    return $success;
   }
 
   /**
@@ -468,9 +468,9 @@ class ImageTable extends Table implements VersionableTableInterface
     $event = AbstractEvent::create(
         'onTableBefore' . ucfirst($type),
         [
-          'subject'  => $this,
-          'pks'      => $pks,
-          'state'    => $state,
+          'subject' => $this,
+          'pks'     => $pks,
+          'state'   => $state,
           'userId'  => $userId,
         ]
     );
@@ -516,21 +516,21 @@ class ImageTable extends Table implements VersionableTableInterface
       $pks = [$pk];
     }
 
-  switch($type)
-  {
-    case 'feature':
-    $stateField = 'featured';
-        break;
+    switch($type)
+    {
+      case 'feature':
+        $stateField = 'featured';
+          break;
 
-    case 'approve':
-    $stateField = 'approved';
-        break;
+      case 'approve':
+        $stateField = 'approved';
+          break;
 
-    case 'publish':
-    default:
-    $stateField = 'published';
-        break;
-  }
+      case 'publish':
+      default:
+        $stateField = 'published';
+          break;
+    }
     $checkedOutField = $this->getColumnAlias('checked_out');
 
     $db = $this->getDatabase();
@@ -612,9 +612,9 @@ class ImageTable extends Table implements VersionableTableInterface
     $event = AbstractEvent::create(
         'onTableAfter' . ucfirst($type),
         [
-          'subject'  => $this,
-          'pks'    => $pks,
-          'state'    => $state,
+          'subject' => $this,
+          'pks'     => $pks,
+          'state'   => $state,
           'userId'  => $userId,
         ]
     );
@@ -638,6 +638,6 @@ class ImageTable extends Table implements VersionableTableInterface
    */
   public function publish($pks = null, $state = 1, $userId = 0)
   {
-  return $this->changeState('publish', $pks, $state, $userId);
+    return $this->changeState('publish', $pks, $state, $userId);
   }
 }
