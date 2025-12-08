@@ -123,10 +123,10 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   public function load($keys = null, $reset = true)
   {
     $res  = parent::load($keys, $reset);
-    $app = Factory::getApplication();
+    $app  = Factory::getApplication();
     $comp = $app->bootComponent(_JOOM_OPTION);
 
-    if (!$app->isClient('api'))
+    if(!$app->isClient('api'))
     {
       $user = $comp->getMVCFactory()->getIdentity();
     }

@@ -135,7 +135,8 @@ class Access implements AccessInterface
     }
 
     // Set current user
-    if (!$this->app->isClient('api')) {
+    if(!$this->app->isClient('api'))
+    {
       $this->user = $this->component->getMVCFactory()->getIdentity();
     }
     else {
