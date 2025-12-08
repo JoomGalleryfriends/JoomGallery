@@ -118,7 +118,7 @@ abstract class JoomAdminModel extends AdminModel
     $this->app       = Factory::getApplication('administrator');
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
 
-    if (! $this->app->isClient('api'))
+    if(! $this->app->isClient('api'))
     {
       $this->user = $this->component->getMVCFactory()->getIdentity();
     }
@@ -348,7 +348,7 @@ abstract class JoomAdminModel extends AdminModel
     // Get current user
       $app = Factory::getApplication();
 
-      if (! $app->isClient('api'))
+      if(! $app->isClient('api'))
       {
         $this->user = $this->component->getMVCFactory()->getIdentity();
       }

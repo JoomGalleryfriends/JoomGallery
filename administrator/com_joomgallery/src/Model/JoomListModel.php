@@ -99,7 +99,7 @@ abstract class JoomListModel extends ListModel
       $this->app       = Factory::getApplication('administrator');
       $this->component = $this->app->bootComponent(_JOOM_OPTION);
 
-      if (! $this->app->isClient('api'))
+      if(! $this->app->isClient('api'))
       {
           $this->user = $this->component->getMVCFactory()->getIdentity();
       }
@@ -314,7 +314,7 @@ abstract class JoomListModel extends ListModel
     {
         $app = Factory::getApplication();
 
-        if (! $app->isClient('api'))
+        if(! $app->isClient('api'))
         {
             $table->setCurrentUser($this->component->getMVCFactory()->getIdentity());
         }

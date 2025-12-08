@@ -54,46 +54,50 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     {
         $router = $event->getRouter();
 
-        $defaults    = ['component' => 'com_joomgallery'];
+        $defaults = ['component' => 'com_joomgallery'];
         // $getDefaults = array_merge(['public' => false], $defaults);
         $getDefaults = array_merge(['public' => false], $defaults); // ToDo: Remove when tests finished, enables access without token
 
 //          new Route(['GET'], 'v1/example/items/:slug', 'item.displayItem',
 //              ['slug' => '(.*)'], ['option' => 'com_example']),
 
-      $router->addRoutes([
-        new Route(['GET'], 'v1/joomgallery/version', 'version.display', [], $getDefaults),
-      ]);
+    $router->addRoutes(
+        [
+          new Route(['GET'], 'v1/joomgallery/version', 'version.display', [], $getDefaults),
+        ]
+    );
 
         // joomla part of JG (not much there)
-        $router->addRoutes([
-          new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),
-        ]);
+        $router->addRoutes(
+            [
+              new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),
+            ]
+        );
 
 //      $router->addRoutes([
 //          new Route(['GET'], 'v1/joomgallery', 'joomgallery.displayItem', [], $getDefaults),
 //      ]);
 
-         $router->createCRUDRoutes(
-             'v1/joomgallery/categories',
-             'categories',
-             ['component' => 'com_joomgallery'],
-             true // ToDo: Remove when tests finished
-         );
+        $router->createCRUDRoutes(
+            'v1/joomgallery/categories',
+            'categories',
+            ['component' => 'com_joomgallery'],
+            true // ToDo: Remove when tests finished
+        );
 
-         $router->createCRUDRoutes(
-             'v1/joomgallery/images',
-             'images',
-             ['component' => 'com_joomgallery'],
-             true // ToDo: Remove when tests finished
-         );
+        $router->createCRUDRoutes(
+            'v1/joomgallery/images',
+            'images',
+            ['component' => 'com_joomgallery'],
+            true // ToDo: Remove when tests finished
+        );
 
-         $router->createCRUDRoutes(
-             'v1/joomgallery/configs',
-             'configs',
-             ['component' => 'com_joomgallery'],
-             true // ToDo: Remove when tests finished
-         );
+        $router->createCRUDRoutes(
+            'v1/joomgallery/configs',
+            'configs',
+            ['component' => 'com_joomgallery'],
+            true // ToDo: Remove when tests finished
+        );
 
 
          // custom fields
@@ -163,7 +167,5 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         ];
 
         $router->addRoutes($routes);
-
     }
 }
-
