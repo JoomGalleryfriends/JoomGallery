@@ -5160,7 +5160,6 @@ class jgDashboard extends _uppy_dashboard_lib_Dashboard_js__WEBPACK_IMPORTED_MOD
 }
 jgDashboard.VERSION = packageJson.version;
 
-
 /***/ }),
 
 /***/ "./src/jgDashboard/components/Dashboard.js":
@@ -5369,7 +5368,6 @@ function Dashboard(props) {
   })))));
   return dashboard;
 }
-
 
 /***/ }),
 
@@ -5631,7 +5629,6 @@ class FileItem extends _uppy_dashboard_lib_components_FileItem_index_js__WEBPACK
   }
 }
 
-
 /***/ }),
 
 /***/ "./src/jgDashboard/components/FileList.js":
@@ -5769,7 +5766,6 @@ function chunks(list, size) {
   });
 });
 
-
 /***/ }),
 
 /***/ "./src/jgDashboard/index.js":
@@ -5784,7 +5780,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* reexport safe */ _Dashboard_js__WEBPACK_IMPORTED_MODULE_0__["default"])
 /* harmony export */ });
 /* harmony import */ var _Dashboard_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Dashboard.js */ "./src/jgDashboard/Dashboard.js");
-
 
 
 /***/ }),

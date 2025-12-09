@@ -58,10 +58,9 @@ $canDeleteFound = false;
 <form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post" 
       name="adminForm" id="adminForm">
 
-  <?php if(!empty($this->filterForm))
-  {
-  echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
-  } ?>
+  <?php if(!empty($this->filterForm)) : ?>
+    <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+  <?php endif; ?>
 
   <div class="row">
     <div class="col-md-12">
@@ -226,17 +225,6 @@ $canDeleteFound = false;
                   <td class="d-none d-lg-table-cell text-center">
                     <?php if($canChange): ?>
                       <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
-                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="imageform.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
-                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" aria-hidden="true"></span>
-                      </button>
-                    <?php else : ?>
-                      <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
-                    <?php endif; ?>
-                  </td>
-
-                <td class="d-none d-lg-table-cell text-center">
-                  <?php if($canChange): ?>
-                    <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
                     <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                             data-item-id="cb<?php echo $i; ?>"
                             data-item-task="imageform.<?php echo $statetask; ?>" <?php echo $disabled; ?>>

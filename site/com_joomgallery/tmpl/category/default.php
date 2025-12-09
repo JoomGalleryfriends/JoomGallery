@@ -24,7 +24,8 @@ $wa->useStyle('com_joomgallery.jg-icon-font');
 ?>
 
 <?php if($this->item->pw_protected): ?>
-  <form action="<?php echo Route::_('index.php?task=category.unlock&catid=' . $this->item->id);?>" method="post" class="form-inline" autocomplete="off">
+  <form action="<?php echo Route::_('index.php?task=category.unlock&catid=' . $this->item->id);?>" method="post" 
+        class="form-inline" autocomplete="off">
     <h3><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD_PROTECTED'); ?></h3>
     <label for="jg_password"><?php echo Text::_('JGLOBAL_PASSWORD'); ?></label>
     <input type="password" name="password" id="jg_password"/>

@@ -40,7 +40,7 @@ $saveOrderingUrl = '';
 
 if($saveOrder && !empty($this->items))
 {
-  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
   HTMLHelper::_('draggablelist.draggable');
 }
 ?>
@@ -51,11 +51,13 @@ if($saveOrder && !empty($this->items))
     </div>
 <?php endif; ?>
 
-<form class="jg-categories" action="<?php echo Route::_('index.php?option=com_joomgallery&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
-  <?php if(!empty($this->filterForm))
-  {
-  echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
-  } ?>
+<form class="jg-categories" action="<?php echo Route::_('index.php?option=com_joomgallery&view=categories'); ?>" 
+      method="post" name="adminForm" id="adminForm">
+
+  <?php if(!empty($this->filterForm)) : ?>
+    <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+  <?php endif; ?>
+
   <div class="row">
     <div class="col-md-12">
 
@@ -216,17 +218,12 @@ if($saveOrder && !empty($this->items))
                   </td>
 
                   <td class="d-none d-lg-table-cell text-center">
-                    <?php if($canEdit || $canDelete): ?>
-                      <?php if($canEdit): ?>
-                        <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="category.edit" <?php echo $disabled; ?>>
-                          <span class="icon-edit" aria-hidden="true"></span>
-                        </button>
-                      <?php endif; ?>
-                      <?php if($canDelete): ?>
-                        <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>" data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="categoryform.remove" <?php echo $disabled; ?>>
-                          <span class="icon-trash" aria-hidden="true"></span>
-                        </button>
-                      <?php endif; ?>
+                    <?php if($canEdit): ?>
+                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" 
+                              data-item-id="cb<?php echo $i; ?>" 
+                              data-item-task="category.edit" <?php echo $disabled; ?>>
+                        <span class="icon-edit" aria-hidden="true"></span>
+                      </button>
                     <?php endif; ?>
                     <?php if($canDelete): ?>
                       <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
@@ -241,8 +238,11 @@ if($saveOrder && !empty($this->items))
                   <td class="d-none d-lg-table-cell text-center">
                     <?php if($canChange): ?>
                       <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
-                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="categoryform.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
-                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" aria-hidden="true"></span>
+                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" 
+                              data-item-id="cb<?php echo $i; ?>" 
+                              data-item-task="categoryform.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
+                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" 
+                              aria-hidden="true"></span>
                       </button>
                     <?php else : ?>
                       <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>

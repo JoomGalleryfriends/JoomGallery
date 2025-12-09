@@ -102,7 +102,7 @@ class DefaultRouter extends RouterView
     $this->noIDs = (bool) $app->bootComponent('com_joomgallery')->getConfig()->get('jg_router_ids', '0');
     $this->db    = $db;
 
-    if ($skipSelf)
+    if($skipSelf)
     {
       return;
     }
@@ -188,11 +188,14 @@ class DefaultRouter extends RouterView
    */
   public function getImageSegment($id, $query)
   {
-    if (!strpos($id, ':'))
+    if(!strpos($id, ':'))
     {
       $dbquery = $this->db->createQuery();
 
-      $dbquery->select($this->db->quoteName('alias'))->from($this->db->quoteName(_JOOM_TABLE_IMAGES))->where($this->db->quoteName('id') . ' = :id')->bind(':id', $id, ParameterType::INTEGER);
+      $dbquery->select($this->db->quoteName('alias'))
+        ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
+        ->where($this->db->quoteName('id') . ' = :id')
+        ->bind(':id', $id, ParameterType::INTEGER);
       $this->db->setQuery($dbquery);
 
       // To create a segment in the form: id-alias

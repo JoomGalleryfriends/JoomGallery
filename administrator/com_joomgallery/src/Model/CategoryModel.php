@@ -92,6 +92,8 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('rm_password', 'filter', 'unset');
       $form->setFieldAttribute('rm_password', 'hidden', 'true');
       $form->setFieldAttribute('rm_password', 'class', 'hidden');
+
+      $form->setFieldAttribute('password', 'lock', 'false');
     }
 
     // Modify the form based on Edit State access controls.
@@ -138,10 +140,13 @@ class CategoryModel extends JoomAdminModel
       $data = $this->item;
 
       // Support for password field
-      if(property_exists($data, 'password') && empty($data->password))
+      $this->is_password = false;
+
+      if(!empty($data->password))
       {
-        $this->is_password = false;
+        $this->is_password = true;
       }
+
       $data->password = '';
 
       // Support for multiple or not foreign key field: robots
@@ -162,6 +167,18 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $data;
+  }
+
+  /**
+   * Does the category has a password in the database.
+   * Attention: $data->password variable may be already overwritten to ''.
+   * @return bool true when password was set on loadFormData ()
+   *
+   * @since  4.2
+   */
+  public function hasPassword(): bool
+  {
+    return $this->is_password;
   }
 
   /**

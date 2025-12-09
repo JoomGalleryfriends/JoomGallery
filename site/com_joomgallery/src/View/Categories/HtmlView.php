@@ -87,7 +87,7 @@ class HtmlView extends JoomGalleryView
       // Redirect to category view
       $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=1'));
 
-      return false;
+    return;
     }
 
     // Preprocess the list of items to find ordering divisions.
