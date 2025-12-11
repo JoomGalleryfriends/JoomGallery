@@ -1,0 +1,97 @@
+<?php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
+namespace Joomgallery\Component\Joomgallery\Site\Controller;
+
+// No direct access
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
+
+use Joomla\CMS\MVC\Controller\FormController;
+
+/**
+ * Category controller class.
+ *
+ * @package JoomGallery
+ * @since   4.2.0
+ */
+class UserpanelController extends FormController //JoomBaseController
+{
+  /**
+   * Constructor.
+   *
+   * @param   array    $config   An optional associative array of configuration settings.
+   * @param   object   $factory  The factory.
+   * @param   object   $app      The Application for the dispatcher
+   * @param   object   $input    Input
+   *
+   * @throws \Exception
+   * @since   4.2.0
+   */
+  public function __construct($config = [], $factory = null, $app = null, $input = null)
+  {
+    parent::__construct($config, $factory, $app, $input);
+
+    $this->default_view = 'userpanel';
+  }
+
+  /**
+   * Proxy for getModel.
+   *
+   * @param   string   $name    The model name. Optional.
+   * @param   string   $prefix  The class prefix. Optional
+   * @param   array    $config  Configuration array for model. Optional
+   *
+   * @return  object  The model
+   *
+   * @since   4.2.0
+   */
+  public function getModel($name = 'Form', $prefix = 'Site', $config = ['ignore_request' => true])
+  {
+    return parent::getModel($name, $prefix, $config);
+  }
+
+  /**
+   * Method to save the submitted ordering values for records via AJAX.
+   *
+   * @return  void
+   *
+   * @throws \Exception
+   * @since   4.2.0
+   */
+  public function saveOrderAjax(): void
+  {
+    // Check for request forgeries.
+    $this->checkToken();
+
+    // Get the input
+    $pks   = (array) $this->input->post->get('cid', [], 'int');
+    $order = (array) $this->input->post->get('order', [], 'int');
+
+    // Remove zero PKs and corresponding order values resulting from input filter for PK
+    foreach($pks as $i => $pk)
+    {
+      if($pk === 0)
+      {
+        unset($pks[$i], $order[$i]);
+      }
+    }
+
+    // Get the model
+    $model = $this->getModel('userimage', 'Site');
+
+    // Save the ordering
+    $model->saveorder($pks, $order);
+
+    // Close the application
+    $this->app->close();
+  }
+}

@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -25,7 +26,7 @@ use Joomla\CMS\Router\Route;
  * @package JoomGallery
  * @since   4.0.0
  */
-class ImageController extends JoomBaseController
+class ImageController extends JoomFormController
 {
   /**
    * Edit an existing image.

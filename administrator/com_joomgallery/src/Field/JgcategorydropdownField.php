@@ -41,7 +41,7 @@ class JgcategorydropdownField extends ListField
   /**
    * To allow creation of new categories.
    *
-   * @var    integer
+   * @var    bool
    * @since  4.0.0
    */
   protected $allowAdd;
@@ -53,6 +53,39 @@ class JgcategorydropdownField extends ListField
    * @since  4.0.0
    */
   protected $customPrefix;
+
+  /**
+   * Optional restrict to categories of logged user
+   *
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $isCategoriesOfUser;
+
+  /**
+   * Add " -No parent- " as first selection
+   *
+   *
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $isShow_NoParent;
+
+  /**
+   * Add " -select category- " as first selection
+   *
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $isShow_SelectHeader;
+
+  /**
+   * Optional restrict to categories of logged user
+   *
+   * @var    bool
+   * @since  4.0.0
+   */
+  protected $ordering = 'ASC';
 
   /**
    * Name of the layout being used to render the field
@@ -84,6 +117,17 @@ class JgcategorydropdownField extends ListField
     {
       $this->allowAdd     = isset($this->element['allowAdd']) ? (bool) $this->element['allowAdd'] : false;
       $this->customPrefix = (string) $this->element['customPrefix'];
+
+      $this->isCategoriesOfUser  = isset($this->element['categoriesOfUser']) ? (bool) $this->element['categoriesOfUser'] : false;
+      $this->isShow_NoParent     = isset($this->element['show_NoParent']) ? (bool) $this->element['show_NoParent'] : false;
+      $this->isShow_SelectHeader = isset($this->element['showSelect']) ? (bool) $this->element['showSelect'] : false;
+
+      $elementOrdering = $this->element['ordering'] ?? '';
+
+      if(strtolower($elementOrdering) == 'desc')
+      {
+        $this->ordering = 'DESC';
+      }
     }
 
     return $return;
@@ -160,7 +204,8 @@ class JgcategorydropdownField extends ListField
     // Load the category options for a given extension.
 
     // For categories the old category is the category id or 0 for new category.
-    if($this->element['parent'] || ($jinput->get('option') == _JOOM_OPTION && $jinput->get('view') == 'category'))
+    if($this->element['parent'] || ($jinput->get('option') == _JOOM_OPTION
+        && ($jinput->get('view') == 'category') || $jinput->get('view') == 'usercategory'))
     {
       $oldCat    = $jinput->get('id', 0);
       $oldParent = $this->form->getValue($name, 0);
@@ -198,6 +243,7 @@ class JgcategorydropdownField extends ListField
           $db->quoteName('a.in_hidden'),
           $db->quoteName('a.lft'),
           $db->quoteName('a.language'),
+          $db->quoteName('a.created_by'),
         ]
     )
       ->from($db->quoteName(_JOOM_TABLE_CATEGORIES, 'a'));
@@ -229,10 +275,11 @@ class JgcategorydropdownField extends ListField
       $query->whereIn($db->quoteName('a.access'), $groups);
     }
 
-    $query->order($db->quoteName('a.lft') . ' ASC');
+    $query->order($db->quoteName('a.lft') . ' ' . $this->ordering);
 
-    // If parent isn't explicitly stated but we are in com_joomgallery assume we want parents
-    if($oldCat != 0 && ($this->element['parent'] == true || ($jinput->get('option') == _JOOM_OPTION && $jinput->get('view') == 'category')))
+    // If parent isn't explicitly stated, but we are in com_joomgallery assume we want parents
+    if($oldCat != 0 && ($this->element['parent'] == true || ($jinput->get('option') == _JOOM_OPTION
+          && ($jinput->get('view') == 'category') || $jinput->get('view') == 'usercategory')))
     {
       // Prevent parenting to children of this item.
       // To rearrange parents and children move the children up, not the parents down.
@@ -254,6 +301,12 @@ class JgcategorydropdownField extends ListField
       $query->where($db->quoteName('a.level') . ' > 0');
     }
 
+    // Filter for user
+    if($this->isCategoriesOfUser)
+    {
+      $query->where($db->quoteName('a.created_by') . ' = ' . (int) $user->id);
+    }
+
     // Get the options.
     $db->setQuery($query);
 
@@ -271,7 +324,8 @@ class JgcategorydropdownField extends ListField
     for($i = 0, $n = \count($options); $i < $n; $i++)
     {
       // Translate ROOT
-      if($this->element['parent'] == true || ($jinput->get('option') == _JOOM_OPTION && $jinput->get('view') == 'category'))
+      if($this->element['parent'] == true || ($jinput->get('option') == _JOOM_OPTION
+          && ($jinput->get('view') == 'category') || $jinput->get('view') == 'usercategory'))
       {
         if($options[$i]->level == 0)
         {
@@ -338,7 +392,7 @@ class JgcategorydropdownField extends ListField
 
         /*
          * However, if you can edit.state you can also move this to another category for which you have
-         * create permission and you should also still be able to save in the current category.
+         * create permission, and you should also still be able to save in the current category.
          */
         $assetKey = $extension . '.category.' . $option->value;
 
@@ -355,7 +409,11 @@ class JgcategorydropdownField extends ListField
       }
     }
 
-    if($oldCat != 0 && ($this->element['parent'] == true || ($jinput->get('option') == _JOOM_OPTION && $jinput->get('view') == 'category'))
+    if($oldCat != 0
+      && (
+        $this->element['parent'] == true
+        || ($jinput->get('option') == _JOOM_OPTION && ($jinput->get('view') == 'category')
+        || $jinput->get('view') == 'usercategory'))
       && !isset($options[0])
       && isset($this->element['show_root']))
     {
@@ -380,8 +438,18 @@ class JgcategorydropdownField extends ListField
         $parent->text = Text::_('JGLOBAL_ROOT_PARENT');
         array_unshift($options, $parent);
       }
+    }
 
-      array_unshift($options, HTMLHelper::_('select.option', '0', Text::_('JGLOBAL_ROOT')));
+    if($this->isShow_NoParent)
+    {
+      // Merge root (any additional options) in the XML definition.
+      array_unshift($options, HTMLHelper::_('select.option', '1', Text::_('JGLOBAL_ROOT_PARENT')));
+    }
+
+    if($this->isShow_SelectHeader)
+    {
+      // Merge root (any additional options) in the XML definition.
+      array_unshift($options, HTMLHelper::_('select.option', '', Text::_('JOPTION_SELECT_CATEGORY')));
     }
 
     // Merge any additional options in the XML definition.

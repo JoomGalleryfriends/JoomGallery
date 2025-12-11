@@ -20,7 +20,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
 
-
 /**
  * Supports an HTML select list of categories
  *

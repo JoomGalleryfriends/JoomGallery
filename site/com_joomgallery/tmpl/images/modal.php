@@ -24,9 +24,9 @@ use Joomla\CMS\Router\Route;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.list')
-   ->useStyle('com_joomgallery.site')
-   ->useScript('com_joomgallery.list-view')
-   ->useScript('multiselect');
+  ->useStyle('com_joomgallery.site')
+  ->useScript('com_joomgallery.list-view')
+  ->useScript('multiselect');
 
 $input       = Factory::getApplication()->input;
 $field       = $input->getCmd('field');
@@ -35,7 +35,8 @@ $listDirn    = $this->state->get('list.direction');
 $imgRequired = (int) $input->get('required', 0, 'int');
 ?>
 
-<form action="<?php echo Route::_('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component'); ?>" method="post"
+<form action="<?php echo Route::_('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component'); ?>" 
+    method="post"
     name="adminForm" id="adminForm">
   <div class="row">
     <div class="col-md-12">
@@ -43,7 +44,9 @@ $imgRequired = (int) $input->get('required', 0, 'int');
 
       <?php if(!$imgRequired) : ?>
         <div>
-          <button type="button" class="btn btn-primary button-select" data-image-value="0" data-image-title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE')); ?>" data-image-field="<?php echo $this->escape($field); ?>">
+          <button type="button" class="btn btn-primary button-select" data-image-value="0" 
+data-image-title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE')); ?>" 
+data-image-field="<?php echo $this->escape($field); ?>">
             <?php echo Text::_('COM_JOOMGALLERY_NO_IMAGE'); ?>
           </button>
         </div>
@@ -129,12 +132,15 @@ $imgRequired = (int) $input->get('required', 0, 'int');
                 </td>
 
                 <td class="small d-none d-md-table-cell">
-                  <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
+                  <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>"
+                       alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
 
                 <th scope="row" class="has-context">
                   <div class="break-word">
-                    <a class="pointer button-select" href="#" data-image-value="<?php echo (int) $item->id; ?>" data-image-title="<?php echo $this->escape($item->title); ?>" data-image-field="<?php echo $this->escape($field); ?>">
+                    <a class="pointer button-select" href="#" data-image-value="<?php echo (int) $item->id; ?>"
+                       data-image-title="<?php echo $this->escape($item->title); ?>"
+                       data-image-field="<?php echo $this->escape($field); ?>">
                       <?php echo $this->escape($item->title); ?>
                     </a>
 
@@ -167,8 +173,8 @@ $imgRequired = (int) $input->get('required', 0, 'int');
 
                 <td class="small d-none d-md-table-cell text-center">
                   <?php
-                    $date = $item->date;
-                    echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
+                  $date = $item->date;
+                  echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
                   ?>
                 </td>
 

@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Categoryform;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\CategoryformModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 
@@ -67,10 +68,11 @@ class HtmlView extends JoomGalleryView
    *
    * @return void
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function display($tpl = null)
   {
+    // ToDo: comment following line ?
     $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_NOT_YET_AVAILABLE'), 'warning');
 
     if(!$this->app->input->get('preview', 0))
@@ -78,7 +80,7 @@ class HtmlView extends JoomGalleryView
       return;
     }
 
-    /** @var CategoryfromModel $model */
+    /** @var CategoryformModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();

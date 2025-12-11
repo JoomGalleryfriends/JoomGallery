@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Model\JoomAdminModel;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -25,7 +26,7 @@ use Joomla\CMS\User\UserFactoryInterface;
  * @package JoomGallery
  * @since   4.0.0
  */
-class ImageModel extends JoomItemModel
+class ImageModel extends JoomAdminModel
 {
   /**
    * Item type
@@ -314,4 +315,6 @@ class ImageModel extends JoomItemModel
 
     return empty($this->item->accessibleParents);
   }
+
+    // ToDo: Fith found here:  public function getForm($data = [], $loadData = true)
 }

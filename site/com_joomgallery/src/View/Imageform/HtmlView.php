@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Imageform;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\ImageformModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 
@@ -78,7 +79,7 @@ class HtmlView extends JoomGalleryView
       return;
     }
 
-    /** @var ImagefromModel $model */
+    /** @var ImageformModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();
