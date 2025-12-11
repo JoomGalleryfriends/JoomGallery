@@ -128,7 +128,7 @@ class HtmlView extends JoomGalleryView
 
     $config = $this->params['configs'];
 
-    //	user must be logged in and have one 'master/base' category
+    //  user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
 
     if($user->guest)
@@ -253,4 +253,4 @@ class HtmlView extends JoomGalleryView
       }
     }
   }
-} // class
+}

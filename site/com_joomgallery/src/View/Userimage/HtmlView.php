@@ -479,4 +479,4 @@ class HtmlView extends JoomGalleryView
       $this->maxSize = min($this->uploadLimit, $this->postMaxSize, $mediaUploadMaxsize);
     }
   }
-} // class
+}

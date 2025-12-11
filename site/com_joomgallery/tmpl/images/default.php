@@ -55,7 +55,7 @@ $canDeleteFound = false;
     </div>
 <?php endif; ?>
 
-<form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post" 
+<form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post"
       name="adminForm" id="adminForm">
 
   <?php if(!empty($this->filterForm)) : ?>
@@ -212,31 +212,33 @@ $canDeleteFound = false;
                       </button>
                     <?php endif; ?>
                     <?php if($canDelete): ?>
-                      <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>" 
-                              data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>" 
-                              data-item-id="cb<?php echo $i; ?>" 
+                      <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
+                              data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
+                              data-item-id="cb<?php echo $i; ?>"
                               data-item-task="imageform.remove" <?php echo $disabled; ?>>
                         <span class="icon-trash" aria-hidden="true"></span>
                       </button>
                     <?php endif; ?>
                   <?php endif; ?>
                   </td>
-                  
+
                   <td class="d-none d-lg-table-cell text-center">
                     <?php if($canChange): ?>
                       <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
-                    <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
-                            data-item-id="cb<?php echo $i; ?>"
-                            data-item-task="imageform.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
-                      <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
-                            aria-hidden="true"></span>
-                    </button>
-                  <?php else : ?>
-                    <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
-                  <?php endif; ?>
-                </td>
+                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
+                              data-item-id="cb<?php echo $i; ?>"
+                              data-item-task="imageform.<?php echo $statetask; ?>" <?php echo $disabled; ?>
+                      >
+                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"
+                              aria-hidden="true">
+                        </span>
+                      </button>
+                    <?php else : ?>
+                      <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
+                    <?php endif; ?>
+                  </td>
 
-              </tr>
+                </tr>
               <?php endforeach; ?>
             </tbody>
           </table>

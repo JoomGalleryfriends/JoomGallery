@@ -125,7 +125,7 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
-    //	user must be logged in and have one 'master/base' category
+    //  user must be logged in and have one 'master/base' category
     $this->isUserLoggedIn = true;
 
     if($user->guest)
