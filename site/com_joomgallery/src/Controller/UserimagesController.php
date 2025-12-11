@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\ImagesController as AdminImagesController;
 use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Router\Route;
 
 /**
  * User images list controller class.
@@ -27,6 +28,8 @@ use Joomla\CMS\MVC\Controller\FormController;
  */
 class UserimagesController extends AdminImagesController // FormController
 {
+  use RoutingTrait;
+
   /**
    * Constructor.
    *
@@ -44,5 +47,33 @@ class UserimagesController extends AdminImagesController // FormController
 
     // parent view
     $this->default_view = 'userimages';
+  }
+
+  /**
+   * Method to publish a list of items
+   *
+   * @return  void
+   *
+   * @since   4.0
+   */
+  public function publish()
+  {
+    parent::publish();
+
+    $this->setRedirect(Route::_($this->getReturnPage(), false)); // UserPanel
+  }
+
+  /**
+   * Removes an item.
+   *
+   * @return  void
+   *
+   * @since   1.6
+   */
+  public function delete()
+  {
+    parent::delete();
+
+    $this->setRedirect(Route::_($this->getReturnPage(), false)); // UserPanel
   }
 }

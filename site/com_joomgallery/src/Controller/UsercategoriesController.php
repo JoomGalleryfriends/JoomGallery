@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\CategoriesController as AdminCategoriesController;
+use Joomla\CMS\Router\Route;
 
 /**
  * Category controller class.
@@ -25,6 +26,8 @@ use Joomgallery\Component\Joomgallery\Administrator\Controller\CategoriesControl
  */
 class UsercategoriesController extends AdminCategoriesController
 {
+  use RoutingTrait;
+
   /**
    * Constructor.
    *
@@ -42,5 +45,32 @@ class UsercategoriesController extends AdminCategoriesController
     parent::__construct($config, $factory, $app, $input);
 
     $this->default_view = 'usercategories';
+  }
+  /**
+   * Method to publish a list of items
+   *
+   * @return  void
+   *
+   * @since   4.0
+   */
+  public function publish()
+  {
+    parent::publish();
+
+    $this->setRedirect(Route::_($this->getReturnPage(), false)); // UserPanel
+  }
+
+  /**
+   * Removes an item.
+   *
+   * @return  void
+   *
+   * @since   1.6
+   */
+  public function delete()
+  {
+    parent::delete();
+
+    $this->setRedirect(Route::_($this->getReturnPage(), false)); // UserPanel
   }
 }
