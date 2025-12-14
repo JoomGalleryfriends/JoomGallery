@@ -88,7 +88,7 @@
 
       <field name="showManageableImages"
              type="radio"
-             default="o"
+             default="0"
              label="COM_JOOMGALLERY_MENU_SHOW_USER_IMAGES_MANAGE"
              description="COM_JOOMGALLERY_MENU_SHOW_USER_IMAGES_MANAGE_DESC"
              class="btn-group btn-group-yesno">
