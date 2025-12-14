@@ -19,7 +19,6 @@ use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormControlle
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
@@ -336,7 +335,7 @@ class UserimageController extends JoomFormController
     $app->setUserState($context . '.data', null);
 
     // Redirect to edit screen
-    $url = 'index.php?option=' . _JOOM_OPTION . '&view=image&layout=edit&id=' . $id;
+    $url = 'index.php?option=' . _JOOM_OPTION . '&view=userimage&layout=edit&id=' . $id;
 
     // Check if there is a return value
     $return = $this->input->get('return', null, 'base64');
