@@ -28,15 +28,17 @@ use Joomla\CMS\Router\Route;
  */
 class ImageController extends JoomFormController
 {
+  use RoutingTrait;
+
   /**
    * Edit an existing image.
    * Redirect to form view.
    *
-   * @return  void
+   * @return  void|false
    *
    * @since   4.0.0
    */
-  public function edit()
+  public function edit($key = null, $urlVar = null)
   {
     // Get the previous edit id (if any) and the current edit id.
     $previousId = (int) $this->app->getUserState(_JOOM_OPTION . '.edit.image.id');
@@ -101,7 +103,7 @@ class ImageController extends JoomFormController
   /**
    * Add a new image: Not available
    *
-   * @return  void
+   * @return  void|false
    *
    * @since   4.0.0
    */
