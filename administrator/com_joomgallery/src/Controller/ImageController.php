@@ -335,6 +335,8 @@ class ImageController extends JoomFormController
 
     // Redirect to the list screen.
     $this->setRedirect(Route::_($url, false));
+
+    return true;
   }
 
   /**

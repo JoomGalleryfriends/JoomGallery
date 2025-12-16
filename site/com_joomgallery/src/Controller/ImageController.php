@@ -18,6 +18,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
 
 /**
@@ -29,6 +30,8 @@ use Joomla\CMS\Router\Route;
 class ImageController extends JoomFormController
 {
   use RoutingTrait;
+
+  protected $view_list = 'images';
 
   /**
    * Edit an existing image.
@@ -142,6 +145,45 @@ class ImageController extends JoomFormController
 
     // Redirect to the form screen.
     $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=imageform&' . $this->getItemAppend(0, $addCatId), false));
+  }
+
+  /**
+   * Method to add multiple new image records.
+   *
+   * @return  boolean  True if the record can be added, false if not.
+   *
+   * @since   4.0
+   */
+  public function ajaxsave(): bool
+  {
+    $result = ['error' => false];
+
+    try
+    {
+      if(!parent::save())
+      {
+        $result['success'] = false;
+        $result['error']   = $this->message;
+      }
+      else
+      {
+        $result['success'] = true;
+        $result['record']  = $this->component->cache->get('imgObj');
+      }
+
+      $json = json_encode($result, JSON_FORCE_OBJECT);
+      echo new JsonResponse($json);
+
+      $this->app->close();
+    }
+    catch(\Exception $e)
+    {
+      echo new JsonResponse($e);
+
+      $this->app->close();
+    }
+
+    return true;
   }
 
   /**

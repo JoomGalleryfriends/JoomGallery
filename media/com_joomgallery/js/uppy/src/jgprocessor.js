@@ -52,7 +52,7 @@ export default class jgProcessor extends BasePlugin {
     this.sema = new Sema(
       (this.opts.semaCalls || 1),
       {
-        capacity: (this.opts.semaTokens  || 150)
+        capacity: (this.opts.semaTokens  || 150) 
       }
     );
 
@@ -94,13 +94,13 @@ export default class jgProcessor extends BasePlugin {
     return '';
   }
 
-
+  
   /**
    * Create a valid html id string from filename and uuid
    *
    * @param    {String}   file_id     The uploaded file id.
    * @param    {String}   uuid	      The uppy upload id.
-   *
+   * 
    * @returns  {String}   The html id string
    */
   idFromFilename (file_id, uuid) {
@@ -170,9 +170,9 @@ export default class jgProcessor extends BasePlugin {
       'type' : type,
       'style' : style,
       'file_id' : file_id,
-      'txt' : Joomla.JText._("COM_JOOMGALLERY_DEBUG_INFORMATION")
+      'txt' : Joomla.Text._("COM_JOOMGALLERY_DEBUG_INFORMATION")
     }
-    //let btn = '<button type="button" class="btn btn-'+type+' btn-sm '+style+'" data-bs-toggle="modal" data-bs-target="#modal'+file.uuid+'">'+Joomla.JText._("COM_JOOMGALLERY_DEBUG_INFORMATION")+'</button>';
+    //let btn = '<button type="button" class="btn btn-'+type+' btn-sm '+style+'" data-bs-toggle="modal" data-bs-target="#modal'+file.uuid+'">'+Joomla.Text._("COM_JOOMGALLERY_DEBUG_INFORMATION")+'</button>';
 
     // Add element FileInfo
     this.uppy.setFileState(file.id, {debugBtn: btn});
@@ -216,7 +216,7 @@ export default class jgProcessor extends BasePlugin {
    * @param    {Object}   file        The Uppy file that was uploaded.
    * @param    {String}   uuid	      The uppy upload id.
    * @param    {Object}   response	  The response of the ajax request to save the file
-   *
+   * 
    * @returns  {String}   The html string of the popup
    */
   createPopup (file, uuid, response) {
@@ -224,9 +224,9 @@ export default class jgProcessor extends BasePlugin {
     let popupBody = '';
 
     if(Boolean(response.success) && Boolean(response.data) && Boolean(response.data.success)) {
-      popupBody = Joomla.JText._('COM_JOOMGALLERY_SUCCESS_UPPY_UPLOAD').replace('{filename}', file.name);
+      popupBody = Joomla.Text._('COM_JOOMGALLERY_SUCCESS_UPPY_UPLOAD').replace('{filename}', file.name);
     } else {
-      popupBody = Joomla.JText._('COM_JOOMGALLERY_ERROR_UPPY_UPLOAD').replace('{filename}', file.name);
+      popupBody = Joomla.Text._('COM_JOOMGALLERY_ERROR_UPPY_UPLOAD').replace('{filename}', file.name);
     }
     if(Boolean(response.message)) {
       popupBody = popupBody + '<br /><br />' + response.message;
@@ -241,7 +241,7 @@ export default class jgProcessor extends BasePlugin {
       if(Boolean(response.messages.error)) {
         popupBody = popupBody + '<br /><br />' + response.messages.error;
       }
-    }
+    } 
     if(Boolean(response.data) && Boolean(response.data.error)) {
       popupBody = popupBody + '<br /><br />' + response.data.error;
     }
@@ -254,14 +254,14 @@ export default class jgProcessor extends BasePlugin {
     html = html +   '<div class="modal-dialog modal-lg">';
     html = html +      '<div class="modal-content">';
     html = html +           '<div class="modal-header">';
-    html = html +               '<h3 class="modal-title" id="modal'+file_id+'Label">'+Joomla.JText._('COM_JOOMGALLERY_DEBUG_INFORMATION')+'</h3>';
-    html = html +               '<button type="button" class="btn-close novalidate" data-bs-dismiss="modal" aria-label="'+Joomla.JText._('JCLOSE')+'"></button>';
+    html = html +               '<h3 class="modal-title" id="modal'+file_id+'Label">'+Joomla.Text._('COM_JOOMGALLERY_DEBUG_INFORMATION')+'</h3>';
+    html = html +               '<button type="button" class="btn-close novalidate" data-bs-dismiss="modal" aria-label="'+Joomla.Text._('JCLOSE')+'"></button>';
     html = html +           '</div>';
     html = html +           '<div class="modal-body">';
     html = html +               '<div id="'+file_id+'-ModalBody">'+popupBody+'</div>';
     html = html +           '</div>';
     html = html +           '<div class="modal-footer">';
-    html = html +               '<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="event.preventDefault()" aria-label="'+Joomla.JText._('JCLOSE')+'">'+Joomla.JText._('JCLOSE')+'</button>';
+    html = html +               '<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="event.preventDefault()" aria-label="'+Joomla.Text._('JCLOSE')+'">'+Joomla.Text._('JCLOSE')+'</button>';
     html = html +           '</div>';
     html = html +      '</div>';
     html = html +   '</div>';
@@ -277,7 +277,7 @@ export default class jgProcessor extends BasePlugin {
    * @param   {String}   tusID       ID of the tus connection (upload)
    * @param   {String}   fileID      ID of the corresponding file
    *
-   * @returns {Object}   Result object
+   * @returns {Object}   Result object 
    *                     {success: bool, status: int, message: string, messages: array, data: object}
    *                      data: response data created by JSON.parse
    */
@@ -294,8 +294,10 @@ export default class jgProcessor extends BasePlugin {
       formData.append('jform[filecounter]', this.filecounters[fileID]);
       if(formData.get('jform[description]').trim().length === 0) {
         // Receive text content from editor
-        //let txt = Joomla.editors.instances['jform_description'].getValue();
-        let txt = Joomla.editors.get('jform_description').getValue();
+		// J4
+        let txt = Joomla.editors.instances['jform_description'].getValue();
+		// J5
+        // let txt = Joomla.editors.get('jform_description').getValue();
         formData.set('jform[description]', txt);
       }
       let url = document.getElementById(this.formID).getAttribute('action');
@@ -307,7 +309,7 @@ export default class jgProcessor extends BasePlugin {
         cache: 'default',
         redirect: 'follow',
         referrerPolicy: 'no-referrer-when-downgrade',
-        body: formData
+        body: formData,
       };
 
       // Perform the fetch request
@@ -335,18 +337,18 @@ export default class jgProcessor extends BasePlugin {
         if (res.startsWith('<br />')) {
           // Response is not of type json --> probably some php warnings/notices
           let split = res.split('\n{"');
-          let temp = JSON.parse('{"'+split[1]);
-          let data = JSON.parse(temp.data);
+          let temp  = JSON.parse('{"'+split[1]);
+          let data  = JSON.parse(temp.data);
           res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
         } else {
-			res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: res}};
+		  res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: res}};
 		}
       }
 
     } finally {
       this.sema.release();
     }
-
+  
     return res;
   }
 
@@ -377,7 +379,7 @@ export default class jgProcessor extends BasePlugin {
     for (let i = 0; i < data.fileIDs.length; i++) {
       // // Add text uploading to file element
       let file = this.uppy.getFile(data.fileIDs[i]);
-      this.addStateTxt(file, Joomla.JText._('COM_JOOMGALLERY_UPLOADING')+'...');
+      this.addStateTxt(file, Joomla.Text._('COM_JOOMGALLERY_UPLOADING')+'...');
 
       // Store the class property filecounter
       this.filecounters[data.fileIDs[i]] = nmb_start+i;
@@ -417,7 +419,7 @@ export default class jgProcessor extends BasePlugin {
         console.log('[PostProcessor] Ajax request for file '+file.name+' failed.');
         console.log(response.message);
         console.log(response.messages);
-        this.setFileError(Joomla.JText._('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD').replace('{filename}', file.name), file, response);
+        this.setFileError(Joomla.Text._('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD').replace('{filename}', file.name), file, response);
 
         // Add text saving to file element
         this.addStateTxt(file, 'Saving failed');
@@ -433,7 +435,7 @@ export default class jgProcessor extends BasePlugin {
           this.uppy.log('[PostProcessor] Save record to database of file '+file.name+' failed.', 'error');
           console.log('[PostProcessor] Save record to database of file '+file.name+' failed.');
           console.log(response.data.error);
-          this.setFileError(Joomla.JText._('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD').replace('{filename}', file.name), file, response);
+          this.setFileError(Joomla.Text._('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD').replace('{filename}', file.name), file, response);
 
           // Add text saving to file element
           this.addStateTxt(file, 'Saving failed');
@@ -519,7 +521,7 @@ export default class jgProcessor extends BasePlugin {
    * Doc: https://uppy.io/docs/guides/building-plugins/#upload-hooks
    *
    * @param   {Array}    fileIDs     List of file IDs that are being uploaded
-   * @param   {String}   uploadID    ID of the current upload
+   * @param   {String}   uploadID    ID of the current upload 
    *
    * @returns {Promise}  Promise to signal completion
    */
