@@ -188,5 +188,4 @@ class UsercategoryModel extends AdminCategoryModel
   {
     return base64_encode($this->getState('return_page', ''));
   }
-
 }

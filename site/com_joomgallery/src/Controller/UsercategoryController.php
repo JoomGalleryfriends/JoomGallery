@@ -629,7 +629,7 @@ class UsercategoryController extends JoomFormController // FormController
   /**
    * Method to unpublish a category
    *
-   * @return  void 
+   * @return  void
    *
    * @throws \Exception
    * @since   4.2.0
