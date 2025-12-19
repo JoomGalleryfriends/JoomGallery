@@ -65,24 +65,6 @@ class UseruploadModel extends JoomAdminModel
   public $typeAlias = 'com_joomgallery.userupload';
 
   /**
-   * Constructor
-   *
-   * @param   array                 $config   An array of configuration options (name, state, dbo, table_path, ignore_request).
-   * @param   MVCFactoryInterface   $factory  The factory.
-   *
-   * @throws  \Exception
-   * @since   4.2.0
-   */
-  public function __construct($config = [], $factory = null)
-  {
-    parent::__construct($config, $factory);
-
-    $this->app       = Factory::getApplication();
-    $this->component = $this->app->bootComponent(_JOOM_OPTION);
-  }
-
-
-  /**
    * Method to autopopulate the model state.
    *
    * Note. Calling getState in this method will result in recursion.
@@ -130,56 +112,6 @@ class UseruploadModel extends JoomAdminModel
   }
 
   /**
-   * Method to load component specific parameters into model state.
-   *
-   * @param   int   $id  ID of the content if needed (default: 0)
-   *
-   * @return  void
-   * @throws \Exception
-   * @since   4.2.0
-   */
-  protected function loadComponentParams(int $id = 0): void
-  {
-    // Load the parameters.
-    $params       = Factory::getApplication()->getParams();
-    $params_array = $params->toArray();
-
-    if(isset($params_array['item_id']))
-    {
-      $this->setState($this->type . '.id', $params_array['item_id']);
-    }
-
-    $this->setState('parameters.component', $params);
-
-    // Load the configs from config service
-    $id = ($id === 0) ? null : $id;
-
-    // $this->component->createConfig(_JOOM_OPTION.'.'.$this->type, $id, true);
-    $this->component->createConfig(_JOOM_OPTION, $id, true);
-    $configArray = $this->component->getConfig()->getProperties();
-    $configs     = new Registry($configArray);
-
-    $this->setState('parameters.configs', $configs);
-  }
-
-  /**
-   * Method to get parameters from model state.
-   *
-   * @return  array   List of parameters
-   * @since   4.2.0
-   */
-  public function getParams(): array
-  {
-    $params = [
-      'component' => $this->getState('parameters.component'),
-      'menu'      => $this->getState('parameters.menu'),
-      'configs'   => $this->getState('parameters.configs'),
-    ];
-
-    return $params;
-  }
-
-  /**
    * Method to override a parameter in the model state
    *
    * @param   string   $property  The parameter name.
@@ -199,24 +131,6 @@ class UseruploadModel extends JoomAdminModel
 
     // Set params to state
     $this->setState('parameters.' . $type, $params);
-  }
-
-  /**
-   * Method to get the access service class.
-   *
-   * @return  AccessInterface   Object on success, false on failure.
-   * @since   4.2.0
-   */
-  public function getAcl(): AccessInterface
-  {
-    // Create access service
-    if(\is_null($this->acl))
-    {
-      $this->component->createAccess();
-      $this->acl = $this->component->getAccess();
-    }
-
-    return $this->acl;
   }
 
   /**

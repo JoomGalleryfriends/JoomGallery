@@ -96,35 +96,6 @@ class UsercategoriesModel extends AdminCategoriesModel
   }
 
   /**
-   * Build an SQL query to load the list data.
-   *
-   * @return  MysqliQuery
-   *
-   * @since   4.2.0
-   */
-  protected function getListQuery(): MysqliQuery
-  {
-    $query = parent::getListQuery();
-
-    return $query;
-  }
-
-  /**
-   * Method to get an array of data items
-   *
-   * @return  mixed An array of data on success, false on failure.
-   *
-   * @since   4.2.0
-   */
-  public function getItems()
-  {
-    $items = parent::getItems();
-
-    return $items;
-  }
-
-
-  /**
    * Method to check if user owns at least one category. Without
    * only a matching request message will be displayed
    *

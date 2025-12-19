@@ -27,7 +27,7 @@ use Joomla\CMS\Router\Route;
  * @package JoomGallery
  * @since   4.0.0
  */
-class ImageController extends JoomFormController
+class ImageController extends JoomBaseController
 {
   use RoutingTrait;
 

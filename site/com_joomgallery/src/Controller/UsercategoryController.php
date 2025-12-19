@@ -136,28 +136,6 @@ class UsercategoryController extends JoomFormController // FormController
     return $isSaved;
   }
 
-//  /**
-//   * Method to save data.
-//   *
-//   * @param $key
-//   * @param $urlVar
-//   *
-//   * @return  bool
-//   *
-//   * @throws  \Exception
-//   * @since   4.2.0
-//   */
-//  public function savePrepared($key = null, $urlVar = null): bool
-//  {
-//    // Check for request forgeries.
-//    $this->checkToken();
-//
-//    // $model = $this->component->getModel();
-//    $model = $this->getModel();
-//
-//    return $this->save($key, $urlVar);
-//  }
-
   /**
    * Method to save data.
    *
@@ -651,7 +629,7 @@ class UsercategoryController extends JoomFormController // FormController
   /**
    * Method to unpublish a category
    *
-   * @return  void
+   * @return  void 
    *
    * @throws \Exception
    * @since   4.2.0

@@ -43,7 +43,7 @@ $replaceType   = $app->input->get('type');
 
 <div class="jg jg-img-replace">
   <form id="image-form"
-        action="<?php echo Route::_('index.php?option=com_joomgallery&view=userimage&layout=editImg&id=' . $this->item->id); ?>"
+        action="<?php echo Route::_('index.php?option=com_joomgallery&view=userimage&layout=replace&id=' . $this->item->id); ?>"
         method="post" enctype="multipart/form-data" name="adminForm" class="form-validate form-horizontal"
         aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_EDIT'); ?>">
 

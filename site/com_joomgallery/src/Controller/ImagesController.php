@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 
 /**
  * Images list controller class.
@@ -23,7 +23,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminControll
  * @package JoomGallery
  * @since   4.0.0
  */
-class ImagesController extends JoomAdminController
+class ImagesController extends JoomFormController
 {
   /**
    * Proxy for getModel.

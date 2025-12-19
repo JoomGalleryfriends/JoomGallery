@@ -89,12 +89,6 @@ class HtmlView extends JoomGalleryView
    * @since 4.2
    */
   protected string $categoryTitle = '';
-  /**
-   * javascript variables for upload
-   * @var \stdClass
-   * @since version
-   */
-  private \stdClass $js_vars;
 
   /**
    * Display the view
@@ -145,21 +139,6 @@ class HtmlView extends JoomGalleryView
     if($this->_layout == 'upload')
     {
       $this->addToolbarUpload();
-
-      // Add variables to JavaScript
-      $js_vars               = new \stdClass();
-      $js_vars->maxFileSize  = (100 * 1073741824); // 100GB
-      $js_vars->TUSlocation  = $this->item->tus_location;
-      $js_vars->allowedTypes = $this->getAllowedTypes();
-
-      $js_vars->uppyTarget = '#drag-drop-area';          // Id of the DOM element to apply the uppy form
-      $js_vars->uppyLimit  = 5;                          // Number of concurrent tus upploads (only file upload)
-      $js_vars->uppyDelays = [0, 1000, 3000, 5000]; // Delay in ms between upload retrys
-
-      $js_vars->semaCalls  = $this->config->get('jg_parallelprocesses', 1); // Number of concurrent async calls to save the record to DB (including image processing)
-      $js_vars->semaTokens = 100;                                           // Prealloc space for 100 tokens
-
-      $this->js_vars = $js_vars;
 
       //--- Limits php.ini, config -----
       $this->limitsPhpConfig();
