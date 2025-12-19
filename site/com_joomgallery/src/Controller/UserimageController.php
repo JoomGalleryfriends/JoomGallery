@@ -335,7 +335,7 @@ class UserimageController extends JoomFormController
     $app->setUserState($context . '.data', null);
 
     // Redirect to edit screen
-    $url = 'index.php?option=' . _JOOM_OPTION . '&view=userimage&layout=edit&id=' . $id;
+    $url = 'index.php?option=' . _JOOM_OPTION . '&view=userimage&layout=editImg&id=' . $id;
 
     // Check if there is a return value
     $return = $this->input->get('return', null, 'base64');
