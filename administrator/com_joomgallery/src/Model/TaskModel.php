@@ -186,12 +186,25 @@ class TaskModel extends JoomAdminModel
       $data['counter']    = '{}';
     }
 
+    $isNew = empty($data['id']);
+
     if (!parent::save($data))
     {
       return false;
     }
 
     $taskId = (int) $this->getState($this->getName() . '.id');
+
+    if ($taskId === 0)
+    {
+      $table = $this->getTable();
+      $taskId = isset($table->id) ? (int) $table->id : 0;
+    }
+
+    if ($isNew && $taskId === 0)
+    {
+      $taskId = (int) $this->getDatabase()->insertid();
+    }
 
     if ($taskId === 0) {
       $this->setError('Konnte Task-ID nach dem Speichern nicht abrufen.');

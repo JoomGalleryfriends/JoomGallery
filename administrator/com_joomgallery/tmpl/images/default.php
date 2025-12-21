@@ -17,6 +17,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Helper\ApprovedButton;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Button\FeaturedButton;
 use Joomla\CMS\Button\PublishedButton;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
@@ -29,7 +30,8 @@ $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.admin')
    ->useScript('com_joomgallery.admin')
    ->useScript('table.columns')
-   ->useScript('multiselect');
+   ->useScript('multiselect')
+   ->useScript('com_joomgallery.tasks');
 
 $user      = $this->app->getIdentity();
 $userId    = $user->id;
@@ -37,6 +39,15 @@ $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery');
 $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
+
+$newTaskId = $this->app->input->get('newTaskId', 0, 'int');
+$newTaskItem = null;
+
+if ($newTaskId) {
+  // Task Model manuell booten, um das Item zu holen
+  $taskModel = Factory::getApplication()->bootComponent('com_joomgallery')->getMVCFactory()->createModel('Task', 'Administrator', ['ignore_request' => true]);
+  $newTaskItem = $taskModel->getItem($newTaskId);
+}
 
 if($saveOrder && !empty($this->items))
 {
@@ -310,4 +321,77 @@ if($saveOrder && !empty($this->items))
       </div> 
     </div>
   </div>
+
+  <?php echo LayoutHelper::render('joomgallery.task.modals'); ?>
+
+  <div class="modal fade" id="joomgallery-new-task-modal" tabindex="-1" aria-labelledby="newTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newTaskModalLabel"><?php echo Text::_('COM_JOOMGALLERY_IMAGES_RECREATE_TASK_CREATED'); ?></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body overflow-hidden">
+          <?php if ($newTaskItem): ?>
+            <?php echo LayoutHelper::render('joomgallery.task.card', $newTaskItem); ?>
+          <?php endif; ?>
+        </div>
+        <div class="modal-footer">
+          <a href="<?php echo Route::_('index.php?option=com_joomgallery&view=tasks'); ?>" class="btn btn-primary"><?php echo Text::_('COM_JOOMGALLERY_IMAGES_GO_TO_TASKS'); ?></a>
+        </div>
+      </div>
+    </div>
+  </div>
 </form>
+<?php if ($newTaskId && $newTaskItem): ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Modal automatisch öffnen, wenn ein neuer Task vorhanden ist
+      var myModal = new bootstrap.Modal(document.getElementById('joomgallery-new-task-modal'));
+      myModal.show();
+    });
+  </script>
+<?php endif; ?>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let currentlyVisibleModal = null;
+    let modalToReopen = null;
+    let isReopening = false; // Flag to prevent the re-opening loop
+
+    // Use 'shown.bs.modal' to track the modal that is fully visible.
+    document.addEventListener('shown.bs.modal', function (event) {
+      currentlyVisibleModal = event.target;
+      // The re-opening process is complete, so reset the flag.
+      isReopening = false;
+    });
+
+    // When a modal is hidden, clear the tracker if it was the one we were tracking.
+    document.addEventListener('hidden.bs.modal', function (event) {
+      if (currentlyVisibleModal === event.target) {
+        currentlyVisibleModal = null;
+      }
+    });
+
+    // When a new modal is about to be shown, check if another one is already visible.
+    document.addEventListener('show.bs.modal', function (event) {
+      // If we are in the process of re-opening a modal, do nothing.
+      if (isReopening) {
+        return;
+      }
+
+      // If a modal was open before this new one was triggered.
+      if (currentlyVisibleModal && currentlyVisibleModal !== event.target) {
+        modalToReopen = currentlyVisibleModal;
+
+        event.target.addEventListener('hidden.bs.modal', function onNewModalHidden() {
+          if (modalToReopen) {
+            isReopening = true;
+            const instance = bootstrap.Modal.getInstance(modalToReopen) || new bootstrap.Modal(modalToReopen);
+            instance.show();
+            modalToReopen = null;
+          }
+        }, { once: true });
+      }
+    });
+  });
+</script>
