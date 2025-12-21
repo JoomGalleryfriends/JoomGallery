@@ -88,67 +88,11 @@ if($saveOrder && !empty($this->items))
                 <div class="col">
                   <div class="row align-items-start">
                     <div class="col-md-12">
-                      <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                          <div class="d-flex align-items-center gap-2">
-                            <div>
-                              <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
-                            </div>
-                            <div>
-                              <strong><?= $this->escape($item->title); ?></strong><br>
-                            </div>
-<!--                            <span class="badge --><?php //= $item->published > 0 ? 'bg-success' : 'bg-secondary'; ?><!--">-->
-<!--                            --><?php //= $item->published > 0 ? Text::_('JPUBLISHED') : Text::_('JUNPUBLISHED'); ?>
-<!--                          </span>-->
-                          </div>
-
-                          <div class="d-flex gap-1">
-                            <button type="button"
-                                    title="Run Log"
-                                    class="btn btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#joomgallery-task-modal">
-                              <span class="fa fa-file-lines m-0"></span>
-                            </button>
-                            <a href="<?= Route::_('index.php?option=com_joomgallery&view=task&layout=edit&id=' . $item->id); ?>"
-                               class="btn btn-sm btn-primary" title="Edit Task">
-                              <span class="fa fa-edit m-0"></span>
-                            </a>
-                            <button type="button"
-                                    class="btn btn-sm btn-warning jg-run-instant-task"
-                                    title="Run/Pause Task"
-                                    <?= $item->published < 0 ? 'disabled' : ''; ?>
-                                    data-id="<?= (int)$item->id; ?>"
-                                    data-title="<?= htmlspecialchars($item->title); ?>"
-                                    data-limit="<?= $item->params->get('parallel_limit', 1) ?>">
-                              <span class="fa fa-play m-0"></span>
-                            </button>
-                          </div>
-
-                        </div>
-                        <div class="card-body">
-                          <div class="progress mb-2" style="height: 6px;">
-                            <div id="progress-<?= $item->id; ?>"
-                                 class="progress-bar"
-                                 style="width: <?= $item->progress; ?>%"
-                                 aria-valuenow="<?= $item->progress; ?>"
-                                 aria-valuemin="0" aria-valuemax="100">
-                            </div>
-                          </div>
-
-                          <div class="d-flex justify-content-between small mb-2">
-                            <span><?= Text::_('COM_JOOMGALLERY_PENDING'); ?>: <span id="count-pending-<?= $item->id; ?>"><?= $item->count_pending; ?></span></span>
-                            <span><?= Text::_('COM_JOOMGALLERY_SUCCESSFUL'); ?>: <span id="count-success-<?= $item->id; ?>"><?= $item->count_success; ?></span></span>
-                            <a href="#"
-                               class="jg-show-failed-items"
-                               data-task-id="<?= $item->id; ?>"
-                               data-bs-toggle="modal"
-                               data-bs-target="#joomgallery-failed-items-modal">
-                              <?= Text::_('COM_JOOMGALLERY_FAILED'); ?>: <span id="count-failed-<?= $item->id; ?>"><?= $item->count_failed; ?></span>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
+                      <?php
+                      // Index hinzufügen für die Checkbox-Generierung im Layout
+                      $item->grid_index = $i;
+                      echo LayoutHelper::render('joomgallery.task.card', $item);
+                      ?>
                     </div>
                   </div>
                 </div>
@@ -163,19 +107,7 @@ if($saveOrder && !empty($this->items))
       </div>
     </form>
 
-      <?php
-      $modalParams = ['title' => Text::_('COM_JOOMGALLERY_TASK_RUNNING'), 'id' => 'joomgallery-task-modal'];
-      $modalBody = '<div id="jg-modal-log-output" class="card card-body border overflow-visible text-dark log-area" style="max-height: 400px; overflow-y: auto;"></div>';
-      echo HTMLHelper::_('bootstrap.renderModal', 'joomgallery-task-modal', $modalParams, $modalBody);
-      ?>
-      <?php
-      $failedModalParams = [
-        'title' => Text::_('COM_JOOMGALLERY_TASKS_FAILED_ITEMS_TITLE'), // Sie benötigen diesen neuen Sprachstring
-        'id'    => 'joomgallery-failed-items-modal'
-      ];
-      $failedModalBody = '<div id="jg-failed-items-list" class="overflow-visible text-muted log-area" style="max-height: 400px; overflow-y: auto;"></div>';
-      echo HTMLHelper::_('bootstrap.renderModal', 'joomgallery-failed-items-modal', $failedModalParams, $failedModalBody);
-      ?>
+      <?php echo LayoutHelper::render('joomgallery.task.modals'); ?>
     </div>
     <br><hr><br>
 
