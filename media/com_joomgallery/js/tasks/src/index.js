@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (response.data.items && response.data.items.length > 0) {
             let html = '<ul class="list-group">';
             response.data.items.forEach(item => {
-              html += `<li class="list-group-item"><strong>Item ${item.item_id || 'Unknown'}:</strong><br>${item.error_message || 'No error message'}</li>`;
+              html += `<li class="list-group-item" data-item-id="${item.item_id || ''}"><strong>Item ${item.item_id || 'Unknown'}:</strong><br>${item.error_message || 'No error message'}</li>`;
             });
             html += '</ul>';
             modalBody.innerHTML = html;
@@ -76,6 +76,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (error) {
         modalBody.innerHTML = `<p class="text-danger">An error occurred: ${error.message}</p>`;
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-copy-failed-button]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const listContainer = document.getElementById('jg-failed-items-list');
+      if (!listContainer) {
+        return;
+      }
+
+      const items = listContainer.querySelectorAll('li[data-item-id]');
+      const itemIds = Array.from(items)
+        .map(item => item.dataset.itemId)
+        .filter(id => id)
+        .join(',');
+
+      if (itemIds) {
+        try {
+          await navigator.clipboard.writeText(itemIds);
+          const originalTitle = button.getAttribute('title');
+          const icon = button.querySelector('span.fa');
+          button.setAttribute('title', 'Copied!');
+          if (icon) {
+            icon.classList.remove('fa-copy');
+            icon.classList.add('fa-check');
+          }
+          setTimeout(() => {
+            button.setAttribute('title', originalTitle);
+            if (icon) {
+              icon.classList.remove('fa-check');
+              icon.classList.add('fa-copy');
+            }
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy item IDs: ', err);
+          alert('Failed to copy IDs to clipboard.');
+        }
       }
     });
   });
@@ -238,6 +277,7 @@ async function runTask(event, element, isNewRun = false) {
   // If not stopped by user (pause), clean up and reload
   if (!userPaused) {
     addLog('Cleaning up and reloading...', logContainer, 'info');
+    const url = new URL(window.location.href);
 
     try {
       const res = await cleanupTask(taskId);
@@ -245,19 +285,20 @@ async function runTask(event, element, isNewRun = false) {
 
       if (json.success) {
         if (json.data && json.data.deleted === false) {
-          console.warn('Reloading, but task was not deleted:', json.data.reason);
+          console.warn('Task was not deleted:', json.data.reason);
+        } else {
+          url.searchParams.delete('newTaskId');
+          window.location.replace(url.toString());
         }
-        window.location.reload();
       } else {
         alert('System error during cleanup: ' + json.message);
-        window.location.reload(); // Trotzdem reload als Fallback
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      finishTaskUI(taskId);
     }
 
-    // Fallback reload (ensure reload happens even if JSON parsing fails)
-    window.location.reload();
     return;
   }
 
@@ -466,7 +507,6 @@ let cleanupTask = async function(taskId) {
   formData.append('task_id', taskId);
   formData.append(Joomla.getOptions('csrf.token'), 1);
 
-  // We wait for the response, but the content doesn't matter for the reload strategy
   return fetch(document.getElementById('adminForm').getAttribute('action'), {
     method: 'POST',
     body: formData
