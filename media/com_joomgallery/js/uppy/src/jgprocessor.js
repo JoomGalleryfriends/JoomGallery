@@ -7,8 +7,8 @@ export default class jgProcessor extends BasePlugin {
    * Constructor
    * Doc: https://uppy.io/docs/guides/building-plugins/#creating-a-plugin
    *
-   * @param   {Object}   uppy	   Uppy instance
-   * @param   {Object}   opts	   Options object passed in to the uppy.use()
+   * @param   {Object}   uppy      Uppy instance
+   * @param   {Object}   opts      Options object passed in to the uppy.use()
    *
    * @returns {Viod}
    * @throws Error
@@ -52,7 +52,7 @@ export default class jgProcessor extends BasePlugin {
     this.sema = new Sema(
       (this.opts.semaCalls || 1),
       {
-        capacity: (this.opts.semaTokens  || 150) 
+        capacity: (this.opts.semaTokens  || 150)
       }
     );
 
@@ -66,7 +66,7 @@ export default class jgProcessor extends BasePlugin {
   /**
    * Setter for options
    *
-   * @param   {Object}   newOpts	  Options object
+   * @param   {Object}   newOpts      Options object
    *
    * @returns {Viod}
    */
@@ -77,7 +77,7 @@ export default class jgProcessor extends BasePlugin {
   /**
    * Read out the uuid from the upload URL
    *
-   * @param   {String}   uploadURL	   The URL
+   * @param   {String}   uploadURL     The URL
    *
    * @returns {String}   The uuid
    */
@@ -94,13 +94,13 @@ export default class jgProcessor extends BasePlugin {
     return '';
   }
 
-  
+
   /**
    * Create a valid html id string from filename and uuid
    *
    * @param    {String}   file_id     The uploaded file id.
-   * @param    {String}   uuid	      The uppy upload id.
-   * 
+   * @param    {String}   uuid        The uppy upload id.
+   *
    * @returns  {String}   The html id string
    */
   idFromFilename (file_id, uuid) {
@@ -156,10 +156,10 @@ export default class jgProcessor extends BasePlugin {
   /**
    * Add debug button to preview in dashboard
    *
-   * @param  {Object}   file	    The Uppy file that was uploaded.
-   * @param  {String}   type	    Button type. (success or danger)
-   * @param  {String}   uuid	    The uppy upload id.
-   * @param  {String}   style	    Class to add to the button. (optional)
+   * @param  {Object}   file        The Uppy file that was uploaded.
+   * @param  {String}   type        Button type. (success or danger)
+   * @param  {String}   uuid        The uppy upload id.
+   * @param  {String}   style       Class to add to the button. (optional)
    */
   addDebugBtn (file, type, uuid, style='') {
     // Create file_id
@@ -181,8 +181,8 @@ export default class jgProcessor extends BasePlugin {
   /**
    * Add state text to preview in dashboard
    *
-   * @param  {Object}   file	   The Uppy file that was uploaded.
-   * @param  {String}   text	   The text content to be added.
+   * @param  {Object}   file       The Uppy file that was uploaded.
+   * @param  {String}   text       The text content to be added.
    */
   addStateTxt (file, text) {
     // Add element FileInfo
@@ -192,8 +192,8 @@ export default class jgProcessor extends BasePlugin {
   /**
    * Add a new title to an uploaded file
    *
-   * @param  {Object}   file	   The Uppy file that was uploaded.
-   * @param  {String}   title	   The title to be added.
+   * @param  {Object}   file       The Uppy file that was uploaded.
+   * @param  {String}   title      The title to be added.
    */
   addTitle (file, title) {
     let newMeta = file.meta;
@@ -214,9 +214,9 @@ export default class jgProcessor extends BasePlugin {
    * Create the HTML string for a bootstrap modal
    *
    * @param    {Object}   file        The Uppy file that was uploaded.
-   * @param    {String}   uuid	      The uppy upload id.
-   * @param    {Object}   response	  The response of the ajax request to save the file
-   * 
+   * @param    {String}   uuid        The uppy upload id.
+   * @param    {Object}   response    The response of the ajax request to save the file
+   *
    * @returns  {String}   The html string of the popup
    */
   createPopup (file, uuid, response) {
@@ -241,7 +241,7 @@ export default class jgProcessor extends BasePlugin {
       if(Boolean(response.messages.error)) {
         popupBody = popupBody + '<br /><br />' + response.messages.error;
       }
-    } 
+    }
     if(Boolean(response.data) && Boolean(response.data.error)) {
       popupBody = popupBody + '<br /><br />' + response.data.error;
     }
@@ -277,7 +277,7 @@ export default class jgProcessor extends BasePlugin {
    * @param   {String}   tusID       ID of the tus connection (upload)
    * @param   {String}   fileID      ID of the corresponding file
    *
-   * @returns {Object}   Result object 
+   * @returns {Object}   Result object
    *                     {success: bool, status: int, message: string, messages: array, data: object}
    *                      data: response data created by JSON.parse
    */
@@ -294,9 +294,9 @@ export default class jgProcessor extends BasePlugin {
       formData.append('jform[filecounter]', this.filecounters[fileID]);
       if(formData.get('jform[description]').trim().length === 0) {
         // Receive text content from editor
-		// J4
+        // J4
         let txt = Joomla.editors.instances['jform_description'].getValue();
-		// J5
+        // J5
         // let txt = Joomla.editors.get('jform_description').getValue();
         formData.set('jform[description]', txt);
       }
@@ -341,14 +341,14 @@ export default class jgProcessor extends BasePlugin {
           let data  = JSON.parse(temp.data);
           res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
         } else {
-		  res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: res}};
-		}
+              res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: res}};
+        }
       }
 
     } finally {
       this.sema.release();
     }
-  
+
     return res;
   }
 
@@ -521,7 +521,7 @@ export default class jgProcessor extends BasePlugin {
    * Doc: https://uppy.io/docs/guides/building-plugins/#upload-hooks
    *
    * @param   {Array}    fileIDs     List of file IDs that are being uploaded
-   * @param   {String}   uploadID    ID of the current upload 
+   * @param   {String}   uploadID    ID of the current upload
    *
    * @returns {Promise}  Promise to signal completion
    */

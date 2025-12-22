@@ -5160,6 +5160,7 @@ class jgDashboard extends _uppy_dashboard_lib_Dashboard_js__WEBPACK_IMPORTED_MOD
 }
 jgDashboard.VERSION = packageJson.version;
 
+
 /***/ }),
 
 /***/ "./src/jgDashboard/components/Dashboard.js":
@@ -5368,6 +5369,7 @@ function Dashboard(props) {
   })))));
   return dashboard;
 }
+
 
 /***/ }),
 
@@ -5629,6 +5631,7 @@ class FileItem extends _uppy_dashboard_lib_components_FileItem_index_js__WEBPACK
   }
 }
 
+
 /***/ }),
 
 /***/ "./src/jgDashboard/components/FileList.js":
@@ -5766,6 +5769,7 @@ function chunks(list, size) {
   });
 });
 
+
 /***/ }),
 
 /***/ "./src/jgDashboard/index.js":
@@ -5780,6 +5784,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* reexport safe */ _Dashboard_js__WEBPACK_IMPORTED_MODULE_0__["default"])
 /* harmony export */ });
 /* harmony import */ var _Dashboard_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Dashboard.js */ "./src/jgDashboard/Dashboard.js");
+
 
 
 /***/ }),
@@ -5807,8 +5812,8 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
    * Constructor
    * Doc: https://uppy.io/docs/guides/building-plugins/#creating-a-plugin
    *
-   * @param   {Object}   uppy	   Uppy instance
-   * @param   {Object}   opts	   Options object passed in to the uppy.use()
+   * @param   {Object}   uppy      Uppy instance
+   * @param   {Object}   opts      Options object passed in to the uppy.use()
    *
    * @returns {Viod}
    * @throws Error
@@ -5844,15 +5849,15 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
     };
 
     // Initialize other properties
-    this.formData     = new Object();
-    this.filecounters = new Object();
+    this.formData     = {};
+    this.filecounters = {};
 
     // Initialize sema
     const { Sema } = __webpack_require__(/*! async-sema */ "./node_modules/async-sema/lib/index.js");
     this.sema = new Sema(
       (this.opts.semaCalls || 1),
       {
-        capacity: (this.opts.semaTokens  || 150) 
+        capacity: (this.opts.semaTokens  || 150)
       }
     );
 
@@ -5866,7 +5871,7 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
   /**
    * Setter for options
    *
-   * @param   {Object}   newOpts	  Options object
+   * @param   {Object}   newOpts      Options object
    *
    * @returns {Viod}
    */
@@ -5877,7 +5882,7 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
   /**
    * Read out the uuid from the upload URL
    *
-   * @param   {String}   uploadURL	   The URL
+   * @param   {String}   uploadURL     The URL
    *
    * @returns {String}   The uuid
    */
@@ -5894,13 +5899,13 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
     return '';
   }
 
-  
+
   /**
    * Create a valid html id string from filename and uuid
    *
    * @param    {String}   file_id     The uploaded file id.
-   * @param    {String}   uuid	      The uppy upload id.
-   * 
+   * @param    {String}   uuid        The uppy upload id.
+   *
    * @returns  {String}   The html id string
    */
   idFromFilename (file_id, uuid) {
@@ -5956,10 +5961,10 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
   /**
    * Add debug button to preview in dashboard
    *
-   * @param  {Object}   file	    The Uppy file that was uploaded.
-   * @param  {String}   type	    Button type. (success or danger)
-   * @param  {String}   uuid	    The uppy upload id.
-   * @param  {String}   style	    Class to add to the button. (optional)
+   * @param  {Object}   file        The Uppy file that was uploaded.
+   * @param  {String}   type        Button type. (success or danger)
+   * @param  {String}   uuid        The uppy upload id.
+   * @param  {String}   style       Class to add to the button. (optional)
    */
   addDebugBtn (file, type, uuid, style='') {
     // Create file_id
@@ -5970,9 +5975,9 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
       'type' : type,
       'style' : style,
       'file_id' : file_id,
-      'txt' : Joomla.JText._("COM_JOOMGALLERY_DEBUG_INFORMATION")
+      'txt' : Joomla.Text._("COM_JOOMGALLERY_DEBUG_INFORMATION")
     }
-    //let btn = '<button type="button" class="btn btn-'+type+' btn-sm '+style+'" data-bs-toggle="modal" data-bs-target="#modal'+file.uuid+'">'+Joomla.JText._("COM_JOOMGALLERY_DEBUG_INFORMATION")+'</button>';
+    //let btn = '<button type="button" class="btn btn-'+type+' btn-sm '+style+'" data-bs-toggle="modal" data-bs-target="#modal'+file.uuid+'">'+Joomla.Text._("COM_JOOMGALLERY_DEBUG_INFORMATION")+'</button>';
 
     // Add element FileInfo
     this.uppy.setFileState(file.id, {debugBtn: btn});
@@ -5981,8 +5986,8 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
   /**
    * Add state text to preview in dashboard
    *
-   * @param  {Object}   file	   The Uppy file that was uploaded.
-   * @param  {String}   text	   The text content to be added.
+   * @param  {Object}   file       The Uppy file that was uploaded.
+   * @param  {String}   text       The text content to be added.
    */
   addStateTxt (file, text) {
     // Add element FileInfo
@@ -5992,8 +5997,8 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
   /**
    * Add a new title to an uploaded file
    *
-   * @param  {Object}   file	   The Uppy file that was uploaded.
-   * @param  {String}   title	   The title to be added.
+   * @param  {Object}   file       The Uppy file that was uploaded.
+   * @param  {String}   title      The title to be added.
    */
   addTitle (file, title) {
     let newMeta = file.meta;
@@ -6014,9 +6019,9 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
    * Create the HTML string for a bootstrap modal
    *
    * @param    {Object}   file        The Uppy file that was uploaded.
-   * @param    {String}   uuid	      The uppy upload id.
-   * @param    {Object}   response	  The response of the ajax request to save the file
-   * 
+   * @param    {String}   uuid        The uppy upload id.
+   * @param    {Object}   response    The response of the ajax request to save the file
+   *
    * @returns  {String}   The html string of the popup
    */
   createPopup (file, uuid, response) {
@@ -6024,9 +6029,9 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
     let popupBody = '';
 
     if(Boolean(response.success) && Boolean(response.data) && Boolean(response.data.success)) {
-      popupBody = Joomla.JText._('COM_JOOMGALLERY_SUCCESS_UPPY_UPLOAD').replace('{filename}', file.name);
+      popupBody = Joomla.Text._('COM_JOOMGALLERY_SUCCESS_UPPY_UPLOAD').replace('{filename}', file.name);
     } else {
-      popupBody = Joomla.JText._('COM_JOOMGALLERY_ERROR_UPPY_UPLOAD').replace('{filename}', file.name);
+      popupBody = Joomla.Text._('COM_JOOMGALLERY_ERROR_UPPY_UPLOAD').replace('{filename}', file.name);
     }
     if(Boolean(response.message)) {
       popupBody = popupBody + '<br /><br />' + response.message;
@@ -6041,7 +6046,7 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
       if(Boolean(response.messages.error)) {
         popupBody = popupBody + '<br /><br />' + response.messages.error;
       }
-    } 
+    }
     if(Boolean(response.data) && Boolean(response.data.error)) {
       popupBody = popupBody + '<br /><br />' + response.data.error;
     }
@@ -6054,14 +6059,14 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
     html = html +   '<div class="modal-dialog modal-lg">';
     html = html +      '<div class="modal-content">';
     html = html +           '<div class="modal-header">';
-    html = html +               '<h3 class="modal-title" id="modal'+file_id+'Label">'+Joomla.JText._('COM_JOOMGALLERY_DEBUG_INFORMATION')+'</h3>';
-    html = html +               '<button type="button" class="btn-close novalidate" data-bs-dismiss="modal" aria-label="'+Joomla.JText._('JCLOSE')+'"></button>';
+    html = html +               '<h3 class="modal-title" id="modal'+file_id+'Label">'+Joomla.Text._('COM_JOOMGALLERY_DEBUG_INFORMATION')+'</h3>';
+    html = html +               '<button type="button" class="btn-close novalidate" data-bs-dismiss="modal" aria-label="'+Joomla.Text._('JCLOSE')+'"></button>';
     html = html +           '</div>';
     html = html +           '<div class="modal-body">';
     html = html +               '<div id="'+file_id+'-ModalBody">'+popupBody+'</div>';
     html = html +           '</div>';
     html = html +           '<div class="modal-footer">';
-    html = html +               '<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="event.preventDefault()" aria-label="'+Joomla.JText._('JCLOSE')+'">'+Joomla.JText._('JCLOSE')+'</button>';
+    html = html +               '<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="event.preventDefault()" aria-label="'+Joomla.Text._('JCLOSE')+'">'+Joomla.Text._('JCLOSE')+'</button>';
     html = html +           '</div>';
     html = html +      '</div>';
     html = html +   '</div>';
@@ -6077,7 +6082,7 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
    * @param   {String}   tusID       ID of the tus connection (upload)
    * @param   {String}   fileID      ID of the corresponding file
    *
-   * @returns {Object}   Result object 
+   * @returns {Object}   Result object
    *                     {success: bool, status: int, message: string, messages: array, data: object}
    *                      data: response data created by JSON.parse
    */
@@ -6094,7 +6099,10 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
       formData.append('jform[filecounter]', this.filecounters[fileID]);
       if(formData.get('jform[description]').trim().length === 0) {
         // Receive text content from editor
+        // J4
         let txt = Joomla.editors.instances['jform_description'].getValue();
+        // J5
+        // let txt = Joomla.editors.get('jform_description').getValue();
         formData.set('jform[description]', txt);
       }
       let url = document.getElementById(this.formID).getAttribute('action');
@@ -6134,18 +6142,18 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
         if (res.startsWith('<br />')) {
           // Response is not of type json --> probably some php warnings/notices
           let split = res.split('\n{"');
-          let temp = JSON.parse('{"'+split[1]);
-          let data = JSON.parse(temp.data);
+          let temp  = JSON.parse('{"'+split[1]);
+          let data  = JSON.parse(temp.data);
           res = {success: true, status: response.status, message: split[0], messages: temp.messages, data: data};
         } else {
-			res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: res}};
-		}
+              res = {success: false, status: response.status, message: response.statusText, messages: {}, data: {error: res}};
+        }
       }
 
     } finally {
       this.sema.release();
     }
-  
+
     return res;
   }
 
@@ -6176,11 +6184,11 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
     for (let i = 0; i < data.fileIDs.length; i++) {
       // // Add text uploading to file element
       let file = this.uppy.getFile(data.fileIDs[i]);
-      this.addStateTxt(file, Joomla.JText._('COM_JOOMGALLERY_UPLOADING')+'...');
+      this.addStateTxt(file, Joomla.Text._('COM_JOOMGALLERY_UPLOADING')+'...');
 
       // Store the class property filecounter
       this.filecounters[data.fileIDs[i]] = nmb_start+i;
-    };
+    }
   }
 
   /**
@@ -6216,7 +6224,7 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
         console.log('[PostProcessor] Ajax request for file '+file.name+' failed.');
         console.log(response.message);
         console.log(response.messages);
-        this.setFileError(Joomla.JText._('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD').replace('{filename}', file.name), file, response);
+        this.setFileError(Joomla.Text._('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD').replace('{filename}', file.name), file, response);
 
         // Add text saving to file element
         this.addStateTxt(file, 'Saving failed');
@@ -6232,7 +6240,7 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
           this.uppy.log('[PostProcessor] Save record to database of file '+file.name+' failed.', 'error');
           console.log('[PostProcessor] Save record to database of file '+file.name+' failed.');
           console.log(response.data.error);
-          this.setFileError(Joomla.JText._('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD').replace('{filename}', file.name), file, response);
+          this.setFileError(Joomla.Text._('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD').replace('{filename}', file.name), file, response);
 
           // Add text saving to file element
           this.addStateTxt(file, 'Saving failed');
@@ -6318,7 +6326,7 @@ class jgProcessor extends _uppy_core__WEBPACK_IMPORTED_MODULE_2__["default"] {
    * Doc: https://uppy.io/docs/guides/building-plugins/#upload-hooks
    *
    * @param   {Array}    fileIDs     List of file IDs that are being uploaded
-   * @param   {String}   uploadID    ID of the current upload 
+   * @param   {String}   uploadID    ID of the current upload
    *
    * @returns {Promise}  Promise to signal completion
    */
