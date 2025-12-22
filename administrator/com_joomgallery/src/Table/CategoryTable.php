@@ -135,7 +135,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 
     if(!empty($this->password) && !\in_array($keys, $unlockedCats))
     {
-// ToDo: Manuel
+// ToDo: solve context issue see issue 288
 //      //if(!$comp->getAccess()->checkACL('admin') || $user->id != $this->created_by)
 //      $isAccess = $comp->getAccess()->checkACL('edit');
 //      $diffUser = $user->id != $this->created_by;
