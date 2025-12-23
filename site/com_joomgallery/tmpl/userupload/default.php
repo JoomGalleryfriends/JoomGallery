@@ -22,7 +22,6 @@ use Joomla\CMS\Router\Route;
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
   ->useScript('form.validate')
-  ->useScript('com_joomgallery.uppy-uploader')
   ->useScript('bootstrap.modal')
   ->useScript('bootstrap.collapse')
   ->useStyle('com_joomgallery.uppy')
@@ -71,27 +70,32 @@ $displayTipData = [
 ];
 $rendererTip    = new FileLayout('joomgallery.tip');
 
+if(!$this->isUserLoggedIn)
+{
+  // uppy upload script
+  $wa->useScript('com_joomgallery.uppy-uploader'); // $this->isUserHasCategory
 
-// Add language strings to JavaScript
-Text::script('JCLOSE');
-Text::script('JAUTHOR');
-Text::script('JGLOBAL_TITLE');
-Text::script('JGLOBAL_DESCRIPTION');
-Text::script('JGLOBAL_VALIDATION_FORM_FAILED');
-Text::script('COM_JOOMGALLERY_UPLOADING');
-Text::script('COM_JOOMGALLERY_SAVING');
-Text::script('COM_JOOMGALLERY_WAITING');
-Text::script('COM_JOOMGALLERY_DEBUG_INFORMATION');
-Text::script('COM_JOOMGALLERY_FILE_TITLE_HINT');
-Text::script('COM_JOOMGALLERY_FILE_DESCRIPTION_HINT');
-Text::script('COM_JOOMGALLERY_FILE_AUTHOR_HINT');
-Text::script('COM_JOOMGALLERY_SUCCESS_UPPY_UPLOAD');
-Text::script('COM_JOOMGALLERY_ERROR_UPPY_UPLOAD');
-Text::script('COM_JOOMGALLERY_ERROR_UPPY_FORM');
-Text::script('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD');
-Text::script('COM_JOOMGALLERY_ERROR_FILL_REQUIRED_FIELDS');
+  // Add language strings to JavaScript
+  Text::script('JCLOSE');
+  Text::script('JAUTHOR');
+  Text::script('JGLOBAL_TITLE');
+  Text::script('JGLOBAL_DESCRIPTION');
+  Text::script('JGLOBAL_VALIDATION_FORM_FAILED');
+  Text::script('COM_JOOMGALLERY_UPLOADING');
+  Text::script('COM_JOOMGALLERY_SAVING');
+  Text::script('COM_JOOMGALLERY_WAITING');
+  Text::script('COM_JOOMGALLERY_DEBUG_INFORMATION');
+  Text::script('COM_JOOMGALLERY_FILE_TITLE_HINT');
+  Text::script('COM_JOOMGALLERY_FILE_DESCRIPTION_HINT');
+  Text::script('COM_JOOMGALLERY_FILE_AUTHOR_HINT');
+  Text::script('COM_JOOMGALLERY_SUCCESS_UPPY_UPLOAD');
+  Text::script('COM_JOOMGALLERY_ERROR_UPPY_UPLOAD');
+  Text::script('COM_JOOMGALLERY_ERROR_UPPY_FORM');
+  Text::script('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD');
+  Text::script('COM_JOOMGALLERY_ERROR_FILL_REQUIRED_FIELDS');
 
-$wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_vars) . '\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
+  $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_vars).'\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
+}
 
 ?>
 
