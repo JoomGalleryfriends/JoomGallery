@@ -70,9 +70,10 @@ $displayTipData = [
 ];
 $rendererTip    = new FileLayout('joomgallery.tip');
 
-if(!$this->isUserLoggedIn)
+// load script only whne user is logged in (uppy needs access to existing category)
+if($this->isUserLoggedIn && $this->isUserHasCategory)
 {
-  // uppy upload script
+  // use uppy upload script
   $wa->useScript('com_joomgallery.uppy-uploader'); // $this->isUserHasCategory
 
   // Add language strings to JavaScript
