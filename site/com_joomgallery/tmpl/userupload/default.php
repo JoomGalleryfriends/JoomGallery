@@ -95,7 +95,7 @@ if($this->isUserLoggedIn && $this->isUserHasCategory)
   Text::script('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD');
   Text::script('COM_JOOMGALLERY_ERROR_FILL_REQUIRED_FIELDS');
 
-  $wa->addInlineScript('window.uppyVars = JSON.parse(\''.json_encode($this->js_vars).'\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
+  $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_vars) . '\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
 }
 
 ?>

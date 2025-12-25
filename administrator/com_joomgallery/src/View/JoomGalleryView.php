@@ -185,7 +185,7 @@ class JoomGalleryView extends BaseHtmlView
     {
       if($menu_link->getVar('id', 0))
       {
-        if ( !empty ($this->item) && property_exists($this->item, 'id'))
+        if( !empty($this->item) && property_exists($this->item, 'id'))
         {
           return $menu_link->getVar('id', 0) == $this->item->id;
         }
