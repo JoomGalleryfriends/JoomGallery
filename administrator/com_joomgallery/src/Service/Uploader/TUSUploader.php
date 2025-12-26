@@ -150,7 +150,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     // Get upload date
     if(empty($data['date']) || strpos($data['date'], '1900-01-01') !== false)
     {
-      $data['date'] = date('Y-m-d');
+      $data['date'] = date('Y-m-d H:i:s');
     }
 
     // Get tus metadata
