@@ -35,116 +35,36 @@ class ImageController extends JoomFormController
 
   /**
    * Edit an existing image.
-   * Redirect to form view.
    *
-   * @return  void|false
-   *
-   * @since   4.0.0
+   * @throws \Exception
+   * @since   4.2.0
    */
   public function edit($key = null, $urlVar = null)
   {
-    // Get the previous edit id (if any) and the current edit id.
-    $previousId = (int) $this->app->getUserState(_JOOM_OPTION . '.edit.image.id');
-    $cid        = (array) $this->input->post->get('cid', [], 'int');
-    $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
-
-    if($boxchecked)
-    {
-      $editId = (int) $cid[0];
-    }
-    else
-    {
-      $editId = $this->input->getInt('id', 0);
-    }
-
-    // ID check
-    if(!$editId)
-    {
-      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
-
-      return false;
-    }
-
-    // Access check
-    $parent_id = JoomHelper::getParent('image', $editId);
-
-    if(!$this->acl->checkACL('edit', 'image', $editId, $parent_id, true))
-    {
-      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
-
-      return false;
-    }
-
-    // Set the current edit id in the session.
-    $this->app->setUserState(_JOOM_OPTION . '.edit.image.id', $editId);
-
-    // Get the model.
-    $model = $this->getModel('Image', 'Site');
-
-    // Check out the item
-    if(!$model->checkout($editId))
-    {
-      // Check-out failed, display a notice but allow the user to see the record.
-      $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKOUT_FAILED', $model->getError()), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
-
-      return false;
-    }
-
-    // Check in the previous user.
-    if($previousId && $previousId !== $editId)
-    {
-      $model->checkin($previousId);
-    }
-
-    // Redirect to the form screen.
-    $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=imageform&' . $this->getItemAppend($editId), false));
+    throw new \Exception('Edit an existing image not possible. Use imageform controller instead.', 503);
   }
+
 
   /**
    * Add a new image: Not available
    *
-   * @return  void|false
-   *
-   * @since   4.0.0
+   * @throws \Exception
+   * @since   4.2.0
    */
   public function add()
   {
-    // Get the previous edit id (if any) and the current edit id.
-    $previousId = (int) $this->app->getUserState(_JOOM_OPTION . '.add.image.id');
-    $cid        = (array) $this->input->post->get('cid', [], 'int');
-    $editId     = (int) (\count($cid) ? $cid[0] : $this->input->getInt('id', 0));
-    $addCatId   = (int) $this->input->getInt('catid', 0);
+    throw new \Exception('Edit an existing image not possible. Use imageform controller instead.', 503);
+  }
 
-    // Access check
-    if(!$this->acl->checkACL('add', 'image', $editId, $addCatId, true))
-    {
-      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($editId), false));
-
-      return false;
-    }
-
-    // Clear form data from session
-    $this->app->setUserState(_JOOM_OPTION . '.edit.image.data', []);
-
-    // Set the current edit id in the session.
-    $this->app->setUserState(_JOOM_OPTION . '.add.image.catid', $addCatId);
-    $this->app->setUserState(_JOOM_OPTION . '.edit.image.id', 0);
-
-    // Check in the previous user.
-    if($previousId && $previousId !== $addCatId)
-    {
-      // Get the model.
-      $model = $this->getModel('Image', 'Site');
-
-      $model->checkin($previousId);
-    }
-
-    // Redirect to the form screen.
-    $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=imageform&' . $this->getItemAppend(0, $addCatId), false));
+  /**
+   * Load item to edit associations in com_associations
+   *
+   * @throws \Exception
+   * @since   4.2.0
+   */
+  public function editAssociations()
+  {
+    throw new \Exception('Edit associations not possible. Use imageform controller instead.', 503);
   }
 
   /**
@@ -190,6 +110,7 @@ class ImageController extends JoomFormController
    * Remove an image
    *
    * @throws \Exception
+   * @since   4.2.0
    */
   public function remove()
   {
@@ -200,6 +121,7 @@ class ImageController extends JoomFormController
    * Checkin a checked out image.
    *
    * @throws \Exception
+   * @since   4.2.0
    */
   public function checkin()
   {
@@ -210,6 +132,7 @@ class ImageController extends JoomFormController
    * Method to publish an image
    *
    * @throws \Exception
+   * @since   4.2.0
    */
   public function publish()
   {
@@ -220,6 +143,7 @@ class ImageController extends JoomFormController
    * Method to unpublish an image
    *
    * @throws \Exception
+   * @since   4.2.0
    */
   public function unpublish()
   {
