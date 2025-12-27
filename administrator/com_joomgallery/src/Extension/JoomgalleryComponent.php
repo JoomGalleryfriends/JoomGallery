@@ -198,10 +198,12 @@ RouterServiceTrait::createRouter as traitCreateRouter;
       {
         case 'image':
         case 'imageform':
+        case 'userimage':
             return 'image';
 
         case 'category':
         case 'categoryform':
+        case 'usercategory':
             return 'category';
       }
     }
@@ -230,6 +232,8 @@ RouterServiceTrait::createRouter as traitCreateRouter;
     return [
       'com_joomgallery.image' => $language->_('COM_JOOMGALLERY_IMAGES'),
       'com_joomgallery.category'    => $language->_('JCATEGORIES'),
+      'com_joomgallery.userimage' => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.usercategory' => $language->_('JCATEGORIES'),
     ];
   }
 }

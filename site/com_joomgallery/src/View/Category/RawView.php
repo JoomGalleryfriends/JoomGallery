@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\View\Category\RawView as AdminRawView;
+use Joomla\Language\Text;
 
 /**
  * Raw view class for a single Category-Image.

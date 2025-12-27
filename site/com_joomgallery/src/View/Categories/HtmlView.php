@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Categories;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\CategoriesModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Router\Route;
@@ -31,6 +32,12 @@ class HtmlView extends JoomGalleryView
   protected $items;
 
   protected $pagination;
+
+  /**
+   * @var array
+   * @since 4.2
+   */
+  protected array $ordering = [];
 
   /**
    * The page parameters
@@ -80,7 +87,7 @@ class HtmlView extends JoomGalleryView
       // Redirect to category view
       $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=1'));
 
-      return false;
+    return;
     }
 
     // Preprocess the list of items to find ordering divisions.
@@ -127,11 +134,11 @@ class HtmlView extends JoomGalleryView
     }
     elseif($this->app->get('sitename_pagetitles', 0) == 1)
     {
-      $title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+            $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
     }
     elseif($this->app->get('sitename_pagetitles', 0) == 2)
     {
-      $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
+            $title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
     }
 
     $this->document->setTitle($title);

@@ -161,43 +161,6 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   </a>
 <?php endif; ?>
 
-<?php // Edit buttons ?>
-<?php if($canEdit || $canAdd || $canDelete): ?>
-  <div class="mb-3">
-    <?php if($canEdit): ?>
-      <a class="btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.edit&id=' . $this->item->id . '&return=' . $returnURL); ?>">
-        <i class="jg-icon-edit"></i><span><?php echo Text::_('JACTION_EDIT'); ?></span>
-      </a>
-    <?php endif; ?>
-
-    <?php /*if($canAdd): ?>
-      <a class="btn btn-outline-success" href="<?php echo Route::_('index.php?option=com_joomgallery&task=category.add&id=0&catid='.$this->item->id.'&return='.$returnURL); ?>">
-        <?php echo Text::_("JGLOBAL_FIELD_ADD"); ?>
-      </a>
-    <?php endif; */?>
-
-    <?php if($canDelete) : ?>
-      <a class="btn btn-danger" rel="noopener noreferrer" href="#deleteModal" role="button" data-bs-toggle="modal">
-        <i class="jg-icon-delete"></i><span><?php echo Text::_('JACTION_DELETE'); ?></span>
-      </a>
-    <?php echo HTMLHelper::_(
-        'bootstrap.renderModal',
-        'deleteModal',
-        [
-          'title'      => Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION'),
-          'height'     => '50%',
-          'width'      => '20%',
-          'modalWidth' => '50',
-          'bodyHeight' => '100',
-          'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_joomgallery&task=category.remove&id=' . $this->item->id . '&return=' . $returnURL . '&' . Session::getFormToken() . '=1', false, 2) . '" class="btn btn-danger">' . Text::_('COM_JOOMGALLERY_COMMON_DELETE_CATEGORY_TIPCAPTION') . '</a>',
-        ],
-        Text::_('COM_JOOMGALLERY_COMMON_ALERT_SURE_DELETE_SELECTED_ITEM')
-    );
-      ?>
-    <?php endif; ?>
-  </div>
-<?php endif; ?>
-
 <?php // Category text ?>
 <p><?php echo $this->item->description; ?></p>
 
@@ -248,6 +211,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
       ?>
       <input type="hidden" name="contenttype" value="image"/>
       <input type="hidden" name="task" value=""/>
+      <input type="hidden" name="return" value="<?php echo $returnURL; ?>"/>
       <input type="hidden" name="filter_order" value=""/>
       <input type="hidden" name="filter_order_Dir" value=""/>
       <?php echo HTMLHelper::_('form.token'); ?>

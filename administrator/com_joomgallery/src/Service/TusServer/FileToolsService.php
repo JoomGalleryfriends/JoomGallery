@@ -302,7 +302,8 @@ class FileToolsService
     $precision = 2;
 
     if($size == (int) $size && $size < 1024) // < 1MB
-    {$precision = 0;
+    {
+      $precision = 0;
     }
 
     $size = round($size / pow(1024, ($i = floor(log($size, 1024)))), $precision);

@@ -92,6 +92,8 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('rm_password', 'filter', 'unset');
       $form->setFieldAttribute('rm_password', 'hidden', 'true');
       $form->setFieldAttribute('rm_password', 'class', 'hidden');
+
+      $form->setFieldAttribute('password', 'lock', 'false');
     }
 
     // Modify the form based on Edit State access controls.
@@ -138,10 +140,13 @@ class CategoryModel extends JoomAdminModel
       $data = $this->item;
 
       // Support for password field
-      if(property_exists($data, 'password') && empty($data->password))
+      $this->is_password = false;
+
+      if(!empty($data->password))
       {
-        $this->is_password = false;
+        $this->is_password = true;
       }
+
       $data->password = '';
 
       // Support for multiple or not foreign key field: robots
@@ -162,6 +167,18 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $data;
+  }
+
+  /**
+   * Does the category has a password in the database.
+   * Attention: $data->password variable may be already overwritten to ''.
+   * @return bool true when password was set on loadFormData ()
+   *
+   * @since  4.2
+   */
+  public function hasPassword(): bool
+  {
+    return $this->is_password;
   }
 
   /**
@@ -360,7 +377,7 @@ class CategoryModel extends JoomAdminModel
   /**
    * Method to save the form data.
    *
-   * @param   array  $data  The form data.
+   * @param   array   $data  The form data.
    *
    * @return  boolean  True on success, False on error.
    *
@@ -418,35 +435,35 @@ class CategoryModel extends JoomAdminModel
     // Allow an exception to be thrown.
     try
     {
-        // Load the row if saving an existing record.
-        if($pk > 0)
+      // Load the row if saving an existing record.
+      if($pk > 0)
+      {
+        $table->load($pk);
+        $isNew = false;
+
+        // Check if the parent category was changed
+        if($table->parent_id != $data['parent_id'])
         {
-          $table->load($pk);
-          $isNew = false;
+          $catMoved = true;
+        }
 
-          // Check if the parent category was changed
-          if($table->parent_id != $data['parent_id'])
-          {
-            $catMoved = true;
-          }
+        // Check if the alias was changed
+        if($table->alias != $data['alias'])
+        {
+          $aliasChanged = true;
+        }
 
-          // Check if the alias was changed
-          if($table->alias != $data['alias'])
+        // Check if the state was changed
+        if($table->published != $data['published'])
+        {
+          if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION . '.category.' . $table->id))
           {
-            $aliasChanged = true;
-          }
-
-          // Check if the state was changed
-          if($table->published != $data['published'])
-          {
-            if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION . '.category.' . $table->id))
-            {
               // We are not allowed to change the published state
               $this->component->addWarning(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'));
               $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 'warning', 'jerror');
               $data['published'] = $table->published;
-            }
           }
+        }
 
           // Check if category has subcategories (children)
           if($this->getChildren($pk))
@@ -467,7 +484,7 @@ class CategoryModel extends JoomAdminModel
           {
             $adapterChanged = true;
           }
-        }
+      }
 
         // Check that filesystem field content is allowed
         if($adapterChanged && $data['parent_id'] != 1)

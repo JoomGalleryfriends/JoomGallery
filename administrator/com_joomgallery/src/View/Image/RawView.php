@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 use Joomla\CMS\Router\Route;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;

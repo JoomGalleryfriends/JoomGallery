@@ -15,9 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\CMS\User\UserHelper;
 
@@ -46,7 +48,7 @@ class CategoryModel extends JoomItemModel
    *
    * @since   4.0.0
    *
-   * @throws Exception
+   * @throws \Exception
    */
   protected function populateState()
   {
@@ -156,8 +158,8 @@ class CategoryModel extends JoomItemModel
     }
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $db        = $this->getDatabase();
+        $query = $db->createQuery();
 
     $query->select('id, password')
           ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
@@ -166,12 +168,7 @@ class CategoryModel extends JoomItemModel
 
     if(!$category = $db->loadObject())
     {
-      throw new \Exception($db->getErrorMsg());
-    }
-
-    if(!$category)
-    {
-      throw new \Exception('Provided category not found.');
+      throw new \Exception('Provided category not found. ' . $db->getErrorMsg());
     }
 
     if(!$category->password)
@@ -226,7 +223,7 @@ class CategoryModel extends JoomItemModel
    *
    * @return  array|false    Array of children on success, false on failure.
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function getChildren()
   {
@@ -291,7 +288,7 @@ class CategoryModel extends JoomItemModel
    * @param   array    $data      data
    * @param   boolean  $loadData  load current data
    *
-   * @return  Form|null  The \JForm object or null if the form can't be found
+   * @return  Form|null  The Joomla Form object or null if the form can't be found
    */
   public function getChildrenFilterForm($data = [], $loadData = true)
   {
@@ -337,7 +334,7 @@ class CategoryModel extends JoomItemModel
    *
    * @return  array|false    Array of images on success, false on failure.
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function getImages()
   {
@@ -402,7 +399,7 @@ class CategoryModel extends JoomItemModel
    * @param   array    $data      data
    * @param   boolean  $loadData  load current data
    *
-   * @return  Form|null  The \JForm object or null if the form can't be found
+   * @return  Form|null  The \Form object or null if the form can't be found
    */
   public function getImagesFilterForm($data = [], $loadData = true)
   {
@@ -612,13 +609,13 @@ class CategoryModel extends JoomItemModel
   /**
    * Get a list of parent categories that are not published (state = 1)
    *
-   * @param   int    $pk         Primary key of the category
+   * @param   ?int    $pk         Primary key of the category
    * @param   bool   $approved   True if the parents also have to be approved
    *
    * @return  array  List of all parents that are published
    *
    * @since   4.0.0
-   * @throws Exception
+   * @throws \Exception
    */
   public function getUnpublishedParents(?int $pk = null, bool $approved = false): array
   {
@@ -637,8 +634,8 @@ class CategoryModel extends JoomItemModel
     }
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $db        = $this->getDatabase();
+        $query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');
@@ -703,7 +700,7 @@ class CategoryModel extends JoomItemModel
 
     // Create a new query object.
     $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');
@@ -762,8 +759,8 @@ class CategoryModel extends JoomItemModel
     $user = $this->app->getIdentity();
 
     // Create a new query object.
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true);
+    $db        = $this->getDatabase();
+        $query = $db->createQuery();
     $query->select('id');
     $query->from($db->quoteName(_JOOM_TABLE_CATEGORIES));
     $query->order($db->quoteName('level') . ' DESC');

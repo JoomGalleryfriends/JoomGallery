@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JOOMGALLERY_VIEW_IMAGES_TITLE" option="JDEFAULT">
-        <message>
-          <![CDATA[COM_JOOMGALLERY_VIEW_IMAGES_DESC]]>
-        </message>
-	</layout>
+  <layout title="COM_JOOMGALLERY_VIEW_IMAGES_TITLE" option="JDEFAULT">
+    <message>
+      <![CDATA[COM_JOOMGALLERY_VIEW_IMAGES_DESC]]>
+    </message>
+  </layout>
 
 </metadata>

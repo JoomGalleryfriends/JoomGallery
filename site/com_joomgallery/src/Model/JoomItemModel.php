@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ItemModel;
@@ -40,7 +41,7 @@ abstract class JoomItemModel extends ItemModel
      * JoomGallery extension class
      *
      * @access  protected
-     * @var     Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
+     * @var     JoomgalleryComponent
      */
     protected $component;
 
@@ -64,7 +65,7 @@ abstract class JoomItemModel extends ItemModel
      * JoomGallery access service
      *
      * @access  protected
-     * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+     * @var     AccessInterface
      */
     protected $acl = null;
 
