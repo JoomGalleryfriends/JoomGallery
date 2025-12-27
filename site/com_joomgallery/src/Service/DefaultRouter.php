@@ -650,53 +650,6 @@ class DefaultRouter extends RouterView
   }
 
   /**
-   * Method to get categories from cache
-   *
-   * @param   int      $id         It of the category
-   * @param   string   $available  The property to make available in the category
-   *
-   * @return  CategoryTable   The category table object
-   *
-   * @since   4.0.0
-   * @throws  \UnexpectedValueException
-   */
-  private function getImage($id, $available = null, $root = true): CategoryTable
-  {
-    // Load the category table
-    if(!isset($this->categoryCache[$id]))
-    {
-      $table = $this->app->bootComponent('com_joomgallery')->getMVCFactory()->createTable('Category', 'administrator');
-      $table->load($id);
-      $this->categoryCache[$id] = $table;
-    }
-
-    // Make node tree available in cache
-    if(!\is_null($available) && !isset($this->categoryCache[$id]->{$available}))
-    {
-      switch($available)
-      {
-        case 'route_path':
-          $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getRoutePath($root, 'route_path');
-            break;
-
-        case 'children':
-          $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-            break;
-
-        case 'parents':
-          $this->categoryCache[$id]->{$available} = $this->categoryCache[$id]->getNodeTree('children', true, $root);
-            break;
-
-        default:
-            throw new \UnexpectedValueException('Requested property (' . $available . ') can to be made available in a category.');
-          break;
-      }
-    }
-
-    return $this->categoryCache[$id];
-  }
-
-  /**
    * if image id from segment 'xx-image-alias' is lower than '1' then
    * the id is taken from the database matching the alias. The query on
    * db regards category id from input or from function argument query
