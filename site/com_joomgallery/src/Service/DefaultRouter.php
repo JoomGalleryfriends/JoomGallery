@@ -116,10 +116,6 @@ class DefaultRouter extends RouterView
     $category->setKey('id')->setNestable()->setParent($gallery);
     $this->registerView($category);
 
-    $categoryform = new RouterViewConfiguration('categoryform');
-    $categoryform->setKey('id');
-    $this->registerView($categoryform);
-
     $images = new RouterViewConfiguration('images');
     $images->setParent($gallery);
     $this->registerView($images);
@@ -127,10 +123,6 @@ class DefaultRouter extends RouterView
     $image = new RouterViewConfiguration('image');
     $image->setKey('id')->setParent($images);
     $this->registerView($image);
-
-    $imageform = new RouterViewConfiguration('imageform');
-    $imageform->setKey('id');
-    $this->registerView($imageform);
 
     $userpanel = new RouterViewConfiguration('userpanel');
     $this->registerView($userpanel);
@@ -153,8 +145,6 @@ class DefaultRouter extends RouterView
     $userimage = new RouterViewConfiguration('userimage');
     $userimage->setKey('id');
     $this->registerView($userimage);
-
-    parent::__construct($app, $menu);
 
     $this->attachRule(new MenuRules($this));
     $this->attachRule(new StandardRules($this));
@@ -209,37 +199,6 @@ class DefaultRouter extends RouterView
   }
 
   /**
-   * Method to get the segment(s) for an imageform
-   *
-   * @param   string   $id     ID of the imageform to retrieve the segments for
-   * @param   array    $query  The request that is built right now
-   *
-   * @return  array|string  The segments of this item
-   *
-   * @since   4.2.0
-   */
-  public function getImageformSegment($id, $query): array|string
-  {
-    if(!strpos($id, ':'))
-    {
-      if(!$id)
-      {
-        // Load empty form view
-        return [''];
-      }
-    }
-
-    if($this->noIDs)
-    {
-      list($void, $segment) = explode(':', $id, 2);
-
-      return [$void => $segment];
-    }
-
-    return $this->getImageSegment($id, $query);
-  }
-
-  /**
    * Method to get the segment(s) for an image
    *
    * @param   string   $id     ID of the image to retrieve the segments for
@@ -274,7 +233,7 @@ class DefaultRouter extends RouterView
   }
 
   /**
-   * Method to get the segment(s) for an category
+   * Method to get the segment(s) for a category
    *
    * @param   string   $id     ID of the category to retrieve the segments for
    * @param   array    $query  The request that is built right now
@@ -284,7 +243,6 @@ class DefaultRouter extends RouterView
    *
    * @since   4.2.0
    */
-  // ToDo: fith/Manuel may need a parent in above definition categoryForm
   public function getCategorySegment($id, $query): array|string
   {
     if(!strpos($id, ':'))
@@ -319,38 +277,6 @@ class DefaultRouter extends RouterView
     }
 
     return [];
-  }
-
-  /**
-   * Method to get the segment(s) for an categoryform
-   *
-   * @param   string   $id     ID of the categoryform to retrieve the segments for
-   * @param   array    $query  The request that is built right now
-   *
-   * @return  array|string  The segments of this item
-   *
-   * @since   4.2.0
-   */
-  // ToDo: fith/Manuel may need a parent in above definition categoryForm
-  public function getCategoryformSegment($id, $query): array|string
-  {
-    if(!strpos($id, ':'))
-    {
-      if(!$id)
-      {
-        // Load empty form view
-        return [''];
-      }
-    }
-
-    if($this->noIDs)
-    {
-      list($void, $segment) = explode(':', $id, 2);
-
-      return [$void => $segment];
-    }
-
-    return $this->getCategorySegment($id, $query);
   }
 
   /**
@@ -492,26 +418,6 @@ class DefaultRouter extends RouterView
   }
 
   /**
-   * Method to get the segment(s) for an imageform
-   *
-   * @param   string   $segment  Segment of the imageform to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
-   *
-   * @return  int|false   The id of this item or false
-   *
-   * @since   4.2.0
-   */
-  public function getImageformId($segment, $query): int|false
-  {
-    if($this->noIDs)
-    {
-      return $this->getImageId($segment, $query);
-    }
-
-    return (int) $segment;
-  }
-
-  /**
    * Method to get the segment(s) for an image
    *
    * @param   string   $segment  Segment of the image to retrieve the ID for
@@ -585,26 +491,6 @@ class DefaultRouter extends RouterView
       }
 
       return false;
-    }
-
-    return (int) $segment;
-  }
-
-  /**
-   * Method to get the segment(s) for an categoryform
-   *
-   * @param   string   $segment  Segment of the categoryform to retrieve the ID for
-   * @param   array    $query    The request that is parsed right now
-   *
-   * @return  int|false   The id of this item or false
-   *
-   * @since   4.2.0
-   */
-  public function getCategoryformId($segment, $query): int|false
-  {
-    if($this->noIDs)
-    {
-      return $this->getCategoryId($segment, $query);
     }
 
     return (int) $segment;
