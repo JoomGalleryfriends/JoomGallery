@@ -27,6 +27,8 @@ use Joomla\Database\ParameterType;
 
 /**
  * Joomgallery Router class (JG3 flavor)
+ *
+ * @since   4.0.0
  */
 class JG3ModernRouter extends DefaultRouter
 {
@@ -37,7 +39,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  public static $displayName = 'COM_JOOMGALLERY_JG3_ROUTER';
+  public static string $displayName = 'COM_JOOMGALLERY_JG3_ROUTER';
 
   /**
    * Type of the router
@@ -46,7 +48,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  public static $type = 'modern';
+  public static string $type = 'modern';
 
   /**
    * ID of the parent of the image view. Empty if none.
@@ -55,7 +57,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  public static $image_parentID = 'catid';
+  public static string $image_parentID = 'catid';
 
   /**
    * Param to use ids in URLs
@@ -64,7 +66,7 @@ class JG3ModernRouter extends DefaultRouter
    *
    * @since  4.0.0
    */
-  private $noIDs;
+  private bool $noIDs;
 
   /**
    * Database object
@@ -119,6 +121,29 @@ class JG3ModernRouter extends DefaultRouter
     $imageform->setKey('id')->setParent($gallery);
     $this->registerView($imageform);
 
+    $userpanel = new RouterViewConfiguration('userpanel');
+    $this->registerView($userpanel);
+
+    $userupload = new RouterViewConfiguration('userupload');
+    $userupload->setParent($userpanel);
+    $this->registerView($userupload);
+
+    $usercategories = new RouterViewConfiguration('usercategories');
+    $usercategories->setParent($userpanel);
+    $this->registerView($usercategories);
+
+    $usercategory = new RouterViewConfiguration('usercategory');
+    $usercategory->setKey('id')->setNestable()->setParent($usercategories);
+    $this->registerView($usercategory);
+
+    $userimages = new RouterViewConfiguration('userimages');
+    $userimages->setParent($userpanel);
+    $this->registerView($userimages);
+
+    $userimage = new RouterViewConfiguration('userimage');
+    $userimage->setKey('id')->setParent($userimages);
+    $this->registerView($userimage);
+
     $this->attachRule(new MenuRules($this));
     $this->attachRule(new StandardRules($this));
     $this->attachRule(new NomenuRules($this));
@@ -127,16 +152,18 @@ class JG3ModernRouter extends DefaultRouter
   /**
    * Method to get the segment for an image view
    *
-   * @param   string  $id     ID of the image to retrieve the segments for
-   * @param   array   $query  The request that is built right now
+   * @param   string   $id     ID of the image to retrieve the segments for
+   * @param   array    $query  The request that is built right now
    *
    * @return  array|string  The segments of this item
+   *
+   * @since  4.0.0
    */
-  public function getImageSegment($id, $query)
+  public function getImageSegment($id, $query): array|string
   {
     if(!strpos($id, ':'))
     {
-      $dbquery = $this->db->getQuery(true);
+      $dbquery = $this->db->createQuery();
 
       $dbquery->select($this->db->quoteName('alias'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
@@ -154,15 +181,17 @@ class JG3ModernRouter extends DefaultRouter
   /**
    * Method to get the segment for an image view
    *
-   * @param   string  $segment  Segment of the image to retrieve the ID for
-   * @param   array   $query    The request that is parsed right now
+   * @param   string   $segment  Segment of the image to retrieve the ID for
+   * @param   array    $query    The request that is parsed right now
    *
-   * @return  mixed   The id of this item or false
+   * @return  int   The id of this item or int 0
+   * @since  4.0.0
    */
-  public function getImageId($segment, $query)
+  public function getImageId($segment, $query): int
   {
     $img_id = 0;
-    $parts  = explode('-', $segment);
+
+    $parts = explode('-', $segment);
 
     if(is_numeric(end($parts)))
     {
@@ -172,7 +201,7 @@ class JG3ModernRouter extends DefaultRouter
 
     if($img_id < 1)
     {
-      $dbquery = $this->db->getQuery(true);
+      $dbquery = $this->db->createQuery();
 
       $dbquery->select($this->db->quoteName('id'))
         ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))

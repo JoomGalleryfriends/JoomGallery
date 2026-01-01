@@ -98,7 +98,7 @@ class CategoryController extends JoomBaseController
 
   /**
    * Add a new category
-   * Checkout and redirect to from view
+   * Checkout and redirect to form view
    *
    * @return  void
    *

@@ -149,6 +149,7 @@ class CategoryList extends AbstractCommand
             $item->modified_by,
             $item->modified_time,
             $item->parent_id, // JGLOBAL_ROOT
+            empty($item->password) ? 'no' : 'yes',
             // $item->,
 
           ];
@@ -159,7 +160,7 @@ class CategoryList extends AbstractCommand
     // Display the categories in a table and set the exit code to 0
     $this->ioStyle->table(
         [
-          'ID', 'Title', 'Published', 'Hidden', 'Created/Owner', 'Created', 'Modified by', 'Modified', 'Parent',
+          'ID', 'Title', 'Published', 'Hidden', 'Created', 'Created time', 'Modified', 'Modified time', 'Parent', 'Password',
         ],
         $categories
     );

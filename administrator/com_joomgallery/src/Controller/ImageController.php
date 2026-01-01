@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
@@ -132,7 +133,11 @@ class ImageController extends JoomFormController
       echo new JsonResponse($e);
 
       $this->app->close();
+
+      return false;
     }
+
+    return true;
   }
 
   /**
@@ -147,7 +152,8 @@ class ImageController extends JoomFormController
     // Check for request forgeries.
     $this->checkToken();
 
-    $app     = $this->app;
+    $app = $this->app;
+    /** @var ImageModel $model */
     $model   = $this->getModel();
     $data    = $this->input->post->get('jform', [], 'array');
     $context = (string) _JOOM_OPTION . '.' . $this->context . '.replace';
@@ -250,6 +256,8 @@ class ImageController extends JoomFormController
 
     // Redirect to the list screen.
     $this->setRedirect(Route::_($url, false));
+
+    return true;
   }
 
   /**
@@ -263,13 +271,15 @@ class ImageController extends JoomFormController
    */
   public function cancel($key = null)
   {
-    parent::cancel($key);
+    $isOk = parent::cancel($key);
 
     if($this->input->get('layout', 'edit', 'cmd') == 'replace')
     {
       // Redirect to the edit screen.
       $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=image&layout=edit&id=' . $this->input->getInt('id'), false));
     }
+
+    return $isOk;
   }
 
   /**
@@ -325,6 +335,8 @@ class ImageController extends JoomFormController
 
     // Redirect to the list screen.
     $this->setRedirect(Route::_($url, false));
+
+    return true;
   }
 
   /**
@@ -342,5 +354,7 @@ class ImageController extends JoomFormController
 
     // Redirect to media manager
     $this->setRedirect(Route::_('index.php?option=com_media&view=file&path=' . $path, false));
+
+    return true;
   }
 }

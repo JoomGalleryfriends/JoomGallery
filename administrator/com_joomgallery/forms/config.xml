@@ -466,7 +466,6 @@
               validate="number"
               filter="integer"
               showon="jg_userspace:1"
-              class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_USERCATS"
               description="COM_JOOMGALLERY_CONFIG_MAX_USERCATS_LONG" />
 
@@ -478,7 +477,6 @@
               validate="number"
               filter="integer"
               showon="jg_userspace:1"
-              class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_USERIMGS"
               description="COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG" />
 
@@ -490,7 +488,6 @@
               filter="integer"
               default="0"
               showon="jg_userspace:1"
-              class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_TIMESPAN"
               description="COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_TIMESPAN_LONG" />
 
@@ -501,7 +498,6 @@
               step="0.1"
               validate="number"
               filter="float"
-              class="hidden"
               label="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE"
               description="COM_JOOMGALLERY_CONFIG_MAX_FILESIZE_LONG"
               showon="jg_userspace:1" />
@@ -527,8 +523,8 @@
              label="COM_JOOMGALLERY_CONFIG_COPYRIGHT_NOTE"
              description="COM_JOOMGALLERY_CONFIG_COPYRIGHT_NOTE_LONG"
              showon="jg_userupload:1" >
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_uploaddefaultcat"
@@ -553,8 +549,8 @@
              label="COM_JOOMGALLERY_CONFIG_PROBLEMATIC_FILES_UPLOAD"
              description="COM_JOOMGALLERY_CONFIG_PROBLEMATIC_FILES_UPLOAD_LONG"
              showon="jg_userupload:1" >
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_newpicnote"
@@ -565,8 +561,8 @@
              label="COM_JOOMGALLERY_CONFIG_UPLOAD_QUOTA"
              description="COM_JOOMGALLERY_CONFIG_UPLOAD_QUOTA_LONG"
              showon="jg_userupload:1" >
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_redirect_after_upload"
@@ -603,8 +599,8 @@
              showon="jg_download:1"
              label="COM_JOOMGALLERY_CONFIG_HINT_NOT_ENOUGH_RIGHTS"
              description="COM_JOOMGALLERY_CONFIG_DOWNLOAD_HINT_LONG" >
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_downloadfile"
@@ -627,8 +623,8 @@
              showon="jg_download:1"
              label="COM_JOOMGALLERY_CONFIG_DOWNLOADWITHWATERMARK"
              description="COM_JOOMGALLERY_CONFIG_DOWNLOADWITHWATERMARK_LONG" >
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+<!--        <option value="0">JNO</option>-->
+<!--        <option value="1">JYES</option>-->
       </field>
     </fieldset>
 
@@ -971,16 +967,16 @@
             <option value="center">JGLOBAL_CENTER</option>
             <option value="right">JGLOBAL_RIGHT</option>
         </field>
-        <field name="jg_category_view_subcategories_category_description"
-            type="radio"
-            label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_DESCRIPTION"
-            default="0"
-            layout="joomla.form.field.radio.switcher"
-            validate="options"
-            >
-            <option value="0">JNO</option>
-            <option value="1">JYES</option>
-        </field>
+      <field name="jg_category_view_subcategories_category_description"
+             type="radio"
+             label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_DESCRIPTION"
+             default="0"
+             layout="joomla.form.field.radio.switcher"
+             validate="options"
+      >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
         <field name="jg_category_view_subcategories_random_image"
             type="radio"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_RANDOM_IMAGES"
