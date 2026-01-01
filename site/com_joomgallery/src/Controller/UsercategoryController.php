@@ -115,7 +115,7 @@ class UsercategoryController extends JoomFormController // FormController
    * @throws \Exception
    * @since   4.2.0
    */
-  public function save2new2($key = null, $urlVar = null): bool
+  public function save2new($key = null, $urlVar = null): bool
   {
     // Check for request forgeries.
     $this->checkToken();
