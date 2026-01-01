@@ -125,25 +125,24 @@ class JG3ModernRouter extends DefaultRouter
     $this->registerView($userpanel);
 
     $userupload = new RouterViewConfiguration('userupload');
-    //$userupload->setKey('id');
+    $userupload->setParent($userpanel);
     $this->registerView($userupload);
 
     $usercategories = new RouterViewConfiguration('usercategories');
+    $usercategories->setParent($userpanel);
     $this->registerView($usercategories);
 
     $usercategory = new RouterViewConfiguration('usercategory');
-    $usercategory->setKey('id');
+    $usercategory->setKey('id')->setNestable()->setParent($usercategories);
     $this->registerView($usercategory);
 
     $userimages = new RouterViewConfiguration('userimages');
-//    $userimages->setParent($usercategory);
+    $userimages->setParent($userpanel);
     $this->registerView($userimages);
 
     $userimage = new RouterViewConfiguration('userimage');
-    $userimage->setKey('id');
+    $userimage->setKey('id')->setParent($userimages);
     $this->registerView($userimage);
-
-    parent::__construct($app, $menu, $categoryFactory, $db, true);
 
     $this->attachRule(new MenuRules($this));
     $this->attachRule(new StandardRules($this));
