@@ -34,7 +34,7 @@ $failedModalParams = [
 ];
 $failedModalBody = '
   <div class="d-flex justify-content-end mb-4">
-      <button type="button" class="btn btn-primary" title="' . Text::_('COM_JOOMGALLERY_TASKS_COPY_FAILED_TITLE') . '" data-copy-failed-button><span class="fa fa-copy m-0"></span></button>
+      <button type="button" class="btn btn-primary" title="'.Text::_('COM_JOOMGALLERY_TASKS_COPY_FAILED_TITLE').'" data-copy-failed-button><span class="fa fa-copy m-0"></span></button>
   </div>
   <div id="jg-failed-items-list" class="overflow-visible text-muted log-area" style="max-height: 400px; overflow-y: auto;"></div>
 ';
