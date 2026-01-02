@@ -211,7 +211,13 @@ if($saveOrder && !empty($this->items))
 
               <!-- Run task -->
               <td class="small d-none d-md-table-cell">
-                <button type="button" class="btn btn-sm btn-warning" <?php echo $item->state < 0 ? 'disabled' : ''; ?> data-id="<?php echo (int) $item->id; ?>" data-title="<?php echo htmlspecialchars($item->title); ?>" data-bs-toggle="modal" data-bs-backdrop="static" data-bs-target="#scheduler-test-modal">
+                <button type="button"
+                        class="btn btn-sm btn-warning"
+                        data-scheduler-run
+                        data-id="<?php echo (int) $item->id; ?>"
+                        data-title="<?php echo $this->escape($item->title); ?>"
+                        data-url="<?php echo Route::_('index.php?option=com_ajax&format=json&plugin=RunSchedulerTest&group=system&id=' . (int) $item->id) . '&t=' . time(); ?>"
+                        title="<?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>">
                   <span class="fa fa-play fa-sm me-2"></span>
                   <?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>
                 </button>
