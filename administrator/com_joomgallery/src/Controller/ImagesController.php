@@ -163,7 +163,7 @@ class ImagesController extends JoomAdminController
       $shortRef = bin2hex(random_bytes(3));
 
       $taskData = [
-        'title'     => Text::sprintf('Task (%s)', $shortRef),
+        'title'     => Text::sprintf('COM_JOOMGALLERY_TASK_TITLE_GENERATED', $shortRef),
         'type'      => 'joomgalleryTask.recreateImage',
         'state'     => 1,
         'access'    => 1,

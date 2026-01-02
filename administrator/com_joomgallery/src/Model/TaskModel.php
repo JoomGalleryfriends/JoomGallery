@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 use Joomla\Component\Scheduler\Administrator\Task\TaskOption;
 use Joomla\Registry\Registry;
@@ -207,7 +208,7 @@ class TaskModel extends JoomAdminModel
     }
 
     if ($taskId === 0) {
-      $this->setError('Konnte Task-ID nach dem Speichern nicht abrufen.');
+      $this->setError(Text::_('COM_JOOMGALLERY_TASK_ERROR_SAVE_FAILED'));
       return false;
     }
 
@@ -219,7 +220,7 @@ class TaskModel extends JoomAdminModel
 
       if (empty($imageIds)) {
         $this->app->enqueueMessage(
-          'Aktion "0" (Alle Bilder) ausgeführt, aber `getAllImageIds()` hat keine Bilder gefunden. Queue ist leer.',
+          Text::_('COM_JOOMGALLERY_TASK_WARN_QUEUE_EMPTY'),
           'warning'
         );
       }
@@ -332,7 +333,7 @@ class TaskModel extends JoomAdminModel
 
     } catch (\Exception $e) {
       $this->app->enqueueMessage(
-        'Fehler beim Auflösen der "Alle Bilder"-Queue: ' . $e->getMessage(),
+        Text::sprintf('COM_JOOMGALLERY_TASK_ERROR_QUEUE_RESOLVE', $e->getMessage()),
         'error'
       );
       return [];

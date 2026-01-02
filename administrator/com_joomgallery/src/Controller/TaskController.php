@@ -166,9 +166,11 @@ class TaskController extends JoomFormController
 
         $this->processTaskItem($task, $itemRow->item_id);
 
-        $db->setQuery(
-          "UPDATE #__joomgallery_task_items SET status = 'success' WHERE id = " . (int) $itemRow->id
-        )->execute();
+        $query = $db->getQuery(true)
+          ->update($db->quoteName('#__joomgallery_task_items'))
+          ->set($db->quoteName('status') . ' = ' . $db->quote('success'))
+          ->where($db->quoteName('id') . ' = ' . (int) $itemRow->id);
+        $db->setQuery($query)->execute();
 
         $responseData['success'] = true;
       }
@@ -194,9 +196,12 @@ class TaskController extends JoomFormController
 
       if ($itemRow) {
         $responseData['item_id'] = $itemRow->item_id;
-        $db->setQuery(
-          "UPDATE #__joomgallery_task_items SET status = 'failed', error_message = " . $db->quote($e->getMessage()) . " WHERE id = " . (int) $itemRow->id
-        )->execute();
+        $query = $db->getQuery(true)
+          ->update($db->quoteName('#__joomgallery_task_items'))
+          ->set($db->quoteName('status') . ' = ' . $db->quote('failed'))
+          ->set($db->quoteName('error_message') . ' = ' . $db->quote($e->getMessage()))
+          ->where($db->quoteName('id') . ' = ' . (int) $itemRow->id);
+        $db->setQuery($query)->execute();
       }
     }
 
@@ -321,7 +326,7 @@ class TaskController extends JoomFormController
 
     if (!$taskId)
     {
-      $responseData['error'] = 'Task ID fehlt';
+      $responseData['error'] = Text::_('COM_JOOMGALLERY_TASK_ERROR_ID_MISSING');
       $response['data'] = json_encode($responseData);
     }
     else
@@ -376,7 +381,7 @@ class TaskController extends JoomFormController
 
     if (!$taskId)
     {
-      echo new JsonResponse(null, 'Keine Task ID übergeben', true);
+      echo new JsonResponse(null, Text::_('COM_JOOMGALLERY_TASK_ERROR_NO_ID'), true);
       $this->app->close();
     }
 
@@ -393,7 +398,7 @@ class TaskController extends JoomFormController
 
       if ($notSuccessCount > 0)
       {
-        $data['reason'] = 'Items with errors present';
+        $data['reason'] = Text::_('COM_JOOMGALLERY_TASK_ERROR_ITEMS_FAILED');
 
         echo new JsonResponse($data, 'Task finished with errors. Cleanup skipped.');
       }

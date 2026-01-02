@@ -8,7 +8,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 /** @var \stdClass $item Das Task-Objekt */
 $item = $displayData;
 ?>
-<div class="card from-layout">
+<div class="card form-layout">
   <div class="card-header d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-2">
       <div>

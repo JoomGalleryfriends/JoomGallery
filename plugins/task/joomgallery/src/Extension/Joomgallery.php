@@ -12,6 +12,7 @@ namespace Joomgallery\Plugin\Task\Joomgallery\Extension;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
@@ -145,7 +146,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     // Attention: This will cause long script execution time
     if(\count($ids) == 1 && $ids[0] == 0)
     {
-      $this->logTask('Attempt to recreate all available images...');
+      $this->logTask(Text::_('COM_JOOMGALLERY_TASK_LOG_MSG_RECREATE_ALL'));
 
       $listModel = $app->bootComponent('com_joomgallery')->getMVCFactory()->createModel('images', 'administrator');
     $ids         = array_map(
@@ -165,19 +166,19 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
 
     if(\is_null($model))
     {
-      $this->logTask('JoomGallery image model could not be loaded');
-      throw new \Exception('JoomGallery image model could not be loaded');
+      $this->logTask(Text::_('COM_JOOMGALLERY_TASK_LOG_MSG_MODEL_LOAD_FAILED'));
+      throw new \Exception(Text::_('COM_JOOMGALLERY_TASK_LOG_MSG_MODEL_LOAD_FAILED'));
     }
 
     // Logging
     if($lastStatus === Status::WILL_RESUME)
     {
-      $this->logTask(\sprintf('Resuming recreation of images as task %d', $task->get('id')));
+      $this->logTask(Text::sprintf('COM_JOOMGALLERY_TASK_LOG_MSG_RESUMING', $task->get('id')));
       $willResume = true;
     }
     else
     {
-      $this->logTask(\sprintf('Starting recreation of %s images as task %d', \count($ids), $task->get('id')));
+      $this->logTask(Text::sprintf('COM_JOOMGALLERY_TASK_LOG_MSG_STARTING', \count($ids), $task->get('id')));
     }
 
     // Create list of imagetypes to be skipped
@@ -202,11 +203,11 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     {
       // Write params with successful executed ids to database
       $params->successful = implode(',', $executed_ids);
-      $this->logTask(\sprintf('Recreation of images (Task %d) will resume', $task->get('id')));
+      $this->logTask(Text::sprintf('COM_JOOMGALLERY_TASK_LOG_MSG_RESUME_INTENTION', $task->get('id')));
     }
     else
     {
-      $this->logTask(\sprintf('Recreation of images (Task %d) is now complete', $task->get('id')));
+      $this->logTask(Text::sprintf('COM_JOOMGALLERY_TASK_LOG_MSG_COMPLETE', $task->get('id')));
       $willResume = false;
     }
 
@@ -338,7 +339,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     }
     catch(\Exception $e)
     {
-      $this->logTask(\sprintf('[Task ID %d] Error storing task params: ' . $e->getMessage(), $task_id));
+      $this->logTask(Text::sprintf('COM_JOOMGALLERY_TASK_LOG_ERR_PARAMS', $task_id, $e->getMessage()));
     }
   }
 }

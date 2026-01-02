@@ -120,7 +120,7 @@ if($saveOrder && !empty($this->items))
         </div>
       <?php else : ?>
         <!-- Tasks table starts here -->
-        <table class="table" id="categoryList">
+        <table class="table" id="taskList">
           <caption class="visually-hidden">
             <?php echo Text::_('Scheduled Tasks'); ?>,
             <span id="scheduler-orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
@@ -254,7 +254,7 @@ if($saveOrder && !empty($this->items))
       <?php endif; ?>
 
       <br>
-      <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_scheduler&view=tasks'); ?>">Go to Scheduled Tasks view</a>
+      <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_scheduler&view=tasks'); ?>"><?php echo Text::_('COM_JOOMGALLERY_TASKS_GO_TO_SCHEDULER'); ?></a>
     </div>
   </div>
 </div>
