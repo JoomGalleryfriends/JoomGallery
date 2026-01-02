@@ -1,11 +1,10 @@
 <?php
 /**
-******************************************************************************************
-**   @package    com_joomgallery                                                        **
-**   @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>                 **
-**   @copyright  2008 - 2025  JoomGallery::ProjectTeam                                  **
-**   @license    GNU General Public License version 3 or later                          **
-*****************************************************************************************/
+ * @package     com_joomgallery
+ * @author      JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
+ * @copyright   2008 - 2025 JoomGallery::ProjectTeam
+ * @license     GNU General Public License version 3 or later
+ */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
@@ -152,7 +151,8 @@ class ImagesController extends JoomAdminController
 
     try
     {
-      if (empty($pks)) {
+      if(empty($pks))
+      {
         throw new \Exception(Text::_('JERROR_NO_ITEMS_SELECTED'));
       }
 
@@ -180,7 +180,8 @@ class ImagesController extends JoomAdminController
       {
         $newTaskId = $taskModel->getState('task.id');
 
-        if (empty($newTaskId)) {
+        if(empty($newTaskId))
+        {
           $newTaskId = $taskModel->getTable()->id;
         }
 
@@ -307,13 +308,13 @@ class ImagesController extends JoomAdminController
 			// Change the state of the items.
 			try
 			{
-				$model->changeSate($cid, $type,$value);
+				$model->changeSate($cid, $type, $value);
 				$errors = $model->getErrors();
 				$ntext = null;
 
-				if ($value === 1)
+				if($value === 1)
 				{
-					if ($errors)
+					if($errors)
 					{
 						$this->app->enqueueMessage(Text::plural($this->text_prefix . '_N_ITEMS_FAILED_'.$msgs[0], \count($cid)), 'error');
 						$this->component->addLog(Text::plural($this->text_prefix . '_N_ITEMS_FAILED_'.$msgs[0], \count($cid)), 'error', 'jerror');
@@ -323,11 +324,11 @@ class ImagesController extends JoomAdminController
 						$ntext = $this->text_prefix . '_N_ITEMS_'.$msgs[1];
 					}
 				}
-				elseif ($value === 0)
+				elseif($value === 0)
 				{
 					$ntext = $this->text_prefix . '_N_ITEMS_'.$msgs[2];
 				}
-				elseif ($value === 2)
+				elseif($value === 2)
 				{
 					$ntext = $this->text_prefix . '_N_ITEMS_'.$msgs[3];
 				}

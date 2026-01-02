@@ -1,11 +1,9 @@
 <?php
 /**
- * *********************************************************************************
- *    @package    com_joomgallery                                                 **
- *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- *    @license    GNU General Public License version 3 or later                   **
- * *********************************************************************************
+ * @package     com_joomgallery
+ * @author      JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
+ * @copyright   2008 - 2025 JoomGallery::ProjectTeam
+ * @license     GNU General Public License version 3 or later
  */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
@@ -260,7 +258,8 @@ class TaskTable extends Table
     $total = $this->count_pending + $this->count_success + $this->count_failed + $count_processing;
     $finished = $this->count_success + $this->count_failed;
 
-    if($total > 0) {
+    if($total > 0)
+    {
       $this->progress = (int) round((100 / $total) * ($finished));
     }
     else

@@ -1,11 +1,9 @@
 <?php
 /**
- * *********************************************************************************
- *    @package    com_joomgallery                                                 **
- *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- *    @license    GNU General Public License version 3 or later                   **
- * *********************************************************************************
+ * @package     com_joomgallery
+ * @author      JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
+ * @copyright   2008 - 2025 JoomGallery::ProjectTeam
+ * @license     GNU General Public License version 3 or later
  */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
@@ -101,7 +99,7 @@ class TaskController extends JoomFormController
   }
 
   /**
-   * Führt ein einzelnes Task-Item per AJAX aus und gibt JSON zurück.
+   * Executes a single task item via AJAX and returns JSON.
    *
    * @return  void
    *
@@ -157,11 +155,11 @@ class TaskController extends JoomFormController
         $task = $taskModel->getItem($taskId);
 
 //        if (str_starts_with($itemRow->item_id, '9')) {
-//          throw new \RuntimeException("Manueller Fehler wenn ItemId mit 8 beginnt.");
+//          throw new \RuntimeException("Manual error if ItemId starts with 8.");
 //        }
 
         if (!$task) {
-          throw new \RuntimeException('Haupt-Task ' . $taskId . ' nicht gefunden.');
+          throw new \RuntimeException('Main Task ' . $taskId . ' not found.');
         }
 
         $this->processTaskItem($task, $itemRow->item_id);
@@ -211,11 +209,11 @@ class TaskController extends JoomFormController
   }
 
   /**
-   * Führt die spezifische Aktion für ein Task-Item aus.
-   * Löst bei Fehlern eine Exception aus.
+   * Executes the specific action for a task item.
+   * Throws an exception on error.
    *
-   * @param   \stdClass $task    Das Task-Objekt
-   * @param   string    $itemId  Die ID des zu verarbeitenden Items
+   * @param   \stdClass $task    The task object
+   * @param   string    $itemId  The ID of the item to be processed
    *
    * @return  void
    * @throws  \Exception
@@ -229,14 +227,14 @@ class TaskController extends JoomFormController
     $taskOption = SchedulerHelper::getTaskOptions()->findOption($task->type);
     if (!$taskOption)
     {
-      throw new \RuntimeException('Task-Typ "' . $task->type . '" ist im SchedulerHelper nicht registriert.');
+      throw new \RuntimeException('Task type "' . $task->type . '" is not registered in SchedulerHelper.');
     }
 
     $handlerMethod = $this->getTaskParamHandler($task->type);
 
     if (!method_exists($this, $handlerMethod))
     {
-      throw new \RuntimeException('Kein Parameter-Handler für Task-Typ "' . $task->type . '" gefunden (Methode: ' . $handlerMethod . ').');
+      throw new \RuntimeException('No parameter handler found for task type "' . $task->type . '" (Method: ' . $handlerMethod . ').');
     }
 
     $params = $this->{$handlerMethod}($task, $itemId);
@@ -261,38 +259,38 @@ class TaskController extends JoomFormController
 
     if ($result !== Status::OK)
     {
-      throw new \RuntimeException('Task-Plugin meldete Fehlerstatus: ' . $result);
+      throw new \RuntimeException('Task plugin reported error status: ' . $result);
     }
   }
 
   /**
-   * Wandelt einen Task-Typ-String in einen Methoden-Namen für den Handler um.
-   * z.B. 'joomgalleryTask.recreateImage' -> 'prepareRecreateImageParams'
+   * Converts a task type string into a method name for the handler.
+   * e.g. 'joomgalleryTask.recreateImage' -> 'prepareRecreateImageParams'
    *
-   * @param   string $taskType  Der Task-Typ (z.B. 'joomgalleryTask.recreateImage')
+   * @param   string $taskType  The task type (e.g. 'joomgalleryTask.recreateImage')
    *
-   * @return  string            Der Name der Handler-Methode
+   * @return  string            The name of the handler method
    *
    * @since   4.2.0
    */
   private function getTaskParamHandler(string $taskType): string
   {
-    // Entfernt 'joomgalleryTask.'
+    // Removes 'joomgalleryTask.'
     $methodPart = str_replace('joomgalleryTask.', '', $taskType);
 
-    // Wandelt z.B. 'recreateImage' in 'RecreateImage' um
+    // Converts e.g. 'recreateImage' into 'RecreateImage'
     $methodPart = ucfirst($methodPart);
 
     return 'prepare' . $methodPart . 'Params';
   }
 
   /**
-   * Bereitet die 'params' für den 'recreateImage' Task vor.
+   * Prepares the 'params' for the 'recreateImage' task.
    *
-   * @param   \stdClass $task    Das JoomGallery Task-Objekt
-   * @param   string    $itemId  Die ID des zu verarbeitenden Items
+   * @param   \stdClass $task    The JoomGallery task object
+   * @param   string    $itemId  The ID of the item to be processed
    *
-   * @return  \stdClass         Das $params-Objekt für das Event
+   * @return  \stdClass         The $params object for the event
    *
    * @since   4.2.0
    */
@@ -309,7 +307,7 @@ class TaskController extends JoomFormController
   }
 
   /**
-   * Holt die Liste der fehlgeschlagenen Items für einen Task via AJAX.
+   * Retrieves the list of failed items for a task via AJAX.
    *
    * @return void
    */

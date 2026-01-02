@@ -1,11 +1,9 @@
 <?php
 /**
- * *********************************************************************************
- *    @package    com_joomgallery                                                 **
- *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- *    @license    GNU General Public License version 3 or later                   **
- * *********************************************************************************
+ * @package     com_joomgallery
+ * @author      JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
+ * @copyright   2008 - 2025 JoomGallery::ProjectTeam
+ * @license     GNU General Public License version 3 or later
  */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
@@ -106,9 +104,10 @@ class TaskModel extends JoomAdminModel
 
     $taskId = $data->id ?? $this->getState($this->getName() . '.id');
 
-    if ($taskId > 0)
+    if($taskId > 0)
     {
-      try {
+      try
+      {
         $db = $this->getDatabase();
 
         $query = $db->getQuery(true)
@@ -123,15 +122,19 @@ class TaskModel extends JoomAdminModel
 
         $data->queue = implode(',', $pendingItems);
 
-      } catch (\Exception $e) {
+      }
+      catch (\Exception $e)
+      {
         $data->queue = '';
         $this->app->enqueueMessage('Could not load pending items: ' . $e->getMessage(), 'warning');
       }
-    } else {
+    }
+    else
+    {
       $data->queue = '0';
     }
 
-    if (isset($data->params))
+    if(isset($data->params))
     {
       $data->params = (string) $data->params;
     }
@@ -180,7 +183,7 @@ class TaskModel extends JoomAdminModel
     $queueInput = $data['queue'] ?? null;
 
     $data['queue'] = '{}';
-    if (isset($data['title']))
+    if(isset($data['title']))
     {
       $data['successful'] = '{}';
       $data['failed']     = '{}';
@@ -207,7 +210,8 @@ class TaskModel extends JoomAdminModel
       $taskId = (int) $this->getDatabase()->insertid();
     }
 
-    if ($taskId === 0) {
+    if ($taskId === 0)
+    {
       $this->setError(Text::_('COM_JOOMGALLERY_TASK_ERROR_SAVE_FAILED'));
       return false;
     }
@@ -218,7 +222,8 @@ class TaskModel extends JoomAdminModel
     {
       $imageIds = $this->getAllImageIds();
 
-      if (empty($imageIds)) {
+      if (empty($imageIds))
+      {
         $this->app->enqueueMessage(
           Text::_('COM_JOOMGALLERY_TASK_WARN_QUEUE_EMPTY'),
           'warning'
@@ -251,7 +256,8 @@ class TaskModel extends JoomAdminModel
       ->where($db->quoteName('task_id') . ' = ' . (int) $taskId);
     $db->setQuery($query)->execute();
 
-    if (empty($itemIds)) {
+    if(empty($itemIds))
+    {
       return true;
     }
 
@@ -260,13 +266,17 @@ class TaskModel extends JoomAdminModel
       ->insert($db->quoteName('#__joomgallery_task_items'))
       ->columns([$db->quoteName('task_id'), $db->quoteName('item_id'), $db->quoteName('status')]);
 
-    foreach ($itemIds as $itemId) {
+    foreach($itemIds as $itemId)
+    {
       $query->values((int) $taskId . ', ' . $db->quote((string) $itemId) . ', ' . $db->quote('pending'));
     }
 
-    try {
+    try
+    {
       $db->setQuery($query)->execute();
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e)
+    {
       $this->setError($e->getMessage());
       return false;
     }
@@ -308,7 +318,8 @@ class TaskModel extends JoomAdminModel
    */
   private function getAllImageIds(): array
   {
-    try {
+    try
+    {
       $db = Factory::getDbo();
 
       $query = $db->getQuery(true)
@@ -331,7 +342,9 @@ class TaskModel extends JoomAdminModel
 
       return $allImageIds;
 
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e)
+    {
       $this->app->enqueueMessage(
         Text::sprintf('COM_JOOMGALLERY_TASK_ERROR_QUEUE_RESOLVE', $e->getMessage()),
         'error'
@@ -352,16 +365,19 @@ class TaskModel extends JoomAdminModel
   public function delete(&$pks)
   {
     // Delete associated task items first (Cascade behavior in PHP)
-    if (!empty($pks))
+    if(!empty($pks))
     {
       $db = $this->getDatabase();
       $query = $db->getQuery(true)
         ->delete($db->quoteName('#__joomgallery_task_items'))
         ->whereIn($db->quoteName('task_id'), $pks); // whereIn handles array sanitization
 
-      try {
+      try
+      {
         $db->setQuery($query)->execute();
-      } catch (\Exception $e) {
+      }
+      catch (\Exception $e)
+      {
         $this->setError($e->getMessage());
         return false;
       }
