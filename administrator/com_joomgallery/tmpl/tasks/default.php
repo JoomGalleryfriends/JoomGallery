@@ -252,7 +252,7 @@ if($saveOrder && !empty($this->items))
           echo HTMLHelper::_('bootstrap.renderModal', 'scheduler-test-modal', $modalparams, $modalbody);
         ?>
       <?php endif; ?>
-      
+
       <br>
       <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_scheduler&view=tasks'); ?>">Go to Scheduled Tasks view</a>
     </div>
