@@ -58,7 +58,7 @@ $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
 if($saveOrder && !empty($this->items))
 {
-  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=tasks.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=tasks.saveOrderAjax&tmpl=component&'.Session::getFormToken().'=1';
   HTMLHelper::_('draggablelist.draggable');
 }
 ?>
@@ -72,7 +72,7 @@ if($saveOrder && !empty($this->items))
           <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
           <div class="clearfix"></div>
 
-          <?php if (empty($this->items)) : ?>
+          <?php if(empty($this->items)) : ?>
             <div class="alert alert-info">
               <span class="icon-info-circle" aria-hidden="true"></span>
               <span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>

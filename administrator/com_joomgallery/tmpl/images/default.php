@@ -43,8 +43,9 @@ $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 $newTaskId = $this->app->input->get('newTaskId', 0, 'int');
 $newTaskItem = null;
 
-if ($newTaskId) {
-  // Task Model manuell booten, um das Item zu holen
+if($newTaskId)
+{
+  // Boot Task Model manually to get the item
   $taskModel = Factory::getApplication()->bootComponent('com_joomgallery')->getMVCFactory()->createModel('Task', 'Administrator', ['ignore_request' => true]);
   $newTaskItem = $taskModel->getItem($newTaskId);
 }
@@ -332,7 +333,7 @@ if($saveOrder && !empty($this->items))
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body overflow-hidden">
-          <?php if ($newTaskItem): ?>
+          <?php if($newTaskItem): ?>
             <?php echo LayoutHelper::render('joomgallery.task.card', $newTaskItem); ?>
           <?php endif; ?>
         </div>
@@ -343,10 +344,10 @@ if($saveOrder && !empty($this->items))
     </div>
   </div>
 </form>
-<?php if ($newTaskId && $newTaskItem): ?>
+<?php if($newTaskId && $newTaskItem): ?>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Modal automatisch öffnen, wenn ein neuer Task vorhanden ist
+      // Open modal automatically if a new task is present
       var myModal = new bootstrap.Modal(document.getElementById('joomgallery-new-task-modal'));
       myModal.show();
     });
