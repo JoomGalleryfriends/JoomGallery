@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImagesModel as AdminImagesModel;
 use Joomla\CMS\Factory;
 use Joomla\Database\DatabaseInterface;
 
@@ -24,7 +25,7 @@ use Joomla\Database\DatabaseInterface;
  * @package JoomGallery
  * @since   4.2.0
  */
-class UserimagesModel extends ImagesModel
+class UserimagesModel extends AdminImagesModel
 {
   /**
    * Method to autopopulate the model state.
@@ -40,7 +41,7 @@ class UserimagesModel extends ImagesModel
    *
    * @since   4.2.0
    */
-  protected function populateState($ordering = 'a.ordering', $direction = 'ASC'): void
+  protected function populateState($ordering = 'a.id', $direction = 'DESC'): void
   {
     // List state information.
     parent::populateState($ordering, $direction);

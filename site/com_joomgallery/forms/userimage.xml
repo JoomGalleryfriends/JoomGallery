@@ -286,20 +286,6 @@
            label="COM_JOOMGALLERY_COMMENT_COMMENT"
            message="COM_JOOMGALLERY_COMMENT_COMMENT_DESCRIPTION" />
 
-    <field name="iptc"
-           type="subform"
-           formsource="administrator/components/com_joomgallery/forms/subform_metadata_iptc.xml"
-           layout="joomla.form.field.subform.default"
-    />
-<!--    label="IPTC"-->
-
-    <field name="exif"
-           type="subform"
-           formsource="administrator/components/com_joomgallery/forms/subform_metadata_exif.xml"
-           layout="joomla.form.field.subform.default"
-    />
-<!--           label="EXIF" -->
-
     <field name="params"
            type="subform"
            formsource="administrator/components/com_joomgallery/forms/subform_imageparams.xml"

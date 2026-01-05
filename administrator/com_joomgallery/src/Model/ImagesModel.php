@@ -96,7 +96,7 @@ class ImagesModel extends JoomListModel
    *
    * @throws \Exception
    */
-  protected function populateState($ordering = 'a.id', $direction = 'ASC')
+  protected function populateState($ordering = 'a.id', $direction = 'DESC')
   {
     $app = Factory::getApplication();
 

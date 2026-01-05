@@ -231,30 +231,10 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
               <legend><?php echo Text::_('COM_JOOMGALLERY_METADATA'); ?></legend>
               <div class="control-group">
                 <div class="controls">
-                  <?php echo $this->form->renderField('imgmetadata'); ?></div>
+                  <?php // echo $this->form->renderField('imgmetadata'); ?>
+                  <?php echo $this->form->getInput('imgmetadata'); ?>
+                </div>
               </div>
-              <!--              <div class="control-group">-->
-              <!--                <div class="controls">-->
-              <?php //echo $this->form->renderField('comment'); ?><!--</div>-->
-              <!--              </div>-->
-              <!--              <div class="card">-->
-              <!--                <div class="card-body">-->
-              <!--                  <h5 class="card-title">IPTC</h5>-->
-              <!--                  <div class="control-group">-->
-              <!--                    <div class="controls">-->
-              <?php //echo $this->form->renderField('iptc'); ?><!--</div>-->
-              <!--                  </div>-->
-              <!--                </div>-->
-              <!--              </div>-->
-              <!--              <div class="card">-->
-              <!--                <div class="card-body">-->
-              <!--                  <h5 class="card-title">EXIF</h5>-->
-              <!--                  <div class="control-group">-->
-              <!--                    <div class="controls">-->
-              <?php //echo $this->form->renderField('exif'); ?><!--</div>-->
-              <!--                  </div>-->
-              <!--                </div>-->
-              <!--              </div>-->
             </fieldset>
           </div>
         </div>
@@ -295,7 +275,7 @@ $mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled
 
 if(\in_array(strtolower(pathinfo($this->item->filename, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']))
 {
-  $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn btn-secondary hasTip"  disabled="disabled" readonly                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  $mediaManagerBtn = '<joomla-toolbar-button id="toolbar-openmedia" task="image.openmedia"><button class="btn btn-secondary hasTip"  disabled="disabled" readonly
      title="' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT_TIP') . '"><s>' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT') . '</s> </button></joomla-toolbar-button>';
 }
 
