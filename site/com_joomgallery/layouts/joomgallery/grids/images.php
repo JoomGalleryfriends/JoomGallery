@@ -64,11 +64,13 @@ extract($displayData);
               <?php endif; ?>
             </a>
               <?php // lightgallery image caption via data-sub-html ?>
-              <?php if($image_title) : ?>
+              <?php if($image_title || $image_desc) : ?>
                 <div id="jg-image-caption-<?php echo $item->id; ?>" style="display: none">
-                  <div class="jg-image-caption <?php echo $caption_align; ?>">
-                    <?php echo $this->escape($item->title); ?>
-                  </div>
+                  <?php if($image_title) : ?>
+                    <div class="jg-image-caption <?php echo $caption_align; ?>">
+                      <?php echo $this->escape($item->title); ?>
+                    </div>
+                  <?php endif; ?>
                   <?php if($image_desc) : ?>
                     <div class="jg-image-desc <?php echo $caption_align; ?>">
                       <?php echo $item->description; ?>
@@ -109,6 +111,15 @@ extract($displayData);
                 <a class="lightgallery-item" href="<?php echo JoomHelper::getImg($item, $lightbox_type); ?>" data-sub-html="#jg-image-caption-<?php echo $item->id; ?>" data-thumb="<?php echo JoomHelper::getImg($item, $image_type); ?>">
                   <?php echo $this->escape($item->title); ?>
                 </a>
+                <?php // lightgallery image caption via data-sub-html ?>
+                <div id="jg-image-caption-<?php echo $item->id; ?>" style="display: none">
+                  <?php if($image_title) : ?>
+                    <?php echo $this->escape($item->title); ?>
+                  <?php endif; ?>
+                  <?php if($image_desc) : ?>
+                    <?php echo $item->description; ?>
+                  <?php endif; ?>
+                </div>
               <?php else : ?>
                 <?php if($title_link == 'defaultview') : ?>
                   <a href="<?php echo Route::_(JoomHelper::getViewRoute('image', (int) $item->id, (int) $item->catid)); ?>">
