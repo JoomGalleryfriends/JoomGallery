@@ -8,7 +8,7 @@
  * *********************************************************************************
  */
 
-namespace Joomgallery\Component\Joomgallery\Site\View\Categoryform;
+namespace Joomgallery\Component\Joomgallery\Site\View\Usercategory;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -17,14 +17,15 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Categoryform;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 
 /**
- * View class for a list of Joomgallery.
+ * View class for a category
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class HtmlView extends JoomGalleryView
 {
@@ -32,62 +33,78 @@ class HtmlView extends JoomGalleryView
    * The category object
    *
    * @var  \stdClass
+   * @since   4.2.0
    */
-  protected $item;
+  protected \stdClass $item;
 
   /**
    * The form object
    *
    * @var  \Joomla\CMS\Form\Form;
+   * @since   4.2.0
    */
-  protected $form;
+  protected \Joomla\CMS\Form\Form $form;
 
   /**
    * The page parameters
    *
    * @var    array
    *
-   * @since  4.0.0
+   * @since   4.2.0
    */
-  protected $params = [];
+  protected array $params = [];
 
   /**
    * The page to return to after the article is submitted
    *
    * @var  string
    *
-   * @since  4.0.0
+   * @since   4.2.0
    */
-  protected $return_page = '';
+  protected string $return_page = '';
+
+  /**
+   * @var bool
+   * @since 4.2
+   */
+  protected bool $isUserRootCategory = false;
 
   /**
    * Display the view
    *
-   * @param   string  $tpl  Template name
+   * @param   string   $tpl  Template name
    *
    * @return void
    *
-   * @throws Exception
+   * @throws \Exception
+   * @since   4.2.0
    */
-  public function display($tpl = null)
+  public function display($tpl = null): void
   {
-    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_NOT_YET_AVAILABLE'), 'warning');
+    // Get model data
 
-    if(!$this->app->input->get('preview', 0))
-    {
-      return;
-    }
-
-    /** @var CategoryfromModel $model */
+    /** @var UsercategoryModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();
     $this->params = $model->getParams();
-    $this->item   = $model->getItem();
-    $this->form   = $model->getForm();
+
+    $this->item = $model->getItem();
+    $this->form = $model->getForm();
 
     // Get return page
     $this->return_page = $model->getReturnPage();
+
+    // fix for empty Id: item->id=null
+    if(empty($this->item->id))
+    {
+      $this->item->id = 0;
+    }
+
+    if((!empty($this->item->id)) && $this->item->parent_id == 1)
+    {
+      $this->isUserRootCategory = true;
+    }
 
     // Check access view level
     if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
@@ -103,22 +120,54 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
+    //--- handle form fields -----------------------------------------------------
+
+    if(!empty($this->form))
+    {
+      $form = $this->form;
+
+      // Disable remove password field if no password is set
+      if(!$model->hasPassword())
+      {
+        $form->setFieldAttribute('rm_password', 'disabled', 'true');
+        // 'filter', 'unset': multiple calls of code in model leads to ignore of reset password
+        $form->setFieldAttribute('rm_password', 'filter', 'unset');
+        $form->setFieldAttribute('rm_password', 'hidden', 'true');
+        $form->setFieldAttribute('rm_password', 'class', 'hidden');
+
+        $form->setFieldAttribute('password', 'lock', 'false');
+      }
+
+      // Apply filter to exclude child categories
+      $children = $form->getFieldAttribute('parent_id', 'children', 'true');
+      $children = filter_var($children, FILTER_VALIDATE_BOOLEAN);
+
+      if(!$children)
+      {
+        $form->setFieldAttribute('parent_id', 'exclude', $this->item->id);
+      }
+
+      // Apply filter for current category on thumbnail field
+      $form->setFieldAttribute('thumbnail', 'categories', $this->item->id);
+    }
+
+    // Prepares the document breadcrumbs
     $this->_prepareDocument();
 
     parent::display($tpl);
   }
 
   /**
-   * Prepares the document
+   * Prepares the document breadcrumbs
    *
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
-  protected function _prepareDocument()
+  protected function _prepareDocument(): void
   {
     $menus = $this->app->getMenu();
-    $title = null;
 
     // Because the application sets a default page title,
     // we need to get it from the menu item itself

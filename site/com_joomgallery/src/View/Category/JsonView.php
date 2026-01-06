@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Site\Model\CategoryModel;
 use Joomgallery\Component\Joomgallery\Site\View\JoomGalleryJsonView;
 use Joomla\CMS\Language\Text;
 

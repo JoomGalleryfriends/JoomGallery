@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="4.0" method="upgrade">
     <name>com_joomgallery</name>
-    <creationDate>2025-10-27</creationDate>
+  <creationDate>2025-12-11</creationDate>
     <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
     <license>GNU General Public License version 3 or later</license>
     <author>JoomGallery::ProjectTeam</author>
@@ -13,17 +13,17 @@
 
   <scriptfile>script.php</scriptfile>
 
-  <install> <!-- Runs on install -->
+  <install> 
     <sql>
       <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
     </sql>
   </install>
-  <update> <!-- Runs on update -->
+  <update> 
     <schemas>
       <schemapath type="mysql">sql/updates/mysql</schemapath>
     </schemas>
   </update>
-  <uninstall> <!-- Runs on uninstall -->
+  <uninstall> 
     <sql>
       <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
     </sql>

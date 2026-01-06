@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseQuery;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -93,9 +94,9 @@ class ImagesModel extends JoomListModel
    *
    * @return void
    *
-   * @throws Exception
+   * @throws \Exception
    */
-  protected function populateState($ordering = 'a.id', $direction = 'ASC')
+  protected function populateState($ordering = 'a.id', $direction = 'DESC')
   {
     $app = Factory::getApplication();
 
@@ -179,7 +180,8 @@ class ImagesModel extends JoomListModel
   /**
    * Build an SQL query to load the list data.
    *
-   * @return  DatabaseQuery
+   * ToDo: Manuel
+   * @return  \Joomla\Database\QueryInterface
    *
    * @since   4.0.0
    */
@@ -209,7 +211,7 @@ class ImagesModel extends JoomListModel
     }
 
     // With less than two tags, we dont need the AND logic
-    if(\count($tag) < 2)
+    if(!empty($tag) && \count($tag) < 2)
     {
       $logicAnd = false;
     }
@@ -518,7 +520,7 @@ class ImagesModel extends JoomListModel
     }
 
     // With less than two tags, we dont need the AND logic
-    if(\count($tag) < 2)
+    if(!empty($tag) && \count($tag) < 2)
     {
       $logicAnd = false;
     }

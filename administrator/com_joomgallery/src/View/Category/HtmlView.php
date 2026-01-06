@@ -68,6 +68,7 @@ class HtmlView extends JoomGalleryView
     }
 
     $this->addToolbar();
+
     parent::display($tpl);
   }
 

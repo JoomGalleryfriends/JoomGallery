@@ -621,7 +621,7 @@ class ImageModel extends JoomAdminModel
         $filesystem_success = $manager->renameImages($old_table, $table->filename);
       }
 
-      // Dont store the table if filesystem changes was not successful
+      // Don't store the table if filesystem changes was not successful
       if(!$filesystem_success)
       {
         $this->component->addError(Text::_('COM_JOOMGALLERY_ERROR_SAVE_FILESYSTEM_ERROR'));
@@ -926,7 +926,7 @@ class ImageModel extends JoomAdminModel
    *
    * @since   4.0.0
    */
-  public function changeSate(&$pks, $type = 'publish', $value = 1)
+  public function changeState(&$pks, $type = 'publish', $value = 1)
   {
     $user    = Factory::getContainer()->get(UserFactoryInterface::class);
     $table   = $this->getTable();
@@ -1041,7 +1041,7 @@ class ImageModel extends JoomAdminModel
    */
   public function publish(&$pks, $value = 1)
   {
-    return $this->changeSate($pks, 'publish', $value);
+    return $this->changeState($pks, 'publish', $value);
   }
 
   /**
