@@ -294,11 +294,9 @@
 
     <field name="date"
            type="calendar"
-           format="%Y-%m-%d"
-           timeformat="24"
-           filter="server_utc"
+           filter="user_utc"
            translateformat="true"
-           showtime="false"
+           showtime="true"
            singleheader="false"
            todaybutton="true"
            weeknumbers="false"
@@ -311,7 +309,8 @@
            type="subform"
            formsource="administrator/components/com_joomgallery/forms/subform_imageimgmetadata.xml"
            layout="joomla.form.field.subform.default"
-           label="COM_JOOMGALLERY_IMGMETADATA" />
+           label="COM_JOOMGALLERY_IMGMETADATA"
+    />
 
     <field name="params"
            type="subform"

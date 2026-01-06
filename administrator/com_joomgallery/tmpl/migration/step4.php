@@ -239,5 +239,5 @@ $wa->useStyle('com_joomgallery.admin')
 
     let bsmodal = new bootstrap.Modal(modal, {keyboard: false});
     bsmodal.show();
-  };
+  }
 </script>

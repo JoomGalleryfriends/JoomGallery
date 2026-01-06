@@ -8,86 +8,116 @@
  * *********************************************************************************
  */
 
-namespace Joomgallery\Component\Joomgallery\Site\View\Imageform;
+namespace Joomgallery\Component\Joomgallery\Site\View\Userimages;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\UserimagesModel;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Router\Route;
 
 /**
  * View class for a list of Joomgallery.
  *
  * @package JoomGallery
- * @since   4.0.0
+ * @since   4.2.0
  */
 class HtmlView extends JoomGalleryView
 {
   /**
-   * The category object
-   *
-   * @var  \stdClass
+   * @var array
+   * @since   4.2.0
    */
-  protected $item;
+  protected array $items;
 
   /**
-   * The form object
-   *
-   * @var  \Joomla\CMS\Form\Form;
+   * @var Pagination
+   * @since   4.2.0
    */
-  protected $form;
+  protected Pagination $pagination;
 
   /**
-   * The page parameters
-   *
    * @var    array
-   *
-   * @since  4.0.0
+   * @since   4.2.0
    */
-  protected $params = [];
+  protected array $params;
 
   /**
-   * The page to return to after the article is submitted
-   *
-   * @var  string
-   *
-   * @since  4.0.0
+   * @var    \Joomla\Registry\Registry
+   * @since   4.2.0
    */
-  protected $return_page = '';
+  protected $state;
+
+  /**
+   * @var    bool
+   * @since   4.2.0
+   */
+  protected bool $isUserLoggedIn = false;
+
+  /**
+   * @var    bool
+   * @since   4.2.0
+   */
+  //protected bool $isUserHasCategory = false;
+
+  /**
+   * @var bool
+   * @since 4.2
+   */
+  protected bool $isUserCoreManager = false;
+
+  /**
+   * @var bool
+   * @since 4.2
+   */
+  protected bool $isDebugSite = false;
+
+  /**
+   * @var int
+   * @since 4.2
+   */
+  protected int $userId = 0;
 
   /**
    * Display the view
    *
-   * @param   string  $tpl  Template name
+   * @param   string   $tpl  Template name
    *
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
-  public function display($tpl = null)
+  public function display($tpl = null): void
   {
-    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_NOT_YET_AVAILABLE'), 'warning');
+    $user = $this->getCurrentUser();
 
-    if(!$this->app->input->get('preview', 0))
-    {
-      return;
-    }
-
-    /** @var ImagefromModel $model */
+    // Get model data
+    /** @var UserimagesModel $model */
     $model = $this->getModel();
 
     $this->state  = $model->getState();
     $this->params = $model->getParams();
-    $this->item   = $model->getItem();
-    $this->form   = $model->getForm();
 
-    // Get return page
-    $this->return_page = $model->getReturnPage();
+    $this->items         = $model->getItems();
+    $this->pagination    = $model->getPagination();
+    $this->filterForm    = $model->getFilterForm();
+    $this->activeFilters = $model->getActiveFilters();
+
+    if(empty($this->params['configs']))
+    {
+      Factory::getApplication()->enqueueMessage(Text::_('Attention: $this->params[\'configs\'] is null'), 'error');
+    }
+
+    $this->isDebugSite = (bool) ($this->params['configs']?->get('isDebugSite'))
+      || $this->app->input->getBool('isDebug');
 
     // Check for errors.
     if(\count($errors = $model->getErrors()))
@@ -95,28 +125,57 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
-    // Check access view level
-    if(!\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
+    //  user must be logged in and have one 'master/base' category
+    $this->isUserLoggedIn = true;
+
+    if($user->guest)
     {
-      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
+      $this->isUserLoggedIn = false;
     }
 
+//    // at least one category is needed for upload view
+//    $this->isUserHasCategory = $model->getUserHasACategory($user->id);
+
+    $this->userId = $user->id;
+
+    // Get access service
+    $this->component->createAccess();
+    $this->acl = $this->component->getAccess();
+
+    // Needed for JgcategoryField
+    $this->isUserCoreManager = $this->acl->checkACL('core.manage', 'com_joomgallery');
+
+    // Check access permission (ACL)
+    if($this->params['configs']?->get('jg_userspace', 1, 'int') == 0 || !$this->getAcl()->checkACL('manage', 'com_joomgallery'))
+    {
+      if($this->params['configs']?->get('jg_userspace', 1, 'int') == 0)
+      {
+        $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_IMAGES_VIEW_NO_ACCESS'), 'message');
+      }
+
+      // Redirect to user panel view
+      $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=userpanel'));
+
+      return;
+    }
+
+    // Prepares the document breadcrumbs
     $this->_prepareDocument();
 
     parent::display($tpl);
   }
 
   /**
-   * Prepares the document
+   * Prepares the document breadcrumbs
    *
    * @return void
    *
    * @throws \Exception
+   * @since   4.2.0
    */
-  protected function _prepareDocument()
+  protected function _prepareDocument(): void
   {
     $menus = $this->app->getMenu();
-    $title = null;
 
     // Because the application sets a default page title,
     // we need to get it from the menu item itself
@@ -166,15 +225,8 @@ class HtmlView extends JoomGalleryView
     if(!$this->isMenuCurrentView($menu))
     {
       // Add Breadcrumbs
-      $pathway        = $this->app->getPathway();
-      $breadcrumbList = Text::_('COM_JOOMGALLERY_IMAGES');
-
-      if(!\in_array($breadcrumbList, $pathway->getPathwayNames()))
-      {
-        $pathway->addItem($breadcrumbList, JoomHelper::getViewRoute('images'));
-      }
-
-      $breadcrumbTitle = isset($this->item->id) ? Text::_('JGLOBAL_EDIT') : Text::_('JGLOBAL_FIELD_ADD');
+      $pathway         = $this->app->getPathway();
+      $breadcrumbTitle = Text::_('COM_JOOMGALLERY_USER_IMAGES');
 
       if(!\in_array($breadcrumbTitle, $pathway->getPathwayNames()))
       {

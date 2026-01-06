@@ -24,9 +24,9 @@ use Joomla\CMS\Session\Session;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.list')
-   ->useStyle('com_joomgallery.site')
-   ->useScript('com_joomgallery.list-view')
-   ->useScript('multiselect');
+  ->useStyle('com_joomgallery.site')
+  ->useScript('com_joomgallery.list-view')
+  ->useScript('multiselect');
 
 // Access check
 $listOrder = $this->state->get('list.ordering');
@@ -36,9 +36,11 @@ $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category');
 $saveOrder = ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 $returnURL = base64_encode(JoomHelper::getListRoute('categories', null, $this->getLayout()));
 
+$saveOrderingUrl = '';
+
 if($saveOrder && !empty($this->items))
 {
-  $saveOrderingUrl = 'index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+  $saveOrderingUrl = Route::_('index.php?option=com_joomgallery&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1');
   HTMLHelper::_('draggablelist.draggable');
 }
 ?>
@@ -49,17 +51,20 @@ if($saveOrder && !empty($this->items))
     </div>
 <?php endif; ?>
 
-<form class="jg-categories" action="<?php echo Route::_('index.php?option=com_joomgallery&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
-  <?php if(!empty($this->filterForm))
-  {
-  echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
-  } ?>
+<form class="jg-categories" action="<?php echo Route::_('index.php?option=com_joomgallery&view=categories'); ?>" 
+      method="post" name="adminForm" id="adminForm">
+
+  <?php if(!empty($this->filterForm)) : ?>
+    <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+  <?php endif; ?>
+
   <div class="row">
     <div class="col-md-12">
 
       <?php if(empty($this->items)) : ?>
         <div class="alert alert-info">
-          <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
+          <span class="icon-info-circle" aria-hidden="true"></span><span
+            class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
           <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
         </div>
       <?php else : ?>
@@ -121,9 +126,10 @@ if($saveOrder && !empty($this->items))
                   $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
 
                   // Get the parents of item for sorting
+              $parentsStr = '';
+
                   if($item->level > 1)
                   {
-                    $parentsStr       = '';
                     $_currentParentId = $item->parent_id;
                     $parentsStr       = ' ' . $_currentParentId;
 
@@ -142,10 +148,6 @@ if($saveOrder && !empty($this->items))
                         }
                       }
                     }
-                  }
-                  else
-                  {
-                    $parentsStr = '';
                   }
                 ?>
 
@@ -174,9 +176,24 @@ if($saveOrder && !empty($this->items))
                         <input type="text" name="order[]" size="5" value="<?php echo $item->lft; ?>" class="hidden">
                       <?php endif; ?>
 
-                      <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
-                    </td>
+                    <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
+                  </td>
                   <?php endif; ?>
+
+                <th scope="row" class="has-context title-cell">
+                  <?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
+                  <?php if($canCheckin && $item->checked_out > 0) : ?>
+                    <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
+                            data-item-id="cb<?php echo $i; ?>"
+                            data-item-task="category.checkin" <?php echo $disabled; ?>>
+                      <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'category.', false); ?>
+                    </button>
+                  <?php endif; ?>
+                  <a
+                    href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $item->id); ?>">
+                    <?php echo $this->escape($item->title); ?>
+                  </a>
+                </th>
 
                   <th scope="row" class="has-context title-cell">
                     <?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
@@ -194,32 +211,38 @@ if($saveOrder && !empty($this->items))
                     <span class="badge bg-info">
                       <?php echo (int) $item->img_count; ?>
                     </span>
-                  </td>
+                </td>
 
                   <td class="d-none d-lg-table-cell text-center">
                     <?php echo ($item->parent_title == 'Root') ? '--' : $this->escape($item->parent_title); ?>
                   </td>
 
                   <td class="d-none d-lg-table-cell text-center">
-                    <?php if($canEdit || $canDelete): ?>
-                      <?php if($canEdit): ?>
-                        <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="category.edit" <?php echo $disabled; ?>>
-                          <span class="icon-edit" aria-hidden="true"></span>
-                        </button>
-                      <?php endif; ?>
-                      <?php if($canDelete): ?>
-                        <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>" data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="categoryform.remove" <?php echo $disabled; ?>>
-                          <span class="icon-trash" aria-hidden="true"></span>
-                        </button>
-                      <?php endif; ?>
+                    <?php if($canEdit): ?>
+                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" 
+                              data-item-id="cb<?php echo $i; ?>" 
+                              data-item-task="category.edit" <?php echo $disabled; ?>>
+                        <span class="icon-edit" aria-hidden="true"></span>
+                      </button>
+                    <?php endif; ?>
+                    <?php if($canDelete): ?>
+                      <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
+                              data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
+                              data-item-id="cb<?php echo $i; ?>"
+                              data-item-task="categoryform.remove" <?php echo $disabled; ?>>
+                        <span class="icon-trash" aria-hidden="true"></span>
+                      </button>
                     <?php endif; ?>
                   </td>
 
                   <td class="d-none d-lg-table-cell text-center">
                     <?php if($canChange): ?>
                       <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
-                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" data-item-id="cb<?php echo $i; ?>" data-item-task="categoryform.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
-                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" aria-hidden="true"></span>
+                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>" 
+                              data-item-id="cb<?php echo $i; ?>" 
+                              data-item-task="categoryform.<?php echo $statetask; ?>" <?php echo $disabled; ?>>
+                        <span class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>" 
+                              aria-hidden="true"></span>
                       </button>
                     <?php else : ?>
                       <i class="icon-<?php echo (int) $item->published ? 'check' : 'cancel'; ?>"></i>
