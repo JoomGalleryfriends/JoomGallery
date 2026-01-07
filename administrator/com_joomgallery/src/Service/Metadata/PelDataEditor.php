@@ -20,7 +20,6 @@ use lsolesen\pel\PelFormat;
 use lsolesen\pel\PelIfd;
 use lsolesen\pel\PelTag;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects

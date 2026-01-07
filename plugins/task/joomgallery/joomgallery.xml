@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="plugin" group="task" method="upgrade">
     <name>plg_task_joomgallery</name>
-    <creationDate>2025-10-27</creationDate>
-    <copyright>2008 - 2025  JoomGallery::ProjectTeam</copyright>
+    <creationDate>2025-01-12</creationDate>
+    <copyright>2008 - 2026  JoomGallery::ProjectTeam</copyright>
     <license>GNU General Public License version 3 or later</license>
     <author>JoomGallery::ProjectTeam</author>
     <authorEmail>team@joomgalleryfriends.net</authorEmail>
     <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-    <version>4.2.0</version>
+    <version>4.3.0</version>
     <description>PLG_TASK_JOOMGALLERY_XML_DESCRIPTION</description>
     <namespace path="src">Joomgallery\Plugin\Task\Joomgallery</namespace>
 
