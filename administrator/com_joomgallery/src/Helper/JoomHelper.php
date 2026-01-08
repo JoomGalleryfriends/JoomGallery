@@ -709,7 +709,7 @@ class JoomHelper
    *
    * @since   4.0.0
    */
-  public static function getViewRoute($view, $id = 0, $catid = 0, $format = null, $type = null, $language = null, $layout = null)
+  public static function getViewRoute($view, $id = 0, $catid = 0, $format = null, $type = null, $language = null, $layout = null, $menuitem = null)
   {
     if(\is_object($id))
     {
@@ -757,6 +757,11 @@ class JoomHelper
     if($layout)
     {
       $link .= '&layout=' . $layout;
+    }
+
+    if($menuitem)
+    {
+      $link .= '&Itemid=' . $menuitem;
     }
 
     return $link;
@@ -900,14 +905,79 @@ class JoomHelper
   {
     if($url)
     {
-      return Route::_(self::getViewRoute('image', 0, 1, 'raw', $type));
+      $menuitem = self::getMenuItem('images');
+
+      return Route::_(self::getViewRoute('image', 0, 1, 'raw', $type, null, null, $menuitem));
     }
 
+    // Create file manager service
+    $manager = self::getService('FileManager', [1]);
 
-      // Create file manager service
-      $manager = self::getService('FileManager', [1]);
+    return $manager->getImgPath(0, $type, false, false, $root);
+  }
 
-      return $manager->getImgPath(0, $type, false, false, $root);
+  /**
+   * Returns a menuitem id of a specific JoomGallery view
+   *
+   * @param   string  $view      Menuitem type
+   * @param   int     $childof   Menuitem must be a child of this menuitem (id)
+   *
+   * @return  int   Menuitem id
+   *
+   * @since   4.0.0
+   */
+  public static function getMenuItem($view, $childof = null)
+  {
+    $menu    = Factory::getApplication()->getMenu();
+    $comp_id = self::getComponent()->extension->extension_id;
+
+    $items = $menu->getItems(
+      ['type', 'component_id', 'access'],
+      ['component', $comp_id, null]
+    );
+
+    if(!empty($items))
+    {
+      $findings = [];
+
+      foreach($items as $menuitem)
+      {
+        if(($menuitem->query['view'] ?? null) !== $view)
+        {
+          continue;
+        }
+
+        if($childof !== null)
+        {
+          // Check that this menuitem is a child of the given menuitem
+          if(empty($menuitem->tree) || !\in_array((int) $childof, $menuitem->tree))
+          {
+            continue;
+          }
+        }
+
+        // We found a menuitem of the corresponding type
+        $findings[] = $menuitem;
+      }
+
+      if($count = \count($findings))
+      {
+        if($count > 1)
+        {
+          // We have multiple matching menuitems
+          usort($findings, function($a, $b)
+          {
+            // Lets take the one with the lowest level value
+            return $a->level - $b->level;
+          });
+        }
+
+        return $findings[0]->id;
+      }
+    }
+
+    $default = $menu->getDefault();
+    return $default ? (int) $default->id : 0;
   }
 
   /**

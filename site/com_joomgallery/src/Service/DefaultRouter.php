@@ -406,9 +406,7 @@ class DefaultRouter extends RouterView
       if($segment == '0-' || $segment == 'noimage' || $segment == '0-noimage')
       {
         // Special case: No image with id=0
-        // return 'null'; wrong
-        // return false;    // ToDo: FiTh/Manuel Discussion => int or false ... ?
-        return 0;
+        return 'null';
       }
 
       $img_id = $this->getImageIdDb($segment, $query);
