@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Categories\CategoryFactoryInterface;
@@ -23,6 +24,7 @@ use Joomla\CMS\Component\Router\RouterViewConfiguration;
 use Joomla\CMS\Component\Router\Rules\MenuRules;
 use Joomla\CMS\Component\Router\Rules\NomenuRules;
 use Joomla\CMS\Component\Router\Rules\StandardRules;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Menu\AbstractMenu;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -136,8 +138,8 @@ class DefaultRouter extends RouterView
     $this->registerView($usercategories);
 
     $usercategory = new RouterViewConfiguration('usercategory');
-    // $usercategory->setKey('id')->setParent($usercategories);
-    $usercategory->setParent($userpanel);
+    $usercategory->setKey('id')->setNestable()->setParent($usercategories);
+    //$usercategory->setParent($userpanel);
     $this->registerView($usercategory);
 
     $userimages = new RouterViewConfiguration('userimages');
@@ -151,6 +153,49 @@ class DefaultRouter extends RouterView
     $this->attachRule(new MenuRules($this));
     $this->attachRule(new StandardRules($this));
     $this->attachRule(new NomenuRules($this));
+  }
+
+  /**
+   * Preprocess a URL
+   *
+   * @param   array  $query  An associative array of URL arguments
+   * @return  array  The URL arguments to use to assemble the subsequent URL.
+   *
+   * @since   4.3.0
+   */
+  public function preprocess($query)
+  {
+    if( (isset($query['view']) && $query['view'] == 'image') &&
+        (isset($query['format']) && \in_array($query['format'], JoomHelper::$image_types))
+      )
+    {
+      // We are processing a raw image. Lets make sure the Itemid is correct
+      if(isset($query['Itemid']))
+      {
+        // Lets check the curretly selected menuitem if any
+        $menuitem = Factory::getApplication()->getMenu()->getItem();
+      }
+      else
+      {
+        // Lets check the active menuitem otherwise
+        $menuitem = Factory::getApplication()->getMenu()->getActive();
+      }
+
+      if(isset($menuitem->query['view']) &&
+        \in_array($menuitem->query['view'], ['image', 'images'], true)
+        )
+      {
+        // Set the Itemid if it has the correct type
+        $query['Itemid'] = $menuitem->id;
+      }
+      else
+      {
+        // Fetch a menuitem id of the correct type
+        $query['Itemid'] = JoomHelper::getMenuItem('images');
+      }
+    }
+
+    return parent::preprocess($query);
   }
 
   /**
@@ -186,6 +231,11 @@ class DefaultRouter extends RouterView
         if($query['view'] = 'image' && $query['format'] = 'raw')
         {
           // Load the no-image
+          if($this->noIDs)
+          {
+            return [0 => 'noimage'];
+          }
+
           return [0 => '0:noimage'];
         }
         elseif($query['view'] = 'userimage')
@@ -227,9 +277,7 @@ class DefaultRouter extends RouterView
         return [''];
       }
 
-      //     return $this->getImageSegment($id, $query);
-      // same as image segment
-      $id .= ':' . $this->getImageAliasDb($id);
+      return $this->getImageSegment($id, $query);
     }
 
     if($this->noIDs)
@@ -301,32 +349,32 @@ class DefaultRouter extends RouterView
    */
   public function getUsercategorySegment($id, $query): array|string
   {
-    $alias = '';
+    // if(!strpos($id, ':'))
+    // {
+    //   if(empty($id))
+    //   {
+    //     // Load empty form view
+    //     return [''];
+    //   }
 
-    if(!strpos($id, ':'))
-    {
-      if(empty($id))
-      {
-        // Load empty form view
-        return [''];
-      }
+    //   $category = $this->getCategory((int) $query['id'], 'children', true);
 
-      $category = $this->getCategory((int) $query['id'], 'children', true);
+    //   if(!empty($category))
+    //   {
+    //     $id .= ':' . $category->alias;
+    //   }
+    // }
 
-      if(!empty($category))
-      {
-        $id .= ':' . $category->alias;
-      }
-    }
+    // if($this->noIDs)
+    // {
+    //   list($void, $segment) = explode(':', $id, 2);
 
-    if($this->noIDs)
-    {
-      list($void, $segment) = explode(':', $id, 2);
+    //   return [$void => $segment];
+    // }
 
-      return [$void => $segment];
-    }
+    // return [(int) $id => $id];
 
-    return [(int) $id => $id];
+    return $this->getCategorySegment($id, $query);
   }
 
   /**
@@ -343,11 +391,11 @@ class DefaultRouter extends RouterView
   {
     if(!strpos($id, ':'))
     {
-//      if (!$id)
-//      {
-//        // Load empty form view
-//        return array('');
-//      }
+      // if (!$id)
+      // {
+      //   // Load empty form view
+      //   return array('');
+      // }
 
       $id .= ':' . $this->getImageAliasDb($id);
     }
@@ -501,33 +549,7 @@ class DefaultRouter extends RouterView
    */
   public function getUsercategoryId($segment, $query): int
   {
-    // ToDo: same alias but different parent.  Bsp. Paris mit jahrnamen -> url hat jahr
-
-    if($this->noIDs)
-    {
-      // ToDo: manuel why is this used in other functions
-//    $id = (int) $query['id'];
-//    $id = (int) $segment;
-      $id = 0;
-
-      if(!empty($segment))
-      {
-        $dbquery = $this->db->createQuery();
-
-        $dbquery->select($this->db->quoteName('id'))
-          ->from($this->db->quoteName(_JOOM_TABLE_CATEGORIES))
-          ->where($this->db->quoteName('alias') . ' = :alias')
-          ->bind(':alias', $segment);
-
-        $this->db->setQuery($dbquery);
-
-        $id = (int) $this->db->loadResult();
-      }
-
-      return (int) $id;
-    }
-
-    return (int) $segment;
+    return $this->getCategoryId($segment, $query);
   }
 
   /**
@@ -542,12 +564,7 @@ class DefaultRouter extends RouterView
    */
   public function getUserimageId($segment, $query): int|false
   {
-    if($this->noIDs)
-    {
-      return $this->getImageId($segment, $query);
-    }
-
-    return (int) $segment;
+    return $this->getImageId($segment, $query);
   }
 
   /**

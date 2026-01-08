@@ -15,12 +15,14 @@ namespace Joomgallery\Component\Joomgallery\Site\Service;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Categories\CategoryFactoryInterface;
 use Joomla\CMS\Component\Router\RouterViewConfiguration;
 use Joomla\CMS\Component\Router\Rules\MenuRules;
 use Joomla\CMS\Component\Router\Rules\NomenuRules;
 use Joomla\CMS\Component\Router\Rules\StandardRules;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Menu\AbstractMenu;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -150,6 +152,56 @@ class JG3ModernRouter extends DefaultRouter
   }
 
   /**
+   * Preprocess a URL
+   *
+   * @param   array  $query  An associative array of URL arguments
+   * @return  array  The URL arguments to use to assemble the subsequent URL.
+   *
+   * @since   4.3.0
+   */
+  public function preprocess($query)
+  {
+    if( (isset($query['view']) && $query['view'] == 'image') &&
+        (isset($query['format']) && \in_array($query['format'], JoomHelper::$image_types)) &&
+        (isset($query['id']) && $query['id'] == 0)
+      )
+    {
+      // We are processing a raw image. Lets make sure the Itemid is correct
+      if(isset($query['Itemid']))
+      {
+        // Lets check the curretly selected menuitem if any
+        $menuitem = Factory::getApplication()->getMenu()->getItem();
+      }
+      else
+      {
+        // Lets check the active menuitem otherwise
+        $menuitem = Factory::getApplication()->getMenu()->getActive();
+      }
+
+      if(isset($menuitem->query['view']) &&
+        \in_array($menuitem->query['view'], ['image', 'images'], true)
+        )
+      {
+        // Set the Itemid if it has the correct type
+        $query['Itemid'] = $menuitem->id;
+      }
+      else
+      {
+        // Fetch a menuitem id of the correct type
+        $query['Itemid'] = JoomHelper::getMenuItem('images');
+      }
+    }
+
+    // Process the parsed variables based on custom defined rules
+    foreach ($this->rules as $rule)
+    {
+      $rule->preprocess($query);
+    }
+
+    return $query;
+  }
+
+  /**
    * Method to get the segment for an image view
    *
    * @param   string   $id     ID of the image to retrieve the segments for
@@ -163,6 +215,25 @@ class JG3ModernRouter extends DefaultRouter
   {
     if(!strpos($id, ':'))
     {
+      if(!$id)
+      {
+        if($query['view'] = 'image' && $query['format'] = 'raw')
+        {
+          // Load the no-image
+          if($this->noIDs)
+          {
+            return [0 => 'noimage'];
+          }
+
+          return [0 => '0:noimage'];
+        }
+        elseif($query['view'] = 'userimage')
+        {
+          // Load empty userimage form view
+          return [''];
+        }
+      }
+
       $dbquery = $this->db->createQuery();
 
       $dbquery->select($this->db->quoteName('alias'))
@@ -189,6 +260,12 @@ class JG3ModernRouter extends DefaultRouter
    */
   public function getImageId($segment, $query): int
   {
+    if($segment == '0-' || $segment == 'noimage' || $segment == '0-noimage')
+    {
+      // Special case: No image with id=0
+      return 'null';
+    }
+    
     $img_id = 0;
 
     $parts = explode('-', $segment);

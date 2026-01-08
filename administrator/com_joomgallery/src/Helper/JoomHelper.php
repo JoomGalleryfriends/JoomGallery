@@ -56,6 +56,13 @@ class JoomHelper
   ];
 
   /**
+   * List of all supported image types
+   *
+   * @var array
+   */
+  public static $image_types = ['raw', 'gif', 'jpeg', 'jpg', 'png', 'webp'];
+
+  /**
    * Gets the JoomGallery component object
    *
    * @return  Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent
@@ -905,9 +912,7 @@ class JoomHelper
   {
     if($url)
     {
-      $menuitem = self::getMenuItem('images');
-
-      return Route::_(self::getViewRoute('image', 0, 1, 'raw', $type, null, null, $menuitem));
+      return Route::_(self::getViewRoute('image', 0, 1, 'raw', $type));
     }
 
     // Create file manager service
