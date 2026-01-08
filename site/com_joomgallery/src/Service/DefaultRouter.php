@@ -183,8 +183,16 @@ class DefaultRouter extends RouterView
     {
       if(!$id)
       {
-        // Load empty form view
-        return [''];
+        if($query['view'] = 'image' && $query['format'] = 'raw')
+        {
+          // Load the no-image
+          return [0 => '0:noimage'];
+        }
+        elseif($query['view'] = 'userimage')
+        {
+          // Load empty userimage form view
+          return [''];
+        }
       }
 
       $id .= ':' . $this->getImageAliasDb($id);
@@ -380,11 +388,11 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the image to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  int|false   The id of this item or false
+   * @return  mixed    The id of this item or false
    *
    * @since   4.2.0
    */
-  public function getGalleryId($segment, $query): int|false
+  public function getGalleryId($segment, $query)
   {
     return (int) $segment;
   }
@@ -395,26 +403,21 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the image to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  int|false   The id of this item or false
+   * @return  mixed    The id of this item or false
    *
    * @since   4.2.0
    */
-  public function getImageId($segment, $query): int|false
+  public function getImageId($segment, $query)
   {
-    if($this->noIDs)
+    if($segment == '0-' || $segment == 'noimage' || $segment == '0-noimage')
     {
-      if($segment == '0-' || $segment == 'noimage' || $segment == '0-noimage')
-      {
-        // Special case: No image with id=0
-        return 'null';
-      }
-
-      $img_id = $this->getImageIdDb($segment, $query);
-
-      return (int) $img_id;
+      // Special case: No image with id=0
+      return 'null';
     }
 
-    return (int) $segment;
+    $img_id = $this->getImageIdDb($segment, $query);
+
+    return (int) $img_id;
   }
 
   /**
@@ -423,18 +426,13 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the image to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  int|false   The id of this item or false
+   * @return  mixed    The id of this item or false
    *
    * @since   4.2.0
    */
-  public function getImagesId($segment, $query): int|false
+  public function getImagesId($segment, $query)
   {
-    if($this->noIDs)
-    {
-      return $this->getImageId($segment, $query);
-    }
-
-    return (int) $segment;
+    return $this->getImageId($segment, $query);
   }
 
   /**
@@ -443,57 +441,52 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the category to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  int|false   The id of this item or false
+   * @return  mixed    The id of this item or false
    *
    * @since   4.2.0
    */
-  public function getCategoryId($segment, $query): int|false
+  public function getCategoryId($segment, $query)
   {
-    if($this->noIDs)
+    if(isset($query['id']) && ($query['id'] === 0 || $query['id'] === '0'))
     {
-      if(isset($query['id']) && ($query['id'] === 0 || $query['id'] === '0'))
-      {
-        // Root element of nestable content in core must have the id=0
-        // But JoomGallery category root has id=1
-        $query['id'] = 1;
-      }
+      // Root element of nestable content in core must have the id=0
+      // But JoomGallery category root has id=1
+      $query['id'] = 1;
+    }
 
-      if(strpos($segment, 'categories'))
-      {
-        // If 'categories' is in the segment, means that we are looking for the root category
-        $segment = str_replace('categories', 'root', $segment);
-      }
+    if(strpos($segment, 'categories'))
+    {
+      // If 'categories' is in the segment, means that we are looking for the root category
+      $segment = str_replace('categories', 'root', $segment);
+    }
 
-      if(isset($query['id']))
-      {
-        $category = $this->getCategory((int) $query['id'], 'children', true);
+    if(isset($query['id']))
+    {
+      $category = $this->getCategory((int) $query['id'], 'children', true);
 
-        if($category)
+      if($category)
+      {
+        foreach($category->children as $child)
         {
-          foreach($category->children as $child)
+          if($this->noIDs)
           {
-            if($this->noIDs)
+            if($child['alias'] == $segment)
             {
-              if($child['alias'] == $segment)
-              {
-                return $child['id'];
-              }
+              return $child['id'];
             }
-            else
+          }
+          else
+          {
+            if($child['id'] == (int) $segment)
             {
-              if($child['id'] == (int) $segment)
-              {
-                return $child['id'];
-              }
+              return $child['id'];
             }
           }
         }
       }
-
-      return false;
     }
 
-    return (int) $segment;
+    return false;
   }
 
   /**
@@ -563,18 +556,13 @@ class DefaultRouter extends RouterView
    * @param   string   $segment  Segment of the category to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  int|false   The id of this item or false
+   * @return  mixed    The id of this item or false
    *
    * @since   4.2.0
    */
-  public function getCategoriesId($segment, $query): int|false
+  public function getCategoriesId($segment, $query)
   {
-    if($this->noIDs)
-    {
-      return $this->getCategoryId($segment, $query);
-    }
-
-    return (int) $segment;
+    return $this->getCategoryId($segment, $query);
   }
 
   /**
