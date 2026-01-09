@@ -179,7 +179,7 @@ class JG3ModernRouter extends DefaultRouter
       }
 
       if(isset($menuitem->query['view']) &&
-        \in_array($menuitem->query['view'], ['image', 'images'], true)
+        \in_array($menuitem->query['view'], ['image', 'categories'], true)
         )
       {
         // Set the Itemid if it has the correct type
@@ -188,7 +188,7 @@ class JG3ModernRouter extends DefaultRouter
       else
       {
         // Fetch a menuitem id of the correct type
-        $query['Itemid'] = JoomHelper::getMenuItem('images');
+        $query['Itemid'] = JoomHelper::getMenuItem('categories');
       }
     }
 
@@ -225,7 +225,7 @@ class JG3ModernRouter extends DefaultRouter
             return [0 => 'noimage'];
           }
 
-          return [0 => '0:noimage'];
+          return [0 => 'noimage:0'];
         }
         elseif($query['view'] = 'userimage')
         {
@@ -255,12 +255,12 @@ class JG3ModernRouter extends DefaultRouter
    * @param   string   $segment  Segment of the image to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
-   * @return  int   The id of this item or int 0
+   * @return  mixed    The id of this item or int 0
    * @since  4.0.0
    */
-  public function getImageId($segment, $query): int
+  public function getImageId($segment, $query)
   {
-    if($segment == '0-' || $segment == 'noimage' || $segment == '0-noimage')
+    if($segment == '-0' || $segment == 'noimage' || $segment == 'noimage-0')
     {
       // Special case: No image with id=0
       return 'null';
