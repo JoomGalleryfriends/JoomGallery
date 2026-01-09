@@ -1,9 +1,11 @@
 <?php
 /**
- * @package     com_joomgallery
- * @author      JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
- * @copyright   2008 - 2025 JoomGallery::ProjectTeam
- * @license     GNU General Public License version 3 or later
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
@@ -81,20 +83,20 @@ class TaskTable extends Table
     return $this->typeAlias;
   }
 
-	/**
-	 * Method to store a row in the database from the Table instance properties.
-	 *
-	 * If a primary key value is set the row with that primary key value will be updated with the instance property values.
-	 * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
-	 *
-	 * @param   boolean  $updateNulls  True to update fields even if they are null.
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @since   4.2.0
-	 */
-	public function store($updateNulls = true)
-	{
+    /**
+     * Method to store a row in the database from the Table instance properties.
+     *
+     * If a primary key value is set the row with that primary key value will be updated with the instance property values.
+     * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
+     *
+     * @param   boolean  $updateNulls  True to update fields even if they are null.
+     *
+     * @return  boolean  True on success.
+     *
+     * @since   4.2.0
+     */
+    public function store($updateNulls = true)
+    {
     // Support for counter field
     if(isset($this->counter) && !\is_string($this->counter))
     {
@@ -110,7 +112,7 @@ class TaskTable extends Table
     }
 
     return parent::store($updateNulls);
-  }
+    }
 
   /**
    * Overloaded bind function to pre-process the params.
@@ -237,7 +239,7 @@ class TaskTable extends Table
   public function clcProgress()
   {
     // Calculate progress property
-    $db = $this->getDatabase();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true);
 
     // Get Counts per status
@@ -252,10 +254,10 @@ class TaskTable extends Table
     // Set Counts
     $this->count_pending = $results['pending']->count ?? 0;
     $this->count_success = $results['success']->count ?? 0;
-    $this->count_failed = $results['failed']->count ?? 0;
-    $count_processing = $results['processing']->count ?? 0;
+    $this->count_failed  = $results['failed']->count ?? 0;
+    $count_processing    = $results['processing']->count ?? 0;
 
-    $total = $this->count_pending + $this->count_success + $this->count_failed + $count_processing;
+    $total    = $this->count_pending + $this->count_success + $this->count_failed + $count_processing;
     $finished = $this->count_success + $this->count_failed;
 
     if($total > 0)

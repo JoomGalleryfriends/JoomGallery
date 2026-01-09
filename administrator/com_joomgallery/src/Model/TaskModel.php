@@ -1,9 +1,11 @@
 <?php
 /**
- * @package     com_joomgallery
- * @author      JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
- * @copyright   2008 - 2025 JoomGallery::ProjectTeam
- * @license     GNU General Public License version 3 or later
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
@@ -121,7 +123,6 @@ class TaskModel extends JoomAdminModel
         $pendingItems = $db->loadColumn();
 
         $data->queue = implode(',', $pendingItems);
-
       }
       catch (\Exception $e)
       {
@@ -183,6 +184,7 @@ class TaskModel extends JoomAdminModel
     $queueInput = $data['queue'] ?? null;
 
     $data['queue'] = '{}';
+
     if(isset($data['title']))
     {
       $data['successful'] = '{}';
@@ -192,48 +194,49 @@ class TaskModel extends JoomAdminModel
 
     $isNew = empty($data['id']);
 
-    if (!parent::save($data))
+    if(!parent::save($data))
     {
       return false;
     }
 
     $taskId = (int) $this->getState($this->getName() . '.id');
 
-    if ($taskId === 0)
+    if($taskId === 0)
     {
-      $table = $this->getTable();
+      $table  = $this->getTable();
       $taskId = isset($table->id) ? (int) $table->id : 0;
     }
 
-    if ($isNew && $taskId === 0)
+    if($isNew && $taskId === 0)
     {
       $taskId = (int) $this->getDatabase()->insertid();
     }
 
-    if ($taskId === 0)
+    if($taskId === 0)
     {
       $this->setError(Text::_('COM_JOOMGALLERY_TASK_ERROR_SAVE_FAILED'));
+
       return false;
     }
 
     $imageIds = [];
 
-    if ($queueInput === '0')
+    if($queueInput === '0')
     {
       $imageIds = $this->getAllImageIds();
 
-      if (empty($imageIds))
+      if(empty($imageIds))
       {
         $this->app->enqueueMessage(
-          Text::_('COM_JOOMGALLERY_TASK_WARN_QUEUE_EMPTY'),
-          'warning'
+            Text::_('COM_JOOMGALLERY_TASK_WARN_QUEUE_EMPTY'),
+            'warning'
         );
       }
     }
-    elseif (!empty($queueInput))
+    elseif(!empty($queueInput))
     {
-      $imageIds = \array_map('trim', \explode(',', $queueInput));
-      $imageIds = \array_filter($imageIds, 'is_numeric');
+      $imageIds = array_map('trim', explode(',', $queueInput));
+      $imageIds = array_filter($imageIds, 'is_numeric');
     }
 
     return $this->populateTaskItems($taskId, $imageIds);
@@ -278,6 +281,7 @@ class TaskModel extends JoomAdminModel
     catch (\Exception $e)
     {
       $this->setError($e->getMessage());
+
       return false;
     }
 
@@ -328,8 +332,8 @@ class TaskModel extends JoomAdminModel
         ->where($db->quoteName('a.published') . ' = 1')
         ->where($db->quoteName('a.approved') . ' = 1')
         ->leftJoin(
-          $db->quoteName(_JOOM_TABLE_CATEGORIES, 'b') .
-          ' ON ' . $db->quoteName('a.catid') . ' = ' . $db->quoteName('b.id')
+            $db->quoteName(_JOOM_TABLE_CATEGORIES, 'b') .
+            ' ON ' . $db->quoteName('a.catid') . ' = ' . $db->quoteName('b.id')
         )
         ->where($db->quoteName('b.published') . ' = 1')
         ->order($db->quoteName('a.ordering') . ' DESC');
@@ -341,14 +345,14 @@ class TaskModel extends JoomAdminModel
       $allImageIds = array_map(fn($item) => (string) $item->id, $allImageObjects);
 
       return $allImageIds;
-
     }
     catch (\Exception $e)
     {
-      $this->app->enqueueMessage(
+    $this->app->enqueueMessage(
         Text::sprintf('COM_JOOMGALLERY_TASK_ERROR_QUEUE_RESOLVE', $e->getMessage()),
         'error'
-      );
+    );
+
       return [];
     }
   }
@@ -367,7 +371,7 @@ class TaskModel extends JoomAdminModel
     // Delete associated task items first (Cascade behavior in PHP)
     if(!empty($pks))
     {
-      $db = $this->getDatabase();
+      $db    = $this->getDatabase();
       $query = $db->getQuery(true)
         ->delete($db->quoteName('#__joomgallery_task_items'))
         ->whereIn($db->quoteName('task_id'), $pks); // whereIn handles array sanitization
@@ -379,6 +383,7 @@ class TaskModel extends JoomAdminModel
       catch (\Exception $e)
       {
         $this->setError($e->getMessage());
+
         return false;
       }
     }

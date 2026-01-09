@@ -1,9 +1,11 @@
 <?php
 /**
- * @package     com_joomgallery
- * @author      JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
- * @copyright   2008 - 2025 JoomGallery::ProjectTeam
- * @license     GNU General Public License version 3 or later
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
@@ -107,14 +109,14 @@ class TaskController extends JoomFormController
    */
   public function runTask()
   {
-    $this->checkToken() or die(Text::_('JINVALID_TOKEN'));
+    $this->checkToken() || die(Text::_('JINVALID_TOKEN'));
 
     $app     = Factory::getApplication();
     $db      = Factory::getDbo();
     $taskId  = $app->input->getInt('task_id');
     $itemRow = null;
 
-    $response = ['success' => true, 'data' => null];
+    $response     = ['success' => true, 'data' => null];
     $responseData = [
       'success'  => false,
       'item_id'  => null,
@@ -137,7 +139,7 @@ class TaskController extends JoomFormController
       $itemRow = $db->loadObject();
 
 
-      if ($itemRow)
+      if($itemRow)
       {
         $updateQuery = $db->getQuery(true)
           ->update($db->quoteName('#__joomgallery_task_items'))
@@ -152,13 +154,14 @@ class TaskController extends JoomFormController
 
         /** @var \Joomgallery\Component\Joomgallery\Administrator\Model\TaskModel $taskModel */
         $taskModel = $this->getModel();
-        $task = $taskModel->getItem($taskId);
+        $task      = $taskModel->getItem($taskId);
 
 //        if (str_starts_with($itemRow->item_id, '9')) {
 //          throw new \RuntimeException("Manual error if ItemId starts with 8.");
 //        }
 
-        if (!$task) {
+        if(!$task)
+        {
           throw new \RuntimeException('Main Task ' . $taskId . ' not found.');
         }
 
@@ -175,8 +178,8 @@ class TaskController extends JoomFormController
       else
       {
         $db->transactionCommit();
-        $responseData['success'] = true;
-        $responseData['item_id'] = null;
+        $responseData['success']  = true;
+        $responseData['item_id']  = null;
         $responseData['continue'] = false;
       }
     }
@@ -184,17 +187,19 @@ class TaskController extends JoomFormController
     {
       try {
         $db->transactionRollback();
-      } catch (\Exception $rollbackException) {
+      }
+      catch (\Exception $rollbackException) {
         Factory::getApplication()->enqueueMessage('Rollback failed: ' . $rollbackException->getMessage(), 'error');
       }
 
-      $responseData['success']   = false;
-      $responseData['error']     = $e->getMessage();
-      $responseData['continue']  = true;
+      $responseData['success']  = false;
+      $responseData['error']    = $e->getMessage();
+      $responseData['continue'] = true;
 
-      if ($itemRow) {
+      if($itemRow)
+      {
         $responseData['item_id'] = $itemRow->item_id;
-        $query = $db->getQuery(true)
+        $query                   = $db->getQuery(true)
           ->update($db->quoteName('#__joomgallery_task_items'))
           ->set($db->quoteName('status') . ' = ' . $db->quote('failed'))
           ->set($db->quoteName('error_message') . ' = ' . $db->quote($e->getMessage()))
@@ -225,21 +230,22 @@ class TaskController extends JoomFormController
     $app = Factory::getApplication();
 
     $taskOption = SchedulerHelper::getTaskOptions()->findOption($task->type);
-    if (!$taskOption)
+
+    if(!$taskOption)
     {
       throw new \RuntimeException('Task type "' . $task->type . '" is not registered in SchedulerHelper.');
     }
 
     $handlerMethod = $this->getTaskParamHandler($task->type);
 
-    if (!method_exists($this, $handlerMethod))
+    if(!method_exists($this, $handlerMethod))
     {
       throw new \RuntimeException('No parameter handler found for task type "' . $task->type . '" (Method: ' . $handlerMethod . ').');
     }
 
     $params = $this->{$handlerMethod}($task, $itemId);
 
-    $mockRecord = new \stdClass();
+    $mockRecord                 = new \stdClass();
     $mockRecord->id             = 4;
     $mockRecord->type           = $task->type;
     $mockRecord->title          = $task->title;
@@ -249,15 +255,18 @@ class TaskController extends JoomFormController
 
     $schedulerTask = new Task($mockRecord);
 
-    $event = new ExecuteTaskEvent('onExecuteTask', [
-      'subject' => $schedulerTask,
-      'params'  => $params,
-    ]);
+    $event = new ExecuteTaskEvent(
+        'onExecuteTask',
+        [
+          'subject' => $schedulerTask,
+          'params'  => $params,
+        ]
+    );
 
     $app->getDispatcher()->dispatch($event->getName(), $event);
     $result = $event->getArgument('result') ?? Status::OK;
 
-    if ($result !== Status::OK)
+    if($result !== Status::OK)
     {
       throw new \RuntimeException('Task plugin reported error status: ' . $result);
     }
@@ -313,19 +322,19 @@ class TaskController extends JoomFormController
    */
   public function getFailedItems(): void
   {
-    $this->checkToken() or die(Text::_('JINVALID_TOKEN'));
+    $this->checkToken() || die(Text::_('JINVALID_TOKEN'));
     $app = Factory::getApplication();
     $db  = Factory::getDbo();
 
     $taskId = $app->input->getInt('task_id', 0);
 
-    $response = ['success' => false, 'data' => null];
+    $response     = ['success' => false, 'data' => null];
     $responseData = ['items' => null, 'error' => null];
 
-    if (!$taskId)
+    if(!$taskId)
     {
       $responseData['error'] = Text::_('COM_JOOMGALLERY_TASK_ERROR_ID_MISSING');
-      $response['data'] = json_encode($responseData);
+      $response['data']      = json_encode($responseData);
     }
     else
     {
@@ -341,13 +350,13 @@ class TaskController extends JoomFormController
         $items = $db->loadObjectList();
 
         $responseData['items'] = $items;
-        $response['data'] = json_encode($responseData);
-        $response['success'] = true;
+        $response['data']      = json_encode($responseData);
+        $response['success']   = true;
       }
       catch (\Exception $e)
       {
         $responseData['error'] = $e->getMessage();
-        $response['data'] = json_encode($responseData);
+        $response['data']      = json_encode($responseData);
       }
     }
 
@@ -363,7 +372,7 @@ class TaskController extends JoomFormController
    */
   public function cleanupTask()
   {
-    if (!$this->checkToken('post'))
+    if(!$this->checkToken('post'))
     {
       echo new JsonResponse(null, Text::_('JINVALID_TOKEN'), true);
       $this->app->close();
@@ -374,10 +383,10 @@ class TaskController extends JoomFormController
 
     $data = [
       'deleted' => false,
-      'reason'  => ''
+      'reason'  => '',
     ];
 
-    if (!$taskId)
+    if(!$taskId)
     {
       echo new JsonResponse(null, Text::_('COM_JOOMGALLERY_TASK_ERROR_NO_ID'), true);
       $this->app->close();
@@ -394,7 +403,7 @@ class TaskController extends JoomFormController
       $db->setQuery($query);
       $notSuccessCount = (int) $db->loadResult();
 
-      if ($notSuccessCount > 0)
+      if($notSuccessCount > 0)
       {
         $data['reason'] = Text::_('COM_JOOMGALLERY_TASK_ERROR_ITEMS_FAILED');
 
@@ -403,7 +412,8 @@ class TaskController extends JoomFormController
       else
       {
         $pks = [(int)$taskId];
-        if ($this->getModel()->delete($pks))
+
+        if($this->getModel()->delete($pks))
         {
           $data['deleted'] = true;
           echo new JsonResponse($data, 'Cleanup successful.');

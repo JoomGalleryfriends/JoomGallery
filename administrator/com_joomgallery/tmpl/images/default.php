@@ -1,9 +1,11 @@
 <?php
 /**
- * @package     com_joomgallery
- * @author      JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
- * @copyright   2008 - 2025 JoomGallery::ProjectTeam
- * @license     GNU General Public License version 3 or later
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 // No direct access
@@ -44,7 +46,7 @@ $newTaskItem = null;
 if($newTaskId)
 {
   // Boot Task Model manually to get the item
-  $taskModel   = Factory::getApplication()->bootComponent('com_joomgallery')->getMVCFactory()->createModel('Task', 'Administrator', array('ignore_request' => true));
+  $taskModel   = Factory::getApplication()->bootComponent('com_joomgallery')->getMVCFactory()->createModel('Task', 'Administrator', ['ignore_request' => true]);
   $newTaskItem = $taskModel->getItem($newTaskId);
 }
 
@@ -60,7 +62,7 @@ if($saveOrder && !empty($this->items))
   <div class="row">
   <div class="col-md-12">
    <div id="j-main-container" class="j-main-container">
-   <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+   <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <?php if(empty($this->items)) : ?>
           <div class="alert alert-info">
             <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
@@ -130,18 +132,19 @@ if($saveOrder && !empty($this->items))
             </thead>
             <tfoot>
             <tr>
-              <td colspan="<?php echo isset($this->items[0]) ? \count(\get_object_vars($this->items[0])) : 10; ?>">
+              <td colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
                 <?php echo $this->pagination->getListFooter(); ?>
               </td>
             </tr>
             </tfoot>
-            <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo \strtolower($listDirn); ?>" <?php endif; ?>>
+            <tbody <?php if($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
+                   endif; ?>>
               <?php foreach($this->items as $i => $item) :
                 $ordering   = ($listOrder == 'a.ordering');
-                $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION.'.image', $item->id, $item->catid, true);
-                $canEditCat = $this->getAcl()->checkACL('edit', _JOOM_OPTION.'.category.'.$item->catid);
-                $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || is_null($item->checked_out);
-                $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION.'.image', $item->id, $item->catid, true) && $canCheckin;
+                $canEdit    = $this->getAcl()->checkACL('edit', _JOOM_OPTION . '.image', $item->id, $item->catid, true);
+                $canEditCat = $this->getAcl()->checkACL('edit', _JOOM_OPTION . '.category.' . $item->catid);
+                $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
+                $canChange  = $this->getAcl()->checkACL('editstate', _JOOM_OPTION . '.image', $item->id, $item->catid, true) && $canCheckin;
                 ?>
 
               <tr class="row<?php echo $i % 2; ?>">
@@ -208,7 +211,7 @@ if($saveOrder && !empty($this->items))
 
                     <?php if($canEdit) : ?>
                       <?php
-                        $ImgUrl     = Route::_('index.php?option=com_joomgallery&task=image.edit&id='.(int) $item->id);
+                        $ImgUrl     = Route::_('index.php?option=com_joomgallery&task=image.edit&id=' . (int) $item->id);
                         $EditImgTxt = Text::_('COM_JOOMGALLERY_IMAGE_EDIT');
                       ?>
                       <a href="<?php echo $ImgUrl; ?>" title="<?php echo $EditImgTxt; ?>">
@@ -226,7 +229,7 @@ if($saveOrder && !empty($this->items))
                       <?php echo Text::_('JCATEGORY') . ': '; ?>
                       <?php if($canEditCat) : ?>
                         <?php
-                          $CatUrl     = Route::_('index.php?option=com_joomgallery&task=category.edit&id='.(int) $item->catid);
+                          $CatUrl     = Route::_('index.php?option=com_joomgallery&task=category.edit&id=' . (int) $item->catid);
                           $EditCatTxt = Text::_('COM_JOOMGALLERY_CATEGORY_EDIT');
                         ?>
                         <a href="<?php echo $CatUrl; ?>" title="<?php echo $EditCatTxt; ?>"><?php echo $this->escape($item->cattitle); ?></a>

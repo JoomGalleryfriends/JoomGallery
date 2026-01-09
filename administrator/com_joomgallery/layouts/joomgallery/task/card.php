@@ -1,5 +1,12 @@
 <?php
-defined('_JEXEC') or die;
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */\defined('_JEXEC') || die;
 
 /**
  * @package     com_joomgallery
@@ -8,9 +15,9 @@ defined('_JEXEC') or die;
  * @license     GNU General Public License version 3 or later
  */
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\HTML\HTMLHelper;
 
 /** @var \stdClass $item Das Task-Objekt */
 $item = $displayData;

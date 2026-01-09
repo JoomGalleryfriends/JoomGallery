@@ -1,9 +1,11 @@
 <?php
 /**
- * @package     com_joomgallery
- * @author      JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
- * @copyright   2008 - 2025 JoomGallery::ProjectTeam
- * @license     GNU General Public License version 3 or later
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 // No direct access
@@ -56,8 +58,8 @@ $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
 
 if($saveOrder && !empty($this->items))
 {
-	$saveOrderingUrl = 'index.php?option=com_joomgallery&task=tasks.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
-	HTMLHelper::_('draggablelist.draggable');
+    $saveOrderingUrl = 'index.php?option=com_joomgallery&task=tasks.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
+    HTMLHelper::_('draggablelist.draggable');
 }
 ?>
 
@@ -67,7 +69,7 @@ if($saveOrder && !empty($this->items))
       <h2><?php echo Text::_('COM_JOOMGALLERY_TASKS_INSTANT_TASKS'); ?></h2>
       <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=tasks'); ?>" method="post" name="adminForm" id="adminForm">
         <div id="ajax-tasks-container" class="j-main-container">
-   <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+   <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
    <div class="clearfix"></div>
 
         <?php if(empty($this->items)) : ?>
@@ -76,13 +78,13 @@ if($saveOrder && !empty($this->items))
               <span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
               <?php echo Text::_('COM_JOOMGALLERY_TASKS_EMPTYSTATE_TITLE'); ?>
             </div>
-          <?php else : ?>
+        <?php else : ?>
             <div class="ms-3 mb-2">
               <span><?php echo HTMLHelper::_('grid.checkall'); ?></span>
               <span><?php echo Text::_('JGLOBAL_SELECTION_ALL'); ?></span>
             </div>
             <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-4 g-4">
-              <?php foreach ($this->items as $i => $item): ?>
+              <?php foreach($this->items as $i => $item): ?>
                 <div class="col">
                   <div class="row align-items-start">
                     <div class="col-md-12">
@@ -96,7 +98,7 @@ if($saveOrder && !empty($this->items))
                 </div>
               <?php endforeach; ?>
             </div>
-          <?php endif; ?>
+        <?php endif; ?>
 
         <input type="hidden" name="task" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
@@ -116,7 +118,7 @@ if($saveOrder && !empty($this->items))
           <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
           <?php echo Text::_('COM_SCHEDULER_EMPTYSTATE_TITLE'); ?>
         </div>
-      <?php else : ?>
+        <?php else : ?>
         <!-- Tasks table starts here -->
         <table class="table" id="taskList">
           <caption class="visually-hidden">
@@ -174,12 +176,18 @@ if($saveOrder && !empty($this->items))
                   <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'tasks.', false); ?>
                 <?php endif; ?>
                 <?php if($item->locked) : ?>
-                  <?php echo HTMLHelper::_('jgrid.action', $i, 'unlock', array('enabled' => $canChange, 'prefix' => 'tasks.',
-                    'active_class' => 'none fa fa-running border-dark text-body',
-                    'inactive_class' => 'none fa fa-running', 'tip' => true, 'translate' => false,
-                    'active_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
-                    'inactive_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
-                    )); ?>
+                <?php echo HTMLHelper::_(
+                    'jgrid.action',
+                    $i,
+                    'unlock',
+                    [
+                      'enabled' => $canChange, 'prefix' => 'tasks.',
+                      'active_class' => 'none fa fa-running border-dark text-body',
+                      'inactive_class' => 'none fa fa-running', 'tip' => true, 'translate' => false,
+                      'active_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
+                      'inactive_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
+                    ]
+                ); ?>
                 <?php endif; ?>
                 <span class="task-title">
                   <a href="<?php echo Route::_('index.php?option=com_scheduler&task=task.edit&id=' . $item->id); ?>"
@@ -249,7 +257,7 @@ if($saveOrder && !empty($this->items))
           $modalbody   = '<div class="p-3"></div>';
           echo HTMLHelper::_('bootstrap.renderModal', 'scheduler-test-modal', $modalparams, $modalbody);
         ?>
-      <?php endif; ?>
+        <?php endif; ?>
 
       <br>
       <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_scheduler&view=tasks'); ?>"><?php echo Text::_('COM_JOOMGALLERY_TASKS_GO_TO_SCHEDULER'); ?></a>
