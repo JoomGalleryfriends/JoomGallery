@@ -138,8 +138,7 @@ class DefaultRouter extends RouterView
     $this->registerView($usercategories);
 
     $usercategory = new RouterViewConfiguration('usercategory');
-    $usercategory->setKey('id')->setNestable()->setParent($usercategories);
-    //$usercategory->setParent($userpanel);
+    $usercategory->setKey('id')->setNestable()->setParent($userpanel);
     $this->registerView($usercategory);
 
     $userimages = new RouterViewConfiguration('userimages');

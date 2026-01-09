@@ -135,7 +135,7 @@ class JG3ModernRouter extends DefaultRouter
     $this->registerView($usercategories);
 
     $usercategory = new RouterViewConfiguration('usercategory');
-    $usercategory->setKey('id')->setNestable()->setParent($usercategories);
+    $usercategory->setKey('id')->setNestable()->setParent($userpanel);
     $this->registerView($usercategory);
 
     $userimages = new RouterViewConfiguration('userimages');
@@ -143,7 +143,7 @@ class JG3ModernRouter extends DefaultRouter
     $this->registerView($userimages);
 
     $userimage = new RouterViewConfiguration('userimage');
-    $userimage->setKey('id')->setParent($userimages);
+    $userimage->setKey('id')->setParent($usercategory, 'catid');
     $this->registerView($userimage);
 
     $this->attachRule(new MenuRules($this));
