@@ -119,23 +119,15 @@ class JG3ModernRouter extends DefaultRouter
     $image->setKey('id')->setParent($category, 'catid');
     $this->registerView($image);
 
-    $imageform = new RouterViewConfiguration('imageform');
-    $imageform->setKey('id')->setParent($gallery);
-    $this->registerView($imageform);
-
     $userpanel = new RouterViewConfiguration('userpanel');
     $this->registerView($userpanel);
-
-    $userupload = new RouterViewConfiguration('userupload');
-    $userupload->setParent($userpanel);
-    $this->registerView($userupload);
 
     $usercategories = new RouterViewConfiguration('usercategories');
     $usercategories->setParent($userpanel);
     $this->registerView($usercategories);
 
     $usercategory = new RouterViewConfiguration('usercategory');
-    $usercategory->setKey('id')->setNestable()->setParent($userpanel);
+    $usercategory->setKey('id')->setNestable()->setParent($usercategories);
     $this->registerView($usercategory);
 
     $userimages = new RouterViewConfiguration('userimages');
@@ -143,8 +135,12 @@ class JG3ModernRouter extends DefaultRouter
     $this->registerView($userimages);
 
     $userimage = new RouterViewConfiguration('userimage');
-    $userimage->setKey('id')->setParent($usercategory, 'catid');
+    $userimage->setKey('id')->setParent($userimages);
     $this->registerView($userimage);
+
+    $userupload = new RouterViewConfiguration('userupload');
+    $userupload->setParent($userpanel);
+    $this->registerView($userupload);
 
     $this->attachRule(new MenuRules($this));
     $this->attachRule(new StandardRules($this));
@@ -161,6 +157,17 @@ class JG3ModernRouter extends DefaultRouter
    */
   public function preprocess($query)
   {
+    // Check for a controller.task command.
+    if(isset($query['task']) && \str_contains($query['task'], '.'))
+    {
+      [$view, $task] = explode('.', $query['task']);
+
+      if(!isset($query['view']))
+      {
+        $query['view'] = $view;
+      }
+    }
+
     if( (isset($query['view']) && $query['view'] == 'image') &&
         (isset($query['format']) && \in_array($query['format'], JoomHelper::$image_types)) &&
         (isset($query['id']) && $query['id'] == 0)
@@ -252,6 +259,35 @@ class JG3ModernRouter extends DefaultRouter
   /**
    * Method to get the segment for an image view
    *
+   * @param   string   $id     ID of the image to retrieve the segments for
+   * @param   array    $query  The request that is built right now
+   *
+   * @return  array|string  The segments of this item
+   *
+   * @since  4.3.0
+   */
+  public function getUserimageSegment($id, $query): array|string
+  {
+    if(!strpos($id, ':'))
+    {
+      $dbquery = $this->db->createQuery();
+
+      $dbquery->select($this->db->quoteName('alias'))
+        ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
+        ->where($this->db->quoteName('id') . ' = :id')
+        ->bind(':id', $id, ParameterType::INTEGER);
+      $this->db->setQuery($dbquery);
+
+      // To create a segment in the form: alias-id
+      $id = $this->db->loadResult() . ':' . $id;
+    }
+
+    return [(int) $id => $id];
+  }
+
+  /**
+   * Method to get the segment for an image view
+   *
    * @param   string   $segment  Segment of the image to retrieve the ID for
    * @param   array    $query    The request that is parsed right now
    *
@@ -265,7 +301,7 @@ class JG3ModernRouter extends DefaultRouter
       // Special case: No image with id=0
       return 'null';
     }
-    
+
     $img_id = 0;
 
     $parts = explode('-', $segment);
