@@ -937,8 +937,8 @@ class JoomHelper
     $comp_id = self::getComponent()->extension->extension_id;
 
     $items = $menu->getItems(
-      ['type', 'component_id', 'access'],
-      ['component', $comp_id, null]
+        ['type', 'component_id', 'access'],
+        ['component', $comp_id, null]
     );
 
     if(!empty($items))
@@ -970,11 +970,13 @@ class JoomHelper
         if($count > 1)
         {
           // We have multiple matching menuitems
-          usort($findings, function($a, $b)
-          {
-            // Lets take the one with the lowest level value
-            return $a->level - $b->level;
-          });
+        usort(
+            $findings,
+            function ($a, $b) {
+              // Lets take the one with the lowest level value
+              return $a->level - $b->level;
+            }
+        );
         }
 
         return $findings[0]->id;
@@ -982,6 +984,7 @@ class JoomHelper
     }
 
     $default = $menu->getDefault();
+
     return $default ? (int) $default->id : 0;
   }
 

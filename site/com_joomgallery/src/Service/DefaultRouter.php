@@ -165,7 +165,7 @@ class DefaultRouter extends RouterView
   public function preprocess($query)
   {
     // Check for a controller.task command.
-    if(isset($query['task']) && \str_contains($query['task'], '.'))
+    if(isset($query['task']) && str_contains($query['task'], '.'))
     {
       [$view, $task] = explode('.', $query['task']);
 
@@ -414,7 +414,7 @@ class DefaultRouter extends RouterView
             return [0 => 'newcat', 1 => 'categories'];
           }
 
-          return [0 => '0:newcat', 1 => '1:categories', ];
+          return [0 => '0:newcat', 1 => '1:categories'];
         }
       }
     }

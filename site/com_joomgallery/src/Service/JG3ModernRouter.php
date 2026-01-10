@@ -158,7 +158,7 @@ class JG3ModernRouter extends DefaultRouter
   public function preprocess($query)
   {
     // Check for a controller.task command.
-    if(isset($query['task']) && \str_contains($query['task'], '.'))
+    if(isset($query['task']) && str_contains($query['task'], '.'))
     {
       [$view, $task] = explode('.', $query['task']);
 
@@ -200,7 +200,7 @@ class JG3ModernRouter extends DefaultRouter
     }
 
     // Process the parsed variables based on custom defined rules
-    foreach ($this->rules as $rule)
+    foreach($this->rules as $rule)
     {
       $rule->preprocess($query);
     }
