@@ -45,6 +45,7 @@ use Joomla\CMS\Component\Router\RouterInterface;
 use Joomla\CMS\Component\Router\RouterServiceInterface;
 use Joomla\CMS\Component\Router\RouterServiceTrait;
 use Joomla\CMS\Extension\BootableExtensionInterface;
+use Joomla\CMS\Extension\ExtensionHelper;
 use Joomla\CMS\Extension\MVCComponent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Fields\FieldsServiceInterface;
@@ -111,6 +112,13 @@ RouterServiceTrait::createRouter as traitCreateRouter;
   public $version = '';
 
   /**
+   * Storage for the current component version
+   *
+   * @var object
+   */
+  public $extension = null;
+
+  /**
    * Booting the extension. This is the function to set up the environment of the extension like
    * registering new class loaders, etc.
    *
@@ -147,6 +155,12 @@ RouterServiceTrait::createRouter as traitCreateRouter;
     if(!$this->version)
     {
       $this->version = (string) $this->xml->version;
+    }
+
+    // Load component object from #__extensions table
+    if(!$this->extension)
+    {
+      $this->extension = ExtensionHelper::getExtensionRecord(_JOOM_OPTION, 'component');
     }
   }
 

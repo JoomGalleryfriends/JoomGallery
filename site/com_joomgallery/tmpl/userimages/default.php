@@ -68,7 +68,7 @@ $categoriesView = Route::_('index.php?option=com_joomgallery&view=usercategories
 
 // return to userImages;
 $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userimages');
-$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return=' . $returnURL);
+$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=0&return=' . $returnURL);
 
 $baseLink_ImageEdit    = 'index.php?option=com_joomgallery&task=userimage.edit&id=';
 $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
