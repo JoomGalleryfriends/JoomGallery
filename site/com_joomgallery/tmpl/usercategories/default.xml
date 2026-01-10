@@ -6,18 +6,22 @@
     </message>
   </layout>
   <fields name="request">
-    <fieldset name="request"
-    >
-      <field
-        name="userNeedsSettings"
-        type="note"
-        label="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO"
-        description="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO_DESC"
-        readonly="true"
-        class="alert alert-info"
-      />
+    <fieldset name="request">
+      <field name="id"
+             type="hidden"
+             default="1"
+             value="1" >
+      </field>
+      <field name="userNeedsSettings"
+             type="note"
+             label="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO"
+             description="COM_JOOMGALLERY_MENU_VIEW_USER_SITE_INFO_DESC"
+             readonly="true"
+             class="alert alert-info" >
+      </field>
     </fieldset>
   </fields>
+
   <fields name="params">
     <fieldset name="basic">
       <field name="showTitle"
