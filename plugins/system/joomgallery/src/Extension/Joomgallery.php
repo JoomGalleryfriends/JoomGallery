@@ -493,6 +493,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
         // Check if already a usercategories menu item exists
         $exists = false;
+
         foreach($jgmenuitems as $menuitem)
         {
           if( isset($menuitem->query['view']) && $menuitem->query['view'] == 'usercategories' &&
