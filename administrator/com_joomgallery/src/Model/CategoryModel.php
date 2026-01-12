@@ -20,6 +20,7 @@ use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -559,6 +560,39 @@ class CategoryModel extends JoomAdminModel
           $this->component->addLog($table->getError(), 'error', 'jerror');
 
           return false;
+        }
+
+        // Stop storing data when maximum user categories is exceeded (only in frontend)
+        if($this->app->isClient('site'))
+        {
+          // Get user
+          $userid = Factory::getApplication()->getIdentity()->id;
+
+          $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+          $query = $db->getQuery(true)
+                ->select('COUNT(id)')
+                ->from(_JOOM_TABLE_CATEGORIES)
+                ->where('created_by = ' . \intval($userid));
+
+          $db->setQuery($query);
+
+          $usercategories    = $db->loadResult();
+          $maxusercategories = $this->component->getConfig()->get('jg_maxusercat');
+
+          // Increment amount user categories when creating a new category
+          if($isNew)
+          {
+            $usercategories++;
+          }
+
+          if($usercategories > $maxusercategories)
+          {
+            $this->setError(Text::sprintf('COM_JOOMGALLERY_USER_MAXUSERCAT_EXCEEDED', $maxusercategories));
+            $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_USER_MAXUSERCAT_EXCEEDED', $maxusercategories), 'error', 'jerror');
+
+            return false;
+          }
         }
 
         // Filesystem changes
