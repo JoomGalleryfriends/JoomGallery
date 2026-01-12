@@ -99,7 +99,8 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     {
       $timespan  = $this->component->getConfig()->get('jg_maxuserimage_timespan');
       $debugtext = Text::sprintf('COM_JOOMGALLERY_UPLOAD_NEW_IMAGE_LIMIT_REACHED', $maxuserimages . ' ' . Text::plural('COM_JOOMGALLERY_UPLOAD_NEW_IMAGE_LIMIT_REACHED_IMAGE', $maxuserimages));
-      If($timespan > 0)
+
+      if($timespan > 0)
       {
         $debugtext .= ' ' . Text::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_IMAGES_LIMIT_DAYS', $timespan . ' ' . Text::plural('COM_JOOMGALLERY_UPLOAD_NEW_IMAGE_LIMIT_DAYS', $timespan));
       }
