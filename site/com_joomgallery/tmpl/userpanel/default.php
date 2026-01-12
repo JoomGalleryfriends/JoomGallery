@@ -346,7 +346,7 @@ function displayUserButtons($returnURL)
 $uploadView      = Route::_('index.php?option=com_joomgallery&view=userupload');
 $imagesView      = Route::_('index.php?option=com_joomgallery&view=userimages');
 $categoriesView  = Route::_('index.php?option=com_joomgallery&view=usercategories');
-$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return=' . $returnURL);
+$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=0&return=' . $returnURL);
 
 ?>
 <div>
