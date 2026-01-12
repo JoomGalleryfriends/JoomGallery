@@ -541,11 +541,11 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
           if($new_table->store($data))
           {
-            $this->app->enqueueMessage(Text::_('Automatic menuitem of type "usercategories" created.'), 'notice');
+            $this->app->enqueueMessage(Text::_('PLG_SYSTEM_JOOMGALLERY_MSG_USERCATEGORIES_SUCCESS'), 'notice');
           }
           else
           {
-            $this->app->enqueueMessage(Text::_('Menuitem of type "usercategories" could not be created automatically. Consider to create it manually.'), 'notice');
+            $this->app->enqueueMessage(Text::_('PLG_SYSTEM_JOOMGALLERY_MSG_USERCATEGORIES_FAILED'), 'notice');
           }
         }
       }
