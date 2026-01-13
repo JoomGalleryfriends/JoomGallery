@@ -235,7 +235,7 @@ $canDelete = false;
                   $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser->id;
+                  $canCheckin = $canChange || $item->checked_out == $this->userId;
                   $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
                   ?>
 
@@ -357,7 +357,7 @@ $canDelete = false;
                         </button>
 
                       <?php else : ?>
-                        YYY<i class="icon-<?php echo (int) $item->featured ? 'featured' : 'minus-2'; ?>"></i>
+                        <i class="icon-<?php echo (int) $item->featured ? 'featured' : 'minus-2'; ?>"></i>
                       <?php endif; ?>
                     </td>
 

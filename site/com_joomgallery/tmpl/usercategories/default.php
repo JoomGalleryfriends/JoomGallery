@@ -216,7 +216,7 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                   $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
                   $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
                   $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
-                  $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser->id;
+                  $canCheckin = $canChange || $item->checked_out == $this->userId;
                   // $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
                   $disabled = '';
 

@@ -137,7 +137,7 @@ $canDeleteFound = false;
                   $canDelete   = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
               $canDeleteFound |= $canDelete;
                   $canChange   = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canCheckin  = $canChange || $item->checked_out == $this->getCurrentUser()->id;
+                  $canCheckin  = $canChange || $item->checked_out == $this->userId;
                   $disabled    = ($item->checked_out > 0) ? 'disabled' : '';
                 ?>
 
