@@ -75,6 +75,15 @@ class DefaultRouter extends RouterView
   private bool $noIDs;
 
   /**
+   * Param to use image ids in URLs
+   *
+   * @var    bool
+   *
+   * @since  4.3.0
+   */
+  private bool $noIMG_IDs;
+
+  /**
    * Database object
    *
    * @var    DatabaseInterface
@@ -100,8 +109,9 @@ class DefaultRouter extends RouterView
     parent::__construct($app, $menu);
 
     // Get router config value
-    $this->noIDs = (bool) $app->bootComponent('com_joomgallery')->getConfig()->get('jg_router_ids', '0');
-    $this->db    = $db;
+    $this->noIDs     = (bool) $app->bootComponent('com_joomgallery')->getConfig()->get('jg_router_ids', '0');
+    $this->noIMG_IDs = (bool) $app->bootComponent('com_joomgallery')->getConfig()->get('jg_router_imgids', '0');
+    $this->db        = $db;
 
     if($skipSelf)
     {
@@ -242,7 +252,7 @@ class DefaultRouter extends RouterView
         if($query['view'] = 'image' && $query['format'] = 'raw')
         {
           // Load the no-image
-          if($this->noIDs)
+          if($this->noIMG_IDs)
           {
             return [0 => 'noimage'];
           }
@@ -259,7 +269,7 @@ class DefaultRouter extends RouterView
       $id .= ':' . $this->getImageAliasDb($id);
     }
 
-    if($this->noIDs)
+    if($this->noIMG_IDs)
     {
       list($void, $segment) = explode(':', $id, 2);
 
@@ -286,7 +296,7 @@ class DefaultRouter extends RouterView
       $id .= ':' . $this->getImageAliasDb($id);
     }
 
-    if($this->noIDs)
+    if($this->noIMG_IDs)
     {
       list($void, $segment) = explode(':', $id, 2);
 
@@ -318,7 +328,7 @@ class DefaultRouter extends RouterView
       return $this->getImageSegment($id, $query);
     }
 
-    if($this->noIDs)
+    if($this->noIMG_IDs)
     {
       list($void, $segment) = explode(':', $id, 2);
 

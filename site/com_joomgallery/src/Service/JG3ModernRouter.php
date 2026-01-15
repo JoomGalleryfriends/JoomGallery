@@ -62,15 +62,6 @@ class JG3ModernRouter extends DefaultRouter
   public static string $image_parentID = 'catid';
 
   /**
-   * Param to use ids in URLs
-   *
-   * @var    bool
-   *
-   * @since  4.0.0
-   */
-  private bool $noIDs;
-
-  /**
    * Database object
    *
    * @var    DatabaseInterface
@@ -79,22 +70,12 @@ class JG3ModernRouter extends DefaultRouter
    */
   private $db;
 
-  /**
-   * The category cache
-   *
-   * @var    array
-   *
-   * @since  4.0.0
-   */
-  private $categoryCache = [];
-
   public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db)
   {
     parent::__construct($app, $menu, $categoryFactory, $db, true);
 
     // Get router config value
-    $this->noIDs = (bool) $app->bootComponent('com_joomgallery')->getConfig()->get('jg_router_ids', '0');
-    $this->db    = $db;
+    $this->db = $db;
 
     $gallery = new RouterViewConfiguration('gallery');
     $this->registerView($gallery);
@@ -226,12 +207,6 @@ class JG3ModernRouter extends DefaultRouter
       {
         if($query['view'] = 'image' && $query['format'] = 'raw')
         {
-          // Load the no-image
-          if($this->noIDs)
-          {
-            return [0 => 'noimage'];
-          }
-
           return [0 => 'noimage:0'];
         }
         elseif($query['view'] = 'userimage')

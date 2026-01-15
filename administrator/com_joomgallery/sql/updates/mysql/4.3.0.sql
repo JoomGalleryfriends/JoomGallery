@@ -1,0 +1,1 @@
+ALTER TABLE `#__joomgallery_configs` ADD `jg_router_imgids` TINYINT(1) NOT NULL DEFAULT 0 AFTER `jg_router_ids`;
