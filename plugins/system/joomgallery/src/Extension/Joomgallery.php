@@ -19,7 +19,9 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Event\Model\AfterCleanCacheEvent;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Event\DispatcherAwareInterface;
 use Joomla\Event\DispatcherAwareTrait;
 use Joomla\Event\Event;
@@ -115,6 +117,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
         'onContentPrepareData' => ['onContentPrepareData', Priority::NORMAL],
         'onUserAfterSave'      => ['onUserAfterSave', Priority::NORMAL],
         'onUserAfterDelete'    => ['onUserAfterDelete', Priority::NORMAL],
+        'onContentAfterSave'   => ['onContentAfterSave', Priority::NORMAL],
       ];
     }
 
@@ -458,6 +461,96 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     }
 
     return true;
+  }
+
+  /**
+   * Event triggered after saving an item form.
+   *
+   * @param   Event   $event
+   *
+   * @return  boolean  True to continue with the storing process, false to stop it
+   *
+   * @since   4.3.0
+   */
+  public function onContentAfterSave(Event $event)
+  {
+    // J4x and J5x (5x: $context = getContext (); $table = $event->getArgument ('subject');
+    [$context, $table, $isNew, $data] = array_values($event->getArguments());
+
+    if(!\in_array($context, ['com_menus.item']) || !$this->app->isClient('administrator'))
+    {
+      return;
+    }
+
+    // Only continue when we are saving a new frontend menu item for a component
+    if($isNew && $table && $table->client_id == 0 && $table->type == 'component')
+    {
+      $uri = new Uri($table->link);
+
+      if($uri && $uri->getVar('option', '') == 'com_joomgallery' && $uri->getVar('view', '') == 'userpanel')
+      {
+        $jgmenuitems = $this->app->getMenu('site')->getItems(['component'], ['com_joomgallery']);
+
+        // Check if already a usercategories menu item exists
+        $exists = false;
+
+        foreach($jgmenuitems as $menuitem)
+        {
+          if( isset($menuitem->query['view']) && $menuitem->query['view'] == 'usercategories' &&
+              isset($menuitem->query['id']) && $menuitem->query['id'] == '1'
+            )
+          {
+            $exists = true;
+          }
+        }
+
+        // Only continue when we are saving a userpanel manu item
+        if(!$exists)
+        {
+          // Create menuitem automatically as a child of this menuitem
+          $com_menu  = $this->app->bootComponent('com_menus');
+          $new_table = $com_menu->getMVCFactory()->createTable('menu', 'administrator');
+
+          if(!$new_table)
+          {
+            return;
+          }
+
+          // Gallery menuitem
+          $data                 = [];
+          $data['id']           = null;
+          $data['parent_id']    = $table->id;
+          $data['menutype']     = $table->menutype;
+          $data['title']        = Text::_('JCATEGORIES');
+          $data['path']         = $table->path;
+          $data['language']     = $table->language;
+          $data['link']         = 'index.php?option=com_joomgallery&view=usercategories&id=1';
+          $data['type']         = $table->type;
+          $data['published']    = $table->published;
+          $data['level']        = $table->level + 1;
+          $data['component_id'] = $table->component_id;
+          $data['access']       = $table->access;
+          $data['img']          = $table->img;
+          $data['params']       = '{"menu_show":0}';
+
+          if(!$new_table->bind($data))
+          {
+            return;
+          }
+
+          $new_table->setLocation($data['parent_id'], 'last-child');
+
+          if($new_table->store($data))
+          {
+            $this->app->enqueueMessage(Text::_('PLG_SYSTEM_JOOMGALLERY_MSG_USERCATEGORIES_SUCCESS'), 'notice');
+          }
+          else
+          {
+            $this->app->enqueueMessage(Text::_('PLG_SYSTEM_JOOMGALLERY_MSG_USERCATEGORIES_FAILED'), 'notice');
+          }
+        }
+      }
+    }
   }
 
   /**
