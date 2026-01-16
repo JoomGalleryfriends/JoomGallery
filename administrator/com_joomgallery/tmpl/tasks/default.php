@@ -224,7 +224,7 @@ if($saveOrder && !empty($this->items))
                         data-scheduler-run
                         data-id="<?php echo (int) $item->id; ?>"
                         data-title="<?php echo $this->escape($item->title); ?>"
-                        data-url="<?php echo Route::_('index.php?option=com_ajax&format=json&plugin=RunSchedulerTest&group=system&id=' . (int) $item->id) . '&t=' . time(); ?>"
+                        data-url="<?php echo Route::_('index.php?option=com_ajax&format=json&plugin=RunSchedulerTest&group=system&id='.(int) $item->id).'&t='.time(); ?>"
                         title="<?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>">
                   <span class="fa fa-play fa-sm me-2"></span>
                   <?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>
@@ -250,15 +250,7 @@ if($saveOrder && !empty($this->items))
           <?php endforeach; ?>
           </tbody>
         </table>
-
-        <?php
-          // Modal for scheduler test runs
-          $modalparams = ['title' => ''];
-          $modalbody   = '<div class="p-3"></div>';
-          echo HTMLHelper::_('bootstrap.renderModal', 'scheduler-test-modal', $modalparams, $modalbody);
-        ?>
         <?php endif; ?>
-
       <br>
       <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_scheduler&view=tasks'); ?>"><?php echo Text::_('COM_JOOMGALLERY_TASKS_GO_TO_SCHEDULER'); ?></a>
     </div>

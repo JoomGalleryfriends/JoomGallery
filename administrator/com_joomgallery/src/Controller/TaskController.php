@@ -129,11 +129,11 @@ class TaskController extends JoomFormController
       $db->transactionStart();
 
       $query = $db->getQuery(true)
-        ->select(['id', 'item_id'])
-        ->from($db->quoteName('#__joomgallery_task_items'))
-        ->where($db->quoteName('task_id') . ' = ' . (int) $taskId)
-        ->where($db->quoteName('status') . ' = ' . $db->quote('pending'))
-        ->setLimit(1);
+                  ->select(['id', 'item_id'])
+                  ->from($db->quoteName('#__joomgallery_task_items'))
+                  ->where($db->quoteName('task_id') . ' = ' . (int)$taskId)
+                  ->where($db->quoteName('status') . ' = ' . $db->quote('pending'))
+                  ->setLimit(1);
 
       $db->setQuery($query . ' FOR UPDATE');
       $itemRow = $db->loadObject();
@@ -142,10 +142,10 @@ class TaskController extends JoomFormController
       if($itemRow)
       {
         $updateQuery = $db->getQuery(true)
-          ->update($db->quoteName('#__joomgallery_task_items'))
-          ->set($db->quoteName('status') . ' = ' . $db->quote('processing'))
-          ->set($db->quoteName('processed_at') . ' = NOW()')
-          ->where($db->quoteName('id') . ' = ' . (int) $itemRow->id);
+                          ->update($db->quoteName('#__joomgallery_task_items'))
+                          ->set($db->quoteName('status') . ' = ' . $db->quote('processing'))
+                          ->set($db->quoteName('processed_at') . ' = NOW()')
+                          ->where($db->quoteName('id') . ' = ' . (int)$itemRow->id);
         $db->setQuery($updateQuery)->execute();
 
         $db->transactionCommit();
@@ -164,9 +164,9 @@ class TaskController extends JoomFormController
         $this->processTaskItem($task, $itemRow->item_id);
 
         $query = $db->getQuery(true)
-          ->update($db->quoteName('#__joomgallery_task_items'))
-          ->set($db->quoteName('status') . ' = ' . $db->quote('success'))
-          ->where($db->quoteName('id') . ' = ' . (int) $itemRow->id);
+                    ->update($db->quoteName('#__joomgallery_task_items'))
+                    ->set($db->quoteName('status') . ' = ' . $db->quote('success'))
+                    ->where($db->quoteName('id') . ' = ' . (int)$itemRow->id);
         $db->setQuery($query)->execute();
 
         $responseData['success'] = true;
@@ -179,12 +179,14 @@ class TaskController extends JoomFormController
         $responseData['continue'] = false;
       }
     }
-    catch (\Exception $e)
+    catch(\Exception $e)
     {
-      try {
+      try
+      {
         $db->transactionRollback();
       }
-      catch (\Exception $rollbackException) {
+      catch(\Exception $rollbackException)
+      {
         Factory::getApplication()->enqueueMessage('Rollback failed: ' . $rollbackException->getMessage(), 'error');
       }
 
@@ -196,10 +198,10 @@ class TaskController extends JoomFormController
       {
         $responseData['item_id'] = $itemRow->item_id;
         $query                   = $db->getQuery(true)
-          ->update($db->quoteName('#__joomgallery_task_items'))
-          ->set($db->quoteName('status') . ' = ' . $db->quote('failed'))
-          ->set($db->quoteName('error_message') . ' = ' . $db->quote($e->getMessage()))
-          ->where($db->quoteName('id') . ' = ' . (int) $itemRow->id);
+                                      ->update($db->quoteName('#__joomgallery_task_items'))
+                                      ->set($db->quoteName('status') . ' = ' . $db->quote('failed'))
+                                      ->set($db->quoteName('error_message') . ' = ' . $db->quote($e->getMessage()))
+                                      ->where($db->quoteName('id') . ' = ' . (int)$itemRow->id);
         $db->setQuery($query)->execute();
       }
     }
@@ -213,8 +215,8 @@ class TaskController extends JoomFormController
    * Executes the specific action for a task item.
    * Throws an exception on error.
    *
-   * @param   \stdClass $task    The task object
-   * @param   string    $itemId  The ID of the item to be processed
+   * @param   \stdClass  $task    The task object
+   * @param   string     $itemId  The ID of the item to be processed
    *
    * @return  void
    * @throws  \Exception
@@ -252,11 +254,11 @@ class TaskController extends JoomFormController
     $schedulerTask = new Task($mockRecord);
 
     $event = new ExecuteTaskEvent(
-        'onExecuteTask',
-        [
-          'subject' => $schedulerTask,
-          'params'  => $params,
-        ]
+      'onExecuteTask',
+      [
+        'subject' => $schedulerTask,
+        'params'  => $params,
+      ]
     );
 
     $app->getDispatcher()->dispatch($event->getName(), $event);
@@ -272,7 +274,7 @@ class TaskController extends JoomFormController
    * Converts a task type string into a method name for the handler.
    * e.g. 'joomgalleryTask.recreateImage' -> 'prepareRecreateImageParams'
    *
-   * @param   string $taskType  The task type (e.g. 'joomgalleryTask.recreateImage')
+   * @param   string  $taskType  The task type (e.g. 'joomgalleryTask.recreateImage')
    *
    * @return  string            The name of the handler method
    *
@@ -292,8 +294,8 @@ class TaskController extends JoomFormController
   /**
    * Prepares the 'params' for the 'recreateImage' task.
    *
-   * @param   \stdClass $task    The JoomGallery task object
-   * @param   string    $itemId  The ID of the item to be processed
+   * @param   \stdClass  $task    The JoomGallery task object
+   * @param   string     $itemId  The ID of the item to be processed
    *
    * @return  \stdClass         The $params object for the event
    *
@@ -303,7 +305,7 @@ class TaskController extends JoomFormController
   {
     $app = Factory::getApplication();
 
-    return (object) [
+    return (object)[
       'cid'     => $itemId,
       'type'    => $task->params->get('type', 'thumbnail'), // 'recreate' specific
       'user'    => $app->getIdentity()->id,
@@ -337,10 +339,10 @@ class TaskController extends JoomFormController
       try
       {
         $query = $db->getQuery(true)
-          ->select($db->quoteName(['item_id', 'error_message']))
-          ->from($db->quoteName('#__joomgallery_task_items'))
-          ->where($db->quoteName('task_id') . ' = ' . (int) $taskId)
-          ->andWhere($db->quoteName('status') . ' = ' . $db->quote('failed'));
+                    ->select($db->quoteName(['item_id', 'error_message']))
+                    ->from($db->quoteName('#__joomgallery_task_items'))
+                    ->where($db->quoteName('task_id') . ' = ' . (int)$taskId)
+                    ->andWhere($db->quoteName('status') . ' = ' . $db->quote('failed'));
 
         $db->setQuery($query);
         $items = $db->loadObjectList();
@@ -349,7 +351,7 @@ class TaskController extends JoomFormController
         $response['data']      = json_encode($responseData);
         $response['success']   = true;
       }
-      catch (\Exception $e)
+      catch(\Exception $e)
       {
         $responseData['error'] = $e->getMessage();
         $response['data']      = json_encode($responseData);
@@ -391,13 +393,13 @@ class TaskController extends JoomFormController
     try
     {
       $query = $db->getQuery(true)
-        ->select('COUNT(*)')
-        ->from($db->quoteName('#__joomgallery_task_items'))
-        ->where($db->quoteName('task_id') . ' = ' . (int) $taskId)
-        ->where($db->quoteName('status') . ' != ' . $db->quote('success'));
+                  ->select('COUNT(*)')
+                  ->from($db->quoteName('#__joomgallery_task_items'))
+                  ->where($db->quoteName('task_id') . ' = ' . (int)$taskId)
+                  ->where($db->quoteName('status') . ' != ' . $db->quote('success'));
 
       $db->setQuery($query);
-      $notSuccessCount = (int) $db->loadResult();
+      $notSuccessCount = (int)$db->loadResult();
 
       if($notSuccessCount > 0)
       {
@@ -421,7 +423,7 @@ class TaskController extends JoomFormController
         }
       }
     }
-    catch (\Exception $e)
+    catch(\Exception $e)
     {
       echo new JsonResponse(null, $e->getMessage(), true);
     }

@@ -60,7 +60,7 @@ class TaskTable extends Table
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
     $this->component_exists = $component_exists;
-    $this->typeAlias        = _JOOM_OPTION . '.task';
+    $this->typeAlias        = _JOOM_OPTION.'.task';
 
     parent::__construct(_JOOM_TABLE_TASKS, 'id', $db);
 
@@ -112,7 +112,7 @@ class TaskTable extends Table
     }
 
     return parent::store($updateNulls);
-    }
+  }
 
   /**
    * Overloaded bind function to pre-process the params.
@@ -244,9 +244,9 @@ class TaskTable extends Table
 
     // Get Counts per status
     $query->select('status, COUNT(*) AS count')
-      ->from($db->quoteName('#__joomgallery_task_items'))
-      ->where($db->quoteName('task_id') . ' = ' . (int) $this->id)
-      ->group('status');
+          ->from($db->quoteName('#__joomgallery_task_items'))
+          ->where($db->quoteName('task_id').' = '.(int)$this->id)
+          ->group('status');
 
     $db->setQuery($query);
     $results = $db->loadObjectList('status');
@@ -299,7 +299,7 @@ class TaskTable extends Table
     // Select all records from the scheduler tasks table where type is matching.
     $query->select('*');
     $query->from($db->quoteName('#__scheduler_tasks'));
-    $query->where(($db->quoteName('id')) . '=' . $db->quote($id));
+    $query->where(($db->quoteName('id')).'='.$db->quote($id));
 
     // Reset the query using our newly populated query object.
     $db->setQuery($query);

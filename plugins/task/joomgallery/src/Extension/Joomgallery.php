@@ -149,12 +149,13 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       $this->logTask(Text::_('COM_JOOMGALLERY_TASK_LOG_MSG_RECREATE_ALL'));
 
       $listModel = $app->bootComponent('com_joomgallery')->getMVCFactory()->createModel('images', 'administrator');
-    $ids         = array_map(
-        function ($item) {
-        return $item->id;
+      $ids       = array_map(
+        function($item)
+        {
+          return $item->id;
         },
         $listModel->getIDs()
-    );
+      );
     }
 
     // Remove zero ids from list
@@ -328,8 +329,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     $query = $this->db->getQuery(true);
 
     $query->update($this->db->quoteName('#__scheduler_tasks'))
-          ->set($this->db->quoteName('params') . ' = ' . $this->db->quote($params->toString('json')))
-          ->where($this->db->quoteName('id') . ' = :extension_id')
+          ->set($this->db->quoteName('params').' = '.$this->db->quote($params->toString('json')))
+          ->where($this->db->quoteName('id').' = :extension_id')
           ->bind(':extension_id', $task_id, ParameterType::INTEGER);
 
     $this->db->setQuery($query);

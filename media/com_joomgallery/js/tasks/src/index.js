@@ -1,8 +1,10 @@
 /**
- * @package    com_joomgallery
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>
- * @copyright  2008 - 2025 JoomGallery::ProjectTeam
- * @license    GNU General Public License version 3 or later
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 import { Sema } from 'async-sema';
@@ -10,22 +12,25 @@ import { Sema } from 'async-sema';
 /**
  * How many tasks (workers) should be executed in parallel.
  */
-let parallelLimit = 10;
+let parallelLimit = 1;
 
 /**
  * Set to true to stop automatic execution.
+ *
  * @var {Boolean}
  */
 var forceStop = false;
 
 /**
  * Stores whether the stop was explicitly triggered by the user (pause click).
+ *
  * @var {Boolean}
  */
 var userPaused = false;
 
 /**
  * Stores whether a task is already being actively executed.
+ *
  * @var {Boolean}
  */
 var taskActive = false;

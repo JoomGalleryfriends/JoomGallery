@@ -51,8 +51,8 @@ class TaskModel extends JoomAdminModel
     $taskType   = $this->app->getUserState('com_joomgallery.add.task.task_type');
     $taskOption = $this->app->getUserState('com_joomgallery.add.task.task_option');
 
-    $this->setState($this->getName() . '.type', $taskType);
-    $this->setState($this->getName() . '.option', $taskOption);
+    $this->setState($this->getName().'.type', $taskType);
+    $this->setState($this->getName().'.option', $taskOption);
   }
 
   /**
@@ -92,7 +92,7 @@ class TaskModel extends JoomAdminModel
   protected function loadFormData()
   {
     // Check the session for previously entered form data.
-    $data = $this->app->getUserState(_JOOM_OPTION . '.edit.task.data', []);
+    $data = $this->app->getUserState(_JOOM_OPTION.'.edit.task.data', []);
 
     if(empty($data))
     {
@@ -104,7 +104,7 @@ class TaskModel extends JoomAdminModel
       $data = $this->item;
     }
 
-    $taskId = $data->id ?? $this->getState($this->getName() . '.id');
+    $taskId = $data->id ?? $this->getState($this->getName().'.id');
 
     if($taskId > 0)
     {
@@ -113,21 +113,21 @@ class TaskModel extends JoomAdminModel
         $db = $this->getDatabase();
 
         $query = $db->getQuery(true)
-          ->select($db->quoteName('item_id'))
-          ->from($db->quoteName('#__joomgallery_task_items'))
-          ->where($db->quoteName('task_id') . ' = ' . (int) $taskId)
-          ->where($db->quoteName('status') . ' = ' . $db->quote('pending'))
-          ->order($db->quoteName('id') . ' ASC');
+                    ->select($db->quoteName('item_id'))
+                    ->from($db->quoteName('#__joomgallery_task_items'))
+                    ->where($db->quoteName('task_id').' = '.(int)$taskId)
+                    ->where($db->quoteName('status').' = '.$db->quote('pending'))
+                    ->order($db->quoteName('id').' ASC');
 
         $db->setQuery($query);
         $pendingItems = $db->loadColumn();
 
         $data->queue = implode(',', $pendingItems);
       }
-      catch (\Exception $e)
+      catch(\Exception $e)
       {
         $data->queue = '';
-        $this->app->enqueueMessage('Could not load pending items: ' . $e->getMessage(), 'warning');
+        $this->app->enqueueMessage('Could not load pending items: '.$e->getMessage(), 'warning');
       }
     }
     else
@@ -137,7 +137,7 @@ class TaskModel extends JoomAdminModel
 
     if(isset($data->params))
     {
-      $data->params = (string) $data->params;
+      $data->params = (string)$data->params;
     }
 
     return $data;
@@ -199,17 +199,17 @@ class TaskModel extends JoomAdminModel
       return false;
     }
 
-    $taskId = (int) $this->getState($this->getName() . '.id');
+    $taskId = (int)$this->getState($this->getName().'.id');
 
     if($taskId === 0)
     {
       $table  = $this->getTable();
-      $taskId = isset($table->id) ? (int) $table->id : 0;
+      $taskId = isset($table->id) ? (int)$table->id : 0;
     }
 
     if($isNew && $taskId === 0)
     {
-      $taskId = (int) $this->getDatabase()->insertid();
+      $taskId = (int)$this->getDatabase()->insertid();
     }
 
     if($taskId === 0)
@@ -228,8 +228,8 @@ class TaskModel extends JoomAdminModel
       if(empty($imageIds))
       {
         $this->app->enqueueMessage(
-            Text::_('COM_JOOMGALLERY_TASK_WARN_QUEUE_EMPTY'),
-            'warning'
+          Text::_('COM_JOOMGALLERY_TASK_WARN_QUEUE_EMPTY'),
+          'warning'
         );
       }
     }
@@ -245,8 +245,9 @@ class TaskModel extends JoomAdminModel
   /**
    * Befüllt die Job-Queue-Tabelle für einen Task.
    *
-   * @param   int    $taskId     Die ID des Haupt-Tasks
-   * @param   array  $itemIds    Ein Array von Item-IDs (z.B. Bild-IDs)
+   * @param   int    $taskId   Die ID des Haupt-Tasks
+   * @param   array  $itemIds  Ein Array von Item-IDs (z.B. Bild-IDs)
+   *
    * @return  bool
    */
   private function populateTaskItems(int $taskId, array $itemIds): bool
@@ -255,8 +256,8 @@ class TaskModel extends JoomAdminModel
 
     // Delete old job for task
     $query = $db->getQuery(true)
-      ->delete($db->quoteName('#__joomgallery_task_items'))
-      ->where($db->quoteName('task_id') . ' = ' . (int) $taskId);
+                ->delete($db->quoteName('#__joomgallery_task_items'))
+                ->where($db->quoteName('task_id').' = '.(int)$taskId);
     $db->setQuery($query)->execute();
 
     if(empty($itemIds))
@@ -266,19 +267,19 @@ class TaskModel extends JoomAdminModel
 
     // Batch insert new jobs for task
     $query = $db->getQuery(true)
-      ->insert($db->quoteName('#__joomgallery_task_items'))
-      ->columns([$db->quoteName('task_id'), $db->quoteName('item_id'), $db->quoteName('status')]);
+                ->insert($db->quoteName('#__joomgallery_task_items'))
+                ->columns([$db->quoteName('task_id'), $db->quoteName('item_id'), $db->quoteName('status')]);
 
     foreach($itemIds as $itemId)
     {
-      $query->values((int) $taskId . ', ' . $db->quote((string) $itemId) . ', ' . $db->quote('pending'));
+      $query->values((int)$taskId.', '.$db->quote((string)$itemId).', '.$db->quote('pending'));
     }
 
     try
     {
       $db->setQuery($query)->execute();
     }
-    catch (\Exception $e)
+    catch(\Exception $e)
     {
       $this->setError($e->getMessage());
 
@@ -327,31 +328,31 @@ class TaskModel extends JoomAdminModel
       $db = Factory::getDbo();
 
       $query = $db->getQuery(true)
-        ->select($db->quoteName(['a.id', 'a.title']))
-        ->from($db->quoteName(_JOOM_TABLE_IMAGES, 'a'))
-        ->where($db->quoteName('a.published') . ' = 1')
-        ->where($db->quoteName('a.approved') . ' = 1')
-        ->leftJoin(
-            $db->quoteName(_JOOM_TABLE_CATEGORIES, 'b') .
-            ' ON ' . $db->quoteName('a.catid') . ' = ' . $db->quoteName('b.id')
-        )
-        ->where($db->quoteName('b.published') . ' = 1')
-        ->order($db->quoteName('a.ordering') . ' DESC');
+                  ->select($db->quoteName(['a.id', 'a.title']))
+                  ->from($db->quoteName(_JOOM_TABLE_IMAGES, 'a'))
+                  ->where($db->quoteName('a.published').' = 1')
+                  ->where($db->quoteName('a.approved').' = 1')
+                  ->leftJoin(
+                    $db->quoteName(_JOOM_TABLE_CATEGORIES, 'b').
+                    ' ON '.$db->quoteName('a.catid').' = '.$db->quoteName('b.id')
+                  )
+                  ->where($db->quoteName('b.published').' = 1')
+                  ->order($db->quoteName('a.ordering').' DESC');
 
       $db->setQuery($query);
       $allImageObjects = $db->loadObjectList();
 
       // Nur IDs zurückgeben (als Strings)
-      $allImageIds = array_map(fn($item) => (string) $item->id, $allImageObjects);
+      $allImageIds = array_map(fn($item) => (string)$item->id, $allImageObjects);
 
       return $allImageIds;
     }
-    catch (\Exception $e)
+    catch(\Exception $e)
     {
-    $this->app->enqueueMessage(
+      $this->app->enqueueMessage(
         Text::sprintf('COM_JOOMGALLERY_TASK_ERROR_QUEUE_RESOLVE', $e->getMessage()),
         'error'
-    );
+      );
 
       return [];
     }
@@ -373,14 +374,14 @@ class TaskModel extends JoomAdminModel
     {
       $db    = $this->getDatabase();
       $query = $db->getQuery(true)
-        ->delete($db->quoteName('#__joomgallery_task_items'))
-        ->whereIn($db->quoteName('task_id'), $pks); // whereIn handles array sanitization
+                  ->delete($db->quoteName('#__joomgallery_task_items'))
+                  ->whereIn($db->quoteName('task_id'), $pks); // whereIn handles array sanitization
 
       try
       {
         $db->setQuery($query)->execute();
       }
-      catch (\Exception $e)
+      catch(\Exception $e)
       {
         $this->setError($e->getMessage());
 
