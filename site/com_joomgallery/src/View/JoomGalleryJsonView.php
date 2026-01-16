@@ -56,12 +56,12 @@ class JoomGalleryJsonView extends JsonView
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
   /**
-   * JUser object, holds the current user data
+   * User object, holds the current user data
    *
    * @access  protected
    * @var     object
@@ -148,7 +148,7 @@ class JoomGalleryJsonView extends JsonView
     // Prevent the api url from being indexed
     $this->app->setHeader('X-Robots-Tag', 'noindex, nofollow');
 
-    // JInput object
+    // Input object
     $input = $this->app->getInput();
 
     // Serializing the output

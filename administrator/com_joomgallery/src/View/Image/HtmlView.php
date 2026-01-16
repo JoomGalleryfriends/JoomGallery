@@ -309,7 +309,7 @@ class HtmlView extends JoomGalleryView
    *
    * On UploadMaxsize = 0 (from com_media) the php.ini limits are used
    *
-   * @since version 4.2
+   * @since 4.2
    */
   public function limitsPhpConfig(): void
   {

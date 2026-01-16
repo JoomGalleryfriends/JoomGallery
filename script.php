@@ -167,7 +167,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     foreach($problemPlugins as $plugin)
     {
-      if(version_compare($jversion[0], $plugin['jversion'], '>='))
+      if(version_compare($jversion[0], $plugin['jversion'], '=='))
       {
         if(!key_exists('problemPlugins', $this->storage))
         {
@@ -180,9 +180,6 @@ class com_joomgalleryInstallerScript extends InstallerScript
           $language->load($plugin['name'], JPATH_ADMINISTRATOR);
 
           Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_DEACTIVATE_PLUGIN', $plugin['folder'], Text::_(strtoupper($plugin['name']))), 'error');
-
-          //array_push($this->storage['problemPlugins'], $id);
-          //$this->deactivateExtension($id);
 
           return false;
         }

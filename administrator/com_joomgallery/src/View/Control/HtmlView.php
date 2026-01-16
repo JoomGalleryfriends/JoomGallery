@@ -91,16 +91,16 @@ class HtmlView extends JoomGalleryView
     /** @var Toolbar $model */
     $toolbar = $this->getToolbar();
 
-    // Images button
-    $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=images" class="btn btn-primary"><span class="icon-images" title="' . Text::_('COM_JOOMGALLERY_IMAGES') . '"></span> ' . Text::_('COM_JOOMGALLERY_IMAGES') . '</a></joomla-toolbar-button>';
+    // Categories button
+    $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=categories" class="button-folder-open btn btn-primary"><span class="icon-folder-open" title="' . Text::_('JCATEGORIES') . '"></span> ' . Text::_('JCATEGORIES') . '</a></joomla-toolbar-button>';
     $toolbar->appendButton('Custom', $html);
 
-    // Multiple add button
+    // Multiple add/upload button
     $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=image&amp;layout=upload" class="btn btn-primary"><span class="icon-upload" title="' . Text::_('Upload') . '"></span> ' . Text::_('Upload') . '</a></joomla-toolbar-button>';
     $toolbar->appendButton('Custom', $html);
 
-    // Categories button
-    $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=categories" class="button-folder-open btn btn-primary"><span class="icon-folder-open" title="' . Text::_('JCATEGORIES') . '"></span> ' . Text::_('JCATEGORIES') . '</a></joomla-toolbar-button>';
+    // Images button
+    $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=images" class="btn btn-primary"><span class="icon-images" title="' . Text::_('COM_JOOMGALLERY_IMAGES') . '"></span> ' . Text::_('COM_JOOMGALLERY_IMAGES') . '</a></joomla-toolbar-button>';
     $toolbar->appendButton('Custom', $html);
 
     // Tags button

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fieldset  name="general">
+    <field name="ordering"/>
+
+    <field name="id"
+           type="text"
+           readonly="true"
+           class="readonly"
+           label="JGLOBAL_FIELD_ID_LABEL" />
+
+    <field name="checked_out"
+           type="hidden"
+           filter="unset" />
+
+    <field name="uploader"
+           default="html"
+           type="hidden" />
+
+    <field name="multiple"
+           default="0"
+           type="hidden" />
+
+    <field name="uuid"
+           type="hidden" />
+
+    <field name="filesystem"
+           type="text"
+           readonly="true"
+           default="local-images"
+           class="readonly"
+           label="COM_JOOMGALLERY_CONFIG_FILESYSTEM" />
+
+    <field name="hits"
+           type="text"
+           readonly="true"
+           class="readonly"
+           label="JGLOBAL_HITS" />
+
+    <field name="downloads"
+           type="text"
+           readonly="true"
+           default="0"
+           class="readonly"
+           label="COM_JOOMGALLERY_DOWNLOADS" />
+
+    <field name="votes"
+           type="text"
+           readonly="true"
+           default="0"
+           class="readonly"
+           label="COM_JOOMGALLERY_VOTES" />
+
+    <field name="votesum"
+           type="text"
+           readonly="true"
+           default="0"
+           class="readonly"
+           hidden="true"
+           label="COM_JOOMGALLERY_IMAGE_RATING" />
+
+    <field name="rating"
+           type="text"
+           readonly="true"
+           default="0"
+           class="readonly"
+           label="COM_JOOMGALLERY_RATING" />
+
+    <field name="approved"
+           type="list"
+           readonly="true"
+           default="0"
+           class="readonly"
+           label="COM_JOOMGALLERY_APPROVED">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="useruploaded"
+           default="0"
+           label="COM_JOOMGALLERY_FORM_LBL_IMAGE_USERUPLOADED"
+           hidden="true" />
+
+    <field name="title"
+           type="text"
+           maxlength="255"
+           filter="safehtml"
+           required="true"
+           label="JGLOBAL_TITLE"
+           message="COM_JOOMGALLERY_COMMON_ALERT_IMAGE_MUST_HAVE_TITLE" />
+
+    <field name="filecounter"
+           type="number"
+           default="1"
+           min="1"
+           step="1" />
+
+    <field name="nmb_start"
+           type="number"
+           default="1"
+           min="1"
+           step="1"
+           label="COM_JOOMGALLERY_FIELDS_NUMBERING_START"
+           description="COM_JOOMGALLERY_FIELDS_NUMBERING_START_DESC" />
+
+    <field name="alias"
+           type="text"
+           class="inputbox"
+           generator="title"
+           label="JALIAS"
+           description="JFIELD_ALIAS_DESC"
+           maxlength="255" />
+
+    <field name="catid"
+           type="jgcategory"
+           label="JCATEGORY"
+           default=""
+           show_root="false"
+           required="true"
+           message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY" />
+
+    <field name="tags"
+           type="jgtag"
+           label="JTAG"
+           description="COM_JOOMGALLERY_FIELDS_TAG_DESC"
+           class="inputbox span12 small"
+           multiple="true" />
+
+    <field name="published"
+           type="radio"
+           class="btn-group"
+           layout="joomla.form.field.radio.switcher"
+           default="1"
+           size="1"
+           label="JPUBLISHED">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="author"
+           type="text"
+           maxlength="50"
+           filter="string"
+           label="JAUTHOR"
+           description="COM_JOOMGALLERY_FIELDS_AUTHOR_DESC" />
+
+    <field name="language"
+           type="language"
+           client="administrator"
+           label="JGRID_HEADING_LANGUAGE">
+           <option value="*">JALL</option>
+		</field>
+
+    <field name="debug"
+           type="radio"
+           class="btn-group"
+           default="0"
+           size="1"
+           label="COM_JOOMGALLERY_DEBUG_MODE"
+           description="COM_JOOMGALLERY_FIELDS_DEBUG_MODE_DESC">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="description"
+           type="editor"
+           rows="250"
+           buttons="true"
+           filter="\Joomla\CMS\Component\ComponentHelper::filterText"
+           label="JGLOBAL_DESCRIPTION" />
+
+    <field name="access"
+           type="accesslevel"
+           label="JFIELD_ACCESS_LABEL"
+           description="JFIELD_ACCESS_DESC" />
+
+    <field name="hidden"
+           type="radio"
+           default="0"
+           class="btn-group"
+           layout="joomla.form.field.radio.switcher"
+           label="COM_JOOMGALLERY_HIDDEN"
+           description="COM_JOOMGALLERY_FIELDS_HIDDEN_DESC">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="featured"
+           type="radio"
+           default="0"
+           class="btn-group"
+           layout="joomla.form.field.radio.switcher"
+           label="JFEATURED"
+           description="COM_JOOMGALLERY_FIELDS_FEATURED_DESC">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="created_time"
+           type="calendar"
+           translateformat="true"
+           showtime="true"
+           size="22"
+           filter="user_utc"
+           label="JGLOBAL_FIELD_CREATED_LABEL" />
+
+    <field name="created_by"
+           type="user"
+           label="COM_JOOMGALLERY_OWNER"
+           description="COM_JOOMGALLERY_FIELDS_OWNER_DESC"
+           validate="UserId" />
+
+    <field name="modified_time"
+           type="calendar"
+           class="form-control"
+           translateformat="true"
+           showtime="true"
+           size="22"
+           readonly="true"
+           filter="user_utc"
+           label="JGLOBAL_FIELD_MODIFIED_LABEL" />
+
+    <field name="modified_by"
+           type="user"
+           class="readonly"
+           readonly="true"
+           filter="unset"
+           validate="UserId"
+           label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
+           description="JGLOBAL_FIELD_MODIFIED_BY_DESC" />
+
+    <field name="metadesc"
+           type="textarea"
+           filter="safehtml"
+           rows="5"
+           cols="40"
+           default=""
+           label="JGLOBAL_DESCRIPTION"
+           description="JFIELD_META_DESCRIPTION_LABEL"
+           maxlength="160"
+           charcounter="true"
+    />
+
+    <field name="metakey"
+           type="textarea"
+           filter="string"
+           rows="5"
+           cols="40"
+           default=""
+           label="JFIELD_META_KEYWORDS_LABEL"
+           description="JFIELD_META_KEYWORDS_DESC"
+    />
+
+    <field name="robots"
+           type="list"
+           default="0"
+           label="JFIELD_METADATA_ROBOTS_LABEL">
+        <option value="0">JGLOBAL_USE_GLOBAL</option>
+        <option value="1">index, follow</option>
+        <option value="2">noindex, follow</option>
+        <option value="3">index, nofollow</option>
+        <option value="4">noindex, nofollow</option>
+    </field>
+
+    <field name="image"
+           type="file"
+           accept="image/*"
+           size="10485760"
+           label="COM_JOOMGALLERY_IMG_UPLOAD_IMAGE" />
+
+    <field name="MAX_FILE_SIZE"
+           type="hidden"
+           default="10485760"
+        />
+
+    <field name="filename"
+           type="hidden"
+           filter="string" />
+
+    <field name="replacetype"
+           type="jgimagetype"
+           label="COM_JOOMGALLERY_IMAGETYPE"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_DESC" />
+
+    <field name="replaceprocess"
+           type="radio"
+           default="0"
+           class="btn-group"
+           layout="joomla.form.field.radio.switcher"
+           label="COM_JOOMGALLERY_CONFIG_TAB_IMAGE_PROCESSING"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_PROCESS_DESC">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+    </field>
+
+    <field name="date"
+           type="calendar"
+           format="%Y-%m-%d"
+           timeformat="24"
+           filter="server_utc"
+           translateformat="true"
+           showtime="false"
+           singleheader="false"
+           todaybutton="true"
+           weeknumbers="false"
+           filltable="false"
+           default=""
+           label="COM_JOOMGALLERY_DATE"
+           description="COM_JOOMGALLERY_DATE_DESC" />
+
+    <field name="imgmetadata"
+           type="editor"
+           editor="codemirror"
+           buttons="false"
+           default=""
+           filter="\Joomla\CMS\Component\ComponentHelper::filterText"
+           label="COM_JOOMGALLERY_IMGMETADATA"
+           description="COM_JOOMGALLERY_IMGMETADATA_DESC" />
+
+    <field name="params"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_imageparams.xml"
+           layout="joomla.form.field.subform.default"
+           label="COM_JOOMGALLERY_PARAMETERS" />
+
+    <field name="version_note"
+           type="text"
+           label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
+           description="JGLOBAL_FIELD_VERSION_NOTE_DESC"
+           class="inputbox"
+           size="45"
+           labelclass="control-label" />
+  </fieldset>
+</form>

@@ -20,6 +20,7 @@ use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -92,6 +93,8 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('rm_password', 'filter', 'unset');
       $form->setFieldAttribute('rm_password', 'hidden', 'true');
       $form->setFieldAttribute('rm_password', 'class', 'hidden');
+
+      $form->setFieldAttribute('password', 'lock', 'false');
     }
 
     // Modify the form based on Edit State access controls.
@@ -138,10 +141,13 @@ class CategoryModel extends JoomAdminModel
       $data = $this->item;
 
       // Support for password field
-      if(property_exists($data, 'password') && empty($data->password))
+      $this->is_password = false;
+
+      if(!empty($data->password))
       {
-        $this->is_password = false;
+        $this->is_password = true;
       }
+
       $data->password = '';
 
       // Support for multiple or not foreign key field: robots
@@ -162,6 +168,18 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $data;
+  }
+
+  /**
+   * Does the category has a password in the database.
+   * Attention: $data->password variable may be already overwritten to ''.
+   * @return bool true when password was set on loadFormData ()
+   *
+   * @since  4.2
+   */
+  public function hasPassword(): bool
+  {
+    return $this->is_password;
   }
 
   /**
@@ -360,7 +378,7 @@ class CategoryModel extends JoomAdminModel
   /**
    * Method to save the form data.
    *
-   * @param   array  $data  The form data.
+   * @param   array   $data  The form data.
    *
    * @return  boolean  True on success, False on error.
    *
@@ -418,35 +436,35 @@ class CategoryModel extends JoomAdminModel
     // Allow an exception to be thrown.
     try
     {
-        // Load the row if saving an existing record.
-        if($pk > 0)
+      // Load the row if saving an existing record.
+      if($pk > 0)
+      {
+        $table->load($pk);
+        $isNew = false;
+
+        // Check if the parent category was changed
+        if($table->parent_id != $data['parent_id'])
         {
-          $table->load($pk);
-          $isNew = false;
+          $catMoved = true;
+        }
 
-          // Check if the parent category was changed
-          if($table->parent_id != $data['parent_id'])
-          {
-            $catMoved = true;
-          }
+        // Check if the alias was changed
+        if($table->alias != $data['alias'])
+        {
+          $aliasChanged = true;
+        }
 
-          // Check if the alias was changed
-          if($table->alias != $data['alias'])
+        // Check if the state was changed
+        if($table->published != $data['published'])
+        {
+          if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION . '.category.' . $table->id))
           {
-            $aliasChanged = true;
-          }
-
-          // Check if the state was changed
-          if($table->published != $data['published'])
-          {
-            if(!$this->getAcl()->checkACL('core.edit.state', _JOOM_OPTION . '.category.' . $table->id))
-            {
               // We are not allowed to change the published state
               $this->component->addWarning(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'));
               $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 'warning', 'jerror');
               $data['published'] = $table->published;
-            }
           }
+        }
 
           // Check if category has subcategories (children)
           if($this->getChildren($pk))
@@ -467,7 +485,7 @@ class CategoryModel extends JoomAdminModel
           {
             $adapterChanged = true;
           }
-        }
+      }
 
         // Check that filesystem field content is allowed
         if($adapterChanged && $data['parent_id'] != 1)
@@ -542,6 +560,39 @@ class CategoryModel extends JoomAdminModel
           $this->component->addLog($table->getError(), 'error', 'jerror');
 
           return false;
+        }
+
+        // Stop storing data when maximum user categories is exceeded (only in frontend)
+        if($this->app->isClient('site'))
+        {
+          // Get user
+          $userid = Factory::getApplication()->getIdentity()->id;
+
+          $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+          $query = $db->getQuery(true)
+                ->select('COUNT(id)')
+                ->from(_JOOM_TABLE_CATEGORIES)
+                ->where('created_by = ' . \intval($userid));
+
+          $db->setQuery($query);
+
+          $usercategories    = $db->loadResult();
+          $maxusercategories = $this->component->getConfig()->get('jg_maxusercat');
+
+          // Increment amount user categories when creating a new category
+          if($isNew)
+          {
+            $usercategories++;
+          }
+
+          if($usercategories > $maxusercategories)
+          {
+            $this->setError(Text::sprintf('COM_JOOMGALLERY_USER_MAXUSERCAT_EXCEEDED', $maxusercategories));
+            $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_USER_MAXUSERCAT_EXCEEDED', $maxusercategories), 'error', 'jerror');
+
+            return false;
+          }
         }
 
         // Filesystem changes

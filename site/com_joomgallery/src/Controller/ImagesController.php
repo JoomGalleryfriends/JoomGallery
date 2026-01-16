@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\MVC\Controller\FormController;
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 
 /**
  * Images list controller class.
@@ -23,7 +23,7 @@ use Joomla\CMS\MVC\Controller\FormController;
  * @package JoomGallery
  * @since   4.0.0
  */
-class ImagesController extends FormController
+class ImagesController extends JoomFormController
 {
   /**
    * Proxy for getModel.
@@ -48,7 +48,7 @@ class ImagesController extends FormController
    *
    * @since   4.0.0
    */
-  public function saveOrderAjax()
+  public function saveOrderAjax(): void
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -70,12 +70,7 @@ class ImagesController extends FormController
     $model = $this->getModel('Imageform', 'Site');
 
     // Save the ordering
-    $return = $model->saveorder($pks, $order);
-
-    if($return)
-    {
-      echo '1';
-    }
+    $model->saveorder($pks, $order);
 
     // Close the application
     $this->app->close();

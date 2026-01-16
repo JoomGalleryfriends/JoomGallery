@@ -15,18 +15,20 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 
 /**
- * Category form controller class.
+ * User category controller class.
  *
  * @package JoomGallery
- * @since   4.0.0
+ *
+ * @since   4.2.0
  */
-class CategoryformController extends FormController
+class UsercategoryController extends JoomFormController // FormController
 {
   use RoutingTrait;
 
@@ -35,6 +37,8 @@ class CategoryformController extends FormController
    *
    * @access  protected
    * @var     object
+   *
+   * @since   4.2.0
    */
   protected $component;
 
@@ -43,6 +47,8 @@ class CategoryformController extends FormController
    *
    * @access  protected
    * @var     object
+   *
+   * @since   4.2.0
    */
   protected $acl;
 
@@ -54,13 +60,14 @@ class CategoryformController extends FormController
    * @param   object   $app      The Application for the dispatcher
    * @param   object   $input    Input
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
   public function __construct($config = [], $factory = null, $app = null, $input = null)
   {
     parent::__construct($config, $factory, $app, $input);
 
-    $this->default_view = 'category';
+    // parent view
+    $this->default_view = 'usercategories';
 
     // JoomGallery extension class
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
@@ -71,20 +78,52 @@ class CategoryformController extends FormController
   }
 
   /**
-   * Method to save data.
+   * Save the category and return to calling by calling cancel additionally
    *
-   * @return  void
+   * @param $key
+   * @param $urlVar
    *
-   * @throws  \Exception
-   * @since   4.0.0
+   * @return bool
+   *
+   * @throws \Exception
+   * @since   4.2.0
    */
-  public function save($key = null, $urlVar = null)
+  public function saveAndClose($key = null, $urlVar = null): bool
   {
     // Check for request forgeries.
     $this->checkToken();
 
+    $isSaved    = $this->save($key, $urlVar) != false;
+    $isCanceled = $this->cancel($key) != false;
+
+    if(!$isSaved || !$isCanceled)
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+
+  /**
+   * Method to save data.
+   *
+   * @param $key
+   * @param $urlVar
+   *
+   * @return  bool
+   *
+   * @throws  \Exception
+   * @since   4.2.0
+   */
+  public function save($key = null, $urlVar = null): bool
+  {
+
     // Get the user data.
     $data = $this->input->post->get('jform', [], 'array');
+
+    // save, save2copy save2new, saveAndClose
+    $task = $this->getTask();
 
     // To avoid data collisions the urlVar may be different from the primary key.
     if(empty($urlVar))
@@ -97,23 +136,31 @@ class CategoryformController extends FormController
     if(!$data)
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend(), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend(), false));
 
       return false;
     }
+
+    $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . (int) $data['id'];
+    $backLink = Route::_($baseLink, false);
 
     // Access check
     if(!$this->acl->checkACL('edit', 'category', $recordId))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($data->id), false));
+      $this->setRedirect($backLink);
 
       return false;
     }
 
+    if($task === 'save2copy')
+    {
+      $data['id'] = 0;
+    }
+
     // Initialise variables.
     $app   = Factory::getApplication();
-    $model = $this->getModel('Categoryform', 'Site');
+    $model = $this->getModel('Usercategory', 'Site');
 
     // Validate the posted data.
     $form = $model->getForm();
@@ -149,7 +196,7 @@ class CategoryformController extends FormController
       $app->setUserState('com_joomgallery.edit.category.data', $data);
 
       // Redirect back to the edit screen.
-      $this->setRedirect(Route::_('index.php?option=com_joomgallery&view=categoryform&' . $this->getItemAppend($recordId), false));
+      $this->setRedirect($backLink);
 
       $this->redirect();
     }
@@ -162,9 +209,25 @@ class CategoryformController extends FormController
 
       // Redirect back to the edit screen.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $model->getError()), 'warning');
-      $this->setRedirect(Route::_('index.php?option=com_joomgallery&view=categoryform&' . $this->getItemAppend($recordId), false));
+      $this->setRedirect($backLink);
+
 
       return false;
+    }
+
+    // new backlink after save of new item
+    if($task === 'save2copy' || (int) $data['id'] == 0)
+    {
+      $newId    = $model->getState('usercategory.id', '');
+      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . (int) $newId;
+      $backLink = Route::_($baseLink, false);
+    }
+
+    // new backlink after save and new item
+    if($task === 'save2new' || (int) $data['id'] == 0)
+    {
+      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat';
+      $backLink = Route::_($baseLink, false);
     }
 
     // Check in the profile.
@@ -175,7 +238,7 @@ class CategoryformController extends FormController
 
       // Redirect to list screen.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'warning');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($recordId), false));
+      $this->setRedirect($backLink);
 
       return false;
     }
@@ -186,17 +249,23 @@ class CategoryformController extends FormController
 
     // Redirect to the list screen.
     $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SAVE_SUCCESSFUL'));
-    $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($data->id), false));
+    $this->setRedirect($backLink);
+
+    return true;
   }
 
   /**
-   * Method to abort current operation
+   * Method to abort current operation and return to calling page
    *
-   * @return void
+   * @param $key
+   *
+   * @return bool
    *
    * @throws \Exception
+   *
+   * @since   4.2.0
    */
-  public function cancel($key = null)
+  public function cancel($key = null): bool
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -205,14 +274,14 @@ class CategoryformController extends FormController
     $recordId = $this->input->getInt('id');
 
     // Get the model.
-    $model = $this->getModel('Categoryform', 'Site');
+    $model = $this->getModel('Usercategory', 'Site');
 
-    // Attempt to check-in the current record.
+    // Attempt to checkin the current record.
     if($recordId && $model->checkin($recordId) === false)
     {
       // Check-in failed, go back to the record and display a notice.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($recordId), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($recordId), false));
 
       return false;
     }
@@ -222,19 +291,23 @@ class CategoryformController extends FormController
     $this->app->setUserState('com_joomgallery.edit.category.data', null);
 
     // Redirect to the list screen.
-    $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($recordId), false));
+    $returnPage = $this->getReturnPage('usercategories');
+    $backLink   = Route::_($returnPage);
+    $this->setRedirect($backLink);
+
+    return true;
   }
 
   /**
    * Method to remove data
    *
-   * @return  void
+   * @return  bool
    *
-   * @throws  Exception
+   * @throws  \Exception
    *
-   * @since   4.0.0
+   * @since   4.2.0
    */
-  public function remove()
+  public function remove(): bool
   {
     // Check for request forgeries
     $this->checkToken();
@@ -258,7 +331,7 @@ class CategoryformController extends FormController
     if(!$removeId)
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend(), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend(), false));
 
       return false;
     }
@@ -267,29 +340,39 @@ class CategoryformController extends FormController
     if(!$this->acl->checkACL('delete', 'category', $removeId))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($removeId), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($removeId), false));
 
       return false;
     }
 
     // Get the model.
-    $model = $this->getModel('Categoryform', 'Site');
+    $model = $this->getModel('Usercategory', 'Site');
+
+//    // user may not delete his root gallery
+//    $isUserRootCategory = $model->isUserRootCategory($removeId);
+//    if($isUserRootCategory)
+//    {
+//      $this->setMessage(Text::_('COM_JOOMGALLERY_ERROR_NO_DEL_USER_ROOT_CAT'), 'error');
+//      $this->setRedirect(Route::_($this->getReturnPage('usercategories').$this->getItemAppend(), false));
+//
+//      return false;
+//    }
 
     // Attempt to delete the record.
     if($model->delete($removeId) === false)
     {
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_DELETE_FAILED', $model->getError()), 'error');
-      $this->app->redirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($removeId), false));
+      $this->app->redirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($removeId), false));
 
       return false;
     }
 
-    // Attempt to check-in the current record.
+    // Attempt to check in the current record.
     if($model->checkin($removeId) === false)
     {
       // Check-in failed, go back to the record and display a notice.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($removeId), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($removeId), false));
 
       return false;
     }
@@ -298,27 +381,94 @@ class CategoryformController extends FormController
     $this->app->setUserState('com_joomgallery.edit.category.data', null);
 
     $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_DELETE_SUCCESSFUL'), 'success');
-    $this->app->redirect(Route::_($this->getReturnPage() . '&' . $this->getItemAppend($removeId), false));
+    $this->app->redirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($removeId), false));
+
+    return true;
   }
 
   /**
    * Method to edit an existing record.
    *
+   * @param $key
+   * @param $urlVar
+   *
+   * @return  bool
+   *
    * @throws \Exception
+   *
+   * @since   4.2.0
    */
-  public function edit($key = null, $urlVar = null)
+  public function edit($key = null, $urlVar = null): bool
   {
-    throw new \Exception('Edit category not possible. Use category controller instead.', 503);
+    // Get the previous edit id (if any) and the current edit id.
+    $previousId = (int) $this->app->getUserState(_JOOM_OPTION . '.edit.category.id');
+    $cid        = (array) $this->input->post->get('cid', [], 'int');
+    $boxchecked = (bool) $this->input->getInt('boxchecked', 0);
+
+    if($boxchecked)
+    {
+      $editId = (int) $cid[0];
+    }
+    else
+    {
+      $editId = $this->input->getInt('id', 0);
+    }
+
+    // ID check
+    if(!$editId)
+    {
+      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
+      $this->setRedirect(Route::_($this->getReturnPage() . $this->getItemAppend($editId), false));
+
+      return false;
+    }
+
+    // Access check
+    if(!$this->acl->checkACL('edit', 'category', $editId))
+    {
+      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
+      $this->setRedirect(Route::_($this->getReturnPage() . $this->getItemAppend($editId), false));
+
+      return false;
+    }
+
+    // Set the current edit id in the session.
+    $this->app->setUserState(_JOOM_OPTION . '.edit.category.id', $editId);
+
+    // Get the model.
+    $model = $this->getModel('Category', 'Site');
+
+    // Check out the item
+    if(!$model->checkout($editId))
+    {
+      // Check-out failed, display a notice but allow the user to see the record.
+      $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKOUT_FAILED', $model->getError()), 'error');
+      $this->setRedirect(Route::_($this->getReturnPage() . $this->getItemAppend($editId), false));
+
+      return false;
+    }
+
+    // Check in the previous user.
+    if($previousId && $previousId !== $editId)
+    {
+      $model->checkin($previousId);
+    }
+
+    // Redirect to the form screen.
+    $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=usercategory&layout=editCat&id=' . $editId . $this->getItemAppend()), false);
+
+    return true;
   }
 
   /**
-   * Checkin a checked-out category.
+   * Check in a checked out category.
    *
-   * @return  void
+   * @return  bool
    *
-   * @since   4.0.0
+   * @throws \Exception
+   * @since   4.2.0
    */
-  public function checkin()
+  public function checkin(): bool
   {
     // Check for request forgeries
     $this->checkToken();
@@ -342,7 +492,7 @@ class CategoryformController extends FormController
     if(!$id)
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('categories') . '&' . $this->getItemAppend($id), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($id), false));
 
       return false;
     }
@@ -351,20 +501,20 @@ class CategoryformController extends FormController
     if(!$this->acl->checkACL('editstate', 'category', $id))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('categories') . '&' . $this->getItemAppend($id), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($id), false));
 
       return false;
     }
 
     // Get the model.
-    $model = $this->getModel('Categoryform', 'Site');
+    $model = $this->getModel('Usercategory', 'Site');
 
-    // Attempt to check-in the current record.
+    // Attempt to checkin the current record.
     if($model->checkin($id) === false)
     {
       // Check-in failed, go back to the record and display a notice.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('categories') . '&' . $this->getItemAppend($id), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($id), false));
 
       return false;
     }
@@ -375,7 +525,9 @@ class CategoryformController extends FormController
 
     // Redirect to the list screen.
     $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_CHECKIN_SUCCESSFUL'), 'success');
-    $this->app->redirect(Route::_($this->getReturnPage('categories') . '&' . $this->getItemAppend($id), false));
+    $this->app->redirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($id), false));
+
+    return true;
   }
 
   /**
@@ -383,9 +535,11 @@ class CategoryformController extends FormController
    *
    * @return  void
    *
-   * @since   4.0
+   * @throws \Exception
+   *
+   * @since   4.2.0
    */
-  public function publish()
+  public function publish(): bool
   {
     // Check for request forgeries
     $this->checkToken();
@@ -409,7 +563,7 @@ class CategoryformController extends FormController
     if(!$id)
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('categories') . '&' . $this->getItemAppend($id), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($id), false));
 
       return false;
     }
@@ -418,7 +572,7 @@ class CategoryformController extends FormController
     if(!$this->acl->checkACL('editstate', 'category', $id))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('categories') . '&' . $this->getItemAppend($id), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($id), false));
 
       return false;
     }
@@ -431,21 +585,23 @@ class CategoryformController extends FormController
     $value = $data[$task];
 
     // Get the model
-    $model = $this->getModel('Categoryform', 'Site');
+    $model = $this->getModel('Usercategory', 'Site');
 
     // Attempt to change state the current record.
     if($model->publish($id, $value) === false)
     {
       // Check-in failed, go back to the record and display a notice.
       $this->setMessage(Text::sprintf('COM_JOOMGALLERY_ITEM_STATE_ERROR', $model->getError()), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('categories') . '&' . $this->getItemAppend($id), false));
+      $this->setRedirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($id), false));
 
       return false;
     }
 
     // Redirect to the list screen.
     $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ITEM_' . strtoupper($task) . '_SUCCESSFUL'), 'success');
-    $this->app->redirect(Route::_($this->getReturnPage('categories') . '&' . $this->getItemAppend($id), false));
+    $this->app->redirect(Route::_($this->getReturnPage('usercategories') . $this->getItemAppend($id), false));
+
+    return true;
   }
 
   /**
@@ -453,7 +609,8 @@ class CategoryformController extends FormController
    *
    * @return  void
    *
-   * @since   4.0
+   * @throws \Exception
+   * @since   4.2.0
    */
   public function unpublish()
   {
@@ -463,9 +620,11 @@ class CategoryformController extends FormController
   /**
    * Method to run batch operations.
    *
-   * @param  object  $model  The model of the component being processed.
+   * @param   object   $model  The model of the component being processed.
    *
    * @throws \Exception
+   *
+   * @since   4.2.0
    */
   public function batch($model)
   {
@@ -475,10 +634,12 @@ class CategoryformController extends FormController
   /**
    * Method to reload a record.
    *
-   * @param   string  $key     The name of the primary key of the URL variable.
-   * @param   string  $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
+   * @param   string   $key     The name of the primary key of the URL variable.
+   * @param   string   $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
    *
    * @throws \Exception
+   *
+   * @since   4.2.0
    */
   public function reload($key = null, $urlVar = null)
   {

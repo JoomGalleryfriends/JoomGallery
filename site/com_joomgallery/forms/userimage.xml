@@ -5,8 +5,8 @@
 
     <field name="id"
            type="text"
-           readonly="true"
            class="readonly"
+           readonly="true"
            label="JGLOBAL_FIELD_ID_LABEL" />
 
     <field name="checked_out"
@@ -15,44 +15,45 @@
 
     <field name="hits"
            type="text"
-           readonly="true"
            class="readonly"
+           readonly="true"
            label="JGLOBAL_HITS" />
 
     <field name="downloads"
            type="text"
+           class="readonly"
            readonly="true"
            default="0"
-           class="readonly"
            label="COM_JOOMGALLERY_DOWNLOADS" />
 
     <field name="votes"
            type="text"
+           class="readonly"
            readonly="true"
            default="0"
-           class="readonly"
            label="COM_JOOMGALLERY_VOTES" />
 
     <field name="votesum"
            type="text"
+           class="readonly"
            readonly="true"
            default="0"
-           class="readonly"
            hidden="true"
            label="COM_JOOMGALLERY_IMAGE_RATING" />
 
     <field name="rating"
            type="text"
+           class="readonly"
            readonly="true"
            default="0"
-           class="readonly"
            label="COM_JOOMGALLERY_RATING" />
 
     <field name="approved"
            type="list"
+           class="readonly hidden"
            readonly="true"
            default="0"
-           class="readonly"
+           hidden="true"
            label="COM_JOOMGALLERY_APPROVED">
         <option value="0">JNO</option>
         <option value="1">JYES</option>
@@ -82,10 +83,18 @@
     <field name="catid"
            type="jgcategorydropdown"
            label="JCATEGORY"
+           categoriesOfUser="true"
            default=""
            show_root="false"
            required="true"
            message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY" />
+
+    <field name="catid_disabled"
+           type="text"
+           class="readonly"
+           readonly="true"
+           label="JCATEGORY"
+    />
 
     <field name="tags"
            type="jgtag"
@@ -155,15 +164,23 @@
 
     <field name="created_time"
            type="calendar"
+           class="readonly"
+           readonly="true"
            translateformat="true"
            showtime="true"
            size="22"
            filter="user_utc"
            label="JGLOBAL_FIELD_CREATED_LABEL" />
 
+    <field name="created_by"
+           type="user"
+           label="COM_JOOMGALLERY_OWNER"
+           description="COM_JOOMGALLERY_FIELDS_OWNER_DESC"
+           validate="UserId" />
+
     <field name="modified_time"
            type="calendar"
-           class="form-control"
+           class="readonly form-control"
            translateformat="true"
            showtime="true"
            size="22"
@@ -171,13 +188,23 @@
            filter="user_utc"
            label="JGLOBAL_FIELD_MODIFIED_LABEL" />
 
+    <field name="modified_by"
+           type="user"
+           class="readonly"
+           readonly="true"
+           filter="unset"
+           validate="UserId"
+           label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
+           description="JGLOBAL_FIELD_MODIFIED_BY_DESC" />
+
     <field name="metadesc"
            type="textarea"
            filter="safehtml"
+           rows="5"
+           cols="40"
            default=""
-           label="JFIELD_META_DESCRIPTION_LABEL"
-           rows="3"
-           cols="30"
+           label="JGLOBAL_DESCRIPTION"
+           description="JFIELD_META_DESCRIPTION_LABEL"
            maxlength="300"
            charcounter="true"
     />
@@ -203,13 +230,42 @@
         <option value="4">noindex, nofollow</option>
     </field>
 
+    <field name="image"
+           type="file"
+           accept="image/*"
+           size="10485760"
+           class="input-group"
+           label="COM_JOOMGALLERY_IMG_UPLOAD_IMAGE" />
+
+    <field name="replacetype"
+           type="jgimagetype"
+           label="COM_JOOMGALLERY_IMAGETYPE"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_DESC" />
+
+    <field name="replacetype_disabled"
+           type="text"
+           class="readonly"
+           readonly="true"
+           label="COM_JOOMGALLERY_IMAGETYPE"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_DESC"
+    />
+
+    <field name="replaceprocess"
+           type="radio"
+           default="0"
+           class="btn-group"
+           layout="joomla.form.field.radio.switcher"
+           label="COM_JOOMGALLERY_CONFIG_TAB_IMAGE_PROCESSING"
+           description="COM_JOOMGALLERY_FIELDS_REPLACE_IMAGETYPE_PROCESS_DESC">
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+
     <field name="date"
            type="calendar"
-           format="%Y-%m-%d"
-           timeformat="24"
-           filter="server_utc"
-           translateformat="false"
-           showtime="false"
+           filter="user_utc"
+           translateformat="true"
+           showtime="true"
            singleheader="false"
            todaybutton="true"
            weeknumbers="false"
@@ -219,13 +275,16 @@
            description="COM_JOOMGALLERY_DATE_DESC" />
 
     <field name="imgmetadata"
-           type="editor"
-           editor="codemirror"
-           buttons="false"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_imageimgmetadata.xml"
+           layout="joomla.form.field.subform.default"
+           label="COM_JOOMGALLERY_IMGMETADATA" />
+
+    <field name="comment"
+           type="metadatacomment"
            default=""
-           filter="\Joomla\CMS\Component\ComponentHelper::filterText"
-           label="COM_JOOMGALLERY_IMGMETADATA"
-           description="COM_JOOMGALLERY_IMGMETADATA_DESC" />
+           label="COM_JOOMGALLERY_COMMENT_COMMENT"
+           message="COM_JOOMGALLERY_COMMENT_COMMENT_DESCRIPTION" />
 
     <field name="params"
            type="subform"
@@ -240,20 +299,5 @@
            class="inputbox"
            size="45"
            labelclass="control-label" />
-  </fieldset>
-  <fieldset name="accesscontrol">
-    <field name="asset_id"
-           type="hidden"
-           filter="unset" />
-
-    <field name="rules"
-           type="rules"
-           label="JFIELD_RULES_LABEL"
-           translate_label="false"
-           filter="rules"
-           validate="rules"
-           class="inputbox"
-           component="com_joomgallery"
-           section="image" />
   </fieldset>
 </form>
