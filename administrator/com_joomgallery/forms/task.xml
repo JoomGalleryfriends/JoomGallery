@@ -15,11 +15,11 @@
            message="COM_JOOMGALLERY_ERROR_NEEDS_TITLE" />
 
     <field name="type"
-				   type="taskType"
-				   label="COM_JOOMGALLERY_TASK_TYPE"
-				   required="true"
-				   readonly="true"
-				   maxlength="1024" />
+           type="taskType"
+           label="COM_JOOMGALLERY_TASK_TYPE"
+           required="true"
+           readonly="true"
+           maxlength="1024" />
 
     <field name="taskid"
            type="jgtask"
@@ -29,10 +29,16 @@
 
     <field name="queue"
            type="text"
-           required="true"
-           default="0"
+           required="false"
+           default=""
            label="COM_JOOMGALLERY_TASK_QUEUE_LABEL"
            description="COM_JOOMGALLERY_TASK_QUEUE_DESC" />
+
+    <field name="params"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_taskparams.xml"
+           layout="joomla.form.field.subform.default"
+           label="COM_JOOMGALLERY_PARAMETERS" />
 
     <field name="note"
            type="text"
@@ -49,8 +55,8 @@
            default="1"
            size="1"
            label="JPUBLISHED">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
     </field>
 
     <field name="times_executed"

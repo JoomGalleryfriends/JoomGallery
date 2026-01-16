@@ -41,6 +41,15 @@
       }
     },
     {
+      "name": "com_joomgallery.tasks",
+      "type": "script",
+      "uri": "com_joomgallery/tasks/dist/tasks.js",
+      "attributes": {
+        "type": "module",
+        "defer": true
+      }
+    },
+    {
       "name": "com_joomgallery.catBtns",
       "type": "script",
       "uri": "com_joomgallery/catBtns.js",
