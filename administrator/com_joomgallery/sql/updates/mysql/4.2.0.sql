@@ -1,19 +1,14 @@
-DROP TABLE IF EXISTS `#__joomgallery_fields`;
-UPDATE `#__joomgallery_configs` SET `jg_maxfilesize` = `jg_maxfilesize` / 1000000;
-ALTER TABLE `#__joomgallery_tags_ref` ADD INDEX `idx_imgid` (`imgid`);
-ALTER TABLE `#__joomgallery_tags_ref` ADD INDEX `idx_tagid` (`tagid`);
-ALTER TABLE `#__joomgallery_tags_ref` ADD INDEX `idx_tag_img` (`tagid`, `imgid`);
-ALTER TABLE `#__joomgallery_collections_ref` ADD INDEX `idx_imgid` (`imgid`);
-ALTER TABLE `#__joomgallery_collections_ref` ADD INDEX `idx_collectionid` (`collectionid`);
-ALTER TABLE `#__joomgallery_collections_ref` ADD INDEX `idx_col_img` (`collectionid`, `imgid`);
-ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_description_label` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_show_description`;
-ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_subcategories_category_description` TINYINT(1) NOT NULL DEFAULT 0 AFTER `jg_category_view_subcategories_caption_align`;
-ALTER TABLE `#__joomgallery_configs` MODIFY `jg_maxfilesize` DOUBLE NOT NULL DEFAULT 2;
 CREATE TABLE IF NOT EXISTS `#__joomgallery_tasks` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `title` VARCHAR(255) NOT NULL DEFAULT "",
 `taskid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `type` VARCHAR(128) NOT NULL DEFAULT "",
+`queue` LONGTEXT NOT NULL,
+`successful` LONGTEXT NOT NULL,
+`failed` LONGTEXT NOT NULL,
+`counter` LONGTEXT NOT NULL,
+`last_id` VARCHAR(25) NOT NULL DEFAULT "0",
+`completed` TINYINT(1) NOT NULL DEFAULT 0,
 `last_execution` DATETIME DEFAULT NULL COMMENT 'timestamp of last run',
 `times_executed` INT(11) UNSIGNED DEFAULT 0 COMMENT 'count of successful runs',
 `params` TEXT NOT NULL,
@@ -27,14 +22,14 @@ PRIMARY KEY (`id`),
 KEY `idx_type` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__joomgallery_task_items` (
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `task_id` INT(10) UNSIGNED NOT NULL,
-  `item_id` VARCHAR(255) NOT NULL,
-  `status` ENUM('pending','processing','success','failed') NOT NULL DEFAULT 'pending',
-  `error_message` TEXT DEFAULT NULL,
-  `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `processed_time` DATETIME DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `idx_task_status` (`task_id`, `status`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `#__joomgallery_tags_ref` ADD INDEX `idx_imgid` (`imgid`);
+ALTER TABLE `#__joomgallery_tags_ref` ADD INDEX `idx_tagid` (`tagid`);
+ALTER TABLE `#__joomgallery_tags_ref` ADD INDEX `idx_tag_img` (`tagid`, `imgid`);
+ALTER TABLE `#__joomgallery_collections_ref` ADD INDEX `idx_imgid` (`imgid`);
+ALTER TABLE `#__joomgallery_collections_ref` ADD INDEX `idx_collectionid` (`collectionid`);
+ALTER TABLE `#__joomgallery_collections_ref` ADD INDEX `idx_col_img` (`collectionid`, `imgid`);
+ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_description_label` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_show_description`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_subcategories_category_description` TINYINT(1) NOT NULL DEFAULT 0, AFTER `jg_category_view_subcategories_caption_align`;
+ALTER TABLE `#__joomgallery_configs` MODIFY COLUMN `jg_maxfilesize` DOUBLE NOT NULL DEFAULT 2;
+UPDATE `#__joomgallery_configs` SET `jg_maxfilesize` = `jg_maxfilesize` / 1000000;
+DROP TABLE IF EXISTS `#__joomgallery_fields`;
