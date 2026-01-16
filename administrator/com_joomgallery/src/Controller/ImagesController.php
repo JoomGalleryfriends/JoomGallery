@@ -173,10 +173,10 @@ class ImagesController extends JoomAdminController
         'note'     => '',
         'queue'    => implode(',', $pks),
         'params'   => json_encode(
-          [
+            [
             'recreate_type'  => $type,
             'parallel_limit' => 1,
-          ]
+            ]
         ),
       ];
 
@@ -354,11 +354,11 @@ class ImagesController extends JoomAdminController
     }
 
     $this->setRedirect(
-      Route::_(
-        'index.php?option=' . $this->option . '&view=' . $this->view_list
-        . $this->getRedirectToListAppend(),
-        false
-      )
+        Route::_(
+            'index.php?option=' . $this->option . '&view=' . $this->view_list
+            . $this->getRedirectToListAppend(),
+            false
+        )
     );
   }
 }
