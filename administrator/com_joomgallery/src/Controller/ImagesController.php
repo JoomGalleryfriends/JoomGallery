@@ -11,7 +11,9 @@
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 // No direct access
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomAdminController;
 use Joomla\CMS\Application\CMSApplication;
