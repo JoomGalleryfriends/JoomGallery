@@ -156,10 +156,6 @@ class TaskController extends JoomFormController
         $taskModel = $this->getModel();
         $task      = $taskModel->getItem($taskId);
 
-//        if (str_starts_with($itemRow->item_id, '9')) {
-//          throw new \RuntimeException("Manual error if ItemId starts with 8.");
-//        }
-
         if(!$task)
         {
           throw new \RuntimeException('Main Task ' . $taskId . ' not found.');
