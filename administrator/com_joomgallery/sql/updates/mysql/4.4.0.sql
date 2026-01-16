@@ -1,0 +1,29 @@
+CREATE TABLE IF NOT EXISTS `#__joomgallery_tasks` (
+`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`title` VARCHAR(255) NOT NULL DEFAULT "",
+`taskid` INT(11) UNSIGNED NOT NULL DEFAULT 0,
+`type` VARCHAR(128) NOT NULL DEFAULT "",
+`last_execution` DATETIME DEFAULT NULL COMMENT 'timestamp of last run',
+`times_executed` INT(11) UNSIGNED DEFAULT 0 COMMENT 'count of successful runs',
+`params` TEXT NOT NULL,
+`published` TINYINT(1) NOT NULL DEFAULT 1,
+`ordering` INT(11) NOT NULL DEFAULT 0,
+`note` TEXT NOT NULL,
+`created_time` DATETIME NOT NULL,
+`checked_out` INT(11) UNSIGNED NOT NULL DEFAULT 0,
+`checked_out_time` DATETIME DEFAULT NULL,
+PRIMARY KEY (`id`),
+KEY `idx_type` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `#__joomgallery_task_items` (
+`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+`task_id` INT(10) UNSIGNED NOT NULL,
+`item_id` VARCHAR(255) NOT NULL,
+`status` ENUM('pending','processing','success','failed') NOT NULL DEFAULT 'pending',
+`error_message` TEXT DEFAULT NULL,
+`created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+`processed_time` DATETIME DEFAULT NULL,
+PRIMARY KEY (`id`),
+INDEX `idx_task_status` (`task_id`, `status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
