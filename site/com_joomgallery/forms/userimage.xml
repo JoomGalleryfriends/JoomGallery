@@ -164,6 +164,8 @@
 
     <field name="created_time"
            type="calendar"
+           class="readonly"
+           readonly="true"
            translateformat="true"
            showtime="true"
            size="22"
@@ -261,11 +263,9 @@
 
     <field name="date"
            type="calendar"
-           format="%Y-%m-%d"
-           timeformat="24"
-           filter="server_utc"
-           translateformat="false"
-           showtime="false"
+           filter="user_utc"
+           translateformat="true"
+           showtime="true"
            singleheader="false"
            todaybutton="true"
            weeknumbers="false"

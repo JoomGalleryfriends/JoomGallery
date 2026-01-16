@@ -317,7 +317,7 @@ $canDelete = false;
                     <td class="small d-none d-lg-table-cell text-center">
                       <?php
                       $date = $item->date;
-                      echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
+                      echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
                       ?>
                     </td>
 

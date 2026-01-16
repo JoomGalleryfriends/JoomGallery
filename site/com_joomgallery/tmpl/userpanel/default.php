@@ -55,9 +55,9 @@ $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
 $returnURL = base64_encode('index.php?option=com_joomgallery&view=userpanel');
 
 $userDataComment                    = [];
-$userDataComment['userCatCount']    = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERCATS_LONG);
-$userDataComment['userImgCount']    = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG);
-$userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_TIMESPAN_LONG);
+$userDataComment['userCatCount']    = Text::_('');
+$userDataComment['userImgCount']    = Text::_('');
+$userDataComment['userImgTimeSpan'] = Text::_('');
 
 ?>
 
