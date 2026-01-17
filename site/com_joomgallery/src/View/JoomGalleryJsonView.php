@@ -98,7 +98,11 @@ class JoomGalleryJsonView extends JsonView
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
     $this->user      = $this->app->getIdentity();
 
-    if(strpos($this->component->version, 'dev'))
+    if( stripos($this->component->version, 'dev') ||
+        stripos($this->component->version, 'alpha') ||
+        stripos($this->component->version, 'beta') ||
+        stripos($this->component->version, 'rc')
+     )
     {
       // We are dealing with a development version (alpha or beta)
       $this->message = Text::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION');
