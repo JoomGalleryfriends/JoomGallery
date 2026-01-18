@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -66,7 +65,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
   use AssociationServiceTrait;
   use HTMLRegistryAwareTrait;
   use RouterServiceTrait {
-RouterServiceTrait::createRouter as traitCreateRouter;
+    RouterServiceTrait::createRouter as traitCreateRouter;
   }
 
   /**
@@ -189,9 +188,8 @@ RouterServiceTrait::createRouter as traitCreateRouter;
       return $this->traitCreateRouter($application, $menu);
     }
 
-
-      // Use a legacy router
-      return new $router($application, $menu);
+    // Use a legacy router
+    return new $router($application, $menu);
   }
 
   /**
@@ -244,9 +242,9 @@ RouterServiceTrait::createRouter as traitCreateRouter;
     $language->load('com_joomgallery', JPATH_ADMINISTRATOR);
 
     return [
-      'com_joomgallery.image' => $language->_('COM_JOOMGALLERY_IMAGES'),
-      'com_joomgallery.category'    => $language->_('JCATEGORIES'),
-      'com_joomgallery.userimage' => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.image'        => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.category'     => $language->_('JCATEGORIES'),
+      'com_joomgallery.userimage'    => $language->_('COM_JOOMGALLERY_IMAGES'),
       'com_joomgallery.usercategory' => $language->_('JCATEGORIES'),
     ];
   }
