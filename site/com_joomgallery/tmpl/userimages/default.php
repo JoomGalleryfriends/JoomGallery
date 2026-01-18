@@ -67,7 +67,7 @@ $categoriesView = Route::_('index.php?option=com_joomgallery&view=usercategories
 
 // return to userImages;
 $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userimages');
-$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return=' . $returnURL);
+$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=0&return=' . $returnURL);
 
 $baseLink_ImageEdit    = 'index.php?option=com_joomgallery&task=userimage.edit&id=';
 $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filter_category=';
@@ -234,7 +234,7 @@ $canDelete = false;
                   $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
                   $canChange  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
-                  $canCheckin = $canChange || $item->checked_out == $this->getCurrentUser->id;
+                  $canCheckin = $canChange || $item->checked_out == $this->userId;
                   $disabled   = ($item->checked_out > 0) ? 'disabled' : '';
                   ?>
 
@@ -316,7 +316,7 @@ $canDelete = false;
                     <td class="small d-none d-lg-table-cell text-center">
                       <?php
                       $date = $item->date;
-                      echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
+                      echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
                       ?>
                     </td>
 
@@ -356,7 +356,7 @@ $canDelete = false;
                         </button>
 
                       <?php else : ?>
-                        YYY<i class="icon-<?php echo (int) $item->featured ? 'featured' : 'minus-2'; ?>"></i>
+                        <i class="icon-<?php echo (int) $item->featured ? 'featured' : 'minus-2'; ?>"></i>
                       <?php endif; ?>
                     </td>
 

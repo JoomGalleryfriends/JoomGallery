@@ -44,6 +44,7 @@ use Joomla\CMS\Component\Router\RouterInterface;
 use Joomla\CMS\Component\Router\RouterServiceInterface;
 use Joomla\CMS\Component\Router\RouterServiceTrait;
 use Joomla\CMS\Extension\BootableExtensionInterface;
+use Joomla\CMS\Extension\ExtensionHelper;
 use Joomla\CMS\Extension\MVCComponent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Fields\FieldsServiceInterface;
@@ -64,7 +65,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
   use AssociationServiceTrait;
   use HTMLRegistryAwareTrait;
   use RouterServiceTrait {
-RouterServiceTrait::createRouter as traitCreateRouter;
+    RouterServiceTrait::createRouter as traitCreateRouter;
   }
 
   /**
@@ -110,6 +111,13 @@ RouterServiceTrait::createRouter as traitCreateRouter;
   public $version = '';
 
   /**
+   * Storage for the current component version
+   *
+   * @var object
+   */
+  public $extension = null;
+
+  /**
    * Booting the extension. This is the function to set up the environment of the extension like
    * registering new class loaders, etc.
    *
@@ -147,6 +155,12 @@ RouterServiceTrait::createRouter as traitCreateRouter;
     {
       $this->version = (string) $this->xml->version;
     }
+
+    // Load component object from #__extensions table
+    if(!$this->extension)
+    {
+      $this->extension = ExtensionHelper::getExtensionRecord(_JOOM_OPTION, 'component');
+    }
   }
 
   /**
@@ -174,9 +188,8 @@ RouterServiceTrait::createRouter as traitCreateRouter;
       return $this->traitCreateRouter($application, $menu);
     }
 
-
-      // Use a legacy router
-      return new $router($application, $menu);
+    // Use a legacy router
+    return new $router($application, $menu);
   }
 
   /**
@@ -229,9 +242,9 @@ RouterServiceTrait::createRouter as traitCreateRouter;
     $language->load('com_joomgallery', JPATH_ADMINISTRATOR);
 
     return [
-      'com_joomgallery.image' => $language->_('COM_JOOMGALLERY_IMAGES'),
-      'com_joomgallery.category'    => $language->_('JCATEGORIES'),
-      'com_joomgallery.userimage' => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.image'        => $language->_('COM_JOOMGALLERY_IMAGES'),
+      'com_joomgallery.category'     => $language->_('JCATEGORIES'),
+      'com_joomgallery.userimage'    => $language->_('COM_JOOMGALLERY_IMAGES'),
       'com_joomgallery.usercategory' => $language->_('JCATEGORIES'),
     ];
   }

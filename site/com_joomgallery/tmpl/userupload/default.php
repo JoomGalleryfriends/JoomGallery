@@ -38,7 +38,7 @@ $imagesView     = Route::_('index.php?option=com_joomgallery&view=userimages');
 
 // return to userupload;
 $returnURL       = base64_encode('index.php?option=com_joomgallery&view=userupload');
-$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return=' . $returnURL);
+$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=0&return=' . $returnURL);
 
 $config = $this->params['configs'];
 
@@ -279,8 +279,9 @@ function DisplaySystemSettings(
     <div class="accordion" id="<?php echo $id; ?>">
       <div class="accordion-item">
         <h2 class="accordion-header" id="<?php echo $itemId; ?>Header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#<?php echo $itemId; ?>" aria-expanded="false" aria-controls="<?php echo $itemId; ?>">
+          <button id="max_upload_calculated" class="accordion-button collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#<?php echo $itemId; ?>"
+                  aria-expanded="false" aria-controls="<?php echo $itemId; ?>">
             <?php echo Text::_($title); ?>
           </button>
         </h2>

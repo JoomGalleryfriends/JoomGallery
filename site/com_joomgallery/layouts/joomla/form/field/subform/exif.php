@@ -12,5 +12,5 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-$path = _JOOM_PATH_ADMIN . '/layouts/joomla/form/field/subform\exif.php';
+$path = _JOOM_PATH_ADMIN . '/layouts/joomla/form/field/subform/exif.php';
 require $path;

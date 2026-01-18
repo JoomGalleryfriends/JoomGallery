@@ -1463,7 +1463,11 @@ class com_joomgalleryInstallerScript extends InstallerScript
   {
     $msg = '';
 
-    if(strpos(end($new_version), 'dev'))
+    if( strpos(end($new_version), 'dev') ||
+        strpos(end($new_version), 'alpha') ||
+        strpos(end($new_version), 'beta') ||
+        strpos(end($new_version), 'rc')
+     )
     {
       // We are dealing with a development version (alpha or beta)
       $msg .= Text::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION');

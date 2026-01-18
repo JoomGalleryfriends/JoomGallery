@@ -103,37 +103,6 @@ class UsercategoryController extends JoomFormController // FormController
     return true;
   }
 
-  /**
-   * Save category and prepare a copy (with changed id ...)
-   *
-   * @param $key
-   * @param $urlVar
-   *
-   * @return bool
-   *
-   * @throws \Exception
-   * @since   4.2.0
-   */
-  public function save2new($key = null, $urlVar = null): bool
-  {
-    // Check for request forgeries.
-    $this->checkToken();
-
-    $isSaved = $this->save($key, $urlVar) != false;
-
-    // Clear the profile id from the session.
-    $this->app->setUserState('com_joomgallery.edit.category.id', null);
-    $this->app->setUserState('com_joomgallery.edit.category.data', null);
-
-    $baseLink   = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . (int) 0;
-    $returnPage = $this->getReturnPage('usercategories');
-
-    $combinedLink = $baseLink . '&return=' . base64_encode($returnPage);
-    $backLink     = Route::_($combinedLink, false);
-    $this->setRedirect($backLink);
-
-    return $isSaved;
-  }
 
   /**
    * Method to save data.
@@ -151,6 +120,9 @@ class UsercategoryController extends JoomFormController // FormController
 
     // Get the user data.
     $data = $this->input->post->get('jform', [], 'array');
+
+    // save, save2copy save2new, saveAndClose
+    $task = $this->getTask();
 
     // To avoid data collisions the urlVar may be different from the primary key.
     if(empty($urlVar))
@@ -180,7 +152,7 @@ class UsercategoryController extends JoomFormController // FormController
       return false;
     }
 
-    if($this->getTask() === 'save2copy')
+    if($task === 'save2copy')
     {
       $data['id'] = 0;
     }
@@ -243,11 +215,17 @@ class UsercategoryController extends JoomFormController // FormController
     }
 
     // new backlink after save of new item
-    // if ((int) $data['id'] == 0)
-    if($this->getTask() === 'save2copy' || (int) $data['id'] == 0)
+    if($task === 'save2copy' || (int) $data['id'] == 0)
     {
       $newId    = $model->getState('usercategory.id', '');
       $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . (int) $newId;
+      $backLink = Route::_($baseLink, false);
+    }
+
+    // new backlink after save and new item
+    if($task === 'save2new' || (int) $data['id'] == 0)
+    {
+      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat';
       $backLink = Route::_($baseLink, false);
     }
 

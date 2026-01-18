@@ -54,9 +54,9 @@ $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
 $returnURL = base64_encode('index.php?option=com_joomgallery&view=userpanel');
 
 $userDataComment                    = [];
-$userDataComment['userCatCount']    = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERCATS_LONG);
-$userDataComment['userImgCount']    = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_LONG);
-$userDataComment['userImgTimeSpan'] = Text::_('COM_JOOMGALLERY_NOT_REALLY_ENFORCED'); // Text::_(COM_JOOMGALLERY_CONFIG_MAX_USERIMGS_TIMESPAN_LONG);
+$userDataComment['userCatCount']    = Text::_('');
+$userDataComment['userImgCount']    = Text::_('');
+$userDataComment['userImgTimeSpan'] = Text::_('');
 
 ?>
 
@@ -345,7 +345,7 @@ function displayUserButtons($returnURL)
 $uploadView      = Route::_('index.php?option=com_joomgallery&view=userupload');
 $imagesView      = Route::_('index.php?option=com_joomgallery&view=userimages');
 $categoriesView  = Route::_('index.php?option=com_joomgallery&view=usercategories');
-$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&return=' . $returnURL);
+$newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=0&return=' . $returnURL);
 
 ?>
 <div>
@@ -466,7 +466,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                     $canEdit    = $data->getAcl()->checkACL('edit', 'com_joomgallery.category', $item->id);
                     $canDelete  = $data->getAcl()->checkACL('delete', 'com_joomgallery.category', $item->id);
                     $canChange  = $data->getAcl()->checkACL('editstate', 'com_joomgallery.category', $item->id);
-                    $canCheckin = $canChange || $item->checked_out == $data->getCurrentUser->id;
+                    $canCheckin = $canChange || $item->checked_out == $data->userId;
                     // $disabled = ($item->checked_out > 0) ? 'disabled' : '';
                     $disabled       = '';
                     $statePublished = ((int) $item->published) ? 'unpublish' : 'publish';
@@ -694,7 +694,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                     $canEdit        = $data->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
                     $canDelete      = $data->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
                     $canChange      = $data->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
-                    $canCheckin     = $canChange || $item->checked_out == $data->getCurrentUser->id;
+                    $canCheckin     = $canChange || $item->checked_out == $data->userId;
                     $disabled       = ($item->checked_out > 0) ? 'disabled' : '';
                     $statePublished = ((int) $item->published) ? 'unpublish' : 'publish';
 
@@ -937,7 +937,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                     $canEdit        = $data->getAcl()->checkACL('edit', 'com_joomgallery.image', $item->id, $item->catid, true);
                     $canDelete      = $data->getAcl()->checkACL('delete', 'com_joomgallery.image', $item->id, $item->catid, true);
                     $canChange      = $data->getAcl()->checkACL('editstate', 'com_joomgallery.image', $item->id, $item->catid, true);
-                    $canCheckin     = $canChange || $item->checked_out == $data->getCurrentUser->id;
+                    $canCheckin     = $canChange || $item->checked_out == $data->userId;
                     $disabled       = ($item->checked_out > 0) ? 'disabled' : '';
                     $statePublished = ((int) $item->published) ? 'unpublish' : 'publish';
 

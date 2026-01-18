@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="4.0" method="upgrade">
   <name>com_joomgallery</name>
-  <creationDate>2026-01-12</creationDate>
+  <creationDate>2026-01-20</creationDate>
   <copyright>2008 - 2026  JoomGallery::ProjectTeam</copyright>
   <license>GNU General Public License version 3 or later</license>
   <author>JoomGallery::ProjectTeam</author>
   <authorEmail>team@joomgalleryfriends.net</authorEmail>
   <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-  <version>4.3.0</version>
+  <version>4.3.0-rc1</version>
   <description>JoomGallery 4, a native gallery component for Joomla! 4.x, 5.x and 6.x</description>
   <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
 
   <scriptfile>script.php</scriptfile>
 
-  <install> 
+  <install>
     <sql>
       <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
     </sql>
   </install>
-  <update> 
+  <update>
     <schemas>
       <schemapath type="mysql">sql/updates/mysql</schemapath>
     </schemas>
   </update>
-  <uninstall> 
+  <uninstall>
     <sql>
       <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
     </sql>

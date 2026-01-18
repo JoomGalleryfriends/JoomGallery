@@ -135,6 +135,17 @@
         <option value="1">JYES</option>
       </field>
 
+      <field name="jg_router_imgids"
+              type="radio"
+              default="0"
+              class="btn-group"
+              layout="joomla.form.field.radio.switcher"
+              label="COM_JOOMGALLERY_CONFIG_NOIMGIDS_LABEL"
+              description="COM_JOOMGALLERY_CONFIG_NOIMGIDS_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
       <field name="jg_compatibility_mode"
              type="list"
              global_only="true"
