@@ -413,7 +413,7 @@ class DefaultRouter extends RouterView
   {
     if(!strpos($id, ':'))
     {
-      if(!$id)
+      if(!$id || $id == 'null')
       {
         if($query['view'] = 'usercategory' && $query['layout'] = 'editCat')
         {
