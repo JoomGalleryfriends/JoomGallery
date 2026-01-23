@@ -94,11 +94,19 @@ abstract class JoomListModel extends ListModel
    */
   function __construct($config = [])
   {
-    parent::__construct($config);
+      parent::__construct($config);
 
-    $this->app       = Factory::getApplication('administrator');
-    $this->component = $this->app->bootComponent(_JOOM_OPTION);
-    $this->user      = $this->component->getMVCFactory()->getIdentity();
+      $this->app       = Factory::getApplication('administrator');
+      $this->component = $this->app->bootComponent(_JOOM_OPTION);
+
+      if(! $this->app->isClient('api'))
+      {
+          $this->user = $this->component->getMVCFactory()->getIdentity();
+      }
+      else
+      {
+          $this->user = $this->app->getIdentity();
+      }
   }
 
   /**
@@ -304,7 +312,16 @@ abstract class JoomListModel extends ListModel
 
     if($table instanceof CurrentUserInterface)
     {
-      $table->setCurrentUser($this->component->getMVCFactory()->getIdentity());
+        $app = Factory::getApplication();
+
+        if(! $app->isClient('api'))
+        {
+            $table->setCurrentUser($this->component->getMVCFactory()->getIdentity());
+        }
+        else
+        {
+            $table->setCurrentUser($app->getIdentity());
+        }
     }
 
     return $table;
