@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Service;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -414,7 +413,7 @@ class DefaultRouter extends RouterView
   {
     if(!strpos($id, ':'))
     {
-      if(!$id)
+      if(!$id || $id == 'null')
       {
         if($query['view'] = 'usercategory' && $query['layout'] = 'editCat')
         {
