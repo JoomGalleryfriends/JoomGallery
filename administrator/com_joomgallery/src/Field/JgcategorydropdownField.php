@@ -433,8 +433,9 @@ class JgcategorydropdownField extends ListField
 
       if($row->parent_id == '1')
       {
-        $parent       = new \stdClass();
-        $parent->text = Text::_('JGLOBAL_ROOT_PARENT');
+        $parent        = new \stdClass();
+        $parent->text  = Text::_('JGLOBAL_ROOT_PARENT');
+        $parent->value = null;
         array_unshift($options, $parent);
       }
     }
