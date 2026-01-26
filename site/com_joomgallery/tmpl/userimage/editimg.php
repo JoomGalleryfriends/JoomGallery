@@ -73,7 +73,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     <!--          action="--><?php //echo Route::_('index.php?option=com_joomgallery&controller=userimage&id='.$this->item->id); ?><!--" -->
     <form id="adminForm"
           action="<?php echo Route::_('index.php?option=com_joomgallery&view=userimage&layout=editImg&id=' . $this->item->id); ?>"
-          method="post" name="adminForm" class="form-validate form-horizontal" enctype="multipart/form-data"
+          method="post" name="adminForm" class="form-validate form-horizontal well" enctype="multipart/form-data"
           aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>"
     >
       <?php if($isShowTitle): ?>

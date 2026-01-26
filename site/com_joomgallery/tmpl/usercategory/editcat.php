@@ -68,8 +68,9 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     <?php Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error'); ?>
   <?php else : ?>
     <form id="adminForm"
-          action="<?php echo Route::_('index.php?option=com_joomgallery&controller=usercategory&id=' . $this->item->id); ?>"
-          method="post" name="adminForm" class="form-validate form-horizontal well" enctype="multipart/form-data">
+          action="<?php echo Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . $this->item->id); ?>"
+          method="post" name="adminForm" class="form-validate form-horizontal well" enctype="multipart/form-data"
+          aria-label="<?php echo Text::_('COM_JOOMGALLERY_CATEGORY_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>"
 
       <?php if($isShowTitle): ?>
         <h3><?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORY_EDIT'); ?></h3>

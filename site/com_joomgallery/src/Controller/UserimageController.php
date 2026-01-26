@@ -395,7 +395,9 @@ class UserimageController extends JoomFormController
     $this->app->setUserState('com_joomgallery.edit.image.data', null);
 
     // Redirect to the list screen.
-    $this->setRedirect(Route::_($this->getReturnPage('userimages') . $this->getItemAppend($recordId), false));
+    $returnPage = $this->getReturnPage('userimages');
+    $backLink   = Route::_($returnPage);
+    $this->setRedirect($backLink);
 
     return true;
   }

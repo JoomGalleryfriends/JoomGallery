@@ -83,8 +83,16 @@ class UsercategoriesModel extends AdminCategoriesModel
    */
   protected function populateState($ordering = 'a.lft', $direction = 'asc'): void
   {
+    // ToDo: use edit.php instead of editImg.php in Tmpl
+    // brute force fix part (1) to keep context without addition '.editImg' by layout
+    // keep and reset $this->context;
+    $context = $this->context;
+
     // List state information.
     parent::populateState($ordering, $direction);
+
+    // brute force fix part (2)
+    $this->context = $context;
 
     // Set filters based on how the view is used.
     //  e.g. user list of categories:
