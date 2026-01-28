@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
@@ -140,7 +141,10 @@ class UsercategoryController extends JoomFormController // FormController
       return false;
     }
 
-    $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . (int) $data['id'];
+    // General return for save on existing item with no side task
+    $returnPage = base64_encode($this->getReturnPage('usercategories'));
+    $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id='
+      . (int) $data['id'] . '&return=' . $returnPage;
     $backLink = Route::_($baseLink, false);
 
     // Access check
@@ -152,13 +156,17 @@ class UsercategoryController extends JoomFormController // FormController
       return false;
     }
 
+    // save2copy prepared but leaves actual item checked out
     if($task === 'save2copy')
     {
+      // Missing save of old values
+      // ToDo: check code in joomla.categories
       $data['id'] = 0;
     }
 
     // Initialise variables.
     $app   = Factory::getApplication();
+    // @var UsercategoryModel $model
     $model = $this->getModel('Usercategory', 'Site');
 
     // Validate the posted data.
@@ -210,22 +218,24 @@ class UsercategoryController extends JoomFormController // FormController
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $model->getError()), 'warning');
       $this->setRedirect($backLink);
 
-
       return false;
     }
 
     // new backlink after save of new item
+    // save2copy prepared but leaves actual item checked out
     if($task === 'save2copy' || (int) $data['id'] == 0)
     {
       $newId    = $model->getState('usercategory.id', '');
-      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . (int) $newId;
+      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id='
+        . (int) $newId . '&return=' . $returnPage;
       $backLink = Route::_($baseLink, false);
     }
 
-    // new backlink after save and new item
-    if($task === 'save2new' || (int) $data['id'] == 0)
+    // new backlink after save to new (empty)
+    if($task === 'save2new')
     {
-      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat';
+      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=0'
+        . '&return=' . $returnPage;
       $backLink = Route::_($baseLink, false);
     }
 
