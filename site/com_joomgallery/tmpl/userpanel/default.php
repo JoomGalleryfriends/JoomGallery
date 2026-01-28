@@ -137,14 +137,14 @@ $returnURL = base64_encode('index.php?option=com_joomgallery&view=userpanel');
  */
 function displayUserPanelLimits($config, array $userData)
 {
-  $usrUserCat        = (string) $userData['userCatCount'];
-  $cfgMaxUserCat     = (string) ($config->get('jg_maxusercat') ?? '%');
+  $usrUserCat    = (string) $userData['userCatCount'];
+  $cfgMaxUserCat = (string) ($config->get('jg_maxusercat') ?? '%');
 
-  $usrUserImgCount        = (string) $userData['userImgCount'];
-  $cfgMaxUserImg          = (string) ($config->get('jg_maxuserimage') ?? '%');
+  $usrUserImgCount = (string) $userData['userImgCount'];
+  $cfgMaxUserImg   = (string) ($config->get('jg_maxuserimage') ?? '%');
 
-  $usrUserImgTimespan        = (string) $userData['userImgTimeSpan'];
-  $cfgMaxUserImgTimespan     = (string) ($config->get('jg_maxuserimage_timespan') ?? '%');
+  $usrUserImgTimespan    = (string) $userData['userImgTimeSpan'];
+  $cfgMaxUserImgTimespan = (string) ($config->get('jg_maxuserimage_timespan') ?? '%');
 
   $classDangerValue = 'table-danger';
 

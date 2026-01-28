@@ -143,9 +143,9 @@ class UsercategoryController extends JoomFormController // FormController
 
     // General return for save on existing item with no side task
     $returnPage = base64_encode($this->getReturnPage('usercategories'));
-    $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id='
+    $baseLink   = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id='
       . (int) $data['id'] . '&return=' . $returnPage;
-    $backLink = Route::_($baseLink, false);
+    $backLink   = Route::_($baseLink, false);
 
     // Access check
     if(!$this->acl->checkACL('edit', 'category', $recordId))
@@ -165,7 +165,7 @@ class UsercategoryController extends JoomFormController // FormController
     }
 
     // Initialise variables.
-    $app   = Factory::getApplication();
+    $app = Factory::getApplication();
     // @var UsercategoryModel $model
     $model = $this->getModel('Usercategory', 'Site');
 
