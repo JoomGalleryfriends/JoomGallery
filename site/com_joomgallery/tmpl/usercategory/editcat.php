@@ -90,10 +90,10 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
           <button class="btn btn-primary" type="button" data-submit-task="usercategory.save2copy">
             <span class="fas fa-plus" aria-hidden="true"></span> <?php echo Text::_('JSAVEASCOPY'); ?>
           </button>
+          </button> */ ?>
           <button class="btn btn-primary" type="button" data-submit-task="usercategory.save2new">
             <span class="fas fa-copy" aria-hidden="true"></span> <?php echo Text::_('JTOOLBAR_SAVE_AND_NEW'); ?>
-          </button> */
-          ?>
+          </button>
           <button class="btn btn-danger" type="button" data-submit-task="usercategory.cancel">
             <span class="fas fa-times" aria-hidden="true"></span> <?php echo Text::_('JCANCEL'); ?>
           </button>
