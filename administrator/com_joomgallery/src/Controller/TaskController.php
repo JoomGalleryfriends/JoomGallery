@@ -254,11 +254,11 @@ class TaskController extends JoomFormController
     $schedulerTask = new Task($mockRecord);
 
     $event = new ExecuteTaskEvent(
-      'onExecuteTask',
-      [
-        'subject' => $schedulerTask,
-        'params'  => $params,
-      ]
+        'onExecuteTask',
+        [
+          'subject' => $schedulerTask,
+          'params'  => $params,
+        ]
     );
 
     $app->getDispatcher()->dispatch($event->getName(), $event);

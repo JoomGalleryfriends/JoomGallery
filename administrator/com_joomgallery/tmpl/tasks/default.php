@@ -224,7 +224,7 @@ if($saveOrder && !empty($this->items))
                         data-scheduler-run
                         data-id="<?php echo (int) $item->id; ?>"
                         data-title="<?php echo $this->escape($item->title); ?>"
-                        data-url="<?php echo Route::_('index.php?option=com_ajax&format=json&plugin=RunSchedulerTest&group=system&id='.(int) $item->id).'&t='.time(); ?>"
+                        data-url="<?php echo Route::_('index.php?option=com_ajax&format=json&plugin=RunSchedulerTest&group=system&id=' . (int) $item->id) . '&t=' . time(); ?>"
                         title="<?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>">
                   <span class="fa fa-play fa-sm me-2"></span>
                   <?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>
