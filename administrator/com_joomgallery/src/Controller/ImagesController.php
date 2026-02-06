@@ -175,10 +175,10 @@ class ImagesController extends JoomAdminController
         'note'     => '',
         'queue'    => implode(',', $pks),
         'params'   => json_encode(
-            [
+          [
             'recreate_type'  => $type,
             'parallel_limit' => 1,
-            ]
+          ]
         ),
       ];
 
