@@ -57,7 +57,7 @@ class TagsModel extends JoomListModel
         'created_by', 'a.created_by',
         'modified_time', 'a.modified_time',
         'modified_by', 'a.modified_by',
-        'id', 'a.id',
+        'id', 'a.id'
       ];
     }
 
