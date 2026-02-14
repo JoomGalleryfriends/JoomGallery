@@ -1,13 +1,16 @@
+@media (width >= 992px) {
+  .com_joomgallery .modal-dialog.modal-lg {
+    --modal-width: 1400px;
+  }
+}
 .jg-controlpanel-content  {
   padding: 1.2rem;
   text-align: center;
 }
-
 img.jg-controlpanel-logo {
   width: 600px;
   max-width: 100%;
 }
-
 .module-actions {
   -webkit-box-ordinal-group: 2;
   -ms-flex-order: 1;
@@ -18,7 +21,6 @@ img.jg-controlpanel-logo {
 .dropdown-item.unpublish-module {
   display:none;
 }
-
 .subhead .btn {
   margin-inline-end: 0.75rem;
 }
@@ -196,7 +198,7 @@ img.jg_minithumb {
 .joom-image > .joom-loader {
   position: absolute;
   text-align: center;
-  margin: 1rem auto;  
+  margin: 1rem auto;
   width: 100%;
 }
 .joom-image > img {
@@ -222,7 +224,8 @@ joomla-field-image .jg_minithumb {
 .jg .modal .btn {
   color: var(--white);
 }
-.jg-category .password-group > div.text-center {
+.jg-category .password-group > div.text-center,
+.jg-tags-aiinterface .ordering-select div:first-child {
   display: none;
 }
 .uppy-Dashboard-inner {

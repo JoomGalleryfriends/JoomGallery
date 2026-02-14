@@ -180,6 +180,15 @@
       "name": "com_joomgallery.migrator",
       "type": "script",
       "uri": "com_joomgallery/migrator/dist/migrator.js"
+    },
+    {
+      "name": "com_joomgallery.admin.taggingtoolbar",
+      "type": "script",
+      "uri": "com_joomgallery/taggingtoolbar.js",
+      "attributes": {
+        "type": "module",
+        "defer": true
+      }
     }
   ]
 }
