@@ -57,7 +57,7 @@ class TagsModel extends JoomListModel
         'created_by', 'a.created_by',
         'modified_time', 'a.modified_time',
         'modified_by', 'a.modified_by',
-        'id', 'a.id',
+        'id', 'a.id'
       ];
     }
 
@@ -76,7 +76,7 @@ class TagsModel extends JoomListModel
    *
    * @throws Exception
    */
-  protected function populateState($ordering = 'a.id', $direction = 'ASC')
+  protected function populateState($ordering = 'countTaggedItems', $direction = 'ASC')
   {
     $app = Factory::getApplication();
 
@@ -244,8 +244,8 @@ class TagsModel extends JoomListModel
     }
 
     // Add the list ordering clause.
-    $orderCol  = $this->state->get('list.ordering', 'a.id');
-    $orderDirn = $this->state->get('list.direction', 'ASC');
+    $orderCol  = $this->state->get('list.ordering', 'countTaggedItems');
+    $orderDirn = $this->state->get('list.direction', 'DESC');
 
     if($orderCol && $orderDirn)
     {
@@ -253,7 +253,7 @@ class TagsModel extends JoomListModel
     }
     else
     {
-      $query->order($db->escape($this->state->get('list.fullordering', 'a.lft ASC')));
+      $query->order($db->escape($this->state->get('list.fullordering', 'countTaggedItems DESC')));
     }
 
     return $query;

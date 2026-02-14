@@ -112,6 +112,14 @@ class HtmlView extends JoomGalleryView
       }
     }
 
+    // Show tagging button
+    $toolbar->popupButton('tagging', 'Image Tagging')
+            ->iframeWidth(1200)
+            ->iframeHeight(800)
+            ->icon('icon-tags')
+            ->url('index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component')
+            ->listCheck(true);
+
     if($this->getAcl()->checkACL('core.edit.state'))
     {
       // Batch button
