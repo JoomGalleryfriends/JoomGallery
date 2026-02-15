@@ -580,7 +580,12 @@ class CategoryModel extends JoomItemModel
     $listModel->setState('list.start', $catform_limitstart);
 
     // Apply ordering
-    $listModel->setState('list.fullordering', 'a.lft ASC');
+    $listModel->setState(
+      'list.fullordering',
+      $catform_list['fullordering']
+          ?? $params['configs']->get('jg_category_view_ord_images', 'a.lft ASC', 'string')
+    );
+
   }
 
   /**
