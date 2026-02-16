@@ -1,0 +1,16 @@
+{
+  "name": "aiinterface",
+  "version": "1.0.0",
+  "description": "JavaScript library to interact with the AI-Interface API",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "JoomGallery::ProjectTeam",
+  "license": "GNU",
+  "devDependencies": {
+    "webpack": "^5.80.0",
+    "webpack-cli": "^6.0.1"
+  }
+}

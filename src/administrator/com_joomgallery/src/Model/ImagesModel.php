@@ -191,8 +191,9 @@ class ImagesModel extends JoomListModel
     $id .= ':' . serialize($this->getState('filter.access'));
     $id .= ':' . serialize($this->getState('filter.created_by'));
     $id .= ':' . serialize($this->getState('filter.category'));
+    $id .= ':' . serialize($this->getState('filter.ids'));
     $id .= ':' . serialize($this->getState('filter.tag'));
-    $id .= ':' . serialize($this->getState('filter.and'));
+    $id .= ':' . $this->getState('filter.and');
 
     return parent::getStoreId($id);
   }
@@ -230,18 +231,14 @@ class ImagesModel extends JoomListModel
     // Check if filtering by tags
     $tag = $this->getState('filter.tag');
 
-    // Sanitise tags array
-    if(isset($tag))
-    {
-      if(!\is_array($tag))
-      {
-        $tag = (string) preg_replace('/[^0-9,]/', '', $tag);
-        $tag = strpos($tag, ',') !== false ? explode(',', $tag) : [$tag];
-      }
+    // Check if filtering by ids
+    $ids = $this->getState('filter.ids');
 
-      $tag = ArrayHelper::toInteger((array) $tag);
-      $tag = array_filter($tag);
-    }
+    // Sanitise tags array
+    $tag = $this->sanitiseIDlist($tag);
+
+    // Sanitise ids array
+    $ids = $this->sanitiseIDlist($ids);
 
     // With less than two tags, we do not need the AND logic
     if(empty($tag) || \count($tag) < 2)
@@ -300,9 +297,21 @@ class ImagesModel extends JoomListModel
 
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
-      // Join with the tags and reference table to get tag IDs
-      $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
-      $query->join('INNER', $db->quoteName('#__joomgallery_tags', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('tr.tagid'));
+      // Tags aggregation subquery
+      $tagsSub = $db->getQuery(true)
+          ->select($db->quoteName('tr_all.imgid', 'imgid'))
+          ->select('GROUP_CONCAT(DISTINCT ' . $db->quoteName('t_all.id') . ' ORDER BY ' . $db->quoteName('t_all.title') . ' SEPARATOR ",") AS ' . $db->quoteName('tag_ids'))
+          ->select('GROUP_CONCAT(DISTINCT ' . $db->quoteName('t_all.title') . ' ORDER BY ' . $db->quoteName('t_all.title') . ' SEPARATOR ",") AS ' . $db->quoteName('tag_titles'))
+          ->from($db->quoteName('#__joomgallery_tags_ref', 'tr_all'))
+          ->join('INNER', $db->quoteName('#__joomgallery_tags', 't_all') . ' ON ' . $db->quoteName('t_all.id') . ' = ' . $db->quoteName('tr_all.tagid'))
+          ->group($db->quoteName('tr_all.imgid'));
+
+      // Join aggregated tags into main query
+      $query->join('LEFT', '(' . $tagsSub->__toString() . ') AS ' . $db->quoteName('tags') . ' ON ' . $db->quoteName('tags.imgid') . ' = ' . $db->quoteName('a.id'));
+      $query->select([
+        $db->quoteName('tags.tag_ids', 'tag_ids'),
+        $db->quoteName('tags.tag_titles', 'tag_titles'),
+      ]);
     }
 
     // Filter by access level.
@@ -448,7 +457,7 @@ class ImagesModel extends JoomListModel
       }
       elseif(\is_array($catId))
       {
-        $catId = ArrayHelper::toInteger($catId);
+        $catId = array_values(array_filter(array_map('intval', (array) $catId)));
         $query->whereIn($db->quoteName('a.catid'), $catId);
       }
     }
@@ -456,14 +465,34 @@ class ImagesModel extends JoomListModel
     // Filter by tags (OR logic)
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
-      if(\count($tag) === 1)
+      $exists = $db->getQuery(true)
+          ->select('1')
+          ->from($db->quoteName('#__joomgallery_tags_ref', 'trx'))
+          ->where($db->quoteName('trx.imgid') . ' = ' . $db->quoteName('a.id'));
+
+      if (\count($tag) === 1)
       {
-        $query->where($db->quoteName('t.id') . ' = :tag')
-          ->bind(':tag', $tag[0], ParameterType::INTEGER);
+        $exists->where($db->quoteName('trx.tagid') . ' = ' . (int) $tag[0]);
       }
       else
       {
-        $query->whereIn($db->quoteName('t.id'), $tag);
+        $exists->where($db->quoteName('trx.tagid') . ' IN (' . implode(',', array_map('intval', $tag)) . ')');
+      }
+
+      $query->where('EXISTS (' . $exists->__toString() . ')');
+    }
+
+    // Filter by ids
+    if(!empty($ids))
+    {
+      if (\count($ids) === 1)
+      {
+        $query->where($db->quoteName('a.id') . ' = :imgId')
+          ->bind(':imgId', $ids[0], ParameterType::INTEGER);
+      }
+      else
+      {
+        $query->where($db->quoteName('a.id') . ' IN (' . implode(',', array_map('intval', $ids)) . ')');
       }
     }
 

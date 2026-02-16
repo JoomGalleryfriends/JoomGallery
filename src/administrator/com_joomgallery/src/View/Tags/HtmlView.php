@@ -65,17 +65,16 @@ class HtmlView extends JoomGalleryView
       $cid = $this->app->input->get('cid', '', 'string');
       if(!empty($cid))
       {
-        $cid = \explode(',', $cid);
-        $cid = \array_values(\array_filter(\array_map('intval', (array) $cid)));
-
         $img_model = $this->component->getMVCFactory()->createModel('images', 'administrator');
         $img_model->getState();
 
-        // Select fields to load
-        $fields = ['a.id', 'a.title', 'a.filename', 'a.filesystem', 'tags'];
-
         // Apply preselected filters and fields selection for images
-        $this->setImagesModelState($img_model, $fields);
+        $fields = ['a.id', 'a.title', 'a.filename', 'a.filesystem', 'tag_ids', 'tag_titles'];
+        $img_model->setState('list.select', $fields);
+        $img_model->setState('filter.ids', $cid);
+        $img_model->setState('list.pages', 1);
+        $img_model->setState('list.start', 1);
+        $img_model->setState('list.fullordering', 'a.date ASC', 'string');
 
         // Get images
         $this->images = $img_model->getItems();

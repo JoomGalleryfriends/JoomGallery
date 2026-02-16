@@ -189,6 +189,15 @@
         "type": "module",
         "defer": true
       }
+    },
+    {
+      "name": "com_joomgallery.aiinterface",
+      "type": "script",
+      "uri": "com_joomgallery/aiinterface/dist/aiinterface.js",
+      "attributes": {
+        "type": "module",
+        "defer": true
+      }
     }
   ]
 }
