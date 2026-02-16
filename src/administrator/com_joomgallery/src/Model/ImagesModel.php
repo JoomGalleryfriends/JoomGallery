@@ -308,12 +308,12 @@ class ImagesModel extends JoomListModel
 
       // Join aggregated tags into main query
       $query->join('LEFT', '(' . $tagsSub->__toString() . ') AS ' . $db->quoteName('tags') . ' ON ' . $db->quoteName('tags.imgid') . ' = ' . $db->quoteName('a.id'));
-    $query->select(
+      $query->select(
         [
           $db->quoteName('tags.tag_ids', 'tag_ids'),
           $db->quoteName('tags.tag_titles', 'tag_titles'),
         ]
-    );
+      );
     }
 
     // Filter by access level.
