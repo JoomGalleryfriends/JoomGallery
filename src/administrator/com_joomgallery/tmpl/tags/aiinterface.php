@@ -18,7 +18,8 @@ use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
-$wa->useStyle('com_joomgallery.admin');
+$wa->useStyle('com_joomgallery.admin')
+   ->useScript('com_joomgallery.aiinterface');
 
 $filter_options = ['formSelector' => '#tagsForm', 'filterButton' => false, 'filtersHidden' => true];
 
@@ -31,7 +32,14 @@ $filter_options = ['formSelector' => '#tagsForm', 'filterButton' => false, 'filt
         <div id="j-main-container" class="j-main-container">
           <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this, 'options' => $filter_options]); ?>
           <div>
-            <p>Tagging: AI Interface Layout</p>
+            <p>Images:</p>
+            <ul>
+              <?php foreach($this->images as $j => $img) : ?>
+                <li><?php echo $this->escape($img->title); ?> [<?php echo $this->escape($img->tag_titles); ?>]</li>
+              <?php endforeach; ?>
+            </ul>
+            <hr>
+            <p>Tags:</p>
             <ul>
               <?php foreach($this->items as $i => $item) : ?>
                 <li><?php echo $this->escape($item->title); ?></li>
