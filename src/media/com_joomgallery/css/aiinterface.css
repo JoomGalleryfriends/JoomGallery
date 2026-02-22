@@ -1,6 +1,8 @@
 .jg-tags-aiinterface {
   --gutter-x: 2rem;
   --gutter-y: 1rem;
+  --grid-space-x: 1rem;
+  --grid-space-y: 0.5rem;
 }
 .jg-tags-aiinterface .card{
   --card-spacer-x: 1.4rem;
@@ -18,7 +20,7 @@
 .jg-tags-aiinterface .token-balance {
   margin-right: var(--gutter-x);
 }
-.jg-tags-aiinterface .images-panel {
+.jg-tags-aiinterface .image-panel {
   display: flex;
 }
 .jg-tags-aiinterface .images-panel .images .image {
@@ -44,7 +46,22 @@
 .jg-tags-aiinterface .input-group.ai-privacy input {
   min-width: 50px;
 }
-
+.jg-tags-aiinterface .keywords-panels .grid,
+.jg-tags-aiinterface .manual-keywords .grid,
+.jg-tags-aiinterface .images-panel .keywords .grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--grid-space-y) var(--grid-space-x);
+}
+.jg-tags-aiinterface .images-panel .keywords .grid {
+  gap: var(--grid-space-y) 3rem;
+  justify-content: space-between;
+}
+.jg-tags-aiinterface .grid .grid-item {
+  min-width: 100px;
+  max-width: 200px;
+}
 .jg-tags-aiinterface .keywords-panels .js-stools-container-bar {
   margin-inline-start: initial;
 }
