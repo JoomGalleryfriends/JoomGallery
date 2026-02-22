@@ -63,7 +63,6 @@ class HtmlView extends JoomGalleryView
     if($this->_layout == 'aiinterface')
     {
       $this->input_cid = $this->app->input->get('cid', '', 'string');
-
       if(!empty($this->input_cid))
       {
         $img_model = $this->component->getMVCFactory()->createModel('images', 'administrator');
