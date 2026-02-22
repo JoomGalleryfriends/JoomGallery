@@ -1,0 +1,50 @@
+.jg-tags-aiinterface {
+  --gutter-x: 2rem;
+  --gutter-y: 1rem;
+}
+.jg-tags-aiinterface .card{
+  --card-spacer-x: 1.4rem;
+  --card-spacer-y: 1.4rem;
+}
+.component .jg-tags-aiinterface .card {
+  box-shadow: 0 3px 8px -5px #8e8e8e;
+  --card-bg: #f0f0f0;
+}
+.jg-tags-aiinterface .top-controls {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+}
+.jg-tags-aiinterface .token-balance {
+  margin-right: var(--gutter-x);
+}
+.jg-tags-aiinterface .images-panel {
+  display: flex;
+}
+.jg-tags-aiinterface .images-panel .images .image {
+  max-width: 400px;
+  max-height: 400px;
+  margin-bottom: var(--gutter-y);
+}
+.jg-tags-aiinterface .images-panel .keywords {
+  margin-left: var(--gutter-x);
+}
+.jg-tags-aiinterface .images-panel .navigation-btn {
+  display: flex;
+  justify-content: space-between;
+}
+.jg-tags-aiinterface .images-panel .keywords {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.jg-tags-aiinterface .images-panel .keywords .grid-2 {
+  width: 100%;
+}
+.jg-tags-aiinterface .input-group.ai-privacy input {
+  min-width: 50px;
+}
+
+.jg-tags-aiinterface .keywords-panels .js-stools-container-bar {
+  margin-inline-start: initial;
+}
