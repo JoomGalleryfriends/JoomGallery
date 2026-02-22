@@ -25,11 +25,18 @@ $wa->useStyle('com_joomgallery.admin')
 
 $filter_options = ['formSelector' => '#tagsForm', 'filterButton' => false, 'filtersHidden' => true];
 
+$form_url = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component';
+
 // Images
 if(!isset($this->images) || empty($this->images))
 {
   $img = (object) ['id' => 0, 'title' => 'No Image', 'alias' => 'no-image', 'tag_ids' => '', 'tag_titles' => ''];
   $this->images = [$img];
+}
+
+if(isset($this->input_cid) && !empty($this->input_cid))
+{
+  $form_url = $form_url . '&cid=' . $this->input_cid;
 }
 
 ?>
@@ -111,21 +118,32 @@ if(!isset($this->images) || empty($this->images))
 
   <div class="images-panel">
     <?php foreach($this->images as $j => $img) : ?>
-      <div class="images">
-        <img class="image" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" alt="<?php echo $img->title; ?>">
-        <div class="navigation-btn">
-          <button class="btn btn-outline-primary" id="ai-prev-image-btn"><span class="icon-arrow-left-4"></span> Previous image</button>
-          <button class="btn btn-outline-primary" id="ai-next-image-btn"><span class="icon-arrow-right-4"></span>Next image</button>
+      <?php
+        $tag_titles = explode(',', $img->tag_titles);
+        $tag_ids = explode(',', $img->tag_ids);
+      ?>
+      <div class="image-panel" <?php if($j>0) { echo 'style="display: none;"'; } ?>>
+        <div class="images">
+          <img class="image" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" alt="<?php echo $img->title; ?>">
+          <div class="navigation-btn">
+            <button class="btn btn-outline-primary" id="ai-prev-image-btn"><span class="icon-arrow-left-4"></span> Previous image</button>
+            <button class="btn btn-outline-primary" id="ai-next-image-btn"><span class="icon-arrow-right-4"></span>Next image</button>
+          </div>
         </div>
-      </div>
-      <div class="keywords">
-        <h4 class="title">Current keywords of this image</h4>
-        <div class="grid">
-          Here comes a grid with buttons with the current keywords of this image.
-        </div>
-        <div>
-          <h5 class="title">Meaning of colors</h4>
-          <p><span class="color-black">already existing</span>, <span class="color-orange">added manually</span>, <span class="color-red">automatically generated</span> Keywords</p>
+        <div class="keywords">
+          <h4 class="title">Current keywords of this image</h4>
+          <div class="grid">
+            <?php foreach($tag_ids as $t => $tag_id) : ?>
+              <div class="input-group grid-item">
+                <input type="text" id="ai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>" class="form-control" aria-describedby="ai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>-btn" value="<?php echo $tag_titles[$t]; ?>" disabled>
+                <button class="btn btn-outline-secondary" type="button" id="ai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>-btn">X</button>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <div>
+            <h5 class="title">Meaning of colors</h4>
+            <p><span class="color-black">already existing</span>, <span class="color-orange">added manually</span>, <span class="color-red">automatically generated</span> Keywords</p>
+          </div>
         </div>
       </div>
     <?php endforeach; ?>
@@ -135,19 +153,16 @@ if(!isset($this->images) || empty($this->images))
 
   <div class="keywords-panels">
     <h4 class="title">My most used Keywords</h4>
-    <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component'); ?>" method="post"
+    <form action="<?php echo Route::_($form_url); ?>" method="post"
       name="tagsForm" id="tagsForm">
       <div class="row">
         <div class="col-md-12">
           <div id="j-main-container" class="j-main-container">
             <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this, 'options' => $filter_options]); ?>
             <div class="grid">
-              <p>Tags:</p>
-              <ul>
                 <?php foreach($this->items as $i => $item) : ?>
-                  <li><?php echo $this->escape($item->title); ?></li>
+                  <button id="ai-keywords-list-<?php echo $this->escape($item->id); ?>" class="btn btn-outline-secondary grid-item"><?php echo $this->escape($item->title); ?></button>
                 <?php endforeach; ?>
-              </ul>
             </div>
             <div colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
               <?php echo $this->pagination->getListFooter(); ?>

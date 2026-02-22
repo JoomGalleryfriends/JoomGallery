@@ -62,8 +62,8 @@ class HtmlView extends JoomGalleryView
 
     if($this->_layout == 'aiinterface')
     {
-      $cid = $this->app->input->get('cid', '', 'string');
-      if(!empty($cid))
+      $this->input_cid = $this->app->input->get('cid', '', 'string');
+      if(!empty($this->input_cid))
       {
         $img_model = $this->component->getMVCFactory()->createModel('images', 'administrator');
         $img_model->getState();
@@ -71,7 +71,7 @@ class HtmlView extends JoomGalleryView
         // Apply preselected filters and fields selection for images
         $fields = ['a.id', 'a.title', 'a.filename', 'a.filesystem', 'tag_ids', 'tag_titles'];
         $img_model->setState('list.select', $fields);
-        $img_model->setState('filter.ids', $cid);
+        $img_model->setState('filter.ids', $this->input_cid);
         $img_model->setState('list.pages', 1);
         $img_model->setState('list.start', 1);
         $img_model->setState('list.fullordering', 'a.date ASC', 'string');
