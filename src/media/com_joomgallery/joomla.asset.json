@@ -198,6 +198,11 @@
         "type": "module",
         "defer": true
       }
+    },
+    {
+      "name": "com_joomgallery.aiinterface",
+      "type": "style",
+      "uri": "com_joomgallery/aiinterface.css"
     }
   ]
 }
