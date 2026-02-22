@@ -65,6 +65,8 @@ $opts = [
 $this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);
 JSHelper::registerText('com_joomgallery.aiinterface', 'COM_JOOMGALLERY_JS_AIINT_');
 
+$form_url = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component';
+
 // Images
 if(!isset($this->images) || empty($this->images))
 {
