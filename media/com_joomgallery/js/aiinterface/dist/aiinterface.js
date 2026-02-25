@@ -1,3 +1,11 @@
+var AIinterface;
+/******/ (() => { // webpackBootstrap
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it declares 'AIinterface' on top-level, which conflicts with the current library output.
+(() => {
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
 // JoomGallery AIinterface class //
 
 class AIinterface {
@@ -406,3 +414,10 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener("click", (e) => window.Joomla.aiinterface.getModels(e));
   }
 })
+
+})();
+
+AIinterface = __webpack_exports__;
+/******/ })()
+;
+//# sourceMappingURL=aiinterface.js.map
