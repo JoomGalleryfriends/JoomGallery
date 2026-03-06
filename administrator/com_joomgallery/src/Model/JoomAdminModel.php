@@ -130,20 +130,20 @@ abstract class JoomAdminModel extends AdminModel
   }
 
   /**
-	 * Returns a reference to the a Table object, always creating it.
-	 *
-	 * @param   string  $type    The table type to instantiate
-	 * @param   string  $prefix  A prefix for the table class name. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  Table    A database object
-	 *
-	 * @since   4.0.0
-	 */
+   * Returns a reference to the a Table object, always creating it.
+   *
+   * @param   string  $type    The table type to instantiate
+   * @param   string  $prefix  A prefix for the table class name. Optional.
+   * @param   array   $config  Configuration array for model. Optional.
+   *
+   * @return  Table    A database object
+   *
+   * @since   4.0.0
+   */
   public function getTable($type = 'Image', $prefix = 'Administrator', $config = [])
-	{
-		return parent::getTable($this->type, $prefix, $config);
-	}
+  {
+        return parent::getTable($this->type, $prefix, $config);
+  }
 
   /**
    * Method to get parameters from model state.
