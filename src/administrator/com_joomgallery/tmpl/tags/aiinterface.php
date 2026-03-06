@@ -67,6 +67,10 @@ JSHelper::registerText('com_joomgallery.aiinterface', 'COM_JOOMGALLERY_JS_AIINT_
 
 $form_url = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component';
 
+// Initialize AIinterface
+$opts = ['prefix' => 'jgai', 'host' => 'http://localhost/api/v1', 'token' => 'jfhrujr:jurur', 'client_name' => 'JG-General'];
+$this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);
+
 // Images
 if(!isset($this->images) || empty($this->images))
 {
