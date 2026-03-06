@@ -3,18 +3,22 @@
 class AIinterface {
 
   name = 'JoomGallery AI Interface';
+  prefix = 'jgai';
   host = 'localhost';
   token = '';
+  info = {};
+  balance = 0;
   models = [];
-  selected_model = 'gemma3'
-  client_name = 'JG-General'
+  providers = {'localhost': 'Local', 'ollama' : 'Ollama/Local'};
+  selected_model = 'gemma3';
+  client_name = 'JG-General';
 
-  constructor(host, token, client_name, client_version, providerKeys) {
+  constructor(prefix, host, token, client_name, client_version) {
+    if (prefix) this.prefix = prefix;
     if (host) this.host = host;
     if (token) this.token = token;
     if (client_name) this.client_name = client_name;
     if (client_version) this.client_version = client_version;
-    if (providerKeys && typeof providerKeys === "object") this.providerKeys = providerKeys;
   }
 
   sanitizeUrl(url) {
@@ -60,12 +64,18 @@ class AIinterface {
 
   parseJsonResponse(txt, status, statusText) {
     if (!txt) {
-      return { success: false, status, message: statusText || "Empty response", messages: {}, data: { error: "", data: null } };
+      return { success: false, status: status, message: statusText || "", messages: [], data: null };
     }
 
     // Clean JSON response (your old check was startsWith('{"success"'))
     const trimmed = txt.trim();
-    if (trimmed.startsWith("{")) {
+
+    // Catch Errors, warnings from API script
+    if (txt.includes("Fatal error") || txt.includes("Warning") || txt.includes("Notice")) {
+      return { success: false, status: status, message: statusText, messages: [ "Errors or warnings detected in response." ], data: txt };
+    }
+    else
+    {
       try {
         const obj = JSON.parse(trimmed);
 
@@ -78,51 +88,22 @@ class AIinterface {
           }
         }
 
-        return { ...obj, status };
+        return {success: true, status: status, message: statusText, messages: [], data: obj};
       } catch {
         // fall through to other heuristics
       }
     }
 
-    // PHP fatal error text
-    if (txt.includes("Fatal error")) {
-      return { success: false, status, message: statusText, messages: {}, data: { error: txt, data: null } };
-    }
+    // Unknown non-JSON response
+    return { success: false, status: status, message: statusText, messages: ["Unknown non-JSON response."], data: txt };
+  }
 
-    // Warnings/notices before JSON
-    // Example: "Warning...\n{...json...}"
-    const idx = txt.indexOf("\n{");
-    if (idx !== -1) {
-      const warningPart = txt.slice(0, idx);
-      const jsonPart = txt.slice(idx + 1); // keep '{' at start
-
-      try {
-        const temp = JSON.parse(jsonPart);
-
-        // decode temp.data if it is JSON string
-        let data = temp.data;
-        if (typeof data === "string") {
-          try {
-            data = JSON.parse(data);
-          } catch {
-            // keep as-is
-          }
-        }
-
-        return {
-          success: true,
-          status,
-          message: warningPart,
-          messages: temp.messages ?? {},
-          data,
-        };
-      } catch {
-        // last resort
+  addProviders(services) {
+    for (const service of services || []) {
+      if(service.value) {
+        this.providers[service.value] = service.name;
       }
     }
-
-    // Unknown non-JSON response
-    return { success: false, status, message: statusText, messages: {}, data: { error: txt, data: null } };
   }
 
   buildTables(array, mapping) {
@@ -145,7 +126,7 @@ class AIinterface {
   buildModelTitles(models) {
     for (const m of models || []) {
       const provKey = (m.options && m.options.service) ? String(m.options.service) : "";
-      const providerName = this.providerNames[provKey.toLowerCase()] || provKey;
+      const providerName = this.providers[provKey.toLowerCase()] || provKey;
       const baseName = m.value || m.title;
       m.title = `${baseName} (${providerName})`;
     }
@@ -187,7 +168,7 @@ class AIinterface {
     if (provLower === "localhost" || provLower === "ollama") return "";
 
     const optKey = `${provLower}_key`;
-    const key = this.providerKeys?.[optKey];
+    const key = this.providers?.[optKey];
 
     if (!key) {
       // Match Lua behavior: return false to signal missing key
@@ -219,7 +200,7 @@ class AIinterface {
     } catch (e) {
       const msg = `Network error: ${String(e)}`;
       this.logRequestErrors(url, headers, msg);
-      return { success: false, status: 0, message: msg, messages: {}, data: { error: msg, data: null } };
+      return { success: false, status: 0, message: msg, messages: [], data: null };
     }
 
     // Resolve promise as text string
@@ -229,7 +210,7 @@ class AIinterface {
       // Catch network error
       const msg = `HTTP ${response.status} ${response.statusText}`;
       this.logRequestErrors(url, headers, msg);
-      return {success: false, status: response.status, message: response.message, messages: {}, data: {error: txt, data:null}};
+      return {success: false, status: response.status, message: response.message, messages: [txt], data: null};
     }
 
     const res = this.parseJsonResponse(txt, response.status, response.statusText);
@@ -260,7 +241,7 @@ class AIinterface {
     } catch (e) {
       const msg = `Network error: ${String(e)}`;
       this.logRequestErrors(url, headers, msg);
-      return { success: false, status: 0, message: msg, messages: {}, data: { error: msg, data: null } };
+      return { success: false, status: 0, message: msg, messages: [], data: null };
     }
 
     const txt = await response.text();
@@ -268,7 +249,7 @@ class AIinterface {
     if (!response.ok) {
       const msg = `HTTP ${response.status} ${response.statusText}`;
       this.logRequestErrors(url, headers, msg);
-      return { success: false, status: response.status, message: msg, messages: {}, data: { error: txt, data: null } };
+      return { success: false, status: response.status, message: msg, messages: [txt], data: null };
     }
 
     const res = this.parseJsonResponse(txt, response.status, response.statusText);
@@ -276,7 +257,6 @@ class AIinterface {
   }
 
   // --- API endpoints ----
-
   async getInfo(e) {
     if (e) e.preventDefault();
 
@@ -288,7 +268,15 @@ class AIinterface {
       "Content-Type": "application/json",
     };
 
-    return await this.sendGet(url, headers);
+    const data = await this.sendGet(url, headers);
+
+    if (data?.data?.email) {
+      this.info = data.data;
+    } else if (data?.email) {
+      this.info = data;
+    }
+
+    return data;
   }
 
   async getTokens(e) {
@@ -302,7 +290,15 @@ class AIinterface {
       "Content-Type" : "application/json"
     }
 
-    return this.sendGet(url, headers);
+    const data = await this.sendGet(url, headers);
+
+    if (data?.data?.balance) {
+      this.balance = data.data.balance;
+    } else if (data?.balance) {
+      this.balance = data.balance;
+    }
+
+    return data;
   }
 
   async getModels(e) {
@@ -324,9 +320,12 @@ class AIinterface {
       // (Your Lua expects data.models; your older JS parsed res.data maybe.)
       const apiModels = data.models;
 
-      if (apiModels.length > 0 && apiModels[0].name) {
-        this.def_model = apiModels[0].name;
+      if (apiModels.length > 0 && apiModels[0].value) {
+        this.def_model = apiModels[0].value;
       }
+
+      // Add services to providers table
+      addProviders(data.services)
 
       const mapping = { value: "name", title: "service", options: ["service", "privacy"] };
       const mapped = this.buildTables(apiModels, mapping);
@@ -339,16 +338,16 @@ class AIinterface {
     if (data?.data?.models) {
       const apiModels = data.data.models;
 
-      if (apiModels.length > 0 && apiModels[0].name) {
-        this.def_model = apiModels[0].name;
+      if (apiModels.length > 0 && apiModels[0].value) {
+        this.def_model = apiModels[0].value;
       }
 
-      const mapping = { value: "name", title: "service", options: ["service", "privacy"] };
+      const mapping = { value: "value", title: "title", options: ["service", "privacy", "modes"] };
       const mapped = this.buildTables(apiModels, mapping);
       this.buildModelTitles(mapped);
 
       this.models = mapped;
-      return { ...data, mappedModels: mapped, def_model: this.def_model };
+      return mapped;
     }
 
     return data;
@@ -388,20 +387,73 @@ class AIinterface {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   if (!window.Joomla) {
     throw new Error('Joomla API was not properly initialised');
   }
 
   // Example: pull config from Joomla options (adjust key to your code)
   const opts = Joomla.getOptions('com_joomgallery.aiinterface', {});
+  const prefix = opts.prefix ?? 'jgai';
   const host = opts.host ?? 'localhost';
   const token = opts.token ?? '';
   const clientName = opts.client_name ?? 'JG-General';
+  let connected = false;
+  let balance = 0;
+  let models = {};
 
-  window.Joomla.aiinterface = new AIinterface(host, token, clientName);
+  window.Joomla.aiinterface = new AIinterface(prefix, host, token, clientName);
+  let ai = window.Joomla.aiinterface;
 
-  const btn = document.getElementById("jg-ai-tokens");
+  // Check connction and get balance
+  balance = await ai.getTokens();
+  if(balance?.data?.balance) {    
+    connected = true;
+    models = await ai.getModels();
+
+    // Update balance
+    document.getElementById(prefix + '-balance-value').innerHTML = toString(balance.data.balance);
+
+    // Update models dropdown
+    let modelsDropdown = document.getElementById(prefix + '-models-dowpdown');
+    modelsDropdown.innerHTML = '';
+    models.forEach((model, index) => {
+      const li = document.createElement('li');
+
+      const a = document.createElement('a');
+      a.className = 'dropdown-item';
+      a.href = '#';
+      a.dataset.value = model.value;
+      a.textContent = model.title;
+
+      // optional: mark first item selected
+      if (index === 0) {
+        a.setAttribute('aria-selected', 'true');
+      }
+
+      li.appendChild(a);
+      modelsDropdown.appendChild(li);
+    });
+
+    // Update modes dropdown
+
+    // Update languages dropdown
+    
+  }
+  else {
+    // Connection failed
+    Joomla.renderMessages({warning: ['No connection to the AI Interface. Check your connection credentials in the JoomGallery configuration.']}, );
+
+    if(balance?.message !== 'OK') {
+      Joomla.renderMessages({error: ['Respond status: ' + balance.message]});
+    }
+
+    if(balance?.data?.messages.length > 0) {
+      Joomla.renderMessages({warning: ['Answer from API: ' + balance.data.messages[0]]});
+    }
+  }
+
+  const btn = document.getElementById("ai-keywords-generate");
   if (btn) {
     btn.addEventListener("click", (e) => window.Joomla.aiinterface.getModels(e));
   }
