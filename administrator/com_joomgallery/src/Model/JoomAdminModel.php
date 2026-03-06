@@ -140,7 +140,7 @@ abstract class JoomAdminModel extends AdminModel
 	 *
 	 * @since   4.0.0
 	 */
-	public function getTable($type = 'Image', $prefix = 'Administrator', $config = array())
+  public function getTable($type = 'Image', $prefix = 'Administrator', $config = [])
 	{
 		return parent::getTable($this->type, $prefix, $config);
 	}
