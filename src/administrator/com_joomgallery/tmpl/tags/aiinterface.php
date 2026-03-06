@@ -24,8 +24,11 @@ $wa->useStyle('com_joomgallery.admin')
    ->useScript('com_joomgallery.aiinterface');
 
 $filter_options = ['formSelector' => '#tagsForm', 'filterButton' => false, 'filtersHidden' => true];
-
 $form_url = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component';
+
+// Initialize AIinterface
+$opts = ['prefix' => 'jgai', 'host' => 'http://localhost/api/v1', 'token' => 'jfhrujr:jurur', 'client_name' => 'JG-General'];
+$this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);
 
 // Images
 if(!isset($this->images) || empty($this->images))
@@ -34,6 +37,7 @@ if(!isset($this->images) || empty($this->images))
   $this->images = [$img];
 }
 
+// Preserve images selection
 if(isset($this->input_cid) && !empty($this->input_cid))
 {
   $form_url = $form_url . '&cid=' . $this->input_cid;
@@ -51,7 +55,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
     <div class="token-balance card">
       <div class="card-body">
         <h4 class="card-title">Balance</h4>
-        <p class="card-text"><span class="token-value">117'000</span><br><span class="token-text">Tokens</span></p>
+        <p class="card-text"><span class="token-value" id="jgai-balance-value">117'000</span><br><span class="token-text">Tokens</span></p>
       </div>
     </div>
   </div>
@@ -61,16 +65,16 @@ if(isset($this->input_cid) && !empty($this->input_cid))
   <div class="interface-controls row">
     <div class="model-selection col-4">
       <h4 class="title">Select an AI model</h4>
-      <div class="dropdown input-group mb-3 ai-model">
+      <div class="dropdown input-group mb-3 jgai-model">
         <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           gemma3:4b (Ollama/Local)
         </button>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu" id="jgai-models-dowpdown">
           <li><a class="dropdown-item" href="#" data-value="gemma3:4b" aria-selected="true">gemma3:4b (Ollama/Local)</a></li>
           <li><a class="dropdown-item" href="#" data-value="gpt-4.1" aria-selected="false">gpt-4.1 (OpenAI)</a></li>
         </ul>
       </div>
-      <div class="dropdown input-group mb-3 ai-mode">
+      <div class="dropdown input-group mb-3 jgai-mode">
         <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           Performance
         </button>
@@ -79,11 +83,11 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <li><a class="dropdown-item" href="#" data-value="advanced" aria-selected="false">Advanced</a></li>
         </ul>
       </div>
-      <div class="checkbox input-group mb-5 ai-privacy">
-        <input type="checkbox" id="ai-privacy-box" name="ai-privacy-box" value="agree">
-        <label for="ai-privacy-box"> I agree with the privacy terms *</label><br>
+      <div class="checkbox input-group mb-5 jgai-privacy">
+        <input type="checkbox" id="jgai-privacy-box" name="jgai-privacy-box" value="agree">
+        <label for="jgai-privacy-box"> I agree with the privacy terms *</label><br>
       </div>
-      <div class="privacy ai-privacy">
+      <div class="privacy jgai-privacy">
         <p>* Depending on the selected KI model, different privacy terms will apply.</p>
         <a href="https://www.google.ch" target="_blank">Click here for more info.</a>
       </div>
@@ -92,8 +96,8 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       <h4 class="title">AI prompt inputs</h4>
       <div class="manual-keywords col-6">
         <div class="input-group mb-3">
-          <input type="text" id="ai-manual-keywords" class="form-control" aria-describedby="ai-manual-keywords-btn">
-          <button class="btn btn-outline-secondary" type="button" id="ai-manual-keywords-btn">⮠</button>
+          <input type="text" id="jgai-manual-keywords" class="form-control" aria-describedby="jgai-manual-keywords-btn">
+          <button class="btn btn-outline-secondary" type="button" id="jgai-manual-keywords-btn">⮠</button>
         </div>
         <div class="grid">
           Here comes a grid with buttons with the entered manual keywords.
@@ -101,15 +105,15 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       </div>
       <div class="prompt-inputs col-6">
         <div class="mb-3">
-          <textarea class="form-control" placeholder="Add a description of your images here to help the AI creating better keywords" id="ai-propmt-description"></textarea>
+          <textarea class="form-control" placeholder="Add a description of your images here to help the AI creating better keywords" id="jgai-propmt-description"></textarea>
         </div>
 
         <div class="mb-3">
-          <label for="ai-nmb-keywords" class="form-label">Generate number of keywords</label>
-          <input type="number" class="form-control" id="ai-nmb-keywords" value="5">
+          <label for="jgai-nmb-keywords" class="form-label">Generate number of keywords</label>
+          <input type="number" class="form-control" id="jgai-nmb-keywords" value="5">
         </div>
 
-        <button class="btn btn-primary" type="button" id="ai-keywords-generate">Generate Keywords</button>
+        <button class="btn btn-primary" type="button" id="jgai-keywords-generate">Generate Keywords</button>
       </div>
     </div>
   </div>
@@ -126,8 +130,8 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         <div class="images">
           <img class="image" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" alt="<?php echo $img->title; ?>">
           <div class="navigation-btn">
-            <button class="btn btn-outline-primary" id="ai-prev-image-btn"><span class="icon-arrow-left-4"></span> Previous image</button>
-            <button class="btn btn-outline-primary" id="ai-next-image-btn"><span class="icon-arrow-right-4"></span>Next image</button>
+            <button class="btn btn-outline-primary" id="jgai-prev-image-btn"><span class="icon-arrow-left-4"></span> Previous image</button>
+            <button class="btn btn-outline-primary" id="jgai-next-image-btn"><span class="icon-arrow-right-4"></span>Next image</button>
           </div>
         </div>
         <div class="keywords">
@@ -135,8 +139,8 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <div class="grid">
             <?php foreach($tag_ids as $t => $tag_id) : ?>
               <div class="input-group grid-item">
-                <input type="text" id="ai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>" class="form-control" aria-describedby="ai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>-btn" value="<?php echo $tag_titles[$t]; ?>" disabled>
-                <button class="btn btn-outline-secondary" type="button" id="ai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>-btn">X</button>
+                <input type="text" id="jgai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>" class="form-control" aria-describedby="jgai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>-btn" value="<?php echo $tag_titles[$t]; ?>" disabled>
+                <button class="btn btn-outline-secondary" type="button" id="jgai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>-btn">X</button>
               </div>
             <?php endforeach; ?>
           </div>
@@ -161,7 +165,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
             <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this, 'options' => $filter_options]); ?>
             <div class="grid">
                 <?php foreach($this->items as $i => $item) : ?>
-                  <button id="ai-keywords-list-<?php echo $this->escape($item->id); ?>" class="btn btn-outline-secondary grid-item"><?php echo $this->escape($item->title); ?></button>
+                  <button id="jgai-keywords-list-<?php echo $this->escape($item->id); ?>" class="btn btn-outline-secondary grid-item"><?php echo $this->escape($item->title); ?></button>
                 <?php endforeach; ?>
             </div>
             <div colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
