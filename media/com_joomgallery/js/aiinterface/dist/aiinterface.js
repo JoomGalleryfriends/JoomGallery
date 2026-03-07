@@ -419,12 +419,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     connected = true;
     models = await ai.getModels();
 
-    // Update UI
+    // Update balance
     document.getElementById(prefix + '-balance-value').innerHTML = toString(balance.data.balance);
-    let modelsDropdown = document.getElementById(prefix + '-models-dowpdown')
-    models.forEach(model => {
-      let test = true;
+
+    // Update models dropdown
+    let modelsDropdown = document.getElementById(prefix + '-models-dowpdown');
+    modelsDropdown.innerHTML = '';
+    models.forEach((model, index) => {
+      const li = document.createElement('li');
+
+      const a = document.createElement('a');
+      a.className = 'dropdown-item';
+      a.href = '#';
+      a.dataset.value = model.value;
+      a.textContent = model.title;
+
+      // optional: mark first item selected
+      if (index === 0) {
+        a.setAttribute('aria-selected', 'true');
+      }
+
+      li.appendChild(a);
+      modelsDropdown.appendChild(li);
     });
+
+    // Update modes dropdown
+
+    // Update languages dropdown
+    
   }
   else {
     // Connection failed
