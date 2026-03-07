@@ -401,30 +401,61 @@ document.addEventListener('DOMContentLoaded', async () => {
   let connected = false;
   let balance = 0;
   let models = {};
+  let modes = [];
+  let languages = [];
 
   window.Joomla.aiinterface = new AIinterface(prefix, host, token, clientName);
   let ai = window.Joomla.aiinterface;
 
   // Check connction and get balance
   balance = await ai.getTokens();
-  if(balance?.data?.balance) {    
+  if(balance?.data?.balance) {
     connected = true;
     models = await ai.getModels();
 
     // Update balance
-    document.getElementById(prefix + '-balance-value').innerHTML = toString(balance.data.balance);
+    document.getElementById(prefix + '-balance-value').innerHTML = balance.data.balance;
 
     // Update models dropdown
-    let modelsDropdown = document.getElementById(prefix + '-models-dowpdown');
-    modelsDropdown.innerHTML = '';
-    models.forEach((model, index) => {
+    if(models) {
+      let modelsDropdown = document.getElementById(prefix + '-models-dowpdown');
+      modelsDropdown.innerHTML = '';
+      models.forEach((model, index) => {
+        const li = document.createElement('li');
+
+        const a = document.createElement('a');
+        a.className = 'dropdown-item';
+        a.href = '#';
+        a.dataset.value = model.value;
+        a.innerHTML = model.title;
+
+        // optional: mark first item selected
+        if (index === 0) {
+          a.setAttribute('aria-selected', 'true');
+        }
+
+        li.appendChild(a);
+        modelsDropdown.appendChild(li);
+
+        model.options.modes.forEach((mode) => {
+          if (!modes.includes(mode)) {
+            modes.push(mode);
+          }
+        });
+      });
+    }
+
+    // Update modes dropdown
+    let modesDropdown = document.getElementById(prefix + '-modes-dowpdown');
+    modesDropdown.innerHTML = '';
+    modes.forEach((mode, index) => {
       const li = document.createElement('li');
 
       const a = document.createElement('a');
       a.className = 'dropdown-item';
       a.href = '#';
-      a.dataset.value = model.value;
-      a.textContent = model.title;
+      a.dataset.value = mode;
+      a.innerHTML = mode.charAt(0).toUpperCase() + mode.slice(1);
 
       // optional: mark first item selected
       if (index === 0) {
@@ -432,13 +463,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       li.appendChild(a);
-      modelsDropdown.appendChild(li);
+      modesDropdown.appendChild(li);
     });
 
-    // Update modes dropdown
-
     // Update languages dropdown
-    
+
   }
   else {
     // Connection failed
