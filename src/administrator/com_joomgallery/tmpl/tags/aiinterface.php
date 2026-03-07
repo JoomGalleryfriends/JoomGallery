@@ -78,7 +78,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           Performance
         </button>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu" id="jgai-modes-dowpdown">
           <li><a class="dropdown-item" href="#" data-value="performance" aria-selected="true">Performance</a></li>
           <li><a class="dropdown-item" href="#" data-value="advanced" aria-selected="false">Advanced</a></li>
         </ul>
