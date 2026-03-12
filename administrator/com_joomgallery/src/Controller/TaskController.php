@@ -144,7 +144,7 @@ class TaskController extends JoomFormController
         $updateQuery = $db->getQuery(true)
                           ->update($db->quoteName('#__joomgallery_task_items'))
                           ->set($db->quoteName('status') . ' = ' . $db->quote('processing'))
-                          ->set($db->quoteName('processed_at') . ' = NOW()')
+                          ->set($db->quoteName('processed_time') . ' = NOW()')
                           ->where($db->quoteName('id') . ' = ' . (int)$itemRow->id);
         $db->setQuery($updateQuery)->execute();
 
