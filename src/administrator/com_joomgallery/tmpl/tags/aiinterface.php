@@ -65,23 +65,34 @@ if(isset($this->input_cid) && !empty($this->input_cid))
   <div class="interface-controls row">
     <div class="model-selection col-4">
       <h4 class="title">Select an AI model</h4>
-      <div class="dropdown input-group mb-3 jgai-model">
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          gemma3:4b (Ollama/Local)
-        </button>
-        <ul class="dropdown-menu" id="jgai-models-dowpdown">
-          <li><a class="dropdown-item" href="#" data-value="gemma3:4b" aria-selected="true">gemma3:4b (Ollama/Local)</a></li>
-          <li><a class="dropdown-item" href="#" data-value="gpt-4.1" aria-selected="false">gpt-4.1 (OpenAI)</a></li>
-        </ul>
-      </div>
-      <div class="dropdown input-group mb-3 jgai-mode">
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Performance
-        </button>
-        <ul class="dropdown-menu" id="jgai-modes-dowpdown">
-          <li><a class="dropdown-item" href="#" data-value="performance" aria-selected="true">Performance</a></li>
-          <li><a class="dropdown-item" href="#" data-value="advanced" aria-selected="false">Advanced</a></li>
-        </ul>
+      <div class="input-group d-flex">
+        <div class="dropdown mb-3 jgai-model">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            gemma3:4b (Ollama/Local)
+          </button>
+          <ul class="dropdown-menu" id="jgai-models-dowpdown">
+            <li><a class="dropdown-item" href="#" data-value="gemma3:4b" aria-selected="true">gemma3:4b (Ollama/Local)</a></li>
+            <li><a class="dropdown-item" href="#" data-value="gpt-4.1" aria-selected="false">gpt-4.1 (OpenAI)</a></li>
+          </ul>
+        </div>
+        <div class="dropdown mb-3 jgai-mode">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Performance
+          </button>
+          <ul class="dropdown-menu" id="jgai-modes-dowpdown">
+            <li><a class="dropdown-item" href="#" data-value="performance" aria-selected="true">Performance</a></li>
+            <li><a class="dropdown-item" href="#" data-value="advanced" aria-selected="false">Advanced</a></li>
+          </ul>
+        </div>
+        <div class="dropdown mb-3 jgai-language">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Language
+          </button>
+          <ul class="dropdown-menu" id="jgai-langs-dowpdown">
+            <li><a class="dropdown-item" href="#" data-value="en" aria-selected="true">English</a></li>
+            <li><a class="dropdown-item" href="#" data-value="de" aria-selected="false">Deutsch</a></li>
+          </ul>
+        </div>
       </div>
       <div class="checkbox input-group mb-5 jgai-privacy">
         <input type="checkbox" id="jgai-privacy-box" name="jgai-privacy-box" value="agree">

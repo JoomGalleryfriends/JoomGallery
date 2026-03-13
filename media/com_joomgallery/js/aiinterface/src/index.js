@@ -2,15 +2,24 @@
 
 class AIinterface {
 
+  // Settings
   name = 'JoomGallery AI Interface';
   prefix = 'jgai';
   host = 'localhost';
+  systemLang = 'en';
+
+  // Data from API
   token = '';
   info = {};
   balance = 0;
   models = [];
+  modes = [];
   providers = {'localhost': 'Local', 'ollama' : 'Ollama/Local'};
-  selected_model = 'gemma3';
+
+  // Request info
+  selected_model = 'gemma3:4b';
+  selected_mode = 'performance';
+  selected_lang = systemLang;
   client_name = 'JG-General';
 
   constructor(prefix, host, token, client_name, client_version) {
@@ -178,8 +187,68 @@ class AIinterface {
     return key;
   }
 
-  // --- HTTP -------
+  // --- DOM Helpers ----
+  addListElements(selector, items) {
+    let dropdown = document.getElementById(this.prefix + selector);
+    dropdown.innerHTML = '';
 
+    // in case items contains a property called data, unpack it
+    if(items?.data) {
+      items = items.data;
+    }
+
+    items.forEach((item, index) => {
+      let value, title, link;
+
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        value = item.value ?? String(item).toLowerCase();
+        title = item.title ?? capitalize(String(item.value ?? ''));
+        link = item.link ?? '#';
+
+        if (!value && item.title) {
+          value = item.title.toLowerCase();
+        }
+        if (!title && item.value) {
+          title = capitalize(String(item.value));
+        }
+      } else {
+        const str = String(item);
+        value = str.toLowerCase();
+        title = capitalize(str);
+        link = '#';
+      }
+
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.className = 'dropdown-item';
+      a.href = link;
+      a.dataset.value = value;
+      a.textContent = title;
+
+      // mark first item selected
+      if (index === 0) {
+        a.setAttribute('aria-selected', 'true');
+      }
+
+      li.appendChild(a);
+      dropdown.appendChild(li);
+    });
+  }
+
+  manualKeywords(this, event) {
+
+  }
+
+  prevImage() {
+
+  }
+
+  nextImage() {
+    
+  }
+
+
+  // --- HTTP -------
   async sendGet(url, headers) {
     // Add default headers
     headers = this.addHeader(headers);
@@ -346,6 +415,13 @@ class AIinterface {
       const mapped = this.buildTables(apiModels, mapping);
       this.buildModelTitles(mapped);
 
+      // Extranct available modes
+      mapped.forEach(model => {
+        model.options?.modes?.forEach(mode => {
+          if (!this.modes.includes(mode)) this.modes.push(mode);
+        });
+      });
+
       this.models = mapped;
       return mapped;
     }
@@ -401,73 +477,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   let connected = false;
   let balance = 0;
   let models = {};
-  let modes = [];
-  let languages = [];
 
   window.Joomla.aiinterface = new AIinterface(prefix, host, token, clientName);
   let ai = window.Joomla.aiinterface;
 
   // Check connction and get balance
   balance = await ai.getTokens();
-  if(balance?.data?.balance) {
+  if(balance?.data?.balance) {    
     connected = true;
     models = await ai.getModels();
 
     // Update balance
-    document.getElementById(prefix + '-balance-value').innerHTML = balance.data.balance;
+    document.getElementById(prefix + '-balance-value').innerHTML = toString(balance.data.balance);
 
     // Update models dropdown
-    if(models) {
-      let modelsDropdown = document.getElementById(prefix + '-models-dowpdown');
-      modelsDropdown.innerHTML = '';
-      models.forEach((model, index) => {
-        const li = document.createElement('li');
-
-        const a = document.createElement('a');
-        a.className = 'dropdown-item';
-        a.href = '#';
-        a.dataset.value = model.value;
-        a.innerHTML = model.title;
-
-        // optional: mark first item selected
-        if (index === 0) {
-          a.setAttribute('aria-selected', 'true');
-        }
-
-        li.appendChild(a);
-        modelsDropdown.appendChild(li);
-
-        model.options.modes.forEach((mode) => {
-          if (!modes.includes(mode)) {
-            modes.push(mode);
-          }
-        });
-      });
-    }
+    ai.addListElements('-models-dowpdown', ai.models)
 
     // Update modes dropdown
-    let modesDropdown = document.getElementById(prefix + '-modes-dowpdown');
-    modesDropdown.innerHTML = '';
-    modes.forEach((mode, index) => {
-      const li = document.createElement('li');
-
-      const a = document.createElement('a');
-      a.className = 'dropdown-item';
-      a.href = '#';
-      a.dataset.value = mode;
-      a.innerHTML = mode.charAt(0).toUpperCase() + mode.slice(1);
-
-      // optional: mark first item selected
-      if (index === 0) {
-        a.setAttribute('aria-selected', 'true');
-      }
-
-      li.appendChild(a);
-      modesDropdown.appendChild(li);
-    });
+    ai.addListElements('-modes-dowpdown', ai.modes)
 
     // Update languages dropdown
+    ai.addListElements('-langs-dowpdown', ai.languages)
 
+    // Install event listeners on buttons
+    document.querySelectorAll('[id^="'+prefix+'-"][id$="-btn"]').forEach(el => {
+      const name = el.id.split('-').slice(1, -1).join('-');
+      const fn = name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+
+      if (typeof ai[fn] === 'function') {
+        el.addEventListener('click', () => ai[fn]());
+      } else {
+        console.warn(`AIinterface: function ${fn}() does not exist. The corresponding button will not work.`);
+      }
+    });
   }
   else {
     // Connection failed
