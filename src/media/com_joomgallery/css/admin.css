@@ -224,6 +224,13 @@ joomla-field-image .jg_minithumb {
 .jg .modal .btn {
   color: var(--white);
 }
+.jg .checkbox input {
+  min-width: 20px;
+  margin-right: 10px;
+}
+.jg .input-group.d-flex .dropdown {
+  margin-right: .5rem;
+}
 .jg-category .password-group > div.text-center,
 .jg-tags-aiinterface .ordering-select div:first-child {
   display: none;
