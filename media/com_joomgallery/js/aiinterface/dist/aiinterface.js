@@ -83,7 +83,7 @@ class AIinterface {
       h['X-Client-Name'] = this.client_name;
     }
     if (!Object.prototype.hasOwnProperty.call(h, 'X-Client-Version')) {
-      h['X-Client-Version'] = 'v1.0.0';
+      h['X-Client-Version'] = this.client_version;
     }
 
     return h;
@@ -341,16 +341,18 @@ class AIinterface {
       return;
     }
 
+    // Get the grid
     const grid = panel.querySelector('.grid');
     if (!grid) return;
 
     // Get image id from data attribute
-    const imgId = panel.querySelector('.image').getAttribute('data-imgid');
+    const imgID = panel.querySelector('.image').getAttribute('data-imgid');
 
     // Store keywords to image (ajax call)
-    if(!this.storeKeywords(imgId, keywords))
+    if(!this.storeKeywords(imgID, keywords, 'add'))
     {
-      console.log(`Keywords could not be stored to database.`)
+      const keywords_str = keywords.join(', ');
+      Joomla.renderMessages(`Keywords could not be added/stored to database.<br>Keywords: ${keywords_str}`);
       return;
     }
 
@@ -380,7 +382,7 @@ class AIinterface {
       input.value = value;
       input.disabled = true;
 
-      const inputId = `jgai-keyword-${imgId}-${tagId}`;
+      const inputId = `jgai-keyword-${imgID}-${tagId}`;
       input.id = inputId;
 
       // Create button
@@ -391,7 +393,7 @@ class AIinterface {
       button.textContent = 'X';
 
       // Add eventlistener to button
-      button.addEventListener('click', (e) => this.removeKeyword(button, e, imgId, tagId));
+      button.addEventListener('click', (e) => this.removeKeyword(button, e));
 
       // Accessibility link
       input.setAttribute('aria-describedby', button.id);
@@ -406,12 +408,67 @@ class AIinterface {
     });
   }
 
+  async remKeywordsFromImg(imgPos, keywords) {
+    if (!Array.isArray(keywords) || !keywords.length) {
+      console.log('Try to remove keywords, but no keywords provided.');
+      return;
+    }
+
+    // Get the panel
+    const panel = document.querySelector(`#jgai-image-panel-${imgPos}`);
+    if (!panel) {
+      console.log(`Try to remove keywords, but image panel at position ${imgPos} not found.`)
+      return;
+    }
+
+    // Get the grid
+    const grid = panel.querySelector('.grid');
+    if (!grid) return;
+
+    // Get image id from data attribute
+    const imgID = panel.querySelector('.image').getAttribute('data-imgid');
+
+    // Store keywords to image (ajax call)
+    if(!this.storeKeywords(imgID, keywords, 'remove'))
+    {
+      const keywords_str = keywords.join(', ');
+      Joomla.renderMessages(`Keywords could not be removed/stored to database.<br>Keywords: ${keywords_str}`);
+      return;
+    }
+
+    // Get all existing keywords
+    const existingKeywords = Array.from(grid.querySelectorAll('input[type="text"]'));
+
+    keywords.forEach((keyword, index) => {
+      const value = keyword.trim();
+      if (!value) return;
+
+      // Remove existing ones
+      const el = existingKeywords.find(input => input.value.trim() === value);
+      if (el) {
+
+        el.parentElement.remove();
+      }
+    });
+  }
+
   addKeyword(el, event) {
     event.preventDefault();
 
     const keywords = [el.innerText.trim()];
     const pos      = this.current_image;
     this.addKeywordsToImg(pos, keywords);
+  }
+
+  removeKeyword(el, event) {
+    event.preventDefault();
+
+    const inputID  = el.id.replace(/-btn$/, "");
+    const input    = document.getElementById(inputID);
+    const keywords = [input.value.trim()];
+    const pos      = this.current_image;
+
+    this.remKeywordsFromImg(pos, keywords);
   }
 
   keywordsGenerate(el, event) {
@@ -461,10 +518,39 @@ class AIinterface {
   async sendPost(url, bodyObjOrString, headers = {}) {
     headers = this.addHeader(headers);
 
-    const body =
-      typeof bodyObjOrString === "string"
-        ? bodyObjOrString
-        : JSON.stringify(bodyObjOrString ?? {});
+    const contentType = headers["Content-Type"] || headers["content-type"] || "";
+    let body = '';
+
+    if(bodyObjOrString instanceof FormData)
+    {
+      body = bodyObjOrString;
+
+      // Let the browser set multipart/form-data with boundary
+      delete headers["Content-Type"];
+      delete headers["content-type"];
+    }
+    else if(contentType.includes("application/json"))
+    {
+      body =
+        typeof bodyObjOrString === "string"
+          ? bodyObjOrString
+          : JSON.stringify(bodyObjOrString ?? {});
+    }
+    else if(contentType.includes("application/x-www-form-urlencoded"))
+    {
+      body =
+        typeof bodyObjOrString === "string"
+          ? bodyObjOrString
+          : new URLSearchParams(bodyObjOrString ?? {}).toString();
+    }
+    else
+    {
+      // Fallback: keep strings as-is, stringify plain objects
+      body =
+        typeof bodyObjOrString === "string"
+          ? bodyObjOrString
+          : JSON.stringify(bodyObjOrString ?? {});
+    }
 
     const params = {
       method: "POST",
@@ -496,24 +582,28 @@ class AIinterface {
     return res;
   }
 
-  async storeKeywords(imgId, keywords) {
+  async storeKeywords(imgId, keywords, action) {
     const url = this.sanitizeUrl(`${this.configs.base_url}/index.php?option=com_joomgallery&task=image.ajaxsavetags`);
 
     const headers = {
       'Authorization': '',
       'Content-Type': 'application/json',
+      'X-CSRF-Token': this.configs.session
     };
 
-    const body = {
-      'id': imgId,
-      'keywords': keywords,
-      [this.configs.session]: '1',
-    }
+    const formData = new FormData();
+    formData.append('id', imgId);
+    formData.append('action', action);
 
-    const res = await this.sendPost(url, body, headers);
+    keywords.forEach(keyword => {
+      formData.append('keywords[]', keyword);
+    });
+
+    const res = await this.sendPost(url, formData, headers);
 
     if(!res.success) {
       console.log(res.error);
+      console.log(res.data);
     }
 
     return res.success
@@ -703,13 +793,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Check connction and get balance
   balance = await ai.getTokens();
-  if(balance?.data?.balance) {    
+  if(balance?.data?.balance) {
     connected = true;
     models = await ai.getModels();
     langs = await ai.getLanguages();
 
     // Update balance
-    document.getElementById(prefix + '-balance-value').innerHTML = toString(balance.data.balance);
+    document.getElementById(prefix + '-balance-value').textContent = String(balance.data.balance);
 
     // Update models dropdown
     ai.addListElements('-models-dowpdown', ai.models)
@@ -729,7 +819,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       let match = name.match(new RegExp(`^keyword-(\\d+)-(\\d+)$`));
       if (match) {
         const [, imgId, tagId] = match;
-        el.addEventListener('click', (e) => ai.removeKeyword(el, e, imgId, tagId));
+        el.addEventListener('click', (e) => ai.removeKeyword(el, e));
         return;
       }
 
