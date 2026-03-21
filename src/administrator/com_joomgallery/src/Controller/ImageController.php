@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
@@ -343,13 +344,14 @@ class ImageController extends JoomFormController
     // Check for request forgeries.
     $this->checkToken();
 
-    $result = ['error' => false];
+    $result = ['error' => false, 'success' => true];
 
     try {
       /** @var ImageModel $model */
       $model   = $this->getModel();
-      $id      = $this->getInput()->getInt('id', 0);
-      $tags    = $this->getInput()->getArray(['keywords' => []]);
+      $id      = $this->input->get('id', 0, 'int');
+      $tags    = $this->input->get('keywords', [], 'array');
+      $action  = $this->input->get('action', '', 'string');
       $context = (string) _JOOM_OPTION . '.' . $this->context . '.savetags';
 
 
@@ -363,17 +365,30 @@ class ImageController extends JoomFormController
         return false;
       }
 
-      // Attempt to store the tags.
-      if(!$model->savetags($id, $tags))
+      if($action && $action == 'add')
       {
-        // Redirect back to the replace screen.
-        $result['success'] = false;
-        $result['error']   = Text::_('JLIB_APPLICATION_ERROR_SAVE_RECORD_FAILED');
+        // Attempt to add the tags.
+        if(!$model->addTags($id, $tags))
+        {
+          // Redirect back to the replace screen.
+          $result['success'] = false;
+          $result['error']   = $model->getError();
 
-        return false;
+          return false;
+        }
       }
+      elseif($action && $action == 'remove')
+      {
+        // Attempt to remove the tags.
+        if(!$model->removeTags($id, $tags))
+        {
+          // Redirect back to the replace screen.
+          $result['success'] = false;
+          $result['error']   = $model->getError();
 
-      $result['success'] = true;
+          return false;
+        }
+      }
 
       $json = json_encode($result, JSON_FORCE_OBJECT);
       echo new JsonResponse($json);
@@ -390,9 +405,6 @@ class ImageController extends JoomFormController
     }
 
     return true;
-  }
-
-    
   }
 
   /**

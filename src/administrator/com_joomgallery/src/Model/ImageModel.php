@@ -1310,41 +1310,98 @@ class ImageModel extends JoomAdminModel
   }
 
   /**
-   * Method to save tags to an image file
+   * Method to add tags to an image
    *
    * @param   int     $pk    The record primary key.
-   * @param   array   $tags  List of tags to be stored.
+   * @param   array   $tags  List of tags to be added.
    *
    * @return  boolean  True if successful, false if an error occurs.
    *
    * @since   4.4
    */
-  public function savetags(int $pk, array $tags): bool
+  public function addTags(int $pk, array $tags): bool
   {
-    $table = $this->getTable();
+    // Prepare tags array
+    $tags = array_unique(array_map('trim', $tags));
 
-    if($table->load($pk))
+    // Get existing tags
+    $tags_model    = $this->component->getMVCFactory()->createModel('Tags', 'administrator');
+    $existing_tags = [];
+    $success = true;
+
+    foreach($tags_model->getItemsInList($tags) as $tag)
     {
-      $table->tags = \array_unique(\array_merge($table->tags, $tags));
-
-      // Check the data.
-      if(!$table->check())
-      {
-        $this->setError($table->getError());
-
-        return false;
-      }
-
-      // Store the data.
-      if(!$table->store())
-      {
-        $this->setError($table->getError());
-
-        return false;
-      }
+      $existing_tags[$tag->title] = $tag->id;
     }
 
-    return true;
+    // Add #new# prefix to new tags
+    $tags = array_map(
+        function ($tag) use ($existing_tags) {
+        return isset($existing_tags[$tag]) ? $existing_tags[$tag] : '#new#' . $tag;
+        },
+        $tags
+    );
+
+    // Create tags
+    $tags = $tags_model->storeTagsList($tags);
+
+    if($tags === false)
+    {
+      $this->setError('Tags Model reports ' . $tags_model->getError());
+      $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
+      $success = false;
+    }
+
+    // Merge list
+    $mapped_tags = \array_map(fn($obj) => $obj->id, $tags_model->getMappedItems($pk));
+    $tags = \array_merge($mapped_tags, $tags);
+
+    // Update tags mapping
+    if(!$tags_model->updateMapping($tags, $pk))
+    {
+      $this->setError('Tags Model reports ' . $tags_model->getError());
+      $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
+      $success = false;
+    }
+
+    return $success;
+  }
+
+  /**
+   * Method to remove tags from an image
+   *
+   * @param   int     $pk    The record primary key.
+   * @param   array   $tags  List of tags to be removed.
+   *
+   * @return  boolean  True if successful, false if an error occurs.
+   *
+   * @since   4.4
+   */
+  public function removeTags(int $pk, array $tags): bool
+  {
+    // Prepare tags array
+    $tags = array_unique(array_map('trim', $tags));
+
+    // Get existing tags
+    $tags_model    = $this->component->getMVCFactory()->createModel('Tags', 'administrator');
+    $existing_tags = \array_column($tags_model->getMappedItems($pk), 'id', 'title');
+    $success = true;
+
+    foreach($tags_model->getItemsInList($tags) as $tag)
+    {
+      // Remove from existing tags array
+      unset($existing_tags[$tag->title]);
+    }
+
+    // Update tags mapping
+    if(!$tags_model->updateMapping(\array_values($existing_tags), $pk))
+    {
+      $this->setError('Tags Model reports ' . $tags_model->getError());
+      $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
+      $success = false;
+    }
+
+    return $success;
   }
 
   /**
