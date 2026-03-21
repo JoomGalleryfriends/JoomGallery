@@ -1272,28 +1272,29 @@ class ImageModel extends JoomAdminModel
       // Create config service
       $this->component->createConfig();
 
-    // Create filemanager service
-    $this->component->createFileManager($table->catid);
-    $path = $this->component->getFileManager()->getImgPath($table, $type);
+      // Create filemanager service
+      $this->component->createFileManager($table->catid);
+      $path = $this->component->getFileManager()->getImgPath($table, $type);
 
-    // Get registry to be used in writeMetadata
-    $registry = new Registry($table->imgmetadata);
+      // Get registry to be used in writeMetadata
+      $registry = new Registry($table->imgmetadata);
 
       // Create the metadata service
       $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
 
-    $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
+      $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
 
-    // Perform the save using the metadata/filesystem service
-    if($filesystem != 'local-images')
-    {
-    $data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
-    }
-    else
-    {
-    $data = $this->component->getMetadata()->writeMetadata($path, $registry);
-    }
-    $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
+      // Perform the save using the metadata/filesystem service
+      if($filesystem != 'local-images')
+      {
+        $data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
+      }
+      else
+      {
+        $data = $this->component->getMetadata()->writeMetadata($path, $registry);
+      }
+
+      $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
     }
     else
     {
@@ -1304,6 +1305,44 @@ class ImageModel extends JoomAdminModel
 
     // Clear the component's cache
     $this->cleanCache();
+
+    return true;
+  }
+
+  /**
+   * Method to save tags to an image file
+   *
+   * @param   int     $pk    The record primary key.
+   * @param   array   $tags  List of tags to be stored.
+   *
+   * @return  boolean  True if successful, false if an error occurs.
+   *
+   * @since   4.4
+   */
+  public function savetags(int $pk, array $tags): bool
+  {
+    $table = $this->getTable();
+
+    if($table->load($pk))
+    {
+      $table->tags = \array_unique(\array_merge($table->tags, $tags));
+
+      // Check the data.
+      if(!$table->check())
+      {
+        $this->setError($table->getError());
+
+        return false;
+      }
+
+      // Store the data.
+      if(!$table->store())
+      {
+        $this->setError($table->getError());
+
+        return false;
+      }
+    }
 
     return true;
   }
