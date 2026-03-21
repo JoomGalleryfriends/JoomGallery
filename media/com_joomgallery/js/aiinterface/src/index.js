@@ -1,12 +1,12 @@
 // JoomGallery AIinterface class //
 
 class AIinterface {
-
   // Settings
   name = 'JoomGallery AI Interface';
   prefix = 'jgai';
   host = 'localhost';
   systemLang = 'en';
+  configs = {};
 
   // Data from API
   token = '';
@@ -19,15 +19,29 @@ class AIinterface {
   // Request info
   selected_model = 'gemma3:4b';
   selected_mode = 'performance';
-  selected_lang = systemLang;
+  selected_lang = this.systemLang;
   client_name = 'JG-General';
+  client_version = '1.0.0';
 
-  constructor(prefix, host, token, client_name, client_version) {
+  // Image panel
+  current_image = 0;
+
+  constructor(prefix, host, token, client_name, configs) {
     if (prefix) this.prefix = prefix;
     if (host) this.host = host;
     if (token) this.token = token;
     if (client_name) this.client_name = client_name;
-    if (client_version) this.client_version = client_version;
+    if (configs) this.configs = configs;
+
+    // Detect language
+    if(this.configs.def_lang) {
+      if (this.configs.def_lang.includes('de')) this.systemLang = 'de';
+    }
+
+    // Detect client version
+    if(this.configs.version) {
+      this.client_version = this.configs.version;
+    }
   }
 
   sanitizeUrl(url) {
@@ -41,6 +55,10 @@ class AIinterface {
 
     if (hadTrailingSlash) url += "/";
     return url;
+  }
+
+  capitalize(str) {
+    return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
   }
 
   urlEncode(s) {
@@ -202,19 +220,19 @@ class AIinterface {
 
       if (item && typeof item === 'object' && !Array.isArray(item)) {
         value = item.value ?? String(item).toLowerCase();
-        title = item.title ?? capitalize(String(item.value ?? ''));
+        title = item.title ?? this.capitalize(String(item.value ?? ''));
         link = item.link ?? '#';
 
         if (!value && item.title) {
           value = item.title.toLowerCase();
         }
         if (!title && item.value) {
-          title = capitalize(String(item.value));
+          title = this.capitalize(String(item.value));
         }
       } else {
         const str = String(item);
         value = str.toLowerCase();
-        title = capitalize(str);
+        title = this.capitalize(str);
         link = '#';
       }
 
@@ -235,18 +253,163 @@ class AIinterface {
     });
   }
 
-  manualKeywords(this, event) {
+  manualKeywords(el, event) {
+    event.preventDefault();
 
+    const txtField = document.getElementById('jgai-manual-keywords');
+    const keywords = txtField.value
+      .split(',')
+      .map(item => item.trim())
+      .filter(item => item !== '');
+
+    const grid = el.parentElement.parentElement.querySelector('.grid');
+
+    const existingKeywords = Array.from(grid.querySelectorAll('button')).map(
+      btn => btn.textContent.trim().toLowerCase()
+    );
+
+    keywords.forEach(keyword => {
+      if (existingKeywords.includes(keyword.toLowerCase())) {
+        return;
+      }
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'btn btn-outline-primary';
+      button.textContent = keyword;
+
+      button.addEventListener('click', function () {
+        this.remove();
+      });
+
+      grid.appendChild(button);
+    });
+
+    txtField.value = '';
   }
 
-  prevImage() {
+  updateImageNavigation() {
+    const panels = document.querySelectorAll('.image-panel');
+    const prevBtn = document.querySelector(`#${this.prefix}-prev-image-btn`);
+    const nextBtn = document.querySelector(`#${this.prefix}-next-image-btn`);
 
+    panels.forEach((panel, index) => {
+      panel.style.display = index === this.current_image ? '' : 'none';
+    });
+
+    if (prevBtn) prevBtn.disabled = this.current_image === 0;
+    if (nextBtn) nextBtn.disabled = this.current_image === panels.length - 1;
   }
 
-  nextImage() {
-    
+  prevImage(el, event) {
+    event.preventDefault();
+
+    if (this.current_image > 0) {
+      this.current_image--;
+      this.updateImageNavigation();
+    }
   }
 
+  nextImage(el, event) {
+    event.preventDefault();
+
+    const panels = document.querySelectorAll('.image-panel');
+    if (this.current_image < panels.length - 1) {
+      this.current_image++;
+      this.updateImageNavigation();
+    }
+  }
+
+  async addKeywordsToImg(imgPos, keywords) {
+    if (!Array.isArray(keywords) || !keywords.length) {
+      console.log('Try to add keywords, but no keywords provided.');
+      return;
+    }
+
+    // Get the panel
+    const panel = document.querySelector(`#jgai-image-panel-${imgPos}`);
+    if (!panel) {
+      console.log(`Try to add keywords, but image panel at position ${imgPos} not found.`)
+      return;
+    }
+
+    const grid = panel.querySelector('.grid');
+    if (!grid) return;
+
+    // Get image id from data attribute
+    const imgId = panel.querySelector('.image').getAttribute('data-imgid');
+
+    // Store keywords to image (ajax call)
+    if(!this.storeKeywords(imgId, keywords))
+    {
+      console.log(`Keywords could not be stored to database.`)
+      return;
+    }
+
+    // Collect existing keywords (case-insensitive)
+    const existingKeywords = Array.from(
+      grid.querySelectorAll('input[type="text"]')
+    ).map(input => input.value.trim().toLowerCase());
+
+    keywords.forEach((keyword, index) => {
+      const value = keyword.trim();
+      if (!value) return;
+
+      // Skip duplicates
+      if (existingKeywords.includes(value.toLowerCase())) return;
+
+      // Generate a simple tag_id (you can replace this logic if needed)
+      const tagId = Date.now() + '-' + index;
+
+      // Create wrapper
+      const wrapper = document.createElement('div');
+      wrapper.className = 'input-group grid-item';
+
+      // Create input
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'form-control';
+      input.value = value;
+      input.disabled = true;
+
+      const inputId = `jgai-keyword-${imgId}-${tagId}`;
+      input.id = inputId;
+
+      // Create button
+      const button = document.createElement('button');
+      button.className = 'btn btn-outline-secondary';
+      button.type = 'button';
+      button.id = `${inputId}-btn`;
+      button.textContent = 'X';
+
+      // Add eventlistener to button
+      button.addEventListener('click', (e) => this.removeKeyword(button, e, imgId, tagId));
+
+      // Accessibility link
+      input.setAttribute('aria-describedby', button.id);
+
+      // Append elements
+      wrapper.appendChild(input);
+      wrapper.appendChild(button);
+      grid.appendChild(wrapper);
+
+      // Track to prevent duplicates within same call
+      existingKeywords.push(value.toLowerCase());
+    });
+  }
+
+  addKeyword(el, event) {
+    event.preventDefault();
+
+    const keywords = [el.innerText.trim()];
+    const pos      = this.current_image;
+    this.addKeywordsToImg(pos, keywords);
+  }
+
+  keywordsGenerate(el, event) {
+    event.preventDefault();
+    console.log('keywordsGenerate() function...');
+  }
 
   // --- HTTP -------
   async sendGet(url, headers) {
@@ -325,6 +488,29 @@ class AIinterface {
     return res;
   }
 
+  async storeKeywords(imgId, keywords) {
+    const url = this.sanitizeUrl(`${this.configs.base_url}/index.php?option=com_joomgallery&task=image.ajaxsavetags`);
+
+    const headers = {
+      'Authorization': '',
+      'Content-Type': 'application/json',
+    };
+
+    const body = {
+      'id': imgId,
+      'keywords': keywords,
+      [this.configs.session]: '1',
+    }
+
+    const res = await this.sendPost(url, body, headers);
+
+    if(!res.success) {
+      console.log(res.error);
+    }
+
+    return res.success
+  }
+
   // --- API endpoints ----
   async getInfo(e) {
     if (e) e.preventDefault();
@@ -365,6 +551,28 @@ class AIinterface {
       this.balance = data.data.balance;
     } else if (data?.balance) {
       this.balance = data.balance;
+    }
+
+    return data;
+  }
+
+  async getLanguages(e) {
+    if (e) e.preventDefault();
+
+    const route = "/tags/languages";
+    const url = this.sanitizeUrl(`${this.host}/${route}`);
+
+    const headers = {
+      "Authorization": `Bearer ${this.token}`,
+      "Content-Type" : "application/json"
+    }
+
+    const data = await this.sendGet(url, headers);
+
+    if (data?.data?.languages) {
+      this.languages = data.data.languages;
+    } else if (data?.languages) {
+      this.laguages = data.languages;
     }
 
     return data;
@@ -474,11 +682,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   const host = opts.host ?? 'localhost';
   const token = opts.token ?? '';
   const clientName = opts.client_name ?? 'JG-General';
+  const configs = opts.configs ?? {};
+  const session = opts.session ?? '';
+  const baseURL = opts.base_url ?? '';
   let connected = false;
   let balance = 0;
   let models = {};
+  let langs = {};
 
-  window.Joomla.aiinterface = new AIinterface(prefix, host, token, clientName);
+  window.Joomla.aiinterface = new AIinterface(prefix, host, token, clientName, configs);
   let ai = window.Joomla.aiinterface;
 
   // Check connction and get balance
@@ -486,6 +698,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if(balance?.data?.balance) {    
     connected = true;
     models = await ai.getModels();
+    langs = await ai.getLanguages();
 
     // Update balance
     document.getElementById(prefix + '-balance-value').innerHTML = toString(balance.data.balance);
@@ -504,8 +717,31 @@ document.addEventListener('DOMContentLoaded', async () => {
       const name = el.id.split('-').slice(1, -1).join('-');
       const fn = name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 
+      // Image Keyword Button
+      let match = name.match(new RegExp(`^keyword-(\\d+)-(\\d+)$`));
+      if (match) {
+        const [, imgId, tagId] = match;
+        el.addEventListener('click', (e) => ai.removeKeyword(el, e, imgId, tagId));
+        return;
+      }
+
+      // Manual Keyword Button
+      match = name.match(new RegExp(`^manual-keyword-(\\d+)$`));
+      if (match) {
+        el.addEventListener('click', (e) => ai.removeManualKeyword(el, e));
+        return;
+      }
+
+      // Most used Keywords Button
+      match = name.match(new RegExp(`^keywords-list-(\\d+)$`));
+      if (match) {
+        el.addEventListener('click', (e) => ai.addKeyword(el, e));
+        return;
+      }
+
+      // Any other Button
       if (typeof ai[fn] === 'function') {
-        el.addEventListener('click', () => ai[fn]());
+        el.addEventListener('click', (e) => ai[fn](el, e));
       } else {
         console.warn(`AIinterface: function ${fn}() does not exist. The corresponding button will not work.`);
       }

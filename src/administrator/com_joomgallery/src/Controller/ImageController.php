@@ -338,6 +338,63 @@ class ImageController extends JoomFormController
     return true;
   }
 
+  public function ajaxsavetags()
+  {
+    // Check for request forgeries.
+    $this->checkToken();
+
+    $result = ['error' => false];
+
+    try {
+      /** @var ImageModel $model */
+      $model   = $this->getModel();
+      $id      = $this->getInput()->getInt('id', 0);
+      $tags    = $this->getInput()->getArray(['keywords' => []]);
+      $context = (string) _JOOM_OPTION . '.' . $this->context . '.savetags';
+
+
+      // Access check.
+      if(!$this->allowEdit(['id' => $id, 'tags' => $tags]))
+      {
+        // Set the internal error and also the redirect error.
+        $result['success'] = false;
+        $result['error']   = Text::_('JLIB_APPLICATION_ERROR_SAVE_RECORD_NOT_PERMITTED');
+
+        return false;
+      }
+
+      // Attempt to store the tags.
+      if(!$model->savetags($id, $tags))
+      {
+        // Redirect back to the replace screen.
+        $result['success'] = false;
+        $result['error']   = Text::_('JLIB_APPLICATION_ERROR_SAVE_RECORD_FAILED');
+
+        return false;
+      }
+
+      $result['success'] = true;
+
+      $json = json_encode($result, JSON_FORCE_OBJECT);
+      echo new JsonResponse($json);
+
+      $this->app->close();
+    }
+    catch(\Exception $e)
+    {
+      echo new JsonResponse($e);
+
+      $this->app->close();
+
+      return false;
+    }
+
+    return true;
+  }
+
+    
+  }
+
   /**
    * Method to open an image in the media manager
    *

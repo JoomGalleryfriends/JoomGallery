@@ -13,9 +13,12 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -27,7 +30,17 @@ $filter_options = ['formSelector' => '#tagsForm', 'filterButton' => false, 'filt
 $form_url = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component';
 
 // Initialize AIinterface
-$opts = ['prefix' => 'jgai', 'host' => 'http://localhost/api/v1', 'token' => 'jfhrujr:jurur', 'client_name' => 'JG-General'];
+$opts = [ 'prefix' => 'jgai',
+          'host' => 'http://localhost/api/v1',
+          'token' => 'jfhrujr:jurur',
+          'client_name' => 'JG-General',
+          'configs' => [
+            'version' => JoomHelper::getComponent()->version,
+            'def_lang' => Factory::getLanguage()->getTag(),
+            'session' => Session::getFormToken(),
+            'base_url' => Uri::base(),
+          ]
+        ];
 $this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);
 
 // Images
@@ -110,9 +123,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <input type="text" id="jgai-manual-keywords" class="form-control" aria-describedby="jgai-manual-keywords-btn">
           <button class="btn btn-outline-secondary" type="button" id="jgai-manual-keywords-btn">⮠</button>
         </div>
-        <div class="grid">
-          Here comes a grid with buttons with the entered manual keywords.
-        </div>
+        <div class="grid"></div>
       </div>
       <div class="prompt-inputs col-6">
         <div class="mb-3">
@@ -124,7 +135,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <input type="number" class="form-control" id="jgai-nmb-keywords" value="5">
         </div>
 
-        <button class="btn btn-primary" type="button" id="jgai-keywords-generate">Generate Keywords</button>
+        <button class="btn btn-primary" type="button" id="jgai-keywords-generate-btn">Generate Keywords</button>
       </div>
     </div>
   </div>
@@ -134,12 +145,18 @@ if(isset($this->input_cid) && !empty($this->input_cid))
   <div class="images-panel">
     <?php foreach($this->images as $j => $img) : ?>
       <?php
-        $tag_titles = explode(',', $img->tag_titles);
-        $tag_ids = explode(',', $img->tag_ids);
+        $tag_titles = [];
+        $tag_ids    = [];
+
+        if(!empty($img->tag_ids))
+        {
+          $tag_titles = array_values(array_filter(array_map('trim', explode(',', $img->tag_titles))));
+          $tag_ids    = array_values(array_filter(array_map('trim', explode(',', $img->tag_ids))));
+        }
       ?>
-      <div class="image-panel" <?php if($j>0) { echo 'style="display: none;"'; } ?>>
+      <div id="jgai-image-panel-<?php echo $j; ?>" class="image-panel" <?php if($j>0) { echo 'style="display: none;"'; } ?>>
         <div class="images">
-          <img class="image" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" alt="<?php echo $img->title; ?>">
+          <img class="image" data-imgid="<?php echo $img->id;?>" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" alt="<?php echo $img->title; ?>">
           <div class="navigation-btn">
             <button class="btn btn-outline-primary" id="jgai-prev-image-btn"><span class="icon-arrow-left-4"></span> Previous image</button>
             <button class="btn btn-outline-primary" id="jgai-next-image-btn"><span class="icon-arrow-right-4"></span>Next image</button>
@@ -176,7 +193,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
             <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this, 'options' => $filter_options]); ?>
             <div class="grid">
                 <?php foreach($this->items as $i => $item) : ?>
-                  <button id="jgai-keywords-list-<?php echo $this->escape($item->id); ?>" class="btn btn-outline-secondary grid-item"><?php echo $this->escape($item->title); ?></button>
+                  <button id="jgai-keywords-list-<?php echo $this->escape($item->id); ?>-btn" class="btn btn-outline-secondary grid-item"><?php echo $this->escape($item->title); ?></button>
                 <?php endforeach; ?>
             </div>
             <div colspan="<?php echo isset($this->items[0]) ? \count(get_object_vars($this->items[0])) : 10; ?>">
