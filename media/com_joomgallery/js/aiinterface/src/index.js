@@ -253,6 +253,11 @@ class AIinterface {
     });
   }
 
+  getSelectedListElement(selector) {
+    const selected = document.querySelector(`#${selector} [aria-selected="true"]`);
+    return selected ? selected.dataset.value : null;
+  }
+
   manualKeywords(el, event) {
     event.preventDefault();
 
@@ -463,9 +468,12 @@ class AIinterface {
     this.remKeywordsFromImg(pos, keywords);
   }
 
-  keywordsGenerate(el, event) {
+  async keywordsGenerate(el, event) {
     event.preventDefault();
-    console.log('keywordsGenerate() function...');
+
+    model = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
+
+    result = await genKeywords(event, images, model, options);
   }
 
   // --- HTTP -------
@@ -596,6 +604,19 @@ class AIinterface {
     if(!res.success) {
       console.log(res.error);
       console.log(res.data);
+
+      if(action == 'add') {
+        Joomla.renderMessages({'error':['Tags could not be added to image.']}, '#image-message-container');
+      } else if(action == 'remove') {
+        Joomla.renderMessages({'error':['Tags could not be removed from image.']}, '#image-message-container');
+      }
+    }
+    else {
+      if(action == 'add') {
+        Joomla.renderMessages({'success':['Tags successfully stored to image.']}, '#image-message-container');
+      } else if(action == 'remove') {
+        Joomla.renderMessages({'success':['Tags successfully deleted from image.']}, '#image-message-container');
+      }
     }
 
     return res.success
@@ -794,13 +815,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById(prefix + '-balance-value').textContent = String(balance.data.balance);
 
     // Update models dropdown
-    ai.addListElements('-models-dowpdown', ai.models)
+    ai.addListElements('-models-dropdown', ai.models)
 
     // Update modes dropdown
-    ai.addListElements('-modes-dowpdown', ai.modes)
+    ai.addListElements('-modes-dropdown', ai.modes)
 
     // Update languages dropdown
-    ai.addListElements('-langs-dowpdown', ai.languages)
+    ai.addListElements('-langs-dropdown', ai.languages)
 
     // Install event listeners on buttons
     document.querySelectorAll('[id^="'+prefix+'-"][id$="-btn"]').forEach(el => {

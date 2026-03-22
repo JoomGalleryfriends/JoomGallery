@@ -24,6 +24,7 @@ use Joomla\CMS\Uri\Uri;
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.admin')
    ->useStyle('com_joomgallery.aiinterface')
+   ->useScript('bootstrap.dropdown')
    ->useScript('com_joomgallery.aiinterface');
 
 $filter_options = ['formSelector' => '#tagsForm', 'filterButton' => false, 'filtersHidden' => true];
@@ -83,7 +84,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             gemma3:4b (Ollama/Local)
           </button>
-          <ul class="dropdown-menu" id="jgai-models-dowpdown">
+          <ul class="dropdown-menu" id="jgai-models-dropdown">
             <li><a class="dropdown-item" href="#" data-value="gemma3:4b" aria-selected="true">gemma3:4b (Ollama/Local)</a></li>
             <li><a class="dropdown-item" href="#" data-value="gpt-4.1" aria-selected="false">gpt-4.1 (OpenAI)</a></li>
           </ul>
@@ -92,7 +93,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Performance
           </button>
-          <ul class="dropdown-menu" id="jgai-modes-dowpdown">
+          <ul class="dropdown-menu" id="jgai-modes-dropdown">
             <li><a class="dropdown-item" href="#" data-value="performance" aria-selected="true">Performance</a></li>
             <li><a class="dropdown-item" href="#" data-value="advanced" aria-selected="false">Advanced</a></li>
           </ul>
@@ -101,7 +102,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Language
           </button>
-          <ul class="dropdown-menu" id="jgai-langs-dowpdown">
+          <ul class="dropdown-menu" id="jgai-langs-dropdown">
             <li><a class="dropdown-item" href="#" data-value="en" aria-selected="true">English</a></li>
             <li><a class="dropdown-item" href="#" data-value="de" aria-selected="false">Deutsch</a></li>
           </ul>
@@ -143,6 +144,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
   <hr>
 
   <div class="images-panel">
+    <div id="image-message-container" aria-live="polite"></div>
     <?php foreach($this->images as $j => $img) : ?>
       <?php
         $tag_titles = [];
@@ -153,10 +155,14 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           $tag_titles = array_values(array_filter(array_map('trim', explode(',', $img->tag_titles))));
           $tag_ids    = array_values(array_filter(array_map('trim', explode(',', $img->tag_ids))));
         }
+
+        // Calculate image dimensions
+        $strategy = ['strategy' => 'max-dimension', 'value' => 400];
+        [$width, $heigth] = JoomHelper::clcImgDimensions($img->id, 'detail', $strategy);
       ?>
       <div id="jgai-image-panel-<?php echo $j; ?>" class="image-panel" <?php if($j>0) { echo 'style="display: none;"'; } ?>>
         <div class="images">
-          <img class="image" data-imgid="<?php echo $img->id;?>" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" alt="<?php echo $img->title; ?>">
+          <img class="image" data-imgid="<?php echo $img->id;?>" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" width="<?php echo $width; ?>" height="<?php echo $heigth; ?>" alt="<?php echo $img->title; ?>">
           <div class="navigation-btn">
             <button class="btn btn-outline-primary" id="jgai-prev-image-btn"><span class="icon-arrow-left-4"></span> Previous image</button>
             <button class="btn btn-outline-primary" id="jgai-next-image-btn"><span class="icon-arrow-right-4"></span>Next image</button>
