@@ -790,20 +790,20 @@ class JoomHelper
       case 'max-dimension':
         // Get ratio based on max dimension value
         $ratio = min($value / $info->width, $value / $info->height);
-          break;
+        break;
 
       case 'by-height':
         // Get ratio based on image height
         $ratio = $value / $info->height;
-          break;
+        break;
 
       case 'by-width':
         // Get ratio based on image width
         $ratio = $value / $info->width;
-          break;
+        break;
 
       default:
-          return [(int) $info->width, (int) $info->height];
+        return [(int) $info->width, (int) $info->height];
     }
 
     if($ratio < 1)
