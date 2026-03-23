@@ -5,11 +5,22 @@ module.exports = {
   //mode: 'production',
   mode: 'development',
   entry: './src/index.js',
+  devtool: 'source-map',
+
+  experiments: {
+    outputModule: true,
+  },
+
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'aiinterface.js',
-    library: 'AIinterface',
-    libraryTarget: 'var'
+    module: true,
+    //library: 'AIinterface',
+    //libraryTarget: 'var'
   },
-  devtool: 'source-map',
+
+  externalsType: 'module',
+  externals: {
+    'joomla.dialog': 'joomla.dialog',
+  },
 }

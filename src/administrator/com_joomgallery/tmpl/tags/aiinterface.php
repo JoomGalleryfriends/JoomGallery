@@ -13,6 +13,7 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JSHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -35,6 +36,7 @@ $opts = [ 'prefix' => 'jgai',
           'host' => 'http://localhost/api/v1',
           'token' => 'jfhrujr:jurur',
           'client_name' => 'JG-General',
+          'autoload' => true,
           'configs' => [
             'version' => JoomHelper::getComponent()->version,
             'def_lang' => Factory::getLanguage()->getTag(),
@@ -43,6 +45,7 @@ $opts = [ 'prefix' => 'jgai',
           ]
         ];
 $this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);
+JSHelper::registerText('com_joomgallery.aiinterface', 'COM_JOOMGALLERY_JS_AIINT_');
 
 // Images
 if(!isset($this->images) || empty($this->images))

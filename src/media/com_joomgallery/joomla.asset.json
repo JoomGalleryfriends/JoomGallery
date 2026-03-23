@@ -194,6 +194,10 @@
       "name": "com_joomgallery.aiinterface",
       "type": "script",
       "uri": "com_joomgallery/aiinterface/dist/aiinterface.js",
+      "dependencies": [
+        "core",
+        "joomla.dialog"
+      ],
       "attributes": {
         "type": "module",
         "defer": true
