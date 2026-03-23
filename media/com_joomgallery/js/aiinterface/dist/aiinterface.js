@@ -1,12 +1,71 @@
-var AIinterface;
-/******/ (() => { // webpackBootstrap
+import * as __WEBPACK_EXTERNAL_MODULE_joomla_dialog_fc22b544__ from "joomla.dialog";
+/******/ var __webpack_modules__ = ({
+
+/***/ "joomla.dialog"
+/*!********************************!*\
+  !*** external "joomla.dialog" ***!
+  \********************************/
+(module) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_joomla_dialog_fc22b544__;
+
+/***/ }
+
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __webpack_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Check if module exists (development only)
+/******/ 	if (__webpack_modules__[moduleId] === undefined) {
+/******/ 		var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 		e.code = 'MODULE_NOT_FOUND';
+/******/ 		throw e;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		// no module.id needed
+/******/ 		// no module.loaded needed
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
+/************************************************************************/
 var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it declares 'AIinterface' on top-level, which conflicts with the current library output.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var joomla_dialog__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! joomla.dialog */ "joomla.dialog");
 // JoomGallery AIinterface class //
+
 
 class AIinterface {
   // Settings
@@ -15,6 +74,7 @@ class AIinterface {
   host = 'localhost';
   systemLang = 'en';
   configs = {};
+  lang = {};
 
   // Data from API
   token = '';
@@ -34,12 +94,13 @@ class AIinterface {
   // Image panel
   current_image = 0;
 
-  constructor(prefix, host, token, client_name, configs) {
+  constructor(prefix, host, token, client_name, configs, lang) {
     if (prefix) this.prefix = prefix;
     if (host) this.host = host;
     if (token) this.token = token;
     if (client_name) this.client_name = client_name;
     if (configs) this.configs = configs;
+    if (lang) this.lang = lang;
 
     // Detect language
     if(this.configs.def_lang) {
@@ -175,7 +236,7 @@ class AIinterface {
       let provider = (m.options && m.options.service) ? String(m.options.service) : "unknown";
       provider = provider.toLowerCase();
 
-      const friendly = this.providerNames[provider] || provider;
+      const friendly = this.providers[provider] || provider;
 
       if (!services.has(friendly)) {
         services.set(friendly, []);
@@ -211,6 +272,36 @@ class AIinterface {
     }
 
     return key;
+  }
+
+  async testConnection(el, event) {
+    if (event) event.preventDefault();
+
+    // Test ping
+    const ping = await this.sendGet(this.host);
+
+    if(ping.data !== "PING") {
+
+      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TITLE ?? 'Connection failed';
+      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TEXT + this.host;
+
+      joomla_dialog__WEBPACK_IMPORTED_MODULE_0__["default"].alert(msg, title)
+      .then(() => {
+        console.log('Connection to "' + this.host + '" failed. Check your AI Interface host URL.');
+      });
+    } else {
+      const info = await this.getInfo();
+
+      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TITLE ?? 'Authentication failed';
+      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TEXT + ' ' + this.host;
+
+      if(info.status !== 200) {
+        joomla_dialog__WEBPACK_IMPORTED_MODULE_0__["default"].alert(msg, title)
+        .then(() => {
+          console.log('Authentication to "' + this.host + '" failed. Check your AI Interface API-Key. Make sure your account in the AI Interface is up and running.');
+        });
+      }
+    }
   }
 
   // --- DOM Helpers ----
@@ -481,7 +572,7 @@ class AIinterface {
 
     model = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
 
-    result = await genKeywords(event, images, model, options);
+    result = await this.genKeywords(event, images, model, options);
   }
 
   // --- HTTP -------
@@ -721,7 +812,7 @@ class AIinterface {
       }
 
       // Add services to providers table
-      addProviders(data.services)
+      this.addProviders(data.services)
 
       const mapping = { value: "name", title: "service", options: ["service", "privacy"] };
       const mapped = this.buildTables(apiModels, mapping);
@@ -797,6 +888,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Example: pull config from Joomla options (adjust key to your code)
   const opts = Joomla.getOptions('com_joomgallery.aiinterface', {});
+  const lang  = Joomla.getOptions('com_joomgallery.aiinterface.lang', {});
   const prefix = opts.prefix ?? 'jgai';
   const host = opts.host ?? 'localhost';
   const token = opts.token ?? '';
@@ -804,80 +896,82 @@ document.addEventListener('DOMContentLoaded', async () => {
   const configs = opts.configs ?? {};
   const session = opts.session ?? '';
   const baseURL = opts.base_url ?? '';
+  const autoload = opts.autoload ?? false;
   let connected = false;
   let balance = 0;
   let models = {};
   let langs = {};
 
-  window.Joomla.aiinterface = new AIinterface(prefix, host, token, clientName, configs);
+  window.Joomla.aiinterface = new AIinterface(prefix, host, token, clientName, configs, lang);
   let ai = window.Joomla.aiinterface;
 
-  // Check connction and get balance
-  balance = await ai.getTokens();
-  if(balance?.data?.balance) {
-    connected = true;
-    models = await ai.getModels();
-    langs = await ai.getLanguages();
+  if(autoload) {
+    // Check connction and get balance
+    balance = await ai.getTokens();
+    if(balance?.data?.balance) {
+      connected = true;
+      models = await ai.getModels();
+      langs = await ai.getLanguages();
 
-    // Update balance
-    document.getElementById(prefix + '-balance-value').textContent = String(balance.data.balance);
+      // Update balance
+      document.getElementById(prefix + '-balance-value').textContent = String(balance.data.balance);
 
-    // Update models dropdown
-    ai.addListElements('-models-dropdown', ai.models)
+      // Update models dropdown
+      ai.addListElements('-models-dropdown', ai.models)
 
-    // Update modes dropdown
-    ai.addListElements('-modes-dropdown', ai.modes)
+      // Update modes dropdown
+      ai.addListElements('-modes-dropdown', ai.modes)
 
-    // Update languages dropdown
-    ai.addListElements('-langs-dropdown', ai.languages)
+      // Update languages dropdown
+      ai.addListElements('-langs-dropdown', ai.languages)
+    } else {
+      // Connection failed
+      Joomla.renderMessages({warning: ['No connection to the AI Interface. Check your connection credentials in the JoomGallery configuration.']}, );
 
-    // Install event listeners on buttons
-    document.querySelectorAll('[id^="'+prefix+'-"][id$="-btn"]').forEach(el => {
-      const name = el.id.split('-').slice(1, -1).join('-');
-      const fn = name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-
-      // Image Keyword Button
-      let match = name.match(new RegExp(`^keyword-(\\d+)-(\\d+)$`));
-      if (match) {
-        const [, imgId, tagId] = match;
-        el.addEventListener('click', (e) => ai.removeKeyword(el, e));
-        return;
+      if(balance?.message !== 'OK') {
+        Joomla.renderMessages({error: ['Respond status: ' + balance.message]});
       }
 
-      // Manual Keyword Button
-      match = name.match(new RegExp(`^manual-keyword-(\\d+)$`));
-      if (match) {
-        el.addEventListener('click', (e) => ai.removeManualKeyword(el, e));
-        return;
+      if(balance?.data?.messages.length > 0) {
+        Joomla.renderMessages({warning: ['Answer from API: ' + balance.data.messages[0]]});
       }
-
-      // Most used Keywords Button
-      match = name.match(new RegExp(`^keywords-list-(\\d+)$`));
-      if (match) {
-        el.addEventListener('click', (e) => ai.addKeyword(el, e));
-        return;
-      }
-
-      // Any other Button
-      if (typeof ai[fn] === 'function') {
-        el.addEventListener('click', (e) => ai[fn](el, e));
-      } else {
-        console.warn(`AIinterface: function ${fn}() does not exist. The corresponding button will not work.`);
-      }
-    });
-  }
-  else {
-    // Connection failed
-    Joomla.renderMessages({warning: ['No connection to the AI Interface. Check your connection credentials in the JoomGallery configuration.']}, );
-
-    if(balance?.message !== 'OK') {
-      Joomla.renderMessages({error: ['Respond status: ' + balance.message]});
-    }
-
-    if(balance?.data?.messages.length > 0) {
-      Joomla.renderMessages({warning: ['Answer from API: ' + balance.data.messages[0]]});
     }
   }
+
+  // Install event listeners on buttons
+  document.querySelectorAll('[id^="'+prefix+'-"][id$="-btn"]').forEach(el => {
+    const name = el.id.split('-').slice(1, -1).join('-');
+    const fn = name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+
+    // Image Keyword Button
+    let match = name.match(new RegExp(`^keyword-(\\d+)-(\\d+)$`));
+    if (match) {
+      const [, imgId, tagId] = match;
+      el.addEventListener('click', (e) => ai.removeKeyword(el, e));
+      return;
+    }
+
+    // Manual Keyword Button
+    match = name.match(new RegExp(`^manual-keyword-(\\d+)$`));
+    if (match) {
+      el.addEventListener('click', (e) => ai.removeManualKeyword(el, e));
+      return;
+    }
+
+    // Most used Keywords Button
+    match = name.match(new RegExp(`^keywords-list-(\\d+)$`));
+    if (match) {
+      el.addEventListener('click', (e) => ai.addKeyword(el, e));
+      return;
+    }
+
+    // Any other Button
+    if (typeof ai[fn] === 'function') {
+      el.addEventListener('click', (e) => ai[fn](el, e));
+    } else {
+      console.warn(`AIinterface: function ${fn}() does not exist. The corresponding button will not work.`);
+    }
+  });
 
   const btn = document.getElementById("ai-keywords-generate");
   if (btn) {
@@ -887,7 +981,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 })();
 
-AIinterface = __webpack_exports__;
-/******/ })()
-;
+
 //# sourceMappingURL=aiinterface.js.map
