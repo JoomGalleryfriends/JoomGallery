@@ -504,7 +504,44 @@ class AIinterface {
   async keywordsGenerate(el, event) {
     event.preventDefault();
 
-    model = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
+    let model  = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
+    let panels = document.querySelector('.images-panel .image-panel');
+
+    // get images
+    let images = {};
+    panels.forEach((panel) => {
+      imgID = panel.querySelector('img.image').getAttribute('data-imgid');
+
+      let image = {
+        'id': imgID,
+        'base64_data': ''
+      }
+
+      images.append(image);
+    });
+
+    // get manual keywords
+    let manualKeywords = [];
+    const keywordsGrid = el.parentElement.parentElement.querySelector('.manual-keywords .grid');
+    keywordsGrid.forEach(keywordBtn => {
+      manualKeywords.append(keywordBtn.innerText);
+    });
+
+    // get model
+    model = this.getSelectedListElement('jgai-models-dropdown');
+
+    // get options
+    options = {
+      "confidence_values": false,
+      "model": model,
+      "predefined_tags": manualKeywords,
+      "prompt_mode": this.getSelectedListElement('jgai-modes-dropdown'),
+      "service": this.getProvider(model),
+      "langauge": this.getSelectedListElement('jgai-langs-dropdown'),
+      "suggested_topic": document.getElementById('jgai-propmt-description').value,
+      "tag_count": document.getElementById('jgai-nmb-keywords').value,
+      "token_count": true
+    }
 
     result = await this.genKeywords(event, images, model, options);
   }
@@ -781,7 +818,7 @@ class AIinterface {
     return data;
   }
 
-  async genKeywords(e, images, model, options = {}) {
+  async genKeywords(e, images, options = {}) {
     if (e) e.preventDefault();
 
     const route = "tags/generate";
@@ -807,8 +844,7 @@ class AIinterface {
     const body = {
       api_key: apiKey,
       options,
-      images: imgs,
-      model: usedModel, // optional; include if your API wants it
+      images: imgs
     };
 
     return await this.sendPost(url, body, headers);
