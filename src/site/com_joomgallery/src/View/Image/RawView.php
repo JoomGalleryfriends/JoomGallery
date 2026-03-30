@@ -36,15 +36,16 @@ class RawView extends AdminRawView
   protected $item;
 
   /**
-   * Postprocessing the image after retrieving the image ressource
+   * Postprocessing the image after retrieving the image resource
    *
-   * @param   \stdClass  $file_info    Object with file information
-   * @param   resource   $resource     Image resource
-   * @param   string     $imagetype    Type of image (original, detail, thumbnail, ...)
+   * @param   \stdClass    $file_info    Object with file information
+   * @param   resource     $resource     Image resource
+   * @param   string       $imagetype    Type of image (original, detail, thumbnail, ...)
+   * @param   null|object  $options      Additional options for post processing
    *
    * @return  bool       True on success, false otherwise
    */
-  public function ppImage(&$file_info, &$resource, $imagetype)
+  public function ppImage(&$file_info, &$resource, $imagetype, $options = Null)
   {
     // Get the current imagetype
     foreach(JoomHelper::getRecords('imagetypes', $this->component) as $key => $type)
