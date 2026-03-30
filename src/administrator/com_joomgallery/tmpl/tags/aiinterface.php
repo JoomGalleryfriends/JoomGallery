@@ -69,8 +69,8 @@ $form_url = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=
 
 // Initialize AIinterface
 $opts = [ 'prefix' => 'jgai',
-          'host' => 'http://localhost/api/v1',
-          'token' => 'jfhrujr:jurur',
+          'host' => $config->get('jg_aiint_host', 'http://localhost/api/v1'),
+          'token' => $config->get('jg_aiint_key', ''),
           'client_name' => 'JG-General',
           'autoload' => true,
           'configs' => [
@@ -78,6 +78,11 @@ $opts = [ 'prefix' => 'jgai',
             'def_lang' => Factory::getLanguage()->getTag(),
             'session' => Session::getFormToken(),
             'base_url' => Uri::base(),
+            'imagetype' => $config->get('jg_aiint_tags_imagetype', 'detail'),
+            'resize' => $config->get('jg_aiint_tags_maxdim', 500),
+            'max_parallel' => $config->get('jg_parallelprocesses', 1),
+            'case_sensitivity' => $config->get('jg_aiint_tags_casesens', 1),
+            'letter_case' => $config->get('jg_aiint_tags_caseupper', 1),
           ]
         ];
 $this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);

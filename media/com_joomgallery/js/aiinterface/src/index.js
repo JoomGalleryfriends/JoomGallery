@@ -1,4 +1,5 @@
 // JoomGallery AIinterface class //
+import { Sema } from 'async-sema';
 import JoomlaDialog from 'joomla.dialog'
 
 class AIinterface {
@@ -291,6 +292,24 @@ class AIinterface {
     return selected ? selected.dataset.value : null;
   }
 
+  getManualKeywords(container) {
+    const keywords = [];
+    const grid = container?.querySelector('.manual-keywords .grid');
+
+    if (!grid) {
+      return keywords;
+    }
+
+    grid.querySelectorAll('button').forEach((btn) => {
+      const keyword = btn.innerText.trim();
+      if (keyword) {
+        keywords.push(keyword);
+      }
+    });
+
+    return keywords;
+  }
+
   manualKeywords(el, event) {
     event.preventDefault();
 
@@ -505,45 +524,102 @@ class AIinterface {
     event.preventDefault();
 
     let model  = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
-    let panels = document.querySelector('.images-panel .image-panel');
+    let panels = document.querySelectorAll('.images-panel .image-panel');
 
-    // get images
-    let images = {};
-    panels.forEach((panel) => {
-      imgID = panel.querySelector('img.image').getAttribute('data-imgid');
-
-      let image = {
-        'id': imgID,
-        'base64_data': ''
-      }
-
-      images.append(image);
-    });
-
-    // get manual keywords
-    let manualKeywords = [];
-    const keywordsGrid = el.parentElement.parentElement.querySelector('.manual-keywords .grid');
-    keywordsGrid.forEach(keywordBtn => {
-      manualKeywords.append(keywordBtn.innerText);
-    });
-
-    // get model
-    model = this.getSelectedListElement('jgai-models-dropdown');
-
-    // get options
-    options = {
-      "confidence_values": false,
-      "model": model,
-      "predefined_tags": manualKeywords,
-      "prompt_mode": this.getSelectedListElement('jgai-modes-dropdown'),
-      "service": this.getProvider(model),
-      "langauge": this.getSelectedListElement('jgai-langs-dropdown'),
-      "suggested_topic": document.getElementById('jgai-propmt-description').value,
-      "tag_count": document.getElementById('jgai-nmb-keywords').value,
-      "token_count": true
+    if (!panels.length) {
+      Joomla.renderMessages({ error: ['No image panels found.'] }, '#image-message-container');
+      return;
     }
 
-    result = await this.genKeywords(event, images, model, options);
+    const workerCount = Math.max(1, Number(this.configs.max_parallel || 1));
+
+    let headersBase64 = {
+      'Authorization': '',
+      'Content-Type': 'text/plain',
+      'X-CSRF-Token': this.configs.session
+    };
+
+    // get images
+    let images = [];
+    for (const panel of panels) {
+      const imgEl = panel.querySelector('img.image');
+
+      if (!imgEl) {
+        continue;
+      }
+
+      imgID = imgEl.getAttribute('data-imgid');
+
+      const variables  = `id=${imgID}&type=${this.configs.imagetype}&base64=1&resize=${this.configs.resize}&resize_type=3`;
+      const urlBase64  = this.sanitizeUrl(`${this.configs.base_url}/index.php?option=com_joomgallery&view=image&format=raw&${variables}`);
+      const imgBase64Res = await this.sendGet(urlBase64, headersBase64);
+
+      images.push({
+        'id': imgID,
+        'base64_data': imgBase64Res
+      });
+    };
+
+    // get manual keywords
+    const manualKeywords = this.getManualKeywords(el.parentElement?.parentElement);
+
+    // get options
+    const options = {
+      'confidence_values': false,
+      'model': model,
+      'predefined_tags': manualKeywords,
+      'prompt_mode': this.getSelectedListElement(`${this.prefix}-modes-dropdown`),
+      'service': this.getProvider(model),
+      'langauge': this.getSelectedListElement(`${this.prefix}-langs-dropdown`),
+      'suggested_topic': document.getElementById(`${this.prefix}-prompt-description`).value ?? '',
+      'tag_count': document.getElementById(`${this.prefix}-nmb-keywords`).value ?? '',
+      'token_count': true
+    }
+
+    const response = await this.genKeywords(event, images, model, options);
+
+    let success = true;
+    let errors = {};
+    let nmbErrors = 0;
+    let nmbSuccess  = 0;
+
+    const results = response?.results ?? [];
+
+    if(response.status == 1 && Array.isArray(results)) {
+      for (const result of results) {
+        if(result.error) {
+          // Error generating keywords
+          success = false;
+          errors[String(result.id)] = {'status': result.status, 'error': result.error};
+          nmbErrors++;
+        } else {
+          // Generation successfully
+          let pos = 0;
+          let keywords = [];
+
+          // Get panel position
+          document.querySelectorAll('.images-panel .image-panel').forEach((panel) => {
+            const imageEl = panel.querySelector('img.image');
+
+            if(imageEl && imageEl.getAttribute('data-imgid') == result.id) {
+              const match = panel.getAttribute('id').match(/-image-panel-(\d+)$/);
+              pos = match ? parseInt(match[1], 10) : 0;
+            }
+          });
+
+          // Transform resulting tags into a correct format
+          (result.tags || []).forEach((tag) => {
+            keywords.push(tag.name);
+          });
+
+          await this.addKeywordsToImg(pos, keywords);
+        }
+      };
+    } else {
+      success = false;
+      errors['0'] = {'status': response.status, 'error': 'API returned result before it actually was finished generating the keywords.'};
+      nmbErrors++;
+    }
   }
 
   // --- HTTP -------
