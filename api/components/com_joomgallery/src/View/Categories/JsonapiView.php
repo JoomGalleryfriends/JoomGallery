@@ -44,7 +44,9 @@ class JsonapiView extends BaseApiView
       'asset_id',
       'asset_id_image',
       'parent_id',
+      'parent_title',
       'img_count',
+      'child_count',
 
       'lft',
       'rgt',
@@ -90,7 +92,9 @@ class JsonapiView extends BaseApiView
       'asset_id',
       'asset_id_image',
       'parent_id',
+      'parent_title',
       'img_count',
+      'child_count',
 
       'lft',
       'rgt',
