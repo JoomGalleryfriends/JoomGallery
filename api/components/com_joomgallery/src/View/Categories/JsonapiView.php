@@ -43,6 +43,7 @@ class JsonapiView extends BaseApiView
       'asset_id',
       'asset_id_image',
       'parent_id',
+      'img_count',
 
       'lft',
       'rgt',
@@ -53,7 +54,7 @@ class JsonapiView extends BaseApiView
       'alias',
       'description',
 
-      'description',
+      'published',
       'hidden',
       'in_hidden',
       'password',
@@ -88,6 +89,7 @@ class JsonapiView extends BaseApiView
       'asset_id',
       'asset_id_image',
       'parent_id',
+      'img_count',
 
       'lft',
       'rgt',
@@ -98,7 +100,7 @@ class JsonapiView extends BaseApiView
       'alias',
       'description',
 
-      'description',
+      'published',
       'hidden',
       'in_hidden',
       'password',
@@ -168,6 +170,15 @@ class JsonapiView extends BaseApiView
             $this->fieldsToRenderList[] = $field->name;
         }
 
+        //** @var \Joomla\CMS\MVC\Model\ListModel $model */
+        /** @var \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel $model */
+        $model = $this->getModel();
+
+        // show all
+        $model->setState('filter.showself', 1);
+        $model->setState('filter.showhidden', 1);
+        $model->setState('filter.showempty', 1);
+
         return parent::displayList();
     }
 
@@ -182,7 +193,7 @@ class JsonapiView extends BaseApiView
      */
     public function displayItem($item = null)
     {
-        $this->relationship[] = 'modified_by';
+        // $this->relationship[] = 'modified_by';
 
         foreach(FieldsHelper::getFields('com_joomgallery.categories') as $field)
         {
@@ -209,10 +220,10 @@ class JsonapiView extends BaseApiView
      */
     protected function prepareItem($item)
     {
-        if(!$item)
-        {
-            return $item;
+        if (empty($item)) {
+            throw new RouteNotFoundException('Item does not exist');
         }
+
 
         $item->text = $item->introtext . ' ' . $item->fulltext;
 
@@ -220,45 +231,45 @@ class JsonapiView extends BaseApiView
         PluginHelper::importPlugin('joomgallery');
 //        Factory::getApplication()->triggerEvent('onContentPrepare', ['com_joomgallery.categories', &$item, &$item->params]);
 
-        foreach(FieldsHelper::getFields('com_joomgallery.project', $item, true) as $field)
+        foreach(FieldsHelper::getFields('com_joomgallery.categories', $item, true) as $field)
         {
             $item->{$field->name} = $field->apivalue ?? $field->rawvalue;
         }
 
-        if(Multilanguage::isEnabled() && !empty($item->associations))
-        {
-            $associations = [];
-
-            foreach($item->associations as $language => $association)
-            {
-                $itemId = explode(':', $association)[0];
-
-                $associations[] = (object) [
-                  'id'       => $itemId,
-                  'language' => $language,
-                ];
-            }
-
-            $item->associations = $associations;
-        }
-
-        if(!empty($item->tags->tags))
-        {
-            $tagsIds    = explode(',', $item->tags->tags);
-            $item->tags = $item->tagsHelper->getTags($tagsIds);
-        }
-        else {
-            $item->tags = [];
-            $tags       = new TagsHelper();
-            $tagsIds    = $tags->getTagIds($item->id, 'com_joomgallery.project');
-
-            if(!empty($tagsIds))
-            {
-                $tagsIds    = explode(',', $tagsIds);
-                $item->tags = $tags->getTags($tagsIds);
-            }
-        }
-
+//        if(Multilanguage::isEnabled() && !empty($item->associations))
+//        {
+//            $associations = [];
+//
+//            foreach($item->associations as $language => $association)
+//            {
+//                $itemId = explode(':', $association)[0];
+//
+//                $associations[] = (object) [
+//                  'id'       => $itemId,
+//                  'language' => $language,
+//                ];
+//            }
+//
+//            $item->associations = $associations;
+//        }
+//
+//        if(!empty($item->tags->tags))
+//        {
+//            $tagsIds    = explode(',', $item->tags->tags);
+//            $item->tags = $item->tagsHelper->getTags($tagsIds);
+//        }
+//        else {
+//            $item->tags = [];
+//            $tags       = new TagsHelper();
+//            $tagsIds    = $tags->getTagIds($item->id, 'com_joomgallery.categories');
+//
+//            if(!empty($tagsIds))
+//            {
+//                $tagsIds    = explode(',', $tagsIds);
+//                $item->tags = $tags->getTags($tagsIds);
+//            }
+//        }
+//
         if(isset($item->images))
         {
             $registry     = new Registry($item->images);

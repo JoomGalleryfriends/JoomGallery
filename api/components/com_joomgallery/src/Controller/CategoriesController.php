@@ -44,3 +44,21 @@ class CategoriesController extends ApiController
 
     // Implement other methods like read, update, delete as needed
 }
+
+/**
+ * Method to allow extended classes to manipulate the data to be saved for an extension.
+ *
+ * @param   array  $data  An array of input data.
+ *
+ * @return  array
+ *
+ * @since   4.0.0
+ */
+/*
+protected function preprocessSaveData(array $data): array
+{
+    // see users
+}
+/**/
+
+
