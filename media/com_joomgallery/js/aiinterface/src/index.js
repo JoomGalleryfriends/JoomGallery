@@ -69,10 +69,10 @@ class AIinterface {
     return encodeURIComponent(String(s));
   }
 
-  addHeader(headers = {}) {
+  addHeader(headers = {}, addContentType = true) {
     const h = { ...headers };
 
-    if (!Object.prototype.hasOwnProperty.call(h, 'Content-Type')) {
+    if (addContentType && !Object.prototype.hasOwnProperty.call(h, 'Content-Type')) {
       h['Content-Type'] = 'application/json';
     }
     if (!Object.prototype.hasOwnProperty.call(h, 'X-Client-Name')) {
@@ -209,36 +209,6 @@ class AIinterface {
     return key;
   }
 
-  async testConnection(el, event) {
-    if (event) event.preventDefault();
-
-    // Test ping
-    const ping = await this.sendGet(this.host);
-
-    if(ping.data !== "PING") {
-
-      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TITLE ?? 'Connection failed';
-      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TEXT + this.host;
-
-      JoomlaDialog.alert(msg, title)
-      .then(() => {
-        console.log('Connection to "' + this.host + '" failed. Check your AI Interface host URL.');
-      });
-    } else {
-      const info = await this.getInfo();
-
-      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TITLE ?? 'Authentication failed';
-      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TEXT + ' ' + this.host;
-
-      if(info.status !== 200) {
-        JoomlaDialog.alert(msg, title)
-        .then(() => {
-          console.log('Authentication to "' + this.host + '" failed. Check your AI Interface API-Key. Make sure your account in the AI Interface is up and running.');
-        });
-      }
-    }
-  }
-
   // --- DOM Helpers ----
   addListElements(selector, items) {
     let dropdown = document.getElementById(this.prefix + selector);
@@ -310,10 +280,25 @@ class AIinterface {
     return keywords;
   }
 
+  getPanelPositionByImageId(imageId) {
+  let pos = 0;
+
+  document.querySelectorAll('.images-panel .image-panel').forEach((panel) => {
+    const imageEl = panel.querySelector('img.image');
+
+    if (imageEl && imageEl.getAttribute('data-imgid') == imageId) {
+      const match = panel.getAttribute('id')?.match(/-image-panel-(\d+)$/);
+      pos = match ? parseInt(match[1], 10) : 0;
+    }
+  });
+
+  return pos;
+}
+
   manualKeywords(el, event) {
     event.preventDefault();
 
-    const txtField = document.getElementById('jgai-manual-keywords');
+    const txtField = document.getElementById(`${this.prefix}-manual-keywords`);
     const keywords = txtField.value
       .split(',')
       .map(item => item.trim())
@@ -384,7 +369,7 @@ class AIinterface {
     }
 
     // Get the panel
-    const panel = document.querySelector(`#jgai-image-panel-${imgPos}`);
+    const panel = document.querySelector(`#${this.prefix}-image-panel-${imgPos}`);
     if (!panel) {
       console.log(`Try to add keywords, but image panel at position ${imgPos} not found.`)
       return;
@@ -398,7 +383,7 @@ class AIinterface {
     const imgID = panel.querySelector('.image').getAttribute('data-imgid');
 
     // Store keywords to image (ajax call)
-    if(!this.storeKeywords(imgID, keywords, 'add'))
+    if(!(await this.storeKeywords(imgID, keywords, 'add')))
     {
       const keywords_str = keywords.join(', ');
       Joomla.renderMessages(`Keywords could not be added/stored to database.<br>Keywords: ${keywords_str}`);
@@ -431,7 +416,7 @@ class AIinterface {
       input.value = value;
       input.disabled = true;
 
-      const inputId = `jgai-keyword-${imgID}-${tagId}`;
+      const inputId = `${this.prefix}-keyword-${imgID}-${tagId}`;
       input.id = inputId;
 
       // Create button
@@ -464,7 +449,7 @@ class AIinterface {
     }
 
     // Get the panel
-    const panel = document.querySelector(`#jgai-image-panel-${imgPos}`);
+    const panel = document.querySelector(`#${this.prefix}-image-panel-${imgPos}`);
     if (!panel) {
       console.log(`Try to remove keywords, but image panel at position ${imgPos} not found.`)
       return;
@@ -520,112 +505,265 @@ class AIinterface {
     this.remKeywordsFromImg(pos, keywords);
   }
 
+  updateKeywordGenerationProgress(total, successCount, failedCount, pendingCount) {
+    console.log(
+      `[AIinterface] Keyword image fetch progress: total=${total}, success=${successCount}, failed=${failedCount}, pending=${pendingCount}`
+    );
+  }
+
+  async testConnection(el, event) {
+    if (event) event.preventDefault();
+
+    // Test ping
+    const ping = await this.sendGet(this.host);
+
+    if(ping.data !== "PING") {
+
+      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TITLE ?? 'Connection failed';
+      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TEXT + this.host;
+
+      JoomlaDialog.alert(msg, title)
+      .then(() => {
+        console.log('Connection to "' + this.host + '" failed. Check your AI Interface host URL.');
+      });
+    } else {
+      const info = await this.getInfo();
+
+      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TITLE ?? 'Authentication failed';
+      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TEXT + ' ' + this.host;
+
+      if(info.status !== 200) {
+        JoomlaDialog.alert(msg, title)
+        .then(() => {
+          console.log('Authentication to "' + this.host + '" failed. Check your AI Interface API-Key. Make sure your account in the AI Interface is up and running.');
+        });
+      }
+    }
+  }
+
   async keywordsGenerate(el, event) {
     event.preventDefault();
 
+    // Get required data from UI
     let model  = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
     let panels = document.querySelectorAll('.images-panel .image-panel');
+    const manualKeywords = this.getManualKeywords(el.parentElement?.parentElement);
 
     if (!panels.length) {
       Joomla.renderMessages({ error: ['No image panels found.'] }, '#image-message-container');
       return;
     }
 
-    const workerCount = Math.max(1, Number(this.configs.max_parallel || 1));
-
-    let headersBase64 = {
-      'Authorization': '',
-      'Content-Type': 'text/plain',
-      'X-CSRF-Token': this.configs.session
-    };
-
-    // get images
-    let images = [];
-    for (const panel of panels) {
-      const imgEl = panel.querySelector('img.image');
-
-      if (!imgEl) {
-        continue;
-      }
-
-      imgID = imgEl.getAttribute('data-imgid');
-
-      const variables  = `id=${imgID}&type=${this.configs.imagetype}&base64=1&resize=${this.configs.resize}&resize_type=3`;
-      const urlBase64  = this.sanitizeUrl(`${this.configs.base_url}/index.php?option=com_joomgallery&view=image&format=raw&${variables}`);
-      const imgBase64Res = await this.sendGet(urlBase64, headersBase64);
-
-      images.push({
-        'id': imgID,
-        'base64_data': imgBase64Res
-      });
-    };
-
-    // get manual keywords
-    const manualKeywords = this.getManualKeywords(el.parentElement?.parentElement);
-
-    // get options
+    // Create the options object
     const options = {
       'confidence_values': false,
       'model': model,
       'predefined_tags': manualKeywords,
       'prompt_mode': this.getSelectedListElement(`${this.prefix}-modes-dropdown`),
       'service': this.getProvider(model),
-      'langauge': this.getSelectedListElement(`${this.prefix}-langs-dropdown`),
-      'suggested_topic': document.getElementById(`${this.prefix}-prompt-description`).value ?? '',
-      'tag_count': document.getElementById(`${this.prefix}-nmb-keywords`).value ?? '',
+      'language': this.getSelectedListElement(`${this.prefix}-langs-dropdown`),
+      'suggested_topic': document.getElementById(`${this.prefix}-prompt-description`)?.value ?? '',
+      'tag_count': document.getElementById(`${this.prefix}-nmb-keywords`)?.value ?? '',
       'token_count': true
     }
 
-    const response = await this.genKeywords(event, images, model, options);
+    const workerCount = Math.max(1, Number(this.configs.max_parallel || 1));
 
-    let success = true;
-    let errors = {};
-    let nmbErrors = 0;
-    let nmbSuccess  = 0;
+    // Generate keywords in parallel using sema
+    const {
+      results, successCount, failedCount
+    } = await this.processImagesWithSema(
+      panels, options, workerCount
+    );
 
-    const results = response?.results ?? [];
+    const errors = {};
+    let success = failedCount === 0;
 
-    if(response.status == 1 && Array.isArray(results)) {
-      for (const result of results) {
-        if(result.error) {
-          // Error generating keywords
-          success = false;
-          errors[String(result.id)] = {'status': result.status, 'error': result.error};
-          nmbErrors++;
-        } else {
-          // Generation successfully
-          let pos = 0;
-          let keywords = [];
+    // Check results
+    results.forEach((result, index) => {
+      if (!result?.success) {
+        errors[String(result?.id ?? index)] = {
+          status: result?.status ?? 0,
+          error: result?.error ?? 'Unknown error'
+        };
+      }
+    });
 
-          // Get panel position
-          document.querySelectorAll('.images-panel .image-panel').forEach((panel) => {
-            const imageEl = panel.querySelector('img.image');
+    return {
+      success,
+      errors,
+      nmbErrors: failedCount,
+      nmbSuccess: successCount
+    };
+  }
+  
+  async processSingleImageKeywords(panel, options) {
+    const fetched = await this.fetchImageAsBase64(panel);
 
-            if(imageEl && imageEl.getAttribute('data-imgid') == result.id) {
-              const match = panel.getAttribute('id').match(/-image-panel-(\d+)$/);
-              pos = match ? parseInt(match[1], 10) : 0;
-            }
-          });
-
-          // Transform resulting tags into a correct format
-          (result.tags || []).forEach((tag) => {
-            keywords.push(tag.name);
-          });
-
-          await this.addKeywordsToImg(pos, keywords);
-        }
+    if (!fetched.success || !fetched.data) {
+      return {
+        success: false,
+        stage: 'fetch',
+        id: fetched.id ?? null,
+        status: fetched.status ?? 0,
+        error: fetched.message || 'Fetching resized image failed.',
       };
-    } else {
-      success = false;
-      errors['0'] = {'status': response.status, 'error': 'API returned result before it actually was finished generating the keywords.'};
-      nmbErrors++;
     }
+
+    const images = [
+      {
+        id: fetched.id,
+        base64_data: fetched.data,
+      }
+    ];
+
+    const response = await this.genKeywords(null, images, options);
+    const payload = response?.data ?? {};
+    const results = payload?.results ?? [];
+
+    if (!response?.success) {
+      return {
+        success: false,
+        stage: 'generate',
+        id: fetched.id,
+        status: response?.status ?? 0,
+        error: response?.message || 'Keyword generation request to API failed.',
+      };
+    }
+
+    if (response.status != 1 || !Array.isArray(results) || results.length < 1) {
+      return {
+        success: false,
+        stage: 'generate',
+        id: fetched.id,
+        status: payload?.status ?? response?.status ?? 0,
+        error: response?.message || 'API returned no valid result.',
+      };
+    }
+
+    const result = results[0];
+
+    if (result.error) {
+      return {
+        success: false,
+        stage: 'generate',
+        id: result.id ?? fetched.id,
+        status: payload?.status ?? response?.status ?? 0,
+        error: result.error,
+        model_tokens: result.model_tokens ?? payload.model_tokens ?? 0,
+        service_tokens: result.service_tokens ?? payload.service_tokens ?? 0,
+      };
+    }
+
+    const keywords = (result.tags || [])
+      .map((tag) => tag?.name?.trim())
+      .filter(Boolean);
+
+    const pos = this.getPanelPositionByImageId(result.id ?? fetched.id);
+
+    await this.addKeywordsToImg(pos, keywords);
+
+    return {
+      success: true,
+      stage: 'done',
+      id: result.id ?? fetched.id,
+      status: payload.status,
+      keywords,
+      model_tokens: result.model_tokens ?? payload.model_tokens ?? 0,
+      service_tokens: result.service_tokens ?? payload.service_tokens ?? 0,
+    };
+  }
+
+  async processImagesWithSema(panels, options, workerCount = 1) {
+    const sema = new Sema(workerCount);
+    const panelList = Array.from(panels);
+    const results = new Array(panelList.length);
+
+    let nextIndex = 0;
+    let successCount = 0;
+    let failedCount = 0;
+    let pendingCount = panelList.length;
+
+    // Define progress logic
+    const updateCounters = (status) => {
+      if (status === 'success') {
+        successCount++;
+      } else if (status === 'failed') {
+        failedCount++;
+      }
+
+      if (pendingCount > 0) {
+        pendingCount--;
+      }
+
+      this.updateKeywordGenerationProgress(
+        panelList.length,
+        successCount,
+        failedCount,
+        pendingCount
+      );
+    };
+
+    this.updateKeywordGenerationProgress(
+      panelList.length,
+      successCount,
+      failedCount,
+      pendingCount
+    );
+
+    // Define worker loop function
+    const runWorkerLoop = async () => {
+      while (true) {
+        const currentIndex = nextIndex++;
+        if (currentIndex >= panelList.length) {
+          break;
+        }
+
+        await sema.acquire();
+        const panel = panelList[currentIndex];
+
+        try {
+          const result = await this.processSingleImageKeywords(panel, options);
+          results[currentIndex] = result;
+          updateCounters(result.success ? 'success' : 'failed');
+        } catch (error) {
+          results[currentIndex] = {
+            success: false,
+            stage: 'internal',
+            id: null,
+            status: 0,
+            error: error instanceof Error ? error.message : String(error),
+          };
+          updateCounters('failed');
+        } finally {
+          sema.release();
+        }
+      }
+    };
+
+    const workerTotal = Math.min(workerCount, panelList.length);
+    const promises = [];
+
+    // Run worker loop
+    for (let i = 0; i < workerTotal; i++) {
+      promises.push(runWorkerLoop());
+    }
+
+    // Wait for promise to resolve
+    await Promise.allSettled(promises);
+
+    return {
+      results,
+      successCount,
+      failedCount,
+      pendingCount,
+    };
   }
 
   // --- HTTP -------
   async sendGet(url, headers) {
     // Add default headers
-    headers = this.addHeader(headers);
+    headers = this.addHeader(headers, false);
 
     // Set request parameters
     let params = {
@@ -653,12 +791,25 @@ class AIinterface {
       // Catch network error
       const msg = `HTTP ${response.status} ${response.statusText}`;
       this.logRequestErrors(url, headers, msg);
-      return {success: false, status: response.status, message: response.message, messages: [txt], data: null};
+      return {success: false, status: response.status, message: msg, messages: [txt], data: null};
     }
 
-    const res = this.parseJsonResponse(txt, response.status, response.statusText);
+    // Detect response content type (NOT request header)
+    const responseContentType = response.headers.get('content-type') || '';
 
-    return res;
+    // JSON response
+    if (responseContentType.includes('application/json')) {
+      return this.parseJsonResponse(txt, response.status, response.statusText);
+    }
+
+    // Plain text (base64 etc.)
+    return {
+      success: true,
+      status: response.status,
+      message: response.statusText,
+      messages: [],
+      data: txt
+    };
   }
 
   async sendPost(url, bodyObjOrString, headers = {}) {
@@ -724,8 +875,22 @@ class AIinterface {
       return { success: false, status: response.status, message: msg, messages: [txt], data: null };
     }
 
-    const res = this.parseJsonResponse(txt, response.status, response.statusText);
-    return res;
+    // Detect response content type (NOT request header)
+    const responseContentType = response.headers.get('content-type') || '';
+
+    // JSON response
+    if (responseContentType.includes('application/json')) {
+      return this.parseJsonResponse(txt, response.status, response.statusText);
+    }
+
+    // Plain text (base64 etc.)
+    return {
+      success: true,
+      status: response.status,
+      message: response.statusText,
+      messages: [],
+      data: txt
+    };
   }
 
   async storeKeywords(imgId, keywords, action) {
@@ -766,6 +931,57 @@ class AIinterface {
     }
 
     return res.success
+  }
+
+  async fetchImageAsBase64(panel) {
+    const imgEl = panel.querySelector('img.image');
+
+    if (!imgEl) {
+      return {
+        success: false,
+        status: null,
+        message: 'No image element found in panel.',
+        messages: [],
+        data: null
+      };
+    }
+
+    const imgID = imgEl.getAttribute('data-imgid');
+
+    const variables = new URLSearchParams({
+      id: imgID,
+      type: this.configs.imagetype ?? '',
+      base64: 1,
+      resize: this.configs.resize ?? 0,
+      resize_type: 3
+    });
+
+    const urlBase64 = this.sanitizeUrl(
+      `${this.configs.base_url}/index.php?option=com_joomgallery&view=image&format=raw&${variables.toString()}`
+    );
+
+    const headersBase64 = {
+      Authorization: '',
+      'X-CSRF-Token': this.configs.session
+    };
+
+    const res = await this.sendGet(urlBase64, headersBase64);
+
+    if (!res.success) {
+      return {
+        success: false,
+        id: imgID,
+        message: res.message || 'Image fetch failed.',
+        data: null,
+      };
+    }
+
+    return {
+      success: true,
+      id: imgID,
+      message: 'OK',
+      data: res.data,
+    };
   }
 
   // --- API endpoints ----
@@ -829,7 +1045,7 @@ class AIinterface {
     if (data?.data?.languages) {
       this.languages = data.data.languages;
     } else if (data?.languages) {
-      this.laguages = data.languages;
+      this.languages = data.languages;
     }
 
     return data;
@@ -901,7 +1117,7 @@ class AIinterface {
     const url = this.sanitizeUrl(`${this.host}/${route}`);
 
     const imgs = images || [];
-    const usedModel = model || this.def_model;
+    const usedModel = options.model || this.def_model;
 
     if (!Array.isArray(imgs) || imgs.length < 1) {
       return { success: false, status: 0, message: "No images provided. You need to send at least one image.", data: null };
