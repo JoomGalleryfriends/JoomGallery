@@ -9,9 +9,10 @@
  * *********************************************************************************
  */
 
-namespace Joomgallery\Component\Joomgallery\Api\View\Images;
+namespace Joomgallery\Component\Joomgallery\Api\View\LatestCategory;
 
-//use Joomgallery\Component\Joomgallery\Api\Helper\JoomgalleryHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel;
+use Joomgallery\Component\Joomgallery\Api\Helper\JoomgalleryHelper;
 use Joomgallery\Component\Joomgallery\Api\Serializer\JoomgallerySerializer;
 
 use Joomla\CMS\Factory;
@@ -19,14 +20,16 @@ use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Exception\RouteNotFoundException;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
+use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * The images view
+ * The galleries view
  *
  * @since  4.0.0
  */
@@ -40,31 +43,31 @@ class JsonapiView extends BaseApiView
      */
     protected $fieldsToRenderItem = [
       'id',
-      'catid',
-      'alias',
-      'title',
-      'description',
-      'author',
+      'asset_id',
+      'asset_id_image',
+      'parent_id',
+      'parent_title',
+      'img_count',
+      'child_count',
 
-      'date',
-      'imgmetadata',
+      'lft',
+      'rgt',
+      'level',
+
+      'path',
+      'title',
+      'alias',
+      'description',
 
       'published',
-      'filename',
-      'filesystem',
-
-      'hits',
-      'downloads',
-
-      'votes',
-      'votesum',
-      'approved',
-      'useruploaded',
-      'access',
       'hidden',
+      'in_hidden',
+      'password',
 
-      'featured',
-      'ordering',
+      'exclude_toplist',
+      'exclude_search',
+      'thumbnail',
+      'static_path',
       'params',
       'language',
 
@@ -78,6 +81,7 @@ class JsonapiView extends BaseApiView
       'metadesc',
       'metakey',
       'robots',
+
     ];
 
     /**
@@ -88,33 +92,33 @@ class JsonapiView extends BaseApiView
      */
     protected $fieldsToRenderList = [
       'id',
-      'catid',
-      'alias',
+      'asset_id',
+      'asset_id_image',
+      'parent_id',
+      'parent_title',
+      'img_count',
+      'child_count',
+
+      'lft',
+      'rgt',
+      'level',
+
+      'path',
       'title',
-      //        'description',
-      //        'author',
-      //
-      //        'date',
-      //        'imgmetadata',
+      'alias',
+      'description',
 
       'published',
-      'filename',
-      'filesystem',
+      'hidden',
+      'in_hidden',
+      'password',
 
-      //        'hits',
-      //        'downloads',
-      //
-      //        'votes',
-      //        'votesum',
-      //        'approved',
-      //        'useruploaded',
-      //        'access',
-      //        'hidden',
-      //
-      //        'featured',
-      //        'ordering',
-      //        'params',
-      //        'language',
+      'exclude_toplist',
+      'exclude_search',
+      'thumbnail',
+      'static_path',
+      'params',
+      'language',
 
       'created_time',
       'created_by',
@@ -123,9 +127,9 @@ class JsonapiView extends BaseApiView
       'checked_out',
       'checked_out_time',
 
-      //        'metadesc',
-      //        'metakey',
-      //        'robots',
+      'metadesc',
+      'metakey',
+      'robots',
     ];
 
 //    /**
@@ -169,10 +173,25 @@ class JsonapiView extends BaseApiView
      */
     public function displayList(?array $items = null)
     {
-        foreach(FieldsHelper::getFields('com_joomgallery.images') as $field)
+        foreach(FieldsHelper::getFields('com_joomgallery.categories') as $field)
         {
             $this->fieldsToRenderList[] = $field->name;
         }
+
+        //--- simulate populate state before model getItems() -------------------------
+
+        /** @var CategoriesModel $model */
+        $model = $this->getModel();
+
+        // sort and restrict to one item
+        $model->setState('list.limit', 1);
+        $model->setState('list.ordering', 'a.created_time');
+        $model->setState('list.direction', 'DESC');
+
+        // select from all
+        $model->setState('filter.showself', 1);
+        $model->setState('filter.showhidden', 1);
+        $model->setState('filter.showempty', 1);
 
         return parent::displayList();
     }
@@ -190,7 +209,7 @@ class JsonapiView extends BaseApiView
     {
         $this->relationship[] = 'modified_by';
 
-        foreach(FieldsHelper::getFields('com_joomgallery.images') as $field)
+        foreach(FieldsHelper::getFields('com_joomgallery.categories') as $field)
         {
             $this->fieldsToRenderItem[] = $field->name;
         }
@@ -215,68 +234,72 @@ class JsonapiView extends BaseApiView
      */
     protected function prepareItem($item)
     {
-        if(!$item)
+        if(empty($item))
         {
-            return $item;
+            throw new RouteNotFoundException('Item does not exist');
         }
+
 
         $item->text = $item->introtext . ' ' . $item->fulltext;
 
         // Process the joomgallery plugins.
         PluginHelper::importPlugin('joomgallery');
-        Factory::getApplication()->triggerEvent('onContentPrepare', ['com_joomgallery.images', &$item, &$item->params]);
+//        Factory::getApplication()->triggerEvent('onContentPrepare', ['com_joomgallery.categories', &$item, &$item->params]);
 
-        foreach(FieldsHelper::getFields('com_joomgallery.images', $item, true) as $field)
+        foreach(FieldsHelper::getFields('com_joomgallery.categories', $item, true) as $field)
         {
             $item->{$field->name} = $field->apivalue ?? $field->rawvalue;
         }
 
-        if(Multilanguage::isEnabled() && !empty($item->associations))
-        {
-            $associations = [];
-
-            foreach($item->associations as $language => $association)
-            {
-                $itemId = explode(':', $association)[0];
-
-                $associations[] = (object)[
-                  'id'       => $itemId,
-                  'language' => $language,
-                ];
-            }
-
-            $item->associations = $associations;
-        }
-
-        if(!empty($item->tags->tags))
-        {
-            $tagsIds    = explode(',', $item->tags->tags);
-            $item->tags = $item->tagsHelper->getTags($tagsIds);
-        }
-        else {
-            $item->tags = [];
-            $tags       = new TagsHelper();
-            $tagsIds    = $tags->getTagIds($item->id, 'com_joomgallery.images');
-
-            if(!empty($tagsIds))
-            {
-                $tagsIds    = explode(',', $tagsIds);
-                $item->tags = $tags->getTags($tagsIds);
-            }
-        }
-
-//        if (isset($item->images)) {
-//            $registry     = new Registry($item->images);
-//            $item->images = $registry->toArray();
+//        if(Multilanguage::isEnabled() && !empty($item->associations))
+//        {
+//            $associations = [];
 //
-//            if (!empty($item->images['image_intro'])) {
-//                $item->images['image_intro'] = JoomgalleryHelper::resolve($item->images['image_intro']);
+//            foreach($item->associations as $language => $association)
+//            {
+//                $itemId = explode(':', $association)[0];
+//
+//                $associations[] = (object) [
+//                  'id'       => $itemId,
+//                  'language' => $language,
+//                ];
 //            }
 //
-//            if (!empty($item->images['image_fulltext'])) {
-//                $item->images['image_fulltext'] = JoomgalleryHelper::resolve($item->images['image_fulltext']);
+//            $item->associations = $associations;
+//        }
+//
+//        if(!empty($item->tags->tags))
+//        {
+//            $tagsIds    = explode(',', $item->tags->tags);
+//            $item->tags = $item->tagsHelper->getTags($tagsIds);
+//        }
+//        else {
+//            $item->tags = [];
+//            $tags       = new TagsHelper();
+//            $tagsIds    = $tags->getTagIds($item->id, 'com_joomgallery.categories');
+//
+//            if(!empty($tagsIds))
+//            {
+//                $tagsIds    = explode(',', $tagsIds);
+//                $item->tags = $tags->getTags($tagsIds);
 //            }
 //        }
+//
+        if(isset($item->images))
+        {
+            $registry     = new Registry($item->images);
+            $item->images = $registry->toArray();
+
+            if(!empty($item->images['image_intro']))
+            {
+                $item->images['image_intro'] = JoomgalleryHelper::resolve($item->images['image_intro']);
+            }
+
+            if(!empty($item->images['image_fulltext']))
+            {
+                $item->images['image_fulltext'] = JoomgalleryHelper::resolve($item->images['image_fulltext']);
+            }
+        }
 
         return parent::prepareItem($item);
     }

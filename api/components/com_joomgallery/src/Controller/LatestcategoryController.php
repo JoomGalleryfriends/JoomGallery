@@ -21,11 +21,11 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * The categories controller
+ * The latest categories controller
  *
  * @since  4.0.0
  */
-class CategoriesController extends ApiController
+class LatestcategoryController extends ApiController
 {
     /**
      * The content type of the item.
@@ -41,23 +41,11 @@ class CategoriesController extends ApiController
      * @var    string
      * @since  3.0
      */
-    protected $default_view = 'categories';
+    protected $default_view = 'latestcategory';
 
+    public function displayList($cachable = false, $urlparams = [])
+    {
+        parent::displayList();
+    }
     // Implement other methods like read, update, delete as needed
 }
-
-/**
- * Method to allow extended classes to manipulate the data to be saved for an extension.
- *
- * @param   array  $data  An array of input data.
- *
- * @return  array
- *
- * @since   4.0.0
- */
-/*
-protected function preprocessSaveData(array $data): array
-{
-    // see users
-}
-/**/

@@ -1,11 +1,10 @@
 <?php
-
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -16,14 +15,14 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Controller\ApiController;
-use Tobscure\JsonApi\Exception\InvalidParameterException;
 use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
 use Joomla\Component\Media\Api\Model\MediumModel;
 use Joomla\Filesystem\File;
 use Joomla\String\Inflector;
+use Tobscure\JsonApi\Exception\InvalidParameterException;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 
@@ -58,23 +57,27 @@ class UploadFileController extends ApiController
 
     $missingParameters = [];
 
-    if (empty($image_name)) {
+    if(empty($image_name))
+    {
       $missingParameters[] = 'image_name';
     }
 
-    if (empty($gallery_id)) {
+    if(empty($gallery_id))
+    {
       $missingParameters[] = 'category_id';
     }
 
     // Content is required as we expect a file
-    if (empty($content)) {
+    if(empty($content))
+    {
       $missingParameters[] = 'content';
     }
 
-    if (\count($missingParameters)) {
-      throw new InvalidParameterException(
+    if(\count($missingParameters))
+    {
+    throw new InvalidParameterException(
         Text::sprintf('WEBSERVICE_COM_MEDIA_MISSING_REQUIRED_PARAMETERS', implode(' & ', $missingParameters)),
-      );
+    );
     }
 
     //--- secure path and image name ----------------------------
@@ -113,7 +116,8 @@ class UploadFileController extends ApiController
     $json = $this->input->json;
 
     // Decode content, if any
-    if ($content = base64_decode($json->get('content', '', 'raw'))) {
+    if($content = base64_decode($json->get('content', '', 'raw')))
+    {
       $this->checkContent();
     }
 
@@ -122,7 +126,4 @@ class UploadFileController extends ApiController
 
     return $model->save();
   }
-
-
-
 }

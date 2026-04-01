@@ -175,7 +175,6 @@ class JsonapiView extends BaseApiView
             $this->fieldsToRenderList[] = $field->name;
         }
 
-        //** @var \Joomla\CMS\MVC\Model\ListModel $model */
         /** @var \Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel $model */
         $model = $this->getModel();
 
@@ -225,7 +224,8 @@ class JsonapiView extends BaseApiView
      */
     protected function prepareItem($item)
     {
-        if (empty($item)) {
+        if(empty($item))
+        {
             throw new RouteNotFoundException('Item does not exist');
         }
 
