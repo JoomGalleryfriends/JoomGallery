@@ -163,17 +163,14 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
               $getDefaults
           ),
 
-          // ToDo: ? use upload_file as 'single'  command
-          //            new Route(['POST'], 'v1/joomgallery/upload/:gallery_name',
           new Route(
               ['POST'],
               'v1/joomgallery/db_reserve_image_id',
-              // 'UploadApi.upload_img',
-              'upload.api_db_reserve_image_id',
-              //['gallery_name' => '(.*)'],
+              'images.add',
               [],
               $getDefaults
           ),
+
 
           new Route(
               ['POST'],
