@@ -1,6 +1,686 @@
 import * as __WEBPACK_EXTERNAL_MODULE_joomla_dialog_fc22b544__ from "joomla.dialog";
 /******/ var __webpack_modules__ = ({
 
+/***/ "./node_modules/async-sema/lib/index.js"
+/*!**********************************************!*\
+  !*** ./node_modules/async-sema/lib/index.js ***!
+  \**********************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RateLimit = exports.Sema = void 0;
+const events_1 = __importDefault(__webpack_require__(/*! events */ "./node_modules/events/events.js"));
+function arrayMove(src, srcIndex, dst, dstIndex, len) {
+    for (let j = 0; j < len; ++j) {
+        dst[j + dstIndex] = src[j + srcIndex];
+        src[j + srcIndex] = void 0;
+    }
+}
+function pow2AtLeast(n) {
+    n = n >>> 0;
+    n = n - 1;
+    n = n | (n >> 1);
+    n = n | (n >> 2);
+    n = n | (n >> 4);
+    n = n | (n >> 8);
+    n = n | (n >> 16);
+    return n + 1;
+}
+function getCapacity(capacity) {
+    return pow2AtLeast(Math.min(Math.max(16, capacity), 1073741824));
+}
+// Deque is based on https://github.com/petkaantonov/deque/blob/master/js/deque.js
+// Released under the MIT License: https://github.com/petkaantonov/deque/blob/6ef4b6400ad3ba82853fdcc6531a38eb4f78c18c/LICENSE
+class Deque {
+    constructor(capacity) {
+        this._capacity = getCapacity(capacity);
+        this._length = 0;
+        this._front = 0;
+        this.arr = [];
+    }
+    push(item) {
+        const length = this._length;
+        this.checkCapacity(length + 1);
+        const i = (this._front + length) & (this._capacity - 1);
+        this.arr[i] = item;
+        this._length = length + 1;
+        return length + 1;
+    }
+    pop() {
+        const length = this._length;
+        if (length === 0) {
+            return void 0;
+        }
+        const i = (this._front + length - 1) & (this._capacity - 1);
+        const ret = this.arr[i];
+        this.arr[i] = void 0;
+        this._length = length - 1;
+        return ret;
+    }
+    shift() {
+        const length = this._length;
+        if (length === 0) {
+            return void 0;
+        }
+        const front = this._front;
+        const ret = this.arr[front];
+        this.arr[front] = void 0;
+        this._front = (front + 1) & (this._capacity - 1);
+        this._length = length - 1;
+        return ret;
+    }
+    get length() {
+        return this._length;
+    }
+    checkCapacity(size) {
+        if (this._capacity < size) {
+            this.resizeTo(getCapacity(this._capacity * 1.5 + 16));
+        }
+    }
+    resizeTo(capacity) {
+        const oldCapacity = this._capacity;
+        this._capacity = capacity;
+        const front = this._front;
+        const length = this._length;
+        if (front + length > oldCapacity) {
+            const moveItemsCount = (front + length) & (oldCapacity - 1);
+            arrayMove(this.arr, 0, this.arr, oldCapacity, moveItemsCount);
+        }
+    }
+}
+class ReleaseEmitter extends events_1.default {
+}
+function isFn(x) {
+    return typeof x === 'function';
+}
+function defaultInit() {
+    return '1';
+}
+class Sema {
+    constructor(nr, { initFn = defaultInit, pauseFn, resumeFn, capacity = 10, } = {}) {
+        if (isFn(pauseFn) !== isFn(resumeFn)) {
+            throw new Error('pauseFn and resumeFn must be both set for pausing');
+        }
+        this.nrTokens = nr;
+        this.free = new Deque(nr);
+        this.waiting = new Deque(capacity);
+        this.releaseEmitter = new ReleaseEmitter();
+        this.noTokens = initFn === defaultInit;
+        this.pauseFn = pauseFn;
+        this.resumeFn = resumeFn;
+        this.paused = false;
+        this.releaseEmitter.on('release', (token) => {
+            const p = this.waiting.shift();
+            if (p) {
+                p.resolve(token);
+            }
+            else {
+                if (this.resumeFn && this.paused) {
+                    this.paused = false;
+                    this.resumeFn();
+                }
+                this.free.push(token);
+            }
+        });
+        for (let i = 0; i < nr; i++) {
+            this.free.push(initFn());
+        }
+    }
+    tryAcquire() {
+        return this.free.pop();
+    }
+    async acquire() {
+        let token = this.tryAcquire();
+        if (token !== void 0) {
+            return token;
+        }
+        return new Promise((resolve, reject) => {
+            if (this.pauseFn && !this.paused) {
+                this.paused = true;
+                this.pauseFn();
+            }
+            this.waiting.push({ resolve, reject });
+        });
+    }
+    release(token) {
+        this.releaseEmitter.emit('release', this.noTokens ? '1' : token);
+    }
+    drain() {
+        const a = new Array(this.nrTokens);
+        for (let i = 0; i < this.nrTokens; i++) {
+            a[i] = this.acquire();
+        }
+        return Promise.all(a);
+    }
+    nrWaiting() {
+        return this.waiting.length;
+    }
+}
+exports.Sema = Sema;
+function RateLimit(rps, { timeUnit = 1000, uniformDistribution = false, } = {}) {
+    const sema = new Sema(uniformDistribution ? 1 : rps);
+    const delay = uniformDistribution ? timeUnit / rps : timeUnit;
+    return async function rl() {
+        await sema.acquire();
+        setTimeout(() => sema.release(), delay);
+    };
+}
+exports.RateLimit = RateLimit;
+
+
+/***/ },
+
+/***/ "./node_modules/events/events.js"
+/*!***************************************!*\
+  !*** ./node_modules/events/events.js ***!
+  \***************************************/
+(module) {
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+var R = typeof Reflect === 'object' ? Reflect : null
+var ReflectApply = R && typeof R.apply === 'function'
+  ? R.apply
+  : function ReflectApply(target, receiver, args) {
+    return Function.prototype.apply.call(target, receiver, args);
+  }
+
+var ReflectOwnKeys
+if (R && typeof R.ownKeys === 'function') {
+  ReflectOwnKeys = R.ownKeys
+} else if (Object.getOwnPropertySymbols) {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target)
+      .concat(Object.getOwnPropertySymbols(target));
+  };
+} else {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target);
+  };
+}
+
+function ProcessEmitWarning(warning) {
+  if (console && console.warn) console.warn(warning);
+}
+
+var NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {
+  return value !== value;
+}
+
+function EventEmitter() {
+  EventEmitter.init.call(this);
+}
+module.exports = EventEmitter;
+module.exports.once = once;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._eventsCount = 0;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+var defaultMaxListeners = 10;
+
+function checkListener(listener) {
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
+}
+
+Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
+  enumerable: true,
+  get: function() {
+    return defaultMaxListeners;
+  },
+  set: function(arg) {
+    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {
+      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + '.');
+    }
+    defaultMaxListeners = arg;
+  }
+});
+
+EventEmitter.init = function() {
+
+  if (this._events === undefined ||
+      this._events === Object.getPrototypeOf(this)._events) {
+    this._events = Object.create(null);
+    this._eventsCount = 0;
+  }
+
+  this._maxListeners = this._maxListeners || undefined;
+};
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
+  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {
+    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n + '.');
+  }
+  this._maxListeners = n;
+  return this;
+};
+
+function _getMaxListeners(that) {
+  if (that._maxListeners === undefined)
+    return EventEmitter.defaultMaxListeners;
+  return that._maxListeners;
+}
+
+EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
+  return _getMaxListeners(this);
+};
+
+EventEmitter.prototype.emit = function emit(type) {
+  var args = [];
+  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
+  var doError = (type === 'error');
+
+  var events = this._events;
+  if (events !== undefined)
+    doError = (doError && events.error === undefined);
+  else if (!doError)
+    return false;
+
+  // If there is no 'error' event listener then throw.
+  if (doError) {
+    var er;
+    if (args.length > 0)
+      er = args[0];
+    if (er instanceof Error) {
+      // Note: The comments on the `throw` lines are intentional, they show
+      // up in Node's output if this results in an unhandled exception.
+      throw er; // Unhandled 'error' event
+    }
+    // At least give some kind of context to the user
+    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
+    err.context = er;
+    throw err; // Unhandled 'error' event
+  }
+
+  var handler = events[type];
+
+  if (handler === undefined)
+    return false;
+
+  if (typeof handler === 'function') {
+    ReflectApply(handler, this, args);
+  } else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      ReflectApply(listeners[i], this, args);
+  }
+
+  return true;
+};
+
+function _addListener(target, type, listener, prepend) {
+  var m;
+  var events;
+  var existing;
+
+  checkListener(listener);
+
+  events = target._events;
+  if (events === undefined) {
+    events = target._events = Object.create(null);
+    target._eventsCount = 0;
+  } else {
+    // To avoid recursion in the case that type === "newListener"! Before
+    // adding it to the listeners, first emit "newListener".
+    if (events.newListener !== undefined) {
+      target.emit('newListener', type,
+                  listener.listener ? listener.listener : listener);
+
+      // Re-assign `events` because a newListener handler could have caused the
+      // this._events to be assigned to a new object
+      events = target._events;
+    }
+    existing = events[type];
+  }
+
+  if (existing === undefined) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    existing = events[type] = listener;
+    ++target._eventsCount;
+  } else {
+    if (typeof existing === 'function') {
+      // Adding the second element, need to change to array.
+      existing = events[type] =
+        prepend ? [listener, existing] : [existing, listener];
+      // If we've already got an array, just append.
+    } else if (prepend) {
+      existing.unshift(listener);
+    } else {
+      existing.push(listener);
+    }
+
+    // Check for listener leak
+    m = _getMaxListeners(target);
+    if (m > 0 && existing.length > m && !existing.warned) {
+      existing.warned = true;
+      // No error code for this since it is a Warning
+      // eslint-disable-next-line no-restricted-syntax
+      var w = new Error('Possible EventEmitter memory leak detected. ' +
+                          existing.length + ' ' + String(type) + ' listeners ' +
+                          'added. Use emitter.setMaxListeners() to ' +
+                          'increase limit');
+      w.name = 'MaxListenersExceededWarning';
+      w.emitter = target;
+      w.type = type;
+      w.count = existing.length;
+      ProcessEmitWarning(w);
+    }
+  }
+
+  return target;
+}
+
+EventEmitter.prototype.addListener = function addListener(type, listener) {
+  return _addListener(this, type, listener, false);
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.prependListener =
+    function prependListener(type, listener) {
+      return _addListener(this, type, listener, true);
+    };
+
+function onceWrapper() {
+  if (!this.fired) {
+    this.target.removeListener(this.type, this.wrapFn);
+    this.fired = true;
+    if (arguments.length === 0)
+      return this.listener.call(this.target);
+    return this.listener.apply(this.target, arguments);
+  }
+}
+
+function _onceWrap(target, type, listener) {
+  var state = { fired: false, wrapFn: undefined, target: target, type: type, listener: listener };
+  var wrapped = onceWrapper.bind(state);
+  wrapped.listener = listener;
+  state.wrapFn = wrapped;
+  return wrapped;
+}
+
+EventEmitter.prototype.once = function once(type, listener) {
+  checkListener(listener);
+  this.on(type, _onceWrap(this, type, listener));
+  return this;
+};
+
+EventEmitter.prototype.prependOnceListener =
+    function prependOnceListener(type, listener) {
+      checkListener(listener);
+      this.prependListener(type, _onceWrap(this, type, listener));
+      return this;
+    };
+
+// Emits a 'removeListener' event if and only if the listener was removed.
+EventEmitter.prototype.removeListener =
+    function removeListener(type, listener) {
+      var list, events, position, i, originalListener;
+
+      checkListener(listener);
+
+      events = this._events;
+      if (events === undefined)
+        return this;
+
+      list = events[type];
+      if (list === undefined)
+        return this;
+
+      if (list === listener || list.listener === listener) {
+        if (--this._eventsCount === 0)
+          this._events = Object.create(null);
+        else {
+          delete events[type];
+          if (events.removeListener)
+            this.emit('removeListener', type, list.listener || listener);
+        }
+      } else if (typeof list !== 'function') {
+        position = -1;
+
+        for (i = list.length - 1; i >= 0; i--) {
+          if (list[i] === listener || list[i].listener === listener) {
+            originalListener = list[i].listener;
+            position = i;
+            break;
+          }
+        }
+
+        if (position < 0)
+          return this;
+
+        if (position === 0)
+          list.shift();
+        else {
+          spliceOne(list, position);
+        }
+
+        if (list.length === 1)
+          events[type] = list[0];
+
+        if (events.removeListener !== undefined)
+          this.emit('removeListener', type, originalListener || listener);
+      }
+
+      return this;
+    };
+
+EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+
+EventEmitter.prototype.removeAllListeners =
+    function removeAllListeners(type) {
+      var listeners, events, i;
+
+      events = this._events;
+      if (events === undefined)
+        return this;
+
+      // not listening for removeListener, no need to emit
+      if (events.removeListener === undefined) {
+        if (arguments.length === 0) {
+          this._events = Object.create(null);
+          this._eventsCount = 0;
+        } else if (events[type] !== undefined) {
+          if (--this._eventsCount === 0)
+            this._events = Object.create(null);
+          else
+            delete events[type];
+        }
+        return this;
+      }
+
+      // emit removeListener for all listeners on all events
+      if (arguments.length === 0) {
+        var keys = Object.keys(events);
+        var key;
+        for (i = 0; i < keys.length; ++i) {
+          key = keys[i];
+          if (key === 'removeListener') continue;
+          this.removeAllListeners(key);
+        }
+        this.removeAllListeners('removeListener');
+        this._events = Object.create(null);
+        this._eventsCount = 0;
+        return this;
+      }
+
+      listeners = events[type];
+
+      if (typeof listeners === 'function') {
+        this.removeListener(type, listeners);
+      } else if (listeners !== undefined) {
+        // LIFO order
+        for (i = listeners.length - 1; i >= 0; i--) {
+          this.removeListener(type, listeners[i]);
+        }
+      }
+
+      return this;
+    };
+
+function _listeners(target, type, unwrap) {
+  var events = target._events;
+
+  if (events === undefined)
+    return [];
+
+  var evlistener = events[type];
+  if (evlistener === undefined)
+    return [];
+
+  if (typeof evlistener === 'function')
+    return unwrap ? [evlistener.listener || evlistener] : [evlistener];
+
+  return unwrap ?
+    unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
+}
+
+EventEmitter.prototype.listeners = function listeners(type) {
+  return _listeners(this, type, true);
+};
+
+EventEmitter.prototype.rawListeners = function rawListeners(type) {
+  return _listeners(this, type, false);
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  if (typeof emitter.listenerCount === 'function') {
+    return emitter.listenerCount(type);
+  } else {
+    return listenerCount.call(emitter, type);
+  }
+};
+
+EventEmitter.prototype.listenerCount = listenerCount;
+function listenerCount(type) {
+  var events = this._events;
+
+  if (events !== undefined) {
+    var evlistener = events[type];
+
+    if (typeof evlistener === 'function') {
+      return 1;
+    } else if (evlistener !== undefined) {
+      return evlistener.length;
+    }
+  }
+
+  return 0;
+}
+
+EventEmitter.prototype.eventNames = function eventNames() {
+  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
+};
+
+function arrayClone(arr, n) {
+  var copy = new Array(n);
+  for (var i = 0; i < n; ++i)
+    copy[i] = arr[i];
+  return copy;
+}
+
+function spliceOne(list, index) {
+  for (; index + 1 < list.length; index++)
+    list[index] = list[index + 1];
+  list.pop();
+}
+
+function unwrapListeners(arr) {
+  var ret = new Array(arr.length);
+  for (var i = 0; i < ret.length; ++i) {
+    ret[i] = arr[i].listener || arr[i];
+  }
+  return ret;
+}
+
+function once(emitter, name) {
+  return new Promise(function (resolve, reject) {
+    function errorListener(err) {
+      emitter.removeListener(name, resolver);
+      reject(err);
+    }
+
+    function resolver() {
+      if (typeof emitter.removeListener === 'function') {
+        emitter.removeListener('error', errorListener);
+      }
+      resolve([].slice.call(arguments));
+    };
+
+    eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
+    if (name !== 'error') {
+      addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });
+    }
+  });
+}
+
+function addErrorHandlerIfEventEmitter(emitter, handler, flags) {
+  if (typeof emitter.on === 'function') {
+    eventTargetAgnosticAddListener(emitter, 'error', handler, flags);
+  }
+}
+
+function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
+  if (typeof emitter.on === 'function') {
+    if (flags.once) {
+      emitter.once(name, listener);
+    } else {
+      emitter.on(name, listener);
+    }
+  } else if (typeof emitter.addEventListener === 'function') {
+    // EventTarget does not have `error` event semantics like Node
+    // EventEmitters, we do not listen for `error` events here.
+    emitter.addEventListener(name, function wrapListener(arg) {
+      // IE does not have builtin `{ once: true }` support so we
+      // have to do it manually.
+      if (flags.once) {
+        emitter.removeEventListener(name, wrapListener);
+      }
+      listener(arg);
+    });
+  } else {
+    throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter);
+  }
+}
+
+
+/***/ },
+
 /***/ "joomla.dialog"
 /*!********************************!*\
   !*** external "joomla.dialog" ***!
@@ -37,13 +717,42 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_joomla_dialog_fc22b544__;
 /******/ 	};
 /******/ 
 /******/ 	// Execute the module function
-/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 
 /******/ 	// Return the exports of the module
 /******/ 	return module.exports;
 /******/ }
 /******/ 
 /************************************************************************/
+/******/ /* webpack/runtime/compat get default export */
+/******/ (() => {
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = (module) => {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			() => (module['default']) :
+/******/ 			() => (module);
+/******/ 		__webpack_require__.d(getter, { a: getter });
+/******/ 		return getter;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
 /******/ /* webpack/runtime/make namespace object */
 /******/ (() => {
 /******/ 	// define __esModule on exports
@@ -63,8 +772,11 @@ var __webpack_exports__ = {};
   !*** ./src/index.js ***!
   \**********************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var joomla_dialog__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! joomla.dialog */ "joomla.dialog");
+/* harmony import */ var async_sema__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! async-sema */ "./node_modules/async-sema/lib/index.js");
+/* harmony import */ var async_sema__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(async_sema__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var joomla_dialog__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! joomla.dialog */ "joomla.dialog");
 // JoomGallery AIinterface class //
+
 
 
 class AIinterface {
@@ -134,10 +846,10 @@ class AIinterface {
     return encodeURIComponent(String(s));
   }
 
-  addHeader(headers = {}) {
+  addHeader(headers = {}, addContentType = true) {
     const h = { ...headers };
 
-    if (!Object.prototype.hasOwnProperty.call(h, 'Content-Type')) {
+    if (addContentType && !Object.prototype.hasOwnProperty.call(h, 'Content-Type')) {
       h['Content-Type'] = 'application/json';
     }
     if (!Object.prototype.hasOwnProperty.call(h, 'X-Client-Name')) {
@@ -274,36 +986,6 @@ class AIinterface {
     return key;
   }
 
-  async testConnection(el, event) {
-    if (event) event.preventDefault();
-
-    // Test ping
-    const ping = await this.sendGet(this.host);
-
-    if(ping.data !== "PING") {
-
-      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TITLE ?? 'Connection failed';
-      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TEXT + this.host;
-
-      joomla_dialog__WEBPACK_IMPORTED_MODULE_0__["default"].alert(msg, title)
-      .then(() => {
-        console.log('Connection to "' + this.host + '" failed. Check your AI Interface host URL.');
-      });
-    } else {
-      const info = await this.getInfo();
-
-      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TITLE ?? 'Authentication failed';
-      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TEXT + ' ' + this.host;
-
-      if(info.status !== 200) {
-        joomla_dialog__WEBPACK_IMPORTED_MODULE_0__["default"].alert(msg, title)
-        .then(() => {
-          console.log('Authentication to "' + this.host + '" failed. Check your AI Interface API-Key. Make sure your account in the AI Interface is up and running.');
-        });
-      }
-    }
-  }
-
   // --- DOM Helpers ----
   addListElements(selector, items) {
     let dropdown = document.getElementById(this.prefix + selector);
@@ -357,10 +1039,43 @@ class AIinterface {
     return selected ? selected.dataset.value : null;
   }
 
+  getManualKeywords(container) {
+    const keywords = [];
+    const grid = container?.querySelector('.manual-keywords .grid');
+
+    if (!grid) {
+      return keywords;
+    }
+
+    grid.querySelectorAll('button').forEach((btn) => {
+      const keyword = btn.innerText.trim();
+      if (keyword) {
+        keywords.push(keyword);
+      }
+    });
+
+    return keywords;
+  }
+
+  getPanelPositionByImageId(imageId) {
+  let pos = 0;
+
+  document.querySelectorAll('.images-panel .image-panel').forEach((panel) => {
+    const imageEl = panel.querySelector('img.image');
+
+    if (imageEl && imageEl.getAttribute('data-imgid') == imageId) {
+      const match = panel.getAttribute('id')?.match(/-image-panel-(\d+)$/);
+      pos = match ? parseInt(match[1], 10) : 0;
+    }
+  });
+
+  return pos;
+}
+
   manualKeywords(el, event) {
     event.preventDefault();
 
-    const txtField = document.getElementById('jgai-manual-keywords');
+    const txtField = document.getElementById(`${this.prefix}-manual-keywords`);
     const keywords = txtField.value
       .split(',')
       .map(item => item.trim())
@@ -431,7 +1146,7 @@ class AIinterface {
     }
 
     // Get the panel
-    const panel = document.querySelector(`#jgai-image-panel-${imgPos}`);
+    const panel = document.querySelector(`#${this.prefix}-image-panel-${imgPos}`);
     if (!panel) {
       console.log(`Try to add keywords, but image panel at position ${imgPos} not found.`)
       return;
@@ -445,7 +1160,7 @@ class AIinterface {
     const imgID = panel.querySelector('.image').getAttribute('data-imgid');
 
     // Store keywords to image (ajax call)
-    if(!this.storeKeywords(imgID, keywords, 'add'))
+    if(!(await this.storeKeywords(imgID, keywords, 'add')))
     {
       const keywords_str = keywords.join(', ');
       Joomla.renderMessages(`Keywords could not be added/stored to database.<br>Keywords: ${keywords_str}`);
@@ -478,7 +1193,7 @@ class AIinterface {
       input.value = value;
       input.disabled = true;
 
-      const inputId = `jgai-keyword-${imgID}-${tagId}`;
+      const inputId = `${this.prefix}-keyword-${imgID}-${tagId}`;
       input.id = inputId;
 
       // Create button
@@ -511,7 +1226,7 @@ class AIinterface {
     }
 
     // Get the panel
-    const panel = document.querySelector(`#jgai-image-panel-${imgPos}`);
+    const panel = document.querySelector(`#${this.prefix}-image-panel-${imgPos}`);
     if (!panel) {
       console.log(`Try to remove keywords, but image panel at position ${imgPos} not found.`)
       return;
@@ -567,18 +1282,270 @@ class AIinterface {
     this.remKeywordsFromImg(pos, keywords);
   }
 
+  updateKeywordGenerationProgress(total, successCount, failedCount, pendingCount) {
+    console.log(
+      `[AIinterface] Keyword image fetch progress: total=${total}, success=${successCount}, failed=${failedCount}, pending=${pendingCount}`
+    );
+  }
+
+  async testConnection(el, event) {
+    if (event) event.preventDefault();
+
+    // Test ping
+    const ping = await this.sendGet(this.host);
+
+    if(ping.data !== "PING") {
+
+      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TITLE ?? 'Connection failed';
+      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TEXT + this.host;
+
+      joomla_dialog__WEBPACK_IMPORTED_MODULE_1__["default"].alert(msg, title)
+      .then(() => {
+        console.log('Connection to "' + this.host + '" failed. Check your AI Interface host URL.');
+      });
+    } else {
+      const info = await this.getInfo();
+
+      if(info.status == 200) {
+        const title = this.lang.COM_JOOMGALLERY_JS_AIINT_SUCCESS_TITLE ?? 'Success';
+        const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_SUCCESS_TEXT + '  ' + this.host;
+
+        joomla_dialog__WEBPACK_IMPORTED_MODULE_1__["default"].alert(msg, title)
+      } else {
+        const title = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TITLE ?? 'Failed';
+        const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TEXT + '  ' + this.host;
+
+        joomla_dialog__WEBPACK_IMPORTED_MODULE_1__["default"].alert(msg, title)
+        .then(() => {
+          console.log('Authentication to "' + this.host + '" failed. Check your AI Interface API-Key. Make sure your account in the AI Interface is up and running.');
+        });
+      }
+    }
+  }
+
   async keywordsGenerate(el, event) {
     event.preventDefault();
 
-    model = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
+    // Get required data from UI
+    let model  = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
+    let panels = document.querySelectorAll('.images-panel .image-panel');
+    const manualKeywords = this.getManualKeywords(el.parentElement?.parentElement);
 
-    result = await this.genKeywords(event, images, model, options);
+    if (!panels.length) {
+      Joomla.renderMessages({ error: ['No image panels found.'] }, '#image-message-container');
+      return;
+    }
+
+    // Create the options object
+    const options = {
+      'confidence_values': false,
+      'model': model,
+      'predefined_tags': manualKeywords,
+      'prompt_mode': this.getSelectedListElement(`${this.prefix}-modes-dropdown`),
+      'service': this.getProvider(model),
+      'language': this.getSelectedListElement(`${this.prefix}-langs-dropdown`),
+      'suggested_topic': document.getElementById(`${this.prefix}-prompt-description`)?.value ?? '',
+      'tag_count': document.getElementById(`${this.prefix}-nmb-keywords`)?.value ?? '',
+      'token_count': true
+    }
+
+    const workerCount = Math.max(1, Number(this.configs.max_parallel || 1));
+
+    // Generate keywords in parallel using sema
+    const {
+      results, successCount, failedCount
+    } = await this.processImagesWithSema(
+      panels, options, workerCount
+    );
+
+    const errors = {};
+    let success = failedCount === 0;
+
+    // Check results
+    results.forEach((result, index) => {
+      if (!result?.success) {
+        errors[String(result?.id ?? index)] = {
+          status: result?.status ?? 0,
+          error: result?.error ?? 'Unknown error'
+        };
+      }
+    });
+
+    return {
+      success,
+      errors,
+      nmbErrors: failedCount,
+      nmbSuccess: successCount
+    };
+  }
+  
+  async processSingleImageKeywords(panel, options) {
+    const fetched = await this.fetchImageAsBase64(panel);
+
+    if (!fetched.success || !fetched.data) {
+      return {
+        success: false,
+        stage: 'fetch',
+        id: fetched.id ?? null,
+        status: fetched.status ?? 0,
+        error: fetched.message || 'Fetching resized image failed.',
+      };
+    }
+
+    const images = [
+      {
+        id: fetched.id,
+        base64_data: fetched.data,
+      }
+    ];
+
+    const response = await this.genKeywords(null, images, options);
+    const payload = response?.data ?? {};
+    const results = payload?.results ?? [];
+
+    if (!response?.success) {
+      return {
+        success: false,
+        stage: 'generate',
+        id: fetched.id,
+        status: response?.status ?? 0,
+        error: response?.message || 'Keyword generation request to API failed.',
+      };
+    }
+
+    if (response.status != 1 || !Array.isArray(results) || results.length < 1) {
+      return {
+        success: false,
+        stage: 'generate',
+        id: fetched.id,
+        status: payload?.status ?? response?.status ?? 0,
+        error: response?.message || 'API returned no valid result.',
+      };
+    }
+
+    const result = results[0];
+
+    if (result.error) {
+      return {
+        success: false,
+        stage: 'generate',
+        id: result.id ?? fetched.id,
+        status: payload?.status ?? response?.status ?? 0,
+        error: result.error,
+        model_tokens: result.model_tokens ?? payload.model_tokens ?? 0,
+        service_tokens: result.service_tokens ?? payload.service_tokens ?? 0,
+      };
+    }
+
+    const keywords = (result.tags || [])
+      .map((tag) => tag?.name?.trim())
+      .filter(Boolean);
+
+    const pos = this.getPanelPositionByImageId(result.id ?? fetched.id);
+
+    await this.addKeywordsToImg(pos, keywords);
+
+    return {
+      success: true,
+      stage: 'done',
+      id: result.id ?? fetched.id,
+      status: payload.status,
+      keywords,
+      model_tokens: result.model_tokens ?? payload.model_tokens ?? 0,
+      service_tokens: result.service_tokens ?? payload.service_tokens ?? 0,
+    };
+  }
+
+  async processImagesWithSema(panels, options, workerCount = 1) {
+    const sema = new async_sema__WEBPACK_IMPORTED_MODULE_0__.Sema(workerCount);
+    const panelList = Array.from(panels);
+    const results = new Array(panelList.length);
+
+    let nextIndex = 0;
+    let successCount = 0;
+    let failedCount = 0;
+    let pendingCount = panelList.length;
+
+    // Define progress logic
+    const updateCounters = (status) => {
+      if (status === 'success') {
+        successCount++;
+      } else if (status === 'failed') {
+        failedCount++;
+      }
+
+      if (pendingCount > 0) {
+        pendingCount--;
+      }
+
+      this.updateKeywordGenerationProgress(
+        panelList.length,
+        successCount,
+        failedCount,
+        pendingCount
+      );
+    };
+
+    this.updateKeywordGenerationProgress(
+      panelList.length,
+      successCount,
+      failedCount,
+      pendingCount
+    );
+
+    // Define worker loop function
+    const runWorkerLoop = async () => {
+      while (true) {
+        const currentIndex = nextIndex++;
+        if (currentIndex >= panelList.length) {
+          break;
+        }
+
+        await sema.acquire();
+        const panel = panelList[currentIndex];
+
+        try {
+          const result = await this.processSingleImageKeywords(panel, options);
+          results[currentIndex] = result;
+          updateCounters(result.success ? 'success' : 'failed');
+        } catch (error) {
+          results[currentIndex] = {
+            success: false,
+            stage: 'internal',
+            id: null,
+            status: 0,
+            error: error instanceof Error ? error.message : String(error),
+          };
+          updateCounters('failed');
+        } finally {
+          sema.release();
+        }
+      }
+    };
+
+    const workerTotal = Math.min(workerCount, panelList.length);
+    const promises = [];
+
+    // Run worker loop
+    for (let i = 0; i < workerTotal; i++) {
+      promises.push(runWorkerLoop());
+    }
+
+    // Wait for promise to resolve
+    await Promise.allSettled(promises);
+
+    return {
+      results,
+      successCount,
+      failedCount,
+      pendingCount,
+    };
   }
 
   // --- HTTP -------
   async sendGet(url, headers) {
     // Add default headers
-    headers = this.addHeader(headers);
+    headers = this.addHeader(headers, false);
 
     // Set request parameters
     let params = {
@@ -606,12 +1573,25 @@ class AIinterface {
       // Catch network error
       const msg = `HTTP ${response.status} ${response.statusText}`;
       this.logRequestErrors(url, headers, msg);
-      return {success: false, status: response.status, message: response.message, messages: [txt], data: null};
+      return {success: false, status: response.status, message: msg, messages: [txt], data: null};
     }
 
-    const res = this.parseJsonResponse(txt, response.status, response.statusText);
+    // Detect response content type (NOT request header)
+    const responseContentType = response.headers.get('content-type') || '';
 
-    return res;
+    // JSON response
+    if (responseContentType.includes('application/json')) {
+      return this.parseJsonResponse(txt, response.status, response.statusText);
+    }
+
+    // Plain text (base64 etc.)
+    return {
+      success: true,
+      status: response.status,
+      message: response.statusText,
+      messages: [],
+      data: txt
+    };
   }
 
   async sendPost(url, bodyObjOrString, headers = {}) {
@@ -677,8 +1657,22 @@ class AIinterface {
       return { success: false, status: response.status, message: msg, messages: [txt], data: null };
     }
 
-    const res = this.parseJsonResponse(txt, response.status, response.statusText);
-    return res;
+    // Detect response content type (NOT request header)
+    const responseContentType = response.headers.get('content-type') || '';
+
+    // JSON response
+    if (responseContentType.includes('application/json')) {
+      return this.parseJsonResponse(txt, response.status, response.statusText);
+    }
+
+    // Plain text (base64 etc.)
+    return {
+      success: true,
+      status: response.status,
+      message: response.statusText,
+      messages: [],
+      data: txt
+    };
   }
 
   async storeKeywords(imgId, keywords, action) {
@@ -719,6 +1713,57 @@ class AIinterface {
     }
 
     return res.success
+  }
+
+  async fetchImageAsBase64(panel) {
+    const imgEl = panel.querySelector('img.image');
+
+    if (!imgEl) {
+      return {
+        success: false,
+        status: null,
+        message: 'No image element found in panel.',
+        messages: [],
+        data: null
+      };
+    }
+
+    const imgID = imgEl.getAttribute('data-imgid');
+
+    const variables = new URLSearchParams({
+      id: imgID,
+      type: this.configs.imagetype ?? '',
+      base64: 1,
+      resize: this.configs.resize ?? 0,
+      resize_type: 3
+    });
+
+    const urlBase64 = this.sanitizeUrl(
+      `${this.configs.base_url}/index.php?option=com_joomgallery&view=image&format=raw&${variables.toString()}`
+    );
+
+    const headersBase64 = {
+      Authorization: '',
+      'X-CSRF-Token': this.configs.session
+    };
+
+    const res = await this.sendGet(urlBase64, headersBase64);
+
+    if (!res.success) {
+      return {
+        success: false,
+        id: imgID,
+        message: res.message || 'Image fetch failed.',
+        data: null,
+      };
+    }
+
+    return {
+      success: true,
+      id: imgID,
+      message: 'OK',
+      data: res.data,
+    };
   }
 
   // --- API endpoints ----
@@ -782,7 +1827,7 @@ class AIinterface {
     if (data?.data?.languages) {
       this.languages = data.data.languages;
     } else if (data?.languages) {
-      this.laguages = data.languages;
+      this.languages = data.languages;
     }
 
     return data;
@@ -847,14 +1892,14 @@ class AIinterface {
     return data;
   }
 
-  async genKeywords(e, images, model, options = {}) {
+  async genKeywords(e, images, options = {}) {
     if (e) e.preventDefault();
 
     const route = "tags/generate";
     const url = this.sanitizeUrl(`${this.host}/${route}`);
 
     const imgs = images || [];
-    const usedModel = model || this.def_model;
+    const usedModel = options.model || this.def_model;
 
     if (!Array.isArray(imgs) || imgs.length < 1) {
       return { success: false, status: 0, message: "No images provided. You need to send at least one image.", data: null };
@@ -873,8 +1918,7 @@ class AIinterface {
     const body = {
       api_key: apiKey,
       options,
-      images: imgs,
-      model: usedModel, // optional; include if your API wants it
+      images: imgs
     };
 
     return await this.sendPost(url, body, headers);
