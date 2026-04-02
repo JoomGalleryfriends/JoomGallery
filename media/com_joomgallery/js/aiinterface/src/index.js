@@ -529,10 +529,15 @@ class AIinterface {
     } else {
       const info = await this.getInfo();
 
-      const title = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TITLE ?? 'Authentication failed';
-      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TEXT + ' ' + this.host;
+      if(info.status == 200) {
+        const title = this.lang.COM_JOOMGALLERY_JS_AIINT_SUCCESS_TITLE ?? 'Success';
+        const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_SUCCESS_TEXT + '  ' + this.host;
 
-      if(info.status !== 200) {
+        JoomlaDialog.alert(msg, title)
+      } else {
+        const title = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TITLE ?? 'Failed';
+        const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TEXT + '  ' + this.host;
+
         JoomlaDialog.alert(msg, title)
         .then(() => {
           console.log('Authentication to "' + this.host + '" failed. Check your AI Interface API-Key. Make sure your account in the AI Interface is up and running.');
