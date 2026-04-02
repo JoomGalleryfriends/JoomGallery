@@ -43,13 +43,12 @@ class RawView extends JoomGalleryRawView
     $type   = $this->app->input->get('type', 'thumbnail', 'word');
     $id     = $this->app->input->get('id', 0);
     $base64 = $this->app->input->get('base64', 0);
+    $resize = $this->app->input->get('resize', 0);
 
     $options = new \stdClass();
-    if($resize = $this->app->input->get('resize', 0))
-    {
-      $options->resize = $resize;
-      $options->resize_type = $this->app->input->get('resize_type', 3);
-    }
+    //$options->base64 = boolval($base64);
+    $options->resize = boolval($resize);
+    $options->resize_type = $this->app->input->get('resize_type', 3);
 
     if($id == 0 || $id == '0')
     {
@@ -147,7 +146,7 @@ class RawView extends JoomGalleryRawView
    */
   public function ppImage(&$file_info, &$resource, $imagetype, $options = null)
   {
-    if(\property_exists($options, 'resize'))
+    if(\property_exists($options, 'resize') && $options->resize)
     {
       // Get component object
       $com = JoomHelper::getComponent();
