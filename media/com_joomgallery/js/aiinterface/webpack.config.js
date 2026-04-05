@@ -22,5 +22,6 @@ module.exports = {
   externalsType: 'module',
   externals: {
     'joomla.dialog': 'joomla.dialog',
+    'bootstrap.modal': 'bootstrap.modal',
   },
 }
