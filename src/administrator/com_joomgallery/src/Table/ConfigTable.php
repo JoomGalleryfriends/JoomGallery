@@ -174,6 +174,9 @@ class ConfigTable extends Table
     // Support for multiple field: jg_record_hits_select
     $this->multipleFieldSupport($array, 'jg_record_hits_select');
 
+    // Support for multiple subform field: jg_aiint_provider_keys
+    $this->subformFieldSupport($array, 'jg_aiint_provider_keys');
+
     //
     if(isset($array['params']) && \is_array($array['params']))
     {
@@ -243,6 +246,28 @@ class ConfigTable extends Table
     if(\is_null($this->jg_dynamicprocessing))
     {
       $this->jg_dynamicprocessing = '{}';
+    }
+
+    // Support for subform field jg_record_hits_select
+    if(\is_array($this->jg_record_hits_select))
+    {
+      $this->jg_record_hits_select = json_encode($this->jg_record_hits_select, JSON_UNESCAPED_UNICODE);
+    }
+
+    if(\is_null($this->jg_record_hits_select))
+    {
+      $this->jg_record_hits_select = '{}';
+    }
+
+    // Support for subform field jg_aiint_provider_keys
+    if(\is_array($this->jg_aiint_provider_keys))
+    {
+      $this->jg_aiint_provider_keys = json_encode($this->jg_aiint_provider_keys, JSON_UNESCAPED_UNICODE);
+    }
+
+    if(\is_null($this->jg_aiint_provider_keys))
+    {
+      $this->jg_aiint_provider_keys = '{}';
     }
 
     // Support for media manager image select

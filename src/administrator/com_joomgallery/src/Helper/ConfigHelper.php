@@ -15,7 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\Folder;
@@ -280,5 +282,30 @@ class ConfigHelper
     }
 
     return false;
+  }
+
+  /**
+   * Get the subform values from jg_aiint_provider_keys in a nice format
+   *
+   * @param   ConfigInterface   Config data
+   *
+   * @return  array             Assotiative array containing all available api keys
+   *
+   * @since   4.4.0
+   */
+  public static function getProviderKeys(ConfigInterface $config)
+  {
+    $apiKeys_orig = json_decode($config->get('jg_aiint_provider_keys', '{}'), true);
+
+    $api_keys = [];
+    foreach($apiKeys_orig as $provider)
+    {
+      // Make provider names lower case
+      $provider_name = OutputFilter::stringURLSafe(trim($provider['provider_name']));
+
+      $api_keys[$provider_name] = $provider['provider_key'];
+    }
+
+    return $api_keys;
   }
 }

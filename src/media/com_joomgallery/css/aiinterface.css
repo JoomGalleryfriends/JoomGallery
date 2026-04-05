@@ -65,3 +65,24 @@
 .jg-tags-aiinterface .keywords-panels .js-stools-container-bar {
   margin-inline-start: initial;
 }
+.modal.fade .modal-dialog.level-2 {
+  transform: translate(0, 0px);
+}
+.jgai-status-success {
+  background-color: var(--success);
+}
+.jgai-status-failed {
+  background-color: var(--danger);
+}
+.jgai-status-warning {
+  background-color: var(--warning);
+}
+.color-black {
+  color: #000000 !important;
+}
+.color-orange {
+  color: #ff7b10 !important;
+}
+.color-red {
+  color: #c90c0c !important;
+}

@@ -207,6 +207,8 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_detail_view_show_metadata` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_aiint_host` VARCHAR(50) NOT NULL DEFAULT "",
 `jg_aiint_key` VARCHAR(300) NOT NULL DEFAULT "",
+`jg_aiint_force_slash` TINYINT(1) NOT NULL DEFAULT 0,
+`jg_aiint_provider_keys` TEXT NOT NULL,
 `jg_aiint_tags_imagetype` VARCHAR(25) NOT NULL DEFAULT "detail",
 `jg_aiint_tags_maxdim` INT NOT NULL DEFAULT 500,
 `jg_aiint_tags_preload` INT NOT NULL DEFAULT 0,

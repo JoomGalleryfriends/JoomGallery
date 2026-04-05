@@ -12,10 +12,12 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JSHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
@@ -29,18 +31,24 @@ $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.admin')
    ->useStyle('com_joomgallery.aiinterface')
    ->useScript('bootstrap.dropdown')
+   ->useScript('bootstrap.modal')
    ->useScript('com_joomgallery.aiinterface');
 
 $filter_options = ['formSelector' => '#tagsForm', 'filterButton' => false, 'filtersHidden' => true];
 $form_url = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component';
 
+$host_url = $config->get('jg_aiint_host', 'http://localhost/api/v1');
+$base_url = parse_url($host_url, PHP_URL_SCHEME) . '://' . parse_url($host_url, PHP_URL_HOST);
+$lang = str_contains('de',Factory::getLanguage()->getTag()) ? 'de' : 'en';
+
 // Initialize AIinterface
 $opts = [ 'prefix' => 'jgai',
-          'host' => $config->get('jg_aiint_host', 'http://localhost/api/v1'),
+          'host' => $host_url,
           'token' => $config->get('jg_aiint_key', ''),
           'client_name' => 'JG-General',
           'autoload' => true,
           'configs' => [
+            'forceTrailingSlash' => $config->get('jg_aiint_force_slash', 0),
             'version' => JoomHelper::getComponent()->version,
             'def_lang' => Factory::getLanguage()->getTag(),
             'session' => Session::getFormToken(),
@@ -50,6 +58,7 @@ $opts = [ 'prefix' => 'jgai',
             'max_parallel' => $config->get('jg_parallelprocesses', 1),
             'case_sensitivity' => $config->get('jg_aiint_tags_casesens', 1),
             'letter_case' => $config->get('jg_aiint_tags_caseupper', 1),
+            'api_keys' => ConfigHelper::getProviderKeys($config),
           ]
         ];
 $this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);
@@ -67,14 +76,15 @@ if(isset($this->input_cid) && !empty($this->input_cid))
 {
   $form_url = $form_url . '&cid=' . $this->input_cid;
 }
-
 ?>
+
+<?php // Tagging UI ?>
 <div class="jg jg-tags-aiinterface">
   <div class="top-controls">
     <div class="interface-btns">
       <h2 class="mb-4">JoomGallery AI Interface: Keywording</h2>
-      <button class="btn btn-outline-primary">My Account</button>
-      <button class="btn btn-outline-primary">By new tokens</button>
+      <button id="jgai-show-account-btn" class="btn btn-outline-primary">My Account</button>
+      <a class="btn btn-outline-primary" target="_blank" href="<?php echo $base_url . '/' . $lang . '/buy-tokens/'; ?>">By new tokens</a>
     </div>
 
     <div class="token-balance card">
@@ -125,7 +135,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       </div>
       <div class="privacy jgai-privacy">
         <p>* Depending on the selected KI model, different privacy terms will apply.</p>
-        <a href="https://www.google.ch" target="_blank">Click here for more info.</a>
+        <a href="<?php echo $base_url . '/' . $lang . '/model-info/'; ?>" target="_blank">Click here for more info.</a>
       </div>
     </div>
     <div class="prompt-settings col-8 row">
@@ -160,6 +170,8 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       <?php
         $tag_titles = [];
         $tag_ids    = [];
+        $first_img  = ($j == 0) ? true : false;
+        $last_img   = ($j == count($this->images)-1) ? true : false;
 
         if(!empty($img->tag_ids))
         {
@@ -175,8 +187,8 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         <div class="images">
           <img class="image" data-imgid="<?php echo $img->id;?>" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" width="<?php echo $width; ?>" height="<?php echo $heigth; ?>" alt="<?php echo $img->title; ?>">
           <div class="navigation-btn">
-            <button class="btn btn-outline-primary" id="jgai-prev-image-btn"><span class="icon-arrow-left-4"></span> Previous image</button>
-            <button class="btn btn-outline-primary" id="jgai-next-image-btn"><span class="icon-arrow-right-4"></span>Next image</button>
+            <button class="btn btn-outline-primary" id="jgai-prev-image-btn" <?php if($first_img) { echo 'disabled';}?>><span class="icon-arrow-left-4"></span> Previous image</button>
+            <button class="btn btn-outline-primary" id="jgai-next-image-btn" <?php if($last_img) { echo 'disabled';}?>><span class="icon-arrow-right-4"></span>Next image</button>
           </div>
         </div>
         <div class="keywords">
@@ -184,7 +196,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <div class="grid">
             <?php foreach($tag_ids as $t => $tag_id) : ?>
               <div class="input-group grid-item">
-                <input type="text" id="jgai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>" class="form-control" aria-describedby="jgai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>-btn" value="<?php echo $tag_titles[$t]; ?>" disabled>
+                <input type="text" id="jgai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>" class="form-control color-black" aria-describedby="jgai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>-btn" value="<?php echo $tag_titles[$t]; ?>" disabled>
                 <button class="btn btn-outline-secondary" type="button" id="jgai-keyword-<?php echo $img->id; ?>-<?php echo $tag_id; ?>-btn">X</button>
               </div>
             <?php endforeach; ?>
@@ -223,5 +235,140 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         </div>
       </div>
     </form>
+  </div>
+</div>
+
+<?php // Progress and Summary Modal ?>
+<div id ="jgai-modal-generate" class="joomla-modal modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog level-2 modal-lg jviewport-width60">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="jgai-progress-title" class="modal-title"><?php echo Text::_('COM_JOOMGALLERY_PROGRESS'); ?></h3>
+        <button type="button" class="btn-close novalidate" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body jviewport-width60">
+        <?php // Progress Bars ?>
+        <div id="jgai-progress-section" class="container-fluid d-none">
+          <div class="mb-4">
+            <label class="form-label fw-bold">Base64 image preparation</label>
+            <div class="progress" style="height: 24px;">
+              <div id="jgai-progress-fetch-bar" class="progress-bar progress-bar-striped progress-bar-animated"
+                   role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                0 / <?php echo count($this->images); ?>
+              </div>
+            </div>
+            <div class="small text-muted mt-1" id="jgai-progress-fetch-text">Pending...</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Keyword generation</label>
+            <div class="progress" style="height: 24px;">
+              <div id="jgai-progress-generate-bar" class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                  role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                0 / <?php echo count($this->images); ?>
+              </div>
+            </div>
+            <div class="small text-muted mt-1" id="jgai-progress-generate-text">Pending...</div>
+          </div>
+        </div>
+        <?php // Summary ?>
+        <div id="jgai-summary-section" class="container-fluid d-none">
+          <h3 class="mb-3">Generation: Summary</h3>
+          <div class="row align-items-center mb-4">
+            <div class="col-auto">
+              <div id="jgai-summary-status"
+                  class="rounded-circle d-flex align-items-center justify-content-center"
+                  style="width:64px;height:64px;">
+                <span id="jgai-summary-status-icon" class="text-white fs-3"></span>
+              </div>
+            </div>
+            <div class="col">
+              <div class="row mb-2">
+                <div class="col-sm-4 fw-bold">Successful images</div>
+                <div class="col-sm-8" id="jgai-summary-success"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-sm-4 fw-bold">Failed images</div>
+                <div class="col-sm-8" id="jgai-summary-failed"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-sm-4 fw-bold">AI Model used</div>
+                <div class="col-sm-8" id="jgai-summary-model"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-sm-4 fw-bold">Created Keywords</div>
+                <div class="col-sm-8" id="jgai-summary-keywords"></div>
+              </div>
+            </div>
+          </div>
+          <div id="jgai-summary-failed-section" class="mt-3 d-none">
+            <h5 class="text-danger">Failed images</h5>
+            <ul id="jgai-summary-failed-list" class="list-group list-group-flush small"></ul>
+          </div>
+          <hr>
+          <h3 class="mb-3">AI Interface: Summary</h3>
+          <div class="row mb-2">
+            <div class="col-sm-6 fw-bold">Tokens used (AI Model)</div>
+            <div class="col-sm-6" id="jgai-summary-model-tokens"></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-sm-6 fw-bold">Tokens used (Interface)</div>
+            <div class="col-sm-6" id="jgai-summary-service-tokens"></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-sm-6 fw-bold">Infractions</div>
+            <div class="col-sm-6" id="jgai-summary-infractions"></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-sm-6 fw-bold">New Balance</div>
+            <div class="col-sm-6" id="jgai-summary-balance"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo Text::_('JLIB_HTML_BEHAVIOR_CLOSE'); ?></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<?php // User Account Modal ?>
+<div id ="jgai-modal-account" class="joomla-modal modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog level-2 modal-lg jviewport-width60">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="jgai-account-title" class="modal-title"><?php echo Text::_('COM_JOOMGALLERY_USER_ACCOUNT'); ?></h3>
+        <button type="button" class="btn-close novalidate" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body jviewport-width60">
+        <div id="jgai-progress-section" class="container-fluid">
+          <h3 class="mb-3">Connected Interface</h3>
+          <div class="row mb-2">
+            <div class="col-sm-4 fw-bold">Host</div>
+            <div class="col-sm-8" id="jgai-modal-account-host"></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-sm-4 fw-bold">Supported AI Models</div>
+            <div class="col-sm-8" id="jgai-modal-account-models"></div>
+          </div>
+          <hr>
+          <h3 class="mb-3">My Account</h3>
+          <div class="row mb-2">
+            <div class="col-sm-4 fw-bold">Registered E-Mail</div>
+            <div class="col-sm-8" id="jgai-modal-account-mail"></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-sm-4 fw-bold">Token Balance</div>
+            <div class="col-sm-8" id="jgai-modal-account-balance"></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-sm-4 fw-bold">Infractions</div>
+            <div class="col-sm-8" id="jgai-modal-account-infractions"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo Text::_('JLIB_HTML_BEHAVIOR_CLOSE'); ?></button>
+      </div>
+    </div>
   </div>
 </div>
