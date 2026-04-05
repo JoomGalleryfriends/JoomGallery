@@ -816,6 +816,8 @@ class AIinterface {
     if (configs) this.configs = configs;
     if (lang) this.lang = lang;
 
+    this.name = this.lang.COM_JOOMGALLERY_JS_AIINT_TITLE ?? 'JoomGallery AI Interface';
+
     // Detect language
     if(this.configs.def_lang) {
       if (this.configs.def_lang.includes('de')) this.systemLang = 'de';
@@ -1004,6 +1006,24 @@ class AIinterface {
   }
 
   // --- DOM Helpers ----
+  addEventListenerDropdown(el) {
+    const dropdown = el.closest('ul');
+
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      // remove active + aria-selected from all
+      dropdown.querySelectorAll('.dropdown-item').forEach(item => {
+        item.classList.remove('active');
+        item.setAttribute('aria-selected', 'false');
+      });
+
+      // add to clicked
+      this.classList.add('active');
+      this.setAttribute('aria-selected', 'true');
+    });
+  }
+
   addListElements(selector, items) {
     let dropdown = document.getElementById(this.prefix + selector);
     dropdown.innerHTML = '';
@@ -1043,11 +1063,17 @@ class AIinterface {
 
       // mark first item selected
       if (index === 0) {
+        a.classList.add('active');
         a.setAttribute('aria-selected', 'true');
+      } else {
+        a.setAttribute('aria-selected', 'false');
       }
 
       li.appendChild(a);
       dropdown.appendChild(li);
+
+      // install event listeners on a element
+      this.addEventListenerDropdown(a);
     });
   }
 
@@ -1087,7 +1113,7 @@ class AIinterface {
   });
 
   return pos;
-}
+  }
 
   manualKeywords(el, event) {
     event.preventDefault();
@@ -1180,7 +1206,7 @@ class AIinterface {
     if(!(await this.storeKeywords(imgID, keywords, 'add')))
     {
       const keywords_str = keywords.join(', ');
-      Joomla.renderMessages({ error: [`Keywords could not be added/stored to database. Keywords: ${keywords_str}`] }, '#image-message-container');
+      Joomla.renderMessages({ error: [`${this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_STORE_ERROR} ${this.lang.COM_JOOMGALLERY_JS_AIINT_KEYWORDS}: ${keywords_str}`] }, '#image-message-container');
       return;
     }
 
@@ -1260,7 +1286,7 @@ class AIinterface {
     if(!(await this.storeKeywords(imgID, keywords, 'remove')))
     {
       const keywords_str = keywords.join(', ');
-      Joomla.renderMessages({ error: [`Keywords could not be removed/stored to database. Keywords: ${keywords_str}`] }, '#image-message-container');
+      Joomla.renderMessages({ error: [`${this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_REMOVE_ERROR} ${this.lang.COM_JOOMGALLERY_JS_AIINT_KEYWORDS}: ${keywords_str}`] }, '#image-message-container');
       return;
     }
 
@@ -1364,14 +1390,14 @@ class AIinterface {
     const manualKeywords = this.getManualKeywords(el.parentElement?.parentElement);
 
     if (!panels.length) {
-      Joomla.renderMessages({ error: ['No image panels found.'] }, '#image-message-container');
+      Joomla.renderMessages({ error: [this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_NO_PANELS_ERROR] }, '#image-message-container');
       return;
     }
 
     // Check that privacy terms are agreed
     const isChecked = document.getElementById(`${this.prefix}-privacy-box`).checked;
     if (!isChecked) {
-      Joomla.renderMessages({ error: ['Please confirm that you have read and agree to the privacy terms of the selected AI model before generating.'] }, '#image-message-container');
+      Joomla.renderMessages({ error: [this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_PRIVACY_ERROR] }, '#image-message-container');
       return;
     }
 
@@ -1482,7 +1508,7 @@ class AIinterface {
         stage: 'fetch',
         id: fetched.id ?? null,
         status: fetched.status ?? 0,
-        error: fetched.message || 'Fetching resized image failed.',
+        error: fetched.message || this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_FETCH_IMG_ERROR,
       };
     }
 
@@ -1523,7 +1549,7 @@ class AIinterface {
         stage: 'generate',
         id: fetched.id,
         status: response?.status ?? 0,
-        error: response?.message || 'Keyword generation request to API failed.',
+        error: response?.message || this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_GEN_REQUEST_ERROR,
       };
     }
 
@@ -1542,7 +1568,7 @@ class AIinterface {
         stage: 'generate',
         id: fetched.id,
         status: payload?.status ?? response?.status ?? 0,
-        error: response?.message || 'API returned no valid result.',
+        error: response?.message || this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_INVALID_RES_ERROR,
       };
     }
 
@@ -1682,21 +1708,6 @@ class AIinterface {
     modal.show();
   }
 
-  showGenerateModal() {
-    const modalEl = document.getElementById(`${this.prefix}-modal-generate`);
-    if (!modalEl || typeof bootstrap === 'undefined' || !bootstrap.Modal) {
-      console.error('Bootstrap Modal is not available.');
-      return;
-    }
-
-    const modal = bootstrap.Modal.getOrCreateInstance(modalEl, {
-      backdrop: 'static',
-      keyboard: false
-    });
-
-    modal.show();
-  }
-
   showProgressSection() {
     document.getElementById(`${this.prefix}-progress-section`)?.classList.remove('d-none');
     document.getElementById(`${this.prefix}-summary-section`)?.classList.add('d-none');
@@ -1719,7 +1730,7 @@ class AIinterface {
     bar.setAttribute('aria-valuenow', percent);
     bar.textContent = `${done} / ${total}`;
 
-    text.textContent = `Prepared: ${success}, failed: ${failed}`;
+    text.textContent = `${this.lang.COM_JOOMGALLERY_JS_AIINT_PREPARED}: ${success}, ${this.lang.COM_JOOMGALLERY_JS_AIINT_FAILED}: ${failed}`;
 
     console.log(`[AIinterface] Keyword image fetch progress: total=${total}, success=${success}, failed=${failed}, pending=${pending}`);
   }
@@ -1736,7 +1747,7 @@ class AIinterface {
     bar.setAttribute('aria-valuenow', percent);
     bar.textContent = `${done} / ${total}`;
 
-    text.textContent = `Generated: ${success}, failed: ${failed}`;
+    text.textContent = `${this.lang.COM_JOOMGALLERY_JS_AIINT_GENERATED}: ${success}, ${this.lang.COM_JOOMGALLERY_JS_AIINT_FAILED}: ${failed}`;
 
     console.log(`[AIinterface] Base64 image gereation progress: total=${total}, success=${success}, failed=${failed}, pending=${pending}`);
   }
@@ -1795,7 +1806,7 @@ class AIinterface {
       const li = document.createElement('li');
       li.className = 'list-group-item text-danger';
 
-      li.textContent = `Image-ID ${item.id}: ${item.error}`;
+      li.textContent = `${this.lang.COM_JOOMGALLERY_JS_AIINT_IMAGE}-ID ${item.id}: ${item.error}`;
 
       list.appendChild(li);
     });
@@ -2161,12 +2172,12 @@ class AIinterface {
     const usedModel = options.model || this.def_model;
 
     if (!Array.isArray(imgs) || imgs.length < 1) {
-      return { success: false, status: 0, message: "No images provided. You need to send at least one image.", data: null };
+      return { success: false, status: 0, message: this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_NO_IMGS_ERROR, data: null };
     }
 
     const apiKey = this.findAPIkey(usedModel, this.models);
     if (apiKey === false) {
-      return { success: false, status: 0, message: `No API key found for model '${usedModel}'`, data: null };
+      return { success: false, status: 0, message: `${this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_NO_API_KEY_ERROR} '${usedModel}'`, data: null };
     }
 
     const headers = {
@@ -2229,17 +2240,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       ai.addListElements('-langs-dropdown', ai.languages)
     } else {
       // Connection failed
-      Joomla.renderMessages({warning: ['No connection to the AI Interface. Check your connection credentials in the JoomGallery configuration.']}, );
+      Joomla.renderMessages({warning: [undefined.lang.COM_JOOMGALLERY_JS_AIINT_MSG_NO_CONNECTION_ERROR]}, );
 
       if(balance?.message !== 'OK') {
-        Joomla.renderMessages({error: ['Respond status: ' + balance.message]});
+        Joomla.renderMessages({error: [undefined.lang.COM_JOOMGALLERY_JS_AIINT_MSG_RESPOND_STATS + ': ' + balance.message]});
       }
 
       if(balance?.data?.messages.length > 0) {
-        Joomla.renderMessages({warning: ['Answer from API: ' + balance.data.messages[0]]});
+        Joomla.renderMessages({warning: [undefined.lang.COM_JOOMGALLERY_JS_AIINT_MSG_API_ANSWER + ': ' + balance.data.messages[0]]});
       }
     }
   }
+
+  // Install event listeners on dropdowns
+  document.querySelectorAll('[id^="'+prefix+'-"][id$="-dropdown"]').forEach(el => {
+    el.querySelectorAll('.dropdown-item').forEach(item => {
+      ai.addEventListenerDropdown(item);
+    });
+  });
 
   // Install event listeners on buttons
   document.querySelectorAll('[id^="'+prefix+'-"][id$="-btn"]').forEach(el => {
