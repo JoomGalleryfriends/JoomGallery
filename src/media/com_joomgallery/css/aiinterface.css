@@ -65,6 +65,10 @@
 .jg-tags-aiinterface .keywords-panels .js-stools-container-bar {
   margin-inline-start: initial;
 }
+.jg-tags-aiinterface .dropdown-menu a[aria-selected="true"] {
+  color: var(--link-color);
+  background-color: var(--template-bg-light);
+}
 .modal.fade .modal-dialog.level-2 {
   transform: translate(0, 0px);
 }

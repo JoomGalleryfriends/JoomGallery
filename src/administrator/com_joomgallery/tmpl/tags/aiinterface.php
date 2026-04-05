@@ -82,15 +82,15 @@ if(isset($this->input_cid) && !empty($this->input_cid))
 <div class="jg jg-tags-aiinterface">
   <div class="top-controls">
     <div class="interface-btns">
-      <h2 class="mb-4">JoomGallery AI Interface: Keywording</h2>
-      <button id="jgai-show-account-btn" class="btn btn-outline-primary">My Account</button>
-      <a class="btn btn-outline-primary" target="_blank" href="<?php echo $base_url . '/' . $lang . '/buy-tokens/'; ?>">By new tokens</a>
+      <h2 class="mb-4"><?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_TITLE'); ?>: <?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_KEYWORDING'); ?></h2>
+      <button id="jgai-show-account-btn" class="btn btn-outline-primary"><?php echo Text::_('COM_JOOMGALLERY_MY_ACCOUNT'); ?></button>
+      <a class="btn btn-outline-primary" target="_blank" href="<?php echo $base_url . '/' . $lang . '/buy-tokens/'; ?>"><?php echo Text::_('COM_JOOMGALLERY_AIINT_BUY_TOKENS'); ?></a>
     </div>
 
     <div class="token-balance card">
       <div class="card-body">
-        <h4 class="card-title">Balance</h4>
-        <p class="card-text"><span class="token-value" id="jgai-balance-value">117'000</span><br><span class="token-text">Tokens</span></p>
+        <h4 class="card-title"><?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_BALANCE'); ?></h4>
+        <p class="card-text"><span class="token-value" id="jgai-balance-value">117'000</span><br><span class="token-text"><?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_TOKENS'); ?></span></p>
       </div>
     </div>
   </div>
@@ -99,11 +99,11 @@ if(isset($this->input_cid) && !empty($this->input_cid))
 
   <div class="interface-controls row">
     <div class="model-selection col-4">
-      <h4 class="title">Select an AI model</h4>
+      <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_SELECT_MODEL'); ?></h4>
       <div class="input-group d-flex">
         <div class="dropdown mb-3 jgai-model">
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            gemma3:4b (Ollama/Local)
+            <?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_MODEL'); ?>
           </button>
           <ul class="dropdown-menu" id="jgai-models-dropdown">
             <li><a class="dropdown-item" href="#" data-value="gemma3:4b" aria-selected="true">gemma3:4b (Ollama/Local)</a></li>
@@ -112,16 +112,16 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         </div>
         <div class="dropdown mb-3 jgai-mode">
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Performance
+            <?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_TITLE'); ?>
           </button>
           <ul class="dropdown-menu" id="jgai-modes-dropdown">
-            <li><a class="dropdown-item" href="#" data-value="performance" aria-selected="true">Performance</a></li>
-            <li><a class="dropdown-item" href="#" data-value="advanced" aria-selected="false">Advanced</a></li>
+            <li><a class="dropdown-item" href="#" data-value="performance" aria-selected="true"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_PERFORMANCE'); ?></a></li>
+            <li><a class="dropdown-item" href="#" data-value="advanced" aria-selected="false"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_ADVANCED'); ?></a></li>
           </ul>
         </div>
         <div class="dropdown mb-3 jgai-language">
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Language
+            <?php echo Text::_('JGRID_HEADING_LANGUAGE'); ?>
           </button>
           <ul class="dropdown-menu" id="jgai-langs-dropdown">
             <li><a class="dropdown-item" href="#" data-value="en" aria-selected="true">English</a></li>
@@ -131,15 +131,15 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       </div>
       <div class="checkbox input-group mb-5 jgai-privacy">
         <input type="checkbox" id="jgai-privacy-box" name="jgai-privacy-box" value="agree">
-        <label for="jgai-privacy-box"> I agree with the privacy terms *</label><br>
+        <label for="jgai-privacy-box"> <?php echo Text::_('COM_JOOMGALLERY_AIINT_PRIVACY_LBL'); ?> *</label><br>
       </div>
       <div class="privacy jgai-privacy">
-        <p>* Depending on the selected KI model, different privacy terms will apply.</p>
-        <a href="<?php echo $base_url . '/' . $lang . '/model-info/'; ?>" target="_blank">Click here for more info.</a>
+        <p>* <?php echo Text::_('COM_JOOMGALLERY_AIINT_PRIVACY_DESC'); ?></p>
+        <a href="<?php echo $base_url . '/' . $lang . '/model-info/'; ?>" target="_blank"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PRIVACY_LINK'); ?></a>
       </div>
     </div>
     <div class="prompt-settings col-8 row">
-      <h4 class="title">AI prompt inputs</h4>
+      <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_INPUTS'); ?></h4>
       <div class="manual-keywords col-6">
         <div class="input-group mb-3">
           <input type="text" id="jgai-manual-keywords" class="form-control" aria-describedby="jgai-manual-keywords-btn">
@@ -153,11 +153,11 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         </div>
 
         <div class="mb-3">
-          <label for="jgai-nmb-keywords" class="form-label">Generate number of keywords</label>
+          <label for="jgai-nmb-keywords" class="form-label"><?php echo Text::_('COM_JOOMGALLERY_AIINT_GEN_NMB'); ?></label>
           <input type="number" class="form-control" id="jgai-nmb-keywords" value="5">
         </div>
 
-        <button class="btn btn-primary" type="button" id="jgai-keywords-generate-btn">Generate Keywords</button>
+        <button class="btn btn-primary" type="button" id="jgai-keywords-generate-btn"><?php echo Text::_('COM_JOOMGALLERY_AIINT_GEN_KEYWORDS'); ?></button>
       </div>
     </div>
   </div>
@@ -187,12 +187,12 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         <div class="images">
           <img class="image" data-imgid="<?php echo $img->id;?>" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" width="<?php echo $width; ?>" height="<?php echo $heigth; ?>" alt="<?php echo $img->title; ?>">
           <div class="navigation-btn">
-            <button class="btn btn-outline-primary" id="jgai-prev-image-btn" <?php if($first_img) { echo 'disabled';}?>><span class="icon-arrow-left-4"></span> Previous image</button>
-            <button class="btn btn-outline-primary" id="jgai-next-image-btn" <?php if($last_img) { echo 'disabled';}?>><span class="icon-arrow-right-4"></span>Next image</button>
+            <button class="btn btn-outline-primary" id="jgai-prev-image-btn" <?php if($first_img) { echo 'disabled';}?>><span class="icon-arrow-left-4"></span> <?php echo Text::_('COM_JOOMGALLERY_PREV_IMG'); ?></button>
+            <button class="btn btn-outline-primary" id="jgai-next-image-btn" <?php if($last_img) { echo 'disabled';}?>><?php echo Text::_('COM_JOOMGALLERY_NEXT_IMG'); ?> <span class="icon-arrow-right-4"></span></button>
           </div>
         </div>
         <div class="keywords">
-          <h4 class="title">Current keywords of this image</h4>
+          <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_CURRENT_KEYWORDS'); ?></h4>
           <div class="grid">
             <?php foreach($tag_ids as $t => $tag_id) : ?>
               <div class="input-group grid-item">
@@ -202,8 +202,8 @@ if(isset($this->input_cid) && !empty($this->input_cid))
             <?php endforeach; ?>
           </div>
           <div>
-            <h5 class="title">Meaning of colors</h4>
-            <p><span class="color-black">already existing</span>, <span class="color-orange">added manually</span>, <span class="color-red">automatically generated</span> Keywords</p>
+            <h5 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_MEANINGS'); ?></h4>
+            <p><span class="color-black"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_EXISTING'); ?></span>, <span class="color-orange"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_MANUALLY'); ?></span>, <span class="color-red"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_AUTO'); ?></span> <?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_KEYWORDS'); ?></p>
           </div>
         </div>
       </div>
@@ -213,7 +213,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
   <hr>
 
   <div class="keywords-panels">
-    <h4 class="title">My most used Keywords</h4>
+    <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_MOST_USED_KEYWORDS'); ?></h4>
     <form action="<?php echo Route::_($form_url); ?>" method="post"
       name="tagsForm" id="tagsForm">
       <div class="row">
@@ -250,29 +250,29 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         <?php // Progress Bars ?>
         <div id="jgai-progress-section" class="container-fluid d-none">
           <div class="mb-4">
-            <label class="form-label fw-bold">Base64 image preparation</label>
+            <label class="form-label fw-bold"><?php echo Text::_('COM_JOOMGALLERY_AIINT_IMAGE_PREP'); ?></label>
             <div class="progress" style="height: 24px;">
               <div id="jgai-progress-fetch-bar" class="progress-bar progress-bar-striped progress-bar-animated"
                    role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 0 / <?php echo count($this->images); ?>
               </div>
             </div>
-            <div class="small text-muted mt-1" id="jgai-progress-fetch-text">Pending...</div>
+            <div class="small text-muted mt-1" id="jgai-progress-fetch-text"><?php echo Text::_('COM_JOOMGALLERY_PENDING'); ?>...</div>
           </div>
           <div class="mb-3">
-            <label class="form-label fw-bold">Keyword generation</label>
+            <label class="form-label fw-bold"><?php echo Text::_('COM_JOOMGALLERY_AIINT_KEYWORD_GEN'); ?></label>
             <div class="progress" style="height: 24px;">
               <div id="jgai-progress-generate-bar" class="progress-bar bg-success progress-bar-striped progress-bar-animated"
                   role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 0 / <?php echo count($this->images); ?>
               </div>
             </div>
-            <div class="small text-muted mt-1" id="jgai-progress-generate-text">Pending...</div>
+            <div class="small text-muted mt-1" id="jgai-progress-generate-text"><?php echo Text::_('COM_JOOMGALLERY_PENDING'); ?>...</div>
           </div>
         </div>
         <?php // Summary ?>
         <div id="jgai-summary-section" class="container-fluid d-none">
-          <h3 class="mb-3">Generation: Summary</h3>
+          <h3 class="mb-3"><?php echo Text::_('COM_JOOMGALLERY_AIINT_SUM_GEN'); ?></h3>
           <div class="row align-items-center mb-4">
             <div class="col-auto">
               <div id="jgai-summary-status"
@@ -301,25 +301,25 @@ if(isset($this->input_cid) && !empty($this->input_cid))
             </div>
           </div>
           <div id="jgai-summary-failed-section" class="mt-3 d-none">
-            <h5 class="text-danger">Failed images</h5>
+            <h5 class="text-danger"><?php echo Text::_('COM_JOOMGALLERY_AIINT_FAILED_IMGS'); ?></h5>
             <ul id="jgai-summary-failed-list" class="list-group list-group-flush small"></ul>
           </div>
           <hr>
-          <h3 class="mb-3">AI Interface: Summary</h3>
+          <h3 class="mb-3"><?php echo Text::_('COM_JOOMGALLERY_AIINT_SUM_INT'); ?></h3>
           <div class="row mb-2">
-            <div class="col-sm-6 fw-bold">Tokens used (AI Model)</div>
+            <div class="col-sm-6 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_AIINT_TOKENS_MODEL'); ?></div>
             <div class="col-sm-6" id="jgai-summary-model-tokens"></div>
           </div>
           <div class="row mb-2">
-            <div class="col-sm-6 fw-bold">Tokens used (Interface)</div>
+            <div class="col-sm-6 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_AIINT_TOKENS_INT'); ?></div>
             <div class="col-sm-6" id="jgai-summary-service-tokens"></div>
           </div>
           <div class="row mb-2">
-            <div class="col-sm-6 fw-bold">Infractions</div>
+            <div class="col-sm-6 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_INFRACTIONS'); ?></div>
             <div class="col-sm-6" id="jgai-summary-infractions"></div>
           </div>
           <div class="row mb-2">
-            <div class="col-sm-6 fw-bold">New Balance</div>
+            <div class="col-sm-6 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_AIINT_NEW_BALANCE'); ?></div>
             <div class="col-sm-6" id="jgai-summary-balance"></div>
           </div>
         </div>
@@ -341,27 +341,27 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       </div>
       <div class="modal-body jviewport-width60">
         <div id="jgai-progress-section" class="container-fluid">
-          <h3 class="mb-3">Connected Interface</h3>
+          <h3 class="mb-3"><?php echo Text::_('COM_JOOMGALLERY_AIINT_CON_INTERFACE'); ?></h3>
           <div class="row mb-2">
-            <div class="col-sm-4 fw-bold">Host</div>
+            <div class="col-sm-4 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_CONFIG_AIINT_HOST_LABEL'); ?></div>
             <div class="col-sm-8" id="jgai-modal-account-host"></div>
           </div>
           <div class="row mb-2">
-            <div class="col-sm-4 fw-bold">Supported AI Models</div>
+            <div class="col-sm-4 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_AIINT_MODELS_SUPPORT'); ?></div>
             <div class="col-sm-8" id="jgai-modal-account-models"></div>
           </div>
           <hr>
-          <h3 class="mb-3">My Account</h3>
+          <h3 class="mb-3"><?php echo Text::_('COM_JOOMGALLERY_MY_ACCOUNT'); ?></h3>
           <div class="row mb-2">
-            <div class="col-sm-4 fw-bold">Registered E-Mail</div>
+            <div class="col-sm-4 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_AIINT_REG_EMAIL'); ?></div>
             <div class="col-sm-8" id="jgai-modal-account-mail"></div>
           </div>
           <div class="row mb-2">
-            <div class="col-sm-4 fw-bold">Token Balance</div>
+            <div class="col-sm-4 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_TOKEN_BALANCE'); ?></div>
             <div class="col-sm-8" id="jgai-modal-account-balance"></div>
           </div>
           <div class="row mb-2">
-            <div class="col-sm-4 fw-bold">Infractions</div>
+            <div class="col-sm-4 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_INFRACTIONS'); ?></div>
             <div class="col-sm-8" id="jgai-modal-account-infractions"></div>
           </div>
         </div>
