@@ -10,6 +10,8 @@ class AIinterface {
   systemLang = 'en';
   configs = {};
   lang = {};
+  forceTrailingSlash = false;
+  apiKeys = {};
 
   // Data from API
   token = '';
@@ -46,9 +48,20 @@ class AIinterface {
     if(this.configs.version) {
       this.client_version = this.configs.version;
     }
+
+    // Detect trailing slash Settings
+    if(this.configs.forceTrailingSlash) {
+      this.forceTrailingSlash = this.configs.forceTrailingSlash;
+    }
+
+    // Detect api keys Settings
+    if(this.configs.api_keys) {
+      this.apiKeys = this.configs.api_keys;
+    }
   }
 
   sanitizeUrl(url) {
+    const hasQuery = url.includes('?');
     const hadTrailingSlash = /\/$/.test(url);
 
     // Collapse multiple slashes except after "http(s):"
@@ -57,7 +70,8 @@ class AIinterface {
     // Remove trailing slashes
     url = url.replace(/\/+$/g, "");
 
-    if (hadTrailingSlash) url += "/";
+    if (!hasQuery && (hadTrailingSlash || this.forceTrailingSlash)) url += "/";
+
     return url;
   }
 
@@ -180,13 +194,18 @@ class AIinterface {
       services.get(friendly).push(m.value);
     }
 
-    const lines = order.map((prov) => `${prov}: ${services.get(prov).join(", ")}`);
-    return { summary: lines.join("\n"), providerCount: order.length };
+    const lines = order.map((prov) => `<strong>${prov}:</strong> ${services.get(prov).join(", ")}`);
+    return { summary: lines.join("<br>"), providerCount: order.length };
   }
 
   getProvider(model, models = this.models) {
     const m = (models || []).find((x) => String(x.value).toLowerCase() === String(model).toLowerCase());
     return m?.options?.service;
+  }
+
+  getModelTitle(model, models = this.models) {
+    const m = (models || []).find((x) => String(x.value).toLowerCase() === String(model).toLowerCase());
+    return m?.title ?? model;
   }
 
   findAPIkey(model, models = this.models) {
@@ -198,11 +217,9 @@ class AIinterface {
 
     if (provLower === "localhost" || provLower === "ollama") return "";
 
-    const optKey = `${provLower}_key`;
-    const key = this.providers?.[optKey];
+    const key = this.apiKeys?.[provLower];
 
     if (!key) {
-      // Match Lua behavior: return false to signal missing key
       return false;
     }
 
@@ -362,7 +379,7 @@ class AIinterface {
     }
   }
 
-  async addKeywordsToImg(imgPos, keywords) {
+  async addKeywordsToImg(imgPos, keywords, color = 'black') {
     if (!Array.isArray(keywords) || !keywords.length) {
       console.log('Try to add keywords, but no keywords provided.');
       return;
@@ -386,7 +403,7 @@ class AIinterface {
     if(!(await this.storeKeywords(imgID, keywords, 'add')))
     {
       const keywords_str = keywords.join(', ');
-      Joomla.renderMessages(`Keywords could not be added/stored to database.<br>Keywords: ${keywords_str}`);
+      Joomla.renderMessages({ error: [`Keywords could not be added/stored to database. Keywords: ${keywords_str}`] }, '#image-message-container');
       return;
     }
 
@@ -412,7 +429,7 @@ class AIinterface {
       // Create input
       const input = document.createElement('input');
       input.type = 'text';
-      input.className = 'form-control';
+      input.className = 'form-control color-' + color;
       input.value = value;
       input.disabled = true;
 
@@ -463,10 +480,10 @@ class AIinterface {
     const imgID = panel.querySelector('.image').getAttribute('data-imgid');
 
     // Store keywords to image (ajax call)
-    if(!this.storeKeywords(imgID, keywords, 'remove'))
+    if(!(await this.storeKeywords(imgID, keywords, 'remove')))
     {
       const keywords_str = keywords.join(', ');
-      Joomla.renderMessages(`Keywords could not be removed/stored to database.<br>Keywords: ${keywords_str}`);
+      Joomla.renderMessages({ error: [`Keywords could not be removed/stored to database. Keywords: ${keywords_str}`] }, '#image-message-container');
       return;
     }
 
@@ -491,7 +508,7 @@ class AIinterface {
 
     const keywords = [el.innerText.trim()];
     const pos      = this.current_image;
-    this.addKeywordsToImg(pos, keywords);
+    this.addKeywordsToImg(pos, keywords, 'orange');
   }
 
   removeKeyword(el, event) {
@@ -505,42 +522,57 @@ class AIinterface {
     this.remKeywordsFromImg(pos, keywords);
   }
 
-  updateKeywordGenerationProgress(total, successCount, failedCount, pendingCount) {
-    console.log(
-      `[AIinterface] Keyword image fetch progress: total=${total}, success=${successCount}, failed=${failedCount}, pending=${pendingCount}`
-    );
+  async showAccount(el, event) {
+    event.preventDefault();
+
+    // Create models list
+    const models = this.summarizeModels(this.models);
+
+    // Fetch user info
+    await this.getInfo();
+
+    // Add content to modal
+    document.getElementById(`${this.prefix}-modal-account-host`).textContent = this.sanitizeUrl(this.host);
+    document.getElementById(`${this.prefix}-modal-account-models`).innerHTML = models.summary;
+    document.getElementById(`${this.prefix}-modal-account-mail`).textContent = this.info.email;
+    document.getElementById(`${this.prefix}-modal-account-balance`).textContent = this.balance;
+    document.getElementById(`${this.prefix}-modal-account-infractions`).textContent = this.info.infractions;
+
+    this.showModal('account');
   }
 
   async testConnection(el, event) {
     if (event) event.preventDefault();
 
+    const url = this.sanitizeUrl(this.host);
+
     // Test ping
-    const ping = await this.sendGet(this.host);
+    const ping = await this.sendGet(url);
 
     if(ping.data !== "PING") {
 
       const title = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TITLE ?? 'Connection failed';
-      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TEXT + this.host;
+      const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_CONN_FAILED_TEXT + url;
 
       JoomlaDialog.alert(msg, title)
       .then(() => {
-        console.log('Connection to "' + this.host + '" failed. Check your AI Interface host URL.');
+        console.log('Connection to "' + url + '" failed. Check your AI Interface host URL.');
       });
     } else {
       const info = await this.getInfo();
 
       if(info.status == 200) {
         const title = this.lang.COM_JOOMGALLERY_JS_AIINT_SUCCESS_TITLE ?? 'Success';
-        const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_SUCCESS_TEXT + '  ' + this.host;
+        const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_SUCCESS_TEXT + '  ' + url;
 
         JoomlaDialog.alert(msg, title)
       } else {
         const title = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TITLE ?? 'Failed';
-        const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TEXT + '  ' + this.host;
+        const msg   = this.lang.COM_JOOMGALLERY_JS_AIINT_AUTH_FAILED_TEXT + '  ' + url;
 
         JoomlaDialog.alert(msg, title)
         .then(() => {
-          console.log('Authentication to "' + this.host + '" failed. Check your AI Interface API-Key. Make sure your account in the AI Interface is up and running.');
+          console.log('Authentication to "' + url + '" failed. Check your AI Interface API-Key. Make sure your account in the AI Interface is up and running.');
         });
       }
     }
@@ -559,6 +591,33 @@ class AIinterface {
       return;
     }
 
+    // Check that privacy terms are agreed
+    const isChecked = document.getElementById(`${this.prefix}-privacy-box`).checked;
+    if (!isChecked) {
+      Joomla.renderMessages({ error: ['Please confirm that you have read and agree to the privacy terms of the selected AI model before generating.'] }, '#image-message-container');
+      return;
+    }
+
+    // Create statistics object
+    const stats = {
+      total: panels.length,
+
+      // Fetching base64 image
+      fetchDone: 0,
+      fetchSuccess: 0,
+      fetchFailed: 0,
+
+      // Fetching base64 image
+      generateDone: 0,
+      generateSuccess: 0,
+      generateFailed: 0,
+
+      createdKeywords: new Set(),
+      modelTokens: 0,
+      serviceTokens: 0,
+      infractions: 0
+    };
+
     // Create the options object
     const options = {
       'confidence_values': false,
@@ -572,13 +631,19 @@ class AIinterface {
       'token_count': true
     }
 
+    this.showModal('generate');
+    this.showProgressSection();
+
+    this.updateImageFetchProgress(stats.total, 0, 0, 0);
+    this.updateKeywordGenerationProgress(stats.total, 0, 0, 0);
+
     const workerCount = Math.max(1, Number(this.configs.max_parallel || 1));
 
     // Generate keywords in parallel using sema
     const {
       results, successCount, failedCount
     } = await this.processImagesWithSema(
-      panels, options, workerCount
+      panels, options, workerCount, stats
     );
 
     const errors = {};
@@ -594,18 +659,47 @@ class AIinterface {
       }
     });
 
-    return {
-      success,
-      errors,
-      nmbErrors: failedCount,
-      nmbSuccess: successCount
-    };
+    // Gather the list of failed image items
+    const failedItems = results
+      .filter(r => !r.success)
+      .map(r => ({
+        id: r.id,
+        error: r.error
+      }));
+
+    this.renderGenerateSummary({
+      successImages: stats.generateSuccess,
+      failedImages: stats.generateFailed,
+      failedItems: failedItems,
+      modelTitle: this.getModelTitle(model),
+      keywords: Array.from(stats.createdKeywords),
+      modelTokens: stats.modelTokens,
+      serviceTokens: stats.serviceTokens,
+      infractions: stats.infractions,
+      newBalance: this.balance
+    });
+
+    // Update user info
+    balance = await ai.getTokens();
+    document.getElementById(prefix + '-balance-value').textContent = String(balance.data.balance);
   }
-  
-  async processSingleImageKeywords(panel, options) {
+
+  async processSingleImageKeywords(panel, options, stats) {
     const fetched = await this.fetchImageAsBase64(panel);
 
+    stats.fetchDone++;
+
     if (!fetched.success || !fetched.data) {
+
+      // Failed image fetch
+      stats.fetchFailed++;
+      this.updateImageFetchProgress(
+        stats.total,
+        stats.fetchDone,
+        stats.fetchSuccess,
+        stats.fetchFailed
+      );
+
       return {
         success: false,
         stage: 'fetch',
@@ -614,6 +708,15 @@ class AIinterface {
         error: fetched.message || 'Fetching resized image failed.',
       };
     }
+
+    // Successful image fetch
+    stats.fetchSuccess++;
+    this.updateImageFetchProgress(
+      stats.total,
+      stats.fetchDone,
+      stats.fetchSuccess,
+      stats.fetchFailed
+    );
 
     const images = [
       {
@@ -626,7 +729,18 @@ class AIinterface {
     const payload = response?.data ?? {};
     const results = payload?.results ?? [];
 
+    stats.generateDone++;
+
     if (!response?.success) {
+      // Failed tags generation
+      stats.generateFailed++;
+      this.updateKeywordGenerationProgress(
+        stats.total,
+        stats.generateDone,
+        stats.generateSuccess,
+        stats.generateFailed
+      );
+
       return {
         success: false,
         stage: 'generate',
@@ -636,7 +750,16 @@ class AIinterface {
       };
     }
 
-    if (response.status != 1 || !Array.isArray(results) || results.length < 1) {
+    if (response.status != 200 || !Array.isArray(results) || results.length < 1) {
+      // Failed tags generation
+      stats.generateFailed++;
+      this.updateKeywordGenerationProgress(
+        stats.total,
+        stats.generateDone,
+        stats.generateSuccess,
+        stats.generateFailed
+      );
+
       return {
         success: false,
         stage: 'generate',
@@ -648,7 +771,16 @@ class AIinterface {
 
     const result = results[0];
 
-    if (result.error) {
+    if (payload?.status != 1 || result.error) {
+      // Failed tags generation
+      stats.generateFailed++;
+      this.updateKeywordGenerationProgress(
+        stats.total,
+        stats.generateDone,
+        stats.generateSuccess,
+        stats.generateFailed
+      );
+
       return {
         success: false,
         stage: 'generate',
@@ -664,9 +796,23 @@ class AIinterface {
       .map((tag) => tag?.name?.trim())
       .filter(Boolean);
 
-    const pos = this.getPanelPositionByImageId(result.id ?? fetched.id);
+    // Update stats
+    keywords.forEach((kw) => stats.createdKeywords.add(kw));
+    stats.modelTokens += Number(result.model_tokens ?? payload.model_tokens ?? 0);
+    stats.serviceTokens += Number(result.service_tokens ?? payload.service_tokens ?? 0);
+    stats.infractions = Number(payload.total_infractions ?? stats.infractions ?? 0);
 
-    await this.addKeywordsToImg(pos, keywords);
+    const pos = this.getPanelPositionByImageId(result.id ?? fetched.id);
+    await this.addKeywordsToImg(pos, keywords, 'red');
+
+    // Successful tags generation
+    stats.generateSuccess++;
+    this.updateKeywordGenerationProgress(
+      stats.total,
+      stats.generateDone,
+      stats.generateSuccess,
+      stats.generateFailed
+    );
 
     return {
       success: true,
@@ -679,7 +825,7 @@ class AIinterface {
     };
   }
 
-  async processImagesWithSema(panels, options, workerCount = 1) {
+  async processImagesWithSema(panels, options, workerCount = 1, stats) {
     const sema = new Sema(workerCount);
     const panelList = Array.from(panels);
     const results = new Array(panelList.length);
@@ -687,34 +833,6 @@ class AIinterface {
     let nextIndex = 0;
     let successCount = 0;
     let failedCount = 0;
-    let pendingCount = panelList.length;
-
-    // Define progress logic
-    const updateCounters = (status) => {
-      if (status === 'success') {
-        successCount++;
-      } else if (status === 'failed') {
-        failedCount++;
-      }
-
-      if (pendingCount > 0) {
-        pendingCount--;
-      }
-
-      this.updateKeywordGenerationProgress(
-        panelList.length,
-        successCount,
-        failedCount,
-        pendingCount
-      );
-    };
-
-    this.updateKeywordGenerationProgress(
-      panelList.length,
-      successCount,
-      failedCount,
-      pendingCount
-    );
 
     // Define worker loop function
     const runWorkerLoop = async () => {
@@ -728,9 +846,15 @@ class AIinterface {
         const panel = panelList[currentIndex];
 
         try {
-          const result = await this.processSingleImageKeywords(panel, options);
+          const result = await this.processSingleImageKeywords(panel, options, stats);
           results[currentIndex] = result;
-          updateCounters(result.success ? 'success' : 'failed');
+
+          if (result.success) {
+            successCount++;
+          } else {
+            failedCount++;
+          }
+
         } catch (error) {
           results[currentIndex] = {
             success: false,
@@ -739,7 +863,8 @@ class AIinterface {
             status: 0,
             error: error instanceof Error ? error.message : String(error),
           };
-          updateCounters('failed');
+
+          failedCount++;
         } finally {
           sema.release();
         }
@@ -760,9 +885,143 @@ class AIinterface {
     return {
       results,
       successCount,
-      failedCount,
-      pendingCount,
+      failedCount
     };
+  }
+
+  // --- Generation Modal Helpers ----
+  showModal(type) {
+    const modalEl = document.getElementById(`${this.prefix}-modal-${type}`);
+    if (!modalEl || typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+      console.error('Bootstrap Modal is not available.');
+      return;
+    }
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl, {
+      backdrop: 'static',
+      keyboard: false
+    });
+
+    modal.show();
+  }
+
+  showGenerateModal() {
+    const modalEl = document.getElementById(`${this.prefix}-modal-generate`);
+    if (!modalEl || typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+      console.error('Bootstrap Modal is not available.');
+      return;
+    }
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl, {
+      backdrop: 'static',
+      keyboard: false
+    });
+
+    modal.show();
+  }
+
+  showProgressSection() {
+    document.getElementById(`${this.prefix}-progress-section`)?.classList.remove('d-none');
+    document.getElementById(`${this.prefix}-summary-section`)?.classList.add('d-none');
+  }
+
+  showSummarySection() {
+    document.getElementById(`${this.prefix}-progress-section`)?.classList.add('d-none');
+    document.getElementById(`${this.prefix}-summary-section`)?.classList.remove('d-none');
+  }
+
+  updateImageFetchProgress(total, done, success, failed, pending) {
+    const bar = document.getElementById(`${this.prefix}-progress-fetch-bar`);
+    const text = document.getElementById(`${this.prefix}-progress-fetch-text`);
+
+    if (!bar) return;
+
+    const percent = Math.round((done / total) * 100);
+
+    bar.style.width = percent + '%';
+    bar.setAttribute('aria-valuenow', percent);
+    bar.textContent = `${done} / ${total}`;
+
+    text.textContent = `Prepared: ${success}, failed: ${failed}`;
+
+    console.log(`[AIinterface] Keyword image fetch progress: total=${total}, success=${success}, failed=${failed}, pending=${pending}`);
+  }
+
+  updateKeywordGenerationProgress(total, done, success, failed, pending) {
+    const bar = document.getElementById(`${this.prefix}-progress-generate-bar`);
+    const text = document.getElementById(`${this.prefix}-progress-generate-text`);
+
+    if (!bar) return;
+
+    const percent = Math.round((done / total) * 100);
+
+    bar.style.width = percent + '%';
+    bar.setAttribute('aria-valuenow', percent);
+    bar.textContent = `${done} / ${total}`;
+
+    text.textContent = `Generated: ${success}, failed: ${failed}`;
+
+    console.log(`[AIinterface] Base64 image gereation progress: total=${total}, success=${success}, failed=${failed}, pending=${pending}`);
+  }
+
+  renderGenerateSummary(summary) {
+    this.showSummarySection();
+
+    const box  = document.getElementById(`${this.prefix}-summary-status`);
+    const icon = document.getElementById(`${this.prefix}-summary-status-icon`);
+
+    // Get success and failed numbers
+    const success = summary.successImages ?? 0;
+    const failed  = summary.failedImages ?? 0;
+
+    // Change icon
+    box.classList.remove('jgai-status-success', 'jgai-status-failed');
+    if (failed === 0) {
+      box.classList.add('jgai-status-success');
+      icon.textContent = '✓';
+    } else if (success === 0) {
+      box.classList.add('jgai-status-failed');
+      icon.textContent = '✕';
+    } else {
+      box.classList.add('jgai-status-warning');
+      icon.textContent = '?';
+    }
+
+    // Generate list of failed images
+    this.renderFailedImages(summary.failedItems);
+
+    // Add summary content to table
+    document.getElementById(`${this.prefix}-summary-success`).textContent = success;
+    document.getElementById(`${this.prefix}-summary-failed`).textContent = failed;
+    document.getElementById(`${this.prefix}-summary-model`).textContent = summary.modelTitle ?? summary.model ?? '-';
+    document.getElementById(`${this.prefix}-summary-keywords`).textContent = (summary.keywords || []).join(', ') || '-';
+    document.getElementById(`${this.prefix}-summary-model-tokens`).textContent = summary.modelTokens ?? 0;
+    document.getElementById(`${this.prefix}-summary-service-tokens`).textContent = summary.serviceTokens ?? 0;
+    document.getElementById(`${this.prefix}-summary-infractions`).textContent = summary.infractions ?? 0;
+    document.getElementById(`${this.prefix}-summary-balance`).textContent = summary.newBalance ?? '-';
+  }
+
+  renderFailedImages(items) {
+    const section = document.getElementById(`${this.prefix}-summary-failed-section`);
+    const list    = document.getElementById(`${this.prefix}-summary-failed-list`);
+
+    list.innerHTML = '';
+
+    if (!items.length) {
+      section.classList.add('d-none');
+      return;
+    }
+
+    section.classList.remove('d-none');
+
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item text-danger';
+
+      li.textContent = `Image-ID ${item.id}: ${item.error}`;
+
+      list.appendChild(li);
+    });
   }
 
   // --- HTTP -------
@@ -1239,9 +1498,4 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.warn(`AIinterface: function ${fn}() does not exist. The corresponding button will not work.`);
     }
   });
-
-  const btn = document.getElementById("ai-keywords-generate");
-  if (btn) {
-    btn.addEventListener("click", (e) => window.Joomla.aiinterface.getModels(e));
-  }
 })
