@@ -85,6 +85,7 @@ class AibuttonField extends FormField
               'client_name' => $this->getAttribute('clientname', 'JG-General'),
               'autoload' => false,
               'configs' => [
+                'forceTrailingSlash' => $config->get('jg_aiint_force_slash', 0),
                 'version' => $jg->version,
                 'def_lang' => Factory::getLanguage()->getTag(),
                 'session' => Session::getFormToken(),
