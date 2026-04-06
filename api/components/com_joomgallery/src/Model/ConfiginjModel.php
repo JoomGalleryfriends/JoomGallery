@@ -16,6 +16,10 @@ use Joomla\CMS\MVC\Model\BaseModel;
 use Joomla\Component\Media\Administrator\Model\ApiModel;
 use Joomla\Database\DatabaseInterface;
 
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
+
 /**
  * @since  4.2.0
  */

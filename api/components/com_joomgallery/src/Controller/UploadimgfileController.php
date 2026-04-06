@@ -1,4 +1,5 @@
 <?php
+
 /**
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
@@ -26,7 +27,7 @@ use Tobscure\JsonApi\Exception\InvalidParameterException;
 // phpcs:enable PSR1.Files.SideEffects
 
 
-class UploadFileController extends ApiController
+class UploadimgfileController extends ApiController
 {
   use ProviderManagerHelperTrait;
 
@@ -36,7 +37,7 @@ class UploadFileController extends ApiController
    * @var    string
    * @since  4.1.0
    */
-  protected $contentType = 'upload_file';
+  protected $contentType = 'uploadimgfile';
 
   /**
    * The default view for the display method.
@@ -45,15 +46,15 @@ class UploadFileController extends ApiController
    *
    * @since  4.1.0
    */
-  protected $default_view = 'upload_file';
+  protected $default_view = 'uploadimgfile';
 
 
   public function upload_image_file(): void
   {
     // $image_name = $this->input->json->get('image_name', '', 'PATH');
-    $image_name = $this->input->json->get('image_name', '', 'STRING');
-    $gallery_id = $this->input->json->get('category_id', '', 'INTEGER');
-    $content    = $this->input->json->get('content', '', 'RAW');
+    $image_name  = $this->input->json->get('image_name', '', 'STRING');
+    $category_id = $this->input->json->get('category_id', '', 'INTEGER');
+    $content     = $this->input->json->get('content', '', 'RAW');
 
     $missingParameters = [];
 
@@ -62,7 +63,7 @@ class UploadFileController extends ApiController
       $missingParameters[] = 'image_name';
     }
 
-    if(empty($gallery_id))
+    if(empty($category_id))
     {
       $missingParameters[] = 'category_id';
     }
@@ -75,9 +76,8 @@ class UploadFileController extends ApiController
 
     if(\count($missingParameters))
     {
-    throw new InvalidParameterException(
-        Text::sprintf('WEBSERVICE_COM_MEDIA_MISSING_REQUIRED_PARAMETERS', implode(' & ', $missingParameters)),
-    );
+//      throw new InvalidParameterException(Text::sprintf('WEBSERVICE_COM_MEDIA_MISSING_REQUIRED_PARAMETERS', implode(' & ', $missingParameters)));
+      throw new InvalidParameterException(Text::sprintf('Missing required parameter(s): %s', implode(' & ', $missingParameters)));
     }
 
     //--- secure path and image name ----------------------------
@@ -86,8 +86,7 @@ class UploadFileController extends ApiController
     $safeFileName = File::makeSafe($image_name);
 
     $this->modelState->set('image_name', $safeFileName);
-    $this->modelState->set('gallery_id', $gallery_id);
-
+    $this->modelState->set('category_id', $category_id);
 
     // Check if an existing file may be overwritten. Defaults to false.
     $this->modelState->set('override', $this->input->json->get('override', false));
@@ -126,4 +125,26 @@ class UploadFileController extends ApiController
 
     return $model->save();
   }
+
+
+    /**
+     * Performs various checks to see if it is allowed to save the content.
+     *
+     * @return  void
+     *
+     * @throws  \RuntimeException
+     * @since   4.1.0
+     */
+    private function checkContent(): void
+    {
+        $params       = ComponentHelper::getParams('com_media');
+        $helper       = new \Joomla\CMS\Helper\MediaHelper();
+        $serverlength = $this->input->server->getInt('CONTENT_LENGTH');
+
+        // Check if the size of the request body does not exceed various server imposed limits.
+        if(($params->get('upload_maxsize', 0) > 0 && $serverlength > ($params->get('upload_maxsize', 0) * 1024 * 1024)) || $serverlength > $helper->toBytes(\ini_get('upload_max_filesize')) || $serverlength > $helper->toBytes(\ini_get('post_max_size')) || $serverlength > $helper->toBytes(\ini_get('memory_limit')))
+        {
+            throw new \RuntimeException(Text::_('COM_MEDIA_ERROR_WARNFILETOOLARGE'), 400);
+        }
+    }
 }
