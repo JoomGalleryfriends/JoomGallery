@@ -69,28 +69,29 @@ $form_url = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=
 
 $host_url = $config->get('jg_aiint_host', 'http://localhost/api/v1');
 $base_url = parse_url($host_url, PHP_URL_SCHEME) . '://' . parse_url($host_url, PHP_URL_HOST);
-$lang = str_contains('de',Factory::getLanguage()->getTag()) ? 'de' : 'en';
+$lang     = str_contains('de', Factory::getLanguage()->getTag()) ? 'de' : 'en';
 
 // Initialize AIinterface
-$opts = [ 'prefix' => 'jgai',
-          'host' => $host_url,
-          'token' => $config->get('jg_aiint_key', ''),
-          'client_name' => 'JG-General',
-          'autoload' => true,
-          'configs' => [
-            'forceTrailingSlash' => $config->get('jg_aiint_force_slash', 0),
-            'version' => JoomHelper::getComponent()->version,
-            'def_lang' => Factory::getLanguage()->getTag(),
-            'session' => Session::getFormToken(),
-            'base_url' => Uri::base(),
-            'imagetype' => $config->get('jg_aiint_tags_imagetype', 'detail'),
-            'resize' => $config->get('jg_aiint_tags_maxdim', 500),
-            'max_parallel' => $config->get('jg_parallelprocesses', 1),
-            'case_sensitivity' => $config->get('jg_aiint_tags_casesens', 1),
-            'letter_case' => $config->get('jg_aiint_tags_caseupper', 1),
-            'api_keys' => ConfigHelper::getProviderKeys($config),
-          ]
-        ];
+$opts = [
+  'prefix' => 'jgai',
+  'host' => $host_url,
+  'token' => $config->get('jg_aiint_key', ''),
+  'client_name' => 'JG-General',
+  'autoload' => true,
+  'configs' => [
+    'forceTrailingSlash' => $config->get('jg_aiint_force_slash', 0),
+    'version' => JoomHelper::getComponent()->version,
+    'def_lang' => Factory::getLanguage()->getTag(),
+    'session' => Session::getFormToken(),
+    'base_url' => Uri::base(),
+    'imagetype' => $config->get('jg_aiint_tags_imagetype', 'detail'),
+    'resize' => $config->get('jg_aiint_tags_maxdim', 500),
+    'max_parallel' => $config->get('jg_parallelprocesses', 1),
+    'case_sensitivity' => $config->get('jg_aiint_tags_casesens', 1),
+    'letter_case' => $config->get('jg_aiint_tags_caseupper', 1),
+    'api_keys' => ConfigHelper::getProviderKeys($config),
+  ],
+];
 $this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);
 JSHelper::registerText('com_joomgallery.aiinterface', 'COM_JOOMGALLERY_JS_AIINT_');
 
