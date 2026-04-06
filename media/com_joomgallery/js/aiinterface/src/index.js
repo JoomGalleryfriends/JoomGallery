@@ -1367,6 +1367,9 @@ class AIinterface {
         this.def_model = apiModels[0].value;
       }
 
+      // Add services to providers table
+      this.addProviders(data.data.services)
+
       const mapping = { value: "value", title: "title", options: ["service", "privacy", "modes"] };
       const mapped = this.buildTables(apiModels, mapping);
       this.buildModelTitles(mapped);

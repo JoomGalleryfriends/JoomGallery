@@ -3,6 +3,9 @@
     --modal-width: 1400px;
   }
 }
+a[target="_blank"]::before {
+  padding-inline-end: 0.5em !important;
+}
 .jg-controlpanel-content  {
   padding: 1.2rem;
   text-align: center;
@@ -26,6 +29,10 @@ img.jg-controlpanel-logo {
 }
 .btn > span {
   margin-inline-end: 0.5rem;
+}
+.btn > span[class*="icon"][class*="right"] {
+  margin-inline-end: initial;
+  margin-inline-start: 0.5rem;
 }
 .jg-messages-logo {
   display: table;
