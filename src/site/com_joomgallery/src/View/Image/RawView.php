@@ -45,7 +45,7 @@ class RawView extends AdminRawView
    *
    * @return  bool       True on success, false otherwise
    */
-  public function ppImage(&$file_info, &$resource, $imagetype, $options = Null)
+  public function ppImage(&$file_info, &$resource, $imagetype, $options = null)
   {
     // Get the current imagetype
     foreach(JoomHelper::getRecords('imagetypes', $this->component) as $key => $type)

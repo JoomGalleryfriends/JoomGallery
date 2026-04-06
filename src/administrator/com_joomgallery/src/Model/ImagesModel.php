@@ -470,7 +470,7 @@ class ImagesModel extends JoomListModel
           ->from($db->quoteName('#__joomgallery_tags_ref', 'trx'))
           ->where($db->quoteName('trx.imgid') . ' = ' . $db->quoteName('a.id'));
 
-      if (\count($tag) === 1)
+      if(\count($tag) === 1)
       {
         $exists->where($db->quoteName('trx.tagid') . ' = ' . (int) $tag[0]);
       }
@@ -485,7 +485,7 @@ class ImagesModel extends JoomListModel
     // Filter by ids
     if(!empty($ids))
     {
-      if (\count($ids) === 1)
+      if(\count($ids) === 1)
       {
         $query->where($db->quoteName('a.id') . ' = :imgId')
           ->bind(':imgId', $ids[0], ParameterType::INTEGER);

@@ -1327,7 +1327,7 @@ class ImageModel extends JoomAdminModel
     // Get existing tags
     $tags_model    = $this->component->getMVCFactory()->createModel('Tags', 'administrator');
     $existing_tags = [];
-    $success = true;
+    $success       = true;
 
     foreach($tags_model->getItemsInList($tags) as $tag)
     {
@@ -1353,8 +1353,8 @@ class ImageModel extends JoomAdminModel
     }
 
     // Merge list
-    $mapped_tags = \array_map(fn($obj) => $obj->id, $tags_model->getMappedItems($pk));
-    $tags = \array_merge($mapped_tags, $tags);
+    $mapped_tags = array_map(fn($obj) => $obj->id, $tags_model->getMappedItems($pk));
+    $tags        = array_merge($mapped_tags, $tags);
 
     // Update tags mapping
     if(!$tags_model->updateMapping($tags, $pk))
@@ -1384,8 +1384,8 @@ class ImageModel extends JoomAdminModel
 
     // Get existing tags
     $tags_model    = $this->component->getMVCFactory()->createModel('Tags', 'administrator');
-    $existing_tags = \array_column($tags_model->getMappedItems($pk), 'id', 'title');
-    $success = true;
+    $existing_tags = array_column($tags_model->getMappedItems($pk), 'id', 'title');
+    $success       = true;
 
     foreach($tags_model->getItemsInList($tags) as $tag)
     {
@@ -1394,7 +1394,7 @@ class ImageModel extends JoomAdminModel
     }
 
     // Update tags mapping
-    if(!$tags_model->updateMapping(\array_values($existing_tags), $pk))
+    if(!$tags_model->updateMapping(array_values($existing_tags), $pk))
     {
       $this->setError('Tags Model reports ' . $tags_model->getError());
       $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
