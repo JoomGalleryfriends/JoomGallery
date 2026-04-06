@@ -69,6 +69,11 @@
   color: var(--link-color);
   background-color: var(--template-bg-light);
 }
+.jg .header-icon {
+  text-align: center;
+  color: var(--gray-600);
+  font-size: 3.5em;
+}
 .modal.fade .modal-dialog.level-2 {
   transform: translate(0, 0px);
 }

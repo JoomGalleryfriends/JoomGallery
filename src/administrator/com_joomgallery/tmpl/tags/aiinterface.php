@@ -82,7 +82,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
 <div class="jg jg-tags-aiinterface">
   <div class="top-controls">
     <div class="interface-btns">
-      <h2 class="mb-4"><?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_TITLE'); ?>: <?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_KEYWORDING'); ?></h2>
+      <h2 class="mb-4"><?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_TITLE'); ?>: <?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_KEYWORDING'); ?> (<?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_TAGGING'); ?>)</h2>
       <button id="jgai-show-account-btn" class="btn btn-outline-primary"><?php echo Text::_('COM_JOOMGALLERY_MY_ACCOUNT'); ?></button>
       <a class="btn btn-outline-primary" target="_blank" href="<?php echo $base_url . '/' . $lang . '/buy-tokens/'; ?>"><?php echo Text::_('COM_JOOMGALLERY_AIINT_BUY_TOKENS'); ?></a>
     </div>
@@ -99,7 +99,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
 
   <div class="interface-controls row">
     <div class="model-selection col-4">
-      <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_SELECT_MODEL'); ?></h4>
+      <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_CONFIGURE_MODEL'); ?></h4>
       <div class="input-group d-flex">
         <div class="dropdown mb-3 jgai-model">
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -129,7 +129,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           </ul>
         </div>
       </div>
-      <div class="checkbox input-group mb-5 jgai-privacy">
+      <div class="checkbox input-group mb-4 jgai-privacy">
         <input type="checkbox" id="jgai-privacy-box" name="jgai-privacy-box" value="agree">
         <label for="jgai-privacy-box"> <?php echo Text::_('COM_JOOMGALLERY_AIINT_PRIVACY_LBL'); ?> *</label><br>
       </div>
@@ -239,14 +239,18 @@ if(isset($this->input_cid) && !empty($this->input_cid))
 </div>
 
 <?php // Progress and Summary Modal ?>
-<div id ="jgai-modal-generate" class="joomla-modal modal fade" role="dialog" tabindex="-1">
+<div id="jgai-modal-generate" class="jg joomla-modal modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog level-2 modal-lg jviewport-width60">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="jgai-progress-title" class="modal-title"><?php echo Text::_('COM_JOOMGALLERY_PROGRESS'); ?></h3>
+        <h3 id="jgai-progress-title" class="modal-title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_GEN_KEYWORDS'); ?></h3>
         <button type="button" class="btn-close novalidate" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body jviewport-width60">
+        <?php // Icon ?>
+        <div class="row mb-2 header-icon container-fluid">
+          <div><span class="fa fa-images"></span></div>
+        </div>
         <?php // Progress Bars ?>
         <div id="jgai-progress-section" class="container-fluid d-none">
           <div class="mb-4">
@@ -332,7 +336,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
 </div>
 
 <?php // User Account Modal ?>
-<div id ="jgai-modal-account" class="joomla-modal modal fade" role="dialog" tabindex="-1">
+<div id="jgai-modal-account" class="jg joomla-modal modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog level-2 modal-lg jviewport-width60">
     <div class="modal-content">
       <div class="modal-header">
@@ -341,6 +345,9 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       </div>
       <div class="modal-body jviewport-width60">
         <div id="jgai-progress-section" class="container-fluid">
+          <div class="row mb-2 header-icon">
+            <div><span class="fa fa-user-group"></span></div>
+          </div>
           <h3 class="mb-3"><?php echo Text::_('COM_JOOMGALLERY_AIINT_CON_INTERFACE'); ?></h3>
           <div class="row mb-2">
             <div class="col-sm-4 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_CONFIG_AIINT_HOST_LABEL'); ?></div>

@@ -113,7 +113,7 @@ class HtmlView extends JoomGalleryView
     }
 
     // Show tagging button
-    $toolbar->popupButton('tagging', 'Image Tagging')
+    $toolbar->popupButton('tagging', Text::_('COM_JOOMGALLERY_IMAGES_TAGGING'))
             ->iframeWidth(1200)
             ->iframeHeight(800)
             ->icon('icon-tags')
