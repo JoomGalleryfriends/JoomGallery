@@ -55,13 +55,13 @@ class JSHelper
 
     $strings = [];
 
-    if(\is_file($file))
+    if(is_file($file))
     {
       $parsed = LanguageHelper::parseIniFile($file);
 
       foreach($parsed as $key => $value)
       {
-        if(\str_starts_with($key, $startsWith))
+        if(str_starts_with($key, $startsWith))
         {
           $strings[$key] = Text::_($key);
         }
@@ -69,6 +69,6 @@ class JSHelper
     }
 
     // Pass all matching translated strings to JavaScript
-    Factory::getApplication()->getDocument()->addScriptOptions($script.'.lang', $strings);
+    Factory::getApplication()->getDocument()->addScriptOptions($script . '.lang', $strings);
   }
 }

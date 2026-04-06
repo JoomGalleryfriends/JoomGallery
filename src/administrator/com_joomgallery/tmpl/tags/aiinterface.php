@@ -35,39 +35,40 @@ $wa->useStyle('com_joomgallery.admin')
    ->useScript('com_joomgallery.aiinterface');
 
 $filter_options = ['formSelector' => '#tagsForm', 'filterButton' => false, 'filtersHidden' => true];
-$form_url = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component';
+$form_url       = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component';
 
 $host_url = $config->get('jg_aiint_host', 'http://localhost/api/v1');
 $base_url = parse_url($host_url, PHP_URL_SCHEME) . '://' . parse_url($host_url, PHP_URL_HOST);
-$lang = str_contains('de',Factory::getLanguage()->getTag()) ? 'de' : 'en';
+$lang     = str_contains('de', Factory::getLanguage()->getTag()) ? 'de' : 'en';
 
 // Initialize AIinterface
-$opts = [ 'prefix' => 'jgai',
-          'host' => $host_url,
-          'token' => $config->get('jg_aiint_key', ''),
-          'client_name' => 'JG-General',
-          'autoload' => true,
-          'configs' => [
-            'forceTrailingSlash' => $config->get('jg_aiint_force_slash', 0),
-            'version' => JoomHelper::getComponent()->version,
-            'def_lang' => Factory::getLanguage()->getTag(),
-            'session' => Session::getFormToken(),
-            'base_url' => Uri::base(),
-            'imagetype' => $config->get('jg_aiint_tags_imagetype', 'detail'),
-            'resize' => $config->get('jg_aiint_tags_maxdim', 500),
-            'max_parallel' => $config->get('jg_parallelprocesses', 1),
-            'case_sensitivity' => $config->get('jg_aiint_tags_casesens', 1),
-            'letter_case' => $config->get('jg_aiint_tags_caseupper', 1),
-            'api_keys' => ConfigHelper::getProviderKeys($config),
-          ]
-        ];
+$opts = [
+  'prefix' => 'jgai',
+  'host' => $host_url,
+  'token' => $config->get('jg_aiint_key', ''),
+  'client_name' => 'JG-General',
+  'autoload' => true,
+  'configs' => [
+    'forceTrailingSlash' => $config->get('jg_aiint_force_slash', 0),
+    'version' => JoomHelper::getComponent()->version,
+    'def_lang' => Factory::getLanguage()->getTag(),
+    'session' => Session::getFormToken(),
+    'base_url' => Uri::base(),
+    'imagetype' => $config->get('jg_aiint_tags_imagetype', 'detail'),
+    'resize' => $config->get('jg_aiint_tags_maxdim', 500),
+    'max_parallel' => $config->get('jg_parallelprocesses', 1),
+    'case_sensitivity' => $config->get('jg_aiint_tags_casesens', 1),
+    'letter_case' => $config->get('jg_aiint_tags_caseupper', 1),
+    'api_keys' => ConfigHelper::getProviderKeys($config),
+  ],
+];
 $this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);
 JSHelper::registerText('com_joomgallery.aiinterface', 'COM_JOOMGALLERY_JS_AIINT_');
 
 // Images
 if(!isset($this->images) || empty($this->images))
 {
-  $img = (object) ['id' => 0, 'title' => 'No Image', 'alias' => 'no-image', 'tag_ids' => '', 'tag_titles' => ''];
+  $img          = (object) ['id' => 0, 'title' => 'No Image', 'alias' => 'no-image', 'tag_ids' => '', 'tag_titles' => ''];
   $this->images = [$img];
 }
 
@@ -171,7 +172,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         $tag_titles = [];
         $tag_ids    = [];
         $first_img  = ($j == 0) ? true : false;
-        $last_img   = ($j == count($this->images)-1) ? true : false;
+        $last_img   = ($j == \count($this->images) - 1) ? true : false;
 
         if(!empty($img->tag_ids))
         {
@@ -180,15 +181,15 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         }
 
         // Calculate image dimensions
-        $strategy = ['strategy' => 'max-dimension', 'value' => 400];
+        $strategy         = ['strategy' => 'max-dimension', 'value' => 400];
         [$width, $heigth] = JoomHelper::clcImgDimensions($img->id, 'detail', $strategy);
       ?>
-      <div id="jgai-image-panel-<?php echo $j; ?>" class="image-panel" <?php if($j>0) { echo 'style="display: none;"'; } ?>>
+      <div id="jgai-image-panel-<?php echo $j; ?>" class="image-panel" <?php if($j > 0) echo 'style="display: none;"'; ?>>
         <div class="images">
           <img class="image" data-imgid="<?php echo $img->id;?>" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" width="<?php echo $width; ?>" height="<?php echo $heigth; ?>" alt="<?php echo $img->title; ?>">
           <div class="navigation-btn">
-            <button class="btn btn-outline-primary" id="jgai-prev-image-btn" <?php if($first_img) { echo 'disabled';}?>><span class="icon-arrow-left-4"></span> <?php echo Text::_('COM_JOOMGALLERY_PREV_IMG'); ?></button>
-            <button class="btn btn-outline-primary" id="jgai-next-image-btn" <?php if($last_img) { echo 'disabled';}?>><?php echo Text::_('COM_JOOMGALLERY_NEXT_IMG'); ?> <span class="icon-arrow-right-4"></span></button>
+            <button class="btn btn-outline-primary" id="jgai-prev-image-btn" <?php if($first_img) echo 'disabled'; ?>><span class="icon-arrow-left-4"></span> <?php echo Text::_('COM_JOOMGALLERY_PREV_IMG'); ?></button>
+            <button class="btn btn-outline-primary" id="jgai-next-image-btn" <?php if($last_img) echo 'disabled'; ?>><?php echo Text::_('COM_JOOMGALLERY_NEXT_IMG'); ?> <span class="icon-arrow-right-4"></span></button>
           </div>
         </div>
         <div class="keywords">
@@ -258,7 +259,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
             <div class="progress" style="height: 24px;">
               <div id="jgai-progress-fetch-bar" class="progress-bar progress-bar-striped progress-bar-animated"
                    role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                0 / <?php echo count($this->images); ?>
+                0 / <?php echo \count($this->images); ?>
               </div>
             </div>
             <div class="small text-muted mt-1" id="jgai-progress-fetch-text"><?php echo Text::_('COM_JOOMGALLERY_PENDING'); ?>...</div>
@@ -268,7 +269,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
             <div class="progress" style="height: 24px;">
               <div id="jgai-progress-generate-bar" class="progress-bar bg-success progress-bar-striped progress-bar-animated"
                   role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                0 / <?php echo count($this->images); ?>
+                0 / <?php echo \count($this->images); ?>
               </div>
             </div>
             <div class="small text-muted mt-1" id="jgai-progress-generate-text"><?php echo Text::_('COM_JOOMGALLERY_PENDING'); ?>...</div>

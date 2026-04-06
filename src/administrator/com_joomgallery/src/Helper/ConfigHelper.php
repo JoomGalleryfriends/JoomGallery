@@ -298,6 +298,7 @@ class ConfigHelper
     $apiKeys_orig = json_decode($config->get('jg_aiint_provider_keys', '{}'), true);
 
     $api_keys = [];
+
     foreach($apiKeys_orig as $provider)
     {
       // Make provider names lower case

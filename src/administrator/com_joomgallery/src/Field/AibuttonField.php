@@ -24,74 +24,75 @@ use Joomla\CMS\Uri\Uri;
 
 class AibuttonField extends FormField
 {
-	/**
-	 * The form field type.
-	 *
-	 * @var    string
-	 * @since  4.4.0
-	 */
-	protected $type = 'aibutton';
+    /**
+     * The form field type.
+     *
+     * @var    string
+     * @since  4.4.0
+     */
+    protected $type = 'aibutton';
 
-	/**
-	 * Hide the label when rendering the form field.
-	 *
-	 * @var    boolean
-	 * @since  4.4.0
-	 */
-	protected $hiddenLabel = false;
+    /**
+     * Hide the label when rendering the form field.
+     *
+     * @var    boolean
+     * @since  4.4.0
+     */
+    protected $hiddenLabel = false;
 
-	/**
-	 * Hide the description when rendering the form field.
-	 *
-	 * @var    boolean
-	 * @since  4.4.0
-	 */
-	protected $hiddenDescription = false;
+    /**
+     * Hide the description when rendering the form field.
+     *
+     * @var    boolean
+     * @since  4.4.0
+     */
+    protected $hiddenDescription = false;
 
-	/**
-	 * Method to get the field label markup.
-	 *
-	 * @return  string  The field label markup.
-	 *
-	 * @since  4.4.0
-	 */
-	protected function getLabel()
-	{
+    /**
+     * Method to get the field label markup.
+     *
+     * @return  string  The field label markup.
+     *
+     * @since  4.4.0
+     */
+    protected function getLabel()
+    {
     $fn = $this->getAttribute('function');
 
-		$html = '<button id="jgai-test-connection-btn" class="btn btn-primary">' . Text::_($this->element['label']) . '</button>';
+        $html = '<button id="jgai-test-connection-btn" class="btn btn-primary">' . Text::_($this->element['label']) . '</button>';
 
-		return $html;
-	}
+        return $html;
+    }
 
-	/**
-	 * Method to get the field input markup.
-	 *
-	 * @return  string  The field input markup.
-	 *
-	 * @since   4.4.0
-	 */
-	protected function getInput()
-	{
+    /**
+     * Method to get the field input markup.
+     *
+     * @return  string  The field input markup.
+     *
+     * @since   4.4.0
+     */
+    protected function getInput()
+    {
     // JoomGallery Configuration
     $jg = JoomHelper::getComponent();
     $jg->createConfig();
     $config = $jg->getConfig();
 
     // Initialize AIinterface
-    $opts = [ 'prefix' => 'jgai',
-              'host' => $config->get('jg_aiint_host', 'http://localhost/api/v1'),
-              'token' => $config->get('jg_aiint_key', ''),
-              'client_name' => $this->getAttribute('clientname', 'JG-General'),
-              'autoload' => false,
-              'configs' => [
-                'forceTrailingSlash' => $config->get('jg_aiint_force_slash', 0),
-                'version' => $jg->version,
-                'def_lang' => Factory::getLanguage()->getTag(),
-                'session' => Session::getFormToken(),
-                'base_url' => Uri::base(),
-              ]
-            ];
+    $opts = [
+      'prefix' => 'jgai',
+      'host' => $config->get('jg_aiint_host', 'http://localhost/api/v1'),
+      'token' => $config->get('jg_aiint_key', ''),
+      'client_name' => $this->getAttribute('clientname', 'JG-General'),
+      'autoload' => false,
+      'configs' => [
+        'forceTrailingSlash' => $config->get('jg_aiint_force_slash', 0),
+        'version' => $jg->version,
+        'def_lang' => Factory::getLanguage()->getTag(),
+        'session' => Session::getFormToken(),
+        'base_url' => Uri::base(),
+      ],
+    ];
     Factory::getApplication()->getDocument()->addScriptOptions('com_joomgallery.aiinterface', $opts);
     JSHelper::registerText('com_joomgallery.aiinterface', 'COM_JOOMGALLERY_JS_AIINT_');
 
@@ -100,5 +101,5 @@ class AibuttonField extends FormField
     $wa->useScript('com_joomgallery.aiinterface');
 
     return '';
-	}
+    }
 }
