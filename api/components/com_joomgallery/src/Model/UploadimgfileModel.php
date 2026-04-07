@@ -23,7 +23,7 @@ use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
 use Joomla\Database\DatabaseInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') || die;
+\defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -76,13 +76,14 @@ class UploadimgfileModel extends BaseModel
      *
      * @throws  Save
      * @since   4.1.0
+     *
      */
     public function save($path = null): string
     {
-        $image_name  = $this->getState('image_name', null);
+        $image_name = $this->getState('image_name', null);
         $category_id = $this->getState('category_id', false);
-        $content     = $this->getState('content', null);
-        $override    = $this->getState('override', false);
+        $content    = $this->getState('content', null);
+        $override   = $this->getState('override', false);
 
         //--- create path ----------------------------------
 
@@ -90,17 +91,16 @@ class UploadimgfileModel extends BaseModel
         // $path = 'local-image' . ':/' . implode('/', $paths);
 //        $path = 'local-image:/' . 'joomgallery/' . $category_path . '/' . $image_name;
         $category_path = $this->getState('category_path', false);
-        $category_path = 'api-05';
-        $path          = '/joomgallery/originals/' . $category_id . '/' . $image_name;
-        $adapterName   = 'local-images';
+        $category_path = "api-05";
+        $path        = '/joomgallery/originals/' . $category_id . '/' . $image_name;
+        $adapterName = 'local-images';
 
         //--- ToDo: validate path ------------------------------
 
         try {
             //--- write file ------------------------------
 
-            if($path && $content)
-            {
+            if ($path && $content) {
                 // com_media expects separate directory and file name.
                 $basename = basename($path);
                 $dirname  = \dirname($path);
@@ -115,8 +115,7 @@ class UploadimgfileModel extends BaseModel
 
                 $resultPath = $dirname . '/' . $name;
             }
-        }
-        catch (FileNotFoundException) {
+        } catch (FileNotFoundException) {
             throw new Save(
                 Text::sprintf(
                     'WEBSERVICE_COM_MEDIA_FILE_NOT_FOUND',
@@ -124,8 +123,7 @@ class UploadimgfileModel extends BaseModel
                 ),
                 404,
             );
-        }
-        catch
+        } catch
         (FileExistsException) {
             throw new Save(
                 Text::sprintf(
@@ -134,8 +132,7 @@ class UploadimgfileModel extends BaseModel
                 ),
                 400,
             );
-        }
-        catch
+        } catch
         (InvalidPathException) {
             throw new Save(
                 Text::sprintf(
@@ -147,8 +144,7 @@ class UploadimgfileModel extends BaseModel
         }
 
         // If we still have no result path, something fishy is going on.
-        if(!$resultPath)
-        {
+        if (!$resultPath) {
             throw new Save(
                 Text::_(
                     'WEBSERVICE_COM_MEDIA_UNSUPPORTED_PARAMETER_COMBINATION'
@@ -160,4 +156,5 @@ class UploadimgfileModel extends BaseModel
         // Return resulting path with the requested adapter in it
         return $adapterName . ':/' . $resultPath;
     }
+
 }

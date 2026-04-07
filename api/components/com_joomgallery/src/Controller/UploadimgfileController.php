@@ -26,7 +26,6 @@ use Tobscure\JsonApi\Exception\InvalidParameterException;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-
 class UploadimgfileController extends ApiController
 {
   use ProviderManagerHelperTrait;
@@ -52,9 +51,9 @@ class UploadimgfileController extends ApiController
   public function upload_image_file(): void
   {
     // $image_name = $this->input->json->get('image_name', '', 'PATH');
-    $image_name  = $this->input->json->get('image_name', '', 'STRING');
+    $image_name = $this->input->json->get('image_name', '', 'STRING');
     $category_id = $this->input->json->get('category_id', '', 'INTEGER');
-    $content     = $this->input->json->get('content', '', 'RAW');
+    $content    = $this->input->json->get('content', '', 'RAW');
 
     $missingParameters = [];
 
@@ -134,6 +133,7 @@ class UploadimgfileController extends ApiController
      *
      * @throws  \RuntimeException
      * @since   4.1.0
+     *
      */
     private function checkContent(): void
     {
@@ -142,9 +142,14 @@ class UploadimgfileController extends ApiController
         $serverlength = $this->input->server->getInt('CONTENT_LENGTH');
 
         // Check if the size of the request body does not exceed various server imposed limits.
-        if(($params->get('upload_maxsize', 0) > 0 && $serverlength > ($params->get('upload_maxsize', 0) * 1024 * 1024)) || $serverlength > $helper->toBytes(\ini_get('upload_max_filesize')) || $serverlength > $helper->toBytes(\ini_get('post_max_size')) || $serverlength > $helper->toBytes(\ini_get('memory_limit')))
+        if (($params->get('upload_maxsize', 0) > 0 && $serverlength > ($params->get('upload_maxsize', 0) * 1024 * 1024)) || $serverlength > $helper->toBytes(\ini_get('upload_max_filesize')) || $serverlength > $helper->toBytes(\ini_get('post_max_size')) || $serverlength > $helper->toBytes(\ini_get('memory_limit')))
         {
             throw new \RuntimeException(Text::_('COM_MEDIA_ERROR_WARNFILETOOLARGE'), 400);
         }
     }
+
+
+
+
+
 }

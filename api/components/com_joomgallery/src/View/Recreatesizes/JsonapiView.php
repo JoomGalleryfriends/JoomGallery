@@ -9,7 +9,7 @@
  * *********************************************************************************
  */
 
-namespace Rsgallery2\Component\Rsgallery2\Api\View\Uploadimgfile;
+namespace Joomgallery\Component\Joomgallery\Api\View\RecreateSizes;
 
 use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
 use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;

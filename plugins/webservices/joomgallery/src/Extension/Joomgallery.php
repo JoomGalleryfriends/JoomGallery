@@ -36,9 +36,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
    */
   public static function getSubscribedEvents(): array
   {
-  return [
-    'onBeforeApiRoute' => 'onBeforeApiRoute',
-  ];
+    return [
+      'onBeforeApiRoute' => 'onBeforeApiRoute',
+    ];
   }
 
   /**
@@ -52,25 +52,25 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
    */
   public function onBeforeApiRoute(BeforeApiRouteEvent $event): void
   {
-  $router = $event->getRouter();
+    $router = $event->getRouter();
 
-  $defaults = ['component' => 'com_joomgallery'];
-  // ToDo: Remove when tests finished, enables access without token
-  // $getDefaults = array_merge(['public' => true], $defaults);
-  $getDefaults = array_merge(['public' => false], $defaults);
+    $defaults = ['component' => 'com_joomgallery'];
+    // ToDo: Remove when tests finished, enables access without token
+    // $getDefaults = array_merge(['public' => true], $defaults);
+    $getDefaults = array_merge(['public' => false], $defaults);
 
 //          new Route(['GET'], 'v1/example/items/:slug', 'item.displayItem',
 //              ['slug' => '(.*)'], ['option' => 'com_example']),
 
-  $this->DBGalleriesImages($router, $getDefaults);
+    $this->DBGalleriesImages($router, $getDefaults);
 
-  $this->DBConfigAndVersion($router, $getDefaults);
+    $this->DBConfigAndVersion($router, $getDefaults);
 
-  $this->UploadImages($router, $getDefaults);
+    $this->UploadImages($router, $getDefaults);
 
-  //    $this->($router);
+    //    $this->($router);
 
-  //    $this->createContentHistoryRoutes($router);
+    //    $this->createContentHistoryRoutes($router);
   }
 
   /**
@@ -86,23 +86,23 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
 //          new Route(['GET'], 'v1/joomgallery', 'joomgallery.displayItem', [], $getDefaults),
 //      ]);
 
-$router->createCRUDRoutes(
-    'v1/joomgallery/categories',
-    'categories',
-    ['component' => 'com_joomgallery'],
-    true // ToDo: Remove when tests finished
-);
+    $router->createCRUDRoutes(
+        'v1/joomgallery/categories',
+        'categories',
+        ['component' => 'com_joomgallery'],
+        true // ToDo: Remove when tests finished
+    );
 
-$router->createCRUDRoutes(
-    'v1/joomgallery/images',
-    'images',
-    ['component' => 'com_joomgallery'],
-    true // ToDo: Remove when tests finished
-);
+    $router->createCRUDRoutes(
+        'v1/joomgallery/images',
+        'images',
+        ['component' => 'com_joomgallery'],
+        true // ToDo: Remove when tests finished
+    );
 
 
-  // ToDo: custom fields
-  // $this->createFieldsRoutes($router);
+    // ToDo: custom fields
+    // $this->createFieldsRoutes($router);
   }
 
   /**
@@ -115,28 +115,28 @@ $router->createCRUDRoutes(
    */
   public function DBConfigAndVersion(ApiRouter $router, array $getDefaults): void
   {
-  // joomla part of JG (not much there)
-$router->addRoutes(
-    [
-      new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),
-    ]
-);
+    // joomla part of JG (not much there)
+    $router->addRoutes(
+        [
+          new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),
+        ]
+    );
 
-  // JG config sets
-$router->createCRUDRoutes(
-    'v1/joomgallery/configs',
-    'configs',
-    ['component' => 'com_joomgallery'],
-    true // ToDo: Remove when tests finished
-);
+    // JG config sets
+    $router->createCRUDRoutes(
+        'v1/joomgallery/configs',
+        'configs',
+        ['component' => 'com_joomgallery'],
+        true // ToDo: Remove when tests finished
+    );
 
 
-  // JG version
-$router->addRoutes(
-    [
-      new Route(['GET'], 'v1/joomgallery/version', 'version.display', [], $getDefaults),
-    ]
-);
+    // JG version
+    $router->addRoutes(
+        [
+          new Route(['GET'], 'v1/joomgallery/version', 'version.display', [], $getDefaults),
+        ]
+    );
   }
 
   /**
@@ -147,57 +147,63 @@ $router->addRoutes(
    */
   private function UploadImages(ApiRouter $router, array $getDefaults)
   {
-  // Gid or name
-$router->addRoutes(
-    [
-      //            new Route(['GET'], 'v1/joomgallery/upload/:gid',
-      //                'UploadApi.upload_img',
-      //                ['id' => '(\d+)'],
-      //                $getDefaults),
+    // Gid or name
+    $router->addRoutes(
+        [
+          //            new Route(['GET'], 'v1/joomgallery/upload/:gid',
+          //                'UploadApi.upload_img',
+          //                ['id' => '(\d+)'],
+          //                $getDefaults),
 
-      new Route(
-          ['GET'],
-          'v1/joomgallery/latestcategory',
-          'latestcategory.displayList',
-          [],
-          $getDefaults
-      ),
+          new Route(
+              ['GET'],
+              'v1/joomgallery/latestcategory',
+              'latestcategory.displayList',
+              [],
+              $getDefaults
+          ),
 
-      new Route(
-          ['POST'],
-          'v1/joomgallery/db_reserve_image_id',
-          'images.add',
-          [],
-          $getDefaults
-      ),
+          new Route(
+              ['POST'],
+              'v1/joomgallery/db_reserve_image_id',
+              'images.add',
+              [],
+              $getDefaults
+          ),
 
-      new Route(
-          ['POST'],
-          'v1/joomgallery/upload_image_file',
-          'uploadimgfile.upload_image_file',
-          [],
-          $getDefaults
-      ),
+          new Route(
+              ['POST'],
+              'v1/joomgallery/upload_image_file',
+              'uploadimgfile.upload_image_file',
+              [],
+              $getDefaults
+          ),
 
-      new Route(
-          ['PATCH'],
-          'v1/joomgallery/recreate_sizes',
-          // 'UploadApi.upload_img',
-            'recreate_sizes.api_recreate_sizes',
-          //['gallery_name' => '(.*)'],
-            [],
-          $getDefaults
-      ),
+          new Route(
+              ['PATCH'],
+              'v1/joomgallery/save_metadata',
+              'savemetadata.save_metadata',
+              [],
+              $getDefaults
+          ),
 
-      //        // image files
-      //        $router->createCRUDRoutes(
-      //            'v1/joomgallery/image_files',
-      //            'UploadApi',
-      //            ['component' => 'com_joomgallery'],
-      //            $getDefaults,
-      //        );
+          new Route(
+              ['PATCH'],
+              'v1/joomgallery/recreate_sizes',
+              'recreatesizes.recreate_sizes',
+              [],
+              $getDefaults
+          ),
 
-    ]
-);
+          //        // image files
+          //        $router->createCRUDRoutes(
+          //            'v1/joomgallery/image_files',
+          //            'UploadApi',
+          //            ['component' => 'com_joomgallery'],
+          //            $getDefaults,
+          //        );
+
+        ]
+    );
   }
 }
