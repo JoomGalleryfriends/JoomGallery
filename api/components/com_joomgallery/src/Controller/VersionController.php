@@ -10,6 +10,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
+use Joomgallery\Component\Joomgallery\Api\Model\VersionModel;
 use Joomgallery\Component\Joomgallery\Api\View\Version\JsonapiView;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\ApiController;
@@ -44,15 +45,11 @@ class VersionController extends ApiController
     protected $default_view = 'version';
 
     /**
-     * Call version model
-     * @param $cachable
-     * @param $urlparams
+     * Generic method to prepare the view
      *
-     * @return $this|VersionController
-     *
-     * @since version
+     * @return JsonapiView  The prepared view
      */
-    public function display($cachable = false, $urlparams = [])
+    public function prepareView($cachable = false, $urlparams = [])
     {
         $viewType   = $this->app->getDocument()->getType();
         $viewName   = $this->input->get('view', $this->default_view);
@@ -74,6 +71,7 @@ class VersionController extends ApiController
         $modelName = $this->input->get('model', Inflector::singularize($this->contentType));
 
         // Create the model, ignoring request data so we can safely set the state in the request from the controller
+        /** @var VersionModel $model */
         $model = $this->getModel($modelName, '', ['ignore_request' => true, 'state' => $this->modelState]);
 
         if(!$model)
@@ -81,12 +79,15 @@ class VersionController extends ApiController
             throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
         }
 
-        // test if model is valid
-        try {
-            $modelName = $model->getName();
-        }
-        catch (\Exception $e) {
-            throw new \RuntimeException($e->getMessage());
+//        // test if model is valid
+//        try {
+//            $modelName = $model->getName();
+//        }
+//        catch (\Exception $e) {
+//            throw new \RuntimeException($e->getMessage());
+//        }
+        if (!$model) {
+            throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
         }
 
         // Push the model into the view (as default)
