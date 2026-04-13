@@ -12,14 +12,18 @@ namespace Joomgallery\Component\Joomgallery\Api\Model;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\Exception\ResourceNotFound;
-use Joomla\CMS\MVC\Model\BaseModel;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Component\Media\Administrator\Model\ApiModel;
 use Joomla\Database\DatabaseInterface;
 
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+
 /**
- * @since  4.2.0
+ * @since  4.4.0
  */
-class VersionModel extends BaseModel
+class VersionModel extends BaseDatabaseModel
 {
     /**
      * Instance of com_media's ApiModel

@@ -90,16 +90,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         'v1/joomgallery/categories',
         'categories',
         ['component' => 'com_joomgallery'],
-        true // ToDo: Remove when tests finished
+        $getDefaults
     );
 
     $router->createCRUDRoutes(
         'v1/joomgallery/images',
         'images',
         ['component' => 'com_joomgallery'],
-        true // ToDo: Remove when tests finished
+        $getDefaults
     );
-
 
     // ToDo: custom fields
     // $this->createFieldsRoutes($router);
@@ -127,14 +126,13 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         'v1/joomgallery/configs',
         'configs',
         ['component' => 'com_joomgallery'],
-        true // ToDo: Remove when tests finished
+        $getDefaults
     );
-
 
     // JG version
     $router->addRoutes(
         [
-          new Route(['GET'], 'v1/joomgallery/version', 'version.display', [], $getDefaults),
+          new Route(['GET'], 'v1/joomgallery/version', 'version.displayItem', [], $getDefaults),
         ]
     );
   }

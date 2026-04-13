@@ -15,7 +15,6 @@ use Joomgallery\Component\Joomgallery\Api\View\Version\JsonapiView;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\ApiController;
 use Joomla\String\Inflector;
-//use Joomla\CMS\MVC\View\JsonApiView;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
@@ -24,7 +23,7 @@ use Joomla\String\Inflector;
 /**
  * The version controller
  *
- * @since  4.0.0
+ * @since  4.4.0
  */
 class VersionController extends ApiController
 {
@@ -32,7 +31,7 @@ class VersionController extends ApiController
      * The content type of the item.
      *
      * @var    string
-     * @since  4.0.0
+     * @since  4.4.0
      */
     protected $contentType = 'version';
 
@@ -40,7 +39,7 @@ class VersionController extends ApiController
      * The default view for the display method.
      *
      * @var    string
-     * @since  3.0
+     * @since  4.4.0
      */
     protected $default_view = 'version';
 
@@ -48,8 +47,10 @@ class VersionController extends ApiController
      * Generic method to prepare the view
      *
      * @return JsonapiView  The prepared view
+     *
+     * @since  5.0.10
      */
-    public function prepareView($cachable = false, $urlparams = [])
+    public function prepareView()
     {
         $viewType   = $this->app->getDocument()->getType();
         $viewName   = $this->input->get('view', $this->default_view);
@@ -74,11 +75,6 @@ class VersionController extends ApiController
         /** @var VersionModel $model */
         $model = $this->getModel($modelName, '', ['ignore_request' => true, 'state' => $this->modelState]);
 
-        if(!$model)
-        {
-            throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
-        }
-
 //        // test if model is valid
 //        try {
 //            $modelName = $model->getName();
@@ -96,6 +92,6 @@ class VersionController extends ApiController
         $view->setDocument($this->app->getDocument());
         $view->displayItem();
 
-        return $this;
+        return $view;
     }
 }
