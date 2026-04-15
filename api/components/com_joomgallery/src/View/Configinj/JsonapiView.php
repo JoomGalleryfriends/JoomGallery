@@ -104,7 +104,6 @@ class JsonapiView extends BaseApiView
 
         try {
             $db = Factory::getContainer()->get(DatabaseInterface::class);
-//            $db = $this->database;
 
             $query = $db->getQuery(true)
                 ->select($db->quoteName('params'))

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
@@ -21,11 +20,11 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * The latest categories controller
+ * The images controller
  *
- * @since  4.0.0
+ * @since  4.4.0
  */
-class LatestcategoryController extends ApiController
+class ApplymetadataController extends ImagesController // ApiController
 {
     /**
      * The content type of the item.
@@ -33,7 +32,7 @@ class LatestcategoryController extends ApiController
      * @var    string
      * @since  4.0.0
      */
-    protected $contentType = 'latestcategory';
+    protected $contentType = 'images';
 
     /**
      * The default view for the display method.
@@ -41,17 +40,22 @@ class LatestcategoryController extends ApiController
      * @var    string
      * @since  3.0
      */
-    protected $default_view = 'latestcategory';
+    protected $default_view = 'images';
 
     /**
-     * @param   null  $id
+     * Adds some parameters for file name
+     * then uses parent:add to save
+     *
+     * @since version
      */
-    public function displayItem($id = null)
-    {
-        // Set the id as the parent sets it as int
-        $this->modelState->set('id', $this->input->get('id', '', 'string'));
+    public function apply_meta_data (){
 
-        return parent::displayItem();
+
+    //    use   public function overrideData(&$data): bool
+
+
+        parent::add();
     }
+
 
 }

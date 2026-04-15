@@ -12,7 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Api\Model;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\Exception\ResourceNotFound;
-use Joomla\CMS\MVC\Model\BaseModel;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Component\Media\Administrator\Model\ApiModel;
 use Joomla\Database\DatabaseInterface;
 
@@ -21,27 +21,17 @@ use Joomla\Database\DatabaseInterface;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @since  4.2.0
+ * @since  4.4.0
  */
-class ConfiginjModel extends BaseModel
+class LatestcategoryModel extends BaseDatabaseModel
 {
-    /**
-     * Instance of com_media's ApiModel
-     *
-     * @var ApiModel
-     * @since  4.1.0
-     */
-//    private $versionApiModel;
-
-    public function __construct($config = [])
-    {
-        parent::__construct($config);
-
-//        $this->versionApiModel = new ApiModel();
-    }
+//    public function __construct($config = [])
+//    {
+//        parent::__construct($config);
+//    }
 
     /**
-     * Method to get all configuration parameters
+     * Method to get latest gallery data
      *
      * @return  \stdClass  A file or folder object.
      *
@@ -50,33 +40,27 @@ class ConfiginjModel extends BaseModel
      */
     public function getItem()
     {
-
-        $componentName = 'com_joomgallery';
-
-        $oConfig = new \stdClass();
+        $oCategory = new \stdClass();
 
         try {
             $db = Factory::getContainer()->get(DatabaseInterface::class);
 
-            $query = $db->getQuery(true)
-                ->select($db->quoteName('params'))
-                ->from($db->quoteName('#__extensions'))
-                ->where($db->quoteName('element') . ' = ' . $db->quote($componentName));
+            $limit = 1;
+
+            $query = $db->createQuery()
+                ->select('*')
+                ->from('#__joomgallery_categories')
+                ->order($db->quoteName('id') . ' DESC')
+                ->setLimit($limit);
             $db->setQuery($query);
 
-            $jsonStr = $db->loadResult();
+            $oCategory = $db->loadObject();
 
-            if(!empty($jsonStr))
-            {
-                $params = json_decode($jsonStr, true);
-            }
-
-            $oConfig = (object) $params;
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
 
-        return $oConfig;
+        return $oCategory;
     }
+
 }

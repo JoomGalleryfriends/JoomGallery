@@ -148,23 +148,32 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     // Gid or name
     $router->addRoutes(
         [
+          // ToDo: Upload in one go
           //            new Route(['GET'], 'v1/joomgallery/upload/:gid',
-          //                'UploadApi.upload_img',
+          //                'uploadimgatonce.upload_imgage_at_once',
           //                ['id' => '(\d+)'],
           //                $getDefaults),
 
           new Route(
               ['GET'],
               'v1/joomgallery/latestcategory',
-              'latestcategory.displayList',
+              'latestcategory.displayItem',
               [],
               $getDefaults
           ),
 
+//          new Route(
+//              ['POST'],
+//              'v1/joomgallery/db_reserve_image_id',
+//              'images.add',
+//              [],
+//              $getDefaults
+//          ),
+//
           new Route(
               ['POST'],
               'v1/joomgallery/db_reserve_image_id',
-              'images.add',
+              'reserveimgid.db_reserve_image_id',
               [],
               $getDefaults
           ),
@@ -189,6 +198,14 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
               ['PATCH'],
               'v1/joomgallery/recreate_sizes',
               'recreatesizes.recreate_sizes',
+              [],
+              $getDefaults
+          ),
+
+          new Route(
+              ['PATCH'],
+              'v1/joomgallery/apply_meta_data',
+              'applymetadata.apply_meta_data',
               [],
               $getDefaults
           ),
