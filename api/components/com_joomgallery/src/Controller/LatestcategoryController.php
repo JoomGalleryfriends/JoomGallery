@@ -45,6 +45,8 @@ class LatestcategoryController extends ApiController
 
     /**
      * @param   null  $id
+     *
+     * @since  5.0.10
      */
     public function displayItem($id = null)
     {

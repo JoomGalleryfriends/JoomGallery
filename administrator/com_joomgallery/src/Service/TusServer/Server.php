@@ -485,7 +485,7 @@ class Server implements ServerInterface
       return;
     }
 
-    // Check if the file is already entirely write
+    // Check if the file is already entirely written
     if($offsetSession === $lengthSession || $lengthSession === 0)
     {
       // the whole file was uploaded

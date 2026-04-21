@@ -42,7 +42,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   }
 
   /**
-   * Registers com_joomgallery's API's routes in the application
+   * Registers com_joomgallery API's routes in the application
    *
    * @param   BeforeApiRouteEvent   $event  The event object
    *
@@ -75,8 +75,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
 
   /**
    * DB galleries
-   * @param   ApiRouter  $router
    *
+   * @param   ApiRouter  $router
+   * @param   array      $getDefaults
    *
    * @since version
    */
@@ -143,7 +144,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
    *
    * @since version
    */
-  private function UploadImages(ApiRouter $router, array $getDefaults)
+  private function UploadImages(ApiRouter $router, array $getDefaults): void
   {
     // Gid or name
     $router->addRoutes(

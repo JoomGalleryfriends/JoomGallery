@@ -50,7 +50,7 @@ class VersionController extends ApiController
      *
      * @since  5.0.10
      */
-    public function prepareView()
+    protected function prepareView()
     {
         $viewType   = $this->app->getDocument()->getType();
         $viewName   = $this->input->get('view', $this->default_view);
@@ -75,13 +75,7 @@ class VersionController extends ApiController
         /** @var VersionModel $model */
         $model = $this->getModel($modelName, '', ['ignore_request' => true, 'state' => $this->modelState]);
 
-//        // test if model is valid
-//        try {
-//            $modelName = $model->getName();
-//        }
-//        catch (\Exception $e) {
-//            throw new \RuntimeException($e->getMessage());
-//        }
+        // test if model is valid
         if (!$model) {
             throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
         }

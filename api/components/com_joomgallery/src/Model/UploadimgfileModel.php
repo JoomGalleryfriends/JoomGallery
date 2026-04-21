@@ -85,6 +85,8 @@ class UploadimgfileModel extends BaseModel
         $content    = $this->getState('content', null);
         $override   = $this->getState('override', false);
 
+        $resultPath = '';
+
         //--- create path ----------------------------------
 
         // ToDo: use db to retrieve $category_path from image id
@@ -144,7 +146,7 @@ class UploadimgfileModel extends BaseModel
         }
 
         // If we still have no result path, something fishy is going on.
-        if (!$resultPath) {
+        if (empty($resultPath)) {
             throw new Save(
                 Text::_(
                     'WEBSERVICE_COM_MEDIA_UNSUPPORTED_PARAMETER_COMBINATION'

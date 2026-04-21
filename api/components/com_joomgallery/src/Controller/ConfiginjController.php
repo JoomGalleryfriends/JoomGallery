@@ -84,17 +84,10 @@ class ConfiginjController extends ApiController
         // Create the model, ignoring request data so we can safely set the state in the request from the controller
         $model = $this->getModel($modelName, '', ['ignore_request' => true, 'state' => $this->modelState]);
 
+        // test if model is valid
         if(!$model)
         {
             throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE'));
-        }
-
-        // test if model is valid
-        try {
-            $modelName = $model->getName();
-        }
-        catch (\Exception $e) {
-            throw new \RuntimeException($e->getMessage());
         }
 
         // Push the model into the view (as default)

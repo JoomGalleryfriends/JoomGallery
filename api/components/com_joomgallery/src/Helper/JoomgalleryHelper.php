@@ -29,6 +29,8 @@ class JoomgalleryHelper
      * @param   string  $uri      The uri to resolve
      *
      * @return  string
+     *
+     * @since  5.0.10
      */
     public static function resolve(string $uri): string
     {
