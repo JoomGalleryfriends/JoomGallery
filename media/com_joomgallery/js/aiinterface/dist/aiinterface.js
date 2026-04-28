@@ -1437,198 +1437,152 @@ class AIinterface {
     this.showModal('generate');
     this.showProgressSection();
 
-    this.updateImageFetchProgress(stats.total, 0, 0, 0);
-    this.updateKeywordGenerationProgress(stats.total, 0, 0, 0);
+    this.updateImageFetchProgress(stats.total, 0, 0, 0, stats.total);
+    this.updateKeywordGenerationProgress(1, 0, 0, 0, 1);
 
     const workerCount = Math.max(1, Number(this.configs.max_parallel || 1));
 
-    // Generate keywords in parallel using sema
+    // Step 1: fetch all images in parallel with sema
     const {
-      results, successCount, failedCount
-    } = await this.processImagesWithSema(
-      panels, options, workerCount, stats
-    );
+      results: fetchedResults,
+      successCount: imageFetchSuccess,
+      failedCount: imageFetchFailed
+    } = await this.processImagesWithSema(panels, workerCount, stats);
 
-    const errors = {};
-    let success = failedCount === 0;
+    const images = fetchedResults
+      .filter((item) => item?.success && item?.data)
+      .map((item) => ({
+        id: item.id,
+        base64_data: item.data
+      }));
 
-    // Check results
-    results.forEach((result, index) => {
-      if (!result?.success) {
-        errors[String(result?.id ?? index)] = {
-          status: result?.status ?? 0,
-          error: result?.error ?? 'Unknown error'
-        };
-      }
+    if (!images.length) {
+      this.stopKeywordGenerationProgressTimer();
+
+      this.renderGenerateSummary({
+        successImages: 0,
+        failedImages: stats.total,
+        modelTitle: model,
+        keywords: [],
+        modelTokens: 0,
+        serviceTokens: 0,
+        infractions: 0,
+        newBalance: this.balance,
+        failedItems: fetchedResults
+          .filter((r) => !r?.success)
+          .map((r, index) => ({
+            id: r?.id ?? index,
+            error: r?.message ?? 'Image fetch failed'
+          }))
+      });
+
+      return {
+        success: false,
+        errors: {
+          image_fetch: {
+            status: 0,
+            error: 'All image fetches failed.'
+          }
+        },
+        nmbErrors: imageFetchFailed,
+        nmbSuccess: 0
+      };
+    }
+
+    // Step 2: estimate and animate generation progress
+    const estimatedSeconds = this.getGenerationTime(images.length, model);
+    this.startKeywordGenerationProgressTimer(estimatedSeconds);
+
+    // Step 3: call generation only once
+    const response = await this.genKeywords(null, images, options);
+
+    // Stop timer first
+    this.stopKeywordGenerationProgressTimer();
+
+    const modelTitle = this.getModelTitle(model);
+
+    // Hard failure before any usable API payload exists
+    if (!response?.success || !response?.data) {
+      stats.generateFailed = images.length;
+
+      // Show generation bar as failed/complete
+      this.updateKeywordGenerationProgress(1, 1, 0, 1, 0);
+
+      const failedItems = images.map((img) => ({
+        id: img.id,
+        error: response?.message || this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_GENERATE_ERROR || 'Keyword generation failed.'
+      }));
+
+      this.renderGenerateSummary({
+        successImages: 0,
+        failedImages: stats.fetchFailed + images.length,
+        modelTitle,
+        keywords: [],
+        modelTokens: 0,
+        serviceTokens: 0,
+        infractions: 0,
+        newBalance: this.balance,
+        failedItems
+      });
+
+      return {
+        success: false,
+        errors: {
+          generate: {
+            status: response?.status ?? 0,
+            error: response?.message || 'Keyword generation failed.'
+          }
+        },
+        nmbErrors: stats.fetchFailed + images.length,
+        nmbSuccess: 0
+      };
+    }
+
+    // Valid generation response received
+    // Step 4: stop timer and complete generation bar
+    this.finishKeywordGenerationProgressTimer();
+
+    // Step 5: process returned results
+    const processed = await this.processKeywordResults(response, stats);
+
+    const failedItems = [];
+    Object.entries(processed.errors || {}).forEach(([id, item]) => {
+      failedItems.push({
+        id,
+        error: item.error
+      });
     });
 
-    // Gather the list of failed image items
-    const failedItems = results
-      .filter(r => !r.success)
-      .map(r => ({
-        id: r.id,
-        error: r.error
-      }));
+    // include fetch errors too
+    fetchedResults
+      .filter((r) => !r?.success)
+      .forEach((r, index) => {
+        failedItems.push({
+          id: r?.id ?? `fetch-${index}`,
+          error: r?.message || 'Image fetch failed'
+        });
+      });
 
     this.renderGenerateSummary({
       successImages: stats.generateSuccess,
-      failedImages: stats.generateFailed,
-      failedItems: failedItems,
-      modelTitle: this.getModelTitle(model),
+      failedImages: stats.generateFailed + stats.fetchFailed,
+      modelTitle: modelTitle,
       keywords: Array.from(stats.createdKeywords),
       modelTokens: stats.modelTokens,
       serviceTokens: stats.serviceTokens,
       infractions: stats.infractions,
-      newBalance: this.balance
+      newBalance: this.balance,
+      failedItems
     });
 
     // Update user info
-    balance = await ai.getTokens();
-    document.getElementById(prefix + '-balance-value').textContent = String(balance.data.balance);
+    const balance = await this.getTokens();
+    if (balance?.data?.balance !== undefined) {
+      document.getElementById(`${this.prefix}-balance-value`).textContent = String(balance.data.balance);
+    }
   }
 
-  async processSingleImageKeywords(panel, options, stats) {
-    const fetched = await this.fetchImageAsBase64(panel);
-
-    stats.fetchDone++;
-
-    if (!fetched.success || !fetched.data) {
-
-      // Failed image fetch
-      stats.fetchFailed++;
-      this.updateImageFetchProgress(
-        stats.total,
-        stats.fetchDone,
-        stats.fetchSuccess,
-        stats.fetchFailed
-      );
-
-      return {
-        success: false,
-        stage: 'fetch',
-        id: fetched.id ?? null,
-        status: fetched.status ?? 0,
-        error: fetched.message || this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_FETCH_IMG_ERROR,
-      };
-    }
-
-    // Successful image fetch
-    stats.fetchSuccess++;
-    this.updateImageFetchProgress(
-      stats.total,
-      stats.fetchDone,
-      stats.fetchSuccess,
-      stats.fetchFailed
-    );
-
-    const images = [
-      {
-        id: fetched.id,
-        base64_data: fetched.data,
-      }
-    ];
-
-    const response = await this.genKeywords(null, images, options);
-    const payload = response?.data ?? {};
-    const results = payload?.results ?? [];
-
-    stats.generateDone++;
-
-    if (!response?.success) {
-      // Failed tags generation
-      stats.generateFailed++;
-      this.updateKeywordGenerationProgress(
-        stats.total,
-        stats.generateDone,
-        stats.generateSuccess,
-        stats.generateFailed
-      );
-
-      return {
-        success: false,
-        stage: 'generate',
-        id: fetched.id,
-        status: response?.status ?? 0,
-        error: response?.message || this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_GEN_REQUEST_ERROR,
-      };
-    }
-
-    if (response.status != 200 || !Array.isArray(results) || results.length < 1) {
-      // Failed tags generation
-      stats.generateFailed++;
-      this.updateKeywordGenerationProgress(
-        stats.total,
-        stats.generateDone,
-        stats.generateSuccess,
-        stats.generateFailed
-      );
-
-      return {
-        success: false,
-        stage: 'generate',
-        id: fetched.id,
-        status: payload?.status ?? response?.status ?? 0,
-        error: response?.message || this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_INVALID_RES_ERROR,
-      };
-    }
-
-    const result = results[0];
-
-    if (payload?.status != 1 || result.error) {
-      // Failed tags generation
-      stats.generateFailed++;
-      this.updateKeywordGenerationProgress(
-        stats.total,
-        stats.generateDone,
-        stats.generateSuccess,
-        stats.generateFailed
-      );
-
-      return {
-        success: false,
-        stage: 'generate',
-        id: result.id ?? fetched.id,
-        status: payload?.status ?? response?.status ?? 0,
-        error: result.error,
-        model_tokens: result.model_tokens ?? payload.model_tokens ?? 0,
-        service_tokens: result.service_tokens ?? payload.service_tokens ?? 0,
-      };
-    }
-
-    const keywords = (result.tags || [])
-      .map((tag) => tag?.name?.trim())
-      .filter(Boolean);
-
-    // Update stats
-    keywords.forEach((kw) => stats.createdKeywords.add(kw));
-    stats.modelTokens += Number(result.model_tokens ?? payload.model_tokens ?? 0);
-    stats.serviceTokens += Number(result.service_tokens ?? payload.service_tokens ?? 0);
-    stats.infractions = Number(payload.total_infractions ?? stats.infractions ?? 0);
-
-    const pos = this.getPanelPositionByImageId(result.id ?? fetched.id);
-    await this.addKeywordsToImg(pos, keywords, 'red');
-
-    // Successful tags generation
-    stats.generateSuccess++;
-    this.updateKeywordGenerationProgress(
-      stats.total,
-      stats.generateDone,
-      stats.generateSuccess,
-      stats.generateFailed
-    );
-
-    return {
-      success: true,
-      stage: 'done',
-      id: result.id ?? fetched.id,
-      status: payload.status,
-      keywords,
-      model_tokens: result.model_tokens ?? payload.model_tokens ?? 0,
-      service_tokens: result.service_tokens ?? payload.service_tokens ?? 0,
-    };
-  }
-
-  async processImagesWithSema(panels, options, workerCount = 1, stats) {
+  async processImagesWithSema(panels, workerCount = 1, stats) {
     const sema = new async_sema__WEBPACK_IMPORTED_MODULE_0__.Sema(workerCount);
     const panelList = Array.from(panels);
     const results = new Array(panelList.length);
@@ -1637,7 +1591,6 @@ class AIinterface {
     let successCount = 0;
     let failedCount = 0;
 
-    // Define worker loop function
     const runWorkerLoop = async () => {
       while (true) {
         const currentIndex = nextIndex++;
@@ -1649,25 +1602,46 @@ class AIinterface {
         const panel = panelList[currentIndex];
 
         try {
-          const result = await this.processSingleImageKeywords(panel, options, stats);
-          results[currentIndex] = result;
+          const fetched = await this.fetchImageAsBase64(panel);
+          results[currentIndex] = fetched;
 
-          if (result.success) {
+          stats.fetchDone++;
+
+          if (fetched.success && fetched.data) {
+            stats.fetchSuccess++;
             successCount++;
           } else {
+            stats.fetchFailed++;
             failedCount++;
           }
 
+          this.updateImageFetchProgress(
+            stats.total,
+            stats.fetchDone,
+            stats.fetchSuccess,
+            stats.fetchFailed,
+            stats.total - stats.fetchDone
+          );
         } catch (error) {
           results[currentIndex] = {
             success: false,
-            stage: 'internal',
             id: null,
             status: 0,
-            error: error instanceof Error ? error.message : String(error),
+            message: error instanceof Error ? error.message : String(error),
+            data: null
           };
 
+          stats.fetchDone++;
+          stats.fetchFailed++;
           failedCount++;
+
+          this.updateImageFetchProgress(
+            stats.total,
+            stats.fetchDone,
+            stats.fetchSuccess,
+            stats.fetchFailed,
+            stats.total - stats.fetchDone
+          );
         } finally {
           sema.release();
         }
@@ -1677,18 +1651,80 @@ class AIinterface {
     const workerTotal = Math.min(workerCount, panelList.length);
     const promises = [];
 
-    // Run worker loop
     for (let i = 0; i < workerTotal; i++) {
       promises.push(runWorkerLoop());
     }
 
-    // Wait for promise to resolve
     await Promise.allSettled(promises);
 
     return {
       results,
       successCount,
       failedCount
+    };
+  }
+
+  async processKeywordResults(response, stats) {
+    const payload = response?.data ?? {};
+    const results = payload?.results ?? [];
+
+    if (!response?.success) {
+      return {
+        success: false,
+        errors: {
+          '0': {
+            status: response?.status ?? 0,
+            error: response?.message || 'Keyword generation request to API failed.'
+          }
+        }
+      };
+    }
+
+    if (response.status !== 200 || !Array.isArray(results) || results.length < 1) {
+      return {
+        success: false,
+        errors: {
+          '0': {
+            status: payload?.status ?? response?.status ?? 0,
+            error: response?.message || 'API returned no valid result.'
+          }
+        }
+      };
+    }
+
+    const errors = {};
+
+    for (const result of results) {
+      if (payload?.status !== 1 || result.error) {
+        stats.generateFailed++;
+
+        errors[String(result.id ?? stats.generateFailed)] = {
+          status: payload?.status ?? response?.status ?? 0,
+          error: result.error || 'Unknown generation error'
+        };
+
+        continue;
+      }
+
+      const keywords = (result.tags || [])
+        .map((tag) => tag?.name?.trim())
+        .filter(Boolean);
+
+      keywords.forEach((kw) => stats.createdKeywords.add(kw));
+      stats.modelTokens += Number(result.model_tokens ?? payload.model_tokens ?? 0);
+      stats.serviceTokens += Number(result.service_tokens ?? payload.service_tokens ?? 0);
+      stats.infractions = Number(payload.total_infractions ?? stats.infractions ?? 0);
+
+      const imageId = result.id ?? null;
+      const pos = imageId !== null ? this.getPanelPositionByImageId(imageId) : 0;
+      await this.addKeywordsToImg(pos, keywords, 'red');
+
+      stats.generateSuccess++;
+    }
+
+    return {
+      success: Object.keys(errors).length === 0,
+      errors
     };
   }
 
@@ -1741,15 +1777,46 @@ class AIinterface {
 
     if (!bar) return;
 
-    const percent = Math.round((done / total) * 100);
+    const safeTotal = total > 0 ? total : 1;
+    const safeDone = Math.max(0, Math.min(done, safeTotal));
+    const percent = Math.round((safeDone / safeTotal) * 100);
 
     bar.style.width = percent + '%';
-    bar.setAttribute('aria-valuenow', percent);
-    bar.textContent = `${done} / ${total}`;
+    bar.setAttribute('aria-valuenow', String(percent));
+    bar.textContent = `${percent}%`;
 
-    text.textContent = `${this.lang.COM_JOOMGALLERY_JS_AIINT_GENERATED}: ${success}, ${this.lang.COM_JOOMGALLERY_JS_AIINT_FAILED}: ${failed}`;
+    text.textContent = `Estimated progress: ${percent}%`;
 
-    console.log(`[AIinterface] Base64 image gereation progress: total=${total}, success=${success}, failed=${failed}, pending=${pending}`);
+    console.log(`[AIinterface] Keyword generation progress: total=${total}, done=${done}, success=${success}, failed=${failed}, pending=${pending}`);
+  }
+
+  startKeywordGenerationProgressTimer(totalSeconds) {
+    this.stopKeywordGenerationProgressTimer();
+
+    const duration = Math.max(1, Number(totalSeconds) || 1);
+    const startedAt = Date.now();
+
+    this._generationProgressTimer = window.setInterval(() => {
+      const elapsedSeconds = (Date.now() - startedAt) / 1000;
+      const ratio = Math.min(elapsedSeconds / duration, 0.95); // stop at 95% until real response arrives
+      const done = ratio;
+      const success = ratio;
+      const failed = 0;
+
+      this.updateKeywordGenerationProgress(1, done, success, failed, 1 - done);
+    }, 200);
+  }
+
+  stopKeywordGenerationProgressTimer() {
+    if (this._generationProgressTimer) {
+      window.clearInterval(this._generationProgressTimer);
+      this._generationProgressTimer = null;
+    }
+  }
+
+  finishKeywordGenerationProgressTimer() {
+    this.stopKeywordGenerationProgressTimer();
+    this.updateKeywordGenerationProgress(1, 1, 1, 0, 0);
   }
 
   renderGenerateSummary(summary) {
@@ -1789,7 +1856,7 @@ class AIinterface {
     document.getElementById(`${this.prefix}-summary-balance`).textContent = summary.newBalance ?? '-';
   }
 
-  renderFailedImages(items) {
+  renderFailedImages(items = []) {
     const section = document.getElementById(`${this.prefix}-summary-failed-section`);
     const list    = document.getElementById(`${this.prefix}-summary-failed-list`);
 
@@ -2165,6 +2232,40 @@ class AIinterface {
     return data;
   }
 
+  getGenerationTime(count = 0, model = '') {
+    if (!count) {
+      return 0;
+    }
+
+    // Base cost per image in seconds
+    const secPerImage = 2.5;
+
+    // Rough model factor
+    let modelFactor = 1.0;
+    const m = String(model || '').toLowerCase();
+
+    if (m.includes('nano')) {
+      modelFactor = 0.6;
+    } else if (m.includes('mini')) {
+      modelFactor = 0.8;
+    } else if (m.includes('4o')) {
+      modelFactor = 1.0;
+    } else if (m.includes('gemma')) {
+      modelFactor = 1.1;
+    } else {
+      modelFactor = 1.0;
+    }
+
+    // Rough image-size factor
+    const px = Number(this.configs.resize || this.configs.img_size || 500) || 500;
+    const sizeFactor = px / 500;
+
+    // Small fixed overhead
+    const overhead = 3;
+
+    return Math.ceil(overhead + (count * secPerImage * modelFactor * sizeFactor));
+  }
+
   async genKeywords(e, images, options = {}) {
     if (e) e.preventDefault();
 
@@ -2243,14 +2344,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       ai.addListElements('-langs-dropdown', ai.languages)
     } else {
       // Connection failed
-      Joomla.renderMessages({warning: [undefined.lang.COM_JOOMGALLERY_JS_AIINT_MSG_NO_CONNECTION_ERROR]}, );
+      Joomla.renderMessages({warning: [ai.lang.COM_JOOMGALLERY_JS_AIINT_MSG_NO_CONNECTION_ERROR]}, );
 
       if(balance?.message !== 'OK') {
-        Joomla.renderMessages({error: [undefined.lang.COM_JOOMGALLERY_JS_AIINT_MSG_RESPOND_STATS + ': ' + balance.message]});
+        Joomla.renderMessages({error: [ai.lang.COM_JOOMGALLERY_JS_AIINT_MSG_RESPOND_STATS + ': ' + balance.message]});
       }
 
       if(balance?.data?.messages.length > 0) {
-        Joomla.renderMessages({warning: [undefined.lang.COM_JOOMGALLERY_JS_AIINT_MSG_API_ANSWER + ': ' + balance.data.messages[0]]});
+        Joomla.renderMessages({warning: [ai.lang.COM_JOOMGALLERY_JS_AIINT_MSG_API_ANSWER + ': ' + balance.data.messages[0]]});
       }
     }
   }
