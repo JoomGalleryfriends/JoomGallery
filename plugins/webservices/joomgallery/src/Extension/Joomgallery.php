@@ -184,14 +184,14 @@ $router->addRoutes(
       //          ),
 
       /* ToDo: look into media and apply Adapter
-      https://github.com/joomla/joomla-cms/pull/34314:
-      In places where path is used, it can be prefixed with adapter:
-         to access files managed using that specific adapter.
-        For example:
-          local-images:/banners/osmbanner1.png,
-        dpdropbox-Dropbox:/fo/bar/baz.jpg, etc.
-        If no adapter is specified, local-images is assumed.
-      */
+    https://github.com/joomla/joomla-cms/pull/34314:
+    In places where path is used, it can be prefixed with adapter:
+     to access files managed using that specific adapter.
+    For example:
+      local-images:/banners/osmbanner1.png,
+    dpdropbox-Dropbox:/fo/bar/baz.jpg, etc.
+    If no adapter is specified, local-images is assumed.
+    */
 
       new Route(
           ['POST'],
