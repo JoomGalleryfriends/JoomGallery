@@ -55,5 +55,4 @@ class LatestcategoryController extends ApiController
 
         return parent::displayItem();
     }
-
 }

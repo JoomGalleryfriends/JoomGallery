@@ -17,7 +17,7 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -36,8 +36,8 @@ class JsonapiView extends BaseApiView
      * @since  4.1.0
      */
     protected $fieldsToRenderItem = [
-        'version',
-        'creationDate',
+      'version',
+      'creationDate',
     ];
 
     /**
@@ -102,9 +102,4 @@ class JsonapiView extends BaseApiView
 
         return parent::displayItem();
     }
-
-
-
-
-
 }

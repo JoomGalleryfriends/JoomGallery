@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -49,30 +49,32 @@ class ReserveimgidController extends ImagesController // ApiController
      */
     public function db_reserve_image_id()
     {
-
-//        $data = json_decode($this->input->json->getRaw(), true);
-//        $title = $this->input->json->getString ('title');
-
+        // $srcFilename = $title . $this->input->json->getPath ('filename');
         $srcFilename  = $this->input->json->getString('filename');
         $srcExtension = $this->input->json->getString('file_extension');
-//        $srcFilename = $title . $this->input->json->getPath ('filename');
-        $catId = $this->input->json->getString('catid');
+
+        // part of the route or of the json options
+        $catId = $this->catidByInput();
 
         $missingParameters = [];
 
-        if (empty($srcFilename)) {
+        if(empty($srcFilename))
+        {
             $missingParameters[] = 'filename';
         }
 
-        if (empty($srcExtension)) {
+        if(empty($srcExtension))
+        {
             $missingParameters[] = 'file_extension';
         }
 
-        if (empty($catId)) {
+        if(empty($catId))
+        {
             $missingParameters[] = 'catid';
         }
 
-        if (\count($missingParameters)) {
+        if(\count($missingParameters))
+        {
             // throw new InvalidParameterException(Text::sprintf('WEBSERVICE_COM_MEDIA_MISSING_REQUIRED_PARAMETERS', implode(' & ', $missingParameters)));
             throw new InvalidParameterException(Text::sprintf('Missing required parameter(s): %s', implode(' & ', $missingParameters)));
         }
@@ -109,7 +111,25 @@ class ReserveimgidController extends ImagesController // ApiController
         return $data;
     }
 
+    private function catidByInput(): string
+    {
+        $post = $this->input->post;
+        $json = $this->input->json;
 
+        // by route
+        $catid = $this->input->post->getString('catid');
 
+        if(empty($catid))
+        {
+            $catid = $this->input->json->getString('catid');
+        }
+        else {
+            // assign to json to be used in save
+            // $this->input->json->catid = $catid;
+            $this->input->set('catid', $catid);
+        }
 
+//		return $this->input->post->getString('catid') ?? $this->input->json->getString('catid');
+        return $catid;
+    }
 }

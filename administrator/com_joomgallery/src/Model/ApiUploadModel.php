@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -16,26 +16,22 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 class ApiUploadModel
 {
-
-
-    private function genFilename(string $srcFilename, $srcExtension, $catId)
-    {
+  private function genFilename(string $srcFilename, $srcExtension, $catId)
+  {
 //        $filename = '';
-        $filename = $srcFilename;
-        $fileCounter = 0;
+    $filename    = $srcFilename;
+    $fileCounter = 0;
 
-        try
-        {
-
-            // Generate image filename
-            $this->component->createFileManager($catId);
-            $filename = $this->component->getFileManager()->genFilename($srcFilename, $srcExtension, $fileCounter);
-
-        } catch (\Exception $e) {
-            throw new \RuntimeException($e->getMessage());
-        }
-
-        return $filename;
+    try
+    {
+      // Generate image filename
+      $this->component->createFileManager($catId);
+      $filename = $this->component->getFileManager()->genFilename($srcFilename, $srcExtension, $fileCounter);
+    }
+    catch (\Exception $e) {
+      throw new \RuntimeException($e->getMessage());
     }
 
+    return $filename;
+  }
 }

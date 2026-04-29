@@ -9,13 +9,13 @@
  * *********************************************************************************
  */
 
-namespace Rsgallery2\Component\Rsgallery2\Api\View\Uploadimgfile;
+namespace Joomgallery\Component\Joomgallery\Api\View\Uploadimgfile;
 
 use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
 use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -34,8 +34,8 @@ class JsonapiView extends BaseApiView
      * @since  4.1.0
      */
     protected $fieldsToRenderItem = [
-        'version',
-        'creationDate',
+      'version',
+      'creationDate',
     ];
 
     /**

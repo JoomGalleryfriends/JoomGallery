@@ -17,7 +17,7 @@ use Joomla\Component\Media\Administrator\Model\ApiModel;
 use Joomla\Database\DatabaseInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -55,12 +55,11 @@ class LatestcategoryModel extends BaseDatabaseModel
             $db->setQuery($query);
 
             $oCategory = $db->loadObject();
-
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
 
         return $oCategory;
     }
-
 }

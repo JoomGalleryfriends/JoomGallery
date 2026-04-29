@@ -48,7 +48,8 @@ class ApplymetadataController extends ImagesController // ApiController
      *
      * @since version
      */
-    public function apply_meta_data (){
+    public function apply_meta_data()
+    {
 
 
     //    use   public function overrideData(&$data): bool
@@ -56,6 +57,4 @@ class ApplymetadataController extends ImagesController // ApiController
 
         parent::add();
     }
-
-
 }
