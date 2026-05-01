@@ -252,12 +252,15 @@ class TasksModel extends JoomListModel
 
     // Join over the task items for status counts
     $subQuery = $db->getQuery(true)
-      ->select([$db->quoteName('ti.task_id'),
-        'COUNT(*) AS total_items',
-        'SUM(CASE WHEN ' . $db->quoteName('ti.status') . ' = ' . $db->quote('success') . ' THEN 1 ELSE 0 END) AS completed_items',
-        'SUM(CASE WHEN ' . $db->quoteName('ti.status') . ' = ' . $db->quote('failed') . ' THEN 1 ELSE 0 END) AS failed_items',
-        'SUM(CASE WHEN ' . $db->quoteName('ti.status') . ' NOT IN (' . $db->quote('success') . ', ' . $db->quote('failed') . ') THEN 1 ELSE 0 END) AS pending_items',
-      ])
+    ->select(
+        [
+          $db->quoteName('ti.task_id'),
+          'COUNT(*) AS total_items',
+          'SUM(CASE WHEN ' . $db->quoteName('ti.status') . ' = ' . $db->quote('success') . ' THEN 1 ELSE 0 END) AS completed_items',
+          'SUM(CASE WHEN ' . $db->quoteName('ti.status') . ' = ' . $db->quote('failed') . ' THEN 1 ELSE 0 END) AS failed_items',
+          'SUM(CASE WHEN ' . $db->quoteName('ti.status') . ' NOT IN (' . $db->quote('success') . ', ' . $db->quote('failed') . ') THEN 1 ELSE 0 END) AS pending_items',
+        ]
+    )
       ->from($db->quoteName('#__joomgallery_task_items', 'ti'))
       ->group($db->quoteName('ti.task_id'));
 
@@ -304,7 +307,7 @@ class TasksModel extends JoomListModel
 
     if($failed !== '*' && is_numeric($failed))
     {
-      if ((int) $failed > 0)
+      if((int) $failed > 0)
       {
         $query->where('COALESCE(ts.failed_items, 0) > 0');
       }
@@ -319,7 +322,7 @@ class TasksModel extends JoomListModel
 
     if($completed !== '*' && is_numeric($completed))
     {
-      if ((int) $completed > 0)
+      if((int) $completed > 0)
       {
         $query->where('COALESCE(ts.total_items, 0) > 0');
         $query->where('COALESCE(ts.completed_items, 0) = COALESCE(ts.total_items, 0)');
@@ -401,7 +404,7 @@ class TasksModel extends JoomListModel
     // Filter by failed state
     $failed = (string) $this->getState('filter.failed');
 
-    if ($failed !== '*' && is_numeric($failed))
+    if($failed !== '*' && is_numeric($failed))
     {
       $failed = (int) $failed;
 
@@ -411,7 +414,7 @@ class TasksModel extends JoomListModel
         ->where($db->quoteName('ti.task_id') . ' = ' . $db->quoteName('a.id'))
         ->where($db->quoteName('ti.status') . ' = ' . $db->quote('failed'));
 
-      if ($failed > 0)
+      if($failed > 0)
       {
         $query->where('EXISTS (' . $failedSubQuery . ')');
       }
@@ -424,7 +427,7 @@ class TasksModel extends JoomListModel
     // Filter by completed state
     $completed = (string) $this->getState('filter.completed');
 
-    if ($completed !== '*' && is_numeric($completed))
+    if($completed !== '*' && is_numeric($completed))
     {
       $completed = (int) $completed;
 
@@ -439,7 +442,7 @@ class TasksModel extends JoomListModel
         ->where($db->quoteName('ti.task_id') . ' = ' . $db->quoteName('a.id'))
         ->where($db->quoteName('ti.status') . ' != ' . $db->quote('success'));
 
-      if ($completed > 0)
+      if($completed > 0)
       {
         $query->where('EXISTS (' . $hasItemsSubQuery . ')');
         $query->where('NOT EXISTS (' . $notSuccessfulSubQuery . ')');
@@ -447,7 +450,7 @@ class TasksModel extends JoomListModel
       else
       {
         $query->where(
-          '(NOT EXISTS (' . $hasItemsSubQuery . ') OR EXISTS (' . $notSuccessfulSubQuery . '))'
+            '(NOT EXISTS (' . $hasItemsSubQuery . ') OR EXISTS (' . $notSuccessfulSubQuery . '))'
         );
       }
     }
