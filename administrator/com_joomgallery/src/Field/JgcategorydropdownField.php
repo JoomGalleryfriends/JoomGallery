@@ -3,14 +3,13 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -434,8 +433,9 @@ class JgcategorydropdownField extends ListField
 
       if($row->parent_id == '1')
       {
-        $parent       = new \stdClass();
-        $parent->text = Text::_('JGLOBAL_ROOT_PARENT');
+        $parent        = new \stdClass();
+        $parent->text  = Text::_('JGLOBAL_ROOT_PARENT');
+        $parent->value = null;
         array_unshift($options, $parent);
       }
     }

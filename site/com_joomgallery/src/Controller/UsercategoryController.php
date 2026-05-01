@@ -3,19 +3,19 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use Joomgallery\Component\Joomgallery\Site\Model\UsercategoryModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
@@ -141,25 +141,31 @@ class UsercategoryController extends JoomFormController // FormController
       return false;
     }
 
-    $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . (int) $data['id'];
-    $backLink = Route::_($baseLink, false);
+    // General return for save on existing item with no side task
+    $returnPage = base64_encode($this->getReturnPage('usercategories'));
+    $baseLink   = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id='
+      . (int) $data['id'] . '&return=' . $returnPage;
 
     // Access check
     if(!$this->acl->checkACL('edit', 'category', $recordId))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       return false;
     }
 
+    // save2copy prepared but leaves actual item checked out
     if($task === 'save2copy')
     {
+      // Missing save of old values
+      // ToDo: check code in joomla.categories
       $data['id'] = 0;
     }
 
     // Initialise variables.
-    $app   = Factory::getApplication();
+    $app = Factory::getApplication();
+    // @var UsercategoryModel $model
     $model = $this->getModel('Usercategory', 'Site');
 
     // Validate the posted data.
@@ -196,7 +202,7 @@ class UsercategoryController extends JoomFormController // FormController
       $app->setUserState('com_joomgallery.edit.category.data', $data);
 
       // Redirect back to the edit screen.
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       $this->redirect();
     }
@@ -209,25 +215,25 @@ class UsercategoryController extends JoomFormController // FormController
 
       // Redirect back to the edit screen.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $model->getError()), 'warning');
-      $this->setRedirect($backLink);
-
+      $this->setRedirect(Route::_($baseLink, false));
 
       return false;
     }
 
     // new backlink after save of new item
+    // save2copy prepared but leaves actual item checked out
     if($task === 'save2copy' || (int) $data['id'] == 0)
     {
       $newId    = $model->getState('usercategory.id', '');
-      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . (int) $newId;
-      $backLink = Route::_($baseLink, false);
+      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id='
+        . (int) $newId . '&return=' . $returnPage;
     }
 
-    // new backlink after save and new item
-    if($task === 'save2new' || (int) $data['id'] == 0)
+    // new backlink after save to new (empty)
+    if($task === 'save2new')
     {
-      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat';
-      $backLink = Route::_($baseLink, false);
+      $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=0'
+        . '&return=' . $returnPage;
     }
 
     // Check in the profile.
@@ -238,7 +244,7 @@ class UsercategoryController extends JoomFormController // FormController
 
       // Redirect to list screen.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'warning');
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       return false;
     }
@@ -249,7 +255,7 @@ class UsercategoryController extends JoomFormController // FormController
 
     // Redirect to the list screen.
     $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SAVE_SUCCESSFUL'));
-    $this->setRedirect($backLink);
+    $this->setRedirect(Route::_($baseLink, false));
 
     return true;
   }

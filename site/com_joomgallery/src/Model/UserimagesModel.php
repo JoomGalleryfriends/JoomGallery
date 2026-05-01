@@ -3,14 +3,13 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Site\Model;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -34,6 +33,7 @@ class UserimagesModel extends AdminImagesModel
    *
    * @param   string   $ordering   Elements order
    * @param   string   $direction  Order direction
+   * @param   string   $direction  Order direction
    *
    * @return  void
    *
@@ -41,10 +41,18 @@ class UserimagesModel extends AdminImagesModel
    *
    * @since   4.2.0
    */
-  protected function populateState($ordering = 'a.id', $direction = 'DESC'): void
+  protected function populateState($ordering = 'a.ordering', $direction = 'DESC'): void
   {
+    // ToDo: use edit.php instead of editImg.php in Tmpl
+    // brute force fix part (1) to keep context without addition '.editImg' by layout
+    // keep and reset $this->context;
+    $context = $this->context;
+
     // List state information.
     parent::populateState($ordering, $direction);
+
+    // brute force fix part (2)
+    $this->context = $context;
 
     // Set filters based on how the view is used.
     //  e.g. user list of categories:

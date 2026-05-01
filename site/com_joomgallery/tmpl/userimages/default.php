@@ -3,12 +3,11 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -37,7 +36,7 @@ $isHasAccess = $this->isUserLoggedIn && $this->isUserCoreManager;
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', 0, 1, true);
-$saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
+$saveOrder = ($listOrder == 'a.ordering');
 
 $config = $this->params['configs'];
 
@@ -171,7 +170,7 @@ $canDelete = false;
                 </caption>
                 <thead>
                 <tr>
-                  <?php if($canOrder && $saveOrder && isset($this->items[0]->ordering)): ?>
+                  <?php if($canOrder): ?>
                     <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                       <?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
                     </th>
@@ -293,6 +292,13 @@ $canDelete = false;
                         }
                         ?>
                       </a>
+                      <?php if($item->hidden === 1) : ?>
+                        <div class="small">
+                          <span class="badge bg-secondary">
+                            <?php echo Text::_('COM_JOOMGALLERY_HIDDEN'); ?>
+                          </span>
+                        </div>
+                      <?php endif; ?>
                     </th>
 
                     <td class="d-none d-lg-table-cell text-center">

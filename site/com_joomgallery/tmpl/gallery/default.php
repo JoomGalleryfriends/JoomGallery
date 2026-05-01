@@ -3,16 +3,16 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -84,6 +84,21 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
     </div>
   <?php endif; ?>
 
+  <?php // load modules on jg_gallery_top ?>
+  <?php $modules = ModuleHelper::getModules('jg_gallery_top'); ?>
+  <?php if(!empty($modules)) : ?>
+    <?php foreach($modules as $module) : ?>
+      <?php $moduleparams = json_decode($module->params, true); ?>
+      <div class="card">
+        <?php if($module->showtitle) : ?>
+          <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+          <?php echo $moduleheader; ?>
+        <?php endif; ?>
+        <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+      </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
+
   <div class="gallery-header">
     <?php echo HTMLHelper::_('content.prepare', $this->item->description, '', 'com_joomgallery.gallery'); ?>
   </div>
@@ -127,6 +142,21 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
     </div>
   <?php endif; ?>
 </div>
+
+<?php // load modules on jg_gallery_bottom ?>
+<?php $modules = ModuleHelper::getModules('jg_gallery_bottom'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
 
 <script>
   // Add event listener to images

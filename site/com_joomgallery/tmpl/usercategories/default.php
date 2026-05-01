@@ -3,12 +3,11 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -34,7 +33,7 @@ $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canAdd    = $this->getAcl()->checkACL('add', 'com_joomgallery.category', 0, 1, true);
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category');
-$saveOrder = ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
+$saveOrder = ($listOrder == 'a.lft');
 
 $config = $this->params['configs'];
 
@@ -163,10 +162,9 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                 </caption>
                 <thead>
                 <tr>
-                  <?php if($canOrder && $saveOrder) : ?>
+                  <?php if($canOrder) : ?>
                     <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                       <?php echo HTMLHelper::_('searchtools.sort', '', 'a.lft', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
-
                     </th>
                   <?php else : ?>
                     <th scope="col" class="w-1 d-none d-md-table-cell"></th>
@@ -311,6 +309,14 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                           }
                           ?>
                         </a>
+                        <?php if($item->hidden === 1) : ?>
+                          <div class="small">
+                            <?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
+                            <span class="badge bg-secondary">
+                              <?php echo Text::_('COM_JOOMGALLERY_HIDDEN'); ?>
+                            </span>
+                          </div>
+                        <?php endif; ?>
                       <?php endif; ?>
                     </th>
 

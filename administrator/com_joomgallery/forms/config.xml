@@ -135,6 +135,17 @@
         <option value="1">JYES</option>
       </field>
 
+      <field name="jg_router_imgids"
+              type="radio"
+              default="0"
+              class="btn-group"
+              layout="joomla.form.field.radio.switcher"
+              label="COM_JOOMGALLERY_CONFIG_NOIMGIDS_LABEL"
+              description="COM_JOOMGALLERY_CONFIG_NOIMGIDS_LONG" >
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
       <field name="jg_compatibility_mode"
              type="list"
              global_only="true"
@@ -996,6 +1007,17 @@
             layout="joomla.form.field.radio.switcher"
             validate="options"
             showon="jg_category_view_subcategories_random_image:1"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="jg_category_view_subcategories_image_count"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_IMAGE_COUNT"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_IMAGE_COUNT_DESC"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
             >
             <option value="0">JNO</option>
             <option value="1">JYES</option>

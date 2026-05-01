@@ -3,14 +3,13 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -139,7 +138,6 @@ class UserimageController extends JoomFormController
     }
 
     $baseLink = 'index.php?option=com_joomgallery&view=userimage&layout=editImg&id=' . (int) $data['id'];
-    $backLink = Route::_($baseLink, false);
 
     // Access check
     $parent_id = JoomHelper::getParent('image', $recordId);
@@ -147,7 +145,7 @@ class UserimageController extends JoomFormController
     if(!$this->acl->checkACL('edit', 'image', $recordId, $parent_id, true))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error');
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       return false;
     }
@@ -190,7 +188,7 @@ class UserimageController extends JoomFormController
       $app->setUserState('com_joomgallery.edit.image.data', $data);
 
       // Redirect back to the edit screen.
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       $this->redirect();
     }
@@ -203,7 +201,7 @@ class UserimageController extends JoomFormController
 
       // Redirect back to the edit screen.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $model->getError()), 'warning');
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       return false;
     }
@@ -216,7 +214,7 @@ class UserimageController extends JoomFormController
 
       // Redirect to list screen.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'warning');
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       return false;
     }
@@ -227,7 +225,7 @@ class UserimageController extends JoomFormController
 
     // Redirect to the list screen.
     $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SAVE_SUCCESSFUL'));
-    $this->setRedirect($backLink);
+    $this->setRedirect(Route::_($baseLink, false));
 
     return true;
   }
@@ -396,7 +394,9 @@ class UserimageController extends JoomFormController
     $this->app->setUserState('com_joomgallery.edit.image.data', null);
 
     // Redirect to the list screen.
-    $this->setRedirect(Route::_($this->getReturnPage('userimages') . $this->getItemAppend($recordId), false));
+    $returnPage = $this->getReturnPage('userimages');
+    $backLink   = Route::_($returnPage);
+    $this->setRedirect($backLink);
 
     return true;
   }

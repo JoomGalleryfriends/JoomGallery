@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -13,6 +13,7 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
@@ -101,6 +102,21 @@ if($this->isUserLoggedIn && $this->isUserHasCategory)
 ?>
 
 <div>
+  <?php // load modules on jg_userupload_top ?>
+  <?php $modules = ModuleHelper::getModules('jg_userupload_top'); ?>
+  <?php if(!empty($modules)) : ?>
+    <?php foreach($modules as $module) : ?>
+      <?php $moduleparams = json_decode($module->params, true); ?>
+      <div class="card">
+        <?php if($module->showtitle) : ?>
+          <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+          <?php echo $moduleheader; ?>
+        <?php endif; ?>
+        <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+      </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
+
   <form class="jg jg-upload"
         action="<?php echo $uploadView; ?>"
         method="post" enctype="multipart/form-data" name="adminForm" id="adminForm" class="needs-validation"
@@ -244,6 +260,21 @@ if($this->isUserLoggedIn && $this->isUserHasCategory)
   </form>
 
   <div id="popup-area"></div>
+
+  <?php // load modules on jg_userupload_bottom ?>
+  <?php $modules = ModuleHelper::getModules('jg_userupload_bottom'); ?>
+  <?php if(!empty($modules)) : ?>
+    <?php foreach($modules as $module) : ?>
+      <?php $moduleparams = json_decode($module->params, true); ?>
+      <div class="card">
+        <?php if($module->showtitle) : ?>
+          <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+          <?php echo $moduleheader; ?>
+        <?php endif; ?>
+        <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+      </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
 
 </div>
 
