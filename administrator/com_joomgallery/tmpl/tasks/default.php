@@ -69,9 +69,8 @@ if($saveOrder && !empty($this->items))
       <h2><?php echo Text::_('COM_JOOMGALLERY_TASKS_INSTANT_TASKS'); ?></h2>
       <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=tasks'); ?>" method="post" name="adminForm" id="adminForm">
         <div id="ajax-tasks-container" class="j-main-container">
-   <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
-   <div class="clearfix"></div>
-
+        <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+        <div class="clearfix"></div>
         <?php if(empty($this->items)) : ?>
             <div class="alert alert-info">
               <span class="icon-info-circle" aria-hidden="true"></span>
@@ -98,6 +97,8 @@ if($saveOrder && !empty($this->items))
                 </div>
               <?php endforeach; ?>
             </div>
+
+            <?php echo $this->pagination->getListFooter(); ?>
         <?php endif; ?>
 
         <input type="hidden" name="task" value=""/>
@@ -127,127 +128,127 @@ if($saveOrder && !empty($this->items))
             <span id="scheduler-filteredBy"><?php echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
           </caption>
           <thead>
-          <tr>
-            <!-- Task State -->
-            <th scope="col" class="w-1 text-center">
-              <?php echo Text::_('JSTATUS'); ?>
-            </th>
-            <!-- Task title header -->
-            <th scope="col">
-              <?php echo Text::_('JGLOBAL_TITLE'); ?>
-            </th>
-            <!-- Task type header -->
-            <th scope="col" class="d-none d-md-table-cell">
-              <?php echo Text::_('COM_JOOMGALLERY_TASK_TYPE'); ?>
-            </th>
-            <!-- Last runs -->
-            <th scope="col" class="d-none d-lg-table-cell">
-              <?php echo Text::_('COM_JOOMGALLERY_TASK_LAST_RUN_DATE'); ?>
-            </th>
-            <!-- Run task -->
-            <th scope="col" class="d-none d-md-table-cell">
-              <?php echo Text::_('COM_JOOMGALLERY_TASK_START_MANUALLY'); ?>
-            </th>
-            <!-- Nmbr of executions -->
-            <th scope="col" class="d-none d-lg-table-cell">
-              <?php echo Text::_('COM_JOOMGALLERY_TASK_EXECUTIONS'); ?>
-            </th>
-            <!-- Is executing -->
-            <th scope="col" class="w-5 d-none d-md-table-cell">
-              <?php echo Text::_('COM_JOOMGALLERY_EXECUTING'); ?>
-            </th>
-          </tr>
+            <tr>
+              <!-- Task State -->
+              <th scope="col" class="w-1 text-center">
+                <?php echo Text::_('JSTATUS'); ?>
+              </th>
+              <!-- Task title header -->
+              <th scope="col">
+                <?php echo Text::_('JGLOBAL_TITLE'); ?>
+              </th>
+              <!-- Task type header -->
+              <th scope="col" class="d-none d-md-table-cell">
+                <?php echo Text::_('COM_JOOMGALLERY_TASK_TYPE'); ?>
+              </th>
+              <!-- Last runs -->
+              <th scope="col" class="d-none d-lg-table-cell">
+                <?php echo Text::_('COM_JOOMGALLERY_TASK_LAST_RUN_DATE'); ?>
+              </th>
+              <!-- Run task -->
+              <th scope="col" class="d-none d-md-table-cell">
+                <?php echo Text::_('COM_JOOMGALLERY_TASK_START_MANUALLY'); ?>
+              </th>
+              <!-- Nmbr of executions -->
+              <th scope="col" class="d-none d-lg-table-cell">
+                <?php echo Text::_('COM_JOOMGALLERY_TASK_EXECUTIONS'); ?>
+              </th>
+              <!-- Is executing -->
+              <th scope="col" class="w-5 d-none d-md-table-cell">
+                <?php echo Text::_('COM_JOOMGALLERY_EXECUTING'); ?>
+              </th>
+            </tr>
           </thead>
           <tbody>
-          <?php foreach($this->scheduledTasks as $i => $item) :?>
-            <?php
-              $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
-              $canChange  = $user->authorise('core.edit.state', 'com_scheduler') && $canCheckin;
-            ?>
-            <tr class="row<?php echo $i % 2; ?>">
-              <!-- Item State -->
-              <td class="text-center">
-                  <?php echo HTMLHelper::_('jgrid.published', $item->state, $i, 'tasks.', false); ?>
-              </td>
+            <?php foreach($this->scheduledTasks as $i => $item) :?>
+              <?php
+                $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || \is_null($item->checked_out);
+                $canChange  = $user->authorise('core.edit.state', 'com_scheduler') && $canCheckin;
+              ?>
+              <tr class="row<?php echo $i % 2; ?>">
+                <!-- Item State -->
+                <td class="text-center">
+                    <?php echo HTMLHelper::_('jgrid.published', $item->state, $i, 'tasks.', false); ?>
+                </td>
 
-              <!-- Item title -->
-              <th scope="row">
-                <?php if($item->checked_out) : ?>
-                  <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'tasks.', false); ?>
-                <?php endif; ?>
-                <?php if($item->locked) : ?>
-                <?php echo HTMLHelper::_(
-                    'jgrid.action',
-                    $i,
-                    'unlock',
-                    [
-                      'enabled' => $canChange, 'prefix' => 'tasks.',
-                      'active_class' => 'none fa fa-running border-dark text-body',
-                      'inactive_class' => 'none fa fa-running', 'tip' => true, 'translate' => false,
-                      'active_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
-                      'inactive_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
-                    ]
-                ); ?>
-                <?php endif; ?>
-                <span class="task-title">
-                  <a href="<?php echo Route::_('index.php?option=com_scheduler&task=task.edit&id=' . $item->id); ?>"
-                    title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape($item->title); ?>"> <?php echo $this->escape($item->title); ?>
-                  </a>
-                  <?php if(!\in_array($item->last_exit_code, [Status::OK, Status::WILL_RESUME])) : ?>
-                    <span class="failure-indicator icon-exclamation-triangle" aria-hidden="true"></span>
-                    <div role="tooltip">
-                      <?php echo Text::sprintf('COM_JOOMGALLERY_TASK_TOOLTIP_TASK_FAILING', $item->last_exit_code); ?>
-                    </div>
+                <!-- Item title -->
+                <th scope="row">
+                  <?php if($item->checked_out) : ?>
+                    <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'tasks.', false); ?>
                   <?php endif; ?>
-                </span>
-                <?php if($item->note) : ?>
-                  <span class="small">
-                    <?php echo Text::sprintf('JGLOBAL_LIST_NOTE', $this->escape($item->note)); ?>
+                  <?php if($item->locked) : ?>
+                  <?php echo HTMLHelper::_(
+                      'jgrid.action',
+                      $i,
+                      'unlock',
+                      [
+                        'enabled' => $canChange, 'prefix' => 'tasks.',
+                        'active_class' => 'none fa fa-running border-dark text-body',
+                        'inactive_class' => 'none fa fa-running', 'tip' => true, 'translate' => false,
+                        'active_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
+                        'inactive_title' => Text::sprintf('COM_JOOMGALLERY_TASK_RUNNING_SINCE', HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5')),
+                      ]
+                  ); ?>
+                  <?php endif; ?>
+                  <span class="task-title">
+                    <a href="<?php echo Route::_('index.php?option=com_scheduler&task=task.edit&id=' . $item->id); ?>"
+                      title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape($item->title); ?>"> <?php echo $this->escape($item->title); ?>
+                    </a>
+                    <?php if(!\in_array($item->last_exit_code, [Status::OK, Status::WILL_RESUME])) : ?>
+                      <span class="failure-indicator icon-exclamation-triangle" aria-hidden="true"></span>
+                      <div role="tooltip">
+                        <?php echo Text::sprintf('COM_JOOMGALLERY_TASK_TOOLTIP_TASK_FAILING', $item->last_exit_code); ?>
+                      </div>
+                    <?php endif; ?>
                   </span>
-                <?php endif; ?>
-              </th>
+                  <?php if($item->note) : ?>
+                    <span class="small">
+                      <?php echo Text::sprintf('JGLOBAL_LIST_NOTE', $this->escape($item->note)); ?>
+                    </span>
+                  <?php endif; ?>
+                </th>
 
-              <!-- Item type -->
-              <td class="small d-none d-md-table-cell">
-                  <?php echo $this->escape($item->safeTypeTitle); ?>
-              </td>
+                <!-- Item type -->
+                <td class="small d-none d-md-table-cell">
+                    <?php echo $this->escape($item->safeTypeTitle); ?>
+                </td>
 
-              <!-- Last run date -->
-              <td class="small d-none d-lg-table-cell">
-                <?php echo $item->last_execution ? HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5') : '-'; ?>
-              </td>
+                <!-- Last run date -->
+                <td class="small d-none d-lg-table-cell">
+                  <?php echo $item->last_execution ? HTMLHelper::_('date', $item->last_execution, 'DATE_FORMAT_LC5') : '-'; ?>
+                </td>
 
-              <!-- Run task -->
-              <td class="small d-none d-md-table-cell">
-                <button type="button"
-                        class="btn btn-sm btn-warning"
-                        data-scheduler-run
-                        data-id="<?php echo (int) $item->id; ?>"
-                        data-title="<?php echo $this->escape($item->title); ?>"
-                        data-url="<?php echo Route::_('index.php?option=com_ajax&format=json&plugin=RunSchedulerTest&group=system&id=' . (int) $item->id) . '&t=' . time(); ?>"
-                        title="<?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>">
-                  <span class="fa fa-play fa-sm me-2"></span>
-                  <?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>
-                </button>
-              </td>
+                <!-- Run task -->
+                <td class="small d-none d-md-table-cell">
+                  <button type="button"
+                          class="btn btn-sm btn-warning"
+                          data-scheduler-run
+                          data-id="<?php echo (int) $item->id; ?>"
+                          data-title="<?php echo $this->escape($item->title); ?>"
+                          data-url="<?php echo Route::_('index.php?option=com_ajax&format=json&plugin=RunSchedulerTest&group=system&id=' . (int) $item->id) . '&t=' . time(); ?>"
+                          title="<?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>">
+                    <span class="fa fa-play fa-sm me-2"></span>
+                    <?php echo Text::_('COM_JOOMGALLERY_TASK_START_SCHEDULER_TASK'); ?>
+                  </button>
+                </td>
 
-              <!-- Nmbr of executions -->
-              <td class="small d-none d-lg-table-cell">
-                <?php echo (int) $item->times_executed; ?>
-              </td>
+                <!-- Nmbr of executions -->
+                <td class="small d-none d-lg-table-cell">
+                  <?php echo (int) $item->times_executed; ?>
+                </td>
 
-              <!-- Is executing -->
-              <td class="small d-none d-md-table-cell">
-                <?php if(!$item->locked): ?>
-                  <?php echo '-'; ?>
-                <?php elseif($item->locked < 0): ?>
-                  <?php echo 'running'; ?>
-                <?php else: ?>
-                  <?php echo 'error'; ?>
-                <?php endif; ?>
-              </td>
-            </tr>
-          <?php endforeach; ?>
+                <!-- Is executing -->
+                <td class="small d-none d-md-table-cell">
+                  <?php if(!$item->locked): ?>
+                    <?php echo '-'; ?>
+                  <?php elseif($item->locked < 0): ?>
+                    <?php echo 'running'; ?>
+                  <?php else: ?>
+                    <?php echo 'error'; ?>
+                  <?php endif; ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
           </tbody>
         </table>
         <?php endif; ?>
