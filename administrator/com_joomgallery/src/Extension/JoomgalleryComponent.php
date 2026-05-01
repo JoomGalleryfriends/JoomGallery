@@ -32,6 +32,8 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\MigrationS
 use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\MigrationServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Refresher\RefresherServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\TusServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\TusServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceInterface;
@@ -85,6 +87,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
   use MessengerServiceTrait;
   use MetadataServiceTrait;
   use RefresherServiceTrait;
+  use SearchServiceTrait;
   use TusServiceTrait;
   use UploaderServiceTrait;
   use MigrationServiceTrait;
