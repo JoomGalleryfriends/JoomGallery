@@ -3,14 +3,13 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Site\View;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -99,7 +98,11 @@ class JoomGalleryJsonView extends JsonView
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
     $this->user      = $this->app->getIdentity();
 
-    if(strpos($this->component->version, 'dev'))
+    if( stripos($this->component->version, 'dev') ||
+        stripos($this->component->version, 'alpha') ||
+        stripos($this->component->version, 'beta') ||
+        stripos($this->component->version, 'rc')
+     )
     {
       // We are dealing with a development version (alpha or beta)
       $this->message = Text::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION');

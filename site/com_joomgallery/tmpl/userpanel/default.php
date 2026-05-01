@@ -3,17 +3,17 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -54,11 +54,6 @@ $panelView = Route::_('index.php?option=com_joomgallery&view=userpanel');
 // return to userpanel;
 $returnURL = base64_encode('index.php?option=com_joomgallery&view=userpanel');
 
-$userDataComment                    = [];
-$userDataComment['userCatCount']    = Text::_('');
-$userDataComment['userImgCount']    = Text::_('');
-$userDataComment['userImgTimeSpan'] = Text::_('');
-
 ?>
 
 <div class="jg jg-user-panel ">
@@ -67,6 +62,21 @@ $userDataComment['userImgTimeSpan'] = Text::_('');
   <!--        method="post" name="adminForm" id="adminForm"-->
   <!--        novalidate aria-label="--><?php //echo Text::_('COM_JOOMGALLERY_USER_PANEL', true); ?><!--">-->
   <div class="jg jg-user-panel ">
+
+  <?php // load modules on jg_userpanel_top ?>
+  <?php $modules = ModuleHelper::getModules('jg_userpanel_top'); ?>
+  <?php if(!empty($modules)) : ?>
+    <?php foreach($modules as $module) : ?>
+      <?php $moduleparams = json_decode($module->params, true); ?>
+      <div class="card">
+        <?php if($module->showtitle) : ?>
+          <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+          <?php echo $moduleheader; ?>
+        <?php endif; ?>
+        <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+      </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
 
     <?php if($isShowTitle): ?>
       <h3><?php echo Text::_('COM_JOOMGALLERY_USER_PANEL'); ?></h3>
@@ -88,7 +98,7 @@ $userDataComment['userImgTimeSpan'] = Text::_('');
       <?php // --- user limits ----------------------------------------------------- ?>
 
       <?php if($isShowUserLimits): ?>
-        <?php displayUserPanelLimits($this->config, $this->userData, $userDataComment); ?>
+        <?php displayUserPanelLimits($this->config, $this->userData); ?>
       <?php else : ?>
         <?php // --- user information ----------------------------------------------------- ?>
 
@@ -128,6 +138,21 @@ $userDataComment['userImgTimeSpan'] = Text::_('');
 
     <?php endif; ?>
   </div>
+
+  <?php // load modules on jg_userpanel_bottom ?>
+  <?php $modules = ModuleHelper::getModules('jg_userpanel_bottom'); ?>
+  <?php if(!empty($modules)) : ?>
+    <?php foreach($modules as $module) : ?>
+      <?php $moduleparams = json_decode($module->params, true); ?>
+      <div class="card">
+        <?php if($module->showtitle) : ?>
+          <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+          <?php echo $moduleheader; ?>
+        <?php endif; ?>
+        <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+      </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
 </div>
 
 <?php
@@ -138,24 +163,19 @@ $userDataComment['userImgTimeSpan'] = Text::_('');
  *
  * @param   Registry   $config limits by config for user categories, images, images in time span
  * @param   array   $userData  Count of user categories, images, images in time span
- * @param   array   $userDataComment hints
  *
  * @since 4.3
  */
-function displayUserPanelLimits($config, array $userData, array $userDataComment)
+function displayUserPanelLimits($config, array $userData)
 {
-  $usrUserCat        = (string) $userData['userCatCount'];
-  $cfgMaxUserCat     = (string) ($config->get('jg_maxusercat') ?? '%');
-  $usrUserCatComment = (string) $userDataComment['userCatCount'];
+  $usrUserCat    = (string) $userData['userCatCount'];
+  $cfgMaxUserCat = (string) ($config->get('jg_maxusercat') ?? '%');
 
-  $usrUserImgCount        = (string) $userData['userImgCount'];
-  $cfgMaxUserImg          = (string) ($config->get('jg_maxuserimage') ?? '%');
-  $usrUserImgCountComment = (string) $userDataComment['userImgCount'];
+  $usrUserImgCount = (string) $userData['userImgCount'];
+  $cfgMaxUserImg   = (string) ($config->get('jg_maxuserimage') ?? '%');
 
-  $usrUserImgTimespan        = (string) $userData['userImgTimeSpan'];
-  $cfgMaxUserImgTimespan     = (string) ($config->get('jg_maxuserimage_timespan') ?? '%');
-  $usrUserImgTimespanComment = (string) $userDataComment['userImgTimeSpan'];
-
+  $usrUserImgTimespan    = (string) $userData['userImgTimeSpan'];
+  $cfgMaxUserImgTimespan = (string) ($config->get('jg_maxuserimage_timespan') ?? '%');
 
   $classDangerValue = 'table-danger';
 
@@ -166,7 +186,7 @@ function displayUserPanelLimits($config, array $userData, array $userDataComment
 
   ?>
 
-  <div class="col-md-6 mb">
+  <div class="col-md-4 mb">
 
     <div class="card">
       <div class="card-header">
@@ -179,7 +199,6 @@ function displayUserPanelLimits($config, array $userData, array $userDataComment
             <td class="text-center"></td>
             <td class="text-center"><?php echo Text::_('COM_JOOMGALLERY_ACTUAL_VALUE'); ?></td>
             <td class="text-center"><?php echo Text::_('COM_JOOMGALLERY_MAXIMUM_VALUE'); ?></td>
-            <td><?php echo Text::_('COM_JOOMGALLERY_COMMENT'); ?></td>
           </tr>
           </thead>
           <tbody>
@@ -193,9 +212,6 @@ function displayUserPanelLimits($config, array $userData, array $userDataComment
             <td class="text-center">
               <?php echo $cfgMaxUserCat; ?>
             </td>
-            <td>
-              <?php echo $usrUserCatComment; ?>
-            </td>
           </tr>
 
           <?php if($cfgMaxUserImgTimespan == '0'): ?>
@@ -208,9 +224,6 @@ function displayUserPanelLimits($config, array $userData, array $userDataComment
               </td>
               <td class="text-center">
                 <?php echo $cfgMaxUserImg; ?>
-              </td>
-              <td>
-                <?php echo $usrUserImgCountComment; ?>
               </td>
             </tr>
           <?php endif; ?>
@@ -226,9 +239,6 @@ function displayUserPanelLimits($config, array $userData, array $userDataComment
               <td class="text-center">
                 <!--                  --><?php //echo $cfgMaxUserImgTimespan; ?>
                 <?php echo $cfgMaxUserImg; ?>
-              </td>
-              <td>
-                <?php echo $usrUserImgTimespanComment; ?>
               </td>
             </tr>
           <?php endif; ?>
@@ -519,6 +529,13 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                           }
                           ?>
                         </a>
+                        <?php if($item->hidden === 1) : ?>
+                          <div class="small">
+                            <span class="badge bg-secondary">
+                              <?php echo Text::_('COM_JOOMGALLERY_HIDDEN'); ?>
+                            </span>
+                          </div>
+                        <?php endif; ?>
                       </th>
 
                       <td class="d-none d-md-table-cell text-center">
@@ -734,6 +751,13 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                           }
                           ?>
                         </a>
+                        <?php if($item->hidden === 1) : ?>
+                          <div class="small">
+                            <span class="badge bg-secondary">
+                              <?php echo Text::_('COM_JOOMGALLERY_HIDDEN'); ?>
+                            </span>
+                          </div>
+                        <?php endif; ?>
                       </th>
 
                       <td class="d-none d-lg-table-cell text-center">
@@ -836,7 +860,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
     $listOrder = $data->state->get('list.ordering');
     $listDirn  = $data->state->get('list.direction');
     $canOrder  = $data->getAcl()->checkACL('editstate', 'com_joomgallery.image', 0, 1, true);
-    $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
+    $saveOrder = ($listOrder == 'a.ordering');
 
     $saveOrderingUrl = '';
 
@@ -886,7 +910,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                   </caption>
                   <thead>
                   <tr>
-                    <?php if($canOrder && $saveOrder && isset($data->items[0]->ordering)): ?>
+                    <?php if($canOrder): ?>
                       <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                         <?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
                       </th>
@@ -997,6 +1021,13 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                           }
                           ?>
                         </a>
+                        <?php if($item->hidden === 1) : ?>
+                          <div class="small">
+                            <span class="badge bg-secondary">
+                              <?php echo Text::_('COM_JOOMGALLERY_HIDDEN'); ?>
+                            </span>
+                          </div>
+                        <?php endif; ?>
                       </th>
 
                       <td class="d-none d-lg-table-cell text-center">

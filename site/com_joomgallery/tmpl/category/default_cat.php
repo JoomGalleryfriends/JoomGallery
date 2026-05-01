@@ -3,18 +3,18 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -31,6 +31,7 @@ $subcategories_pagination    = $this->params['configs']->get('jg_category_view_s
 $subcategories_caption_align = $this->params['configs']->get('jg_category_view_subcategories_caption_align', 'left', 'STRING');
 $subcategories_description   = $this->params['configs']->get('jg_category_view_subcategories_category_description', 0, 'INT');
 $subcategories_random_image  = $this->params['configs']->get('jg_category_view_subcategories_random_image', 1, 'INT');
+$subcategories_image_count   = $this->params['configs']->get('jg_category_view_subcategories_image_count', 0, 'INT');
 
 // Image params
 $category_class         = $this->params['configs']->get('jg_category_view_class', 'masonry', 'STRING');
@@ -140,6 +141,21 @@ $canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category',
 $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id, $this->item->parent_id, $this->item->language, $this->getLayout()));
 ?>
 
+<?php // load modules on jg_category_top ?>
+<?php $modules = ModuleHelper::getModules('jg_category_top'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
 <?php // Category title ?>
 <?php if($this->item->parent_id > 0) : ?>
   <h2><?php echo Text::sprintf('COM_JOOMGALLERY_CATEGORY_TITLE', $this->escape($this->item->title)); ?></h2>
@@ -169,6 +185,21 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <p><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_NO_ELEMENTS') ?></p>
 <?php endif; ?>
 
+<?php // load modules on jg_category_before_subcategories ?>
+<?php $modules = ModuleHelper::getModules('jg_category_before_subcategories'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
 <?php // Subcategories ?>
 <?php if(\count($this->item->children->items) > 0 && ($this->item->id == 1 || $numb_subcategories > 0)) : ?>
   <?php if($this->item->parent_id > 0) : ?>
@@ -181,6 +212,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
     $subcatData = [
       'layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns, 'image_type' => $subcategory_image_type,
       'caption_align'       => $subcategories_caption_align, 'description' => $subcategories_description, 'image_class' => $subcategory_image_class, 'random_image' => (bool) $subcategories_random_image,
+      'image_count' => (bool) $subcategories_image_count,
     ];
   ?>
 
@@ -190,6 +222,21 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
     <?php echo $this->item->children->pagination->getListFooter(); ?>
   <?php endif; ?>
 
+<?php endif; ?>
+
+<?php // load modules on jg_category_before_images ?>
+<?php $modules = ModuleHelper::getModules('jg_category_before_images'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
 <?php endif; ?>
 
 <?php // Category ?>
@@ -263,6 +310,21 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
       <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_VIEW_BROWSE_IMAGES'); ?>
     </a></p>
   </div>
+<?php endif; ?>
+
+<?php // load modules on jg_category_bottom ?>
+<?php $modules = ModuleHelper::getModules('jg_category_bottom'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
 <?php endif; ?>
 
 <script>

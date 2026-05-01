@@ -3,12 +3,11 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -69,8 +68,9 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     <?php Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error'); ?>
   <?php else : ?>
     <form id="adminForm"
-          action="<?php echo Route::_('index.php?option=com_joomgallery&controller=usercategory&id=' . $this->item->id); ?>"
-          method="post" name="adminForm" class="form-validate form-horizontal well" enctype="multipart/form-data">
+          action="<?php echo Route::_('index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=' . $this->item->id); ?>"
+          method="post" name="adminForm" class="form-validate form-horizontal well" enctype="multipart/form-data"
+          aria-label="<?php echo Text::_('COM_JOOMGALLERY_CATEGORY_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>"
 
       <?php if($isShowTitle): ?>
         <h3><?php echo Text::_('COM_JOOMGALLERY_USER_CATEGORY_EDIT'); ?></h3>
@@ -86,9 +86,11 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
           <button class="btn btn-primary" type="button" data-submit-task="usercategory.saveAndClose">
             <span class="fas fa-save" aria-hidden="true"></span> <?php echo Text::_('JSAVEANDCLOSE'); ?>
           </button>
+          <?php /* Disabled, because not working properly yet.
           <button class="btn btn-primary" type="button" data-submit-task="usercategory.save2copy">
             <span class="fas fa-plus" aria-hidden="true"></span> <?php echo Text::_('JSAVEASCOPY'); ?>
           </button>
+          </button> */ ?>
           <button class="btn btn-primary" type="button" data-submit-task="usercategory.save2new">
             <span class="fas fa-copy" aria-hidden="true"></span> <?php echo Text::_('JTOOLBAR_SAVE_AND_NEW'); ?>
           </button>

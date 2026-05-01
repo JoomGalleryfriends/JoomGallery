@@ -3,18 +3,18 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
@@ -61,6 +61,21 @@ $metadata       = $metadataLayout->render($this->item->imgmetadata);
 $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 ?>
 
+<?php // load modules on jg_image_top ?>
+<?php $modules = ModuleHelper::getModules('jg_image_top'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
 <?php if($show_title) : ?>
   <h2><?php echo $this->item->title; ?></h2>
 <?php endif; ?>
@@ -81,6 +96,21 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
     <figcaption class="figure-caption"><?php echo $this->item->description; ?></figcaption>
   <?php endif; ?>
 </figure>
+
+<?php // load modules on jg_image_before_info ?>
+<?php $modules = ModuleHelper::getModules('jg_image_before_info'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
 
 <?php // Image info and fields ?>
 <div class="item_fields">
@@ -168,6 +198,21 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
         <?php endif; ?>
     </table>
 </div>
+
+<?php // load modules on jg_image_bottom ?>
+<?php $modules = ModuleHelper::getModules('jg_image_bottom'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
 
 <script>
   window.onload = function () {
