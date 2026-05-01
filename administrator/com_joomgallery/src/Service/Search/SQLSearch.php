@@ -37,18 +37,24 @@ class SQLSearch extends Search implements SearchInterface
    *
    * @param   QueryInterface  $query   The list query
    * @param   string          $term    The search term
+   * @param   string          $alias   The db table alias
    *
    * @return  void
    *
    * @since   4.4.0
    */
-  public function applyToQuery(QueryInterface $query, string $term): void
+  public function applyToQuery(QueryInterface $query, string $term, string $alias = 'a'): void
   {
+    if($term === '')
+    {
+      return;
+    }
+
     if(stripos($term, 'id:') === 0)
     {
       $id = (int) substr($term, 3);
 
-      $query->where($this->db->quoteName('a.id') . ' = :search_id')
+      $query->where($this->db->quoteName($alias . '.id') . ' = :search_id')
             ->bind(':search_id', $id, ParameterType::INTEGER);
 
       return;
@@ -58,9 +64,9 @@ class SQLSearch extends Search implements SearchInterface
 
     $query->where(
       '('
-      . $this->db->quoteName('a.title') . ' LIKE :search_title'
-      . ' OR ' . $this->db->quoteName('a.alias') . ' LIKE :search_alias'
-      . ' OR ' . $this->db->quoteName('a.description') . ' LIKE :search_description'
+      . $this->db->quoteName($alias . '.title') . ' LIKE :search_title'
+      . ' OR ' . $this->db->quoteName($alias . '.alias') . ' LIKE :search_alias'
+      . ' OR ' . $this->db->quoteName($alias . '.description') . ' LIKE :search_description'
       . ')'
     );
 

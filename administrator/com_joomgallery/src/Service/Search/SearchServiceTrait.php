@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SQLSearch;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\FinderSearch;
 use Joomla\Database\DatabaseInterface;
+use Joomla\Registry\Registry;
 
 /**
  * Trait to implement SearchServiceInterface
@@ -49,22 +50,23 @@ trait SearchServiceTrait
   /**
    * Creates the search helper class
    *
-   * @param   string  $search  Name of the search to be used
+   * @param   string      $search  Name of the search to be used
+   * @param   Registry    $state   The state object
    *
    * @return  void
    *
    * @since  4.4.0
    */
-  public function createSearch($search, DatabaseInterface $db): void
+  public function createSearch($search, DatabaseInterface $db, Registry $state): void
   {
     switch($search)
     {
       case 'finder':
-        $this->search = new FinderSearch($db);
+        $this->search = new FinderSearch($db, $state);
         break;
 
       default:
-        $this->search = new SQLSearch($db);
+        $this->search = new SQLSearch($db, $state);
         break;
     }
 

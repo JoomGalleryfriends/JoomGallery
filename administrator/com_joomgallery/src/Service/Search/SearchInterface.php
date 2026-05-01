@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\Database\QueryInterface;
+use Joomla\Registry\Registry;
 
 /**
  * Search service interface
@@ -33,14 +34,24 @@ interface SearchInterface
   public function getName(): string;
 
   /**
+   * Add the state to the service.
+   *
+   * @param   Registry  $state   The state object
+   *
+   * @since   4.4.0
+   */
+  public function setState(Registry $state): void;
+
+  /**
    * Function to add the search to the query.
    *
    * @param   QueryInterface  $query   The list query
    * @param   string          $term    The search term
+   * @param   string          $alias   The db table alias
    *
    * @return  void
    *
    * @since   4.4.0
    */
-  public function applyToQuery(QueryInterface $query, string $term): void;
+  public function applyToQuery(QueryInterface $query, string $term, string $alias): void;
 }

@@ -18,6 +18,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\QueryInterface;
+use Joomla\Registry\Registry;
 
 /**
  * Search Base Class
@@ -45,17 +46,27 @@ class Search implements SearchInterface
   protected $db = null;
 
   /**
+   * A state object
+   *
+   * @var    Registry
+   * @since  4.4.0
+   */
+  protected $state = null;
+
+  /**
    * Constructor
    *
-   * @param  DatabaseInterface  $db  The databse
+   * @param  DatabaseInterface  $db      The databse
+   * @param  Registry           $state   The state object
    *
    * @return  void
    *
    * @since   4.4.0
    */
-  public function __construct(DatabaseInterface $db)
+  public function __construct(DatabaseInterface $db, Registry $state)
   {
-    $this->db = $db;
+    $this->db    = $db;
+    $this->state = $state;
   }
 
   /**
@@ -71,16 +82,29 @@ class Search implements SearchInterface
   }
 
   /**
+   * Add the state to the service.
+   *
+   * @param   Registry  $state   The state object
+   *
+   * @since   4.4.0
+   */
+  public function setState(Registry $state): void
+  {
+    $this->state = $state;
+  }
+
+  /**
    * Function to add the search to the query.
    *
    * @param   QueryInterface  $query   The list query
    * @param   string          $term    The search term
+   * @param   string          $alias   The db table alias
    *
    * @return  void
    *
    * @since   4.4.0
    */
-  public function applyToQuery(QueryInterface $query, string $term): void
+  public function applyToQuery(QueryInterface $query, string $term, string $alias): void
   {
     return;
   }

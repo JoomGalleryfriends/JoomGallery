@@ -14,6 +14,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\Database\DatabaseInterface;
+use Joomla\Registry\Registry;
+
 /**
  * The Search service
  *
@@ -24,13 +27,14 @@ interface SearchServiceInterface
   /**
    * Creates the search helper class
    *
-   * @param   string  $search  Name of the search adapter to be used
+   * @param   string      $search  Name of the search to be used
+   * @param   Registry    $state   The state object
    *
    * @return  void
    *
    * @since  4.4.0
    */
-  public function createSearch($search): void;
+  public function createSearch($search, DatabaseInterface $db, Registry $state): void;
 
   /**
    * Returns the search helper class.

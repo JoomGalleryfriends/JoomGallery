@@ -320,8 +320,8 @@ class ImagesModel extends JoomListModel
 
     if(!empty($search))
     {
-      $this->component->createSearch('sql', $db);
-      $this->component->getSearch()->applyToQuery($query, $search);
+      $this->component->createSearch('sql', $db, $this->state);
+      $this->component->getSearch()->applyToQuery($query, $search, 'a');
     }
 
     // Filter by published state
