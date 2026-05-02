@@ -36,6 +36,22 @@ class FinderSearch extends Search implements SearchInterface
   protected $name = 'finder';
 
   /**
+   * The filters this search service applies.
+   *
+   * @var   array
+   * @since  4.4.0
+   */
+  protected $filters = ['category', 'tag', 'language'];
+
+  /**
+   * True if this search service applies ordering.
+   *
+   * @var   bool
+   * @since  4.4.0
+   */
+  protected $ordering = true;
+
+  /**
    * Function to add the search to the query.
    *
    * @param   QueryInterface  $query   The list query

@@ -38,6 +38,22 @@ class Search implements SearchInterface
   protected $name = '';
 
   /**
+   * The filters this search service applies.
+   *
+   * @var   array
+   * @since  4.4.0
+   */
+  protected $filters = [];
+
+  /**
+   * True if this search service applies ordering.
+   *
+   * @var   bool
+   * @since  4.4.0
+   */
+  protected $ordering = false;
+
+  /**
    * The database driver object.
    *
    * @var    DatabaseInterface
@@ -107,5 +123,31 @@ class Search implements SearchInterface
   public function applyToQuery(QueryInterface $query, string $term, string $alias): void
   {
     return;
+  }
+
+  /**
+   * Returns true if the search handles this filter within applyToQuery().
+   *
+   * @param   string    $filter   The name of the filter
+   *
+   * @return  bool
+   *
+   * @since   4.4.0
+   */
+  public function handlesFilter(string $filter): bool
+  {
+    return \in_array($filter, $this->filters, true);
+  }
+
+  /**
+   * Returns true if the search handles ordering within applyToQuery().
+   *
+   * @return  bool
+   *
+   * @since   4.4.0
+   */
+  public function handlesOrdering(): bool
+  {
+    return $this->ordering;
   }
 }

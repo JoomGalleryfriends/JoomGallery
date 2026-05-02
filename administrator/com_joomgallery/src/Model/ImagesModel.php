@@ -191,6 +191,10 @@ class ImagesModel extends JoomListModel
     $db    = $this->getDatabase();
     $query = $db->getQuery(true);
 
+    // Initialize search service
+    $this->component->createSearch('sql', $db, $this->state);
+    $searchProvider = $this->component->getSearch();
+
     // Check if logic and is active
     $logicAnd = (bool) ($this->getState('filter.and') > 0);
 
@@ -217,7 +221,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select the required fields from the table.
-    if(!empty($tag) && \count($tag) > 1 && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && \count($tag) > 1 && !$logicAnd)
     {
       // Add DISTINCT when filtering with multiple tags
       $query->select('DISTINCT ' . $this->getState('list.select', 'a.*'));
@@ -228,7 +232,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select table
-    if(!empty($tag) && $logicAnd)
+    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && $logicAnd)
     {
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
@@ -271,7 +275,7 @@ class ImagesModel extends JoomListModel
     $query->select([$db->quoteName('l.title', 'language_title'), $db->quoteName('l.image', 'language_image')]);
     $query->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'));
 
-    if(!empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
       $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
@@ -279,7 +283,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by access level.
-    $filter_access = $this->state->get('filter.access');
+    $filter_access = $this->getState('filter.access');
 
     if(!empty($filter_access))
     {
@@ -320,7 +324,6 @@ class ImagesModel extends JoomListModel
 
     if(!empty($search))
     {
-      $this->component->createSearch('sql', $db, $this->state);
       $this->component->getSearch()->applyToQuery($query, $search, 'a');
     }
 
@@ -391,7 +394,7 @@ class ImagesModel extends JoomListModel
     $catId = $this->getState('filter.category');
 
     // Convert to array
-    if(isset($catId) && !\is_array($catId))
+    if(!$searchProvider->handlesFilter('category') && isset($catId) && !\is_array($catId))
     {
       $catId = (string) preg_replace('/[^0-9\,]/i', '', $catId);
 
@@ -401,7 +404,7 @@ class ImagesModel extends JoomListModel
       }
     }
 
-    if(!empty($catId))
+    if(!$searchProvider->handlesFilter('category') && !empty($catId))
     {
       if(is_numeric($catId))
       {
@@ -417,7 +420,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by tags (OR logic)
-    if(!empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && !$logicAnd)
     {
       if(\count($tag) === 1)
       {
@@ -452,23 +455,26 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter on the language.
-    if($language = $this->getState('filter.language'))
+    if(!$searchProvider->handlesFilter('language') && $language = $this->getState('filter.language'))
     {
       $query->where($db->quoteName('a.language') . ' = :language')
         ->bind(':language', $language);
     }
 
     // Add the list ordering clause.
-    $orderCol  = $this->state->get('list.ordering', 'a.id');
-    $orderDirn = $this->state->get('list.direction', 'ASC');
+    if(!$searchProvider->handlesOrdering())
+    {
+      $orderCol  = $this->getState('list.ordering', 'a.id');
+      $orderDirn = $this->getState('list.direction', 'ASC');
 
-    if($orderCol && $orderDirn)
-    {
-      $query->order($db->escape($orderCol . ' ' . $orderDirn));
-    }
-    else
-    {
-      $query->order($db->escape($this->state->get('list.fullordering', 'a.lft ASC')));
+      if($orderCol && $orderDirn)
+      {
+        $query->order($db->escape($orderCol . ' ' . $orderDirn));
+      }
+      else
+      {
+        $query->order($db->escape($this->getState('list.fullordering', 'a.lft ASC')));
+      }
     }
 
     return $query;
@@ -486,6 +492,10 @@ class ImagesModel extends JoomListModel
     // Create a new query object.
     $db    = $this->getDbo();
     $query = $db->getQuery(true);
+
+    // Initialize search service
+    $this->component->createSearch('sql', $db, $this->state);
+    $searchProvider = $this->component->getSearch();
 
     // Check if logic and is active
     $logicAnd = (bool) $this->getState('filter.and');
@@ -513,7 +523,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select the required fields from the table.
-    if(!empty($tag) && \count($tag) > 1 && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && \count($tag) > 1 && !$logicAnd)
     {
       // Add DISTINCT when filtering with multiple tags
       $query->select('COUNT(DISTINCT a.id)');
@@ -524,7 +534,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select table
-    if(!empty($tag) && $logicAnd)
+    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && $logicAnd)
     {
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
@@ -543,7 +553,7 @@ class ImagesModel extends JoomListModel
       $query->from($db->quoteName('#__joomgallery', 'a'));
     }
 
-    if(!empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
       $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
@@ -676,7 +686,7 @@ class ImagesModel extends JoomListModel
     $catId = $this->getState('filter.category');
 
     // Convert to array
-    if(isset($catId) && !\is_array($catId))
+    if(!$searchProvider->handlesFilter('category') && isset($catId) && !\is_array($catId))
     {
       $catId = (string) preg_replace('/[^0-9\,]/i', '', $catId);
 
@@ -686,7 +696,7 @@ class ImagesModel extends JoomListModel
       }
     }
 
-    if(!empty($catId))
+    if(!$searchProvider->handlesFilter('category') && !empty($catId))
     {
       if(is_numeric($catId))
       {
@@ -702,7 +712,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by tags (OR logic)
-    if(!empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && !$logicAnd)
     {
       if(\count($tag) === 1)
       {

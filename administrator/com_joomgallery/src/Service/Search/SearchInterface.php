@@ -54,4 +54,24 @@ interface SearchInterface
    * @since   4.4.0
    */
   public function applyToQuery(QueryInterface $query, string $term, string $alias): void;
+
+  /**
+   * Returns true if the search handles this filter within applyToQuery().
+   *
+   * @param   string    $filter   The name of the filter
+   *
+   * @return  bool
+   *
+   * @since   4.4.0
+   */
+  public function handlesFilter(string $filter): bool;
+
+  /**
+   * Returns true if the search handles ordering within applyToQuery().
+   *
+   * @return  bool
+   *
+   * @since   4.4.0
+   */
+  public function handlesOrdering(): bool;
 }
