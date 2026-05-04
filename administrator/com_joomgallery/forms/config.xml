@@ -286,7 +286,7 @@
              buttons="add,remove"
              formsource="administrator/components/com_joomgallery/forms/subform_imageconvert.xml"
              layout="joomla.form.field.subform.repeatable-config"
-             label="COM_JOOMGALLERY_CONFIG_IP_STATIC" 
+             label="COM_JOOMGALLERY_CONFIG_IP_STATIC"
              description="COM_JOOMGALLERY_CONFIG_IP_STATIC_DESC" />
 
       <field name="jg_dynamic_watermark"
@@ -725,6 +725,15 @@
   </fieldset>
 
   <fieldset type="tab" name="backend" label="COM_JOOMGALLERY_CONFIG_TAB_BACKEND" note="backend">
+    <fieldset type="tab" name="backend-general" label="COM_JOOMGALLERY_CONFIG_TAB_COMMON">
+      <field name="jg_backend_searchprovider"
+             type="jgdynamiclist"
+             dynamic="true"
+             default="sql"
+             script="getSearchProviders"
+             label="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LABEL"
+             description="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LONG" />
+    </fieldset>
   </fieldset>
 
   <fieldset type="tab" name="frontend" label="COM_JOOMGALLERY_CONFIG_TAB_FRONTEND" note="frontend">
@@ -808,8 +817,15 @@
                filter="integer"
                label="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES_DESC" />
+        <field name="jg_gallery_view_searchprovider"
+               type="jgdynamiclist"
+               dynamic="true"
+               default="finder"
+               script="getSearchProviders"
+               label="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LABEL"
+               description="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LONG" />
         <field name="jg_gallery_view_ordering"
-               type="list" 
+               type="list"
                label="COM_JOOMGALLERY_CONFIG_SORT_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_SORT_IMAGES_DESC"
                default="a.hits DESC"
@@ -1046,7 +1062,7 @@
             showon="jg_category_view_pagination:0[OR]jg_category_view_pagination:2"
         />
         <field name="jg_category_view_ord_images"
-               type="list" 
+               type="list"
                label="COM_JOOMGALLERY_CONFIG_SORT_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_SORT_IMAGES_DESC"
                default="a.date ASC"
@@ -1089,7 +1105,7 @@
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
-        </field> 
+        </field>
         <field name="jg_category_view_image_class"
             type="radio"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGE_CLASS"

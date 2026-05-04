@@ -18,7 +18,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -193,6 +192,22 @@ class JgcategorydropdownField extends ListField
    */
   protected function getOptions()
   {
+    // Initialize needed classes
+    $comp = Factory::getApplication()->bootComponent('com_joomgallery');
+    $db   = $this->getDatabase();
+    $user = Factory::getApplication()->getIdentity();
+
+    if( isset($this->element['search_service']) && (string) $this->element['search_service'] == 'true' &&
+        $comp->getSearch()->handlesFilter('category')
+      )
+    {
+      // Load options from search provider
+      $options = $comp->getSearch()->getFilterOptions('category');
+
+      // Merge any additional options in the XML definition.
+      return array_merge(parent::getOptions(), $options);
+    }
+
     $options   = [];
     $published = $this->element['published'] ? explode(',', (string) $this->element['published']) : [0, 1];
     $name      = (string) $this->element['name'];
@@ -221,11 +236,6 @@ class JgcategorydropdownField extends ListField
     $oldCat = \is_array($oldCat)
       ? (int) reset($oldCat)
       : (int) $oldCat;
-
-    // Initialize needed classes
-    $comp = Factory::getApplication()->bootComponent('com_joomgallery');
-    $db   = Factory::getContainer()->get(DatabaseInterface::class);
-    $user = Factory::getApplication()->getIdentity();
 
     // Get access service
     $comp->createAccess();

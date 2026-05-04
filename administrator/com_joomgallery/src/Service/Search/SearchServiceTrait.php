@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SQLSearch;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\FinderSearch;
+use Joomla\CMS\Language\Text;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Registry\Registry;
 
@@ -45,6 +46,23 @@ trait SearchServiceTrait
   public function getSearch(): SearchInterface
   {
     return $this->search;
+  }
+
+  /**
+   * Returns a list of available search providers.
+   *
+   * @return  array
+   *
+   * @since  4.4.0
+   */
+  public function getSearchProviders(): array
+  {
+    $providers = [
+      ['value' => 'sql', 'text' => Text::_('COM_JOOMGALLERY_SERVICE_SEARCH_PROVIDER_SQL_TITLE'), 'desc' => Text::_('COM_JOOMGALLERY_SERVICE_SEARCH_PROVIDER_SQL_DESC')],
+      ['value' => 'finder', 'text' => Text::_('COM_JOOMGALLERY_SERVICE_SEARCH_PROVIDER_FINDER_TITLE'), 'desc' => Text::_('COM_JOOMGALLERY_SERVICE_SEARCH_PROVIDER_FINDER_DESC')],
+    ];
+
+    return $providers;
   }
 
   /**

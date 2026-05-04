@@ -44,4 +44,13 @@ interface SearchServiceInterface
    * @since  4.4.0
    */
   public function getSearch(): SearchInterface;
+
+  /**
+   * Returns a list of available search providers.
+   *
+   * @return  array
+   *
+   * @since  4.4.0
+   */
+  public function getSearchProviders(): array;
 }

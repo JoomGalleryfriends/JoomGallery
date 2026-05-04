@@ -34,6 +34,15 @@ interface SearchInterface
   public function getName(): string;
 
   /**
+   * Returns the array of filters.
+   *
+   * @return  array
+   *
+   * @since   4.4.0
+   */
+  public function getFilters(): array;
+
+  /**
    * Add the state to the service.
    *
    * @param   Registry  $state   The state object
@@ -74,4 +83,15 @@ interface SearchInterface
    * @since   4.4.0
    */
   public function handlesOrdering(): bool;
+
+  /**
+   * Method to get a list of possible options
+   *
+   * @param   string  $filter  The name of the filter
+   *
+   * @return  array   The field option objects.
+   *
+   * @since   4.4.0
+   */
+  public function getFilterOptions(string $filter): array;
 }

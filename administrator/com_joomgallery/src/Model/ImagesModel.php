@@ -192,8 +192,10 @@ class ImagesModel extends JoomListModel
     $query = $db->getQuery(true);
 
     // Initialize search service
-    $this->component->createSearch('sql', $db, $this->state);
-    $searchProvider = $this->component->getSearch();
+    $this->component->createConfig();
+    $searchProviderName = $this->component->getConfig()->get('jg_backend_searchprovider');
+    $this->component->createSearch($searchProviderName, $db, $this->state);
+    $searchProvider     = $this->component->getSearch();
 
     // Check if logic and is active
     $logicAnd = (bool) ($this->getState('filter.and') > 0);
@@ -221,7 +223,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select the required fields from the table.
-    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && \count($tag) > 1 && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && \count($tag) > 1 && !$logicAnd)
     {
       // Add DISTINCT when filtering with multiple tags
       $query->select('DISTINCT ' . $this->getState('list.select', 'a.*'));
@@ -232,7 +234,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select table
-    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && $logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && $logicAnd)
     {
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
@@ -275,7 +277,7 @@ class ImagesModel extends JoomListModel
     $query->select([$db->quoteName('l.title', 'language_title'), $db->quoteName('l.image', 'language_image')]);
     $query->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'));
 
-    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
       $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
@@ -320,9 +322,14 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by search
-    $search = $this->getState('filter.search');
+    $search = trim((string) $this->getState('filter.search'));
 
-    if(!empty($search))
+    $hasActiveSearchProviderFilter =
+      !empty($this->getState('filter.category'))
+      || !empty($this->getState('filter.tag'))
+      || !empty($this->getState('filter.language'));
+
+    if(!empty($search) || $hasActiveSearchProviderFilter)
     {
       $this->component->getSearch()->applyToQuery($query, $search, 'a');
     }
@@ -420,7 +427,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by tags (OR logic)
-    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       if(\count($tag) === 1)
       {
@@ -477,6 +484,10 @@ class ImagesModel extends JoomListModel
       }
     }
 
+    echo $query->__toString();
+
+    //exit;
+
     return $query;
   }
 
@@ -494,8 +505,10 @@ class ImagesModel extends JoomListModel
     $query = $db->getQuery(true);
 
     // Initialize search service
-    $this->component->createSearch('sql', $db, $this->state);
-    $searchProvider = $this->component->getSearch();
+    $this->component->createConfig();
+    $searchProviderName = $this->component->getConfig()->get('jg_backend_searchprovider');
+    $this->component->createSearch($searchProviderName, $db, $this->state);
+    $searchProvider     = $this->component->getSearch();
 
     // Check if logic and is active
     $logicAnd = (bool) $this->getState('filter.and');
@@ -523,7 +536,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select the required fields from the table.
-    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && \count($tag) > 1 && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && \count($tag) > 1 && !$logicAnd)
     {
       // Add DISTINCT when filtering with multiple tags
       $query->select('COUNT(DISTINCT a.id)');
@@ -534,7 +547,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select table
-    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && $logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && $logicAnd)
     {
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
@@ -553,7 +566,7 @@ class ImagesModel extends JoomListModel
       $query->from($db->quoteName('#__joomgallery', 'a'));
     }
 
-    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
       $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
@@ -712,7 +725,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by tags (OR logic)
-    if(!$searchProvider->handlesFilter('tag') && !empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       if(\count($tag) === 1)
       {
@@ -766,5 +779,24 @@ class ImagesModel extends JoomListModel
     $items = parent::getItems();
 
     return $items;
+  }
+
+  /**
+   * Get the filter form
+   *
+   * @param   array    $data      data
+   * @param   boolean  $loadData  load current data
+   *
+   * @return  Form|null  The \JForm object or null if the form can't be found
+   *
+   * @since   3.2
+   */
+  public function getFilterForm($data = [], $loadData = true)
+  {
+    $form = parent::getFilterForm($data, $loadData);
+
+    $tmp = 1;
+
+    return $form;
   }
 }

@@ -98,6 +98,18 @@ class Search implements SearchInterface
   }
 
   /**
+   * Returns the array of filters.
+   *
+   * @return  array
+   *
+   * @since   4.4.0
+   */
+  public function getFilters(): array
+  {
+    return $this->filters;
+  }
+
+  /**
    * Add the state to the service.
    *
    * @param   Registry  $state   The state object
@@ -149,5 +161,19 @@ class Search implements SearchInterface
   public function handlesOrdering(): bool
   {
     return $this->ordering;
+  }
+
+  /**
+   * Method to get a list of possible options
+   *
+   * @param   string  $filter  The name of the filter
+   *
+   * @return  array   The field option objects.
+   *
+   * @since   4.4.0
+   */
+  public function getFilterOptions(string $filter): array
+  {
+    return [];
   }
 }
