@@ -48,8 +48,6 @@
             <option value="a.ordering DESC">JGRID_HEADING_ORDERING_DESC</option>
             <option value="a.published ASC">JSTATUS_ASC</option>
             <option value="a.published DESC">JSTATUS_DESC</option>
-            <option value="a.completed ASC">COM_JOOMGALLERY_TASKS_STATUS_COMPLETED_ASC</option>
-            <option value="a.completed DESC">COM_JOOMGALLERY_TASKS_STATUS_COMPLETED_DESC</option>
         </field>
 
        <field name="limit"

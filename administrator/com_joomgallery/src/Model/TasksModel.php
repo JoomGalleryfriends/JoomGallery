@@ -51,8 +51,6 @@ class TasksModel extends JoomListModel
       $config['filter_fields'] = [
         'ordering', 'a.ordering',
         'published', 'a.published',
-        'failed', 'a.failed',
-        'completed', 'a.completed',
         'created_time', 'a.created_time',
         'id', 'a.id',
       ];
