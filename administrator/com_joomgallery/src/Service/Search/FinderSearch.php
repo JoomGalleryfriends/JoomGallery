@@ -54,6 +54,14 @@ class FinderSearch extends Search implements SearchInterface
   protected $ordering = true;
 
   /**
+   * Storage for bounded query values.
+   *
+   * @var   array
+   * @since  4.4.0
+   */
+  protected array $boundValues = [];
+
+  /**
    * Function to add the search to the query.
    *
    * @param   QueryInterface  $query   The list query
@@ -69,11 +77,13 @@ class FinderSearch extends Search implements SearchInterface
     $term = trim($term);
     $taxonomyNodeIds = $this->getFinderTaxonomyNodeIdsFromState();
 
+    // If no search term AND no taxonomy filters → do nothing
     if($term === '' && empty($taxonomyNodeIds))
     {
       return;
     }
 
+    // Special case: direct ID lookup
     if(stripos($term, 'id:') === 0)
     {
       $imageId = (int) substr($term, 3);
@@ -90,80 +100,69 @@ class FinderSearch extends Search implements SearchInterface
     /** @var FinderBridgeModel $finderModel */
     $finderModel = $component->getMVCFactory()->createModel('FinderBridge', 'Site', ['ignore_request' => true]);
 
-    // Create the state
+    /*
+    * Build Finder internal state:
+    * - parses search term (AND/OR/NOT, phrases, etc.)
+    * - applies taxonomy filters
+    * - prepares term IDs and query tokens
+    */
     $finderModel->customPopulateState($term, $taxonomyNodeIds);
 
-    // /*
-    //  * Pass the raw Finder input.
-    //  * Finder itself parses AND / OR / NOT, phrases, required terms,
-    //  * excluded terms, taxonomy filters, date filters, language, etc.
-    //  */
-    // $finderModel->setState('input', $term);
-    // $finderModel->setState('filter.search', $term);
-    // //$finderModel->setState('list.ordering', 'm.weight');
-    // //$finderModel->setState('list.direction', 'DESC');
-
-    // /*
-    //  * Apply finder taxonomies.
-    //  *
-    //  */
-    // if(!empty($taxonomyNodeIds))
-    // {
-    //   $finderModel->setState('filter.taxonomy', $taxonomyNodeIds);
-    // }
-
     /*
-     * Important:
-     * We want Finder's SQL, not Finder's rendered result list.
-     */
+    * Build the actual Finder SQL query (subquery).
+    * This returns matching Finder links (not yet JoomGallery images).
+    */
     $finderQuery = $finderModel->buildListQuery();
 
-
+    /*
+    * We need the URL to extract the image ID later.
+    * Finder normally doesn't select it explicitly.
+    */
     $finderQuery->select($this->db->quoteName('l.url', 'url'));
 
+
     /*
-     * Restrict Finder result rows to JoomGallery image items.
-     *
-     * Finder getListQuery() uses #__finder_links AS l.
-     * Your plugin sets:
-     *
-     *   $item->context = 'com_joomgallery.image';
-     *
-     * Depending on Joomla/Finder version, the context may be stored in
-     * l.object, l.url, or be indirectly represented by the indexed URL.
-     *
-     * The URL restriction is usually the safest fallback.
-     */
+    * Restrict Finder results to JoomGallery items only.
+    * This ensures we don't get results from other components.
+    */
     $finderQuery->where(
       $this->db->quoteName('l.url') . ' LIKE ' . $this->db->quote('%option=com_joomgallery%')
     );
 
+    /*
+    * Copy all bound parameters from the Finder subquery
+    * into the main query.
+    *
+    */
     foreach($finderQuery->getBounded() as $key => $bound)
     {
       if(\is_array($bound))
       {
-        $value = $bound['value'];
-        $type  = $bound['dataType'] ?? ParameterType::STRING;
+        $this->boundValues[$key] = $bound['value'];
+        $type = $bound['dataType'] ?? ParameterType::STRING;
       }
       else
       {
-        $value = $bound->value;
-        $type  = $bound->dataType ?? ParameterType::STRING;
+        $this->boundValues[$key] = $bound->value;
+        $type = $bound->dataType ?? ParameterType::STRING;
       }
 
-      $query->bind($key, $value, $type);
+      $query->bind($key, $this->boundValues[$key], $type);
     }
 
     /*
-     * Join the Finder result query into the JoomGallery list query.
-     *
-     * The derived table contains:
-     *   link_id
-     *   object
-     *   ordering
-     *
-     * We map Finder link URL back to image id.
-     */
+    * Join Finder results into the JoomGallery query.
+    *
+    * Strategy:
+    * - Finder returns URLs like:
+    *   index.php?option=com_joomgallery&view=image&id=123
+    *
+    * - We extract the "id" from the URL using SQL string functions
+    * - Then match it to a.id (image table)
+    *
+    * Result:
+    * Only images found by Finder remain in the result set
+    */
     $query->join(
         'INNER',
         '(' . $finderQuery->__toString() . ') AS ' . $this->db->quoteName('fr')
@@ -359,30 +358,12 @@ class FinderSearch extends Search implements SearchInterface
   }
 
   /**
-   * Method to flatten a tree to a sorted array
+   * Method to create the filter array based on state
    *
-   * @param   \stdClass[]  $array
-   *
-   * @return  \stdClass[]  Flat array of all nodes of a tree with the children after each parent
+   * @return  array Filters array
    *
    * @since   4.4.0
    */
-  private function reduce(array $array)
-  {
-    $return = [];
-
-    foreach($array as $item)
-    {
-      $return[] = $item;
-      if(isset($item->children))
-      {
-        $return = array_merge($return, $this->reduce($item->children));
-      }
-    }
-
-    return $return;
-  }
-
   private function getFinderTaxonomyNodeIdsFromState(): array
   {
     $categoryIds = $this->normaliseTaxonomyIds($this->state->get('filter.category'));
@@ -426,6 +407,13 @@ class FinderSearch extends Search implements SearchInterface
     return $filters;
   }
 
+  /**
+   * Method to normalize taxonomy ids
+   *
+   * @return  array  List of taxonomy ids
+   *
+   * @since   4.4.0
+   */
   private function normaliseTaxonomyIds(mixed $value): array
   {
     if(empty($value))

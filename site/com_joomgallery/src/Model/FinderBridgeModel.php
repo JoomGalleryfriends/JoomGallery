@@ -23,11 +23,16 @@ use Joomla\Database\QueryInterface;
 
 final class FinderBridgeModel extends SearchModel
 {
-  public function buildListQuery(): QueryInterface
-  {
-    return $this->getListQuery();
-  }
-
+  /**
+   * Custom method to populate the state of SearchModel
+   *
+   * @param   string  $searchTerm  The search term
+   * @param   array   $filters     The applied taxonomy filters
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
   public function customPopulateState(string $searchTerm, array $filters): void
   {
     // Get the configuration options.
@@ -100,5 +105,17 @@ final class FinderBridgeModel extends SearchModel
           $this->setState('list.raworder');
           break;
     }
+  }
+
+  /**
+   * Wrapper function to execute the getListQuery() method
+   *
+   * @return  QueryInterface  The query created by SearchModel
+   *
+   * @since   4.4.0
+   */
+  public function buildListQuery(): QueryInterface
+  {
+    return $this->getListQuery();
   }
 }

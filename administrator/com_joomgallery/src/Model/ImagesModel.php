@@ -484,10 +484,6 @@ class ImagesModel extends JoomListModel
       }
     }
 
-    echo $query->__toString();
-
-    //exit;
-
     return $query;
   }
 
