@@ -296,10 +296,14 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         {
           // We log failed recreations.
           $this->logTask(\sprintf($error_msg, $id));
+          // We also store failed recreations in the Session
+          Factory::getApplication()->getSession()->set('com_joomgallery.task.recreateImage.' . $id, $error_msg);
         }
-
-        // Add id to executed ids array
-        array_push($executed_ids, $id);
+        else
+        {
+          // Add id to executed ids array
+          array_push($executed_ids, $id);
+        }
       }
       else
       {
