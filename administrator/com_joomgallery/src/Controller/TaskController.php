@@ -268,16 +268,18 @@ class TaskController extends JoomFormController
       throw new \RuntimeException('Task plugin reported error status: ' . $result);
     }
 
-    $session = Factory::getApplication()->getSession()->get('com_joomgallery.task');
+    // Check session if there was an error during running the task
     $type    = explode('.', $task->type)[1];
-
-    if( property_exists($session, $type) &&
-        property_exists($session->{$type}, $itemId) &&
-        !\is_null($session->{$type}->{$itemId})
+    $session = Factory::getApplication()->getSession()->get('com_joomgallery.task.' . $type);
+    
+    if( isset($session->{$task->taskid}) &&
+        isset($session->{$task->taskid}->{$itemId}) &&
+        !\is_null($session->{$task->taskid}->{$itemId})
       )
     {
-      $error = $session->{$type}->{$itemId};
-      Factory::getApplication()->getSession()->set('com_joomgallery.task.' . $type . '.' . $itemId, null);
+      // We found a message in the session for this task item
+      $error = $session->{$task->taskid}->{$itemId};
+      Factory::getApplication()->getSession()->set('com_joomgallery.task.' . $type . '.' . $task->taskid . '.' . $itemId, null);
 
       throw new \RuntimeException(Text::sprintf($error, $itemId));
     }

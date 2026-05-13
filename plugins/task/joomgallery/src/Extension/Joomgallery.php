@@ -188,7 +188,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     // Actually performing the task using the model and a specific method
     $task_def     = ['model' => $model, 'method' => 'recreate', 'options' => ['original', $skip]];
     $error_msg    = 'Recreation of images failed. Failed image: %s';
-    $executed_ids = $this->performTask($ids, $task_def, $params, $error_msg);
+    $executed_ids = $this->performTask($ids, $task_def, $task->getRecord(), $params, $error_msg);
 
     // Check if we are finished
     if(\count($ids) == \count($executed_ids))
@@ -223,17 +223,18 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   /**
    * Performs the actual task with the model defined in the
    *
-   * @param   array   $ids         The id of the task
-   * @param   array   $task_def    Task definition array in the form
-   *                               ['model' => (object) Model, 'method' => (string) method-name, 'options' => (array) method-arguments]
-   * @param   object  $params      The params object
-   * @param   string  $error_msg   The message to be logged on error
+   * @param   array    $ids         The id of the task
+   * @param   array    $task_def    Task definition array in the form
+   *                                 ['model' => (object) Model, 'method' => (string) method-name, 'options' => (array) method-arguments]
+   * @param   object   $task        The task object
+   * @param   object   $params      The params object
+   * @param   string   $error_msg   The message to be logged on error
    *
    * @return  array   List of ecexuted ids
    *
    * @since   4.2.0
    */
-  private function performTask(array $ids, array $task_def, object $params, string $error_msg = ''): array
+  private function performTask(array $ids, array $task_def, object $task, object $params, string $error_msg = ''): array
   {
     $max_time = (int) \ini_get('max_execution_time');
 
@@ -297,7 +298,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
           // We log failed recreations.
           $this->logTask(\sprintf($error_msg, $id));
           // We also store failed recreations in the Session
-          Factory::getApplication()->getSession()->set('com_joomgallery.task.recreateImage.' . $id, $error_msg);
+          $task_type = explode('.', $task->type)[1];
+          Factory::getApplication()->getSession()->set('com_joomgallery.task.' . $task_type . '.' . $task->id . '.' . $id, $error_msg);
         }
         else
         {
