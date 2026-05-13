@@ -1215,6 +1215,7 @@ class ImageModel extends JoomAdminModel
     else
     {
       $this->setError($table->getError());
+      $this->component->setError('ID not found.');
 
       return false;
     }

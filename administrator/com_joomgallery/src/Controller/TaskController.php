@@ -271,9 +271,9 @@ class TaskController extends JoomFormController
     // Check session if there was an error during running the task
     $type    = explode('.', $task->type)[1];
     $session = Factory::getApplication()->getSession()->get('com_joomgallery.task.' . $type);
-    
-    if( isset($session->{$task->taskid}) &&
-        isset($session->{$task->taskid}->{$itemId}) &&
+
+    if( isset($session->{$task->taskid}, $session->{$task->taskid}->{$itemId})
+         &&
         !\is_null($session->{$task->taskid}->{$itemId})
       )
     {
@@ -281,7 +281,21 @@ class TaskController extends JoomFormController
       $error = $session->{$task->taskid}->{$itemId};
       Factory::getApplication()->getSession()->set('com_joomgallery.task.' . $type . '.' . $task->taskid . '.' . $itemId, null);
 
-      throw new \RuntimeException(Text::sprintf($error, $itemId));
+      // Construct the error html
+      $error_msg = $error->msg;
+
+      if(isset($error->detail) && !empty($error->detail))
+      {
+        $error_msg .= '<a data-bs-toggle="collapse" href="#collapseTip_' . $itemId . '" role="button" aria-expanded="false" aria-controls="collapseTip_' . $itemId . '"> ';
+        $error_msg .= Text::_('COM_JOOMGALLERY_FIELDS_TIP_MORE');
+        $error_msg .= '</a><br>';
+        $error_msg .= '<small id="collapseTip_' . $itemId . '" class="form-text collapse">';
+        $error_msg .=  $error->detail;
+        $error_msg .= '</small>';
+      }
+
+
+      throw new \RuntimeException(Text::sprintf($error_msg, $itemId));
     }
   }
 

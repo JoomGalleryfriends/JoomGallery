@@ -186,7 +186,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     $skip = array_filter($skip, fn($typename) => $typename !== $type);
 
     // Actually performing the task using the model and a specific method
-    $task_def     = ['model' => $model, 'method' => 'recreate', 'options' => ['original', $skip]];
+    $task_def     = ['model' => $model, 'method' => 'recreate', 'options' => ['original', $skip], 'errors' => 'error'];
     $error_msg    = 'Recreation of images failed. Failed image: %s';
     $executed_ids = $this->performTask($ids, $task_def, $task->getRecord(), $params, $error_msg);
 
@@ -256,10 +256,14 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
       throw new \InvalidArgumentException('Invalid options given: Options must be an array');
     }
 
+    // Load component into scope
+    $component = Factory::getApplication()->bootComponent('com_joomgallery');
+
     // Check that $task_def is correctly given
     $model   = $task_def['model'];
     $method  = $task_def['method'];
     $options = $task_def['options'];
+    $errors  = $task_def['errors'];
 
     $assumed_duration = 1;
     $successful       = \is_string($params->successful) ? $params->successful : '';
@@ -293,13 +297,20 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         $success          = $model->{$method}($id, ...$options);
         $assumed_duration = microtime(true) - $start;
 
-        if(!$success && $error_msg)
+        if(!$success)
         {
           // We log failed recreations.
           $this->logTask(\sprintf($error_msg, $id));
+
+          // Retreive messages from component storage
+          $msg         = new \stdClass();
+          $msg->msg    = $error_msg;
+          $msg->detail = $component->getMsg($errors, true);
+          $component->clearMsgStorage($errors);
+
           // We also store failed recreations in the Session
           $task_type = explode('.', $task->type)[1];
-          Factory::getApplication()->getSession()->set('com_joomgallery.task.' . $task_type . '.' . $task->id . '.' . $id, $error_msg);
+          Factory::getApplication()->getSession()->set('com_joomgallery.task.' . $task_type . '.' . $task->id . '.' . $id, $msg);
         }
         else
         {
