@@ -10,6 +10,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Api\Model;
 
+use Joomgallery\Component\Joomgallery\Api\Helper\ManifestHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\Exception\ResourceNotFound;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -76,4 +77,70 @@ class VersionModel extends BaseDatabaseModel
 
         return $oVersion;
     }
+
+	/**
+	 *
+	 * @param   mixed  $data
+	 *
+	 *
+	 * @since version
+	 */
+	public function save(mixed $data = [], $isForce = false)
+	{
+		$isSaved = true;
+
+		// may be used when accepting multiple parameter
+		if (!empty ($data))
+		{
+			$isChanged = false;
+			$isSaved = false;
+
+			try
+			{
+				$oManifest = ManifestHelper::getDbManifest($this->componentName);
+
+				if (!empty($oManifest))
+				{
+					//--- version ------------------------------------
+
+					if (!empty ($data['version']))
+					{
+						$version = $data['version'];
+						if ($oManifest['version'] != $version)
+						{
+							$oManifest['version'] = $data['version'];
+							$isChanged = true;
+						}
+					}
+
+					//--- creation date ------------------------------------
+
+					if (!empty ($data['creationDate']))
+					{
+						$creationDate = $data['creationDate'];
+						if ($oManifest['creationDate'] != $creationDate)
+						{
+							$oManifest['creationDate'] = $creationDate;
+							$isChanged = true;
+						}
+					}
+
+					//--- save changers ----------------------------------------
+
+					if ($isChanged) {
+						$isSaved = ManifestHelper::saveDbManifest($oManifest, $this->componentName);
+					}
+				}
+
+			}
+			catch (\Exception $e)
+			{
+				throw new \RuntimeException($e->getMessage());
+			}
+
+		}
+
+		return $isSaved;
+	}
+
 }

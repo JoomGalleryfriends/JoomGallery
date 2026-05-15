@@ -12,9 +12,12 @@ namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
 use Joomgallery\Component\Joomgallery\Api\Model\VersionModel;
 use Joomgallery\Component\Joomgallery\Api\View\Version\JsonapiView;
+use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\ApiController;
 use Joomla\String\Inflector;
+use Tobscure\JsonApi\Exception\InvalidParameterException;
+
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
@@ -89,4 +92,38 @@ class VersionController extends ApiController
 
         return $view;
     }
+
+	/**
+	 *
+	 * @return VersionController
+	 *
+	 * @throws InvalidParameterException
+	 * @since version
+	 */
+	public function edit()
+	{
+		// Access check.
+		if (!$this->allowEdit())
+		{
+			throw new NotAllowed('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED', 403);
+		}
+
+		// all variables
+		$data = $this->input->json->getArray();
+
+		if (empty($data))
+		{
+			throw new InvalidParameterException(Text::_('No parameter given for patch config'), 403);        //	Text::sprintf('Missing required parameter(s): %s', implode(' & ', $missingParameters))
+		}
+
+		//--- Create the model -----------------------------------------------------------------
+
+		/** @var VersionModel $model */
+		$model = $this->getModel('Version', '', ['ignore_request' => true, 'state' => $this->modelState]);
+
+		$isSaved = $model->save($data);
+
+		return parent::displayItem('0');
+	}
+
 }
