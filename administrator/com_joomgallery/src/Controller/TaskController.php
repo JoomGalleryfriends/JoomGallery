@@ -242,12 +242,14 @@ class TaskController extends JoomFormController
 
     $params = $this->{$handlerMethod}($task, $itemId);
 
-    $mockRecord                 = new \stdClass();
-    $mockRecord->id             = 4;
-    $mockRecord->type           = $task->type;
+    // Load task definition
+    $com_scheduler   = Factory::getApplication()->bootComponent('com_scheduler');
+    $scheduler_model = $com_scheduler->getMVCFactory()->createModel('Task', 'administrator');
+    $mockRecord      = $scheduler_model->getItem($task->taskid);
+
+    // Modify task definition
     $mockRecord->title          = $task->title;
-    $mockRecord->params         = '{}';
-    $mockRecord->taskOption     = $taskOption;
+    $mockRecord->params         = json_encode($mockRecord->params);
     $mockRecord->last_exit_code = Status::OK;
 
     $schedulerTask = new Task($mockRecord);
