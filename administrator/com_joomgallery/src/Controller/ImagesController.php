@@ -160,8 +160,8 @@ class ImagesController extends JoomAdminController
       }
 
       // Load task definition
-      $com_scheduler   = Factory::getApplication()->bootComponent('com_scheduler');
-      $listModel       = $com_scheduler->getMVCFactory()->createModel('Tasks', 'administrator');
+      $com_scheduler = Factory::getApplication()->bootComponent('com_scheduler');
+      $listModel     = $com_scheduler->getMVCFactory()->createModel('Tasks', 'administrator');
       $listModel->getState();
       $listModel->setState('filter.state', 1);
       $listModel->setState('filter.type', 'joomgalleryTask.recreateImage');
@@ -175,9 +175,10 @@ class ImagesController extends JoomAdminController
 
       // Try to guess the scheduler task
       $scheduler_id = $scheduler_items[0]->id;
+
       foreach($scheduler_items as $scheduler_task)
       {
-        if(\str_contains(\strtolower($scheduler_task->title), $type))
+        if(str_contains(strtolower($scheduler_task->title), $type))
         {
           // Scheduler task found with correct type in title
           $scheduler_id = $scheduler_task->id;

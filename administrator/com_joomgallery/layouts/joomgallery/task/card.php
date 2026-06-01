@@ -19,11 +19,11 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-$context = $displayData[0];
-$item    = $displayData[1];
+$context             = $displayData[0];
+$item                = $displayData[1];
 $overrideable_params = [];
 
-if(isset($item->task->params) && array_key_exists('overrideable_params', $item->task->params))
+if(isset($item->task->params) && \array_key_exists('overrideable_params', $item->task->params))
 {
   $overrideable_params = explode(',', $item->task->params['overrideable_params']);
 }
@@ -74,13 +74,13 @@ if(isset($item->task->params) && array_key_exists('overrideable_params', $item->
       <?php
         /** @var FormFactoryInterface $formFactory */
         $formFactory = Factory::getContainer()->get(FormFactoryInterface::class);
-        $form = $formFactory->createForm('com_jommgallery.subform_taskparams', ['control' => 'jform']);
+        $form        = $formFactory->createForm('com_jommgallery.subform_taskparams', ['control' => 'jform']);
         $form->loadFile(JPATH_COMPONENT_ADMINISTRATOR . '/forms/subform_taskparams.xml');
         $form->bind($item->params->toArray());
       ?>
       <div class="test">
         <?php foreach($item->params as $param => $value): ?>
-          <?php if(in_array($param, $overrideable_params)): ?>
+          <?php if(\in_array($param, $overrideable_params)): ?>
             <?php echo $form->renderField($param); ?>
           <?php endif; ?>
         <?php endforeach; ?>

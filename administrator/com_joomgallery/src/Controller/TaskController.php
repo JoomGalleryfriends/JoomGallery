@@ -245,6 +245,7 @@ class TaskController extends JoomFormController
 
     // Get possible override tasks
     $overrideable_params = [];
+
     if(isset($task->task->params) && \array_key_exists('overrideable_params', $task->task->params))
     {
       $overrideable_params = (array) $task->task->params['overrideable_params'];
@@ -255,11 +256,11 @@ class TaskController extends JoomFormController
     {
       foreach($overrideable_params as $ov_param_key)
       {
-        if(\property_exists($params, $ov_param_key))
+        if(property_exists($params, $ov_param_key))
         {
-          $default_val = $params->{$ov_param_key};
-          $jform = Factory::getApplication()->getInput()->post->get('jform', [], 'array');
-          $jform = new Registry($jform);
+          $default_val             = $params->{$ov_param_key};
+          $jform                   = Factory::getApplication()->getInput()->post->get('jform', [], 'array');
+          $jform                   = new Registry($jform);
           $params->{$ov_param_key} = $jform->get($ov_param_key, $default_val);
         }
       }
