@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -110,6 +110,15 @@ class RawView extends JoomGalleryView
     if(!$this->ppImage($file_info, $resource, $type))
     {
       $this->app->redirect(Route::_('index.php', false), 404);
+    }
+
+    // Increment hits counter
+    $record_hits        = (bool) $this->component->getConfig()->get('jg_record_hits', 1);
+    $record_hits_select = (array) $this->component->getConfig()->get('jg_record_hits_select');
+
+    if($record_hits && \in_array($type, $record_hits_select))
+    {
+      $model->hit();
     }
 
     // Set mime encoding to document

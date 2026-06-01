@@ -1011,6 +1011,17 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
+        <field name="jg_category_view_subcategories_image_count"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_IMAGE_COUNT"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_IMAGE_COUNT_DESC"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
         <field name="spacer2"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES"
             type="spacer"

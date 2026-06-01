@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -1355,5 +1355,67 @@ class JoomHelper
 
     // Instantiate a new table class and return it.
     return new $tableClass(Factory::getContainer()->get(DatabaseInterface::class));
+  }
+
+  /**
+   * @param   int    $catId   The id of the category
+   *
+   * @return  int    number of published images
+   *
+   * @since   4.3.0
+   */
+  public static function getTotalImagesInCategory($catId)
+  {
+    // Get view levels of current user
+    $user              = Factory::getApplication()->getIdentity();
+    $allowedViewLevels = Access::getAuthorisedViewLevels($user->id);
+
+    $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+    $query = $db->getQuery(true)
+          ->select('id, lft, rgt')
+          ->from(_JOOM_TABLE_CATEGORIES)
+          ->where($db->quoteName('access') . ' IN (' . implode(',', $allowedViewLevels) . ')')
+          ->where($db->quoteName('hidden') . ' = 0')
+          ->where($db->quoteName('published') . ' = 1');
+
+    $db->setQuery($query);
+    $catids = $db->loadAssocList('id');
+
+    $idsToCount = [];
+
+    if(isset($catids[$catId]))
+    {
+      $lft = $catids[$catId]['lft'];
+      $rgt = $catids[$catId]['rgt'];
+
+      // Find all subcategories in the tree
+      foreach($catids as $id => $cat)
+      {
+        if($cat['lft'] >= $lft && $cat['rgt'] <= $rgt)
+        {
+          $idsToCount[] = (int) $id;
+        }
+      }
+    }
+
+    if(empty($idsToCount))
+    {
+      return 0;
+    }
+
+    // Count images
+    $query = $db->getQuery(true)
+      ->select('COUNT(*)')
+      ->from(_JOOM_TABLE_IMAGES)
+      ->where('catid IN (' . implode(',', $idsToCount) . ')')
+      ->where($db->quoteName('access') . ' IN (' . implode(',', $allowedViewLevels) . ')')
+      ->where($db->quoteName('hidden') . ' = 0')
+      ->where($db->quoteName('approved') . ' = 1')
+      ->where($db->quoteName('published') . ' = 1');
+
+    $db->setQuery($query);
+
+    return (int) $db->loadResult();
   }
 }

@@ -167,6 +167,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_category_view_subcategories_category_description` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_subcategories_random_image` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_subcategories_random_subimages` TINYINT(1) NOT NULL DEFAULT 0,
+`jg_category_view_subcategories_image_count` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_class` VARCHAR(25) NOT NULL DEFAULT "columns",
 `jg_category_view_num_columns` TINYINT(1) NOT NULL DEFAULT 3,
 `jg_category_view_image_class` TINYINT(1) NOT NULL DEFAULT 0,
