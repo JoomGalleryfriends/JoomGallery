@@ -24,6 +24,7 @@ use Joomla\Component\Scheduler\Administrator\Helper\SchedulerHelper;
 use Joomla\Component\Scheduler\Administrator\Task\Status;
 use Joomla\Component\Scheduler\Administrator\Task\Task;
 use Joomla\Event\Dispatcher;
+use Joomla\Registry\Registry;
 
 /**
  * Task controller class.
@@ -241,6 +242,28 @@ class TaskController extends JoomFormController
     }
 
     $params = $this->{$handlerMethod}($task, $itemId);
+
+    // Get possible override tasks
+    $overrideable_params = [];
+    if(isset($task->task->params) && \array_key_exists('overrideable_params', $task->task->params))
+    {
+      $overrideable_params = (array) $task->task->params['overrideable_params'];
+    }
+
+    // Override task params
+    if(!empty($overrideable_params))
+    {
+      foreach($overrideable_params as $ov_param_key)
+      {
+        if(\property_exists($params, $ov_param_key))
+        {
+          $default_val = $params->{$ov_param_key};
+          $jform = Factory::getApplication()->getInput()->post->get('jform', [], 'array');
+          $jform = new Registry($jform);
+          $params->{$ov_param_key} = $jform->get($ov_param_key, $default_val);
+        }
+      }
+    }
 
     // Load task definition
     $com_scheduler   = Factory::getApplication()->bootComponent('com_scheduler');

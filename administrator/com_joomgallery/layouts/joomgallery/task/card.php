@@ -13,14 +13,20 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormFactoryInterface;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
 $context = $displayData[0];
 $item    = $displayData[1];
+$overrideable_params = [];
 
-$overrideable_params = explode(',', $item->task->params['overrideable_params'])
+if(isset($item->task->params) && array_key_exists('overrideable_params', $item->task->params))
+{
+  $overrideable_params = explode(',', $item->task->params['overrideable_params']);
+}
 
 ?>
 <div class="card form-layout">
@@ -72,7 +78,6 @@ $overrideable_params = explode(',', $item->task->params['overrideable_params'])
         $form->loadFile(JPATH_COMPONENT_ADMINISTRATOR . '/forms/subform_taskparams.xml');
         $form->bind($item->params->toArray());
       ?>
-
       <div class="test">
         <?php foreach($item->params as $param => $value): ?>
           <?php if(in_array($param, $overrideable_params)): ?>
@@ -81,6 +86,7 @@ $overrideable_params = explode(',', $item->task->params['overrideable_params'])
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
+    <br>
     <div class="progress mb-2" style="height: 6px;">
       <div id="progress-<?php echo $item->id; ?>"
            class="progress-bar"

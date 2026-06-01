@@ -171,7 +171,7 @@ class TaskModel extends JoomAdminModel
     // Load associated scheduler task
     $com_scheduler   = Factory::getApplication()->bootComponent('com_scheduler');
     $scheduler_model = $com_scheduler->getMVCFactory()->createModel('Task', 'administrator');
-    $mockRecord      = $scheduler_model->getItem($item->taskid);
+    $item->task      = $scheduler_model->getItem($item->taskid);
 
     return $item;
   }

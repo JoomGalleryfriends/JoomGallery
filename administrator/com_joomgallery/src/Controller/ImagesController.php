@@ -150,7 +150,7 @@ class ImagesController extends JoomAdminController
     $this->checkToken();
 
     $pks  = $this->input->post->get('cid', [], 'array');
-    $type = $this->input->post->get('type', 'original', 'cmd');
+    $type = $this->input->post->get('type', 'thumbnail', 'cmd');
 
     try
     {
@@ -159,15 +159,41 @@ class ImagesController extends JoomAdminController
         throw new \Exception(Text::_('JERROR_NO_ITEMS_SELECTED'));
       }
 
+      // Load task definition
+      $com_scheduler   = Factory::getApplication()->bootComponent('com_scheduler');
+      $listModel       = $com_scheduler->getMVCFactory()->createModel('Tasks', 'administrator');
+      $listModel->getState();
+      $listModel->setState('filter.state', 1);
+      $listModel->setState('filter.type', 'joomgalleryTask.recreateImage');
+      $scheduler_items = $listModel->getItems();
+
+      if(empty($scheduler_items))
+      {
+        // No scheduler task found
+        throw new \Exception(Text::sprintf('COM_JOOMGALLERY_TASK_ERROR_NO_SCHEDULER', 'recreate'));
+      }
+
+      // Try to guess the scheduler task
+      $scheduler_id = $scheduler_items[0]->id;
+      foreach($scheduler_items as $scheduler_task)
+      {
+        if(\str_contains(\strtolower($scheduler_task->title), $type))
+        {
+          // Scheduler task found with correct type in title
+          $scheduler_id = $scheduler_task->id;
+
+          break;
+        }
+      }
+
       ArrayHelper::toInteger($pks);
-
       $taskModel = $this->factory->createModel('Task', 'Administrator');
-
-      $shortRef = bin2hex(random_bytes(3));
+      $shortRef  = bin2hex(random_bytes(3));
 
       $taskData = [
         'title'    => Text::sprintf('COM_JOOMGALLERY_TASK_TITLE_GENERATED', $shortRef),
         'type'     => 'joomgalleryTask.recreateImage',
+        'taskid'   => $scheduler_id,
         'state'    => 1,
         'access'   => 1,
         'priority' => 2,
@@ -175,7 +201,7 @@ class ImagesController extends JoomAdminController
         'queue'    => implode(',', $pks),
         'params'   => json_encode(
             [
-              'recreate_type'  => $type,
+              'type'  => $type,
               'parallel_limit' => 1,
             ]
         ),
