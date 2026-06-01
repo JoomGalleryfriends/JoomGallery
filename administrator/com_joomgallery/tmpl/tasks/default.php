@@ -89,7 +89,7 @@ if($saveOrder && !empty($this->items))
                       <?php
                       // Index hinzufügen für die Checkbox-Generierung im Layout
                       $item->grid_index = $i;
-                      echo LayoutHelper::render('joomgallery.task.card', $item);
+                      echo LayoutHelper::render('joomgallery.task.card', ['com_joomgallery.tasks', $item]);
                       ?>
                     </div>
                   </div>

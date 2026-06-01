@@ -322,6 +322,7 @@ if($saveOrder && !empty($this->items))
     </div>
   </div>
 
+  <?php // Task modal creation ?>
   <?php echo LayoutHelper::render('joomgallery.task.modals'); ?>
 
   <div class="modal fade" id="joomgallery-new-task-modal" tabindex="-1" aria-labelledby="newTaskModalLabel" aria-hidden="true">
@@ -333,7 +334,7 @@ if($saveOrder && !empty($this->items))
         </div>
         <div class="modal-body overflow-hidden">
           <?php if($newTaskItem) : ?>
-            <?php echo LayoutHelper::render('joomgallery.task.card', $newTaskItem); ?>
+            <?php echo LayoutHelper::render('joomgallery.task.card', ['com_joomgallery.images', $newTaskItem]); ?>
           <?php endif; ?>
         </div>
         <div class="modal-footer">
@@ -343,6 +344,7 @@ if($saveOrder && !empty($this->items))
     </div>
   </div>
 </form>
+
 <?php if($newTaskId && $newTaskItem) : ?>
   <script>
     document.addEventListener('DOMContentLoaded', () => {

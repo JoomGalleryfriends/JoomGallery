@@ -140,6 +140,11 @@ class TasksModel extends JoomListModel
         $table->check();
         $table->clcProgress();
 
+        // Load associated scheduler task
+        $com_scheduler   = Factory::getApplication()->bootComponent('com_scheduler');
+        $scheduler_model = $com_scheduler->getMVCFactory()->createModel('Task', 'administrator');
+        $table->task     = $scheduler_model->getItem($item->taskid);
+
         array_push($items, $table);
       }
 

@@ -17,8 +17,11 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-/** @var \stdClass $item Das Task-Objekt */
-$item = $displayData;
+$context = $displayData[0];
+$item    = $displayData[1];
+
+$overrideable_params = explode(',', $item->task->params['overrideable_params'])
+
 ?>
 <div class="card form-layout">
   <div class="card-header d-flex justify-content-between align-items-center">
@@ -61,6 +64,23 @@ $item = $displayData;
 
   </div>
   <div class="card-body">
+    <?php if($context == 'com_joomgallery.images'): ?>
+      <?php
+        /** @var FormFactoryInterface $formFactory */
+        $formFactory = Factory::getContainer()->get(FormFactoryInterface::class);
+        $form = $formFactory->createForm('com_jommgallery.subform_taskparams', ['control' => 'jform']);
+        $form->loadFile(JPATH_COMPONENT_ADMINISTRATOR . '/forms/subform_taskparams.xml');
+        $form->bind($item->params->toArray());
+      ?>
+
+      <div class="test">
+        <?php foreach($item->params as $param => $value): ?>
+          <?php if(in_array($param, $overrideable_params)): ?>
+            <?php echo $form->renderField($param); ?>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
     <div class="progress mb-2" style="height: 6px;">
       <div id="progress-<?php echo $item->id; ?>"
            class="progress-bar"
