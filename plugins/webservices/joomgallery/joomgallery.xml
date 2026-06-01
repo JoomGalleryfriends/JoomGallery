@@ -12,7 +12,7 @@
     <namespace path="src">Joomgallery\Plugin\WebServices\Joomgallery</namespace>
     
     <files>
-        <folder plugin="joomgallery">src</folder>
+        <folder plugin="joomgallery">services</folder>
         <folder>language</folder>
         <folder>services</folder>
         <folder>src</folder>
