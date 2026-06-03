@@ -481,7 +481,7 @@ class ImageModel extends JoomAdminModel
       // Handle images if category was changed
       if(!$isNew && ($catMoved || $aliasChanged))
       {
-        // Douplicate old data
+        // Duplicate old data
         $old_table = clone $table;
       }
 

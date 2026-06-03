@@ -10,11 +10,11 @@
 
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
-// phpcs:disable PSR1.Files.SideEffects
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Tobscure\JsonApi\Exception\InvalidParameterException;
 
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
@@ -53,8 +53,8 @@ class ReserveimgidController extends ImagesController // ApiController
         $srcFilename  = $this->input->json->getString('filename');
         $srcExtension = $this->input->json->getString('file_extension');
 
-        // part of the route or of the json options
-        $catId = $this->catidByInput();
+        // from json *.http parameter
+        $catId = $this->input->json->getString('catid');
 
         $missingParameters = [];
 
@@ -81,7 +81,6 @@ class ReserveimgidController extends ImagesController // ApiController
 
 //        $filename = $this->genFilename($srcFilename, $srcExtension, $catId);
 //        $this->input->json->set('filename', $filename);
-
 
         // Add/save ....
         parent::add();
@@ -111,25 +110,4 @@ class ReserveimgidController extends ImagesController // ApiController
         return $data;
     }
 
-    private function catidByInput(): string
-    {
-        $post = $this->input->post;
-        $json = $this->input->json;
-
-        // by route
-        $catid = $this->input->post->getString('catid');
-
-        if(empty($catid))
-        {
-            $catid = $this->input->json->getString('catid');
-        }
-        else {
-            // assign to json to be used in save
-            // $this->input->json->catid = $catid;
-            $this->input->set('catid', $catid);
-        }
-
-//		return $this->input->post->getString('catid') ?? $this->input->json->getString('catid');
-        return $catid;
-    }
 }

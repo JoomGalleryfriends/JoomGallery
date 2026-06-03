@@ -128,13 +128,13 @@ abstract class Uploader implements UploaderInterface
    * Method has to be extended! Do not use it in this way!
    *
    * @param   array    $data        Form data (as reference)
-   * @param   bool     $filename    True, if the filename has to be created (default: True)
+   * @param   bool   $createFilename  True, if the filename has to be created (default: True)
    *
    * @return  bool     True on success, false otherwise
    *
    * @since  4.0.0
    */
-  public function retrieveImage(&$data, $filename = true): bool
+  public function retrieveImage(&$data, $createFilename = true): bool
   {
     // Create filesystem service
     $this->component->createFilesystem();
@@ -176,7 +176,7 @@ abstract class Uploader implements UploaderInterface
       return false;
     }
 
-    if($filename)
+    if($createFilename)
     {
       // Get filecounter
       $filecounter = null;

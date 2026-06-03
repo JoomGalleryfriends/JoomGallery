@@ -177,7 +177,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
         //
         new Route(
           ['POST'],
-          'v1/joomgallery/db_reserve_image_id/:catid',
+//          'v1/joomgallery/db_reserve_image_id/:catid',
+          'v1/joomgallery/db_reserve_image_id',
           'reserveimgid.db_reserve_image_id',
           ['catid' => '(\d+)'],
           $getDefaults
@@ -204,6 +205,14 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
             ['POST'],
             'v1/joomgallery/upload_image_file',
             'uploadimgfile.upload_image_file',
+            [],
+            $getDefaults
+        ),
+
+        new Route(
+            ['PATCH'],
+            'v1/joomgallery/upload_image_file',
+            'uploadimgfile.patch_image_upload_file',
             [],
             $getDefaults
         ),

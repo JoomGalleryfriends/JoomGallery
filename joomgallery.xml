@@ -7,12 +7,10 @@
   <author>JoomGallery::ProjectTeam</author>
   <authorEmail>team@joomgalleryfriends.net</authorEmail>
   <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-  <version>4.4.0</version>
+  <version>4.4.0.1</version>
   <description>JoomGallery 4, a native gallery component for Joomla! 4.x, 5.x and 6.x</description>
   <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
-
   <scriptfile>script.php</scriptfile>
-
   <install>
     <sql>
       <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
@@ -71,21 +69,18 @@
       <folder>vendor</folder>
     </files>
   </administration>
-
   <config>
     <fields name="params">
       <fieldset name="component">
-        <field name="save_history" default="0" />
+        <field name="save_history" default="0"/>
       </fieldset>
     </fields>
   </config>
-
   <api>
     <files folder="api/components/com_joomgallery">
       <folder>src</folder>
     </files>
   </api>
-
   <plugins>
     <plugin group="console" plugin="joomconsole"/>
     <plugin group="privacy" plugin="joomgallery"/>
@@ -94,9 +89,7 @@
     <plugin group="task" plugin="joomgallery"/>
     <plugin group="webservices" plugin="joomgallery"/>
   </plugins>
-
   <changelogurl>https://www.joomgalleryfriends.net/updates/changelog.xml</changelogurl>
-
   <updateservers>
     <server type="extension" priority="1" name="JoomGallery: Component Updater">https://www.joomgalleryfriends.net/updates/joomgallery4/joomgallery.xml</server>
     <server type="collection" priority="2" name="JoomGallery: Official Extensions Updater">https://www.joomgalleryfriends.net/updates/extensions4.xml</server>
