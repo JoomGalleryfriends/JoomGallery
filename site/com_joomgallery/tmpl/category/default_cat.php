@@ -52,6 +52,7 @@ $show_description_label = $this->params['configs']->get('jg_category_view_show_d
 $show_imgdate           = $this->params['configs']->get('jg_category_view_show_imgdate', 0, 'INT');
 $show_imgauthor         = $this->params['configs']->get('jg_category_view_show_imgauthor', 0, 'INT');
 $show_tags              = $this->params['configs']->get('jg_category_view_show_tags', 0, 'INT');
+$browse_categories_link = $this->params['configs']->get('jg_category_view_browse_categories_link', 1, 'INT');
 $browse_images_link     = $this->params['configs']->get('jg_category_view_browse_images_link', 1, 'INT');
 $lightbox_image         = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
 $lightbox_thumbnails    = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
@@ -99,11 +100,6 @@ if($image_link == 'lightgallery' || $title_link == 'lightgallery')
   $wa->useScript('com_joomgallery.lg-thumbnail');
   $wa->useScript('com_joomgallery.lg-zoom');
   $wa->useStyle('com_joomgallery.lightgallery-bundle');
-}
-
-if(!empty($use_pagination))
-{
-  // $wa->useScript('com_joomgallery.infinite-scroll');
 }
 
 // Add and initialize the grid script
@@ -163,22 +159,34 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <h2><?php echo Text::_('COM_JOOMGALLERY') ?></h2>
 <?php endif; ?>
 
-<?php // Back to parent category ?>
-<?php if($this->item->parent_id > 0) : ?>
-  <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
-    <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?></span>
-  </a>
-<?php endif; ?>
-
-<?php // Browse images ?>
-<?php if($browse_images_link == '1') : ?>
-  <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
-    <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_VIEW_BROWSE_IMAGES'); ?>
-  </a>
+<?php // Button container ?>
+<?php if($browse_categories_link == '1' || $browse_images_link == '1') : ?>
+  <div class="jg-button-container">
+  <?php // Back to parent category ?>
+  <?php if($this->item->parent_id > 0 && $browse_categories_link == '1') : ?>
+    <div class="jg-link-categories">
+      <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
+        <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?></span>
+      </a>
+    </div>
+  <?php endif; ?>
+  <?php // Browse images ?>
+  <?php if($browse_images_link == '1') : ?>
+    <div class="jg-link-images">
+      <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
+        <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_VIEW_BROWSE_IMAGES'); ?>
+      </a>
+    </div>
+  <?php endif; ?>
+  </div>
 <?php endif; ?>
 
 <?php // Category text ?>
-<p><?php echo $this->item->description; ?></p>
+<?php if($this->item->description) : ?>
+  <div class="jg-category-description">
+    <?php echo $this->item->description; ?>
+  </div>
+<?php endif; ?>
 
 <?php // Hint for no items ?>
 <?php if(\count($this->item->children->items) == 0 && \count($this->item->images->items) == 0) : ?>
@@ -303,12 +311,25 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   </div>
 <?php endif; */?>
 
-<?php // Browse images ?>
-<?php if($browse_images_link == '2') : ?>
-  <div class="center text-center">
-    <p><a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
-      <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_VIEW_BROWSE_IMAGES'); ?>
-    </a></p>
+<?php // Button container ?>
+<?php if($browse_categories_link == '2' || $browse_images_link == '2') : ?>
+  <div class="jg-button-container bottom">
+  <?php // Back to parent category ?>
+  <?php if($this->item->parent_id > 0 && $browse_categories_link == '2') : ?>
+    <div class="jg-link-categories">
+      <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
+        <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?></span>
+      </a>
+    </div>
+  <?php endif; ?>
+  <?php // Browse images ?>
+  <?php if($browse_images_link == '2') : ?>
+    <div class="jg-link-images">
+      <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
+        <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_VIEW_BROWSE_IMAGES'); ?>
+      </a>
+    </div>
+  <?php endif; ?>
   </div>
 <?php endif; ?>
 

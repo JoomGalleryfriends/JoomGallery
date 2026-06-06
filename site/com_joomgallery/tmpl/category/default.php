@@ -12,9 +12,52 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+
+// add meta title
+$app = Factory::getApplication();
+$doc = $app->getDocument();
+$menu = $app->getMenu()->getActive();
+
+$menuPageTitle = '';
+
+if($menu)
+{
+    $menuPageTitle = $menu->getParams()->get('page_title', '');
+}
+
+// only set automatic title if no custom menu page title exists
+if(empty($menuPageTitle))
+{
+    $title = $this->item->title ?? '';
+    $sitename = $app->get('sitename');
+    $sitename_pagetitles = (int) $app->get('sitename_pagetitles', 0);
+
+    $prefix = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX_CATEGORY');
+    $baseTitle = trim($prefix . ' ' . $title);
+
+    if($sitename_pagetitles === 0)
+    {
+        $fullTitle = $baseTitle;
+    }
+    elseif($sitename_pagetitles === 1)
+    {
+        $fullTitle = $sitename . ' - ' . $baseTitle;
+    }
+    elseif($sitename_pagetitles === 2)
+    {
+        $fullTitle = $baseTitle . ' - ' . $sitename;
+    }
+    else
+    {
+        $fullTitle = $baseTitle;
+    }
+
+    $doc->setTitle($fullTitle);
+}
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();

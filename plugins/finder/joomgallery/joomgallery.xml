@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="finder" method="upgrade">
+  <name>plg_finder_joomgallery</name>
+  <creationDate>2026-02-09</creationDate>
+  <copyright>2008 - 2026  JoomGallery::ProjectTeam</copyright>
+  <license>GNU General Public License version 3 or later</license>
+  <author>JoomGallery::ProjectTeam</author>
+  <authorEmail>team@joomgalleryfriends.net</authorEmail>
+  <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
+  <version>4.3.0</version>
+  <description>PLG_FINDER_JOOMGALLERY_XML_DESCRIPTION</description>
+  <namespace path="src">Joomgallery\Plugin\Finder\Joomgallery</namespace>
+
+  <files>
+    <folder>language</folder>
+    <folder>services</folder>
+    <folder plugin="joomgallery">src</folder>
+  </files>
+
+  <config>
+    <fields name="params">
+      <fieldset name="basic" addfieldprefix="Joomla\Component\Finder\Administrator\Field">
+        <field name="taxonomies"
+                type="taxonomytypes"
+                label="PLG_FINDER_JOOMGALLERY_TAXONOMIES_LABEL"
+                default="type,category,tags,language,author"
+                multiple="true" >
+          <option value="author">JAUTHOR</option>
+          <option value="category">JCATEGORY</option>
+          <option value="tags">JTAG</option>
+          <option value="language">JFIELD_LANGUAGE_LABEL</option>
+          <option value="type">PLG_FINDER_JOOMGALLERY_TAXONOMIES_TYPE</option>
+        </field>
+      </fieldset>
+    </fields>
+  </config>
+</extension>

@@ -82,6 +82,7 @@
 
   <plugins>
     <plugin group="console" plugin="joomconsole"/>
+    <plugin group="finder" plugin="joomgallery"/>
     <plugin group="privacy" plugin="joomgallery"/>
     <plugin group="system" plugin="joomgallery"/>
     <plugin group="system" plugin="joomowner"/>
