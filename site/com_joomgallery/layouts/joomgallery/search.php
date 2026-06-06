@@ -54,7 +54,7 @@ if($provider->getName() == 'finder' & $params->get('jg_gallery_view_autosuggest'
 ?>
 
 <div class="jg-searchform">
-  <form action="<?php echo Route::_('index.php?option='.$search_url['option'].'&view='.$search_url['view']); ?>" method="get" class="js-finder-searchform">
+  <form action="<?php echo Route::_('index.php?option=' . $search_url['option'] . '&view=' . $search_url['view']); ?>" method="get" class="js-finder-searchform">
     <div class="form-inline">
       <div class="input-group">
         <input type="hidden" name="option" value="<?php echo $search_url['option']; ?>">
