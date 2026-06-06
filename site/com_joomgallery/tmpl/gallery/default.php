@@ -113,6 +113,18 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
     </div>
   <?php endif; ?>
 
+  <?php // Search bar
+    $search_vars = [
+      'provider'    => $this->component->getSearch(),
+      'query'       => $this->escape($this->item->query),
+      'params'      => $this->params['configs'],
+      'suggest_url' => Route::_('index.php?option=com_finder&task=suggestions.suggest&format=json&tmpl=component', false),
+      'search_url'  => Route::_('index.php?option=com_joomgallery&view=gallery'),
+    ];
+
+    echo LayoutHelper::render('joomgallery.search', $search_vars);
+  ?>
+
   <?php // Hint for no items ?>
   <?php if(\count($this->item->images->items) == 0) : ?>
     <p><?php echo Text::_('COM_JOOMGALLERY_GALLERY_NO_IMAGES') ?></p>

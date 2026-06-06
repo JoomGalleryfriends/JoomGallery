@@ -71,6 +71,9 @@ class GalleryModel extends JoomItemModel
     $params                  = $this->getParams();
     $this->item->description = $params['configs']->get('jg_gallery_view_description', '', 'STRING');
 
+    // Get Search query string
+    $this->item->query       = $this->app->input->get('q', '');
+
     return $this->item;
   }
 
@@ -119,6 +122,7 @@ class GalleryModel extends JoomItemModel
     // Load images list model
     $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
     $listModel->getState();
+    $listModel->search = 'jg_gallery_view_searchprovider';
 
     // Select fields to load
     $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum'];
@@ -191,6 +195,10 @@ class GalleryModel extends JoomItemModel
     $listModel->setState('filter.published', 1);
     $listModel->setState('filter.showunapproved', 0);
     $listModel->setState('filter.showhidden', 0);
+
+    // Apply the search
+    $search = $listModel->getUserStateFromRequest($listModel->context . '.filter.search', 'q', '');
+    $listModel->setState('filter.search', $search);
 
     if(Multilanguage::isEnabled())
     {

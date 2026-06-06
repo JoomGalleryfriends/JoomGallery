@@ -37,6 +37,14 @@ class ImagesModel extends JoomListModel
   protected $type = 'image';
 
   /**
+   * Configuration param for search provider
+   *
+   * @access  public
+   * @var     string
+   */
+  public $search = 'jg_backend_searchprovider';
+
+  /**
    * Constructor
    *
    * @param   array  $config  An optional associative array of configuration settings.
@@ -193,7 +201,7 @@ class ImagesModel extends JoomListModel
 
     // Initialize search service
     $this->component->createConfig();
-    $searchProviderName = $this->component->getConfig()->get('jg_backend_searchprovider');
+    $searchProviderName = $this->component->getConfig()->get($this->search);
     $this->component->createSearch($searchProviderName, $db, $this->state);
     $searchProvider     = $this->component->getSearch();
 
