@@ -80,6 +80,27 @@ table.itemList th.sort-cell .form-check-input {
   margin-bottom: 0;
 }
 
+/* Gallery view */
+.com_joomgallery .jg-searchform {
+  margin: 3em 0;
+}
+.com_joomgallery .jg-searchform .form-inline {
+  display: block ruby;
+  text-align: center;
+}
+.com_joomgallery .jg-searchform .input-group {
+  width: 80%;
+}
+.com_joomgallery .jg-searchform .awesomplete {
+  flex-grow: 1;
+}
+.com_joomgallery .jg-searchform .input-group ul {
+  min-width: 20%;
+}
+.com_joomgallery .jg-searchform .input-group li {
+  text-align: initial;
+}
+
 /* Category view */
 .com_joomgallery.view-category main {
   overflow-anchor: none;

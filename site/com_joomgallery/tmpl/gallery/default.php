@@ -118,8 +118,9 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
       'provider'    => $this->component->getSearch(),
       'query'       => $this->escape($this->item->query),
       'params'      => $this->params['configs'],
+      'itemid'      => $this->itemid,
       'suggest_url' => Route::_('index.php?option=com_finder&task=suggestions.suggest&format=json&tmpl=component', false),
-      'search_url'  => Route::_('index.php?option=com_joomgallery&view=gallery'),
+      'search_url'  => ['option' => 'com_joomgallery', 'view' => 'gallery'],
     ];
 
     echo LayoutHelper::render('joomgallery.search', $search_vars);

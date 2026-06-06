@@ -14,6 +14,7 @@
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
 
 extract($displayData);
@@ -24,7 +25,8 @@ extract($displayData);
  * @var   object    $provider       The search provider object
  * @var   string    $query          The applied serach query
  * @var   Registry  $params         The view params
- * @var   string    $search_url     The endpoint for the search request
+ * @var   int       $itemid         The active menuitem id
+ * @var   array     $search_url     The endpoint for the search request
  * @var   string    $suggest_url    The endpoint for the auto suggestions to load
  **/
 
@@ -51,17 +53,19 @@ if($provider->getName() == 'finder' & $params->get('jg_gallery_view_autosuggest'
 
 ?>
 
-<form action="<?php echo $search_url; ?>" method="get" class="js-finder-searchform">
-  <div class="form-inline">
-    <div class="input-group">
-      <div class="">
-        <input type="text" name="q" id="q" class="js-finder-search-query form-control" value="<?php echo $this->escape($query); ?>">
+<div class="jg-searchform">
+  <form action="<?php echo Route::_('index.php?option='.$search_url['option'].'&view='.$search_url['view']); ?>" method="get" class="js-finder-searchform">
+    <div class="form-inline">
+      <div class="input-group">
+        <input type="hidden" name="option" value="<?php echo $search_url['option']; ?>">
+        <input type="hidden" name="view" value="<?php echo $search_url['view']; ?>">
+        <input type="hidden" name="Itemid" value="<?php echo $itemid; ?>">
+        <input type="text" name="q" id="q" placeholder="<?php echo Text::_('COM_JOOMGALLERY_SEARCH_TERM');?>" class="js-finder-search-query form-control" value="<?php echo $this->escape($query); ?>">
         <button type="submit" class="btn btn-primary">
           <span class="icon-search icon-white" aria-hidden="true"></span>
           <?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>
         </button>
       </div>
-
     </div>
-  </div>
-</form>
+  </form>
+</div>

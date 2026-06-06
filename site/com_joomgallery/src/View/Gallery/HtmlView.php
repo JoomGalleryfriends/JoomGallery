@@ -59,6 +59,7 @@ class HtmlView extends JoomGalleryView
     $this->state  = $model->getState();
     $this->params = $model->getParams();
     $this->item   = $model->getItem();
+    $this->itemid = $this->app->getMenu()->getActive()->id;
 
     // Load images
     $this->item->images             = new \stdClass();
