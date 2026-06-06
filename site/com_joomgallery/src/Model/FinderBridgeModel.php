@@ -14,11 +14,11 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\Component\Finder\Administrator\Indexer\Query;
-use Joomla\Component\Finder\Site\Model\SearchModel;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
+use Joomla\Component\Finder\Administrator\Indexer\Query;
+use Joomla\Component\Finder\Site\Model\SearchModel;
 use Joomla\Database\QueryInterface;
 
 final class FinderBridgeModel extends SearchModel
@@ -79,7 +79,8 @@ final class FinderBridgeModel extends SearchModel
     $order = $params->get('sort_order', 'relevance');
     $this->setState('list.raworder', $order);
 
-    switch ($order) {
+    switch($order)
+    {
       case 'date':
           $this->setState('list.ordering', 'l.start_date');
           break;

@@ -74,7 +74,7 @@ class FinderSearch extends Search implements SearchInterface
    */
   public function applyToQuery(QueryInterface $query, string $term, string $alias = 'a'): void
   {
-    $term = trim($term);
+    $term            = trim($term);
     $taxonomyNodeIds = $this->getFinderTaxonomyNodeIdsFromState();
 
     // If no search term AND no taxonomy filters → do nothing
@@ -120,13 +120,12 @@ class FinderSearch extends Search implements SearchInterface
     */
     $finderQuery->select($this->db->quoteName('l.url', 'url'));
 
-
     /*
     * Restrict Finder results to JoomGallery items only.
     * This ensures we don't get results from other components.
     */
     $finderQuery->where(
-      $this->db->quoteName('l.url') . ' LIKE ' . $this->db->quote('%option=com_joomgallery%')
+        $this->db->quoteName('l.url') . ' LIKE ' . $this->db->quote('%option=com_joomgallery%')
     );
 
     /*
@@ -139,12 +138,12 @@ class FinderSearch extends Search implements SearchInterface
       if(\is_array($bound))
       {
         $this->boundValues[$key] = $bound['value'];
-        $type = $bound['dataType'] ?? ParameterType::STRING;
+        $type                    = $bound['dataType'] ?? ParameterType::STRING;
       }
       else
       {
         $this->boundValues[$key] = $bound->value;
-        $type = $bound->dataType ?? ParameterType::STRING;
+        $type                    = $bound->dataType ?? ParameterType::STRING;
       }
 
       $query->bind($key, $this->boundValues[$key], $type);
@@ -184,7 +183,7 @@ class FinderSearch extends Search implements SearchInterface
    */
   public function getFilterOptions(string $filter): array
   {
-    if (!$this->handlesFilter($filter))
+    if(!$this->handlesFilter($filter))
     {
       return [];
     }
@@ -221,9 +220,12 @@ class FinderSearch extends Search implements SearchInterface
     $cacheId = 'finder_filter_select_' . serialize([$groups, Factory::getLanguage()->getTag()]);
 
     // Check the cached results.
-    if ($cache->contains($cacheId)) {
+    if($cache->contains($cacheId))
+    {
       $branches = $cache->get($cacheId);
-    } else {
+    }
+    else
+    {
       $query = $this->db->getQuery(true);
 
       // Build the query to get the branch data and the number of child nodes.

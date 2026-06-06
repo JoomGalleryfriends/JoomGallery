@@ -201,9 +201,16 @@ class ImagesModel extends JoomListModel
 
     // Initialize search service
     $this->component->createConfig();
-    $searchProviderName = $this->component->getConfig()->get($this->search);
-    $this->component->createSearch($searchProviderName, $db, $this->state);
-    $searchProvider     = $this->component->getSearch();
+    try
+    {
+      $searchProvider = $this->component->getSearch();
+    }
+    catch (\TypeError $e)
+    {
+      $searchProviderName = $this->component->getConfig()->get($this->search);
+      $this->component->createSearch($searchProviderName, $db, $this->state);
+      $searchProvider = $this->component->getSearch();
+    }
 
     // Check if logic and is active
     $logicAnd = (bool) ($this->getState('filter.and') > 0);
@@ -498,24 +505,31 @@ class ImagesModel extends JoomListModel
   /**
    * Build an SQL query to load the list data for counting.
    *
-   * @return  DatabaseQuery
+   * @return  \Joomla\Database\QueryInterface
    *
    * @since   4.1.0
    */
   protected function getCountListQuery()
   {
     // Create a new query object.
-    $db    = $this->getDbo();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true);
 
     // Initialize search service
     $this->component->createConfig();
-    $searchProviderName = $this->component->getConfig()->get('jg_backend_searchprovider');
-    $this->component->createSearch($searchProviderName, $db, $this->state);
-    $searchProvider     = $this->component->getSearch();
+    try
+    {
+      $searchProvider = $this->component->getSearch();
+    }
+    catch (\TypeError $e)
+    {
+      $searchProviderName = $this->component->getConfig()->get($this->search);
+      $this->component->createSearch($searchProviderName, $db, $this->state);
+      $searchProvider = $this->component->getSearch();
+    }
 
     // Check if logic and is active
-    $logicAnd = (bool) $this->getState('filter.and');
+    $logicAnd = (bool) ($this->getState('filter.and') > 0);
 
     // Check if filtering by tags
     $tag = $this->getState('filter.tag');

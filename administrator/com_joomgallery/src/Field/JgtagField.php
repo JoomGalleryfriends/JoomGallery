@@ -136,14 +136,14 @@ class JgtagField extends ListField
     $isRemoteSearch = $this->isRemoteSearch();
 
     $query = $db->getQuery(true)
-      ->select(
-          [
-            $db->quoteName('a.id', 'value'),
-            $db->quoteName('a.title', 'text'),
-            $db->quoteName('a.published'),
-            $db->quoteName('a.ordering'),
-          ]
-      )
+    ->select(
+        [
+          $db->quoteName('a.id', 'value'),
+          $db->quoteName('a.title', 'text'),
+          $db->quoteName('a.published'),
+          $db->quoteName('a.ordering'),
+        ]
+    )
         ->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
 
     // Limit Options in multilanguage

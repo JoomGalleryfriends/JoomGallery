@@ -26,7 +26,7 @@ extract($displayData);
  * @var   Registry  $params         The view params
  * @var   string    $search_url     The endpoint for the search request
  * @var   string    $suggest_url    The endpoint for the auto suggestions to load
-**/
+ **/
 
 $app = Factory::getApplication();
 
@@ -39,7 +39,7 @@ $wa->useScript('com_finder.finder');
 /*
 * This segment of code sets up the autocompleter.
 */
-if($prodiver->name == 'finder' & $params->get('jg_gallery_view_autosuggest', 1))
+if($provider->getName() == 'finder' & $params->get('jg_gallery_view_autosuggest', 1))
 {
   $app->getDocument()->getWebAssetManager()->usePreset('awesomplete');
   $app->getDocument()->addScriptOptions('finder-search', ['url' => $suggest_url]);
@@ -61,7 +61,7 @@ if($prodiver->name == 'finder' & $params->get('jg_gallery_view_autosuggest', 1))
           <?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>
         </button>
       </div>
-      
+
     </div>
   </div>
 </form>

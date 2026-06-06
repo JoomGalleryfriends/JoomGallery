@@ -14,8 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SQLSearch;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\FinderSearch;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SQLSearch;
 use Joomla\CMS\Language\Text;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Registry\Registry;
@@ -81,11 +81,11 @@ trait SearchServiceTrait
     {
       case 'finder':
         $this->search = new FinderSearch($db, $state);
-        break;
+          break;
 
       default:
         $this->search = new SQLSearch($db, $state);
-        break;
+          break;
     }
 
     return;

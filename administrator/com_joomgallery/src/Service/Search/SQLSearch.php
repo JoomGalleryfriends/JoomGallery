@@ -14,8 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\Database\QueryInterface;
 use Joomla\Database\ParameterType;
+use Joomla\Database\QueryInterface;
 
 /**
  * SQL text based search
@@ -63,15 +63,17 @@ class SQLSearch extends Search implements SearchInterface
     $search = '%' . str_replace(' ', '%', trim($term)) . '%';
 
     $query->where(
-      '('
-      . $this->db->quoteName($alias . '.title') . ' LIKE :search_title'
-      . ' OR ' . $this->db->quoteName($alias . '.alias') . ' LIKE :search_alias'
-      . ' OR ' . $this->db->quoteName($alias . '.description') . ' LIKE :search_description'
-      . ')'
+        '('
+        . $this->db->quoteName($alias . '.title') . ' LIKE :search_title'
+        . ' OR ' . $this->db->quoteName($alias . '.alias') . ' LIKE :search_alias'
+        . ' OR ' . $this->db->quoteName($alias . '.description') . ' LIKE :search_description'
+        . ')'
     );
 
-    $query->bind([':search_title', ':search_alias', ':search_description'], $search,
-      [ParameterType::STRING, ParameterType::STRING, ParameterType::STRING]
+    $query->bind(
+        [':search_title', ':search_alias', ':search_description'],
+        $search,
+        [ParameterType::STRING, ParameterType::STRING, ParameterType::STRING]
     );
   }
 }

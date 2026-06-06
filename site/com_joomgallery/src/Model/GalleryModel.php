@@ -72,7 +72,7 @@ class GalleryModel extends JoomItemModel
     $this->item->description = $params['configs']->get('jg_gallery_view_description', '', 'STRING');
 
     // Get Search query string
-    $this->item->query       = $this->app->input->get('q', '');
+    $this->item->query = $this->app->input->get('q', '');
 
     return $this->item;
   }
@@ -120,9 +120,9 @@ class GalleryModel extends JoomItemModel
     }
 
     // Load images list model
-    $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
-    $listModel->getState();
+    $listModel         = $this->component->getMVCFactory()->createModel('images', 'site');
     $listModel->search = 'jg_gallery_view_searchprovider';
+    $listModel->getState();
 
     // Select fields to load
     $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum'];
