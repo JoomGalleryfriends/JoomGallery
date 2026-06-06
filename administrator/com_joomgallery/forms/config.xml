@@ -918,6 +918,16 @@
     </fieldset>
 
     <fieldset type="tab" name="frontend-categoryview" label="COM_JOOMGALLERY_CONFIG_TAB_CATEGORY_VIEW">
+        <field name="jg_category_view_browse_categories_link"
+               type="list"
+               label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK"
+               description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK_DESC"
+               default="1"
+               validate="options" >
+            <option value="0">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK_OPT0</option>
+            <option value="1">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK_OPT1</option>
+            <option value="2">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK_OPT2</option>
+        </field>
         <field name="jg_category_view_browse_images_link"
                type="list"
                label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_IMAGES_LINK"

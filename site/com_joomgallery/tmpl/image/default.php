@@ -57,6 +57,36 @@ $tags      = $tagLayout->render($this->item->tags);
 $metadataLayout = new FileLayout('joomgallery.content.metadata');
 $metadata       = $metadataLayout->render($this->item->imgmetadata);
 
+// add meta title
+$app = Factory::getApplication();
+$doc = $app->getDocument();
+
+$title = $this->item->title ?? '';
+$sitename = $app->get('sitename');
+$sitename_pagetitles = (int) $app->get('sitename_pagetitles', 0);
+
+$prefix = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX');
+$baseTitle = trim($prefix . ' ' . $title);
+
+if($sitename_pagetitles === 0)
+{
+    $fullTitle = $baseTitle;
+}
+elseif($sitename_pagetitles === 1)
+{
+    $fullTitle = $sitename . ' - ' . $baseTitle;
+}
+elseif($sitename_pagetitles === 2)
+{
+    $fullTitle = $baseTitle . ' - ' . $sitename;
+}
+else
+{
+    $fullTitle = $baseTitle;
+}
+
+$doc->setTitle($fullTitle);
+
 // Custom Fields
 $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 ?>
