@@ -3,7 +3,7 @@
   <fieldset name="general" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
     <field name="type"
            type="jgimagetype"
-           default="thumbnail"
+           default=""
            label="COM_JOOMGALLERY_IMAGETYPE"
            description="COM_JOOMGALLERY_CONFIG_IP_TYPE_NAME_SELECT_LONG" />
     <field name="parallel_limit"

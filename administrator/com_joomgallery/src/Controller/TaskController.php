@@ -258,7 +258,14 @@ class TaskController extends JoomFormController
       {
         if(property_exists($params, $ov_param_key))
         {
-          $default_val             = $params->{$ov_param_key};
+          $default_val = $params->{$ov_param_key};
+
+          if($default_val === '' && isset($task->task->params) && \array_key_exists($ov_param_key, $task->task->params))
+          {
+            $default_val             = $task->task->params[$ov_param_key];
+            $params->{$ov_param_key} = $task->task->params[$ov_param_key];
+          }
+
           $jform                   = Factory::getApplication()->getInput()->post->get('jform', [], 'array');
           $jform                   = new Registry($jform);
           $params->{$ov_param_key} = $jform->get($ov_param_key, $default_val);
@@ -362,7 +369,7 @@ class TaskController extends JoomFormController
 
     return (object)[
       'cid'     => $itemId,
-      'type'    => $task->params->get('type', 'thumbnail'), // 'recreate' specific
+      'type'    => $task->params->get('type', ''), // 'recreate' specific
       'user'    => $app->getIdentity()->id,
       'instant' => true,
     ];
