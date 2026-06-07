@@ -93,7 +93,7 @@ class ImagesController extends JoomFormController
     $model = $this->getModel();
     $model->clearFilter();
 
-    $this->app->enqueueMessage('All filters successfully cleared.', 'message');
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_MSG_FILTERS_CLEARED'), 'message');
     $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=' . $redirect);
   }
 }

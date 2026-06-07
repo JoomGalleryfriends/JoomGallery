@@ -82,7 +82,7 @@ if($provider->getName() == 'finder' & $params->get('jg_gallery_view_autosuggest'
       </div>
       <div class="filter-input collapse" id="toggleFilter">
         <div class="card card-body">
-          <h5>Filter Images</h5>
+          <h5><?php echo Text::_('COM_JOOMGALLERY_FILTER_TITLE'); ?></h5>
           <div class="filter-group">
             <?php if(!empty($filterForm))
             {
