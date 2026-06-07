@@ -13,10 +13,10 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 use Joomla\Registry\Registry;
 
 extract($displayData);
@@ -68,7 +68,6 @@ if($provider->getName() == 'finder' & $params->get('jg_gallery_view_autosuggest'
         <input type="hidden" name="option" value="<?php echo $search_url['option']; ?>">
         <input type="hidden" name="view" value="<?php echo $search_url['view']; ?>">
         <input type="hidden" name="Itemid" value="<?php echo $menuitem['itemid']; ?>">
-        <?php echo HTMLHelper::_('form.token'); ?>
         <input type="text" name="q" id="q" placeholder="<?php echo Text::_('COM_JOOMGALLERY_SEARCH_TERM');?>" class="js-finder-search-query form-control" value="<?php echo $this->escape($query); ?>">
         <button type="submit" class="btn btn-primary">
           <span class="icon-search icon-white" aria-hidden="true"></span>
@@ -100,9 +99,27 @@ if($provider->getName() == 'finder' & $params->get('jg_gallery_view_autosuggest'
   function clearFilters(event) {
     event.preventDefault();
 
-    const form  = document.getElementById('image-searchform');
-    form.action = "<?php echo Route::_('index.php?option=' . $menuitem['option'] . '&task=' . $menuitem['model'] . '.clear&redirect=' . $menuitem['view']); ?>";
+    const form  = document.getElementById("image-searchform");
+    form.action = "<?php echo Route::_('index.php?option=' . $menuitem['option'] . '&task=' . $menuitem['model'] . '.clear'); ?>";
     form.method = "post";
+
+    addHiddenInput(form, "redirect", "<?php echo $menuitem['view']; ?>");
+    addHiddenInput(form, "<?php echo Session::getFormToken(); ?>", "1");
+
     form.submit();
+  }
+
+  function addHiddenInput(form, name, value)
+  {
+    let input = form.querySelector('input[name="' + CSS.escape(name) + '"]');
+
+    if(!input) {
+      input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      form.appendChild(input);
+    }
+
+    input.value = value;
   }
 </script>
