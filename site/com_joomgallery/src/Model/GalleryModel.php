@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Site\Model\ImagesModel;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -33,6 +34,31 @@ class GalleryModel extends JoomItemModel
    * @var     string
    */
   protected $type = 'gallery';
+
+  /**
+   * Images list model
+   *
+   * @access  protected
+   * @var     ImagesModel
+   */
+  protected $imagesModel = null;
+
+  /**
+   * Constructor
+   *
+   * @param   array  $config  An optional associative array of configuration settings.
+   *
+   * @return  void
+   * @since   4.4.0
+   */
+  function __construct($config = [])
+  {
+    parent::__construct($config);
+
+    $this->imagesModel         = $this->component->getMVCFactory()->createModel('images', 'site');
+    $this->imagesModel->search = 'jg_gallery_view_searchprovider';
+    $this->imagesModel->getState();
+  }
 
   /**
    * Method to auto-populate the model state.
@@ -119,24 +145,19 @@ class GalleryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load images list model
-    $listModel         = $this->component->getMVCFactory()->createModel('images', 'site');
-    $listModel->search = 'jg_gallery_view_searchprovider';
-    $listModel->getState();
-
     // Select fields to load
     $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum'];
     $fields = $this->addColumnPrefix('a', $fields);
 
     // Apply preselected filters and fields selection for images
-    $this->setImagesModelState($listModel, $fields);
+    $this->setImagesModelState($this->imagesModel, $fields);
 
     // Get images
-    $items = $listModel->getItems();
+    $items = $this->imagesModel->getItems();
 
-    if(!empty($listModel->getError()))
+    if(!empty($this->imagesModel->getError()))
     {
-      $this->setError($listModel->getError());
+      $this->setError($this->imagesModel->getError());
     }
 
     return $items;
@@ -154,20 +175,39 @@ class GalleryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load images list model
-    $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
-    $listModel->getState();
-
     // Apply preselected filters and fields selection for images
-    $this->setImagesModelState($listModel);
+    $this->setImagesModelState($this->imagesModel);
 
     // Get pagination
-    $pagination = $listModel->getPagination();
+    $pagination = $this->imagesModel->getPagination();
 
     // Set additional query parameter to pagination
     $pagination->setAdditionalUrlParam('contenttype', 'image');
 
     return $pagination;
+  }
+
+  /**
+   * Get the filter form
+   *
+   * @param   array    $data      data
+   * @param   boolean  $loadData  load current data
+   *
+   * @return  Form|null  The \JForm object or null if the form can't be found
+   */
+  public function getFilterForm($data = [], $loadData = true)
+  {
+    return $this->imagesModel->getFilterForm($data, $loadData);
+  }
+
+  /**
+   * Function to get the active filters
+   *
+   * @return  array  Associative array in the format: array('filter_published' => 0)
+   */
+  public function getActiveFilters()
+  {
+    return $this->imagesModel->getActiveFilters();
   }
 
   /**

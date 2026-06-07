@@ -18,8 +18,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
 // add meta title
-$app = Factory::getApplication();
-$doc = $app->getDocument();
+$app  = Factory::getApplication();
+$doc  = $app->getDocument();
 $menu = $app->getMenu()->getActive();
 
 $menuPageTitle = '';
@@ -32,11 +32,11 @@ if($menu)
 // only set automatic title if no custom menu page title exists
 if(empty($menuPageTitle))
 {
-    $title = $this->item->title ?? '';
-    $sitename = $app->get('sitename');
+    $title               = $this->item->title ?? '';
+    $sitename            = $app->get('sitename');
     $sitename_pagetitles = (int) $app->get('sitename_pagetitles', 0);
 
-    $prefix = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX_CATEGORY');
+    $prefix    = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX_CATEGORY');
     $baseTitle = trim($prefix . ' ' . $title);
 
     if($sitename_pagetitles === 0)

@@ -74,4 +74,26 @@ class ImagesController extends JoomFormController
     // Close the application
     $this->app->close();
   }
+
+  /**
+   * Method to clear filters from model state and user session.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public function clear(): void
+  {
+    // Check for request forgeries.
+    $this->checkToken();
+
+    $redirect = $this->app->getInput()->get('redirect', 'cmd');
+
+    // Get the model
+    $model = $this->getModel();
+    $model->clearFilter();
+
+    $this->app->enqueueMessage('All filters successfully cleared.', 'message');
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=' . $redirect);
+  }
 }

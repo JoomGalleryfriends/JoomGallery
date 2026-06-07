@@ -813,8 +813,6 @@ class ImagesModel extends JoomListModel
   {
     $form = parent::getFilterForm($data, $loadData);
 
-    $tmp = 1;
-
     return $form;
   }
 }

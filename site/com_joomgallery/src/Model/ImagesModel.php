@@ -165,4 +165,31 @@ class ImagesModel extends AdminImagesModel
 
     return $this->cache[$store];
   }
+
+  /**
+   * Method to clear filter state.
+   *
+   * @since   4.4.0
+   */
+  public function clearFilter()
+  {
+    $defaults = [
+      'search'         => '',
+      'published'      => '*',
+      'language'       => '',
+      'showunapproved' => '1',
+      'showhidden'     => '1',
+      'access'         => [],
+      'created_by'     => '',
+      'category'       => [],
+      'tag'            => [],
+      'and'            => false,
+    ];
+
+    foreach($defaults as $name => $default)
+    {
+      $this->app->setUserState($this->context . '.filter.' . $name, null);
+      $this->setState('filter.' . $name, $default);
+    }
+  }
 }

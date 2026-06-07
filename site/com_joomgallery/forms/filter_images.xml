@@ -1,35 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
     <fields name="filter">
-        <field name="search"
-               type="text"
-               hint="JSEARCH_FILTER"
-               label="JSEARCH_FILTER"
-               class="js-stools-search-string" />
+        <field name="category"
+               type="jgcategorydropdown"
+               layout="joomla.form.field.list-fancy-select"
+               label="COM_JOOMGALLERY_COMMON_ALL"
+               onchange="this.form.submit();"
+               show_root="false"
+               multiple="true"
+               default=""
+               hint="JOPTION_SELECT_CATEGORY"
+               message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY"
+               task="filter" />
 
-        <field name="published"
+        <field name="tag"
+               type="jgtag"
+               label="JTAG"
+               description="COM_JOOMGALLERY_FIELDS_TAG_DESC"
+               onchange="this.form.submit();"
+               class="inputbox span12 small"
+               default=""
+               search_service="true"
+               custom="deny"
+               hint="JOPTION_SELECT_TAG"
+               multiple="true" />
+
+        <field name="and"
                type="list"
-               label="JOPTION_SELECT_PUBLISHED"
+               label="COM_JOOMGALLERY_SELECT_LOG_OPERATOR"
+               default="-1"
                onchange="this.form.submit();">
-            <option value="*">JOPTION_SELECT_PUBLISHED</option>
-            <option value="1">PUBLISHED</option>
-            <option value="2">UNPUBLISHED</option>
-            <option value="3">COM_JOOMGALLERY_APPROVED</option>
-            <option value="4">COM_JOOMGALLERY_UNAPPROVED</option>
+            <option value="-1">COM_JOOMGALLERY_SELECT_LOG_OPERATOR</option>
+            <option value="0">COM_JOOMGALLERY_OR</option>
+            <option value="1">COM_JOOMGALLERY_AND</option>
         </field>
 
-        <field
-              name="category"
-              type="jgcategorydropdown"
-              layout="joomla.form.field.list-fancy-select"
-              label="COM_JOOMGALLERY_COMMON_ALL"
-              onchange="this.form.submit();"
-              show_root="false"
-              multiple="true"
-              default=""
-              hint="JOPTION_SELECT_CATEGORY"
-              message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY"
-              task="filter" />
+        <field name="created_by"
+               type="userdropdown"
+               label="COM_JOOMGALLERY_COMMON_OPTION_SELECT_OWNER"
+               hint="COM_JOOMGALLERY_COMMON_OPTION_SELECT_OWNER"
+               onchange="this.form.submit();" />
+
+        <field name="language"
+               type="jglanguage"
+               label="JGRID_HEADING_LANGUAGE"
+               default=""
+               search_service="true"
+               onchange="this.form.submit();" >
+            <option value="">JOPTION_SELECT_LANGUAGE</option>
+            <option value="*">JALL</option>
+        </field>
     </fields>
 
     <fields name="list">
