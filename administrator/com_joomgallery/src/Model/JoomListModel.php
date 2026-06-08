@@ -309,4 +309,35 @@ abstract class JoomListModel extends ListModel
 
     return $table;
   }
+
+  /**
+   * Method to normalize a list of selected fields
+   *
+   * @param   bool  $distinct  True, if distinct is needed
+   *
+   * @return  array|string     Table object or boolean false if failed
+   *
+   * @since   4.4.0
+   */
+  protected function getListSelectFields(bool $distinct = false): array|string
+  {
+    $select = $this->getState('list.select', 'a.*');
+
+    if(\is_array($select))
+    {
+      if($distinct && !empty($select))
+      {
+        $select[0] = 'DISTINCT ' . $select[0];
+      }
+
+      return $select;
+    }
+
+    if($distinct)
+    {
+      return 'DISTINCT ' . $select;
+    }
+
+    return $select;
+  }
 }
