@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use Joomla\CMS\Language\Text;
 
 /**
  * Images list controller class.

@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_lightbox_image` VARCHAR(25) NOT NULL DEFAULT "detail",
 `jg_lightbox_thumbnails` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_lightbox_zoom` TINYINT(1) NOT NULL DEFAULT 0,
-`jg_gallery_view_browse_categories_link` TINYINT(1) NOT NULL DEFAULT 1,
+`jg_gallery_view_browse_categories_link` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_gallery_view_class` VARCHAR(25) NOT NULL DEFAULT "columns",
 `jg_gallery_view_num_columns` TINYINT(1) NOT NULL DEFAULT 3,
 `jg_gallery_view_image_class` TINYINT(1) NOT NULL DEFAULT 0,

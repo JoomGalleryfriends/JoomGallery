@@ -796,7 +796,7 @@
                type="list"
                label="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK"
                description="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK_DESC"
-               default="1"
+               default="0"
                validate="options" >
             <option value="0">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK_OPT0</option>
             <option value="1">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK_OPT1</option>
