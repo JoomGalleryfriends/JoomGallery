@@ -7,6 +7,7 @@
                label="COM_JOOMGALLERY_COMMON_ALL"
                onchange="this.form.submit();"
                show_root="false"
+               search_service="true"
                multiple="true"
                default=""
                hint="JOPTION_SELECT_CATEGORY"
@@ -39,6 +40,7 @@
                type="userdropdown"
                label="COM_JOOMGALLERY_COMMON_OPTION_SELECT_OWNER"
                hint="COM_JOOMGALLERY_COMMON_OPTION_SELECT_OWNER"
+               search_service="true"
                onchange="this.form.submit();" />
 
         <field name="language"
