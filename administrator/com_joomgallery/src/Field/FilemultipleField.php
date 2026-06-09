@@ -43,7 +43,7 @@ class FileMultipleField extends FormField
   {
     // Initialize variables.
     $html = '<input type="file" name="' . $this->name . '[]" multiple>';
-    
+
     return $html;
   }
 }
