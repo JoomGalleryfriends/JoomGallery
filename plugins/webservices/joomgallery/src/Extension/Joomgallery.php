@@ -153,12 +153,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     // Gid or name
     $router->addRoutes(
       [
-        // ToDo: Upload in one go
-        //            new Route(['GET'], 'v1/joomgallery/upload/:gid',
-        //                'uploadimgatonce.upload_imgage_at_once',
-        //                ['id' => '(\d+)'],
-        //                $getDefaults),
-
         new Route(
             ['GET'],
             'v1/joomgallery/latestcategory',
@@ -167,53 +161,27 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
             $getDefaults
         ),
 
-        //          new Route(
-        //              ['POST'],
-        //              'v1/joomgallery/db_reserve_image_id',
-        //              'images.add',
-        //              [],
-        //              $getDefaults
-        //          ),
-        //
         new Route(
           ['POST'],
-//          'v1/joomgallery/db_reserve_image_id/:catid',
           'v1/joomgallery/db_reserve_image_id',
           'reserveimgid.db_reserve_image_id',
           ['catid' => '(\d+)'],
           $getDefaults
         ),
-        //          new Route(
-        //              ['POST'],
-        //              'v1/joomgallery/db_reserve_image_id',
-        //              'reserveimgid.db_reserve_image_id',
-        //              [],
-        //              $getDefaults
-        //          ),
-
-        /* ToDo: look into media and apply Adapter
-        https://github.com/joomla/joomla-cms/pull/34314:
-        In places where path is used, it can be prefixed with adapter:
-         to access files managed using that specific adapter.
-        For example:
-          local-images:/banners/osmbanner1.png,
-        dpdropbox-Dropbox:/fo/bar/baz.jpg, etc.
-        If no adapter is specified, local-images is assumed.
-        */
 
         new Route(
             ['POST'],
             'v1/joomgallery/upload_image_file',
-            'uploadimgfile.upload_image_file',
+            'uploadimgfile.image_data_upload',
             [],
             $getDefaults
         ),
 
         new Route(
             ['PATCH'],
-            'v1/joomgallery/upload_image_file',
+            'v1/joomgallery/upload_image_file/:image_id',
             'uploadimgfile.patch_image_upload_file',
-            [],
+            ['imgid' => '(\d+)'],
             $getDefaults
         ),
 
@@ -225,29 +193,23 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
             $getDefaults
         ),
 
-        new Route(
-            ['PATCH'],
-            'v1/joomgallery/recreate_sizes',
-            'recreatesizes.recreate_sizes',
-            [],
-            $getDefaults
-        ),
+        // ToDo: recreate sizes
+//        new Route(
+//            ['PATCH'],
+//            'v1/joomgallery/recreate_sizes',
+//            'recreatesizes.recreate_sizes',
+//            [],
+//            $getDefaults
+//        ),
 
-        new Route(
-            ['PATCH'],
-            'v1/joomgallery/apply_meta_data',
-            'applymetadata.apply_meta_data',
-            [],
-            $getDefaults
-        ),
-
-        //        // image files
-        //        $router->createCRUDRoutes(
-        //            'v1/joomgallery/image_files',
-        //            'UploadApi',
-        //            ['component' => 'com_joomgallery'],
-        //            $getDefaults,
-        //        );
+            // ToDo: apply meta data
+//        new Route(
+//            ['PATCH'],
+//            'v1/joomgallery/apply_meta_data',
+//            'applymetadata.apply_meta_data',
+//            [],
+//            $getDefaults
+//        ),
 
       ]
     );

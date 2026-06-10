@@ -1,4 +1,5 @@
 <?php
+
 /**
  * *********************************************************************************
  * @package    com_joomgallery                                                 **
@@ -10,16 +11,18 @@
 
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
-use Joomgallery\Component\Joomgallery\Api\Model\VersionModel;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\ApiController;
 use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 use Tobscure\JsonApi\Exception\InvalidParameterException;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
-
 // phpcs:enable PSR1.Files.SideEffects
 
 
@@ -33,7 +36,6 @@ class UploadimgfileController extends ApiController
      * @var    string
      * @since  4.1.0
      */
-    // protected $contentType = 'uploadimgfile';
     protected $contentType = 'image';
 
     /**
@@ -43,42 +45,47 @@ class UploadimgfileController extends ApiController
      *
      * @since  4.1.0
      */
-    protected $default_view = 'uploadimgfile';
+    protected $default_view = 'images';
 
-
-    public function image_upload_file()
+    /**
+     *
+     * @return UploadimgfileController
+     *
+     * @throws InvalidParameterException
+     * @since version
+     */
+    public function image_data_upload()
     {
-        // $image_name = $this->input->json->get('image_name', '', 'PATH');
-        // $image_name    = $this->input->json->get('image_name', '', 'STRING');
-        //$image_id    = $this->input->json->get('image_id', '', 'STRING');
-        $category_id = $this->input->json->get('category_id', '', 'STRING');
-        //$category_name = $this->input->json->get('category_name', '', 'STRING');
+        //--- DB parameter ------------------------------------------
+
+        $srcFilename  = $this->input->json->getString('filename');
+        $srcExtension = $this->input->json->getString('file_extension');
+
+        // from json *.http parameter
+        $catId = $this->input->json->getString('catid');
+
+        //--- upload --------------------------------------------
+
         $content  = $this->input->json->get('content', '', 'RAW');
-        $uploader = $this->input->json->get('uploader', '', 'string');
+//        $uploader = $this->input->json->get('uploader', '', 'string');
 
+        //--- Missing parameters --------------------------------------------
 
-
-        // ToDo: API
         $missingParameters = [];
 
-//        if(empty($image_name))
-//        {
-//            $missingParameters[] = 'image_name';
-//        }
-//
-//        if(empty($category_name))
-//        {
-//            $missingParameters[] = 'category_name';
-//        }
-//
-        if (empty($image_id))
+        if(empty($srcFilename))
         {
-            $missingParameters[] = 'image_id';
+            $missingParameters[] = 'filename';
         }
 
-        if (empty($category_id))
+        if(empty($srcExtension))
         {
-            $missingParameters[] = 'category_id';
+            $missingParameters[] = 'file_extension';
+        }
+
+        if(empty($catId))
+        {
+            $missingParameters[] = 'catid';
         }
 
         // Content is required as we expect a file
@@ -87,26 +94,24 @@ class UploadimgfileController extends ApiController
             $missingParameters[] = 'content';
         }
 
-        // Content is required as we expect a file
-        if (empty($uploader))
-        {
-            $missingParameters[] = 'uploader';
-        }
+//        // Content is required as we expect a file
+//        if (empty($uploader))
+//        {
+//            $missingParameters[] = 'uploader';
+//        }
 
 //		$missingParameters[] = 'dummy';
 //		$text = Text::sprintf('WEBSERVICE_COM_MEDIA_MISSING_REQUIRED_PARAMETERS', implode(' & ', $missingParameters));
 
         if (\count($missingParameters))
         {
-            throw new InvalidParameterException(Text::sprintf('WEBSERVICE_COM_MEDIA_MISSING_REQUIRED_PARAMETERS', implode(' & ', $missingParameters)));
-            // throw new InvalidParameterException(Text::sprintf('Missing required parameter(s): %s', implode(' & ', $missingParameters)));
+            // throw new InvalidParameterException(Text::sprintf('WEBSERVICE_COM_MEDIA_MISSING_REQUIRED_PARAMETERS', implode(' & ', $missingParameters)));
+            throw new InvalidParameterException(Text::sprintf('Missing required parameter(s): %s', implode(' & ', $missingParameters)));
         }
-
-        $this->checkContent();
-
 
         //--- secure path and image name ----------------------------
 
+        // ToDo:
 //        // secure image name
 //        $safeFileName = File::makeSafe($image_name);
 //        $this->modelState->set('image_name', $safeFileName);
@@ -123,85 +128,80 @@ class UploadimgfileController extends ApiController
         //$this->modelState->set('override', $this->input->json->get('override', false));
 //        $this->modelState->set('override', $this->input->json->get('override', true)); // false
 
-        // calls $this->save
-        // parent::add();
+        // check size early
+        $this->checkContent();
 
-        // $this->save();
+        //--- Create the backend JG image model ---------------------------------------------------------------
 
-        //--- Create the model -----------------------------------------------------------------
-
-        /** @var VersionModel $model */
+        /** @var ImageModel $model */
         $model = $this->getModel('image', '', ['ignore_request' => true, 'state' => $this->modelState]);
 
+        //--- Fetch data and correct  -----------------------------------------------------------------
+
         // all variables
-        $data = $this->input->json->getArray();
-//
-//        $data['id'] = $image_id;
-//        $data['catId'] = $category_id;
-//
-//        unset($data['image_id']);
-//        unset($data['category_id']);
+        $data = json_decode($this->input->json->getRaw(), true);
 
-        $data = [];
-        $data['id'] = $this->input->json->get('image_id', '', 'STRING');
-        $data['catId'] = $this->input->json->get('category_id', '', 'STRING');
-        $data['content'] = $this->input->json->get('content', '', 'RAW');
-        $data['content'] = base64_decode($this->input->json->get('content', '', 'RAW'));
-        $data['uploader'] = $this->input->json->get('uploader', '', 'STRING');
+        // Uploader may be set from outside in the future
+        if (empty ($data['uploader']))
+        {
+            $data['uploader'] = 'api';
+        }
 
-        // $data['content'] = $content;
+        // ToDo: @Manuel Assign user from API by UserId / name?
+        //    $user = Factory::getUser();
+        //    $app  = Factory::getApplication();
 
-        // ToDo: load data from table
-
-        // ToDo: check cat id ?
+        //--- Save image data/file  -----------------------------------------------------------------
 
         $isSaved = $model->save($data);
-        return parent::displayItem($image_id);
+        if ($isSaved)
+        {
+            //--- Return json with created DB data -----------------------------------------------------------------
+
+            $imageState = $model->getState('image');
+            $image_id      = $imageState->id;
+
+            return parent::displayItem($image_id);
+        } else {
+            throw new \RuntimeException(Text::_('UploadimgfileController: Could not save the image'), 500);
+        }
+    }
 
     public function patch_image_upload_file()
     {
         // $image_name = $this->input->json->get('image_name', '', 'PATH');
         // $image_name    = $this->input->json->get('image_name', '', 'STRING');
-        $image_id    = $this->input->json->get('image_id', '', 'STRING');
-        $category_id = $this->input->json->get('category_id', '', 'STRING');
+        //$image_id    = $this->input->json->get('image_id', '', 'STRING');
+        $image_id    = $this->input->getInt('image_id');
+        // $category_id = $this->input->json->get('catid', '', 'STRING');
+        $category_id = $this->input->getInt('catid');
         //$category_name = $this->input->json->get('category_name', '', 'STRING');
         $content  = $this->input->json->get('content', '', 'RAW');
-        $uploader = $this->input->json->get('uploader', '', 'string');
 
         // ToDo: API
         $missingParameters = [];
 
-//        if(empty($image_name))
-//        {
-//            $missingParameters[] = 'image_name';
-//        }
-//
-//        if(empty($category_name))
-//        {
-//            $missingParameters[] = 'category_name';
-//        }
-//
         if (empty($image_id))
         {
             $missingParameters[] = 'image_id';
         }
 
-        if (empty($category_id))
-        {
-            $missingParameters[] = 'category_id';
-        }
-
+//        if (empty($category_id))
+//        {
+//            $missingParameters[] = 'category_id';
+//        }
+//
         // Content is required as we expect a file
         if (empty($content))
         {
             $missingParameters[] = 'content';
         }
 
-        // Content is required as we expect a file
-        if (empty($uploader))
-        {
-            $missingParameters[] = 'uploader';
-        }
+//        // Content is required as we expect a file
+//        if (empty($uploader))
+//        {
+//            $missingParameters[] = 'uploader';
+//        }
 
 //		$missingParameters[] = 'dummy';
 //		$text = Text::sprintf('WEBSERVICE_COM_MEDIA_MISSING_REQUIRED_PARAMETERS', implode(' & ', $missingParameters));
@@ -211,8 +211,6 @@ class UploadimgfileController extends ApiController
             throw new InvalidParameterException(Text::sprintf('WEBSERVICE_COM_MEDIA_MISSING_REQUIRED_PARAMETERS', implode(' & ', $missingParameters)));
             // throw new InvalidParameterException(Text::sprintf('Missing required parameter(s): %s', implode(' & ', $missingParameters)));
         }
-
-        $this->checkContent();
 
         //--- secure path and image name ----------------------------
 
@@ -232,40 +230,69 @@ class UploadimgfileController extends ApiController
         //$this->modelState->set('override', $this->input->json->get('override', false));
         $this->modelState->set('override', $this->input->json->get('override', true)); // false
 
-        // calls $this->save
-        // parent::add();
+        // check size early
+        $this->checkContent();
 
-        // $this->save();
+        //--- Create the backend JG image model ---------------------------------------------------------------
 
-        //--- Create the model -----------------------------------------------------------------
-
-        /** @var VersionModel $model */
+        /** @var ImageModel $model */
         $model = $this->getModel('image', '', ['ignore_request' => true, 'state' => $this->modelState]);
 
-        // all variables
-//        $data = $this->input->json->getArray();
+        //--- Fetch data and correct  -----------------------------------------------------------------
+
+        // all external variables
+        $apiData = json_decode($this->input->json->getRaw(), true);
+
+        $apiData['id'] = $image_id;
+
+//        // Parameters which should be taken from db if not given as parameters
+//        [$catId_db, $alias_db, $published_db] = $this->catId_byDB($image_id);
+
+        // not given as API parameter
+        if (empty ($apiData['catid']))
+        {
+            // given by api route
+            if (!empty($category_id)) {
+                // given from API route
+                $apiData['catid'] = $category_id;
+            }
+        }
+
+//        // not given as API parameter
+//        if (empty ($data['alias']))
+//        {
+//            // fetch from database
+//            $data['alias'] = $alias_db;
+//        }
 //
-//        $data['id'] = $image_id;
-//        $data['catId'] = $category_id;
-//
-//        unset($data['image_id']);
-//        unset($data['category_id']);
+//        // not given as API parameter
+//        if (empty ($data['published']))
+//        {
+//            // fetch from database
+//            $data['published'] = $published_db;
+//        }
 
-        $data = [];
-        $data['id'] = $this->input->json->get('image_id', '', 'STRING');
-        $data['catId'] = $this->input->json->get('category_id', '', 'STRING');
-        $data['content'] = $this->input->json->get('content', '', 'RAW');
-        $data['content'] = base64_decode($this->input->json->get('content', '', 'RAW'));
-        $data['uploader'] = $this->input->json->get('uploader', '', 'STRING');
+        // Uploader may be set from outside in the future
+        if (empty ($apiData['uploader']))
+        {
+            $apiData['uploader'] = 'api';
+        }
 
-        // $data['content'] = $content;
+        // Merge api data into image db data
+        $data = $this->mergeDbData($image_id, $apiData);
 
-        // ToDo: load data from table
-
-        // ToDo: check cat id ?
+        //--- Save image data/file  -----------------------------------------------------------------
 
         $isSaved = $model->save($data);
-        return parent::displayItem($image_id);
+        if ($isSaved)
+        {
+            //--- Return json with created DB data -----------------------------------------------------------------
+
+            return parent::displayItem($image_id);
+
+        } else {
+            throw new \RuntimeException(Text::_('UploadimgfileController: Could not save the image'), 500);
+        }
     }
 
 //    /**
@@ -335,5 +362,94 @@ class UploadimgfileController extends ApiController
 
         // ToDo: Image extension
 
+    }
+
+    /**
+     * Method to allow extended classes to manipulate the data to be saved for an extension.
+     *
+     * @param   array  $data  An array of input data.
+     *
+     * @return  array
+     *
+     * @since   4.0.0
+     */
+    protected function preprocessSaveData(array $data): array
+    {
+
+//        // If we are updating an item the template is a readonly property based on the ID
+//        if ($this->input->getMethod() === 'PATCH')
+//        {
+//            if (\array_key_exists('template', $data))
+//            {
+//                unset($data['template']);
+//            }
+//
+//        }
+
+        return $data;
+    }
+
+//    private function catId_byDB(int $image_id): array
+//    {
+//        $catId = 0;
+//        $alias = 0;
+//        $published = 0;
+//
+//        try {
+//            $db = Factory::getContainer()->get(DatabaseInterface::class);
+//
+//            $query = $db->createQuery()
+//                ->select('catId, alias, published')
+//                ->from('#__joomgallery')
+//                ->where($db->quoteName('id') . ' = :id')
+//                ->bind(':id', $image_id, ParameterType::INTEGER);
+//            $db->setQuery($query);
+//
+//            $oImage = $db->loadObject();
+//
+//            $catId = $oImage->catId;
+//            $alias = $oImage->alias;
+//            $published = $oImage->published;
+//
+//        }
+//        catch (\Exception $e) {
+//            throw new \RuntimeException($e->getMessage());
+//        }
+//
+//        return [$catId, $alias, $published];
+//    }
+
+    /**
+     * Merge api data into image db data
+     * @param   int    $image_id
+     * @param   array  $apiData
+     *
+     * @return array
+     *
+     * @since version
+     */
+    private function mergeDbData(int $image_id, array $apiData): array
+    {
+        $data = $apiData;
+
+        try {
+            $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+            $query = $db->createQuery()
+                ->select('*')
+                ->from('#__joomgallery')
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':id', $image_id, ParameterType::INTEGER);
+            $db->setQuery($query);
+
+            $dbData = $db->loadAssoc();
+
+            $data = array_merge($dbData, $apiData);
+        }
+        catch (\Exception $e) {
+            throw new \RuntimeException($e->getMessage());
+        }
+
+        return $data;
     }
 }

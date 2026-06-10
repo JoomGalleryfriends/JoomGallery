@@ -43,4 +43,11 @@ class ImagesController extends ApiController
     protected $default_view = 'images';
 
     // Implement other methods like read, update, delete as needed
+
+//    // toDebug
+//    public function displayItem($id = null)
+//    {
+//        return parent::displayItem($id);
+//    }
+
 }

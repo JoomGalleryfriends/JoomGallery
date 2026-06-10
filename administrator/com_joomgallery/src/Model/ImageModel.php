@@ -249,7 +249,7 @@ class ImageModel extends JoomAdminModel
    *
    * @return  boolean  True if successful.
    *
-   * @throws  Exception
+   * @throws  \Exception
    */
   public function duplicate(&$pks)
   {

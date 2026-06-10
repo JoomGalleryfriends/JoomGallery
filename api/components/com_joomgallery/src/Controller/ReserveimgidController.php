@@ -49,6 +49,7 @@ class ReserveimgidController extends ImagesController // ApiController
      */
     public function db_reserve_image_id()
     {
+        // ToDo: use filename as 'name.ext' see upload -> api model ?
         // $srcFilename = $title . $this->input->json->getPath ('filename');
         $srcFilename  = $this->input->json->getString('filename');
         $srcExtension = $this->input->json->getString('file_extension');
@@ -84,30 +85,6 @@ class ReserveimgidController extends ImagesController // ApiController
 
         // Add/save ....
         parent::add();
-    }
-
-
-    /**
-     * Method to allow extended classes to manipulate the data to be saved for an extension.
-     *
-     * @param   array  $data  An array of input data.
-     *
-     * @return  array
-     *
-     * @since   4.0.0
-     */
-    protected function preprocessSaveData(array $data): array
-    {
-//        foreach (FieldsHelper::getFields('com_contact.contact') as $field) {
-//            if (isset($data[$field->name])) {
-//                !isset($data['com_fields']) && $data['com_fields'] = [];
-//
-//                $data['com_fields'][$field->name] = $data[$field->name];
-//                unset($data[$field->name]);
-//            }
-//        }
-
-        return $data;
     }
 
 }

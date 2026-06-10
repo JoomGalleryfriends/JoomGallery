@@ -29,10 +29,10 @@ use Joomla\Filesystem\Path as JPath;
  */
 class TUSUploader extends BaseUploader implements UploaderInterface
 {
-  protected $src_name;
-  protected $src_size;
-  protected $src_tmp;
-  protected $src_file;
+//  protected $src_name;
+//  protected $src_size;
+//  protected $src_tmp;
+//  protected $src_file;
 
   /**
    * Constructor
@@ -124,6 +124,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     }
 
     // Upload file to temp file
+      // ToDo: @Manuel: Attention dirname removes uuid part ? intentionally ?
     $this->src_file = JPath::clean(\dirname($this->src_tmp) . \DIRECTORY_SEPARATOR . $this->src_name);
 
     if(!JFile::move($this->src_tmp, $this->src_file))
@@ -138,7 +139,8 @@ class TUSUploader extends BaseUploader implements UploaderInterface
 
     // Set permissions of uploaded file
     JPath::setPermissions($this->src_file, '0644', null);
-    $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
+    //$this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
+    $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', $this->src_size / 1000)); // @Manuel
 
     return true;
   }

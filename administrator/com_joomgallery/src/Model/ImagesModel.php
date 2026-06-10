@@ -180,7 +180,7 @@ class ImagesModel extends JoomListModel
   /**
    * Build an SQL query to load the list data.
    *
-   * ToDo: Manuel
+   * ToDo: @Manuel
    * @return  \Joomla\Database\QueryInterface
    *
    * @since   4.0.0

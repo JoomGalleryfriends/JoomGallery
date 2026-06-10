@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- *    @package    com_joomgallery                                                 **
- *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
- *    @license    GNU General Public License version 3 or later                   **
+ * @package    com_joomgallery                                                 **
+ * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ * @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ * @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -12,14 +12,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-
-use Joomla\Filesystem\File as JFile;
 use Joomla\Filesystem\Path as JPath;
 
 /**
@@ -29,230 +27,174 @@ use Joomla\Filesystem\Path as JPath;
  */
 class APIUploader extends BaseUploader implements UploaderInterface
 {
-  /**
-   * Method to retrieve an uploaded image. Step 1.
-   * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
-   *
-   * @param   array    $data        Form data (as reference)
-   * @param   bool   $createFilename  True, if the filename has to be created (default: True)
-   *
-   * @return  bool     True on success, false otherwise
-   *
-   * @since  4.0.0
-   */
-  public function retrieveImage(&$data, $createFilename = true): bool
-  {
-      $isUploaded = false;
-
-      $user = Factory::getUser();
-    $app  = Factory::getApplication();
-
-    // toDo: try {
-
-    $isSaved = $this->saveImgContent2Temp($data);
-
-    if ($isSaved)
+    /**
+     * Method to retrieve an uploaded image. Step 1.
+     * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
+     *
+     * @param   array  $data            Form data (as reference)
+     * @param   bool   $createFilename  True, if the filename has to be created (default: True)
+     *
+     * @return  bool     True on success, false otherwise
+     *
+     * @since  4.0.0
+     */
+    public function retrieveImage(&$data, $createFilename = true): bool
     {
-        unset($data['content']);
+        $isSaved = false;
 
-//    // Retrieve request image file data
-//    if(\array_key_exists('image', $app->input->files->get('jform')) && !empty($app->input->files->get('jform')['image']))
-//    {
-//      $data['images'] = [];
-//      array_push($data['images'], $app->input->files->get('jform')['image']);
-//    }
-//
-//    if(\count($data['images']) > 1)
-//    {
-//      if($this->filecounter >= 1)
-//      {
-//        $this->component->addDebug('<hr />');
-//      }
-//      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_IMAGE_NBR_PROCESSING', $this->filecounter + 1));
-//    }
-//
-//    $image = $data['images'][$this->filecounter - 1];
-//
-//    // Check for upload error codes
-//    if($image['error'] > 0)
-//    {
-//      if($image['error'] == 4)
-//      {
-//        $this->component->addDebug(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED'));
-//        $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED'), 'error', 'jerror');
-//
-//        return false;
-//      }
-//      $this->component->addDebug($this->checkError($image['error']));
-//      $this->error = true;
-//
-//      return false;
-//    }
-//
-//    // Get number of uploaded images of the current user
-//    $counter = $this->getImageNumber($user->id);
-//
-//    // Check if user already exceeds its upload limit
-//    if($this->app->isClient('site') && $counter > ($this->component->getConfig()->get('jg_maxuserimage') - 1) && $user->id)
-//    {
-//      $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
-//      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_UPLOAD_OUTPUT_MAY_ADD_MAX_OF', $this->component->getConfig()->get('jg_maxuserimage'), $timespan > 0 ? Text::plural('COM_JOOMGALLERY_UPLOAD_NEW_IMAGE_MAXCOUNT_TIMESPAN', $timespan) : ''));
-//
-//      return false;
-//    }
+        // ToDo: @Manuel Assign user from API cal UserId ?
+//    $user = Factory::getUser();
+//    $app  = Factory::getApplication();
 
-//    $this->src_tmp  = $image['tmp_name'];
-        $src_tmp = $data['tmp_name'];
-//    $this->src_name = $image['name'];
-//    $this->src_size = $image['size'];
+        $this->src_size = strlen($data['content']);
+
+//        $data ['uuid'] = $this->getUserUuid();
+
+        //old: $this->src_tmp  = $image['tmp_name'];
+        // J! tempfolder with folder from uuid
+        // where the file does come from
+        //$this->src_tmp = $data['src_tmp'];
+        $this->src_tmp = JPath::clean(Factory::getApplication()->get('tmp_path')); // @Manuel: found in  . '/' . $data['uuid'];
+        //old: $this->src_name = $image['name'];
+        $this->src_name = $data['filename'] . '.' . $data['file_extension'];
+        //old: $this->src_size = $image['size'];
+
+        //$this->src_size = filesize($this->src_tmp);
 
         // Perform the parent method
         // - check tag and size
         // - create filename
         // - trigger onJoomBeforeUpload
-        if (!parent::retrieveImage($data, $createFilename))
+        $isFileNameValid = parent::retrieveImage($data, $createFilename);
+
+        if ($isFileNameValid)
         {
-            return false;
+            // Save file to intermediate temp file
+            //$this->src_file = JPath::clean(\dirname($this->src_tmp) . '/' . $this->src_name);
+            $this->src_file = JPath::clean($this->src_tmp . '/' . $this->src_name);
+
+            $isSaved = $this->saveImgContent2Temp($data['content'], $this->src_file);
+            unset($data['content']);
         }
 
-        // Upload file to temp file
-        $src_file = JPath::clean(\dirname($this->src_tmp) . \DIRECTORY_SEPARATOR . $this->src_name);
-        $return   = JFile::upload($src_tmp, $src_file);
+        // not saved or filename invalid
+        if (!$isSaved)
+        {
+            // Set permissions of uploaded file
+            $isSaved = JPath::setPermissions($this->src_file, '0644', null);
+            $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
+            $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', $this->src_size / 1000));
+        }
+        else
+        {
+            $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MOVING_FILE', $this->src_file));
+            $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MOVING_FILE', $this->src_file), 'error', 'jerror');
+        }
 
-//    if(!$return)
-//    {
-//      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MOVING_FILE', $this->src_file));
-//      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_MOVING_FILE', $this->src_file), 'error', 'jerror');
-//      $this->rollback();
-//      $this->error = true;
-//
-//      return false;
-//    }
-//
-//    // Set permissions of uploaded file
-//    $return = JPath::setPermissions($this->src_file, '0644', null);
-//    $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
+        $this->error = !$isSaved;
 
-        $isUploaded = true;
+        return $isSaved;
     }
 
-      return $isUploaded;
-  }
-
-  /**
-   * Override form data with image metadata
-   * according to configuration. Step 2.
-   *
-   * @param   array   $data       The form data (as a reference)
-   *
-   * @return  bool    True on success, false otherwise
-   *
-   * @since   1.5.7
-   */
-  public function overrideData(&$data): bool
-  {
-    // Get upload date
-    if(empty($data['date']) || strpos($data['date'], '1900-01-01') !== false)
+    /**
+     * Override form data with image metadata
+     * according to configuration. Step 2.
+     *
+     * @param   array  $data  The form data (as a reference)
+     *
+     * @return  bool    True on success, false otherwise
+     *
+     * @since   1.5.7
+     */
+    public function overrideData(&$data): bool
     {
-      $data['date'] = $data['created_time'];
+        // Get upload date
+        if (empty($data['date']) || strpos($data['date'], '1900-01-01') !== false)
+        {
+            $data['date'] = $data['created_time'];
+            // ToDo: Use actual data if $data['created_time']; not set ?
+        }
+
+        // Override form data with image metadata
+        return parent::overrideData($data);
     }
 
-    // Override form data with image metadata
-    return parent::overrideData($data);
-  }
-
-  /**
-   * Analyses an error code and returns its text
-   *
-   * @param   int     $uploaderror  The errorcode
-   *
-   * @return  string  The error message
-   *
-   * @since   4.0.0
-   */
-  public function checkError($uploaderror): string
-  {
-    // Common PHP errors
-    $uploadErrors = [
-      1 => Text::_('COM_JOOMGALLERY_ERROR_PHP_MAXFILESIZE'),
-      2 => Text::_('COM_JOOMGALLERY_ERROR_HTML_MAXFILESIZE'),
-      3 => Text::_('COM_JOOMGALLERY_ERROR_FILE_PARTLY_UPLOADED'),
-      4 => Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED'),
-    ];
-
-    if(\in_array($uploaderror, $uploadErrors))
+    /**
+     * Analyses an error code and returns its text
+     *
+     * @param   int  $uploaderror  The errorcode
+     *
+     * @return  string  The error message
+     *
+     * @since   4.0.0
+     */
+    public function checkError($uploaderror): string
     {
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', $uploadErrors[$uploaderror]), 'error', 'jerror');
+        // Common PHP errors
+        $uploadErrors = [1 => Text::_('COM_JOOMGALLERY_ERROR_PHP_MAXFILESIZE'), 2 => Text::_('COM_JOOMGALLERY_ERROR_HTML_MAXFILESIZE'), 3 => Text::_('COM_JOOMGALLERY_ERROR_FILE_PARTLY_UPLOADED'), 4 => Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED'),];
 
-      return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', $uploadErrors[$uploaderror]);
+        if (\in_array($uploaderror, $uploadErrors))
+        {
+            $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', $uploadErrors[$uploaderror]), 'error', 'jerror');
+
+            return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', $uploadErrors[$uploaderror]);
+        }
+
+
+        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN')), 'error', 'jerror');
+
+        return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
     }
 
+    /**
+     * Save image bytes content here and tell about it
+     * Attention other similar function expect the file is already on the server
+     *
+     * @param   array  $data  Form data
+     *
+     * @return  bool     True if file is detected, false otherwise
+     *
+     * @since   4.0.0
+     */
+    public function isImgUploaded($data): bool
+    {
+        $isUploaded = false;
 
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN')), 'error', 'jerror');
+        if (!empty ($data['content']) && strlen($data['content']) > 0)
+        {
 
-      return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
-  }
+            $isUploaded = true;
+        }
 
-  /**
-   * Save image bytes content here and tell about it
-   * Attention other similar function expect the file is already on the server
-   *
-   * @param   array    $data      Form data
-   *
-   * @return  bool     True if file is detected, false otherwise
-   *
-   * @since   4.0.0
-   */
-  public function isImgUploaded($data): bool
-  {
-      $isUploaded = false;
-
-      if ( ! empty ($data['content']) && strlen ($data['content']) > 0) {
-
-          $isUploaded = true;
-      }
-
-      // test mime type ... ? png, jpg, svg ?
+        // test mime type ... ? png, jpg, svg ?
 
 
-      return $isUploaded;
-  }
+        return $isUploaded;
+    }
 
-  public function saveImgContent2Temp (&$data)
-  {
-      // JFile::upload($src, $dest);
-      $isSaved = false;
+//    public function saveImgContent2Temp(&$data)
+    public function saveImgContent2Temp($content, $tmp_path_file_name)
+    {
+        $isSaved = false;
 
-      try
-      {
-          // Define temporary image file to be created
-          $tmp_folder = $this->app->get('tmp_path') . 'JG_API_files';
-          $tmp_folder = Factory::getApplication()->get('tmp_path') . '/JG_API_files';
+        try
+        {
+            $base64Data = base64_decode($content);
+            $count = file_put_contents($tmp_path_file_name, $base64Data);
 
-          //$tmp_dst_file = $tmp_folder . '/tmp_dst_img_' . $this->rndNumber . '.' . strtolower($this->dst_type);
-          $randomName = $this->genFilename('api_', 'tmp');
-          $tmp_path_file_name = $tmp_folder . '/' . $randomName;
+            $isSaved = ! empty ($count);
+        }
+        catch (\Exception $e)
+        {
+            // Debug info
+            //$this->component->addDebug(Text::sprintf('Failed to write file %s', $tmp_dst_file));
+            //$this->component->addLog(Text::sprintf('Failed to write file %s', $filename), 'error', $logfile);
 
-          $base64Data = base64_decode(urldecode($data['content']));
-          file_put_contents($tmp_path_file_name, $base64Data);
-//          $test = $data['content'];
-//          file_put_contents($tmp_path_file_name, $data['content']);
+            throw new \Exception("saveImgContent2Temp failed: ", 0, $e);
+        }
 
-          $data['src_tmp'] = $tmp_path_file_name;
-
-          $isSaved = true;
-      }
-      catch (\Exception $e)
-      {
-          // Debug info
-          //$this->component->addDebug(Text::sprintf('Failed to write file %s', $tmp_dst_file));
-          //$this->component->addLog(Text::sprintf('Failed to write file %s', $filename), 'error', $logfile);
-
-          throw new Exception("saveImgContent2Temp failed: ", 0, $e);
-      }
-
-      return $isSaved;
-  }
+        return $isSaved;
+    }
 
     /**
      * Generates image filenames
@@ -261,9 +203,9 @@ class APIUploader extends BaseUploader implements UploaderInterface
      * ToDo: @ manual: this is a copy of Filmanager code. Better: add static there
      *
      *
-     * @param   string    $filename     Original upload name without extension
-     * @param   string    $tag          File extension e.g. 'jpg'
-     * @param   int       $filecounter  Optionally a filecounter
+     * @param   string  $filename     Original upload name without extension
+     * @param   string  $tag          File extension e.g. 'jpg'
+     * @param   int     $filecounter  Optionally a filecounter
      *
      * @return  string    The generated filename
      *
@@ -278,18 +220,18 @@ class APIUploader extends BaseUploader implements UploaderInterface
 
         $maxlen = 255 - 2 - \strlen($filedate) - \strlen($randomnumber) - (\strlen($tag) + 1);
 
-        if(!\is_null($filecounter))
+        if (!\is_null($filecounter))
         {
             $maxlen = $maxlen - (\strlen($filecounter) + 1);
         }
 
-        if(\strlen($filename) > $maxlen)
+        if (\strlen($filename) > $maxlen)
         {
             $filename = substr($filename, 0, $maxlen);
         }
 
         // New filename
-        if(\is_null($filecounter))
+        if (\is_null($filecounter))
         {
             $newfilename = $filename . '_' . $filedate . '_' . $randomnumber . '.' . $tag;
         }
@@ -300,5 +242,31 @@ class APIUploader extends BaseUploader implements UploaderInterface
 
         return $newfilename;
     }
+
+//    /**
+//     * Get the UUID of the request (use for HEAD and PATCH request)
+//     *
+//     * @return  string  The UUID of the request
+//     *
+//     * @throws \InvalidArgumentException If the UUID is empty
+//     */
+//    private function getUserUuid(): string
+//    {
+//        $uuid = 0;
+//        // ? CLI ....
+//        $uuidFound = $this->app->input->get('uuid', '', 'string');
+//
+//        if (\strlen($uuidFound) === 32 && preg_match('/[a-z0-9]/', $uuidFound))
+//        {
+//            $uuid = $uuidFound;
+//        }
+//        else
+//        {
+//            $this->component->addLog('The uuid cannot be empty.', 'error', 'jerror');
+//            throw new \InvalidArgumentException('The uuid cannot be empty.');
+//        }
+//
+//        return $uuid;
+//    }
 
 }
