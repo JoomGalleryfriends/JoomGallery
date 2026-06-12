@@ -62,7 +62,7 @@
            categoriesOfUser="true"
            default="1"
            show_root="false"
-           show_NoParent="true"
+           show_NoParent="false"
            message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY"/>
 
     <field name="published"
