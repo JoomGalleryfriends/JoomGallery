@@ -10,6 +10,7 @@
 
 namespace Joomgallery\Component\Joomgallery\Api\View\Configinj;
 
+//use Joomgallery\Component\Joomgallery\Api\Serializer\JoomgallerySerializer;
 use Joomla\CMS\Factory;
 use Joomla\Database\DatabaseInterface;
 use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
