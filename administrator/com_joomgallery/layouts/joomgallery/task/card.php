@@ -77,6 +77,7 @@ if(isset($item->task->params) && \array_key_exists('overrideable_params', $item-
         $form        = $formFactory->createForm('com_jommgallery.subform_taskparams', ['control' => 'jform']);
         $form->loadFile(JPATH_COMPONENT_ADMINISTRATOR . '/forms/subform_taskparams.xml');
         $form->bind($item->params->toArray());
+        $form->setValue('scheduler_task_params', null, json_encode($item->task->params));
       ?>
       <div class="test">
         <?php foreach($item->params as $param => $value): ?>

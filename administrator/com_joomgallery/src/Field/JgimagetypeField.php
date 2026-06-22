@@ -18,6 +18,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 
 class JgimagetypeField extends ListField
 {
@@ -70,7 +71,19 @@ class JgimagetypeField extends ListField
 
     if($this->default === '')
     {
-      $options[] = HTMLHelper::_('select.option', '', Text::_('JLIB_RULES_INHERITED'));
+      $task_params = new Registry();
+
+      if($this->form)
+      {
+        $raw = (string) $this->form->getValue('scheduler_task_params');
+
+        if($raw !== '')
+        {
+          $task_params = new Registry($raw);
+        }
+      }
+
+      $options[] = HTMLHelper::_('select.option', '', Text::_('JLIB_RULES_INHERITED') . ' (' . $task_params->get('type', '-') . ')');
     }
 
     foreach($imagetypes as $imagetype)

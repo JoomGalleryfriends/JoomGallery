@@ -15,5 +15,8 @@
            max="10"
            step="1"
            filter="integer" />
+    <field name="scheduler_task_params"
+           type="hidden"
+           default="" />
   </fieldset>
 </form>
