@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_gallery_view_justified_height` INT NOT NULL DEFAULT 200,
 `jg_gallery_view_justified_gap` TINYINT(1) NOT NULL DEFAULT 5,
 `jg_gallery_view_numb_images` INT NOT NULL DEFAULT 15,
+`jg_gallery_view_limit_images` INT NOT NULL DEFAULT 100,
 `jg_gallery_view_searchprovider` VARCHAR(15) NOT NULL DEFAULT "finder",
 `jg_gallery_view_autosuggest` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_gallery_view_ordering` VARCHAR(25) NOT NULL DEFAULT "a.hits DESC",

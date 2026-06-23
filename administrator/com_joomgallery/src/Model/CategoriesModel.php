@@ -569,18 +569,6 @@ class CategoriesModel extends JoomListModel
   /**
    * Get an array of data items
    *
-   * @return mixed Array of data items on success, false on failure.
-   */
-  public function getItems()
-  {
-    $items = parent::getItems();
-
-    return $items;
-  }
-
-  /**
-   * Get an array of data items
-   *
    * @return void
    */
   protected function categoriesFilterQuery(&$query, $categoryId, $level = false, $exclude = false)

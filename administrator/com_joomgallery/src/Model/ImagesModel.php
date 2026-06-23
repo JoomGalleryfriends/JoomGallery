@@ -780,33 +780,4 @@ class ImagesModel extends JoomListModel
 
     return $query;
   }
-
-  /**
-   * Get an array of data items
-   *
-   * @return mixed Array of data items on success, false on failure.
-   */
-  public function getItems()
-  {
-    $items = parent::getItems();
-
-    return $items;
-  }
-
-  /**
-   * Get the filter form
-   *
-   * @param   array    $data      data
-   * @param   boolean  $loadData  load current data
-   *
-   * @return  Form|null  The \JForm object or null if the form can't be found
-   *
-   * @since   3.2
-   */
-  public function getFilterForm($data = [], $loadData = true)
-  {
-    $form = parent::getFilterForm($data, $loadData);
-
-    return $form;
-  }
 }

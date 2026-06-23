@@ -85,6 +85,14 @@ abstract class JoomListModel extends ListModel
   protected $lastCountQueryStoreId = null;
 
   /**
+   * A global cap to limit the number of list elements
+   *
+   * @access  protected
+   * @var   null|int
+   */
+  protected $globalLimit = null;
+
+  /**
    * Constructor
    *
    * @param   array  $config  An optional associative array of configuration settings.
@@ -164,6 +172,26 @@ abstract class JoomListModel extends ListModel
   }
 
   /**
+   * Method to get an array of data items.
+   *
+   * @return  mixed  An array of data items on success, false on failure.
+   *
+   * @since   4.4.0
+   */
+  public function getItems()
+  {
+    $limit = (int) $this->getState('list.limit');
+    $start = (int) $this->getStart();
+
+    if($this->globalLimit && $start + $limit > $this->globalLimit)
+    {
+      $this->setState('list.limit', $this->globalLimit - $start);
+    }
+
+    return parent::getItems();
+  }
+
+  /**
    * Method to get the total number of items for the data set.
    *
    * @return  integer  The total number of items available in the data set.
@@ -193,7 +221,14 @@ abstract class JoomListModel extends ListModel
     try
     {
       // Load the total and add the total to the internal cache.
-      $this->cache[$store] = (int) $this->_getListCount($this->{$getListQuery}());
+      if($this->globalLimit)
+      {
+        $this->cache[$store] = min( (int) $this->_getListCount($this->{$getListQuery}()), $this->globalLimit);
+      }
+      else
+      {
+        $this->cache[$store] = (int) $this->_getListCount($this->{$getListQuery}());
+      }
     }
     catch(\RuntimeException $e)
     {
@@ -203,6 +238,25 @@ abstract class JoomListModel extends ListModel
     }
 
     return $this->cache[$store];
+  }
+
+  /**
+   * Method to get the starting number of items for the data set.
+   *
+   * @return  integer  The starting number of items available in the data set.
+   * 
+   * @since   4.4.0
+   */
+  public function getStart()
+  {
+    $start = parent::getStart();
+
+    if($this->globalLimit && $start >= $this->globalLimit)
+    {
+      return 0;
+    }
+
+    return $start;
   }
 
   /**
@@ -236,6 +290,18 @@ abstract class JoomListModel extends ListModel
     }
 
     return $this->cache[$store];
+  }
+
+  /**
+   * Method to set the global list limit.
+   *
+   * @return  integer  Max number of elements to be shown in all pages.
+   *
+   * @since   4.4.0
+   */
+  public function setGlobLimit($limit)
+  {
+    $this->globalLimit = (int) $limit;
   }
 
   /**

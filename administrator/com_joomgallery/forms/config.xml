@@ -817,6 +817,15 @@
                filter="integer"
                label="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES_DESC" />
+        <field name="jg_gallery_view_limit_images"
+               type="number"
+               default="100"
+               min="1"
+               step="1"
+               validate="number"
+               filter="integer"
+               label="COM_JOOMGALLERY_CONFIG_LIMIT_IMAGES"
+               description="COM_JOOMGALLERY_CONFIG_LIMIT_IMAGES_DESC" />
         <field name="jg_gallery_view_searchprovider"
                type="jgdynamiclist"
                dynamic="true"
