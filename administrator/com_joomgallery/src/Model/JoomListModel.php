@@ -223,7 +223,7 @@ abstract class JoomListModel extends ListModel
       // Load the total and add the total to the internal cache.
       if($this->globalLimit)
       {
-        $this->cache[$store] = min( (int) $this->_getListCount($this->{$getListQuery}()), $this->globalLimit);
+        $this->cache[$store] = min((int) $this->_getListCount($this->{$getListQuery}()), $this->globalLimit);
       }
       else
       {
@@ -244,7 +244,7 @@ abstract class JoomListModel extends ListModel
    * Method to get the starting number of items for the data set.
    *
    * @return  integer  The starting number of items available in the data set.
-   * 
+   *
    * @since   4.4.0
    */
   public function getStart()
