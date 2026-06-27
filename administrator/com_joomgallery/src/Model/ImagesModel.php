@@ -146,6 +146,12 @@ class ImagesModel extends JoomListModel
     $this->setState('filter.tag', $tag);
     $and = $this->getUserStateFromRequest($this->context . '.filter.and', 'filter_and', false);
     $this->setState('filter.and', $and);
+    $ids = $this->getUserStateFromRequest($this->context . '.filter.ids', 'filter_ids', '');
+    $this->setState('filter.ids', $ids);
+    $startDate = $this->getUserStateFromRequest($this->context . '.filter.startdate', 'filter_startdate', '');
+    $this->setState('filter.startdate', $startDate);
+    $endDate = $this->getUserStateFromRequest($this->context . '.filter.enddate', 'filter_enddate', '');
+    $this->setState('filter.enddate', $endDate);
 
     // Force a language
     if(!empty($forcedLanguage))
@@ -176,6 +182,9 @@ class ImagesModel extends JoomListModel
     $id .= ':' . $this->getState('filter.language');
     $id .= ':' . $this->getState('filter.showunapproved');
     $id .= ':' . $this->getState('filter.showhidden');
+    $id .= ':' . $this->getState('filter.startdate');
+    $id .= ':' . $this->getState('filter.enddate');
+    $id .= ':' . serialize($this->getState('filter.ids'));
     $id .= ':' . serialize($this->getState('filter.access'));
     $id .= ':' . serialize($this->getState('filter.created_by'));
     $id .= ':' . serialize($this->getState('filter.category'));
@@ -207,7 +216,7 @@ class ImagesModel extends JoomListModel
     }
     catch (\TypeError $e)
     {
-      $searchProviderName = $this->component->getConfig()->get($this->search);
+      $searchProviderName = $this->component->getConfig()->get($this->search, 'sql');
       $this->component->createSearch($searchProviderName, $db, $this->state);
       $searchProvider = $this->component->getSearch();
     }
@@ -449,6 +458,25 @@ class ImagesModel extends JoomListModel
       }
     }
 
+    // Filter by IDs
+    $ids = $this->getState('filter.ids');
+    if(!empty($ids))
+    {
+      if(!\is_array($ids))
+      {
+        $ids = (string) preg_replace('/[^0-9,]/', '', $ids);
+        $ids = strpos($ids, ',') !== false ? explode(',', $ids) : [$ids];
+      }
+
+      $ids = ArrayHelper::toInteger((array) $ids);
+      $ids = array_filter($ids);
+
+      if(!empty($ids))
+      {
+        $query->whereIn($db->quoteName('a.id'), $ids);
+      }
+    }
+
     // Filter: Exclude images
     $excludedId = Factory::getApplication()->input->get('exclude', '', 'string');
     $excludedId = (string) preg_replace('/[^0-9\,]/i', '', $excludedId);
@@ -475,6 +503,42 @@ class ImagesModel extends JoomListModel
     {
       $query->where($db->quoteName('a.language') . ' = :language')
         ->bind(':language', $language);
+    }
+
+    // Filter by date range
+    $startDate = trim((string) $this->getState('filter.startdate'));
+    $endDate   = trim((string) $this->getState('filter.enddate'));
+
+    if($startDate !== '')
+    {
+      // Adjust date format
+      if(!preg_match('/\d{2}:\d{2}:\d{2}$/', $startDate))
+      {
+        $startDate = Factory::getDate($startDate)->setTime(0, 0, 0);
+      }
+      else
+      {
+        $startDate = Factory::getDate($startDate);
+      }
+
+      $query->where($db->quoteName('a.date') . ' >= :startDate')
+        ->bind(':startDate', $db->toSql($startDate));
+    }
+
+    if($endDate !== '')
+    {
+      // Adjust date format
+      if(!preg_match('/\d{2}:\d{2}:\d{2}$/', $endDate))
+      {
+        $endDate = Factory::getDate($endDate)->setTime(23, 59, 59);
+      }
+      else
+      {
+        $endDate = Factory::getDate($endDate);
+      }
+
+      $query->where($db->quoteName('a.date') . ' <= :endDate')
+        ->bind(':endDate', $db->toSql($endDate));
     }
 
     // Add the list ordering clause.
@@ -750,6 +814,25 @@ class ImagesModel extends JoomListModel
       }
     }
 
+    // Filter by IDs
+    $ids = $this->getState('filter.ids');
+    if(!empty($ids))
+    {
+      if(!\is_array($ids))
+      {
+        $ids = (string) preg_replace('/[^0-9,]/', '', $ids);
+        $ids = strpos($ids, ',') !== false ? explode(',', $ids) : [$ids];
+      }
+
+      $ids = ArrayHelper::toInteger((array) $ids);
+      $ids = array_filter($ids);
+
+      if(!empty($ids))
+      {
+        $query->whereIn($db->quoteName('a.id'), $ids);
+      }
+    }
+
     // Filter: Exclude images
     $excludedId = Factory::getApplication()->input->get('exclude', '', 'string');
     $excludedId = (string) preg_replace('/[^0-9\,]/i', '', $excludedId);
@@ -776,6 +859,42 @@ class ImagesModel extends JoomListModel
     {
       $query->where($db->quoteName('a.language') . ' = :language')
         ->bind(':language', $language);
+    }
+
+    // Filter by date range
+    $startDate = trim((string) $this->getState('filter.startdate'));
+    $endDate   = trim((string) $this->getState('filter.enddate'));
+
+    if($startDate !== '')
+    {
+      // Adjust date format
+      if(!preg_match('/\d{2}:\d{2}:\d{2}$/', $startDate))
+      {
+        $startDate = Factory::getDate($startDate)->setTime(0, 0, 0);
+      }
+      else
+      {
+        $startDate = Factory::getDate($startDate);
+      }
+
+      $query->where($db->quoteName('a.date') . ' >= :startDate')
+        ->bind(':startDate', $db->toSql($startDate));
+    }
+
+    if($endDate !== '')
+    {
+      // Adjust date format
+      if(!preg_match('/\d{2}:\d{2}:\d{2}$/', $endDate))
+      {
+        $endDate = Factory::getDate($endDate)->setTime(23, 59, 59);
+      }
+      else
+      {
+        $endDate = Factory::getDate($endDate);
+      }
+
+      $query->where($db->quoteName('a.date') . ' <= :endDate')
+        ->bind(':endDate', $db->toSql($endDate));
     }
 
     return $query;
