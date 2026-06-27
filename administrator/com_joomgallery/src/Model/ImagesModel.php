@@ -148,6 +148,8 @@ class ImagesModel extends JoomListModel
     $this->setState('filter.and', $and);
     $ids = $this->getUserStateFromRequest($this->context . '.filter.ids', 'filter_ids', '');
     $this->setState('filter.ids', $ids);
+    $dateField = $this->getUserStateFromRequest($this->context . '.filter.datefiled', 'filter_datefield', 'date');
+    $this->setState('filter.datefiled', $dateField);
     $startDate = $this->getUserStateFromRequest($this->context . '.filter.startdate', 'filter_startdate', '');
     $this->setState('filter.startdate', $startDate);
     $endDate = $this->getUserStateFromRequest($this->context . '.filter.enddate', 'filter_enddate', '');
@@ -182,6 +184,7 @@ class ImagesModel extends JoomListModel
     $id .= ':' . $this->getState('filter.language');
     $id .= ':' . $this->getState('filter.showunapproved');
     $id .= ':' . $this->getState('filter.showhidden');
+    $id .= ':' . $this->getState('filter.datefield');
     $id .= ':' . $this->getState('filter.startdate');
     $id .= ':' . $this->getState('filter.enddate');
     $id .= ':' . serialize($this->getState('filter.ids'));
@@ -460,6 +463,7 @@ class ImagesModel extends JoomListModel
 
     // Filter by IDs
     $ids = $this->getState('filter.ids');
+
     if(!empty($ids))
     {
       if(!\is_array($ids))
@@ -506,6 +510,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by date range
+    $dateField = trim((string) $this->getState('filter.datefield'));
     $startDate = trim((string) $this->getState('filter.startdate'));
     $endDate   = trim((string) $this->getState('filter.enddate'));
 
@@ -521,7 +526,7 @@ class ImagesModel extends JoomListModel
         $startDate = Factory::getDate($startDate);
       }
 
-      $query->where($db->quoteName('a.date') . ' >= :startDate')
+      $query->where($db->quoteName('a.' . $dateField) . ' >= :startDate')
         ->bind(':startDate', $db->toSql($startDate));
     }
 
@@ -537,7 +542,7 @@ class ImagesModel extends JoomListModel
         $endDate = Factory::getDate($endDate);
       }
 
-      $query->where($db->quoteName('a.date') . ' <= :endDate')
+      $query->where($db->quoteName('a.' . $dateField) . ' <= :endDate')
         ->bind(':endDate', $db->toSql($endDate));
     }
 
@@ -816,6 +821,7 @@ class ImagesModel extends JoomListModel
 
     // Filter by IDs
     $ids = $this->getState('filter.ids');
+
     if(!empty($ids))
     {
       if(!\is_array($ids))
@@ -862,6 +868,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by date range
+    $dateField = trim((string) $this->getState('filter.datefield'));
     $startDate = trim((string) $this->getState('filter.startdate'));
     $endDate   = trim((string) $this->getState('filter.enddate'));
 
@@ -877,7 +884,7 @@ class ImagesModel extends JoomListModel
         $startDate = Factory::getDate($startDate);
       }
 
-      $query->where($db->quoteName('a.date') . ' >= :startDate')
+      $query->where($db->quoteName('a.' . $dateField) . ' >= :startDate')
         ->bind(':startDate', $db->toSql($startDate));
     }
 
@@ -893,7 +900,7 @@ class ImagesModel extends JoomListModel
         $endDate = Factory::getDate($endDate);
       }
 
-      $query->where($db->quoteName('a.date') . ' <= :endDate')
+      $query->where($db->quoteName('a.' . $dateField) . ' <= :endDate')
         ->bind(':endDate', $db->toSql($endDate));
     }
 
