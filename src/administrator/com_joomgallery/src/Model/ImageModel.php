@@ -256,7 +256,7 @@ class ImageModel extends JoomAdminModel
    *
    * @return  boolean  True if successful.
    *
-   * @throws  Exception
+   * @throws  \Exception
    */
   public function duplicate(&$pks)
   {
@@ -495,7 +495,7 @@ class ImageModel extends JoomAdminModel
       // Handle images if category was changed
       if(!$isNew && ($catMoved || $aliasChanged))
       {
-        // Douplicate old data
+        // Duplicate old data
         $old_table = clone $table;
       }
 
