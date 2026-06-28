@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- *    @package    com_joomgallery                                                 **
- *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
- *    @license    GNU General Public License version 3 or later                   **
+ * @package    com_joomgallery                                                 **
+ * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ * @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ * @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -12,13 +12,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseQuery;
-use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\Database\ParameterType;
+use Joomla\Database\DatabaseQuery;
 
 /**
  * Methods supporting a list of Images records.
@@ -47,7 +47,7 @@ class ImagesModel extends JoomListModel
   /**
    * Constructor
    *
-   * @param   array  $config  An optional associative array of configuration settings.
+   * @param   array   $config  An optional associative array of configuration settings.
    *
    * @return  void
    * @since   4.0.0
@@ -97,8 +97,8 @@ class ImagesModel extends JoomListModel
    *
    * Note. Calling getState in this method will result in recursion.
    *
-   * @param   string  $ordering   Elements order
-   * @param   string  $direction  Order direction
+   * @param   string   $ordering   Elements order
+   * @param   string   $direction  Order direction
    *
    * @return void
    *
@@ -113,38 +113,38 @@ class ImagesModel extends JoomListModel
     // Adjust the context to support modal layouts.
     if($layout = $app->input->get('layout'))
     {
-      $this->context .= '.' . $layout;
+      $this->context .= '.'.$layout;
     }
 
     // Adjust the context to support forced languages.
     if($forcedLanguage)
     {
-      $this->context .= '.' . $forcedLanguage;
+      $this->context .= '.'.$forcedLanguage;
     }
 
     // List state information.
     parent::populateState($ordering, $direction);
 
     // Load the filter state.
-    $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '');
+    $search = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search', '');
     $this->setState('filter.search', $search);
-    $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '*');
+    $published = $this->getUserStateFromRequest($this->context.'.filter.published', 'filter_published', '*');
     $this->setState('filter.published', $published);
-    $language = $this->getUserStateFromRequest($this->context . '.filter.language', 'filter_language', '');
+    $language = $this->getUserStateFromRequest($this->context.'.filter.language', 'filter_language', '');
     $this->setState('filter.language', $language);
-    $showunapproved = $this->getUserStateFromRequest($this->context . '.filter.showunapproved', 'filter_showunapproved', '1');
+    $showunapproved = $this->getUserStateFromRequest($this->context.'.filter.showunapproved', 'filter_showunapproved', '1');
     $this->setState('filter.showunapproved', $showunapproved);
-    $showhidden = $this->getUserStateFromRequest($this->context . '.filter.showhidden', 'filter_showhidden', '1');
+    $showhidden = $this->getUserStateFromRequest($this->context.'.filter.showhidden', 'filter_showhidden', '1');
     $this->setState('filter.showhidden', $showhidden);
-    $access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', []);
+    $access = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', []);
     $this->setState('filter.access', $access);
-    $createdBy = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
+    $createdBy = $this->getUserStateFromRequest($this->context.'.filter.created_by', 'filter_created_by', '');
     $this->setState('filter.created_by', $createdBy);
-    $category = $this->getUserStateFromRequest($this->context . '.filter.category', 'filter_category', []);
+    $category = $this->getUserStateFromRequest($this->context.'.filter.category', 'filter_category', []);
     $this->setState('filter.category', $category);
-    $tag = $this->getUserStateFromRequest($this->context . '.filter.tag', 'filter_tag', []);
+    $tag = $this->getUserStateFromRequest($this->context.'.filter.tag', 'filter_tag', []);
     $this->setState('filter.tag', $tag);
-    $and = $this->getUserStateFromRequest($this->context . '.filter.and', 'filter_and', false);
+    $and = $this->getUserStateFromRequest($this->context.'.filter.and', 'filter_and', false);
     $this->setState('filter.and', $and);
     $ids = $this->getUserStateFromRequest($this->context . '.filter.ids', 'filter_ids', '');
     $this->setState('filter.ids', $ids);
@@ -170,7 +170,7 @@ class ImagesModel extends JoomListModel
    * different modules that might need different sets of data or different
    * ordering requirements.
    *
-   * @param   string  $id  A prefix for the store id.
+   * @param   string   $id  A prefix for the store id.
    *
    * @return  string A store id.
    *
@@ -200,7 +200,7 @@ class ImagesModel extends JoomListModel
   /**
    * Build an SQL query to load the list data.
    *
-   * ToDo: Manuel
+   * ToDo: @Manuel
    * @return  \Joomla\Database\QueryInterface
    *
    * @since   4.0.0
@@ -250,9 +250,15 @@ class ImagesModel extends JoomListModel
     }
 
     // Select the required fields from the table.
-    // Add DISTINCT when filtering with multiple tags
-    $useDistinct = !$searchProvider->handlesFilter('tags') && !empty($tag) && \count($tag) > 1 && !$logicAnd;
-    $query->select($this->getListSelectFields($useDistinct));
+    if(!empty($tag) && \count($tag) > 1 && !$logicAnd)
+    {
+      // Add DISTINCT when filtering with multiple tags
+      $query->select('DISTINCT '.$this->getState('list.select', 'a.*'));
+    }
+    else
+    {
+      $query->select($this->getState('list.select', 'a.*'));
+    }
 
     // Select table
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && $logicAnd)
@@ -260,14 +266,14 @@ class ImagesModel extends JoomListModel
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
       $subquery->select($db->quoteName('tr.imgid'))
-               ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
-               ->where($db->quoteName('tr.tagid') . ' IN (' . implode(',', array_map('intval', $tag)) . ')')
-               ->group($db->quoteName('tr.imgid'))
-               ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
+        ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
+        ->where($db->quoteName('tr.tagid').' IN ('.implode(',', array_map('intval', $tag)).')')
+        ->group($db->quoteName('tr.imgid'))
+        ->having('COUNT(DISTINCT tr.tagid) = '.(int) \count($tag));
 
       // Join the image table to the subquery
-      $query->from('(' . trim($subquery->__toString()) . ') AS imgs');
-      $query->join('INNER', $db->quoteName('#__joomgallery', 'a') . ' ON ' . $db->quoteName('a.id') . ' = ' . $db->quoteName('imgs.imgid'));
+      $query->from('('.trim($subquery->__toString()).') AS imgs');
+      $query->join('INNER', $db->quoteName('#__joomgallery', 'a').' ON '.$db->quoteName('a.id').' = '.$db->quoteName('imgs.imgid'));
     }
     else
     {
@@ -276,33 +282,33 @@ class ImagesModel extends JoomListModel
 
     // Join over the users for the checked out user
     $query->select($db->quoteName('uc.name', 'uEditor'));
-    $query->join('LEFT', $db->quoteName('#__users', 'uc'), $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.checked_out'));
+    $query->join('LEFT', $db->quoteName('#__users', 'uc'), $db->quoteName('uc.id').' = '.$db->quoteName('a.checked_out'));
 
     // Join over the foreign key 'catid'
     $query->select([$db->quoteName('category.title', 'cattitle'), $db->quoteName('category.created_by', 'cat_uid')]);
-    $query->join('LEFT', $db->quoteName('#__joomgallery_categories', 'category'), $db->quoteName('category.id') . ' = ' . $db->quoteName('a.catid'));
+    $query->join('LEFT', $db->quoteName('#__joomgallery_categories', 'category'), $db->quoteName('category.id').' = '.$db->quoteName('a.catid'));
 
     // Join over the access level field 'access'
     $query->select($db->quoteName('access.title', 'access'));
-    $query->join('LEFT', $db->quoteName('#__viewlevels', 'access'), $db->quoteName('access.id') . ' = ' . $db->quoteName('a.access'));
+    $query->join('LEFT', $db->quoteName('#__viewlevels', 'access'), $db->quoteName('access.id').' = '.$db->quoteName('a.access'));
 
     // Join over the user field 'created_by'
     $query->select([$db->quoteName('ua.name', 'created_by'), $db->quoteName('ua.id', 'created_by_id')]);
-    $query->join('LEFT', $db->quoteName('#__users', 'ua'), $db->quoteName('ua.id') . ' = ' . $db->quoteName('a.created_by'));
+    $query->join('LEFT', $db->quoteName('#__users', 'ua'), $db->quoteName('ua.id').' = '.$db->quoteName('a.created_by'));
 
     // Join over the user field 'modified_by'
     $query->select([$db->quoteName('um.name', 'modified_by'), $db->quoteName('um.id', 'modified_by_id')]);
-    $query->join('LEFT', $db->quoteName('#__users', 'um'), $db->quoteName('um.id') . ' = ' . $db->quoteName('a.modified_by'));
+    $query->join('LEFT', $db->quoteName('#__users', 'um'), $db->quoteName('um.id').' = '.$db->quoteName('a.modified_by'));
 
     // Join over the language fields 'language_title' and 'language_image'
     $query->select([$db->quoteName('l.title', 'language_title'), $db->quoteName('l.image', 'language_image')]);
-    $query->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'));
+    $query->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code').' = '.$db->quoteName('a.language'));
 
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
-      $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
-      $query->join('INNER', $db->quoteName('#__joomgallery_tags', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('tr.tagid'));
+      $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr').' ON '.$db->quoteName('tr.imgid').' = '.$db->quoteName('a.id'));
+      $query->join('INNER', $db->quoteName('#__joomgallery_tags', 't').' ON '.$db->quoteName('t.id').' = '.$db->quoteName('tr.tagid'));
     }
 
     // Filter by access level.
@@ -313,8 +319,8 @@ class ImagesModel extends JoomListModel
       if(is_numeric($filter_access))
       {
         $filter_access = (int) $filter_access;
-        $query->where($db->quoteName('a.access') . ' = :access')
-              ->bind(':access', $filter_access, ParameterType::INTEGER);
+        $query->where($db->quoteName('a.access').' = :access')
+          ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
       elseif(\is_array($filter_access))
       {
@@ -332,7 +338,7 @@ class ImagesModel extends JoomListModel
       {
         $userId = (int) $userId;
         $type   = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
-        $query->where($db->quoteName('a.created_by') . $type . ':userId')
+        $query->where($db->quoteName('a.created_by').$type.':userId')
           ->bind(':userId', $userId, ParameterType::INTEGER);
       }
       elseif(\is_array($userId))
@@ -396,8 +402,8 @@ class ImagesModel extends JoomListModel
 
         if($state || $state === 0)
         {
-          $query->where($db->quoteName($row) . ' = :state')
-          ->bind(':state', $state, ParameterType::INTEGER);
+          $query->where($db->quoteName($row).' = :state')
+            ->bind(':state', $state, ParameterType::INTEGER);
         }
       }
     }
@@ -407,13 +413,13 @@ class ImagesModel extends JoomListModel
 
     if(!$showhidden)
     {
-    $query->where(
-        [
-          $db->quoteName('a.hidden') . ' = 0',
-          $db->quoteName('category.hidden') . ' = 0',
-          $db->quoteName('category.in_hidden') . ' = 0',
-        ]
-    );
+      $query->where(
+          [
+            $db->quoteName('a.hidden') . ' = 0',
+            $db->quoteName('category.hidden') . ' = 0',
+            $db->quoteName('category.in_hidden') . ' = 0',
+          ]
+      );
     }
 
     // Filter by unapproved images
@@ -421,7 +427,7 @@ class ImagesModel extends JoomListModel
 
     if(!$showunapproved)
     {
-      $query->where($db->quoteName('a.approved') . ' = 1');
+      $query->where($db->quoteName('a.approved').' = 1');
     }
 
     // Filter by categories
@@ -443,7 +449,7 @@ class ImagesModel extends JoomListModel
       if(is_numeric($catId))
       {
         $catId = (int) $catId;
-        $query->where($db->quoteName('a.catid') . ' = :catId')
+        $query->where($db->quoteName('a.catid').' = :catId')
           ->bind(':catId', $catId, ParameterType::INTEGER);
       }
       elseif(\is_array($catId))
@@ -458,7 +464,7 @@ class ImagesModel extends JoomListModel
     {
       if(\count($tag) === 1)
       {
-        $query->where($db->quoteName('t.id') . ' = :tag')
+        $query->where($db->quoteName('t.id').' = :tag')
           ->bind(':tag', $tag[0], ParameterType::INTEGER);
       }
       else
@@ -499,7 +505,7 @@ class ImagesModel extends JoomListModel
     if(is_numeric($excludedId))
     {
       $excludedId = (int) $excludedId;
-      $query->where($db->quoteName('a.id') . ' != :imgId')
+      $query->where($db->quoteName('a.id').' != :imgId')
         ->bind(':imgId', $excludedId, ParameterType::INTEGER);
     }
     elseif(\is_array($excludedId))
@@ -511,7 +517,7 @@ class ImagesModel extends JoomListModel
     // Filter on the language.
     if(!$searchProvider->handlesFilter('language') && $language = $this->getState('filter.language'))
     {
-      $query->where($db->quoteName('a.language') . ' = :language')
+      $query->where($db->quoteName('a.language').' = :language')
         ->bind(':language', $language);
     }
 
@@ -643,14 +649,14 @@ class ImagesModel extends JoomListModel
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
       $subquery->select($db->quoteName('tr.imgid'))
-               ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
-               ->where($db->quoteName('tr.tagid') . ' IN (' . implode(',', array_map('intval', $tag)) . ')')
-               ->group($db->quoteName('tr.imgid'))
-               ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
+        ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
+        ->where($db->quoteName('tr.tagid').' IN ('.implode(',', array_map('intval', $tag)).')')
+        ->group($db->quoteName('tr.imgid'))
+        ->having('COUNT(DISTINCT tr.tagid) = '.(int) \count($tag));
 
       // Join the image table to the subquery
-      $query->from('(' . trim($subquery->__toString()) . ') AS imgs');
-      $query->join('INNER', $db->quoteName('#__joomgallery', 'a') . ' ON ' . $db->quoteName('a.id') . ' = ' . $db->quoteName('imgs.imgid'));
+      $query->from('('.trim($subquery->__toString()).') AS imgs');
+      $query->join('INNER', $db->quoteName('#__joomgallery', 'a').' ON '.$db->quoteName('a.id').' = '.$db->quoteName('imgs.imgid'));
     }
     else
     {
@@ -660,8 +666,8 @@ class ImagesModel extends JoomListModel
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
-      $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
-      $query->join('INNER', $db->quoteName('#__joomgallery_tags', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('tr.tagid'));
+      $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr').' ON '.$db->quoteName('tr.imgid').' = '.$db->quoteName('a.id'));
+      $query->join('INNER', $db->quoteName('#__joomgallery_tags', 't').' ON '.$db->quoteName('t.id').' = '.$db->quoteName('tr.tagid'));
     }
 
     // Filter by access level.
@@ -672,8 +678,8 @@ class ImagesModel extends JoomListModel
       if(is_numeric($filter_access))
       {
         $filter_access = (int) $filter_access;
-        $query->where($db->quoteName('a.access') . ' = :access')
-              ->bind(':access', $filter_access, ParameterType::INTEGER);
+        $query->where($db->quoteName('a.access').' = :access')
+          ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
       elseif(\is_array($filter_access))
       {
@@ -691,7 +697,7 @@ class ImagesModel extends JoomListModel
       {
         $userId = (int) $userId;
         $type   = $this->getState('filter.created_by.include', true) ? ' = ' : ' <> ';
-        $query->where($db->quoteName('a.created_by') . $type . ':userId')
+        $query->where($db->quoteName('a.created_by').$type.':userId')
           ->bind(':userId', $userId, ParameterType::INTEGER);
       }
       elseif(\is_array($userId))
@@ -709,15 +715,15 @@ class ImagesModel extends JoomListModel
       if(stripos($search, 'id:') === 0)
       {
         $search = (int) substr($search, 3);
-        $query->where($db->quoteName('a.id') . ' = :search')
+        $query->where($db->quoteName('a.id').' = :search')
           ->bind(':search', $search, ParameterType::INTEGER);
       }
       else
       {
-        $search = '%' . str_replace(' ', '%', trim($search)) . '%';
+        $search = '%'.str_replace(' ', '%', trim($search)).'%';
         $query->where(
-            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
-            . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
+          '('.$db->quoteName('a.title').' LIKE :search1 OR '.$db->quoteName('a.alias').' LIKE :search2'
+          .' OR '.$db->quoteName('a.description').' LIKE :search3)'
         )
           ->bind([':search1', ':search2', ':search3'], $search);
       }
@@ -764,8 +770,8 @@ class ImagesModel extends JoomListModel
 
         if($state || $state === 0)
         {
-          $query->where($db->quoteName($row) . ' = :state')
-          ->bind(':state', $state, ParameterType::INTEGER);
+          $query->where($db->quoteName($row).' = :state')
+            ->bind(':state', $state, ParameterType::INTEGER);
         }
       }
     }
@@ -775,13 +781,13 @@ class ImagesModel extends JoomListModel
 
     if(!$showhidden)
     {
-    $query->where(
-        [
-          $db->quoteName('a.hidden') . ' = 0',
-          $db->quoteName('category.hidden') . ' = 0',
-          $db->quoteName('category.in_hidden') . ' = 0',
-        ]
-    );
+      $query->where(
+          [
+            $db->quoteName('a.hidden') . ' = 0',
+            $db->quoteName('category.hidden') . ' = 0',
+            $db->quoteName('category.in_hidden') . ' = 0',
+          ]
+      );
     }
 
     // Filter by unapproved images
@@ -789,7 +795,7 @@ class ImagesModel extends JoomListModel
 
     if(!$showunapproved)
     {
-      $query->where($db->quoteName('a.approved') . ' = 1');
+      $query->where($db->quoteName('a.approved').' = 1');
     }
 
     // Filter by categories
@@ -811,7 +817,7 @@ class ImagesModel extends JoomListModel
       if(is_numeric($catId))
       {
         $catId = (int) $catId;
-        $query->where($db->quoteName('a.catid') . ' = :catId')
+        $query->where($db->quoteName('a.catid').' = :catId')
           ->bind(':catId', $catId, ParameterType::INTEGER);
       }
       elseif(\is_array($catId))
@@ -826,7 +832,7 @@ class ImagesModel extends JoomListModel
     {
       if(\count($tag) === 1)
       {
-        $query->where($db->quoteName('t.id') . ' = :tag')
+        $query->where($db->quoteName('t.id').' = :tag')
           ->bind(':tag', $tag[0], ParameterType::INTEGER);
       }
       else
@@ -867,7 +873,7 @@ class ImagesModel extends JoomListModel
     if(is_numeric($excludedId))
     {
       $excludedId = (int) $excludedId;
-      $query->where($db->quoteName('a.id') . ' != :imgId')
+      $query->where($db->quoteName('a.id').' != :imgId')
         ->bind(':imgId', $excludedId, ParameterType::INTEGER);
     }
     elseif(\is_array($excludedId))
@@ -879,7 +885,7 @@ class ImagesModel extends JoomListModel
     // Filter on the language.
     if($language = $this->getState('filter.language'))
     {
-      $query->where($db->quoteName('a.language') . ' = :language')
+      $query->where($db->quoteName('a.language').' = :language')
         ->bind(':language', $language);
     }
 
