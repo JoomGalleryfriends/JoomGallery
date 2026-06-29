@@ -271,9 +271,8 @@
         return;
       }
 
-      const batchSize = parseInt(limit.value, 10);
-      const selected = selectedRows();
-      const rows = Number.isFinite(batchSize) && batchSize > 0 ? selected.slice(0, batchSize) : selected;
+      const batchSize = parseInt(limit.value, 10) || 10;
+      const rows = selectedRows().slice(0, batchSize);
 
       if (!rows.length) {
         showJoomlaMessage('warning', text('COM_JOOMGALLERY_FTP_IMPORT_NO_FILES_SELECTED'));
