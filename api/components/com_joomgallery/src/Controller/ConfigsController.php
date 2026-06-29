@@ -39,5 +39,4 @@ class ConfigsController extends ApiController
    */
   protected $default_view = 'configs';
 
-  // Implement other methods like read, update, delete as needed
 }
