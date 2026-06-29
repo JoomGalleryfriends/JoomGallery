@@ -76,7 +76,7 @@ class GalleryModel extends JoomItemModel
     $this->loadComponentParams();
 
     $params = $this->imagesModel->getParams();
-    $this->imagesModel->setGlobLimit($params['configs']->get('jg_gallery_view_description', 100));
+    $this->imagesModel->setGlobLimit($params['configs']->get('jg_gallery_view_limit_images', 100));
   }
 
   /**
