@@ -2,10 +2,10 @@
 
 /**
  * *********************************************************************************
- *    @package    com_joomgallery                                                 **
- *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- *    @license    GNU General Public License version 3 or later                   **
+ * @package    com_joomgallery                                                 **
+ * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ * @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -13,10 +13,10 @@ namespace Joomgallery\Component\Joomgallery\Api\View\Images;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\TagsHelper;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Serializer\JoomlaSerializer;
 use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
-use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -30,228 +30,229 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
  */
 class JsonapiView extends BaseApiView
 {
-    /**
-     * The fields to render item in the documents
-     *
-     * @var  array
-     * @since  4.0.0
-     */
-    protected $fieldsToRenderItem = [
-      'id',
-      'catid',
-      'alias',
-      'title',
-      'description',
-      'author',
+  /**
+   * The fields to render item in the documents
+   *
+   * @var  array
+   * @since  4.0.0
+   */
+  protected $fieldsToRenderItem = [
+    'id',
+    'catid',
+    'alias',
+    'title',
+    'description',
+    'author',
 
-      'date',
-      'imgmetadata',
+    'date',
+    'imgmetadata',
 
-      'published',
-      'filename',
-      'filesystem',
+    'published',
+    'filename',
+    'filesystem',
 
-      'hits',
-      'downloads',
+    'hits',
+    'downloads',
 
-      'votes',
-      'votesum',
-      'approved',
-      'useruploaded',
-      'access',
-      'hidden',
+    'votes',
+    'votesum',
+    'approved',
+    'useruploaded',
+    'access',
+    'hidden',
 
-      'featured',
-      'ordering',
-      'params',
-      'language',
+    'featured',
+    'ordering',
+    'params',
+    'language',
 
-      'created_time',
-      'created_by',
-      'modified_time',
-      'modified_by',
-      'checked_out',
-      'checked_out_time',
+    'created_time',
+    'created_by',
+    'modified_time',
+    'modified_by',
+    'checked_out',
+    'checked_out_time',
 
-      'metadesc',
-      'metakey',
-      'robots',
-    ];
+    'metadesc',
+    'metakey',
+    'robots',
+  ];
 
-    /**
-     * The fields to render items in the documents
-     *
-     * @var  array
-     * @since  4.0.0
-     */
-    protected $fieldsToRenderList = [
-      'id',
-      'catid',
-      'alias',
-      'title',
-      //        'description',
-      //        'author',
-      //
-      //        'date',
-      //        'imgmetadata',
+  /**
+   * The fields to render items in the documents
+   *
+   * @var  array
+   * @since  4.0.0
+   */
+  protected $fieldsToRenderList = [
+    'id',
+    'catid',
+    'alias',
+    'title',
+    //        'description',
+    //        'author',
+    //
+    //        'date',
+    //        'imgmetadata',
 
-      'published',
-      'filename',
-      'filesystem',
+    'published',
+    'filename',
+    'filesystem',
 
-      //        'hits',
-      //        'downloads',
-      //
-      //        'votes',
-      //        'votesum',
-      //        'approved',
-      //        'useruploaded',
-      //        'access',
-      //        'hidden',
-      //
-      //        'featured',
-      //        'ordering',
-      //        'params',
-      //        'language',
+    //        'hits',
+    //        'downloads',
+    //
+    //        'votes',
+    //        'votesum',
+    //        'approved',
+    //        'useruploaded',
+    //        'access',
+    //        'hidden',
+    //
+    //        'featured',
+    //        'ordering',
+    //        'params',
+    //        'language',
 
-      'created_time',
-      'created_by',
-      'modified_time',
-      'modified_by',
-      'checked_out',
-      'checked_out_time',
+    'created_time',
+    'created_by',
+    'modified_time',
+    'modified_by',
+    'checked_out',
+    'checked_out_time',
 
-      //        'metadesc',
-      //        'metakey',
-      //        'robots',
-    ];
+    //        'metadesc',
+    //        'metakey',
+    //        'robots',
+  ];
 
-    /**
-     * Constructor.
-     *
-     * @param   array  $config  A named configuration array for object construction.
-     *                          contentType: the name (optional) of the content type to use for the serialization
-     *
-     * @since   4.0.0
-     */
-    public function __construct($config = [])
+  /**
+   * Constructor.
+   *
+   * @param   array   $config  A named configuration array for object construction.
+   *                           contentType: the name (optional) of the content type to use for the serialization
+   *
+   * @since   4.0.0
+   */
+  public function __construct($config = [])
+  {
+    if(\array_key_exists('contentType', $config))
     {
-        if(\array_key_exists('contentType', $config))
-        {
-            $this->serializer = new JoomlaSerializer($config['contentType']);
-        }
-
-        parent::__construct($config);
+      $this->serializer = new JoomlaSerializer($config['contentType']);
     }
 
-    /**
-     * Execute and display a template script.
-     *
-     * @param   ?array  $items  Array of items
-     *
-     * @return  string
-     *
-     * @since   4.0.0
-     */
-    public function displayList(?array $items = null)
-    {
-        foreach(FieldsHelper::getFields('com_joomgallery.images') as $field)
-        {
-            $this->fieldsToRenderList[] = $field->name;
-        }
+    parent::__construct($config);
+  }
 
-        return parent::displayList();
+  /**
+   * Execute and display a template script.
+   *
+   * @param   ?array   $items  Array of items
+   *
+   * @return  string
+   *
+   * @since   4.0.0
+   */
+  public function displayList(?array $items = null)
+  {
+    foreach(FieldsHelper::getFields('com_joomgallery.images') as $field)
+    {
+      $this->fieldsToRenderList[] = $field->name;
     }
 
-    /**
-     * Execute and display a template script.
-     *
-     * @param   object  $item  Item
-     *
-     * @return  string
-     *
-     * @since   4.0.0
-     */
-    public function displayItem($item = null)
+    return parent::displayList();
+  }
+
+  /**
+   * Execute and display a template script.
+   *
+   * @param   object   $item  Item
+   *
+   * @return  string
+   *
+   * @since   4.0.0
+   */
+  public function displayItem($item = null)
+  {
+    $this->relationship[] = 'modified_by';
+
+    foreach(FieldsHelper::getFields('com_joomgallery.images') as $field)
     {
-        $this->relationship[] = 'modified_by';
-
-        foreach(FieldsHelper::getFields('com_joomgallery.images') as $field)
-        {
-            $this->fieldsToRenderItem[] = $field->name;
-        }
-
-        if(Multilanguage::isEnabled())
-        {
-            $this->fieldsToRenderItem[] = 'languageAssociations';
-            $this->relationship[]       = 'languageAssociations';
-        }
-
-        return parent::displayItem();
+      $this->fieldsToRenderItem[] = $field->name;
     }
 
-    /**
-     * Prepare item before render.
-     *
-     * @param   object  $item  The model item
-     *
-     * @return  object
-     *
-     * @since   4.0.0
-     */
-    protected function prepareItem($item)
+    if(Multilanguage::isEnabled())
     {
-        if(!$item)
-        {
-            return $item;
-        }
-
-        $item->text = $item->introtext . ' ' . $item->fulltext;
-
-        // Process the joomgallery plugins.
-        PluginHelper::importPlugin('joomgallery');
-        Factory::getApplication()->triggerEvent('onContentPrepare', ['com_joomgallery.images', &$item, &$item->params]);
-
-        foreach(FieldsHelper::getFields('com_joomgallery.images', $item, true) as $field)
-        {
-            $item->{$field->name} = $field->apivalue ?? $field->rawvalue;
-        }
-
-        if(Multilanguage::isEnabled() && !empty($item->associations))
-        {
-            $associations = [];
-
-            foreach($item->associations as $language => $association)
-            {
-                $itemId = explode(':', $association)[0];
-
-                $associations[] = (object)[
-                  'id'       => $itemId,
-                  'language' => $language,
-                ];
-            }
-
-            $item->associations = $associations;
-        }
-
-        if(!empty($item->tags->tags))
-        {
-            $tagsIds    = explode(',', $item->tags->tags);
-            $item->tags = $item->tagsHelper->getTags($tagsIds);
-        }
-        else {
-            $item->tags = [];
-            $tags       = new TagsHelper();
-            $tagsIds    = $tags->getTagIds($item->id, 'com_joomgallery.images');
-
-            if(!empty($tagsIds))
-            {
-                $tagsIds    = explode(',', $tagsIds);
-                $item->tags = $tags->getTags($tagsIds);
-            }
-        }
-
-        return parent::prepareItem($item);
+      $this->fieldsToRenderItem[] = 'languageAssociations';
+      $this->relationship[]       = 'languageAssociations';
     }
+
+    return parent::displayItem();
+  }
+
+  /**
+   * Prepare item before render.
+   *
+   * @param   object   $item  The model item
+   *
+   * @return  object
+   *
+   * @since   4.0.0
+   */
+  protected function prepareItem($item)
+  {
+    if(!$item)
+    {
+      return $item;
+    }
+
+    $item->text = $item->introtext.' '.$item->fulltext;
+
+    // Process the joomgallery plugins.
+    PluginHelper::importPlugin('joomgallery');
+    Factory::getApplication()->triggerEvent('onContentPrepare', ['com_joomgallery.images', &$item, &$item->params]);
+
+    foreach(FieldsHelper::getFields('com_joomgallery.images', $item, true) as $field)
+    {
+      $item->{$field->name} = $field->apivalue ?? $field->rawvalue;
+    }
+
+    if(Multilanguage::isEnabled() && !empty($item->associations))
+    {
+      $associations = [];
+
+      foreach($item->associations as $language => $association)
+      {
+        $itemId = explode(':', $association)[0];
+
+        $associations[] = (object) [
+          'id'       => $itemId,
+          'language' => $language,
+        ];
+      }
+
+      $item->associations = $associations;
+    }
+
+    if(!empty($item->tags->tags))
+    {
+      $tagsIds    = explode(',', $item->tags->tags);
+      $item->tags = $item->tagsHelper->getTags($tagsIds);
+    }
+    else
+    {
+      $item->tags = [];
+      $tags       = new TagsHelper();
+      $tagsIds    = $tags->getTagIds($item->id, 'com_joomgallery.images');
+
+      if(!empty($tagsIds))
+      {
+        $tagsIds    = explode(',', $tagsIds);
+        $item->tags = $tags->getTags($tagsIds);
+      }
+    }
+
+    return parent::prepareItem($item);
+  }
 
 }
