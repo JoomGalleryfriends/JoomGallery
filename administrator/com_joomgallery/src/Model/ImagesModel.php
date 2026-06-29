@@ -407,7 +407,13 @@ class ImagesModel extends JoomListModel
 
     if(!$showhidden)
     {
-      $query->where($db->quoteName('a.hidden') . ' = 0');
+    $query->where(
+        [
+          $db->quoteName('a.hidden') . ' = 0',
+          $db->quoteName('category.hidden') . ' = 0',
+          $db->quoteName('category.in_hidden') . ' = 0',
+        ]
+    );
     }
 
     // Filter by unapproved images
@@ -526,8 +532,10 @@ class ImagesModel extends JoomListModel
         $startDate = Factory::getDate($startDate);
       }
 
+      $startDate = $startDate->toSql();
+
       $query->where($db->quoteName('a.' . $dateField) . ' >= :startDate')
-        ->bind(':startDate', $db->toSql($startDate));
+        ->bind(':startDate', $startDate);
     }
 
     if($endDate !== '')
@@ -542,8 +550,10 @@ class ImagesModel extends JoomListModel
         $endDate = Factory::getDate($endDate);
       }
 
+      $endDate = $endDate->toSql();
+
       $query->where($db->quoteName('a.' . $dateField) . ' <= :endDate')
-        ->bind(':endDate', $db->toSql($endDate));
+        ->bind(':endDate', $endDate);
     }
 
     // Add the list ordering clause.
@@ -765,7 +775,13 @@ class ImagesModel extends JoomListModel
 
     if(!$showhidden)
     {
-      $query->where($db->quoteName('a.hidden') . ' = 0');
+    $query->where(
+        [
+          $db->quoteName('a.hidden') . ' = 0',
+          $db->quoteName('category.hidden') . ' = 0',
+          $db->quoteName('category.in_hidden') . ' = 0',
+        ]
+    );
     }
 
     // Filter by unapproved images
