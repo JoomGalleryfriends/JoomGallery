@@ -14,11 +14,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 
 /**
  * Image controller class.
@@ -99,6 +102,50 @@ class ImageController extends JoomFormController
   }
 
   /**
+   * Method to open the FTP import page.
+   *
+   * @return  boolean  True if the record can be added, false if not.
+   *
+   * @since   4.0.0
+   */
+  public function ftpimport()
+  {
+    $this->view_item = 'image';
+    $layout          = 'ftp';
+
+    $context = "$this->option.upload.$this->context";
+
+    // Access check.
+    if(!$this->allowAdd())
+    {
+      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error');
+      $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 'error', 'jerror');
+
+    $this->setRedirect(
+        Route::_(
+            'index.php?option=' . $this->option . '&view=' . $this->view_list . $this->getRedirectToListAppend(),
+            false
+        )
+    );
+
+      return false;
+    }
+
+    // Clear the record edit information from the session.
+    $this->app->setUserState($context . '.data', null);
+
+    // Redirect to the FTP import screen.
+    $this->setRedirect(
+        Route::_(
+            'index.php?option=' . $this->option . '&view=' . $this->view_item . '&layout=' . $layout,
+            false
+        )
+    );
+
+    return true;
+  }
+
+  /**
    * Method to add multiple new image records.
    *
    * @return  boolean  True if the record can be added, false if not.
@@ -137,6 +184,235 @@ class ImageController extends JoomFormController
     }
 
     return true;
+  }
+
+  /**
+   * Return files available in the server-side FTP import directory.
+   *
+   * @return  boolean
+   *
+   * @since   4.0.0
+   */
+  public function ftplist()
+  {
+    $result = [
+      'success' => false,
+      'files'   => [],
+      'path'    => '',
+      'error'   => '',
+    ];
+
+    try
+    {
+      if(!$this->allowAdd())
+      {
+        throw new \Exception(Text::_('JLIB_APPLICATION_ERROR_CREATE_RECORD_NOT_PERMITTED'), 403);
+      }
+
+      $directory      = $this->getFtpImportDirectory();
+      $result['path'] = str_replace(JPATH_ROOT, '', $directory);
+
+      if(!Folder::exists($directory) && !Folder::create($directory))
+      {
+        throw new \Exception(Text::sprintf('COM_JOOMGALLERY_FTP_IMPORT_ERROR_CREATE_DIRECTORY', $result['path']));
+      }
+
+      $allowed_extensions = $this->getFtpImportExtensions();
+      $files              = [];
+
+      foreach(new \DirectoryIterator($directory) as $file)
+      {
+        if(!$file->isFile() || $file->isDot())
+        {
+          continue;
+        }
+
+        $filename = $file->getFilename();
+
+        if(!\in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $allowed_extensions, true))
+        {
+          continue;
+        }
+
+        $files[] = [
+          'name'  => $filename,
+          'size'  => $file->getSize(),
+          'mtime' => $file->getMTime(),
+        ];
+      }
+
+    usort(
+        $files,
+        function ($a, $b) {
+          return strnatcasecmp($a['name'], $b['name']);
+        }
+    );
+
+      $result['success'] = true;
+      $result['files']   = $files;
+    }
+    catch(\Exception $e)
+    {
+      $result['error'] = $e->getMessage();
+    }
+
+    $this->app->setHeader('Content-Type', 'application/json', true);
+    echo json_encode($result);
+    $this->app->close();
+
+    return true;
+  }
+
+  /**
+   * Get the active FTP import directory.
+   *
+   * @return  string
+   *
+   * @since   4.0.0
+   */
+  protected function getFtpImportDirectory(): string
+  {
+    $directories        = $this->getFtpImportDirectories();
+    $allowed_extensions = $this->getFtpImportExtensions();
+
+    foreach($directories as $directory)
+    {
+      if(Folder::exists($directory) && $this->directoryHasImportableFiles($directory, $allowed_extensions))
+      {
+        return $directory;
+      }
+    }
+
+    foreach($directories as $directory)
+    {
+      if(Folder::exists($directory))
+      {
+        return $directory;
+      }
+    }
+
+    return $directories[0] ?? Path::clean(JPATH_ROOT . '/images/joomgallery/FTP');
+  }
+
+  /**
+   * Get FTP import directory candidates in priority order.
+   *
+   * @return  array
+   *
+   * @since   4.0.0
+   */
+  protected function getFtpImportDirectories(): array
+  {
+    $config = JoomHelper::getService('config');
+    $paths  = [
+      $config->get('jg_pathftpupload', ''),
+      'images/joomgallery/FTP',
+      'administrator/components/com_joomgallery/temp/ftp_upload',
+    ];
+
+    $directories = [];
+
+    foreach($paths as $path)
+    {
+      $directory = $this->normalizeFtpImportPath((string) $path);
+
+      if($directory === '' || \in_array($directory, $directories, true))
+      {
+        continue;
+      }
+
+      $directories[] = $directory;
+    }
+
+    return $directories;
+  }
+
+  /**
+   * Normalize a configured FTP import path.
+   *
+   * @param   string  $path  Configured path
+   *
+   * @return  string
+   *
+   * @since   4.0.0
+   */
+  protected function normalizeFtpImportPath(string $path): string
+  {
+    $path = trim($path);
+
+    if($path === '')
+    {
+      return '';
+    }
+
+    if(!preg_match('#^([A-Z]:[\\\\/]|/)#i', $path))
+    {
+      $path = JPATH_ROOT . '/' . ltrim($path, '/\\');
+    }
+
+    return Path::clean(rtrim($path, '/\\'));
+  }
+
+  /**
+   * Check if a directory contains at least one importable file.
+   *
+   * @param   string  $directory           Directory path
+   * @param   array   $allowed_extensions  Allowed extensions
+   *
+   * @return  bool
+   *
+   * @since   4.0.0
+   */
+  protected function directoryHasImportableFiles(string $directory, array $allowed_extensions): bool
+  {
+    try
+    {
+      foreach(new \DirectoryIterator($directory) as $file)
+      {
+        if($file->isFile() && \in_array(strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)), $allowed_extensions, true))
+        {
+          return true;
+        }
+      }
+    }
+    catch(\Exception $e)
+    {
+      return false;
+    }
+
+    return false;
+  }
+
+  /**
+   * Get image extensions allowed for FTP import.
+   *
+   * @return  array
+   *
+   * @since   4.0.0
+   */
+  protected function getFtpImportExtensions(): array
+  {
+    $config     = JoomHelper::getService('config');
+    $extensions = array_filter(
+        array_map(
+            function ($extension) {
+              return strtolower(ltrim(trim((string) $extension), '.'));
+            },
+            explode(',', (string) $config->get('jg_imagetypes', 'jpg,jpeg,png,gif,webp'))
+        )
+    );
+
+    if(empty($extensions))
+    {
+      $extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    }
+
+    if(\in_array('jpg', $extensions, true) || \in_array('jpeg', $extensions, true) || \in_array('jpe', $extensions, true) || \in_array('jfif', $extensions, true))
+    {
+      $extensions = array_unique(array_merge($extensions, ['jpg', 'jpeg', 'jpe', 'jfif']));
+    }
+
+    return array_values($extensions);
   }
 
   /**

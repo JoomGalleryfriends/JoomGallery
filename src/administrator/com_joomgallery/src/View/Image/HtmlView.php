@@ -103,6 +103,11 @@ class HtmlView extends JoomGalleryView
       //--- Limits php.ini, config -----
       $this->limitsPhpConfig();
     }
+    elseif($this->_layout == 'ftp')
+    {
+      $this->addToolbarFtp();
+      $this->form->setFieldAttribute('title', 'required', 'false');
+    }
     elseif($this->_layout == 'replace')
     {
       if($this->item->id == 0)
@@ -204,6 +209,7 @@ class HtmlView extends JoomGalleryView
     Factory::getApplication()->input->set('hidemainmenu', true);
 
     ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES') . ' :: ' . Text::_('COM_JOOMGALLERY_IMAGES_UPLOAD'), 'image');
+    $this->addUploadNavigation('upload');
     ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CLOSE');
 
     // Create tus server
@@ -211,6 +217,66 @@ class HtmlView extends JoomGalleryView
     $server = $this->component->getTusServer();
 
     $this->item->tus_location = $server->getLocation();
+  }
+
+  /**
+   * Add the page title and toolbar for the FTP import form.
+   *
+   * @return void
+   *
+   * @throws \Exception
+   */
+  protected function addToolbarFtp()
+  {
+    Factory::getApplication()->input->set('hidemainmenu', true);
+
+    ToolbarHelper::title(Text::_('COM_JOOMGALLERY_IMAGES') . ' :: ' . Text::_('COM_JOOMGALLERY_FTP_IMPORT'), 'upload');
+    $this->addUploadNavigation('ftp');
+    ToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CLOSE');
+  }
+
+  /**
+   * Add navigation between image list and upload methods.
+   *
+   * @param   string  $active  Active upload layout
+   *
+   * @return  void
+   */
+  protected function addUploadNavigation(string $active): void
+  {
+    $toolbar = $this->getToolbar();
+    $items   = [
+      [
+        'layout' => 'images',
+        'url'    => 'index.php?option=com_joomgallery&amp;view=images',
+        'icon'   => 'icon-images',
+        'label'  => Text::_('COM_JOOMGALLERY_IMAGES'),
+      ],
+      [
+        'layout' => 'upload',
+        'url'    => 'index.php?option=com_joomgallery&amp;view=image&amp;layout=upload',
+        'icon'   => 'icon-upload',
+        'label'  => Text::_('COM_JOOMGALLERY_IMAGES_UPLOAD'),
+      ],
+      [
+        'layout' => 'ftp',
+        'url'    => 'index.php?option=com_joomgallery&amp;view=image&amp;layout=ftp',
+        'icon'   => 'icon-folder-open',
+        'label'  => Text::_('COM_JOOMGALLERY_FTP_IMPORT'),
+      ],
+    ];
+
+    foreach($items as $item)
+    {
+      $is_active = $item['layout'] === $active;
+      $class     = $is_active ? 'btn btn-primary active disabled' : 'btn btn-primary';
+      $current   = $is_active ? ' aria-current="page"' : '';
+      $html      = '<joomla-toolbar-button><a href="' . $item['url'] . '" class="' . $class . '"' . $current . '>'
+                 . '<span class="' . $item['icon'] . '" aria-hidden="true"></span> ' . $item['label']
+                 . '</a></joomla-toolbar-button>';
+
+      $toolbar->appendButton('Custom', $html);
+    }
   }
 
   /**
