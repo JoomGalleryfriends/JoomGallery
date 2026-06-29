@@ -40,6 +40,4 @@ class CategoriesController extends ApiController
    */
   protected $default_view = 'categories';
 
-  // Implement other methods like read, update, delete as needed
 }
-
