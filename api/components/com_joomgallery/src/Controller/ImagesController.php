@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- *    @package    com_joomgallery                                                 **
- *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- *    @license    GNU General Public License version 3 or later                   **
+ * @package    com_joomgallery                                                 **
+ * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ * @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -26,20 +26,20 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
  */
 class ImagesController extends ApiController
 {
-    /**
-     * The content type of the item.
-     *
-     * @var    string
-     * @since  4.0.0
-     */
-    protected $contentType = 'images';
+  /**
+   * The content type of the item.
+   *
+   * @var    string
+   * @since  4.0.0
+   */
+  protected $contentType = 'images';
 
-    /**
-     * The default view for the display method.
-     *
-     * @var    string
-     * @since  3.0
-     */
-    protected $default_view = 'images';
+  /**
+   * The default view for the display method.
+   *
+   * @var    string
+   * @since  3.0
+   */
+  protected $default_view = 'images';
 
 }
