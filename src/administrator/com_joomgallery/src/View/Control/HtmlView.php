@@ -98,6 +98,10 @@ class HtmlView extends JoomGalleryView
     $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=image&amp;layout=upload" class="btn btn-primary"><span class="icon-upload" title="' . Text::_('Upload') . '"></span> ' . Text::_('Upload') . '</a></joomla-toolbar-button>';
     $toolbar->appendButton('Custom', $html);
 
+    // FTP import button
+    $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=image&amp;layout=ftp" class="btn btn-primary"><span class="icon-upload" title="' . Text::_('COM_JOOMGALLERY_FTP_IMPORT') . '"></span> ' . Text::_('COM_JOOMGALLERY_FTP_IMPORT') . '</a></joomla-toolbar-button>';
+    $toolbar->appendButton('Custom', $html);
+
     // Images button
     $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=images" class="btn btn-primary"><span class="icon-images" title="' . Text::_('COM_JOOMGALLERY_IMAGES') . '"></span> ' . Text::_('COM_JOOMGALLERY_IMAGES') . '</a></joomla-toolbar-button>';
     $toolbar->appendButton('Custom', $html);

@@ -53,8 +53,90 @@ Text::script('COM_JOOMGALLERY_ERROR_UPPY_UPLOAD');
 Text::script('COM_JOOMGALLERY_ERROR_UPPY_FORM');
 Text::script('COM_JOOMGALLERY_ERROR_UPPY_SAVE_RECORD');
 Text::script('COM_JOOMGALLERY_ERROR_FILL_REQUIRED_FIELDS');
+Text::script('COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY');
 
 $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_vars) . '\');', ['position' => 'before'], [], ['com_joomgallery.uppy-uploader']);
+$wa->addInlineScript(
+<<<'JS'
+(() => {
+  const uploadButtonSelector = '.uppy-StatusBar-actionBtn--upload, .uppy-StatusBar-actionBtn--uploadNewlyAdded';
+
+  const getCategoryElements = () => {
+    const hiddenInput = document.getElementById('jform_catid_id');
+    const visibleInput = document.getElementById('jform_catid');
+    const wrapper = visibleInput ? visibleInput.closest('.input-group') : null;
+
+    return { hiddenInput, visibleInput, wrapper };
+  };
+
+  const setCategoryValidity = (isValid) => {
+    const { hiddenInput, visibleInput, wrapper } = getCategoryElements();
+
+    if (!hiddenInput || !visibleInput) {
+      return isValid;
+    }
+
+    hiddenInput.toggleAttribute('aria-invalid', !isValid);
+    visibleInput.toggleAttribute('aria-invalid', !isValid);
+    visibleInput.classList.toggle('is-valid', isValid);
+    visibleInput.classList.toggle('is-invalid', !isValid);
+
+    if (wrapper) {
+      wrapper.classList.toggle('is-valid', isValid);
+      wrapper.classList.toggle('is-invalid', !isValid);
+    }
+
+    return isValid;
+  };
+
+  const hasSelectedCategory = () => {
+    const { hiddenInput } = getCategoryElements();
+
+    if (!hiddenInput) {
+      return false;
+    }
+
+    return setCategoryValidity(Number(hiddenInput.getAttribute('value') || 0) > 0);
+  };
+
+  const showCategoryError = () => {
+    const message = Joomla.JText._('COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY');
+    const container = document.getElementById('system-message-container');
+
+    if (container) {
+      container.innerHTML = '';
+    }
+
+    Joomla.renderMessages({ warning: [message] });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  document.addEventListener('change', (event) => {
+    if (event.target && event.target.id === 'jform_catid_id') {
+      hasSelectedCategory();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    const uploadButton = event.target.closest(uploadButtonSelector);
+
+    if (!uploadButton) {
+      return;
+    }
+
+    if (!hasSelectedCategory()) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      showCategoryError();
+    }
+  }, true);
+})();
+JS,
+    ['position' => 'after'],
+    [],
+    ['com_joomgallery.uppy-uploader']
+);
 ?>
 
 <div class="jg jg-upload">

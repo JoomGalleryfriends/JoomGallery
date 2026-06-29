@@ -152,6 +152,13 @@ class ImageModel extends JoomAdminModel
       $form->setFieldAttribute('created_by', 'filter', 'unset');
     }
 
+    $uploader = $data['uploader'] ?? $this->app->getInput()->post->get('jform', [], 'array')['uploader'] ?? '';
+
+    if($uploader === 'ftp')
+    {
+      $form->setFieldAttribute('title', 'required', false);
+    }
+
     return $form;
   }
 
@@ -377,6 +384,13 @@ class ImageModel extends JoomAdminModel
     if(!Multilanguage::isEnabled())
     {
       $data['language'] = '*';
+    }
+
+    if((int) ($data['catid'] ?? 0) <= 0)
+    {
+      $this->setError(Text::_('COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY'));
+
+      return false;
     }
 
     // Include the plugins for the save events.
