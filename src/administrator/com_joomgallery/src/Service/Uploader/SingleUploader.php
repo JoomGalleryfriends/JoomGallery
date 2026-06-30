@@ -48,13 +48,13 @@ class SingleUploader extends BaseUploader implements UploaderInterface
    * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
    *
    * @param   array    $data        Form data (as reference)
-   * @param   bool     $filename    True, if the filename has to be created (default: True)
+   * @param   bool   $createFilename  True, if the filename has to be created (default: True)
    *
    * @return  bool     True on success, false otherwise
    *
    * @since  4.0.0
    */
-  public function retrieveImage(&$data, $filename = true): bool
+  public function retrieveImage(&$data, $createFilename = true): bool
   {
     $user = Factory::getUser();
 
@@ -248,12 +248,13 @@ class SingleUploader extends BaseUploader implements UploaderInterface
   {
     $app = Factory::getApplication();
 
-    if(\array_key_exists('image', $app->input->files->get('jform')) && !empty($app->input->files->get('jform')['image'])
-    && $app->input->files->get('jform')['image']['error'] != 4 && $app->input->files->get('jform')['image']['size'] > 0)
+    if(\array_key_exists('image', $app->input->files->get('jform'))
+        && !empty($app->input->files->get('jform')['image'])
+        && $app->input->files->get('jform')['image']['error'] != 4
+        && $app->input->files->get('jform')['image']['size'] > 0)
     {
       return true;
     }
-
 
       return false;
   }
