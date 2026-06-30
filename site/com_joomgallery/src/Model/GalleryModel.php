@@ -200,7 +200,17 @@ class GalleryModel extends JoomItemModel
    */
   public function getFilterForm($data = [], $loadData = true)
   {
-    return $this->imagesModel->getFilterForm($data, $loadData);
+    $form = $this->imagesModel->getFilterForm($data, $loadData);
+
+    // Get the XML category field element
+    $field = $form->getXml()->xpath('//field[@name="category"]');
+
+    if(!empty($field))
+    {
+      $field[0]->addAttribute('edit', 'false');
+    }
+
+    return $form;
   }
 
   /**

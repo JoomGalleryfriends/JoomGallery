@@ -358,8 +358,11 @@ class JgcategorydropdownField extends ListField
       }
     }
 
+    // check if the field should allow to edit (create, move, edit state...)
+    $edit_cats = filter_var($this->element['edit'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
     // For new items we want a list of categories you are allowed to create in.
-    if($oldCat == 0)
+    if($edit_cats && $oldCat == 0)
     {
       foreach($options as $i => $option)
       {
@@ -376,7 +379,7 @@ class JgcategorydropdownField extends ListField
       }
     }
     // If you have an existing category id things are more complex.
-    else
+    elseif($edit_cats)
     {
       /*
        * If you are only allowed to edit in this category but not edit.state, you should not get any
