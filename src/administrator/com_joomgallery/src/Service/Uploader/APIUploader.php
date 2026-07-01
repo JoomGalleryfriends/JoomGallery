@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -14,10 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\Path as JPath;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
 
 /**
  * Uploader helper class (Standard HTML Upload)
@@ -41,7 +41,7 @@ class APIUploader extends BaseUploader implements UploaderInterface
   {
     $isSaved = false;
 
-    $this->src_size = strlen($data['content']);
+    $this->src_size = \strlen($data['content']);
 
 //        $data ['uuid'] = $this->getUserUuid();
 
@@ -69,7 +69,7 @@ class APIUploader extends BaseUploader implements UploaderInterface
     {
       // Save file to intermediate temp file
       //$this->src_file = JPath::clean(\dirname($this->src_tmp) . '/' . $this->src_name);
-      $this->src_file = JPath::clean($this->src_tmp.'/'.$this->src_name);
+      $this->src_file = JPath::clean($this->src_tmp . '/' . $this->src_name);
 
       $isSaved = $this->saveImgContent2Temp($data['content'], $this->src_file);
       unset($data['content']);
@@ -129,7 +129,7 @@ class APIUploader extends BaseUploader implements UploaderInterface
   public function checkError($uploaderror): string
   {
     // Common PHP errors
-    $uploadErrors = [1 => Text::_('COM_JOOMGALLERY_ERROR_PHP_MAXFILESIZE'), 2 => Text::_('COM_JOOMGALLERY_ERROR_HTML_MAXFILESIZE'), 3 => Text::_('COM_JOOMGALLERY_ERROR_FILE_PARTLY_UPLOADED'), 4 => Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED'),];
+    $uploadErrors = [1 => Text::_('COM_JOOMGALLERY_ERROR_PHP_MAXFILESIZE'), 2 => Text::_('COM_JOOMGALLERY_ERROR_HTML_MAXFILESIZE'), 3 => Text::_('COM_JOOMGALLERY_ERROR_FILE_PARTLY_UPLOADED'), 4 => Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_UPLOADED')];
 
     if(\in_array($uploaderror, $uploadErrors))
     {
@@ -158,9 +158,8 @@ class APIUploader extends BaseUploader implements UploaderInterface
   {
     $isUploaded = false;
 
-    if(!empty ($data['content']) && strlen($data['content']) > 0)
+    if(!empty($data['content']) && \strlen($data['content']) > 0)
     {
-
       $isUploaded = true;
     }
 
@@ -179,7 +178,7 @@ class APIUploader extends BaseUploader implements UploaderInterface
       $base64Data = base64_decode($content);
       $count      = file_put_contents($tmp_path_file_name, $base64Data);
 
-      $isSaved = !empty ($count);
+      $isSaved = !empty($count);
     }
     catch(\Exception $e)
     {
@@ -187,7 +186,7 @@ class APIUploader extends BaseUploader implements UploaderInterface
       //$this->component->addDebug(Text::sprintf('Failed to write file %s', $tmp_dst_file));
       //$this->component->addLog(Text::sprintf('Failed to write file %s', $filename), 'error', $logfile);
 
-      throw new \Exception("saveImgContent2Temp failed: ", 0, $e);
+      throw new \Exception('saveImgContent2Temp failed: ', 0, $e);
     }
 
     return $isSaved;
@@ -230,14 +229,13 @@ class APIUploader extends BaseUploader implements UploaderInterface
     // New filename
     if(\is_null($filecounter))
     {
-      $newfilename = $filename.'_'.$filedate.'_'.$randomnumber.'.'.$tag;
+      $newfilename = $filename . '_' . $filedate . '_' . $randomnumber . '.' . $tag;
     }
     else
     {
-      $newfilename = $filename.'_'.$filecounter.'_'.$filedate.'_'.$randomnumber.'.'.$tag;
+      $newfilename = $filename . '_' . $filecounter . '_' . $filedate . '_' . $randomnumber . '.' . $tag;
     }
 
     return $newfilename;
   }
-
 }

@@ -1,11 +1,10 @@
 <?php
-
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -13,10 +12,10 @@ namespace Joomgallery\Component\Joomgallery\Api\View\Images;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\TagsHelper;
-use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Language\Multilanguage;
-use Joomla\CMS\Serializer\JoomlaSerializer;
 use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Serializer\JoomlaSerializer;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -206,7 +205,7 @@ class JsonapiView extends BaseApiView
       return $item;
     }
 
-    $item->text = $item->introtext.' '.$item->fulltext;
+    $item->text = $item->introtext . ' ' . $item->fulltext;
 
     // Process the joomgallery plugins.
     PluginHelper::importPlugin('joomgallery');
@@ -254,5 +253,4 @@ class JsonapiView extends BaseApiView
 
     return parent::prepareItem($item);
   }
-
 }

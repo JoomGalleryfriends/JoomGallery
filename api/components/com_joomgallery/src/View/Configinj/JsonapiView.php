@@ -1,20 +1,20 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\View\Configinj;
 
 use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseInterface;
-use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
 use Joomla\CMS\MVC\Controller\Exception\ResourceNotFound;
+use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
 use Joomla\CMS\Serializer\JoomlaSerializer;
+use Joomla\Database\DatabaseInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
@@ -50,7 +50,7 @@ class JsonapiView extends BaseApiView
    *                           contentType: the name (optional) of the content type to use for the serialization
    *
    * @since  4.4.0
-  */
+   */
   public function __construct($config = [])
   {
     if(\array_key_exists('contentType', $config))
@@ -71,7 +71,7 @@ class JsonapiView extends BaseApiView
    * @return  object
    *
    * @since  4.4.0
-  */
+   */
   protected function prepareItem($item)
   {
     // Media resources have no id.
@@ -93,7 +93,7 @@ class JsonapiView extends BaseApiView
   {
 
     $componentName = 'com_joomgallery';
-    $params   = [];
+    $params        = [];
 
     try
     {
@@ -102,7 +102,7 @@ class JsonapiView extends BaseApiView
       $query = $db->getQuery(true)
         ->select($db->quoteName('params'))
         ->from($db->quoteName('#__extensions'))
-        ->where($db->quoteName('element').' = '.$db->quote($componentName));
+        ->where($db->quoteName('element') . ' = ' . $db->quote($componentName));
       $db->setQuery($query);
 
       $jsonStr = $db->loadResult();

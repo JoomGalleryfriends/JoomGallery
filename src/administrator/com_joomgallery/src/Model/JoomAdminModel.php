@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -15,20 +15,20 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Form\Form;
-use Joomla\CMS\Table\Table;
-use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
-use Joomla\Utilities\ArrayHelper;
-use Joomla\Database\ParameterType;
-use Joomla\CMS\MVC\Model\AdminModel;
-use Joomla\CMS\Language\Multilanguage;
-use Joomla\CMS\Form\FormFactoryInterface;
-use Joomla\CMS\User\CurrentUserInterface;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\User\CurrentUserInterface;
+use Joomla\Database\ParameterType;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Base model class for JoomGallery administration views
@@ -127,7 +127,7 @@ abstract class JoomAdminModel extends AdminModel
     {
       $this->user = $this->app->getIdentity();
     }
-    $this->typeAlias = _JOOM_OPTION.'.'.$this->type;
+    $this->typeAlias = _JOOM_OPTION . '.' . $this->type;
   }
 
   /**
@@ -194,7 +194,7 @@ abstract class JoomAdminModel extends AdminModel
   {
     $table = $this->getTable();
     $key   = $table->getKeyName();
-    $pk    = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName().'.id');
+    $pk    = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
     // Change language to 'All' if multilangugae is not enabled
     if(!Multilanguage::isEnabled())
@@ -239,7 +239,7 @@ abstract class JoomAdminModel extends AdminModel
 
     if(empty($pks))
     {
-      $pks = [(int) $this->getState($this->getName().'.id')];
+      $pks = [(int) $this->getState($this->getName() . '.id')];
     }
 
     $checkedOutField = $table->getColumnAlias('checked_out');
@@ -430,7 +430,7 @@ abstract class JoomAdminModel extends AdminModel
 
     if(isset($params_array['item_id']))
     {
-      $this->setState($this->type.'.id', $params_array['item_id']);
+      $this->setState($this->type . '.id', $params_array['item_id']);
     }
 
     $this->setState('parameters.component', $params);
@@ -438,7 +438,7 @@ abstract class JoomAdminModel extends AdminModel
     // Load the configs from config service
     $id = ($id === 0) ? null : $id;
 
-    $this->component->createConfig(_JOOM_OPTION.'.'.$this->type, $id, true);
+    $this->component->createConfig(_JOOM_OPTION . '.' . $this->type, $id, true);
     $configArray = $this->component->getConfig()->getProperties();
     $configs     = new Registry($configArray);
 
@@ -480,7 +480,7 @@ abstract class JoomAdminModel extends AdminModel
     }
 
     // On edit, we get ID from state, but on save, we use data from input
-    $id = (int) $this->getState($this->type.'.id', $this->app->getInput()->getInt('id', null));
+    $id = (int) $this->getState($this->type . '.id', $this->app->getInput()->getInt('id', null));
 
     // Object uses for checking edit state permission of item
     $record     = new \stdClass();
@@ -585,8 +585,8 @@ abstract class JoomAdminModel extends AdminModel
     // Show a warning if the item isn't assigned to a language but we have associations.
     if($associations && $table->language === '*')
     {
-      Factory::getApplication()->enqueueMessage(Text::_(strtoupper($this->option).'_ERROR_ALL_LANGUAGE_ASSOCIATED'), 'warning');
-      $this->component->addLog(Text::_(strtoupper($this->option).'_ERROR_ALL_LANGUAGE_ASSOCIATED'), 'warning', 'jerror');
+      Factory::getApplication()->enqueueMessage(Text::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'), 'warning');
+      $this->component->addLog(Text::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'), 'warning', 'jerror');
     }
 
     // Get associationskey for edited item
@@ -595,8 +595,8 @@ abstract class JoomAdminModel extends AdminModel
     $query = $db->getQuery(true)
       ->select($db->quoteName('key'))
       ->from($db->quoteName('#__associations'))
-      ->where($db->quoteName('context').' = :context')
-      ->where($db->quoteName('id').' = :id')
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('id') . ' = :id')
       ->bind(':context', $this->associationsContext)
       ->bind(':id', $id, ParameterType::INTEGER);
     $db->setQuery($query);
@@ -607,19 +607,19 @@ abstract class JoomAdminModel extends AdminModel
       // Deleting old associations for the associated items
       $query = $db->getQuery(true)
         ->delete($db->quoteName('#__associations'))
-        ->where($db->quoteName('context').' = :context')
+        ->where($db->quoteName('context') . ' = :context')
         ->bind(':context', $this->associationsContext);
 
       $where = [];
 
       if($associations)
       {
-        $where[] = $db->quoteName('id').' IN ('.implode(',', $query->bindArray(array_values($associations))).')';
+        $where[] = $db->quoteName('id') . ' IN (' . implode(',', $query->bindArray(array_values($associations))) . ')';
       }
 
       if($oldKey !== null)
       {
-        $where[] = $db->quoteName('key').' = :oldKey';
+        $where[] = $db->quoteName('key') . ' = :oldKey';
         $query->bind(':oldKey', $oldKey);
       }
 
@@ -641,23 +641,23 @@ abstract class JoomAdminModel extends AdminModel
       $query = $db->getQuery(true)
         ->insert($db->quoteName('#__associations'))
         ->columns(
-          [
-            $db->quoteName('id'),
-            $db->quoteName('context'),
-            $db->quoteName('key'),
-          ]
+            [
+              $db->quoteName('id'),
+              $db->quoteName('context'),
+              $db->quoteName('key'),
+            ]
         );
 
       foreach($associations as $id)
       {
         $query->values(
-          implode(
-            ',',
-            $query->bindArray(
-              [$id, $this->associationsContext, $key],
-              [ParameterType::INTEGER, ParameterType::STRING, ParameterType::STRING]
+            implode(
+                ',',
+                $query->bindArray(
+                    [$id, $this->associationsContext, $key],
+                    [ParameterType::INTEGER, ParameterType::STRING, ParameterType::STRING]
+                )
             )
-          )
         );
       }
 

@@ -1,19 +1,19 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\Model;
 
 use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseInterface;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\MVC\Controller\Exception\ResourceNotFound;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Database\DatabaseInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
@@ -24,7 +24,6 @@ use Joomla\CMS\MVC\Controller\Exception\ResourceNotFound;
  */
 class LatestcategoryModel extends BaseDatabaseModel
 {
-
   /**
    * Method to get latest gallery data
    *
@@ -46,7 +45,7 @@ class LatestcategoryModel extends BaseDatabaseModel
       $query = $db->createQuery()
         ->select('*')
         ->from('#__joomgallery_categories')
-        ->order($db->quoteName('id').' DESC')
+        ->order($db->quoteName('id') . ' DESC')
         ->setLimit($limit);
       $db->setQuery($query);
 

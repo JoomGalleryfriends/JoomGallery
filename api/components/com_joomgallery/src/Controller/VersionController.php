@@ -1,22 +1,22 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
-use Joomla\String\Inflector;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Access\Exception\NotAllowed;
-use Joomla\CMS\MVC\Controller\ApiController;
-use Tobscure\JsonApi\Exception\InvalidParameterException;
 use Joomgallery\Component\Joomgallery\Api\Model\VersionModel;
 use Joomgallery\Component\Joomgallery\Api\View\Version\JsonapiView;
+use Joomla\CMS\Access\Exception\NotAllowed;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\ApiController;
+use Joomla\String\Inflector;
+use Tobscure\JsonApi\Exception\InvalidParameterException;
 
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -52,7 +52,7 @@ class VersionController extends ApiController
    * @return JsonapiView  The prepared view
    *
    * @since  4.4.0
- */
+   */
   protected function prepareView()
   {
     $viewType   = $this->app->getDocument()->getType();
@@ -61,13 +61,13 @@ class VersionController extends ApiController
 
     try
     {
-      /** @var JsonApiView $view */
-      $view = $this->getView(
+    /** @var JsonApiView $view */
+    $view = $this->getView(
         $viewName,
         $viewType,
         '',
         ['base_path' => $this->basePath, 'layout' => $viewLayout, 'contentType' => $this->contentType]
-      );
+    );
     }
     catch(\Exception $e)
     {
@@ -96,12 +96,11 @@ class VersionController extends ApiController
   }
 
   /**
-   *
    * @return VersionController
    *
    * @throws InvalidParameterException
    * @since  4.4.0
- */
+   */
   public function edit()
   {
     // Access check.
@@ -127,5 +126,4 @@ class VersionController extends ApiController
 
     return parent::displayItem('0');
   }
-
 }
