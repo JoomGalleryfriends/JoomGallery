@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -14,17 +14,17 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Asset;
-use Joomla\CMS\Access\Rules;
-use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
-use Joomla\CMS\User\UserHelper;
-use Joomla\CMS\Filter\OutputFilter;
-use Joomla\Database\DatabaseDriver;
-use Joomla\CMS\Versioning\VersionableTableInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\MultipleAssetsTableTrait;
+use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Asset;
+use Joomla\CMS\User\UserHelper;
+use Joomla\CMS\Versioning\VersionableTableInterface;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
 
 /**
  * Category table
@@ -88,7 +88,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
     $this->component_exists = $component_exists;
-    $this->typeAlias        = _JOOM_OPTION.'.category';
+    $this->typeAlias        = _JOOM_OPTION . '.category';
 
     parent::__construct(_JOOM_TABLE_CATEGORIES, 'id', $db);
 
@@ -136,7 +136,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     $comp->createAccess();
 
     // Get all unlocked categories of this user from session
-    $unlockedCats = Factory::getApplication()->getUserState(_JOOM_OPTION.'unlockedCategories', [0]);
+    $unlockedCats = Factory::getApplication()->getUserState(_JOOM_OPTION . 'unlockedCategories', [0]);
 
     // Return password only if user is admin or owner
     $this->pw_protected = false;
@@ -377,7 +377,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 
         while(!$this->isUnique('alias', $this->parent_id, 'parent_id'))
         {
-          $this->alias = $currentAlias.'-'.$count++;
+          $this->alias = $currentAlias . '-' . $count++;
         }
       }
     }
@@ -469,7 +469,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       }
       else
       {
-        $this->_new_location_path = $referenceObj->path.'/{alias}';
+        $this->_new_location_path = $referenceObj->path . '/{alias}';
       }
     }
   }
@@ -515,18 +515,18 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
         ->set('lft = 0')
         ->set('rgt = 1')
         ->set('level = 0')
-        ->set('path = '.$db->quote(''))
-        ->set('title = '.$db->quote('Root'))
-        ->set('alias = '.$db->quote('root'))
-        ->set('description = '.$db->quote(''))
+        ->set('path = ' . $db->quote(''))
+        ->set('title = ' . $db->quote('Root'))
+        ->set('alias = ' . $db->quote('root'))
+        ->set('description = ' . $db->quote(''))
         ->set('access = 1')
         ->set('published = 1')
-        ->set('params = '.$db->quote(''))
-        ->set('created_time = '.$db->quote($date->toSql()))
-        ->set('modified_time = '.$db->quote($date->toSql()))
-        ->set('language = '.$db->quote('*'))
-        ->set('metadesc = '.$db->quote(''))
-        ->set('metakey = '.$db->quote(''));
+        ->set('params = ' . $db->quote(''))
+        ->set('created_time = ' . $db->quote($date->toSql()))
+        ->set('modified_time = ' . $db->quote($date->toSql()))
+        ->set('language = ' . $db->quote('*'))
+        ->set('metadesc = ' . $db->quote(''))
+        ->set('metakey = ' . $db->quote(''));
 
       $db->setQuery($query);
 
@@ -546,7 +546,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       $this->parent_id = $old_parentID;
 
       // Get asset name
-      $name = $this->typeAlias.'.1';
+      $name = $this->typeAlias . '.1';
 
       // Create asset for root category
       $assetTable = new Asset($this->getDatabase());
@@ -584,7 +584,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 
       // Connect root category with asset table
       $query = $db->getQuery(true);
-      $query->update($db->quoteName(_JOOM_TABLE_CATEGORIES))->set($db->quoteName('asset_id').' = '.$assetTable->id)->where($db->quoteName('id').' = '.$root_catid);
+      $query->update($db->quoteName(_JOOM_TABLE_CATEGORIES))->set($db->quoteName('asset_id') . ' = ' . $assetTable->id)->where($db->quoteName('id') . ' = ' . $root_catid);
       $db->setQuery($query);
 
       if(!$db->execute())
@@ -643,16 +643,16 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     {
       case 'parents':
         $type = 'parents';
-        break;
+          break;
 
       case 'childs':
       case 'children':
         $type = 'children';
-        break;
+          break;
 
       default:
         $type = 'cpl';
-        break;
+          break;
     }
 
     // Create a new query object.
@@ -668,11 +668,11 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       // Select children
       if($self)
       {
-        $query->where($db->quoteName('lft').' >= '.$this->lft.' AND '.$db->quoteName('rgt').' <= '.$this->rgt);
+        $query->where($db->quoteName('lft') . ' >= ' . $this->lft . ' AND ' . $db->quoteName('rgt') . ' <= ' . $this->rgt);
       }
       else
       {
-        $query->where($db->quoteName('lft').' > '.$this->lft.' AND '.$db->quoteName('rgt').' < '.$this->rgt);
+        $query->where($db->quoteName('lft') . ' > ' . $this->lft . ' AND ' . $db->quoteName('rgt') . ' < ' . $this->rgt);
       }
     }
     elseif($type === 'parents')
@@ -680,31 +680,31 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       // Select parents
       if($self)
       {
-        $query->where($db->quoteName('lft').' <= '.$this->lft.' AND '.$db->quoteName('rgt').' >= '.$this->rgt);
+        $query->where($db->quoteName('lft') . ' <= ' . $this->lft . ' AND ' . $db->quoteName('rgt') . ' >= ' . $this->rgt);
       }
       else
       {
-        $query->where($db->quoteName('lft').' < '.$this->lft.' AND '.$db->quoteName('rgt').' > '.$this->rgt);
+        $query->where($db->quoteName('lft') . ' < ' . $this->lft . ' AND ' . $db->quoteName('rgt') . ' > ' . $this->rgt);
       }
     }
     else
     {
       // children and itself
-      $cWhere = '('.$db->quoteName('lft').' >= '.$this->lft.' AND '.$db->quoteName('rgt').' <= '.$this->rgt.')';
+      $cWhere = '(' . $db->quoteName('lft') . ' >= ' . $this->lft . ' AND ' . $db->quoteName('rgt') . ' <= ' . $this->rgt . ')';
       // parents
-      $pWhere = '('.$db->quoteName('lft').' < '.$this->lft.' AND '.$db->quoteName('rgt').' > '.$this->rgt.')';
+      $pWhere = '(' . $db->quoteName('lft') . ' < ' . $this->lft . ' AND ' . $db->quoteName('rgt') . ' > ' . $this->rgt . ')';
 
-      $query->where('('.implode(' OR ', [$cWhere, $pWhere]).')');
+      $query->where('(' . implode(' OR ', [$cWhere, $pWhere]) . ')');
     }
 
     // Exclude root category
     if(!$root)
     {
-      $query->where($db->quoteName('level').' > 0');
+      $query->where($db->quoteName('level') . ' > 0');
     }
 
     // Apply ordering
-    $query->order($db->quoteName('level').' ASC');
+    $query->order($db->quoteName('level') . ' ASC');
 
     // Reset the query using our newly populated query object.
     $db->setQuery($query);
@@ -757,17 +757,17 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       case 'lft':
       case 'l':
         $type = 'left';
-        break;
+          break;
 
       case 'right':
       case 'rgt':
       case 'r':
         $type = 'right';
-        break;
+          break;
 
       default:
         $type = 'both';
-        break;
+          break;
     }
 
     // Check if parent object is loaded
@@ -790,11 +790,11 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       // Select left siblings
       if($direct)
       {
-        $query->where($db->quoteName('rgt').' = '.\strval($this->lft - 1));
+        $query->where($db->quoteName('rgt') . ' = ' . \strval($this->lft - 1));
       }
       else
       {
-        $query->where($db->quoteName('lft').' > '.\strval($parent->lft).' AND '.$db->quoteName('rgt').' < '.\strval($this->lft));
+        $query->where($db->quoteName('lft') . ' > ' . \strval($parent->lft) . ' AND ' . $db->quoteName('rgt') . ' < ' . \strval($this->lft));
       }
     }
     elseif($type === 'right')
@@ -802,11 +802,11 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       // Select right siblings
       if($direct)
       {
-        $query->where($db->quoteName('lft').' = '.\strval($this->rgt + 1));
+        $query->where($db->quoteName('lft') . ' = ' . \strval($this->rgt + 1));
       }
       else
       {
-        $query->where($db->quoteName('lft').' > '.\strval($this->rgt).' AND '.$db->quoteName('rgt').' < '.\strval($parent->rgt));
+        $query->where($db->quoteName('lft') . ' > ' . \strval($this->rgt) . ' AND ' . $db->quoteName('rgt') . ' < ' . \strval($parent->rgt));
       }
     }
     else
@@ -814,21 +814,21 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       // Select all siblings
       if($direct)
       {
-        $query->where($db->quoteName('rgt').' = '.\strval($this->lft - 1).' OR '.$db->quoteName('lft').' = '.\strval($this->rgt + 1));
+        $query->where($db->quoteName('rgt') . ' = ' . \strval($this->lft - 1) . ' OR ' . $db->quoteName('lft') . ' = ' . \strval($this->rgt + 1));
       }
       else
       {
-        $query->where($db->quoteName('id').' != '.$this->id);
+        $query->where($db->quoteName('id') . ' != ' . $this->id);
       }
     }
 
     //Apply level
-    $query->where($db->quoteName('level').' = '.$this->level);
+    $query->where($db->quoteName('level') . ' = ' . $this->level);
 
     // Apply ordering
     if(!$direct)
     {
-      $query->order($db->quoteName('lft').' ASC');
+      $query->order($db->quoteName('lft') . ' ASC');
     }
 
     // Reset the query using our newly populated query object.
@@ -892,7 +892,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
 
       foreach($parents as $key => $node)
       {
-        $this->{$prop_name}[$node['id']] = $node['id'].':'.$node['alias'];
+        $this->{$prop_name}[$node['id']] = $node['id'] . ':' . $node['alias'];
       }
     }
 

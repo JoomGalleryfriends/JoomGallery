@@ -18,45 +18,45 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
 // add meta title
-$app = Factory::getApplication();
-$doc = $app->getDocument();
+$app  = Factory::getApplication();
+$doc  = $app->getDocument();
 $menu = $app->getMenu()->getActive();
 
 $menuPageTitle = '';
 
 if($menu)
 {
-    $menuPageTitle = $menu->getParams()->get('page_title', '');
+  $menuPageTitle = $menu->getParams()->get('page_title', '');
 }
 
 // only set automatic title if no custom menu page title exists
 if(empty($menuPageTitle))
 {
-    $title = $this->item->title ?? '';
-    $sitename = $app->get('sitename');
-    $sitename_pagetitles = (int) $app->get('sitename_pagetitles', 0);
+  $title               = $this->item->title ?? '';
+  $sitename            = $app->get('sitename');
+  $sitename_pagetitles = (int) $app->get('sitename_pagetitles', 0);
 
-    $prefix = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX_CATEGORY');
-    $baseTitle = trim($prefix . ' ' . $title);
+  $prefix    = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX_CATEGORY');
+  $baseTitle = trim($prefix . ' ' . $title);
 
-    if($sitename_pagetitles === 0)
-    {
-        $fullTitle = $baseTitle;
-    }
-    elseif($sitename_pagetitles === 1)
-    {
-        $fullTitle = $sitename . ' - ' . $baseTitle;
-    }
-    elseif($sitename_pagetitles === 2)
-    {
-        $fullTitle = $baseTitle . ' - ' . $sitename;
-    }
-    else
-    {
-        $fullTitle = $baseTitle;
-    }
+  if($sitename_pagetitles === 0)
+  {
+    $fullTitle = $baseTitle;
+  }
+  elseif($sitename_pagetitles === 1)
+  {
+    $fullTitle = $sitename . ' - ' . $baseTitle;
+  }
+  elseif($sitename_pagetitles === 2)
+  {
+    $fullTitle = $baseTitle . ' - ' . $sitename;
+  }
+  else
+  {
+    $fullTitle = $baseTitle;
+  }
 
-    $doc->setTitle($fullTitle);
+  $doc->setTitle($fullTitle);
 }
 
 // Import CSS & JS
@@ -67,12 +67,12 @@ $wa->useStyle('com_joomgallery.jg-icon-font');
 
 <?php if($this->item->pw_protected): ?>
   <form action="<?php echo Route::_('index.php?task=category.unlock&catid=' . $this->item->id);?>" method="post" 
-    class="form-inline" autocomplete="off">
+  class="form-inline" autocomplete="off">
   <h3><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD_PROTECTED'); ?></h3>
   <label for="jg_password"><?php echo Text::_('JGLOBAL_PASSWORD'); ?></label>
   <input type="password" name="password" id="jg_password"/>
   <button type="submit" class="btn btn-primary"
-      id="jg_unlock_button"><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BUTTON_UNLOCK'); ?></button>
+    id="jg_unlock_button"><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BUTTON_UNLOCK'); ?></button>
   <?php echo HTMLHelper::_('form.token'); ?>
   </form>
 <?php else: ?>

@@ -92,7 +92,7 @@ abstract class Uploader implements UploaderInterface
    */
   protected $async = false;
 
-  /**
+    /**
      * Path to file after upload completed
      *
      * @var string
@@ -623,7 +623,7 @@ abstract class Uploader implements UploaderInterface
     }
 
       // if (isset($this->src_tmp) && !empty($this->src_tmp) && file_exists($this->src_tmp))
-      if (isset($this->src_tmp) && !empty($this->src_tmp) && is_file($this->src_tmp))
+      if(isset($this->src_tmp) && !empty($this->src_tmp) && is_file($this->src_tmp))
       {
           array_push($files, $this->src_tmp);
       }
@@ -631,7 +631,7 @@ abstract class Uploader implements UploaderInterface
       // ToDo: @manuel JFile only accepts string not array J6.0 ? earlier ?
       $isDeleted = true;
 
-      foreach ($files as $file)
+      foreach($files as $file)
       {
           $isDeleted &= JFile::delete($file);
       }

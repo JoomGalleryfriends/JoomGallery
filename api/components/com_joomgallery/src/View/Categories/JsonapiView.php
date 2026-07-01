@@ -1,23 +1,23 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\View\Categories;
 
-use Joomla\Registry\Registry;
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\Language\Multilanguage;
-use Joomla\CMS\Serializer\JoomlaSerializer;
-use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
-use Joomla\CMS\Router\Exception\RouteNotFoundException;
-use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomgallery\Component\Joomgallery\Api\Helper\JoomgalleryHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\MVC\View\JsonApiView as BaseApiView;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Exception\RouteNotFoundException;
+use Joomla\CMS\Serializer\JoomlaSerializer;
+use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
+use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
@@ -212,7 +212,7 @@ class JsonapiView extends BaseApiView
       throw new RouteNotFoundException('Item does not exist');
     }
 
-    $item->text = $item->introtext.' '.$item->fulltext;
+    $item->text = $item->introtext . ' ' . $item->fulltext;
 
     // Process the joomgallery plugins.
     PluginHelper::importPlugin('joomgallery');

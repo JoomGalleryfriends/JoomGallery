@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -15,11 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\User\CurrentUserInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomla\Registry\Registry;
 
 /**
  * Base model class for JoomGallery list of items
@@ -159,7 +159,7 @@ abstract class JoomListModel extends ListModel
 
     if(isset($params_array['item_id']))
     {
-      $this->setState($this->type.'.id', $params_array['item_id']);
+      $this->setState($this->type . '.id', $params_array['item_id']);
     }
 
     $this->setState('parameters.component', $params);
@@ -290,7 +290,7 @@ abstract class JoomListModel extends ListModel
     $query->from($db->quoteName($table->getTableName()));
 
     // Apply ordering
-    if(!$ordering) $ordering = $table->getKeyName().' ASC';
+    if(!$ordering) $ordering = $table->getKeyName() . ' ASC';
     $query->order($db->escape($ordering));
 
     return $query;

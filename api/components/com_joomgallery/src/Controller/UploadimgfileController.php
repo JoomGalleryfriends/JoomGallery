@@ -1,25 +1,24 @@
 <?php
-
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\Controller;
 
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\Database\ParameterType;
-use Joomla\Database\DatabaseInterface;
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\MVC\Controller\ApiController;
-use Tobscure\JsonApi\Exception\InvalidParameterException;
-use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomla\Component\Media\Administrator\Provider\ProviderManagerHelperTrait;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
+use Tobscure\JsonApi\Exception\InvalidParameterException;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
@@ -48,7 +47,6 @@ class UploadimgfileController extends ApiController
   protected $default_view = 'images';
 
   /**
-   *
    * @return UploadimgfileController
    *
    * @throws InvalidParameterException
@@ -132,7 +130,7 @@ class UploadimgfileController extends ApiController
     $data = json_decode($this->input->json->getRaw(), true);
 
     // Uploader may be set from outside in the future
-    if(empty ($data['uploader']))
+    if(empty($data['uploader']))
     {
       $data['uploader'] = 'api';
     }
@@ -144,6 +142,7 @@ class UploadimgfileController extends ApiController
     //--- Save image data/file  -----------------------------------------------------------------
 
     $isSaved = $model->save($data);
+
     if($isSaved)
     {
       //--- Return json with created DB data -----------------------------------------------------------------
@@ -153,10 +152,9 @@ class UploadimgfileController extends ApiController
 
       return parent::displayItem($image_id);
     }
-    else
-    {
+
+
       throw new \RuntimeException(Text::_('UploadimgfileController: Could not save the image'), 500);
-    }
   }
 
   /**
@@ -180,14 +178,13 @@ class UploadimgfileController extends ApiController
     }
 
     // ToDo: Image extension
-
   }
 
   public function patch_image_upload_file()
   {
-    $image_id = $this->input->getInt('image_id');
+    $image_id    = $this->input->getInt('image_id');
     $category_id = $this->input->getInt('catid');
-    $content = $this->input->json->get('content', '', 'RAW');
+    $content     = $this->input->json->get('content', '', 'RAW');
 
     // ToDo: API
     $missingParameters = [];
@@ -243,7 +240,7 @@ class UploadimgfileController extends ApiController
     $apiData['id'] = $image_id;
 
     // not given as API parameter
-    if(empty ($apiData['catid']))
+    if(empty($apiData['catid']))
     {
       // given by api route
       if(!empty($category_id))
@@ -254,7 +251,7 @@ class UploadimgfileController extends ApiController
     }
 
     // Uploader may be set from outside in the future
-    if(empty ($apiData['uploader']))
+    if(empty($apiData['uploader']))
     {
       $apiData['uploader'] = 'api';
     }
@@ -265,17 +262,16 @@ class UploadimgfileController extends ApiController
     //--- Save image data/file  -----------------------------------------------------------------
 
     $isSaved = $model->save($data);
+
     if($isSaved)
     {
       //--- Return json with created DB data -----------------------------------------------------------------
 
       return parent::displayItem($image_id);
+    }
 
-    }
-    else
-    {
+
       throw new \RuntimeException(Text::_('UploadimgfileController: Could not save the image'), 500);
-    }
   }
 
   /**
@@ -299,7 +295,7 @@ class UploadimgfileController extends ApiController
       $query = $db->createQuery()
         ->select('*')
         ->from('#__joomgallery')
-        ->where($db->quoteName('id').' = :id')
+        ->where($db->quoteName('id') . ' = :id')
         ->bind(':id', $image_id, ParameterType::INTEGER);
       $db->setQuery($query);
 

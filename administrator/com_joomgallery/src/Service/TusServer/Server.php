@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -14,14 +14,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
+use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Request;
 use Joomla\CMS\Factory;
 use Psr\Http\Message\ResponseInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
-use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
-use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
-use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
-use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Request;
-use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
 
 /**
  * Tus-Server v1.0.0 implementation
@@ -40,8 +40,8 @@ class Server implements ServerInterface
 {
   use ResponseTrait;
 
-  public const TIMEOUT = 30;
-  public const TUS_VERSION = '1.0.0';
+  public const TIMEOUT        = 30;
+  public const TUS_VERSION    = '1.0.0';
   public const TUS_EXTENSIONS = 'creation,termination';
 
   /**
@@ -155,7 +155,7 @@ class Server implements ServerInterface
     $this->app       = Factory::getApplication();
     $this->debugMode = $debug;
 
-    require JPATH_ADMINISTRATOR.'/components/'._JOOM_OPTION.'/includes/tusspecs.php';
+    require JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/includes/tusspecs.php';
     $this->specs = $tus_specs_array;
   }
 
@@ -186,7 +186,7 @@ class Server implements ServerInterface
           }
           $this->buildUuid();
           $this->processPost();
-          break;
+            break;
 
         case 'HEAD':
           if(!$this->checkTusVersion())
@@ -196,7 +196,7 @@ class Server implements ServerInterface
           }
           $this->getUserUuid();
           $this->processHead();
-          break;
+            break;
 
         case 'PATCH':
           if(!$this->checkTusVersion())
@@ -206,26 +206,26 @@ class Server implements ServerInterface
           }
           $this->getUserUuid();
           $this->processPatch();
-          break;
+            break;
 
         case 'OPTIONS':
           $isOption = true;
           $this->processOptions();
-          break;
+            break;
 
         case 'GET':
           $this->getUserUuid();
           $this->processGet();
-          break;
+            break;
 
         case 'DELETE':
           $this->getUserUuid();
           $this->processDelete();
-          break;
+            break;
 
         default:
-          $this->component->addLog('The requested method '.$method.' is not allowed 405', 'error', 'jerror');
-          throw new Request('The requested method '.$method.' is not allowed', 405);
+          $this->component->addLog('The requested method ' . $method . ' is not allowed 405', 'error', 'jerror');
+            throw new Request('The requested method ' . $method . ' is not allowed', 405);
       }
 
       $this->addCommonHeader($isOption);
@@ -348,18 +348,18 @@ class Server implements ServerInterface
     $this->setMetaData($this->parseMetaDataHeader($headers['Upload-Metadata']), false);
     $this->setRealFileName();
 
-    $file = $this->directory.$this->getFilename();
+    $file = $this->directory . $this->getFilename();
 
     if(file_exists($file) === true)
     {
-      $this->component->addLog('File already exists : '.$file.' 500', 'error', 'jerror');
-      throw new File('File already exists : '.$file, 500);
+      $this->component->addLog('File already exists : ' . $file . ' 500', 'error', 'jerror');
+      throw new File('File already exists : ' . $file, 500);
     }
 
     if(touch($file) === false)
     {
-      $this->component->addLog('Impossible to touch '.$file.' 500', 'error', 'jerror');
-      throw new File('Impossible to touch '.$file, 500);
+      $this->component->addLog('Impossible to touch ' . $file . ' 500', 'error', 'jerror');
+      throw new File('Impossible to touch ' . $file, 500);
     }
 
     $this->setMetaDataValue('id', $this->uuid);
@@ -370,7 +370,7 @@ class Server implements ServerInterface
     $location = $this->app->input->server->get('REQUEST_URI', $this->getLocation(), 'string');
     $domain   = $this->getDomain() ?: '';
 
-    $this->addHeaderLine('Location', $domain.$location.'&uuid='.$this->uuid);
+    $this->addHeaderLine('Location', $domain . $location . '&uuid=' . $this->uuid);
 
     unset($path);
   }
@@ -395,7 +395,7 @@ class Server implements ServerInterface
     }
 
     // if file in storage does not exist
-    if(!file_exists($this->directory.$this->getFilename()))
+    if(!file_exists($this->directory . $this->getFilename()))
     {
       // allow new upload
       $this->deleteMetaData($this->uuid);
@@ -500,7 +500,7 @@ class Server implements ServerInterface
       throw new File('Impossible to open php://input');
     }
 
-    $file         = $this->directory.$this->getFilename();
+    $file         = $this->directory . $this->getFilename();
     $handleOutput = fopen($file, 'ab');
 
     if($handleOutput === false)
@@ -626,7 +626,8 @@ class Server implements ServerInterface
     {
       $returnCode = 500;
       $returnMsg  = $exp->getMessage();
-    } finally
+    }
+    finally
     {
       fclose($handleInput);
       fclose($handleOutput);
@@ -663,24 +664,24 @@ class Server implements ServerInterface
       throw new Request('The requested method Get is not allowed', 405);
     }
 
-    $file = $this->directory.$this->getFilename();
+    $file = $this->directory . $this->getFilename();
 
     if(!file_exists($file))
     {
-      $this->component->addLog('The file '.$this->uuid.' doesn\'t exist 404', 'error', 'jerror');
-      throw new Request('The file '.$this->uuid.' doesn\'t exist', 404);
+      $this->component->addLog('The file ' . $this->uuid . ' doesn\'t exist 404', 'error', 'jerror');
+      throw new Request('The file ' . $this->uuid . ' doesn\'t exist', 404);
     }
 
     if(!is_readable($file))
     {
-      $this->component->addLog('The file '.$this->uuid.' is unaccessible 403', 'error', 'jerror');
-      throw new Request('The file '.$this->uuid.' is unaccessible', 403);
+      $this->component->addLog('The file ' . $this->uuid . ' is unaccessible 403', 'error', 'jerror');
+      throw new Request('The file ' . $this->uuid . ' is unaccessible', 403);
     }
 
-    if(!file_exists($file.'.info') || !is_readable($file.'.info'))
+    if(!file_exists($file . '.info') || !is_readable($file . '.info'))
     {
-      $this->component->addLog('The file '.$this->uuid.' has no metadata 500', 'error', 'jerror');
-      throw new Request('The file '.$this->uuid.' has no metadata', 500);
+      $this->component->addLog('The file ' . $this->uuid . ' has no metadata 500', 'error', 'jerror');
+      throw new Request('The file ' . $this->uuid . ' has no metadata', 500);
     }
 
     $fileName = $this->getMetaDataValue('filename', true);
@@ -691,7 +692,7 @@ class Server implements ServerInterface
 
       if($isInfo !== -1)
       {
-        FileToolsService::downloadFile($file.'.info', $fileName.'.info');
+        FileToolsService::downloadFile($file . '.info', $fileName . '.info');
       }
       else
       {
@@ -725,7 +726,7 @@ class Server implements ServerInterface
     }
 
     // if file in storage does not exists
-    if(!file_exists($this->directory.$this->getFilename()))
+    if(!file_exists($this->directory . $this->getFilename()))
     {
       // allow new upload
       $this->deleteMetaData($this->uuid);
@@ -803,7 +804,7 @@ class Server implements ServerInterface
    */
   private function buildUuid(): void
   {
-    $this->uuid = hash('md5', uniqid(mt_rand().php_uname(), true));
+    $this->uuid = hash('md5', uniqid(mt_rand() . php_uname(), true));
   }
 
   /**
@@ -896,8 +897,8 @@ class Server implements ServerInterface
 
     if($throw)
     {
-      $this->component->addLog($key.' is not defined in medatada', 'error', 'jerror');
-      throw new \RuntimeException($key.' is not defined in medatada');
+      $this->component->addLog($key . ' is not defined in medatada', 'error', 'jerror');
+      throw new \RuntimeException($key . ' is not defined in medatada');
     }
 
 
@@ -995,7 +996,7 @@ class Server implements ServerInterface
       'isfinal'   => false,
     ];
 
-    $file = $this->directory.$filename.'.info';
+    $file = $this->directory . $filename . '.info';
 
     if(file_exists($file))
     {
@@ -1046,14 +1047,14 @@ class Server implements ServerInterface
     {
       if(!$this->fileType)
       {
-        $this->fileType = FileToolsService::detectMimeType($this->directory.$this->getUserUuid(), $this->getRealFileName());
+        $this->fileType = FileToolsService::detectMimeType($this->directory . $this->getUserUuid(), $this->getRealFileName());
       }
       $this->setMetaDataValue('mimetype', $this->fileType);
     }
 
     $json = json_encode($this->getMetaData());
 
-    file_put_contents($this->directory.$this->getUserUuid().'.info', $json);
+    file_put_contents($this->directory . $this->getUserUuid() . '.info', $json);
   }
 
   /**
@@ -1065,7 +1066,7 @@ class Server implements ServerInterface
    */
   private function deleteMetaData($filename): bool
   {
-    $file = $this->directory.$filename.'.info';
+    $file = $this->directory . $filename . '.info';
 
     if(file_exists($file) && is_writable($file))
     {
@@ -1116,8 +1117,8 @@ class Server implements ServerInterface
   {
     if($this->uuid === null)
     {
-      $this->component->addLog('Uuid can\'t be null when call '.__METHOD__, 'error', 'jerror');
-      throw new \DomainException('Uuid can\'t be null when call '.__METHOD__);
+      $this->component->addLog('Uuid can\'t be null when call ' . __METHOD__, 'error', 'jerror');
+      throw new \DomainException('Uuid can\'t be null when call ' . __METHOD__);
     }
 
     return $this->uuid;
@@ -1135,7 +1136,7 @@ class Server implements ServerInterface
   private function deleteUpload($uuid)
   {
     // List of name of files inside upload folder
-    $files = glob($this->directory.'*');
+    $files = glob($this->directory . '*');
 
     $num_files = 0;
 
@@ -1146,8 +1147,8 @@ class Server implements ServerInterface
         // Delete file with uuid in its name
         if(!unlink($file))
         {
-          $this->component->addLog('File with name "'.$file.'" can not be deleted. 500', 'error', 'jerror');
-          throw new File('File with name "'.$file.'" can not be deleted.', 500);
+          $this->component->addLog('File with name "' . $file . '" can not be deleted. 500', 'error', 'jerror');
+          throw new File('File with name "' . $file . '" can not be deleted.', 500);
         }
       }
     }
@@ -1178,7 +1179,7 @@ class Server implements ServerInterface
 
       if($this->specs['Headers'][$headerName]['Type'] == 'string' && trim($value) === '')
       {
-        throw new BadHeader($headerName.' can\'t be empty');
+        throw new BadHeader($headerName . ' can\'t be empty');
       }
 
       $headersValues[$headerName] = $value;
@@ -1248,11 +1249,11 @@ class Server implements ServerInterface
   {
     if(is_dir($directory) === false || is_writable($directory) === false)
     {
-      $this->component->addLog($directory.' doesn\'t exist or isn\'t writable', 'error', 'jerror');
-      throw new File($directory.' doesn\'t exist or isn\'t writable');
+      $this->component->addLog($directory . ' doesn\'t exist or isn\'t writable', 'error', 'jerror');
+      throw new File($directory . ' doesn\'t exist or isn\'t writable');
     }
 
-    $this->directory = $directory.(substr($directory, -1) !== DIRECTORY_SEPARATOR ? DIRECTORY_SEPARATOR : '');
+    $this->directory = $directory . (substr($directory, -1) !== DIRECTORY_SEPARATOR ? DIRECTORY_SEPARATOR : '');
 
     return $this;
   }
@@ -1267,7 +1268,7 @@ class Server implements ServerInterface
     if(substr($this->directory, -1) != '/')
     {
       // directory should end with a slash (/)
-      return $this->directory.'/';
+      return $this->directory . '/';
     }
 
     return $this->directory;
@@ -1283,7 +1284,7 @@ class Server implements ServerInterface
     if(substr($this->location, 0, 1) != '/')
     {
       // location should always starts with a slash (/)
-      return '/'.$this->location;
+      return '/' . $this->location;
     }
 
     return $this->location;
@@ -1310,7 +1311,7 @@ class Server implements ServerInterface
     if(substr($location, 0, 1) != '/')
     {
       // location should always starts with a slash (/)
-      $location = '/'.$location;
+      $location = '/' . $location;
     }
 
     $this->location = $location;
