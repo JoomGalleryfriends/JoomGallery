@@ -1,10 +1,9 @@
 <?php
-
 /**
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -30,9 +29,9 @@ class VersionModel extends BaseDatabaseModel
     protected string $componentName = 'com_joomgallery';
 
     /**
-	   * @param $config
+     * @param $config
      *
-	   * @throws \Exception
+     * @throws \Exception
      */
     public function __construct($config = [])
     {
@@ -42,102 +41,102 @@ class VersionModel extends BaseDatabaseModel
     }
 
     /**
- 	   * Method to get a single result
-	   *
+     * Method to get a single result
+     *
      * @return  \stdClass  A file or folder object.
      *
-	   * @throws  ResourceNotFound
+     * @throws  ResourceNotFound
      * @since   4.1.0
      */
     public function getItem()
     {
-		// Dummy default
+        // Dummy default
         $oVersion               = new \stdClass();
-		$oVersion->version      = "xx.xx.xx";
-		$oVersion->creationDate = "2025.xx.xx";
+        $oVersion->version      = 'xx.xx.xx';
+        $oVersion->creationDate = '2025.xx.xx';
 
         try
-		{
-			$oManifest = ManifestHelper::getDbManifest($this->componentName);
+        {
+            $oManifest = ManifestHelper::getDbManifest($this->componentName);
 
-			if (!empty($oManifest))
-			{
-				$oVersion->version      = $oManifest['version'];
-				$oVersion->creationDate = $oManifest['creationDate'];
-
-			}
-		}
-		catch (\Exception $e)
-		{
-			throw new \RuntimeException($e->getMessage());
-		}
+            if(!empty($oManifest))
+            {
+                $oVersion->version      = $oManifest['version'];
+                $oVersion->creationDate = $oManifest['creationDate'];
+            }
+        }
+        catch (\Exception $e)
+        {
+            throw new \RuntimeException($e->getMessage());
+        }
 
         return $oVersion;
     }
 
-	/**
-	 * Save manifest data
-   * Transfers 'version' and 'creationDate' in data
-   *
-	 * @param   mixed  $data
-	 *
-   * @since  4.4.0
-  */
-	public function save(mixed $data = [], $isForce = false)
-	{
-		$isSaved = true;
+    /**
+     * Save manifest data
+     * Transfers 'version' and 'creationDate' in data
+     *
+     * @param   mixed  $data
+     *
+     * @since  4.4.0
+     */
+    public function save(mixed $data = [], $isForce = false)
+    {
+        $isSaved = true;
 
-		// accepting multiple parameter
-		if (!empty ($data))
-		{
-			$isChanged = false;
-			$isSaved = false;
+        // accepting multiple parameter
+        if(!empty($data))
+        {
+            $isChanged = false;
+            $isSaved   = false;
 
-			try
-			{
-				$oManifest = ManifestHelper::getDbManifest($this->componentName);
+            try
+            {
+                $oManifest = ManifestHelper::getDbManifest($this->componentName);
 
-				if (!empty($oManifest))
-				{
-					//--- version ------------------------------------
+                if(!empty($oManifest))
+                {
+                    //--- version ------------------------------------
 
-					if (!empty ($data['version']))
-					{
-						$version = $data['version'];
-						if ($oManifest['version'] != $version)
-						{
-							$oManifest['version'] = $data['version'];
-							$isChanged = true;
-						}
-					}
+                    if(!empty($data['version']))
+                    {
+                        $version = $data['version'];
 
-					//--- creation date ------------------------------------
+                        if($oManifest['version'] != $version)
+                        {
+                            $oManifest['version'] = $data['version'];
+                            $isChanged            = true;
+                        }
+                    }
 
-					if (!empty ($data['creationDate']))
-					{
-						$creationDate = $data['creationDate'];
-						if ($oManifest['creationDate'] != $creationDate)
-						{
-							$oManifest['creationDate'] = $creationDate;
-							$isChanged = true;
-						}
-					}
+                    //--- creation date ------------------------------------
 
-					//--- save changes ----------------------------------------
+                    if(!empty($data['creationDate']))
+                    {
+                        $creationDate = $data['creationDate'];
 
-					if ($isChanged) {
-						$isSaved = ManifestHelper::saveDbManifest($oManifest, $this->componentName);
-					}
-				}
+                        if($oManifest['creationDate'] != $creationDate)
+                        {
+                            $oManifest['creationDate'] = $creationDate;
+                            $isChanged                 = true;
+                        }
+                    }
 
-			}
-			catch (\Exception $e)
-			{
-				throw new \RuntimeException($e->getMessage());
-			}
-		}
+                    //--- save changes ----------------------------------------
 
-		return $isSaved;
-	}
+                    if($isChanged)
+                    {
+                        $isSaved = ManifestHelper::saveDbManifest($oManifest, $this->componentName);
+                    }
+                }
+            }
+            catch (\Exception $e)
+            {
+                throw new \RuntimeException($e->getMessage());
+            }
+        }
 
+        return $isSaved;
+    }
 }

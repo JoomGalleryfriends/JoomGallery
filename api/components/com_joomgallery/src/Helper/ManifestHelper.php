@@ -1,22 +1,21 @@
 <?php
-
 /**
  * *********************************************************************************
- * @package    com_joomgallery                                                 **
- * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- * @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
- * @license    GNU General Public License version 3 or later                   **
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Api\Helper;
 
 use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseInterface;
 use Joomla\CMS\MVC\Controller\Exception\ResourceNotFound;
+use Joomla\Database\DatabaseInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+\defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -26,7 +25,6 @@ use Joomla\CMS\MVC\Controller\Exception\ResourceNotFound;
  */
 class ManifestHelper
 {
-
   /**
    * Method to get the manifest from the Databas as json
    *
@@ -46,7 +44,7 @@ class ManifestHelper
       $query = $db->createQuery()
         ->select($db->quoteName('manifest_cache'))
         ->from($db->quoteName('#__extensions'))
-        ->where($db->quoteName('element').' = '.$db->quote($extension));
+        ->where($db->quoteName('element') . ' = ' . $db->quote($extension));
       $db->setQuery($query);
 
       $manifest = $db->loadResult();
@@ -107,8 +105,8 @@ class ManifestHelper
 
       $query = $db->createQuery()
         ->update($db->quoteName('#__extensions'))
-        ->set($db->quoteName('manifest_cache').' = '.$db->quote($manifestJson))
-        ->where($db->quoteName('element').' = '.$db->quote($extension));
+        ->set($db->quoteName('manifest_cache') . ' = ' . $db->quote($manifestJson))
+        ->where($db->quoteName('element') . ' = ' . $db->quote($extension));
       $db->setQuery($query)->execute();
 
       $isSaved = true;
@@ -146,7 +144,7 @@ class ManifestHelper
       }
       else
       {
-        throw new \Exception ("Can not json_encode given manifest data ");
+        throw new \Exception('Can not json_encode given manifest data ');
       }
     }
     catch(\Exception $e)
@@ -157,5 +155,4 @@ class ManifestHelper
 
     return $isSaved;
   }
-
 }
