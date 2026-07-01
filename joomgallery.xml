@@ -79,11 +79,13 @@
       </fieldset>
     </fields>
   </config>
+
   <api>
     <files folder="api/components/com_joomgallery">
       <folder>src</folder>
     </files>
   </api>
+
   <plugins>
     <plugin group="console" plugin="joomconsole"/>
     <plugin group="finder" plugin="joomgallery"/>
