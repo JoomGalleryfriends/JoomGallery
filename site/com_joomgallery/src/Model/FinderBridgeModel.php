@@ -62,17 +62,17 @@ final class FinderBridgeModel extends SearchModel
     $taxonomyNodeIds = array_values(array_unique(array_filter(array_map('intval', $taxonomyNodeIds))));
 
     // Allow empty search only when taxonomy filters exist.
-    $options['empty']        = ($searchTerm === '' && !empty($taxonomyNodeIds)) ? 1 : (int) $params->get('allow_empty_query', 0);
+    $options['empty'] = ($searchTerm === '' && !empty($taxonomyNodeIds)) ? 1 : (int) $params->get('allow_empty_query', 0);
 
     // Static Finder filter id, not taxonomy node ids.
-    $options['filter']     = $params->get('f', '');
+    $options['filter'] = $params->get('f', '');
 
     // Dynamic taxonomy node ids.
-    $options['filters']    = $taxonomyNodeIds;
+    $options['filters'] = $taxonomyNodeIds;
 
     // Apply search term
-    $options['input']      = !empty($searchTerm) ? $searchTerm : $params->get('q', '');
-    
+    $options['input'] = !empty($searchTerm) ? $searchTerm : $params->get('q', '');
+
     // Options from Finder parameters
     $options['language']   = $params->get('l', $language->getTag());
     $options['word_match'] = $params->get('word_match', 'exact');

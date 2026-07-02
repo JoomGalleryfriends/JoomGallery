@@ -47,6 +47,17 @@ $search_obj                = new stdClass();
 $search_obj->filterForm    = $filterForm;
 $search_obj->activeFilters = $activeFilters;
 
+// Check for active filters
+$active = false;
+
+foreach((array) $filterForm->getData()->get('filter') as $values)
+{
+  if(!empty($values))
+  {
+    $active = true;
+  }
+}
+
 /*
 * This segment of code sets up the autocompleter.
 */
@@ -80,13 +91,19 @@ if($provider->getName() == 'finder' & $params->get('jg_gallery_view_autosuggest'
           <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
         </button>
       </div>
-      <div class="filter-input collapse" id="toggleFilter">
+      <div class="filter-input collapse <?php if($active) echo 'show'; ?>" id="toggleFilter">
         <div class="card card-body">
           <h5><?php echo Text::_('COM_JOOMGALLERY_FILTER_TITLE'); ?></h5>
           <div class="filter-group">
             <?php if(!empty($filterForm))
             {
-              echo LayoutHelper::render('joomla.searchtools.default.filters', ['view' => $search_obj]);
+              $data = [
+                'provider' => $provider,
+                'params'   => $params,
+                'form'     => $search_obj->filterForm,
+                'active'   => $search_obj->activeFilters,
+              ];
+              echo LayoutHelper::render('joomgallery.search.filters', $data);
             } ?>
           </div>
         </div>

@@ -125,7 +125,7 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
       'activeFilters' => $this->activeFilters,
     ];
 
-    echo LayoutHelper::render('joomgallery.search', $search_vars);
+    echo LayoutHelper::render('joomgallery.search.searchbar', $search_vars);
   ?>
 
   <?php // Hint for no items ?>

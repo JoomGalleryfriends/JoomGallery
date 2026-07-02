@@ -11,12 +11,23 @@
 \defined('_JEXEC') || die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormHelper;
+use Joomla\Registry\Registry;
 
-$data = $displayData;
+extract($displayData);
+
+/**
+ * Layout variables
+ * -----------------
+ * @var   object    $provider       The search provider object
+ * @var   Registry  $params         The view params
+ * @var   Form      $form      Form object of the filters
+ * @var   array     $active    The active filters
+ **/
 
 // Load the form filters
-$filters = $data['view']->filterForm->getGroup('filter');
+$filters = $form->getGroup('filter');
 
 /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
@@ -24,6 +35,16 @@ $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
 <?php if($filters) : ?>
     <?php foreach($filters as $fieldName => $field) : ?>
+        <?php
+            $hasTags   = \in_array('tags', $provider->getFilters());
+            $hasLogOps = \in_array('and', $provider->getFilters());
+
+            if(str_contains($fieldName, 'and') && $hasTags && !$hasLogOps)
+            {
+                # The search provider does not support logical operator for tags
+                continue;
+            }
+        ?>
         <?php if($fieldName !== 'filter_search') : ?>
             <?php $dataShowOn = ''; ?>
             <?php if($field->showon) : ?>
