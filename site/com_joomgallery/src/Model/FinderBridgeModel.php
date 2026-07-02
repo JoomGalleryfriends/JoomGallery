@@ -44,11 +44,36 @@ final class FinderBridgeModel extends SearchModel
     $options    = [];
     $searchTerm = trim($searchTerm);
 
-    // Get the empty query setting.
-    $options['empty']      = ($searchTerm === '' && !empty($taxonomyNodeIds)) ? 1 : (int) $params->get('allow_empty_query', 0);
-    $options['filter']     = !empty($filters) ? $filters : $params->get('f', '');
-    $options['filters']    = $params->get('t', []);
+    // Finder expects taxonomy node ids as flat array for "filters".
+    $taxonomyNodeIds = [];
+
+    foreach($filters as $filter)
+    {
+      if(\is_array($filter))
+      {
+        $taxonomyNodeIds = array_merge($taxonomyNodeIds, $filter);
+      }
+      else
+      {
+        $taxonomyNodeIds[] = $filter;
+      }
+    }
+
+    $taxonomyNodeIds = array_values(array_unique(array_filter(array_map('intval', $taxonomyNodeIds))));
+
+    // Allow empty search only when taxonomy filters exist.
+    $options['empty']        = ($searchTerm === '' && !empty($taxonomyNodeIds)) ? 1 : (int) $params->get('allow_empty_query', 0);
+
+    // Static Finder filter id, not taxonomy node ids.
+    $options['filter']     = $params->get('f', '');
+
+    // Dynamic taxonomy node ids.
+    $options['filters']    = $taxonomyNodeIds;
+
+    // Apply search term
     $options['input']      = !empty($searchTerm) ? $searchTerm : $params->get('q', '');
+    
+    // Options from Finder parameters
     $options['language']   = $params->get('l', $language->getTag());
     $options['word_match'] = $params->get('word_match', 'exact');
     $options['date1']      = $params->get('d1', '');
@@ -67,7 +92,6 @@ final class FinderBridgeModel extends SearchModel
     $this->setState('filter.language', Multilanguage::isEnabled());
     $this->setState('list.start', $input->get('limitstart', 0, 'uint'));
     $this->setState('list.limit', $input->get('limit', $params->get('list_limit', $app->get('list_limit', 20)), 'uint'));
-    $this->setState('list.direction', 'DESC');
     $this->setState('params', $params);
     $this->setState('list.ordering', 'l.link_id');
     $this->setState('list.direction', 'DESC');
