@@ -99,14 +99,13 @@
              type="externalconfig"
              label="com_media.upload_maxsize" />
 
-      <!-- <field name="jg_pathftpupload"
+      <field name="jg_pathftpupload"
              type="text"
-             default="administrator/components/com_joomgallery/temp/ftp_upload/"
+             default="images/joomgallery/FTP/"
              maxlength="100"
              filter="string"
-             class="hidden"
              label="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH"
-             description="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH_LONG" /> -->
+             description="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH_LONG" />
 
       <field name="jg_use_real_paths"
              type="radio"
