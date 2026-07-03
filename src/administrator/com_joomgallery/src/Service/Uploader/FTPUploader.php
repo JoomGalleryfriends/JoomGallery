@@ -236,7 +236,6 @@ class FTPUploader extends BaseUploader implements UploaderInterface
     $paths  = [
       $config->get('jg_pathftpupload', ''),
       'images/joomgallery/FTP',
-      'administrator/components/com_joomgallery/temp/ftp_upload',
     ];
 
     $directories = [];
