@@ -668,7 +668,7 @@ class ImageModel extends JoomAdminModel
         // (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
         if(!$uploader->createImage($table))
         {
-          $this->setError($this->component->getDebug(true));
+          $this->setError($this->component->getError(true) ?: $this->component->getDebug(true) ?: Text::_('COM_JOOMGALLERY_SERVICE_SOME_ERRORS_IMAGEFILE'));
           $uploader->rollback($table);
 
           if($isNew)

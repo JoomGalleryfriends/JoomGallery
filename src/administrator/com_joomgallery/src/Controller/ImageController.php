@@ -161,7 +161,7 @@ class ImageController extends JoomFormController
       if(!parent::save())
       {
         $result['success'] = false;
-        $result['error']   = $this->message;
+        $result['error']   = $this->message ?: $this->component->getError(true);
       }
       else
       {
