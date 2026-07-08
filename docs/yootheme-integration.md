@@ -2,9 +2,10 @@
 
 ## Goal
 
-This addon adds an optional YOOtheme/UIkit rendering mode for selected frontend
-views. The default remains Joomla/Bootstrap so existing sites keep their current
-markup unless the new option is enabled.
+This addon adds an optional YOOtheme/UIkit rendering mode for frontend gallery,
+category, image and image-management views. The default remains
+Joomla/Bootstrap so existing sites keep their current markup unless the new
+option is enabled.
 
 ## Configuration
 
@@ -27,8 +28,8 @@ Bootstrap-oriented classes.
 When `YOOtheme (UIkit)` is selected, the affected views:
 
 - use UIkit classes for headings, buttons, alignment and module wrappers
-- replace the `jg-image-thumbnail` wrapper with `uk-display-block` in the shared
-  image grid layout
+- replace the `jg-image-thumbnail` wrapper with `uk-display-block` in shared
+  image and subcategory grid layouts
 - render the frontend image-management table with UIkit table, label, button,
   alert, grid and responsive visibility classes
 - keep the existing lightbox, pagination, grid script and module positions
@@ -50,5 +51,8 @@ hidden and a warning is shown because the selected value cannot be persisted.
 ## Covered Views
 
 - `view=gallery`
+- `view=category`
+- `view=image`
 - `view=images`
 - shared layout `joomgallery.grids.images`
+- shared layout `joomgallery.grids.subcategories`
