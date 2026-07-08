@@ -793,6 +793,15 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
+        <field name="jg_gallery_view_framework"
+               type="list"
+               label="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK"
+               description="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_DESC"
+               default="joomla"
+               validate="options">
+            <option value="joomla">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_JOOMLA</option>
+            <option value="yootheme">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_YOOTHEME</option>
+        </field>
     </fieldset>
 
     <fieldset type="tab" name="frontend-galleryview" label="COM_JOOMGALLERY_CONFIG_TAB_GALLERY_VIEW">
@@ -863,15 +872,6 @@
             <option value="a.downloads ASC">COM_JOOMGALLERY_DOWNLOADS_ASC</option>
             <option value="a.downloads DESC">COM_JOOMGALLERY_DOWNLOADS_DESC</option>
             <option value="RAND()">COM_JOOMGALLERY_RANDOM_ORDER</option>
-        </field>
-        <field name="jg_gallery_view_framework"
-               type="list"
-               label="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK"
-               description="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_DESC"
-               default="joomla"
-               validate="options">
-            <option value="joomla">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_JOOMLA</option>
-            <option value="yootheme">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_YOOTHEME</option>
         </field>
         <field name="jg_gallery_view_class"
                type="list"
