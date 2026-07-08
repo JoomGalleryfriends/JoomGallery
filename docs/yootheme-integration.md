@@ -44,6 +44,9 @@ The update SQL file adds:
 Existing installations need to run the component update so the new configuration
 column is created.
 
+If the form files are copied without running the database update, the setting is
+hidden and a warning is shown because the selected value cannot be persisted.
+
 ## Covered Views
 
 - `view=gallery`
