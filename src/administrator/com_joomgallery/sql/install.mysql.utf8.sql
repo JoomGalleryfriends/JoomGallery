@@ -158,6 +158,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_gallery_view_searchprovider` VARCHAR(15) NOT NULL DEFAULT "finder",
 `jg_gallery_view_autosuggest` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_gallery_view_ordering` VARCHAR(25) NOT NULL DEFAULT "a.hits DESC",
+`jg_gallery_view_framework` VARCHAR(25) NOT NULL DEFAULT "joomla",
 `jg_gallery_view_type_image` VARCHAR(25) NOT NULL DEFAULT "thumbnail",
 `jg_gallery_view_image_link` VARCHAR(25) NOT NULL DEFAULT "defaultview",
 `jg_category_view_browse_images_link` TINYINT(1) NOT NULL DEFAULT 1,
