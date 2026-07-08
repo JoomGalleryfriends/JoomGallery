@@ -1,0 +1,1 @@
+ALTER TABLE `#__joomgallery_configs` ADD `jg_gallery_view_framework` VARCHAR(25) NOT NULL DEFAULT "joomla" AFTER `jg_gallery_view_ordering`;

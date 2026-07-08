@@ -45,7 +45,11 @@ $image_tags_data    = $image_tags_data ?? [];
  * @var   bool     $lightbox_show_tags True to display image tags in the lightbox caption
  * @var   array    $lightbox_tags      Image tags indexed by image id
  * @var   array    $image_tags_data    Image tags indexed by image id
+ * @var   string   $frontend_framework CSS framework used by the parent view (joomla, yootheme)
  */
+
+$frontend_framework = $frontend_framework ?? 'joomla';
+$thumbnail_class     = $frontend_framework === 'yootheme' ? 'uk-display-block' : 'jg-image-thumbnail';
 ?>
 
 <div class="jg-gallery <?php echo $this->escape($layout); ?>" itemscope="" itemtype="https://schema.org/ImageGallery">
@@ -54,7 +58,7 @@ $image_tags_data    = $image_tags_data ?? [];
     <?php $index = 0; ?>
     <?php foreach($items as $key => $item) : ?>
       <div class="jg-image">
-        <div class="jg-image-thumbnail<?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php
+        <div class="<?php echo $thumbnail_class; ?><?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php
                                       endif; ?>">
           <?php if($layout != 'justified') : ?>
             <div class="jg-image-caption-hover <?php echo $this->escape($caption_align); ?>">

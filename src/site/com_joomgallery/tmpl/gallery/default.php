@@ -20,6 +20,7 @@ use Joomla\CMS\Router\Route;
 
 // Image params
 $image_type             = $this->params['configs']->get('jg_gallery_view_type_image', 'thumbnail', 'STRING');
+$frontend_framework     = $this->params['configs']->get('jg_gallery_view_framework', 'joomla', 'STRING');
 $gallery_class          = $this->params['configs']->get('jg_gallery_view_class', 'masonry', 'STRING');
 $num_columns            = $this->params['configs']->get('jg_gallery_view_num_columns', 3, 'INT');
 $image_class            = $this->params['configs']->get('jg_gallery_view_image_class', 0, 'INT');
@@ -30,6 +31,7 @@ $browse_categories_link = $this->params['configs']->get('jg_gallery_view_browse_
 $lightbox_image         = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
 $lightbox_thumbnails    = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
 $lightbox_zoom          = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
+$is_yootheme            = $frontend_framework === 'yootheme';
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -77,10 +79,10 @@ $wa->useScript('com_joomgallery.joomgrid');
 $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joomgrid']);
 ?>
 
-<div class="com-joomgallery-gallery">
+<div class="com-joomgallery-gallery<?php echo $is_yootheme ? ' uk-margin' : ''; ?>">
   <?php if($this->params['menu']->get('show_page_heading')) : ?>
-    <div class="page-header">
-      <h1> <?php echo $this->escape($this->params['menu']->get('page_heading')); ?> </h1>
+    <div class="<?php echo $is_yootheme ? 'uk-margin-medium-bottom' : 'page-header'; ?>">
+      <h1<?php echo $is_yootheme ? ' class="uk-heading-bullet"' : ''; ?>> <?php echo $this->escape($this->params['menu']->get('page_heading')); ?> </h1>
     </div>
   <?php endif; ?>
 
@@ -89,9 +91,9 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
   <?php if(!empty($modules)) : ?>
     <?php foreach($modules as $module) : ?>
       <?php $moduleparams = json_decode($module->params, true); ?>
-      <div class="card">
+      <div class="<?php echo $is_yootheme ? 'uk-card uk-card-default uk-card-body uk-margin' : 'card'; ?>">
         <?php if($module->showtitle) : ?>
-          <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+          <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="' . ($is_yootheme ? 'uk-card-title ' : 'card-header ') . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
           <?php echo $moduleheader; ?>
         <?php endif; ?>
         <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
@@ -99,14 +101,14 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
     <?php endforeach; ?>
   <?php endif; ?>
 
-  <div class="gallery-header">
+  <div class="gallery-header<?php echo $is_yootheme ? ' uk-margin' : ''; ?>">
     <?php echo HTMLHelper::_('content.prepare', $this->item->description, '', 'com_joomgallery.gallery'); ?>
   </div>
 
   <?php // Link to category overview ?>
   <?php if($browse_categories_link == '1') : ?>
-    <div class="center text-center">
-      <a class="jg-link btn btn-outline-primary"
+    <div class="<?php echo $is_yootheme ? 'uk-text-center' : 'center text-center'; ?>">
+      <a class="jg-link <?php echo $is_yootheme ? 'uk-button uk-button-default uk-button-small' : 'btn btn-outline-primary'; ?>"
          href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=1'); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_GALLERY_VIEW_BROWSE_CATEGORIES'); ?>
       </a>
@@ -137,7 +139,7 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
       'id' => '1-' . $this->item->id, 'layout' => $gallery_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
       'caption_align' => 'center', 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
       'image_title'   => false, 'title_link' => 'defaultview', 'image_desc' => false, 'image_date' => false,
-      'image_author'  => false, 'image_tags' => false,
+      'image_author'  => false, 'image_tags' => false, 'frontend_framework' => $frontend_framework,
     ];
     ?>
     <?php // Images grid ?>
@@ -149,8 +151,8 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
 
   <?php // Link to category overview ?>
   <?php if($browse_categories_link == '2') : ?>
-    <div class="center text-center">
-      <p><a class="jg-link btn btn-outline-primary"
+    <div class="<?php echo $is_yootheme ? 'uk-text-center' : 'center text-center'; ?>">
+      <p><a class="jg-link <?php echo $is_yootheme ? 'uk-button uk-button-default uk-button-small' : 'btn btn-outline-primary'; ?>"
             href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=1'); ?>">
           <?php echo Text::_('COM_JOOMGALLERY_GALLERY_VIEW_BROWSE_CATEGORIES'); ?>
         </a></p>
@@ -163,9 +165,9 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
 <?php if(!empty($modules)) : ?>
   <?php foreach($modules as $module) : ?>
     <?php $moduleparams = json_decode($module->params, true); ?>
-    <div class="card">
+    <div class="<?php echo $is_yootheme ? 'uk-card uk-card-default uk-card-body uk-margin' : 'card'; ?>">
       <?php if($module->showtitle) : ?>
-        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="' . ($is_yootheme ? 'uk-card-title ' : 'card-header ') . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
         <?php echo $moduleheader; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
