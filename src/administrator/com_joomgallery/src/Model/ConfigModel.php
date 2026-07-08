@@ -73,6 +73,12 @@ class ConfigModel extends JoomAdminModel
       return false;
     }
 
+    if(!$this->getTable()->hasField('jg_gallery_view_framework'))
+    {
+      $this->form->removeField('jg_gallery_view_framework');
+      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_SCHEMA_MISSING'), 'warning');
+    }
+
     // On edit, we get ID from state, but on save, we use data from input
     $id = (int) $this->getState('config.id', $this->app->getInput()->getInt('id', null));
 
@@ -344,6 +350,14 @@ class ConfigModel extends JoomAdminModel
   {
     // id of the data to be saved
     $id = \intval($data['id']);
+
+    if(\array_key_exists('jg_gallery_view_framework', $data) && !$this->getTable()->hasField('jg_gallery_view_framework'))
+    {
+      $this->setError(Text::_('COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_SCHEMA_MISSING'));
+      $this->component->addLog(Text::_('COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_SCHEMA_MISSING'), 'error', 'jerror');
+
+      return false;
+    }
 
     $mod_items = $this->component->getMVCFactory()->createModel('imagetypes', 'administrator');
     $model     = $this->component->getMVCFactory()->createModel('imagetype', 'administrator');
