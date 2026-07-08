@@ -496,6 +496,7 @@ abstract class Uploader implements UploaderInterface
     // Create image types
     if(!$this->component->getFileManager()->createImages($this->src_file, $data_row->filename, $data_row->catid))
     {
+      $this->component->addError(Text::_('COM_JOOMGALLERY_SERVICE_SOME_ERRORS_IMAGEFILE'));
       $this->rollback($data_row);
       $this->error = true;
 

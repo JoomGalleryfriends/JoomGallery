@@ -112,6 +112,7 @@ $this->form->setFieldAttribute('title', 'required', 'false');
                 <option value="50">50</option>
                 <option value="100">100</option>
                 <option value="150">150</option>
+                <option value="all"><?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_ALL'); ?></option>
               </select>
             </div>
             <div class="mb-3">

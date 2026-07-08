@@ -271,7 +271,7 @@
         return;
       }
 
-      const batchSize = parseInt(limit.value, 10) || 10;
+      const batchSize = limit.value === 'all' ? Number.MAX_SAFE_INTEGER : parseInt(limit.value, 10) || 10;
       const rows = selectedRows().slice(0, batchSize);
 
       if (!rows.length) {
