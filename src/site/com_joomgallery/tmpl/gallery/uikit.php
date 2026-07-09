@@ -72,22 +72,22 @@ $uikit_image_ratio      = $this->params['configs']->get('jg_uikit_gallery_image_
     echo LayoutHelper::render(
         'joomgallery.uikit.images',
         [
-            'id'                   => '1-' . $this->item->id,
-            'items'                => $this->item->images->items,
-            'num_columns'          => (int) $num_columns,
-            'image_type'           => $image_type,
-            'lightbox_type'        => $lightbox_image,
-            'image_link'           => $image_link,
-            'image_title'          => true,
-            'uikit_gap'            => $uikit_gap,
-            'uikit_masonry'        => (bool) $uikit_masonry,
-            'uikit_overlay'        => $uikit_overlay,
-            'uikit_overlay_text'   => $uikit_overlay_text,
-            'uikit_title_position' => $uikit_title_position,
-            'uikit_button_text'    => $uikit_button_text,
-            'uikit_lightbox'       => (bool) $uikit_lightbox,
-            'uikit_image_ratio'    => $uikit_image_ratio,
-          ]
+          'id'                   => '1-' . $this->item->id,
+          'items'                => $this->item->images->items,
+          'num_columns'          => (int) $num_columns,
+          'image_type'           => $image_type,
+          'lightbox_type'        => $lightbox_image,
+          'image_link'           => $image_link,
+          'image_title'          => true,
+          'uikit_gap'            => $uikit_gap,
+          'uikit_masonry'        => (bool) $uikit_masonry,
+          'uikit_overlay'        => $uikit_overlay,
+          'uikit_overlay_text'   => $uikit_overlay_text,
+          'uikit_title_position' => $uikit_title_position,
+          'uikit_button_text'    => $uikit_button_text,
+          'uikit_lightbox'       => (bool) $uikit_lightbox,
+          'uikit_image_ratio'    => $uikit_image_ratio,
+        ]
     );
     ?>
     <div class="uk-flex uk-flex-center uk-margin-medium-top">
