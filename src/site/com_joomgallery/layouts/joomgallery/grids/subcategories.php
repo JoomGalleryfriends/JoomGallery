@@ -29,11 +29,7 @@ extract($displayData);
  * @var   string   $caption_align   Alignment class for the caption
  * @var   string   $description     Category description
  * @var   bool     $random_image    True, if a random inage should be loaded (only for categories)
- * @var   string   $frontend_framework CSS framework used by the parent view (joomla, yootheme)
  */
-
-$frontend_framework = $frontend_framework ?? 'joomla';
-$thumbnail_class     = $frontend_framework === 'yootheme' ? 'uk-display-block' : 'jg-image-thumbnail';
 ?>
 
 <div class="jg-gallery" itemscope="" itemtype="https://schema.org/ImageGallery">
@@ -51,7 +47,7 @@ $thumbnail_class     = $frontend_framework === 'yootheme' ? 'uk-display-block' :
       ?>
 
       <div class="jg-image">
-        <div class="<?php echo $thumbnail_class; ?><?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php
+        <div class="jg-image-thumbnail<?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php
                                       endif; ?>">
           <a href="<?php echo Route::_(JoomHelper::getViewRoute('category', (int) $item->id)); ?>">
             <img src="<?php echo JoomHelper::getImg($item->thumbnail, $img_type); ?>" class="jg-image-thumb" alt="<?php echo $this->escape($item->title); ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php

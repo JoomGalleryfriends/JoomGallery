@@ -19,9 +19,6 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
-$frontendFramework = $this->params['configs']->get('jg_gallery_view_framework', 'joomla', 'STRING');
-$isYootheme        = $frontendFramework === 'yootheme';
-
 // Import CSS
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.list')
@@ -52,27 +49,25 @@ $canDeleteFound = false;
 ?>
 
 <?php if($this->params['menu']->get('show_page_heading')) : ?>
-  <div class="<?php echo $isYootheme ? 'uk-margin-medium-bottom' : 'page-header page-title'; ?>">
-    <h1<?php echo $isYootheme ? ' class="uk-heading-bullet"' : ''; ?>>
-      <?php echo $this->escape($this->params['menu']->get('page_heading')); ?>
-    </h1>
-  </div>
+    <div class="page-header page-title">
+        <h1> <?php echo $this->escape($this->params['menu']->get('page_heading')); ?> </h1>
+    </div>
 <?php endif; ?>
 
-<form class="jg-images<?php echo $isYootheme ? ' uk-margin' : ''; ?>" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post"
+<form class="jg-images" action="<?php echo Route::_('index.php?option=com_joomgallery&view=images'); ?>" method="post"
       name="adminForm" id="adminForm">
 
   <?php if(!empty($this->filterForm)) : ?>
     <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
   <?php endif; ?>
 
-  <div class="<?php echo $isYootheme ? 'uk-grid-small' : 'row'; ?>"<?php echo $isYootheme ? ' uk-grid' : ''; ?>>
-    <div class="<?php echo $isYootheme ? 'uk-width-1-1' : 'col-md-12'; ?>">
+  <div class="row">
+    <div class="col-md-12">
 
       <?php if(empty($this->items)) : ?>
-        <div class="<?php echo $isYootheme ? 'uk-alert-primary' : 'alert alert-info'; ?>"<?php echo $isYootheme ? ' uk-alert' : ''; ?>>
+        <div class="alert alert-info">
           <span class="icon-info-circle" aria-hidden="true"></span><span
-            class="<?php echo $isYootheme ? 'uk-hidden' : 'visually-hidden'; ?>"><?php echo Text::_('INFO'); ?></span>
+            class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
           <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
         </div>
       <?php else : ?>
@@ -80,11 +75,11 @@ $canDeleteFound = false;
           <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <?php endif; ?>
 
-        <div class="<?php echo $isYootheme ? 'uk-clearfix' : 'clearfix'; ?>"></div>
+        <div class="clearfix"></div>
 
-        <div class="<?php echo $isYootheme ? 'uk-overflow-auto' : 'table-responsive'; ?>">
-          <table class="<?php echo $isYootheme ? 'uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-middle' : 'table table-striped'; ?> itemList" id="imageList">
-            <caption class="<?php echo $isYootheme ? 'uk-hidden' : 'visually-hidden'; ?>">
+        <div class="table-responsive">
+          <table class="table table-striped itemList" id="imageList">
+            <caption class="visually-hidden">
               <?php echo Text::_('COM_JOOMGALLERY_IMAGES_TABLE_CAPTION'); ?>,
               <span id="orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
               <span id="filteredBy"><?php echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
@@ -92,36 +87,36 @@ $canDeleteFound = false;
             <thead>
             <tr>
               <?php if($canOrder && $saveOrder && isset($this->items[0]->ordering)): ?>
-                <th scope="col" class="<?php echo $isYootheme ? 'uk-table-shrink uk-text-center uk-visible@m' : 'w-1 text-center d-none d-md-table-cell'; ?>">
+                <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                   <?php echo HTMLHelper::_('grid.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
                 </th>
               <?php else : ?>
-                <th scope="col" class="<?php echo $isYootheme ? 'uk-table-shrink uk-visible@m' : 'w-1 d-md-table-cell'; ?>"></th>
+                <th scope="col" class="w-1 d-md-table-cell"></th>
               <?php endif; ?>
 
-              <th<?php echo $isYootheme ? ' class="uk-table-shrink uk-visible@m"' : ''; ?>></th>
+              <th></th>
 
-                  <th scope="col"<?php echo $isYootheme ? ' class="uk-table-expand"' : ''; ?> style="min-width:180px">
+                  <th scope="col" style="min-width:180px">
                     <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                   </th>
 
-                  <th scope="col" class="<?php echo $isYootheme ? 'uk-table-shrink uk-text-center uk-visible@l' : 'w-3 d-none d-lg-table-cell text-center'; ?>">
+                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                     <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_HITS', 'a.hits', $listDirn, $listOrder); ?>
                   </th>
 
-                  <th scope="col" class="<?php echo $isYootheme ? 'uk-table-shrink uk-text-center uk-visible@l' : 'w-3 d-none d-lg-table-cell text-center'; ?>">
+                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JOOMGALLERY_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
                   </th>
 
-                  <th scope="col" class="<?php echo $isYootheme ? 'uk-table-shrink uk-text-center uk-visible@l' : 'w-3 d-none d-lg-table-cell text-center'; ?>">
+                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                     <?php echo HTMLHelper::_('grid.sort', 'JCATEGORY', 'a.catid', $listDirn, $listOrder); ?>
                   </th>
 
-              <th scope="col" class="<?php echo $isYootheme ? 'uk-table-shrink uk-text-center uk-visible@l' : 'w-3 d-none d-lg-table-cell text-center'; ?>">
+              <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                 <?php echo Text::_('COM_JOOMGALLERY_ACTIONS'); ?>
               </th>
 
-                  <th scope="col" class="<?php echo $isYootheme ? 'uk-table-shrink uk-text-center uk-visible@l' : 'w-3 d-none d-lg-table-cell text-center'; ?>">
+                  <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                     <?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
                   </th>
               </tr>
@@ -148,7 +143,7 @@ $canDeleteFound = false;
               <tr class="row<?php echo $i % 2; ?>">
 
                   <?php if(isset($this->items[0]->ordering)) : ?>
-                    <td class="<?php echo $isYootheme ? 'uk-text-center uk-visible@m' : 'text-center d-none d-md-table-cell'; ?> sort-cell">
+                    <td class="text-center d-none d-md-table-cell sort-cell">
                       <?php
                         $iconClass = '';
 
@@ -166,21 +161,21 @@ $canDeleteFound = false;
                           <span class="icon-ellipsis-v" aria-hidden="true"></span>
                         </span>
                       <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
-                             class="width-20 text-area-order <?php echo $isYootheme ? 'uk-hidden' : 'hidden'; ?>">
+                             class="width-20 text-area-order hidden">
                       <?php endif; ?>
 
                     <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                   </td>
                   <?php endif; ?>
 
-                <td class="<?php echo $isYootheme ? 'uk-table-shrink uk-visible@m' : 'small d-none d-md-table-cell'; ?>">
+                <td class="small d-none d-md-table-cell">
                   <img class="jg_minithumb" src="<?php echo JoomHelper::getImg($item, 'thumbnail'); ?>"
                        alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
                 </td>
 
                 <th scope="row" class="has-context title-cell">
                   <?php if($canCheckin && $item->checked_out > 0) : ?>
-                    <button class="js-grid-item-action tbody-icon<?php echo $isYootheme ? ' uk-button uk-button-text' : ''; ?>" data-item-id="cb<?php echo $i; ?>"
+                    <button class="js-grid-item-action tbody-icon" data-item-id="cb<?php echo $i; ?>"
                             data-item-task="imageform.checkin">
                       <span class="icon-checkedout" aria-hidden="true"></span>
                     </button>
@@ -191,32 +186,32 @@ $canDeleteFound = false;
                   </a>
                 </th>
 
-                <td class="<?php echo $isYootheme ? 'uk-text-center uk-visible@l' : 'd-none d-lg-table-cell text-center'; ?>">
-                    <span class="<?php echo $isYootheme ? 'uk-label' : 'badge bg-info'; ?>">
+                <td class="d-none d-lg-table-cell text-center">
+                    <span class="badge bg-info">
                       <?php echo (int) $item->hits; ?>
                     </span>
                 </td>
 
-                <td class="<?php echo $isYootheme ? 'uk-text-center uk-visible@l' : 'd-none d-lg-table-cell text-center'; ?>">
-                    <span class="<?php echo $isYootheme ? 'uk-label' : 'badge bg-info'; ?>">
+                <td class="d-none d-lg-table-cell text-center">
+                    <span class="badge bg-info">
                       <?php echo (int) $item->downloads; ?>
                     </span>
                 </td>
 
-                <td class="<?php echo $isYootheme ? 'uk-text-center uk-visible@l' : 'd-none d-lg-table-cell text-center'; ?>">
+                <td class="d-none d-lg-table-cell text-center">
                   <?php echo $this->escape($item->cattitle); ?>
                 </td>
 
-                <td class="<?php echo $isYootheme ? 'uk-text-center uk-visible@l' : 'd-none d-lg-table-cell text-center'; ?>">
+                <td class="d-none d-lg-table-cell text-center">
                   <?php if($canEdit || $canDelete): ?>
                     <?php if($canEdit): ?>
-                      <button class="js-grid-item-action tbody-icon <?php echo $isYootheme ? 'uk-button uk-button-text ' : ''; ?><?php echo $disabled; ?>"
+                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                               data-item-id="cb<?php echo $i; ?>" data-item-task="userimage.edit" <?php echo $disabled; ?>>
                         <span class="icon-edit" aria-hidden="true"></span>
                       </button>
                     <?php endif; ?>
                     <?php if($canDelete): ?>
-                      <button class="js-grid-item-delete tbody-icon <?php echo $isYootheme ? 'uk-button uk-button-text ' : ''; ?><?php echo $disabled; ?>"
+                      <button class="js-grid-item-delete tbody-icon <?php echo $disabled; ?>"
                               data-item-confirm="<?php echo Text::_('JGLOBAL_CONFIRM_DELETE'); ?>"
                               data-item-id="cb<?php echo $i; ?>"
                               data-item-task="imageform.remove" <?php echo $disabled; ?>>
@@ -226,10 +221,10 @@ $canDeleteFound = false;
                   <?php endif; ?>
                   </td>
 
-                  <td class="<?php echo $isYootheme ? 'uk-text-center uk-visible@l' : 'd-none d-lg-table-cell text-center'; ?>">
+                  <td class="d-none d-lg-table-cell text-center">
                     <?php if($canChange): ?>
                       <?php $statetask = ((int) $item->published) ? 'unpublish' : 'publish'; ?>
-                      <button class="js-grid-item-action tbody-icon <?php echo $isYootheme ? 'uk-button uk-button-text ' : ''; ?><?php echo $disabled; ?>"
+                      <button class="js-grid-item-action tbody-icon <?php echo $disabled; ?>"
                               data-item-id="cb<?php echo $i; ?>"
                               data-item-task="imageform.<?php echo $statetask; ?>" <?php echo $disabled; ?>
                       >
