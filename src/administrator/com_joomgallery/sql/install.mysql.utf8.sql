@@ -162,6 +162,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_uikit_gallery_masonry` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_uikit_gallery_lightbox` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_uikit_gallery_overlay` VARCHAR(25) NOT NULL DEFAULT "default",
+`jg_uikit_gallery_overlay_text` VARCHAR(25) NOT NULL DEFAULT "inherit",
 `jg_uikit_gallery_image_ratio` VARCHAR(25) NOT NULL DEFAULT "original",
 `jg_uikit_gallery_title_position` VARCHAR(25) NOT NULL DEFAULT "overlay",
 `jg_uikit_gallery_button_text` VARCHAR(100) NOT NULL DEFAULT "View",

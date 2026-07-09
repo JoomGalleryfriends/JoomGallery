@@ -795,7 +795,7 @@
         </field>
     </fieldset>
 
-    <fieldset type="tab" name="frontend-galleryview" label="COM_JOOMGALLERY_CONFIG_TAB_GALLERY_VIEW">
+    <fieldset type="tab" name="frontend-uikitlayouts" label="COM_JOOMGALLERY_CONFIG_TAB_UIKIT_LAYOUTS">
         <field
             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OPTIONS"
             type="spacer"
@@ -843,6 +843,16 @@
             <option value="primary">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_PRIMARY</option>
             <option value="none">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_NONE</option>
         </field>
+        <field name="jg_uikit_gallery_overlay_text"
+               type="list"
+               label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT"
+               description="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_DESC"
+               default="inherit"
+               validate="options">
+            <option value="inherit">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_INHERIT</option>
+            <option value="light">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_LIGHT</option>
+            <option value="dark">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_DARK</option>
+        </field>
         <field name="jg_uikit_gallery_image_ratio"
                type="list"
                label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_IMAGE_RATIO"
@@ -871,6 +881,9 @@
                description="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_BUTTON_TEXT_DESC"
                default="View"
                filter="string" />
+    </fieldset>
+
+    <fieldset type="tab" name="frontend-galleryview" label="COM_JOOMGALLERY_CONFIG_TAB_GALLERY_VIEW">
         <field name="jg_gallery_view_browse_categories_link"
                type="list"
                label="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK"
