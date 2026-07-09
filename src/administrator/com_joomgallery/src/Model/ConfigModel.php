@@ -379,7 +379,7 @@ class ConfigModel extends JoomAdminModel
       'jg_uikit_gallery_button_text',
     ];
 
-    if(!empty(\array_intersect($uikitFields, \array_keys($data))) && !$this->getTable()->hasField('jg_uikit_gallery_gap'))
+    if(!empty(array_intersect($uikitFields, array_keys($data))) && !$this->getTable()->hasField('jg_uikit_gallery_gap'))
     {
       $this->setError(Text::_('COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_SCHEMA_MISSING'));
       $this->component->addLog(Text::_('COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_SCHEMA_MISSING'), 'error', 'jerror');
