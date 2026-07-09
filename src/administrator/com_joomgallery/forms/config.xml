@@ -793,6 +793,9 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
+    </fieldset>
+
+    <fieldset type="tab" name="frontend-galleryview" label="COM_JOOMGALLERY_CONFIG_TAB_GALLERY_VIEW">
         <field
             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OPTIONS"
             type="spacer"
@@ -868,9 +871,6 @@
                description="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_BUTTON_TEXT_DESC"
                default="View"
                filter="string" />
-    </fieldset>
-
-    <fieldset type="tab" name="frontend-galleryview" label="COM_JOOMGALLERY_CONFIG_TAB_GALLERY_VIEW">
         <field name="jg_gallery_view_browse_categories_link"
                type="list"
                label="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK"
