@@ -37,15 +37,6 @@ $show_hits        = $this->params['configs']->get('jg_detail_view_show_hits', 0,
 $show_downloads   = $this->params['configs']->get('jg_detail_view_show_downloads', 0, 'INT');
 $show_tags        = $this->params['configs']->get('jg_detail_view_show_tags', 0, 'INT');
 $show_metadata    = $this->params['configs']->get('jg_detail_view_show_metadata', 0, 'INT');
-$frontend_framework = $this->params['configs']->get('jg_gallery_view_framework', 'joomla', 'STRING');
-$is_yootheme        = $frontend_framework === 'yootheme';
-$button_class       = $is_yootheme ? 'uk-button uk-button-default uk-button-small' : 'btn btn-outline-primary';
-$module_class       = $is_yootheme ? 'uk-card uk-card-default uk-card-body uk-margin' : 'card';
-$module_header_class = $is_yootheme ? 'uk-card-title ' : 'card-header ';
-$table_class        = $is_yootheme ? 'uk-table uk-table-divider uk-table-small uk-table-middle' : 'table';
-$figure_class       = $is_yootheme ? 'joom-image uk-text-center uk-margin' : 'figure joom-image text-center center';
-$figure_image_class = $is_yootheme ? 'uk-border-rounded' : 'figure-img img-fluid rounded';
-$caption_class      = $is_yootheme ? 'uk-text-meta' : 'figure-caption';
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -105,9 +96,9 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php if(!empty($modules)) : ?>
   <?php foreach($modules as $module) : ?>
     <?php $moduleparams = json_decode($module->params, true); ?>
-    <div class="<?php echo $module_class; ?>">
+    <div class="card">
       <?php if($module->showtitle) : ?>
-        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="' . $module_header_class . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
         <?php echo $moduleheader; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
@@ -116,10 +107,10 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php endif; ?>
 
 <?php if($show_title) : ?>
-  <h2<?php echo $is_yootheme ? ' class="uk-heading-bullet"' : ''; ?>><?php echo $this->item->title; ?></h2>
+  <h2><?php echo $this->item->title; ?></h2>
 <?php endif; ?>
 
-<a class="jg-link <?php echo $button_class; ?>" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
+<a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
   <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_IMAGE_BACK_TO_CATEGORY') . ' ' . $this->item->cattitle; ?></span>
 </a>
 
@@ -127,13 +118,12 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 </br />
 
 <?php // Image ?>
-<figure class="<?php echo $figure_class; ?>">
+<figure class="figure joom-image text-center center">
   <div id="jg-loader"></div>
-
-  <img src="<?php echo JoomHelper::getImg($this->item, $image_type); ?>" class="<?php echo $figure_image_class; ?>"
+  <img src="<?php echo JoomHelper::getImg($this->item, $image_type); ?>" class="figure-img img-fluid rounded" 
        alt="<?php echo $this->escape($this->item->title); ?>" style="width:auto;" itemprop="image" loading="lazy">
   <?php if($show_description) : ?>
-    <figcaption class="<?php echo $caption_class; ?>"><?php echo JoomHelper::sanitizeHtml($this->item->description); ?></figcaption>
+    <figcaption class="figure-caption"><?php echo JoomHelper::sanitizeHtml($this->item->description); ?></figcaption>
   <?php endif; ?>
 </figure>
 
@@ -142,9 +132,9 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php if(!empty($modules)) : ?>
   <?php foreach($modules as $module) : ?>
     <?php $moduleparams = json_decode($module->params, true); ?>
-    <div class="<?php echo $module_class; ?>">
+    <div class="card">
       <?php if($module->showtitle) : ?>
-        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="' . $module_header_class . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
         <?php echo $moduleheader; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
@@ -154,8 +144,8 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 
 <?php // Image info and fields ?>
 <div class="item_fields">
-  <h3<?php echo $is_yootheme ? ' class="uk-heading-line uk-text-left"' : ''; ?>><?php echo Text::_('COM_JOOMGALLERY_IMAGE_INFO'); ?></h3>
-  <table class="<?php echo $table_class; ?>">
+  <h3><?php echo Text::_('COM_JOOMGALLERY_IMAGE_INFO'); ?></h3>
+  <table class="table">
     <tr>
       <?php if($show_category) : ?>
     <tr>
@@ -244,9 +234,9 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php if(!empty($modules)) : ?>
   <?php foreach($modules as $module) : ?>
     <?php $moduleparams = json_decode($module->params, true); ?>
-    <div class="<?php echo $module_class; ?>">
+    <div class="card">
       <?php if($module->showtitle) : ?>
-        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="' . $module_header_class . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
         <?php echo $moduleheader; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>

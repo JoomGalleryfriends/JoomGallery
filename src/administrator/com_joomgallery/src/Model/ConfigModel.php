@@ -73,10 +73,26 @@ class ConfigModel extends JoomAdminModel
       return false;
     }
 
-    if(!$this->getTable()->hasField('jg_gallery_view_framework'))
+    $uikitFields = [
+      'jg_uikit_gallery_gap',
+      'jg_uikit_gallery_masonry',
+      'jg_uikit_gallery_lightbox',
+      'jg_uikit_gallery_overlay',
+      'jg_uikit_gallery_image_ratio',
+      'jg_uikit_gallery_title_position',
+      'jg_uikit_gallery_button_text',
+    ];
+
+    if(!$this->getTable()->hasField('jg_uikit_gallery_gap'))
     {
-      $this->form->removeField('jg_gallery_view_framework');
-      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_SCHEMA_MISSING'), 'warning');
+      $this->form->removeField('uikit_gallery_options');
+
+      foreach($uikitFields as $field)
+      {
+        $this->form->removeField($field);
+      }
+
+      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_SCHEMA_MISSING'), 'warning');
     }
 
     // On edit, we get ID from state, but on save, we use data from input
@@ -351,10 +367,20 @@ class ConfigModel extends JoomAdminModel
     // id of the data to be saved
     $id = \intval($data['id']);
 
-    if(\array_key_exists('jg_gallery_view_framework', $data) && !$this->getTable()->hasField('jg_gallery_view_framework'))
+    $uikitFields = [
+      'jg_uikit_gallery_gap',
+      'jg_uikit_gallery_masonry',
+      'jg_uikit_gallery_lightbox',
+      'jg_uikit_gallery_overlay',
+      'jg_uikit_gallery_image_ratio',
+      'jg_uikit_gallery_title_position',
+      'jg_uikit_gallery_button_text',
+    ];
+
+    if(!empty(\array_intersect($uikitFields, \array_keys($data))) && !$this->getTable()->hasField('jg_uikit_gallery_gap'))
     {
-      $this->setError(Text::_('COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_SCHEMA_MISSING'));
-      $this->component->addLog(Text::_('COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_FRAMEWORK_SCHEMA_MISSING'), 'error', 'jerror');
+      $this->setError(Text::_('COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_SCHEMA_MISSING'));
+      $this->component->addLog(Text::_('COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_SCHEMA_MISSING'), 'error', 'jerror');
 
       return false;
     }

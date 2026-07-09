@@ -38,11 +38,7 @@ extract($displayData);
  * @var   bool     $image_date        True to display the image date
  * @var   bool     $image_author      True to display the image author
  * @var   bool     $image_tags        True to display the image tags
- * @var   string   $frontend_framework CSS framework used by the parent view (joomla, yootheme)
  */
-
-$frontend_framework = $frontend_framework ?? 'joomla';
-$thumbnail_class     = $frontend_framework === 'yootheme' ? 'uk-display-block' : 'jg-image-thumbnail';
 ?>
 
 <div class="jg-gallery <?php echo $this->escape($layout); ?>" itemscope="" itemtype="https://schema.org/ImageGallery">
@@ -51,7 +47,7 @@ $thumbnail_class     = $frontend_framework === 'yootheme' ? 'uk-display-block' :
     <?php $index = 0; ?>
     <?php foreach($items as $key => $item) : ?>
       <div class="jg-image">
-        <div class="<?php echo $thumbnail_class; ?><?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php
+        <div class="jg-image-thumbnail<?php if($image_class && $layout != 'justified') : ?><?php echo ' boxed'; ?><?php
                                       endif; ?>">
           <?php if($layout != 'justified') : ?>
             <div class="jg-image-caption-hover <?php echo $this->escape($caption_align); ?>">

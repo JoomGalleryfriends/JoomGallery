@@ -57,12 +57,6 @@ $browse_images_link     = $this->params['configs']->get('jg_category_view_browse
 $lightbox_image         = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
 $lightbox_thumbnails    = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
 $lightbox_zoom          = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
-$frontend_framework     = $this->params['configs']->get('jg_gallery_view_framework', 'joomla', 'STRING');
-$is_yootheme            = $frontend_framework === 'yootheme';
-$button_class           = $is_yootheme ? 'uk-button uk-button-default uk-button-small' : 'btn btn-outline-primary';
-$success_button_class   = $is_yootheme ? 'uk-button uk-button-primary uk-button-small' : 'btn btn-success btn-small';
-$module_class           = $is_yootheme ? 'uk-card uk-card-default uk-card-body uk-margin' : 'card';
-$module_header_class    = $is_yootheme ? 'uk-card-title ' : 'card-header ';
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -77,7 +71,7 @@ $wa->useStyle('com_joomgallery.jg-icon-font');
     <h3><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD_PROTECTED'); ?></h3>
     <label for="jg_password"><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD'); ?></label>
     <input type="password" name="password" id="jg_password" />
-    <button type="submit" class="<?php echo $is_yootheme ? 'uk-button uk-button-primary uk-button-small' : 'btn btn-primary'; ?>" id="jg_unlock_button"><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BUTTON_UNLOCK'); ?></button>
+    <button type="submit" class="btn btn-primary" id="jg_unlock_button"><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BUTTON_UNLOCK'); ?></button>
     <?php echo HTMLHelper::_('form.token'); ?>
   </form>
   <?php return; ?>
@@ -148,9 +142,9 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php if(!empty($modules)) : ?>
   <?php foreach($modules as $module) : ?>
     <?php $moduleparams = json_decode($module->params, true); ?>
-    <div class="<?php echo $module_class; ?>">
+    <div class="card">
       <?php if($module->showtitle) : ?>
-        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="' . $module_header_class . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
         <?php echo $moduleheader; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
@@ -160,9 +154,9 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 
 <?php // Category title ?>
 <?php if($this->item->parent_id > 0) : ?>
-  <h2<?php echo $is_yootheme ? ' class="uk-heading-bullet"' : ''; ?>><?php echo Text::sprintf('COM_JOOMGALLERY_CATEGORY_TITLE', $this->escape($this->item->title)); ?></h2>
+  <h2><?php echo Text::sprintf('COM_JOOMGALLERY_CATEGORY_TITLE', $this->escape($this->item->title)); ?></h2>
 <?php else : ?>
-  <h2<?php echo $is_yootheme ? ' class="uk-heading-bullet"' : ''; ?>><?php echo Text::_('COM_JOOMGALLERY') ?></h2>
+  <h2><?php echo Text::_('COM_JOOMGALLERY') ?></h2>
 <?php endif; ?>
 
 <?php // Button container ?>
@@ -171,7 +165,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php // Back to parent category ?>
   <?php if($this->item->parent_id > 0 && $browse_categories_link == '1') : ?>
     <div class="jg-link-categories">
-      <a class="jg-link <?php echo $button_class; ?>" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
+      <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
         <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?></span>
       </a>
     </div>
@@ -179,7 +173,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php // Browse images ?>
   <?php if($browse_images_link == '1') : ?>
     <div class="jg-link-images">
-      <a class="jg-link <?php echo $button_class; ?>" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
+      <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_VIEW_BROWSE_IMAGES'); ?>
       </a>
     </div>
@@ -204,9 +198,9 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php if(!empty($modules)) : ?>
   <?php foreach($modules as $module) : ?>
     <?php $moduleparams = json_decode($module->params, true); ?>
-    <div class="<?php echo $module_class; ?>">
+    <div class="card">
       <?php if($module->showtitle) : ?>
-        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="' . $module_header_class . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
         <?php echo $moduleheader; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
@@ -217,16 +211,16 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php // Subcategories ?>
 <?php if(\count($this->item->children->items) > 0 && ($this->item->id == 1 || $numb_subcategories > 0)) : ?>
   <?php if($this->item->parent_id > 0) : ?>
-    <h3<?php echo $is_yootheme ? ' class="uk-heading-line uk-text-left"' : ''; ?>><?php echo Text::_('COM_JOOMGALLERY_SUBCATEGORIES') ?></h3>
+    <h3><?php echo Text::_('COM_JOOMGALLERY_SUBCATEGORIES') ?></h3>
   <?php else : ?>
-    <h3<?php echo $is_yootheme ? ' class="uk-heading-line uk-text-left"' : ''; ?>><?php echo Text::_('COM_JOOMGALLERY_CATEGORIES') ?></h3>
+    <h3><?php echo Text::_('COM_JOOMGALLERY_CATEGORIES') ?></h3>
   <?php endif; ?>
 
   <?php // Display data array for layout
     $subcatData = [
       'layout' => $subcategory_class, 'items' => $this->item->children->items, 'num_columns' => (int) $subcategory_num_columns, 'image_type' => $subcategory_image_type,
       'caption_align'       => $subcategories_caption_align, 'description' => $subcategories_description, 'image_class' => $subcategory_image_class, 'random_image' => (bool) $subcategories_random_image,
-      'image_count' => (bool) $subcategories_image_count, 'frontend_framework' => $frontend_framework,
+      'image_count' => (bool) $subcategories_image_count,
     ];
   ?>
 
@@ -243,9 +237,9 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php if(!empty($modules)) : ?>
   <?php foreach($modules as $module) : ?>
     <?php $moduleparams = json_decode($module->params, true); ?>
-    <div class="<?php echo $module_class; ?>">
+    <div class="card">
       <?php if($module->showtitle) : ?>
-        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="' . $module_header_class . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
         <?php echo $moduleheader; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
@@ -255,7 +249,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 
 <?php // Category ?>
 <?php if(\count($this->item->images->items) > 0) : ?>
-  <h3<?php echo $is_yootheme ? ' class="uk-heading-line uk-text-left"' : ''; ?>><?php echo Text::_('COM_JOOMGALLERY_IMAGES') ?></h3>
+  <h3><?php echo Text::_('COM_JOOMGALLERY_IMAGES') ?></h3>
   <?php if(!empty($this->item->images->filterForm) && $use_pagination == '0') : ?>
     <?php // Show image filters ?>
     <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . $this->item->id . '&Itemid=' . $this->menu->id); ?>" method="post" name="adminForm" id="adminForm">
@@ -284,7 +278,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
       'id' => '1-' . $this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
       'caption_align' => $caption_align, 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
       'image_title'   => (bool) $show_title, 'title_link' => $title_link, 'image_desc' => (bool) $show_description, 'image_desc_label' => (bool) $show_description_label,
-      'image_date'    => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags, 'frontend_framework' => $frontend_framework,
+      'image_date'    => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags,
     ];
   ?>
 
@@ -295,12 +289,12 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php if($use_pagination == 1) : ?>
   <div class="load-more-container">
     <div class="infinite-scroll"></div>
-    <div id="noMore" class="<?php echo $button_class; ?> no-more-images <?php echo $is_yootheme ? 'uk-hidden' : 'hidden'; ?>"><?php echo Text::_('COM_JOOMGALLERY_NO_MORE_IMAGES') ?></div>
+    <div id="noMore" class="btn btn-outline-primary no-more-images hidden"><?php echo Text::_('COM_JOOMGALLERY_NO_MORE_IMAGES') ?></div>
   </div>
   <?php elseif($use_pagination == 2 && \count($this->item->images->items) > $numb_images) : ?>
     <div class="load-more-container">
-      <div id="loadMore" class="<?php echo $button_class; ?> load-more"><span><?php echo Text::_('COM_JOOMGALLERY_LOAD_MORE') ?></span><i class="jg-icon-expand-more"></i></div>
-      <div id="noMore" class="<?php echo $button_class; ?> no-more-images <?php echo $is_yootheme ? 'uk-hidden' : 'hidden'; ?>"><?php echo Text::_('COM_JOOMGALLERY_NO_MORE_IMAGES') ?></div>
+      <div id="loadMore" class="btn btn-outline-primary load-more"><span><?php echo Text::_('COM_JOOMGALLERY_LOAD_MORE') ?></span><i class="jg-icon-expand-more"></i></div>
+      <div id="noMore" class="btn btn-outline-primary no-more-images hidden"><?php echo Text::_('COM_JOOMGALLERY_NO_MORE_IMAGES') ?></div>
     </div>
   <?php else : ?>
     <?php echo $this->item->images->pagination->getListFooter(); ?>
@@ -310,7 +304,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php // Add image button ?>
 <?php /*if($canAddImg) : ?>
   <div class="mb-2">
-    <a href="<?php echo Route::_('index.php?option=com_joomgallery&task=image.add&id=0&catid='.$this->item->id.'&return='.$returnURL, false, 0); ?>" class="<?php echo $success_button_class; ?>">
+    <a href="<?php echo Route::_('index.php?option=com_joomgallery&task=image.add&id=0&catid='.$this->item->id.'&return='.$returnURL, false, 0); ?>" class="btn btn-success btn-small">
       <i class="icon-plus"></i>
       <?php echo Text::_('COM_JOOMGALLERY_IMG_UPLOAD_IMAGE'); ?>
     </a>
@@ -323,7 +317,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php // Back to parent category ?>
   <?php if($this->item->parent_id > 0 && $browse_categories_link == '2') : ?>
     <div class="jg-link-categories">
-      <a class="jg-link <?php echo $button_class; ?>" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
+      <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
         <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?></span>
       </a>
     </div>
@@ -331,7 +325,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php // Browse images ?>
   <?php if($browse_images_link == '2') : ?>
     <div class="jg-link-images">
-      <a class="jg-link <?php echo $button_class; ?>" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
+      <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_VIEW_BROWSE_IMAGES'); ?>
       </a>
     </div>
@@ -344,9 +338,9 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php if(!empty($modules)) : ?>
   <?php foreach($modules as $module) : ?>
     <?php $moduleparams = json_decode($module->params, true); ?>
-    <div class="<?php echo $module_class; ?>">
+    <div class="card">
       <?php if($module->showtitle) : ?>
-        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="' . $module_header_class . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
         <?php echo $moduleheader; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
