@@ -22,6 +22,7 @@ $columns         = max(1, min(6, (int) ($num_columns ?? 3)));
 $gap             = $uikit_gap ?? 'small';
 $masonry         = !empty($uikit_masonry);
 $overlay         = $uikit_overlay ?? 'default';
+$overlay_text    = $uikit_overlay_text ?? 'inherit';
 $title_position  = $uikit_title_position ?? 'overlay';
 $button_text     = $uikit_button_text ?? 'View';
 $image_ratio     = $uikit_image_ratio ?? 'original';
@@ -34,6 +35,7 @@ $ratio_map       = [
 $ratio           = $ratio_map[$image_ratio] ?? null;
 $grid_attributes = $masonry ? ' uk-grid="masonry: pack"' : ' uk-grid';
 $grid_class      = 'uk-grid uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-' . $columns . '@m uk-grid-' . $gap;
+$overlay_text_class = \in_array($overlay_text, ['light', 'dark'], true) ? ' uk-' . $overlay_text : '';
 ?>
 
 <div class="jg-images jg-subcategories <?php echo $grid_class; ?>"<?php echo $grid_attributes; ?>>
@@ -62,7 +64,7 @@ $grid_class      = 'uk-grid uk-child-width-1-1 uk-child-width-1-2@s uk-child-wid
           <?php if($overlay != 'none') : ?>
             <div class="uk-overlay-<?php echo $overlay; ?> uk-transition-fade uk-position-cover"></div>
             <div class="uk-position-center uk-transition-fade">
-              <div class="uk-overlay uk-margin-remove-first-child uk-text-center">
+              <div class="uk-overlay uk-margin-remove-first-child uk-text-center<?php echo $overlay_text_class; ?>">
                 <?php if($title_position == 'overlay') : ?>
                   <div class="uk-h4"><?php echo $this->escape($item->title); ?></div>
                 <?php endif; ?>

@@ -28,9 +28,12 @@ The UIkit layouts can use global settings or menu-item overrides for:
 - UIkit masonry
 - UIkit lightbox
 - Overlay style
+- Overlay text color
 - Image ratio
 - Title position
 - Overlay button text
+
+Global defaults are available in `Frontend Views -> UIkit Layouts`.
 
 Menu item fields use `useglobal="true"` so each UIkit menu item can either
 inherit the global configuration or override individual values.

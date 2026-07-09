@@ -55,7 +55,6 @@
       <field name="jg_uikit_gallery_gap"
              type="jglist"
              useglobal="true"
-             default="small"
              label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_GAP"
              validate="options">
         <option value="collapse">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_GAP_COLLAPSE</option>
@@ -66,7 +65,6 @@
       <field name="jg_uikit_gallery_masonry"
              type="jgradio"
              useglobal="true"
-             default="0"
              label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_MASONRY"
              layout="joomla.form.field.radio.switcher"
              validate="options">
@@ -76,7 +74,6 @@
       <field name="jg_uikit_gallery_lightbox"
              type="jgradio"
              useglobal="true"
-             default="1"
              label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_LIGHTBOX"
              layout="joomla.form.field.radio.switcher"
              validate="options">
@@ -86,17 +83,24 @@
       <field name="jg_uikit_gallery_overlay"
              type="jglist"
              useglobal="true"
-             default="default"
              label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY"
              validate="options">
         <option value="default">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_DEFAULT</option>
         <option value="primary">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_PRIMARY</option>
         <option value="none">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_NONE</option>
       </field>
+      <field name="jg_uikit_gallery_overlay_text"
+             type="jglist"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT"
+             validate="options">
+        <option value="inherit">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_INHERIT</option>
+        <option value="light">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_LIGHT</option>
+        <option value="dark">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_DARK</option>
+      </field>
       <field name="jg_uikit_gallery_image_ratio"
              type="jglist"
              useglobal="true"
-             default="original"
              label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_IMAGE_RATIO"
              validate="options">
         <option value="original">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_IMAGE_RATIO_ORIGINAL</option>
@@ -108,7 +112,6 @@
       <field name="jg_uikit_gallery_title_position"
              type="jglist"
              useglobal="true"
-             default="overlay"
              label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_TITLE_POSITION"
              validate="options">
         <option value="overlay">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_TITLE_POSITION_OVERLAY</option>
@@ -118,7 +121,6 @@
       <field name="jg_uikit_gallery_button_text"
              type="jgtext"
              useglobal="true"
-             default="View"
              label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_BUTTON_TEXT"
              filter="string"
       />
