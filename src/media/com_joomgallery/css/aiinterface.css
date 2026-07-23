@@ -95,3 +95,14 @@
 .color-red {
   color: #c90c0c !important;
 }
+.inline {
+  display: inline;
+}
+label.inline {
+  position: relative;
+  top: -0.5rem;
+  margin-right: 1em;
+}
+fieldset.inline .switcher {
+  width: inherit;
+}

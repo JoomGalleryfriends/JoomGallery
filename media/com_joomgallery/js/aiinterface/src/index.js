@@ -247,6 +247,20 @@ class AIinterface {
     });
   }
 
+  toggleHideElement(selector, hide = null) {
+    const element = document.querySelector(selector);
+
+    if (!element) {
+      return;
+    }
+
+    if (hide === null) {
+      element.classList.toggle('hidden');
+    } else {
+      element.classList.toggle('hidden', hide);
+    }
+  }
+
   addListElements(selector, items) {
     let dropdown = document.getElementById(this.prefix + selector);
     dropdown.innerHTML = '';
@@ -1578,6 +1592,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
   }
+
+  // Install event listener on geo location switch
+  document.querySelectorAll('input[name="jgai_exif_location"]').forEach(el => {
+    el.addEventListener('change', () => {
+      const useExif = document.querySelector('input[name="jgai_exif_location"]:checked').value === '1';
+      window.Joomla.aiinterface.toggleHideElement('#jgai-gr-geo-location', useExif);
+    });
+  });
 
   // Install event listeners on dropdowns
   document.querySelectorAll('[id^="'+prefix+'-"][id$="-dropdown"]').forEach(el => {
