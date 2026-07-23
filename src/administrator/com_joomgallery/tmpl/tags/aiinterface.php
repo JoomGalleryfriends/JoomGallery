@@ -143,14 +143,38 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_INPUTS'); ?></h4>
       <div class="manual-keywords col-6">
         <div class="input-group mb-3">
-          <input type="text" id="jgai-manual-keywords" class="form-control" aria-describedby="jgai-manual-keywords-btn">
+          <input type="text" id="jgai-manual-keywords" class="form-control" aria-describedby="jgai-manual-keywords-btn" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_MANTAGS_DESC'); ?>">
           <button class="btn btn-outline-secondary" type="button" id="jgai-manual-keywords-btn">⮠</button>
         </div>
         <div class="grid"></div>
       </div>
       <div class="prompt-inputs col-6">
         <div class="mb-3">
-          <textarea class="form-control" placeholder="Add a description of your images here to help the AI creating better keywords" id="jgai-propmt-description"></textarea>
+          <label class="inline" for="jgai-exif-location"><?php echo Text::_('COM_JOOMGALLERY_AIINT_EXIF_LOC_LBL');?></label>
+          <?php
+            echo LayoutHelper::render(
+                'joomla.form.field.radio.switcher',
+                [
+                  'id'      => 'jgai-exif-location',
+                  'name'    => 'jgai_exif_location',
+                  'label'   => Text::_('COM_JOOMGALLERY_AIINT_EXIF_LOC_LBL'),
+                  'validate'=> 'options',
+                  'default' => 1,
+                  'options' => [(object) ['value' => '0', 'text' => Text::_('JNO')], (object) ['value' => '1', 'text' => Text::_('JYES')]],
+                  'dataAttribute' => 'class="inline"', 'value' => '1', 'class' => '', 'disabled' => false, 'readonly' => false, 'onchange' => '', 
+                ]
+            );
+          ?>
+        </div>
+
+        <div id="jgai-gr-geo-location" class="mb-3 hidden">
+          <label class="inline" for="jgai-geo-location"><?php echo Text::_('COM_JOOMGALLERY_AIINT_GEO_LOC_LBL');?></label>
+          <input type="text" id="jgai-geo-location" class="form-control" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_GEO_LOC_DESC'); ?>">
+        </div>
+
+        <div class="mb-3">
+          <label for="jgai-prompt-description" class="form-label"><?php echo Text::_('JGLOBAL_DESCRIPTION'); ?></label>
+          <textarea class="form-control" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_DESCRIPTION_DESC'); ?>" id="jgai-prompt-description"></textarea>
         </div>
 
         <div class="mb-3">
