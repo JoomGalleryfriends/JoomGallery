@@ -606,6 +606,188 @@ class JoomHelper
   }
 
   /**
+   * Returns the file info of a specific image file
+   *
+   * @param   string/object/int $img     Filename, database object, ID or URL of the image
+   * @param   string            $type    The image type
+   *
+   * @return  object            File info
+   *
+   * @since   4.4.0
+   */
+  public static function getImgInfo($img, $type)
+  {
+    $url  = false;
+    $root = false;
+
+    // Load image object
+    if(!\is_object($img))
+    {
+      if(is_numeric($img) || $img == 'null')
+      {
+        if($img == 0 || $img == 'null')
+        {
+          // ID = 0 given
+          return self::getImgZero($type, $url, $root);
+        }
+
+
+          // get image based on ID
+          $img = self::getRecord('image', $img);
+      }
+      elseif(\is_string($img))
+      {
+        if(\strlen($img) > 5 && (strpos($img, '/') !== false || strpos($img, \DIRECTORY_SEPARATOR) !== false))
+        {
+          // already image url given
+          if(strpos($img, '/') === 0)
+          {
+            // url starts with '/'
+            return Uri::root(true) . $img;
+          }
+
+
+            return Uri::root(true) . '/' . $img;
+        }
+
+
+          // get image id based on filename
+          $img = self::getRecord('image', ['filename' => $img]);
+      }
+      else
+      {
+        // no image given
+        return self::getImgZero($type, $url, $root);
+      }
+    }
+
+    // Get file info
+    $file       = self::getImg($img, $type, $url, $root);
+    $filesystem = self::getService('Filesystem', [$img->filesystem]);
+    $info       = $filesystem->getFile($file);
+
+    // Allowed file infos
+    $allowed = ['type', 'extension', 'mime_type', 'width', 'height', 'adapter'];
+
+    // Filter infos
+    $filtered = new stdClass();
+
+    foreach($allowed as $key)
+    {
+      if(isset($info->$key))
+      {
+        $filtered->$key = $info->$key;
+      }
+    }
+
+    return $filtered;
+  }
+
+  /**
+   * Returns width and height for a specific image
+   *
+   * @param   string/object/int $img       Filename, database object, ID or URL of the image
+   * @param   string            $type      The image type
+   * @param   array/bool        $strategy  The strategy to apply to calculate the domensions
+   *
+   * @return  array             (width, height)
+   *
+   * @since   4.4.0
+   */
+  public static function clcImgDimensions($img, $type, $strategy = false)
+  {
+    $url  = false;
+    $root = false;
+
+    // Load image object
+    if(!\is_object($img))
+    {
+      if(is_numeric($img) || $img == 'null')
+      {
+        if($img == 0 || $img == 'null')
+        {
+          // ID = 0 given
+          return self::getImgZero($type, $url, $root);
+        }
+
+
+          // get image based on ID
+          $img = self::getRecord('image', $img);
+      }
+      elseif(\is_string($img))
+      {
+        if(\strlen($img) > 5 && (strpos($img, '/') !== false || strpos($img, \DIRECTORY_SEPARATOR) !== false))
+        {
+          // already image url given
+          if(strpos($img, '/') === 0)
+          {
+            // url starts with '/'
+            return Uri::root(true) . $img;
+          }
+
+
+            return Uri::root(true) . '/' . $img;
+        }
+
+
+          // get image id based on filename
+          $img = self::getRecord('image', ['filename' => $img]);
+      }
+      else
+      {
+        // no image given
+        return self::getImgZero($type, $url, $root);
+      }
+    }
+
+    // Get file info
+    $file       = self::getImg($img, $type, $url, $root);
+    $filesystem = self::getService('Filesystem', [$img->filesystem]);
+    $info       = $filesystem->getFile($file);
+
+    // If there is no strategy provided or strategy info missing
+    if( !$strategy ||
+        !\is_array($strategy) ||
+        !\array_key_exists('strategy', $strategy)
+      )
+    {
+      return [(int) $info->width, (int) $info->height];
+    }
+
+    $value = !empty($strategy['value']) ? $strategy['value'] : 300;
+
+    switch($strategy['strategy'])
+    {
+      case 'max-dimension':
+        // Get ratio based on max dimension value
+        $ratio = min($value / $info->width, $value / $info->height);
+          break;
+
+      case 'by-height':
+        // Get ratio based on image height
+        $ratio = $value / $info->height;
+          break;
+
+      case 'by-width':
+        // Get ratio based on image width
+        $ratio = $value / $info->width;
+          break;
+
+      default:
+          return [(int) $info->width, (int) $info->height];
+    }
+
+    if($ratio < 1)
+    {
+      // Scale dimension based on ratio
+      return [(int) round($info->width * $ratio), (int) round($info->height * $ratio)];
+    }
+
+    // Nothing to scale
+    return [(int) $info->width, (int) $info->height];
+  }
+
+  /**
    * Returns the table name of a content type
    *
    * @param   string   $type    Name of the content type
