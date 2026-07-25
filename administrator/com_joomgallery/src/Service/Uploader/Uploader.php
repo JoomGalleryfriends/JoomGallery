@@ -259,7 +259,7 @@ abstract class Uploader implements UploaderInterface
     $metadata = $this->component->getMetadata()->readMetadata($this->src_file);
 
     // Add image metadata to data
-    $data['imgmetadata'] = json_encode($metadata);
+    $data['imgmetadata'] = json_encode($metadata, JSON_INVALID_UTF8_SUBSTITUTE);
 
     // Check if there is something to override
     if(!property_exists($this->component->getConfig()->get('jg_replaceinfo'), 'jg_replaceinfo0'))
