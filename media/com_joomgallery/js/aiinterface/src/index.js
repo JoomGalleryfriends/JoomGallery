@@ -387,6 +387,45 @@ class AIinterface {
     txtField.value = '';
   }
 
+  getGpsCoordinates() {
+    const useExif = document.querySelector('input[name="jgai_exif_location"]:checked')?.value === '1';
+
+    // Use EXIF data
+    if (useExif) {
+      return null;
+    }
+
+    // Use the user input field
+    const input = document.getElementById(`${this.prefix}-geo-location`);
+
+    if (!input) {
+      return null;
+    }
+
+    const value = input.value.trim();
+
+    if (!value) {
+      return null;
+    }
+
+    // Expected format:
+    // 47.143471, 8.432966
+    const parts = value.split(',');
+
+    if (parts.length !== 2) {
+      return null;
+    }
+
+    const latitude  = Number(parts[0].trim());
+    const longitude = Number(parts[1].trim());
+
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      return null;
+    }
+
+    return {latitude, longitude};
+  }
+
   updateImageNavigation() {
     const panels = document.querySelectorAll('.image-panel');
     const prevBtn = document.querySelector(`#${this.prefix}-prev-image-btn`);
@@ -622,7 +661,9 @@ class AIinterface {
     event.preventDefault();
 
     // Get required data from UI
-    let model  = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
+    this.selected_model = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
+    this.selected_mode  = this.getSelectedListElement(`${this.prefix}-modes-dropdown`);
+    this.selected_lang  = this.getSelectedListElement(`${this.prefix}-langs-dropdown`);
     let panels = document.querySelectorAll('.images-panel .image-panel');
     const manualKeywords = this.getManualKeywords(el.parentElement?.parentElement);
 
@@ -661,11 +702,12 @@ class AIinterface {
     // Create the options object
     const options = {
       'confidence_values': false,
-      'model': model,
+      'model': this.selected_model,
       'predefined_tags': manualKeywords,
-      'prompt_mode': this.getSelectedListElement(`${this.prefix}-modes-dropdown`),
-      'service': this.getProvider(model),
-      'language': this.getSelectedListElement(`${this.prefix}-langs-dropdown`),
+      'prompt_mode': this.selected_mode,
+      'service': this.getProvider(this.selected_model),
+      'language': this.selected_lang,
+      'gps': this.getGpsCoordinates(),
       'suggested_topic': document.getElementById(`${this.prefix}-prompt-description`)?.value ?? '',
       'tag_count': document.getElementById(`${this.prefix}-nmb-keywords`)?.value ?? '',
       'token_count': true
@@ -699,7 +741,7 @@ class AIinterface {
       this.renderGenerateSummary({
         successImages: 0,
         failedImages: stats.total,
-        modelTitle: model,
+        modelTitle: this.selected_model,
         keywords: [],
         modelTokens: 0,
         serviceTokens: 0,
@@ -727,8 +769,10 @@ class AIinterface {
     }
 
     // Step 2: estimate and animate generation progress
-    const estimatedSeconds = this.getGenerationTime(images.length, model);
-    this.startKeywordGenerationProgressTimer(estimatedSeconds);
+    const estimatedSeconds = await this.getGenerationTime(images, this.selected_model);
+    if (estimatedSeconds > 0) {
+      this.startKeywordGenerationProgressTimer(estimatedSeconds);
+    }
 
     // Step 3: call generation only once
     const response = await this.genKeywords(null, images, options);
@@ -736,7 +780,7 @@ class AIinterface {
     // Stop timer first
     this.stopKeywordGenerationProgressTimer();
 
-    const modelTitle = this.getModelTitle(model);
+    const modelTitle = this.getModelTitle(this.selected_model);
 
     // Hard failure before any usable API payload exists
     if (!response?.success || !response?.data) {
@@ -1427,7 +1471,7 @@ class AIinterface {
       const apiModels = data.models;
 
       if (apiModels.length > 0 && apiModels[0].value) {
-        this.def_model = apiModels[0].value;
+        this.default_model = apiModels[0].value;
       }
 
       // Add services to providers table
@@ -1438,14 +1482,14 @@ class AIinterface {
       this.buildModelTitles(mapped);
 
       this.models = mapped;
-      return { ...data, mappedModels: mapped, def_model: this.def_model };
+      return { ...data, mappedModels: mapped, default_model: this.default_model };
     }
     // If API returns wrapped data like {data:{models:[...]}}:
     if (data?.data?.models) {
       const apiModels = data.data.models;
 
       if (apiModels.length > 0 && apiModels[0].value) {
-        this.def_model = apiModels[0].value;
+        this.default_model = apiModels[0].value;
       }
 
       // Add services to providers table
@@ -1469,38 +1513,57 @@ class AIinterface {
     return data;
   }
 
-  getGenerationTime(count = 0, model = '') {
-    if (!count) {
+  async getGenerationTime(images, model = '') {
+    const imgs = Array.isArray(images) ? images : [];
+
+    if (imgs.length < 1) {
       return 0;
     }
 
-    // Base cost per image in seconds
-    const secPerImage = 2.5;
+    const usedModel = model || this.selected_model || this.default_model;
+    const route = 'tags/estimate';
+    const url = this.sanitizeUrl(`${this.host}/${route}`);
 
-    // Rough model factor
-    let modelFactor = 1.0;
-    const m = String(model || '').toLowerCase();
+    const headers = {
+      'Authorization': `Bearer ${this.token}`,
+      'Content-Type': 'application/json'
+    };
 
-    if (m.includes('nano')) {
-      modelFactor = 0.6;
-    } else if (m.includes('mini')) {
-      modelFactor = 0.8;
-    } else if (m.includes('4o')) {
-      modelFactor = 1.0;
-    } else if (m.includes('gemma')) {
-      modelFactor = 1.1;
-    } else {
-      modelFactor = 1.0;
+    const body = {
+      images: imgs.map((image) => ({
+        id: image.id,
+        base64_data: image.base64_data
+      })),
+      model: usedModel
+    };
+
+    const response = await this.sendPost(url, body, headers);
+
+    if (!response?.success || response.status !== 200) {
+      console.warn(
+        '[AIinterface] Could not retrieve generation-time estimate:',
+        response?.message || 'Unknown error'
+      );
+
+      return 0;
     }
 
-    // Rough image-size factor
-    const px = Number(this.configs.resize || this.configs.img_size || 500) || 500;
-    const sizeFactor = px / 500;
+    const estimates = response.data?.estimates;
 
-    // Small fixed overhead
-    const overhead = 3;
+    if (!Array.isArray(estimates)) {
+      console.warn(
+        '[AIinterface] Invalid generation-time estimate response:',
+        response.data
+      );
 
-    return Math.ceil(overhead + (count * secPerImage * modelFactor * sizeFactor));
+      return 0;
+    }
+
+    return estimates.reduce((total, estimate) => {
+      const seconds = Number(estimate?.time);
+
+      return total + (Number.isFinite(seconds) && seconds > 0 ? seconds : 0);
+    }, 0);
   }
 
   async genKeywords(e, images, options = {}) {
@@ -1510,7 +1573,7 @@ class AIinterface {
     const url = this.sanitizeUrl(`${this.host}/${route}`);
 
     const imgs = images || [];
-    const usedModel = options.model || this.def_model;
+    const usedModel = options.model || this.selected_model || this.default_model;
 
     if (!Array.isArray(imgs) || imgs.length < 1) {
       return { success: false, status: 0, message: this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_NO_IMGS_ERROR, data: null };
