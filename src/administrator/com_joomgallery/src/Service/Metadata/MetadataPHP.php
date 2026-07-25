@@ -638,13 +638,13 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
       if(\is_array($numbers))
       {
         return implode(
-            ',',
-            array_map(
-                fn($part) => $this->isRational($part)
-                  ? $this->formatRational($part)
-                  : (string) $part,
-                $numbers
-            )
+          ',',
+          array_map(
+            fn($part) => $this->isRational($part)
+              ? $this->formatRational($part)
+              : (string) $part,
+            $numbers
+          )
         );
       }
 
@@ -682,14 +682,14 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
     {
       $parts = array_map('trim', explode(',', $entry));
 
-    $rationals = array_map(
+      $rationals = array_map(
         static function (string $part): array {
-            [$numerator, $denominator] = array_map('intval', explode('/', $part, 2));
+          [$numerator, $denominator] = array_map('intval', explode('/', $part, 2));
 
-            return [$numerator, $denominator];
+          return [$numerator, $denominator];
         },
         $parts
-    );
+      );
 
       return \count($rationals) === 1 ? $rationals[0] : $rationals;
     }
