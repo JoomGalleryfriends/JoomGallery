@@ -387,11 +387,142 @@ class AIinterface {
     txtField.value = '';
   }
 
-  getGpsCoordinates() {
+  parseExifRational(value) {
+    if (typeof value === 'number') {
+      return Number.isFinite(value) ? value : null;
+    }
+
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    const rational = value.trim();
+
+    if (!rational) {
+      return null;
+    }
+
+    if (!rational.includes('/')) {
+      const number = Number(rational);
+
+      return Number.isFinite(number) ? number : null;
+    }
+
+    const [numerator, denominator] = rational.split('/').map(Number);
+
+    if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator === 0) {
+      return null;
+    }
+
+    return numerator / denominator;
+  }
+
+  convertExifGpsCoordinate(value, reference) {
+    const parts = Array.isArray(value) ? value : String(value ?? '').split(',');
+
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const degrees = this.parseExifRational(parts[0]);
+    const minutes = this.parseExifRational(parts[1]);
+    const seconds = this.parseExifRational(parts[2]);
+
+    if (degrees === null || minutes === null || seconds === null) {
+      return null;
+    }
+
+    let coordinate = degrees + (minutes / 60) + (seconds / 3600);
+    const normalizedReference = String(reference ?? '').toUpperCase();
+
+    if (normalizedReference === 'S' || normalizedReference === 'W') {
+      coordinate *= -1;
+    }
+
+    return coordinate;
+  }
+
+  extractGpsCoordinates(payload) {
+    const gps = payload?.data?.imgmetadata?.exif?.GPS;
+
+    if (!gps) {
+      return null;
+    }
+
+    const latitude  = this.convertExifGpsCoordinate(gps.GPSLatitude, gps.GPSLatitudeRef);
+    const longitude = this.convertExifGpsCoordinate(gps.GPSLongitude, gps.GPSLongitudeRef);
+
+    if (
+      latitude === null ||
+      longitude === null ||
+      latitude < -90 ||
+      latitude > 90 ||
+      longitude < -180 ||
+      longitude > 180
+    ) {
+      return null;
+    }
+
+    return {latitude, longitude};
+  }
+
+  async getGpsCoordinates(panels) {
     const useExif = document.querySelector('input[name="jgai_exif_location"]:checked')?.value === '1';
 
     // Use EXIF data
     if (useExif) {
+
+      if (!panels) {
+        return null;
+      }
+
+      const panelList = Array.from(panels);
+
+      if (panelList.length === 0) {
+        return null;
+      }
+
+      const headers = {
+        Authorization: '',
+        'X-CSRF-Token': this.configs.session
+      };
+
+      for (const panel of panelList) {
+        const imageId = panel.querySelector('img.image')?.getAttribute('data-imgid');
+
+        const variables = new URLSearchParams({
+          option: 'com_joomgallery',
+          view: 'image',
+          id: String(imageId),
+          format: 'json'
+        });
+
+        const url = this.sanitizeUrl(`${this.configs.base_url}/administrator/index.php?${variables.toString()}`);
+
+        const response = await this.sendGet(url, headers);
+
+        if (!response?.success || !response?.data) {
+          // Not successful. Try the next image.
+          console.warn(`[AIinterface] Could not fetch EXIF GPS data for image ${imageId}:`, response?.message);
+          continue;
+        }
+
+        const coordinates = this.extractGpsCoordinates(response.data);
+
+        if (!coordinates) {
+          // No valid gps data. Try the next image.
+          console.debug(`[AIinterface] No valid EXIF GPS coordinates found in the image ${imageId}.`);
+          continue;
+        }
+
+        console.debug(`[AIinterface] Using EXIF GPS coordinates from image ${imageId}.`, coordinates);
+
+        // Immediately exit the method after the first valid result.
+        return coordinates;
+      };
+
+      console.debug('[AIinterface] No valid EXIF GPS coordinates found in any image.');
+
       return null;
     }
 
@@ -701,16 +832,22 @@ class AIinterface {
 
     // Create the options object
     const options = {
-      'confidence_values': false,
-      'model': this.selected_model,
-      'predefined_tags': manualKeywords,
-      'prompt_mode': this.selected_mode,
-      'service': this.getProvider(this.selected_model),
-      'language': this.selected_lang,
-      'gps': this.getGpsCoordinates(),
-      'suggested_topic': document.getElementById(`${this.prefix}-prompt-description`)?.value ?? '',
-      'tag_count': document.getElementById(`${this.prefix}-nmb-keywords`)?.value ?? '',
-      'token_count': true
+      confidence_values: false,
+      model: this.selected_model,
+      predefined_tags: manualKeywords,
+      prompt_mode: this.selected_mode,
+      service: this.getProvider(this.selected_model),
+      language: this.selected_lang,
+      suggested_topic: document.getElementById(`${this.prefix}-prompt-description`)?.value ?? '',
+      tag_count: document.getElementById(`${this.prefix}-nmb-keywords`)?.value ?? '',
+      token_count: true
+    };
+
+    // Add GPS coordinates if available
+    const gps = await this.getGpsCoordinates(panels);
+
+    if (gps !== null) {
+      options.gps = gps;
     }
 
     this.showModal('generate');
