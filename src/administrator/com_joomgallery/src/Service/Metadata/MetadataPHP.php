@@ -184,7 +184,9 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
       $tiff   = new PelTiff();
       $ifd0   = new PelIfd(PelIfd::IFD0);
       $subIfd = new PelIfd(PelIfd::EXIF);
+      $gpsIfd = new PelIfd(PelIfd::GPS);
       $ifd0->addSubIfd($subIfd);
+      $ifd0->addSubIfd($gpsIfd);
       $tiff->setIfd($ifd0);
     }
     else
@@ -335,6 +337,7 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
         $metadata['exif']['IFD0'][PelTag::getName(PelIfd::IFD0, $entry->getTag())] = self::formatPELEntryForForm($entry);
       }
 
+      // EXIF IFD
       $subIfd = $ifd0->getSubIfd(PelIfd::EXIF);
 
       if($subIfd != null)
@@ -344,6 +347,19 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
         foreach($subIfd->getEntries() as $entry)
         {
           $metadata['exif']['EXIF'][PelTag::getName(PelIfd::EXIF, $entry->getTag())] = self::formatPELEntryForForm($entry);
+        }
+      }
+
+      // GPS IFD
+      $gpsIfd = $ifd0->getSubIfd(PelIfd::GPS);
+
+      if($gpsIfd !== null)
+      {
+        $metadata['exif']['GPS'] = [];
+
+        foreach($gpsIfd->getEntries() as $entry)
+        {
+          $metadata['exif']['GPS'][PelTag::getName(PelIfd::GPS, $entry->getTag())] = self::formatPELEntryForForm($entry);
         }
       }
     }
@@ -424,16 +440,38 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
   /**
    * Formats a PelEntry variant to be stored in a displayable format for the imgmetadata form.
    *
-   * @param  mixed $entry  Variant of the PelEntry class
+   * @param   mixed  $entry   Variant of the PelEntry object
    *
-   * @return mixed Value of the entry
+   * @return  mixed  Formatted entry value.
    */
-  private function formatPELEntryForForm($entry)
+  private function formatPELEntryForForm(mixed $entry): mixed
   {
     if($entry instanceof PelEntryRational || $entry instanceof PelEntrySRational)
     {
       // Rationals are retrieved/stored as an array, they need to be reformatted for the form.
       $numbers = $entry->getValue();
+
+      // A single rational:
+      // [numerator, denominator]
+      if($this->isRational($numbers))
+      {
+        return $this->formatRational($numbers);
+      }
+
+      // Multiple rationals, for example:
+      // GPSLatitude, GPSLongitude or GPSTimeStamp
+      if(\is_array($numbers))
+      {
+        return implode(
+          ',',
+          array_map(
+            fn($part) => $this->isRational($part)
+              ? $this->formatRational($part)
+              : (string) $part,
+            $numbers
+          )
+        );
+      }
 
       return $entry->formatNumber($numbers);
     }
@@ -451,17 +489,35 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
       return str_pad('ASCII', 8, \chr(0)) . $entry->getValue();
     }
 
-
       return $entry->getValue();
   }
 
-  private function formatForPelEntry($tag, $entry, $type)
+  /**
+   * Formats a form value for use in a PEL entry.
+   *
+   * @param   int    $tag    EXIF tag identifier.
+   * @param   mixed  $entry  Form value.
+   * @param   int    $type   PEL data format (PelFormat::*).
+   *
+   * @return  mixed  Value formatted for PEL.
+   */
+  private function formatForPelEntry(int $tag, mixed $entry, int $type): mixed
   {
-    if($type == PelFormat::RATIONAL || $type == PelFormat::SRATIONAL)
+    if($type === PelFormat::RATIONAL || $type === PelFormat::SRATIONAL)
     {
-      $explode = explode('/', $entry);
+      $parts = array_map('trim', explode(',', $entry));
 
-      return [\intval($explode[0]), \intval($explode[1])];
+      $rationals = array_map(
+        static function(string $part): array
+        {
+          [$numerator, $denominator] = array_map('intval',explode('/', $part, 2));
+
+          return [$numerator, $denominator];
+        },
+        $parts
+      );
+
+      return \count($rationals) === 1 ? $rationals[0] : $rationals;
     }
     elseif($tag == PelTag::COPYRIGHT)
     {
@@ -475,8 +531,35 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
       return [$explode[0], $explode[1]];
     }
 
-
       return $entry;
+  }
+
+  /**
+   * Checks whether a value represents a rational number.
+   *
+   * @param   mixed  $value  Value to test.
+   *
+   * @return  bool   True if the value is a rational number.
+   */
+  private function isRational(mixed $value): bool
+  {
+    return \is_array($value)
+      && \count($value) === 2
+      && isset($value[0], $value[1])
+      && \is_numeric($value[0])
+      && \is_numeric($value[1]);
+  }
+
+  /**
+   * Formats a rational number as a string.
+   *
+   * @param   array  $value  Rational value as [numerator, denominator].
+   *
+   * @return  string  Rational value as "numerator/denominator".
+   */
+  private function formatRational(array $value): string
+  {
+    return $value[0] . '/' . $value[1];
   }
 
   /**
