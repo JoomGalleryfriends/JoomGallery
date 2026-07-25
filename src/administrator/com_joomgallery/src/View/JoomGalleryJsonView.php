@@ -208,6 +208,7 @@ class JoomGalleryJsonView extends JsonView
     if(\is_string($string))
     {
       json_decode($string);
+
       return json_last_error() === JSON_ERROR_NONE;
     }
 
