@@ -1274,7 +1274,7 @@ class AIinterface {
           format: 'json'
         });
 
-        const url = this.sanitizeUrl(`${this.configs.base_url}/administrator/index.php?${variables.toString()}`);
+        const url = this.sanitizeUrl(`${this.configs.base_url}/index.php?${variables.toString()}`);
 
         const response = await this.sendGet(url, headers);
 
