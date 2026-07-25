@@ -158,10 +158,10 @@ if(isset($this->input_cid) && !empty($this->input_cid))
                   'id'      => 'jgai-exif-location',
                   'name'    => 'jgai_exif_location',
                   'label'   => Text::_('COM_JOOMGALLERY_AIINT_EXIF_LOC_LBL'),
-                  'validate'=> 'options',
+                  'validate' => 'options',
                   'default' => 1,
                   'options' => [(object) ['value' => '0', 'text' => Text::_('JNO')], (object) ['value' => '1', 'text' => Text::_('JYES')]],
-                  'dataAttribute' => 'class="inline"', 'value' => '1', 'class' => '', 'disabled' => false, 'readonly' => false, 'onchange' => '', 
+                  'dataAttribute' => 'class="inline"', 'value' => '1', 'class' => '', 'disabled' => false, 'readonly' => false, 'onchange' => '',
                 ]
             );
           ?>
