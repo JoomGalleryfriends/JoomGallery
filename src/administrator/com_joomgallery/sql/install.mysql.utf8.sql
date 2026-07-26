@@ -128,6 +128,8 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_router_ids` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_router_imgids` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_compatibility_mode` TINYINT(1) NOT NULL DEFAULT 0,
+`jg_acl_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 64,
+`jg_acl_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 15,
 `jg_replaceinfo` TEXT NOT NULL,
 `jg_replaceshowwarning` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_useorigfilename` TINYINT(1) NOT NULL DEFAULT 0,

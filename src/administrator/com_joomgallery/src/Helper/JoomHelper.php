@@ -38,6 +38,45 @@ use Joomla\Registry\Registry;
 class JoomHelper
 {
   /**
+   * Creators already resolved during the current request.
+   *
+   * @var array
+   */
+  protected static $creators = [];
+
+  /**
+   * Register creator values which were already selected by a model query.
+   *
+   * @param   string  $name     Content type.
+   * @param   int     $id       Item ID.
+   * @param   int     $creator  Creator user ID.
+   * @param   bool    $parent   Whether this is a parent creator lookup.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public static function registerCreator(string $name, int $id, int $creator, bool $parent = false): void
+  {
+    if($id > 0)
+    {
+      self::$creators[$name . ':' . $id . ':' . (int) $parent] = $creator;
+    }
+  }
+
+  /**
+   * Clear creator values after an item hierarchy or ownership change.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public static function clearCreatorCache(): void
+  {
+    self::$creators = [];
+  }
+
+  /**
    * List of available content types
    *
    * @var array
@@ -248,6 +287,13 @@ class JoomHelper
     // We got a record id
     if(is_numeric($id) && $id > 0)
     {
+      $cacheKey = $name . ':' . $id . ':' . (int) $parent;
+
+      if(\array_key_exists($cacheKey, self::$creators))
+      {
+        return self::$creators[$cacheKey];
+      }
+
       $db    = Factory::getContainer()->get(DatabaseInterface::class);
       $query = $db->getQuery(true);
 
@@ -274,7 +320,9 @@ class JoomHelper
 
       $db->setQuery($query);
 
-      return $db->loadResult();
+      self::$creators[$cacheKey] = $db->loadResult();
+
+      return self::$creators[$cacheKey];
     }
 
     return false;
