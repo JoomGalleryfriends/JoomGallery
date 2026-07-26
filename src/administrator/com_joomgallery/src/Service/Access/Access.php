@@ -489,7 +489,7 @@ class Access implements AccessInterface
     if($user instanceof User)
     {
       // user object given
-      $this->user = $user;
+      $this->user    = $user;
       $this->appUser = null;
     }
     elseif(!\is_object($user))
@@ -507,7 +507,7 @@ class Access implements AccessInterface
 
       if(isset($appuser->id))
       {
-        $this->user = new User($appuser->id);
+        $this->user    = new User($appuser->id);
         $this->appUser = $appuser;
       }
     }
@@ -617,7 +617,7 @@ class Access implements AccessInterface
 
     $db     = Factory::getContainer()->get(DatabaseInterface::class);
     $userId = (int) $this->user->id;
-    $query = $db->getQuery(true)
+    $query  = $db->getQuery(true)
       ->select($db->quoteName(['id', 'created_by']))
       ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
       ->where($db->quoteName('created_by') . ' = :userId')
@@ -642,10 +642,10 @@ class Access implements AccessInterface
     }
 
     $this->putCacheEntry(
-      $this->cacheNamespace,
-      $warmKey,
-      ['count' => \count($categories), 'expires' => time() + $this->hotCacheLifetime],
-      $this->hotCacheLimit
+        $this->cacheNamespace,
+        $warmKey,
+        ['count' => \count($categories), 'expires' => time() + $this->hotCacheLifetime],
+        $this->hotCacheLimit
     );
   }
 
@@ -668,12 +668,12 @@ class Access implements AccessInterface
 
     if($this->isHotCacheCandidate($asset, $pk))
     {
-      $this->putCacheEntry(
+    $this->putCacheEntry(
         $this->cacheNamespace,
         $key,
         ['value' => $result, 'expires' => time() + $this->hotCacheLifetime],
         $this->hotCacheLimit
-      );
+    );
     }
 
     return $result;

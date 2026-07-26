@@ -212,8 +212,8 @@ trait CacheAwareTrait
     }
 
     Factory::getApplication()->getSession()->set(
-      $namespace,
-      ['created' => time(), 'items' => self::$runtimeCaches[$namespace] ?? []]
+        $namespace,
+        ['created' => time(), 'items' => self::$runtimeCaches[$namespace] ?? []]
     );
 
     unset(self::$dirtyCaches[$namespace]);
