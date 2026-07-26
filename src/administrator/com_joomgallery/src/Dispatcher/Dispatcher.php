@@ -36,7 +36,7 @@ class Dispatcher extends ComponentDispatcher
     try
     {
       $component = Factory::getApplication()->bootComponent('com_joomgallery');
-      $config     = $component->getConfig();
+      $config    = $component->getConfig();
     }
     catch(\Throwable $th)
     {
