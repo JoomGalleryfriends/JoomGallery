@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\User\CurrentUserInterface;
@@ -142,6 +143,47 @@ abstract class JoomListModel extends ListModel
     }
 
     return $this->acl;
+  }
+
+  /**
+   * Load list items and register ownership data already present in the result.
+   *
+   * @return  array
+   *
+   * @since   4.4.0
+   */
+  public function getItems()
+  {
+    $items = parent::getItems();
+
+    if(!\is_array($items))
+    {
+      return $items;
+    }
+
+    foreach($items as $item)
+    {
+      if(!isset($item->id))
+      {
+        continue;
+      }
+
+      if(isset($item->created_by_id))
+      {
+        JoomHelper::registerCreator($this->type, (int) $item->id, (int) $item->created_by_id);
+      }
+
+      if($this->type === 'category' && isset($item->parent_created_by))
+      {
+        JoomHelper::registerCreator('category', (int) $item->id, (int) $item->parent_created_by, true);
+      }
+      elseif($this->type === 'image' && isset($item->catid, $item->cat_uid))
+      {
+        JoomHelper::registerCreator('category', (int) $item->catid, (int) $item->cat_uid);
+      }
+    }
+
+    return $items;
   }
 
   /**

@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Traits\CacheAwareTrait;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\User;
@@ -33,6 +34,7 @@ use Joomla\Database\DatabaseInterface;
 abstract class Config extends \stdClass implements ConfigInterface
 {
   use ServiceTrait;
+  use CacheAwareTrait;
 
   /**
    * Name of the config service
@@ -70,11 +72,11 @@ abstract class Config extends \stdClass implements ConfigInterface
   protected $storeId = null;
 
   /**
-   * Array of cached parameter by usergroup and context.
+   * Session namespace for this config variant
    *
-   * @var    array
+   * @var string
    */
-  protected static $cache = [];
+  protected $cacheNamespace = '';
 
   /**
    * Loading the calculated settings for a specific content
@@ -115,13 +117,8 @@ abstract class Config extends \stdClass implements ConfigInterface
       $this->context = $context;
     }
 
-    // Load cache from session
-    $cache = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.' . $this->name);
-
-    if(!empty($cache))
-    {
-      self::$cache = $cache;
-    }
+    $this->cacheNamespace = 'com_joomgallery.configcache.' . $this->name;
+    $this->initialiseCache($this->cacheNamespace);
 
     // Get current user
     $user = Factory::getApplication()->getIdentity();
@@ -199,12 +196,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    */
   public function storeCacheToSession()
   {
-    // Store current caches to session
-    if(!empty(self::$cache))
-    {
-      $res = array_merge(Factory::getApplication()->getSession()->get('com_joomgallery.configcache.' . $this->name, []), self::$cache);
-      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.' . $this->name, $res);
-    }
+    $this->persistCachesToSession();
   }
 
   /**
@@ -272,26 +264,7 @@ abstract class Config extends \stdClass implements ConfigInterface
       $name = $this->name;
     }
 
-    if($storeId)
-    {
-      // Delete matching entries in static object property
-      self::$cache = $this->del_preg_keys($storeId, self::$cache);
-
-      // Get session cache
-      $session = Factory::getApplication()->getSession()->get('com_joomgallery.configcache.' . $name);
-
-      if($session && \is_array($session))
-      {
-        // Delete matching entries in session
-        Factory::getApplication()->getSession()->set('com_joomgallery.configcache.' . $name, $this->del_preg_keys($storeId, $session));
-      }
-    }
-    else
-    {
-      // No storeId provided. Delete everything.
-      self::$cache = [];
-      Factory::getApplication()->getSession()->set('com_joomgallery.configcache.' . $name, []);
-    }
+    $this->removeCacheEntries('com_joomgallery.configcache.' . $name, $storeId, true);
   }
 
   /**
@@ -310,7 +283,7 @@ abstract class Config extends \stdClass implements ConfigInterface
      * one instance of the Config object for contexts that have
      * the same exact configs.
      */
-    self::$cache[base64_encode($this->storeId)] = $this->getProperties();
+    $this->putCacheEntry($this->cacheNamespace, base64_encode($storeId), $this->getProperties());
   }
 
   /**

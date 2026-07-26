@@ -160,6 +160,32 @@
           <option value="0">JNO</option>
           <option value="1">JYES</option>
       </field>
+
+      <field name="jg_acl_cache_entries"
+             type="number"
+             default="64"
+             min="0"
+             max="10000"
+             step="1"
+             filter="integer"
+             validate="number"
+             global_only="true"
+             sensitive="true"
+             label="COM_JOOMGALLERY_CONFIG_ACL_CACHE_ENTRIES"
+             description="COM_JOOMGALLERY_CONFIG_ACL_CACHE_ENTRIES_LONG" />
+
+      <field name="jg_acl_cache_lifetime"
+             type="number"
+             default="15"
+             min="0"
+             max="1440"
+             step="1"
+             filter="integer"
+             validate="number"
+             global_only="true"
+             sensitive="true"
+             label="COM_JOOMGALLERY_CONFIG_ACL_CACHE_LIFETIME"
+             description="COM_JOOMGALLERY_CONFIG_ACL_CACHE_LIFETIME_LONG" />
     </fieldset>
 
     <fieldset type="tab" name="general-upload" label="COM_JOOMGALLERY_UPLOADS">

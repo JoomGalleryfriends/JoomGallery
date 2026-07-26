@@ -24,3 +24,5 @@ ALTER TABLE `#__joomgallery_configs` ADD `jg_gallery_view_limit_images` INT NOT 
 ALTER TABLE `#__joomgallery_configs` ADD `jg_gallery_view_searchprovider` VARCHAR(15) NOT NULL DEFAULT "finder" AFTER `jg_gallery_view_limit_images`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_gallery_view_autosuggest` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_gallery_view_searchprovider`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_browse_categories_link` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_browse_images_link`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_acl_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 64 AFTER `jg_compatibility_mode`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_acl_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 15 AFTER `jg_acl_cache_entries`;
