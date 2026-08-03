@@ -17,7 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryRawView;
-use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 
 /**
@@ -56,7 +56,7 @@ class RawView extends JoomGalleryRawView
     // Check access
     if(!$this->access($id, $type))
     {
-      $this->outputError(403, Text::_('COM_JOOMGALLERY_ERROR_IMAGE_ACCESS_DENIED'));
+      $this->outputError(403, Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
     }
 
     /** @var ImageModel $model */
@@ -99,8 +99,7 @@ class RawView extends JoomGalleryRawView
     }
     catch (InvalidPathException $e)
     {
-      $this->app->enqueueMessage($e, 'error');
-      $this->app->redirect(Route::_('index.php', false), 404);
+      $this->outputError(404, $e->getMessage());
     }
 
     // Create config service
@@ -109,7 +108,7 @@ class RawView extends JoomGalleryRawView
     // Postprocessing of the image
     if(!$this->ppImage($file_info, $resource, $type))
     {
-      $this->app->redirect(Route::_('index.php', false), 404);
+      $this->outputError(404, 'Error postprocessing the image');
     }
 
     // Increment hits counter
