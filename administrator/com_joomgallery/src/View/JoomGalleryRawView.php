@@ -58,7 +58,7 @@ abstract class JoomGalleryRawView extends JoomGalleryView
     $this->app->setHeader('Status', (string) $status, true);
     $this->app->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
     $this->app->setHeader('Cache-Control', 'no-store', true);
-    $this->app->setHeader('Content-Length', (string) strlen($message), true);
+    $this->app->setHeader('Content-Length', (string) \strlen($message), true);
 
     // Required for large files to work properly
     if(ob_get_level() > 0) ob_end_clean();
