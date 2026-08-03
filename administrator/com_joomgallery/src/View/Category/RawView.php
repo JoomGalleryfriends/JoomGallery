@@ -15,8 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Category;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryRawView;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 
 /**
@@ -25,7 +24,7 @@ use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
  * @package JoomGallery
  * @since   4.0.0
  */
-class RawView extends JoomGalleryView
+class RawView extends JoomGalleryRawView
 {
   /**
    * Raw view display method, outputs one image
@@ -58,24 +57,14 @@ class RawView extends JoomGalleryView
     // Get image resource
     try
     {
-      list($file_info, $ressource) = $this->component->getFilesystem()->getResource($img_path);
+      list($file_info, $resource) = $this->component->getFilesystem()->getResource($img_path);
     }
     catch (InvalidPathException $e)
     {
-      $this->app->enqueueMessage($e, 'error');
-      $this->app->redirect(Route::_('index.php', false), 404);
+      $this->outputError(404, $e->getMessage());
     }
 
-    // Set mime encoding
-    $this->getDocument()->setMimeEncoding($file_info->mime_type);
-
-    // Set header to specify the file name
-    $this->app->setHeader('Cache-Control', 'no-cache, must-revalidate');
-    $this->app->setHeader('Pragma', 'no-cache');
-    $this->app->setHeader('Content-disposition', 'inline; filename=' . basename($img_path));
-    $this->app->setHeader('Content-Length', \strval($file_info->size));
-
-    ob_end_clean(); //required here or large files will not work
-    fpassthru($ressource);
+    // Output
+    $this->outputResource($resource, $file_info->mime_type, $img_path, $file_info->size);
   }
 }
