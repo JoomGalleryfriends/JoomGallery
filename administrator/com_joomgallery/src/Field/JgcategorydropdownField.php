@@ -117,9 +117,9 @@ class JgcategorydropdownField extends ListField
       $this->allowAdd     = isset($this->element['allowAdd']) ? (bool) $this->element['allowAdd'] : false;
       $this->customPrefix = (string) $this->element['customPrefix'];
 
-      $this->isCategoriesOfUser  = isset($this->element['categoriesOfUser']) ? (bool) $this->element['categoriesOfUser'] : false;
-      $this->isShow_NoParent     = isset($this->element['show_NoParent']) ? (bool) $this->element['show_NoParent'] : false;
-      $this->isShow_SelectHeader = isset($this->element['showSelect']) ? (bool) $this->element['showSelect'] : false;
+      $this->isCategoriesOfUser  = isset($this->element['categoriesOfUser']) ? filter_var($this->element['categoriesOfUser'], FILTER_VALIDATE_BOOLEAN) : false;
+      $this->isShow_NoParent     = isset($this->element['show_NoParent']) ? filter_var($this->element['show_NoParent'], FILTER_VALIDATE_BOOLEAN) : false;
+      $this->isShow_SelectHeader = isset($this->element['showSelect']) ? filter_var($this->element['showSelect'], FILTER_VALIDATE_BOOLEAN) : false;
 
       $elementOrdering = $this->element['ordering'] ?? '';
 
