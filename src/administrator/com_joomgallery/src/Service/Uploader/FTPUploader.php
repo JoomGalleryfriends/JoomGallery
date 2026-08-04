@@ -44,7 +44,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  bool
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   public function isImgUploaded($data): bool
   {
@@ -59,7 +59,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  bool
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   public function retrieveImage(&$data, $filename = true): bool
   {
@@ -85,6 +85,9 @@ class FTPUploader extends BaseUploader implements UploaderInterface
       $data['title'] = pathinfo($this->src_name, PATHINFO_FILENAME);
     }
 
+    // The parent uploader validates the file type against the configured image
+    // processor and filesystem, creates the destination filename and records the
+    // filesystem selected for the target category.
     if(!parent::retrieveImage($data, $filename))
     {
       return false;
@@ -126,7 +129,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  bool
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   public function overrideData(&$data): bool
   {
@@ -145,7 +148,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  bool
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   public function createImage($data_row): bool
   {
@@ -166,7 +169,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  string
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   public function checkError($uploaderror): string
   {
@@ -180,7 +183,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  bool
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   public function deleteTmp(): bool
   {
@@ -199,7 +202,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  string|false
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function resolveSourceFile(string $file)
   {
@@ -228,7 +231,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  array
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function getSourceDirectories(): array
   {
@@ -260,7 +263,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  string
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function normalizeSourcePath(string $path): string
   {
@@ -287,7 +290,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  bool
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function isInsideDirectory(string $file, string $directory): bool
   {
@@ -301,7 +304,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
    *
    * @return  void
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function cleanupSource(): void
   {

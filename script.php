@@ -497,6 +497,13 @@ class com_joomgalleryInstallerScript extends InstallerScript
    */
   function postflight($type, $parent)
   {
+    if(($type == 'install' || $type == 'update') && !$this->createFtpImportDirectory())
+    {
+      $directory = Path::clean(JPATH_ROOT . '/images/joomgallery/FTP');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_FTP_IMPORT_ERROR_CREATE_DIRECTORY', $directory), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_FTP_IMPORT_ERROR_CREATE_DIRECTORY', $directory), 8, 'joomgallery');
+    }
+
     if($type == 'install' || ($type == 'update' && $this->fromOldJG))
     {
       $app = Factory::getApplication();
@@ -1548,6 +1555,20 @@ class com_joomgalleryInstallerScript extends InstallerScript
         }
       }
     }
+  }
+
+  /**
+   * Creates the default local directory used as the FTP import inbox.
+   *
+   * @return  bool  True if the directory exists or was created successfully
+   *
+   * @since   4.5.0
+   */
+  private function createFtpImportDirectory(): bool
+  {
+    $directory = Path::clean(JPATH_ROOT . '/images/joomgallery/FTP');
+
+    return Folder::exists($directory) || Folder::create($directory);
   }
 
   /**

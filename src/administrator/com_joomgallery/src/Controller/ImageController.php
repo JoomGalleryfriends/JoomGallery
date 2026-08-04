@@ -106,7 +106,7 @@ class ImageController extends JoomFormController
    *
    * @return  boolean  True if the record can be added, false if not.
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   public function ftpimport()
   {
@@ -191,7 +191,7 @@ class ImageController extends JoomFormController
    *
    * @return  boolean
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   public function ftplist()
   {
@@ -256,8 +256,7 @@ class ImageController extends JoomFormController
       $result['error'] = $e->getMessage();
     }
 
-    $this->app->setHeader('Content-Type', 'application/json', true);
-    echo json_encode($result);
+    echo new JsonResponse($result);
     $this->app->close();
 
     return true;
@@ -268,7 +267,7 @@ class ImageController extends JoomFormController
    *
    * @return  string
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function getFtpImportDirectory(): string
   {
@@ -299,7 +298,7 @@ class ImageController extends JoomFormController
    *
    * @return  array
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function getFtpImportDirectories(): array
   {
@@ -333,7 +332,7 @@ class ImageController extends JoomFormController
    *
    * @return  string
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function normalizeFtpImportPath(string $path): string
   {
@@ -360,7 +359,7 @@ class ImageController extends JoomFormController
    *
    * @return  bool
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function directoryHasImportableFiles(string $directory, array $allowed_extensions): bool
   {
@@ -387,7 +386,7 @@ class ImageController extends JoomFormController
    *
    * @return  array
    *
-   * @since   4.0.0
+   * @since   4.5.0
    */
   protected function getFtpImportExtensions(): array
   {
