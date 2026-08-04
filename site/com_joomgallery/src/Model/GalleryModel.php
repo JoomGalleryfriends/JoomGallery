@@ -55,7 +55,7 @@ class GalleryModel extends JoomItemModel
   {
     parent::__construct($config);
 
-    $this->imagesModel         = $this->component->getMVCFactory()->createModel('images', 'site');
+    $this->imagesModel         = $this->component->getMVCFactory()->createModel('images', 'site', ['context' => 'com_joomgallery.gallery.images']);
     $this->imagesModel->search = 'jg_gallery_view_searchprovider';
     $this->imagesModel->getState();
   }

@@ -27,6 +27,14 @@ use Joomla\Database\DatabaseInterface;
 class UserimagesModel extends AdminImagesModel
 {
   /**
+   * Context used to store list state in the user session.
+   *
+   * @var    string
+   * @since  4.4.0
+   */
+  protected $context = 'com_joomgallery.user.images';
+
+  /**
    * Method to autopopulate the model state.
    *
    * Note. Calling getState in this method will result in recursion.

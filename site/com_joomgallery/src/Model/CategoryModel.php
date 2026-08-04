@@ -40,6 +40,31 @@ class CategoryModel extends JoomItemModel
   protected $type = 'category';
 
   /**
+   * Images list model.
+   *
+   * @var    ImagesModel|null
+   * @since  4.4.0
+   */
+  protected $imagesModel = null;
+
+  /**
+   * Get the images list model used by the category view.
+   *
+   * @return  ImagesModel
+   * @since   4.4.0
+   */
+  protected function getImagesModel(): ImagesModel
+  {
+    if($this->imagesModel === null)
+    {
+      $this->imagesModel = $this->component->getMVCFactory()->createModel('images', 'site', ['context' => 'com_joomgallery.category.images']);
+      $this->imagesModel->getState();
+    }
+
+    return $this->imagesModel;
+  }
+
+  /**
    * Method to auto-populate the model state.
    *
    * Note. Calling getState in this method will result in recursion.
@@ -344,8 +369,7 @@ class CategoryModel extends JoomItemModel
     }
 
     // Load images list model
-    $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
-    $listModel->getState();
+    $listModel = $this->getImagesModel();
 
     // Select fields to load
     $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum'];
@@ -377,9 +401,8 @@ class CategoryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load categories list model
-    $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
-    $listModel->getState();
+    // Load images list model
+    $listModel = $this->getImagesModel();
 
     // Apply preselected filters and fields selection for images
     $this->setImagesModelState($listModel);
@@ -408,9 +431,8 @@ class CategoryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load categories list model
-    $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
-    $listModel->getState();
+    // Load images list model
+    $listModel = $this->getImagesModel();
 
     // Apply preselected filters and fields selection for images
     $this->setImagesModelState($listModel);
@@ -430,9 +452,8 @@ class CategoryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load categories list model
-    $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
-    $listModel->getState();
+    // Load images list model
+    $listModel = $this->getImagesModel();
 
     // Apply preselected filters and fields selection for images
     $this->setImagesModelState($listModel);

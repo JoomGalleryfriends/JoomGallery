@@ -34,6 +34,11 @@ class ImagesModel extends AdminImagesModel
    */
   function __construct($config = [])
   {
+    if(!empty($config['context']))
+    {
+      $this->context = (string) $config['context'];
+    }
+
     if(empty($config['filter_fields']))
     {
       $config['filter_fields'] = [
