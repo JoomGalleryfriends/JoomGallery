@@ -27,6 +27,11 @@
         type="user"
         label="PLG_TASK_JOOMGALLERY_TASK_RECREATEIMAGE_USER_LABEL"
         description="PLG_TASK_JOOMGALLERY_TASK_RECREATEIMAGE_USER_DESC" />
+      <field name="overrideable_params"
+        type="text"
+        default="type"
+        readonly="true"
+        label="PLG_TASK_JOOMGALLERY_TASK_OVERRITABLE_PARAM_LABEL" />
       <field name="successful"
         type="text"
         readonly="true"

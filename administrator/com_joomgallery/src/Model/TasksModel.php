@@ -51,8 +51,6 @@ class TasksModel extends JoomListModel
       $config['filter_fields'] = [
         'ordering', 'a.ordering',
         'published', 'a.published',
-        'failed', 'a.failed',
-        'completed', 'a.completed',
         'created_time', 'a.created_time',
         'id', 'a.id',
       ];
@@ -141,6 +139,11 @@ class TasksModel extends JoomListModel
 
         $table->check();
         $table->clcProgress();
+
+        // Load associated scheduler task
+        $com_scheduler   = Factory::getApplication()->bootComponent('com_scheduler');
+        $scheduler_model = $com_scheduler->getMVCFactory()->createModel('Task', 'administrator');
+        $table->task     = $scheduler_model->getItem($item->taskid);
 
         array_push($items, $table);
       }
@@ -250,6 +253,23 @@ class TasksModel extends JoomListModel
     $query->select($db->quoteName('uc.name', 'uEditor'));
     $query->join('LEFT', $db->quoteName('#__users', 'uc'), $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.checked_out'));
 
+    // Join over the task items for status counts
+    $subQuery = $db->getQuery(true)
+    ->select(
+        [
+          $db->quoteName('ti.task_id'),
+          'COUNT(*) AS total_items',
+          'SUM(CASE WHEN ' . $db->quoteName('ti.status') . ' = ' . $db->quote('success') . ' THEN 1 ELSE 0 END) AS completed_items',
+          'SUM(CASE WHEN ' . $db->quoteName('ti.status') . ' = ' . $db->quote('failed') . ' THEN 1 ELSE 0 END) AS failed_items',
+          'SUM(CASE WHEN ' . $db->quoteName('ti.status') . ' NOT IN (' . $db->quote('success') . ', ' . $db->quote('failed') . ') THEN 1 ELSE 0 END) AS pending_items',
+        ]
+    )
+      ->from($db->quoteName('#__joomgallery_task_items', 'ti'))
+      ->group($db->quoteName('ti.task_id'));
+
+    $query->join('LEFT', '(' . $subQuery . ') AS ' . $db->quoteName('ts') . ' ON ' . $db->quoteName('ts.task_id') . ' = ' . $db->quoteName('a.id'));
+
+
     // Filter by search
     $search = $this->getState('filter.search');
 
@@ -288,42 +308,31 @@ class TasksModel extends JoomListModel
     // Filter by failed state
     $failed = (string) $this->getState('filter.failed');
 
-    if($failed !== '*')
+    if($failed !== '*' && is_numeric($failed))
     {
-      if(is_numeric($failed))
+      if((int) $failed > 0)
       {
-        $failed = (int) $failed;
-
-        if($failed > 0)
-        {
-          // Show only records with failed tasks (non-empty JSON arrays)
-          $query->where($db->quoteName('a.failed') . ' != ' . $db->quote(''))
-                ->where($db->quoteName('a.failed') . ' != ' . $db->quote('{}'));
-        }
-        else
-        {
-          // Show only records with no failed tasks (empty or empty JSON array)
-        $query->where(
-            [
-              $db->quoteName('a.failed') . ' = ' . $db->quote(''),
-              $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
-            ],
-            'OR'
-        );
-        }
+        $query->where('COALESCE(ts.failed_items, 0) > 0');
+      }
+      else
+      {
+        $query->where('COALESCE(ts.failed_items, 0) = 0');
       }
     }
 
     // Filter by completed state
     $completed = (string) $this->getState('filter.completed');
 
-    if($completed !== '*')
+    if($completed !== '*' && is_numeric($completed))
     {
-      if(is_numeric($completed))
+      if((int) $completed > 0)
       {
-        $completed = (int) $completed;
-        $query->where($db->quoteName('a.completed') . ' = :completed')
-          ->bind(':completed', $completed, ParameterType::INTEGER);
+        $query->where('COALESCE(ts.total_items, 0) > 0');
+        $query->where('COALESCE(ts.completed_items, 0) = COALESCE(ts.total_items, 0)');
+      }
+      else
+      {
+        $query->where('(COALESCE(ts.total_items, 0) = 0 OR COALESCE(ts.completed_items, 0) < COALESCE(ts.total_items, 0))');
       }
     }
 
@@ -398,42 +407,54 @@ class TasksModel extends JoomListModel
     // Filter by failed state
     $failed = (string) $this->getState('filter.failed');
 
-    if($failed !== '*')
+    if($failed !== '*' && is_numeric($failed))
     {
-      if(is_numeric($failed))
-      {
-        $failed = (int) $failed;
+      $failed = (int) $failed;
 
-        if($failed > 0)
-        {
-          // Show only records with failed tasks (non-empty JSON arrays)
-          $query->where($db->quoteName('a.failed') . ' != ' . $db->quote(''))
-                ->where($db->quoteName('a.failed') . ' != ' . $db->quote('{}'));
-        }
-        else
-        {
-          // Show only records with no failed tasks (empty or empty JSON array)
-        $query->where(
-            [
-              $db->quoteName('a.failed') . ' = ' . $db->quote(''),
-              $db->quoteName('a.failed') . ' = ' . $db->quote('{}'),
-            ],
-            'OR'
-        );
-        }
+      $failedSubQuery = $db->getQuery(true)
+        ->select('1')
+        ->from($db->quoteName('#__joomgallery_task_items', 'ti'))
+        ->where($db->quoteName('ti.task_id') . ' = ' . $db->quoteName('a.id'))
+        ->where($db->quoteName('ti.status') . ' = ' . $db->quote('failed'));
+
+      if($failed > 0)
+      {
+        $query->where('EXISTS (' . $failedSubQuery . ')');
+      }
+      else
+      {
+        $query->where('NOT EXISTS (' . $failedSubQuery . ')');
       }
     }
 
     // Filter by completed state
     $completed = (string) $this->getState('filter.completed');
 
-    if($completed !== '*')
+    if($completed !== '*' && is_numeric($completed))
     {
-      if(is_numeric($completed))
+      $completed = (int) $completed;
+
+      $hasItemsSubQuery = $db->getQuery(true)
+        ->select('1')
+        ->from($db->quoteName('#__joomgallery_task_items', 'ti'))
+        ->where($db->quoteName('ti.task_id') . ' = ' . $db->quoteName('a.id'));
+
+      $notSuccessfulSubQuery = $db->getQuery(true)
+        ->select('1')
+        ->from($db->quoteName('#__joomgallery_task_items', 'ti'))
+        ->where($db->quoteName('ti.task_id') . ' = ' . $db->quoteName('a.id'))
+        ->where($db->quoteName('ti.status') . ' != ' . $db->quote('success'));
+
+      if($completed > 0)
       {
-        $completed = (int) $completed;
-        $query->where($db->quoteName('a.completed') . ' = :completed')
-          ->bind(':completed', $completed, ParameterType::INTEGER);
+        $query->where('EXISTS (' . $hasItemsSubQuery . ')');
+        $query->where('NOT EXISTS (' . $notSuccessfulSubQuery . ')');
+      }
+      else
+      {
+        $query->where(
+            '(NOT EXISTS (' . $hasItemsSubQuery . ') OR EXISTS (' . $notSuccessfulSubQuery . '))'
+        );
       }
     }
 

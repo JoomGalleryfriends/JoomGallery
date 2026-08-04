@@ -48,6 +48,7 @@ class HtmlView extends JoomGalleryView
 
     $this->state          = $model->getState();
     $this->items          = $model->getItems();
+    $this->pagination     = $model->getPagination();
     $this->filterForm     = $model->getFilterForm();
     $this->activeFilters  = $model->getActiveFilters();
     $this->scheduledTasks = $model->getScheduledTasks();

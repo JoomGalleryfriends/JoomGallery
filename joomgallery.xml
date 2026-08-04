@@ -50,6 +50,7 @@
       <menu link="option=com_joomgallery&amp;view=image&amp;layout=upload" view="Upload" alt="Joomgallery/Upload">COM_JOOMGALLERY_UPLOAD</menu>
       <menu link="option=com_joomgallery&amp;view=images" view="images" alt="Joomgallery/Images">COM_JOOMGALLERY_IMAGES</menu>
       <menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TAGS</menu>
+      <menu link="option=com_joomgallery&amp;view=tasks" view="tasks" alt="Joomgallery/Tasks">COM_JOOMGALLERY_TASKS</menu>
       <menu link="option=com_joomgallery&amp;view=configs" view="configs" alt="Joomgallery/Configs">COM_JOOMGALLERY_CONFIG_SETS</menu>
       <menu link="option=com_joomgallery&amp;view=migration" view="migration" alt="Joomgallery/Migration">COM_JOOMGALLERY_MIGRATIONS</menu>
       <menu type="separator" hidden="true">Separator1</menu>
