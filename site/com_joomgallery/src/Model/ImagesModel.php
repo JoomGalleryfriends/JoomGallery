@@ -196,9 +196,19 @@ class ImagesModel extends AdminImagesModel
       'and'            => false,
     ];
 
+    // Guess context
+    $com     = $this->app->getInput()->get('option', 'com_joomgallery', 'string');
+    $view    = $this->app->getInput()->get('view', '', 'string');
+    $context = $com . '.' . $view . '.images';
+
+    if($view == 'images')
+    {
+      $context = $com . '.images';
+    }
+
     foreach($defaults as $name => $default)
     {
-      $this->app->setUserState($this->context . '.filter.' . $name, null);
+      $this->app->setUserState($context . '.filter.' . $name, null);
       $this->setState('filter.' . $name, $default);
     }
   }
