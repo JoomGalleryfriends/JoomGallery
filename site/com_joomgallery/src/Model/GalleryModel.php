@@ -101,7 +101,16 @@ class GalleryModel extends JoomItemModel
     $this->item->description = $params['configs']->get('jg_gallery_view_description', '', 'STRING');
 
     // Get Search query string
-    $this->item->query = $this->app->input->get('q', '');
+    $search = trim((string) $this->app->getInput()->get('q', '', 'string'));
+
+    // Remove control characters, but keep normal Unicode characters,
+    // punctuation, accents and umlauts.
+    $search = preg_replace('/[\x00-\x1F\x7F]/u', '', $search) ?? '';
+
+    // Prevent excessively large search input.
+    $search = mb_substr($search, 0, 255, 'UTF-8');
+
+    $this->item->query = $search;
 
     return $this->item;
   }

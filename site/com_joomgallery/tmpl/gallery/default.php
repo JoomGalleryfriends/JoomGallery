@@ -116,7 +116,7 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
   <?php // Search bar
     $search_vars = [
       'provider'      => $this->component->getSearch(),
-      'query'         => $this->escape($this->item->query),
+      'query'         => $this->item->query,
       'params'        => $this->params['configs'],
       'menuitem'      => ['itemid' => $this->itemid, 'option' => 'com_joomgallery', 'view' => 'gallery', 'model' => 'images'],
       'suggest_url'   => Route::_('index.php?option=com_finder&task=suggestions.suggest&format=json&tmpl=component', false),
