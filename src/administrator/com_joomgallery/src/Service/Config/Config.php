@@ -224,15 +224,18 @@ abstract class Config extends \stdClass implements ConfigInterface
     }
 
     // Include every input that can affect the calculated configuration.
-    $this->storeId = implode(':', [
-      $this->name,
-      $this->context,
-      'client=' . $this->app->getName(),
-      'group=' . (int) $this->getUsergroup($user),
-      'id=' . (int) ($id ?? 0),
-      'own=' . (int) (bool) $inclOwn,
-      'menu=' . (int) ($this->ids['menu'] ?? 0),
-    ]);
+    $this->storeId = implode(
+        ':',
+        [
+          $this->name,
+          $this->context,
+          'client=' . $this->app->getName(),
+          'group=' . (int) $this->getUsergroup($user),
+          'id=' . (int) ($id ?? 0),
+          'own=' . (int) (bool) $inclOwn,
+          'menu=' . (int) ($this->ids['menu'] ?? 0),
+        ]
+    );
   }
 
   /**
