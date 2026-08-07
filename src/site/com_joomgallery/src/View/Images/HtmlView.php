@@ -56,12 +56,8 @@ class HtmlView extends JoomGalleryView
     /** @var ImagesModel $model */
     $model = $this->getModel();
 
-    $this->state         = $model->getState();
-    $this->params        = $model->getParams();
-    $this->items         = $model->getItems();
-    $this->pagination    = $model->getPagination();
-    $this->filterForm    = $model->getFilterForm();
-    $this->activeFilters = $model->getActiveFilters();
+    $this->state  = $model->getState();
+    $this->params = $model->getParams();
 
     // Check for errors.
     if(\count($errors = $model->getErrors()))
@@ -81,7 +77,18 @@ class HtmlView extends JoomGalleryView
       // Redirect to gallery view
       $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
 
-    return;
+      return;
+    }
+
+    $this->items         = $model->getItems();
+    $this->pagination    = $model->getPagination();
+    $this->filterForm    = $model->getFilterForm();
+    $this->activeFilters = $model->getActiveFilters();
+
+    // Check for errors caused while loading the list data.
+    if(\count($errors = $model->getErrors()))
+    {
+      throw new GenericDataException(implode("\n", $errors), 500);
     }
 
     $this->_prepareDocument();

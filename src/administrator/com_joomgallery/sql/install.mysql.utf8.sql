@@ -130,6 +130,8 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_compatibility_mode` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_acl_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 64,
 `jg_acl_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 15,
+`jg_config_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 64,
+`jg_config_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 60,
 `jg_replaceinfo` TEXT NOT NULL,
 `jg_replaceshowwarning` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_useorigfilename` TINYINT(1) NOT NULL DEFAULT 0,
@@ -248,7 +250,8 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_report_hint` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_showcomments` TINYINT(1) NOT NULL DEFAULT 1,
 PRIMARY KEY (`id`),
-KEY `idx_checkout` (`checked_out`)
+KEY `idx_checkout` (`checked_out`),
+UNIQUE KEY `idx_unique_group` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
