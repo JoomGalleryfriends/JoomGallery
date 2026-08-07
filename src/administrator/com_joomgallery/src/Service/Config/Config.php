@@ -37,6 +37,34 @@ abstract class Config extends \stdClass implements ConfigInterface
   use CacheAwareTrait;
 
   /**
+   * Cache format version. Increment this when the cache key format changes.
+   *
+   * @var string
+   */
+  protected const CACHE_VERSION = 'v3';
+
+  /**
+   * Default maximum number of calculated configurations retained per service.
+   *
+   * @var int
+   */
+  protected const DEFAULT_CACHE_LIMIT = 64;
+
+  /**
+   * Default lifetime of a calculated configuration in minutes.
+   *
+   * @var int
+   */
+  protected const DEFAULT_CACHE_LIFETIME = 60;
+
+  /**
+   * Configuration cache policy loaded once during the current request.
+   *
+   * @var array|null
+   */
+  protected static $configCachePolicy = null;
+
+  /**
    * Name of the config service
    *
    * @var string
@@ -79,6 +107,20 @@ abstract class Config extends \stdClass implements ConfigInterface
   protected $cacheNamespace = '';
 
   /**
+   * Maximum number of entries retained in this service's session namespace.
+   *
+   * @var int
+   */
+  protected $cacheLimit = self::DEFAULT_CACHE_LIMIT;
+
+  /**
+   * Lifetime of a configuration entry in seconds.
+   *
+   * @var int
+   */
+  protected $cacheLifetime = self::DEFAULT_CACHE_LIFETIME * 60;
+
+  /**
    * Loading the calculated settings for a specific content
    * to class properties
    *
@@ -117,8 +159,10 @@ abstract class Config extends \stdClass implements ConfigInterface
       $this->context = $context;
     }
 
-    $this->cacheNamespace = 'com_joomgallery.configcache.' . $this->name;
+    $this->loadConfigCachePolicy();
+    $this->cacheNamespace = $this->getCacheNamespace($this->name);
     $this->initialiseCache($this->cacheNamespace);
+    $this->pruneConfigCache();
 
     // Get current user
     $user = Factory::getApplication()->getIdentity();
@@ -179,12 +223,16 @@ abstract class Config extends \stdClass implements ConfigInterface
       }
     }
 
-    // Creates a simple unique string for each parameter combination
-    $group         = $this->getUsergroup($user);
-    $contentId     = \is_null($id) ? '' : ':' . $id;
-    $own           = \is_null($inclOwn) ? '' : ':1';
-    $this->storeId = $this->name . ':' . $this->context . ':' . $group . $contentId . $own;
-    // ConfigName:context:usergroup:own
+    // Include every input that can affect the calculated configuration.
+    $this->storeId = implode(':', [
+      $this->name,
+      $this->context,
+      'client=' . $this->app->getName(),
+      'group=' . (int) $this->getUsergroup($user),
+      'id=' . (int) ($id ?? 0),
+      'own=' . (int) (bool) $inclOwn,
+      'menu=' . (int) ($this->ids['menu'] ?? 0),
+    ]);
   }
 
   /**
@@ -220,20 +268,19 @@ abstract class Config extends \stdClass implements ConfigInterface
         $user_array = explode('.', $type);
         $user_id    = (\count($user_array) > 1) ? $user_array[1] : 0;
         $user       = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $user_id);
-        $usergroups = $user->get('groups');
-        $regex      = '/^' . $service . ':com_joomgallery.*:\b(' . implode('|', $usergroups) . ')\b:.*/';
+        $usergroups = array_map('intval', (array) $user->get('groups'));
+        $regex      = '/^' . preg_quote($service, '/') . ':.*:group=(' . implode('|', $usergroups) . '):/';
       }
       elseif(strpos($type, 'image') === 0)
       {
         // Delete only cache which is related to context of type image
         $context = 'com_joomgallery.image';
-        $regex   = '/^' . $service . ':' . $context . '.*:.*/';
+        $regex   = '/^' . preg_quote($service, '/') . ':' . preg_quote($context, '/') . '(?:\.id)?:/';
       }
       elseif(strpos($type, 'category') === 0)
       {
         // Delete only cache which is related to context of type image or category
-        $context = 'com_joomgallery.\b(image|category)\b';
-        $regex   = '/^' . $service . ':' . $context . '.*:.*/';
+        $regex = '/^' . preg_quote($service, '/') . ':com_joomgallery\.(?:image|category)(?:\.id)?:/';
       }
       else
       {
@@ -264,7 +311,100 @@ abstract class Config extends \stdClass implements ConfigInterface
       $name = $this->name;
     }
 
-    $this->removeCacheEntries('com_joomgallery.configcache.' . $name, $storeId, true);
+    $this->removeCacheEntries($this->getCacheNamespace($name), $storeId, true);
+  }
+
+  /**
+   * Returns the versioned session namespace for a configuration service.
+   *
+   * @param   string  $name  Name of the configuration service.
+   *
+   * @return  string  Versioned cache namespace.
+   *
+   * @since   4.4.0
+   */
+  protected function getCacheNamespace(string $name): string
+  {
+    return 'com_joomgallery.configcache.' . self::CACHE_VERSION . '.' . $name;
+  }
+
+  /**
+   * Loads the global configuration-cache policy directly from the database.
+   * The policy cannot be loaded through this service without causing recursion.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  protected function loadConfigCachePolicy(): void
+  {
+    if(\is_null(self::$configCachePolicy))
+    {
+      self::$configCachePolicy = [
+        'limit'    => self::DEFAULT_CACHE_LIMIT,
+        'lifetime' => self::DEFAULT_CACHE_LIFETIME,
+      ];
+
+      try
+      {
+        $db    = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+          ->select($db->quoteName(['jg_config_cache_entries', 'jg_config_cache_lifetime']))
+          ->from($db->quoteName(_JOOM_TABLE_CONFIGS))
+          ->where($db->quoteName('id') . ' = 1');
+
+        $policy = $db->setQuery($query)->loadAssoc();
+
+        if(\is_array($policy))
+        {
+          self::$configCachePolicy = [
+            'limit'    => max(0, (int) ($policy['jg_config_cache_entries'] ?? self::DEFAULT_CACHE_LIMIT)),
+            'lifetime' => max(0, (int) ($policy['jg_config_cache_lifetime'] ?? self::DEFAULT_CACHE_LIFETIME)),
+          ];
+        }
+      }
+      catch(\Throwable $e)
+      {
+        // Retain safe defaults during installation, updates, or database failures.
+      }
+    }
+
+    $this->cacheLimit    = self::$configCachePolicy['limit'];
+    $this->cacheLifetime = self::$configCachePolicy['lifetime'] * 60;
+  }
+
+  /**
+   * Removes expired entries and applies the configured namespace limit.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  protected function pruneConfigCache(): void
+  {
+    $changed = false;
+
+    foreach(self::$runtimeCaches[$this->cacheNamespace] as $key => $entry)
+    {
+      if($this->cacheLimit === 0 || $this->cacheLifetime === 0
+        || !\is_array($entry) || !isset($entry['expires'], $entry['value'])
+        || (int) $entry['expires'] < time())
+      {
+        unset(self::$runtimeCaches[$this->cacheNamespace][$key]);
+        $changed = true;
+      }
+    }
+
+    while($this->cacheLimit > 0 && \count(self::$runtimeCaches[$this->cacheNamespace]) > $this->cacheLimit)
+    {
+      array_shift(self::$runtimeCaches[$this->cacheNamespace]);
+      $changed = true;
+    }
+
+    if($changed)
+    {
+      self::$dirtyCaches[$this->cacheNamespace] = true;
+    }
   }
 
   /**
@@ -278,12 +418,25 @@ abstract class Config extends \stdClass implements ConfigInterface
    */
   protected function setCache(string $storeId)
   {
+    if($this->cacheLimit === 0 || $this->cacheLifetime === 0)
+    {
+      return;
+    }
+
     /**
      * Cashing the calculated params allows us to store
      * one instance of the Config object for contexts that have
      * the same exact configs.
      */
-    $this->putCacheEntry($this->cacheNamespace, base64_encode($storeId), $this->getProperties());
+    $this->putCacheEntry(
+        $this->cacheNamespace,
+        base64_encode($storeId),
+        [
+          'expires' => time() + $this->cacheLifetime,
+          'value'   => $this->getProperties(),
+        ],
+        $this->cacheLimit
+    );
   }
 
   /**

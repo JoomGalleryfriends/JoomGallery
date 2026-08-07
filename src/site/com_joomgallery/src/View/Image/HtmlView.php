@@ -72,29 +72,36 @@ class HtmlView extends JoomGalleryView
       $loaded = false;
     }
 
-    $temp = $model->getCategoryProtected();
-
-    // Check if category is protected?
-    if($loaded && $model->getCategoryProtected())
-    {
-      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_IMAGE_CAT_PROTECTED'), 'error');
-      $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=' . $this->item->protectedParents[0]));
-    }
-
-    $temp = $model->getCategoryPublished();
-
-    // Check published and approved state
-    if(!$loaded || !$model->getCategoryPublished() || $this->item->published !== 1 || $this->item->approved !== 1)
+    if(!$loaded)
     {
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
 
       return;
     }
 
-    $temp = $model->getCategoryAccess();
+    $categoryProtected = $model->getCategoryProtected();
+
+    // Check if category is protected?
+    if($categoryProtected)
+    {
+      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_IMAGE_CAT_PROTECTED'), 'error');
+      $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=' . $this->item->protectedParents[0]));
+    }
+
+    $categoryPublished = $model->getCategoryPublished();
+
+    // Check published and approved state
+    if(!$categoryPublished || $this->item->published !== 1 || $this->item->approved !== 1)
+    {
+      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
+
+      return;
+    }
+
+    $categoryAccess = $model->getCategoryAccess();
 
     // Check access view level
-    if(!$model->getCategoryAccess() || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
+    if(!$categoryAccess || !\in_array($this->item->access, $this->getCurrentUser()->getAuthorisedViewLevels()))
     {
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 'error');
 

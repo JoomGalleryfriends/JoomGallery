@@ -27,7 +27,7 @@ class JoomCache
   use CacheAwareTrait;
 
   /**
-   * Namespace of the bounded session hot cache.
+   * Namespace of the request-only component cache.
    *
    * @var string
    */
@@ -45,16 +45,7 @@ class JoomCache
    */
   public function get(string $key, $default = null)
   {
-    // Get cached value if exists
-    $value = $this->getCacheEntry($this->cacheNamespace, $key);
-
-    if($value)
-    {
-      return $value;
-    }
-
-    // Return default value as fallback
-    return $default;
+    return $this->getCacheEntry($this->cacheNamespace, $key, $default, true);
   }
 
   /**
@@ -69,14 +60,10 @@ class JoomCache
    */
   public function set(string $key, $value = null)
   {
-    if($this->hasCacheEntry($this->cacheNamespace, $key))
-    {
-      // Set the real property if exists
-      $previous = $this->getCacheEntry($this->cacheNamespace, $key) ?? null;
-    }
+    $previous = $this->getCacheEntry($this->cacheNamespace, $key, null, true);
 
     // Set the new value
-    $this->putCacheEntry($this->cacheNamespace, $key, $value);
+    $this->putCacheEntry($this->cacheNamespace, $key, $value, 0, true);
 
     return $previous;
   }

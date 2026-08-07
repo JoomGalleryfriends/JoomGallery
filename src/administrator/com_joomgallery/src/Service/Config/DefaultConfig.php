@@ -55,13 +55,18 @@ class DefaultConfig extends Config implements ConfigInterface
     // Check if we can use cached parameters
     $cacheKey = base64_encode($this->storeId);
 
-    if($useCache && $this->hasCacheEntry($this->cacheNamespace, $cacheKey))
+    if($useCache && $this->cacheLimit > 0 && $this->cacheLifetime > 0
+      && $this->hasCacheEntry($this->cacheNamespace, $cacheKey))
     {
-      // The params for this context is available in the object cache.
-      // Use cache instead.
-      $this->setProperties($this->getCacheEntry($this->cacheNamespace, $cacheKey));
+      $entry = $this->getCacheEntry($this->cacheNamespace, $cacheKey);
 
-      return;
+      if(\is_array($entry) && isset($entry['expires'], $entry['value']) && (int) $entry['expires'] >= time())
+      {
+        // The calculated parameters are available and still valid.
+        $this->setProperties($entry['value']);
+
+        return;
+      }
     }
 
     $context_array = explode('.', $context);

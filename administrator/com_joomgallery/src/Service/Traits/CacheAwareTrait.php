@@ -20,15 +20,24 @@ use Joomla\CMS\Factory;
  * Request cache with an optional, bounded session-backed hot cache.
  * Key construction and cache policy remain the responsibility of the service.
  *
- * There are three types of caches: runtime entries, hot entries, and dirty namespaces.
- * - A runtime entry exists only during the current PHP request.
- * - A hot entry is a result that is also eligible for the bounded session cache.
- * - A dirty namespaces means that a runtime cache namespace has changed and its session copy has not yet been updated.
+ * There are request-only entries and session-backed runtime entries.
+ * - A request-only entry is never read from or written to the session.
+ * - A runtime entry is the current-request copy of a session-backed entry.
+ * - A dirty namespace has changed and its session copy has not yet been updated.
  *
  * @since  4.4.0
  */
 trait CacheAwareTrait
 {
+  /**
+   * Request-only caches indexed by namespace.
+   *
+   * These entries are never loaded from or persisted to the session.
+   *
+   * @var array
+   */
+  protected static $requestCaches = [];
+
   /**
    * Runtime caches indexed by session namespace.
    *
@@ -94,15 +103,22 @@ trait CacheAwareTrait
    * Checks whether a key exists in the specified cache namespace.
    * Entries containing null are treated as existing cache entries.
    *
-   * @param   string  $namespace  Session key identifying the cache namespace.
-   * @param   string  $key        Cache entry key to check.
+   * @param   string  $namespace    Key identifying the cache namespace.
+   * @param   string  $key          Cache entry key to check.
+   * @param   bool    $requestOnly  True to use the request-only cache.
    *
    * @return  bool  True when the entry exists, false otherwise.
    *
    * @since   4.4.0
    */
-  protected function hasCacheEntry(string $namespace, string $key): bool
+  protected function hasCacheEntry(string $namespace, string $key, bool $requestOnly = false): bool
   {
+    if($requestOnly)
+    {
+      return isset(self::$requestCaches[$namespace])
+        && \array_key_exists($key, self::$requestCaches[$namespace]);
+    }
+
     $this->initialiseCache($namespace);
 
     return \array_key_exists($key, self::$runtimeCaches[$namespace]);
@@ -112,34 +128,57 @@ trait CacheAwareTrait
    * Returns an entry from the specified cache namespace or a default value
    * when the key is not cached.
    *
-   * @param   string  $namespace  Session key identifying the cache namespace.
-   * @param   string  $key        Cache entry key to retrieve.
-   * @param   mixed   $default    Value returned when the entry does not exist.
+   * @param   string  $namespace    Key identifying the cache namespace.
+   * @param   string  $key          Cache entry key to retrieve.
+   * @param   mixed   $default      Value returned when the entry does not exist.
+   * @param   bool    $requestOnly  True to use the request-only cache.
    *
    * @return  mixed  Cached value or the supplied default value.
    *
    * @since   4.4.0
    */
-  protected function getCacheEntry(string $namespace, string $key, $default = null)
+  protected function getCacheEntry(string $namespace, string $key, $default = null, bool $requestOnly = false)
   {
-    return $this->hasCacheEntry($namespace, $key) ? self::$runtimeCaches[$namespace][$key] : $default;
+    if(!$this->hasCacheEntry($namespace, $key, $requestOnly))
+    {
+      return $default;
+    }
+
+    return $requestOnly ? self::$requestCaches[$namespace][$key] : self::$runtimeCaches[$namespace][$key];
   }
 
   /**
    * Stores an entry in the runtime cache, marks the namespace as dirty and
    * optionally evicts the least recently inserted entries.
    *
-   * @param   string  $namespace  Session key identifying the cache namespace.
-   * @param   string  $key        Cache entry key under which to store the value.
-   * @param   mixed   $value      Value to store.
-   * @param   int     $limit      Maximum number of entries, or zero for no limit.
+   * @param   string  $namespace    Key identifying the cache namespace.
+   * @param   string  $key          Cache entry key under which to store the value.
+   * @param   mixed   $value        Value to store.
+   * @param   int     $limit        Maximum number of entries, or zero for no limit.
+   * @param   bool    $requestOnly  True to store the entry for the current request only.
    *
    * @return  void
    *
    * @since   4.4.0
    */
-  protected function putCacheEntry(string $namespace, string $key, mixed $value, int $limit = 0): void
+  protected function putCacheEntry(string $namespace, string $key, mixed $value, int $limit = 0, bool $requestOnly = false): void
   {
+    if($requestOnly)
+    {
+      unset(self::$requestCaches[$namespace][$key]);
+      self::$requestCaches[$namespace][$key] = $value;
+
+      if($limit > 0)
+      {
+        while(\count(self::$requestCaches[$namespace]) > $limit)
+        {
+          array_shift(self::$requestCaches[$namespace]);
+        }
+      }
+
+      return;
+    }
+
     $this->initialiseCache($namespace);
 
     // Reinsertion makes array order a compact LRU approximation.
