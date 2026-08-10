@@ -3,12 +3,14 @@
   <fieldset name="general">
     <field name="id"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            label="JGLOBAL_FIELD_ID_LABEL" />
 
     <field name="imgid"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            label="Image ID" />
@@ -16,7 +18,7 @@
     <field name="title"
            type="text"
            maxlength="255"
-           filter="safehtml"           
+           filter="string"
            required="true"
            label="JGLOBAL_TITLE"
            message="COM_JOOMGALLERY_ERROR_NEEDS_TITLE" />
@@ -62,6 +64,7 @@
 
     <field name="created_by"
            type="user"
+           filter="integer"
            label="JGLOBAL_FIELD_CREATED_BY_LABEL"
            description="JGLOBAL_FIELD_CREATED_BY_DESC"
            validate="UserId" />

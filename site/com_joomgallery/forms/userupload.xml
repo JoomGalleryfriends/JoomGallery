@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <fieldset  name="general">
-    <field name="ordering"/>
+    <field name="ordering" filter="integer"/>
 
     <field name="id"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            label="JGLOBAL_FIELD_ID_LABEL" />
@@ -33,12 +34,14 @@
 
     <field name="hits"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            label="JGLOBAL_HITS" />
 
     <field name="downloads"
            type="text"
+           filter="integer"
            readonly="true"
            default="0"
            class="readonly"
@@ -46,6 +49,7 @@
 
     <field name="votes"
            type="text"
+           filter="integer"
            readonly="true"
            default="0"
            class="readonly"
@@ -53,6 +57,7 @@
 
     <field name="votesum"
            type="text"
+           filter="integer"
            readonly="true"
            default="0"
            class="readonly"
@@ -84,7 +89,7 @@
     <field name="title"
            type="text"
            maxlength="255"
-           filter="safehtml"
+           filter="string"
            required="true"
            label="JGLOBAL_TITLE"
            message="COM_JOOMGALLERY_COMMON_ALERT_IMAGE_MUST_HAVE_TITLE" />
@@ -105,6 +110,7 @@
 
     <field name="alias"
            type="text"
+           filter="cmd"
            class="inputbox"
            generator="title"
            label="JALIAS"
@@ -113,6 +119,7 @@
 
     <field name="catid"
            type="jgcategorydropdown"
+           filter="integer"
            label="JCATEGORY"
            hint="JOPTION_SELECT_CATEGORY"
            layout="joomla.form.field.list-fancy-select"
@@ -222,6 +229,7 @@
 
     <field name="created_by"
            type="user"
+           filter="integer"
            label="COM_JOOMGALLERY_OWNER"
            description="COM_JOOMGALLERY_FIELDS_OWNER_DESC"
            validate="UserId" />
@@ -341,6 +349,7 @@
 
     <field name="version_note"
            type="text"
+           filter="string"
            label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
            description="JGLOBAL_FIELD_VERSION_NOTE_DESC"
            class="inputbox"

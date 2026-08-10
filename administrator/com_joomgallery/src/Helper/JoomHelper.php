@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Http\HttpFactory;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
@@ -61,6 +62,34 @@ class JoomHelper
    * @var array
    */
   public static $image_types = ['raw', 'gif', 'jpeg', 'jpg', 'png', 'webp'];
+
+  /**
+   * Sanitize formatted content with a fixed HTML allowlist.
+   *
+   * This deliberately does not depend on the current viewer's text-filter
+   * permissions because stored frontend content must be safe for every viewer.
+   *
+   * @param   string|null  $html  Formatted HTML
+   *
+   * @return  string  Sanitized HTML
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public static function sanitizeHtml(?string $html): string
+  {
+    $tags = [
+      'a', 'abbr', 'b', 'blockquote', 'br', 'code', 'div', 'em', 'figcaption', 'figure',
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'li', 'ol', 'p', 'pre',
+      'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead',
+      'tr', 'u', 'ul',
+    ];
+    $attributes = [
+      'alt', 'class', 'colspan', 'height', 'href', 'rel', 'rowspan', 'scope', 'src',
+      'target', 'title', 'width',
+    ];
+
+    return InputFilter::getInstance($tags, $attributes)->clean((string) $html, 'html');
+  }
 
   /**
    * Gets the JoomGallery component object
