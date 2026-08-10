@@ -110,8 +110,8 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('published', 'filter', 'unset');
     }
 
-    // Don't allow to change the created_user_id user if not allowed to access com_users.
-    if(!$this->user->authorise('core.manage', 'com_users'))
+    // Only component managers/admins and the current owner may transfer ownership.
+    if(!$this->canChangeCreatedBy($id))
     {
       $form->setFieldAttribute('created_by', 'filter', 'unset');
     }

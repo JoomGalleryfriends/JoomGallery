@@ -77,10 +77,7 @@ class ConfigTable extends Table
       }
     }
 
-    if($array['id'] == 0 && (!key_exists('created_by', $array) || empty($array['created_by'])))
-    {
-      $array['created_by'] = Factory::getApplication()->getIdentity()->id;
-    }
+    $this->protectCreatedBy($array, false);
 
     if($array['id'] == 0 && empty($array['modified_by']))
     {

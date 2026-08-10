@@ -18,7 +18,7 @@ use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Database\ParameterType;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
@@ -212,7 +212,65 @@ trait JoomTableTrait
       $this->setRules($rules);
     }
 
+    // Types where ownership transfer is allowed
+    $ownershipTransfer = [
+      _JOOM_OPTION . '.image',
+      _JOOM_OPTION . '.category',
+      _JOOM_OPTION . '.collection',
+    ];
+
+    // Apply ownership transfer policy
+    $this->protectCreatedBy($array, \in_array($this->typeAlias, $ownershipTransfer, true));
+
     return parent::bind($array, $ignore);
+  }
+
+  /**
+   * Apply the ownership policy before binding submitted data.
+   *
+   * @param   array  &$array             Submitted table data
+   * @param   bool   $ownerCanTransfer   Whether the current owner may transfer ownership
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  protected function protectCreatedBy(array &$array, bool $ownerCanTransfer = false): void
+  {
+    if(!property_exists($this, 'created_by'))
+    {
+      return;
+    }
+
+    $user       = Factory::getApplication()->getIdentity();
+    $keyName    = $this->getKeyName();
+    $pk         = (int) ($array[$keyName] ?? $this->{$keyName} ?? 0);
+    $canManage  = $user->authorise('core.manage', _JOOM_OPTION) || $user->authorise('core.admin', _JOOM_OPTION);
+
+    if($pk === 0)
+    {
+      if(!$canManage || empty($array['created_by']))
+      {
+        $array['created_by'] = (int) $user->id;
+      }
+
+      return;
+    }
+
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('created_by'))
+      ->from($db->quoteName($this->getTableName()))
+      ->where($db->quoteName($keyName) . ' = :createdByItemId')
+      ->bind(':createdByItemId', $pk, ParameterType::INTEGER);
+
+    $storedOwner = (int) $db->setQuery($query)->loadResult();
+    $canTransfer = $canManage || ($ownerCanTransfer && $storedOwner === (int) $user->id);
+
+    if(!$canTransfer || empty($array['created_by']))
+    {
+      $array['created_by'] = $storedOwner;
+    }
   }
 
   /**
