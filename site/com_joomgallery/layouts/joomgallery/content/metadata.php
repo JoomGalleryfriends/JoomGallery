@@ -35,7 +35,7 @@ $i        = 0;
           $value = implode(',', $value);
         }
       ?>
-      <li class="list-inline-item metadata-<?php echo $key; ?> metadata-list<?php echo $i; ?>" itemprop="keywords">
+      <li class="list-inline-item metadata-<?php echo $this->escape($key); ?> metadata-list<?php echo (int) $i; ?>" itemprop="keywords">
         <span><?php echo Text::_($key); ?></span>: <span><?php echo $this->escape($value); ?></span>;
       </li>
       <?php $i++; ?>

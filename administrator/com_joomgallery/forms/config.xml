@@ -2,6 +2,7 @@
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <field name="id"
          type="text"
+         filter="integer"
          readonly="true"
          class="readonly"
          hidden="true"
@@ -14,6 +15,7 @@
          filter="unset" />
 
   <field name="ordering"
+         filter="integer"
          hidden="true" />
 
   <field name="checked_out"
@@ -23,6 +25,7 @@
 
   <field name="created_by"
          type="createdby"
+         filter="integer"
          default="0"
          hidden="true"
          label="JGLOBAL_FIELD_CREATED_BY_LABEL"
@@ -30,6 +33,7 @@
 
   <field name="modified_by"
          type="modifiedby"
+         filter="unset"
          default="0"
          hidden="true"
          label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
@@ -44,7 +48,7 @@
 
   <field name="note"
          type="textarea"
-         filter="safehtml"
+         filter="string"
          rows="5"
          cols="40"
          default=""

@@ -184,7 +184,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
 <?php // Category text ?>
 <?php if($this->item->description) : ?>
   <div class="jg-category-description">
-    <?php echo $this->item->description; ?>
+    <?php echo JoomHelper::sanitizeHtml($this->item->description); ?>
   </div>
 <?php endif; ?>
 
