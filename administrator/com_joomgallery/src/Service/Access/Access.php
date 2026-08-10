@@ -566,6 +566,9 @@ class Access implements AccessInterface
     }
 
     // Take away own and inown in action statement
+    // ".own" and ".inown" are permission-rule qualifiers, not ownership-only
+    // request modes. checkACL() always combines the normal and applicable
+    // ownership-aware rules for the requested base action.
     $action = str_replace(['.own', '.inown'], '', $action);
 
     // Synonyms for add
