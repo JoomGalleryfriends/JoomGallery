@@ -22,7 +22,7 @@ extract($displayData);
 /**
  * Layout variables
  * -----------------
- * @var   int      $id                Layout id
+ * @var   string   $id                Layout id
  * @var   string   $layout            Layout selection (columns, masonry, justified)
  * @var   array    $items             List of objects that are displayed in a grid layout (id, catid, title, description, date, author)
  * @var   int      $num_columns       Number of columns of this layout
@@ -43,7 +43,7 @@ extract($displayData);
 
 <div class="jg-gallery <?php echo $this->escape($layout); ?>" itemscope="" itemtype="https://schema.org/ImageGallery">
   <div class="jg-loader"></div>
-  <div id="lightgallery-<?php echo (int) $id; ?>" class="jg-images <?php echo $this->escape($layout); ?>-<?php echo (int) $num_columns; ?> jg-category" data-masonry="{ pollDuration: 175 }">
+  <div id="lightgallery-<?php echo $this->escape($id); ?>" class="jg-images <?php echo $this->escape($layout); ?>-<?php echo (int) $num_columns; ?> jg-category" data-masonry="{ pollDuration: 175 }">
     <?php $index = 0; ?>
     <?php foreach($items as $key => $item) : ?>
       <div class="jg-image">
