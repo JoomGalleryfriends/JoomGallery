@@ -122,10 +122,7 @@ class TagTable extends Table
       $array['created_time'] = $date->toSql();
     }
 
-    if(!key_exists('created_by', $array) || empty($array['created_by']))
-    {
-      $array['created_by'] = Factory::getApplication()->getIdentity()->id;
-    }
+    $this->protectCreatedBy($array, false);
 
     if($task == 'apply' || strpos($task, 'save') !== false)
     {
