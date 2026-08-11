@@ -222,26 +222,6 @@ abstract class JoomListModel extends ListModel
   }
 
   /**
-   * Method to get an array of data items.
-   *
-   * @return  mixed  An array of data items on success, false on failure.
-   *
-   * @since   4.4.0
-   */
-  public function getItems()
-  {
-    $limit = (int) $this->getState('list.limit');
-    $start = (int) $this->getStart();
-
-    if($this->globalLimit && $start + $limit > $this->globalLimit)
-    {
-      $this->setState('list.limit', $this->globalLimit - $start);
-    }
-
-    return parent::getItems();
-  }
-
-  /**
    * Method to get the total number of items for the data set.
    *
    * @return  integer  The total number of items available in the data set.
