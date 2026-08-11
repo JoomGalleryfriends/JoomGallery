@@ -33,19 +33,6 @@ class ImagetypesModel extends JoomListModel
     protected $type = 'imagetype';
 
     /**
-     * Constructor
-     *
-     * @param   array  $config  An optional associative array of configuration settings.
-     *
-     * @return  void
-     * @since   4.0.0
-     */
-    function __construct($config = [])
-    {
-        parent::__construct($config);
-    }
-
-    /**
      * Build an SQL query to load the list data.
      *
      * @return  DatabaseQuery

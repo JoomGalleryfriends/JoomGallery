@@ -340,20 +340,6 @@ class TagsModel extends JoomListModel
   }
 
   /**
-   * Get an array of data items
-   *
-   * @return mixed Array of data items on success, false on failure.
-   *
-   * @since   4.0.0
-   */
-  public function getItems()
-  {
-    $items = parent::getItems();
-
-    return $items;
-  }
-
-  /**
    * Search for data items
    *
    * @param   array  $filters  Filter to apply to the search

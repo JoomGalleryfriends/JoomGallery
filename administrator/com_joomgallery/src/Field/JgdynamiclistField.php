@@ -43,7 +43,7 @@ class JgdynamiclistField extends JglistField
    */
   protected function getOptions()
   {
-    $options = parent::getOptions();
+    $options = [];
 
     // Get script
     $script = '';
@@ -84,5 +84,34 @@ class JgdynamiclistField extends JglistField
     reset($options);
 
     return $options;
+  }
+
+  /**
+   * Method to get the field options publicly.
+   *
+   * @return  object[]  The field option objects.
+   *
+   * @since   4.4.0
+   */
+  public function dynGetOptions()
+  {
+    return $this->getOptions();
+  }
+
+  /**
+   * Method to get the data to be passed to the layout for rendering.
+   *
+   * @return  array
+   *
+   * @since 4.4.0
+   */
+  protected function collectLayoutData(): array
+  {
+    parent::collectLayoutData();
+
+    // Post process layout data
+    $tmp = 1;
+
+    return $this->layoutData;
   }
 }

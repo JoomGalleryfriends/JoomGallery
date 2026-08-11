@@ -725,6 +725,15 @@
   </fieldset>
 
   <fieldset type="tab" name="backend" label="COM_JOOMGALLERY_CONFIG_TAB_BACKEND" note="backend">
+    <fieldset type="tab" name="backend-general" label="COM_JOOMGALLERY_CONFIG_TAB_COMMON">
+      <field name="jg_backend_searchprovider"
+             type="jgdynamiclist"
+             dynamic="true"
+             default="sql"
+             script="getSearchProviders"
+             label="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LABEL"
+             description="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LONG" />
+    </fieldset>
   </fieldset>
 
   <fieldset type="tab" name="frontend" label="COM_JOOMGALLERY_CONFIG_TAB_FRONTEND" note="frontend">
@@ -787,7 +796,7 @@
                type="list"
                label="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK"
                description="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK_DESC"
-               default="1"
+               default="0"
                validate="options" >
             <option value="0">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK_OPT0</option>
             <option value="1">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK_OPT1</option>
@@ -808,6 +817,33 @@
                filter="integer"
                label="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES_DESC" />
+        <field name="jg_gallery_view_limit_images"
+               type="number"
+               default="100"
+               min="1"
+               step="1"
+               validate="number"
+               filter="integer"
+               label="COM_JOOMGALLERY_CONFIG_LIMIT_IMAGES"
+               description="COM_JOOMGALLERY_CONFIG_LIMIT_IMAGES_DESC" />
+        <field name="jg_gallery_view_searchprovider"
+               type="jgdynamiclist"
+               dynamic="true"
+               default="finder"
+               script="getSearchProviders"
+               label="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LABEL"
+               description="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LONG" />
+       <field  name="jg_gallery_view_autosuggest"
+               type="radio"
+               label="COM_JOOMGALLERY_CONFIG_AUTOSUGGEST_LABEL"
+               description="COM_JOOMGALLERY_CONFIG_AUTOSUGGEST_LONG"
+               default="1"
+               layout="joomla.form.field.radio.switcher"
+               showon="jg_gallery_view_searchprovider:finder"
+               validate="options">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
         <field name="jg_gallery_view_ordering"
                type="list"
                label="COM_JOOMGALLERY_CONFIG_SORT_IMAGES"
