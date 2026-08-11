@@ -161,7 +161,7 @@ class JoomHelper
   {
     if(strpos($name, 'com_joomgallery.') === 0)
     {
-      $name = substr($name, strlen('com_joomgallery.'));
+      $name = substr($name, \strlen('com_joomgallery.'));
     }
 
     $cacheTypes = ['record', 'records', 'creator'];
