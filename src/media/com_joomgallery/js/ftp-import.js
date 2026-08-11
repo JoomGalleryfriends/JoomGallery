@@ -198,7 +198,7 @@
         }
 
         files = data.files || [];
-        path.textContent = data.path ? `${text('COM_JOOMGALLERY_FTP_IMPORT_DIRECTORY')}: ${data.path}` : '';
+        path.textContent = data.path ? `${text('JLIB_FORM_FIELD_PARAM_IMAGELIST_DIRECTORY_LABEL')}: ${data.path}` : '';
         status.textContent = '';
         renderRows();
       } catch (error) {
@@ -224,7 +224,7 @@
       const rowStatus = row.querySelector('.ftp-import-row-status');
       const formData = new FormData(form);
 
-      rowStatus.textContent = text('COM_JOOMGALLERY_FTP_IMPORT_PROCESSING');
+      rowStatus.textContent = text('COM_JOOMGALLERY_PROCESSING');
       uploader.value = 'ftp';
       ftpFile.value = fileName;
       ftpAction.value = action.value;
@@ -247,10 +247,10 @@
       const result = await parseSaveResponse(response);
 
       if (!result.success) {
-        throw new Error(result.error || text('COM_JOOMGALLERY_FTP_IMPORT_FAILED'));
+        throw new Error(result.error || text('COM_JOOMGALLERY_FAILED'));
       }
 
-      rowStatus.textContent = text('COM_JOOMGALLERY_FTP_IMPORT_DONE');
+      rowStatus.textContent = text('COM_JOOMGALLERY_DONE');
     };
 
     const importSelected = async () => {
@@ -284,7 +284,7 @@
       start.disabled = true;
       refresh.disabled = true;
       setProgress(0, rows.length);
-      status.textContent = `${text('COM_JOOMGALLERY_FTP_IMPORT_PROCESSING')} 0/${rows.length}`;
+      status.textContent = `${text('COM_JOOMGALLERY_PROCESSING')} 0/${rows.length}`;
 
       const nmbStartInput = document.getElementById('jform_nmb_start');
       const nmbStart = nmbStartInput ? parseInt(nmbStartInput.value, 10) || 1 : 1;
@@ -303,7 +303,7 @@
 
         done += 1;
         setProgress(done, rows.length);
-        status.textContent = `${text('COM_JOOMGALLERY_FTP_IMPORT_PROCESSING')} ${done}/${rows.length}`;
+        status.textContent = `${text('COM_JOOMGALLERY_PROCESSING')} ${done}/${rows.length}`;
       }
 
       uploader.value = 'ftp';
@@ -314,8 +314,8 @@
       refresh.disabled = false;
 
       const summary = failed
-        ? `${text('COM_JOOMGALLERY_FTP_IMPORT_DONE')}: ${done - failed}. ${text('COM_JOOMGALLERY_FTP_IMPORT_FAILED')}: ${failed}.`
-        : text('COM_JOOMGALLERY_FTP_IMPORT_DONE');
+        ? `${text('COM_JOOMGALLERY_DONE')}: ${done - failed}. ${text('COM_JOOMGALLERY_FAILED')}: ${failed}.`
+        : text('COM_JOOMGALLERY_DONE');
 
       if (!failed) {
         await loadFiles();

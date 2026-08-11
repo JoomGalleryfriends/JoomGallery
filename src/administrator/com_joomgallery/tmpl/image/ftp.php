@@ -27,12 +27,12 @@ HTMLHelper::_('bootstrap.tooltip');
 Text::script('JGLOBAL_VALIDATION_FORM_FAILED');
 Text::script('COM_JOOMGALLERY_ERROR_FILL_REQUIRED_FIELDS');
 Text::script('COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY');
-Text::script('COM_JOOMGALLERY_FTP_IMPORT_DIRECTORY');
+Text::script('JLIB_FORM_FIELD_PARAM_IMAGELIST_DIRECTORY_LABEL');
 Text::script('COM_JOOMGALLERY_FTP_IMPORT_NO_FILES');
 Text::script('COM_JOOMGALLERY_FTP_IMPORT_NO_FILES_SELECTED');
-Text::script('COM_JOOMGALLERY_FTP_IMPORT_PROCESSING');
-Text::script('COM_JOOMGALLERY_FTP_IMPORT_DONE');
-Text::script('COM_JOOMGALLERY_FTP_IMPORT_FAILED');
+Text::script('COM_JOOMGALLERY_PROCESSING');
+Text::script('COM_JOOMGALLERY_DONE');
+Text::script('COM_JOOMGALLERY_FAILED');
 Text::script('COM_JOOMGALLERY_FTP_IMPORT_LOADING');
 Text::script('COM_JOOMGALLERY_FTP_IMPORT_LOAD_FAILED');
 
@@ -80,13 +80,12 @@ $this->form->setFieldAttribute('title', 'required', 'false');
             <h2><?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT'); ?></h2>
           </div>
           <div class="card-body">
-            <p class="small text-muted mb-3" id="ftp-import-path"></p>
             <div class="mb-3">
               <button type="button" class="btn btn-secondary btn-sm" id="ftp-import-refresh">
-                <?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_REFRESH'); ?>
+                <?php echo Text::_('COM_JOOMGALLERY_REFRESH'); ?>
               </button>
               <button type="button" class="btn btn-secondary btn-sm" id="ftp-import-select-all">
-                <?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_SELECT_ALL'); ?>
+                <?php echo Text::_('JGLOBAL_SELECTION_ALL'); ?>
               </button>
               <button type="button" class="btn btn-secondary btn-sm" id="ftp-import-select-none">
                 <?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_SELECT_NONE'); ?>
@@ -112,7 +111,7 @@ $this->form->setFieldAttribute('title', 'required', 'false');
                 <option value="50">50</option>
                 <option value="100">100</option>
                 <option value="150">150</option>
-                <option value="all"><?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_ALL'); ?></option>
+                <option value="all"><?php echo Text::_('JALL'); ?></option>
               </select>
             </div>
             <div class="mb-3">
@@ -120,6 +119,8 @@ $this->form->setFieldAttribute('title', 'required', 'false');
                 <?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_START'); ?>
               </button>
             </div>
+            <p class="small text-muted mb-1" id="ftp-import-path"></p>
+            <p class="small text-muted mb-3"><?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_DIRECTORY_HINT'); ?></p>
             <div class="progress mb-3" role="progressbar" aria-label="<?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_PROGRESS', true); ?>">
               <div class="progress-bar" id="ftp-import-progress" style="width: 0%">0%</div>
             </div>
