@@ -203,31 +203,43 @@ trait CacheAwareTrait
    * @param   string        $namespace     Session key identifying the cache namespace.
    * @param   string|false  $pattern       Key-matching regular expression, or false to remove all entries.
    * @param   bool          $decodeBase64  True to decode Base64-encoded keys before matching.
+   * @param   bool          $requestOnly   True to remove the entry for the current request only.
    *
    * @return  void
    *
    * @since   4.4.0
    */
-  protected function removeCacheEntries(string $namespace, $pattern = false, bool $decodeBase64 = false): void
+  protected function removeCacheEntries(string $namespace, string|false $pattern = false, bool $decodeBase64 = false, bool $requestOnly = false): void
   {
-    $this->initialiseCache($namespace);
+    if($requestOnly)
+    {
+      self::$requestCaches[$namespace] ??= [];
+      $cache =& self::$requestCaches[$namespace];
+    }
+    else
+    {
+      $this->initialiseCache($namespace);
+      $cache =& self::$runtimeCaches[$namespace];
+    }
 
     if($pattern === false)
     {
-      self::$runtimeCaches[$namespace] = [];
+      $cache = [];
     }
     elseif(@preg_match($pattern, '') !== false)
     {
-      foreach(array_keys(self::$runtimeCaches[$namespace]) as $key)
+      foreach(array_keys($cache) as $key)
       {
         $matchKey = $decodeBase64 ? base64_decode($key) : $key;
 
         if(preg_match($pattern, $matchKey))
         {
-          unset(self::$runtimeCaches[$namespace][$key]);
+          unset($cache[$key]);
         }
       }
     }
+
+    if($requestOnly) return;
 
     self::$dirtyCaches[$namespace] = true;
     $this->persistCacheNamespace($namespace);

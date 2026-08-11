@@ -67,4 +67,32 @@ class JoomCache
 
     return $previous;
   }
+
+  /**
+   * Checks whether a cache entry exists.
+   *
+   * @param   string  $key  The cache entry key.
+   *
+   * @return  bool
+   *
+   * @since   4.4.0
+   */
+  public function has(string $key): bool
+  {
+    return $this->hasCacheEntry($this->cacheNamespace, $key, true);
+  }
+
+  /**
+   * Removes cache entry based on pattern.
+   *
+   * @param   string|false  $pattern  The serach pattern
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public function remove(string|false $pattern = false): void
+  {
+    $this->removeCacheEntries($this->cacheNamespace, $pattern, false, true);
+  }
 }

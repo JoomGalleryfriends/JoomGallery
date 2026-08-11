@@ -38,45 +38,6 @@ use Joomla\Registry\Registry;
 class JoomHelper
 {
   /**
-   * Creators already resolved during the current request.
-   *
-   * @var array
-   */
-  protected static $creators = [];
-
-  /**
-   * Register creator values which were already selected by a model query.
-   *
-   * @param   string  $name     Content type.
-   * @param   int     $id       Item ID.
-   * @param   int     $creator  Creator user ID.
-   * @param   bool    $parent   Whether this is a parent creator lookup.
-   *
-   * @return  void
-   *
-   * @since   4.4.0
-   */
-  public static function registerCreator(string $name, int $id, int $creator, bool $parent = false): void
-  {
-    if($id > 0)
-    {
-      self::$creators[$name . ':' . $id . ':' . (int) $parent] = $creator;
-    }
-  }
-
-  /**
-   * Clear creator values after an item hierarchy or ownership change.
-   *
-   * @return  void
-   *
-   * @since   4.4.0
-   */
-  public static function clearCreatorCache(): void
-  {
-    self::$creators = [];
-  }
-
-  /**
    * List of available content types
    *
    * @var array
@@ -140,6 +101,87 @@ class JoomHelper
   public static function getComponent()
   {
     return Factory::getApplication()->bootComponent('com_joomgallery');
+  }
+
+    /**
+   * Register creator values which were already selected by a model query.
+   *
+   * @param   string  $name     Content type.
+   * @param   int     $id       Item ID.
+   * @param   int     $creator  Creator user ID.
+   * @param   bool    $parent   Whether this is a parent creator lookup.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public static function registerCreator(string $name, int $id, int $creator, bool $parent = false): void
+  {
+    if($id <= 0)
+    {
+        return;
+    }
+
+    $key = 'creators:' . $name . ':' . $id . ':' . (int) $parent;
+
+    self::getComponent()->cache->set($key, $creator);
+  }
+
+  /**
+   * Register record objects which were already loaded from DB.
+   *
+   * @param   string  $name     Content type.
+   * @param   int     $id       Item ID.
+   * 
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public static function registerRecord(string $name, int $id, object $record): void
+  {
+    if($id > 0)
+    {
+      $key = 'records:' . $name . ':' . $id;
+
+      self::getComponent()->cache->set($key, $record);
+    }
+  }
+
+  /**
+   * Clear available caches.
+   * 
+   * @param   string  $name  The content type to be cleaned
+   * @param   string  $type  The type of cache to be cleaned
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public static function clearCache(string $name='', string $type=''): void
+  {
+    $cacheTypes = ['records', 'creators'];
+
+    foreach($cacheTypes as $cacheType)
+    {
+      // If a specific cache type is requested, skip all others.
+      if($type !== '' && $type !== $cacheType)
+      {
+        continue;
+      }
+
+      // Clear all entries of this cache type.
+      if($name === '')
+      {
+        $pattern = '/^' . preg_quote($cacheType, '/') . ':/';
+      }
+      // Clear only entries of the specified content type.
+      else
+      {
+        $pattern = '/^' . preg_quote($cacheType, '/') . ':' . preg_quote($name, '/') . ':/';
+      }
+
+      self::getComponent()->cache->remove($pattern);
+    }
   }
 
   /**
@@ -237,6 +279,21 @@ class JoomHelper
         $id = \intval($id);
       }
 
+      // Check the cache
+      if($name == 'imagetype')
+      {
+        $imgtype_id = $id;
+        if(is_array($id) && key_exists('typename', $id))
+        {
+          $imgtype_id = $id['typename'];
+        }
+
+        if(self::getComponent()->cache->has('record:' . $name . ':' . $imgtype_id))
+        {
+          return self::getComponent()->cache->get('record:' . $name . ':' . $imgtype_id);
+        }
+      }
+
       // Get the JoomgalleryComponent object if needed
       if(!isset($com_obj) || !strpos('JoomgalleryComponent', \get_class($com_obj)) === false)
       {
@@ -255,15 +312,18 @@ class JoomHelper
       // Attempt to load the record.
       $return = $model->getItem($id);
 
+      // Write result to cache
+      if($name == 'imagetype' && $return)
+      {
+        return self::getComponent()->cache->set('record:' . $name . ':' . $imgtype_id, $return);
+      }
+
       return $return;
     }
+    
     // We got nothing to work with
-
-
-      self::getComponent()->addLog('Please provide a valid record ID, alias or filename.', 'error', 'jerror');
-      throw new \Exception('Please provide a valid record ID, alias or filename.');
-
-      return false;
+    self::getComponent()->addLog('Please provide a valid record ID, alias or filename.', 'error', 'jerror');
+    throw new \Exception('Please provide a valid record ID, alias or filename.');
   }
 
   /**
@@ -390,8 +450,12 @@ class JoomHelper
     {
       self::getComponent()->addLog('Please provide an available name of the record type.', 'error', 'jerror');
       throw new \Exception('Please provide an available name of the record type.');
+    }
 
-      return false;
+    // Check the cache
+    if($name == 'imagetypes' && self::getComponent()->cache->has('records:' . $name))
+    {
+      return self::getComponent()->cache->get('records:' . $name);
     }
 
     // Get the JoomgalleryComponent object if needed
@@ -428,6 +492,12 @@ class JoomHelper
       {
         $return = $ind_array;
       }
+    }
+
+    // Write result to cache
+    if($name == 'imagetypes' && $return)
+    {
+      return self::getComponent()->cache->set('records:' . $name, $return);
     }
 
     return $return;
