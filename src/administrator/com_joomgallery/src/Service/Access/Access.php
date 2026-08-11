@@ -199,7 +199,6 @@ class Access implements AccessInterface
     AccessOwn::$parent_dependent_types = $this->parent_dependent_types;
     AccessOwn::$global_types           = $this->asset_global_types;
 
-    $this->warmHotCache();
   }
 
   /**
@@ -740,7 +739,25 @@ class Access implements AccessInterface
   public function clearCache(): void
   {
     $this->checks = [];
-    $this->removeCacheEntries($this->cacheNamespace);
+
+    // Clear every identity namespace for this component which was loaded in
+    // the current session/request, not just the identity currently selected.
+    $prefix     = 'com_joomgallery.accesscache.' . sha1($this->option) . '.';
+    $namespaces = array_keys(self::$loadedCaches);
+
+    foreach($namespaces as $namespace)
+    {
+      if(strpos($namespace, $prefix) === 0)
+      {
+        $this->removeCacheEntries($namespace);
+      }
+    }
+
+    // The current namespace may not have been included if initialisation failed.
+    if(!\in_array($this->cacheNamespace, $namespaces, true))
+    {
+      $this->removeCacheEntries($this->cacheNamespace);
+    }
   }
 
   /**

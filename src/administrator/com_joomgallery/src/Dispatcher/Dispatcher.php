@@ -30,13 +30,14 @@ class Dispatcher extends ComponentDispatcher
   public function dispatch()
   {
     parent::dispatch();
-    $config = null;
-    $access = null;
+    $component = null;
+    $config    = null;
+    $access    = null;
 
     try
     {
       $component = Factory::getApplication()->bootComponent('com_joomgallery');
-      $config    = $component->getConfig();
+      $config     = $component->getConfig();
     }
     catch(\Throwable $th)
     {
@@ -44,7 +45,10 @@ class Dispatcher extends ComponentDispatcher
 
     try
     {
-      $access = $component->getAccess();
+      if(!\is_null($component))
+      {
+        $access = $component->getAccess();
+      }
     }
     catch(\Throwable $th)
     {
