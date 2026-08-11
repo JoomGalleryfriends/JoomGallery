@@ -198,7 +198,6 @@ class Access implements AccessInterface
     // Fill AccessOwn properties
     AccessOwn::$parent_dependent_types = $this->parent_dependent_types;
     AccessOwn::$global_types           = $this->asset_global_types;
-
   }
 
   /**
