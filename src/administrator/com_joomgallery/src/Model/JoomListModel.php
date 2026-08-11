@@ -148,12 +148,20 @@ abstract class JoomListModel extends ListModel
   /**
    * Load list items and register ownership data already present in the result.
    *
-   * @return  array
+   * @return  mixed  An array of data items on success, false on failure.
    *
    * @since   4.4.0
    */
   public function getItems()
   {
+    $limit = (int) $this->getState('list.limit');
+    $start = (int) $this->getStart();
+
+    if($this->globalLimit && $start + $limit > $this->globalLimit)
+    {
+      $this->setState('list.limit', $this->globalLimit - $start);
+    }
+
     $items = parent::getItems();
 
     if(!\is_array($items))
