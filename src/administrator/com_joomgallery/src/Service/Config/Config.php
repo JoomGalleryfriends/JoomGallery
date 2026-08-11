@@ -651,10 +651,8 @@ abstract class Config extends \stdClass implements ConfigInterface
 
     $userSetting = (int) $db->loadResult();
 
-    if($userSetting)
-    {
-      $this->putCacheEntry($cacheNamespace, $userId, $userSetting, $this->cacheLimit, true);
-    }
+    // Zero means that no explicit user setting exists and is a cacheable result too.
+    $this->putCacheEntry($cacheNamespace, (string) $userId, $userSetting, $this->cacheLimit, true);
 
     return $userSetting;
   }

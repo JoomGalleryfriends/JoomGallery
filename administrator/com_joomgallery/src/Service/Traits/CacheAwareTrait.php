@@ -181,7 +181,7 @@ trait CacheAwareTrait
 
     $this->initialiseCache($namespace);
 
-    // Reinsertion makes array order a compact LRU approximation.
+    // Reinsertion keeps updated entries at the end of the insertion-order queue.
     unset(self::$runtimeCaches[$namespace][$key]);
     self::$runtimeCaches[$namespace][$key] = $value;
 
