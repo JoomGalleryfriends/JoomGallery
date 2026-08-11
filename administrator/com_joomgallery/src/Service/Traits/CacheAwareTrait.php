@@ -214,7 +214,7 @@ trait CacheAwareTrait
     if($requestOnly)
     {
       self::$requestCaches[$namespace] ??= [];
-      $cache =& self::$requestCaches[$namespace];
+      $cache                             =& self::$requestCaches[$namespace];
     }
     else
     {

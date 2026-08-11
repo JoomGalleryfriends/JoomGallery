@@ -103,7 +103,7 @@ class JoomHelper
     return Factory::getApplication()->bootComponent('com_joomgallery');
   }
 
-    /**
+  /**
    * Register creator values which were already selected by a model query.
    *
    * @param   string  $name     Content type.
@@ -132,7 +132,7 @@ class JoomHelper
    *
    * @param   string  $name     Content type.
    * @param   int     $id       Item ID.
-   * 
+   *
    * @return  void
    *
    * @since   4.4.0
@@ -149,7 +149,7 @@ class JoomHelper
 
   /**
    * Clear available caches.
-   * 
+   *
    * @param   string  $name  The content type to be cleaned
    * @param   string  $type  The type of cache to be cleaned
    *
@@ -157,7 +157,7 @@ class JoomHelper
    *
    * @since   4.4.0
    */
-  public static function clearCache(string $name='', string $type=''): void
+  public static function clearCache(string $name = '', string $type = ''): void
   {
     $cacheTypes = ['records', 'creators'];
 
@@ -283,7 +283,8 @@ class JoomHelper
       if($name == 'imagetype')
       {
         $imgtype_id = $id;
-        if(is_array($id) && key_exists('typename', $id))
+
+        if(\is_array($id) && key_exists('typename', $id))
         {
           $imgtype_id = $id['typename'];
         }
@@ -320,7 +321,7 @@ class JoomHelper
 
       return $return;
     }
-    
+
     // We got nothing to work with
     self::getComponent()->addLog('Please provide a valid record ID, alias or filename.', 'error', 'jerror');
     throw new \Exception('Please provide a valid record ID, alias or filename.');
