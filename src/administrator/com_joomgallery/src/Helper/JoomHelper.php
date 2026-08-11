@@ -122,7 +122,7 @@ class JoomHelper
         return;
     }
 
-    $key = 'creators:' . $name . ':' . $id . ':' . (int) $parent;
+    $key = 'creator:' . $name . ':' . $id . ':' . (int) $parent;
 
     self::getComponent()->cache->set($key, $creator);
   }
@@ -141,7 +141,7 @@ class JoomHelper
   {
     if($id > 0)
     {
-      $key = 'records:' . $name . ':' . $id;
+      $key = 'record:' . $name . ':' . $id;
 
       self::getComponent()->cache->set($key, $record);
     }
@@ -159,7 +159,18 @@ class JoomHelper
    */
   public static function clearCache(string $name = '', string $type = ''): void
   {
-    $cacheTypes = ['records', 'creators'];
+    if(strpos($name, 'com_joomgallery.') === 0)
+    {
+      $name = substr($name, strlen('com_joomgallery.'));
+    }
+
+    $cacheTypes = ['record', 'records', 'creator'];
+    $cacheNames = [$name];
+
+    if($name === 'imagetype')
+    {
+      $cacheNames[] = 'imagetypes';
+    }
 
     foreach($cacheTypes as $cacheType)
     {
@@ -177,7 +188,9 @@ class JoomHelper
       // Clear only entries of the specified content type.
       else
       {
-        $pattern = '/^' . preg_quote($cacheType, '/') . ':' . preg_quote($name, '/') . ':/';
+        $pattern = '/^' . preg_quote($cacheType, '/') . ':(?:'
+          . implode('|', array_map(static fn($value) => preg_quote($value, '/'), $cacheNames))
+          . ')(?::|$)/';
       }
 
       self::getComponent()->cache->remove($pattern);
@@ -316,7 +329,7 @@ class JoomHelper
       // Write result to cache
       if($name == 'imagetype' && $return)
       {
-        return self::getComponent()->cache->set('record:' . $name . ':' . $imgtype_id, $return);
+        self::getComponent()->cache->set('record:' . $name . ':' . $imgtype_id, $return);
       }
 
       return $return;
@@ -348,11 +361,11 @@ class JoomHelper
     // We got a record id
     if(is_numeric($id) && $id > 0)
     {
-      $cacheKey = $name . ':' . $id . ':' . (int) $parent;
+      $cacheKey = 'creator:' . $name . ':' . $id . ':' . (int) $parent;
 
-      if(\array_key_exists($cacheKey, self::$creators))
+      if(self::getComponent()->cache->has($cacheKey))
       {
-        return self::$creators[$cacheKey];
+        return self::getComponent()->cache->get($cacheKey);
       }
 
       $db    = Factory::getContainer()->get(DatabaseInterface::class);
@@ -381,9 +394,10 @@ class JoomHelper
 
       $db->setQuery($query);
 
-      self::$creators[$cacheKey] = $db->loadResult();
+      $creator = $db->loadResult();
+      self::getComponent()->cache->set($cacheKey, $creator);
 
-      return self::$creators[$cacheKey];
+      return $creator;
     }
 
     return false;
@@ -498,7 +512,7 @@ class JoomHelper
     // Write result to cache
     if($name == 'imagetypes' && $return)
     {
-      return self::getComponent()->cache->set('records:' . $name, $return);
+      self::getComponent()->cache->set('records:' . $name, $return);
     }
 
     return $return;
