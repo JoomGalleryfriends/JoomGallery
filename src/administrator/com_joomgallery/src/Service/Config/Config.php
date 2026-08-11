@@ -629,7 +629,16 @@ abstract class Config extends \stdClass implements ConfigInterface
    */
   protected function getUserSetting($userId)
   {
-    // get a db connection
+    // Dedicated namespace for the user settings
+    $cacheNamespace = $this->cacheNamespace . 'config_usergroup';
+
+    // Load from cache if available
+    if($this->hasCacheEntry($cacheNamespace, $userId, true))
+    {
+      return $this->getCacheEntry($cacheNamespace, $userId, null, true);
+    }
+
+    // Get the usergroup setting from db
     $db = Factory::getContainer()->get(DatabaseInterface::class);
 
     $query = $db->getQuery(true)
@@ -640,7 +649,14 @@ abstract class Config extends \stdClass implements ConfigInterface
 
     $db->setQuery($query);
 
-    return (int) $db->loadResult();
+    $userSetting = (int) $db->loadResult();
+
+    if($userSetting)
+    {
+      $this->putCacheEntry($cacheNamespace, $userId, $userSetting, $this->cacheLimit, true);
+    }
+
+    return $userSetting;
   }
 
   /**
