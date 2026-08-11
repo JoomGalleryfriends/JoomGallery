@@ -168,7 +168,7 @@ class Access implements AccessInterface
     $appuser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->user->id);
 
     // Global and component administrators are always allowed.
-    if($appuser->get('isRoot') === true || $appuser->authorise('core.admin', $this->option))
+    if($appuser->get('isRoot') === true)
     {
       return true;
     }
