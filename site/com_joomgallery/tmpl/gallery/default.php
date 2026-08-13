@@ -26,7 +26,7 @@ $image_class            = $this->params['configs']->get('jg_gallery_view_image_c
 $justified_height       = $this->params['configs']->get('jg_gallery_view_justified_height', 200, 'INT');
 $justified_gap          = $this->params['configs']->get('jg_gallery_view_justified_gap', 5, 'INT');
 $image_link             = $this->params['configs']->get('jg_gallery_view_image_link', 'defaultview', 'STRING');
-$browse_categories_link = $this->params['configs']->get('jg_gallery_view_browse_categories_link', 1, 'INT');
+$browse_categories_link = $this->params['configs']->get('jg_gallery_view_browse_categories_link', 0, 'INT');
 $lightbox_image         = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
 $lightbox_thumbnails    = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
 $lightbox_zoom          = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
@@ -112,6 +112,21 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
       </a>
     </div>
   <?php endif; ?>
+
+  <?php // Search bar
+    $search_vars = [
+      'provider'      => $this->component->getSearch(),
+      'query'         => $this->item->query,
+      'params'        => $this->params['configs'],
+      'menuitem'      => ['itemid' => $this->itemid, 'option' => 'com_joomgallery', 'view' => 'gallery', 'model' => 'images'],
+      'suggest_url'   => Route::_('index.php?option=com_finder&task=suggestions.suggest&format=json&tmpl=component', false),
+      'search_url'    => ['option' => 'com_joomgallery', 'view' => 'gallery'],
+      'filterForm'    => $this->filterForm,
+      'activeFilters' => $this->activeFilters,
+    ];
+
+    echo LayoutHelper::render('joomgallery.search.searchbar', $search_vars);
+  ?>
 
   <?php // Hint for no items ?>
   <?php if(\count($this->item->images->items) == 0) : ?>

@@ -12,6 +12,7 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Field\JgdynamiclistField;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -70,6 +71,31 @@ if(!empty($parentclass))
 if(!empty($addClass))
 {
   $class .= ' ' . $addClass;
+}
+
+if($field instanceof JgdynamiclistField && !empty($description) && strpos($description, '{dyndesc}') !== false)
+{
+  $script_options = $field->dynGetOptions();
+
+  if($script_options)
+  {
+    $dan_desc = '';
+
+    foreach($script_options as $i => $so)
+    {
+      if($i != 0)
+      {
+        $dan_desc .= '<br>';
+      }
+
+      $so = (array) $so;
+
+      $dan_desc .= '<strong>' . $so['text'] . '</strong>: ';
+      $dan_desc .= $so['desc'];
+    }
+
+    $description = str_replace('{dyndesc}', $dan_desc, $description);
+  }
 }
 
 $tip = null;
@@ -134,7 +160,7 @@ if($sensitive)
         <?php if($name == 'jform[jg_imgprocessor]') : ?>
           <div class="mt">
             <small id="jg_imgprocessor_supplement" class="form-text"></small>
-          </div>          
+          </div>
         <?php endif; ?>
       </div>
     <?php endif; ?>

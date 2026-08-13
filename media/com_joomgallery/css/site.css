@@ -88,6 +88,39 @@ table.itemList th.sort-cell .form-check-input {
   margin-bottom: 0;
 }
 
+/* Gallery view */
+.com_joomgallery .jg-searchform {
+  margin: 3em 0 5em;
+}
+.com_joomgallery .jg-searchform .form-inline {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.com_joomgallery .jg-searchform .input-group,
+.com_joomgallery .jg-searchform .filter-input {
+  width: 80%;
+}
+.com_joomgallery .jg-searchform .filter-input {
+  margin-top: 1em;
+}
+.com_joomgallery .jg-searchform .awesomplete {
+  flex-grow: 1;
+}
+.com_joomgallery .jg-searchform .input-group ul {
+  min-width: 20%;
+}
+.com_joomgallery .jg-searchform .input-group li {
+  text-align: initial;
+}
+.com_joomgallery .jg-searchform .filter-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+.com_joomgallery .jg-searchform .js-stools-field-filter {
+  margin: 0 1em 1em 0;
+}
+
 /* Category view */
 .com_joomgallery.view-category main {
   overflow-anchor: none;

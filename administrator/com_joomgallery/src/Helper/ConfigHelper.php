@@ -199,6 +199,29 @@ class ConfigHelper
   }
 
   /**
+   * Get a list of options for the search provider form field
+   * based on its attributes
+   *
+   * @param   Form    $form    Form object
+   *
+   * @return  array   List of options
+   *
+   * @since   4.4.0
+   */
+  public static function getSearchProviders($form)
+  {
+    // Check if we got a valid form
+    if(\is_object($form) && $form instanceof Form)
+    {
+      return Factory::getApplication()->bootComponent('com_joomgallery')->getSearchProviders();
+    }
+
+
+      $this->component->addLog(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'), 'error', 'jerror');
+      throw new \Exception(Text::_('COM_JOOMGALLERY_ERROR_INVALID_FORM_OBJECT'));
+  }
+
+  /**
    * - Checks if we are visiting a joomgallery form
    * - If yes, guess context and item id
    *

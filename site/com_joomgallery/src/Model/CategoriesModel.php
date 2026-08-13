@@ -88,30 +88,4 @@ class CategoriesModel extends AdminCategoriesModel
 
     $this->loadComponentParams();
   }
-
-  /**
-   * Build an SQL query to load the list data.
-   *
-   * @return  DatabaseQuery
-   *
-   * @since   4.0.0
-   */
-  protected function getListQuery()
-  {
-    $query = parent::getListQuery();
-
-    return $query;
-  }
-
-  /**
-   * Method to get an array of data items
-   *
-   * @return  mixed An array of data on success, false on failure.
-   */
-  public function getItems()
-  {
-    $items = parent::getItems();
-
-    return $items;
-  }
 }

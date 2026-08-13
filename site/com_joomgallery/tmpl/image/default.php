@@ -61,11 +61,11 @@ $metadata       = $metadataLayout->render($this->item->imgmetadata);
 $app = Factory::getApplication();
 $doc = $app->getDocument();
 
-$title = $this->item->title ?? '';
-$sitename = $app->get('sitename');
+$title               = $this->item->title ?? '';
+$sitename            = $app->get('sitename');
 $sitename_pagetitles = (int) $app->get('sitename_pagetitles', 0);
 
-$prefix = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX');
+$prefix    = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX');
 $baseTitle = trim($prefix . ' ' . $title);
 
 if($sitename_pagetitles === 0)
