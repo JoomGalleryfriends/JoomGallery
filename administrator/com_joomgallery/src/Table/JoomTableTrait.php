@@ -242,10 +242,10 @@ trait JoomTableTrait
       return;
     }
 
-    $user       = Factory::getApplication()->getIdentity();
-    $keyName    = $this->getKeyName();
-    $pk         = (int) ($array[$keyName] ?? $this->{$keyName} ?? 0);
-    $canManage  = $user->authorise('core.manage', _JOOM_OPTION) || $user->authorise('core.admin', _JOOM_OPTION);
+    $user      = Factory::getApplication()->getIdentity();
+    $keyName   = $this->getKeyName();
+    $pk        = (int) ($array[$keyName] ?? $this->{$keyName} ?? 0);
+    $canManage = $user->authorise('core.manage', _JOOM_OPTION) && $user->authorise('core.admin', _JOOM_OPTION);
 
     if($pk === 0)
     {

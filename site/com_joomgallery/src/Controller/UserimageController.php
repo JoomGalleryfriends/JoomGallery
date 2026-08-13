@@ -754,7 +754,7 @@ class UserimageController extends JoomFormController
       $urlVar = $key;
     }
 
-    $recordId  = $this->input->getInt($urlVar);
+    $recordId   = $this->input->getInt($urlVar);
     $data[$key] = $recordId;
 
     if(!$recordId || !$this->allowEdit($data, $key))

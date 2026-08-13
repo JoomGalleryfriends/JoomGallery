@@ -118,6 +118,16 @@ class UserimageModel extends AdminImageModel
       return false;
     }
 
+    // Only component managers/admins and the current owner may transfer ownership.
+    $id = (int) $this->getState('image.id', $this->app->getInput()->getInt('id', 0));
+
+    if(!$this->canChangeCreatedBy($id))
+    {
+      // Keep the owner visible, but prevent changes in both the UI and submitted data.
+      $form->setFieldAttribute('created_by', 'disabled', 'true');
+      $form->setFieldAttribute('created_by', 'filter', 'unset');
+    }
+
     return $form;
   }
 
@@ -130,7 +140,29 @@ class UserimageModel extends AdminImageModel
    */
   protected function loadFormData(): \Joomla\CMS\Object\CMSObject|\stdClass|array
   {
-    return parent::loadFormData();
+    $data = parent::loadFormData();
+    $id   = (int) $this->getState('image.id', 0);
+
+    // Reload and validation requests may have stored submitted form data in
+    // the session. Do not display a rejected ownership change on the form.
+    if($id > 0 && !$this->canChangeCreatedBy($id))
+    {
+      $item = $this->getItem($id);
+
+      if($item)
+      {
+        if(\is_array($data))
+        {
+          $data['created_by'] = (int) $item->created_by;
+        }
+        else
+        {
+          $data->created_by = (int) $item->created_by;
+        }
+      }
+    }
+
+    return $data;
   }
 
   /**

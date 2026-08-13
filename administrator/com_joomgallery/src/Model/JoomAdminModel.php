@@ -501,7 +501,7 @@ abstract class JoomAdminModel extends AdminModel
    */
   protected function canChangeCreatedBy(int $id = 0): bool
   {
-    if($this->acl->checkACL('core.manage', _JOOM_OPTION) || $this->acl->checkACL('core.admin', _JOOM_OPTION))
+    if($this->getAcl()->checkACL('core.manage', _JOOM_OPTION) && $this->acl->checkACL('core.admin', _JOOM_OPTION))
     {
       return true;
     }
