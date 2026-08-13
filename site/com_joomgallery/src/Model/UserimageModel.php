@@ -134,6 +134,32 @@ class UserimageModel extends AdminImageModel
   }
 
   /**
+   * Prepare the frontend userimage form.
+   *
+   * Image custom fields use the com_joomgallery.image content context. The
+   * Fields helper therefore sets the category refresh task to image.reload.
+   * Override only the reload controller after the plugins have prepared the
+   * form, so the same userimage form is used when the category changes.
+   *
+   * @param   Form    $form   Form instance
+   * @param   mixed   $data   Form data
+   * @param   string  $group  Plugin group
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  protected function preprocessForm(Form $form, $data, $group = 'joomgallery')
+  {
+    parent::preprocessForm($form, $data, $group);
+
+    if($form->getField('catid'))
+    {
+      $form->setFieldAttribute('catid', 'refresh-section', 'userimage');
+    }
+  }
+
+  /**
    * Get the return URL.
    *
    * @return  string  The return URL.
