@@ -16,8 +16,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
-use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use Joomla\CMS\Router\Route;
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryRawView;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 
 /**
@@ -26,7 +26,7 @@ use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
  * @package JoomGallery
  * @since   4.0.0
  */
-class RawView extends JoomGalleryView
+class RawView extends JoomGalleryRawView
 {
   /**
    * Raw view display method, outputs one image
@@ -56,7 +56,7 @@ class RawView extends JoomGalleryView
     // Check access
     if(!$this->access($id, $type))
     {
-      $this->app->redirect(Route::_('index.php', false), 403);
+      $this->outputError(403, Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
     }
 
     /** @var ImageModel $model */
@@ -99,8 +99,7 @@ class RawView extends JoomGalleryView
     }
     catch (InvalidPathException $e)
     {
-      $this->app->enqueueMessage($e, 'error');
-      $this->app->redirect(Route::_('index.php', false), 404);
+      $this->outputError(404, $e->getMessage());
     }
 
     // Create config service
@@ -109,7 +108,7 @@ class RawView extends JoomGalleryView
     // Postprocessing of the image
     if(!$this->ppImage($file_info, $resource, $type))
     {
-      $this->app->redirect(Route::_('index.php', false), 404);
+      $this->outputError(404, 'Error postprocessing the image');
     }
 
     // Increment hits counter
@@ -124,21 +123,8 @@ class RawView extends JoomGalleryView
       }
     }
 
-    // Set mime encoding to document
-    $this->getDocument()->setMimeEncoding($file_info->mime_type);
-
-    // Set header to specify the file name
-    $this->app->setHeader('Content-Type', $file_info->mime_type);
-    $this->app->setHeader('Content-Disposition', 'inline; filename=' . basename($img_path));
-    $this->app->setHeader('Content-Length', \strval($file_info->size));
-    $this->app->setHeader('Cache-Control', 'no-cache, must-revalidate');
-    $this->app->setHeader('Pragma', 'no-cache');
-
-    // Required for large files to work properly
-    if(ob_get_level() > 0) ob_end_clean();
-
-    fpassthru($resource);
-    fclose($resource);
+    // Output
+    $this->outputResource($resource, $file_info->mime_type, $img_path, $file_info->size);
   }
 
   /**

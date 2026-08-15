@@ -14,8 +14,8 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Category;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryJsonView;
 use Joomgallery\Component\Joomgallery\Site\Model\CategoryModel;
-use Joomgallery\Component\Joomgallery\Site\View\JoomGalleryJsonView;
 use Joomla\CMS\Language\Text;
 
 /**
@@ -60,7 +60,7 @@ class JsonView extends JoomGalleryJsonView
     // Check published state
     if($loaded && $this->item->published !== 1)
     {
-      $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'), 'error');
+      $this->output(Text::_('COM_JOOMGALLERY_ERROR_UNAVAILABLE_VIEW'));
 
       return;
     }
@@ -73,16 +73,29 @@ class JsonView extends JoomGalleryJsonView
       return;
     }
 
-    // Load parent category
-    $this->item->parent = $model->getParent();
+    // Load only if category is currently not protected
+    if(!$this->item->pw_protected)
+    {
+      // Load parent category
+      $this->item->parent = $model->getParent();
 
-    // Load subcategories
-    $this->item->children        = new \stdClass();
-    $this->item->children->items = $model->getChildren();
+      // Load subcategories
+      $this->item->children        = new \stdClass();
+      $this->item->children->items = $model->getChildren();
 
-    // Load images
-    $this->item->images        = new \stdClass();
-    $this->item->images->items = $model->getImages();
+      // Load images
+      $this->item->images        = new \stdClass();
+      $this->item->images->items = $model->getImages();
+    }
+    else
+    {
+      // Protected category
+      $this->error   = true;
+      $this->message = Text::_('COM_JOOMGALLERY_CATEGORY_PASSWORD_PROTECTED');
+      $this->output((object) []);
+
+      return;
+    }
 
     // Check for errors.
     if(\count($errors = $model->getErrors()))

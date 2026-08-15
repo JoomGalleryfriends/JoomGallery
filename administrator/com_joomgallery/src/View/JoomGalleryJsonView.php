@@ -8,7 +8,7 @@
  * *********************************************************************************
  */
 
-namespace Joomgallery\Component\Joomgallery\Site\View;
+namespace Joomgallery\Component\Joomgallery\Administrator\View;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
@@ -94,7 +94,7 @@ class JoomGalleryJsonView extends JsonView
   {
     parent::__construct($config);
 
-    $this->app       = Factory::getApplication('administrator');
+    $this->app       = Factory::getApplication();
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
     $this->user      = $this->app->getIdentity();
 
@@ -140,6 +140,82 @@ class JoomGalleryJsonView extends JsonView
   }
 
   /**
+   * Recursively converts all JSON strings in an object/array into PHP objects.
+   * Suitable for preparing a stdClass before calling json_encode().
+   *
+   * @param  mixed  $data  The data to be processed
+   *
+   * @return mixed
+   */
+  protected function prepareForJson(mixed $data): mixed
+  {
+    // Process objects
+    if(\is_object($data))
+    {
+      foreach($data as $key => $value)
+      {
+        $data->$key = $this->prepareForJson($value);
+      }
+
+      return $data;
+    }
+
+    // Process arrays
+    if(\is_array($data))
+    {
+      foreach($data as $key => $value)
+      {
+        $data[$key] = $this->prepareForJson($value);
+      }
+
+      return $data;
+    }
+
+    // Process strings
+    if(\is_string($data))
+    {
+      $trimmed = trim($data);
+
+      // Skip empty strings
+      if($trimmed === '')
+      {
+        return $data;
+      }
+
+      // Only attempt to decode values that look like JSON
+      if( ($trimmed[0] === '{' && str_ends_with($trimmed, '}')) || ($trimmed[0] === '[' && str_ends_with($trimmed, ']')))
+      {
+        try
+        {
+          $decoded = json_decode($trimmed, false, 512, JSON_THROW_ON_ERROR);
+
+          // Continue recursively because the decoded object may itself
+          // contain JSON strings.
+          return $this->prepareForJson($decoded);
+        }
+        catch(\JsonException)
+        {
+          // Not valid JSON -> leave untouched.
+        }
+      }
+    }
+
+    return $data;
+  }
+
+  protected function isJson(mixed $string)
+  {
+    if(\is_string($string))
+    {
+      json_decode($string);
+
+      return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    return false;
+  }
+
+  /**
    * Outputs the content as json string
    *
    * @param   mixed  $res  The output
@@ -155,12 +231,16 @@ class JoomGalleryJsonView extends JsonView
     $input = $this->app->getInput();
 
     // Serializing the output
-    $result = json_encode($res);
+    if($this->isJson($res))
+    {
+      // Content must not be serialized
+      $res = json_decode($res);
+    }
 
     // Pushing output to the document
-    $this->getDocument()->setBuffer($result);
+    $this->getDocument()->setBuffer($res);
 
     // Output json response
-    echo new JsonResponse($result, $this->message, $this->error, $input->get('ignoreMessages', true, 'bool'));
+    echo new JsonResponse($res, $this->message, $this->error, $input->get('ignoreMessages', true, 'bool'));
   }
 }
