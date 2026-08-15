@@ -189,10 +189,10 @@ class AccessOwn extends Access
             // Usergroup is allowed to perform the action
             $result = \boolval($allowed);
 
-            // An explicit deny wins.
+            // An explicit deny wins across all groups and asset ancestors.
             if($result === false)
             {
-              break;
+              return false;
             }
           }
         }

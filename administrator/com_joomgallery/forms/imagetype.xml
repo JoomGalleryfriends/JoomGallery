@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <fieldset name="general">
-    <field name="ordering" />
+    <field name="ordering" filter="integer" />
 
     <field name="id"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            default="0"
@@ -20,6 +21,7 @@
 
     <field name="type_alias"
            type="text"
+           filter="cmd"
            class="inputbox"
            generator="typename"
            label="JGLOBAL_FIELD_ALIAS_LABEL"

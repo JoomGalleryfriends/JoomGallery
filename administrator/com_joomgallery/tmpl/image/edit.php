@@ -93,7 +93,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
         <div class="text-center">
           <div class="btn-group joom-imgtypes" role="group" aria-label="<?php echo Text::_('COM_JOOMGALLERY_SHOWIMAGE_LBL'); ?>">
             <?php foreach($this->imagetypes as $key => $imagetype) : ?>
-              <a class="btn btn-outline-primary" style="cursor:pointer;" onclick="openModal('<?php echo $imagetype->typename; ?>')"><?php echo Text::sprintf('COM_JOOMGALLERY_SHOWIMAGE_IMGTYPE', ucfirst($imagetype->typename)); ?></a>
+              <a class="btn btn-outline-primary" style="cursor:pointer;" data-imagetype="<?php echo $this->escape($imagetype->typename); ?>" onclick="openModal(this.dataset.imagetype)"><?php echo $this->escape(Text::sprintf('COM_JOOMGALLERY_SHOWIMAGE_IMGTYPE', ucfirst($imagetype->typename))); ?></a>
             <?php endforeach; ?>
           </div>
         </div>
@@ -229,14 +229,14 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
     let mediaInput = document.getElementById('mediaManagerPath');
 
     <?php
-      $imgURL   = '{';
-      $title    = '{';
-      $mediaURL = '{';
+      $imgURL   = [];
+      $title    = [];
+      $mediaURL = [];
 
       foreach($this->imagetypes as $key => $imagetype)
       {
-        $imgURL .= $imagetype->typename . ':"' . JoomHelper::getImg($this->item, $imagetype->typename) . '",';
-        $title  .= $imagetype->typename . ':"' . Text::_('COM_JOOMGALLERY_' . strtoupper($imagetype->typename)) . '",';
+        $imgURL[$imagetype->typename] = JoomHelper::getImg($this->item, $imagetype->typename);
+        $title[$imagetype->typename]  = Text::_('COM_JOOMGALLERY_' . strtoupper($imagetype->typename));
 
         $img_path = str_replace('\\', '/', JoomHelper::getImg($this->item, $imagetype->typename, false, false));
 
@@ -246,25 +246,34 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
           $img_path = str_replace('/images/', '/', $img_path);
         }
 
-        $mediaURL .= $imagetype->typename . ':"index.php?option=com_joomgallery&path=' . $this->item->filesystem . ':' . $img_path . '",';
+        $mediaURL[$imagetype->typename] = 'index.php?option=com_joomgallery&path=' . $this->item->filesystem . ':' . $img_path;
       }
-
-      $imgURL   .= '}';
-      $title    .= '}';
-      $mediaURL .= '}';
     ?>
-    let imgURL   = <?php echo $imgURL; ?>;
-    let title    = <?php echo $title; ?>;
-    let mediaURL = <?php echo $mediaURL; ?>;
+    const imgURL   = <?php echo json_encode($imgURL, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES); ?>;
+    const title    = <?php echo json_encode($title, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES); ?>;
+    const mediaURL = <?php echo json_encode($mediaURL, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES); ?>;
 
-    modalTitle.innerHTML = title[typename];
-    let body  = '<div class="joom-image center">'
-    body      = body + '<div class="joom-loader"><img src="<?php echo Uri::root(true); ?>/media/system/images/ajax-loader.gif" alt="loading..."></div>';
-    body      = body + '<img src="' + imgURL[typename] + '" alt="' + title[typename] + '">';
-    body      = body + '</div>';
-    modalBody.innerHTML  = body;
+    modalTitle.textContent = title[typename];
 
-    replaceBtn.href  = replaceBtn.href + '&type=' + typename;
+    const body        = document.createElement('div');
+    const loader      = document.createElement('div');
+    const loaderImage = document.createElement('img');
+    const image       = document.createElement('img');
+
+    body.className        = 'joom-image center';
+    loader.className      = 'joom-loader';
+    loaderImage.src       = <?php echo json_encode(Uri::root(true) . '/media/system/images/ajax-loader.gif', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES); ?>;
+    loaderImage.alt       = 'loading...';
+    image.src             = imgURL[typename];
+    image.alt             = title[typename];
+
+    loader.append(loaderImage);
+    body.append(loader, image);
+    modalBody.replaceChildren(body);
+
+    const replaceUrl = new URL(replaceBtn.href, window.location.href);
+    replaceUrl.searchParams.set('type', typename);
+    replaceBtn.href  = replaceUrl.toString();
     mediaInput.value = mediaURL[typename];
 
     let bsmodal = new bootstrap.Modal(document.getElementById('image-modal-box'), {keyboard: false});

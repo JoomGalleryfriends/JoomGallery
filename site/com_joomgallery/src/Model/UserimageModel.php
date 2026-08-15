@@ -118,6 +118,16 @@ class UserimageModel extends AdminImageModel
       return false;
     }
 
+    // Only component managers/admins and the current owner may transfer ownership.
+    $id = (int) $this->getState('image.id', $this->app->getInput()->getInt('id', 0));
+
+    if(!$this->canChangeCreatedBy($id))
+    {
+      // Keep the owner visible, but prevent changes in both the UI and submitted data.
+      $form->setFieldAttribute('created_by', 'disabled', 'true');
+      $form->setFieldAttribute('created_by', 'filter', 'unset');
+    }
+
     return $form;
   }
 
@@ -130,7 +140,55 @@ class UserimageModel extends AdminImageModel
    */
   protected function loadFormData(): \Joomla\CMS\Object\CMSObject|\stdClass|array
   {
-    return parent::loadFormData();
+    $data = parent::loadFormData();
+    $id   = (int) $this->getState('image.id', 0);
+
+    // Reload and validation requests may have stored submitted form data in
+    // the session. Do not display a rejected ownership change on the form.
+    if($id > 0 && !$this->canChangeCreatedBy($id))
+    {
+      $item = $this->getItem($id);
+
+      if($item)
+      {
+        if(\is_array($data))
+        {
+          $data['created_by'] = (int) $item->created_by;
+        }
+        else
+        {
+          $data->created_by = (int) $item->created_by;
+        }
+      }
+    }
+
+    return $data;
+  }
+
+  /**
+   * Prepare the frontend userimage form.
+   *
+   * Image custom fields use the com_joomgallery.image content context. The
+   * Fields helper therefore sets the category refresh task to image.reload.
+   * Override only the reload controller after the plugins have prepared the
+   * form, so the same userimage form is used when the category changes.
+   *
+   * @param   Form    $form   Form instance
+   * @param   mixed   $data   Form data
+   * @param   string  $group  Plugin group
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  protected function preprocessForm(Form $form, $data, $group = 'joomgallery')
+  {
+    parent::preprocessForm($form, $data, $group);
+
+    if($form->getField('catid'))
+    {
+      $form->setFieldAttribute('catid', 'refresh-section', 'userimage');
+    }
   }
 
   /**

@@ -481,13 +481,39 @@ abstract class JoomAdminModel extends AdminModel
       $form->setFieldAttribute('published', 'filter', 'unset');
     }
 
-    // Don't allow to change the created_user_id user if not allowed to access com_users.
-    if(!$this->user->authorise('core.manage', 'com_users'))
+    // Only component managers/admins and eligible current owners may transfer ownership.
+    if(!$this->canChangeCreatedBy($id))
     {
       $form->setFieldAttribute('created_by', 'filter', 'unset');
     }
 
     return $form;
+  }
+
+  /**
+   * Check whether the current user may select the owner of an item.
+   *
+   * @param   int  $id  Item id, or zero for a new item
+   *
+   * @return  bool
+   *
+   * @since   4.4.0
+   */
+  protected function canChangeCreatedBy(int $id = 0): bool
+  {
+    if($this->getAcl()->checkACL('core.manage', _JOOM_OPTION) && $this->acl->checkACL('core.admin', _JOOM_OPTION))
+    {
+      return true;
+    }
+
+    if($id <= 0 || !\in_array($this->type, ['image', 'category', 'collection'], true))
+    {
+      return false;
+    }
+
+    $table = $this->getTable();
+
+    return $table->load($id) && (int) $table->created_by === (int) $this->user->id;
   }
 
   /**

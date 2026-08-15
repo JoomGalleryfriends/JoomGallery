@@ -107,7 +107,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php endif; ?>
 
 <?php if($show_title) : ?>
-  <h2><?php echo $this->item->title; ?></h2>
+  <h2><?php echo $this->escape($this->item->title); ?></h2>
 <?php endif; ?>
 
 <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
@@ -121,9 +121,9 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <figure class="figure joom-image text-center center">
   <div id="jg-loader"></div>
   <img src="<?php echo JoomHelper::getImg($this->item, $image_type); ?>" class="figure-img img-fluid rounded" 
-       alt="<?php echo $this->item->title; ?>" style="width:auto;" itemprop="image" loading="lazy">
+       alt="<?php echo $this->escape($this->item->title); ?>" style="width:auto;" itemprop="image" loading="lazy">
   <?php if($show_description) : ?>
-    <figcaption class="figure-caption"><?php echo $this->item->description; ?></figcaption>
+    <figcaption class="figure-caption"><?php echo JoomHelper::sanitizeHtml($this->item->description); ?></figcaption>
   <?php endif; ?>
 </figure>
 
@@ -219,9 +219,9 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
           </tr>
           <?php foreach($fields as $key => $field) : ?>
             <?php if($this->component->getAccess()->checkViewLevel($field->access) && $field->params->get('display') > 0) : ?>
-              <tr class="<?php echo $field->params->get('render_class'); ?>">
-                <th class="<?php echo $field->params->get('label_render_class'); ?>"><?php if($field->params->get('showlabel', true)) echo $this->escape($field->title); ?></th>
-                <td class="<?php echo $field->params->get('value_render_class'); ?>"><?php echo $this->escape($field->value); ?></td>
+              <tr class="<?php echo $this->escape($field->params->get('render_class')); ?>">
+                <th class="<?php echo $this->escape($field->params->get('label_render_class')); ?>"><?php if($field->params->get('showlabel', true)) echo $this->escape($field->title); ?></th>
+                <td class="<?php echo $this->escape($field->params->get('value_render_class')); ?>"><?php echo $this->escape($field->value); ?></td>
               </tr>
             <?php endif; ?>
           <?php endforeach; ?>

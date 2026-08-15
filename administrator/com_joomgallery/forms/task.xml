@@ -3,6 +3,7 @@
   <fieldset name="general" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
     <field name="id"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            label="JGLOBAL_FIELD_ID_LABEL" />
@@ -10,7 +11,7 @@
     <field name="title"
            type="text"
            maxlength="255"
-           filter="safehtml"
+           filter="string"
            label="JGLOBAL_TITLE"
            message="COM_JOOMGALLERY_ERROR_NEEDS_TITLE" />
 
@@ -42,6 +43,7 @@
 
     <field name="note"
            type="text"
+           filter="string"
            label="JFIELD_NOTE_LABEL"
            description="JGLOBAL_FIELD_VERSION_NOTE_DESC"
            class="inputbox"
@@ -61,6 +63,7 @@
 
     <field name="times_executed"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            default="0"
@@ -70,7 +73,7 @@
            type="hidden"
            filter="unset" />
 
-    <field name="ordering"/>
+    <field name="ordering" filter="integer"/>
 
     <field name="last_execution"
            type="calendar"
