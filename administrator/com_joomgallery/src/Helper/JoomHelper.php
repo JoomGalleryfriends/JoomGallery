@@ -73,7 +73,7 @@ class JoomHelper
    *
    * @return  string  Sanitized HTML
    *
-   * @since   __DEPLOY_VERSION__
+   * @since   4.4.0
    */
   public static function sanitizeHtml(?string $html): string
   {
