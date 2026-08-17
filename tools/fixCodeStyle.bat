@@ -1,164 +1,92 @@
 @ECHO OFF
-REM -----------------------------------------------------
-REM Fix joomgallery code style (fixCodeStyle.bat)
-REM -----------------------------------------------------
-REM This batch calls following task succession to apply
-REM JG defined codestyle
-REM "php-cs-fixer" "phpcbf"  "php-cs-fixer"
-REM
-REM the base path to the repository may be given as the
-REM first argument. It will be used with pushd/popd. So
-REM if something runs wrong you may be stuck on the wrong
-REM folder. Then use popd to get back ;-)
-REM
-REM -----------------------------------------------------
+SETLOCAL EnableExtensions
 
-CLS
+REM Fix JoomGallery code style, then run the same checks as the PR workflow.
+REM Run from the repository root: tools\fixCodeStyle.bat
 
-ECHO ----------------------------------------------
-ECHO Fix joomgallery code style
-ECHO ----------------------------------------------
-REM ECHO.
+SET "LOG_DIR=tools"
+SET "PHP_CS_FIXER_IGNORE_ENV=true"
 
-REM -----------------------------------------------------
-REM Check if PHP is available
+ECHO JoomGallery code-style repair and PR verification
 
-ECHO php check
+IF NOT EXIST "composer.json" GOTO :WrongDirectory
+IF NOT EXIST "joomgallery.xml" GOTO :WrongDirectory
+IF NOT EXIST "src\" GOTO :WrongDirectory
 
-php --version >NUL 2>&1
-IF errorlevel 1 (
-	ECHO.
-	ECHO Actual environment PATH:
-	ECHO %path%
-	ECHO.
-	ECHO Please add the path to php.exe to path variable
-	ECHO using "set PATH=%%PATH%%;C:\your\path\here\"
-	GOTO :EOF
-	ECHO.
+WHERE php >NUL 2>&1
+IF ERRORLEVEL 1 (
+  ECHO ERROR: PHP is not available on PATH.
+  EXIT /B 1
 )
 
-REM -----------------------------------------------------
-REM keep actual directory for log files
-set "actualPath=%cd%"
-ECHO  - 'actualPath %actualPath%'
-
-REM -----------------------------------------------------
-REM jg_basePath to the repository
-REM
-set "jg_basePath=..\"
-IF NOT  "%~1"=="" (
- 	set "jg_basePath=%~1"
-)
-ECHO  - 'jg base path %jg_basePath%'
-
-REM -----------------------------------------------------
-REM Move to jg_basePath
-
-pushd  "%jg_basePath%"
-ECHO Moved to path: %cd%
-
-REM -----------------------------------------------------
-REM Verify that we are in the correct working directory
-REM Check for required file: joomgallery.xml
-IF NOT EXIST "joomgallery.xml" (
-    ECHO.
-    ECHO ERROR: joomgallery.xml not found in %cd%
-    ECHO This does not appear to be the JoomGallery root directory.
-    ECHO Aborting to prevent accidental composer operations!
-    ECHO.
-    GOTO :ErrorBack
-)
-REM -----------------------------------------------------
-REM Composer housekeeping
-
-ECHO Install and update needed dependencies (composer)
-
-echo "--- composer install"
-call composer install --prefer-dist --no-ansi --no-interaction --no-progress
-IF errorlevel 1 (
-    ECHO.
-    ECHO ERROR: composer install failed!
-    GOTO :ErrorBack
+WHERE composer >NUL 2>&1
+IF ERRORLEVEL 1 (
+  ECHO ERROR: Composer is not available on PATH.
+  EXIT /B 1
 )
 
-ECHO Composer tasks completed successfully.
+php --version
+
+CALL :Run "Install locked dependencies" "00.composer-install.log" "composer install --prefer-dist --no-ansi --no-interaction --no-progress"
+IF ERRORLEVEL 1 GOTO :Failed
+
+CALL :Run "1/3 Apply PHP-CS-Fixer rules" "01.php-cs-fixer.log" "php .\vendor\bin\php-cs-fixer fix -vvv --diff"
+IF ERRORLEVEL 1 GOTO :Failed
+
+CALL :Run "2/3 Normalize indentation" "02.fixindent.log" "php .\tools\fixindent.php fix details"
+IF ERRORLEVEL 1 GOTO :Failed
+
+CALL :Run "3/3 Apply PHPCS fixes with PHPCBF" "03.phpcbf.log" "php .\vendor\bin\phpcbf --extensions=php -p -v --standard=ruleset.xml src"
+IF ERRORLEVEL 2 GOTO :Failed
+
+CALL :Run "Re-apply PHP-CS-Fixer after PHPCBF" "04.php-cs-fixer.log" "php .\vendor\bin\php-cs-fixer fix -vvv --diff"
+IF ERRORLEVEL 1 GOTO :Failed
+
 ECHO.
+ECHO Running the exact code-style checks used by JoomGallery's GitHub PullRequest pipeline.
 
-REM =====================================================
-REM 01 call "php-cs-fixer"
+CALL :Run "CI check: PHP-CS-Fixer" "05.ci-php-cs-fixer.log" "php .\vendor\bin\php-cs-fixer fix -vvv --dry-run --diff"
+IF ERRORLEVEL 1 GOTO :Failed
 
-ECHO ----------------------------------------------
-ECHO 01 call "php-cs-fixer"
-ECHO    log file 01.php-cs-fixer.log
-ECHO    may take some time
+CALL :Run "CI check: PHPCS" "06.ci-phpcs.log" "php .\vendor\bin\phpcs --extensions=php -p --standard=ruleset.xml --runtime-set ignore_warnings_on_exit 1 src"
+IF ERRORLEVEL 1 GOTO :Failed
 
-php ".\administrator\com_joomgallery\vendor\bin\php-cs-fixer" --verbose --config=.\.php-cs-fixer.dist.php fix .\ >"%actualPath%\01.php-cs-fixer.log"
-REM if errorlevel 1 (
-REM 	ECHO Error on calling php-cs-fixer (01)
-REM 	goto :ErrorBack
-REM )
+IF EXIST "joomla\includes\framework.php" (
+  CALL :Run "CI check: PHPStan" "07.ci-phpstan.log" "php .\vendor\bin\phpstan analyse"
+  IF ERRORLEVEL 1 GOTO :Failed
+) ELSE (
+  ECHO.
+  ECHO Skipping PHPStan exactly as CI does: joomla\includes\framework.php is absent.
+)
+
+CALL :Run "CI check: Rector dry-run" "08.ci-rector.log" "php .\vendor\bin\rector process --dry-run"
+IF ERRORLEVEL 1 GOTO :Failed
+
 ECHO.
+ECHO SUCCESS: local checks match the PR pipeline.
+ECHO Logs are available in tools\*.log.
+EXIT /B 0
 
-REM =====================================================
-REM 02 call "fixindent"
-
-ECHO ----------------------------------------------
-ECHO 02 call "fixindent"
-ECHO    log file 02.fixindent.log
-ECHO    may take some time
-
-php ".\tools\fixindent.php" fix >"%actualPath%\02.fixindent.log"
-REM if errorlevel 1 (
-REM 	ECHO Error on calling fixindent (02)
-REM 	goto :ErrorBack
-REM )
+:Run
+SET "STEP_TITLE=%~1"
+SET "LOG_FILE=%LOG_DIR%\%~2"
 ECHO.
+ECHO ------------------------------------------------------------
+ECHO %STEP_TITLE%
+ECHO Log: %LOG_FILE%
+ECHO ------------------------------------------------------------
+%~3 > "%LOG_FILE%" 2>&1
+SET "STEP_STATUS=%ERRORLEVEL%"
+TYPE "%LOG_FILE%"
+EXIT /B %STEP_STATUS%
 
-REM =====================================================
-REM 03 call "phpcbf"
-
-ECHO ----------------------------------------------
-ECHO 03 call "phpcbf"
-ECHO    log file 03.phpcbf.log
-ECHO    may take some time
-
-php ".\administrator\com_joomgallery\vendor\bin\phpcbf" -v --standard=ruleset.xml .\ >"%actualPath%\03.phpcbf.log"
-REM if errorlevel 1 (
-REM 	ECHO Error on calling phpcbf (03)
-REM 	goto :ErrorBack
-REM )
+:WrongDirectory
 ECHO.
+ECHO ERROR: Run this script from the JoomGallery repository root.
+EXIT /B 1
 
-REM =====================================================
-REM 04 call "php-cs-fixer"
-
-ECHO ----------------------------------------------
-ECHO 04 call "php-cs-fixer"
-ECHO    log file 04.php-cs-fixer.log
-ECHO    may take some time
-
-php ".\administrator\com_joomgallery\vendor\bin\php-cs-fixer" --verbose --config=.\.php-cs-fixer.dist.php fix .\ >"%actualPath%\04.php-cs-fixer.log"
-REM may not be needed but for additional code added later
-REM if errorlevel 1 (
-REM 	ECHO Error on calling php-cs-fixer (04)
-REM 	goto :ErrorBack
-REM )
+:Failed
 ECHO.
-
-REM -----------------------------------------------------
-REM Move back
-
-:MoveBack
-popd
-ECHO.
-ECHO Done and moved back to path: %cd%
-ECHO.
-GOTO :EOF
-
-:ErrorBack
-popd
-ECHO.
-ECHO !!! Error found !!!
-ECHO and moved back to path: %cd%
-ECHO.
-GOTO :EOF
+ECHO ERROR: A repair or CI verification step failed.
+ECHO Review the last displayed output and the corresponding tools\*.log file.
+EXIT /B 1

@@ -55,6 +55,33 @@ Following the JoomGalleries coding documentation:
 ### Setup development environment
 https://docs.joomla.org/Setting_up_your_workstation_for_Joomla_development
 
+The deployable extension tree lives in `src/`. Development dependencies are installed in the repository-level `vendor/`, while runtime dependencies shipped with the component are installed in `src/administrator/com_joomgallery/vendor/`.
+
+After cloning, run:
+
+```sh
+composer install
+```
+
+Put a Joomla installation in the gitignored `joomla/` directory for PHPStan and Rector type discovery. The available checks (no file writes) are:
+
+```sh
+composer cs-check
+composer phpcs
+composer phpstan
+composer rector
+```
+
+`composer rector` is a dry run. Review its output before invoking `vendor/bin/rector process` without `--dry-run`.
+
+To apply code-style fixes, you can do by
+
+```sh
+./vendor/bin/php-cs-fixer fix
+./vendor/bin/phpcbf -p --standard=ruleset.xml src
+./vendor/bin/php-cs-fixer fix
+```
+
 **Webserver recommendation:**
 - https://wampserver.aviatechno.net/ (Windows only)
 - https://www.apachefriends.org/index.html (Windows, Linux and macOS)
