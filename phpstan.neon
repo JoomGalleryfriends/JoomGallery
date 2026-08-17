@@ -4,9 +4,7 @@ parameters:
   level: 0
   phpVersion: 80100
   paths:
-    - src/administrator/com_joomgallery
-    - src/site/com_joomgallery
-    - src/plugins
+    - src
   scanDirectories:
     - joomla
   excludePaths:

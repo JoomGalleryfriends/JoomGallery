@@ -33,9 +33,7 @@
 $finder = PhpCsFixer\Finder::create()
   ->in(
     [
-      __DIR__ . '/src/administrator',
-      __DIR__ . '/src/plugins',
-      __DIR__ . '/src/site',
+      __DIR__ . '/src',
     ]
   )
   ->notPath('com_joomgallery/vendor')
@@ -43,6 +41,7 @@ $finder = PhpCsFixer\Finder::create()
   ->notPath('tools/phpcs')
   ->exclude('vendor')
   ->exclude('includes')
+  ->exclude('media')
   ->exclude('tools')
   ->name('*.php')
   ->ignoreDotFiles(true)
