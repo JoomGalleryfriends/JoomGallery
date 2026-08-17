@@ -19,16 +19,16 @@ jobs:
           php-version: '8.1'
           tools: composer
 
-      - name: Install dependencies
-        run: composer install --no-dev --no-scripts --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader
+      - name: Install component dependencies
+        run: composer install --working-dir=src/administrator/com_joomgallery --no-dev --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader
 
       - name: Clean up unnecessary files
         run: |
-          rm -rf crowdin.yml composer.json composer.lock header.txt phpstan.neon ruleset.xml docs tests tools .github .editorconfig
+          rm -rf src/administrator/com_joomgallery/composer.json src/administrator/com_joomgallery/composer.lock
 
       - name: Cleanup pel directory
         run: |
-          PEL_DIR="administrator/com_joomgallery/vendor/fileeye/pel"
+          PEL_DIR="src/administrator/com_joomgallery/vendor/fileeye/pel"
           find "$PEL_DIR" -mindepth 1 -maxdepth 1 ! -name 'src' ! -name 'autoload.php' ! -name 'composer.json' -exec rm -rf {} +
 
       - name: Sanitize PR title for filename
@@ -41,7 +41,10 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: JoomGallery-${{ steps.pr.outputs.SAFE_TITLE }}
-          path: .
+          path: |
+            joomgallery.xml
+            script.php
+            src
           retention-days: 60
 
   code-style-php:
@@ -53,7 +56,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           tools: composer
           coverage: none
 
@@ -63,7 +66,7 @@ jobs:
         with:
           path: |
             ~/.composer/cache/files
-            administrator/com_joomgallery/vendor
+            vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
@@ -75,7 +78,14 @@ jobs:
       - name: Run PHP-CS-Fixer
         env:
           PHP_CS_FIXER_IGNORE_ENV: true
-        run: ./administrator/com_joomgallery/vendor/bin/php-cs-fixer fix -vvv --dry-run --diff
+        run: ./vendor/bin/php-cs-fixer fix -vvv --dry-run --diff
 
       - name: Run PHPCS
-        run: ./administrator/com_joomgallery/vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml --runtime-set ignore_warnings_on_exit 1 .
+        run: ./vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml --runtime-set ignore_warnings_on_exit 1 src
+
+      # - name: Run PHPStan
+      #   if: ${{ hashFiles('joomla/includes/framework.php') != '' }}
+      #   run: ./vendor/bin/phpstan analyse
+
+      # - name: Run Rector dry-run
+      #   run: ./vendor/bin/rector process --dry-run

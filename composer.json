@@ -1,17 +1,24 @@
 {
-    "require": {
-        "fileeye/pel": "^0.10.0"
-    },
+    "name": "joomgallery/joomgallery",
+    "description": "Development tooling and build configuration for JoomGallery",
+    "license": "GPL-3.0-or-later",
+    "type": "project",
     "require-dev": {
+        "joomla-projects/jorobo": "^0.14",
         "friendsofphp/php-cs-fixer": "^3.88.0",
         "squizlabs/php_codesniffer": "^3.13.4",
         "slevomat/coding-standard": "^8.15",
-        "colinodell/indentation": "^1.0"
+        "colinodell/indentation": "^1.0",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "rector/rector": "^2.1",
+        "joomla-projects/jrector": "^0.1.0",
+        "joomla-projects/typehints": "^0.1.0",
+        "symfony/console": ">=7.3 <7.4"
     },
     "config": {
-        "vendor-dir": "administrator/com_joomgallery/vendor",
         "platform": {
-            "php": "8.0.0"
+            "php": "8.2.0"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
@@ -19,10 +26,19 @@
     },
     "scripts": {
         "post-install-cmd": [
-          "administrator/com_joomgallery/vendor/bin/phpcs --config-set installed_paths tools/phpcs,administrator/com_joomgallery/vendor/slevomat/coding-standard"
+          "@install-component-dependencies",
+          "vendor/bin/phpcs --config-set installed_paths tools/phpcs,vendor/slevomat/coding-standard"
         ],
         "post-update-cmd": [
-          "administrator/com_joomgallery/vendor/bin/phpcs --config-set installed_paths tools/phpcs,administrator/com_joomgallery/vendor/slevomat/coding-standard"
-        ]
+          "@install-component-dependencies",
+          "vendor/bin/phpcs --config-set installed_paths tools/phpcs,vendor/slevomat/coding-standard"
+        ],
+        "install-component-dependencies": "@composer install --working-dir=src/administrator/com_joomgallery --no-dev --prefer-dist --no-interaction",
+        "cs-check": "php-cs-fixer fix -vvv --dry-run --diff",
+        "cs-fix": "php-cs-fixer fix",
+        "phpcs": "@php vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml --runtime-set ignore_warnings_on_exit 1 src",
+        "phpcbf": "phpcbf --extensions=php -p --standard=ruleset.xml src",
+        "phpstan": "phpstan analyse",
+        "rector": "rector process --dry-run"
     }
 }

@@ -8,7 +8,7 @@
  * *********************************************************************************
  */
 
-require_once __DIR__ . '/../administrator/com_joomgallery/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 use ColinODell\Indentation\Indentation;
 
 $rootDir = realpath(__DIR__ . '/..');
@@ -19,7 +19,7 @@ $indentSize = 2;
 $indentType = Indentation::TYPE_SPACE;
 $doFix = false;
 $details = false;
-$folders = ['administrator', 'site', 'plugins'];
+$folders = ['src/administrator', 'src/site', 'src/plugins'];
 $exclude = ['.git', 'vendor', 'includes', 'node_modules', 'cache'];
 //----------------------
 

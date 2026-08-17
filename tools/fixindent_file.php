@@ -8,10 +8,11 @@
  * *********************************************************************************
  */
 
-require_once __DIR__ . '/../administrator/com_joomgallery/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 use ColinODell\Indentation\Indentation;
 
 $rootDir = realpath(__DIR__ . '/..');
+$sourceDir = realpath($rootDir . '/src');
 
 // Setting
 //----------------------
@@ -20,17 +21,34 @@ $indentType = Indentation::TYPE_SPACE;
 $doFix = false;
 $details = false;
 $file = '';
-$folders = ['administrator', 'site', 'plugins'];
-$exclude = ['.git', 'vendor', 'includes', 'node_modules', 'cache'];
 //----------------------
 
-if(!isset($argv[1]) && !is_string($argv[1]))
+if(!isset($argv[1]) || !is_string($argv[1]) || trim($argv[1]) === '')
 {
   throw new \Exception('You have to provide a valid php file path as the first argument', 1);
 }
-else
+
+if($sourceDir === false)
 {
-  $file = $rootDir . '/' . $argv[1];
+  throw new \Exception('Source directory not found: ' . $rootDir . '/src', 1);
+}
+
+// Accept paths relative to src as well as paths explicitly starting with src/.
+$relativeFile = str_replace('\\', '/', trim($argv[1]));
+$relativeFile = preg_replace('#^\./#', '', $relativeFile);
+$relativeFile = preg_replace('#^src/#i', '', $relativeFile);
+$file = realpath($sourceDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativeFile));
+
+if($file === false || !is_file($file) || strtolower(pathinfo($file, PATHINFO_EXTENSION)) !== 'php')
+{
+  throw new \Exception('PHP file not found below src: ' . $argv[1], 1);
+}
+
+$sourcePrefix = rtrim($sourceDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+if(!str_starts_with($file, $sourcePrefix))
+{
+  throw new \Exception('The file must be located below the src directory: ' . $argv[1], 1);
 }
 
 // If script is called with "fix" argument → enable fixing

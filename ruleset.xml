@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <ruleset name="JoomGallery">
   <description>The JoomGallery PSR-12 exceptions.</description>
-  <autoload>administrator/com_joomgallery/vendor/autoload.php</autoload>
+  <autoload>vendor/autoload.php</autoload>
 
-  <exclude-pattern type="relative">^docs/*</exclude-pattern>
-  <exclude-pattern type="relative">^media/*</exclude-pattern>
-  <exclude-pattern type="relative">^node_modules/*</exclude-pattern>
-  <exclude-pattern type="relative">^administrator/com_joomgallery/vendor/*</exclude-pattern>
-  <exclude-pattern type="relative">^administrator/com_joomgallery/includes/*</exclude-pattern>
-  <exclude-pattern type="relative">^tools/*</exclude-pattern>
-  <exclude-pattern type="relative">^script.php</exclude-pattern>
+  <exclude-pattern>*/docs/*</exclude-pattern>
+  <exclude-pattern>*/src/media/*</exclude-pattern>
+  <exclude-pattern>*/node_modules/*</exclude-pattern>
+  <exclude-pattern>*/src/administrator/com_joomgallery/vendor/*</exclude-pattern>
+  <exclude-pattern>*/src/administrator/com_joomgallery/includes/*</exclude-pattern>
+  <exclude-pattern>*/tools/*</exclude-pattern>
+  <exclude-pattern>*/script.php$</exclude-pattern>
 
   <rule ref="PSR12">
     <!-- Disable automatic formatting of control structures -->
