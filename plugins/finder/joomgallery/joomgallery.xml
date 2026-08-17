@@ -7,7 +7,7 @@
   <author>JoomGallery::ProjectTeam</author>
   <authorEmail>team@joomgalleryfriends.net</authorEmail>
   <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-  <version>4.4.0-rc1</version>
+  <version>4.5.0-dev</version>
   <description>PLG_FINDER_JOOMGALLERY_XML_DESCRIPTION</description>
   <namespace path="src">Joomgallery\Plugin\Finder\Joomgallery</namespace>
 
