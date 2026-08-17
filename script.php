@@ -109,31 +109,31 @@ class com_joomgalleryInstallerScript extends InstallerScript
    */
   public function preflight($type, $parent)
   {
-    // Only proceed if Joomla version is correct
-    if(version_compare(JVERSION, '5.0.0', '<'))
+    // Only proceed if Joomla meets the minimum requirements
+    if(version_compare(JVERSION, '4.4.0', '<'))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 8, 'joomgallery');
 
       return false;
     }
 
-    // Only proceed if it is not an incompatible Joomla version
+    // Only proceed if Joomla is not an incompatible version
     $jversion = explode('-', JVERSION);
 
     if(\in_array($jversion[0], $this->incompatible))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 8, 'joomgallery');
 
       return false;
     }
 
-    // Only proceed if PHP version is correct
+    // Only proceed if PHP meets the minimum requirements
     if(version_compare(PHP_VERSION, $this->minPhp, '<='))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '5.x', $this->minPhp, PHP_VERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '5.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery');
 
       return false;
     }
