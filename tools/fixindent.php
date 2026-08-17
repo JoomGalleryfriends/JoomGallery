@@ -19,8 +19,8 @@ $indentSize = 2;
 $indentType = Indentation::TYPE_SPACE;
 $doFix = false;
 $details = false;
-$folders = ['src/administrator', 'src/site', 'src/plugins'];
-$exclude = ['.git', 'vendor', 'includes', 'node_modules', 'cache'];
+$folders = ['src'];
+$exclude = ['.git', 'vendor', 'includes', 'media', 'node_modules', 'cache'];
 //----------------------
 
 // If script is called with "fix" argument → enable fixing
