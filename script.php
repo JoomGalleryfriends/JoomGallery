@@ -144,7 +144,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         // use new uploaded defines.php
         $temp_dir = $parent->getParent()->getPath('source');
-        $defines  = $temp_dir . DIRECTORY_SEPARATOR . 'administrator' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'defines.php';
+        $defines  = $temp_dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'administrator' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'defines.php';
       }
       else
       {
@@ -1271,7 +1271,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     {
       $pluginName  = (string) $plugin['plugin'];
       $pluginGroup = (string) $plugin['group'];
-      $path        = $installation_folder . '/plugins/' . $pluginGroup . '/' . $pluginName;
+      $path        = $installation_folder . '/src/plugins/' . $pluginGroup . '/' . $pluginName;
       $installer   = new Installer();
       $installer->setDatabase($db);
 
@@ -1366,7 +1366,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     foreach($modules->children() as $module)
     {
       $moduleName = (string) $module['module'];
-      $path       = $folder . '/modules/' . $moduleName;
+      $path       = $folder . '/src/modules/' . $moduleName;
       $installer  = new Installer();
       $installer->setDatabase($db);
 
