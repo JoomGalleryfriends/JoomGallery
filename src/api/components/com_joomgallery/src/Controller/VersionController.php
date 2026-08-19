@@ -114,7 +114,7 @@ class VersionController extends ApiController
 
     if(empty($data))
     {
-      throw new InvalidParameterException(Text::_('No parameter given for patch config'), 403);        //	Text::sprintf('Missing required parameter(s): %s', implode(' & ', $missingParameters))
+      throw new InvalidParameterException(Text::_('No parameter given for patch config'), 403);        //  Text::sprintf('Missing required parameter(s): %s', implode(' & ', $missingParameters))
     }
 
     //--- Create the model -----------------------------------------------------------------

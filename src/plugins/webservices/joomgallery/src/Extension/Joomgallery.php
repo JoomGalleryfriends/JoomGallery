@@ -36,9 +36,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
    */
   public static function getSubscribedEvents(): array
   {
-    return [
-      'onBeforeApiRoute' => 'onBeforeApiRoute',
-    ];
+  return [
+    'onBeforeApiRoute' => 'onBeforeApiRoute',
+  ];
   }
 
   /**
@@ -52,19 +52,19 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
    */
   public function onBeforeApiRoute(BeforeApiRouteEvent $event): void
   {
-    $router = $event->getRouter();
+  $router = $event->getRouter();
 
-    $defaults = ['component' => 'com_joomgallery'];
-    // ToDo: Remove when tests finished ?
-    // enables access without token
-    // $getDefaults = array_merge(['public' => true], $defaults);
-    $getDefaults = array_merge(['public' => false], $defaults);
+  $defaults = ['component' => 'com_joomgallery'];
+  // ToDo: Remove when tests finished ?
+  // enables access without token
+  // $getDefaults = array_merge(['public' => true], $defaults);
+  $getDefaults = array_merge(['public' => false], $defaults);
 
-    $this->DBGalleriesImages($router, $getDefaults);
+  $this->DBGalleriesImages($router, $getDefaults);
 
-    $this->DBConfigAndVersion($router, $getDefaults);
+  $this->DBConfigAndVersion($router, $getDefaults);
 
-    $this->UploadImages($router, $getDefaults);
+  $this->UploadImages($router, $getDefaults);
   }
 
   /**
@@ -78,19 +78,19 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   public function DBGalleriesImages(ApiRouter $router, array $getDefaults): void
   {
 
-    $router->createCRUDRoutes(
-        'v1/joomgallery/categories',
-        'categories',
-        ['component' => 'com_joomgallery'],
-        $getDefaults
-    );
+$router->createCRUDRoutes(
+    'v1/joomgallery/categories',
+    'categories',
+    ['component' => 'com_joomgallery'],
+    $getDefaults
+);
 
-    $router->createCRUDRoutes(
-        'v1/joomgallery/images',
-        'images',
-        ['component' => 'com_joomgallery'],
-        $getDefaults
-    );
+$router->createCRUDRoutes(
+    'v1/joomgallery/images',
+    'images',
+    ['component' => 'com_joomgallery'],
+    $getDefaults
+);
   }
 
   /**
@@ -104,34 +104,34 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
    */
   public function DBConfigAndVersion(ApiRouter $router, array $getDefaults): void
   {
-    //--- J! config part of JG -------------------------------------------
+  //--- J! config part of JG -------------------------------------------
 
-    // Joomla parameter part of JG
-    $router->addRoutes(
-        [
-          new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),
-        ]
-    );
+  // Joomla parameter part of JG
+$router->addRoutes(
+    [
+      new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),
+    ]
+);
 
-    //--- JG config sets -------------------------------------------
+  //--- JG config sets -------------------------------------------
 
-    $router->createCRUDRoutes(
-        'v1/joomgallery/configs',
-        'configs',
-        ['component' => 'com_joomgallery'],
-        $getDefaults
-    );
+$router->createCRUDRoutes(
+    'v1/joomgallery/configs',
+    'configs',
+    ['component' => 'com_joomgallery'],
+    $getDefaults
+);
 
-    //--- JG version in db manifest -----------------------------
+  //--- JG version in db manifest -----------------------------
 
-    // JG version
-    $router->addRoutes(
-        [
-          // version, creationDate
-          new Route(['GET'], 'v1/joomgallery/version', 'version.displayItem', [], $getDefaults),
-          new Route(['PATCH'], 'v1/joomgallery/version', 'version.edit', [], $getDefaults),
-        ]
-    );
+  // JG version
+$router->addRoutes(
+    [
+      // version, creationDate
+      new Route(['GET'], 'v1/joomgallery/version', 'version.displayItem', [], $getDefaults),
+      new Route(['PATCH'], 'v1/joomgallery/version', 'version.edit', [], $getDefaults),
+    ]
+);
   }
 
   /**
@@ -142,34 +142,34 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
    */
   private function UploadImages(ApiRouter $router, array $getDefaults): void
   {
-    // Gid or name
-    $router->addRoutes(
-        [
-          new Route(
-              ['GET'],
-              'v1/joomgallery/latestcategory',
-              'latestcategory.displayItem',
-              [],
-              $getDefaults
-          ),
+  // Gid or name
+$router->addRoutes(
+    [
+      new Route(
+          ['GET'],
+          'v1/joomgallery/latestcategory',
+          'latestcategory.displayItem',
+          [],
+          $getDefaults
+      ),
 
-          new Route(
-              ['POST'],
-              'v1/joomgallery/upload_image_file',
-              'uploadimgfile.image_data_upload',
-              [],
-              $getDefaults
-          ),
+      new Route(
+          ['POST'],
+          'v1/joomgallery/upload_image_file',
+          'uploadimgfile.image_data_upload',
+          [],
+          $getDefaults
+      ),
 
-          new Route(
-              ['PATCH'],
-              'v1/joomgallery/upload_image_file/:image_id',
-              'uploadimgfile.patch_image_upload_file',
-              ['imgid' => '(\d+)'],
-              $getDefaults
-          ),
+      new Route(
+          ['PATCH'],
+          'v1/joomgallery/upload_image_file/:image_id',
+          'uploadimgfile.patch_image_upload_file',
+          ['imgid' => '(\d+)'],
+          $getDefaults
+      ),
 
-        ]
-    );
+    ]
+);
   }
 }

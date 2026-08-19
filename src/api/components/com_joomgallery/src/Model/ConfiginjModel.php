@@ -27,48 +27,48 @@ use Joomla\Database\DatabaseInterface;
  */
 class ConfiginjModel extends BaseModel
 {
-    public function __construct($config = [])
-    {
-        parent::__construct($config);
+  public function __construct($config = [])
+  {
+    parent::__construct($config);
+  }
+
+  /**
+   * Method to get all configuration parameters
+   *
+   * @return  \stdClass  A file or folder object.
+   *
+   * @throws  ResourceNotFound
+   * @since  4.4.0
+   */
+  public function getItem()
+  {
+
+    $componentName = 'com_joomgallery';
+
+    $oConfig = new \stdClass();
+
+    try {
+      $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('params'))
+        ->from($db->quoteName('#__extensions'))
+        ->where($db->quoteName('element') . ' = ' . $db->quote($componentName));
+      $db->setQuery($query);
+
+      $jsonStr = $db->loadResult();
+
+      if(!empty($jsonStr))
+      {
+        $params = json_decode($jsonStr, true);
+      }
+
+      $oConfig = (object) $params;
+    }
+    catch (\Exception $e) {
+      throw new \RuntimeException($e->getMessage());
     }
 
-    /**
-     * Method to get all configuration parameters
-     *
-     * @return  \stdClass  A file or folder object.
-     *
-     * @throws  ResourceNotFound
-     * @since  4.4.0
-     */
-    public function getItem()
-    {
-
-        $componentName = 'com_joomgallery';
-
-        $oConfig = new \stdClass();
-
-        try {
-            $db = Factory::getContainer()->get(DatabaseInterface::class);
-
-            $query = $db->getQuery(true)
-                ->select($db->quoteName('params'))
-                ->from($db->quoteName('#__extensions'))
-                ->where($db->quoteName('element') . ' = ' . $db->quote($componentName));
-            $db->setQuery($query);
-
-            $jsonStr = $db->loadResult();
-
-            if(!empty($jsonStr))
-            {
-                $params = json_decode($jsonStr, true);
-            }
-
-            $oConfig = (object) $params;
-        }
-        catch (\Exception $e) {
-            throw new \RuntimeException($e->getMessage());
-        }
-
-        return $oConfig;
-    }
+    return $oConfig;
+  }
 }
