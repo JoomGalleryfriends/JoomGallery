@@ -28,3 +28,4 @@ ALTER TABLE `#__joomgallery_configs` ADD `jg_lightbox_show_tags` TINYINT(1) NOT 
 ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_tags_label` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_show_tags`;
 ALTER TABLE `#__joomgallery_configs` DROP COLUMN `jg_maxuploadfields`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_title_position` VARCHAR(5) NOT NULL DEFAULT 'below' AFTER `jg_detail_view_show_title`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_gallery_view_framework` VARCHAR(25) NOT NULL DEFAULT "joomla" AFTER `jg_gallery_view_ordering`;
