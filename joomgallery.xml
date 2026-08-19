@@ -82,7 +82,7 @@
   </config>
 
   <api>
-    <files folder="api/components/com_joomgallery">
+    <files folder="src/api/components/com_joomgallery">
       <folder>src</folder>
     </files>
   </api>
