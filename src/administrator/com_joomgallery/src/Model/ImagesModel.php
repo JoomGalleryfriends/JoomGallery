@@ -250,15 +250,9 @@ class ImagesModel extends JoomListModel
     }
 
     // Select the required fields from the table.
-    if(!empty($tag) && \count($tag) > 1 && !$logicAnd)
-    {
-      // Add DISTINCT when filtering with multiple tags
-      $query->select('DISTINCT ' . $this->getState('list.select', 'a.*'));
-    }
-    else
-    {
-      $query->select($this->getState('list.select', 'a.*'));
-    }
+    // Add DISTINCT when filtering with multiple tags
+    $useDistinct = !$searchProvider->handlesFilter('tags') && !empty($tag) && \count($tag) > 1 && !$logicAnd;
+    $query->select($this->getListSelectFields($useDistinct));
 
     // Select table
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && $logicAnd)
