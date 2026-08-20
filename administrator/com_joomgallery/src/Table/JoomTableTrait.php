@@ -45,19 +45,6 @@ trait JoomTableTrait
   protected $component_exists = true;
 
   /**
-   * Joomla 4 / 5 compatible database getter.
-   */
-  public function getDatabase(): DatabaseInterface
-  {
-    if(method_exists(get_parent_class($this), 'getDatabase'))
-    {
-      return parent::getDatabase();
-    }
-
-    return $this->getDbo();
-  }
-
-  /**
    * Delete a record by id
    *
    * @param   mixed  $pk  Primary key value to delete. Optional
