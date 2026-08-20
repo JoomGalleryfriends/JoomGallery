@@ -1059,7 +1059,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $query->where($db->quoteName('type') . ' LIKE ' . $db->quote('joomgalleryTask.%'));
     $db->setQuery($query);
 
-    $installed_tasks = $db->loadColumn();
+    $installedTasks = $db->loadColumn();
 
     foreach($types as $typeName)
     {
