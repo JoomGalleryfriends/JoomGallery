@@ -1098,7 +1098,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
         $taskdata['title']           = 'Recreate Images';
         $taskdata['type']            = 'joomgalleryTask.recreateImage';
         $taskdata['state']           = 1;
-        $taskdata['execution_rules'] = '{"rule-type":"manual","exec-day":"7","exec-time":"00:00:00"}';
+        $taskdata['execution_rules'] = '{"rule-type":"manual","exec-day":"7","exec-time":"01:00:00"}';
         $taskdata['cron_rules']      = '{"type":"manual","exp":""}';
         $taskdata['params']          = '{"individual_log":false,"log_file":"","notifications":{"success_mail":"0","failure_mail":"1","fatal_failure_mail":"1","orphan_mail":"1"},"cid":"0","type":"thumbnail","resume":"1","user":"","overrideable_params":"type","successful":""}';
 
@@ -1112,6 +1112,20 @@ class com_joomgalleryInstallerScript extends InstallerScript
       // Create the table
       $scheduler = Factory::getApplication()->bootComponent('com_scheduler');
       $model     = $scheduler->getMVCFactory()->createModel('Task', 'Administrator', ['ignore_request' => true]);
+
+      // Turn json to array
+      if(is_string($taskdata['execution_rules']))
+      {
+        $taskdata['execution_rules'] = json_decode($taskdata['execution_rules'], true);
+      }
+      if(is_string($taskdata['cron_rules']))
+      {
+        $taskdata['cron_rules'] = json_decode($taskdata['cron_rules'], true);
+      }
+      if(is_string($taskdata['params']))
+      {
+        $taskdata['params'] = json_decode($taskdata['params'], true);
+      }
 
       if(!$model->save($taskdata))
       {
