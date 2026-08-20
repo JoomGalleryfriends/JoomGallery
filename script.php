@@ -402,7 +402,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     // Create default scheduled tasks
     if(!$this->addDefaultTasks())
     {
-      $app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS', 'error'));
+      Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS', 'error'));
       Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS'), 8, 'joomgallery');
     }
 
