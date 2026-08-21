@@ -16,8 +16,13 @@
 /administrator/com_joomgallery/joomgallery_old.xml
 /administrator/com_joomgallery/vendor
 /src/administrator/com_joomgallery/vendor/
+/src/administrator/com_joomgallery/joomgallery.xml
+/src/administrator/com_joomgallery/joomgallery_old.xml
 /vendor/
 /joomla/
+/dist/
+/jorobo.ini
+/.php-cs-fixer.cache
 /tools/*.log
 .DS_Store
 Thumbs.db
