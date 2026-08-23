@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+  <layout title="UIkit Category" option="JDEFAULT">
+    <message>
+      <![CDATA[UIkit category layout with UIkit grid, overlay and lightbox.]]>
+    </message>
+  </layout>
+  <fields name="request">
+    <fieldset name="request">
+      <field name="id"
+             type="sql"
+             query="SELECT `id`, `title` FROM #__joomgallery_categories ORDER BY `id`"
+             key_field="id"
+             value_field="title"
+             label="COM_JOOMGALLERY_FILTER_BY_CATEGORY"
+             require="true">
+      </field>
+      <field name="tag"
+             type="sql"
+             query="SELECT `id`, `title` FROM #__joomgallery_tags ORDER BY `id`"
+             key_field="id"
+             value_field="title"
+             multiple="true"
+             label="COM_JOOMGALLERY_FILTER_BY_TAGS"
+             require="true">
+      </field>
+    </fieldset>
+  </fields>
+  <fields name="params">
+    <fieldset name="advanced" label="COM_JOOMGALLERY_MENU_CATEGORY_VIEW_OPTIONS" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+      <field name="jg_category_view_subcategory_num_columns"
+             type="jglist"
+             useglobal="true"
+             label="COM_JOOMGALLERY_MENU_NUM_COLUMNS_LABEL"
+             validate="options">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+      </field>
+      <field name="jg_category_view_num_columns"
+             type="jglist"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_NUM_COLUMNS_LABEL"
+             validate="options">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+      </field>
+      <field name="jg_uikit_gallery_gap"
+             type="jglist"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_GAP"
+             validate="options">
+        <option value="collapse">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_GAP_COLLAPSE</option>
+        <option value="small">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_GAP_SMALL</option>
+        <option value="medium">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_GAP_MEDIUM</option>
+        <option value="large">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_GAP_LARGE</option>
+      </field>
+      <field name="jg_uikit_gallery_masonry"
+             type="jgradio"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_MASONRY"
+             layout="joomla.form.field.radio.switcher"
+             validate="options">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field name="jg_uikit_gallery_lightbox"
+             type="jgradio"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_LIGHTBOX"
+             layout="joomla.form.field.radio.switcher"
+             validate="options">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+      <field name="jg_uikit_gallery_overlay"
+             type="jglist"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY"
+             validate="options">
+        <option value="default">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_DEFAULT</option>
+        <option value="primary">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_PRIMARY</option>
+        <option value="none">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_NONE</option>
+      </field>
+      <field name="jg_uikit_gallery_overlay_text"
+             type="jglist"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT"
+             validate="options">
+        <option value="inherit">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_INHERIT</option>
+        <option value="light">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_LIGHT</option>
+        <option value="dark">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OVERLAY_TEXT_DARK</option>
+      </field>
+      <field name="jg_uikit_gallery_image_ratio"
+             type="jglist"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_IMAGE_RATIO"
+             validate="options">
+        <option value="original">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_IMAGE_RATIO_ORIGINAL</option>
+        <option value="landscape">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_IMAGE_RATIO_LANDSCAPE</option>
+        <option value="wide">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_IMAGE_RATIO_WIDE</option>
+        <option value="square">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_IMAGE_RATIO_SQUARE</option>
+        <option value="portrait">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_IMAGE_RATIO_PORTRAIT</option>
+      </field>
+      <field name="jg_uikit_gallery_title_position"
+             type="jglist"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_TITLE_POSITION"
+             validate="options">
+        <option value="overlay">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_TITLE_POSITION_OVERLAY</option>
+        <option value="below">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_TITLE_POSITION_BELOW</option>
+        <option value="hidden">COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_TITLE_POSITION_HIDDEN</option>
+      </field>
+      <field name="jg_uikit_gallery_button_text"
+             type="jgtext"
+             useglobal="true"
+             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_BUTTON_TEXT"
+             filter="string"
+      />
+    </fieldset>
+  </fields>
+</metadata>

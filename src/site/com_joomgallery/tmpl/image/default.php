@@ -107,7 +107,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php endif; ?>
 
 <?php if($show_title) : ?>
-  <h2><?php echo $this->escape($this->item->title); ?></h2>
+  <h2><?php echo $this->item->title; ?></h2>
 <?php endif; ?>
 
 <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
