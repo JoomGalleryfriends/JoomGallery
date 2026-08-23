@@ -40,8 +40,15 @@ class RawView extends JoomGalleryRawView
   public function display($tpl = null)
   {
     // Get request variables
-    $type = $this->app->input->get('type', 'thumbnail', 'word');
-    $id   = $this->app->input->get('id', 0);
+    $type   = $this->app->input->get('type', 'thumbnail', 'word');
+    $id     = $this->app->input->get('id', 0);
+    $base64 = $this->app->input->get('base64', 0);
+    $resize = $this->app->input->get('resize', 0);
+
+    $options = new \stdClass();
+    //$options->base64 = boolval($base64);
+    $options->resize      = \boolval($resize);
+    $options->resize_type = $this->app->input->get('resize_type', 3);
 
     if($id == 0 || $id == '0')
     {
@@ -106,7 +113,7 @@ class RawView extends JoomGalleryRawView
     $this->component->createConfig('com_joomgallery.image', $id);
 
     // Postprocessing of the image
-    if(!$this->ppImage($file_info, $resource, $type))
+    if(!$this->ppImage($file_info, $resource, $type, $options))
     {
       $this->outputError(404, 'Error postprocessing the image');
     }
@@ -130,14 +137,39 @@ class RawView extends JoomGalleryRawView
   /**
    * Postprocessing the image after retrieving the image resource
    *
-   * @param   \stdClass  $file_info    Object with file information
-   * @param   resource   $resource     Image resource
-   * @param   string     $imagetype    Type of image (original, detail, thumbnail, ...)
+   * @param   \stdClass    $file_info    Object with file information
+   * @param   resource     $resource     Image resource
+   * @param   string       $imagetype    Type of image (original, detail, thumbnail, ...)
+   * @param   null|object  $options      Additional options for post processing
    *
    * @return  bool       True on success, false otherwise
    */
-  public function ppImage(&$file_info, &$resource, $imagetype)
+  public function ppImage(&$file_info, &$resource, $imagetype, $options = null)
   {
+    if(property_exists($options, 'resize') && $options->resize)
+    {
+      // Get component object
+      $com = JoomHelper::getComponent();
+
+      // Create the IMGtools service
+      $com->createIMGtools($this->component->getConfig()->get('jg_imgprocessor'));
+
+      // Reread ressource
+      $com->getIMGtools()->read($resource, true);
+
+      // Resize image, resize by max dimension
+      $com->getIMGtools()->resize($options->resize_type, $options->resize, $options->resize);
+      $img_string = $com->getIMGtools()->stream(100, false);
+
+      // Retrieve stream resource from image string
+      $stream = fopen('php://temp', 'r+');
+      fwrite($stream, $img_string);
+      rewind($stream);
+
+      // Override new, processed resource
+      $resource = $stream;
+    }
+
     return true;
   }
 
