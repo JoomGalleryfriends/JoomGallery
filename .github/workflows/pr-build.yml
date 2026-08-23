@@ -13,14 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
           tools: composer
 
       - name: Install dependencies
-        run: composer install --prefer-dist
+        run: composer install --no-dev --no-scripts --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader
 
       - name: Clean up unnecessary files
         run: |
@@ -38,7 +38,7 @@ jobs:
           echo "SAFE_TITLE=${SAFE_TITLE}" >> $GITHUB_OUTPUT
 
       - name: Upload artifact (GitHub will zip it)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: JoomGallery-${{ steps.pr.outputs.SAFE_TITLE }}
           path: .
@@ -50,7 +50,7 @@ jobs:
     needs: [prepare]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
@@ -59,7 +59,7 @@ jobs:
 
       # Cache composer downloads + vendor to speed up installs
       - name: Cache Composer
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.composer/cache/files

@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -131,8 +131,18 @@ $modalHTML = HTMLHelper::_(
     ]
 );
 
-  Factory::getApplication()->getDocument()->getWebAssetManager()
-    ->useScript('com_joomgallery.field-image');
+  try
+  {
+    Factory::getApplication()->getDocument()->getWebAssetManager()
+      ->useScript('com_joomgallery.field-image');
+  }
+  catch(\Exception)
+  {
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa->getRegistry()->addRegistryFile('media/com_joomgallery/joomla.asset.json');
+    $wa->useScript('com_joomgallery.field-image');
+    $wa->useStyle('com_joomgallery.admin');
+  }
 }
 ?>
 <?php // Create a dummy text field with the image name. ?>

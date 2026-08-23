@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -109,7 +109,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
    */
   public function preflight($type, $parent)
   {
-    // Only proceed if Joomla version is correct
+    // Only proceed if Joomla meets the minimum requirements
     if(version_compare(JVERSION, '4.4.0', '<'))
     {
       Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
@@ -118,7 +118,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       return false;
     }
 
-    // Only proceed if it is not an incompatible Joomla version
+    // Only proceed if Joomla is not an incompatible version
     $jversion = explode('-', JVERSION);
 
     if(\in_array($jversion[0], $this->incompatible))
@@ -129,7 +129,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       return false;
     }
 
-    // Only proceed if PHP version is correct
+    // Only proceed if PHP meets the minimum requirements
     if(version_compare(PHP_VERSION, $this->minPhp, '<='))
     {
       Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 'error');
@@ -399,6 +399,13 @@ class com_joomgalleryInstallerScript extends InstallerScript
       'height'     => 'fit-content',
     ];
 
+    // Create default scheduled tasks
+    if(!$this->addDefaultTasks())
+    {
+      Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS', 'error'));
+      Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS'), 8, 'joomgallery');
+    }
+
     if(version_compare(JVERSION, '5.1.0', '>'))
     {
       /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
@@ -554,6 +561,13 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         $app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_MENU', 'error'));
         Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_MENU'), 8, 'joomgallery');
+      }
+
+      // Create default scheduled tasks
+      if(!$this->addDefaultTasks())
+      {
+        $app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS', 'error'));
+        Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS'), 8, 'joomgallery');
       }
 
       // Create default mail templates
@@ -1029,6 +1043,110 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
+   * Add tasks to the ´#__scheduler_tasks´ table
+   *
+   * @return  bool  true on success
+   */
+  public function addDefaultTasks()
+  {
+    // Task types to be installed
+    $types = ['recreateImage'];
+
+    $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+    $query = $db->getQuery(true);
+    $query->select('type')->from('#__scheduler_tasks');
+    $query->where($db->quoteName('type') . ' LIKE ' . $db->quote('joomgalleryTask.%'));
+    $db->setQuery($query);
+
+    $installedTasks = $db->loadColumn();
+
+    foreach($types as $typeName)
+    {
+      $taskType = 'joomgalleryTask.' . $typeName;
+
+      if(!in_array($taskType, $installedTasks, true))
+      {
+        if(!$this->addDefaultTask($typeName))
+        {
+          Factory::getApplication()->enqueueMessage('Failed installing task ' . $typeName, 'error');
+          Log::add('Failed installing task ' . $typeName, 8, 'joomgallery');
+
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Add a task to the ´#__scheduler_tasks´ table
+   *
+   * @param   string $type Task type name
+   *
+   * @return  bool   true on success
+   */
+  public function addDefaultTask(string $type): bool
+  {
+    switch($type)
+    {
+      case 'recreateImage':
+        // Default recreateImage task
+        $taskdata                    = [];
+        $taskdata['id']              = null;
+        $taskdata['title']           = 'Recreate Images';
+        $taskdata['type']            = 'joomgalleryTask.recreateImage';
+        $taskdata['state']           = 1;
+        $taskdata['execution_rules'] = '{"rule-type":"manual","exec-day":"7","exec-time":"01:00:00"}';
+        $taskdata['cron_rules']      = '{"type":"manual","exp":""}';
+        $taskdata['params']          = '{"individual_log":false,"log_file":"","notifications":{"success_mail":"0","failure_mail":"1","fatal_failure_mail":"1","orphan_mail":"1"},"cid":"0","type":"thumbnail","resume":"1","user":"","overrideable_params":"type","successful":""}';
+
+        break;
+
+      default:
+        return false;
+    }
+
+    try {
+      // Create the table
+      $scheduler = Factory::getApplication()->bootComponent('com_scheduler');
+      $model     = $scheduler->getMVCFactory()->createModel('Task', 'Administrator', ['ignore_request' => true]);
+
+      // Turn json to array
+      if(is_string($taskdata['execution_rules']))
+      {
+        $taskdata['execution_rules'] = json_decode($taskdata['execution_rules'], true);
+      }
+      if(is_string($taskdata['cron_rules']))
+      {
+        $taskdata['cron_rules'] = json_decode($taskdata['cron_rules'], true);
+      }
+      if(is_string($taskdata['params']))
+      {
+        $taskdata['params'] = json_decode($taskdata['params'], true);
+      }
+
+      if(!$model->save($taskdata))
+      {
+        Factory::getApplication()->enqueueMessage('This default scheduled task could not be created: ' . $type, 'notice');
+        Log::add('This default scheduled task could not be created: ' . $type, 8, 'joomgallery');
+
+        return false;
+      }
+    }
+    catch (\Throwable $e)
+    {
+      Factory::getApplication()->enqueueMessage('This default scheduled task could not be created: ' . $type, 'notice');
+      Log::add('This default scheduled task could not be created: ' . $type, 8, 'joomgallery');
+
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Tries to get an extension id based on information
    *
    * @param   string $name           Extension name
@@ -1168,12 +1286,12 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
       if($result)
       {
-        $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_INSTALL_EXT', 'Plugin', $pluginName));
+        $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_INSTALL_EXT', 'Plugin', $pluginGroup . '.' . $pluginName));
       }
       else
       {
-        $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_INSTALL_EXT', 'Plugin', $pluginName), 'error');
-        Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_INSTALL_EXT', 'Plugin', $pluginName), 8, 'joomgallery');
+        $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_INSTALL_EXT', 'Plugin', $pluginGroup . '.' . $pluginName), 'error');
+        Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_INSTALL_EXT', 'Plugin', $pluginGroup . '.' . $pluginName), 8, 'joomgallery');
       }
 
       $query
@@ -1339,12 +1457,12 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
         if($result)
         {
-          $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_UNINSTALL_EXT', 'Plugin', $pluginName));
+          $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SUCCESS_UNINSTALL_EXT', 'Plugin', $pluginGroup . '.' . $pluginName));
         }
         else
         {
-          $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_UNINSTALL_EXT', 'Plugin', $pluginName), 'error');
-          Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_UNINSTALL_EXT', 'Plugin', $pluginName), 8, 'joomgallery');
+          $app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_UNINSTALL_EXT', 'Plugin', $pluginGroup . '.' . $pluginName), 'error');
+          Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_UNINSTALL_EXT', 'Plugin', $pluginGroup . '.' . $pluginName), 8, 'joomgallery');
         }
       }
     }

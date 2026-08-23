@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -12,6 +12,7 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -25,7 +26,7 @@ $image_class            = $this->params['configs']->get('jg_gallery_view_image_c
 $justified_height       = $this->params['configs']->get('jg_gallery_view_justified_height', 200, 'INT');
 $justified_gap          = $this->params['configs']->get('jg_gallery_view_justified_gap', 5, 'INT');
 $image_link             = $this->params['configs']->get('jg_gallery_view_image_link', 'defaultview', 'STRING');
-$browse_categories_link = $this->params['configs']->get('jg_gallery_view_browse_categories_link', 1, 'INT');
+$browse_categories_link = $this->params['configs']->get('jg_gallery_view_browse_categories_link', 0, 'INT');
 $lightbox_image         = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
 $lightbox_thumbnails    = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
 $lightbox_zoom          = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
@@ -83,6 +84,21 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
     </div>
   <?php endif; ?>
 
+  <?php // load modules on jg_gallery_top ?>
+  <?php $modules = ModuleHelper::getModules('jg_gallery_top'); ?>
+  <?php if(!empty($modules)) : ?>
+    <?php foreach($modules as $module) : ?>
+      <?php $moduleparams = json_decode($module->params, true); ?>
+      <div class="card">
+        <?php if($module->showtitle) : ?>
+          <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+          <?php echo $moduleheader; ?>
+        <?php endif; ?>
+        <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+      </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
+
   <div class="gallery-header">
     <?php echo HTMLHelper::_('content.prepare', $this->item->description, '', 'com_joomgallery.gallery'); ?>
   </div>
@@ -96,6 +112,21 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
       </a>
     </div>
   <?php endif; ?>
+
+  <?php // Search bar
+    $search_vars = [
+      'provider'      => $this->component->getSearch(),
+      'query'         => $this->item->query,
+      'params'        => $this->params['configs'],
+      'menuitem'      => ['itemid' => $this->itemid, 'option' => 'com_joomgallery', 'view' => 'gallery', 'model' => 'images'],
+      'suggest_url'   => Route::_('index.php?option=com_finder&task=suggestions.suggest&format=json&tmpl=component', false),
+      'search_url'    => ['option' => 'com_joomgallery', 'view' => 'gallery'],
+      'filterForm'    => $this->filterForm,
+      'activeFilters' => $this->activeFilters,
+    ];
+
+    echo LayoutHelper::render('joomgallery.search.searchbar', $search_vars);
+  ?>
 
   <?php // Hint for no items ?>
   <?php if(\count($this->item->images->items) == 0) : ?>
@@ -126,6 +157,21 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
     </div>
   <?php endif; ?>
 </div>
+
+<?php // load modules on jg_gallery_bottom ?>
+<?php $modules = ModuleHelper::getModules('jg_gallery_bottom'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
 
 <script>
   // Add event listener to images

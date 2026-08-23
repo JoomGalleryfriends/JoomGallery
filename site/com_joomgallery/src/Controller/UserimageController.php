@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -738,6 +738,52 @@ class UserimageController extends JoomFormController
    */
   public function reload($key = null, $urlVar = null): void
   {
-    throw new \Exception('Reload operation not available.', 503);
+    // Check for request forgeries.
+    $this->checkToken();
+
+    $model = $this->getModel('Userimage', 'Site');
+    $data  = $this->input->post->get('jform', [], 'array');
+
+    if(empty($key))
+    {
+      $key = $model->getTable()->getKeyName();
+    }
+
+    if(empty($urlVar))
+    {
+      $urlVar = $key;
+    }
+
+    $recordId   = $this->input->getInt($urlVar);
+    $data[$key] = $recordId;
+
+    if(!$recordId || !$this->allowEdit($data, $key))
+    {
+      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
+      $this->setRedirect(Route::_($this->getReturnPage('userimages'), false));
+      $this->redirect();
+
+      return;
+    }
+
+    // Load and filter the same form definition that rendered the edit view.
+    $form = $model->getForm($data, false);
+
+    if(!$form)
+    {
+      throw new \RuntimeException((string) $model->getError(), 500);
+    }
+
+    // Joomla normalizes calendar values during reload to avoid applying the
+    // timezone offset a second time when the form is rendered again.
+    $data = $this->applyFilterForCalendarFieldsToRequestData($form, $data);
+
+    // ImageModel::loadFormData() reads this established state key.
+    $this->app->setUserState(_JOOM_OPTION . '.edit.image.data', $data);
+
+    $url = 'index.php?option=' . _JOOM_OPTION . '&view=userimage' . $this->getItemAppend($recordId, null, $urlVar);
+
+    $this->setRedirect(Route::_($url, false));
+    $this->redirect();
   }
 }

@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -16,11 +16,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Http\HttpFactory;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Version;
 use Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Filesystem\Path;
@@ -60,6 +62,34 @@ class JoomHelper
    * @var array
    */
   public static $image_types = ['raw', 'gif', 'jpeg', 'jpg', 'png', 'webp'];
+
+  /**
+   * Sanitize formatted content with a fixed HTML allowlist.
+   *
+   * This deliberately does not depend on the current viewer's text-filter
+   * permissions because stored frontend content must be safe for every viewer.
+   *
+   * @param   string|null  $html  Formatted HTML
+   *
+   * @return  string  Sanitized HTML
+   *
+   * @since   4.4.0
+   */
+  public static function sanitizeHtml(?string $html): string
+  {
+    $tags       = [
+      'a', 'abbr', 'b', 'blockquote', 'br', 'code', 'div', 'em', 'figcaption', 'figure',
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'li', 'ol', 'p', 'pre',
+      'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead',
+      'tr', 'u', 'ul',
+    ];
+    $attributes = [
+      'alt', 'class', 'colspan', 'height', 'href', 'rel', 'rowspan', 'scope', 'src',
+      'target', 'title', 'width',
+    ];
+
+    return InputFilter::getInstance($tags, $attributes)->clean((string) $html, 'html');
+  }
 
   /**
    * Gets the JoomGallery component object
@@ -605,6 +635,188 @@ class JoomHelper
   }
 
   /**
+   * Returns the file info of a specific image file
+   *
+   * @param   string/object/int $img     Filename, database object, ID or URL of the image
+   * @param   string            $type    The image type
+   *
+   * @return  object            File info
+   *
+   * @since   4.4.0
+   */
+  public static function getImgInfo($img, $type)
+  {
+    $url  = false;
+    $root = false;
+
+    // Load image object
+    if(!\is_object($img))
+    {
+      if(is_numeric($img) || $img == 'null')
+      {
+        if($img == 0 || $img == 'null')
+        {
+          // ID = 0 given
+          return self::getImgZero($type, $url, $root);
+        }
+
+
+          // get image based on ID
+          $img = self::getRecord('image', $img);
+      }
+      elseif(\is_string($img))
+      {
+        if(\strlen($img) > 5 && (strpos($img, '/') !== false || strpos($img, \DIRECTORY_SEPARATOR) !== false))
+        {
+          // already image url given
+          if(strpos($img, '/') === 0)
+          {
+            // url starts with '/'
+            return Uri::root(true) . $img;
+          }
+
+
+            return Uri::root(true) . '/' . $img;
+        }
+
+
+          // get image id based on filename
+          $img = self::getRecord('image', ['filename' => $img]);
+      }
+      else
+      {
+        // no image given
+        return self::getImgZero($type, $url, $root);
+      }
+    }
+
+    // Get file info
+    $file       = self::getImg($img, $type, $url, $root);
+    $filesystem = self::getService('Filesystem', [$img->filesystem]);
+    $info       = $filesystem->getFile($file);
+
+    // Allowed file infos
+    $allowed = ['type', 'extension', 'mime_type', 'width', 'height', 'adapter'];
+
+    // Filter infos
+    $filtered = new stdClass();
+
+    foreach($allowed as $key)
+    {
+      if(isset($info->$key))
+      {
+        $filtered->$key = $info->$key;
+      }
+    }
+
+    return $filtered;
+  }
+
+  /**
+   * Returns width and height for a specific image
+   *
+   * @param   string/object/int $img       Filename, database object, ID or URL of the image
+   * @param   string            $type      The image type
+   * @param   array/bool        $strategy  The strategy to apply to calculate the domensions
+   *
+   * @return  array             (width, height)
+   *
+   * @since   4.4.0
+   */
+  public static function clcImgDimensions($img, $type, $strategy = false)
+  {
+    $url  = false;
+    $root = false;
+
+    // Load image object
+    if(!\is_object($img))
+    {
+      if(is_numeric($img) || $img == 'null')
+      {
+        if($img == 0 || $img == 'null')
+        {
+          // ID = 0 given
+          return self::getImgZero($type, $url, $root);
+        }
+
+
+          // get image based on ID
+          $img = self::getRecord('image', $img);
+      }
+      elseif(\is_string($img))
+      {
+        if(\strlen($img) > 5 && (strpos($img, '/') !== false || strpos($img, \DIRECTORY_SEPARATOR) !== false))
+        {
+          // already image url given
+          if(strpos($img, '/') === 0)
+          {
+            // url starts with '/'
+            return Uri::root(true) . $img;
+          }
+
+
+            return Uri::root(true) . '/' . $img;
+        }
+
+
+          // get image id based on filename
+          $img = self::getRecord('image', ['filename' => $img]);
+      }
+      else
+      {
+        // no image given
+        return self::getImgZero($type, $url, $root);
+      }
+    }
+
+    // Get file info
+    $file       = self::getImg($img, $type, $url, $root);
+    $filesystem = self::getService('Filesystem', [$img->filesystem]);
+    $info       = $filesystem->getFile($file);
+
+    // If there is no strategy provided or strategy info missing
+    if( !$strategy ||
+        !\is_array($strategy) ||
+        !\array_key_exists('strategy', $strategy)
+      )
+    {
+      return [(int) $info->width, (int) $info->height];
+    }
+
+    $value = !empty($strategy['value']) ? $strategy['value'] : 300;
+
+    switch($strategy['strategy'])
+    {
+      case 'max-dimension':
+        // Get ratio based on max dimension value
+        $ratio = min($value / $info->width, $value / $info->height);
+          break;
+
+      case 'by-height':
+        // Get ratio based on image height
+        $ratio = $value / $info->height;
+          break;
+
+      case 'by-width':
+        // Get ratio based on image width
+        $ratio = $value / $info->width;
+          break;
+
+      default:
+          return [(int) $info->width, (int) $info->height];
+    }
+
+    if($ratio < 1)
+    {
+      // Scale dimension based on ratio
+      return [(int) round($info->width * $ratio), (int) round($info->height * $ratio)];
+    }
+
+    // Nothing to scale
+    return [(int) $info->width, (int) $info->height];
+  }
+
+  /**
    * Returns the table name of a content type
    *
    * @param   string   $type    Name of the content type
@@ -700,6 +912,117 @@ class JoomHelper
     }
 
     return $id;
+  }
+
+  /**
+   * Returns a list of parent/child categories
+   *
+   * @param   string/object/int   $cat         Alias, database object or ID of the category
+   * @param   string              $type        Which kind of nde tree (default: cpl)
+   * @param   bool                $self        Include current node id (default: false)
+   * @param   bool                $root        Include root node (default: false)
+   * @param   bool                $ids         True to return only ids (default: false)
+   *
+   * @return  array
+   *
+   * @since   4.4.0
+   */
+  public static function getCategories($cat, $type = 'cpl', $self = false, $root = false, $ids = false)
+  {
+    $cats = [];
+
+    if(!\is_object($cat))
+    {
+      if((!is_numeric($cat) && !\is_string($cat)) || $cat == 0)
+      {
+        // no actual category given
+        return $cats;
+      }
+
+      $cat = self::getRecord('category', $cat);
+    }
+
+    // Create the category table
+    $com_obj = self::getComponent();
+
+    if(!$table = $com_obj->getMVCFactory()->createTable('category', 'administrator'))
+    {
+      return $cats;
+    }
+
+    // Load categories
+    $table->load($cat->id);
+
+    if($ids)
+    {
+      return array_column($table->getNodeTree($type, $self, $root), 'id');
+    }
+
+    return $table->getNodeTree($type, $self, $root);
+  }
+
+  /**
+   * Returns a list of images of a specific category
+   *
+   * @param   string/object/int   $cat         Alias, database object or ID of the category
+   * @param   bool                $subcats     Also include images from subcategories (default: own)
+   * @param   bool                $ids         True to return only ids (default: false)
+   *
+   * @return  array
+   *
+   * @since   4.4.0
+   */
+  public static function getImages($cat, $subcats = false, $states = [], $ids = false)
+  {
+    if(!\is_object($cat))
+    {
+      if((!is_numeric($cat) && !\is_string($cat)) || $cat == 0)
+      {
+        // no actual category given
+        return [];
+      }
+
+      $cat = self::getRecord('category', $cat);
+    }
+
+    // Load subcategories
+    $cat = array_column(self::getCategories($cat, 'childs', true, false, true), 'id');
+
+    // Load images list model
+    $listModel = self::getComponent()->getMVCFactory()->createModel('images', 'administrator');
+    $listModel->getState();
+
+    if($ids)
+    {
+      $fields = ['id'];
+    }
+    else
+    {
+      $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum'];
+    }
+
+    // Select fields to load
+    $fields = self::addColumnPrefix('a', $fields);
+
+    // Apply preselected filters and fields selection for images
+    $listModel->setState('list.select', $fields);
+    $listModel->setState('filter.category', $cat);
+
+    // Add filters and or list start/ordering
+    foreach($states as $key => $value)
+    {
+      $listModel->setState($key, $value);
+    }
+
+    // Get images
+    if($ids)
+    {
+      // Flatten the returning array
+      return array_column($listModel->getItems(), 'id');
+    }
+
+    // Return the list of objects
+    return $listModel->getItems();
   }
 
   /**
@@ -1096,6 +1419,14 @@ class JoomHelper
    */
   public static function fetchXML(string $uri): \SimpleXMLElement
   {
+
+    // Check for user_agent in php.ini
+    if(!\ini_get('user_agent'))
+    {
+      $version = new Version();
+      ini_set('user_agent', $version->getUserAgent('Joomla', true, false));
+    }
+
     // Create the XMLReader object.
     $reader = new \XMLReader();
 
@@ -1355,5 +1686,90 @@ class JoomHelper
 
     // Instantiate a new table class and return it.
     return new $tableClass(Factory::getContainer()->get(DatabaseInterface::class));
+  }
+
+  /**
+   * @param   int    $catId   The id of the category
+   *
+   * @return  int    number of published images
+   *
+   * @since   4.3.0
+   */
+  public static function getTotalImagesInCategory($catId)
+  {
+    // Get view levels of current user
+    $user              = Factory::getApplication()->getIdentity();
+    $allowedViewLevels = Access::getAuthorisedViewLevels($user->id);
+
+    $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+    $query = $db->getQuery(true)
+          ->select('id, lft, rgt')
+          ->from(_JOOM_TABLE_CATEGORIES)
+          ->where($db->quoteName('access') . ' IN (' . implode(',', $allowedViewLevels) . ')')
+          ->where($db->quoteName('hidden') . ' = 0')
+          ->where($db->quoteName('published') . ' = 1');
+
+    $db->setQuery($query);
+    $catids = $db->loadAssocList('id');
+
+    $idsToCount = [];
+
+    if(isset($catids[$catId]))
+    {
+      $lft = $catids[$catId]['lft'];
+      $rgt = $catids[$catId]['rgt'];
+
+      // Find all subcategories in the tree
+      foreach($catids as $id => $cat)
+      {
+        if($cat['lft'] >= $lft && $cat['rgt'] <= $rgt)
+        {
+          $idsToCount[] = (int) $id;
+        }
+      }
+    }
+
+    if(empty($idsToCount))
+    {
+      return 0;
+    }
+
+    // Count images
+    $query = $db->getQuery(true)
+      ->select('COUNT(*)')
+      ->from(_JOOM_TABLE_IMAGES)
+      ->where('catid IN (' . implode(',', $idsToCount) . ')')
+      ->where($db->quoteName('access') . ' IN (' . implode(',', $allowedViewLevels) . ')')
+      ->where($db->quoteName('hidden') . ' = 0')
+      ->where($db->quoteName('approved') . ' = 1')
+      ->where($db->quoteName('published') . ' = 1');
+
+    $db->setQuery($query);
+
+    return (int) $db->loadResult();
+  }
+
+  /**
+   * Method to add a prefix to a list of field names
+   *
+   * @param   string  $prefix   The prefix to apply
+   * @param   array   $fields   List of fields
+   *
+   * @return  array   List of fields with applied prefix
+   */
+  protected static function addColumnPrefix(string $prefix, array $fields): array
+  {
+    foreach($fields as $key => $field)
+    {
+      $field = (string) $field;
+
+      if(strpos($field, $prefix . '.') === false)
+      {
+        $fields[$key] = $prefix . '.' . $field;
+      }
+    }
+
+    return $fields;
   }
 }

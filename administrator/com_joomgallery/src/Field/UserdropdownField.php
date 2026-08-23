@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -46,9 +46,19 @@ class UserdropdownField extends ListField
     $ordering     = $this->getAttribute('ordering', 'name');
     $dropdownname = $this->getAttribute('dropdownname', 'both');
     $multiple     = $this->getAttribute('multiple', 'false');
+    $db           = $this->getDatabase();
+    $comp         = Factory::getApplication()->bootComponent('com_joomgallery');
 
-    // Get a db connection.
-    $db = Factory::getContainer()->get(DatabaseInterface::class);
+    if( isset($this->element['search_service']) && (string) $this->element['search_service'] == 'true' &&
+        $comp->getSearch()->handlesFilter('user')
+      )
+    {
+      // Load options from search provider
+      $options = $comp->getSearch()->getFilterOptions('user');
+
+      // Merge any additional options in the XML definition.
+      return array_merge(parent::getOptions(), $options);
+    }
 
     // Create a new query object.
     $query = $db->getQuery(true);

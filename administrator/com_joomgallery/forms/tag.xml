@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <fieldset name="general">
-    <field name="ordering"/>
+    <field name="ordering" filter="integer"/>
 
     <field name="id"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            label="JGLOBAL_FIELD_ID_LABEL" />
 
     <field name="alias"
            type="text"
+           filter="cmd"
            class="inputbox"
            generator="title"
            label="JALIAS"
@@ -20,7 +22,7 @@
     <field name="title"
            type="text"
            maxlength="255"
-           filter="safehtml"           
+           filter="string"
            required="true"
            label="JGLOBAL_TITLE"
            message="COM_JOOMGALLERY_ERROR_NEEDS_TITLE" />
@@ -68,6 +70,7 @@
 
     <field name="created_by"
            type="user"
+           filter="integer"
            label="JGLOBAL_FIELD_CREATED_BY_LABEL"
            description="JGLOBAL_FIELD_CREATED_BY_DESC"
            validate="UserId" />

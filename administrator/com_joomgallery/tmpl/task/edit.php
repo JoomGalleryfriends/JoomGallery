@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -64,6 +64,14 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
           <?php echo $this->form->renderField('times_executed'); ?>
           <?php echo $this->form->renderField('note'); ?>
         </fieldset>
+      </div>
+    </div>
+    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'TaskParams', Text::_('COM_JOOMGALLERY_PARAMETERS', true)); ?>
+    <div class="row">
+      <div class="col-12">
+        <?php echo $this->form->getInput('params'); ?>
       </div>
     </div>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>

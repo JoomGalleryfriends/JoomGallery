@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up PHP with Composer
         uses: shivammathur/setup-php@v2
@@ -21,7 +21,7 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader
+        run: composer install --no-dev --no-scripts --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader
 
       - name: Clean up unnecessary files
         run: |
@@ -41,7 +41,7 @@ jobs:
           zip -r JoomGallery-${{ steps.get_tag.outputs.TAG_NAME }}.zip . -x '*.git*'
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: Release ${{ steps.get_tag.outputs.TAG_NAME }}
           tag_name: ${{ steps.get_tag.outputs.TAG_NAME }}

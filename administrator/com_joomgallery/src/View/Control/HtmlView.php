@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -104,6 +104,10 @@ class HtmlView extends JoomGalleryView
 
     // Tags button
     $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=tags" class="btn btn-primary"><span class="icon-tags" title="' . Text::_('COM_JOOMGALLERY_TAGS') . '"></span> ' . Text::_('COM_JOOMGALLERY_TAGS') . '</a></joomla-toolbar-button>';
+    $toolbar->appendButton('Custom', $html);
+
+    // Tasks button
+    $html = '<joomla-toolbar-button><a href="index.php?option=com_joomgallery&amp;view=tasks" class="btn btn-primary"><span class="fas fa-bars-progress" title="' . Text::_('COM_JOOMGALLERY_TASKS') . '"></span> ' . Text::_('COM_JOOMGALLERY_TASKS') . '</a></joomla-toolbar-button>';
     $toolbar->appendButton('Custom', $html);
 
     // Configs button

@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -14,6 +14,7 @@
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
@@ -56,12 +57,57 @@ $tags      = $tagLayout->render($this->item->tags);
 $metadataLayout = new FileLayout('joomgallery.content.metadata');
 $metadata       = $metadataLayout->render($this->item->imgmetadata);
 
+// add meta title
+$app = Factory::getApplication();
+$doc = $app->getDocument();
+
+$title               = $this->item->title ?? '';
+$sitename            = $app->get('sitename');
+$sitename_pagetitles = (int) $app->get('sitename_pagetitles', 0);
+
+$prefix    = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX');
+$baseTitle = trim($prefix . ' ' . $title);
+
+if($sitename_pagetitles === 0)
+{
+    $fullTitle = $baseTitle;
+}
+elseif($sitename_pagetitles === 1)
+{
+    $fullTitle = $sitename . ' - ' . $baseTitle;
+}
+elseif($sitename_pagetitles === 2)
+{
+    $fullTitle = $baseTitle . ' - ' . $sitename;
+}
+else
+{
+    $fullTitle = $baseTitle;
+}
+
+$doc->setTitle($fullTitle);
+
 // Custom Fields
 $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 ?>
 
+<?php // load modules on jg_image_top ?>
+<?php $modules = ModuleHelper::getModules('jg_image_top'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
 <?php if($show_title) : ?>
-  <h2><?php echo $this->item->title; ?></h2>
+  <h2><?php echo $this->escape($this->item->title); ?></h2>
 <?php endif; ?>
 
 <a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
@@ -75,11 +121,26 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <figure class="figure joom-image text-center center">
   <div id="jg-loader"></div>
   <img src="<?php echo JoomHelper::getImg($this->item, $image_type); ?>" class="figure-img img-fluid rounded" 
-       alt="<?php echo $this->item->title; ?>" style="width:auto;" itemprop="image" loading="lazy">
+       alt="<?php echo $this->escape($this->item->title); ?>" style="width:auto;" itemprop="image" loading="lazy">
   <?php if($show_description) : ?>
-    <figcaption class="figure-caption"><?php echo $this->item->description; ?></figcaption>
+    <figcaption class="figure-caption"><?php echo JoomHelper::sanitizeHtml($this->item->description); ?></figcaption>
   <?php endif; ?>
 </figure>
+
+<?php // load modules on jg_image_before_info ?>
+<?php $modules = ModuleHelper::getModules('jg_image_before_info'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
 
 <?php // Image info and fields ?>
 <div class="item_fields">
@@ -158,15 +219,30 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
           </tr>
           <?php foreach($fields as $key => $field) : ?>
             <?php if($this->component->getAccess()->checkViewLevel($field->access) && $field->params->get('display') > 0) : ?>
-              <tr class="<?php echo $field->params->get('render_class'); ?>">
-                <th class="<?php echo $field->params->get('label_render_class'); ?>"><?php if($field->params->get('showlabel', true)) echo $this->escape($field->title); ?></th>
-                <td class="<?php echo $field->params->get('value_render_class'); ?>"><?php echo $this->escape($field->value); ?></td>
+              <tr class="<?php echo $this->escape($field->params->get('render_class')); ?>">
+                <th class="<?php echo $this->escape($field->params->get('label_render_class')); ?>"><?php if($field->params->get('showlabel', true)) echo $this->escape($field->title); ?></th>
+                <td class="<?php echo $this->escape($field->params->get('value_render_class')); ?>"><?php echo $this->escape($field->value); ?></td>
               </tr>
             <?php endif; ?>
           <?php endforeach; ?>
         <?php endif; ?>
     </table>
 </div>
+
+<?php // load modules on jg_image_bottom ?>
+<?php $modules = ModuleHelper::getModules('jg_image_bottom'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
 
 <script>
   window.onload = function () {

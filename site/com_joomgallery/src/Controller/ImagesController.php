@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
+use Joomla\CMS\Language\Text;
 
 /**
  * Images list controller class.
@@ -73,5 +74,27 @@ class ImagesController extends JoomFormController
 
     // Close the application
     $this->app->close();
+  }
+
+  /**
+   * Method to clear filters from model state and user session.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public function clear(): void
+  {
+    // Check for request forgeries.
+    $this->checkToken();
+
+    $redirect = $this->app->getInput()->get('redirect', 'cmd');
+
+    // Get the model
+    $model = $this->getModel();
+    $model->clearFilter();
+
+    $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_MSG_FILTERS_CLEARED'), 'message');
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=' . $redirect);
   }
 }

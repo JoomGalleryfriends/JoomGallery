@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -25,29 +25,29 @@ use Joomla\CMS\Form\Field\RadioField;
  */
 class CustomradioField extends RadioField
 {
-    /**
-     * The form field type.
-     *
-     * @var    string
-     * @since  4.0.0
-     */
-    protected $type = 'customradio';
+  /**
+   * The form field type.
+   *
+   * @var    string
+   * @since  4.0.0
+   */
+  protected $type = 'customradio';
 
-    /**
-     * Method to get the data to be passed to the layout for rendering.
-     *
-     * @return  array
-     *
-     * @since   3.5
-     */
-    protected function getLayoutData()
-    {
-        $data = parent::getLayoutData();
+  /**
+   * Method to get the data to be passed to the layout for rendering.
+   *
+   * @return  array
+   *
+   * @since   3.5
+   */
+  protected function getLayoutData()
+  {
+    $data = parent::getLayoutData();
 
-        $extraData = [
-          'sensitive' => $this->getAttribute('sensitive'),
-        ];
+    $extraData = [
+      'sensitive' => $this->getAttribute('sensitive'),
+    ];
 
-        return array_merge($data, $extraData);
-    }
+    return array_merge($data, $extraData);
+  }
 }

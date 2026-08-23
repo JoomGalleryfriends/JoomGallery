@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -18,7 +18,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -117,9 +116,9 @@ class JgcategorydropdownField extends ListField
       $this->allowAdd     = isset($this->element['allowAdd']) ? (bool) $this->element['allowAdd'] : false;
       $this->customPrefix = (string) $this->element['customPrefix'];
 
-      $this->isCategoriesOfUser  = isset($this->element['categoriesOfUser']) ? (bool) $this->element['categoriesOfUser'] : false;
-      $this->isShow_NoParent     = isset($this->element['show_NoParent']) ? (bool) $this->element['show_NoParent'] : false;
-      $this->isShow_SelectHeader = isset($this->element['showSelect']) ? (bool) $this->element['showSelect'] : false;
+      $this->isCategoriesOfUser  = isset($this->element['categoriesOfUser']) ? filter_var($this->element['categoriesOfUser'], FILTER_VALIDATE_BOOLEAN) : false;
+      $this->isShow_NoParent     = isset($this->element['show_NoParent']) ? filter_var($this->element['show_NoParent'], FILTER_VALIDATE_BOOLEAN) : false;
+      $this->isShow_SelectHeader = isset($this->element['showSelect']) ? filter_var($this->element['showSelect'], FILTER_VALIDATE_BOOLEAN) : false;
 
       $elementOrdering = $this->element['ordering'] ?? '';
 
@@ -193,6 +192,22 @@ class JgcategorydropdownField extends ListField
    */
   protected function getOptions()
   {
+    // Initialize needed classes
+    $comp = Factory::getApplication()->bootComponent('com_joomgallery');
+    $db   = $this->getDatabase();
+    $user = Factory::getApplication()->getIdentity();
+
+    if( isset($this->element['search_service']) && (string) $this->element['search_service'] == 'true' &&
+        $comp->getSearch()->handlesFilter('category')
+      )
+    {
+      // Load options from search provider
+      $options = $comp->getSearch()->getFilterOptions('category');
+
+      // Merge any additional options in the XML definition.
+      return array_merge(parent::getOptions(), $options);
+    }
+
     $options   = [];
     $published = $this->element['published'] ? explode(',', (string) $this->element['published']) : [0, 1];
     $name      = (string) $this->element['name'];
@@ -221,11 +236,6 @@ class JgcategorydropdownField extends ListField
     $oldCat = \is_array($oldCat)
       ? (int) reset($oldCat)
       : (int) $oldCat;
-
-    // Initialize needed classes
-    $comp = Factory::getApplication()->bootComponent('com_joomgallery');
-    $db   = Factory::getContainer()->get(DatabaseInterface::class);
-    $user = Factory::getApplication()->getIdentity();
 
     // Get access service
     $comp->createAccess();
@@ -348,8 +358,11 @@ class JgcategorydropdownField extends ListField
       }
     }
 
+    // check if the field should allow to edit (create, move, edit state...)
+    $edit_cats = filter_var($this->element['edit'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
     // For new items we want a list of categories you are allowed to create in.
-    if($oldCat == 0)
+    if($edit_cats && $oldCat == 0)
     {
       foreach($options as $i => $option)
       {
@@ -366,7 +379,7 @@ class JgcategorydropdownField extends ListField
       }
     }
     // If you have an existing category id things are more complex.
-    else
+    elseif($edit_cats)
     {
       /*
        * If you are only allowed to edit in this category but not edit.state, you should not get any

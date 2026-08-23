@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="4.0" method="upgrade">
   <name>com_joomgallery</name>
-  <creationDate>2026-02-09</creationDate>
+  <creationDate>2026-08-22</creationDate>
   <copyright>2008 - 2026  JoomGallery::ProjectTeam</copyright>
   <license>GNU General Public License version 3 or later</license>
   <author>JoomGallery::ProjectTeam</author>
   <authorEmail>team@joomgalleryfriends.net</authorEmail>
   <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-  <version>4.3.0</version>
+  <version>4.4.0</version>
   <description>JoomGallery 4, a native gallery component for Joomla! 4.x, 5.x and 6.x</description>
   <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
 
@@ -50,6 +50,7 @@
       <menu link="option=com_joomgallery&amp;view=image&amp;layout=upload" view="Upload" alt="Joomgallery/Upload">COM_JOOMGALLERY_UPLOAD</menu>
       <menu link="option=com_joomgallery&amp;view=images" view="images" alt="Joomgallery/Images">COM_JOOMGALLERY_IMAGES</menu>
       <menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TAGS</menu>
+      <menu link="option=com_joomgallery&amp;view=tasks" view="tasks" alt="Joomgallery/Tasks">COM_JOOMGALLERY_TASKS</menu>
       <menu link="option=com_joomgallery&amp;view=configs" view="configs" alt="Joomgallery/Configs">COM_JOOMGALLERY_CONFIG_SETS</menu>
       <menu link="option=com_joomgallery&amp;view=migration" view="migration" alt="Joomgallery/Migration">COM_JOOMGALLERY_MIGRATIONS</menu>
       <menu type="separator" hidden="true">Separator1</menu>
@@ -82,6 +83,7 @@
 
   <plugins>
     <plugin group="console" plugin="joomconsole"/>
+    <plugin group="finder" plugin="joomgallery"/>
     <plugin group="privacy" plugin="joomgallery"/>
     <plugin group="system" plugin="joomgallery"/>
     <plugin group="system" plugin="joomowner"/>

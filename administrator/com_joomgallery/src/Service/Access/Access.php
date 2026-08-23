@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -165,6 +165,14 @@ class Access implements AccessInterface
    */
   public function checkACL(string $action, string $asset = '', int $pk = 0, int $parent_pk = 0, bool $use_parent = false): bool
   {
+    $appuser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->user->id);
+
+    // Global and component administrators are always allowed.
+    if($appuser->get('isRoot') === true)
+    {
+      return true;
+    }
+
     // Prepare action
     if(!empty($this->aclMap))
     {
@@ -217,6 +225,11 @@ class Access implements AccessInterface
       $this->allowed[$key] = null;
     }
 
+    foreach($this->tocheck as $key => $value)
+    {
+      $this->tocheck[$key] = ($key === 'default');
+    }
+
     // Adjust asset for further checks when only parent given
     if($action == 'add' && $use_parent)
     {
@@ -237,14 +250,6 @@ class Access implements AccessInterface
 
     // More preparations
     $acl_rule_array = explode('.', $acl_rule);
-    $appuser        = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->user->id);
-
-    // Special case: super user
-    if($appuser->get('isRoot') === true)
-    {
-      // If it is the super user
-      return true;
-    }
 
     // 1. Default permission checks based on asset table
     // (Global Configuration -> Recursive assets)
@@ -314,10 +319,11 @@ class Access implements AccessInterface
     // Basic: Apply the core result
     $allowedRes = $this->allowed['default'];
 
-    // Advanced: Apply owner result
-    if($this->tocheck['own'] === true)
+    // Advanced: An explicit own result takes precedence over the core result.
+    // An inherited own permission (null) falls back to the core result.
+    if($this->tocheck['own'] === true && $this->allowed['own'] !== null)
     {
-      $allowedRes = $this->allowed['default'] || $this->allowed['own'];
+      $allowedRes = $this->allowed['own'];
     }
 
     // Advanced: Apply media items result
@@ -329,10 +335,10 @@ class Access implements AccessInterface
         $allowedRes = $this->allowed['upload'];
       }
 
-      if($this->tocheck['upload-own'] === true)
+      if($this->tocheck['upload-own'] === true && $this->allowed['upload-own'] !== null)
       {
-        // Action requires an owner check
-        $allowedRes = $allowedRes || $this->allowed['upload-own'];
+        // An explicit parent-owner result takes precedence over upload access.
+        $allowedRes = $this->allowed['upload-own'];
       }
     }
 
@@ -560,6 +566,9 @@ class Access implements AccessInterface
     }
 
     // Take away own and inown in action statement
+    // ".own" and ".inown" are permission-rule qualifiers, not ownership-only
+    // request modes. checkACL() always combines the normal and applicable
+    // ownership-aware rules for the requested base action.
     $action = str_replace(['.own', '.inown'], '', $action);
 
     // Synonyms for add

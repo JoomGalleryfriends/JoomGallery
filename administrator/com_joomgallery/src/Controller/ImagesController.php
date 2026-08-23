@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -128,7 +128,7 @@ class ImagesController extends JoomAdminController
         $this->component->addLog(Text::_('COM_JOOMGALLERY_ITEM_SUCCESS_DUPLICATED'), 'info', 'jerror');
       }
     }
-    catch (\Exception $e)
+    catch(\Exception $e)
     {
       $this->component->addLog($e->getMessage(), 'warning', 'jerror');
 
@@ -147,98 +147,91 @@ class ImagesController extends JoomAdminController
    */
   public function recreate()
   {
-    // Get inputs
-    $pks     = $this->app->getUserStateFromRequest('joom.recreate.cid', 'cid', [], 'array');
-    $type    = $this->app->getUserStateFromRequest('joom.recreate.type', 'type', 'original', 'cmd');
-    $count   = $this->app->getUserState('joom.recreate.count', 0);
-    $created = $this->app->getUserState('joom.recreate.created', []);
-    $error   = $this->app->getUserState('joom.recreate.error', []);
+    $this->checkToken();
 
-    if($count === 0)
-    {
-      // Check for request forgeries
-      $this->checkToken();
-    }
+    $pks  = $this->input->post->get('cid', [], 'array');
+    $type = $this->input->post->get('type', 'thumbnail', 'cmd');
 
     try
     {
-      if($count > 0 && empty($pks))
+      if(empty($pks))
       {
-        $this->component->addLog(Text::_('JERROR_NO_ITEMS_SELECTED'), 'warning', 'jerror');
         throw new \Exception(Text::_('JERROR_NO_ITEMS_SELECTED'));
       }
 
-      // Sanitize input array
-      $pks = ArrayHelper::toInteger($pks);
+      // Load task definition
+      $com_scheduler = Factory::getApplication()->bootComponent('com_scheduler');
+      $listModel     = $com_scheduler->getMVCFactory()->createModel('Tasks', 'administrator');
+      $listModel->getState();
+      $listModel->setState('filter.state', 1);
+      $listModel->setState('filter.type', 'joomgalleryTask.recreateImage');
+      $scheduler_items = $listModel->getItems();
 
-      // Create refresher
-      $options = [
-        'controller' => 'images',
-        'task'                 => 'recreate',
-        'name'                 => Text::_('COM_JOOMGALLERY_RECREATE_IMAGES'),
-        'remaining'            => \count($pks),
-        'start'                => $this->input->getBool('cid'),
-      ];
-      $this->component->createRefresher($options);
-      $refresher = $this->component->getRefresher();
-
-      // Iterate the items to recreate each one.
-      foreach($pks as $key => $pk)
+      if(empty($scheduler_items))
       {
-        $model = $this->getModel('image');
+        // No scheduler task found
+        throw new \Exception(Text::sprintf('COM_JOOMGALLERY_TASK_ERROR_NO_SCHEDULER', 'recreate'));
+      }
 
-        if($model->recreate($pk, $type))
+      // Try to guess the scheduler task
+      $scheduler_id = $scheduler_items[0]->id;
+
+      foreach($scheduler_items as $scheduler_task)
+      {
+        if(str_contains(strtolower($scheduler_task->title), $type))
         {
-          // Success
-          array_push($created, $pk);
+          // Scheduler task found with correct type in title
+          $scheduler_id = $scheduler_task->id;
+
+          break;
         }
-        else
+      }
+
+      ArrayHelper::toInteger($pks);
+      $taskModel = $this->factory->createModel('Task', 'Administrator');
+      $shortRef  = bin2hex(random_bytes(3));
+
+      $taskData = [
+        'title'    => Text::sprintf('COM_JOOMGALLERY_TASK_TITLE_GENERATED', $shortRef),
+        'type'     => 'joomgalleryTask.recreateImage',
+        'taskid'   => $scheduler_id,
+        'state'    => 1,
+        'access'   => 1,
+        'priority' => 2,
+        'note'     => '',
+        'queue'    => implode(',', $pks),
+        'params'   => json_encode(
+            [
+              'type'  => $type,
+              'parallel_limit' => 1,
+            ]
+        ),
+      ];
+
+      if($taskModel->save($taskData))
+      {
+        $newTaskId = $taskModel->getState('task.id');
+
+        if(empty($newTaskId))
         {
-          // Error
-          array_push($error, $pk);
+          $newTaskId = $taskModel->getTable()->id;
         }
 
-        // Remove item from todo-list
-        unset($pks[$key]);
-
-        // Count up
-        $count++;
-
-        // Check remaining time
-        if(!$refresher->check())
-        {
-          $this->app->setUserState('joom.recreate.cid', $pks);
-          $this->app->setUserState('joom.recreate.count', $count);
-          $this->app->setUserState('joom.recreate.created', $created);
-          $this->app->setUserState('joom.recreate.error', $error);
-          $refresher->refresh(\count($pks));
-        }
+        $this->setMessage(Text::_('COM_JOOMGALLERY_TASK_CREATED_SUCCESSFULLY'));
+        $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=images&newTaskId=' . $newTaskId, false));
+      }
+      else
+      {
+        $this->setMessage($taskModel->getError(), 'error');
+        $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=images', false));
       }
     }
     catch(\Exception $e)
     {
-      Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+      $this->component->addLog($e->getMessage(), 'warning', 'jerror');
+      $this->setMessage($e->getMessage(), 'warning');
+      $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=images', false));
     }
-
-    // Output success message
-    if(\count($created) > 0)
-    {
-      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_IMAGES_RECREATED_SUCCESS', implode(', ', $created)));
-    }
-
-    // Output error message
-    if(\count($error) > 0)
-    {
-      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_IMAGES_RECREATED_ERROR', implode(', ', $error)), 'error');
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_IMAGES_RECREATED_ERROR', implode(', ', $error)), 'error', 'jerror');
-    }
-
-    $this->app->setUserState('joom.recreate.cid', []);
-    $this->app->setUserState('joom.recreate.count', 0);
-    $this->app->setUserState('joom.recreate.created', []);
-    $this->app->setUserState('joom.recreate.error', []);
-
-    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=images');
   }
 
   /**
@@ -294,7 +287,7 @@ class ImagesController extends JoomAdminController
   /**
    * Method to change the state of a list of items
    *
-   * @param   string   $type   Name of the state to be changed
+   * @param   string  $type  Name of the state to be changed
    *
    * @return  void
    *
@@ -381,7 +374,7 @@ class ImagesController extends JoomAdminController
           $this->setMessage(Text::plural($ntext, \count($cid)));
         }
       }
-      catch (\Exception $e)
+      catch(\Exception $e)
       {
         $this->component->addLog($e->getMessage(), 'warning', 'jerror');
         $this->setMessage($e->getMessage(), 'error');

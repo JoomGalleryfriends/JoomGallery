@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -82,58 +82,58 @@ class ConfigsubformField extends SubformField
    */
   protected function loadSubFormData($subForm)
   {
-      $value = $this->value ? (array) $this->value : [];
+    $value = $this->value ? (array) $this->value : [];
 
-      // Simple form, just bind the data and return one row.
-      if(!$this->multiple)
+    // Simple form, just bind the data and return one row.
+    if(!$this->multiple)
+    {
+      // Preprocess form
+        // Get fields with dynamic options
+        $dyn_fields = $subForm->getDynamicFields();
+
+        // Add options to dynamic fields
+        foreach($dyn_fields as $key => $field)
+        {
+          $subForm->setDynamicOptions($field);
+        }
+
+      // Bind form data
+      $subForm->bind($value);
+
+      return [$subForm];
+    }
+
+    // Multiple rows possible: Construct array and bind values to their respective forms.
+    $forms = [];
+    $value = array_values($value);
+
+    // Show as many rows as we have values, but at least min and at most max.
+    $c = max($this->min, min(\count($value), $this->max));
+
+    for($i = 0; $i < $c; $i++)
+    {
+      $control  = $this->name . '[' . $this->fieldname . $i . ']';
+      $itemForm = ConfigForm::getInstance($subForm->getName() . $i, $this->formsource, ['control' => $control]);
+
+      if(!empty($value[$i]))
       {
         // Preprocess form
           // Get fields with dynamic options
-          $dyn_fields = $subForm->getDynamicFields();
+          $dyn_fields = $itemForm->getDynamicFields();
 
           // Add options to dynamic fields
           foreach($dyn_fields as $key => $field)
           {
-            $subForm->setDynamicOptions($field);
+            $itemForm->setDynamicOptions($field);
           }
 
         // Bind form data
-        $subForm->bind($value);
-
-        return [$subForm];
+        $itemForm->bind($value[$i]);
       }
 
-      // Multiple rows possible: Construct array and bind values to their respective forms.
-      $forms = [];
-      $value = array_values($value);
+      $forms[] = $itemForm;
+    }
 
-      // Show as many rows as we have values, but at least min and at most max.
-      $c = max($this->min, min(\count($value), $this->max));
-
-      for($i = 0; $i < $c; $i++)
-      {
-        $control  = $this->name . '[' . $this->fieldname . $i . ']';
-        $itemForm = ConfigForm::getInstance($subForm->getName() . $i, $this->formsource, ['control' => $control]);
-
-        if(!empty($value[$i]))
-        {
-          // Preprocess form
-            // Get fields with dynamic options
-            $dyn_fields = $itemForm->getDynamicFields();
-
-            // Add options to dynamic fields
-            foreach($dyn_fields as $key => $field)
-            {
-              $itemForm->setDynamicOptions($field);
-            }
-
-          // Bind form data
-          $itemForm->bind($value[$i]);
-        }
-
-        $forms[] = $itemForm;
-      }
-
-      return $forms;
+    return $forms;
   }
 }

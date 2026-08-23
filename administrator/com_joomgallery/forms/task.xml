@@ -3,6 +3,7 @@
   <fieldset name="general" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
     <field name="id"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            label="JGLOBAL_FIELD_ID_LABEL" />
@@ -10,16 +11,16 @@
     <field name="title"
            type="text"
            maxlength="255"
-           filter="safehtml"
+           filter="string"
            label="JGLOBAL_TITLE"
            message="COM_JOOMGALLERY_ERROR_NEEDS_TITLE" />
 
     <field name="type"
-				   type="taskType"
-				   label="COM_JOOMGALLERY_TASK_TYPE"
-				   required="true"
-				   readonly="true"
-				   maxlength="1024" />
+           type="taskType"
+           label="COM_JOOMGALLERY_TASK_TYPE"
+           required="true"
+           readonly="true"
+           maxlength="1024" />
 
     <field name="taskid"
            type="jgtask"
@@ -29,13 +30,20 @@
 
     <field name="queue"
            type="text"
-           required="true"
-           default="0"
+           required="false"
+           default=""
            label="COM_JOOMGALLERY_TASK_QUEUE_LABEL"
            description="COM_JOOMGALLERY_TASK_QUEUE_DESC" />
 
+    <field name="params"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_taskparams.xml"
+           layout="joomla.form.field.subform.default"
+           label="COM_JOOMGALLERY_PARAMETERS" />
+
     <field name="note"
            type="text"
+           filter="string"
            label="JFIELD_NOTE_LABEL"
            description="JGLOBAL_FIELD_VERSION_NOTE_DESC"
            class="inputbox"
@@ -49,12 +57,13 @@
            default="1"
            size="1"
            label="JPUBLISHED">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
     </field>
 
     <field name="times_executed"
            type="text"
+           filter="integer"
            readonly="true"
            class="readonly"
            default="0"
@@ -64,7 +73,7 @@
            type="hidden"
            filter="unset" />
 
-    <field name="ordering"/>
+    <field name="ordering" filter="integer"/>
 
     <field name="last_execution"
            type="calendar"

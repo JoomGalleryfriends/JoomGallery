@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -34,6 +34,11 @@ class ImagesModel extends AdminImagesModel
    */
   function __construct($config = [])
   {
+    if(!empty($config['context']))
+    {
+      $this->context = (string) $config['context'];
+    }
+
     if(empty($config['filter_fields']))
     {
       $config['filter_fields'] = [
@@ -149,6 +154,11 @@ class ImagesModel extends AdminImagesModel
 
     if($start > 0)
     {
+      if($this->globalLimit && $start >= $this->globalLimit)
+      {
+        return 0;
+      }
+
       $pages = \boolval($this->getState('list.pages', 1));
       $limit = $this->getState('list.limit');
       $total = $this->getTotal();
@@ -164,5 +174,42 @@ class ImagesModel extends AdminImagesModel
     $this->cache[$store] = $start;
 
     return $this->cache[$store];
+  }
+
+  /**
+   * Method to clear filter state.
+   *
+   * @since   4.4.0
+   */
+  public function clearFilter()
+  {
+    $defaults = [
+      'search'         => '',
+      'published'      => '*',
+      'language'       => '',
+      'showunapproved' => '1',
+      'showhidden'     => '1',
+      'access'         => [],
+      'created_by'     => '',
+      'category'       => [],
+      'tag'            => [],
+      'and'            => false,
+    ];
+
+    // Guess context
+    $com     = $this->app->getInput()->get('option', 'com_joomgallery', 'string');
+    $view    = $this->app->getInput()->get('view', '', 'string');
+    $context = $com . '.' . $view . '.images';
+
+    if($view == 'images')
+    {
+      $context = $com . '.images';
+    }
+
+    foreach($defaults as $name => $default)
+    {
+      $this->app->setUserState($context . '.filter.' . $name, null);
+      $this->setState('filter.' . $name, $default);
+    }
   }
 }

@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Site\Model\ImagesModel;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -35,6 +36,31 @@ class GalleryModel extends JoomItemModel
   protected $type = 'gallery';
 
   /**
+   * Images list model
+   *
+   * @access  protected
+   * @var     ImagesModel
+   */
+  protected $imagesModel = null;
+
+  /**
+   * Constructor
+   *
+   * @param   array  $config  An optional associative array of configuration settings.
+   *
+   * @return  void
+   * @since   4.4.0
+   */
+  function __construct($config = [])
+  {
+    parent::__construct($config);
+
+    $this->imagesModel         = $this->component->getMVCFactory()->createModel('images', 'site', ['context' => 'com_joomgallery.gallery.images']);
+    $this->imagesModel->search = 'jg_gallery_view_searchprovider';
+    $this->imagesModel->getState();
+  }
+
+  /**
    * Method to auto-populate the model state.
    *
    * Note. Calling getState in this method will result in recursion.
@@ -48,6 +74,9 @@ class GalleryModel extends JoomItemModel
   protected function populateState()
   {
     $this->loadComponentParams();
+
+    $params = $this->imagesModel->getParams();
+    $this->imagesModel->setGlobLimit($params['configs']->get('jg_gallery_view_limit_images', 100));
   }
 
   /**
@@ -70,6 +99,18 @@ class GalleryModel extends JoomItemModel
     // Get Gallery description
     $params                  = $this->getParams();
     $this->item->description = $params['configs']->get('jg_gallery_view_description', '', 'STRING');
+
+    // Get Search query string
+    $search = trim((string) $this->app->getInput()->get('q', '', 'string'));
+
+    // Remove control characters, but keep normal Unicode characters,
+    // punctuation, accents and umlauts.
+    $search = preg_replace('/[\x00-\x1F\x7F]/u', '', $search) ?? '';
+
+    // Prevent excessively large search input.
+    $search = mb_substr($search, 0, 255, 'UTF-8');
+
+    $this->item->query = $search;
 
     return $this->item;
   }
@@ -116,23 +157,19 @@ class GalleryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load images list model
-    $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
-    $listModel->getState();
-
     // Select fields to load
     $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum'];
     $fields = $this->addColumnPrefix('a', $fields);
 
     // Apply preselected filters and fields selection for images
-    $this->setImagesModelState($listModel, $fields);
+    $this->setImagesModelState($this->imagesModel, $fields);
 
     // Get images
-    $items = $listModel->getItems();
+    $items = $this->imagesModel->getItems();
 
-    if(!empty($listModel->getError()))
+    if(!empty($this->imagesModel->getError()))
     {
-      $this->setError($listModel->getError());
+      $this->setError($this->imagesModel->getError());
     }
 
     return $items;
@@ -150,20 +187,49 @@ class GalleryModel extends JoomItemModel
       throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 1);
     }
 
-    // Load images list model
-    $listModel = $this->component->getMVCFactory()->createModel('images', 'site');
-    $listModel->getState();
-
     // Apply preselected filters and fields selection for images
-    $this->setImagesModelState($listModel);
+    $this->setImagesModelState($this->imagesModel);
 
     // Get pagination
-    $pagination = $listModel->getPagination();
+    $pagination = $this->imagesModel->getPagination();
 
     // Set additional query parameter to pagination
     $pagination->setAdditionalUrlParam('contenttype', 'image');
 
     return $pagination;
+  }
+
+  /**
+   * Get the filter form
+   *
+   * @param   array    $data      data
+   * @param   boolean  $loadData  load current data
+   *
+   * @return  Form|null  The \JForm object or null if the form can't be found
+   */
+  public function getFilterForm($data = [], $loadData = true)
+  {
+    $form = $this->imagesModel->getFilterForm($data, $loadData);
+
+    // Get the XML category field element
+    $field = $form->getXml()->xpath('//field[@name="category"]');
+
+    if(!empty($field))
+    {
+      $field[0]->addAttribute('edit', 'false');
+    }
+
+    return $form;
+  }
+
+  /**
+   * Function to get the active filters
+   *
+   * @return  array  Associative array in the format: array('filter_published' => 0)
+   */
+  public function getActiveFilters()
+  {
+    return $this->imagesModel->getActiveFilters();
   }
 
   /**
@@ -191,6 +257,10 @@ class GalleryModel extends JoomItemModel
     $listModel->setState('filter.published', 1);
     $listModel->setState('filter.showunapproved', 0);
     $listModel->setState('filter.showhidden', 0);
+
+    // Apply the search
+    $search = $listModel->getUserStateFromRequest($listModel->context . '.filter.search', 'q', '');
+    $listModel->setState('filter.search', $search);
 
     if(Multilanguage::isEnabled())
     {

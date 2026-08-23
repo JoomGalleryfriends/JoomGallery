@@ -2,6 +2,7 @@
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <field name="id"
          type="text"
+         filter="integer"
          readonly="true"
          class="readonly"
          hidden="true"
@@ -14,6 +15,7 @@
          filter="unset" />
 
   <field name="ordering"
+         filter="integer"
          hidden="true" />
 
   <field name="checked_out"
@@ -23,6 +25,7 @@
 
   <field name="created_by"
          type="createdby"
+         filter="integer"
          default="0"
          hidden="true"
          label="JGLOBAL_FIELD_CREATED_BY_LABEL"
@@ -30,6 +33,7 @@
 
   <field name="modified_by"
          type="modifiedby"
+         filter="unset"
          default="0"
          hidden="true"
          label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
@@ -44,7 +48,7 @@
 
   <field name="note"
          type="textarea"
-         filter="safehtml"
+         filter="string"
          rows="5"
          cols="40"
          default=""
@@ -286,7 +290,7 @@
              buttons="add,remove"
              formsource="administrator/components/com_joomgallery/forms/subform_imageconvert.xml"
              layout="joomla.form.field.subform.repeatable-config"
-             label="COM_JOOMGALLERY_CONFIG_IP_STATIC" 
+             label="COM_JOOMGALLERY_CONFIG_IP_STATIC"
              description="COM_JOOMGALLERY_CONFIG_IP_STATIC_DESC" />
 
       <field name="jg_dynamic_watermark"
@@ -725,6 +729,15 @@
   </fieldset>
 
   <fieldset type="tab" name="backend" label="COM_JOOMGALLERY_CONFIG_TAB_BACKEND" note="backend">
+    <fieldset type="tab" name="backend-general" label="COM_JOOMGALLERY_CONFIG_TAB_COMMON">
+      <field name="jg_backend_searchprovider"
+             type="jgdynamiclist"
+             dynamic="true"
+             default="sql"
+             script="getSearchProviders"
+             label="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LABEL"
+             description="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LONG" />
+    </fieldset>
   </fieldset>
 
   <fieldset type="tab" name="frontend" label="COM_JOOMGALLERY_CONFIG_TAB_FRONTEND" note="frontend">
@@ -787,7 +800,7 @@
                type="list"
                label="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK"
                description="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK_DESC"
-               default="1"
+               default="0"
                validate="options" >
             <option value="0">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK_OPT0</option>
             <option value="1">COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_BROWSE_CATEGORIES_LINK_OPT1</option>
@@ -808,8 +821,35 @@
                filter="integer"
                label="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_NUMB_IMAGES_DESC" />
+        <field name="jg_gallery_view_limit_images"
+               type="number"
+               default="100"
+               min="1"
+               step="1"
+               validate="number"
+               filter="integer"
+               label="COM_JOOMGALLERY_CONFIG_LIMIT_IMAGES"
+               description="COM_JOOMGALLERY_CONFIG_LIMIT_IMAGES_DESC" />
+        <field name="jg_gallery_view_searchprovider"
+               type="jgdynamiclist"
+               dynamic="true"
+               default="finder"
+               script="getSearchProviders"
+               label="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LABEL"
+               description="COM_JOOMGALLERY_CONFIG_SEARCHPROVIDER_SELECT_LONG" />
+       <field  name="jg_gallery_view_autosuggest"
+               type="radio"
+               label="COM_JOOMGALLERY_CONFIG_AUTOSUGGEST_LABEL"
+               description="COM_JOOMGALLERY_CONFIG_AUTOSUGGEST_LONG"
+               default="1"
+               layout="joomla.form.field.radio.switcher"
+               showon="jg_gallery_view_searchprovider:finder"
+               validate="options">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
         <field name="jg_gallery_view_ordering"
-               type="list" 
+               type="list"
                label="COM_JOOMGALLERY_CONFIG_SORT_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_SORT_IMAGES_DESC"
                default="a.hits DESC"
@@ -891,6 +931,16 @@
     </fieldset>
 
     <fieldset type="tab" name="frontend-categoryview" label="COM_JOOMGALLERY_CONFIG_TAB_CATEGORY_VIEW">
+        <field name="jg_category_view_browse_categories_link"
+               type="list"
+               label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK"
+               description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK_DESC"
+               default="1"
+               validate="options" >
+            <option value="0">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK_OPT0</option>
+            <option value="1">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK_OPT1</option>
+            <option value="2">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_CATEGORIES_LINK_OPT2</option>
+        </field>
         <field name="jg_category_view_browse_images_link"
                type="list"
                label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_IMAGES_LINK"
@@ -1011,6 +1061,17 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
+        <field name="jg_category_view_subcategories_image_count"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_IMAGE_COUNT"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_SUBCATEGORIES_IMAGE_COUNT_DESC"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
         <field name="spacer2"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES"
             type="spacer"
@@ -1035,7 +1096,7 @@
             showon="jg_category_view_pagination:0[OR]jg_category_view_pagination:2"
         />
         <field name="jg_category_view_ord_images"
-               type="list" 
+               type="list"
                label="COM_JOOMGALLERY_CONFIG_SORT_IMAGES"
                description="COM_JOOMGALLERY_CONFIG_SORT_IMAGES_DESC"
                default="a.date ASC"
@@ -1078,7 +1139,7 @@
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
-        </field> 
+        </field>
         <field name="jg_category_view_image_class"
             type="radio"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_IMAGE_CLASS"

@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -48,6 +48,7 @@ class HtmlView extends JoomGalleryView
 
     $this->state          = $model->getState();
     $this->items          = $model->getItems();
+    $this->pagination     = $model->getPagination();
     $this->filterForm     = $model->getFilterForm();
     $this->activeFilters  = $model->getActiveFilters();
     $this->scheduledTasks = $model->getScheduledTasks();

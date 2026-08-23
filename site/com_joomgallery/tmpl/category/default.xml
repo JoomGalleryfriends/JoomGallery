@@ -243,6 +243,28 @@
                 <option value="1">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT1</option>
                 <option value="2">COM_JOOMGALLERY_MENU_CATEGORY_VIEW_PAGINATION_OPT2</option>
             </field>
+            <field name="jg_category_view_ord_images"
+                type="jglist"
+                useglobal="true"
+                parentclass="span-3"
+                label="COM_JOOMGALLERY_CONFIG_SORT_IMAGES"
+                description="COM_JOOMGALLERY_CONFIG_SORT_IMAGES_DESC"
+                validate="options"
+                >
+                <option value="a.ordering ASC">JGRID_HEADING_ORDERING_ASC</option>
+                <option value="a.ordering DESC">JGRID_HEADING_ORDERING_DESC</option>
+                <option value="a.date ASC">JDATE_ASC</option>
+                <option value="a.date DESC">JDATE_DESC</option>
+                <option value="a.author ASC">JAUTHOR_ASC</option>
+                <option value="a.author DESC">JAUTHOR_DESC</option>
+                <option value="a.title ASC">JGLOBAL_TITLE_ASC</option>
+                <option value="a.title DESC">JGLOBAL_TITLE_DESC</option>
+                <option value="a.hits ASC">JGLOBAL_HITS_ASC</option>
+                <option value="a.hits DESC">JGLOBAL_HITS_DESC</option>
+                <option value="a.downloads ASC">COM_JOOMGALLERY_DOWNLOADS_ASC</option>
+                <option value="a.downloads DESC">COM_JOOMGALLERY_DOWNLOADS_DESC</option>
+                <option value="RAND()">COM_JOOMGALLERY_RANDOM_ORDER</option>
+            </field>   
             <field
                 name="jg_category_view_number_of_reloaded_images"
                 type="jgnumber"

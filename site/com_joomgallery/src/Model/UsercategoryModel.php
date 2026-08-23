@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -161,6 +161,16 @@ class UsercategoryModel extends AdminCategoryModel
       return false;
     }
 
+    // Only component managers/admins and the current owner may transfer ownership.
+    $id = (int) $this->getState('category.id', $this->app->getInput()->getInt('id', 0));
+
+    if(!$this->canChangeCreatedBy($id))
+    {
+      // Keep the owner visible, but prevent changes in both the UI and submitted data.
+      $form->setFieldAttribute('created_by', 'disabled', 'true');
+      $form->setFieldAttribute('created_by', 'filter', 'unset');
+    }
+
     return $form;
   }
 
@@ -173,7 +183,29 @@ class UsercategoryModel extends AdminCategoryModel
    */
   protected function loadFormData(): \Joomla\CMS\Object\CMSObject|\stdClass|array
   {
-    return parent::loadFormData();
+    $data = parent::loadFormData();
+    $id   = (int) $this->getState('category.id', 0);
+
+    // Validation requests may have stored submitted form data in the session.
+    // Do not display a rejected ownership change on the form.
+    if($id > 0 && !$this->canChangeCreatedBy($id))
+    {
+      $item = $this->getItem($id);
+
+      if($item)
+      {
+        if(\is_array($data))
+        {
+          $data['created_by'] = (int) $item->created_by;
+        }
+        else
+        {
+          $data->created_by = (int) $item->created_by;
+        }
+      }
+    }
+
+    return $data;
   }
 
   /**

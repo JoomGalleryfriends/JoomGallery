@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -292,6 +292,13 @@ $canDelete = false;
                         }
                         ?>
                       </a>
+                      <?php if($item->hidden === 1) : ?>
+                        <div class="small">
+                          <span class="badge bg-secondary">
+                            <?php echo Text::_('COM_JOOMGALLERY_HIDDEN'); ?>
+                          </span>
+                        </div>
+                      <?php endif; ?>
                     </th>
 
                     <td class="d-none d-lg-table-cell text-center">

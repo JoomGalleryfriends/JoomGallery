@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -35,6 +35,14 @@ class ImagesModel extends JoomListModel
    * @var     string
    */
   protected $type = 'image';
+
+  /**
+   * Configuration param for search provider
+   *
+   * @access  public
+   * @var     string
+   */
+  public $search = 'jg_backend_searchprovider';
 
   /**
    * Constructor
@@ -138,6 +146,14 @@ class ImagesModel extends JoomListModel
     $this->setState('filter.tag', $tag);
     $and = $this->getUserStateFromRequest($this->context . '.filter.and', 'filter_and', false);
     $this->setState('filter.and', $and);
+    $ids = $this->getUserStateFromRequest($this->context . '.filter.ids', 'filter_ids', '');
+    $this->setState('filter.ids', $ids);
+    $dateField = $this->getUserStateFromRequest($this->context . '.filter.datefiled', 'filter_datefield', 'date');
+    $this->setState('filter.datefiled', $dateField);
+    $startDate = $this->getUserStateFromRequest($this->context . '.filter.startdate', 'filter_startdate', '');
+    $this->setState('filter.startdate', $startDate);
+    $endDate = $this->getUserStateFromRequest($this->context . '.filter.enddate', 'filter_enddate', '');
+    $this->setState('filter.enddate', $endDate);
 
     // Force a language
     if(!empty($forcedLanguage))
@@ -168,6 +184,10 @@ class ImagesModel extends JoomListModel
     $id .= ':' . $this->getState('filter.language');
     $id .= ':' . $this->getState('filter.showunapproved');
     $id .= ':' . $this->getState('filter.showhidden');
+    $id .= ':' . $this->getState('filter.datefield');
+    $id .= ':' . $this->getState('filter.startdate');
+    $id .= ':' . $this->getState('filter.enddate');
+    $id .= ':' . serialize($this->getState('filter.ids'));
     $id .= ':' . serialize($this->getState('filter.access'));
     $id .= ':' . serialize($this->getState('filter.created_by'));
     $id .= ':' . serialize($this->getState('filter.category'));
@@ -190,6 +210,19 @@ class ImagesModel extends JoomListModel
     // Create a new query object.
     $db    = $this->getDatabase();
     $query = $db->getQuery(true);
+
+    // Initialize search service
+    $this->component->createConfig();
+    try
+    {
+      $searchProvider = $this->component->getSearch();
+    }
+    catch (\TypeError $e)
+    {
+      $searchProviderName = $this->component->getConfig()->get($this->search, 'sql');
+      $this->component->createSearch($searchProviderName, $db, $this->state);
+      $searchProvider = $this->component->getSearch();
+    }
 
     // Check if logic and is active
     $logicAnd = (bool) ($this->getState('filter.and') > 0);
@@ -217,18 +250,12 @@ class ImagesModel extends JoomListModel
     }
 
     // Select the required fields from the table.
-    if(!empty($tag) && \count($tag) > 1 && !$logicAnd)
-    {
-      // Add DISTINCT when filtering with multiple tags
-      $query->select('DISTINCT ' . $this->getState('list.select', 'a.*'));
-    }
-    else
-    {
-      $query->select($this->getState('list.select', 'a.*'));
-    }
+    // Add DISTINCT when filtering with multiple tags
+    $useDistinct = !$searchProvider->handlesFilter('tags') && !empty($tag) && \count($tag) > 1 && !$logicAnd;
+    $query->select($this->getListSelectFields($useDistinct));
 
     // Select table
-    if(!empty($tag) && $logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && $logicAnd)
     {
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
@@ -271,7 +298,7 @@ class ImagesModel extends JoomListModel
     $query->select([$db->quoteName('l.title', 'language_title'), $db->quoteName('l.image', 'language_image')]);
     $query->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'));
 
-    if(!empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
       $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
@@ -279,7 +306,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by access level.
-    $filter_access = $this->state->get('filter.access');
+    $filter_access = $this->getState('filter.access');
 
     if(!empty($filter_access))
     {
@@ -316,25 +343,16 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by search
-    $search = $this->getState('filter.search');
+    $search = trim((string) $this->getState('filter.search'));
 
-    if(!empty($search))
+    $hasActiveSearchProviderFilter =
+      !empty($this->getState('filter.category'))
+      || !empty($this->getState('filter.tag'))
+      || !empty($this->getState('filter.language'));
+
+    if(!empty($search) || $hasActiveSearchProviderFilter)
     {
-      if(stripos($search, 'id:') === 0)
-      {
-        $search = (int) substr($search, 3);
-        $query->where($db->quoteName('a.id') . ' = :search')
-          ->bind(':search', $search, ParameterType::INTEGER);
-      }
-      else
-      {
-        $search = '%' . str_replace(' ', '%', trim($search)) . '%';
-        $query->where(
-            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
-            . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
-        )
-          ->bind([':search1', ':search2', ':search3'], $search);
-      }
+      $this->component->getSearch()->applyToQuery($query, $search, 'a');
     }
 
     // Filter by published state
@@ -389,7 +407,13 @@ class ImagesModel extends JoomListModel
 
     if(!$showhidden)
     {
-      $query->where($db->quoteName('a.hidden') . ' = 0');
+    $query->where(
+        [
+          $db->quoteName('a.hidden') . ' = 0',
+          $db->quoteName('category.hidden') . ' = 0',
+          $db->quoteName('category.in_hidden') . ' = 0',
+        ]
+    );
     }
 
     // Filter by unapproved images
@@ -404,7 +428,7 @@ class ImagesModel extends JoomListModel
     $catId = $this->getState('filter.category');
 
     // Convert to array
-    if(isset($catId) && !\is_array($catId))
+    if(!$searchProvider->handlesFilter('category') && isset($catId) && !\is_array($catId))
     {
       $catId = (string) preg_replace('/[^0-9\,]/i', '', $catId);
 
@@ -414,7 +438,7 @@ class ImagesModel extends JoomListModel
       }
     }
 
-    if(!empty($catId))
+    if(!$searchProvider->handlesFilter('category') && !empty($catId))
     {
       if(is_numeric($catId))
       {
@@ -430,7 +454,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by tags (OR logic)
-    if(!empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       if(\count($tag) === 1)
       {
@@ -440,6 +464,26 @@ class ImagesModel extends JoomListModel
       else
       {
         $query->whereIn($db->quoteName('t.id'), $tag);
+      }
+    }
+
+    // Filter by IDs
+    $ids = $this->getState('filter.ids');
+
+    if(!empty($ids))
+    {
+      if(!\is_array($ids))
+      {
+        $ids = (string) preg_replace('/[^0-9,]/', '', $ids);
+        $ids = strpos($ids, ',') !== false ? explode(',', $ids) : [$ids];
+      }
+
+      $ids = ArrayHelper::toInteger((array) $ids);
+      $ids = array_filter($ids);
+
+      if(!empty($ids))
+      {
+        $query->whereIn($db->quoteName('a.id'), $ids);
       }
     }
 
@@ -465,23 +509,67 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter on the language.
-    if($language = $this->getState('filter.language'))
+    if(!$searchProvider->handlesFilter('language') && $language = $this->getState('filter.language'))
     {
       $query->where($db->quoteName('a.language') . ' = :language')
         ->bind(':language', $language);
     }
 
-    // Add the list ordering clause.
-    $orderCol  = $this->state->get('list.ordering', 'a.id');
-    $orderDirn = $this->state->get('list.direction', 'ASC');
+    // Filter by date range
+    $dateField = trim((string) $this->getState('filter.datefield'));
+    $startDate = trim((string) $this->getState('filter.startdate'));
+    $endDate   = trim((string) $this->getState('filter.enddate'));
 
-    if($orderCol && $orderDirn)
+    if($startDate !== '')
     {
-      $query->order($db->escape($orderCol . ' ' . $orderDirn));
+      // Adjust date format
+      if(!preg_match('/\d{2}:\d{2}:\d{2}$/', $startDate))
+      {
+        $startDate = Factory::getDate($startDate)->setTime(0, 0, 0);
+      }
+      else
+      {
+        $startDate = Factory::getDate($startDate);
+      }
+
+      $startDate = $startDate->toSql();
+
+      $query->where($db->quoteName('a.' . $dateField) . ' >= :startDate')
+        ->bind(':startDate', $startDate);
     }
-    else
+
+    if($endDate !== '')
     {
-      $query->order($db->escape($this->state->get('list.fullordering', 'a.lft ASC')));
+      // Adjust date format
+      if(!preg_match('/\d{2}:\d{2}:\d{2}$/', $endDate))
+      {
+        $endDate = Factory::getDate($endDate)->setTime(23, 59, 59);
+      }
+      else
+      {
+        $endDate = Factory::getDate($endDate);
+      }
+
+      $endDate = $endDate->toSql();
+
+      $query->where($db->quoteName('a.' . $dateField) . ' <= :endDate')
+        ->bind(':endDate', $endDate);
+    }
+
+    // Add the list ordering clause.
+    if(!$searchProvider->handlesOrdering())
+    {
+      $orderCol  = $this->getState('list.ordering', 'a.id');
+      $orderDirn = $this->getState('list.direction', 'ASC');
+
+      if($orderCol && $orderDirn)
+      {
+        $query->order($db->escape($orderCol . ' ' . $orderDirn));
+      }
+      else
+      {
+        $query->order($db->escape($this->getState('list.fullordering', 'a.lft ASC')));
+      }
     }
 
     return $query;
@@ -490,18 +578,31 @@ class ImagesModel extends JoomListModel
   /**
    * Build an SQL query to load the list data for counting.
    *
-   * @return  DatabaseQuery
+   * @return  \Joomla\Database\QueryInterface
    *
    * @since   4.1.0
    */
   protected function getCountListQuery()
   {
     // Create a new query object.
-    $db    = $this->getDbo();
+    $db    = $this->getDatabase();
     $query = $db->getQuery(true);
 
+    // Initialize search service
+    $this->component->createConfig();
+    try
+    {
+      $searchProvider = $this->component->getSearch();
+    }
+    catch (\TypeError $e)
+    {
+      $searchProviderName = $this->component->getConfig()->get($this->search);
+      $this->component->createSearch($searchProviderName, $db, $this->state);
+      $searchProvider = $this->component->getSearch();
+    }
+
     // Check if logic and is active
-    $logicAnd = (bool) $this->getState('filter.and');
+    $logicAnd = (bool) ($this->getState('filter.and') > 0);
 
     // Check if filtering by tags
     $tag = $this->getState('filter.tag');
@@ -526,7 +627,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select the required fields from the table.
-    if(!empty($tag) && \count($tag) > 1 && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && \count($tag) > 1 && !$logicAnd)
     {
       // Add DISTINCT when filtering with multiple tags
       $query->select('COUNT(DISTINCT a.id)');
@@ -537,7 +638,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Select table
-    if(!empty($tag) && $logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && $logicAnd)
     {
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
@@ -556,7 +657,7 @@ class ImagesModel extends JoomListModel
       $query->from($db->quoteName('#__joomgallery', 'a'));
     }
 
-    if(!empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
       $query->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'tr') . ' ON ' . $db->quoteName('tr.imgid') . ' = ' . $db->quoteName('a.id'));
@@ -674,7 +775,13 @@ class ImagesModel extends JoomListModel
 
     if(!$showhidden)
     {
-      $query->where($db->quoteName('a.hidden') . ' = 0');
+    $query->where(
+        [
+          $db->quoteName('a.hidden') . ' = 0',
+          $db->quoteName('category.hidden') . ' = 0',
+          $db->quoteName('category.in_hidden') . ' = 0',
+        ]
+    );
     }
 
     // Filter by unapproved images
@@ -689,7 +796,7 @@ class ImagesModel extends JoomListModel
     $catId = $this->getState('filter.category');
 
     // Convert to array
-    if(isset($catId) && !\is_array($catId))
+    if(!$searchProvider->handlesFilter('category') && isset($catId) && !\is_array($catId))
     {
       $catId = (string) preg_replace('/[^0-9\,]/i', '', $catId);
 
@@ -699,7 +806,7 @@ class ImagesModel extends JoomListModel
       }
     }
 
-    if(!empty($catId))
+    if(!$searchProvider->handlesFilter('category') && !empty($catId))
     {
       if(is_numeric($catId))
       {
@@ -715,7 +822,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by tags (OR logic)
-    if(!empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       if(\count($tag) === 1)
       {
@@ -725,6 +832,26 @@ class ImagesModel extends JoomListModel
       else
       {
         $query->whereIn($db->quoteName('t.id'), $tag);
+      }
+    }
+
+    // Filter by IDs
+    $ids = $this->getState('filter.ids');
+
+    if(!empty($ids))
+    {
+      if(!\is_array($ids))
+      {
+        $ids = (string) preg_replace('/[^0-9,]/', '', $ids);
+        $ids = strpos($ids, ',') !== false ? explode(',', $ids) : [$ids];
+      }
+
+      $ids = ArrayHelper::toInteger((array) $ids);
+      $ids = array_filter($ids);
+
+      if(!empty($ids))
+      {
+        $query->whereIn($db->quoteName('a.id'), $ids);
       }
     }
 
@@ -756,18 +883,43 @@ class ImagesModel extends JoomListModel
         ->bind(':language', $language);
     }
 
+    // Filter by date range
+    $dateField = trim((string) $this->getState('filter.datefield'));
+    $startDate = trim((string) $this->getState('filter.startdate'));
+    $endDate   = trim((string) $this->getState('filter.enddate'));
+
+    if($startDate !== '')
+    {
+      // Adjust date format
+      if(!preg_match('/\d{2}:\d{2}:\d{2}$/', $startDate))
+      {
+        $startDate = Factory::getDate($startDate)->setTime(0, 0, 0);
+      }
+      else
+      {
+        $startDate = Factory::getDate($startDate);
+      }
+
+      $query->where($db->quoteName('a.' . $dateField) . ' >= :startDate')
+        ->bind(':startDate', $db->toSql($startDate));
+    }
+
+    if($endDate !== '')
+    {
+      // Adjust date format
+      if(!preg_match('/\d{2}:\d{2}:\d{2}$/', $endDate))
+      {
+        $endDate = Factory::getDate($endDate)->setTime(23, 59, 59);
+      }
+      else
+      {
+        $endDate = Factory::getDate($endDate);
+      }
+
+      $query->where($db->quoteName('a.' . $dateField) . ' <= :endDate')
+        ->bind(':endDate', $db->toSql($endDate));
+    }
+
     return $query;
-  }
-
-  /**
-   * Get an array of data items
-   *
-   * @return mixed Array of data items on success, false on failure.
-   */
-  public function getItems()
-  {
-    $items = parent::getItems();
-
-    return $items;
   }
 }

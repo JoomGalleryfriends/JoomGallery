@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -228,10 +228,7 @@ class ImageTable extends Table implements VersionableTableInterface
       $array['created_time'] = $date->toSql();
     }
 
-    if(!key_exists('created_by', $array) || empty($array['created_by']))
-    {
-      $array['created_by'] = Factory::getApplication()->getIdentity()->id;
-    }
+    $this->protectCreatedBy($array, true);
 
     if($array['id'] == 0 && !$component->getConfig()->get('jg_approve'))
     {

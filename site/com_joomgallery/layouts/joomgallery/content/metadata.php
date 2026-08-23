@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -35,7 +35,7 @@ $i        = 0;
           $value = implode(',', $value);
         }
       ?>
-      <li class="list-inline-item metadata-<?php echo $key; ?> metadata-list<?php echo $i; ?>" itemprop="keywords">
+      <li class="list-inline-item metadata-<?php echo $this->escape($key); ?> metadata-list<?php echo (int) $i; ?>" itemprop="keywords">
         <span><?php echo Text::_($key); ?></span>: <span><?php echo $this->escape($value); ?></span>;
       </li>
       <?php $i++; ?>

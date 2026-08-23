@@ -3,7 +3,7 @@
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
  *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
@@ -87,31 +87,5 @@ class CategoriesModel extends AdminCategoriesModel
     // e.g. user list of categories: $this->setState('filter.created_by', Factory::getApplication()->getIdentity());
 
     $this->loadComponentParams();
-  }
-
-  /**
-   * Build an SQL query to load the list data.
-   *
-   * @return  DatabaseQuery
-   *
-   * @since   4.0.0
-   */
-  protected function getListQuery()
-  {
-    $query = parent::getListQuery();
-
-    return $query;
-  }
-
-  /**
-   * Method to get an array of data items
-   *
-   * @return  mixed An array of data on success, false on failure.
-   */
-  public function getItems()
-  {
-    $items = parent::getItems();
-
-    return $items;
   }
 }
