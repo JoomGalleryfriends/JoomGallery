@@ -659,6 +659,10 @@ abstract class JoomAdminModel extends AdminModel
    */
   protected function cleanCache($group = null)
   {
+    JoomHelper::clearCache($this->typeAlias);
+
+    $this->getAcl()->clearCache();
+
     return parent::cleanCache($this->typeAlias);
   }
 

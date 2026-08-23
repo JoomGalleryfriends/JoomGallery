@@ -79,4 +79,22 @@ interface AccessInterface
    * @since   4.0.0
    */
   public function setUser($user);
+
+  /**
+   * Persist the bounded session hot cache.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public function storeCacheToSession(): void;
+
+  /**
+   * Clear cached ACL results for the current identity.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public function clearCache(): void;
 }
