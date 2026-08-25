@@ -905,7 +905,7 @@ class ImagesModel extends JoomListModel
 
   /**
    * Defines the name of the search provider to be used.
-   * 
+   *
    * @param   string  $name  Name of the search provider
    *
    * @return  void
@@ -968,7 +968,7 @@ class ImagesModel extends JoomListModel
     if(str_starts_with($this->search, 'jg'))
     {
       $this->component->createConfig();
-      $searchProviderName = $this->component->getConfig()->get($this->search, 'jg_backend_searchprovider'); 
+      $searchProviderName = $this->component->getConfig()->get($this->search, 'jg_backend_searchprovider');
     }
 
     // Create new serach provider service
