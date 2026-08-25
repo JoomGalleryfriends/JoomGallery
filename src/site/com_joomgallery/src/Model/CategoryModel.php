@@ -58,6 +58,7 @@ class CategoryModel extends JoomItemModel
     if($this->imagesModel === null)
     {
       $this->imagesModel = $this->component->getMVCFactory()->createModel('images', 'site', ['context' => 'com_joomgallery.category.images']);
+      $this->imagesModel->setSearchProvider('sql');
       $this->imagesModel->getState();
     }
 
