@@ -326,7 +326,7 @@ class ImagesController extends JoomAdminController
     if(empty($cid))
     {
       $this->app->getLogger()->warning(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), ['image' => 'jerror']);
-      // ToDo Manuel: Fix array to string conversion
+      // ToDo @Manuel: Fix array to string conversion
       $this->component->addLog(Text::_($this->text_prefix . '_NO_ITEM_SELECTED' . ['image' => 'jerror']), 'warning', 'jerror');
     }
     else

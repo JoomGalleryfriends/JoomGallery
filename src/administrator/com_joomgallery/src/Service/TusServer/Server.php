@@ -16,13 +16,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
-
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Request;
-use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
-use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
 use Joomla\CMS\Factory;
 use Psr\Http\Message\ResponseInterface;
 
@@ -143,9 +140,9 @@ class Server implements ServerInterface
   /**
    * Constructor
    *
-   * @param  string   $directory   The directory to use for save the file
-   * @param  string   $location    The uri to reach the TUS server
-   * @param  bool     $debug       Switches debug mode - {@see Server::debugMode}
+   * @param   string   $directory  The directory to use for save the file
+   * @param   string   $location   The uri to reach the TUS server
+   * @param   bool     $debug      Switches debug mode - {@see Server::debugMode}
    *
    * @throws File
    * @access public
@@ -165,7 +162,7 @@ class Server implements ServerInterface
   /**
    * Process the client request
    *
-   * @param   bool             $send    True to send the response, false to return the response
+   * @param   bool   $send  True to send the response, false to return the response
    *
    * @return  void|Response    void if send = true else Response object
    *
@@ -238,7 +235,7 @@ class Server implements ServerInterface
         return $this->getResponse();
       }
     }
-    catch (BadHeader $exp)
+    catch(BadHeader $exp)
     {
       if($send === false)
       {
@@ -248,7 +245,7 @@ class Server implements ServerInterface
       $this->setStatusCode(400);
       $this->addCommonHeader();
     }
-    catch (Request $exp)
+    catch(Request $exp)
     {
       if($send === false)
       {
@@ -258,7 +255,7 @@ class Server implements ServerInterface
       $this->setStatusCode($exp->getCode());
       $this->addCommonHeader();
     }
-    catch (File $exp)
+    catch(File $exp)
     {
       if($send === false)
       {
@@ -269,7 +266,7 @@ class Server implements ServerInterface
       $this->setContent($exp->getMessage());
       $this->addCommonHeader();
     }
-    catch (\Exception $exp)
+    catch(\Exception $exp)
     {
       if($send === false)
       {
@@ -284,14 +281,14 @@ class Server implements ServerInterface
     $this->app->sendHeaders();
     echo $this->app->getBody();
 
-        // The process only needs to send the HTTP headers and content: kill request after send
+    // The process only needs to send the HTTP headers and content: kill request after send
     exit;
   }
 
   /**
    * Loads an upload into the object
    *
-   * @param   string  $uuid  The uuid of the upload to load
+   * @param   string   $uuid  The uuid of the upload to load
    *
    * @return  bool    True on success, false otherwise
    */
@@ -310,7 +307,6 @@ class Server implements ServerInterface
 
     return true;
   }
-
 
 
   /**
@@ -341,7 +337,7 @@ class Server implements ServerInterface
       throw new BadHeader('Upload-Length must be a positive integer');
     }
 
-    $finalLength = (int)$headers['Upload-Length'];
+    $finalLength = (int) $headers['Upload-Length'];
 
     if($finalLength > $this->allowMaxSize)
     {
@@ -398,7 +394,7 @@ class Server implements ServerInterface
       return;
     }
 
-        // if file in storage does not exist
+    // if file in storage does not exist
     if(!file_exists($this->directory . $this->getFilename()))
     {
       // allow new upload
@@ -466,13 +462,13 @@ class Server implements ServerInterface
     }
 
     // Offset of current PATCH request
-    $offsetHeader = (int)$headers['Upload-Offset'];
+    $offsetHeader = (int) $headers['Upload-Offset'];
     // Length of data of the current PATCH request
-    $contentLength = isset($headers['Content-Length']) ? (int)$headers['Content-Length'] : null;
+    $contentLength = isset($headers['Content-Length']) ? (int) $headers['Content-Length'] : null;
     // Last offset, taken from session
-    $offsetSession = (int)$this->getMetaDataValue('offset', true);
+    $offsetSession = (int) $this->getMetaDataValue('offset', true);
     // Total length of file (expected data)
-    $lengthSession = (int)$this->getMetaDataValue('size', true);
+    $lengthSession = (int) $this->getMetaDataValue('size', true);
 
     $this->setRealFileName();
 
@@ -485,7 +481,7 @@ class Server implements ServerInterface
       return;
     }
 
-    // Check if the file is already entirely write
+    // Check if the file is already entirely written
     if($offsetSession === $lengthSession || $lengthSession === 0)
     {
       // the whole file was uploaded
@@ -611,22 +607,22 @@ class Server implements ServerInterface
 
       $this->addHeaderLine('Upload-Offset', $currentSize);
     }
-    catch (Max $exp)
+    catch(Max $exp)
     {
       $returnCode = 400;
       $returnMsg  = $exp->getMessage();
     }
-    catch (File $exp)
+    catch(File $exp)
     {
       $returnCode = 500;
       $returnMsg  = $exp->getMessage();
     }
-    catch (Abort $exp)
+    catch(Abort $exp)
     {
       $returnCode = 100;
       $returnMsg  = $exp->getMessage();
     }
-    catch (\Exception $exp)
+    catch(\Exception $exp)
     {
       $returnCode = 500;
       $returnMsg  = $exp->getMessage();
@@ -763,13 +759,13 @@ class Server implements ServerInterface
     }
 
 
-      return false;
+    return false;
   }
 
   /**
    * Add the commons headers to the HTTP response
    *
-   * @param bool $isOption Is OPTION request
+   * @param   bool   $isOption  Is OPTION request
    */
   private function addCommonHeader($isOption = false): void
   {
@@ -857,8 +853,8 @@ class Server implements ServerInterface
   /**
    * Set metaData array to property
    *
-   * @param  array  $metadata  The metadata array
-   * @param  bool   $replace   True to replace, false to append
+   * @param   array   $metadata  The metadata array
+   * @param   bool    $replace   True to replace, false to append
    *
    * @return void
    */
@@ -867,24 +863,24 @@ class Server implements ServerInterface
     // Make keys lowercase
     foreach($metadata as $key => $value)
     {
-    $metadata[strtolower($key)] = $value;
+      $metadata[strtolower($key)] = $value;
     }
 
     if($replace)
     {
-    $this->metaData = $metadata;
+      $this->metaData = $metadata;
     }
     else
     {
-    $this->metaData = array_merge($this->metaData, $metadata);
+      $this->metaData = array_merge($this->metaData, $metadata);
     }
   }
 
   /**
    * Get a metaData value from property
    *
-   * @param string $key    The key for which you want value
-   * @param bool   $throw  True if exception should be thrown
+   * @param   string   $key    The key for which you want value
+   * @param   bool     $throw  True if exception should be thrown
    *
    * @return mixed The value for the id-key, false on failure
    *
@@ -906,14 +902,14 @@ class Server implements ServerInterface
     }
 
 
-      return false;
+    return false;
   }
 
   /**
    * Set a metaData value in the property
    *
-   * @param  string  $key    The key for which you want set the value
-   * @param  mixed   $value  The value for the id-key to save
+   * @param   string   $key    The key for which you want set the value
+   * @param   mixed    $value  The value for the id-key to save
    *
    * @return void
    */
@@ -926,7 +922,7 @@ class Server implements ServerInterface
     {
       if($data['size'] === 0)
       {
-      $data['size'] = $value;
+        $data['size'] = $value;
       }
     }
     else
@@ -954,7 +950,7 @@ class Server implements ServerInterface
   /**
    * Parse the Tus Upload-Metadata header
    *
-   * @param  string   $header   Upload-Metadata header string
+   * @param   string   $header  Upload-Metadata header string
    *
    * @return array    Associative array with all Upload-Metadata
    */
@@ -964,8 +960,8 @@ class Server implements ServerInterface
 
     if(\count($parts) <= 1)
     {
-    // if only one metadata exists, it is the filename
-    return ['filename' => $header];
+      // if only one metadata exists, it is the filename
+      return ['filename' => $header];
     }
 
     // multiple metadata submitted
@@ -973,8 +969,8 @@ class Server implements ServerInterface
 
     foreach($parts as $part)
     {
-    $pair                           = explode(' ', $part);
-    $metadata[strtolower($pair[0])] = base64_decode($pair[1]);
+      $pair                           = explode(' ', $part);
+      $metadata[strtolower($pair[0])] = base64_decode($pair[1]);
     }
 
     return $metadata;
@@ -983,7 +979,7 @@ class Server implements ServerInterface
   /**
    * Reads or initialize metaData from file.
    *
-   * @param  string  $filename  The filename of the file
+   * @param   string   $filename  The filename of the file
    *
    * @return array
    */
@@ -1020,10 +1016,10 @@ class Server implements ServerInterface
    * Saves metadata to file.
    * Metadata are saved into a file with name mask 'uuid'.info
    *
-   * @param  int   $size
-   * @param  int   $offset
-   * @param  bool  $isFinal
-   * @param  bool  $isPartial
+   * @param   int    $size
+   * @param   int    $offset
+   * @param   bool   $isFinal
+   * @param   bool   $isPartial
    *
    * @throws \Exception
    */
@@ -1064,7 +1060,7 @@ class Server implements ServerInterface
   /**
    * Deletes a metaData file
    *
-   * @param  string  $filename  The filename of the file
+   * @param   string   $filename  The filename of the file
    *
    * @return bool    True on success, false otherwise
    */
@@ -1131,7 +1127,7 @@ class Server implements ServerInterface
   /**
    * Get the filename to use when save the uploaded file
    *
-   * @param   string  $uuid   UUID of the upload to delete
+   * @param   string   $uuid  UUID of the upload to delete
    *
    * @return  void
    *
@@ -1146,22 +1142,22 @@ class Server implements ServerInterface
 
     foreach($files as $file)
     {
-    if(strpos(basename($file), $uuid) !== false)
-    {
-      // Delete file with uuid in its name
-      if(!unlink($file))
+      if(strpos(basename($file), $uuid) !== false)
       {
-      $this->component->addLog('File with name "' . $file . '" can not be deleted. 500', 'error', 'jerror');
-      throw new File('File with name "' . $file . '" can not be deleted.', 500);
+        // Delete file with uuid in its name
+        if(!unlink($file))
+        {
+          $this->component->addLog('File with name "' . $file . '" can not be deleted. 500', 'error', 'jerror');
+          throw new File('File with name "' . $file . '" can not be deleted.', 500);
+        }
       }
-    }
     }
   }
 
   /**
    * Extract a list of headers in the HTTP headers
    *
-   * @param   array  $headers   A list of header name to extract
+   * @param   array   $headers  A list of header name to extract
    *
    * @return  array  A list if header ([header name => header value])
    *
@@ -1205,13 +1201,13 @@ class Server implements ServerInterface
   /**
    * Allows GET method (it means allow download uploaded files)
    *
-   * @param bool $allow
+   * @param   bool   $allow
    *
    * @return void
    */
   public function setAllowGetMethod($allow)
   {
-    $this->allowGetMethod = (bool)$allow;
+    $this->allowGetMethod = (bool) $allow;
 
     return $this;
   }
@@ -1219,7 +1215,7 @@ class Server implements ServerInterface
   /**
    * Sets upload size limit
    *
-   * @param int $value
+   * @param   int   $value
    *
    * @return void
    * @throws \BadMethodCallException
@@ -1242,7 +1238,7 @@ class Server implements ServerInterface
   /**
    * Set the directory where the file will be store
    *
-   * @param   string   $directory   The directory where the file are stored
+   * @param   string   $directory  The directory where the file are stored
    *
    * @return  Server
    *
@@ -1271,8 +1267,8 @@ class Server implements ServerInterface
   {
     if(substr($this->directory, -1) != '/')
     {
-    // directory should end with a slash (/)
-    return $this->directory . '/';
+      // directory should end with a slash (/)
+      return $this->directory . '/';
     }
 
     return $this->directory;
@@ -1287,8 +1283,8 @@ class Server implements ServerInterface
   {
     if(substr($this->location, 0, 1) != '/')
     {
-    // location should always starts with a slash (/)
-    return '/' . $this->location;
+      // location should always starts with a slash (/)
+      return '/' . $this->location;
     }
 
     return $this->location;
@@ -1297,7 +1293,7 @@ class Server implements ServerInterface
   /**
    * Sets the location (uri) of the TUS server
    *
-   * @param string $location
+   * @param   string   $location
    *
    * @return void
    *
@@ -1307,15 +1303,15 @@ class Server implements ServerInterface
   {
     if(strpos($location, 'http') !== false || strpos($location, '://') !== false || strpos($location, 'www.') !== false)
     {
-    // looks like $location contains the domain
-    $this->component->addLog('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 'error', 'jerror');
-    throw new \Exception('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 1);
+      // looks like $location contains the domain
+      $this->component->addLog('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 'error', 'jerror');
+      throw new \Exception('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 1);
     }
 
     if(substr($location, 0, 1) != '/')
     {
-    // location should always starts with a slash (/)
-    $location = '/' . $location;
+      // location should always starts with a slash (/)
+      $location = '/' . $location;
     }
 
     $this->location = $location;
@@ -1332,8 +1328,8 @@ class Server implements ServerInterface
   {
     if(substr($this->domain, -1) == '/')
     {
-    // domain should never ends with a slash (/)
-    return substr($this->domain, 0, -1);
+      // domain should never ends with a slash (/)
+      return substr($this->domain, 0, -1);
     }
 
     return $this->domain;
@@ -1342,7 +1338,7 @@ class Server implements ServerInterface
   /**
    * Sets the domain of the server
    *
-   * @param string $domain
+   * @param   string   $domain
    *
    * @return void
    */
@@ -1350,8 +1346,8 @@ class Server implements ServerInterface
   {
     if(substr($domain, -1) == '/')
     {
-    // domain should never ends with a slash (/)
-    $domain = substr($domain, 0, -1);
+      // domain should never ends with a slash (/)
+      $domain = substr($domain, 0, -1);
     }
 
     $this->domain = $domain;
@@ -1362,7 +1358,7 @@ class Server implements ServerInterface
   /**
    * Sets the Access-Control-Allow-Origin header (CORS)
    *
-   * @param  string  $domain  Domain to allow access from
+   * @param   string   $domain  Domain to allow access from
    *
    * @return void
    */

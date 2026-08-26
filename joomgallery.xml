@@ -81,6 +81,12 @@
     </fields>
   </config>
 
+  <api>
+    <files folder="src/api/components/com_joomgallery">
+      <folder>src</folder>
+    </files>
+  </api>
+
   <plugins>
     <plugin group="console" plugin="joomconsole"/>
     <plugin group="finder" plugin="joomgallery"/>
@@ -88,6 +94,7 @@
     <plugin group="system" plugin="joomgallery"/>
     <plugin group="system" plugin="joomowner"/>
     <plugin group="task" plugin="joomgallery"/>
+    <plugin group="webservices" plugin="joomgallery"/>
   </plugins>
 
   <changelogurl>https://www.joomgalleryfriends.net/updates/changelog.xml</changelogurl>

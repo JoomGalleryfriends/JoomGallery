@@ -12,9 +12,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 use Joomla\CMS\Factory;
 use Joomla\Database\DatabaseQuery;
 use Joomla\Database\ParameterType;
@@ -47,7 +47,7 @@ class ImagesModel extends JoomListModel
   /**
    * Constructor
    *
-   * @param   array  $config  An optional associative array of configuration settings.
+   * @param   array   $config  An optional associative array of configuration settings.
    *
    * @return  void
    * @since   4.0.0
@@ -97,8 +97,8 @@ class ImagesModel extends JoomListModel
    *
    * Note. Calling getState in this method will result in recursion.
    *
-   * @param   string  $ordering   Elements order
-   * @param   string  $direction  Order direction
+   * @param   string   $ordering   Elements order
+   * @param   string   $direction  Order direction
    *
    * @return void
    *
@@ -170,7 +170,7 @@ class ImagesModel extends JoomListModel
    * different modules that might need different sets of data or different
    * ordering requirements.
    *
-   * @param   string  $id  A prefix for the store id.
+   * @param   string   $id  A prefix for the store id.
    *
    * @return  string A store id.
    *
@@ -200,7 +200,7 @@ class ImagesModel extends JoomListModel
   /**
    * Build an SQL query to load the list data.
    *
-   * ToDo: Manuel
+   * ToDo: @Manuel
    * @return  \Joomla\Database\QueryInterface
    *
    * @since   4.0.0
@@ -260,10 +260,10 @@ class ImagesModel extends JoomListModel
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
       $subquery->select($db->quoteName('tr.imgid'))
-               ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
-               ->where($db->quoteName('tr.tagid') . ' IN (' . implode(',', array_map('intval', $tag)) . ')')
-               ->group($db->quoteName('tr.imgid'))
-               ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
+        ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
+        ->where($db->quoteName('tr.tagid') . ' IN (' . implode(',', array_map('intval', $tag)) . ')')
+        ->group($db->quoteName('tr.imgid'))
+        ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
 
       // Join the image table to the subquery
       $query->from('(' . trim($subquery->__toString()) . ') AS imgs');
@@ -314,7 +314,7 @@ class ImagesModel extends JoomListModel
       {
         $filter_access = (int) $filter_access;
         $query->where($db->quoteName('a.access') . ' = :access')
-              ->bind(':access', $filter_access, ParameterType::INTEGER);
+          ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
       elseif(\is_array($filter_access))
       {
@@ -397,7 +397,7 @@ class ImagesModel extends JoomListModel
         if($state || $state === 0)
         {
           $query->where($db->quoteName($row) . ' = :state')
-          ->bind(':state', $state, ParameterType::INTEGER);
+            ->bind(':state', $state, ParameterType::INTEGER);
         }
       }
     }
@@ -643,10 +643,10 @@ class ImagesModel extends JoomListModel
       // With tags applied (AND logic)
       $subquery = $db->getQuery(true);
       $subquery->select($db->quoteName('tr.imgid'))
-               ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
-               ->where($db->quoteName('tr.tagid') . ' IN (' . implode(',', array_map('intval', $tag)) . ')')
-               ->group($db->quoteName('tr.imgid'))
-               ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
+        ->from($db->quoteName('#__joomgallery_tags_ref', 'tr'))
+        ->where($db->quoteName('tr.tagid') . ' IN (' . implode(',', array_map('intval', $tag)) . ')')
+        ->group($db->quoteName('tr.imgid'))
+        ->having('COUNT(DISTINCT tr.tagid) = ' . (int) \count($tag));
 
       // Join the image table to the subquery
       $query->from('(' . trim($subquery->__toString()) . ') AS imgs');
@@ -673,7 +673,7 @@ class ImagesModel extends JoomListModel
       {
         $filter_access = (int) $filter_access;
         $query->where($db->quoteName('a.access') . ' = :access')
-              ->bind(':access', $filter_access, ParameterType::INTEGER);
+          ->bind(':access', $filter_access, ParameterType::INTEGER);
       }
       elseif(\is_array($filter_access))
       {
@@ -765,7 +765,7 @@ class ImagesModel extends JoomListModel
         if($state || $state === 0)
         {
           $query->where($db->quoteName($row) . ' = :state')
-          ->bind(':state', $state, ParameterType::INTEGER);
+            ->bind(':state', $state, ParameterType::INTEGER);
         }
       }
     }

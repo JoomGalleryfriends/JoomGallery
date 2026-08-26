@@ -82,8 +82,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   /**
    * Constructor
    *
-   * @param   JDatabase  &$db               A database connector object
-   * @param   bool       $component_exists  True if the component object class exists
+   * @param   JDatabase  &$db                A database connector object
+   * @param   bool        $component_exists  True if the component object class exists
    */
   public function __construct(DatabaseDriver $db, bool $component_exists = true)
   {
@@ -111,9 +111,9 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   /**
    * Method to load a row from the database by primary key and bind the fields to the Table instance properties.
    *
-   * @param   mixed    $keys   An optional primary key value to load the row by, or an array of fields to match.
-   *                           If not set the instance property value is used.
-   * @param   boolean  $reset  True to reset the default values before loading the new row.
+   * @param   mixed     $keys   An optional primary key value to load the row by, or an array of fields to match.
+   *                            If not set the instance property value is used.
+   * @param   boolean   $reset  True to reset the default values before loading the new row.
    *
    * @return  boolean  True if successful. False if row not found.
    *
@@ -122,8 +122,17 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   public function load($keys = null, $reset = true)
   {
     $res  = parent::load($keys, $reset);
+    $app  = Factory::getApplication();
     $comp = Factory::getApplication('administrator')->bootComponent(_JOOM_OPTION);
-    $user = $comp->getMVCFactory()->getIdentity();
+
+    if(!$app->isClient('api'))
+    {
+      $user = $comp->getMVCFactory()->getIdentity();
+    }
+    else
+    {
+      $user = $app->getIdentity();
+    }
     $comp->createAccess();
 
     // Get all unlocked categories of this user from session
@@ -161,14 +170,14 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   /**
    * Overloaded bind function to pre-process the params.
    *
-   * @param   array  $array   Named array
-   * @param   mixed  $ignore  Optional array or list of parameters to ignore
+   * @param   array   $array   Named array
+   * @param   mixed   $ignore  Optional array or list of parameters to ignore
    *
    * @return  boolean  True on success.
    *
-   * @see     Table:bind
-   * @since   4.0.0
    * @throws  \InvalidArgumentException
+   * @since   4.0.0
+   * @see     Table:bind
    */
   public function bind($array, $ignore = '')
   {
@@ -284,7 +293,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
    * If a primary key value is set the row with that primary key value will be updated with the instance property values.
    * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
    *
-   * @param   boolean  $updateNulls  True to update fields even if they are null.
+   * @param   boolean   $updateNulls  True to update fields even if they are null.
    *
    * @return  boolean  True on success.
    *
@@ -323,7 +332,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   /**
    * Method to set path based on the location properties.
    *
-   * @param   boolean  $old  To use the old location path.
+   * @param   boolean   $old  To use the old location path.
    *
    * @return  void
    *
@@ -430,15 +439,15 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
    * save the new location to the database, but will set it in the object so
    * that when the node is stored it will be stored in the new location.
    *
-   * @param   integer  $referenceId  The primary key of the node to reference new location by.
-   * @param   string   $position     Location type string.
+   * @param   integer   $referenceId  The primary key of the node to reference new location by.
+   * @param   string    $position     Location type string.
    *
    * @return  void
    *
    * @note    Since 3.0.0 this method returns void and throws an \InvalidArgumentException when an invalid position is passed.
-   * @see     Nested::$_validLocations
-   * @since   4.0.0
    * @throws  \InvalidArgumentException
+   * @since   4.0.0
+   * @see     Nested::$_validLocations
    */
   public function setLocation($referenceId, $position = 'after')
   {
@@ -465,8 +474,9 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   /**
    * Delete a record by id
    *
-   * @param  mixed   $pk  Primary key value to delete. Optional
-   * @param  boolean  $children  True to delete child nodes, false to move them up a level.
+   * @param   mixed     $pk        Primary key value to delete. Optional
+   * @param   boolean   $children  True to delete child nodes, false to move them up a level.
+   *
    * @return bool
    */
   public function delete($pk = null, $children = true)
@@ -497,23 +507,23 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     if(empty($db->loadAssoc()))
     {
       $query = $db->getQuery(true)
-      ->insert(_JOOM_TABLE_CATEGORIES)
-      ->set('parent_id = 0')
-      ->set('lft = 0')
-      ->set('rgt = 1')
-      ->set('level = 0')
-      ->set('path = ' . $db->quote(''))
-      ->set('title = ' . $db->quote('Root'))
-      ->set('alias = ' . $db->quote('root'))
-      ->set('description = ' . $db->quote(''))
-      ->set('access = 1')
-      ->set('published = 1')
-      ->set('params = ' . $db->quote(''))
-      ->set('created_time = ' . $db->quote($date->toSql()))
-      ->set('modified_time = ' . $db->quote($date->toSql()))
-      ->set('language = ' . $db->quote('*'))
-      ->set('metadesc = ' . $db->quote(''))
-      ->set('metakey = ' . $db->quote(''));
+        ->insert(_JOOM_TABLE_CATEGORIES)
+        ->set('parent_id = 0')
+        ->set('lft = 0')
+        ->set('rgt = 1')
+        ->set('level = 0')
+        ->set('path = ' . $db->quote(''))
+        ->set('title = ' . $db->quote('Root'))
+        ->set('alias = ' . $db->quote('root'))
+        ->set('description = ' . $db->quote(''))
+        ->set('access = 1')
+        ->set('published = 1')
+        ->set('params = ' . $db->quote(''))
+        ->set('created_time = ' . $db->quote($date->toSql()))
+        ->set('modified_time = ' . $db->quote($date->toSql()))
+        ->set('language = ' . $db->quote('*'))
+        ->set('metadesc = ' . $db->quote(''))
+        ->set('metakey = ' . $db->quote(''));
 
       $db->setQuery($query);
 
@@ -548,25 +558,25 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       }
 
 
-        // Specify how a new or moved node asset is inserted into the tree.
-        if(empty($assetTable->id) || $assetTable->parent_id != $parentId)
-        {
-          $assetTable->setLocation($parentId, 'last-child');
-        }
+      // Specify how a new or moved node asset is inserted into the tree.
+      if(empty($assetTable->id) || $assetTable->parent_id != $parentId)
+      {
+        $assetTable->setLocation($parentId, 'last-child');
+      }
 
-        // Prepare the asset to be stored.
-        $assetTable->parent_id = $parentId;
-        $assetTable->name      = $name;
-        $assetTable->title     = 'Root';
-        $assetTable->rules     = '{}';
+      // Prepare the asset to be stored.
+      $assetTable->parent_id = $parentId;
+      $assetTable->name      = $name;
+      $assetTable->title     = 'Root';
+      $assetTable->rules     = '{}';
 
-        if(!$assetTable->check() || !$assetTable->store(false))
-        {
-          Factory::getApplication()->enqueueMessage(Text::_('Error create asset for root category'), 'error');
-          $this->getComponent()->addLog(Text::_('Error create asset for root category'), 'error', 'jerror');
+      if(!$assetTable->check() || !$assetTable->store(false))
+      {
+        Factory::getApplication()->enqueueMessage(Text::_('Error create asset for root category'), 'error');
+        $this->getComponent()->addLog(Text::_('Error create asset for root category'), 'error', 'jerror');
 
-          return false;
-        }
+        return false;
+      }
 
 
       // Connect root category with asset table
@@ -609,9 +619,9 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   /**
    * Get a node tree based on current category (children, parents, complete)
    *
-   * @param    string   $type        Which kind of nde tree (default: cpl)
-   * @param    bool     $self        Include current node id (default: false)
-   * @param    bool     $root        Include root node (default: false)
+   * @param   string   $type  Which kind of nde tree (default: cpl)
+   * @param   bool     $self  Include current node id (default: false)
+   * @param   bool     $root  Include root node (default: false)
    *
    * @return   array  List tree node node ids ordered by level ascending.
    * @throws  \UnexpectedValueException
@@ -721,9 +731,9 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   /**
    * Get a list of (direct) siblings (left, right, both)
    *
-   * @param    string   $type    Left or right siblings (default: both)
-   * @param    bool     $direct  Only direct siblings (default: true)
-   * @param    object   $parent  Parent category (only needed if direct=false)
+   * @param   string   $type    Left or right siblings (default: both)
+   * @param   bool     $direct  Only direct siblings (default: true)
+   * @param   object   $parent  Parent category (only needed if direct=false)
    *
    * @return   array  List of siblings.
    * @throws  \UnexpectedValueException
@@ -857,8 +867,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   /**
    * Get an array of path segments (needed for routing)
    *
-   * @param   bool     $root        True to include root node (default: false)
-   * @param   string   $prop_name   The property name
+   * @param   bool     $root       True to include root node (default: false)
+   * @param   string   $prop_name  The property name
    *
    * @return   array  List of path slugs (slug = id:alias).
    * @throws  \UnexpectedValueException

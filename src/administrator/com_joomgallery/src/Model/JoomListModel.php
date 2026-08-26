@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
@@ -95,7 +96,7 @@ abstract class JoomListModel extends ListModel
   /**
    * Constructor
    *
-   * @param   array  $config  An optional associative array of configuration settings.
+   * @param   array   $config  An optional associative array of configuration settings.
    *
    * @return  void
    * @since   4.0.0
@@ -106,7 +107,15 @@ abstract class JoomListModel extends ListModel
 
     $this->app       = Factory::getApplication('administrator');
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
-    $this->user      = $this->component->getMVCFactory()->getIdentity();
+
+    if(!$this->app->isClient('api')) // @Manuel
+    {
+      $this->user = $this->component->getMVCFactory()->getIdentity();
+    }
+    else
+    {
+      $this->user = $this->app->getIdentity();
+    }
   }
 
   /**
@@ -119,8 +128,8 @@ abstract class JoomListModel extends ListModel
   {
     $params = [
       'component' => $this->getState('parameters.component'),
-      'menu'               => $this->getState('parameters.menu'),
-      'configs'            => $this->getState('parameters.configs'),
+      'menu'      => $this->getState('parameters.menu'),
+      'configs'   => $this->getState('parameters.configs'),
     ];
 
     return $params;
@@ -356,9 +365,9 @@ abstract class JoomListModel extends ListModel
   /**
    * Method to load and return a table object.
    *
-   * @param   string  $name    The name of the view
-   * @param   string  $prefix  The class prefix. Optional.
-   * @param   array   $config  Configuration settings to pass to Table::getInstance
+   * @param   string   $name    The name of the view
+   * @param   string   $prefix  The class prefix. Optional.
+   * @param   array    $config  Configuration settings to pass to Table::getInstance
    *
    * @return  Table|boolean  Table object or boolean false if failed
    *
@@ -370,7 +379,16 @@ abstract class JoomListModel extends ListModel
 
     if($table instanceof CurrentUserInterface)
     {
-      $table->setCurrentUser($this->component->getMVCFactory()->getIdentity());
+      $app = Factory::getApplication();
+
+      if(!$app->isClient('api')) // @Manuel
+      {
+        $table->setCurrentUser($this->component->getMVCFactory()->getIdentity());
+      }
+      else
+      {
+        $table->setCurrentUser($app->getIdentity());
+      }
     }
 
     return $table;

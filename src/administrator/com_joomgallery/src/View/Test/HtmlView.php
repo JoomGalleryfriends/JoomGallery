@@ -41,7 +41,7 @@ class HtmlView extends JoomGalleryView
 
     if(!$user->authorise('core.admin', 'com_joomgallery'))
     {
-      throw new Exception('Access to this view only for super users.', 1);
+      throw new \Exception('Access to this view only for super users.', 1);
     }
 
     ToolBarHelper::title('Testing View', 'wrench');

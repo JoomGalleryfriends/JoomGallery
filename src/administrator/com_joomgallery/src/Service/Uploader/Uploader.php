@@ -92,6 +92,36 @@ abstract class Uploader implements UploaderInterface
    */
   protected $async = false;
 
+    /**
+     * Path to file after upload completed
+     *
+     * @var string
+     */
+    protected $src_tmp = '';
+
+    /**
+     * Path and file name for intermedia file before creating resized files
+     * Actual ../tmp/filename from upload
+     * @Manual ../tmp/filename The file name should be more unique for multiple uploads with same name and maybe different people or smae nam,e but different file origin?
+     *
+     * @var string
+     */
+    protected $src_file = '';
+
+    /**
+     * Name of file after upload
+     *
+     * @var string
+     */
+    protected $src_name = '';
+
+    /**
+     * Size of file after upload
+     *
+     * @var string
+     */
+    protected $src_size = 0;
+
   /**
    * Constructor
    *
@@ -128,13 +158,13 @@ abstract class Uploader implements UploaderInterface
    * Method has to be extended! Do not use it in this way!
    *
    * @param   array    $data        Form data (as reference)
-   * @param   bool     $filename    True, if the filename has to be created (default: True)
+   * @param   bool   $createFilename  True, if the filename has to be created (default: True)
    *
    * @return  bool     True on success, false otherwise
    *
    * @since  4.0.0
    */
-  public function retrieveImage(&$data, $filename = true): bool
+  public function retrieveImage(&$data, $createFilename = true): bool
   {
     // Create filesystem service
     $this->component->createFilesystem();
@@ -176,7 +206,7 @@ abstract class Uploader implements UploaderInterface
       return false;
     }
 
-    if($filename)
+    if($createFilename)
     {
       // Get filecounter
       $filecounter = null;
@@ -385,7 +415,7 @@ abstract class Uploader implements UploaderInterface
         default:
           // Unknown metadata source
             continue 2;
-          break;
+          // break;
       }
 
 
@@ -592,12 +622,21 @@ abstract class Uploader implements UploaderInterface
       array_push($files, $this->src_file);
     }
 
-    if(isset($this->src_tmp) && !empty($this->src_tmp) && file_exists($this->src_tmp))
-    {
-      array_push($files, $this->src_tmp);
-    }
+      // if (isset($this->src_tmp) && !empty($this->src_tmp) && file_exists($this->src_tmp))
+      if(isset($this->src_tmp) && !empty($this->src_tmp) && is_file($this->src_tmp))
+      {
+          array_push($files, $this->src_tmp);
+      }
 
-    return JFile::delete($files);
+      // ToDo: @manuel JFile only accepts string not array J6.0 ? earlier ?
+      $isDeleted = true;
+
+      foreach($files as $file)
+      {
+          $isDeleted &= JFile::delete($file);
+      }
+
+      return $isDeleted;
   }
 
   /**
@@ -706,7 +745,7 @@ abstract class Uploader implements UploaderInterface
       throw new \Exception('Form data must have at least catid and filename');
     }
 
-    $img = new stdClass();
+    $img = new \stdClass();
 
     $img->catid    = $data['catid'];
     $img->filename = $data['filename'];

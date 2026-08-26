@@ -134,7 +134,14 @@ class Access implements AccessInterface
     }
 
     // Set current user
-    $this->user = $this->component->getMVCFactory()->getIdentity();
+    if(!$this->app->isClient('api'))
+    {
+      $this->user = $this->component->getMVCFactory()->getIdentity();
+    }
+    else
+    {
+      $this->user = $this->app->getIdentity();
+    }
 
     // Set acl map for components with advanced rules
     $mapPath = _JOOM_PATH_ADMIN . '/includes/rules.php';
@@ -153,11 +160,11 @@ class Access implements AccessInterface
   /**
    * Check the ACL permission for an asset on which to perform an action.
    *
-   * @param   string   $action     The name of the action to check for permission.
-   * @param   string   $asset      The name of the asset on which to perform the action.
-   * @param   integer  $pk         The primary key of the item.
-   * @param   integer  $parent_pk  The primary key of the parent item.
-   * @param   bool     $use_parent True to show that the given primary key is its parent key.
+   * @param   string    $action      The name of the action to check for permission.
+   * @param   string    $asset       The name of the asset on which to perform the action.
+   * @param   integer   $pk          The primary key of the item.
+   * @param   integer   $parent_pk   The primary key of the parent item.
+   * @param   bool      $use_parent  True to show that the given primary key is its parent key.
    *
    * @return  bool     True if user has the permission, false if denied
    *
@@ -191,9 +198,9 @@ class Access implements AccessInterface
     if(!empty($this->aclMap))
     {
       // Check if asset is available for this action
-      if( ($asset_length == 1 && !\in_array('.', $this->aclMap[$action]['assets'])) ||
-          (!\in_array('.' . $asset_type, $this->aclMap[$action]['assets']))
-        )
+      if(($asset_length == 1 && !\in_array('.', $this->aclMap[$action]['assets'])) ||
+        (!\in_array('.' . $asset_type, $this->aclMap[$action]['assets']))
+      )
       {
         // Action not available for this asset.
         $this->component->addLog('Action not available for this asset. Access can not be checked. Please provide reasonable inputs.', 'error', 'jerror');
@@ -348,7 +355,7 @@ class Access implements AccessInterface
   /**
    * Check the permission to view an item based on the users allowed view levels
    *
-   * @param   mixed   $level   The view level of which the access is allowed for this item
+   * @param   mixed   $level  The view level of which the access is allowed for this item
    *
    * @return  bool    True if user has the permission, false if denied
    *
@@ -388,9 +395,9 @@ class Access implements AccessInterface
    * Change the component related properties of the class.
    * Needed if you want to use this service for another component.
    *
-   * @param   string   $option    The new option.
-   * @param   array    $types     The new list of available content types.
-   * @param   array    $aclMap    The new mapping of acl actions with rules.
+   * @param   string   $option  The new option.
+   * @param   array    $types   The new list of available content types.
+   * @param   array    $aclMap  The new mapping of acl actions with rules.
    *
    * @return  void
    *
@@ -406,7 +413,7 @@ class Access implements AccessInterface
   /**
    * Set the user for which to check the access.
    *
-   * @param   int|User   $user    The user id or a user object.
+   * @param   int|User   $user  The user id or a user object.
    *
    * @return  void
    *
@@ -448,8 +455,8 @@ class Access implements AccessInterface
    *
    * @return  array    The prepared asset list.
    *
-   * @since   4.0.0
    * @throws  \Exception
+   * @since   4.0.0
    */
   protected function prepareAsset(string $asset, int $pk = 0, int $parent_pk = 0, bool $use_parent = false): array
   {
@@ -548,12 +555,12 @@ class Access implements AccessInterface
   /**
    * Prepare the entered action to catch similar words.
    *
-   * @param   string   $action     The given aaction.
+   * @param   string   $action  The given aaction.
    *
    * @return  string   The prepared action.
    *
-   * @since   4.0.0
    * @throws  \Exception
+   * @since   4.0.0
    */
   protected function prepareAction(string $action): string
   {
@@ -601,8 +608,8 @@ class Access implements AccessInterface
    * Search for a value in a nested array and return first value of
    * current array level.
    *
-   * @param   string   $needle    The searched value.
-   * @param   array    $array     The array.
+   * @param   string   $needle  The searched value.
+   * @param   array    $array   The array.
    *
    * @return  string   First value in the array where needle was found.
    *

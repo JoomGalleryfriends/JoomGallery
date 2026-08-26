@@ -34,27 +34,27 @@ $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 ?>
 
 <?php if($filters) : ?>
-    <?php foreach($filters as $fieldName => $field) : ?>
-        <?php
-            $hasTags   = \in_array('tags', $provider->getFilters());
-            $hasLogOps = \in_array('and', $provider->getFilters());
+  <?php foreach($filters as $fieldName => $field) : ?>
+    <?php
+      $hasTags   = \in_array('tags', $provider->getFilters());
+      $hasLogOps = \in_array('and', $provider->getFilters());
 
-            if(str_contains($fieldName, 'and') && $hasTags && !$hasLogOps)
-            {
-                # The search provider does not support logical operator for tags
-                continue;
-            }
-        ?>
-        <?php if($fieldName !== 'filter_search') : ?>
-            <?php $dataShowOn = ''; ?>
-            <?php if($field->showon) : ?>
-                <?php $wa->useScript('showon'); ?>
-                <?php $dataShowOn = " data-showon='" . json_encode(FormHelper::parseShowOnConditions($field->showon, $field->formControl, $field->group)) . "'"; ?>
-            <?php endif; ?>
-            <div class="js-stools-field-filter"<?php echo $dataShowOn; ?>>
-                <span class="visually-hidden"><?php echo $field->label; ?></span>
-                <?php echo $field->input; ?>
-            </div>
-        <?php endif; ?>
-    <?php endforeach; ?>
+      if(str_contains($fieldName, 'and') && $hasTags && !$hasLogOps)
+      {
+        # The search provider does not support logical operator for tags
+        continue;
+      }
+    ?>
+    <?php if($fieldName !== 'filter_search') : ?>
+      <?php $dataShowOn = ''; ?>
+      <?php if($field->showon) : ?>
+        <?php $wa->useScript('showon'); ?>
+        <?php $dataShowOn = " data-showon='" . json_encode(FormHelper::parseShowOnConditions($field->showon, $field->formControl, $field->group)) . "'"; ?>
+      <?php endif; ?>
+      <div class="js-stools-field-filter"<?php echo $dataShowOn; ?>>
+        <span class="visually-hidden"><?php echo $field->label; ?></span>
+        <?php echo $field->input; ?>
+      </div>
+    <?php endif; ?>
+  <?php endforeach; ?>
 <?php endif; ?>
