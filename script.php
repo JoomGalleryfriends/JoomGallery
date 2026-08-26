@@ -109,31 +109,31 @@ class com_joomgalleryInstallerScript extends InstallerScript
    */
   public function preflight($type, $parent)
   {
-    // Only proceed if Joomla version is correct
-    if(version_compare(JVERSION, '4.4.0', '<'))
+    // Only proceed if Joomla meets the minimum requirements
+    if(version_compare(JVERSION, '5.0.0', '<'))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 8, 'joomgallery');
 
       return false;
     }
 
-    // Only proceed if it is not an incompatible Joomla version
+    // Only proceed if Joomla is not an incompatible version
     $jversion = explode('-', JVERSION);
 
     if(\in_array($jversion[0], $this->incompatible))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 8, 'joomgallery');
 
       return false;
     }
 
-    // Only proceed if PHP version is correct
+    // Only proceed if PHP meets the minimum requirements
     if(version_compare(PHP_VERSION, $this->minPhp, '<='))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '5.x', $this->minPhp, PHP_VERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '5.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery');
 
       return false;
     }
@@ -144,7 +144,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         // use new uploaded defines.php
         $temp_dir = $parent->getParent()->getPath('source');
-        $defines  = $temp_dir . DIRECTORY_SEPARATOR . 'administrator' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'defines.php';
+        $defines  = $temp_dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'administrator' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'defines.php';
       }
       else
       {
@@ -399,6 +399,13 @@ class com_joomgalleryInstallerScript extends InstallerScript
       'height'     => 'fit-content',
     ];
 
+    // Create default scheduled tasks
+    if(!$this->addDefaultTasks())
+    {
+      Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS', 'error'));
+      Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS'), 8, 'joomgallery');
+    }
+
     if(version_compare(JVERSION, '5.1.0', '>'))
     {
       /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
@@ -554,6 +561,13 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         $app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_MENU', 'error'));
         Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_MENU'), 8, 'joomgallery');
+      }
+
+      // Create default scheduled tasks
+      if(!$this->addDefaultTasks())
+      {
+        $app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS', 'error'));
+        Log::add(Text::_('COM_JOOMGALLERY_ERROR_CREATE_DEFAULT_TASKS'), 8, 'joomgallery');
       }
 
       // Create default mail templates
@@ -1029,6 +1043,110 @@ class com_joomgalleryInstallerScript extends InstallerScript
   }
 
   /**
+   * Add tasks to the ´#__scheduler_tasks´ table
+   *
+   * @return  bool  true on success
+   */
+  public function addDefaultTasks()
+  {
+    // Task types to be installed
+    $types = ['recreateImage'];
+
+    $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+    $query = $db->getQuery(true);
+    $query->select('type')->from('#__scheduler_tasks');
+    $query->where($db->quoteName('type') . ' LIKE ' . $db->quote('joomgalleryTask.%'));
+    $db->setQuery($query);
+
+    $installedTasks = $db->loadColumn();
+
+    foreach($types as $typeName)
+    {
+      $taskType = 'joomgalleryTask.' . $typeName;
+
+      if(!in_array($taskType, $installedTasks, true))
+      {
+        if(!$this->addDefaultTask($typeName))
+        {
+          Factory::getApplication()->enqueueMessage('Failed installing task ' . $typeName, 'error');
+          Log::add('Failed installing task ' . $typeName, 8, 'joomgallery');
+
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Add a task to the ´#__scheduler_tasks´ table
+   *
+   * @param   string $type Task type name
+   *
+   * @return  bool   true on success
+   */
+  public function addDefaultTask(string $type): bool
+  {
+    switch($type)
+    {
+      case 'recreateImage':
+        // Default recreateImage task
+        $taskdata                    = [];
+        $taskdata['id']              = null;
+        $taskdata['title']           = 'Recreate Images';
+        $taskdata['type']            = 'joomgalleryTask.recreateImage';
+        $taskdata['state']           = 1;
+        $taskdata['execution_rules'] = '{"rule-type":"manual","exec-day":"7","exec-time":"01:00:00"}';
+        $taskdata['cron_rules']      = '{"type":"manual","exp":""}';
+        $taskdata['params']          = '{"individual_log":false,"log_file":"","notifications":{"success_mail":"0","failure_mail":"1","fatal_failure_mail":"1","orphan_mail":"1"},"cid":"0","type":"thumbnail","resume":"1","user":"","overrideable_params":"type","successful":""}';
+
+        break;
+
+      default:
+        return false;
+    }
+
+    try {
+      // Create the table
+      $scheduler = Factory::getApplication()->bootComponent('com_scheduler');
+      $model     = $scheduler->getMVCFactory()->createModel('Task', 'Administrator', ['ignore_request' => true]);
+
+      // Turn json to array
+      if(is_string($taskdata['execution_rules']))
+      {
+        $taskdata['execution_rules'] = json_decode($taskdata['execution_rules'], true);
+      }
+      if(is_string($taskdata['cron_rules']))
+      {
+        $taskdata['cron_rules'] = json_decode($taskdata['cron_rules'], true);
+      }
+      if(is_string($taskdata['params']))
+      {
+        $taskdata['params'] = json_decode($taskdata['params'], true);
+      }
+
+      if(!$model->save($taskdata))
+      {
+        Factory::getApplication()->enqueueMessage('This default scheduled task could not be created: ' . $type, 'notice');
+        Log::add('This default scheduled task could not be created: ' . $type, 8, 'joomgallery');
+
+        return false;
+      }
+    }
+    catch (\Throwable $e)
+    {
+      Factory::getApplication()->enqueueMessage('This default scheduled task could not be created: ' . $type, 'notice');
+      Log::add('This default scheduled task could not be created: ' . $type, 8, 'joomgallery');
+
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Tries to get an extension id based on information
    *
    * @param   string $name           Extension name
@@ -1153,7 +1271,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     {
       $pluginName  = (string) $plugin['plugin'];
       $pluginGroup = (string) $plugin['group'];
-      $path        = $installation_folder . '/plugins/' . $pluginGroup . '/' . $pluginName;
+      $path        = $installation_folder . '/src/plugins/' . $pluginGroup . '/' . $pluginName;
       $installer   = new Installer();
       $installer->setDatabase($db);
 
@@ -1248,7 +1366,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     foreach($modules->children() as $module)
     {
       $moduleName = (string) $module['module'];
-      $path       = $folder . '/modules/' . $moduleName;
+      $path       = $folder . '/src/modules/' . $moduleName;
       $installer  = new Installer();
       $installer->setDatabase($db);
 

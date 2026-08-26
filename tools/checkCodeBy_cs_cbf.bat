@@ -1,111 +1,46 @@
 @ECHO OFF
-REM -----------------------------------------------------
-REM Check joomgallery code style by phpcs
-REM calling cbf (jg_checkCodeBy_cs_cbf.bat)
-REM -----------------------------------------------------
-REM
-REM -----------------------------------------------------
+SETLOCAL EnableExtensions
 
-CLS
+REM Check JoomGallery with the same PHPCS command used by the PR workflow.
+REM Run from the repository root: tools\checkCodeBy_cs_cbf.bat
 
-ECHO ----------------------------------------------
-ECHO Check joomgallery code style by phpcs
-ECHO ----------------------------------------------
-REM ECHO.
+SET "LOG_FILE=tools\check.phpcs.log"
 
-REM -----------------------------------------------------
-REM Check if PHP is available
+IF NOT EXIST "composer.json" GOTO :WrongDirectory
+IF NOT EXIST "ruleset.xml" GOTO :WrongDirectory
+IF NOT EXIST "src\" GOTO :WrongDirectory
 
-ECHO php check
-
-php --version >NUL 2>&1
-IF errorlevel 1 (
-	ECHO.
-	ECHO Actual environment PATH:
-	ECHO "%path%"
-	ECHO.
-	ECHO Please add the path to php.exe to path variable
-	ECHO using "set PATH=%%PATH%%;C:\your\path\here\"
-	GOTO :EOF
-	ECHO.
+WHERE php >NUL 2>&1
+IF ERRORLEVEL 1 (
+  ECHO ERROR: PHP is not available on PATH.
+  EXIT /B 1
 )
 
-REM -----------------------------------------------------
-REM keep actual directory for log files
-set "actualPath=%cd%"
-ECHO  - 'actualPath %actualPath%'
-
-REM -----------------------------------------------------
-REM jg_basePath to the repository
-REM
-set "jg_basePath=..\"
-IF NOT  "%~1"=="" (
- 	set "jg_basePath=%~1"
-)
-ECHO  - 'jg base path %jg_basePath%'
-
-REM -----------------------------------------------------
-REM Move to jg_basePath
-
-pushd  "%jg_basePath%"
-ECHO Moved to path: %cd%
-
-REM -----------------------------------------------------
-REM Verify that we are in the correct working directory
-REM Check for required file: joomgallery.xml
-IF NOT EXIST "joomgallery.xml" (
-    ECHO.
-    ECHO ERROR: joomgallery.xml not found in %cd%
-    ECHO This does not appear to be the JoomGallery root directory.
-    ECHO Aborting to prevent accidental composer operations!
-    ECHO.
-    GOTO :ErrorBack
-)
-REM -----------------------------------------------------
-REM Composer housekeeping
-
-ECHO Install and update needed dependencies (composer)
-
-echo "--- composer install"
-call composer install --prefer-dist --no-ansi --no-interaction --no-progress
-IF errorlevel 1 (
-    ECHO.
-    ECHO ERROR: composer install failed!
-    GOTO :ErrorBack
+IF NOT EXIST "vendor\bin\phpcs" IF NOT EXIST "vendor\bin\phpcs.bat" (
+  ECHO ERROR: vendor\bin\phpcs is missing. Run "composer install" first.
+  EXIT /B 1
 )
 
-ECHO Composer tasks completed successfully.
+ECHO Checking PHP code with the PR pipeline's PHPCS command
+ECHO Log: %LOG_FILE%
 ECHO.
 
-REM =====================================================
-REM call "phpcs"
+php ".\vendor\bin\phpcs" --extensions=php -p --standard=ruleset.xml --runtime-set ignore_warnings_on_exit 1 src > "%LOG_FILE%" 2>&1
+SET "STATUS=%ERRORLEVEL%"
+TYPE "%LOG_FILE%"
 
-ECHO ----------------------------------------------
-ECHO call "phpcs"
-ECHO    may take some time
+ECHO.
+IF "%STATUS%"=="0" (
+  ECHO SUCCESS: PHPCS passes the PR pipeline check.
+) ELSE (
+  ECHO FAILED: PHPCS found coding-standard errors.
+  ECHO Run "tools\fixCodeStyle.bat" to fix what can be fixed automatically.
+  ECHO Remaining violations are listed in %LOG_FILE%.
+)
 
-php ".\administrator\com_joomgallery\vendor\bin\phpcs" --standard=ruleset.xml .\
-REM if errorlevel 1 (
-REM 	ECHO Error on calling phpcs (02)
-REM 	goto :ErrorBack
-REM )
-ECHO.
+EXIT /B %STATUS%
 
-REM -----------------------------------------------------
-REM Move back
-
-:MoveBack
-popd
-ECHO.
-ECHO Done and moved back to path: %cd%
-ECHO.
-GOTO :EOF
-
-:ErrorBack
-popd
-ECHO.
-ECHO !!! Error found !!!
-ECHO and moved back to path: %cd%
-ECHO.
-GOTO :EOF
+:WrongDirectory
+ECHO ERROR: Run this script from the JoomGallery repository root.
+EXIT /B 1
 

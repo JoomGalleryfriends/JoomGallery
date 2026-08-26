@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="4.0" method="upgrade">
   <name>com_joomgallery</name>
-  <creationDate>2026-02-09</creationDate>
+  <creationDate>2026-08-22</creationDate>
   <copyright>2008 - 2026  JoomGallery::ProjectTeam</copyright>
   <license>GNU General Public License version 3 or later</license>
   <author>JoomGallery::ProjectTeam</author>
   <authorEmail>team@joomgalleryfriends.net</authorEmail>
   <authorUrl>https://www.joomgalleryfriends.net/</authorUrl>
-  <version>4.4.0</version>
-  <description>JoomGallery 4, a native gallery component for Joomla! 4.x, 5.x and 6.x</description>
+  <version>4.5.0-dev</version>
+  <description>JoomGallery 4, a native gallery component for Joomla! 5.x and 6.x</description>
   <namespace path="src">Joomgallery\Component\Joomgallery</namespace>
 
   <scriptfile>script.php</scriptfile>
@@ -28,14 +28,14 @@
       <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
     </sql>
   </uninstall>
-  <files folder="site/com_joomgallery">
+  <files folder="src/site/com_joomgallery">
     <folder>forms</folder>
     <folder>language</folder>
     <folder>layouts</folder>
     <folder>src</folder>
     <folder>tmpl</folder>
   </files>
-  <media destination="com_joomgallery" folder="media/com_joomgallery">
+  <media destination="com_joomgallery" folder="src/media/com_joomgallery">
     <folder>css</folder>
     <folder>fonts</folder>
     <folder>js</folder>
@@ -50,6 +50,7 @@
       <menu link="option=com_joomgallery&amp;view=image&amp;layout=upload" view="Upload" alt="Joomgallery/Upload">COM_JOOMGALLERY_UPLOAD</menu>
       <menu link="option=com_joomgallery&amp;view=images" view="images" alt="Joomgallery/Images">COM_JOOMGALLERY_IMAGES</menu>
       <menu link="option=com_joomgallery&amp;view=tags" view="tags" alt="Joomgallery/Tags">COM_JOOMGALLERY_TAGS</menu>
+      <menu link="option=com_joomgallery&amp;view=tasks" view="tasks" alt="Joomgallery/Tasks">COM_JOOMGALLERY_TASKS</menu>
       <menu link="option=com_joomgallery&amp;view=configs" view="configs" alt="Joomgallery/Configs">COM_JOOMGALLERY_CONFIG_SETS</menu>
       <menu link="option=com_joomgallery&amp;view=migration" view="migration" alt="Joomgallery/Migration">COM_JOOMGALLERY_MIGRATIONS</menu>
       <menu type="separator" hidden="true">Separator1</menu>
@@ -57,7 +58,7 @@
       <menu link="option=com_fields&amp;view=groups;&amp;context=com_joomgallery.image">JGLOBAL_FIELD_GROUPS</menu>
       <menu type="separator" hidden="true">Separator2</menu>
     </submenu>
-    <files folder="administrator/com_joomgallery">
+    <files folder="src/administrator/com_joomgallery">
       <filename>access.xml</filename>
       <filename>config.xml</filename>
       <folder>forms</folder>
@@ -81,7 +82,7 @@
   </config>
 
   <api>
-    <files folder="api/components/com_joomgallery">
+    <files folder="src/api/components/com_joomgallery">
       <folder>src</folder>
     </files>
   </api>

@@ -1,0 +1,270 @@
+.jg-controlpanel-content  {
+  padding: 1.2rem;
+  text-align: center;
+}
+
+img.jg-controlpanel-logo {
+  width: 600px;
+  max-width: 100%;
+}
+
+.module-actions {
+  -webkit-box-ordinal-group: 2;
+  -ms-flex-order: 1;
+  order: 1;
+  -webkit-margin-start: auto;
+  margin-inline-start: auto;
+}
+.dropdown-item.unpublish-module {
+  display:none;
+}
+
+.subhead .btn {
+  margin-inline-end: 0.75rem;
+}
+.btn > span {
+  margin-inline-end: 0.5rem;
+}
+.jg-messages-logo {
+  display: table;
+  margin: 0 auto 0 auto;
+}
+.jg-messages-inner {
+  display: table;
+}
+.jg-copyright {
+  text-align: center;
+  font-size: 0.85em;
+  color: #666;
+}
+.wrapper .container-main {
+  overflow: hidden;
+}
+.btn-secondary {
+  background-color: var(--template-bg-dark-50) !important;
+  border-color: var(--template-bg-dark-50) !important;
+}
+.admin .modal .btn-primary {
+  background-color: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-color) !important;
+}
+.modal .btn-secondary {
+  color: var(--white) !important;
+}
+.head-row .control-group .control-label {
+  width: 150px;
+}
+.mt {
+  margin-top: 1rem !important;
+}
+.mb {
+  margin-bottom: 1rem !important;
+}
+.ml {
+  margin-left: 1rem !important;
+}
+.mr {
+  margin-right: 1rem !important;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+}
+.modal .modal-body {
+  margin: 1rem 2rem;
+  overflow-y: scroll;
+}
+td .modal .form-control {
+  width: 100%;
+}
+.modal .control-group .alert {
+  display: block;
+  margin: 0;
+  flex-grow: 1;
+  width: 100%;
+}
+.card.border.active,
+.card.border.success {
+  border-color: var(--success) !important;
+}
+.card.border.error {
+  border-color: var(--danger) !important;
+}
+.controls .choices__inner.is-valid {
+  border-color: #457d54;
+  padding-right: calc(1.5em + 1rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23457d54' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.25rem) center;
+  background-size: calc(0.75em + 0.5rem) calc(0.75em + 0.5rem);
+}
+.controls .choices__inner.is-invalid {
+  border-color: #c52827;
+  padding-right: calc(1.5em + 1rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23c52827'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23c52827' stroke='none'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.25rem) center;
+  background-size: calc(0.75em + 0.5rem) calc(0.75em + 0.5rem);
+}
+.log-area {
+  font-size: 0.85rem;
+  min-height: 100px;
+  max-height: 250px;
+  overflow-y: scroll;
+}
+.jcc-color-box {
+  float: left;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  border: 1px solid rgba(0, 0, 0, .2);
+}
+.other-filters{
+  padding: 0 14px;
+}
+.jg.jg-config joomla-tab > joomla-tab-element {
+  padding: 0;
+}
+.jg.jg-config joomla-tab > joomla-tab-element .row-fluid {
+  padding: 30px;
+}
+.jg.jg-config .subform-table-layout .table,
+.jg.jg-config joomla-field-fancy-select.mb-0 div
+{
+  margin-bottom: 0;
+}
+.jg.jg-config .jg_staticprocessing .modal .original-note {
+  display: none;
+}
+.jg.jg-config .jg_staticprocessing.original .modal .original-note {
+  display: initial;
+}
+.jg .control-label.unused label {
+  color: red;
+}
+.jg .controls.sensitive {
+  display: flex;
+  flex-wrap: wrap;
+}
+.jg .subform-repeatable-container td.sensitive {
+  display: flex;
+  align-items: baseline;
+}
+.jg .controls.sensitive input.sensitive-input,
+.jg .controls.sensitive select.sensitive-input,
+.jg .subform-repeatable-container td.sensitive .control-group {
+  width: inherit;
+  flex-grow: 1;
+}
+.jg .subform-repeatable-container td.sensitive [class^=icon] {
+  margin-left: 1rem;
+}
+.jg .controls.sensitive .sensitive-input.switcher  {
+  width: 10rem;
+}
+.jg .controls.sensitive .description {
+  width: 100%;
+}
+.jg .subform-repeatable .controls.sensitive .btn {
+  margin-inline-end: 0;
+}
+.jg .subform-repeatable .control-label label {
+  width: initial;
+}
+.jg_minithumb {
+  border: 0;
+  height: 80px;
+  width: 80px;
+}
+img.jg_minithumb {
+  max-height: 80px;
+  max-width: 80px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+}
+.joom-imgtypes.btn-group {
+  margin-top: 1rem;
+}
+.joom-logo-small {
+  max-width: 60px;
+  height: auto;
+}
+.joom-image {
+  position: relative;
+  min-height: 100px;
+}
+.joom-image > .joom-loader {
+  position: absolute;
+  text-align: center;
+  margin: 1rem auto;  
+  width: 100%;
+}
+.joom-image > img {
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+  background-color: var(--body-bg);
+}
+.joom-image.center > img {
+  display: block;
+  margin: 0 auto;
+}
+.badge-list .badge {
+  margin: 0.2rem;
+}
+joomla-field-image .jg_minithumb {
+  border: solid 1px var(--template-bg-dark-20);
+  background-color: #e8e8e8;
+}
+.jg .modal .modal-body {
+  margin: 1rem 2rem;
+}
+.jg .modal .btn {
+  color: var(--white);
+}
+.jg-category .password-group > div.text-center {
+  display: none;
+}
+.uppy-Dashboard-inner {
+  background-color: var(--white);
+  border: none;
+}
+.uppy-Dashboard-Item {
+  height: auto !important;
+}
+.uppy-Dashboard-Item-state {
+  margin-bottom: 5px;
+}
+.uppy-Dashboard-Item-name {
+  white-space: nowrap;
+}
+.jg-migration .card img {
+  max-width: 120px;
+}
+.jg-migration .card img {
+  max-width: 120px;
+}
+.jg-migration .navigation {
+  margin: 0 0 2rem;
+}
+.log-area p {
+  margin-bottom: 0.5rem;
+}
+.log-area .color-success {
+  color: var(--success)
+}
+.log-area .color-error {
+  color: var(--danger)
+}
+.log-area .color-warning {
+  color: var(--warning)
+}
+.dependency {
+  color: var(--body-color)
+}
+.dependency.pending {
+  color: var(--warning)
+}
+.exif-form > .control-group > .control-label {
+  display: none;
+}

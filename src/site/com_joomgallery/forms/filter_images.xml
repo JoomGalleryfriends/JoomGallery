@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+    <fields name="filter">
+        <field name="category"
+               type="jgcategorydropdown"
+               layout="joomla.form.field.list-fancy-select"
+               label="COM_JOOMGALLERY_COMMON_ALL"
+               onchange="this.form.submit();"
+               show_root="false"
+               search_service="true"
+               multiple="true"
+               default=""
+               hint="JOPTION_SELECT_CATEGORY"
+               message="COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY"
+               task="filter" />
+
+        <field name="tag"
+               type="jgtag"
+               label="JTAG"
+               description="COM_JOOMGALLERY_FIELDS_TAG_DESC"
+               onchange="this.form.submit();"
+               class="inputbox span12 small"
+               default=""
+               search_service="true"
+               custom="deny"
+               hint="JOPTION_SELECT_TAG"
+               multiple="true" />
+
+        <field name="and"
+               type="list"
+               label="COM_JOOMGALLERY_SELECT_LOG_OPERATOR"
+               default="-1"
+               onchange="this.form.submit();">
+            <option value="-1">COM_JOOMGALLERY_SELECT_LOG_OPERATOR</option>
+            <option value="0">COM_JOOMGALLERY_OR</option>
+            <option value="1">COM_JOOMGALLERY_AND</option>
+        </field>
+
+        <field name="created_by"
+               type="userdropdown"
+               label="COM_JOOMGALLERY_COMMON_OPTION_SELECT_OWNER"
+               hint="COM_JOOMGALLERY_COMMON_OPTION_SELECT_OWNER"
+               search_service="true"
+               onchange="this.form.submit();" />
+
+        <field name="language"
+               type="jglanguage"
+               label="JGRID_HEADING_LANGUAGE"
+               default=""
+               search_service="true"
+               onchange="this.form.submit();" >
+            <option value="">JOPTION_SELECT_LANGUAGE</option>
+            <option value="*">JALL</option>
+        </field>
+    </fields>
+
+    <fields name="list">
+        <field name="fullordering"
+               type="list"
+               label="JGLOBAL_SORT_BY"
+               onchange="this.form.submit();"
+               default="a.ordering ASC"
+               validate="options" >
+            <option value="*">JGLOBAL_SORT_BY</option>
+            <option value="a.ordering ASC">JGRID_HEADING_ORDERING_ASC</option>
+            <option value="a.ordering DESC">JGRID_HEADING_ORDERING_DESC</option>
+            <option value="a.date ASC">JDATE_ASC</option>
+            <option value="a.date DESC">JDATE_DESC</option>
+            <option value="a.title ASC">JGLOBAL_TITLE_ASC</option>
+            <option value="a.title DESC">JGLOBAL_TITLE_DESC</option>
+            <option value="a.hits ASC">JGLOBAL_HITS_ASC</option>
+            <option value="a.hits DESC">JGLOBAL_HITS_DESC</option>
+            <option value="a.downloads ASC">COM_JOOMGALLERY_DOWNLOADS_ASC</option>
+            <option value="a.downloads DESC">COM_JOOMGALLERY_DOWNLOADS_DESC</option>
+            <option value="a.cattitle ASC">JCATEGORY_ASC</option>
+            <option value="a.cattitle DESC">JCATEGORY_DESC</option>
+            <option value="a.published ASC">JSTATUS_ASC</option>
+            <option value="a.published DESC">JSTATUS_DESC</option>
+        </field>
+
+        <field name="limit"
+              type="limitbox"
+              label="JSEARCH_FILTER_LIMIT"
+              class="input-mini"
+              default="20"
+              onchange="this.form.submit();" />
+    </fields>
+</form>

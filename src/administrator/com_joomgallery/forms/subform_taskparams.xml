@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <fieldset name="general" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+    <field name="type"
+           type="jgimagetype"
+           default=""
+           label="COM_JOOMGALLERY_IMAGETYPE"
+           description="COM_JOOMGALLERY_CONFIG_IP_TYPE_NAME_SELECT_LONG" />
+    <field name="parallel_limit"
+           type="number"
+           label="COM_JOOMGALLERY_TASK_PARALLEL_LIMIT_LABEL"
+           description="COM_JOOMGALLERY_TASK_PARALLEL_LIMIT_DESC"
+           default="1"
+           min="1"
+           max="10"
+           step="1"
+           filter="integer" />
+    <field name="scheduler_task_params"
+           type="hidden"
+           default="" />
+  </fieldset>
+</form>

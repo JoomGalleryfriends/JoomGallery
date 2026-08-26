@@ -1,0 +1,252 @@
+<?php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
+
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
+
+// image params
+$image_type       = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
+$show_title       = $this->params['configs']->get('jg_detail_view_show_title', 0, 'INT');
+$show_category    = $this->params['configs']->get('jg_detail_view_show_category', 0, 'INT');
+$show_description = $this->params['configs']->get('jg_detail_view_show_description', 0, 'INT');
+$show_imgdate     = $this->params['configs']->get('jg_detail_view_show_imgdate', 0, 'INT');
+$show_imgauthor   = $this->params['configs']->get('jg_detail_view_show_imgauthor', 0, 'INT');
+$show_created_by  = $this->params['configs']->get('jg_detail_view_show_created_by', 0, 'INT');
+$show_votes       = $this->params['configs']->get('jg_detail_view_show_votes', 0, 'INT');
+$show_rating      = $this->params['configs']->get('jg_detail_view_show_rating', 0, 'INT');
+$show_hits        = $this->params['configs']->get('jg_detail_view_show_hits', 0, 'INT');
+$show_downloads   = $this->params['configs']->get('jg_detail_view_show_downloads', 0, 'INT');
+$show_tags        = $this->params['configs']->get('jg_detail_view_show_tags', 0, 'INT');
+$show_metadata    = $this->params['configs']->get('jg_detail_view_show_metadata', 0, 'INT');
+
+// Import CSS & JS
+$wa = $this->document->getWebAssetManager();
+$wa->useStyle('com_joomgallery.site');
+$wa->useStyle('com_joomgallery.jg-icon-font');
+
+// Access check
+$canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
+$canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
+$canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $this->item->id, $this->item->catid, true) || $this->item->checked_out == $this->getCurrentUser()->id;
+$returnURL  = base64_encode(JoomHelper::getViewRoute('image', $this->item->id, $this->item->catid, $this->item->language, $this->getLayout()));
+
+// Tags
+$tagLayout = new FileLayout('joomgallery.content.tags');
+$tags      = $tagLayout->render($this->item->tags);
+
+// Metadata
+$metadataLayout = new FileLayout('joomgallery.content.metadata');
+$metadata       = $metadataLayout->render($this->item->imgmetadata);
+
+// add meta title
+$app = Factory::getApplication();
+$doc = $app->getDocument();
+
+$title               = $this->item->title ?? '';
+$sitename            = $app->get('sitename');
+$sitename_pagetitles = (int) $app->get('sitename_pagetitles', 0);
+
+$prefix    = Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX');
+$baseTitle = trim($prefix . ' ' . $title);
+
+if($sitename_pagetitles === 0)
+{
+    $fullTitle = $baseTitle;
+}
+elseif($sitename_pagetitles === 1)
+{
+    $fullTitle = $sitename . ' - ' . $baseTitle;
+}
+elseif($sitename_pagetitles === 2)
+{
+    $fullTitle = $baseTitle . ' - ' . $sitename;
+}
+else
+{
+    $fullTitle = $baseTitle;
+}
+
+$doc->setTitle($fullTitle);
+
+// Custom Fields
+$fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
+?>
+
+<?php // load modules on jg_image_top ?>
+<?php $modules = ModuleHelper::getModules('jg_image_top'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
+<?php if($show_title) : ?>
+  <h2><?php echo $this->escape($this->item->title); ?></h2>
+<?php endif; ?>
+
+<a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
+  <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_IMAGE_BACK_TO_CATEGORY') . ' ' . $this->item->cattitle; ?></span>
+</a>
+
+</br />
+</br />
+
+<?php // Image ?>
+<figure class="figure joom-image text-center center">
+  <div id="jg-loader"></div>
+  <img src="<?php echo JoomHelper::getImg($this->item, $image_type); ?>" class="figure-img img-fluid rounded" 
+       alt="<?php echo $this->escape($this->item->title); ?>" style="width:auto;" itemprop="image" loading="lazy">
+  <?php if($show_description) : ?>
+    <figcaption class="figure-caption"><?php echo JoomHelper::sanitizeHtml($this->item->description); ?></figcaption>
+  <?php endif; ?>
+</figure>
+
+<?php // load modules on jg_image_before_info ?>
+<?php $modules = ModuleHelper::getModules('jg_image_before_info'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
+<?php // Image info and fields ?>
+<div class="item_fields">
+  <h3><?php echo Text::_('COM_JOOMGALLERY_IMAGE_INFO'); ?></h3>
+  <table class="table">
+    <tr>
+      <?php if($show_category) : ?>
+    <tr>
+      <th><?php echo Text::_('JCATEGORY'); ?></th>
+      <td>
+              <a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
+                <?php echo $this->escape($this->item->cattitle); ?>
+              </a>
+            </td>
+          </tr>
+      <?php endif; ?>
+        <?php if($show_imgdate) : ?>
+          <tr>
+            <th><?php echo Text::_('COM_JOOMGALLERY_DATE'); ?></th>
+            <td><?php echo HTMLHelper::_('date', $this->item->date, Text::_('DATE_FORMAT_LC6')); ?></td>
+          </tr>
+        <?php endif; ?>
+        <?php if($show_imgauthor) : ?>
+          <tr>
+            <th><?php echo Text::_('JAUTHOR'); ?></th>
+            <td><?php echo $this->escape($this->item->author); ?></td>
+          </tr>
+        <?php endif; ?>
+        <?php if($show_created_by) : ?>
+        <?php $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->item->created_by); ?>
+          <tr>
+            <th><?php echo Text::_('COM_JOOMGALLERY_OWNER'); ?></th>
+            <td><?php echo $this->escape($user->name); ?></td>
+          </tr>
+        <?php endif; ?>
+        <?php if($show_votes) : ?>
+          <tr>
+            <th><?php echo Text::_('COM_JOOMGALLERY_VOTES'); ?></th>
+            <td><?php echo $this->escape($this->item->votes); ?></td>
+          </tr>
+        <?php endif; ?>
+        <?php if($show_rating) : ?>
+          <tr>
+            <th><?php echo Text::_('COM_JOOMGALLERY_IMAGE_RATING'); ?></th>
+            <td><?php echo $this->escape($this->item->rating); ?></td>
+          </tr>
+        <?php endif; ?>
+        <?php if($show_hits) : ?>
+          <tr>
+            <th><?php echo Text::_('JGLOBAL_HITS'); ?></th>
+            <td><?php echo (int) $this->item->hits; ?></td>
+          </tr>
+        <?php endif; ?>
+        <?php if($show_downloads) : ?>
+          <tr>
+            <th><?php echo Text::_('COM_JOOMGALLERY_DOWNLOADS'); ?></th>
+            <td><?php echo (int) $this->item->downloads; ?></td>
+          </tr>
+        <?php endif; ?>
+        <?php if($show_tags) : ?>
+          <tr>
+            <th><?php echo Text::_('COM_JOOMGALLERY_TAGS'); ?></th>
+            <td><?php echo $tags; ?></td>
+          </tr>
+        <?php endif; ?>
+        <?php if($show_metadata) : ?>
+          <tr>
+            <th><?php echo Text::_('COM_JOOMGALLERY_IMGMETADATA'); ?></th>
+            <td><?php echo $metadata; ?></td>
+          </tr>
+        <?php endif; ?>
+        <?php if(\count($fields) > 0) : ?>
+          <tr>
+            <th><strong><?php echo Text::_('JGLOBAL_FIELDS'); ?></strong></th>
+            <td></td>
+          </tr>
+          <?php foreach($fields as $key => $field) : ?>
+            <?php if($this->component->getAccess()->checkViewLevel($field->access) && $field->params->get('display') > 0) : ?>
+              <tr class="<?php echo $this->escape($field->params->get('render_class')); ?>">
+                <th class="<?php echo $this->escape($field->params->get('label_render_class')); ?>"><?php if($field->params->get('showlabel', true)) echo $this->escape($field->title); ?></th>
+                <td class="<?php echo $this->escape($field->params->get('value_render_class')); ?>"><?php echo $this->escape($field->value); ?></td>
+              </tr>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+    </table>
+</div>
+
+<?php // load modules on jg_image_bottom ?>
+<?php $modules = ModuleHelper::getModules('jg_image_bottom'); ?>
+<?php if(!empty($modules)) : ?>
+  <?php foreach($modules as $module) : ?>
+    <?php $moduleparams = json_decode($module->params, true); ?>
+    <div class="card">
+      <?php if($module->showtitle) : ?>
+        <?php $moduleheader = '<' . $moduleparams['header_tag'] . ' class="card-header ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo $moduleheader; ?>
+      <?php endif; ?>
+      <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
+<script>
+  window.onload = function () {
+    const el = document.querySelector('#jg-loader');
+    el.classList.add('hidden');
+  };
+</script>

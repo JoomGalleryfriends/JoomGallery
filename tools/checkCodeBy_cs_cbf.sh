@@ -1,104 +1,47 @@
 #!/usr/bin/env bash
 
-# -----------------------------------------------------
-# Check joomgallery code style by phpcs (jg_checkCodeBy_cs_cbf.sh)
-# -----------------------------------------------------
+# Check JoomGallery with the same PHPCS command used by the PR workflow.
+# Run from the repository root: bash tools/checkCodeBy_cs_cbf.sh
 
-clear
+set -o pipefail
 
-echo "----------------------------------------------"
-echo "Check joomgallery code style by phpcs"
-echo "----------------------------------------------"
-echo
+log_file="tools/check.phpcs.log"
 
-# -----------------------------------------------------
-# Check if PHP is available
-
-echo "php check"
-
-if ! php --version > /dev/null 2>&1; then
-    echo
-    echo "Actual environment PATH:"
-    echo "$PATH"
-    echo
-    echo "Please add the path to php to PATH variable"
-    echo 'using: export PATH="$PATH:/your/path/here"'
-    echo
-    exit 1
+if [ ! -f "composer.json" ] || [ ! -f "ruleset.xml" ] || [ ! -d "src" ]; then
+  echo "ERROR: Run this script from the JoomGallery repository root."
+  exit 1
 fi
 
-# -----------------------------------------------------
-# Save current directory for log files
+command -v php >/dev/null 2>&1 || {
+  echo "ERROR: PHP is not available on PATH."
+  exit 1
+}
 
-actualPath="$(pwd)"
-echo "  - 'actualPath $actualPath'"
-
-# -----------------------------------------------------
-# Determine repository base path
-# Default: one directory up from tools/
-
-jg_basePath="../"
-
-if [ -n "$1" ]; then
-    jg_basePath="$1"
+if [ ! -f "vendor/bin/phpcs" ]; then
+  echo "ERROR: vendor/bin/phpcs is missing. Run 'composer install' first."
+  exit 1
 fi
 
-echo "  - 'jg base path $jg_basePath'"
+echo "Checking PHP code with the PR pipeline's PHPCS command"
+echo "Log: ${log_file}"
+echo
 
-# -----------------------------------------------------
-# Move to jg_basePath
+php ./vendor/bin/phpcs \
+  --extensions=php \
+  -p \
+  --standard=ruleset.xml \
+  --runtime-set ignore_warnings_on_exit 1 \
+  src 2>&1 | tee "$log_file"
+status="${PIPESTATUS[0]}"
 
-pushd "$jg_basePath" > /dev/null
-echo "Moved to path: $(pwd)"
-
-# -----------------------------------------------------
-# Verify that we are in the correct directory
-
-if [ ! -f "joomgallery.xml" ]; then
-    echo
-    echo "ERROR: joomgallery.xml not found in $(pwd)"
-    echo "This does not appear to be the JoomGallery root directory."
-    echo "Aborting to prevent accidental composer operations!"
-    echo
-    popd > /dev/null
-    exit 1
+echo
+if [ "$status" -eq 0 ]; then
+  echo "SUCCESS: PHPCS passes the PR pipeline check."
+else
+  echo "FAILED: PHPCS found coding-standard errors."
+  echo "Run 'bash tools/fixCodeStyle.sh' to fix what can be fixed automatically."
+  echo "Remaining violations are listed in ${log_file}."
 fi
 
-# -----------------------------------------------------
-# Composer housekeeping
+exit "$status"
 
-echo "Install needed dependencies (composer)"
-echo
-
-echo "--- composer install"
-composer install --prefer-dist --no-ansi --no-interaction --no-progress
-if [ $? -ne 0 ]; then
-    echo
-    echo "ERROR: composer install failed!"
-    popd > /dev/null
-    exit 1
-fi
-
-echo "Composer tasks completed successfully."
-echo
-
-# =====================================================
-# Call "phpcs"
-
-echo "----------------------------------------------"
-echo "call \"phpcs\""
-echo "   may take some time"
-echo
-
-php "./administrator/com_joomgallery/vendor/bin/phpcs" --standard=ruleset.xml ./
-echo
-
-# -----------------------------------------------------
-# Move back
-
-popd > /dev/null
-echo
-echo "Done and moved back to path: $(pwd)"
-echo
-
-exit 0

@@ -18,31 +18,30 @@
  *
  * To run a quick dry run to see the files that would be modified:
  *
- *        ./administrator/com_joomgallery/vendor/bin/php-cs-fixer fix --dry-run
+ *        ./vendor/bin/php-cs-fixer fix --dry-run
  *
  * To run a full check, with automated fixing of each problem :
  *
- *        ./administrator/com_joomgallery/vendor/bin/php-cs-fixer fix
+ *        ./vendor/bin/php-cs-fixer fix
  *
  * You can run the clean up on a single file if you need to, this is faster
  *
- *        ./administrator/com_joomgallery/vendor/bin/php-cs-fixer fix --dry-run administrator/index.php
- *        ./administrator/com_joomgallery/vendor/bin/php-cs-fixer fix administrator/index.php
+ *        ./vendor/bin/php-cs-fixer fix --dry-run src/administrator/index.php
+ *        ./vendor/bin/php-cs-fixer fix src/administrator/index.php
  */
 
 $finder = PhpCsFixer\Finder::create()
   ->in(
     [
-      __DIR__ . '/administrator',
-      __DIR__ . '/plugins',
-      __DIR__ . '/site',
+      __DIR__ . '/src',
     ]
   )
-  ->notPath('administrator/com_joomgallery/vendor')
-  ->notPath('administrator/com_joomgallery/includes')
+  ->notPath('com_joomgallery/vendor')
+  ->notPath('com_joomgallery/includes')
   ->notPath('tools/phpcs')
   ->exclude('vendor')
   ->exclude('includes')
+  ->exclude('media')
   ->exclude('tools')
   ->name('*.php')
   ->ignoreDotFiles(true)

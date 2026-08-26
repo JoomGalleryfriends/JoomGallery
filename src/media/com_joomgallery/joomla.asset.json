@@ -1,0 +1,185 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_joomgallery",
+  "version": "CVS: 4.0.0",
+  "license": "GNU General Public License version 2 or later",
+  "assets": [
+    {
+      "name": "com_joomgallery.admin",
+      "type": "style",
+      "uri": "com_joomgallery/admin.css"
+    },
+    {
+      "name": "com_joomgallery.site",
+      "type": "style",
+      "uri": "com_joomgallery/site.css"
+    },
+    {
+      "name": "com_joomgallery.jg-icon-font",
+      "type": "style",
+      "uri": "com_joomgallery/jg-icon-font.css"
+    },
+    {
+      "name": "com_joomgallery.lightgallery-bundle",
+      "type": "style",
+      "uri": "com_joomgallery/lightgallery-bundle.min.css"
+    },
+    {
+      "name": "com_joomgallery.refresher",
+      "type": "style",
+      "uri": "com_joomgallery/refresher.css"
+    },
+    {
+      "name": "com_joomgallery.admin",
+      "type": "script",
+      "uri": "com_joomgallery/admin.js",
+      "dependencies": [
+        "jquery"
+      ],
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "com_joomgallery.tasks",
+      "type": "script",
+      "uri": "com_joomgallery/tasks/dist/tasks.js",
+      "attributes": {
+        "type": "module",
+        "defer": true
+      }
+    },
+    {
+      "name": "com_joomgallery.catBtns",
+      "type": "script",
+      "uri": "com_joomgallery/catBtns.js",
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "com_joomgallery.list-view",
+      "type": "script",
+      "uri": "com_joomgallery/list-view.js",
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "com_joomgallery.sensitiveField",
+      "type": "script",
+      "uri": "com_joomgallery/sensitiveField.js",
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "com_joomgallery.list",
+      "type": "style",
+      "uri": "com_joomgallery/list.css"
+    },
+    {
+      "name": "com_joomgallery.field-image",
+      "type": "script",
+      "uri": "com_joomgallery/field-image.js",
+      "attributes": {
+        "type": "module"
+      }
+    },
+    {
+      "name": "com_joomgallery.field-category",
+      "type": "script",
+      "uri": "com_joomgallery/field-category.js",
+      "attributes": {
+        "type": "module"
+      }
+    },
+    {
+      "name": "com_joomgallery.form-edit",
+      "type": "script",
+      "uri": "com_joomgallery/form-edit.js",
+      "attributes": {
+        "type": "module"
+      }
+    },
+    {
+      "name": "com_joomgallery.lightgallery",
+      "type": "script",
+      "uri": "com_joomgallery/lightgallery.min.js",
+      "attributes": {
+        "defer": false
+      }
+    },
+    {
+      "name": "com_joomgallery.lg-hash",
+      "type": "script",
+      "uri": "com_joomgallery/lg-hash.min.js",
+      "attributes": {
+        "defer": false
+      }
+    },
+    {
+      "name": "com_joomgallery.lg-thumbnail",
+      "type": "script",
+      "uri": "com_joomgallery/lg-thumbnail.min.js",
+      "attributes": {
+        "defer": false
+      }
+    },
+    {
+      "name": "com_joomgallery.lg-zoom",
+      "type": "script",
+      "uri": "com_joomgallery/lg-zoom.min.js",
+      "attributes": {
+        "defer": false
+      }
+    },
+    {
+      "name": "com_joomgallery.masonry",
+      "type": "script",
+      "uri": "com_joomgallery/masonry.min.js",
+      "attributes": {
+        "type": "module"
+      }
+    },
+    {
+      "name": "com_joomgallery.tasklessForm",
+      "type": "script",
+      "uri": "com_joomgallery/tasklessForm.js",
+      "attributes": {
+        "type": "module"
+      }
+    },
+    {
+      "name": "com_joomgallery.justified",
+      "type": "script",
+      "uri": "com_joomgallery/imgjust/imgjust.min.js",
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "com_joomgallery.joomgrid",
+      "type": "script",
+      "uri": "com_joomgallery/joomgrid.js"
+    },
+    {
+      "name": "com_joomgallery.uppy-uploader",
+      "type": "script",
+      "uri": "com_joomgallery/uppy/dist/uppy-uploader.js",
+      "attributes": {
+        "type": "module"
+      }
+    },
+    {
+      "name": "com_joomgallery.uppy",
+      "type": "style",
+      "uri": "com_joomgallery/uppy.css"
+    },
+    {
+      "name": "com_joomgallery.migrator",
+      "type": "script",
+      "uri": "com_joomgallery/migrator/dist/migrator.js"
+    }
+  ]
+}

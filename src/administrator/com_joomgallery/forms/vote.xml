@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fieldset name="general">
+    <field name="id"
+           type="text"
+           filter="integer"
+           readonly="true"
+           class="readonly"
+           label="JGLOBAL_FIELD_ID_LABEL" />
+
+    <field name="imgid"
+           type="text"
+           filter="integer"
+           readonly="true"
+           class="readonly"
+           label="Image ID" />
+
+    <field name="score"
+           type="text"
+           filter="integer"
+           readonly="true"
+           class="readonly"
+           label="Score" />
+
+    <field name="identication"
+           type="text"
+           readonly="true"
+           class="readonly"
+           label="Identication" />
+
+    <field name="created_time"
+           type="calendar"
+           translateformat="true"
+           showtime="true"
+           size="22"
+           filter="user_utc"
+           label="JGLOBAL_FIELD_CREATED_LABEL" />
+
+    <field name="created_by"
+           type="user"
+           filter="integer"
+           label="JGLOBAL_FIELD_CREATED_BY_LABEL"
+           description="JGLOBAL_FIELD_CREATED_BY_DESC"
+           validate="UserId" />
+  </fieldset>
+  <fieldset name="accesscontrol">
+    <field name="asset_id"
+           type="hidden"
+           filter="unset" />
+
+    <field name="rules"
+           type="rules"
+           label="JFIELD_RULES_LABEL"
+           translate_label="false"
+           filter="rules"
+           validate="rules"
+           class="inputbox"
+           component="com_joomgallery"
+           section="vote" />
+  </fieldset>
+</form>
