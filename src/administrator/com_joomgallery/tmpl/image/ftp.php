@@ -154,7 +154,7 @@ $this->form->setFieldAttribute('title', 'required', 'false');
           <p>
             <?php
               $displayData = [
-                'description' => Text::_('COM_JOOMGALLERY_GENERIC_UPLOAD_DATA'),
+                'description' => Text::_('COM_JOOMGALLERY_FTP_IMPORT_DATA'),
                 'id'          => 'adminForm-desc',
                 'small'       => true,
               ];
