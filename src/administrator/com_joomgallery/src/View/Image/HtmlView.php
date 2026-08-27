@@ -247,6 +247,12 @@ class HtmlView extends JoomGalleryView
     $toolbar = $this->getToolbar();
     $items   = [
       [
+        'layout' => 'control',
+        'url'    => 'index.php?option=com_joomgallery&amp;view=control',
+        'icon'   => 'icon-arrow-left-4',
+        'label'  => Text::_('COM_JOOMGALLERY_CONTROL_PANEL'),
+      ],
+      [
         'layout' => 'images',
         'url'    => 'index.php?option=com_joomgallery&amp;view=images',
         'icon'   => 'icon-images',
