@@ -22,6 +22,7 @@ use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\CMS\User\UserHelper;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Model to get a category record.
@@ -592,11 +593,22 @@ class CategoryModel extends JoomItemModel
 
     if(Multilanguage::isEnabled())
     {
-      $language = $this->item->language === '*'
-        ? $this->app->getLanguage()->getTag()
-        : $this->item->language;
+      $currentLanguage  = $this->app->getLanguage()->getTag();
+      $fallbackLanguage = ComponentHelper::getParams('com_joomgallery')->get('category_fallback_language', '');
 
-      $listModel->setState('filter.language', [$language, '*']);
+      if($fallbackLanguage === '')
+      {
+        $fallbackLanguage = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+      }
+
+      $languages = [$currentLanguage, '*'];
+
+      if($fallbackLanguage !== $currentLanguage)
+      {
+        $languages[] = $fallbackLanguage;
+      }
+
+      $listModel->setState('filter.language', $languages);
     }
 
     $catform_list       = [];

@@ -86,8 +86,28 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('parent_id', 'exclude', $id);
     }
 
-    // Apply filter for current category on thumbnail field
-    $form->setFieldAttribute('thumbnail', 'categories', $id);
+    // Apply filter for current and associated categories on thumbnail field
+    $thumbnailCategories = [$id];
+
+    if($id && Associations::isEnabled())
+    {
+      $associations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery_categories',
+        'com_joomgallery.category',
+        $id,
+        'id',
+        '',
+        ''
+      );
+
+      foreach($associations as $association)
+      {
+        $thumbnailCategories[] = (int) $association->id;
+      }
+    }
+
+    $form->setFieldAttribute('thumbnail', 'categories', implode(',', $thumbnailCategories));
 
     // Disable remove password field if no password is set
     if(!$this->is_password)
