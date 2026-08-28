@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
+use Joomla\CMS\Language\Multilanguage;
 // ToDo use ... databsequery  (?MysqliQuery)
 /**
  * Model to get a list of category records.
@@ -82,6 +83,11 @@ class CategoriesModel extends AdminCategoriesModel
   {
     // List state information.
     parent::populateState($ordering, $direction);
+
+    if(Multilanguage::isEnabled())
+    {
+      $this->setState('filter.language', $this->app->getLanguage()->getTag());
+    }
 
     // Set filters based on how the view is used.
     // e.g. user list of categories: $this->setState('filter.created_by', Factory::getApplication()->getIdentity());

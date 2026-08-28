@@ -39,6 +39,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\TusService
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceTrait;
 use Joomgallery\Component\Joomgallery\Site\Service\JG3Router;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\AssociationsHelper;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Association\AssociationServiceInterface;
 use Joomla\CMS\Association\AssociationServiceTrait;
@@ -61,7 +62,7 @@ use Psr\Container\ContainerInterface;
  * @package JoomGallery
  * @since   4.0.0
  */
-class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface
+class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface, AssociationServiceInterface
 {
   use MessageTrait;
   use AssociationServiceTrait;
@@ -140,6 +141,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
     {
       require_once JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/defines.php';
     }
+    $this->setAssociationExtension(new AssociationsHelper());
 
     // Initialize JoomGallery cache
     if(!$this->cache)
