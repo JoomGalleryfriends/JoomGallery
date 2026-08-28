@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\AssociationsHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceInterface;
@@ -39,7 +40,6 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\TusService
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceTrait;
 use Joomgallery\Component\Joomgallery\Site\Service\JG3Router;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\AssociationsHelper;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Association\AssociationServiceInterface;
 use Joomla\CMS\Association\AssociationServiceTrait;
