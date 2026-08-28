@@ -86,7 +86,7 @@ class CategoriesModel extends AdminCategoriesModel
 
     if(Multilanguage::isEnabled())
     {
-      $this->setState('filter.language', $this->app->getLanguage()->getTag());
+        $this->setState('filter.language', [$this->app->getLanguage()->getTag(), '*']);
     }
 
     // Set filters based on how the view is used.
