@@ -634,21 +634,21 @@ class JoomHelper
         }
 
         $associations = Associations::getAssociations(
-          'com_joomgallery',
-          '#__joomgallery_categories',
-          'com_joomgallery.category',
-          $cat->id,
-          'id',
-          '',
-          ''
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $cat->id,
+            'id',
+            '',
+            ''
         );
 
         if(!empty($associations[$fallbackLanguage]))
         {
-          $fallbackCategory = self::getRecord(
+        $fallbackCategory = self::getRecord(
             'category',
             (int) $associations[$fallbackLanguage]->id
-          );
+        );
 
           if($fallbackCategory && !empty($fallbackCategory->thumbnail))
           {
@@ -902,21 +902,21 @@ class JoomHelper
         }
 
         $associations = Associations::getAssociations(
-          'com_joomgallery',
-          '#__joomgallery_categories',
-          'com_joomgallery.category',
-          $cat->id,
-          'id',
-          '',
-          ''
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $cat->id,
+            'id',
+            '',
+            ''
         );
 
         if(!empty($associations[$fallbackLanguage]))
         {
-          $fallbackCategory = self::getRecord(
+        $fallbackCategory = self::getRecord(
             'category',
             (int) $associations[$fallbackLanguage]->id
-          );
+        );
 
           if($fallbackCategory && !empty($fallbackCategory->thumbnail))
           {
@@ -956,7 +956,7 @@ class JoomHelper
       {
         foreach($categories as $categoryId)
         {
-          $associations = Associations::getAssociations(
+        $associations = Associations::getAssociations(
             'com_joomgallery',
             '#__joomgallery_categories',
             'com_joomgallery.category',
@@ -964,7 +964,7 @@ class JoomHelper
             'id',
             '',
             ''
-          );
+        );
 
           foreach($associations as $association)
           {
@@ -1356,7 +1356,7 @@ class JoomHelper
 
     if(!empty($items))
     {
-      $findings       = [];
+      $findings        = [];
       $currentLanguage = Factory::getApplication()->getLanguage()->getTag();
 
       foreach($items as $menuitem)
@@ -1388,7 +1388,7 @@ class JoomHelper
       {
         if($count > 1)
         {
-          usort(
+        usort(
             $findings,
             function ($a, $b) use ($currentLanguage) {
               $aLanguage = $a->language === $currentLanguage ? 0 : 1;
@@ -1396,7 +1396,7 @@ class JoomHelper
 
               return ($aLanguage <=> $bLanguage) ?: ($a->level <=> $b->level);
             }
-          );
+        );
         }
 
         return $findings[0]->id;

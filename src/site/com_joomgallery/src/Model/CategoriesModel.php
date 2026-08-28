@@ -136,24 +136,24 @@ class CategoriesModel extends AdminCategoriesModel
     $subQuery = $db->getQuery(true)
       ->select('1')
       ->from($db->quoteName('#__associations', 'fa'))
-      ->join(
+    ->join(
         'INNER',
         $db->quoteName('#__associations', 'ca'),
         $db->quoteName('ca.key') . ' = ' . $db->quoteName('fa.key')
-        . ' AND ' . $db->quoteName('ca.context') . ' = ' . $db->quoteName('fa.context')
-      )
-      ->join(
+          . ' AND ' . $db->quoteName('ca.context') . ' = ' . $db->quoteName('fa.context')
+    )
+    ->join(
         'INNER',
         $db->quoteName('#__joomgallery_categories', 'cc'),
         $db->quoteName('cc.id') . ' = ' . $db->quoteName('ca.id')
-      )
+    )
       ->where($db->quoteName('fa.id') . ' = ' . $db->quoteName('a.id'))
       ->where($db->quoteName('fa.context') . ' = ' . $db->quote('com_joomgallery.category'))
       ->where($db->quoteName('cc.language') . ' = ' . $db->quote($currentLanguage));
 
     $query->where(
-      '(' . $db->quoteName('a.language') . ' != ' . $db->quote($fallbackLanguage)
-      . ' OR NOT EXISTS (' . $subQuery . '))'
+        '(' . $db->quoteName('a.language') . ' != ' . $db->quote($fallbackLanguage)
+        . ' OR NOT EXISTS (' . $subQuery . '))'
     );
 
     return $query;

@@ -487,10 +487,10 @@ class CategoryModel extends JoomItemModel
 
     if(Multilanguage::isEnabled() && !empty($associatedCategoryIds))
     {
-      $categoryIds = array_merge(
+    $categoryIds = array_merge(
         [(int) $this->item->id],
         array_map('intval', $associatedCategoryIds)
-      );
+    );
 
       $db = $this->getDatabase();
 
