@@ -16,9 +16,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\DatabaseInterface;
@@ -205,15 +205,15 @@ class CategoryModel extends JoomAdminModel
     return $this->is_password;
   }
 
-  /**
-   * Method to get a single record.
-   *
-   * @param   integer  $pk  The id of the primary key.
-   *
-   * @return  Object|boolean Object on success, false on failure.
-   *
-   * @since   4.0.0
-   */
+    /**
+     * Method to get a single record.
+     *
+     * @param   integer  $pk  The id of the primary key.
+     *
+     * @return  Object|boolean Object on success, false on failure.
+     *
+     * @since   4.0.0
+     */
     public function getItem($pk = null)
   {
     if($this->item === null)

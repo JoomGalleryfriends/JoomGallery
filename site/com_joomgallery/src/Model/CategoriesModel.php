@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\CategoriesModel as AdminCategoriesModel;
-use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Multilanguage;
 // ToDo use ... databsequery  (?MysqliQuery)
 /**
  * Model to get a list of category records.
