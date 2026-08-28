@@ -596,7 +596,7 @@ class CategoryModel extends JoomItemModel
         ? $this->app->getLanguage()->getTag()
         : $this->item->language;
 
-      $listModel->setState('filter.language', $language);
+      $listModel->setState('filter.language', [$language, '*']);
     }
 
     $catform_list       = [];
