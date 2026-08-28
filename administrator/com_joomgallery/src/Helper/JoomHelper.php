@@ -1265,11 +1265,17 @@ class JoomHelper
 
     if(!empty($items))
     {
-      $findings = [];
+      $findings       = [];
+      $currentLanguage = Factory::getApplication()->getLanguage()->getTag();
 
       foreach($items as $menuitem)
       {
         if(($menuitem->query['view'] ?? null) !== $view)
+        {
+          continue;
+        }
+
+        if(($menuitem->language ?? '*') !== '*' && ($menuitem->language ?? '*') !== $currentLanguage)
         {
           continue;
         }
@@ -1291,14 +1297,15 @@ class JoomHelper
       {
         if($count > 1)
         {
-          // We have multiple matching menuitems
-        usort(
+          usort(
             $findings,
-            function ($a, $b) {
-              // Lets take the one with the lowest level value
-              return $a->level - $b->level;
+            function ($a, $b) use ($currentLanguage) {
+              $aLanguage = $a->language === $currentLanguage ? 0 : 1;
+              $bLanguage = $b->language === $currentLanguage ? 0 : 1;
+
+              return ($aLanguage <=> $bLanguage) ?: ($a->level <=> $b->level);
             }
-        );
+          );
         }
 
         return $findings[0]->id;

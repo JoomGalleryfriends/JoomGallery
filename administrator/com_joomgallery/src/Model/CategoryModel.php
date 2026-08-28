@@ -18,6 +18,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\DatabaseInterface;
@@ -38,6 +39,8 @@ class CategoryModel extends JoomAdminModel
    * @var     string
    */
   protected $type = 'category';
+
+  protected $associationsContext = 'com_joomgallery.category';
 
   /**
    * True if a password is set
@@ -191,7 +194,7 @@ class CategoryModel extends JoomAdminModel
    *
    * @since   4.0.0
    */
-  public function getItem($pk = null)
+    public function getItem($pk = null)
   {
     if($this->item === null)
     {
@@ -204,6 +207,26 @@ class CategoryModel extends JoomAdminModel
 
       if($this->item = parent::getItem($pk))
       {
+        if($this->associationsContext && Associations::isEnabled())
+        {
+          $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $this->item->id,
+            'id',
+            '',
+            ''
+          );
+
+          $this->item->associations = [];
+
+          foreach($associations as $language => $association)
+          {
+            $this->item->associations[$language] = $association->id;
+          }
+        }
+
         if(isset($this->item->params))
         {
           $this->item->params = json_encode($this->item->params);
@@ -1233,5 +1256,50 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $count;
+  }
+  protected function preprocessForm(\Joomla\CMS\Form\Form $form, $data, $group = 'content')
+  {
+    $languages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(false, false, null, 'ordering', 'asc');
+
+    if (\count($languages) > 1)
+    {
+        $addform = new \SimpleXMLElement('<form />');
+        $fields  = $addform->addChild('fields');
+        $fields->addAttribute('name', 'associations');
+
+        $fieldset = $fields->addChild('fieldset');
+        $fieldset->addAttribute('name', 'item_associations');
+        $fieldset->addAttribute('addfieldprefix', 'Joomla\Component\Categories\Administrator\Field');
+
+        $currentLanguage = \is_object($data)
+          ? ($data->language ?? '')
+          : ($data['language'] ?? '');
+
+        foreach ($languages as $language)
+        {
+          if($language->lang_code === $currentLanguage)
+          {
+            continue;
+          }
+
+          $field = $fieldset->addChild('field');
+          $field->addAttribute('name', $language->lang_code);
+          $field->addAttribute('type', 'jgcategory');
+          $field->addAttribute('forcedLanguage', $language->lang_code);
+          $field->addAttribute('language', $language->lang_code);
+          $field->addAttribute('label', $language->title);
+          $field->addAttribute('translate_label', 'false');
+          $field->addAttribute('extension', 'com_joomgallery');
+          $field->addAttribute('select', 'true');
+          $field->addAttribute('new', 'true');
+          $field->addAttribute('edit', 'true');
+          $field->addAttribute('clear', 'true');
+          $field->addAttribute('propagate', 'true');
+        }
+
+        $form->load($addform, false);
+    }
+
+    parent::preprocessForm($form, $data, $group);
   }
 }

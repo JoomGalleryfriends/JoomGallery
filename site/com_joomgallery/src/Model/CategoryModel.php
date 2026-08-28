@@ -482,16 +482,43 @@ class CategoryModel extends JoomItemModel
     }
 
     // Apply filters
-    $listModel->setState('filter.category', $this->item->id);
+    $associatedCategoryIds = array_values($this->item->associations ?? []);
+
+    if(Multilanguage::isEnabled() && !empty($associatedCategoryIds))
+    {
+      $categoryIds = array_merge(
+        [(int) $this->item->id],
+        array_map('intval', $associatedCategoryIds)
+      );
+
+      $db = $this->getDatabase();
+
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('id'))
+        ->from($db->quoteName(_JOOM_TABLE_IMAGES))
+        ->whereIn($db->quoteName('catid'), $categoryIds);
+
+      $db->setQuery($query);
+      $imageIds = $db->loadColumn();
+
+      $listModel->setState('filter.category', []);
+      $listModel->setState('filter.ids', !empty($imageIds) ? $imageIds : [-1]);
+      $listModel->setState('filter.language', '');
+    }
+    else
+    {
+      $listModel->setState('filter.category', $this->item->id);
+
+      if(Multilanguage::isEnabled())
+      {
+        $listModel->setState('filter.language', $this->item->language);
+      }
+    }
+
     $listModel->setState('filter.access', $user->getAuthorisedViewLevels());
     $listModel->setState('filter.published', 1);
     $listModel->setState('filter.showunapproved', 0);
     $listModel->setState('filter.showhidden', 0);
-
-    if(Multilanguage::isEnabled())
-    {
-      $listModel->setState('filter.language', $this->item->language);
-    }
 
     $imgform_list       = [];
     $imgform_limitstart = $this->app->getUserState('joom.categoryview.' . $this->item->id . '.image.limitstart', 0);
@@ -565,7 +592,11 @@ class CategoryModel extends JoomItemModel
 
     if(Multilanguage::isEnabled())
     {
-      $listModel->setState('filter.language', $this->item->language);
+      $language = $this->item->language === '*'
+        ? $this->app->getLanguage()->getTag()
+        : $this->item->language;
+
+      $listModel->setState('filter.language', $language);
     }
 
     $catform_list       = [];
