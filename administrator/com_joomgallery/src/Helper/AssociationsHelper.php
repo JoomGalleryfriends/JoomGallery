@@ -36,13 +36,13 @@ class AssociationsHelper extends AssociationExtensionHelper
     }
 
     return Associations::getAssociations(
-      $this->extension,
-      '#__joomgallery_categories',
-      'com_joomgallery.category',
-      $id,
-      'id',
-      '',
-      ''
+        $this->extension,
+        '#__joomgallery_categories',
+        'com_joomgallery.category',
+        $id,
+        'id',
+        '',
+        ''
     );
   }
 

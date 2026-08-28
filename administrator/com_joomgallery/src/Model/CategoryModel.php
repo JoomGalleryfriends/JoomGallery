@@ -91,7 +91,7 @@ class CategoryModel extends JoomAdminModel
 
     if($id && Associations::isEnabled())
     {
-      $associations = Associations::getAssociations(
+    $associations = Associations::getAssociations(
         'com_joomgallery',
         '#__joomgallery_categories',
         'com_joomgallery.category',
@@ -99,7 +99,7 @@ class CategoryModel extends JoomAdminModel
         'id',
         '',
         ''
-      );
+    );
 
       foreach($associations as $association)
       {
@@ -215,7 +215,7 @@ class CategoryModel extends JoomAdminModel
      * @since   4.0.0
      */
     public function getItem($pk = null)
-  {
+    {
     if($this->item === null)
     {
       $this->item = false;
@@ -229,7 +229,7 @@ class CategoryModel extends JoomAdminModel
       {
         if($this->associationsContext && Associations::isEnabled())
         {
-          $associations = Associations::getAssociations(
+        $associations = Associations::getAssociations(
             'com_joomgallery',
             '#__joomgallery_categories',
             'com_joomgallery.category',
@@ -237,7 +237,7 @@ class CategoryModel extends JoomAdminModel
             'id',
             '',
             ''
-          );
+        );
 
           $this->item->associations = [];
 
@@ -257,7 +257,7 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $this->item;
-  }
+    }
 
   /**
    * Method to delete one or more categories.
@@ -1281,7 +1281,7 @@ class CategoryModel extends JoomAdminModel
   {
     $languages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(false, false, null, 'ordering', 'asc');
 
-    if (\count($languages) > 1)
+    if(\count($languages) > 1)
     {
         $addform = new \SimpleXMLElement('<form />');
         $fields  = $addform->addChild('fields');
@@ -1295,7 +1295,7 @@ class CategoryModel extends JoomAdminModel
           ? ($data->language ?? '')
           : ($data['language'] ?? '');
 
-        foreach ($languages as $language)
+        foreach($languages as $language)
         {
           if($language->lang_code === $currentLanguage)
           {
