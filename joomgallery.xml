@@ -87,7 +87,7 @@
     </files>
   </api>
 
-  <plugins>
+  <plugins  folder="src/plugins">
     <plugin group="console" plugin="joomconsole"/>
     <plugin group="finder" plugin="joomgallery"/>
     <plugin group="privacy" plugin="joomgallery"/>
