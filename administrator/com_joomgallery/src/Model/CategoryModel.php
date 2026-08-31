@@ -22,6 +22,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
 /**
