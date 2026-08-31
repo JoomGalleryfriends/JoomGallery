@@ -774,15 +774,15 @@ class DefaultRouter extends RouterView
 
         if(Multilanguage::isEnabled() && Associations::isEnabled())
         {
-          $associations = Associations::getAssociations(
-              'com_joomgallery',
-              '#__joomgallery_categories',
-              'com_joomgallery.category',
-              (int) $query['id'],
-              'id',
-              '',
-              ''
-          );
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            (int) $query['id'],
+            'id',
+            '',
+            ''
+        );
 
           foreach($associations as $association)
           {
