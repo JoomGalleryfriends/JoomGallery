@@ -1828,6 +1828,36 @@ class JoomHelper
       }
     }
 
+    if(Multilanguage::isEnabled() && Associations::isEnabled())
+    {
+      $categoryIds = $idsToCount;
+
+      foreach($categoryIds as $id)
+      {
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $id,
+            'id',
+            '',
+            ''
+        );
+
+        foreach($associations as $association)
+        {
+          $associationId = (int) $association->id;
+
+          if(isset($catids[$associationId]))
+          {
+            $idsToCount[] = $associationId;
+          }
+        }
+      }
+
+      $idsToCount = array_unique($idsToCount);
+    }    
+
     if(empty($idsToCount))
     {
       return 0;
