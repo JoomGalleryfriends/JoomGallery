@@ -64,7 +64,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  public static string $image_parentID = '';
+  public static string $image_parentID = 'catid';
 
   /**
    * Param to use ids in URLs
@@ -134,7 +134,7 @@ class DefaultRouter extends RouterView
     $this->registerView($images);
 
     $image = new RouterViewConfiguration('image');
-    $image->setKey('id')->setParent($images);
+    $image->setKey('id')->setParent($category, 'catid');
     $this->registerView($image);
 
     $userpanel = new RouterViewConfiguration('userpanel');
