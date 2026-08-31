@@ -1856,7 +1856,7 @@ class JoomHelper
       }
 
       $idsToCount = array_unique($idsToCount);
-    }    
+    }
 
     if(empty($idsToCount))
     {
