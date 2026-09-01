@@ -110,10 +110,10 @@ class com_joomgalleryInstallerScript extends InstallerScript
   public function preflight($type, $parent)
   {
     // Only proceed if Joomla meets the minimum requirements
-    if(version_compare(JVERSION, '4.4.0', '<'))
+    if(version_compare(JVERSION, '5.0.0', '<'))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 8, 'joomgallery');
 
       return false;
     }
@@ -123,8 +123,8 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     if(\in_array($jversion[0], $this->incompatible))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 8, 'joomgallery');
 
       return false;
     }
@@ -132,8 +132,8 @@ class com_joomgalleryInstallerScript extends InstallerScript
     // Only proceed if PHP meets the minimum requirements
     if(version_compare(PHP_VERSION, $this->minPhp, '<='))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '5.x', $this->minPhp, PHP_VERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '5.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery');
 
       return false;
     }
@@ -144,7 +144,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         // use new uploaded defines.php
         $temp_dir = $parent->getParent()->getPath('source');
-        $defines  = $temp_dir . DIRECTORY_SEPARATOR . 'administrator' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'defines.php';
+        $defines  = $temp_dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'administrator' . DIRECTORY_SEPARATOR . 'com_joomgallery' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'defines.php';
       }
       else
       {
@@ -1271,7 +1271,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     {
       $pluginName  = (string) $plugin['plugin'];
       $pluginGroup = (string) $plugin['group'];
-      $path        = $installation_folder . '/plugins/' . $pluginGroup . '/' . $pluginName;
+      $path        = $installation_folder . '/src/plugins/' . $pluginGroup . '/' . $pluginName;
       $installer   = new Installer();
       $installer->setDatabase($db);
 
@@ -1366,7 +1366,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
     foreach($modules->children() as $module)
     {
       $moduleName = (string) $module['module'];
-      $path       = $folder . '/modules/' . $moduleName;
+      $path       = $folder . '/src/modules/' . $moduleName;
       $installer  = new Installer();
       $installer->setDatabase($db);
 

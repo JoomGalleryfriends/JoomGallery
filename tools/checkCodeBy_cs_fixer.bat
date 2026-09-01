@@ -1,111 +1,46 @@
 @ECHO OFF
-REM -----------------------------------------------------
-REM Check joomgallery code style by php-cs-fixer
-REM calling cbf (jg_checkCodeBy_cs_fixer.bat)
-REM -----------------------------------------------------
-REM
-REM -----------------------------------------------------
+SETLOCAL EnableExtensions
 
-CLS
+REM Check JoomGallery with the same PHP-CS-Fixer command used by the PR workflow.
+REM Run from the repository root: tools\checkCodeBy_cs_fixer.bat
 
-ECHO ----------------------------------------------
-ECHO Check joomgallery code style by php-cs-fixer
-ECHO ----------------------------------------------
-REM ECHO.
+SET "LOG_FILE=tools\check.php-cs-fixer.log"
 
-REM -----------------------------------------------------
-REM Check if PHP is available
+IF NOT EXIST "composer.json" GOTO :WrongDirectory
+IF NOT EXIST ".php-cs-fixer.dist.php" GOTO :WrongDirectory
+IF NOT EXIST "src\" GOTO :WrongDirectory
 
-ECHO php check
-
-php --version >NUL 2>&1
-if errorlevel 1 (
-	ECHO.
-	ECHO Actual environment PATH:
-	ECHO "%path%"
-	ECHO.
-	ECHO Please add the path to php.exe to path variable
-	ECHO using "set PATH=%%PATH%%;C:\your\path\here\"
-	GOTO :EOF
-	ECHO.
+WHERE php >NUL 2>&1
+IF ERRORLEVEL 1 (
+  ECHO ERROR: PHP is not available on PATH.
+  EXIT /B 1
 )
 
-REM -----------------------------------------------------
-REM keep actual directory for log files
-set "actualPath=%cd%"
-ECHO  - 'actualPath %actualPath%'
-
-REM -----------------------------------------------------
-REM jg_basePath to the repository
-REM
-set "jg_basePath=..\"
-IF NOT  "%~1"=="" (
- 	set "jg_basePath=%~1"
-)
-ECHO  - 'jg base path %jg_basePath%'
-
-REM -----------------------------------------------------
-REM Move to jg_basePath
-
-pushd  "%jg_basePath%"
-ECHO Moved to path: %cd%
-
-REM -----------------------------------------------------
-REM Verify that we are in the correct working directory
-REM Check for required file: joomgallery.xml
-IF NOT EXIST "joomgallery.xml" (
-    ECHO.
-    ECHO ERROR: joomgallery.xml not found in %cd%
-    ECHO This does not appear to be the JoomGallery root directory.
-    ECHO Aborting to prevent accidental composer operations!
-    ECHO.
-    GOTO :ErrorBack
-)
-REM -----------------------------------------------------
-REM Composer housekeeping
-
-ECHO Install and update needed dependencies (composer)
-
-echo "--- composer install"
-call composer install --prefer-dist --no-ansi --no-interaction --no-progress
-IF errorlevel 1 (
-    ECHO.
-    ECHO ERROR: composer install failed!
-    GOTO :ErrorBack
+IF NOT EXIST "vendor\bin\php-cs-fixer" IF NOT EXIST "vendor\bin\php-cs-fixer.bat" (
+  ECHO ERROR: vendor\bin\php-cs-fixer is missing. Run "composer install" first.
+  EXIT /B 1
 )
 
-ECHO Composer tasks completed successfully.
+ECHO Checking PHP code with the PR pipeline's PHP-CS-Fixer command
+ECHO Log: %LOG_FILE%
 ECHO.
 
-REM =====================================================
-REM call "php-cs-fixer"
+SET "PHP_CS_FIXER_IGNORE_ENV=true"
+php ".\vendor\bin\php-cs-fixer" fix -vvv --dry-run --diff > "%LOG_FILE%" 2>&1
+SET "STATUS=%ERRORLEVEL%"
+TYPE "%LOG_FILE%"
 
-ECHO ----------------------------------------------
-ECHO call "php-cs-fixer"
-ECHO    may take some time
-
-php ".\administrator\com_joomgallery\vendor\bin\php-cs-fixer" --dry-run --verbose --config=.\.php-cs-fixer.dist.php .\
-REM if errorlevel 1 (
-REM 	ECHO Error on calling php-cs-fixer (01)
-REM 	goto :ErrorBack
-REM )
 ECHO.
+IF "%STATUS%"=="0" (
+  ECHO SUCCESS: PHP-CS-Fixer passes the PR pipeline check.
+) ELSE (
+  ECHO FAILED: PHP-CS-Fixer would change files.
+  ECHO Run "tools\fixCodeStyle.bat" to apply the fixes.
+  ECHO The proposed differences are listed in %LOG_FILE%.
+)
 
-REM -----------------------------------------------------
-REM Move back
+EXIT /B %STATUS%
 
-:MoveBack
-popd
-ECHO.
-ECHO Done and moved back to path: %cd%
-ECHO.
-GOTO :EOF
-
-:ErrorBack
-popd
-ECHO.
-ECHO !!! Error found !!!
-ECHO and moved back to path: %cd%
-ECHO.
-GOTO :EOF
-
+:WrongDirectory
+ECHO ERROR: Run this script from the JoomGallery repository root.
+EXIT /B 1
