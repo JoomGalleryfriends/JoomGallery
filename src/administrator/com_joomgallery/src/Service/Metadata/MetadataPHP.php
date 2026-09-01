@@ -44,6 +44,48 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 {
   use ServiceTrait;
 
+  /** Maximum size in bytes for regular metadata form fields. */
+  private const MAX_METADATA_FIELD_LENGTH = 255;
+
+  /** Maximum size in bytes for metadata form fields intended for longer text. */
+  private const MAX_LONG_METADATA_FIELD_LENGTH = 2048;
+
+  /** EXIF fields supported by the metadata XML forms. */
+  private const SUPPORTED_EXIF_FIELDS = [
+    'IFD0' => [
+      'ImageDescription', 'Make', 'Model', 'Orientation', 'XResolution',
+      'YResolution', 'ResolutionUnit', 'Software', 'DateTime', 'Artist',
+      'WhitePoint', 'PrimaryChromaticities', 'YCbCrCoefficients',
+      'YCbCrPositioning', 'ReferenceBlackWhite', 'Copyright',
+    ],
+    'EXIF' => [
+      'ExposureTime', 'FNumber', 'ExposureProgram', 'ISOSpeedRatings',
+      'ExifVersion', 'DateTimeOriginal', 'DateTimeDigitized',
+      'CompressedBitsPerPixel', 'ShutterSpeedValue', 'ApertureValue',
+      'BrightnessValue', 'ExposureBiasValue', 'MaxApertureValue',
+      'SubjectDistance', 'MeteringMode', 'LightSource', 'Flash', 'FocalLength',
+      'UserComment', 'PixelXDimension', 'PixelYDimension',
+      'FocalPlaneXResolution', 'FocalPlaneYResolution',
+      'FocalPlaneResolutionUnit', 'ExposureIndex', 'SensingMethod',
+    ],
+  ];
+
+  /** IPTC fields supported by the metadata XML form. */
+  private const SUPPORTED_IPTC_FIELDS = [
+    '2#090', '2#118', '2#116', '2#100', '2#101', '2#080', '2#085', '2#110',
+    '2#055', '2#120', '2#122', '2#105', '2#040', '2#025', '2#095', '2#115',
+    '2#092', '2#005',
+  ];
+
+  /** Metadata form fields intended for longer text. */
+  private const LONG_METADATA_FIELDS = [
+    'comment',
+    'exif.EXIF.UserComment',
+    'iptc.2#120',
+    'iptc.2#040',
+    'iptc.2#025',
+  ];
+
   /**
    * @var array
    */
@@ -285,7 +327,16 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
    */
   public function readMetadata(string $file)
   {
-    return self::readJpegMetadata($file);
+    try
+    {
+      return $this->readJpegMetadata($file);
+    }
+    catch(\Throwable $e)
+    {
+      $this->component->addDebug('Unable to read image metadata: ' . $e->getMessage());
+
+      return ['exif' => [], 'iptc' => [], 'comment' => ''];
+    }
   }
 
   /**
@@ -299,19 +350,33 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
    */
   public function readJpegMetadata(string $file)
   {
-    // Output to the same format as before. Comment field has been left out on purpose.
+    // Output to the same format as before.
     $metadata = ['exif' => [], 'iptc' => [], 'comment' => ''];
-    $size     = getimagesize($file, $info);
+    $size     = @getimagesize($file, $info);
+
+    if($size === false)
+    {
+      $this->component->addDebug('Unable to read image metadata: The image dimensions could not be determined.');
+
+      return $metadata;
+    }
 
     if(\extension_loaded('exif') && \function_exists('exif_read_data') && $size[2] == 2)
     {
       // Read COMMENT data
-      $exif_tmp = exif_read_data($file, null, 1);
+      $exif_tmp = @exif_read_data($file, null, true);
 
       // Read COMMENT
       if(isset($exif_tmp['COMMENT'], $exif_tmp['COMMENT'][0])  )
       {
-        $metadata['comment'] = $exif_tmp['COMMENT'][0];
+        try
+        {
+          $metadata['comment'] = $this->normalizeMetadataField($exif_tmp['COMMENT'][0], 'comment');
+        }
+        catch(\Throwable $e)
+        {
+          $this->component->addDebug('Unable to process JPEG comment metadata: ' . $e->getMessage());
+        }
       }
     }
 
@@ -320,7 +385,9 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
     if($imageObjects == false)
     {
-      return;
+      $this->component->addDebug('Unable to read image metadata: PEL did not recognize the image data.');
+
+      return $metadata;
     }
 
     $tiff = $imageObjects['tiff'];
@@ -328,23 +395,13 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
     if($ifd0 != null)
     {
-      $metadata['exif']['IFD0'] = [];
-
-      foreach($ifd0->getEntries() as $entry)
-      {
-        $metadata['exif']['IFD0'][PelTag::getName(PelIfd::IFD0, $entry->getTag())] = self::formatPELEntryForForm($entry);
-      }
+      $metadata['exif']['IFD0'] = $this->readPelEntries($ifd0, PelIfd::IFD0, 'IFD0');
 
       $subIfd = $ifd0->getSubIfd(PelIfd::EXIF);
 
       if($subIfd != null)
       {
-        $metadata['exif']['EXIF'] = [];
-
-        foreach($subIfd->getEntries() as $entry)
-        {
-          $metadata['exif']['EXIF'][PelTag::getName(PelIfd::EXIF, $entry->getTag())] = self::formatPELEntryForForm($entry);
-        }
+        $metadata['exif']['EXIF'] = $this->readPelEntries($subIfd, PelIfd::EXIF, 'EXIF');
       }
     }
 
@@ -353,8 +410,25 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
     {
       $iptc = iptcparse($info['APP13']);
 
-      foreach($iptc as $key => $value)
+      if($iptc === false)
       {
+        $this->component->addDebug('Unable to read IPTC metadata: The APP13 data could not be parsed.');
+      }
+
+      foreach($iptc ?: [] as $key => $value)
+      {
+        if(!\in_array($key, self::SUPPORTED_IPTC_FIELDS, true))
+        {
+          continue;
+        }
+
+        if(!\is_array($value) || !isset($value[0]))
+        {
+          $this->component->addDebug('Unable to process IPTC metadata field ' . $key . ': The metadata value is missing.');
+
+          continue;
+        }
+
         // Convert keywords to string
         if($key == '2#025')
         {
@@ -368,11 +442,112 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
           $value[0] = substr($keywords, 0, -2);
         }
 
-        $metadata['iptc'][$key] = $value[0];
+        try
+        {
+          $metadata['iptc'][$key] = $this->normalizeMetadataField($value[0], 'iptc.' . $key);
+        }
+        catch(\Throwable $e)
+        {
+          $this->component->addDebug('Unable to process IPTC metadata field ' . $key . ': ' . $e->getMessage());
+        }
       }
     }
 
     return $metadata;
+  }
+
+  /**
+   * Reads and normalizes the entries supported by an EXIF metadata form.
+   *
+   * @param   PelIfd  $ifd      PEL IFD containing the entries
+   * @param   int     $ifdType  PEL IFD type
+   * @param   string  $section  Metadata form section
+   *
+   * @return array Supported metadata values
+   */
+  private function readPelEntries(PelIfd $ifd, int $ifdType, string $section): array
+  {
+    $metadata = [];
+
+    foreach($ifd->getEntries() as $entry)
+    {
+      $field = PelTag::getName($ifdType, $entry->getTag());
+
+      if(!\in_array($field, self::SUPPORTED_EXIF_FIELDS[$section], true))
+      {
+        continue;
+      }
+
+      try
+      {
+        $value            = $this->formatPELEntryForForm($entry);
+        $metadata[$field] = $this->normalizeMetadataField($value, 'exif.' . $section . '.' . $field);
+      }
+      catch(\Throwable $e)
+      {
+        $this->component->addDebug('Unable to process EXIF metadata field ' . $section . '.' . $field . ': ' . $e->getMessage());
+      }
+    }
+
+    return $metadata;
+  }
+
+  /**
+   * Normalizes and bounds a metadata form field value.
+   *
+   * @param   mixed   $value  Metadata value
+   * @param   string  $field  Metadata field path used in debug output
+   *
+   * @return mixed Normalized metadata value
+   */
+  private function normalizeMetadataField($value, string $field)
+  {
+    if(!\is_string($value))
+    {
+      if(\is_scalar($value) || $value === null)
+      {
+        return $value;
+      }
+
+      throw new \UnexpectedValueException('The metadata value is not scalar.');
+    }
+
+    if(!mb_check_encoding($value, 'UTF-8'))
+    {
+      $value = mb_convert_encoding($value, 'UTF-8', 'Windows-1252');
+      $this->component->addDebug('Non-UTF-8 data was converted in metadata field ' . $field . '.');
+    }
+
+    $prefix = '';
+
+    if($field == 'exif.EXIF.UserComment' && \strlen($value) >= 8)
+    {
+      $prefix = \substr($value, 0, 8);
+      $value  = \substr($value, 8);
+    }
+
+    $normalized = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $value);
+
+    if($normalized !== $value)
+    {
+      $value = $normalized;
+      $this->component->addDebug('Control characters were removed from metadata field ' . $field . '.');
+    }
+
+    $value = $prefix . $value;
+
+    $maximum = \in_array($field, self::LONG_METADATA_FIELDS, true)
+      ? self::MAX_LONG_METADATA_FIELD_LENGTH
+      : self::MAX_METADATA_FIELD_LENGTH;
+
+    if(\strlen($value) > $maximum)
+    {
+      $length = \strlen($value);
+      $value  = mb_strcut($value, 0, $maximum, 'UTF-8');
+      $this->component->addDebug('Metadata field ' . $field . ' was truncated from ' . $length . ' to ' . \strlen($value) . ' bytes.');
+    }
+
+    return $value;
   }
 
   /**
