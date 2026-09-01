@@ -21,6 +21,7 @@ use Joomla\CMS\Form\FormFactoryInterface;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
@@ -312,6 +313,10 @@ class ImageModel extends JoomAdminModel
       $suffix      = str_replace('-', '_', strtolower($language->lang_code));
       $title       = trim((string) ($translations['translation_' . $suffix . '_title'] ?? ''));
       $alias       = trim((string) ($translations['translation_' . $suffix . '_alias'] ?? ''));
+      if($alias === '' && $title !== '')
+      {
+        $alias = OutputFilter::stringURLSafe($title);
+      }      
       $description = (string) ($translations['translation_' . $suffix . '_description'] ?? '');
 
       $query = $db->getQuery(true)
