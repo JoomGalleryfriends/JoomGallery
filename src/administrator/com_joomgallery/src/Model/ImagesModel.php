@@ -637,6 +637,10 @@ class ImagesModel extends JoomListModel
       $query->from($db->quoteName('#__joomgallery', 'a'));
     }
 
+    // Join over the foreign key 'catid'.
+    $query->join('LEFT', $db->quoteName('#__joomgallery_categories', 'category'), $db->quoteName('category.id') . ' = ' . $db->quoteName('a.catid'));
+
+    // Join tags when the SQL search provider does not handle tag filtering.
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
@@ -682,25 +686,16 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by search
-    $search = $this->getState('filter.search');
+    $search = trim((string) $this->getState('filter.search'));
 
-    if(!empty($search))
+    $hasActiveSearchProviderFilter =
+      !empty($this->getState('filter.category'))
+      || !empty($this->getState('filter.tag'))
+      || !empty($this->getState('filter.language'));
+
+    if(!empty($search) || $hasActiveSearchProviderFilter)
     {
-      if(stripos($search, 'id:') === 0)
-      {
-        $search = (int) substr($search, 3);
-        $query->where($db->quoteName('a.id') . ' = :search')
-          ->bind(':search', $search, ParameterType::INTEGER);
-      }
-      else
-      {
-        $search = '%' . str_replace(' ', '%', trim($search)) . '%';
-        $query->where(
-            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
-            . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
-        )
-          ->bind([':search1', ':search2', ':search3'], $search);
-      }
+      $this->component->getSearch()->applyToQuery($query, $search, 'a');
     }
 
     // Filter by published state
