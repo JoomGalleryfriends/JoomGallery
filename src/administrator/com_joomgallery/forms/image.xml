@@ -335,4 +335,5 @@
            size="45"
            labelclass="control-label" />
   </fieldset>
+  <fields name="translations" />  
 </form>
