@@ -283,11 +283,11 @@ class ImageModel extends JoomAdminModel
     $query = $db->getQuery(true)
     ->select(
         [
-            $db->quoteName('language'),
-            $db->quoteName('title'),
-            $db->quoteName('alias'),
-            $db->quoteName('description'),
-          ]
+          $db->quoteName('language'),
+          $db->quoteName('title'),
+          $db->quoteName('alias'),
+          $db->quoteName('description'),
+        ]
     )
       ->from($db->quoteName('#__joomgallery_image_translations'))
       ->where($db->quoteName('image_id') . ' = :imageId')
