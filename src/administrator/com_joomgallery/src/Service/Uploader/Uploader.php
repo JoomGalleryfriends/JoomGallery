@@ -261,7 +261,7 @@ abstract class Uploader implements UploaderInterface
     // Add image metadata to data
     try
     {
-      $data['imgmetadata'] = json_encode( $metadata, JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+      $data['imgmetadata'] = json_encode($metadata, JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     }
     catch(\JsonException $e)
     {

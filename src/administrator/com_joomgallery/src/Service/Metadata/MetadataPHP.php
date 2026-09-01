@@ -522,8 +522,8 @@ class MetadataPHP extends BaseMetadata implements MetadataInterface
 
     if($field == 'exif.EXIF.UserComment' && \strlen($value) >= 8)
     {
-      $prefix = \substr($value, 0, 8);
-      $value  = \substr($value, 8);
+      $prefix = substr($value, 0, 8);
+      $value  = substr($value, 8);
     }
 
     $normalized = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $value);
