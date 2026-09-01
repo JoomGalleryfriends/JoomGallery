@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Multilanguage;
@@ -482,16 +483,43 @@ class CategoryModel extends JoomItemModel
     }
 
     // Apply filters
-    $listModel->setState('filter.category', $this->item->id);
+    $associatedCategoryIds = array_values($this->item->associations ?? []);
+
+    if(Multilanguage::isEnabled() && !empty($associatedCategoryIds))
+    {
+    $categoryIds = array_merge(
+        [(int) $this->item->id],
+        array_map('intval', $associatedCategoryIds)
+    );
+
+      $db = $this->getDatabase();
+
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('id'))
+        ->from($db->quoteName(_JOOM_TABLE_IMAGES))
+        ->whereIn($db->quoteName('catid'), $categoryIds);
+
+      $db->setQuery($query);
+      $imageIds = $db->loadColumn();
+
+      $listModel->setState('filter.category', []);
+      $listModel->setState('filter.ids', !empty($imageIds) ? $imageIds : [-1]);
+      $listModel->setState('filter.language', '');
+    }
+    else
+    {
+      $listModel->setState('filter.category', $this->item->id);
+
+      if(Multilanguage::isEnabled())
+      {
+        $listModel->setState('filter.language', $this->item->language);
+      }
+    }
+
     $listModel->setState('filter.access', $user->getAuthorisedViewLevels());
     $listModel->setState('filter.published', 1);
     $listModel->setState('filter.showunapproved', 0);
     $listModel->setState('filter.showhidden', 0);
-
-    if(Multilanguage::isEnabled())
-    {
-      $listModel->setState('filter.language', $this->item->language);
-    }
 
     $imgform_list       = [];
     $imgform_limitstart = $this->app->getUserState('joom.categoryview.' . $this->item->id . '.image.limitstart', 0);
@@ -565,7 +593,22 @@ class CategoryModel extends JoomItemModel
 
     if(Multilanguage::isEnabled())
     {
-      $listModel->setState('filter.language', $this->item->language);
+      $currentLanguage  = $this->app->getLanguage()->getTag();
+      $fallbackLanguage = ComponentHelper::getParams('com_joomgallery')->get('category_fallback_language', '');
+
+      if($fallbackLanguage === '')
+      {
+        $fallbackLanguage = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+      }
+
+      $languages = [$currentLanguage, '*'];
+
+      if($fallbackLanguage !== $currentLanguage)
+      {
+        $languages[] = $fallbackLanguage;
+      }
+
+      $listModel->setState('filter.language', $languages);
     }
 
     $catform_list       = [];

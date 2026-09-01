@@ -24,6 +24,7 @@ use Joomla\CMS\Component\Router\Rules\MenuRules;
 use Joomla\CMS\Component\Router\Rules\NomenuRules;
 use Joomla\CMS\Component\Router\Rules\StandardRules;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Menu\AbstractMenu;
 use Joomla\Database\DatabaseInterface;
@@ -63,7 +64,7 @@ class DefaultRouter extends RouterView
    *
    * @since  4.0.0
    */
-  public static string $image_parentID = '';
+  public static string $image_parentID = 'catid';
 
   /**
    * Param to use ids in URLs
@@ -133,7 +134,7 @@ class DefaultRouter extends RouterView
     $this->registerView($images);
 
     $image = new RouterViewConfiguration('image');
-    $image->setKey('id')->setParent($images);
+    $image->setKey('id')->setParent($category, 'catid');
     $this->registerView($image);
 
     $userpanel = new RouterViewConfiguration('userpanel');
@@ -786,9 +787,31 @@ class DefaultRouter extends RouterView
 
       if(key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
       {
-        // We can identify the image via menu item of type category
-        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
-        $dbquery->bind(':catid', $query['id'], ParameterType::INTEGER);
+        $categoryIds = [(int) $query['id']];
+
+        if(Multilanguage::isEnabled() && Associations::isEnabled())
+        {
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            (int) $query['id'],
+            'id',
+            '',
+            ''
+        );
+
+          foreach($associations as $association)
+          {
+            $categoryIds[] = (int) $association->id;
+          }
+        }
+
+        $dbquery->whereIn(
+            $this->db->quoteName('catid'),
+            array_unique($categoryIds),
+            ParameterType::INTEGER
+        );
       }
 
       $this->db->setQuery($dbquery);

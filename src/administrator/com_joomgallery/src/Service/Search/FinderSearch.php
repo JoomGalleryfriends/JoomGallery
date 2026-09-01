@@ -195,7 +195,7 @@ class FinderSearch extends Search implements SearchInterface
       if($branch->alias == $filter || $branch->path == $filter)
       {
         // We found the possible options for this filter field
-        return $branch->nodes;
+                return $branch->nodes ?? [];
       }
     }
 
