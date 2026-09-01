@@ -311,8 +311,8 @@ class ImageModel extends JoomAdminModel
     foreach(LanguageHelper::getContentLanguages() as $language)
     {
       $suffix = str_replace('-', '_', strtolower($language->lang_code));
-      $title = trim((string) ($translations['translation_' . $suffix . '_title'] ?? ''));
-      $alias = trim((string) ($translations['translation_' . $suffix . '_alias'] ?? ''));
+      $title  = trim((string) ($translations['translation_' . $suffix . '_title'] ?? ''));
+      $alias  = trim((string) ($translations['translation_' . $suffix . '_alias'] ?? ''));
 
       if($alias === '' && $title !== '')
       {

@@ -71,10 +71,7 @@ class HtmlView extends JoomGalleryView
 
     if(!empty($this->item->language) && $this->item->language !== '*')
     {
-      $this->contentLanguages = array_filter(
-          $this->contentLanguages,
-          fn($language) => $language->lang_code !== $this->item->language
-      );
+      $this->contentLanguages = array_filter($this->contentLanguages, fn($language) => $language->lang_code !== $this->item->language);
     }
 
     foreach($this->contentLanguages as $language)
