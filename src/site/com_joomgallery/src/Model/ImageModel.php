@@ -117,6 +117,20 @@ class ImageModel extends JoomAdminModel
       {
         throw new \Exception(Text::_('COM_JOOMGALLERY_ITEM_NOT_LOADED'), 404);
       }
+
+      if(Multilanguage::isEnabled())
+      {
+        $language     = Factory::getApplication()->getLanguage()->getTag();
+        $translations = $adminModel->getTranslations((int) $this->item->id);
+        $translation  = $translations[$language] ?? null;
+
+        if($translation)
+        {
+          $this->item->title       = $translation->title ?: $this->item->title;
+          $this->item->alias       = $translation->alias ?: $this->item->alias;
+          $this->item->description = $translation->description ?: $this->item->description;
+        }
+      }
     }
 
     if(isset($this->item->catid) && $this->item->catid != '')

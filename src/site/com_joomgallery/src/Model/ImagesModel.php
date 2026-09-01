@@ -15,6 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImagesModel as AdminImagesModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\Database\ParameterType;
 
 /**
  * Model to get a list of image records.
@@ -127,6 +130,45 @@ class ImagesModel extends AdminImagesModel
       {
         // Make sure $start=1 starts at the first image
         $items = \array_slice($items, $start - 1);
+      }
+    }
+
+    if(Multilanguage::isEnabled() && !empty($items))
+    {
+      $language = Factory::getApplication()->getLanguage()->getTag();
+    $imageIds   = array_map(
+        static fn($item) => (int) $item->id,
+        $items
+    );
+
+      $db    = $this->getDatabase();
+      $query = $db->getQuery(true)
+        ->select(
+            [
+              $db->quoteName('image_id'),
+              $db->quoteName('title'),
+              $db->quoteName('alias'),
+              $db->quoteName('description'),
+            ]
+        )
+        ->from($db->quoteName('#__joomgallery_image_translations'))
+        ->where($db->quoteName('language') . ' = :language')
+        ->whereIn($db->quoteName('image_id'), $imageIds, ParameterType::INTEGER)
+        ->bind(':language', $language, ParameterType::STRING);
+
+      $db->setQuery($query);
+      $translations = $db->loadObjectList('image_id');
+
+      foreach($items as $item)
+      {
+        $translation = $translations[(int) $item->id] ?? null;
+
+        if($translation)
+        {
+          $item->title       = $translation->title ?: $item->title;
+          $item->alias       = $translation->alias ?: $item->alias;
+          $item->description = $translation->description ?: $item->description;
+        }
       }
     }
 

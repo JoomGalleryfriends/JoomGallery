@@ -18,6 +18,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
@@ -122,6 +123,35 @@ class ImageModel extends JoomAdminModel
     if(empty($form))
     {
       return false;
+    }
+
+    if(Multilanguage::isEnabled())
+    {
+      foreach(LanguageHelper::getContentLanguages() as $language)
+      {
+        $suffix = str_replace('-', '_', strtolower($language->lang_code));
+
+        $form->setField(
+            new \SimpleXMLElement(
+                '<field name="translation_' . $suffix . '_title" type="text" maxlength="255" filter="string" label="JGLOBAL_TITLE" />'
+            ),
+            'translations'
+        );
+
+        $form->setField(
+            new \SimpleXMLElement(
+                '<field name="translation_' . $suffix . '_alias" type="text" maxlength="255" filter="cmd" label="JALIAS" />'
+            ),
+            'translations'
+        );
+
+        $form->setField(
+            new \SimpleXMLElement(
+                '<field name="translation_' . $suffix . '_description" type="editor" rows="12" buttons="true" filter="\Joomla\CMS\Component\ComponentHelper::filterText" label="JGLOBAL_DESCRIPTION" />'
+            ),
+            'translations'
+        );
+      }
     }
 
     // On edit, we get ID from state, but on save, we use data from input
@@ -240,6 +270,75 @@ class ImageModel extends JoomAdminModel
     $this->item = $table->getFieldsValues();
 
     return $this->item;
+  }
+
+  public function getTranslations(int $imageId): array
+  {
+    if($imageId <= 0)
+    {
+      return [];
+    }
+
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+    ->select(
+        [
+            $db->quoteName('language'),
+            $db->quoteName('title'),
+            $db->quoteName('alias'),
+            $db->quoteName('description'),
+          ]
+    )
+      ->from($db->quoteName('#__joomgallery_image_translations'))
+      ->where($db->quoteName('image_id') . ' = :imageId')
+      ->bind(':imageId', $imageId, ParameterType::INTEGER);
+
+    $db->setQuery($query);
+
+    return $db->loadObjectList('language');
+  }
+
+  protected function saveTranslations(int $imageId, array $translations): void
+  {
+    if($imageId <= 0)
+    {
+      return;
+    }
+
+    $db = $this->getDatabase();
+
+    foreach(LanguageHelper::getContentLanguages() as $language)
+    {
+      $suffix      = str_replace('-', '_', strtolower($language->lang_code));
+      $title       = trim((string) ($translations['translation_' . $suffix . '_title'] ?? ''));
+      $alias       = trim((string) ($translations['translation_' . $suffix . '_alias'] ?? ''));
+      $description = (string) ($translations['translation_' . $suffix . '_description'] ?? '');
+
+      $query = $db->getQuery(true)
+        ->delete($db->quoteName('#__joomgallery_image_translations'))
+        ->where($db->quoteName('image_id') . ' = :imageId')
+        ->where($db->quoteName('language') . ' = :language')
+        ->bind(':imageId', $imageId, ParameterType::INTEGER)
+        ->bind(':language', $language->lang_code, ParameterType::STRING);
+
+      $db->setQuery($query);
+      $db->execute();
+
+      if($title === '' && $alias === '' && trim($description) === '')
+      {
+        continue;
+      }
+
+      $translation = (object) [
+        'image_id'    => $imageId,
+        'language'    => $language->lang_code,
+        'title'       => $title,
+        'alias'       => $alias,
+        'description' => $description,
+      ];
+
+      $db->insertObject('#__joomgallery_image_translations', $translation);
+    }
   }
 
   /**
@@ -670,6 +769,12 @@ class ImageModel extends JoomAdminModel
         }
       }
 
+      // Save image translations
+      if(Multilanguage::isEnabled() && isset($data['translations']))
+      {
+        $this->saveTranslations((int) $table->$key, (array) $data['translations']);
+      }
+
       // Handle ajax uploads
       if($isAjax)
       {
@@ -810,6 +915,17 @@ class ImageModel extends JoomAdminModel
 
             $db->setQuery($query);
             $db->execute();
+
+          // Delete corresponding image translations
+          $query = $db->getQuery(true)
+            ->delete($db->quoteName('#__joomgallery_image_translations'))
+            ->where(
+                $db->quoteName('image_id') . ' = :pk',
+            )
+            ->bind(':pk', $pk, ParameterType::INTEGER);
+
+          $db->setQuery($query);
+          $db->execute();
 
           // Multilanguage: if associated, delete the item in the _associations table
           if($this->associationsContext && Associations::isEnabled())
