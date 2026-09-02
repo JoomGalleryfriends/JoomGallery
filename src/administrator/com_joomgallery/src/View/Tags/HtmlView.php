@@ -67,6 +67,7 @@ class HtmlView extends JoomGalleryView
       if(!empty($this->input_cid))
       {
         $img_model = $this->component->getMVCFactory()->createModel('images', 'administrator');
+        $img_model->setSearchProvider('sql');
         $img_model->getState();
 
         // Apply preselected filters and fields selection for images
