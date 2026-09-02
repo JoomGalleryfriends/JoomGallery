@@ -696,7 +696,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
         ->select('t.language AS translation_language')
         ->from($this->table . ' AS i')
         ->join('INNER', '#__joomgallery_image_translations AS t ON t.image_id = i.id')
-        ->join('INNER', '#__joomgallery_image_translations AS t ON t.image_id = i.id')
+        ->join('INNER', '#__languages AS l ON l.lang_code = t.language AND l.published = 1')
         ->where('(i.language = ' . $db->quote('*') . ' OR t.language <> i.language)');
 
       // For an "All" image use the original values as fallback in every
