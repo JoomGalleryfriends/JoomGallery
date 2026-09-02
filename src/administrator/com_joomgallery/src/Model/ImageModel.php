@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormFactoryInterface;
 use Joomla\CMS\Language\LanguageHelper;
@@ -310,13 +311,15 @@ class ImageModel extends JoomAdminModel
 
     foreach(LanguageHelper::getContentLanguages() as $language)
     {
-      $suffix      = str_replace('-', '_', strtolower($language->lang_code));
-      $title       = trim((string) ($translations['translation_' . $suffix . '_title'] ?? ''));
-      $alias       = trim((string) ($translations['translation_' . $suffix . '_alias'] ?? ''));
+      $suffix = str_replace('-', '_', strtolower($language->lang_code));
+      $title  = trim((string) ($translations['translation_' . $suffix . '_title'] ?? ''));
+      $alias  = trim((string) ($translations['translation_' . $suffix . '_alias'] ?? ''));
+
       if($alias === '' && $title !== '')
       {
         $alias = OutputFilter::stringURLSafe($title);
-      }      
+      }
+      
       $description = (string) ($translations['translation_' . $suffix . '_description'] ?? '');
 
       $query = $db->getQuery(true)
