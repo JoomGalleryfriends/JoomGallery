@@ -41,8 +41,12 @@ abstract class JoomGalleryRawView extends JoomGalleryView
     // Required for large files to work properly
     if(ob_get_level() > 0) ob_end_clean();
 
+    $this->app->sendHeaders();
+
     fpassthru($resource);
     fclose($resource);
+
+    $this->app->close();
   }
 
   /**
