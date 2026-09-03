@@ -215,16 +215,8 @@ class JG3ModernRouter extends DefaultRouter
         }
       }
 
-      $dbquery = $this->db->createQuery();
-
-      $dbquery->select($this->db->quoteName('alias'))
-        ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($this->db->quoteName('id') . ' = :id')
-        ->bind(':id', $id, ParameterType::INTEGER);
-      $this->db->setQuery($dbquery);
-
       // To create a segment in the form: alias-id
-      $id = $this->db->loadResult() . ':' . $id;
+      $id = $this->getImageAliasDb($id) . ':' . $id;
     }
 
     return [(int) $id => $id];
@@ -244,16 +236,8 @@ class JG3ModernRouter extends DefaultRouter
   {
     if(!strpos($id, ':'))
     {
-      $dbquery = $this->db->createQuery();
-
-      $dbquery->select($this->db->quoteName('alias'))
-        ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
-        ->where($this->db->quoteName('id') . ' = :id')
-        ->bind(':id', $id, ParameterType::INTEGER);
-      $this->db->setQuery($dbquery);
-
       // To create a segment in the form: alias-id
-      $id = $this->db->loadResult() . ':' . $id;
+      $id = $this->getImageAliasDb($id) . ':' . $id;
     }
 
     return [(int) $id => $id];

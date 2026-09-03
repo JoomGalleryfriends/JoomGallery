@@ -20,6 +20,7 @@ use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\MediaHelper;
+use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Toolbar\Toolbar;
@@ -37,7 +38,8 @@ class HtmlView extends JoomGalleryView
   protected $form;
   protected $config;
   protected $imagetypes;
-
+  protected $contentLanguages;
+  protected $translations;
   protected $uploadLimit;
   protected $postMaxSize;
   protected $memoryLimit;
@@ -59,12 +61,30 @@ class HtmlView extends JoomGalleryView
     /** @var ImageModel $model */
     $model = $this->getModel();
 
-    $this->state      = $model->getState();
-    $this->item       = $model->getItem();
-    $this->form       = $model->getForm();
-    $this->config     = JoomHelper::getService('config');
-    $this->imagetypes = JoomHelper::getRecords('imagetypes');
-    $rating           = JoomHelper::getRating($this->item->id);
+    $this->state            = $model->getState();
+    $this->item             = $model->getItem();
+    $this->form             = $model->getForm();
+    $this->config           = JoomHelper::getService('config');
+    $this->imagetypes       = JoomHelper::getRecords('imagetypes');
+    $this->contentLanguages = LanguageHelper::getContentLanguages();
+    $this->translations     = $model->getTranslations((int) $this->item->id);
+
+    if(!empty($this->item->language) && $this->item->language !== '*')
+    {
+      $this->contentLanguages = array_filter($this->contentLanguages, fn($language) => $language->lang_code !== $this->item->language);
+    }
+
+    foreach($this->contentLanguages as $language)
+    {
+      $suffix      = str_replace('-', '_', strtolower($language->lang_code));
+      $translation = $this->translations[$language->lang_code] ?? null;
+
+      $this->form->setValue('translation_' . $suffix . '_title', 'translations', $translation->title ?? '');
+      $this->form->setValue('translation_' . $suffix . '_alias', 'translations', $translation->alias ?? '');
+      $this->form->setValue('translation_' . $suffix . '_description', 'translations', $translation->description ?? '');
+    }
+
+    $rating = JoomHelper::getRating($this->item->id);
     $this->form->setvalue('rating', '', $rating);
     $this->app->getLanguage()->load('com_joomgallery.exif', _JOOM_PATH_ADMIN);
     $this->app->getLanguage()->load('com_joomgallery.iptc', _JOOM_PATH_ADMIN);
