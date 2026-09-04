@@ -79,7 +79,7 @@ extract($displayData);
                 </div>
               <?php endif; ?>
           <?php elseif($image_link == 'defaultview') : ?>
-            <a href="<?php echo Route::_(JoomHelper::getViewRoute('image', (int) $item->id, (int) $item->catid)); ?>">
+<a href="<?php echo Route::_(JoomHelper::getViewRoute('image', (int) $item->id, (int) ($display_catid ?? $item->catid))); ?>">
               <img src="<?php echo $this->escape(JoomHelper::getImg($item, $image_type)); ?>" class="jg-image-thumb" alt="<?php echo $this->escape($item->title); ?>" itemprop="image" itemscope="" itemtype="https://schema.org/image"<?php if( $layout != 'justified') : ?> loading="lazy"<?php
                         endif; ?>>
               <?php if($image_title && $layout == 'justified') : ?>
@@ -122,7 +122,7 @@ extract($displayData);
                 </div>
               <?php else : ?>
                 <?php if($title_link == 'defaultview') : ?>
-                  <a href="<?php echo Route::_(JoomHelper::getViewRoute('image', (int) $item->id, (int) $item->catid)); ?>">
+                  <a href="<?php echo Route::_(JoomHelper::getViewRoute('image', (int) $item->id, (int) ($display_catid ?? $item->catid))); ?>">
                     <?php echo $this->escape($item->title); ?>
                   </a>
                 <?php elseif($title_link != 'lightgallery') : ?>

@@ -16,11 +16,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -38,6 +40,8 @@ class CategoryModel extends JoomAdminModel
    * @var     string
    */
   protected $type = 'category';
+
+  protected $associationsContext = 'com_joomgallery.category';
 
   /**
    * True if a password is set
@@ -83,8 +87,28 @@ class CategoryModel extends JoomAdminModel
       $form->setFieldAttribute('parent_id', 'exclude', $id);
     }
 
-    // Apply filter for current category on thumbnail field
-    $form->setFieldAttribute('thumbnail', 'categories', $id);
+    // Apply filter for current and associated categories on thumbnail field
+    $thumbnailCategories = [$id];
+
+    if($id && Associations::isEnabled())
+    {
+    $associations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery_categories',
+        'com_joomgallery.category',
+        $id,
+        'id',
+        '',
+        ''
+    );
+
+      foreach($associations as $association)
+      {
+        $thumbnailCategories[] = (int) $association->id;
+      }
+    }
+
+    $form->setFieldAttribute('thumbnail', 'categories', implode(',', $thumbnailCategories));
 
     // Disable remove password field if no password is set
     if(!$this->is_password)
@@ -182,17 +206,17 @@ class CategoryModel extends JoomAdminModel
     return $this->is_password;
   }
 
-  /**
-   * Method to get a single record.
-   *
-   * @param   integer  $pk  The id of the primary key.
-   *
-   * @return  Object|boolean Object on success, false on failure.
-   *
-   * @since   4.0.0
-   */
-  public function getItem($pk = null)
-  {
+    /**
+     * Method to get a single record.
+     *
+     * @param   integer  $pk  The id of the primary key.
+     *
+     * @return  Object|boolean Object on success, false on failure.
+     *
+     * @since   4.0.0
+     */
+    public function getItem($pk = null)
+    {
     if($this->item === null)
     {
       $this->item = false;
@@ -204,6 +228,26 @@ class CategoryModel extends JoomAdminModel
 
       if($this->item = parent::getItem($pk))
       {
+        if($this->associationsContext && Associations::isEnabled())
+        {
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $this->item->id,
+            'id',
+            '',
+            ''
+        );
+
+          $this->item->associations = [];
+
+          foreach($associations as $language => $association)
+          {
+            $this->item->associations[$language] = $association->id;
+          }
+        }
+
         if(isset($this->item->params))
         {
           $this->item->params = json_encode($this->item->params);
@@ -214,7 +258,7 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $this->item;
-  }
+    }
 
   /**
    * Method to delete one or more categories.
@@ -1233,5 +1277,50 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $count;
+  }
+  protected function preprocessForm(\Joomla\CMS\Form\Form $form, $data, $group = 'content')
+  {
+    $languages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(false, false, null, 'ordering', 'asc');
+
+    if(\count($languages) > 1)
+    {
+        $addform = new \SimpleXMLElement('<form />');
+        $fields  = $addform->addChild('fields');
+        $fields->addAttribute('name', 'associations');
+
+        $fieldset = $fields->addChild('fieldset');
+        $fieldset->addAttribute('name', 'item_associations');
+        $fieldset->addAttribute('addfieldprefix', 'Joomla\Component\Categories\Administrator\Field');
+
+        $currentLanguage = \is_object($data)
+          ? ($data->language ?? '')
+          : ($data['language'] ?? '');
+
+        foreach($languages as $language)
+        {
+          if($language->lang_code === $currentLanguage)
+          {
+            continue;
+          }
+
+          $field = $fieldset->addChild('field');
+          $field->addAttribute('name', $language->lang_code);
+          $field->addAttribute('type', 'jgcategory');
+          $field->addAttribute('forcedLanguage', $language->lang_code);
+          $field->addAttribute('language', $language->lang_code);
+          $field->addAttribute('label', $language->title);
+          $field->addAttribute('translate_label', 'false');
+          $field->addAttribute('extension', 'com_joomgallery');
+          $field->addAttribute('select', 'true');
+          $field->addAttribute('new', 'true');
+          $field->addAttribute('edit', 'true');
+          $field->addAttribute('clear', 'true');
+          $field->addAttribute('propagate', 'true');
+        }
+
+        $form->load($addform, false);
+    }
+
+    parent::preprocessForm($form, $data, $group);
   }
 }
