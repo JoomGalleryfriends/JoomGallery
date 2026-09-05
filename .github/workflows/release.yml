@@ -17,11 +17,11 @@ jobs:
       - name: Set up PHP with Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1' # or your PHP version
+          php-version: '8.1'
           tools: composer
 
       - name: Install dependencies
-        run: composer install --no-dev --no-scripts --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader
+        run: composer install --working-dir=src/administrator/com_joomgallery --no-dev --no-scripts --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader
 
       - name: Clean up unnecessary files
         run: |
