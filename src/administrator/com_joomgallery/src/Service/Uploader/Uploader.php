@@ -259,7 +259,16 @@ abstract class Uploader implements UploaderInterface
     $metadata = $this->component->getMetadata()->readMetadata($this->src_file);
 
     // Add image metadata to data
-    $data['imgmetadata'] = json_encode($metadata, JSON_INVALID_UTF8_SUBSTITUTE);
+    try
+    {
+      $data['imgmetadata'] = json_encode($metadata, JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+    }
+    catch(\JsonException $e)
+    {
+      $this->component->addDebug('Unable to encode image metadata: ' . $e->getMessage());
+      $metadata            = ['exif' => [], 'iptc' => [], 'comment' => ''];
+      $data['imgmetadata'] = json_encode($metadata);
+    }
 
     // Check if there is something to override
     if(!property_exists($this->component->getConfig()->get('jg_replaceinfo'), 'jg_replaceinfo0'))
