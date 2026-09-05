@@ -441,7 +441,9 @@ select.disabled {
   max-height: 78vh;
   object-fit: contain;
 }
-.jg-detail__back,
+.jg-detail__back > i {
+  margin-right: 0.8rem;
+}
 .jg-detail__nav {
   z-index: 2;
   width: 3rem;
