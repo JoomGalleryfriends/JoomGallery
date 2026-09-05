@@ -156,9 +156,6 @@ class ConfigTable extends Table
     // Support for number field: jg_maxfilesize
     $this->numberFieldSupport($array, 'jg_maxfilesize');
 
-    // Support for number field: jg_maxuploadfields
-    $this->numberFieldSupport($array, 'jg_maxuploadfields');
-
     // Support for number field: jg_maxvoting
     $this->numberFieldSupport($array, 'jg_maxvoting');
 
