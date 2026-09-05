@@ -20,6 +20,7 @@ use Joomgallery\Component\Joomgallery\Site\Model\ImageModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * View class for a detail view of Joomgallery.
@@ -44,6 +45,11 @@ class HtmlView extends JoomGalleryView
    * @since  4.0.0
    */
   protected $params = [];
+
+  protected $navigation = [];
+  protected $backUrl = '';
+  protected $originView = 'category';
+  protected $imageInfo;
 
   /**
    * Display the view
@@ -109,12 +115,47 @@ class HtmlView extends JoomGalleryView
 
     // Load additional information
     $this->item->rating = JoomHelper::getRating($this->item->id);
+    $this->prepareNavigation($model);
+
+    try
+    {
+      $this->imageInfo = JoomHelper::getImgInfo($this->item, $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING'));
+    }
+    catch(\Throwable $e)
+    {
+      $this->imageInfo = new \stdClass();
+    }
 
     $this->_prepareDocument();
 
     parent::display($tpl);
   }
 
+  /** Resolve a safe return target and load siblings in the originating list. */
+  protected function prepareNavigation(ImageModel $model): void
+  {
+    $encodedReturn = $this->app->getInput()->getString('return', '');
+    $candidate = $encodedReturn !== '' ? base64_decode($encodedReturn, true) : false;
+    if(!$candidate)
+    {
+      $candidate = $this->app->input->server->getString('HTTP_REFERER', '');
+    }
+    $siteHost = Uri::getInstance(Uri::root())->getHost();
+    $candidateHost = $candidate ? Uri::getInstance($candidate)->getHost() : '';
+    $isLocal = $candidate && (!$candidateHost || strcasecmp($candidateHost, $siteHost) === 0);
+    $isImageUrl = $candidate && (strpos($candidate, 'view=image') !== false || preg_match('#/images/\d+(?:-|/|$)#', $candidate));
+    if($isLocal && !$isImageUrl)
+    {
+      $this->backUrl = $candidate;
+      $candidatePath = rtrim(Uri::getInstance($candidate)->getPath(), '/');
+      $this->originView = strpos($candidate, 'view=gallery') !== false || preg_match('#/gallery$#', $candidatePath) ? 'gallery' : 'category';
+    }
+    else
+    {
+      $this->backUrl = Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=' . (int) $this->item->catid);
+    }
+    $this->navigation = $model->getNavigation($this->originView);
+  }
   /**
    * Prepares the document
    *

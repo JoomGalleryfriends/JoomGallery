@@ -164,6 +164,40 @@ class ImageModel extends JoomAdminModel
 
     return $this->item;
   }
+  /** Get adjacent images in the originating frontend list. */
+  public function getNavigation(string $origin = 'category'): array
+  {
+    $item = $this->getItem();
+    $navigation = ['previous' => null, 'next' => null];
+    try
+    {
+      if($origin === 'gallery')
+      {
+        $listModel = $this->component->getMVCFactory()->createModel('gallery', 'site');
+        $listModel->getItem();
+      }
+      else
+      {
+        $listModel = $this->component->getMVCFactory()->createModel('category', 'site');
+        $listModel->getItem((int) $item->catid);
+      }
+      $items = array_values((array) $listModel->getImages());
+      foreach($items as $position => $listItem)
+      {
+        if((int) $listItem->id === (int) $item->id)
+        {
+          $navigation['previous'] = $items[$position - 1] ?? null;
+          $navigation['next'] = $items[$position + 1] ?? null;
+          break;
+        }
+      }
+    }
+    catch(\Throwable $e)
+    {
+      // Navigation is optional if the originating list is unavailable.
+    }
+    return $navigation;
+  }
 
   /**
    * Increment the hit counter for the article.

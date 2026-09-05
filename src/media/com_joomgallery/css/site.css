@@ -432,3 +432,37 @@ select.disabled {
 .js-draggable .sortable-handler {
   cursor: move;
 }
+
+/* Image detail view */
+.jg-detail__stage {
+  min-height: 60vh;
+}
+.jg-detail__image {
+  max-height: 78vh;
+  object-fit: contain;
+}
+.jg-detail__back,
+.jg-detail__nav {
+  z-index: 2;
+  width: 3rem;
+  height: 3rem;
+}
+.jg-detail__avatar {
+  flex: 0 0 3.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 1.5rem;
+}
+.jg-detail__tags .badge,
+.jg-detail__tags a {
+  display: inline-block;
+}
+@media (max-width: 767.98px) {
+  .jg-detail__stage {
+    min-height: 45vh;
+  }
+  .jg-detail__nav {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
