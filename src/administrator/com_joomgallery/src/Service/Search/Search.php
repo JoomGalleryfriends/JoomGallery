@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
@@ -73,13 +74,13 @@ class Search implements SearchInterface
    * Constructor
    *
    * @param  DatabaseInterface  $db      The databse
-   * @param  Registry           $state   The state object
+   * @param  Registry|CMSObject $state   The state object
    *
    * @return  void
    *
    * @since   4.4.0
    */
-  public function __construct(DatabaseInterface $db, Registry $state)
+  public function __construct(DatabaseInterface $db, Registry|CMSObject $state)
   {
     $this->db    = $db;
     $this->state = $state;
@@ -107,6 +108,21 @@ class Search implements SearchInterface
   public function getFilters(): array
   {
     return $this->filters;
+  }
+
+  /**
+   * Return the filter-form fields that should be displayed for this provider.
+   *
+   * @return  array<string, array|null>
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getDisplayFields(): array
+  {
+    return [
+      'filter' => null,
+      'list'   => null,
+    ];
   }
 
   /**
@@ -161,6 +177,20 @@ class Search implements SearchInterface
   public function handlesOrdering(): bool
   {
     return $this->ordering;
+  }
+
+  /**
+   * Apply provider-specific ordering to the final list query.
+   *
+   * @param   QueryInterface  $query  The final list query
+   *
+   * @return  bool  True when provider ordering was applied.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function applyOrderingToQuery(QueryInterface $query): bool
+  {
+    return false;
   }
 
   /**

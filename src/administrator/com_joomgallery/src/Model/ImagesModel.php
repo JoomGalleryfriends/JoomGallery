@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
 use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseQuery;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -37,12 +37,12 @@ class ImagesModel extends JoomListModel
   protected $type = 'image';
 
   /**
-   * Configuration param for search provider
+   * Service name or configuration param for search provider
    *
    * @access  public
    * @var     string
    */
-  public $search = 'jg_backend_searchprovider';
+  protected $search = 'jg_backend_searchprovider';
 
   /**
    * Constructor
@@ -198,6 +198,51 @@ class ImagesModel extends JoomListModel
   }
 
   /**
+   * Get the filter form adapted to the selected search provider.
+   *
+   * @param   array    $data      Data used to bind the form
+   * @param   boolean  $loadData  True to load the model state into the form
+   *
+   * @return  \Joomla\CMS\Form\Form|null
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getFilterForm($data = [], $loadData = true)
+  {
+    $form = parent::getFilterForm($data, $loadData);
+
+    if($form === null)
+    {
+      return null;
+    }
+
+    $displayFields = $this->getSearchProvider()->getDisplayFields();
+
+    foreach(['filter', 'list'] as $group)
+    {
+      $visibleFields = $displayFields[$group] ?? null;
+
+      // A null allowlist means that the provider does not restrict this group.
+      if($visibleFields === null)
+      {
+        continue;
+      }
+
+      foreach($form->getGroup($group) as $field)
+      {
+        $fieldName = (string) $field->fieldname;
+
+        if(!\in_array($fieldName, $visibleFields, true))
+        {
+          $form->removeField($fieldName, $group);
+        }
+      }
+    }
+
+    return $form;
+  }
+
+  /**
    * Build an SQL query to load the list data.
    *
    * ToDo: Manuel
@@ -212,17 +257,7 @@ class ImagesModel extends JoomListModel
     $query = $db->getQuery(true);
 
     // Initialize search service
-    $this->component->createConfig();
-    try
-    {
-      $searchProvider = $this->component->getSearch();
-    }
-    catch (\TypeError $e)
-    {
-      $searchProviderName = $this->component->getConfig()->get($this->search, 'sql');
-      $this->component->createSearch($searchProviderName, $db, $this->state);
-      $searchProvider = $this->component->getSearch();
-    }
+    $searchProvider = $this->getSearchProvider();
 
     // Check if logic and is active
     $logicAnd = (bool) ($this->getState('filter.and') > 0);
@@ -345,15 +380,8 @@ class ImagesModel extends JoomListModel
     // Filter by search
     $search = trim((string) $this->getState('filter.search'));
 
-    $hasActiveSearchProviderFilter =
-      !empty($this->getState('filter.category'))
-      || !empty($this->getState('filter.tag'))
-      || !empty($this->getState('filter.language'));
-
-    if(!empty($search) || $hasActiveSearchProviderFilter)
-    {
-      $this->component->getSearch()->applyToQuery($query, $search, 'a');
-    }
+    // Let the provider decide whether the current search/filter state is active.
+    $searchProvider->applyToQuery($query, $search, 'a');
 
     // Filter by published state
     $published = (string) $this->getState('filter.published');
@@ -556,8 +584,8 @@ class ImagesModel extends JoomListModel
         ->bind(':endDate', $endDate);
     }
 
-    // Add the list ordering clause.
-    if(!$searchProvider->handlesOrdering())
+    // Give provider-specific result ordering precedence over list ordering.
+    if(!$searchProvider->applyOrderingToQuery($query))
     {
       $orderCol  = $this->getState('list.ordering', 'a.id');
       $orderDirn = $this->getState('list.direction', 'ASC');
@@ -589,17 +617,7 @@ class ImagesModel extends JoomListModel
     $query = $db->getQuery(true);
 
     // Initialize search service
-    $this->component->createConfig();
-    try
-    {
-      $searchProvider = $this->component->getSearch();
-    }
-    catch (\TypeError $e)
-    {
-      $searchProviderName = $this->component->getConfig()->get($this->search);
-      $this->component->createSearch($searchProviderName, $db, $this->state);
-      $searchProvider = $this->component->getSearch();
-    }
+    $searchProvider = $this->getSearchProvider();
 
     // Check if logic and is active
     $logicAnd = (bool) ($this->getState('filter.and') > 0);
@@ -657,6 +675,10 @@ class ImagesModel extends JoomListModel
       $query->from($db->quoteName('#__joomgallery', 'a'));
     }
 
+    // Join over the foreign key 'catid'.
+    $query->join('LEFT', $db->quoteName('#__joomgallery_categories', 'category'), $db->quoteName('category.id') . ' = ' . $db->quoteName('a.catid'));
+
+    // Join tags when the SQL search provider does not handle tag filtering.
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
     {
       // Join with the tags and reference table to get tag IDs
@@ -702,26 +724,10 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter by search
-    $search = $this->getState('filter.search');
+    $search = trim((string) $this->getState('filter.search'));
 
-    if(!empty($search))
-    {
-      if(stripos($search, 'id:') === 0)
-      {
-        $search = (int) substr($search, 3);
-        $query->where($db->quoteName('a.id') . ' = :search')
-          ->bind(':search', $search, ParameterType::INTEGER);
-      }
-      else
-      {
-        $search = '%' . str_replace(' ', '%', trim($search)) . '%';
-        $query->where(
-            '(' . $db->quoteName('a.title') . ' LIKE :search1 OR ' . $db->quoteName('a.alias') . ' LIKE :search2'
-            . ' OR ' . $db->quoteName('a.description') . ' LIKE :search3)'
-        )
-          ->bind([':search1', ':search2', ':search3'], $search);
-      }
-    }
+    // Let the provider decide whether the current search/filter state is active.
+    $searchProvider->applyToQuery($query, $search, 'a');
 
     // Filter by published state
     $published = (string) $this->getState('filter.published');
@@ -921,5 +927,80 @@ class ImagesModel extends JoomListModel
     }
 
     return $query;
+  }
+
+  /**
+   * Defines the name of the search provider to be used.
+   *
+   * @param   string  $name  Name of the search provider
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public function setSearchProvider(string $name = 'sql')
+  {
+    if(str_starts_with($name, 'jg'))
+    {
+      // We expect the provider to be given by a configuration parameter
+      $this->search = $name;
+
+      return;
+    }
+
+    // Else we check the name of the available providers
+    $providers = $this->component->getSearchProviders();
+
+    foreach($providers as $provider)
+    {
+      if($provider['value'] == $name)
+      {
+        $this->search = $name;
+
+        return;
+      }
+    }
+
+    throw new \Exception('Requested search provider ("' . $name . '") does not exist.', 1);
+  }
+
+  /**
+   * Returns a serach provider service due to the provider name in the class
+   *
+   * @return  SearchInterface  Search provider service class
+   *
+   * @since   4.4.0
+   */
+  protected function getSearchProvider(): SearchInterface
+  {
+    try
+    {
+      $searchProvider = $this->component->getSearch();
+
+      if($searchProvider->getName() == $this->search)
+      {
+        // Correct search provider already created
+        return $searchProvider;
+      }
+    }
+    catch (\TypeError $e)
+    {
+      // No search provider initialized yet
+    }
+
+    // Guess the name of the serach provider
+    $searchProviderName = $this->search;
+
+    if(str_starts_with($this->search, 'jg'))
+    {
+      $this->component->createConfig();
+      $searchProviderName = $this->component->getConfig()->get($this->search, 'jg_backend_searchprovider');
+    }
+
+    // Create new serach provider service
+    $db = $this->getDatabase();
+    $this->component->createSearch($searchProviderName, $db, $this->state);
+
+    return $this->component->getSearch();
   }
 }
