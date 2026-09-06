@@ -1445,6 +1445,16 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
+        <field
+            name="importantMetadataKeys"
+            type="textarea"
+            label="COM_JOOMGALLERY_CONFIG_IMPORTANT_METADATA_KEYS"
+            description="COM_JOOMGALLERY_CONFIG_IMPORTANT_METADATA_KEYS_DESC"
+            default="Model,Make,DateTimeOriginal,DateTime"
+            rows="4"
+            filter="raw"
+            showon="jg_detail_view_show_metadata:1"
+        />
     </fieldset>
   </fieldset>
 

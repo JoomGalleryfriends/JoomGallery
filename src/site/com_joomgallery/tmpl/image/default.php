@@ -17,8 +17,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
-use Joomla\Registry\Registry;
 
 // image params
 $image_type       = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
@@ -34,6 +34,7 @@ $show_hits        = $this->params['configs']->get('jg_detail_view_show_hits', 0,
 $show_downloads   = $this->params['configs']->get('jg_detail_view_show_downloads', 0, 'INT');
 $show_tags        = $this->params['configs']->get('jg_detail_view_show_tags', 0, 'INT');
 $show_metadata    = $this->params['configs']->get('jg_detail_view_show_metadata', 0, 'INT');
+$importantMetadataKeys = $this->params['configs']->get('importantMetadataKeys', 'Model,Make,DateTimeOriginal,DateTime', 'RAW');
 
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.site');
@@ -58,43 +59,29 @@ $navUrl       = static function($image) use ($returnToken) {return $image ? Rout
 $previousUrl  = $navUrl($this->navigation['previous'] ?? null);
 $nextUrl      = $navUrl($this->navigation['next'] ?? null);
 
+// Use the actual return URL so this also works with menu aliases and SEF URLs.
+$backUri   = Uri::getInstance(html_entity_decode($this->backUrl, ENT_QUOTES, 'UTF-8'));
+$backView  = $backUri->getVar('view', '');
+$backPath  = trim($backUri->getPath(), '/');
+$backLabel = 'COM_JOOMGALLERY_IMAGE_BACK';
+if($backView === 'category' || preg_match('#(?:^|/)categor(?:y|ies)(?:/|$)#i', $backPath))
+{
+  $backLabel = 'COM_JOOMGALLERY_IMAGE_BACK_TO_CATEGORY';
+}
+elseif($backView === 'gallery' || preg_match('#(?:^|/)gallery(?:/|$)#i', $backPath))
+{
+  $backLabel = 'COM_JOOMGALLERY_IMAGE_BACK_TO_GALLERY';
+}
+
 // Tags
 $tagLayout = new FileLayout('joomgallery.content.tags');
 $tags      = $tagLayout->render($this->item->tags);
 
 // Image Metadata
-$metadataRegistry = new Registry($this->item->imgmetadata);
-$metadataItems    = [];
-$flattenMetadata  = static function($values) use (&$metadataItems, &$flattenMetadata): void {
-  foreach((array) $values as $key => $value)
-  {
-    if(is_array($value) || is_object($value))
-    {
-      $flattenMetadata($value);
-      continue;
-    }
-    if($value !== '' && $value !== null)
-    {
-      $metadataItems[(string) $key] = (string) $value;
-    }
-  }
-};
-$flattenMetadata($metadataRegistry->toArray());
-
-$importantMetadataKey = null;
-foreach(['Model', 'Make', 'DateTimeOriginal', 'DateTime'] as $key)
-{
-  if(isset($metadataItems[$key]))
-  {
-    $importantMetadataKey = $key;
-    break;
-  }
-}
-$otherMetadata = $metadataItems;
-if($importantMetadataKey !== null)
-{
-  unset($otherMetadata[$importantMetadataKey]);
-}
+$this->component->createMetadata($this->params['configs']->get('jg_metaprocessor', 'php'));
+[$importantMetadata, $otherMetadata] = $this->component->getMetadata()->renderPrep($this->item->imgmetadata, $importantMetadataKeys);
+$metadataLayout      = new FileLayout('joomgallery.content.metadata');
+$metadataModalLayout = new FileLayout('joomgallery.content.metadatamodal');
 
 // HTML Metadata
 $app   = Factory::getApplication();
@@ -119,8 +106,8 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php endif; ?>
 
 <article class="jg-detail overflow-hidden" itemscope itemtype="https://schema.org/ImageObject">
-  <a class="jg-detail__back btn btn-outline-primary" href="<?php echo htmlspecialchars($this->backUrl, ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo Text::_('JBACK'); ?>" title="<?php echo Text::_('JBACK'); ?>">
-    <i class="icon-arrow-left" aria-hidden="true"></i><span><?php echo Text::_('JBACK'); ?></span>
+  <a class="jg-detail__back btn btn-outline-primary" href="<?php echo htmlspecialchars($this->backUrl, ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo Text::_($backLabel); ?>" title="<?php echo Text::_($backLabel); ?>">
+    <i class="icon-arrow-left" aria-hidden="true"></i><span><?php echo Text::_($backLabel); ?></span>
   </a>
   <div class="jg-detail__stage position-relative d-flex align-items-center justify-content-center p-3">
     <?php if($previousUrl) : ?>
@@ -134,15 +121,15 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 
   <div class="container-fluid py-4">
     <div class="d-flex flex-wrap align-items-center gap-2 pb-3 border-bottom" aria-label="Image actions">
-      <button class="btn btn-outline-secondary" type="button" disabled title="Favorites are coming soon">
-        <span class="icon-heart me-1" aria-hidden="true"></span>Favorite
-      </button>
-      <button class="btn btn-outline-secondary" type="button" disabled title="Comments are coming soon">
-        <span class="icon-comment me-1" aria-hidden="true"></span>Comment
-      </button>
-      <button class="btn btn-outline-secondary" type="button" disabled title="Downloads are coming soon">
-        <span class="icon-download me-1" aria-hidden="true"></span>Download
-      </button>
+      <span class="d-inline-block" tabindex="0" title="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_FEATURE_COMING_SOON'); ?>">
+        <button class="btn btn-outline-secondary" type="button" disabled><span class="icon-heart me-1" aria-hidden="true"></span>Favorite</button>
+      </span>
+      <span class="d-inline-block" tabindex="0" title="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_FEATURE_COMING_SOON'); ?>">
+        <button class="btn btn-outline-secondary" type="button" disabled><span class="icon-comment me-1" aria-hidden="true"></span>Comment</button>
+      </span>
+      <span class="d-inline-block" tabindex="0" title="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_FEATURE_COMING_SOON'); ?>">
+        <button class="btn btn-outline-secondary" type="button" disabled><span class="icon-download me-1" aria-hidden="true"></span>Download</button>
+      </span>
       <button class="btn btn-outline-secondary ms-md-auto" type="button" data-jg-copy-link>
         <span class="icon-link me-1" aria-hidden="true"></span><span>Copy link</span>
       </button>
@@ -156,7 +143,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
             <input type="hidden" name="cid[]" value="<?php echo (int) $this->item->id; ?>">
             <input type="hidden" name="return" value="<?php echo base64_encode($this->backUrl); ?>">
             <?php if($canCheckin) : ?>
-              <button class="btn btn-outline-secondary" type="submit" name="task" value="imageform.<?php echo $stateTask; ?>"><span class="icon-<?php echo $stateTask === 'publish' ? 'check' : 'cancel'; ?> me-1" aria-hidden="true"></span><?php echo Text::_($stateTask === 'publish' ? 'JTOOLBAR_PUBLISH' : 'JTOOLBAR_UNPUBLISH'); ?></button>
+              <button class="btn btn-outline-secondary" type="submit" name="task" value="imageform.<?php echo $stateTask; ?>"><span class="icon-<?php echo $stateTask === 'publish' ? 'check' : 'cancel'; ?> me-1" aria-hidden="true"></span><?php echo Text::_($stateTask === 'publish' ? 'PUBLISH' : 'UNPUBLISH'); ?></button>
             <?php endif; ?>
             <?php if($canDelete) : ?>
               <button class="btn btn-outline-danger" type="submit" name="task" value="imageform.remove" data-jg-delete><span class="icon-trash me-1" aria-hidden="true"></span><?php echo Text::_('JACTION_DELETE'); ?></button>
@@ -172,33 +159,32 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       <time class="text-body-secondary text-md-end" datetime="<?php echo $this->escape($this->item->date); ?>"><?php echo Text::_('JPUBLISHED'); ?>: <?php echo HTMLHelper::_('date', $this->item->date, Text::_('DATE_FORMAT_LC3')); ?></time>
     </header>
 
-    <div class="d-flex flex-wrap gap-4 py-3 border-bottom text-body-secondary"><span><span class="icon-heart"></span> <?php echo (int) $this->item->votes; ?> <?php echo Text::_('COM_JOOMGALLERY_VOTES'); ?></span><span><span class="icon-comment"></span> 0 Comments</span><span><span class="icon-eye"></span> <?php echo (int) $this->item->hits; ?> <?php echo Text::_('JGLOBAL_HITS'); ?></span><span><span class="icon-download"></span> <?php echo (int) $this->item->downloads; ?> <?php echo Text::_('COM_JOOMGALLERY_DOWNLOADS'); ?></span></div>
+    <div class="d-flex flex-wrap gap-4 py-3 border-bottom text-body-secondary">
+      <span><span class="icon-heart"></span> <?php echo (int) $this->item->votes; ?> <?php echo Text::_('COM_JOOMGALLERY_VOTES'); ?></span>
+      <span><span class="icon-comment"></span> 0 Comments</span>
+      <span><span class="icon-eye"></span> <?php echo (int) $this->item->hits; ?> <?php echo Text::_('JGLOBAL_HITS'); ?></span>
+      <span><span class="icon-download"></span> <?php echo (int) $this->item->downloads; ?> <?php echo Text::_('COM_JOOMGALLERY_DOWNLOADS'); ?></span>
+    </div>
 
     <?php if($show_tags && trim($tags) !== '') : ?><div class="d-flex flex-wrap gap-2 py-4 jg-detail__tags"><?php echo $tags; ?></div><?php endif; ?>
     <?php if($show_description && trim((string) $this->item->description) !== '') : ?><div class="lead mb-4" itemprop="description"><?php echo JoomHelper::sanitizeHtml($this->item->description); ?></div><?php endif; ?>
 
     <dl class="row mb-0">
       <?php if(!empty($this->imageInfo->width) && !empty($this->imageInfo->height)) : ?><dt class="col-sm-3 col-lg-2">Image size</dt><dd class="col-sm-9 col-lg-10"><?php echo (int) $this->imageInfo->width; ?> &times; <?php echo (int) $this->imageInfo->height; ?> px</dd><?php endif; ?>
-      <?php if($importantMetadataKey !== null) : ?><dt class="col-sm-3 col-lg-2"><?php echo $this->escape(Text::_($importantMetadataKey)); ?></dt><dd class="col-sm-9 col-lg-10"><?php echo $this->escape($metadataItems[$importantMetadataKey]); ?></dd><?php endif; ?>
+      <?php echo $metadataLayout->render($importantMetadata); ?>
       <dt class="col-sm-3 col-lg-2"><?php echo Text::_('JCATEGORY'); ?></dt><dd class="col-sm-9 col-lg-10"><a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>"><?php echo $this->escape($this->item->cattitle); ?></a></dd>
       <?php foreach($fields as $field) : ?><?php if($this->component->getAccess()->checkViewLevel($field->access) && $field->params->get('display') > 0) : ?><dt class="col-sm-3 col-lg-2"><?php echo $this->escape($field->title); ?></dt><dd class="col-sm-9 col-lg-10"><?php echo $this->escape($field->value); ?></dd><?php endif; ?><?php endforeach; ?>
     </dl>
 
-    <?php if($show_metadata && !empty($otherMetadata)) : ?>
+    <?php if($show_metadata && \count($otherMetadata->get('items', [])) > 0) : ?>
       <button class="btn btn-outline-secondary mt-2" type="button" data-bs-toggle="modal" data-bs-target="#jg-metadata-modal"><span class="icon-info-circle me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_IMGMETADATA'); ?></button>
     <?php endif; ?>
     <div class="mt-4 text-body-secondary">&copy; <?php echo HTMLHelper::_('date', $this->item->date, 'Y'); ?> <?php echo $this->escape($owner); ?></div>
   </div>
 </article>
 
-<?php if($show_metadata && !empty($otherMetadata)) : ?>
-  <div class="modal fade" id="jg-metadata-modal" tabindex="-1" aria-labelledby="jg-metadata-modal-title" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
-      <div class="modal-header"><h2 class="modal-title fs-5" id="jg-metadata-modal-title"><?php echo Text::_('COM_JOOMGALLERY_IMGMETADATA'); ?></h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo Text::_('JCLOSE'); ?>"></button></div>
-      <div class="modal-body"><dl class="row mb-0"><?php foreach($otherMetadata as $key => $value) : ?><dt class="col-sm-5"><?php echo $this->escape(Text::_($key)); ?></dt><dd class="col-sm-7 text-break"><?php echo $this->escape($value); ?></dd><?php endforeach; ?></dl></div>
-      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo Text::_('JCLOSE'); ?></button></div>
-    </div></div>
-  </div>
+<?php if($show_metadata && \count($otherMetadata->get('items', [])) > 0) : ?>
+  <?php echo $metadataModalLayout->render($otherMetadata); ?>
 <?php endif; ?>
 
 <?php foreach(ModuleHelper::getModules('jg_image_before_info') as $module) : ?><div class="mt-3"><?php echo ModuleHelper::renderModule($module, ['style' => 'card']); ?></div><?php endforeach; ?>

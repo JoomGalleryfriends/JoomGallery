@@ -23,6 +23,18 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 interface MetadataInterface
 {
   /**
+   * Prepares stored metadata for rendering.
+   *
+   * @param   mixed         $imgmetadata           Stored image metadata
+   * @param   array|string  $importantMetadataKeys Metadata keys rendered outside the modal
+   *
+   * @return  array<int, \Joomla\Registry\Registry> Important and remaining metadata registries
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function renderPrep($imgmetadata, $importantMetadataKeys = []): array;
+
+  /**
    * Reads the metadata from an image.
    * (Current supported image formats: JPEG)
    * (Current supported metadata formats: EXIF/IPTC)
