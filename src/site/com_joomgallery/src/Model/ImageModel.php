@@ -167,7 +167,7 @@ class ImageModel extends JoomAdminModel
   /** Get adjacent images in the originating frontend list. */
   public function getNavigation(string $origin = 'category'): array
   {
-    $item = $this->getItem();
+    $item       = $this->getItem();
     $navigation = ['previous' => null, 'next' => null];
     try
     {
@@ -182,12 +182,13 @@ class ImageModel extends JoomAdminModel
         $listModel->getItem((int) $item->catid);
       }
       $items = array_values((array) $listModel->getImages());
+
       foreach($items as $position => $listItem)
       {
         if((int) $listItem->id === (int) $item->id)
         {
           $navigation['previous'] = $items[$position - 1] ?? null;
-          $navigation['next'] = $items[$position + 1] ?? null;
+          $navigation['next']     = $items[$position + 1] ?? null;
           break;
         }
       }
@@ -196,6 +197,7 @@ class ImageModel extends JoomAdminModel
     {
       // Navigation is optional if the originating list is unavailable.
     }
+
     return $navigation;
   }
 

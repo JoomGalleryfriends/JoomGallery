@@ -48,11 +48,13 @@ class Metadata implements MetadataInterface
     require JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/iptcarray.php';
 
     $definitions = [];
+
     foreach($exif_config_array as $group => $entries)
     {
       foreach($entries as $entry)
       {
         $attribute = (string) ($entry['Attribute'] ?? '');
+
         if($attribute !== '')
         {
           $definitions['exif.' . $group . '.' . $attribute] = $entry;
@@ -65,6 +67,7 @@ class Metadata implements MetadataInterface
       foreach($entries as $entry)
       {
         $tag = str_replace(':', '#', (string) ($entry['IMM'] ?? ''));
+
         if($tag !== '')
         {
           $definitions['iptc.' . $tag] = $entry;
@@ -77,11 +80,13 @@ class Metadata implements MetadataInterface
       foreach((array) $values as $key => $value)
       {
         $itemPath = [...$path, (string) $key];
+
         if(\is_array($value) || \is_object($value))
         {
           $flatten($value, $itemPath);
           continue;
         }
+
         if($value === '' || $value === null)
         {
           continue;
@@ -108,6 +113,7 @@ class Metadata implements MetadataInterface
     $importantKeys = array_map('trim', $importantKeys ?: []);
     $important     = [];
     $remaining     = $items;
+
     foreach($importantKeys as $importantKey)
     {
       foreach($items as $pathKey => $item)
@@ -130,6 +136,7 @@ class Metadata implements MetadataInterface
     {
       $date   = \DateTimeImmutable::createFromFormat($format, trim($value));
       $errors = \DateTimeImmutable::getLastErrors();
+
       if($date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0)))
       {
         return $date->format('d.m.Y H:i');
