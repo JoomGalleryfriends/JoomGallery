@@ -480,8 +480,19 @@ class CategoryModel extends JoomAdminModel
 
           // Check if filesystem adapter has changed
           $old_params = json_decode($table->params);
+          $old_adapter = $old_params->{'jg_filesystem'} ?? '';
 
-          if($old_params->{'jg_filesystem'} != $data['params']['jg_filesystem'])
+          // Disabled form fields are not submitted. Keep the stored adapter in that case.
+          if(!isset($data['params']) || !\is_array($data['params']))
+          {
+            $data['params'] = (array) $old_params;
+          }
+
+          if(!\array_key_exists('jg_filesystem', $data['params']))
+          {
+            $data['params']['jg_filesystem'] = $old_adapter;
+          }
+          elseif($old_adapter != $data['params']['jg_filesystem'])
           {
             $adapterChanged = true;
           }

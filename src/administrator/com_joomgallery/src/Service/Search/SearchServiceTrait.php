@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\FinderSearch;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SQLSearch;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Registry\Registry;
 
@@ -68,14 +69,14 @@ trait SearchServiceTrait
   /**
    * Creates the search helper class
    *
-   * @param   string      $search  Name of the search to be used
-   * @param   Registry    $state   The state object
+   * @param   string               $search  Name of the search to be used
+   * @param   Registry|CMSObject   $state   The state object
    *
    * @return  void
    *
    * @since  4.4.0
    */
-  public function createSearch($search, DatabaseInterface $db, Registry $state): void
+  public function createSearch($search, DatabaseInterface $db, Registry|CMSObject $state): void
   {
     switch($search)
     {
