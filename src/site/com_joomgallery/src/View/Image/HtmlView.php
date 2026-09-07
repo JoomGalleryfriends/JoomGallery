@@ -47,7 +47,7 @@ class HtmlView extends JoomGalleryView
   protected $params = [];
 
   protected $navigation = [];
-  protected $backUrl = '';
+  protected $backUrl    = '';
   protected $originView = 'category';
   protected $imageInfo;
 
@@ -135,19 +135,21 @@ class HtmlView extends JoomGalleryView
   protected function prepareNavigation(ImageModel $model): void
   {
     $encodedReturn = $this->app->getInput()->getString('return', '');
-    $candidate = $encodedReturn !== '' ? base64_decode($encodedReturn, true) : false;
+    $candidate     = $encodedReturn !== '' ? base64_decode($encodedReturn, true) : false;
+
     if(!$candidate)
     {
       $candidate = $this->app->input->server->getString('HTTP_REFERER', '');
     }
-    $siteHost = Uri::getInstance(Uri::root())->getHost();
+    $siteHost      = Uri::getInstance(Uri::root())->getHost();
     $candidateHost = $candidate ? Uri::getInstance($candidate)->getHost() : '';
-    $isLocal = $candidate && (!$candidateHost || strcasecmp($candidateHost, $siteHost) === 0);
-    $isImageUrl = $candidate && (strpos($candidate, 'view=image') !== false || preg_match('#/images/\d+(?:-|/|$)#', $candidate));
+    $isLocal       = $candidate && (!$candidateHost || strcasecmp($candidateHost, $siteHost) === 0);
+    $isImageUrl    = $candidate && (strpos($candidate, 'view=image') !== false || preg_match('#/images/\d+(?:-|/|$)#', $candidate));
+
     if($isLocal && !$isImageUrl)
     {
-      $this->backUrl = $candidate;
-      $candidatePath = rtrim(Uri::getInstance($candidate)->getPath(), '/');
+      $this->backUrl    = $candidate;
+      $candidatePath    = rtrim(Uri::getInstance($candidate)->getPath(), '/');
       $this->originView = strpos($candidate, 'view=gallery') !== false || preg_match('#/gallery$#', $candidatePath) ? 'gallery' : 'category';
     }
     else

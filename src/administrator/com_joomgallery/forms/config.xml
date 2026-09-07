@@ -1347,7 +1347,6 @@
             name="jg_detail_view_show_imgdate"
             type="radio"
             label="COM_JOOMGALLERY_DATE"
-            description="COM_JOOMGALLERY_DATE_DESC"
             default="1"
             layout="joomla.form.field.radio.switcher"
             validate="options"
@@ -1446,13 +1445,12 @@
             <option value="1">JYES</option>
         </field>
         <field
-            name="importantMetadataKeys"
-            type="textarea"
+            name="jg_detail_view_metadata_keys"
+            type="text"
             label="COM_JOOMGALLERY_CONFIG_IMPORTANT_METADATA_KEYS"
             description="COM_JOOMGALLERY_CONFIG_IMPORTANT_METADATA_KEYS_DESC"
             default="Model,Make,DateTimeOriginal,DateTime"
-            rows="4"
-            filter="raw"
+            filter="string"
             showon="jg_detail_view_show_metadata:1"
         />
     </fieldset>

@@ -34,7 +34,7 @@ $show_hits        = $this->params['configs']->get('jg_detail_view_show_hits', 0,
 $show_downloads   = $this->params['configs']->get('jg_detail_view_show_downloads', 0, 'INT');
 $show_tags        = $this->params['configs']->get('jg_detail_view_show_tags', 0, 'INT');
 $show_metadata    = $this->params['configs']->get('jg_detail_view_show_metadata', 0, 'INT');
-$importantMetadataKeys = $this->params['configs']->get('importantMetadataKeys', 'Model,Make,DateTimeOriginal,DateTime', 'RAW');
+$meta_keys        = $this->params['configs']->get('jg_detail_view_metadata_keys', 'Model,Make,DateTimeOriginal,DateTime', 'STRING');
 
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.site');
@@ -51,11 +51,16 @@ $imageUrl     = JoomHelper::getImg($this->item, $image_type);
 $returnToken  = rawurlencode(base64_encode($this->backUrl));
 $currentRoute = JoomHelper::getViewRoute('image', $this->item->id, $this->item->catid, $this->item->language, $this->getLayout());
 $editReturn   = rawurlencode(base64_encode($currentRoute));
-$owner        = $this->item->created_by_name ?: ($this->item->author ?: Text::_('JAUTHOR'));
-$initial      = function_exists('mb_substr') ? mb_strtoupper(mb_substr($owner, 0, 1)) : strtoupper(substr($owner, 0, 1));
+$imageAuthor  = trim((string) ($this->item->author ?? ''));
+$createdBy    = trim((string) ($this->item->created_by_name ?? ''));
+$owner        = $createdBy ?: ($imageAuthor ?: Text::_('JAUTHOR'));
+$initial      = \function_exists('mb_substr') ? mb_strtoupper(mb_substr($createdBy, 0, 1)) : strtoupper(substr($createdBy, 0, 1));
+$rating       = $show_rating ? (float) JoomHelper::getRating($this->item->id) : 0.0;
 $stateTask    = (int) $this->item->published === 1 ? 'unpublish' : 'publish';
 $fields       = FieldsHelper::getFields('com_joomgallery.image', $this->item);
-$navUrl       = static function($image) use ($returnToken) {return $image ? Route::_(JoomHelper::getViewRoute('image', (int) $image->id, (int) $image->catid) . '&return=' . $returnToken) : '';};
+$navUrl       = static function ($image) use ($returnToken) {
+return $image ? Route::_(JoomHelper::getViewRoute('image', (int) $image->id, (int) $image->catid) . '&return=' . $returnToken) : '';
+};
 $previousUrl  = $navUrl($this->navigation['previous'] ?? null);
 $nextUrl      = $navUrl($this->navigation['next'] ?? null);
 
@@ -64,6 +69,7 @@ $backUri   = Uri::getInstance(html_entity_decode($this->backUrl, ENT_QUOTES, 'UT
 $backView  = $backUri->getVar('view', '');
 $backPath  = trim($backUri->getPath(), '/');
 $backLabel = 'COM_JOOMGALLERY_IMAGE_BACK';
+
 if($backView === 'category' || preg_match('#(?:^|/)categor(?:y|ies)(?:/|$)#i', $backPath))
 {
   $backLabel = 'COM_JOOMGALLERY_IMAGE_BACK_TO_CATEGORY';
@@ -79,13 +85,33 @@ $tags      = $tagLayout->render($this->item->tags);
 
 // Image Metadata
 $this->component->createMetadata($this->params['configs']->get('jg_metaprocessor', 'php'));
-[$importantMetadata, $otherMetadata] = $this->component->getMetadata()->renderPrep($this->item->imgmetadata, $importantMetadataKeys);
-$metadataLayout      = new FileLayout('joomgallery.content.metadata');
-$metadataModalLayout = new FileLayout('joomgallery.content.metadatamodal');
+[$importantMetadata, $otherMetadata] = $this->component->getMetadata()->renderPrep($this->item->imgmetadata, $meta_keys);
+$metadataLayout                      = new FileLayout('joomgallery.content.metadata');
+$metadataModalLayout                 = new FileLayout('joomgallery.content.metadatamodal');
+$imageDateLabel                      = 'COM_JOOMGALLERY_DATE_UPLOAD';
+$databaseDate                        = !empty($this->item->date) ? \DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $this->item->date) : false;
+$metadataItems                       = array_merge($importantMetadata->get('items', []), $otherMetadata->get('items', []));
+
+// Adjust image date field label
+foreach($metadataItems as $metadataItem)
+{
+  if(!\in_array($metadataItem['key'], ['DateTimeOriginal', 'DateTime'], true))
+  {
+    continue;
+  }
+
+  $exifDate = \DateTimeImmutable::createFromFormat('!d.m.Y H:i', $metadataItem['value']);
+
+  if($databaseDate !== false && $exifDate !== false && $databaseDate->format('Y-m-d H:i') === $exifDate->format('Y-m-d H:i'))
+  {
+    $imageDateLabel = 'COM_JOOMGALLERY_DATE';
+    break;
+  }
+}
 
 // HTML Metadata
-$app   = Factory::getApplication();
-$doc   = $app->getDocument();
+$app = Factory::getApplication();
+$doc = $app->getDocument();
 // Title
 $title            = $this->item->title ?? '';
 $baseTitle        = trim(Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX') . ' ' . $title);
@@ -154,31 +180,86 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       <?php endif; ?>
     </div>
 
-    <header class="d-flex flex-column flex-md-row justify-content-between gap-3 py-4">
-      <div class="d-flex gap-3 align-items-start"><span class="jg-detail__avatar d-inline-flex align-items-center justify-content-center rounded bg-primary text-white fw-bold" aria-hidden="true"><?php echo $this->escape($initial); ?></span><div><h1 class="h2 mb-1" itemprop="name"><?php echo $this->escape($this->item->title); ?></h1><div class="text-body-secondary"><?php echo Text::_('JAUTHOR'); ?> <strong><?php echo $this->escape($owner); ?></strong></div></div></div>
-      <time class="text-body-secondary text-md-end" datetime="<?php echo $this->escape($this->item->date); ?>"><?php echo Text::_('JPUBLISHED'); ?>: <?php echo HTMLHelper::_('date', $this->item->date, Text::_('DATE_FORMAT_LC3')); ?></time>
-    </header>
+    <?php if($show_title || ($show_created_by && $createdBy !== '') || ($show_imgdate && !empty($this->item->date))) : ?>
+      <header class="d-flex flex-column flex-md-row justify-content-between gap-3 py-4">
+        <?php if($show_title || ($show_created_by && $createdBy !== '')) : ?>
+          <div class="d-flex gap-3 align-items-start">
+            <?php if($show_created_by && $createdBy !== '') : ?>
+              <span class="jg-detail__avatar d-inline-flex align-items-center justify-content-center rounded bg-primary text-white fw-bold" aria-hidden="true"><?php echo $this->escape($initial); ?></span>
+            <?php endif; ?>
+            <div>
+              <?php if($show_title) : ?>
+                <h1 class="h2 mb-1" itemprop="name"><?php echo $this->escape($this->item->title); ?></h1>
+              <?php endif; ?>
+              <?php if($show_created_by && $createdBy !== '') : ?>
+                <div class="text-body-secondary"><?php echo Text::_('COM_JOOMGALLERY_OWNER'); ?>: <strong><?php echo $this->escape($createdBy); ?></strong></div>
+              <?php endif; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+        <?php if($show_imgdate && !empty($this->item->date)) : ?>
+          <time class="text-body-secondary text-md-end" datetime="<?php echo $this->escape($this->item->date); ?>"><?php echo Text::_($imageDateLabel); ?>: <?php echo HTMLHelper::_('date', $this->item->date, Text::_('DATE_FORMAT_LC3')); ?></time>
+        <?php endif; ?>
+      </header>
+    <?php endif; ?>
 
     <div class="d-flex flex-wrap gap-4 py-3 border-bottom text-body-secondary">
-      <span><span class="icon-heart"></span> <?php echo (int) $this->item->votes; ?> <?php echo Text::_('COM_JOOMGALLERY_VOTES'); ?></span>
-      <span><span class="icon-comment"></span> 0 Comments</span>
-      <span><span class="icon-eye"></span> <?php echo (int) $this->item->hits; ?> <?php echo Text::_('JGLOBAL_HITS'); ?></span>
-      <span><span class="icon-download"></span> <?php echo (int) $this->item->downloads; ?> <?php echo Text::_('COM_JOOMGALLERY_DOWNLOADS'); ?></span>
+      <?php if($show_votes) : ?>
+        <span><span class="icon-heart" aria-hidden="true"></span> <?php echo (int) $this->item->votes; ?> <?php echo Text::_('COM_JOOMGALLERY_VOTES'); ?></span>
+      <?php endif; ?>
+      <?php if($show_rating) : ?>
+        <span><span class="icon-star" aria-hidden="true"></span> <?php echo $this->escape(number_format($rating, 2)); ?> <?php echo Text::_('COM_JOOMGALLERY_IMAGE_RATING'); ?></span>
+      <?php endif; ?>
+      <span><span class="icon-comment" aria-hidden="true"></span> 0 Comments</span>
+      <?php if($show_hits) : ?>
+        <span><span class="icon-eye" aria-hidden="true"></span> <?php echo (int) $this->item->hits; ?> <?php echo Text::_('JGLOBAL_HITS'); ?></span>
+      <?php endif; ?>
+      <?php if($show_downloads) : ?>
+        <span><span class="icon-download" aria-hidden="true"></span> <?php echo (int) $this->item->downloads; ?> <?php echo Text::_('COM_JOOMGALLERY_DOWNLOADS'); ?></span>
+      <?php endif; ?>
     </div>
 
-    <?php if($show_tags && trim($tags) !== '') : ?><div class="d-flex flex-wrap gap-2 py-4 jg-detail__tags"><?php echo $tags; ?></div><?php endif; ?>
-    <?php if($show_description && trim((string) $this->item->description) !== '') : ?><div class="lead mb-4" itemprop="description"><?php echo JoomHelper::sanitizeHtml($this->item->description); ?></div><?php endif; ?>
+    <?php if($show_tags && trim($tags) !== '') : ?>
+      <div class="d-flex flex-wrap gap-2 py-4 jg-detail__tags"><?php echo $tags; ?></div>
+    <?php endif; ?>
+    <?php if($show_description && trim((string) $this->item->description) !== '') : ?>
+      <div class="lead mb-4" itemprop="description"><?php echo JoomHelper::sanitizeHtml($this->item->description); ?>
+    </div>
+    <?php endif; ?>
 
     <dl class="row mb-0">
-      <?php if(!empty($this->imageInfo->width) && !empty($this->imageInfo->height)) : ?><dt class="col-sm-3 col-lg-2">Image size</dt><dd class="col-sm-9 col-lg-10"><?php echo (int) $this->imageInfo->width; ?> &times; <?php echo (int) $this->imageInfo->height; ?> px</dd><?php endif; ?>
-      <?php echo $metadataLayout->render($importantMetadata); ?>
-      <dt class="col-sm-3 col-lg-2"><?php echo Text::_('JCATEGORY'); ?></dt><dd class="col-sm-9 col-lg-10"><a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>"><?php echo $this->escape($this->item->cattitle); ?></a></dd>
-      <?php foreach($fields as $field) : ?><?php if($this->component->getAccess()->checkViewLevel($field->access) && $field->params->get('display') > 0) : ?><dt class="col-sm-3 col-lg-2"><?php echo $this->escape($field->title); ?></dt><dd class="col-sm-9 col-lg-10"><?php echo $this->escape($field->value); ?></dd><?php endif; ?><?php endforeach; ?>
-    </dl>
+      <?php if($show_imgauthor && $imageAuthor !== '') : ?>
+        <dt class="col-sm-3 col-lg-2"><?php echo Text::_('JAUTHOR'); ?></dt>
+        <dd class="col-sm-9 col-lg-10"><?php echo $this->escape($imageAuthor); ?></dd>
+      <?php endif; ?>
+      <?php if($show_category) : ?>
+        <dt class="col-sm-3 col-lg-2"><?php echo Text::_('JCATEGORY'); ?></dt>
+        <dd class="col-sm-9 col-lg-10"><a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>"><?php echo $this->escape($this->item->cattitle); ?></a></dd>
+      <?php endif; ?>
+      <?php if(!empty($this->imageInfo->width) && !empty($this->imageInfo->height)) : ?>
+        <dt class="col-sm-3 col-lg-2">Image size</dt>
+        <dd class="col-sm-9 col-lg-10"><?php echo (int) $this->imageInfo->width; ?> &times; <?php echo (int) $this->imageInfo->height; ?> px</dd>
+      <?php endif; ?>
 
+      <?php // Custom fields ?>
+      <?php foreach($fields as $field) : ?>
+        <?php if($this->component->getAccess()->checkViewLevel($field->access) && $field->params->get('display') > 0) : ?>
+          <dt class="col-sm-3 col-lg-2"><?php echo $this->escape($field->title); ?></dt>
+          <dd class="col-sm-9 col-lg-10"><?php echo $this->escape($field->value); ?></dd>
+        <?php endif; ?>
+      <?php endforeach; ?>
+
+      <?php // Important metadata fields ?>
+      <?php echo $metadataLayout->render($importantMetadata); ?>
+    </dl>
+    <br>
+    <?php // Important metadata modal button ?>
     <?php if($show_metadata && \count($otherMetadata->get('items', [])) > 0) : ?>
-      <button class="btn btn-outline-secondary mt-2" type="button" data-bs-toggle="modal" data-bs-target="#jg-metadata-modal"><span class="icon-info-circle me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_IMGMETADATA'); ?></button>
+      <button class="btn btn-outline-secondary mt-2" type="button" data-bs-toggle="modal" data-bs-target="#jg-metadata-modal">
+        <span class="icon-info-circle me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_IMGMETADATA'); ?>
+      </button>
     <?php endif; ?>
+
     <div class="mt-4 text-body-secondary">&copy; <?php echo HTMLHelper::_('date', $this->item->date, 'Y'); ?> <?php echo $this->escape($owner); ?></div>
   </div>
 </article>
@@ -187,8 +268,10 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
   <?php echo $metadataModalLayout->render($otherMetadata); ?>
 <?php endif; ?>
 
-<?php foreach(ModuleHelper::getModules('jg_image_before_info') as $module) : ?><div class="mt-3"><?php echo ModuleHelper::renderModule($module, ['style' => 'card']); ?></div><?php endforeach; ?>
-<?php foreach(ModuleHelper::getModules('jg_image_bottom') as $module) : ?><div class="mt-3"><?php echo ModuleHelper::renderModule($module, ['style' => 'card']); ?></div><?php endforeach; ?>
+<?php foreach(ModuleHelper::getModules('jg_image_before_info') as $module) : ?><div class="mt-3"><?php echo ModuleHelper::renderModule($module, ['style' => 'card']); ?></div><?php
+endforeach; ?>
+<?php foreach(ModuleHelper::getModules('jg_image_bottom') as $module) : ?><div class="mt-3"><?php echo ModuleHelper::renderModule($module, ['style' => 'card']); ?></div><?php
+endforeach; ?>
 
 <script>
   document.querySelector('[data-jg-copy-link]')?.addEventListener('click', async function () {
