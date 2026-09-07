@@ -699,7 +699,7 @@ class JoomHelper
     $allowed = ['type', 'extension', 'mime_type', 'width', 'height', 'adapter'];
 
     // Filter infos
-    $filtered = new stdClass();
+    $filtered = new \stdClass();
 
     foreach($allowed as $key)
     {

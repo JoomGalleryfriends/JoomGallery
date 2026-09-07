@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
@@ -73,13 +74,13 @@ class Search implements SearchInterface
    * Constructor
    *
    * @param  DatabaseInterface  $db      The databse
-   * @param  Registry           $state   The state object
+   * @param  Registry|CMSObject $state   The state object
    *
    * @return  void
    *
    * @since   4.4.0
    */
-  public function __construct(DatabaseInterface $db, Registry $state)
+  public function __construct(DatabaseInterface $db, Registry|CMSObject $state)
   {
     $this->db    = $db;
     $this->state = $state;

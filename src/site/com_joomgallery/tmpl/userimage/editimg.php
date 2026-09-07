@@ -312,7 +312,7 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
 
     foreach($this->imagetypes as $key => $imagetype)
     {
-      $imgURL[$imagetype->typename] = JoomHelper::getImg($this->item, $imagetype->typename);
+      $imgURL[$imagetype->typename] = htmlspecialchars_decode(JoomHelper::getImg($this->item, $imagetype->typename), ENT_QUOTES | ENT_HTML5);
       $title[$imagetype->typename]  = Text::_('COM_JOOMGALLERY_' . strtoupper($imagetype->typename));
 
       $img_path = str_replace('\\', '/', JoomHelper::getImg($this->item, $imagetype->typename, false, false));
