@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS `#__joomgallery`;
+DROP TABLE IF EXISTS `#__joomgallery_image_translations`;
 DROP TABLE IF EXISTS `#__joomgallery_categories`;
 DROP TABLE IF EXISTS `#__joomgallery_collections`;
 DROP TABLE IF EXISTS `#__joomgallery_collections_ref`;

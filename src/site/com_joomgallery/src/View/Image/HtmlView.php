@@ -178,7 +178,7 @@ class HtmlView extends JoomGalleryView
       $pathway        = $this->app->getPathway();
       $breadcrumbList = Text::_('COM_JOOMGALLERY_IMAGES');
 
-      if(!\in_array($breadcrumbList, $pathway->getPathwayNames()))
+      if(($menu->query['option'] ?? '') !== 'com_joomgallery' && !\in_array($breadcrumbList, $pathway->getPathwayNames()))
       {
         $pathway->addItem($breadcrumbList, JoomHelper::getViewRoute('images'));
       }

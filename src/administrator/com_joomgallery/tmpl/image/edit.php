@@ -58,7 +58,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <div class="main-card">
   <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'Details', 'recall' => true, 'breakpoint' => 768]); ?>
 
-  <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>  
+  <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>
   <div class="row">
     <div class="col-lg-9">
       <fieldset class="adminform">
@@ -80,6 +80,24 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     </div>
   </div>
   <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+  <?php if(!empty($this->contentLanguages)) : ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Translations', Text::_('COM_JOOMGALLERY_IMAGE_TRANSLATIONS', true)); ?>
+
+    <?php foreach($this->contentLanguages as $language) : ?>
+      <?php $suffix = str_replace('-', '_', strtolower($language->lang_code)); ?>
+
+      <fieldset class="options-form">
+        <legend><?php echo htmlspecialchars($language->title_native, ENT_QUOTES, 'UTF-8'); ?></legend>
+
+        <?php echo $this->form->renderField('translation_' . $suffix . '_title', 'translations'); ?>
+        <?php echo $this->form->renderField('translation_' . $suffix . '_alias', 'translations'); ?>
+        <?php echo $this->form->renderField('translation_' . $suffix . '_description', 'translations'); ?>
+      </fieldset>
+    <?php endforeach; ?>
+
+    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+  <?php endif; ?>
 
   <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Images', Text::_('COM_JOOMGALLERY_IMAGES', true)); ?>
   <div class="row">
@@ -110,7 +128,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
           <?php echo $this->form->renderField('downloads'); ?>
           <?php echo $this->form->renderField('votes'); ?>
           <?php echo $this->form->renderField('rating'); ?>
-        </div>          
+        </div>
       </fieldset>
     </div>
   </div>
@@ -136,7 +154,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
           <?php echo $this->form->renderField('modified_time'); ?>
           <?php echo $this->form->renderField('modified_by'); ?>
           <?php echo $this->form->renderField('id'); ?>
-        </div>        
+        </div>
       </fieldset>
     </div>
     <div class="col-12 col-lg-6">
@@ -170,7 +188,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
         </fieldset>
       </div>
     <?php endif; ?>
-  </div>  
+  </div>
   <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
   <?php if($this->item->id) : ?>

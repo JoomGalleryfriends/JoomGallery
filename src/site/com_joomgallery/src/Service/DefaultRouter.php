@@ -24,6 +24,7 @@ use Joomla\CMS\Component\Router\Rules\MenuRules;
 use Joomla\CMS\Component\Router\Rules\NomenuRules;
 use Joomla\CMS\Component\Router\Rules\StandardRules;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Menu\AbstractMenu;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -709,21 +710,38 @@ class DefaultRouter extends RouterView
    *
    * @since   4.2.0
    */
+
   public function getImageAliasDb(string $id): string
   {
-    $alias   = '';
-    $dbquery = $this->db->createQuery();
+    if(Multilanguage::isEnabled())
+    {
+      $language = Factory::getApplication()->getLanguage()->getTag();
+      $dbquery  = $this->db->createQuery()
+        ->select($this->db->quoteName('alias'))
+        ->from($this->db->quoteName('#__joomgallery_image_translations'))
+        ->where($this->db->quoteName('image_id') . ' = :id')
+        ->where($this->db->quoteName('language') . ' = :language')
+        ->bind(':id', $id, ParameterType::INTEGER)
+        ->bind(':language', $language, ParameterType::STRING);
 
-    $dbquery->select($this->db->quoteName('alias'))
+      $this->db->setQuery($dbquery);
+      $alias = (string) $this->db->loadResult();
+
+      if($alias !== '')
+      {
+        return $alias;
+      }
+    }
+
+    $dbquery = $this->db->createQuery()
+      ->select($this->db->quoteName('alias'))
       ->from($this->db->quoteName(_JOOM_TABLE_IMAGES))
       ->where($this->db->quoteName('id') . ' = :id')
       ->bind(':id', $id, ParameterType::INTEGER);
+
     $this->db->setQuery($dbquery);
 
-    // To create a segment in the form: id-alias
-    $alias = (string) $this->db->loadResult();
-
-    return $alias;
+    return (string) $this->db->loadResult();
   }
 
   /**
