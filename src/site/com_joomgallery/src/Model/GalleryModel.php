@@ -94,6 +94,7 @@ class GalleryModel extends JoomItemModel
     {
       $this->item     = new \stdClass();
       $this->item->id = 1;
+      $this->item->language = '*';
     }
 
     // Get Gallery description

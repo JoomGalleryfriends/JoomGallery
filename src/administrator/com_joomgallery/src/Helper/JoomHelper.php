@@ -15,9 +15,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Access\Access;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Http\HttpFactory;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -622,6 +624,39 @@ class JoomHelper
 
     if($cat->thumbnail == 0)
     {
+      if(Multilanguage::isEnabled() && Associations::isEnabled())
+      {
+        $fallbackLanguage = ComponentHelper::getParams('com_joomgallery')->get('category_fallback_language', '');
+
+        if($fallbackLanguage === '')
+        {
+          $fallbackLanguage = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+        }
+
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $cat->id,
+            'id',
+            '',
+            ''
+        );
+
+        if(!empty($associations[$fallbackLanguage]))
+        {
+        $fallbackCategory = self::getRecord(
+            'category',
+            (int) $associations[$fallbackLanguage]->id
+        );
+
+          if($fallbackCategory && !empty($fallbackCategory->thumbnail))
+          {
+            return self::getImg($fallbackCategory->thumbnail, $type, $url, $root);
+          }
+        }
+      }
+
       // Create file config service based on current user
       $config = self::getService('Config');
 
@@ -857,6 +892,39 @@ class JoomHelper
 
     try
     {
+      if(Multilanguage::isEnabled() && Associations::isEnabled())
+      {
+        $fallbackLanguage = ComponentHelper::getParams('com_joomgallery')->get('category_fallback_language', '');
+
+        if($fallbackLanguage === '')
+        {
+          $fallbackLanguage = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+        }
+
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $cat->id,
+            'id',
+            '',
+            ''
+        );
+
+        if(!empty($associations[$fallbackLanguage]))
+        {
+        $fallbackCategory = self::getRecord(
+            'category',
+            (int) $associations[$fallbackLanguage]->id
+        );
+
+          if($fallbackCategory && !empty($fallbackCategory->thumbnail))
+          {
+            return (int) $fallbackCategory->thumbnail;
+          }
+        }
+      }
+
       if($inc_subcats)
       {
         // Create the category table
@@ -882,6 +950,29 @@ class JoomHelper
       else
       {
         $categories = [$cat->id];
+      }
+
+      if(Multilanguage::isEnabled() && Associations::isEnabled())
+      {
+        foreach($categories as $categoryId)
+        {
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $categoryId,
+            'id',
+            '',
+            ''
+        );
+
+          foreach($associations as $association)
+          {
+            $categories[] = (int) $association->id;
+          }
+        }
+
+        $categories = array_values(array_unique($categories));
       }
 
       // Load the random image id
@@ -1265,11 +1356,17 @@ class JoomHelper
 
     if(!empty($items))
     {
-      $findings = [];
+      $findings        = [];
+      $currentLanguage = Factory::getApplication()->getLanguage()->getTag();
 
       foreach($items as $menuitem)
       {
         if(($menuitem->query['view'] ?? null) !== $view)
+        {
+          continue;
+        }
+
+        if(($menuitem->language ?? '*') !== '*' && ($menuitem->language ?? '*') !== $currentLanguage)
         {
           continue;
         }
@@ -1291,12 +1388,13 @@ class JoomHelper
       {
         if($count > 1)
         {
-          // We have multiple matching menuitems
         usort(
             $findings,
-            function ($a, $b) {
-              // Lets take the one with the lowest level value
-              return $a->level - $b->level;
+            function ($a, $b) use ($currentLanguage) {
+              $aLanguage = $a->language === $currentLanguage ? 0 : 1;
+              $bLanguage = $b->language === $currentLanguage ? 0 : 1;
+
+              return ($aLanguage <=> $bLanguage) ?: ($a->level <=> $b->level);
             }
         );
         }
@@ -1728,6 +1826,36 @@ class JoomHelper
           $idsToCount[] = (int) $id;
         }
       }
+    }
+
+    if(Multilanguage::isEnabled() && Associations::isEnabled())
+    {
+      $categoryIds = $idsToCount;
+
+      foreach($categoryIds as $id)
+      {
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $id,
+            'id',
+            '',
+            ''
+        );
+
+        foreach($associations as $association)
+        {
+          $associationId = (int) $association->id;
+
+          if(isset($catids[$associationId]))
+          {
+            $idsToCount[] = $associationId;
+          }
+        }
+      }
+
+      $idsToCount = array_unique($idsToCount);
     }
 
     if(empty($idsToCount))
