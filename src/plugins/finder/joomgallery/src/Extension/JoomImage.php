@@ -106,7 +106,14 @@ final class JoomImage extends Adapter implements SubscriberInterface
    * @var    mixed
    * @since  4.4.0
    */
-  protected $tmp = null;
+  protected $tmp              = null;
+  protected $old_catpublished = null;
+  protected $old_cathidden    = null;
+  protected $old_catinhidden  = null;
+  protected $old_catexclude   = null;
+  protected $old_published    = null;
+  protected $old_approved     = null;
+  protected $old_hidden       = null;
 
   /**
    * Returns an array of events this subscriber will listen to.
