@@ -224,6 +224,10 @@ class ImagesModel extends JoomListModel
     // Check if filtering by ids
     $ids = $this->getState('filter.ids');
 
+    // Check if tags data is needed
+    $select = (array) $this->getState('list.select', []);
+    $needsTagData = in_array('tag_ids', $select, true) || in_array('tag_titles', $select, true);
+
     // Sanitise tags array
     $tag = $this->sanitiseIDlist($tag);
 
@@ -285,7 +289,7 @@ class ImagesModel extends JoomListModel
     $query->select([$db->quoteName('l.title', 'language_title'), $db->quoteName('l.image', 'language_image')]);
     $query->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'));
 
-    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd)
+    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && !$logicAnd || $needsTagData)
     {
       // Tags aggregation subquery
       $tagsSub = $db->getQuery(true)
