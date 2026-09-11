@@ -42,11 +42,10 @@ class RawView extends JoomGalleryRawView
     // Get request variables
     $type   = $this->app->input->get('type', 'thumbnail', 'word');
     $id     = $this->app->input->get('id', 0);
-    $base64 = $this->app->input->get('base64', 0);
-    $resize = $this->app->input->get('resize', 0);
+    $base64 = $this->app->input->get('base64', 0, 'int');
+    $resize = $this->app->input->get('resize', 0, 'int');
 
     $options = new \stdClass();
-    //$options->base64 = boolval($base64);
     $options->resize      = \boolval($resize);
     $options->resize_type = $this->app->input->get('resize_type', 3);
 
@@ -128,6 +127,23 @@ class RawView extends JoomGalleryRawView
       {
         $model->hit();
       }
+    }
+
+    if($base64)
+    {
+      rewind($resource);
+
+      $imageData = stream_get_contents($resource);
+      fclose($resource);
+
+      if($imageData === false)
+      {
+        $this->outputError(500, 'Unable to read image resource');
+      }
+
+      $this->outputText(base64_encode($imageData));
+
+      return;
     }
 
     // Output
