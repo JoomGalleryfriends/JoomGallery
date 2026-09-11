@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <field name="GPSLatitudeRef"
+         type="list"
+         default=""
+         label="COM_JOOMGALLERY_GPS_GPSLATITUDEREF"
+         description="COM_JOOMGALLERY_GPS_GPSLATITUDEREF_DESCRIPTION">
+    <option value="">JOPTION_DO_NOT_USE</option>
+    <option value="N">COM_JOOMGALLERY_GPS_GPSLATITUDEREF_N</option>
+    <option value="S">COM_JOOMGALLERY_GPS_GPSLATITUDEREF_S</option>
+  </field>
+
+  <field name="GPSLatitude"
+         type="text"
+         pattern="^\s*\d+\/[1-9]\d*\s*,\s*\d+\/[1-9]\d*\s*,\s*\d+\/[1-9]\d*\s*$"
+         hint="47/1,30/1,2043/100"
+         label="COM_JOOMGALLERY_GPS_GPSLATITUDE"
+         description="COM_JOOMGALLERY_GPS_GPSLATITUDE_DESCRIPTION"
+         message="COM_JOOMGALLERY_GPS_GPSLATITUDE_INVALID" />
+
+  <field name="GPSLongitudeRef"
+         type="list"
+         default=""
+         label="COM_JOOMGALLERY_GPS_GPSLONGITUDEREF"
+         description="COM_JOOMGALLERY_GPS_GPSLONGITUDEREF_DESCRIPTION">
+    <option value="">JOPTION_DO_NOT_USE</option>
+    <option value="E">COM_JOOMGALLERY_GPS_GPSLONGITUDEREF_E</option>
+    <option value="W">COM_JOOMGALLERY_GPS_GPSLONGITUDEREF_W</option>
+  </field>
+
+  <field name="GPSLongitude"
+         type="text"
+         pattern="^\s*\d+\/[1-9]\d*\s*,\s*\d+\/[1-9]\d*\s*,\s*\d+\/[1-9]\d*\s*$"
+         hint="19/1,2/1,4673/100"
+         label="COM_JOOMGALLERY_GPS_GPSLONGITUDE"
+         description="COM_JOOMGALLERY_GPS_GPSLONGITUDE_DESCRIPTION"
+         message="COM_JOOMGALLERY_GPS_GPSLONGITUDE_INVALID" />
+
+  <field name="GPSAltitudeRef"
+         type="list"
+         default=""
+         label="COM_JOOMGALLERY_GPS_GPSALTITUDEREF"
+         description="COM_JOOMGALLERY_GPS_GPSALTITUDEREF_DESCRIPTION">
+    <option value="">JOPTION_DO_NOT_USE</option>
+    <option value="0">COM_JOOMGALLERY_GPS_GPSALTITUDEREF_0</option>
+    <option value="1">COM_JOOMGALLERY_GPS_GPSALTITUDEREF_1</option>
+  </field>
+
+  <field name="GPSAltitude"
+         type="text"
+         pattern="^\s*\d+\/[1-9]\d*\s*$"
+         hint="11233/100"
+         label="COM_JOOMGALLERY_GPS_GPSALTITUDE"
+         description="COM_JOOMGALLERY_GPS_GPSALTITUDE_DESCRIPTION"
+         message="COM_JOOMGALLERY_GPS_GPSRATIONAL_INVALID" />
+
+  <field name="GPSTimeStamp"
+         type="text"
+         class="hidden"
+         pattern="^\s*\d+\/[1-9]\d*\s*,\s*\d+\/[1-9]\d*\s*,\s*\d+\/[1-9]\d*\s*$"
+         hint="19/1,17/1,40/1"
+         label="COM_JOOMGALLERY_GPS_GPSTIMESTAMP"
+         description="COM_JOOMGALLERY_GPS_GPSTIMESTAMP_DESCRIPTION"
+         message="COM_JOOMGALLERY_GPS_GPSTIMESTAMP_INVALID" />
+
+  <field name="GPSSpeedRef"
+         type="list"
+         class="hidden"
+         default=""
+         label="COM_JOOMGALLERY_GPS_GPSSPEEDREF"
+         description="COM_JOOMGALLERY_GPS_GPSSPEEDREF_DESCRIPTION">
+    <option value="">JOPTION_DO_NOT_USE</option>
+    <option value="K">COM_JOOMGALLERY_GPS_GPSSPEEDREF_K</option>
+    <option value="M">COM_JOOMGALLERY_GPS_GPSSPEEDREF_M</option>
+    <option value="N">COM_JOOMGALLERY_GPS_GPSSPEEDREF_N</option>
+  </field>
+
+  <field name="GPSSpeed"
+         type="text"
+         class="hidden"
+         pattern="^\s*\d+\/[1-9]\d*\s*$"
+         hint="0/1"
+         label="COM_JOOMGALLERY_GPS_GPSSPEED"
+         description="COM_JOOMGALLERY_GPS_GPSSPEED_DESCRIPTION"
+         message="COM_JOOMGALLERY_GPS_GPSRATIONAL_INVALID" />
+
+  <field name="GPSImgDirectionRef"
+         type="list"
+         class="hidden"
+         default=""
+         label="COM_JOOMGALLERY_GPS_GPSIMGDIRECTIONREF"
+         description="COM_JOOMGALLERY_GPS_GPSIMGDIRECTIONREF_DESCRIPTION">
+    <option value="">JOPTION_DO_NOT_USE</option>
+    <option value="T">COM_JOOMGALLERY_GPS_GPSDIRECTIONREF_T</option>
+    <option value="M">COM_JOOMGALLERY_GPS_GPSDIRECTIONREF_M</option>
+  </field>
+
+  <field name="GPSImgDirection"
+         type="text"
+         class="hidden"
+         pattern="^\s*\d+\/[1-9]\d*\s*$"
+         hint="329419/7405"
+         label="COM_JOOMGALLERY_GPS_GPSIMGDIRECTION"
+         description="COM_JOOMGALLERY_GPS_GPSIMGDIRECTION_DESCRIPTION"
+         message="COM_JOOMGALLERY_GPS_GPSRATIONAL_INVALID" />
+
+  <field name="GPSDestBearingRef"
+         type="list"
+         class="hidden"
+         default=""
+         label="COM_JOOMGALLERY_GPS_GPSDESTBEARINGREF"
+         description="COM_JOOMGALLERY_GPS_GPSDESTBEARINGREF_DESCRIPTION">
+    <option value="">JOPTION_DO_NOT_USE</option>
+    <option value="T">COM_JOOMGALLERY_GPS_GPSDIRECTIONREF_T</option>
+    <option value="M">COM_JOOMGALLERY_GPS_GPSDIRECTIONREF_M</option>
+  </field>
+
+  <field name="GPSDestBearing"
+         type="text"
+         class="hidden"
+         pattern="^\s*\d+\/[1-9]\d*\s*$"
+         hint="329419/7405"
+         label="COM_JOOMGALLERY_GPS_GPSDESTBEARING"
+         description="COM_JOOMGALLERY_GPS_GPSDESTBEARING_DESCRIPTION"
+         message="COM_JOOMGALLERY_GPS_GPSRATIONAL_INVALID" />
+
+  <field name="GPSDateStamp"
+         type="text"
+         class="hidden"
+         pattern="^\d{4}:\d{2}:\d{2}$"
+         hint="2026:05:20"
+         maxlength="10"
+         label="COM_JOOMGALLERY_GPS_GPSDATESTAMP"
+         description="COM_JOOMGALLERY_GPS_GPSDATESTAMP_DESCRIPTION"
+         message="COM_JOOMGALLERY_GPS_GPSDATESTAMP_INVALID" />
+</form>

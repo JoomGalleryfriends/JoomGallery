@@ -50,6 +50,32 @@ abstract class JoomGalleryRawView extends JoomGalleryView
   }
 
   /**
+   * Send a ASCII only string response to the client.
+   *
+   * @param   string   $content  The ASCII string
+   *
+   * @return  void
+   */
+  protected function outputText(string $content): void
+  {
+    $this->getDocument()->setMimeEncoding('text/plain');
+
+    $this->app->setHeader('Content-Type', 'text/plain; charset=US-ASCII', true);
+    $this->app->setHeader('Content-Length', (string) \strlen($content), true);
+    $this->app->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
+    $this->app->setHeader('Pragma', 'no-cache', true);
+
+    // Required for large files to work properly
+    if(ob_get_level() > 0) ob_end_clean();
+
+    $this->app->sendHeaders();
+
+    echo $content;
+
+    $this->app->close();
+  }
+
+  /**
    * Send an error response for a raw request.
    *
    * @param   int      $status
