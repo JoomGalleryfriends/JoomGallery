@@ -61,7 +61,7 @@ abstract class JoomGalleryRawView extends JoomGalleryView
     $this->getDocument()->setMimeEncoding('text/plain');
 
     $this->app->setHeader('Content-Type', 'text/plain; charset=US-ASCII', true);
-    $this->app->setHeader('Content-Length', (string) strlen($content), true);
+    $this->app->setHeader('Content-Length', (string) \strlen($content), true);
     $this->app->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
     $this->app->setHeader('Pragma', 'no-cache', true);
 

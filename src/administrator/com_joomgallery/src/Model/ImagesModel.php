@@ -225,8 +225,8 @@ class ImagesModel extends JoomListModel
     $ids = $this->getState('filter.ids');
 
     // Check if tags data is needed
-    $select = (array) $this->getState('list.select', []);
-    $needsTagData = in_array('tag_ids', $select, true) || in_array('tag_titles', $select, true);
+    $select       = (array) $this->getState('list.select', []);
+    $needsTagData = \in_array('tag_ids', $select, true) || \in_array('tag_titles', $select, true);
 
     // Sanitise tags array
     $tag = $this->sanitiseIDlist($tag);

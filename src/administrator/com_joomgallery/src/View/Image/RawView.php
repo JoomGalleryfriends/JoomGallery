@@ -45,7 +45,7 @@ class RawView extends JoomGalleryRawView
     $base64 = $this->app->input->get('base64', 0, 'int');
     $resize = $this->app->input->get('resize', 0, 'int');
 
-    $options = new \stdClass();
+    $options              = new \stdClass();
     $options->resize      = \boolval($resize);
     $options->resize_type = $this->app->input->get('resize_type', 3);
 
