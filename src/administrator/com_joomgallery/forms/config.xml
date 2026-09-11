@@ -108,6 +108,12 @@
              label="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH"
              description="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH_LONG" /> -->
 
+      <field name="spacer1"
+              label="COM_JOOMGALLERY_CONFIG_ROUTER"
+              type="spacer"
+              class="bold" >
+      </field>
+
       <field name="jg_use_real_paths"
              type="radio"
              default="0"
@@ -160,6 +166,64 @@
           <option value="0">JNO</option>
           <option value="1">JYES</option>
       </field>
+
+      <field name="spacer2"
+              label="COM_JOOMGALLERY_CONFIG_CACHING"
+              type="spacer"
+              class="bold" >
+      </field>
+
+      <field name="jg_acl_cache_entries"
+             type="number"
+             default="64"
+             min="0"
+             max="10000"
+             step="1"
+             filter="integer"
+             validate="number"
+             global_only="true"
+             sensitive="true"
+             label="COM_JOOMGALLERY_CONFIG_ACL_CACHE_ENTRIES"
+             description="COM_JOOMGALLERY_CONFIG_ACL_CACHE_ENTRIES_LONG" />
+
+      <field name="jg_acl_cache_lifetime"
+             type="number"
+             default="15"
+             min="0"
+             max="1440"
+             step="1"
+             filter="integer"
+             validate="number"
+             global_only="true"
+             sensitive="true"
+             label="COM_JOOMGALLERY_CONFIG_ACL_CACHE_LIFETIME"
+             description="COM_JOOMGALLERY_CONFIG_ACL_CACHE_LIFETIME_LONG" />
+
+      <field name="jg_config_cache_entries"
+             type="number"
+             default="64"
+             min="0"
+             max="10000"
+             step="1"
+             filter="integer"
+             validate="number"
+             global_only="true"
+             sensitive="true"
+             label="COM_JOOMGALLERY_CONFIG_CACHE_ENTRIES"
+             description="COM_JOOMGALLERY_CONFIG_CACHE_ENTRIES_LONG" />
+
+      <field name="jg_config_cache_lifetime"
+             type="number"
+             default="60"
+             min="0"
+             max="10080"
+             step="1"
+             filter="integer"
+             validate="number"
+             global_only="true"
+             sensitive="true"
+             label="COM_JOOMGALLERY_CONFIG_CACHE_LIFETIME"
+             description="COM_JOOMGALLERY_CONFIG_CACHE_LIFETIME_LONG" />
     </fieldset>
 
     <fieldset type="tab" name="general-upload" label="COM_JOOMGALLERY_UPLOADS">
@@ -951,7 +1015,7 @@
             <option value="1">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_IMAGES_LINK_OPT1</option>
             <option value="2">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_BROWSE_IMAGES_LINK_OPT2</option>
         </field>
-        <field name="spacer1"
+        <field name="spacer3"
                label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_SUBCATEGORIES"
                type="spacer" >
         </field>
@@ -1072,7 +1136,7 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
-        <field name="spacer2"
+        <field name="spacer4"
             label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES"
             type="spacer"
             hr="false" >
@@ -1240,7 +1304,7 @@
             <option value="defaultview">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_DETAILVIEW</option>
             <option value="lightgallery">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_LIGHTGALLERY</option>
         </field>
-        <field name="spacer3"
+        <field name="spacer5"
             label="COM_JOOMGALLERY_CONFIG_IMAGE_INFORMATION"
             type="spacer"
             hr="false"
