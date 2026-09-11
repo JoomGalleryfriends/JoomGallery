@@ -212,7 +212,7 @@ class ImageController extends JoomFormController
       $directory      = $this->getFtpImportDirectory();
       $result['path'] = str_replace(JPATH_ROOT, '', $directory);
 
-      if(!Folder::exists($directory) && !Folder::create($directory))
+      if(!is_dir($directory) && !Folder::create($directory))
       {
         throw new \Exception(Text::sprintf('COM_JOOMGALLERY_FTP_IMPORT_ERROR_CREATE_DIRECTORY', $result['path']));
       }
@@ -271,58 +271,10 @@ class ImageController extends JoomFormController
    */
   protected function getFtpImportDirectory(): string
   {
-    $directories        = $this->getFtpImportDirectories();
-    $allowed_extensions = $this->getFtpImportExtensions();
-
-    foreach($directories as $directory)
-    {
-      if(Folder::exists($directory) && $this->directoryHasImportableFiles($directory, $allowed_extensions))
-      {
-        return $directory;
-      }
-    }
-
-    foreach($directories as $directory)
-    {
-      if(Folder::exists($directory))
-      {
-        return $directory;
-      }
-    }
-
-    return $directories[0] ?? Path::clean(JPATH_ROOT . '/images/joomgallery/FTP');
-  }
-
-  /**
-   * Get FTP import directory candidates in priority order.
-   *
-   * @return  array
-   *
-   * @since   4.5.0
-   */
-  protected function getFtpImportDirectories(): array
-  {
     $config = JoomHelper::getService('config');
-    $paths  = [
-      $config->get('jg_pathftpupload', ''),
-      'images/joomgallery/FTP',
-    ];
+    $path   = trim((string) $config->get('jg_pathftpupload', ''));
 
-    $directories = [];
-
-    foreach($paths as $path)
-    {
-      $directory = $this->normalizeFtpImportPath((string) $path);
-
-      if($directory === '' || \in_array($directory, $directories, true))
-      {
-        continue;
-      }
-
-      $directories[] = $directory;
-    }
-
-    return $directories;
+    return $this->normalizeFtpImportPath($path !== '' ? $path : 'images/joomgallery/FTP');
   }
 
   /**
@@ -349,36 +301,6 @@ class ImageController extends JoomFormController
     }
 
     return Path::clean(rtrim($path, '/\\'));
-  }
-
-  /**
-   * Check if a directory contains at least one importable file.
-   *
-   * @param   string  $directory           Directory path
-   * @param   array   $allowed_extensions  Allowed extensions
-   *
-   * @return  bool
-   *
-   * @since   4.5.0
-   */
-  protected function directoryHasImportableFiles(string $directory, array $allowed_extensions): bool
-  {
-    try
-    {
-      foreach(new \DirectoryIterator($directory) as $file)
-      {
-        if($file->isFile() && \in_array(strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)), $allowed_extensions, true))
-        {
-          return true;
-        }
-      }
-    }
-    catch(\Exception $e)
-    {
-      return false;
-    }
-
-    return false;
   }
 
   /**

@@ -80,11 +80,6 @@ class FTPUploader extends BaseUploader implements UploaderInterface
     $this->src_size      = filesize($source);
     $this->src_tmp       = $source;
 
-    if(empty($data['title']))
-    {
-      $data['title'] = pathinfo($this->src_name, PATHINFO_FILENAME);
-    }
-
     // The parent uploader validates the file type against the configured image
     // processor and filesystem, creates the destination filename and records the
     // filesystem selected for the target category.
@@ -95,7 +90,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
 
     $tmp_dir = Path::clean(Factory::getApplication()->get('tmp_path') . '/joomgalleryftp');
 
-    if(!Folder::exists($tmp_dir) && !Folder::create($tmp_dir))
+    if(!is_dir($tmp_dir) && !Folder::create($tmp_dir))
     {
       $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_FOLDER', $tmp_dir));
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_FOLDER', $tmp_dir), 'error', 'jerror');
@@ -236,24 +231,9 @@ class FTPUploader extends BaseUploader implements UploaderInterface
   protected function getSourceDirectories(): array
   {
     $config = JoomHelper::getService('config');
-    $paths  = [
-      $config->get('jg_pathftpupload', ''),
-      'images/joomgallery/FTP',
-    ];
+    $path   = trim((string) $config->get('jg_pathftpupload', ''));
 
-    $directories = [];
-
-    foreach($paths as $path)
-    {
-      $directory = $this->normalizeSourcePath((string) $path);
-
-      if($directory !== '' && !\in_array($directory, $directories, true))
-      {
-        $directories[] = $directory;
-      }
-    }
-
-    return $directories;
+    return [$this->normalizeSourcePath($path !== '' ? $path : 'images/joomgallery/FTP')];
   }
 
   /**
@@ -324,7 +304,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
     {
       $processed_dir = Path::clean(\dirname($this->source_file) . '/processed');
 
-      if(!Folder::exists($processed_dir))
+      if(!is_dir($processed_dir))
       {
         Folder::create($processed_dir);
       }

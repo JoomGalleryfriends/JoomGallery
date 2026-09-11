@@ -36,33 +36,6 @@ Text::script('COM_JOOMGALLERY_FAILED');
 Text::script('COM_JOOMGALLERY_FTP_IMPORT_LOADING');
 Text::script('COM_JOOMGALLERY_FTP_IMPORT_LOAD_FAILED');
 
-$wa->addInlineScript(
-    "
-    document.addEventListener('DOMContentLoaded', function () {
-      const title = document.getElementById('jform_title');
-      const numbering = document.getElementById('jform_nmb_start');
-
-      if (!title || !numbering) {
-        return;
-      }
-
-      const field = numbering.closest('.control-group, .mb-3, .form-group') || numbering.parentElement;
-      const toggleNumbering = function () {
-        const hasTitle = title.value.trim().length > 0;
-
-        numbering.disabled = !hasTitle;
-
-        if (field) {
-          field.hidden = !hasTitle;
-        }
-      };
-
-      title.addEventListener('input', toggleNumbering);
-      toggleNumbering();
-    });
-    "
-);
-$this->form->setFieldAttribute('title', 'required', 'false');
 ?>
 
 <div class="jg jg-upload jg-ftp-import">

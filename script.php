@@ -1568,7 +1568,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
   {
     $directory = Path::clean(JPATH_ROOT . '/images/joomgallery/FTP');
 
-    return Folder::exists($directory) || Folder::create($directory);
+    return is_dir($directory) || Folder::create($directory);
   }
 
   /**
