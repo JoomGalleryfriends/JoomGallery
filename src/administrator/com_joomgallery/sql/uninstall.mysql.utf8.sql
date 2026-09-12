@@ -22,3 +22,5 @@ DELETE `#__fields_values` FROM `#__fields_values` INNER JOIN `#__fields` ON `#__
 DELETE FROM `#__fields_groups` WHERE (context LIKE 'com_joomgallery%');
 DELETE FROM `#__fields` WHERE (context LIKE 'com_joomgallery%');
 DELETE FROM `#__scheduler_tasks` WHERE (type LIKE 'joomgallery%');
+DELETE `#__finder_links` FROM `#__finder_links` INNER JOIN `#__finder_types` ON `#__finder_types`.`id` = `#__finder_links`.`type_id` WHERE (`#__finder_types`.`title` LIKE 'Image (JoomGallery)');
+DELETE `#__finder_types` FROM `#__finder_types` WHERE (`#__finder_types`.`title` LIKE 'Image (JoomGallery)');
