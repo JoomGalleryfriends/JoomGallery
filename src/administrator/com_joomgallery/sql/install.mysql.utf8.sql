@@ -228,7 +228,6 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_newpiccopyright` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_uploaddefaultcat` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_useruploadsingle` TINYINT(1) NOT NULL DEFAULT 1,
-`jg_maxuploadfields` DOUBLE NOT NULL DEFAULT 3,
 `jg_useruploadajax` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_useruploadbatch` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_special_upload` TINYINT(1) NOT NULL DEFAULT 1,
