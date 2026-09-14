@@ -180,6 +180,33 @@
       "name": "com_joomgallery.migrator",
       "type": "script",
       "uri": "com_joomgallery/migrator/dist/migrator.js"
+    },
+    {
+      "name": "com_joomgallery.admin.taggingtoolbar",
+      "type": "script",
+      "uri": "com_joomgallery/taggingtoolbar.js",
+      "attributes": {
+        "type": "module",
+        "defer": true
+      }
+    },
+    {
+      "name": "com_joomgallery.aiinterface",
+      "type": "script",
+      "uri": "com_joomgallery/aiinterface/dist/aiinterface.js",
+      "dependencies": [
+        "core",
+        "joomla.dialog"
+      ],
+      "attributes": {
+        "type": "module",
+        "defer": true
+      }
+    },
+    {
+      "name": "com_joomgallery.aiinterface",
+      "type": "style",
+      "uri": "com_joomgallery/aiinterface.css"
     }
   ]
 }

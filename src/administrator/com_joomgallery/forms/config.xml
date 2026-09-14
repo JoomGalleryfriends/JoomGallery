@@ -538,8 +538,8 @@
              label="COM_JOOMGALLERY_CONFIG_COPYRIGHT_NOTE"
              description="COM_JOOMGALLERY_CONFIG_COPYRIGHT_NOTE_LONG"
              showon="jg_userupload:1" >
-<!--        <option value="0">JNO</option>-->
-<!--        <option value="1">JYES</option>-->
+            <!-- <option value="0">JNO</option>-->
+            <!-- <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_uploaddefaultcat"
@@ -564,8 +564,8 @@
              label="COM_JOOMGALLERY_CONFIG_PROBLEMATIC_FILES_UPLOAD"
              description="COM_JOOMGALLERY_CONFIG_PROBLEMATIC_FILES_UPLOAD_LONG"
              showon="jg_userupload:1" >
-<!--        <option value="0">JNO</option>-->
-<!--        <option value="1">JYES</option>-->
+            <!--  <option value="0">JNO</option>-->
+            <!--  <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_newpicnote"
@@ -576,8 +576,8 @@
              label="COM_JOOMGALLERY_CONFIG_UPLOAD_QUOTA"
              description="COM_JOOMGALLERY_CONFIG_UPLOAD_QUOTA_LONG"
              showon="jg_userupload:1" >
-<!--        <option value="0">JNO</option>-->
-<!--        <option value="1">JYES</option>-->
+            <!-- <option value="0">JNO</option>-->
+            <!-- <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_redirect_after_upload"
@@ -614,8 +614,8 @@
              showon="jg_download:1"
              label="COM_JOOMGALLERY_CONFIG_HINT_NOT_ENOUGH_RIGHTS"
              description="COM_JOOMGALLERY_CONFIG_DOWNLOAD_HINT_LONG" >
-<!--        <option value="0">JNO</option>-->
-<!--        <option value="1">JYES</option>-->
+            <!-- <option value="0">JNO</option>-->
+            <!-- <option value="1">JYES</option>-->
       </field>
 
       <field name="jg_downloadfile"
@@ -638,8 +638,8 @@
              showon="jg_download:1"
              label="COM_JOOMGALLERY_CONFIG_DOWNLOADWITHWATERMARK"
              description="COM_JOOMGALLERY_CONFIG_DOWNLOADWITHWATERMARK_LONG" >
-<!--        <option value="0">JNO</option>-->
-<!--        <option value="1">JYES</option>-->
+            <!--  <option value="0">JNO</option>-->
+            <!--  <option value="1">JYES</option>-->
       </field>
     </fieldset>
 
@@ -1445,6 +1445,107 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
+    </fieldset>
+  </fieldset>
+
+  <fieldset type="tab" name="apis" label="COM_JOOMGALLERY_CONFIG_TAB_APIS" note="apis">
+    <fieldset type="tab" name="apis-aiint" label="COM_JOOMGALLERY_CONFIG_TAB_AI_INTERFACE">
+      <field name="aiint_note"
+              type="note"
+              description="COM_JOOMGALLERY_CONFIG_AIINT_NOTE_LONG" />
+      <field name="jg_aiint_host"
+             type="text"
+             default="https://ai.joomgalleryfriends.net/api/v1"
+             label="COM_JOOMGALLERY_CONFIG_AIINT_HOST_LABEL"
+             description="COM_JOOMGALLERY_CONFIG_AIINT_HOST_LONG" />
+      <field name="jg_aiint_key"
+             type="textarea"
+             default=""
+             rows="2"
+             label="COM_JOOMGALLERY_CONFIG_AIINT_KEY_LABEL"
+             description="COM_JOOMGALLERY_CONFIG_AIINT_KEY_LONG" />
+      <field name="jg_aiint_force_slash"
+             type="radio"
+             label="COM_JOOMGALLERY_CONFIG_AIINT_FORCE_SLASH_LABEL"
+             description="COM_JOOMGALLERY_CONFIG_AIINT_FORCE_SLASH_LONG"
+             default="0"
+             layout="joomla.form.field.radio.switcher"
+             validate="options" >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+      </field>
+      <field name="check_aiint"
+             type="aibutton"
+             script="com_joomgallery.aiinterface"
+             clientname="JG-Configuration"
+             label="COM_JOOMGALLERY_CONFIG_AIINT_CHECK_CONNECTION_LABEL" />
+      <field name="spacer5"
+             label="COM_JOOMGALLERY_CONFIG_AIINT_AIS_LABEL"
+             type="spacer"
+             hr="false" >
+      </field>
+      <field name="jg_aiint_provider_keys"
+             type="subform"
+             label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_LABEL"
+             description="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_LONG"
+             multiple="true" >
+          <form>
+              <field name="provider_name"
+                     type="text"
+                     hint="openai"
+                     label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_NAME_LABEL" />
+              <field name="provider_key"
+                     type="textarea"
+                     label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_KEY_LABEL"
+                     default=""
+                     rows="2" />
+          </form>
+      </field>
+      <field name="spacer4"
+            label="COM_JOOMGALLERY_CONFIG_AIINT_TAGGING_LABEL"
+            type="spacer"
+            hr="false" >
+      </field>
+      <field name="jg_aiint_tags_imagetype"
+             type="jgimagetype"
+             label="COM_JOOMGALLERY_CONFIG_VIEW_IMAGETYPE"
+             description="COM_JOOMGALLERY_CONFIG_AIINT_TAGS_IMAGETYPE_LONG"
+             default="detail"
+             validate="options" />
+      <field name="jg_aiint_tags_maxdim"
+            type="number"
+            default="500"
+            validate="number"
+            filter="integer"
+            label="COM_JOOMGALLERY_CONFIG_AIINT_MAXDIM_LABEL"
+            description="COM_JOOMGALLERY_CONFIG_AIINT_MAXDIM_LONG" />
+      <field name="jg_aiint_tags_preload"
+            type="number"
+            default="0"
+            min="0"
+            step="1"
+            validate="number"
+            filter="integer"
+            label="COM_JOOMGALLERY_CONFIG_AIINT_LOAD_TAGS_LABEL"
+            description="COM_JOOMGALLERY_CONFIG_AIINT_LOAD_TAGS_LONG" />
+      <field name="jg_aiint_tags_casesens"
+            type="list"
+            default="1"
+            validate="options"
+            label="COM_JOOMGALLERY_CONFIG_AIINT_TAGS_CASESENS_LABEL"
+            description="COM_JOOMGALLERY_CONFIG_AIINT_TAGS_CASESENS_LONG" >
+        <option value="1">COM_JOOMGALLERY_CONFIG_AIINT_SENSITIVE</option>
+        <option value="0">COM_JOOMGALLERY_CONFIG_AIINT_INSENSITIVE</option>
+      </field>
+      <field name="jg_aiint_tags_caseupper"
+            type="list"
+            default="1"
+            validate="options"
+            label="COM_JOOMGALLERY_CONFIG_AIINT_TAGS_CASEUPPER_LABEL"
+            description="COM_JOOMGALLERY_CONFIG_AIINT_TAGS_CASEUPPER_LONG" >
+        <option value="1">COM_JOOMGALLERY_CONFIG_AIINT_UPPERCASE</option>
+        <option value="0">COM_JOOMGALLERY_CONFIG_AIINT_LOWERCASE</option>
+      </field>
     </fieldset>
   </fieldset>
 

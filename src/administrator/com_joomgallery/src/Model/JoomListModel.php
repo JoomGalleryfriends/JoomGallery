@@ -406,4 +406,29 @@ abstract class JoomListModel extends ListModel
 
     return $select;
   }
+
+  /**
+   * Method to load and return a table object.
+   *
+   * @param   string|array  $list   A list of ids
+   *
+   * @return  array  Array of sanitised IDs
+   *
+   * @since   4.4.0
+   */
+  protected function sanitiseIDlist($list)
+  {
+    if(isset($list))
+    {
+      if(!\is_array($list))
+      {
+        $list = (string) preg_replace('/[^0-9,]/', '', $list);
+        $list = strpos($list, ',') !== false ? explode(',', $list) : [$list];
+      }
+
+      $list = array_values(array_filter(array_map('intval', (array) $list)));
+    }
+
+    return $list;
+  }
 }

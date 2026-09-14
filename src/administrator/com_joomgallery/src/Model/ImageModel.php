@@ -1272,28 +1272,29 @@ class ImageModel extends JoomAdminModel
       // Create config service
       $this->component->createConfig();
 
-    // Create filemanager service
-    $this->component->createFileManager($table->catid);
-    $path = $this->component->getFileManager()->getImgPath($table, $type);
+      // Create filemanager service
+      $this->component->createFileManager($table->catid);
+      $path = $this->component->getFileManager()->getImgPath($table, $type);
 
-    // Get registry to be used in writeMetadata
-    $registry = new Registry($table->imgmetadata);
+      // Get registry to be used in writeMetadata
+      $registry = new Registry($table->imgmetadata);
 
       // Create the metadata service
       $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
 
-    $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
+      $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
 
-    // Perform the save using the metadata/filesystem service
-    if($filesystem != 'local-images')
-    {
-    $data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
-    }
-    else
-    {
-    $data = $this->component->getMetadata()->writeMetadata($path, $registry);
-    }
-    $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
+      // Perform the save using the metadata/filesystem service
+      if($filesystem != 'local-images')
+      {
+        $data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
+      }
+      else
+      {
+        $data = $this->component->getMetadata()->writeMetadata($path, $registry);
+      }
+
+      $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
     }
     else
     {
@@ -1306,6 +1307,101 @@ class ImageModel extends JoomAdminModel
     $this->cleanCache();
 
     return true;
+  }
+
+  /**
+   * Method to add tags to an image
+   *
+   * @param   int     $pk    The record primary key.
+   * @param   array   $tags  List of tags to be added.
+   *
+   * @return  boolean  True if successful, false if an error occurs.
+   *
+   * @since   4.4
+   */
+  public function addTags(int $pk, array $tags): bool
+  {
+    // Prepare tags array
+    $tags = array_unique(array_map('trim', $tags));
+
+    // Get existing tags
+    $tags_model    = $this->component->getMVCFactory()->createModel('Tags', 'administrator');
+    $existing_tags = [];
+    $success       = true;
+
+    foreach($tags_model->getItemsInList($tags) as $tag)
+    {
+      $existing_tags[$tag->title] = $tag->id;
+    }
+
+    // Add #new# prefix to new tags
+    $tags = array_map(
+        function ($tag) use ($existing_tags) {
+        return isset($existing_tags[$tag]) ? $existing_tags[$tag] : '#new#' . $tag;
+        },
+        $tags
+    );
+
+    // Create tags
+    $tags = $tags_model->storeTagsList($tags);
+
+    if($tags === false)
+    {
+      $this->setError('Tags Model reports ' . $tags_model->getError());
+      $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
+      $success = false;
+    }
+
+    // Merge list
+    $mapped_tags = array_map(fn($obj) => $obj->id, $tags_model->getMappedItems($pk));
+    $tags        = array_merge($mapped_tags, $tags);
+
+    // Update tags mapping
+    if(!$tags_model->updateMapping($tags, $pk))
+    {
+      $this->setError('Tags Model reports ' . $tags_model->getError());
+      $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
+      $success = false;
+    }
+
+    return $success;
+  }
+
+  /**
+   * Method to remove tags from an image
+   *
+   * @param   int     $pk    The record primary key.
+   * @param   array   $tags  List of tags to be removed.
+   *
+   * @return  boolean  True if successful, false if an error occurs.
+   *
+   * @since   4.4
+   */
+  public function removeTags(int $pk, array $tags): bool
+  {
+    // Prepare tags array
+    $tags = array_unique(array_map('trim', $tags));
+
+    // Get existing tags
+    $tags_model    = $this->component->getMVCFactory()->createModel('Tags', 'administrator');
+    $existing_tags = array_column($tags_model->getMappedItems($pk), 'id', 'title');
+    $success       = true;
+
+    foreach($tags_model->getItemsInList($tags) as $tag)
+    {
+      // Remove from existing tags array
+      unset($existing_tags[$tag->title]);
+    }
+
+    // Update tags mapping
+    if(!$tags_model->updateMapping(array_values($existing_tags), $pk))
+    {
+      $this->setError('Tags Model reports ' . $tags_model->getError());
+      $this->getComponent()->addLog('Tags Model reports ', 'error', 'jerror');
+      $success = false;
+    }
+
+    return $success;
   }
 
   /**
