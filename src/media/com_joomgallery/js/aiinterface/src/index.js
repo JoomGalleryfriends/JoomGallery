@@ -912,7 +912,13 @@ class AIinterface {
     }
 
     // Step 3: call generation only once
+    const generationStartedAt = performance.now();
     const response = await this.genKeywords(null, images, options);
+    const generationDurationSeconds = (performance.now() - generationStartedAt) / 1000;
+
+    images.forEach((image) => {
+      console.log(`Image with ID ${image.id}: ${generationDurationSeconds.toFixed(2)} sec`);
+    });
 
     // Stop timer first
     this.stopKeywordGenerationProgressTimer();
