@@ -505,7 +505,6 @@ class CategoryModel extends JoomItemModel
     $listModel->setState('filter.access', $user->getAuthorisedViewLevels());
     $listModel->setState('filter.published', 1);
     $listModel->setState('filter.showunapproved', 0);
-    $listModel->setState('filter.showhidden', 0);
 
     if(Multilanguage::isEnabled())
     {
