@@ -124,7 +124,7 @@ class JoomHelper
 
     $key = 'creator:' . $name . ':' . $id . ':' . (int) $parent;
 
-    self::getComponent()->cache->set($key, $creator);
+    self::getComponent()->getCache()->set($key, $creator);
   }
 
   /**
@@ -143,7 +143,7 @@ class JoomHelper
     {
       $key = 'record:' . $name . ':' . $id;
 
-      self::getComponent()->cache->set($key, $record);
+      self::getComponent()->getCache()->set($key, $record);
     }
   }
 
@@ -193,7 +193,7 @@ class JoomHelper
           . ')(?::|$)/';
       }
 
-      self::getComponent()->cache->remove($pattern);
+      self::getComponent()->getCache()->remove($pattern);
     }
   }
 
@@ -302,9 +302,9 @@ class JoomHelper
           $imgtype_id = $id['typename'];
         }
 
-        if(self::getComponent()->cache->has('record:' . $name . ':' . $imgtype_id))
+        if(self::getComponent()->getCache()->has('record:' . $name . ':' . $imgtype_id))
         {
-          return self::getComponent()->cache->get('record:' . $name . ':' . $imgtype_id);
+          return self::getComponent()->getCache()->get('record:' . $name . ':' . $imgtype_id);
         }
       }
 
@@ -329,7 +329,7 @@ class JoomHelper
       // Write result to cache
       if($name == 'imagetype' && $return)
       {
-        self::getComponent()->cache->set('record:' . $name . ':' . $imgtype_id, $return);
+        self::getComponent()->getCache()->set('record:' . $name . ':' . $imgtype_id, $return);
       }
 
       return $return;
@@ -363,9 +363,9 @@ class JoomHelper
     {
       $cacheKey = 'creator:' . $name . ':' . $id . ':' . (int) $parent;
 
-      if(self::getComponent()->cache->has($cacheKey))
+      if(self::getComponent()->getCache()->has($cacheKey))
       {
-        return self::getComponent()->cache->get($cacheKey);
+        return self::getComponent()->getCache()->get($cacheKey);
       }
 
       $db    = Factory::getContainer()->get(DatabaseInterface::class);
@@ -395,7 +395,7 @@ class JoomHelper
       $db->setQuery($query);
 
       $creator = $db->loadResult();
-      self::getComponent()->cache->set($cacheKey, $creator);
+      self::getComponent()->getCache()->set($cacheKey, $creator);
 
       return $creator;
     }
@@ -468,9 +468,9 @@ class JoomHelper
     }
 
     // Check the cache
-    if($name == 'imagetypes' && self::getComponent()->cache->has('records:' . $name))
+    if($name == 'imagetypes' && self::getComponent()->getCache()->has('records:' . $name))
     {
-      return self::getComponent()->cache->get('records:' . $name);
+      return self::getComponent()->getCache()->get('records:' . $name);
     }
 
     // Get the JoomgalleryComponent object if needed
@@ -512,7 +512,7 @@ class JoomHelper
     // Write result to cache
     if($name == 'imagetypes' && $return)
     {
-      self::getComponent()->cache->set('records:' . $name, $return);
+      self::getComponent()->getCache()->set('records:' . $name, $return);
     }
 
     return $return;

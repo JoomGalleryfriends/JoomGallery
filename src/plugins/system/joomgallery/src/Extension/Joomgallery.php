@@ -15,6 +15,7 @@ namespace Joomgallery\Plugin\System\Joomgallery\Extension;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheRevision;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Event\Model\AfterCleanCacheEvent;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
@@ -112,12 +113,14 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     if(self::$jg_exists)
     {
       return [
-        'onContentCleanCache'  => ['onContentCleanCache', Priority::NORMAL],
-        'onContentPrepareForm' => ['onContentPrepareForm', Priority::NORMAL],
-        'onContentPrepareData' => ['onContentPrepareData', Priority::NORMAL],
-        'onUserAfterSave'      => ['onUserAfterSave', Priority::NORMAL],
-        'onUserAfterDelete'    => ['onUserAfterDelete', Priority::NORMAL],
-        'onContentAfterSave'   => ['onContentAfterSave', Priority::NORMAL],
+        'onContentCleanCache'    => ['onContentCleanCache', Priority::NORMAL],
+        'onContentPrepareForm'   => ['onContentPrepareForm', Priority::NORMAL],
+        'onContentPrepareData'   => ['onContentPrepareData', Priority::NORMAL],
+        'onUserAfterSave'        => ['onUserAfterSave', Priority::NORMAL],
+        'onUserAfterDelete'      => ['onUserAfterDelete', Priority::NORMAL],
+        'onUserAfterSaveGroup'   => ['invalidateUserCaches', Priority::NORMAL],
+        'onUserAfterDeleteGroup' => ['invalidateUserCaches', Priority::NORMAL],
+        'onContentAfterSave'     => ['onContentAfterSave', Priority::NORMAL],
       ];
     }
 
@@ -148,6 +151,16 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       // Joomla 5 or newer
       extract($event->getArguments());
       $defaultgroup = $event->getDefaultGroup();
+    }
+
+    // Core global/component permissions use _system; user changes can affect
+    // inherited permissions and the configuration group selected for a user.
+    if($defaultgroup === '_system' || strpos($defaultgroup, 'com_users') === 0)
+    {
+      $this->invalidateUserCaches($event);
+      $this->setResult($event, true, false);
+
+      return;
     }
 
     if(strpos($defaultgroup, 'com_joomgallery') !== 0 && strpos($defaultgroup, 'com_users') !== 0 && strpos($defaultgroup, 'com_menus') !== 0)
@@ -410,6 +423,11 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
         return;
       }
     }
+
+    if($userId && $result)
+    {
+      $this->invalidateUserCaches($event);
+    }
   }
 
   /**
@@ -460,7 +478,20 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       }
     }
 
+    $this->invalidateUserCaches($event);
+
     return true;
+  }
+
+  /**
+   * Retire configuration and ACL snapshots after identity or global changes.
+   */
+  public function invalidateUserCaches(Event $event): void
+  {
+    // Booting registers the component namespace before accessing its service.
+    JoomHelper::getComponent();
+    CacheRevision::invalidate('config');
+    CacheRevision::invalidate('acl');
   }
 
   /**

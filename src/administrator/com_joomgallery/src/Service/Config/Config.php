@@ -15,8 +15,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Traits\CacheAwareTrait;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\User;
@@ -34,7 +34,14 @@ use Joomla\Database\DatabaseInterface;
 abstract class Config extends \stdClass implements ConfigInterface
 {
   use ServiceTrait;
-  use CacheAwareTrait;
+
+  /** @var CacheInterface Namespace cache owned by this service. */
+  protected CacheInterface $cache;
+
+  /** @var CacheInterface Request-only user configuration-group lookups. */
+  protected CacheInterface $userSettingsCache;
+
+
 
   /**
    * Cache format version. Increment this when the cache key format changes.
@@ -161,7 +168,12 @@ abstract class Config extends \stdClass implements ConfigInterface
 
     $this->loadConfigCachePolicy();
     $this->cacheNamespace = $this->getCacheNamespace($this->name);
-    $this->initialiseCache($this->cacheNamespace);
+    $this->cache          = $this->component->createCache($this->cacheNamespace);
+    $this->cache->configure('config', true);
+    $this->cache->initialise();
+
+    $this->userSettingsCache = $this->component->createCache($this->cacheNamespace . 'config_usergroup');
+    $this->userSettingsCache->configure('config');
     $this->pruneConfigCache();
 
     // Get current user
@@ -247,13 +259,13 @@ abstract class Config extends \stdClass implements ConfigInterface
    */
   public function storeCacheToSession()
   {
-    $this->persistCachesToSession();
+    $this->cache->persistAll();
   }
 
   /**
-   * Empty all the cache
+   * Invalidate all calculated configurations across sessions
    *
-   * @param   string|false   $type   Type name of types to delete the cache from. False: Delete all types
+   * @param   string|false   $type   Legacy type hint; all types now share one invalidation scope
    *
    * @return  void
    *
@@ -261,39 +273,9 @@ abstract class Config extends \stdClass implements ConfigInterface
    */
   public function emptyCache($type = false)
   {
-    $configServices = ['Config', 'DefaultConfig'];
-
-    foreach($configServices as $service)
-    {
-      if(strpos($type, 'user') === 0)
-      {
-        // Delete only cache which is related to one of the usergoups this user is part of
-        $user_array = explode('.', $type);
-        $user_id    = (\count($user_array) > 1) ? $user_array[1] : 0;
-        $user       = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $user_id);
-        $usergroups = array_map('intval', (array) $user->get('groups'));
-        $regex      = '/^' . preg_quote($service, '/') . ':.*:group=(' . implode('|', $usergroups) . '):/';
-      }
-      elseif(strpos($type, 'image') === 0)
-      {
-        // Delete only cache which is related to context of type image
-        $context = 'com_joomgallery.image';
-        $regex   = '/^' . preg_quote($service, '/') . ':' . preg_quote($context, '/') . '(?:\.id)?:/';
-      }
-      elseif(strpos($type, 'category') === 0)
-      {
-        // Delete only cache which is related to context of type image or category
-        $regex = '/^' . preg_quote($service, '/') . ':com_joomgallery\.(?:image|category)(?:\.id)?:/';
-      }
-      else
-      {
-        // Delete all cache
-        $regex = false;
-      }
-
-      // Delete cache based on regex
-      $this->deleteCache($regex, $service);
-    }
+    // The type argument is retained for callers; the shared scope is global.
+    self::$configCachePolicy = null;
+    $this->cache->remove();
   }
 
   /**
@@ -314,7 +296,9 @@ abstract class Config extends \stdClass implements ConfigInterface
       $name = $this->name;
     }
 
-    $this->removeCacheEntries($this->getCacheNamespace($name), $storeId, true);
+    $cache = $this->component->createCache($this->getCacheNamespace($name));
+    $cache->configure('config', true);
+    $cache->remove($storeId, true);
   }
 
   /**
@@ -385,29 +369,12 @@ abstract class Config extends \stdClass implements ConfigInterface
    */
   protected function pruneConfigCache(): void
   {
-    $changed = false;
-
-    foreach(self::$runtimeCaches[$this->cacheNamespace] as $key => $entry)
-    {
-      if($this->cacheLimit === 0 || $this->cacheLifetime === 0
-        || !\is_array($entry) || !isset($entry['expires'], $entry['value'])
-        || (int) $entry['expires'] < time())
-      {
-        unset(self::$runtimeCaches[$this->cacheNamespace][$key]);
-        $changed = true;
-      }
-    }
-
-    while($this->cacheLimit > 0 && \count(self::$runtimeCaches[$this->cacheNamespace]) > $this->cacheLimit)
-    {
-      array_shift(self::$runtimeCaches[$this->cacheNamespace]);
-      $changed = true;
-    }
-
-    if($changed)
-    {
-      self::$dirtyCaches[$this->cacheNamespace] = true;
-    }
+    $this->cache->prune(
+        fn($entry) => $this->cacheLimit > 0 && $this->cacheLifetime > 0
+          && \is_array($entry) && isset($entry['expires'], $entry['value'])
+          && (int) $entry['expires'] >= time(),
+        $this->cacheLimit
+    );
   }
 
   /**
@@ -431,8 +398,7 @@ abstract class Config extends \stdClass implements ConfigInterface
      * one instance of the Config object for contexts that have
      * the same exact configs.
      */
-    $this->putCacheEntry(
-        $this->cacheNamespace,
+    $this->cache->set(
         base64_encode($storeId),
         [
           'expires' => time() + $this->cacheLifetime,
@@ -629,13 +595,10 @@ abstract class Config extends \stdClass implements ConfigInterface
    */
   protected function getUserSetting($userId)
   {
-    // Dedicated namespace for the user settings
-    $cacheNamespace = $this->cacheNamespace . 'config_usergroup';
-
     // Load from cache if available
-    if($this->hasCacheEntry($cacheNamespace, $userId, true))
+    if($this->userSettingsCache->has((string) $userId))
     {
-      return $this->getCacheEntry($cacheNamespace, $userId, null, true);
+      return $this->userSettingsCache->get((string) $userId);
     }
 
     // Get the usergroup setting from db
@@ -652,7 +615,7 @@ abstract class Config extends \stdClass implements ConfigInterface
     $userSetting = (int) $db->loadResult();
 
     // Zero means that no explicit user setting exists and is a cacheable result too.
-    $this->putCacheEntry($cacheNamespace, (string) $userId, $userSetting, $this->cacheLimit, true);
+    $this->userSettingsCache->set((string) $userId, $userSetting, $this->cacheLimit);
 
     return $userSetting;
   }
