@@ -17,7 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access;
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base\AccessOwn;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Traits\CacheAwareTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheInterface;
 use Joomgallery\Component\Joomgallery\Administrator\User\User;
 use Joomla\CMS\Access\Access as AccessBase;
 use Joomla\CMS\Factory;
@@ -35,7 +35,14 @@ use Joomla\Database\DatabaseInterface;
 class Access implements AccessInterface
 {
   use ServiceTrait;
-  use CacheAwareTrait;
+
+  /** @var CacheInterface Namespace cache owned by this service. */
+  protected CacheInterface $cache;
+
+  /** @var string|null Revision associated with this instance's request results. */
+  protected ?string $checksRevision = null;
+
+
 
   /**
    * The option which component to check the ACL.
@@ -215,6 +222,14 @@ class Access implements AccessInterface
    */
   public function checkACL(string $action, string $asset = '', int $pk = 0, int $parent_pk = 0, bool $use_parent = false): bool
   {
+    $this->cache->initialise();
+
+    if($this->checksRevision !== $this->cache->getRevision())
+    {
+      $this->checks         = [];
+      $this->checksRevision = $this->cache->getRevision();
+    }
+
     $checkKey = implode(':', [$this->user->id, $action, $asset, $pk, $parent_pk, (int) $use_parent]);
 
     if(\array_key_exists($checkKey, $this->checks))
@@ -222,9 +237,9 @@ class Access implements AccessInterface
       return $this->checks[$checkKey];
     }
 
-    if($this->isHotCacheCandidate($asset, $pk) && $this->hasCacheEntry($this->cacheNamespace, $checkKey))
+    if($this->isHotCacheCandidate($asset, $pk) && $this->cache->has($checkKey))
     {
-      $hot = $this->getCacheEntry($this->cacheNamespace, $checkKey);
+      $hot = $this->cache->get($checkKey);
 
       if(\is_array($hot) && isset($hot['expires']) && (int) $hot['expires'] >= time())
       {
@@ -528,7 +543,9 @@ class Access implements AccessInterface
     sort($groups);
 
     $this->cacheNamespace = 'com_joomgallery.accesscache.' . sha1($this->option) . '.' . (int) $this->user->id . '.' . sha1(implode(',', $groups));
-    $this->initialiseCache($this->cacheNamespace, $this->hotCacheLifetime);
+    $this->cache          = $this->component->createCache($this->cacheNamespace);
+    $this->cache->configure('acl', true, $this->hotCacheLifetime);
+    $this->cache->initialise();
   }
 
   /**
@@ -599,7 +616,7 @@ class Access implements AccessInterface
 
     // Warmup frontend (site) application
     $warmKey = '__owned_categories_warmed__';
-    $warm    = $this->getCacheEntry($this->cacheNamespace, $warmKey);
+    $warm    = $this->cache->get($warmKey);
 
     if(\is_array($warm) && isset($warm['expires'], $warm['count']) && (int) $warm['expires'] >= time())
     {
@@ -639,8 +656,7 @@ class Access implements AccessInterface
       $this->checkACL('add', $this->option . '.image', 0, $categoryId, true);
     }
 
-    $this->putCacheEntry(
-        $this->cacheNamespace,
+    $this->cache->set(
         $warmKey,
         ['count' => \count($categories), 'expires' => time() + $this->hotCacheLifetime],
         $this->hotCacheLimit
@@ -666,8 +682,7 @@ class Access implements AccessInterface
 
     if($this->isHotCacheCandidate($asset, $pk))
     {
-    $this->putCacheEntry(
-        $this->cacheNamespace,
+    $this->cache->set(
         $key,
         ['value' => $result, 'expires' => time() + $this->hotCacheLifetime],
         $this->hotCacheLimit
@@ -724,12 +739,11 @@ class Access implements AccessInterface
    */
   public function storeCacheToSession(): void
   {
-    $this->persistCachesToSession();
+    $this->cache->persistAll();
   }
 
   /**
-   * Clears request-local ACL results and removes the current identity's hot
-   * cache entries from the session.
+   * Invalidates the shared ACL scope for every identity and session.
    *
    * @return  void
    *
@@ -739,24 +753,7 @@ class Access implements AccessInterface
   {
     $this->checks = [];
 
-    // Clear every identity namespace for this component which was loaded in
-    // the current session/request, not just the identity currently selected.
-    $prefix     = 'com_joomgallery.accesscache.' . sha1($this->option) . '.';
-    $namespaces = array_keys(self::$loadedCaches);
-
-    foreach($namespaces as $namespace)
-    {
-      if(strpos($namespace, $prefix) === 0)
-      {
-        $this->removeCacheEntries($namespace);
-      }
-    }
-
-    // The current namespace may not have been included if initialisation failed.
-    if(!\in_array($this->cacheNamespace, $namespaces, true))
-    {
-      $this->removeCacheEntries($this->cacheNamespace);
-    }
+    $this->cache->remove();
   }
 
   /**

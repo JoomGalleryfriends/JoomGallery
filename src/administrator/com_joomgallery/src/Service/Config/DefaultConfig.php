@@ -56,9 +56,9 @@ class DefaultConfig extends Config implements ConfigInterface
     $cacheKey = base64_encode($this->storeId);
 
     if($useCache && $this->cacheLimit > 0 && $this->cacheLifetime > 0
-      && $this->hasCacheEntry($this->cacheNamespace, $cacheKey))
+      && $this->cache->has($cacheKey))
     {
-      $entry = $this->getCacheEntry($this->cacheNamespace, $cacheKey);
+      $entry = $this->cache->get($cacheKey);
 
       if(\is_array($entry) && isset($entry['expires'], $entry['value']) && (int) $entry['expires'] >= time())
       {
