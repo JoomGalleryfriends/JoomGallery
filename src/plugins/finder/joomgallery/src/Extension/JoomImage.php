@@ -17,14 +17,18 @@ namespace Joomgallery\Plugin\Finder\Joomgallery\Extension;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Event\Finder as FinderEvent;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\Component\Finder\Administrator\Indexer\Adapter;
 use Joomla\Component\Finder\Administrator\Indexer\Helper;
 use Joomla\Component\Finder\Administrator\Indexer\Indexer;
 use Joomla\Component\Finder\Administrator\Indexer\Result;
+use Joomla\Component\Finder\Administrator\Indexer\Taxonomy;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\QueryInterface;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Smart Search adapter for JoomGallery Images.
@@ -537,7 +541,13 @@ final class JoomImage extends Adapter implements SubscriberInterface
     $item->summary = Helper::prepareContent($item->summary, $item->params, $item);
 
     // Build the necessary route and path information.
-    $item->url   = $this->getUrl($item->id, $this->extension, $this->layout);
+    $item->url = $this->getUrl($item->id, $this->extension, $this->layout);
+
+    if(!empty($item->translation_language))
+    {
+      $item->url .= '&lang=' . $item->translation_language;
+    }
+
     $item->route = JoomHelper::getViewRoute('image', $item->id, $item->catid, null, null, $item->language);
 
     // Get the menu title if it exists.
@@ -643,19 +653,244 @@ final class JoomImage extends Adapter implements SubscriberInterface
   {
     $db = $this->getDatabase();
 
-    // Check if we can use the supplied SQL query.
-    $query = $query instanceof QueryInterface ? $query : $db->getQuery(true)
-      ->select('a.id, a.title AS title, a.alias, a.author AS author, a.description AS summary')
-      ->select('a.published AS state, a.catid, a.date')
-      ->select('a.hidden, a.featured, a.checked_out, a.approved, a.params, a.language')
-      ->select('a.metakey, a.metadesc, a.access, a.ordering, a.created_time')
+    if($query instanceof QueryInterface)
+    {
+      return $query;
+    }
+
+    // Original image records.
+    $baseQuery = $db->createQuery()
+      ->select('i.id, i.title, i.alias, i.author, i.description AS summary')
+      ->select('i.published AS state, i.catid, i.date')
+      ->select('i.hidden, i.featured, i.checked_out, i.approved, i.params, i.language')
+      ->select('i.metakey, i.metadesc, i.access, i.ordering, i.created_time, i.created_by')
+      ->select($db->quote('') . ' AS translation_language')
+      ->from($this->table . ' AS i');
+
+    if(Multilanguage::isEnabled())
+    {
+      // Images assigned to "All" with translations must not also be
+      // indexed as wildcard entries.
+      $translationExists = $db->createQuery()
+        ->select('1')
+        ->from('#__joomgallery_image_translations AS tx')
+        ->join('INNER', '#__languages AS lx ON lx.lang_code = tx.language AND lx.published = 1')
+        ->where('tx.image_id = i.id');
+
+    $baseQuery->where(
+        '(i.language <> ' . $db->quote('*')
+          . ' OR NOT EXISTS (' . $translationExists . '))'
+    );
+
+      // Explicit translations.
+      $translationQuery = $db->createQuery()
+        ->select('i.id')
+        ->select('COALESCE(NULLIF(t.title, ' . $db->quote('') . '), i.title) AS title')
+        ->select('COALESCE(NULLIF(t.alias, ' . $db->quote('') . '), i.alias) AS alias')
+        ->select('i.author')
+        ->select('COALESCE(NULLIF(t.description, ' . $db->quote('') . '), i.description) AS summary')
+        ->select('i.published AS state, i.catid, i.date')
+        ->select('i.hidden, i.featured, i.checked_out, i.approved, i.params')
+        ->select('t.language AS language')
+        ->select('i.metakey, i.metadesc, i.access, i.ordering, i.created_time, i.created_by')
+        ->select('t.language AS translation_language')
+        ->from($this->table . ' AS i')
+        ->join('INNER', '#__joomgallery_image_translations AS t ON t.image_id = i.id')
+        ->join('INNER', '#__languages AS l ON l.lang_code = t.language AND l.published = 1')
+        ->where('(i.language = ' . $db->quote('*') . ' OR t.language <> i.language)');
+
+      // For an "All" image use the original values as fallback in every
+      // published content language without an explicit translation.
+      $fallbackQuery = $db->createQuery()
+        ->select('i.id, i.title, i.alias, i.author, i.description AS summary')
+        ->select('i.published AS state, i.catid, i.date')
+        ->select('i.hidden, i.featured, i.checked_out, i.approved, i.params')
+        ->select('l.lang_code AS language')
+        ->select('i.metakey, i.metadesc, i.access, i.ordering, i.created_time, i.created_by')
+        ->select('l.lang_code AS translation_language')
+        ->from($this->table . ' AS i')
+        ->join('INNER', '#__languages AS l ON l.published = 1')
+        ->join(
+            'LEFT',
+            '#__joomgallery_image_translations AS t'
+            . ' ON t.image_id = i.id AND t.language = l.lang_code'
+        )
+        ->where('i.language = ' . $db->quote('*'))
+        ->where('t.id IS NULL')
+        ->where('EXISTS (' . $translationExists . ')');
+
+      $baseQuery = $baseQuery->toQuerySet()
+        ->unionAll($translationQuery)
+        ->unionAll($fallbackQuery);
+    }
+
+    $query = $db->createQuery()
+      ->select('a.*')
       ->select('c.title AS category, c.published AS cat_state')
       ->select('u.name AS owner')
-      ->from($this->table . ' AS a')
+      ->from('(' . $baseQuery . ') AS a')
       ->join('LEFT', '#__joomgallery_categories AS c ON c.id = a.catid')
-      ->join('LEFT', '#__users AS u ON u.id = a.created_by');
+      ->join('LEFT', '#__users AS u ON u.id = a.created_by')
+      ->order('a.id, a.translation_language');
 
     return $query;
+  }
+
+  /**
+   * Reindex all language variants of an image.
+   *
+   * @param   integer  $id  Image ID.
+   *
+   * @return  void
+   */
+  protected function reindex($id)
+  {
+    $this->setup();
+
+    // Remove all existing language variants first.
+    $this->remove($id, false);
+
+    $query = $this->getListQuery();
+    $query->where('a.id = ' . (int) $id);
+
+    $db = $this->getDatabase();
+    $db->setQuery($query);
+    $items = $db->loadAssocList();
+
+    foreach($items as $item)
+    {
+      $item = ArrayHelper::toObject($item, Result::class);
+
+      $item->type_id = $this->type_id;
+      $item->mime    = $this->mime;
+      $item->layout  = $this->layout;
+
+      $this->index($item);
+    }
+
+    Taxonomy::removeOrphanNodes();
+  }
+
+  /**
+   * Remove all language variants of an image from the index.
+   *
+   * @param   integer  $id                Image ID.
+   * @param   bool     $removeTaxonomies  Remove empty taxonomies.
+   *
+   * @return  boolean
+   */
+  protected function remove($id, $removeTaxonomies = true)
+  {
+    $db      = $this->getDatabase();
+    $baseUrl = $this->getUrl($id, $this->extension, $this->layout);
+
+    $query = $db->createQuery()
+      ->select($db->quoteName('link_id'))
+      ->from($db->quoteName('#__finder_links'))
+      ->where($db->quoteName('type_id') . ' = ' . (int) $this->type_id)
+    ->where(
+        '(' . $db->quoteName('url') . ' = ' . $db->quote($baseUrl)
+          . ' OR ' . $db->quoteName('url') . ' LIKE ' . $db->quote($baseUrl . '&lang=%') . ')'
+    );
+
+    $db->setQuery($query);
+    $items = $db->loadColumn();
+
+    if(empty($items))
+    {
+      Factory::getApplication()->triggerEvent('onFinderIndexAfterDelete', [$id]);
+
+      return true;
+    }
+
+    foreach($items as $item)
+    {
+      $this->indexer->remove($item, false);
+    }
+
+    if($removeTaxonomies)
+    {
+      Taxonomy::removeOrphanNodes();
+    }
+
+    return true;
+  }
+
+  /**
+   * Remove outdated index entries.
+   *
+   * @return  integer
+   */
+  public function onFinderGarbageCollection()
+  {
+    $db      = $this->getDatabase();
+    $typeId  = $this->getTypeId();
+    $baseUrl = $this->getUrl('', $this->extension, $this->layout);
+
+    // Build all currently valid URLs, including language variants.
+    $subquery = $db->createQuery()
+    ->select(
+        'CONCAT('
+          . $db->quote($baseUrl)
+          . ', a.id, CASE WHEN a.translation_language <> ' . $db->quote('')
+          . ' THEN CONCAT(' . $db->quote('&lang=') . ', a.translation_language)'
+          . ' ELSE ' . $db->quote('') . ' END)'
+    )
+      ->from('(' . $this->getListQuery() . ') AS a');
+
+    $query = $db->createQuery()
+      ->select($db->quoteName('l.link_id'))
+      ->from($db->quoteName('#__finder_links', 'l'))
+      ->where($db->quoteName('l.type_id') . ' = ' . (int) $typeId)
+    ->where(
+        $db->quoteName('l.url')
+          . ' LIKE '
+          . $db->quote($this->getUrl('%', $this->extension, $this->layout))
+    )
+      ->where($db->quoteName('l.url') . ' NOT IN (' . $subquery . ')');
+
+    $db->setQuery($query);
+    $items = $db->loadColumn();
+
+    foreach($items as $item)
+    {
+      $this->indexer->remove($item);
+    }
+
+    return \count($items);
+  }
+
+  /**
+   * Change a property for all language variants of an image.
+   *
+   * @param   string   $id        Image ID.
+   * @param   string   $property  Property to change.
+   * @param   integer  $value     New value.
+   *
+   * @return  boolean
+   */
+  protected function change($id, $property, $value)
+  {
+    if($property !== 'state' && $property !== 'access')
+    {
+      return true;
+    }
+
+    $db      = $this->getDatabase();
+    $baseUrl = $this->getUrl($id, $this->extension, $this->layout);
+
+    $query = $db->createQuery()
+      ->update($db->quoteName('#__finder_links'))
+      ->set($db->quoteName($property) . ' = ' . (int) $value)
+    ->where(
+        '(' . $db->quoteName('url') . ' = ' . $db->quote($baseUrl)
+          . ' OR ' . $db->quoteName('url') . ' LIKE ' . $db->quote($baseUrl . '&lang=%') . ')'
+    );
+
+    $db->setQuery($query);
+    $db->execute();
+
+    return true;
   }
 
   /**
