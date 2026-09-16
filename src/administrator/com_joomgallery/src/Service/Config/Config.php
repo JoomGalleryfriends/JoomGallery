@@ -61,7 +61,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    *
    * @var string
    */
-  protected $cacheVersion = 'v3';
+  protected $cacheVersion = 'v1';
 
   /**
    * Maximum number of entries retained in this service's session namespace.
