@@ -99,6 +99,16 @@ class GifFrameExtractor
   /**
    * @var integer
    */
+  private $gifWidth;
+
+  /**
+   * @var integer
+   */
+  private $gifHeight;
+
+  /**
+   * @var integer
+   */
   private $totalDuration;
 
   /**
