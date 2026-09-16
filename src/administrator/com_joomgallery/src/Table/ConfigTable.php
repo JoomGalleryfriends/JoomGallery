@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
 use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Factory;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Registry\Registry;
@@ -47,6 +48,71 @@ class ConfigTable extends Table
     parent::__construct(_JOOM_TABLE_CONFIGS, 'id', $db);
 
     $this->setColumnAlias('published', 'published');
+  }
+
+  public function store($updateNulls = false)
+  {
+    if(!$this->component_exists) return $this->storeRecord($updateNulls);
+
+    $db = $this->getDatabase();
+    $ids = [(int) ($this->id ?? 0)];
+    $before = CacheHelper::gallery($db, 'config', $ids);
+    $result = false;
+
+    try
+    {
+      $result = $this->storeRecord($updateNulls);
+
+      return $result;
+    }
+    finally
+    {
+      $ids = [(int) ($this->id ?? 0)];
+      $after = CacheHelper::gallery($db, 'config', $ids);
+      foreach (CacheHelper::galleryScopes('config', $before, $after, $result === true) as $scope)
+      {
+        $this->getComponent()->getCacheRevision()->invalidate($scope);
+      }
+    }
+  }
+
+  /** Perform the table write; the public wrapper compares cache inputs. */
+  private function storeRecord($updateNulls = false)
+  {
+    return parent::store($updateNulls);
+  }
+
+  public function delete($pk = null)
+  {
+    if(!$this->component_exists) return $this->deleteRecord($pk);
+
+    $db = $this->getDatabase();
+    $ids = [(int) ($pk ?? $this->id)];
+    $before = CacheHelper::gallery($db, 'config', $ids);
+    $result = false;
+
+    try
+    {
+      $result = $this->deleteRecord($pk);
+
+      return $result;
+    }
+    finally
+    {
+      // Deletion compares the original IDs, including removed descendants.
+      $after = CacheHelper::gallery($db, 'config', $ids);
+      foreach (CacheHelper::galleryScopes('config', $before, $after, false) as $scope)
+      {
+        $this->getComponent()->getCacheRevision()->invalidate($scope);
+      }
+    }
+  }
+
+  /** Perform the table write; the public wrapper compares cache inputs. */
+  private function deleteRecord($pk = null)
+  {
+    $this->load($pk);
+    return parent::delete($pk);
   }
 
   /**

@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Asset;
 use Joomla\CMS\Table\Table;
@@ -302,6 +303,33 @@ class ImageTable extends Table implements VersionableTableInterface
    */
   public function store($updateNulls = true)
   {
+    if(!$this->component_exists) return $this->storeRecord($updateNulls);
+
+    $db = $this->getDatabase();
+    $ids = [(int) ($this->id ?? 0)];
+    $before = CacheHelper::gallery($db, 'image', $ids);
+    $result = false;
+
+    try
+    {
+      $result = $this->storeRecord($updateNulls);
+
+      return $result;
+    }
+    finally
+    {
+      $ids = [(int) ($this->id ?? 0)];
+      $after = CacheHelper::gallery($db, 'image', $ids);
+      foreach (CacheHelper::galleryScopes('image', $before, $after, $result === true) as $scope)
+      {
+        $this->getComponent()->getCacheRevision()->invalidate($scope);
+      }
+    }
+  }
+
+  /** Perform the table write; the public wrapper compares cache inputs. */
+  private function storeRecord($updateNulls = true)
+  {
     // Support for params field
     if(isset($this->params) && !\is_string($this->params))
     {
@@ -414,6 +442,33 @@ class ImageTable extends Table implements VersionableTableInterface
    * @return bool
    */
   public function delete($pk = null)
+  {
+    if(!$this->component_exists) return $this->deleteRecord($pk);
+
+    $db = $this->getDatabase();
+    $ids = [(int) ($pk ?? $this->id)];
+    $before = CacheHelper::gallery($db, 'image', $ids);
+    $result = false;
+
+    try
+    {
+      $result = $this->deleteRecord($pk);
+
+      return $result;
+    }
+    finally
+    {
+      // Deletion compares the original IDs, including removed descendants.
+      $after = CacheHelper::gallery($db, 'image', $ids);
+      foreach (CacheHelper::galleryScopes('image', $before, $after, false) as $scope)
+      {
+        $this->getComponent()->getCacheRevision()->invalidate($scope);
+      }
+    }
+  }
+
+  /** Perform the table write; the public wrapper compares cache inputs. */
+  private function deleteRecord($pk = null)
   {
     $this->load($pk);
     $success = parent::delete($pk);
