@@ -15,9 +15,8 @@ namespace Joomgallery\Plugin\System\Joomgallery\Extension;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheRevision;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\Event\Model\AfterCleanCacheEvent;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -86,6 +85,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
   protected $allowedFormContext = ['com_users.profile', 'com_users.user', 'com_users.registration', 'com_admin.profile'];
 
   /**
+   * Before-write snapshots keyed by table object.
+   * 
+   * @var \WeakMap|null 
+   * 
+   * @since 4.5.0
+   */
+  private ?\WeakMap $coreCacheInputs = null;
+  
+  /**
    * Constructor
    *
    * @param   DispatcherInterface  $dispatcher  The event dispatcher
@@ -113,14 +121,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     if(self::$jg_exists)
     {
       return [
-        'onContentCleanCache'    => ['onContentCleanCache', Priority::NORMAL],
         'onContentPrepareForm'   => ['onContentPrepareForm', Priority::NORMAL],
         'onContentPrepareData'   => ['onContentPrepareData', Priority::NORMAL],
         'onUserAfterSave'        => ['onUserAfterSave', Priority::NORMAL],
         'onUserAfterDelete'      => ['onUserAfterDelete', Priority::NORMAL],
-        'onUserAfterSaveGroup'   => ['invalidateUserCaches', Priority::NORMAL],
-        'onUserAfterDeleteGroup' => ['invalidateUserCaches', Priority::NORMAL],
         'onContentAfterSave'     => ['onContentAfterSave', Priority::NORMAL],
+        'onTableBeforeStore'     => ['captureCoreCacheInputs', Priority::NORMAL],
+        'onTableAfterStore'      => ['invalidateCoreCacheInputs', Priority::NORMAL],
+        'onTableBeforeDelete'    => ['captureCoreCacheInputs', Priority::NORMAL],
+        'onTableAfterDelete'     => ['invalidateCoreCacheInputs', Priority::NORMAL],
       ];
     }
 
@@ -128,100 +137,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       return [];
   }
 
-  /**
-   * Event triggered before a migrated record gets saved into the db.
-   * Check if owner of JG record is valid and exists.
-   *
-   * @param   Event   $event
-   *
-   * @return  boolean  True to continue the save process, false to stop it
-   *
-   * @since   4.0.0
-   */
-  public function onContentCleanCache(Event $event)
-  {
-    if(version_compare(JVERSION, '5.0.0', '<'))
-    {
-      // Joomla 4
-      $arguments    = $event->getArguments();
-      $defaultgroup = $arguments['defaultgroup'];
-    }
-    else
-    {
-      // Joomla 5 or newer
-      extract($event->getArguments());
-      $defaultgroup = $event->getDefaultGroup();
-    }
-
-    // Core global/component permissions use _system; user changes can affect
-    // inherited permissions and the configuration group selected for a user.
-    if($defaultgroup === '_system' || strpos($defaultgroup, 'com_users') === 0)
-    {
-      $this->invalidateUserCaches($event);
-      $this->setResult($event, true, false);
-
-      return;
-    }
-
-    if(strpos($defaultgroup, 'com_joomgallery') !== 0 && strpos($defaultgroup, 'com_users') !== 0 && strpos($defaultgroup, 'com_menus') !== 0)
-    {
-      // Do nothing if we are not handling joomgallery content
-      $this->setResult($event, true, false);
-
-      return;
-    }
-
-    // Guess cache type
-    if(!$type = $this->guessType($defaultgroup))
-    {
-      // Type not recognized. Do nothing.
-      $this->setResult($event, true, false);
-
-      return;
-    }
-
-    switch($type)
-    {
-      case 'config':
-        // If a configuration set is modified, delete all cache
-        JoomHelper::getComponent()->createConfig();
-        JoomHelper::getComponent()->getConfig()->emptyCache();
-          break;
-
-      case 'user':
-        // If a user is modified, delete only usergroup cache
-        $userId = $this->guessType($defaultgroup, true);
-        JoomHelper::getComponent()->createConfig();
-        JoomHelper::getComponent()->getConfig()->emptyCache('user.' . $userId);
-          break;
-
-      case 'category':
-        // If a category is modified, delete only category cache
-        JoomHelper::getComponent()->createConfig();
-        JoomHelper::getComponent()->getConfig()->emptyCache('category');
-          break;
-
-      case 'image':
-        // If an image is modified, delete only image cache
-        JoomHelper::getComponent()->createConfig();
-        JoomHelper::getComponent()->getConfig()->emptyCache('image');
-          break;
-
-      case 'menu':
-        // If an image is modified, delete only image cache
-        $itemid = $this->guessType($defaultgroup, true);
-        JoomHelper::getComponent()->createConfig();
-        JoomHelper::getComponent()->getConfig()->emptyCache('menu.' . $itemid);
-          break;
-
-      default:
-        // Do nothing
-          break;
-    }
-
-    // Return the result
-    $this->setResult($event, true, false);
-  }
 
   /**
    * Event triggered when loading a form.
@@ -370,35 +285,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
     if($userId && $result && isset($data['joomgallery']) && (\count($data['joomgallery'])))
     {
-      $options = [
-        'defaultgroup' => 'com_users.user.' . $userId,
-        'cachebase'    => $this->app->get('cache_path', JPATH_CACHE),
-        'result'       => true,
-      ];
-
-      if(version_compare(JVERSION, '5.0.0', '<'))
-      {
-        // Joomla 4
-        $cacheEvent = new Event('onContentCleanCache', $options);
-
-        // Perform the onContentCleanCache event
-        $this->onContentCleanCache($cacheEvent);
-
-        if($cacheEvent->getArgument('error', false))
-        {
-          $this->setError($event, $cacheEvent->getArgument('error', ''));
-          $this->setResult($event, true);
-
-          return;
-        }
-      }
-      else
-      {
-        // Joomla 5
-        $cacheEvent = new AfterCleanCacheEvent('onContentCleanCache', $options);
-        $this->getDispatcher()->dispatch('onContentCleanCache', $cacheEvent);
-      }
-
       // Update user fields
       try
       {
@@ -422,11 +308,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
         return;
       }
-    }
-
-    if($userId && $result)
-    {
-      $this->invalidateUserCaches($event);
     }
   }
 
@@ -478,20 +359,91 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       }
     }
 
-    $this->invalidateUserCaches($event);
 
     return true;
   }
 
   /**
-   * Retire configuration and ACL snapshots after identity or global changes.
+   * Detect tables and fields relevant to the cache policy
+   * 
+   * @param   Event   $event
+   *
+   * @return  void
+   *
+   * @since   4.0.0
    */
-  public function invalidateUserCaches(Event $event): void
+  public function captureCoreCacheInputs(Event $event): void
   {
-    // Booting registers the component namespace before accessing its service.
+    $table = $event->getArgument('subject');
+    $db    = $table->getDatabase();
+    $kind  = null;
+
+    foreach(['assets', 'extensions', 'menu', 'usergroups', 'viewlevels'] as $candidate)
+    {
+      if(\in_array($table->getTableName(), ['#__' . $candidate, $db->replacePrefix('#__' . $candidate)], true))
+      {
+        $kind = $candidate;
+        break;
+      }
+    }
+
+    if($kind === null) return;
+    if($kind === 'assets' && !\in_array($table->name ?? '', ['root.1', 'com_joomgallery'], true)) return;
+    if($kind === 'extensions' && (($table->element ?? '') !== 'com_joomgallery' || ($table->type ?? '') !== 'component')) return;
+
     JoomHelper::getComponent();
-    CacheRevision::invalidate('config');
-    CacheRevision::invalidate('acl');
+    $key  = $table->getKeyName();
+    $id   = (int) $event->getArgument('pk', $table->$key ?? 0);
+    $row  = CacheHelper::row($db, $table->getTableName(), $id, $key);
+    $rows = $row ? [$id => $row] : [];
+
+    // Deleting a non-gallery parent can also delete gallery menu children.
+    if( $kind === 'menu' && $event->getName() === 'onTableBeforeDelete' &&
+        $event->getArgument('children', true) && isset($row['lft'], $row['rgt'])
+      )
+    {
+      $query = $db->getQuery(true)->select('*')->from($db->quoteName($table->getTableName()))
+        ->where($db->quoteName('lft') . ' >= ' . (int) $row['lft'])
+        ->where($db->quoteName('rgt') . ' <= ' . (int) $row['rgt']);
+      $rows = $db->setQuery($query)->loadAssocList($key);
+    }
+
+    $this->coreCacheInputs ??= new \WeakMap();
+    $this->coreCacheInputs[$table] = [$kind, $key, $rows];
+  }
+
+  /**
+   * Compare persisted values after writes, including nested-table deletes.
+   * Root/JoomGallery asset rules cover global and component permissions.
+   * 
+   * @param   Event   $event
+   *
+   * @return  void
+   *
+   * @since   4.5.0
+   */
+  public function invalidateCoreCacheInputs(Event $event): void
+  {
+    $table = $event->getArgument('subject');
+
+    if($this->coreCacheInputs === null || !isset($this->coreCacheInputs[$table])) return;
+
+    [$kind, $key, $before] = $this->coreCacheInputs[$table];
+    unset($this->coreCacheInputs[$table]);
+
+    $ids    = array_unique(array_merge(array_keys($before), [(int) ($table->$key ?? 0)]));
+    $scopes = [];
+
+    foreach($ids as $id)
+    {
+      $after = CacheHelper::row($table->getDatabase(), $table->getTableName(), (int) $id, $key);
+      $scopes = array_merge($scopes, CacheHelper::coreScopes($kind, $before[$id] ?? [], $after));
+    }
+
+    foreach(array_unique($scopes) as $scope)
+    {
+      JoomHelper::getComponent()->getCacheRevision()->invalidate($scope);
+    }
   }
 
   /**
@@ -506,7 +458,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
   public function onContentAfterSave(Event $event)
   {
     // J4x and J5x (5x: $context = getContext (); $table = $event->getArgument ('subject');
-    [$context, $table, $isNew, $data] = array_values($event->getArguments());
+    [$context, $table, $isNew] = array_values($event->getArguments());
+
 
     if(!\in_array($context, ['com_menus.item']) || !$this->app->isClient('administrator'))
     {
@@ -619,63 +572,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     return self::$jg_exists;
   }
 
-  /**
-   * Guess the content type based on a dot separated string.
-   *
-   * @param   string        $string  Context like string
-   * @param   bool          $id      Return id (second value)
-   *
-   * @return  string|false  Guessed type on success, false otherwise
-   *
-   * @since   4.0.0
-   */
-  protected function guessType(string $string, $id = false)
-  {
-    // Detect type from menuitem
-    if(strpos($string, 'com_menus') === 0)
-    {
-      // Get menuitem id from JInput
-      if(!$itemid = $this->app->input->get('id', 0, 'int'))
-      {
-        return false;
-      }
-
-      // Get menuitem model
-      $menuModel = $this->app->bootComponent('com_menus')->getMVCFactory()->createModel('item', 'administrator');
-      $menuItem  = $menuModel->getItem($itemid);
-
-      if(!$menuItem || strpos($menuItem->link, 'com_joomgallery') === false)
-      {
-        // Menuitem is not related to joomgallery
-        return false;
-      }
-
-      // We have a menuitem that is related to joomgallery
-      foreach(explode('&', $menuItem->link) as $key => $value)
-      {
-        // Read type from the link variable: 'view'
-        if(strpos($value, 'view') !== false)
-        {
-          return str_replace('view=', '', $value);
-        }
-      }
-    }
-
-    $pieces = explode('.', $string);
-
-    if(\count($pieces) > 1)
-    {
-      if($id && \count($pieces) > 2)
-      {
-        return strtolower($pieces[2]);
-      }
-
-
-        return strtolower($pieces[1]);
-    }
-
-    return false;
-  }
 
   /**
    * Returns the plugin result

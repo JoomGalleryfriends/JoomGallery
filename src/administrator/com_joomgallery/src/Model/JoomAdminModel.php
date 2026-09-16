@@ -661,8 +661,13 @@ abstract class JoomAdminModel extends AdminModel
   {
     JoomHelper::clearCache($this->typeAlias);
 
-    $this->getAcl()->clearCache();
+    // Configuration sets also have bulk state changes which bypass store().
+    if($this->typeAlias === 'com_joomgallery.config')
+    {
+      $this->component->getCacheRevision()->invalidate('config');
+    }
 
+    // Category/image parameters and permission rules are compared by tables.
     return parent::cleanCache($this->typeAlias);
   }
 
