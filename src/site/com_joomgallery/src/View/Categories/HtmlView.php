@@ -61,8 +61,12 @@ class HtmlView extends JoomGalleryView
     /** @var CategoriesModel $model */
     $model = $this->getModel();
 
-    $this->state  = $model->getState();
-    $this->params = $model->getParams();
+    $this->state         = $model->getState();
+    $this->params        = $model->getParams();
+    $this->items         = $model->getItems();
+    $this->pagination    = $model->getPagination();
+    $this->filterForm    = $model->getFilterForm();
+    $this->activeFilters = $model->getActiveFilters();
 
     // Check for errors.
     if(\count($errors = $model->getErrors()))
@@ -82,18 +86,7 @@ class HtmlView extends JoomGalleryView
       // Redirect to category view
       $this->app->redirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=1'));
 
-      return;
-    }
-
-    $this->items         = $model->getItems();
-    $this->pagination    = $model->getPagination();
-    $this->filterForm    = $model->getFilterForm();
-    $this->activeFilters = $model->getActiveFilters();
-
-    // Check for errors caused while loading the list data.
-    if(\count($errors = $model->getErrors()))
-    {
-      throw new GenericDataException(implode("\n", $errors), 500);
+    return;
     }
 
     // Preprocess the list of items to find ordering divisions.
