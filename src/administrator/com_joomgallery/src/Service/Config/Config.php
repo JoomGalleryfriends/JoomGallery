@@ -35,34 +35,47 @@ abstract class Config extends \stdClass implements ConfigInterface
 {
   use ServiceTrait;
 
-  /** @var CacheInterface Namespace cache owned by this service. */
+  /**
+   * Namespace cache owned by this service.
+   *
+   * @var CacheInterface
+   */
   protected CacheInterface $cache;
 
-  /** @var CacheInterface Request-only user configuration-group lookups. */
+  /**
+   * Request-only user configuration-group lookups.
+   *
+   * @var CacheInterface
+   */
   protected CacheInterface $userSettingsCache;
 
-
+  /**
+   * Session namespace for this config variant
+   *
+   * @var string
+   */
+  protected $cacheNamespace = '';
 
   /**
    * Cache format version. Increment this when the cache key format changes.
    *
    * @var string
    */
-  protected const CACHE_VERSION = 'v3';
+  protected $cacheVersion = 'v3';
 
   /**
-   * Default maximum number of calculated configurations retained per service.
+   * Maximum number of entries retained in this service's session namespace.
    *
    * @var int
    */
-  protected const DEFAULT_CACHE_LIMIT = 64;
+  protected $hotCacheLimit = 64;
 
   /**
-   * Default lifetime of a calculated configuration in minutes.
+   * Lifetime of a configuration entry in seconds.
    *
    * @var int
    */
-  protected const DEFAULT_CACHE_LIFETIME = 60;
+  protected $hotCacheLifetime = 3600;
 
   /**
    * Configuration cache policy loaded once during the current request.
@@ -105,27 +118,6 @@ abstract class Config extends \stdClass implements ConfigInterface
    * @var string
    */
   protected $storeId = null;
-
-  /**
-   * Session namespace for this config variant
-   *
-   * @var string
-   */
-  protected $cacheNamespace = '';
-
-  /**
-   * Maximum number of entries retained in this service's session namespace.
-   *
-   * @var int
-   */
-  protected $cacheLimit = self::DEFAULT_CACHE_LIMIT;
-
-  /**
-   * Lifetime of a configuration entry in seconds.
-   *
-   * @var int
-   */
-  protected $cacheLifetime = self::DEFAULT_CACHE_LIFETIME * 60;
 
   /**
    * Loading the calculated settings for a specific content
@@ -312,7 +304,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    */
   protected function getCacheNamespace(string $name): string
   {
-    return 'com_joomgallery.configcache.' . self::CACHE_VERSION . '.' . $name;
+    return 'com_joomgallery.configcache.' . $this->cacheVersion . '.' . $name;
   }
 
   /**
@@ -328,8 +320,8 @@ abstract class Config extends \stdClass implements ConfigInterface
     if(\is_null(self::$configCachePolicy))
     {
       self::$configCachePolicy = [
-        'limit'    => self::DEFAULT_CACHE_LIMIT,
-        'lifetime' => self::DEFAULT_CACHE_LIFETIME,
+        'limit'    => $this->hotCacheLimit,
+        'lifetime' => ($this->hotCacheLifetime / 60),
       ];
 
       try
@@ -345,8 +337,8 @@ abstract class Config extends \stdClass implements ConfigInterface
         if(\is_array($policy))
         {
           self::$configCachePolicy = [
-            'limit'    => max(0, (int) ($policy['jg_config_cache_entries'] ?? self::DEFAULT_CACHE_LIMIT)),
-            'lifetime' => max(0, (int) ($policy['jg_config_cache_lifetime'] ?? self::DEFAULT_CACHE_LIFETIME)),
+            'limit'    => max(0, (int) ($policy['jg_config_cache_entries'] ?? $this->hotCacheLimit)),
+            'lifetime' => max(0, (int) ($policy['jg_config_cache_lifetime'] ?? ($this->hotCacheLifetime / 60))),
           ];
         }
       }
@@ -356,8 +348,8 @@ abstract class Config extends \stdClass implements ConfigInterface
       }
     }
 
-    $this->cacheLimit    = self::$configCachePolicy['limit'];
-    $this->cacheLifetime = self::$configCachePolicy['lifetime'] * 60;
+    $this->hotCacheLimit    = self::$configCachePolicy['limit'];
+    $this->hotCacheLifetime = self::$configCachePolicy['lifetime'] * 60;
   }
 
   /**
@@ -370,10 +362,10 @@ abstract class Config extends \stdClass implements ConfigInterface
   protected function pruneConfigCache(): void
   {
     $this->cache->prune(
-        fn($entry) => $this->cacheLimit > 0 && $this->cacheLifetime > 0
+        fn($entry) => $this->hotCacheLimit > 0 && $this->hotCacheLifetime > 0
           && \is_array($entry) && isset($entry['expires'], $entry['value'])
           && (int) $entry['expires'] >= time(),
-        $this->cacheLimit
+        $this->hotCacheLimit
     );
   }
 
@@ -388,7 +380,7 @@ abstract class Config extends \stdClass implements ConfigInterface
    */
   protected function setCache(string $storeId)
   {
-    if($this->cacheLimit === 0 || $this->cacheLifetime === 0)
+    if($this->hotCacheLimit === 0 || $this->hotCacheLifetime === 0)
     {
       return;
     }
@@ -401,10 +393,10 @@ abstract class Config extends \stdClass implements ConfigInterface
     $this->cache->set(
         base64_encode($storeId),
         [
-          'expires' => time() + $this->cacheLifetime,
+          'expires' => time() + $this->hotCacheLifetime,
           'value'   => $this->getProperties(),
         ],
-        $this->cacheLimit
+        $this->hotCacheLimit
     );
   }
 
@@ -615,7 +607,7 @@ abstract class Config extends \stdClass implements ConfigInterface
     $userSetting = (int) $db->loadResult();
 
     // Zero means that no explicit user setting exists and is a cacheable result too.
-    $this->userSettingsCache->set((string) $userId, $userSetting, $this->cacheLimit);
+    $this->userSettingsCache->set((string) $userId, $userSetting, $this->hotCacheLimit);
 
     return $userSetting;
   }

@@ -44,7 +44,7 @@ class CacheStorage
    *
    * @since   4.5.0
    */
-  private array $requestCaches  = [];
+  private array $requestCaches = [];
 
   /**
    * Session-backed runtime entries indexed by namespace and key
@@ -53,7 +53,7 @@ class CacheStorage
    *
    * @since   4.5.0
    */
-  private array $runtimeCaches  = [];
+  private array $runtimeCaches = [];
 
   /**
    * Namespaces already loaded during this request
@@ -62,7 +62,7 @@ class CacheStorage
    *
    * @since   4.5.0
    */
-  private array $loadedCaches   = [];
+  private array $loadedCaches = [];
 
   /**
    * Namespaces with changes awaiting session persistence
@@ -71,7 +71,7 @@ class CacheStorage
    *
    * @since   4.5.0
    */
-  private array $dirtyCaches    = [];
+  private array $dirtyCaches = [];
 
   /**
    * Revisions associated with the loaded namespace snapshots
@@ -89,7 +89,7 @@ class CacheStorage
    *
    * @since   4.5.0
    */
-  private array $scopes         = [];
+  private array $scopes = [];
 
   /**
    * Scope revisions already observed by this storage instance
@@ -124,7 +124,7 @@ class CacheStorage
    */
   public function __construct(CacheRevision $revisionStore, ?\Closure $sessionProvider = null)
   {
-    $this->revisionStore = $revisionStore;
+    $this->revisionStore   = $revisionStore;
     $this->sessionProvider = $sessionProvider
       ?? static fn() => Factory::getApplication()->getSession();
   }
@@ -138,7 +138,7 @@ class CacheStorage
    * @param   string|null  $scope      the shared revision scope, or null for an unscoped cache
    *
    * @return  void
-   * 
+   *
    * @throws  \LogicException  If the namespace has a conflicting scope.
    * @since   4.5.0
    */

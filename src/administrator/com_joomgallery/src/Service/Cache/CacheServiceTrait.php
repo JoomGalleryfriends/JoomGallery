@@ -28,7 +28,6 @@ use Joomla\Database\DatabaseInterface;
  */
 trait CacheServiceTrait
 {
-
   /**
    * Revision store shared by all cache objects owned by the component
    *
@@ -73,7 +72,7 @@ trait CacheServiceTrait
     return $this->cache;
   }
 
-  
+
   /**
    * Returns the component's shared revision store
    *

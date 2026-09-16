@@ -28,7 +28,6 @@ use Joomla\Database\DatabaseInterface;
  */
 final class CacheRevision
 {
-
   /**
    * Database connection used by this shared revision instance
    *
@@ -69,7 +68,7 @@ final class CacheRevision
    * @param   string  $scope  the supported revision scope: config or acl
    *
    * @return  string
-   * 
+   *
    * @throws  \InvalidArgumentException  If a scope is unsupported.
    * @throws  \RuntimeException          If revision storage cannot be read or updated.
    * @since   4.4.0
@@ -107,7 +106,7 @@ final class CacheRevision
    * @param   string  $scope  the supported revision scope: config or acl
    *
    * @return  void
-   * 
+   *
    * @throws  \InvalidArgumentException  If a scope is unsupported.
    * @throws  \RuntimeException          If revision storage cannot be read or updated.
    * @since   4.4.0
@@ -140,7 +139,7 @@ final class CacheRevision
    * @param   string  $scope  the supported revision scope: config or acl
    *
    * @return  void
-   * 
+   *
    * @throws  \InvalidArgumentException  If a scope is unsupported.
    * @since   4.4.0
    */

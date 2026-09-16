@@ -14,10 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\NoAssetTableTrait;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Asset;
 use Joomla\CMS\Table\Table;
@@ -305,8 +305,8 @@ class ImageTable extends Table implements VersionableTableInterface
   {
     if(!$this->component_exists) return $this->storeRecord($updateNulls);
 
-    $db = $this->getDatabase();
-    $ids = [(int) ($this->id ?? 0)];
+    $db     = $this->getDatabase();
+    $ids    = [(int) ($this->id ?? 0)];
     $before = CacheHelper::gallery($db, 'image', $ids);
     $result = false;
 
@@ -318,9 +318,10 @@ class ImageTable extends Table implements VersionableTableInterface
     }
     finally
     {
-      $ids = [(int) ($this->id ?? 0)];
+      $ids   = [(int) ($this->id ?? 0)];
       $after = CacheHelper::gallery($db, 'image', $ids);
-      foreach (CacheHelper::galleryScopes('image', $before, $after, $result === true) as $scope)
+
+      foreach(CacheHelper::galleryScopes('image', $before, $after, $result === true) as $scope)
       {
         $this->getComponent()->getCacheRevision()->invalidate($scope);
       }
@@ -445,8 +446,8 @@ class ImageTable extends Table implements VersionableTableInterface
   {
     if(!$this->component_exists) return $this->deleteRecord($pk);
 
-    $db = $this->getDatabase();
-    $ids = [(int) ($pk ?? $this->id)];
+    $db     = $this->getDatabase();
+    $ids    = [(int) ($pk ?? $this->id)];
     $before = CacheHelper::gallery($db, 'image', $ids);
     $result = false;
 
@@ -460,7 +461,8 @@ class ImageTable extends Table implements VersionableTableInterface
     {
       // Deletion compares the original IDs, including removed descendants.
       $after = CacheHelper::gallery($db, 'image', $ids);
-      foreach (CacheHelper::galleryScopes('image', $before, $after, false) as $scope)
+
+      foreach(CacheHelper::galleryScopes('image', $before, $after, false) as $scope)
       {
         $this->getComponent()->getCacheRevision()->invalidate($scope);
       }

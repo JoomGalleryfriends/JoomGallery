@@ -25,7 +25,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Cache;
  */
 interface CacheServiceInterface
 {
-
   /**
    * Creates a namespace object or retains the default component cache
    *
@@ -52,7 +51,7 @@ interface CacheServiceInterface
    * @since   4.5.0
    */
   public function getCache(): CacheInterface;
-  
+
   /**
    * Returns the revision store shared by the component's cache objects
    *

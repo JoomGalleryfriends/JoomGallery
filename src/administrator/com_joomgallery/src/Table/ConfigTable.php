@@ -14,10 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\AssetTableTrait;
 use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Factory;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Registry\Registry;
@@ -54,8 +54,8 @@ class ConfigTable extends Table
   {
     if(!$this->component_exists) return $this->storeRecord($updateNulls);
 
-    $db = $this->getDatabase();
-    $ids = [(int) ($this->id ?? 0)];
+    $db     = $this->getDatabase();
+    $ids    = [(int) ($this->id ?? 0)];
     $before = CacheHelper::gallery($db, 'config', $ids);
     $result = false;
 
@@ -67,9 +67,10 @@ class ConfigTable extends Table
     }
     finally
     {
-      $ids = [(int) ($this->id ?? 0)];
+      $ids   = [(int) ($this->id ?? 0)];
       $after = CacheHelper::gallery($db, 'config', $ids);
-      foreach (CacheHelper::galleryScopes('config', $before, $after, $result === true) as $scope)
+
+      foreach(CacheHelper::galleryScopes('config', $before, $after, $result === true) as $scope)
       {
         $this->getComponent()->getCacheRevision()->invalidate($scope);
       }
@@ -86,8 +87,8 @@ class ConfigTable extends Table
   {
     if(!$this->component_exists) return $this->deleteRecord($pk);
 
-    $db = $this->getDatabase();
-    $ids = [(int) ($pk ?? $this->id)];
+    $db     = $this->getDatabase();
+    $ids    = [(int) ($pk ?? $this->id)];
     $before = CacheHelper::gallery($db, 'config', $ids);
     $result = false;
 
@@ -101,7 +102,8 @@ class ConfigTable extends Table
     {
       // Deletion compares the original IDs, including removed descendants.
       $after = CacheHelper::gallery($db, 'config', $ids);
-      foreach (CacheHelper::galleryScopes('config', $before, $after, false) as $scope)
+
+      foreach(CacheHelper::galleryScopes('config', $before, $after, false) as $scope)
       {
         $this->getComponent()->getCacheRevision()->invalidate($scope);
       }
@@ -112,6 +114,7 @@ class ConfigTable extends Table
   private function deleteRecord($pk = null)
   {
     $this->load($pk);
+
     return parent::delete($pk);
   }
 
