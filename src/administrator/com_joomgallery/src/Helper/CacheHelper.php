@@ -27,7 +27,6 @@ use Joomla\Database\DatabaseInterface;
  */
 final class CacheHelper
 {
-
   /**
    * Normalises JSON-compatible values for structural comparison
    *
@@ -43,8 +42,10 @@ final class CacheHelper
   public static function json($value): array
   {
     if(\is_string($value)) $value = json_decode($value, true);
+
     if(\is_object($value)) $value = json_decode(json_encode($value), true);
-    $value = \is_array($value) ? $value : [];
+    $value                        = \is_array($value) ? $value : [];
+
     foreach($value as &$child)
     {
       if(\is_array($child) || \is_object($child)) $child = self::json($child);
@@ -96,6 +97,7 @@ final class CacheHelper
   public static function categoryIds($db, int $id, bool $children): array
   {
     $row = self::row($db, '#__joomgallery_categories', $id);
+
     if(!$children || !$row) return [$id];
 
     $query = $db->getQuery(true)->select($db->quoteName('id'))
@@ -123,29 +125,37 @@ final class CacheHelper
    */
   public static function gallery($db, string $type, array $ids): array
   {
-    $tables = ['config' => '#__joomgallery_configs', 'category' => '#__joomgallery_categories', 'image' => '#__joomgallery'];
+    $tables   = ['config' => '#__joomgallery_configs', 'category' => '#__joomgallery_categories', 'image' => '#__joomgallery'];
     $snapshot = ['params' => [], 'rules' => [], 'records' => []];
-    $names = [];
+    $names    = [];
+
     foreach($ids as $id)
     {
       $row = self::row($db, $tables[$type], (int) $id);
+
       if($type === 'config' && $row) $snapshot['records'][$id] = $row;
-      $params = self::json($row['params'] ?? []);
+      $params                                                  = self::json($row['params'] ?? []);
+
       if($params) $snapshot['params'][$id] = $params;
+
       if($type !== 'image')
       {
         $names[] = 'com_joomgallery.' . $type . '.' . (int) $id;
+
         if($type === 'category') $names[] = 'com_joomgallery.image.' . (int) $id;
       }
     }
+
     if($names)
     {
       $query = $db->getQuery(true)->select($db->quoteName(['name', 'rules']))
         ->from($db->quoteName('#__assets'))
         ->where($db->quoteName('name') . ' IN (' . implode(',', array_map([$db, 'quote'], $names)) . ')');
+
       foreach($db->setQuery($query)->loadAssocList() as $asset)
       {
         $rules = self::json($asset['rules']);
+
         if($rules) $snapshot['rules'][$asset['name']] = $rules;
       }
       ksort($snapshot['rules']);
@@ -227,16 +237,20 @@ final class CacheHelper
     {
       return self::json($before['rules'] ?? []) !== self::json($after['rules'] ?? []) ? ['acl'] : [];
     }
+
     if($kind === 'extensions')
     {
       $old = self::json($before['params'] ?? []);
       $new = self::json($after['params'] ?? []);
+
       foreach(['inheritance_config' => 'default', 'save_history' => '0'] as $field => $default)
       {
         if((string) ($old[$field] ?? $default) !== (string) ($new[$field] ?? $default)) return ['config'];
       }
+
       return [];
     }
+
     if($kind === 'menu')
     {
       return $before !== $after && (self::isGalleryMenu($before) || self::isGalleryMenu($after)) ? ['config'] : [];
@@ -244,5 +258,4 @@ final class CacheHelper
 
     return \in_array($kind, ['usergroups', 'viewlevels'], true) && $before !== $after ? ['acl'] : [];
   }
-
 }

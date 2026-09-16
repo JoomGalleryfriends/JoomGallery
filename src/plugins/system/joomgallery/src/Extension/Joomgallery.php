@@ -14,8 +14,8 @@ namespace Joomgallery\Plugin\System\Joomgallery\Extension;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
 use Joomla\CMS\Form\Form;
@@ -86,13 +86,13 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
   /**
    * Before-write snapshots keyed by table object.
-   * 
-   * @var \WeakMap|null 
-   * 
+   *
+   * @var \WeakMap|null
+   *
    * @since 4.5.0
    */
   private ?\WeakMap $coreCacheInputs = null;
-  
+
   /**
    * Constructor
    *
@@ -365,7 +365,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
   /**
    * Detect tables and fields relevant to the cache policy
-   * 
+   *
    * @param   Event   $event
    *
    * @return  void
@@ -388,7 +388,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     }
 
     if($kind === null) return;
+
     if($kind === 'assets' && !\in_array($table->name ?? '', ['root.1', 'com_joomgallery'], true)) return;
+
     if($kind === 'extensions' && (($table->element ?? '') !== 'com_joomgallery' || ($table->type ?? '') !== 'component')) return;
 
     JoomHelper::getComponent();
@@ -405,17 +407,17 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       $query = $db->getQuery(true)->select('*')->from($db->quoteName($table->getTableName()))
         ->where($db->quoteName('lft') . ' >= ' . (int) $row['lft'])
         ->where($db->quoteName('rgt') . ' <= ' . (int) $row['rgt']);
-      $rows = $db->setQuery($query)->loadAssocList($key);
+      $rows  = $db->setQuery($query)->loadAssocList($key);
     }
 
-    $this->coreCacheInputs ??= new \WeakMap();
+    $this->coreCacheInputs       ??= new \WeakMap();
     $this->coreCacheInputs[$table] = [$kind, $key, $rows];
   }
 
   /**
    * Compare persisted values after writes, including nested-table deletes.
    * Root/JoomGallery asset rules cover global and component permissions.
-   * 
+   *
    * @param   Event   $event
    *
    * @return  void
@@ -436,7 +438,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
     foreach($ids as $id)
     {
-      $after = CacheHelper::row($table->getDatabase(), $table->getTableName(), (int) $id, $key);
+      $after  = CacheHelper::row($table->getDatabase(), $table->getTableName(), (int) $id, $key);
       $scopes = array_merge($scopes, CacheHelper::coreScopes($kind, $before[$id] ?? [], $after));
     }
 

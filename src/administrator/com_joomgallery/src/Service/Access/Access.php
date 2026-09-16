@@ -36,13 +36,47 @@ class Access implements AccessInterface
 {
   use ServiceTrait;
 
-  /** @var CacheInterface Namespace cache owned by this service. */
+  /**
+   * Namespace cache owned by this service.
+   *
+   * @var CacheInterface
+   */
   protected CacheInterface $cache;
 
-  /** @var string|null Revision associated with this instance's request results. */
+  /**
+   * Namespace of the bounded session hot cache.
+   *
+   * @var string
+   */
+  protected $cacheNamespace = '';
+
+  /**
+   * Cache format version. Increment this when the cache key format changes.
+   *
+   * @var string
+   */
+  protected $cacheVersion = 'v1';
+
+  /**
+   * Maximum number of ACL results retained in the session.
+   *
+   * @var int
+   */
+  protected $hotCacheLimit = 64;
+
+  /**
+   * Lifetime of an ACL result in the session hot cache, in seconds.
+   *
+   * @var int
+   */
+  protected $hotCacheLifetime = 900;
+
+  /**
+   * Revision associated with this instance's request results.
+   *
+   * @var string|null
+   */
   protected ?string $checksRevision = null;
-
-
 
   /**
    * The option which component to check the ACL.
@@ -121,27 +155,6 @@ class Access implements AccessInterface
    * @var array
    */
   protected $checks = [];
-
-  /**
-   * Namespace of the bounded session hot cache.
-   *
-   * @var string
-   */
-  protected $cacheNamespace = '';
-
-  /**
-   * Maximum number of ACL results retained in the session.
-   *
-   * @var int
-   */
-  protected $hotCacheLimit = 64;
-
-  /**
-   * Lifetime of an ACL result in the session hot cache, in seconds.
-   *
-   * @var int
-   */
-  protected $hotCacheLifetime = 900;
 
   /**
    * Storage containing all applied acl checks.
@@ -542,7 +555,7 @@ class Access implements AccessInterface
     $groups = $this->appUser ? array_map('intval', (array) $this->appUser->getAuthorisedGroups()) : [];
     sort($groups);
 
-    $this->cacheNamespace = 'com_joomgallery.accesscache.' . sha1($this->option) . '.' . (int) $this->user->id . '.' . sha1(implode(',', $groups));
+    $this->cacheNamespace = 'com_joomgallery.accesscache.' . $this->cacheVersion . '.' . sha1($this->option) . '.' . (int) $this->user->id . '.' . sha1(implode(',', $groups));
     $this->cache          = $this->component->createCache($this->cacheNamespace);
     $this->cache->configure('acl', true, $this->hotCacheLifetime);
     $this->cache->initialise();
@@ -563,13 +576,12 @@ class Access implements AccessInterface
       $this->component->createConfig('com_joomgallery');
       $config = $this->component->getConfig();
 
-      $this->hotCacheLimit    = max(0, (int) $config->get('jg_acl_cache_entries', 64));
-      $this->hotCacheLifetime = max(0, (int) $config->get('jg_acl_cache_lifetime', 15)) * 60;
+      $this->hotCacheLimit    = max(0, (int) $config->get('jg_acl_cache_entries', $this->hotCacheLimit));
+      $this->hotCacheLifetime = max(0, (int) $config->get('jg_acl_cache_lifetime', $this->hotCacheLifetime / 60)) * 60;
     }
     catch(\Throwable $e)
     {
-      $this->hotCacheLimit    = 64;
-      $this->hotCacheLifetime = 900;
+      // Retain the property defaults if loading the cache policy fails.
     }
   }
 

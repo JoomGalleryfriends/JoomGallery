@@ -27,7 +27,6 @@ use Joomla\CMS\Factory;
  */
 class Cache implements CacheInterface
 {
-
   /**
    * Namespace identifying this cache object
    *
@@ -67,7 +66,7 @@ class Cache implements CacheInterface
    * @since   4.5.0
    */
   private bool $requestOnly = true;
-  
+
 
   /**
    * Shared revision scope, or null for unscoped entries
@@ -77,7 +76,7 @@ class Cache implements CacheInterface
    *
    * @since   4.5.0
    */
-  private ?string $scope    = null;
+  private ?string $scope = null;
 
   /**
    * Initialises the cache namespace and its storage dependencies
@@ -108,7 +107,7 @@ class Cache implements CacheInterface
    * @param   int          $maxAge   the maximum namespace age in seconds; zero disables expiration
    *
    * @return  void
-   * 
+   *
    * @throws  \LogicException  If the namespace has a conflicting scope.
    * @since   4.5.0
    */

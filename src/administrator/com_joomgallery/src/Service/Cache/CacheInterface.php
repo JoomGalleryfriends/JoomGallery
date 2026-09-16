@@ -23,7 +23,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Cache;
  */
 interface CacheInterface
 {
-
   /**
    * Initialises a namespace-specific cache object
    *

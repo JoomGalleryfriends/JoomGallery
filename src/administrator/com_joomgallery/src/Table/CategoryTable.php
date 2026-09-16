@@ -14,11 +14,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\MultipleAssetsTableTrait;
 use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Factory;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Asset;
@@ -295,8 +295,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   {
     if(!$this->component_exists) return $this->storeRecord($updateNulls);
 
-    $db = $this->getDatabase();
-    $ids = [(int) ($this->id ?? 0)];
+    $db     = $this->getDatabase();
+    $ids    = [(int) ($this->id ?? 0)];
     $before = CacheHelper::gallery($db, 'category', $ids);
     $result = false;
 
@@ -308,9 +308,10 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     }
     finally
     {
-      $ids = [(int) ($this->id ?? 0)];
+      $ids   = [(int) ($this->id ?? 0)];
       $after = CacheHelper::gallery($db, 'category', $ids);
-      foreach (CacheHelper::galleryScopes('category', $before, $after, $result === true) as $scope)
+
+      foreach(CacheHelper::galleryScopes('category', $before, $after, $result === true) as $scope)
       {
         $this->getComponent()->getCacheRevision()->invalidate($scope);
       }
@@ -501,8 +502,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   {
     if(!$this->component_exists) return $this->deleteRecord($pk, $children);
 
-    $db = $this->getDatabase();
-    $ids = CacheHelper::categoryIds($db, (int) ($pk ?? $this->id), (bool) $children);
+    $db     = $this->getDatabase();
+    $ids    = CacheHelper::categoryIds($db, (int) ($pk ?? $this->id), (bool) $children);
     $before = CacheHelper::gallery($db, 'category', $ids);
     $result = false;
 
@@ -516,7 +517,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     {
       // Deletion compares the original IDs, including removed descendants.
       $after = CacheHelper::gallery($db, 'category', $ids);
-      foreach (CacheHelper::galleryScopes('category', $before, $after, false) as $scope)
+
+      foreach(CacheHelper::galleryScopes('category', $before, $after, false) as $scope)
       {
         $this->getComponent()->getCacheRevision()->invalidate($scope);
       }
