@@ -15,7 +15,6 @@ namespace Joomgallery\Component\Joomgallery\Site\Dispatcher;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Dispatcher\ComponentDispatcher;
-use Joomla\CMS\Factory;
 
 /**
  * ComponentDispatcher class for com_joomgallery
@@ -35,39 +34,5 @@ class Dispatcher extends ComponentDispatcher
     public function dispatch()
     {
         parent::dispatch();
-
-        $component = null;
-        $config    = null;
-        $access    = null;
-
-        try
-        {
-            $component = Factory::getApplication()->bootComponent('com_joomgallery');
-            $config    = $component->getConfig();
-        }
-        catch(\Throwable $th)
-        {
-        }
-
-        try
-        {
-            if(!\is_null($component))
-            {
-                $access = $component->getAccess();
-            }
-        }
-        catch(\Throwable $th)
-        {
-        }
-
-        if(!\is_null($config))
-        {
-            $config->storeCacheToSession();
-        }
-
-        if(!\is_null($access))
-        {
-            $access->storeCacheToSession();
-        }
     }
 }
