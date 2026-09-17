@@ -55,8 +55,7 @@ class DefaultConfig extends Config implements ConfigInterface
     // Check if we can use cached parameters
     $cacheKey = base64_encode($this->storeId);
 
-    if($useCache && $this->cacheLimit > 0 && $this->cacheLifetime > 0
-      && $this->cache->has($cacheKey))
+    if($useCache && $this->hotCacheLimit > 0 && $this->hotCacheLifetime > 0 && $this->cache->has($cacheKey))
     {
       $entry = $this->cache->get($cacheKey);
 
