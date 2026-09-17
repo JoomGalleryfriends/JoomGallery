@@ -437,7 +437,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
     foreach($ids as $id)
     {
-      $after  = CacheHelper::row($table->getDatabase(), $table->getTableName(), (int) $id, $key);
+      $after  = CacheHelper::row($this->db, $table->getTableName(), (int) $id, $key);
       $scopes = array_merge($scopes, CacheHelper::coreScopes($kind, $before[$id] ?? [], $after));
     }
 
