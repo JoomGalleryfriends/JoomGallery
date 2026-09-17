@@ -375,12 +375,11 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
   public function captureCoreCacheInputs(Event $event): void
   {
     $table = $event->getArgument('subject');
-    $db    = $table->getDatabase();
     $kind  = null;
 
     foreach(['assets', 'extensions', 'menu', 'usergroups', 'viewlevels'] as $candidate)
     {
-      if(\in_array($table->getTableName(), ['#__' . $candidate, $db->replacePrefix('#__' . $candidate)], true))
+      if(\in_array($table->getTableName(), ['#__' . $candidate, $this->db->replacePrefix('#__' . $candidate)], true))
       {
         $kind = $candidate;
         break;
@@ -396,7 +395,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     JoomHelper::getComponent();
     $key  = $table->getKeyName();
     $id   = (int) $event->getArgument('pk', $table->$key ?? 0);
-    $row  = CacheHelper::row($db, $table->getTableName(), $id, $key);
+    $row  = CacheHelper::row($this->db, $table->getTableName(), $id, $key);
     $rows = $row ? [$id => $row] : [];
 
     // Deleting a non-gallery parent can also delete gallery menu children.
@@ -404,10 +403,10 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
         $event->getArgument('children', true) && isset($row['lft'], $row['rgt'])
       )
     {
-      $query = $db->getQuery(true)->select('*')->from($db->quoteName($table->getTableName()))
-        ->where($db->quoteName('lft') . ' >= ' . (int) $row['lft'])
-        ->where($db->quoteName('rgt') . ' <= ' . (int) $row['rgt']);
-      $rows  = $db->setQuery($query)->loadAssocList($key);
+      $query = $this->db->getQuery(true)->select('*')->from($this->db->quoteName($table->getTableName()))
+        ->where($this->db->quoteName('lft') . ' >= ' . (int) $row['lft'])
+        ->where($this->db->quoteName('rgt') . ' <= ' . (int) $row['rgt']);
+      $rows  = $this->db->setQuery($query)->loadAssocList($key);
     }
 
     $this->coreCacheInputs       ??= new \WeakMap();
