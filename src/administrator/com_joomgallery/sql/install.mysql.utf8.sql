@@ -510,6 +510,21 @@ INDEX `idx_task_status` (`task_id`, `status`)
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `#__joomgallery_cache_revisions`
+--
+
+CREATE TABLE IF NOT EXISTS `#__joomgallery_cache_revisions` (
+  `scope` VARCHAR(32) NOT NULL,
+  `revision` BIGINT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`scope`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `#__joomgallery_cache_revisions` (`scope`, `revision`)
+VALUES ('config', 1), ('acl', 1), ('cleanup', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Dumping data for table `#__content_types`
 --
 
@@ -524,14 +539,3 @@ SELECT * FROM ( SELECT 'Image','com_joomgallery.image','{"special":{"dbtable":"#
 WHERE NOT EXISTS (
 	SELECT type_alias FROM `#__content_types` WHERE (`type_alias` = 'com_joomgallery.image')
 ) LIMIT 1;
-
-
--- Shared revisions invalidate session caches without modifying other sessions.
-CREATE TABLE IF NOT EXISTS `#__joomgallery_cache_revisions` (
-  `scope` VARCHAR(32) NOT NULL,
-  `revision` BIGINT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`scope`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-INSERT IGNORE INTO `#__joomgallery_cache_revisions` (`scope`, `revision`)
-VALUES ('config', 1), ('acl', 1);

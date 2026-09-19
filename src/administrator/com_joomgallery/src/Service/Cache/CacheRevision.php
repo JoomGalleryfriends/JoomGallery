@@ -65,7 +65,7 @@ final class CacheRevision
    * Reads the database on the first access during a request. Revision strings
    * are never converted to PHP integers.
    *
-   * @param   string  $scope  the supported revision scope: config or acl
+   * @param   string  $scope  the supported revision scope: config, acl or cleanup
    *
    * @return  string
    *
@@ -103,7 +103,7 @@ final class CacheRevision
    * Refreshes the request-local revision after the update. Counters must never
    * be reset or reused.
    *
-   * @param   string  $scope  the supported revision scope: config or acl
+   * @param   string  $scope  the supported revision scope: config, acl or cleanup
    *
    * @return  void
    *
@@ -134,9 +134,9 @@ final class CacheRevision
   /**
    * Rejects scope names outside the supported revision groups
    *
-   * Only config and acl are supported.
+   * Config and ACL invalidate values; cleanup requests session maintenance.
    *
-   * @param   string  $scope  the supported revision scope: config or acl
+   * @param   string  $scope  the supported revision scope: config, acl or cleanup
    *
    * @return  void
    *
@@ -145,7 +145,7 @@ final class CacheRevision
    */
   private function validateScope(string $scope): void
   {
-    if(!\in_array($scope, ['config', 'acl'], true))
+    if(!\in_array($scope, ['config', 'acl', 'cleanup'], true))
     {
       throw new \InvalidArgumentException('Unknown JoomGallery cache scope: ' . $scope);
     }

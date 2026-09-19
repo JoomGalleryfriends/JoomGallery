@@ -24,19 +24,3 @@ ALTER TABLE `#__joomgallery_configs` ADD `jg_gallery_view_limit_images` INT NOT 
 ALTER TABLE `#__joomgallery_configs` ADD `jg_gallery_view_searchprovider` VARCHAR(15) NOT NULL DEFAULT "finder" AFTER `jg_gallery_view_limit_images`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_gallery_view_autosuggest` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_gallery_view_searchprovider`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_browse_categories_link` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_browse_images_link`;
-ALTER TABLE `#__joomgallery_configs` ADD `jg_acl_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 64 AFTER `jg_compatibility_mode`;
-ALTER TABLE `#__joomgallery_configs` ADD `jg_acl_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 15 AFTER `jg_acl_cache_entries`;
-ALTER TABLE `#__joomgallery_configs` ADD `jg_config_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 64 AFTER `jg_acl_cache_lifetime`;
-ALTER TABLE `#__joomgallery_configs` ADD `jg_config_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 60 AFTER `jg_config_cache_entries`;
-ALTER TABLE `#__joomgallery_configs` ADD UNIQUE INDEX `idx_unique_group` (`group_id`);
-
-
--- Shared revisions invalidate session caches without modifying other sessions.
-CREATE TABLE IF NOT EXISTS `#__joomgallery_cache_revisions` (
-  `scope` VARCHAR(32) NOT NULL,
-  `revision` BIGINT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`scope`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-INSERT IGNORE INTO `#__joomgallery_cache_revisions` (`scope`, `revision`)
-VALUES ('config', 1), ('acl', 1);

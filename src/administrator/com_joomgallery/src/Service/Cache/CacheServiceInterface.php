@@ -59,4 +59,14 @@ interface CacheServiceInterface
    * @since   4.5.0
    */
   public function getCacheRevision(): CacheRevision;
+
+  /**
+   * Clears gallery caches across all scopes or removes only expired entries
+   *
+   * @param   bool  $expiredOnly  whether to retain unexpired entries
+   *
+   * @return  void
+   * @since   4.5.0
+   */
+  public function clearCaches(bool $expiredOnly = false): void;
 }
