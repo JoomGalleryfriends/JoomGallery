@@ -97,7 +97,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
    * Prevents repeated invalidation when Joomla clears several cache groups
    *
    * @var     bool
-   * 
+   *
    * @since   4.5.0
    */
   private bool $cacheMaintenanceHandled = false;
@@ -717,7 +717,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
    * @param   EventInterface  $event  the cache purge event
    *
    * @return  void
-   * 
+   *
    * @since   4.5.0
    */
   public function onAfterPurge(EventInterface $event): void

@@ -18,6 +18,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base\AccessOwn;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\GuestCachePolicy;
 use Joomgallery\Component\Joomgallery\Administrator\User\User;
 use Joomla\CMS\Access\Access as AccessBase;
 use Joomla\CMS\Factory;
@@ -203,9 +204,6 @@ class Access implements AccessInterface
       $this->appUser = $identity;
     }
 
-    $this->loadCacheConfig();
-    $this->refreshCacheNamespace();
-
     // Set acl map for components with advanced rules
     $mapPath = _JOOM_PATH_ADMIN . '/includes/rules.php';
 
@@ -214,6 +212,8 @@ class Access implements AccessInterface
       require $mapPath;
       $this->aclMap = $rules_map_array;
     }
+
+    $this->refreshCacheNamespace();
 
     // Fill AccessOwn properties
     AccessOwn::$parent_dependent_types = $this->parent_dependent_types;
@@ -499,6 +499,8 @@ class Access implements AccessInterface
     $this->option = $option;
     $this->types  = $types;
     $this->aclMap = $aclMap;
+    $this->checks = [];
+    $this->refreshCacheNamespace();
   }
 
   /**
@@ -552,12 +554,30 @@ class Access implements AccessInterface
    */
   protected function refreshCacheNamespace(): void
   {
-    $groups = $this->appUser ? array_map('intval', (array) $this->appUser->getAuthorisedGroups()) : [];
+    $identity = $this->appUser ?? $this->user;
+    $groups   = array_map('intval', (array) $identity->getAuthorisedGroups());
     sort($groups);
 
     $this->cacheNamespace = 'com_joomgallery.accesscache.' . $this->cacheVersion . '.' . sha1($this->option) . '.' . (int) $this->user->id . '.' . sha1(implode(',', $groups));
-    $this->cache          = $this->component->createCache($this->cacheNamespace);
-    $this->cache->configure('acl', true, $this->hotCacheLifetime);
+    $guest                = $this->app->isClient('site') && (int) $this->user->id === 0
+      && (bool) $identity->guest && $this->option === 'com_joomgallery';
+    $shared               = false;
+
+    if($guest)
+    {
+      $policy                 = GuestCachePolicy::get();
+      $shared                 = $policy['entries'] > 0 && $policy['lifetime'] > 0;
+      $this->hotCacheLimit    = $policy['entries'] ?: 64;
+      $this->hotCacheLifetime = $policy['lifetime'] ?: 900;
+    }
+    else
+    {
+      $this->loadCacheConfig();
+    }
+
+    if($guest) $this->cacheNamespace .= '.guest.' . hash('sha256', serialize([$this->app->getLanguage()->getTag(), $this->aclMap, $this->types, $policy]));
+    $this->cache                      = $this->component->createCache($this->cacheNamespace);
+    $this->cache->configure('acl', !$guest, $this->hotCacheLifetime, $shared);
     $this->cache->initialise();
   }
 
@@ -736,9 +756,7 @@ class Access implements AccessInterface
 
     $parts = explode('.', strpos($asset, 'com_') === 0 ? $asset : $this->option . '.' . $asset);
 
-    return \count($parts) <= 2
-      || (isset($parts[1]) && $parts[1] === 'category')
-      || (isset($parts[1]) && $parts[1] === 'image' && $pk === 0);
+    return \count($parts) <= 2 || (isset($parts[1]) && $parts[1] === 'category') || (isset($parts[1]) && $parts[1] === 'image' && $pk === 0);
   }
 
   /**

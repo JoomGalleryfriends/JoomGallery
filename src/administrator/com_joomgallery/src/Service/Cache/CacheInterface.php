@@ -37,19 +37,21 @@ interface CacheInterface
   /**
    * Selects revision tracking, storage mode and namespace lifetime
    *
-   * The session flag selects persistent storage. A null scope disables shared
-   * revision tracking; zero maximum age disables namespace expiration.
+   * The shared flag selects guest storage and takes precedence over session.
+   * Shared storage requires a config/ACL scope and a positive lifetime.
+   * Otherwise session selects session storage; both flags false are request-only.
    *
    * @param   string|null  $scope    the shared revision scope, or null for an unscoped cache
    * @param   bool         $session  whether entries are persisted in the current session
    * @param   int          $maxAge   the maximum namespace age in seconds; zero disables expiration
+   * @param   bool         $shared   whether to use shared guest storage instead of the session
    *
    * @return  void
    * @throws  \LogicException  If the namespace has a conflicting scope.
    *
    * @since   4.5.0
    */
-  public function configure(?string $scope = null, bool $session = false, int $maxAge = 0): void;
+  public function configure(?string $scope = null, bool $session = false, int $maxAge = 0, bool $shared = false): void;
 
   /**
    * Registers the namespace and loads eligible session entries

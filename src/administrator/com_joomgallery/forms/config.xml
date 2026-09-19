@@ -224,6 +224,32 @@
              sensitive="true"
              label="COM_JOOMGALLERY_CONFIG_CACHE_LIFETIME"
              description="COM_JOOMGALLERY_CONFIG_CACHE_LIFETIME_LONG" />
+       <field name="guest_cache_heading" type="spacer" class="bold"
+             label="COM_JOOMGALLERY_CONFIG_GUEST_CACHE" />
+      <field name="jg_guest_cache_entries"
+             type="number"
+             default="4096"
+             min="0"
+             max="100000"
+             step="1"
+             filter="integer"
+             validate="number"
+             global_only="true"
+             sensitive="true"
+             label="COM_JOOMGALLERY_CONFIG_GUEST_CACHE_ENTRIES"
+             description="COM_JOOMGALLERY_CONFIG_GUEST_CACHE_ENTRIES_LONG" />
+      <field name="jg_guest_cache_lifetime"
+             type="number"
+             default="60"
+             min="0"
+             max="10080"
+             step="1"
+             filter="integer"
+             validate="number"
+             global_only="true"
+             sensitive="true"
+             label="COM_JOOMGALLERY_CONFIG_GUEST_CACHE_LIFETIME"
+             description="COM_JOOMGALLERY_CONFIG_GUEST_CACHE_LIFETIME_LONG" />
     </fieldset>
 
     <fieldset type="tab" name="general-upload" label="COM_JOOMGALLERY_UPLOADS">
