@@ -132,6 +132,8 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_acl_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 15,
 `jg_config_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 64,
 `jg_config_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 60,
+`jg_guest_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 4096,
+`jg_guest_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 60,
 `jg_replaceinfo` TEXT NOT NULL,
 `jg_replaceshowwarning` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_useorigfilename` TINYINT(1) NOT NULL DEFAULT 0,

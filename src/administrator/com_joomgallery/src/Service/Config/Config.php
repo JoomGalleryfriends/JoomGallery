@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Config;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\GuestCachePolicy;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -159,15 +160,6 @@ abstract class Config extends \stdClass implements ConfigInterface
     }
 
     $this->loadConfigCachePolicy();
-    $this->cacheNamespace = $this->getCacheNamespace($this->name);
-    $this->cache          = $this->component->createCache($this->cacheNamespace);
-    $this->cache->configure('config', true);
-    $this->cache->initialise();
-
-    $this->userSettingsCache = $this->component->createCache($this->cacheNamespace . 'config_usergroup');
-    $this->userSettingsCache->configure('config');
-    $this->pruneConfigCache();
-
     // Get current user
     $user = Factory::getApplication()->getIdentity();
 
@@ -226,6 +218,33 @@ abstract class Config extends \stdClass implements ConfigInterface
         $this->ids['menu'] = (int) $menuitem->id;
       }
     }
+
+    // Resolve storage from the effective user, including explicit user contexts.
+    $guest  = $this->app->isClient('site') && (int) $user->id === 0 && (bool) $user->guest;
+    $shared = false;
+
+    if($guest)
+    {
+      $policy                 = GuestCachePolicy::get();
+      $shared                 = $policy['entries'] > 0 && $policy['lifetime'] > 0;
+      $this->hotCacheLimit    = $policy['entries'] ?: 64;
+      $this->hotCacheLifetime = $policy['lifetime'] ?: 3600;
+    }
+    $this->cacheNamespace = $this->getCacheNamespace($this->name);
+
+    if($guest)
+    {
+      $groups = array_map('intval', $user->getAuthorisedGroups());
+      sort($groups);
+      $this->cacheNamespace .= '.guest.' . hash('sha256', serialize([$groups, $this->app->getLanguage()->getTag(), $policy]));
+    }
+    $this->cache = $this->component->createCache($this->cacheNamespace);
+    $this->cache->configure('config', !$guest, $shared ? $this->hotCacheLifetime : 0, $shared);
+    $this->cache->initialise();
+    $this->userSettingsCache = $this->component->createCache($this->cacheNamespace . 'config_usergroup');
+    $this->userSettingsCache->configure('config');
+
+    if(!$guest || $shared) $this->pruneConfigCache();
 
     // Include every input that can affect the calculated configuration.
     $this->storeId = implode(

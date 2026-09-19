@@ -30,6 +30,38 @@ use Joomla\CMS\Factory;
 class CacheStorage
 {
   /**
+   * Shared guest backend adapter
+   *
+   * @var     GuestCacheStorage
+   * @since   4.5.0
+   */
+  private GuestCacheStorage $guestStorage;
+
+  /**
+   * Shared namespaces and their maximum entry lifetimes
+   *
+   * @var     array
+   * @since   4.5.0
+   */
+  private array $sharedNamespaces = [];
+
+  /**
+   * Shared keys already read, including misses, during this request
+   *
+   * @var     array
+   * @since   4.5.0
+   */
+  private array $sharedReads = [];
+
+  /**
+   * Revisions captured when a shared calculation starts
+   *
+   * @var     array
+   * @since   4.5.0
+   */
+  private array $readRevisions = [];
+
+  /**
    * Last maintenance signal inspected during this request
    *
    * @var     string|null
@@ -125,16 +157,17 @@ class CacheStorage
    *
    * @param   CacheRevision  $revisionStore  the shared component revision store
    * @param   \Closure|null  $sessionProvider  the session factory, or null to use the current application
+   * @param   GuestCacheStorage|null  $guestStorage  optional shared guest backend
    *
    * @return  void
    *
    * @since   4.5.0
    */
-  public function __construct(CacheRevision $revisionStore, ?\Closure $sessionProvider = null)
+  public function __construct(CacheRevision $revisionStore, ?\Closure $sessionProvider = null, ?GuestCacheStorage $guestStorage = null)
   {
+    $this->guestStorage    = $guestStorage ?? new GuestCacheStorage();
     $this->revisionStore   = $revisionStore;
-    $this->sessionProvider = $sessionProvider
-      ?? static fn() => Factory::getApplication()->getSession();
+    $this->sessionProvider = $sessionProvider ?? static fn() => Factory::getApplication()->getSession();
   }
 
   /**
@@ -189,7 +222,7 @@ class CacheStorage
       {
         if($registeredScope !== $scope) continue;
 
-        unset($this->requestCaches[$name]);
+        unset($this->requestCaches[$name], $this->sharedReads[$name]);
 
         if(isset($this->loadedCaches[$name]))
         {
@@ -223,6 +256,15 @@ class CacheStorage
     $revision = $this->synchronise($namespace);
 
     if(isset($this->loadedCaches[$namespace])) return;
+
+    if(isset($this->sharedNamespaces[$namespace]))
+    {
+      $this->runtimeCaches[$namespace]  = [];
+      $this->loadedCaches[$namespace]   = true;
+      $this->cacheRevisions[$namespace] = $revision;
+
+      return;
+    }
 
     $this->maintainSessionCaches();
     $stored = ($this->sessionProvider)()->get($namespace, []);
@@ -292,6 +334,16 @@ class CacheStorage
 
     $this->initialise($namespace);
 
+    if(isset($this->sharedNamespaces[$namespace]) && !isset($this->sharedReads[$namespace][$key]))
+    {
+      $revision                                = $this->cacheRevisions[$namespace];
+      $this->readRevisions[$namespace][$key] ??= $revision;
+      $entry                                   = $this->guestStorage->get($this->scopes[$namespace], $revision, $namespace, $key);
+      $this->sharedReads[$namespace][$key]     = true;
+
+      if($entry !== null) $this->runtimeCaches[$namespace][$key] = $entry['value'];
+    }
+
     return \array_key_exists($key, $this->runtimeCaches[$namespace]);
   }
 
@@ -346,13 +398,25 @@ class CacheStorage
       $this->dirtyCaches[$namespace] = true;
     }
 
+    if(isset($this->sharedNamespaces[$namespace]))
+    {
+      $captured = $this->readRevisions[$namespace][$key] ?? $this->cacheRevisions[$namespace];
+      // Never publish a calculation under a revision observed after it began.
+      $this->guestStorage->put($this->scopes[$namespace], $captured, $namespace, $key, $value, $this->sharedNamespaces[$namespace]);
+      unset($this->readRevisions[$namespace][$key]);
+
+      if($captured !== $this->cacheRevisions[$namespace]) return;
+      $this->sharedReads[$namespace][$key] = true;
+    }
+
     unset($items[$key]);
     $items[$key] = $value;
 
     while($limit > 0 && \count($items) > $limit)
     {
       // Unlike array_shift(), this preserves numeric user-ID keys.
-      unset($items[array_key_first($items)]);
+      $oldKey = array_key_first($items);
+      unset($items[$oldKey], $this->sharedReads[$namespace][$oldKey]);
     }
   }
 
@@ -466,6 +530,13 @@ class CacheStorage
   {
     $this->synchronise($namespace);
 
+    if(isset($this->sharedNamespaces[$namespace]))
+    {
+      unset($this->dirtyCaches[$namespace]);
+
+      return;
+    }
+
     if(empty($this->dirtyCaches[$namespace])) return;
 
     $stored = ['created' => time(), 'items' => $this->runtimeCaches[$namespace] ?? []];
@@ -530,6 +601,7 @@ class CacheStorage
       }
     }
 
+    $this->guestStorage->clear($expiredOnly);
     $this->revisionStore->invalidate('cleanup');
     $this->maintainSessionCaches();
 
@@ -550,6 +622,7 @@ class CacheStorage
       }
       $this->dirtyCaches[$namespace] = true;
     }
+
     $this->persistAll();
   }
 
@@ -579,6 +652,7 @@ class CacheStorage
       }
       $session->set('com_joomgallery.cacheCleanupRevision', $revision);
     }
+
     $this->maintenanceRevision = $revision;
   }
 
@@ -600,8 +674,7 @@ class CacheStorage
 
     if(isset($nodes['items']) && \is_array($nodes['items']))
     {
-      $nodes['items'] = (string) ($nodes['revision'] ?? '') === $revision
-        ? $this->withoutExpiredEntries($nodes['items']) : [];
+      $nodes['items'] = (string) ($nodes['revision'] ?? '') === $revision ? $this->withoutExpiredEntries($nodes['items']) : [];
     }
     else
     {
@@ -623,10 +696,40 @@ class CacheStorage
   {
     $now = time();
 
-    return array_filter(
-        $items,
-        static fn($entry) => !\is_array($entry)
-        || !isset($entry['expires']) || (int) $entry['expires'] >= $now
-    );
+    return array_filter($items, static fn($entry) => !\is_array($entry) || !isset($entry['expires']) || (int) $entry['expires'] >= $now);
+  }
+
+  /**
+   * Selects shared storage for an explicitly resolved guest context
+   *
+   * @param   string       $namespace  the guest-specific namespace
+   * @param   string|null  $scope      the config or ACL revision scope
+   * @param   int          $lifetime   maximum entry lifetime in seconds
+   * @param   bool         $shared     whether shared storage is selected
+   *
+   * @return  void
+   * @since   4.5.0
+   */
+  public function registerShared(string $namespace, ?string $scope, int $lifetime, bool $shared = true): void
+  {
+    if(!$shared)
+    {
+      if(isset($this->sharedNamespaces[$namespace])) throw new \LogicException('Shared namespaces cannot use session or request-only storage.');
+
+      return;
+    }
+
+    if(!\in_array($scope, ['config', 'acl'], true) || $lifetime <= 0)
+    {
+      throw new \InvalidArgumentException('Shared guest caching requires an ACL/config scope and positive lifetime.');
+    }
+
+    if(isset($this->loadedCaches[$namespace]) && !isset($this->sharedNamespaces[$namespace]))
+    {
+      throw new \LogicException('Cannot change a loaded session namespace to shared storage.');
+    }
+
+    $this->register($namespace, $scope);
+    $this->sharedNamespaces[$namespace] = $lifetime;
   }
 }
