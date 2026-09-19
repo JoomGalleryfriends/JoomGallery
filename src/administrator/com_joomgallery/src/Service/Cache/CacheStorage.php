@@ -30,6 +30,14 @@ use Joomla\CMS\Factory;
 class CacheStorage
 {
   /**
+   * Last maintenance signal inspected during this request
+   *
+   * @var     string|null
+   * @since   4.5.0
+   */
+  private ?string $maintenanceRevision = null;
+
+  /**
    * Component-owned revision store used to validate session snapshots
    *
    * @var     CacheRevision
@@ -216,6 +224,7 @@ class CacheStorage
 
     if(isset($this->loadedCaches[$namespace])) return;
 
+    $this->maintainSessionCaches();
     $stored = ($this->sessionProvider)()->get($namespace, []);
     $items  = [];
 
@@ -493,5 +502,131 @@ class CacheStorage
         $this->persist($namespace);
       }
     }
+  }
+
+  /**
+   * Clears all scopes or requests expired-only maintenance across sessions
+   *
+   * Other sessions observe the change when they next initialise a cache.
+   *
+   * @param   bool  $expiredOnly  whether to retain unexpired values
+   *
+   * @return  void
+   * @since   4.5.0
+   */
+  public function clearCaches(bool $expiredOnly = false): void
+  {
+    if(!$expiredOnly)
+    {
+      $this->revisionStore->invalidate('config');
+      $this->revisionStore->invalidate('acl');
+      $this->requestCaches = [];
+    }
+    else
+    {
+      foreach($this->requestCaches as $namespace => $items)
+      {
+        $this->requestCaches[$namespace] = $this->withoutExpiredEntries($items);
+      }
+    }
+
+    $this->revisionStore->invalidate('cleanup');
+    $this->maintainSessionCaches();
+
+    foreach(array_keys($this->loadedCaches) as $namespace)
+    {
+      $this->synchronise($namespace);
+
+      if(!$expiredOnly)
+      {
+        $this->runtimeCaches[$namespace] = [];
+      }
+      else
+      {
+        $items = $this->withoutExpiredEntries($this->runtimeCaches[$namespace]);
+
+        if($items === $this->runtimeCaches[$namespace]) continue;
+        $this->runtimeCaches[$namespace] = $items;
+      }
+      $this->dirtyCaches[$namespace] = true;
+    }
+    $this->persistAll();
+  }
+
+  /**
+   * Applies a shared maintenance request once to every gallery session namespace
+   *
+   * Session data is accessed through Joomla so all session handlers are supported.
+   *
+   * @return  void
+   * @since   4.5.0
+   */
+  private function maintainSessionCaches(): void
+  {
+    $revision = $this->revisionStore->get('cleanup');
+
+    if($this->maintenanceRevision === $revision) return;
+
+    $session = ($this->sessionProvider)();
+
+    if((string) $session->get('com_joomgallery.cacheCleanupRevision', '') !== $revision)
+    {
+      foreach(['configcache' => 'config', 'accesscache' => 'acl'] as $root => $scope)
+      {
+        $namespace = 'com_joomgallery.' . $root;
+        $tree      = $session->get($namespace, []);
+        $session->set($namespace, $this->cleanSessionTree($tree, $this->revisionStore->get($scope)));
+      }
+      $session->set('com_joomgallery.cacheCleanupRevision', $revision);
+    }
+    $this->maintenanceRevision = $revision;
+  }
+
+  /**
+   * Cleans cache envelopes while preserving namespace structure and timestamps
+   *
+   * @param   mixed   $tree      the nested session namespace
+   * @param   string  $revision  the valid revision for this scope
+   *
+   * @return  mixed
+   * @since   4.5.0
+   */
+  private function cleanSessionTree(mixed $tree, string $revision): mixed
+  {
+    if(!\is_array($tree) && !\is_object($tree)) return $tree;
+
+    $object = \is_object($tree);
+    $nodes  = (array) $tree;
+
+    if(isset($nodes['items']) && \is_array($nodes['items']))
+    {
+      $nodes['items'] = (string) ($nodes['revision'] ?? '') === $revision
+        ? $this->withoutExpiredEntries($nodes['items']) : [];
+    }
+    else
+    {
+      foreach($nodes as $key => $node) $nodes[$key] = $this->cleanSessionTree($node, $revision);
+    }
+
+    return $object ? (object) $nodes : $nodes;
+  }
+
+  /**
+   * Removes expired values without discarding entries that have no expiry
+   *
+   * @param   array  $items  the cached entries
+   *
+   * @return  array
+   * @since   4.5.0
+   */
+  private function withoutExpiredEntries(array $items): array
+  {
+    $now = time();
+
+    return array_filter(
+        $items,
+        static fn($entry) => !\is_array($entry)
+        || !isset($entry['expires']) || (int) $entry['expires'] >= $now
+    );
   }
 }

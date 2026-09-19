@@ -94,6 +94,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
   private ?\WeakMap $coreCacheInputs = null;
 
   /**
+   * Prevents repeated invalidation when Joomla clears several cache groups
+   *
+   * @var     bool
+   * 
+   * @since   4.5.0
+   */
+  private bool $cacheMaintenanceHandled = false;
+
+  /**
    * Constructor
    *
    * @param   DispatcherInterface  $dispatcher  The event dispatcher
@@ -121,6 +130,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     if(self::$jg_exists)
     {
       return [
+        'onAfterPurge'           => ['onAfterPurge', Priority::NORMAL],
         'onContentPrepareForm'   => ['onContentPrepareForm', Priority::NORMAL],
         'onContentPrepareData'   => ['onContentPrepareData', Priority::NORMAL],
         'onUserAfterSave'        => ['onUserAfterSave', Priority::NORMAL],
@@ -699,5 +709,34 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     $this->db->setQuery($query);
 
     return $this->db->loadRowList();
+  }
+
+  /**
+   * Mirrors successful administrator cache operations in gallery session caches
+   *
+   * @param   EventInterface  $event  the cache purge event
+   *
+   * @return  void
+   * 
+   * @since   4.5.0
+   */
+  public function onAfterPurge(EventInterface $event): void
+  {
+    $app = $this->getApplication();
+
+    if( !$app->isClient('administrator') || $this->cacheMaintenanceHandled ||
+        $app->input->getCmd('option') !== 'com_cache' || !$app->getIdentity()->authorise('core.manage', 'com_cache')
+      )
+    {
+      return;
+    }
+
+    $task = strtolower($app->input->getCmd('task'));
+    $task = substr($task, strrpos('.' . $task, '.'));
+
+    if(!\in_array($task, ['delete', 'deleteall', 'purge'], true)) return;
+
+    JoomHelper::getComponent()->clearCaches($task === 'purge');
+    $this->cacheMaintenanceHandled = true;
   }
 }

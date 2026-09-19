@@ -113,4 +113,18 @@ trait CacheServiceTrait
 
     return true;
   }
+
+  /**
+   * Clears gallery caches across all scopes or removes only expired entries
+   *
+   * @param   bool  $expiredOnly  whether to retain unexpired entries
+   *
+   * @return  void
+   * @since   4.5.0
+   */
+  public function clearCaches(bool $expiredOnly = false): void
+  {
+    $this->cacheStorage ??= new CacheStorage($this->getCacheRevision());
+    $this->cacheStorage->clearCaches($expiredOnly);
+  }
 }
