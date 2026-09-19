@@ -326,6 +326,9 @@ class CategoryModel extends JoomAdminModel
             return false;
           }
 
+          // Retire caches before observers run and before a later item can fail.
+          $this->cleanCache();
+
           // Trigger the after event.
           Factory::getApplication()->triggerEvent($this->event_after_delete, [$context, $table]);
         }
@@ -368,9 +371,6 @@ class CategoryModel extends JoomAdminModel
     {
       $this->component->printDebug();
     }
-
-    // Clear the component's cache
-    $this->cleanCache();
 
     return true;
   }
@@ -479,7 +479,7 @@ class CategoryModel extends JoomAdminModel
           }
 
           // Check if filesystem adapter has changed
-          $old_params = json_decode($table->params);
+          $old_params  = json_decode($table->params);
           $old_adapter = $old_params->{'jg_filesystem'} ?? '';
 
           // Disabled form fields are not submitted. Keep the stored adapter in that case.

@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Table\Asset\MultipleAssetsTableTrait;
 use Joomla\CMS\Access\Rules;
@@ -292,6 +293,34 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
    */
   public function store($updateNulls = true)
   {
+    if(!$this->component_exists) return $this->storeRecord($updateNulls);
+
+    $db     = $this->getDatabase();
+    $ids    = [(int) ($this->id ?? 0)];
+    $before = CacheHelper::gallery($db, 'category', $ids);
+    $result = false;
+
+    try
+    {
+      $result = $this->storeRecord($updateNulls);
+
+      return $result;
+    }
+    finally
+    {
+      $ids   = [(int) ($this->id ?? 0)];
+      $after = CacheHelper::gallery($db, 'category', $ids);
+
+      foreach(CacheHelper::galleryScopes('category', $before, $after, $result === true) as $scope)
+      {
+        $this->getComponent()->getCacheRevision()->invalidate($scope);
+      }
+    }
+  }
+
+  /** Perform the table write; the public wrapper compares cache inputs. */
+  private function storeRecord($updateNulls = true)
+  {
     $this->setPathWithLocation();
 
     // Support for password field
@@ -470,6 +499,34 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
    * @return bool
    */
   public function delete($pk = null, $children = true)
+  {
+    if(!$this->component_exists) return $this->deleteRecord($pk, $children);
+
+    $db     = $this->getDatabase();
+    $ids    = CacheHelper::categoryIds($db, (int) ($pk ?? $this->id), (bool) $children);
+    $before = CacheHelper::gallery($db, 'category', $ids);
+    $result = false;
+
+    try
+    {
+      $result = $this->deleteRecord($pk, $children);
+
+      return $result;
+    }
+    finally
+    {
+      // Deletion compares the original IDs, including removed descendants.
+      $after = CacheHelper::gallery($db, 'category', $ids);
+
+      foreach(CacheHelper::galleryScopes('category', $before, $after, false) as $scope)
+      {
+        $this->getComponent()->getCacheRevision()->invalidate($scope);
+      }
+    }
+  }
+
+  /** Perform the table write; the public wrapper compares cache inputs. */
+  private function deleteRecord($pk = null, $children = true)
   {
     $result = parent::delete($pk, $children);
 

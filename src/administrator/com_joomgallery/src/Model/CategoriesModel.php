@@ -213,7 +213,7 @@ class CategoriesModel extends JoomListModel
     $query->join('LEFT', $db->quoteName('#__users', 'um'), $db->quoteName('um.id') . ' = ' . $db->quoteName('a.modified_by'));
 
     // Join over the category field 'parent_title'
-    $query->select($db->quoteName('parent.title', 'parent_title'));
+    $query->select([$db->quoteName('parent.title', 'parent_title'), $db->quoteName('parent.created_by', 'parent_created_by')]);
     $query->join('LEFT', $db->quoteName('#__joomgallery_categories', 'parent'), $db->quoteName('parent.id') . ' = ' . $db->quoteName('a.parent_id'));
 
     // Get img_count

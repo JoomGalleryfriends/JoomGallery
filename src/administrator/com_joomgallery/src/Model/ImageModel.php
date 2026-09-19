@@ -867,6 +867,9 @@ class ImageModel extends JoomAdminModel
             return false;
           }
 
+          // Retire caches before observers run and before a later item can fail.
+          $this->cleanCache();
+
           // Trigger the after event.
           Factory::getApplication()->triggerEvent($this->event_after_delete, [$context, $table]);
         }
@@ -908,9 +911,6 @@ class ImageModel extends JoomAdminModel
     {
       $this->component->printDebug();
     }
-
-    // Clear the component's cache
-    $this->cleanCache();
 
     return true;
   }

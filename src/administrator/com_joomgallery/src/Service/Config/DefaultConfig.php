@@ -53,13 +53,19 @@ class DefaultConfig extends Config implements ConfigInterface
     parent::__construct($context, $id, $inclOwn, $useCache);
 
     // Check if we can use cached parameters
-    if($useCache && !empty(self::$cache) && key_exists(base64_encode($this->storeId), self::$cache))
-    {
-      // The params for this context is available in the object cache.
-      // Use cache instead.
-      $this->setProperties(self::$cache[base64_encode($this->storeId)]);
+    $cacheKey = base64_encode($this->storeId);
 
-      return;
+    if($useCache && $this->hotCacheLimit > 0 && $this->hotCacheLifetime > 0 && $this->cache->has($cacheKey))
+    {
+      $entry = $this->cache->get($cacheKey);
+
+      if(\is_array($entry) && isset($entry['expires'], $entry['value']) && (int) $entry['expires'] >= time())
+      {
+        // The calculated parameters are available and still valid.
+        $this->setProperties($entry['value']);
+
+        return;
+      }
     }
 
     $context_array = explode('.', $context);

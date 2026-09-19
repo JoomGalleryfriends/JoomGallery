@@ -16,6 +16,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerServiceInterface;
@@ -61,7 +63,7 @@ use Psr\Container\ContainerInterface;
  * @package JoomGallery
  * @since   4.0.0
  */
-class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface
+class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface, CacheServiceInterface
 {
   use MessageTrait;
   use AssociationServiceTrait;
@@ -80,6 +82,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
    * $component->get<SERVICENAME>()-><METHOD>();     // execute method of service class
    */
   use AccessServiceTrait;
+  use CacheServiceTrait;
   use ConfigServiceTrait;
   use FileManagerServiceTrait;
   use FilesystemServiceTrait;
@@ -91,13 +94,6 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
   use TusServiceTrait;
   use UploaderServiceTrait;
   use MigrationServiceTrait;
-
-  /**
-   * Storage for the component cache object
-   *
-   * @var MVCStorage
-   */
-  public $cache = false;
 
   /**
    * Storage for the xml of the current component
@@ -142,10 +138,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
     }
 
     // Initialize JoomGallery cache
-    if(!$this->cache)
-    {
-      $this->cache = new JoomCache();
-    }
+    $this->createCache('com_joomgallery', true);
 
     // Load component manifest xml
     if(!$this->xml)
