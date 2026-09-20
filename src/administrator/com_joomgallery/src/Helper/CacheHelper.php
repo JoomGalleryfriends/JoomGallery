@@ -109,11 +109,13 @@ final class CacheHelper
   }
 
   /**
-   * Captures persisted gallery parameters and permission rules
+   * Captures persisted configuration and ACL dependencies
    *
-   * The snapshot contains params, rules and records maps. Category snapshots
-   * include category and image permission assets; image snapshots omit ACL
-   * rules. Full records are retained for configuration sets.
+   * Configuration dependencies include category parents and image categories.
+   * Category snapshots also include owners, category parents and the parent links
+   * of category/image permission assets. Image snapshots omit ACL dependencies
+   * because image-specific decisions are request-local. Full records are
+   * retained for configuration sets.
    *
    * @param   DatabaseInterface  $db    the database connection used to read persisted inputs
    * @param   string             $type  the gallery record type: config, category or image
@@ -126,7 +128,7 @@ final class CacheHelper
   public static function gallery($db, string $type, array $ids): array
   {
     $tables   = ['config' => '#__joomgallery_configs', 'category' => '#__joomgallery_categories', 'image' => '#__joomgallery'];
-    $snapshot = ['params' => [], 'rules' => [], 'records' => []];
+    $snapshot = ['params' => [], 'rules' => [], 'records' => [], 'owners' => [], 'parents' => [], 'inheritance' => []];
     $names    = [];
 
     foreach($ids as $id)
@@ -138,6 +140,18 @@ final class CacheHelper
 
       if($params) $snapshot['params'][$id] = $params;
 
+      if($type !== 'config' && $row)
+      {
+        $parent                       = $type === 'category' ? 'parent_id' : 'catid';
+        $snapshot['inheritance'][$id] = (int) ($row[$parent] ?? 0);
+      }
+
+      if($type === 'category' && $row)
+      {
+        $snapshot['owners'][$id]                      = (int) ($row['created_by'] ?? 0);
+        $snapshot['parents']['category.' . (int) $id] = (int) ($row['parent_id'] ?? 0);
+      }
+
       if($type !== 'image')
       {
         $names[] = 'com_joomgallery.' . $type . '.' . (int) $id;
@@ -148,7 +162,7 @@ final class CacheHelper
 
     if($names)
     {
-      $query = $db->getQuery(true)->select($db->quoteName(['name', 'rules']))
+      $query = $db->getQuery(true)->select($db->quoteName(['name', 'rules', 'parent_id']))
         ->from($db->quoteName('#__assets'))
         ->where($db->quoteName('name') . ' IN (' . implode(',', array_map([$db, 'quote'], $names)) . ')');
 
@@ -157,8 +171,14 @@ final class CacheHelper
         $rules = self::json($asset['rules']);
 
         if($rules) $snapshot['rules'][$asset['name']] = $rules;
+        $snapshot['parents'][$asset['name']]          = (int) $asset['parent_id'];
       }
       ksort($snapshot['rules']);
+    }
+
+    foreach(['owners', 'parents', 'inheritance'] as $dependency)
+    {
+      ksort($snapshot[$dependency]);
     }
 
     return $snapshot;
@@ -168,8 +188,9 @@ final class CacheHelper
    * Determines which scopes changed between gallery snapshots
    *
    * Configuration-set stores always invalidate config. Category and image
-   * parameters invalidate config; only category and configuration-set rules
-   * invalidate ACL.
+   * parameters and configuration inheritance links invalidate config, including
+   * moves saved individually or in batches. Permission rules, category ownership
+   * and ACL inheritance relationships invalidate ACL across all visitors.
    *
    * @param   string  $type    the gallery record type: config, category or image
    * @param   array   $before  the persisted values before the operation
@@ -185,13 +206,15 @@ final class CacheHelper
     $scopes = [];
 
     if( ($type === 'config' && ($stored || $before['records'] !== $after['records'])) ||
-        ($type !== 'config' && $before['params'] !== $after['params'])
+        ($type !== 'config' && ($before['params'] !== $after['params'] || $before['inheritance'] !== $after['inheritance']))
       )
     {
       $scopes[] = 'config';
     }
 
-    if($type !== 'image' && $before['rules'] !== $after['rules'])
+    if( $type !== 'image' &&
+        ($before['rules'] !== $after['rules'] || $before['owners'] !== $after['owners'] || $before['parents'] !== $after['parents'])
+      )
     {
       $scopes[] = 'acl';
     }
@@ -235,7 +258,11 @@ final class CacheHelper
   {
     if($kind === 'assets')
     {
-      return self::json($before['rules'] ?? []) !== self::json($after['rules'] ?? []) ? ['acl'] : [];
+      $changed = self::json($before['rules'] ?? []) !== self::json($after['rules'] ?? [])
+        || (int) ($before['parent_id'] ?? 0) !== (int) ($after['parent_id'] ?? 0)
+        || (string) ($before['name'] ?? '') !== (string) ($after['name'] ?? '');
+
+      return $changed ? ['acl'] : [];
     }
 
     if($kind === 'extensions')

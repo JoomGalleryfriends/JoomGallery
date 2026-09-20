@@ -57,6 +57,14 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
   protected $_old_location_path = null;
 
   /**
+   * Whether store() already owns the before/after cache comparison.
+   *
+   * @var    bool
+   * @since  4.5.0
+   */
+  private bool $cacheStoreInProgress = false;
+
+  /**
    * Set here the new password
    *
    * @var    string
@@ -300,6 +308,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     $before = CacheHelper::gallery($db, 'category', $ids);
     $result = false;
 
+    $this->cacheStoreInProgress = true;
+
     try
     {
       $result = $this->storeRecord($updateNulls);
@@ -308,6 +318,8 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     }
     finally
     {
+      $this->cacheStoreInProgress = false;
+
       $ids   = [(int) ($this->id ?? 0)];
       $after = CacheHelper::gallery($db, 'category', $ids);
 
@@ -487,6 +499,47 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
       else
       {
         $this->_new_location_path = $referenceObj->path . '/{alias}';
+      }
+    }
+  }
+
+  /**
+   * Moves a category and invalidates ACL when its persisted ancestry changes.
+   *
+   * Nested-table moves can bypass store(). Moves performed inside store() are
+   * compared by its outer snapshot after category and asset writes finish.
+   *
+   * @param   integer       $referenceId      The reference node.
+   * @param   string        $position         The position relative to the reference.
+   * @param   integer|null  $pk               The category ID, or null for this instance.
+   * @param   boolean       $recursiveUpdate  Whether to update descendant publication state.
+   *
+   * @return  boolean
+   *
+   * @since   4.5.0
+   */
+  public function moveByReference($referenceId, $position = 'after', $pk = null, $recursiveUpdate = true)
+  {
+    if(!$this->component_exists || $this->cacheStoreInProgress)
+    {
+      return parent::moveByReference($referenceId, $position, $pk, $recursiveUpdate);
+    }
+
+    $db     = $this->getDatabase();
+    $ids    = [(int) ($pk ?? $this->id)];
+    $before = CacheHelper::gallery($db, 'category', $ids);
+
+    try
+    {
+      return parent::moveByReference($referenceId, $position, $pk, $recursiveUpdate);
+    }
+    finally
+    {
+      $after = CacheHelper::gallery($db, 'category', $ids);
+
+      foreach(CacheHelper::galleryScopes('category', $before, $after) as $scope)
+      {
+        $this->getComponent()->getCacheRevision()->invalidate($scope);
       }
     }
   }

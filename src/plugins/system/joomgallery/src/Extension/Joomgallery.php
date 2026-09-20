@@ -398,14 +398,21 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
     if($kind === null) return;
 
-    if($kind === 'assets' && !\in_array($table->name ?? '', ['root.1', 'com_joomgallery'], true)) return;
-
     if($kind === 'extensions' && (($table->element ?? '') !== 'com_joomgallery' || ($table->type ?? '') !== 'component')) return;
 
+    $key = $table->getKeyName();
+    $id  = (int) $event->getArgument('pk', $table->$key ?? 0);
+    $row = CacheHelper::row($this->db, $table->getTableName(), $id, $key);
+
+    if($kind === 'assets')
+    {
+      // Include the persisted name for renamed assets and deletes by primary key.
+      $names = [(string) ($row['name'] ?? ''), (string) ($table->name ?? '')];
+
+      if(!array_filter($names, static fn($name) => $name === 'root.1' || preg_match('/^com_joomgallery(?:\.|$)/', $name))) return;
+    }
+
     JoomHelper::getComponent();
-    $key  = $table->getKeyName();
-    $id   = (int) $event->getArgument('pk', $table->$key ?? 0);
-    $row  = CacheHelper::row($this->db, $table->getTableName(), $id, $key);
     $rows = $row ? [$id => $row] : [];
 
     // Deleting a non-gallery parent can also delete gallery menu children.
@@ -425,7 +432,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
   /**
    * Compare persisted values after writes, including nested-table deletes.
-   * Root/JoomGallery asset rules cover global and component permissions.
+   * Root and JoomGallery asset rules/parent links cover inherited permissions.
    *
    * @param   Event   $event
    *

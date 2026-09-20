@@ -10,8 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Cache;
 
-\defined('_JEXEC') || die;
-
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -22,7 +20,10 @@ use Joomla\CMS\Factory;
  * Shared request state and session storage for component caches
  *
  * Loads session data lazily and preserves the revision associated with each
- * cached snapshot. Request-only helper caching does not open a session.
+ * cached snapshot. Session changes are staged immediately in Joomla's in-memory
+ * session; Joomla writes its backend when the session closes. This also covers
+ * redirects and exit(), which can bypass dispatcher completion and finally.
+ * Request-only and shared guest caching do not open a session.
  *
  * @package    JoomGallery
  * @since      4.5.0
@@ -293,6 +294,7 @@ class CacheStorage
     if($revision !== null && (!isset($stored['revision']) || (string) $stored['revision'] !== $revision))
     {
       $this->dirtyCaches[$namespace] = true;
+      $this->persist($namespace);
     }
   }
 
@@ -418,6 +420,9 @@ class CacheStorage
       $oldKey = array_key_first($items);
       unset($items[$oldKey], $this->sharedReads[$namespace][$oldKey]);
     }
+
+    // Stage the bounded snapshot before a redirect, close() or exit can end the request.
+    if(!$requestOnly) $this->persist($namespace);
   }
 
   /**
@@ -512,13 +517,17 @@ class CacheStorage
       unset($this->runtimeCaches[$namespace][array_key_first($this->runtimeCaches[$namespace])]);
       $this->dirtyCaches[$namespace] = true;
     }
+
+    $this->persist($namespace);
   }
 
   /**
-   * Writes dirty namespace entries to the current session
+   * Stages dirty namespace entries in Joomla's in-memory session
    *
    * Preserves the revision associated with the calculated entries so that an
-   * older request cannot relabel stale data as current.
+   * older request cannot relabel stale data as current. This does not close the
+   * session or write its backend; Joomla owns that lifecycle. Repeated calls
+   * without changes are no-ops, and shared guest namespaces bypass the session.
    *
    * @param   string  $namespace  the namespace identifying the cache entries
    *
