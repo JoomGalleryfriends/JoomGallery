@@ -109,7 +109,7 @@
              description="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH_LONG" /> -->
 
       <field name="spacer1"
-              label="COM_JOOMGALLERY_CONFIG_ROUTER"
+              label="COM_JOOMGALLERY_CONFIG_ROUTER_TITLE"
               type="spacer"
               class="bold" >
       </field>
