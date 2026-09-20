@@ -17,10 +17,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 use Joomla\Database\DatabaseInterface;
 
 /**
- * Persisted-input comparisons for selective cache invalidation
+ * Cache invalidation comparisons and LFU usage bookkeeping
  *
  * Compares configuration parameters and permission rules without treating JSON
- * formatting or object-key order as changes.
+ * formatting or object-key order as changes. Tracks usage separately from cached
+ * values for LFU eviction with aging and least-recently-used tie-breaking.
  *
  * @package    JoomGallery
  * @since      4.5.0
@@ -284,5 +285,74 @@ final class CacheHelper
     }
 
     return \in_array($kind, ['usergroups', 'viewlevels'], true) && $before !== $after ? ['acl'] : [];
+  }
+
+  /**
+   * Retains usage metadata for existing values and initialises older entries.
+   * Array order records least to most recent use for equal-hit eviction ties.
+   * Values stay separate from metadata; entries without metadata start at one hit.
+   */
+  public static function reconcileUsage(array $items, array $usage): array
+  {
+    $usage = array_intersect_key($usage, $items);
+
+    foreach($usage as &$entry)
+    {
+      $entry         = \is_array($entry) ? $entry : [];
+      $entry['hits'] = max(1, (int) ($entry['hits'] ?? 1));
+    }
+    unset($entry);
+
+    foreach($items as $key => $value)
+    {
+      $usage[$key] ??= ['hits' => 1];
+    }
+
+    return $usage;
+  }
+
+  /** Records one retrieval, preserving metadata such as absolute expiration. */
+  public static function recordHit(array &$usage, string|int $key): void
+  {
+    $entry = $usage[$key] ?? ['hits' => 1];
+
+    if($entry['hits'] < PHP_INT_MAX) $entry['hits']++;
+
+    unset($usage[$key]);
+    $usage[$key] = $entry;
+  }
+
+  /** Ages surviving counters once when a new insertion encounters a full cache. */
+  public static function ageUsage(array &$usage): void
+  {
+    foreach($usage as &$entry)
+    {
+      $entry['hits'] = max(1, (int) floor($entry['hits'] / 1.5));
+    }
+    unset($entry);
+  }
+
+  /** Chooses the lowest count, retaining the oldest access on equal counts. */
+  public static function evictionKey(array $usage): string|int|null
+  {
+    $victim = null;
+    $hits   = PHP_INT_MAX;
+
+    foreach($usage as $key => $entry)
+    {
+      if($victim === null || $entry['hits'] < $hits)
+      {
+        $victim = $key;
+        $hits   = $entry['hits'];
+      }
+    }
+
+    return $victim;
+  }
+
+  /** Values without an expiration field remain valid until explicitly removed. */
+  public static function isExpired(mixed $value): bool
+  {
+    return \is_array($value) && isset($value['expires']) && (int) $value['expires'] < time();
   }
 }

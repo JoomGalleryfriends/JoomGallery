@@ -193,8 +193,9 @@ class Cache implements CacheInterface
   /**
    * Stores a value and returns the previous cached value
    *
-   * Reinsertion moves the entry to the end of the insertion-order queue. A
-   * positive limit evicts the oldest inserted entries.
+   * New entries start at one hit. A full cache removes expired entries, ages
+   * usage counts and evicts the least frequently used, then least recently used.
+   * Reading the previous value here does not count as a cache hit.
    *
    * @param   string  $key    the cache entry key
    * @param   mixed   $value  the value to store
@@ -206,7 +207,8 @@ class Cache implements CacheInterface
    */
   public function set(string $key, mixed $value = null, int $limit = 0): mixed
   {
-    $previous = $this->get($key);
+    $this->initialise();
+    $previous = $this->storage->get($this->namespace, $key, null, $this->requestOnly, false);
     $this->storage->put($this->namespace, $key, $value, $limit, $this->requestOnly);
 
     return $previous;

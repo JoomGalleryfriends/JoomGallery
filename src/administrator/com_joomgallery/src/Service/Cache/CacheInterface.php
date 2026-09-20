@@ -102,8 +102,9 @@ interface CacheInterface
   /**
    * Stores a value and returns the previous cached value
    *
-   * Reinsertion moves the entry to the end of the insertion-order queue. A
-   * positive limit evicts the oldest inserted entries.
+   * New entries start at one hit. Full-cache insertions remove expired entries,
+   * age usage counts by dividing by 1.5 (floored, minimum one), then evict the
+   * least frequently used entry, breaking ties by least recent retrieval.
    *
    * @param   string  $key    the cache entry key
    * @param   mixed   $value  the value to store

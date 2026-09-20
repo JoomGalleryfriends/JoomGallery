@@ -10,8 +10,11 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\Cache;
 
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Factory;
 
@@ -19,7 +22,7 @@ use Joomla\CMS\Factory;
  * Shared guest values stored through Joomla's configured cache handler
  *
  * Individual values use revision-specific keys. Small locked index buckets
- * support exact expiration cleanup and enforce the configured per-scope limit.
+ * support expiration cleanup and LFU eviction with aging and LRU tie-breaking.
  * Backend retention is seven days; entry expiration is checked independently.
  *
  * @package JoomGallery
@@ -152,11 +155,12 @@ class GuestCacheStorage
    * @param   string  $revision   the revision captured before calculation
    * @param   string  $namespace  the complete guest context namespace
    * @param   string  $key        the logical entry key
+   * @param   bool    $countHit   whether this retrieval counts as use
    *
    * @return  array|null
    * @since   4.5.0
    */
-  public function get(string $scope, string $revision, string $namespace, string $key): ?array
+  public function get(string $scope, string $revision, string $namespace, string $key, bool $countHit = true): ?array
   {
     $policy = $this->policy();
 
@@ -170,7 +174,12 @@ class GuestCacheStorage
       $this->preparePolicy($scope, $cache);
       $entry = $this->decode($cache->get($id));
 
-      if($entry !== null && $entry['expires'] >= time()) return $entry;
+      if($entry !== null && $entry['expires'] >= time())
+      {
+        if($countHit) $this->touch($scope, $revision, $namespace, $key);
+
+        return $entry;
+      }
 
       if(!isset($this->locks[$scope][$id]))
       {
@@ -185,6 +194,8 @@ class GuestCacheStorage
           {
             $this->release($scope, $id);
 
+            if($countHit) $this->touch($scope, $revision, $namespace, $key);
+
             return $entry;
           }
         }
@@ -196,6 +207,63 @@ class GuestCacheStorage
     }
 
     return null;
+  }
+
+  /**
+   * Records one successful retrieval in the shared bucket under its write lock
+   *
+   * Missing or expired index entries are never recreated. A failed metadata
+   * update does not prevent the caller from using its already retrieved value.
+   * Counters and LRU order change without extending the value's expiration.
+   *
+   * @param   string  $scope      the invalidation scope
+   * @param   string  $revision   the revision of the retrieved value
+   * @param   string  $namespace  the guest context namespace
+   * @param   string  $key        the logical entry key
+   *
+   * @return  void
+   * @since   4.5.0
+   */
+  public function touch(string $scope, string $revision, string $namespace, string $key): void
+  {
+    $policy = $this->policy();
+
+    if($policy['entries'] === 0 || $policy['lifetime'] === 0) return;
+
+    $id     = $this->key($revision, $namespace, $key);
+    $count  = min($this->bucketCount, $policy['entries']);
+    $bucket = 'index-' . (hexdec(substr($id, 0, 8)) % $count);
+    $locked = false;
+
+    try
+    {
+      $cache = $this->backend($scope);
+      $this->preparePolicy($scope, $cache);
+      $locked = (bool) $cache->lock($bucket, null, 1)->locked;
+
+      if(!$locked) return;
+
+      $index = $this->readIndex($cache->get($bucket));
+
+      if(!isset($index[$id]) || CacheHelper::isExpired($index[$id])) return;
+
+      CacheHelper::recordHit($index, $id);
+      $cache->store(serialize($index), $bucket);
+    }
+    catch(\Throwable $e)
+    {
+      // Usage accounting must not turn a cache hit into an application failure.
+    }
+    finally
+    {
+      if($locked)
+      {
+        try { $cache->unlock($bucket);
+        }
+        catch(\Throwable $e) {
+        }
+      }
+    }
   }
 
   /**
@@ -239,27 +307,38 @@ class GuestCacheStorage
       if(!$locked) return;
       $index = $this->readIndex($cache->get($bucket));
 
-      foreach($index as $oldId => $expiry)
+      $newEntry = !isset($index[$id]) || CacheHelper::isExpired($index[$id]);
+      $full     = $newEntry && \count($index) >= $limit;
+
+      foreach($index as $oldId => $metadata)
       {
-        if($expiry < time())
-        { $cache->remove($oldId);
-unset($index[$oldId]);
+        if(CacheHelper::isExpired($metadata))
+        {
+          $cache->remove($oldId);
+          unset($index[$oldId]);
         }
       }
-      unset($index[$id]);
 
-      while(\count($index) >= $limit)
+      if($full) CacheHelper::ageUsage($index);
+
+      if($newEntry)
       {
-        $oldId = array_key_first($index);
-        $cache->remove($oldId);
-        unset($index[$oldId]);
+        while(\count($index) >= $limit)
+        {
+          $oldId = CacheHelper::evictionKey($index);
+          $cache->remove($oldId);
+          unset($index[$oldId]);
+        }
       }
 
       if($cache->store(serialize(['expires' => $expires, 'value' => $value]), $id))
       {
-        $index[$id] = $expires;
-        $cache->store(serialize($index), $bucket);
+        $index[$id]          ??= ['hits' => 1];
+        $index[$id]['expires'] = $expires;
       }
+
+      // Persist cleanup and aging even when the new value could not be stored.
+      $cache->store(serialize($index), $bucket);
     }
     catch(\Throwable $e)
     {
@@ -310,9 +389,9 @@ unset($index[$oldId]);
         {
           $index = $this->readIndex($cache->get($bucket));
 
-          foreach($index as $id => $expires)
+          foreach($index as $id => $metadata)
           {
-            if($expires < time())
+            if(CacheHelper::isExpired($metadata))
             { $cache->remove($id);
 unset($index[$id]);
             }
@@ -375,7 +454,7 @@ unset($index[$id]);
   }
 
   /**
-   * Decodes a bucket containing backend IDs and expiration timestamps
+   * Decodes usage metadata, accepting older expiration-only bucket entries
    *
    * @param   mixed  $data  the serialized index
    *
@@ -386,7 +465,26 @@ unset($index[$id]);
   {
     $index = \is_string($data) ? @unserialize($data, ['allowed_classes' => false]) : null;
 
-    return \is_array($index) ? $index : [];
+    if(!\is_array($index)) return [];
+
+    foreach($index as $id => &$entry)
+    {
+      if(\is_int($entry))
+      {
+        $entry = ['expires' => $entry, 'hits' => 1];
+      }
+      elseif(\is_array($entry) && isset($entry['expires']))
+      {
+        $entry['hits'] = max(1, (int) ($entry['hits'] ?? 1));
+      }
+      else
+      {
+        unset($index[$id]);
+      }
+    }
+    unset($entry);
+
+    return $index;
   }
 
   /**

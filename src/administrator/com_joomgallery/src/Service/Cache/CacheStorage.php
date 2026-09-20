@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Cache;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Factory;
 
 /**
@@ -95,6 +96,15 @@ class CacheStorage
    * @since   4.5.0
    */
   private array $runtimeCaches = [];
+
+  /** @var array Request-only hit counters in least-recently-used order. */
+  private array $requestUsage = [];
+
+  /** @var array Persistent hit counters in least-recently-used order. */
+  private array $runtimeUsage = [];
+
+  /** @var array Namespace timestamps, preserved when only usage changes. */
+  private array $cacheCreated = [];
 
   /**
    * Namespaces already loaded during this request
@@ -223,11 +233,12 @@ class CacheStorage
       {
         if($registeredScope !== $scope) continue;
 
-        unset($this->requestCaches[$name], $this->sharedReads[$name]);
+        unset($this->requestCaches[$name], $this->requestUsage[$name], $this->sharedReads[$name]);
 
         if(isset($this->loadedCaches[$name]))
         {
           $this->runtimeCaches[$name]  = [];
+          $this->runtimeUsage[$name]   = [];
           $this->cacheRevisions[$name] = $revision;
           $this->dirtyCaches[$name]    = true;
         }
@@ -261,6 +272,7 @@ class CacheStorage
     if(isset($this->sharedNamespaces[$namespace]))
     {
       $this->runtimeCaches[$namespace]  = [];
+      $this->runtimeUsage[$namespace]   = [];
       $this->loadedCaches[$namespace]   = true;
       $this->cacheRevisions[$namespace] = $revision;
 
@@ -287,6 +299,8 @@ class CacheStorage
       $items = $stored;
     }
 
+    $this->runtimeUsage[$namespace]   = CacheHelper::reconcileUsage($items, \is_array($stored['usage'] ?? null) ? $stored['usage'] : []);
+    $this->cacheCreated[$namespace]   = (int) ($stored['created'] ?? time());
     $this->runtimeCaches[$namespace]  = $items;
     $this->loadedCaches[$namespace]   = true;
     $this->cacheRevisions[$namespace] = $revision;
@@ -340,39 +354,71 @@ class CacheStorage
     {
       $revision                                = $this->cacheRevisions[$namespace];
       $this->readRevisions[$namespace][$key] ??= $revision;
-      $entry                                   = $this->guestStorage->get($this->scopes[$namespace], $revision, $namespace, $key);
+      $entry                                   = $this->guestStorage->get($this->scopes[$namespace], $revision, $namespace, $key, false);
       $this->sharedReads[$namespace][$key]     = true;
 
-      if($entry !== null) $this->runtimeCaches[$namespace][$key] = $entry['value'];
+      if($entry !== null)
+      {
+        $this->runtimeCaches[$namespace][$key] = $entry['value'];
+        $this->runtimeUsage[$namespace][$key]  = ['hits' => 1, 'expires' => $entry['expires']];
+      }
     }
 
     return \array_key_exists($key, $this->runtimeCaches[$namespace]);
   }
 
   /**
-   * Returns a cached value or the supplied default
+   * Returns a valid cached value and records usage unless explicitly suppressed
    *
    * @param   string  $namespace    the namespace identifying the cache entries
    * @param   string  $key          the cache entry key
    * @param   mixed   $default      the value returned when the entry is absent
    * @param   bool    $requestOnly  whether to use request-only storage
+   * @param   bool    $countHit     whether this retrieval counts as use
    *
    * @return  mixed
    *
    * @since   4.5.0
    */
-  public function get(string $namespace, string $key, mixed $default, bool $requestOnly): mixed
+  public function get(string $namespace, string $key, mixed $default, bool $requestOnly, bool $countHit = true): mixed
   {
     if(!$this->has($namespace, $key, $requestOnly)) return $default;
 
-    return $requestOnly ? $this->requestCaches[$namespace][$key] : $this->runtimeCaches[$namespace][$key];
+    $value = $requestOnly ? $this->requestCaches[$namespace][$key] : $this->runtimeCaches[$namespace][$key];
+
+    if(CacheHelper::isExpired($value) || (!$requestOnly && CacheHelper::isExpired($this->runtimeUsage[$namespace][$key] ?? []))) return $default;
+
+    if($countHit)
+    {
+      if($requestOnly)
+      {
+        CacheHelper::recordHit($this->requestUsage[$namespace], $key);
+      }
+      else
+      {
+        CacheHelper::recordHit($this->runtimeUsage[$namespace], $key);
+
+        if(isset($this->sharedNamespaces[$namespace]))
+        {
+          $this->guestStorage->touch($this->scopes[$namespace], $this->cacheRevisions[$namespace], $namespace, $key);
+        }
+        else
+        {
+          $this->dirtyCaches[$namespace] = true;
+          $this->persist($namespace, true);
+        }
+      }
+    }
+
+    return $value;
   }
 
   /**
-   * Stores an entry and enforces insertion-order eviction
+   * Stores an entry and enforces expired-first LFU eviction with aging
    *
-   * Preserves numeric keys during eviction and marks session-backed entries
-   * dirty.
+   * New entries start at one hit. Full-cache insertions remove expired entries,
+   * divide surviving hit counts by 1.5 (floored, minimum one), then evict the
+   * least frequently used entry, breaking ties by least recent retrieval.
    *
    * @param   string  $namespace    the namespace identifying the cache entries
    * @param   string  $key          the cache entry key
@@ -392,11 +438,14 @@ class CacheStorage
     {
       $this->requestCaches[$namespace] ??= [];
       $items                             =& $this->requestCaches[$namespace];
+      $this->requestUsage[$namespace]  ??= [];
+      $usage                             =& $this->requestUsage[$namespace];
     }
     else
     {
       $this->initialise($namespace);
       $items                         =& $this->runtimeCaches[$namespace];
+      $usage                         =& $this->runtimeUsage[$namespace];
       $this->dirtyCaches[$namespace] = true;
     }
 
@@ -411,14 +460,46 @@ class CacheStorage
       $this->sharedReads[$namespace][$key] = true;
     }
 
-    unset($items[$key]);
-    $items[$key] = $value;
+    $usage = CacheHelper::reconcileUsage($items, $usage);
 
+    $expired = \array_key_exists($key, $items) && (CacheHelper::isExpired($items[$key]) || CacheHelper::isExpired($usage[$key]));
+    $full    = (!\array_key_exists($key, $items) || $expired) && $limit > 0 && \count($items) >= $limit;
+
+    if($expired)
+    {
+      unset($items[$key], $usage[$key]);
+    }
+
+    if($full)
+    {
+      foreach($items as $oldKey => $entry)
+      {
+        if(CacheHelper::isExpired($entry) || CacheHelper::isExpired($usage[$oldKey]))
+        {
+          unset($items[$oldKey], $usage[$oldKey], $this->sharedReads[$namespace][$oldKey]);
+        }
+      }
+      $usage = CacheHelper::reconcileUsage($items, $usage);
+      CacheHelper::ageUsage($usage);
+
+      while(\count($items) >= $limit)
+      {
+        $oldKey = CacheHelper::evictionKey($usage);
+        unset($items[$oldKey], $usage[$oldKey], $this->sharedReads[$namespace][$oldKey]);
+      }
+    }
+
+    $items[$key]   = $value;
+    $usage[$key] ??= ['hits' => 1];
+
+    // A replacement has a new value lifetime; do not retain an old guest envelope expiry.
+    unset($usage[$key]['expires']);
+
+    // A reduced limit also applies to replacements, without aging on a write.
     while($limit > 0 && \count($items) > $limit)
     {
-      // Unlike array_shift(), this preserves numeric user-ID keys.
-      $oldKey = array_key_first($items);
-      unset($items[$oldKey], $this->sharedReads[$namespace][$oldKey]);
+      $oldKey = CacheHelper::evictionKey($usage);
+      unset($items[$oldKey], $usage[$oldKey], $this->sharedReads[$namespace][$oldKey]);
     }
 
     // Stage the bounded snapshot before a redirect, close() or exit can end the request.
@@ -459,11 +540,14 @@ class CacheStorage
     {
       $this->requestCaches[$namespace] ??= [];
       $items                             =& $this->requestCaches[$namespace];
+      $this->requestUsage[$namespace]  ??= [];
+      $usage                             =& $this->requestUsage[$namespace];
     }
     else
     {
       $this->initialise($namespace);
       $items =& $this->runtimeCaches[$namespace];
+      $usage =& $this->runtimeUsage[$namespace];
     }
 
     if($pattern === false)
@@ -479,6 +563,8 @@ class CacheStorage
         if(preg_match($pattern, $matchKey)) unset($items[$key]);
       }
     }
+
+    $usage = CacheHelper::reconcileUsage($items, $usage);
 
     if(!$requestOnly)
     {
@@ -512,9 +598,12 @@ class CacheStorage
       }
     }
 
+    $this->runtimeUsage[$namespace] = CacheHelper::reconcileUsage($this->runtimeCaches[$namespace], $this->runtimeUsage[$namespace]);
+
     while($limit > 0 && \count($this->runtimeCaches[$namespace]) > $limit)
     {
-      unset($this->runtimeCaches[$namespace][array_key_first($this->runtimeCaches[$namespace])]);
+      $key = CacheHelper::evictionKey($this->runtimeUsage[$namespace]);
+      unset($this->runtimeCaches[$namespace][$key], $this->runtimeUsage[$namespace][$key]);
       $this->dirtyCaches[$namespace] = true;
     }
 
@@ -529,13 +618,14 @@ class CacheStorage
    * session or write its backend; Joomla owns that lifecycle. Repeated calls
    * without changes are no-ops, and shared guest namespaces bypass the session.
    *
-   * @param   string  $namespace  the namespace identifying the cache entries
+   * @param   string  $namespace    the namespace identifying the cache entries
+   * @param   bool    $preserveAge  whether only usage changed, leaving expiration unchanged
    *
    * @return  void
    *
    * @since   4.5.0
    */
-  public function persist(string $namespace): void
+  public function persist(string $namespace, bool $preserveAge = false): void
   {
     $this->synchronise($namespace);
 
@@ -548,7 +638,15 @@ class CacheStorage
 
     if(empty($this->dirtyCaches[$namespace])) return;
 
-    $stored = ['created' => time(), 'items' => $this->runtimeCaches[$namespace] ?? []];
+    if(!$preserveAge) $this->cacheCreated[$namespace] = time();
+
+    $items                          = $this->runtimeCaches[$namespace] ?? [];
+    $this->runtimeUsage[$namespace] = CacheHelper::reconcileUsage($items, $this->runtimeUsage[$namespace] ?? []);
+    $stored                         = [
+      'created' => $this->cacheCreated[$namespace] ?? time(),
+      'items' => $items,
+      'usage' => $this->runtimeUsage[$namespace],
+    ];
 
     if(($this->scopes[$namespace] ?? null) !== null)
     {
@@ -601,12 +699,14 @@ class CacheStorage
       $this->revisionStore->invalidate('config');
       $this->revisionStore->invalidate('acl');
       $this->requestCaches = [];
+      $this->requestUsage  = [];
     }
     else
     {
       foreach($this->requestCaches as $namespace => $items)
       {
         $this->requestCaches[$namespace] = $this->withoutExpiredEntries($items);
+        $this->requestUsage[$namespace]  = CacheHelper::reconcileUsage($this->requestCaches[$namespace], $this->requestUsage[$namespace] ?? []);
       }
     }
 
@@ -621,6 +721,8 @@ class CacheStorage
       if(!$expiredOnly)
       {
         $this->runtimeCaches[$namespace] = [];
+        $this->runtimeUsage[$namespace]  = [];
+        unset($this->sharedReads[$namespace]);
       }
       else
       {
@@ -628,6 +730,7 @@ class CacheStorage
 
         if($items === $this->runtimeCaches[$namespace]) continue;
         $this->runtimeCaches[$namespace] = $items;
+        $this->runtimeUsage[$namespace]  = CacheHelper::reconcileUsage($items, $this->runtimeUsage[$namespace]);
       }
       $this->dirtyCaches[$namespace] = true;
     }
@@ -684,6 +787,7 @@ class CacheStorage
     if(isset($nodes['items']) && \is_array($nodes['items']))
     {
       $nodes['items'] = (string) ($nodes['revision'] ?? '') === $revision ? $this->withoutExpiredEntries($nodes['items']) : [];
+      $nodes['usage'] = CacheHelper::reconcileUsage($nodes['items'], \is_array($nodes['usage'] ?? null) ? $nodes['usage'] : []);
     }
     else
     {
