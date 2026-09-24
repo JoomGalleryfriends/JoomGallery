@@ -92,6 +92,60 @@ $imageDateLabel                      = 'COM_JOOMGALLERY_DATE_UPLOAD';
 $databaseDate                        = !empty($this->item->date) ? \DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $this->item->date) : false;
 $metadataItems                       = array_merge($importantMetadata->get('items', []), $otherMetadata->get('items', []));
 
+// The view loads this information with JoomHelper::getImgInfo() for
+// jg_detail_view_type_image. Keep it separate from the original file's EXIF.
+if($show_metadata)
+{
+  $fileItems = [];
+  $fileLabels = [
+    'mime_type' => 'COM_JOOMGALLERY_MIME_TYPE',
+    'dimensions' => 'COM_JOOMGALLERY_IMAGE_SIZE',
+    'adapter'   => 'COM_JOOMGALLERY_CONFIG_FILESYSTEM',
+  ];
+
+  $fileInfo = (array) $this->imageInfo;
+  if(!empty($fileInfo['width']) && !empty($fileInfo['height']))
+  {
+    $fileInfo['dimensions'] = (int) $fileInfo['width'] . ' x ' . (int) $fileInfo['height'] . ' px';
+  }
+
+  if(!empty($fileInfo['adapter']))
+  {
+    $filesystem = JoomHelper::getService('Filesystem', [$this->item->filesystem]);
+    foreach($filesystem->getProviders() as $provider)
+    {
+      foreach($provider->adapterNames as $adapterName)
+      {
+        if($provider->name . '-' . $adapterName === $fileInfo['adapter'])
+        {
+          $fileInfo['adapter'] = Text::_($provider->displayName) . ' (' . $adapterName . ')';
+          break 2;
+        }
+      }
+    }
+  }
+
+  foreach($fileLabels as $key => $label)
+  {
+    $value = $fileInfo[$key] ?? null;
+
+    if(!\is_scalar($value) || (string) $value === '')
+    {
+      continue;
+    }
+
+    $fileItems[] = [
+      'path'  => 'file.' . $key,
+      'key'   => $key,
+      'label' => $label,
+      'value' => (string) $value,
+    ];
+  }
+
+  // Include file-only images even when no remaining EXIF/IPTC is available.
+  $otherMetadata->set('items', array_merge($fileItems, $otherMetadata->get('items', [])));
+}
+
 // Adjust image date field label
 foreach($metadataItems as $metadataItem)
 {
@@ -236,8 +290,8 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
         <dt class="col-sm-3 col-lg-2"><?php echo Text::_('JCATEGORY'); ?></dt>
         <dd class="col-sm-9 col-lg-10"><a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>"><?php echo $this->escape($this->item->cattitle); ?></a></dd>
       <?php endif; ?>
-      <?php if(!empty($this->imageInfo->width) && !empty($this->imageInfo->height)) : ?>
-        <dt class="col-sm-3 col-lg-2">Image size</dt>
+      <?php if($show_metadata && !empty($this->imageInfo->width) && !empty($this->imageInfo->height)) : ?>
+        <dt class="col-sm-3 col-lg-2"><?php echo Text::_('COM_JOOMGALLERY_IMAGE_SIZE'); ?></dt>
         <dd class="col-sm-9 col-lg-10"><?php echo (int) $this->imageInfo->width; ?> &times; <?php echo (int) $this->imageInfo->height; ?> px</dd>
       <?php endif; ?>
 
@@ -250,7 +304,9 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       <?php endforeach; ?>
 
       <?php // Important metadata fields ?>
-      <?php echo $metadataLayout->render($importantMetadata); ?>
+      <?php if($show_metadata) : ?>
+        <?php echo $metadataLayout->render($importantMetadata); ?>
+      <?php endif; ?>
     </dl>
     <br>
     <?php // Important metadata modal button ?>
@@ -260,7 +316,9 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       </button>
     <?php endif; ?>
 
-    <div class="mt-4 text-body-secondary">&copy; <?php echo HTMLHelper::_('date', $this->item->date, 'Y'); ?> <?php echo $this->escape($owner); ?></div>
+    <?php if(($show_created_by && $createdBy !== '') || ($show_imgauthor && $imageAuthor !== '')) : ?>
+      <div class="mt-4 text-body-secondary">&copy; <?php if($show_imgdate && !empty($this->item->date)) echo HTMLHelper::_('date', $this->item->date, 'Y'); ?> <?php echo $this->escape($show_imgauthor && $imageAuthor !== '' ? $imageAuthor : $createdBy); ?></div>
+    <?php endif; ?>
   </div>
 </article>
 
