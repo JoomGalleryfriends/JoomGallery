@@ -96,7 +96,7 @@ $metadataItems                       = array_merge($importantMetadata->get('item
 // jg_detail_view_type_image. Keep it separate from the original file's EXIF.
 if($show_metadata)
 {
-  $fileItems = [];
+  $fileItems  = [];
   $fileLabels = [
     'mime_type' => 'COM_JOOMGALLERY_MIME_TYPE',
     'dimensions' => 'COM_JOOMGALLERY_IMAGE_SIZE',
@@ -104,6 +104,7 @@ if($show_metadata)
   ];
 
   $fileInfo = (array) $this->imageInfo;
+
   if(!empty($fileInfo['width']) && !empty($fileInfo['height']))
   {
     $fileInfo['dimensions'] = (int) $fileInfo['width'] . ' x ' . (int) $fileInfo['height'] . ' px';
@@ -112,6 +113,7 @@ if($show_metadata)
   if(!empty($fileInfo['adapter']))
   {
     $filesystem = JoomHelper::getService('Filesystem', [$this->item->filesystem]);
+
     foreach($filesystem->getProviders() as $provider)
     {
       foreach($provider->adapterNames as $adapterName)

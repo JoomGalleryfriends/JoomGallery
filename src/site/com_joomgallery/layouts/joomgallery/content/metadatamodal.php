@@ -10,8 +10,8 @@
 
 \defined('_JEXEC') || die;
 
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 $metadata = $displayData instanceof Registry ? $displayData : new Registry($displayData);
@@ -22,18 +22,19 @@ $labels = ['file' => Text::_('JLIB_FORM_VALUE_CACHE_FILE'), 'exif' => 'EXIF', 'i
 
 foreach($metadata->get('items', []) as $item)
 {
-  $path = strtolower((string) ($item['path'] ?? ''));
+  $path   = strtolower((string) ($item['path'] ?? ''));
   $source = explode('.', $path)[0];
   // General JPEG comments belong to File; EXIF UserComment stays in EXIF.
-  $group = in_array($source, ['exif', 'iptc', 'xmp'], true) ? $source : 'file';
+  $group = \in_array($source, ['exif', 'iptc', 'xmp'], true) ? $source : 'file';
+
   if(preg_match('/(?:^|\.)comment(?:\.|$)/', $path))
   {
-    $group = 'file';
+    $group         = 'file';
     $item['label'] = 'COM_JOOMGALLERY_COMMENT';
   }
   $groups[$group][] = $item;
 }
-$groups = array_filter($groups);
+$groups      = array_filter($groups);
 $activeGroup = array_key_first($groups);
 ?>
 <div class="modal fade" id="jg-metadata-modal" tabindex="-1" aria-labelledby="jg-metadata-modal-title" aria-hidden="true">
