@@ -24,6 +24,14 @@ foreach($metadata->get('items', []) as $item)
 {
   $path   = strtolower((string) ($item['path'] ?? ''));
   $source = explode('.', $path)[0];
+
+  // IPTC 1:90 declares the character encoding (e.g. ESC % G for UTF-8).
+  // Keep it in stored metadata, but omit this technical marker from the UI.
+  if($source === 'iptc' && preg_match('/(?:^|\.)(?:1[#:]0*90|codedcharacterset)(?:\.\d+)*$/', $path))
+  {
+    continue;
+  }
+
   // General JPEG comments belong to File; EXIF UserComment stays in EXIF.
   $group = \in_array($source, ['exif', 'iptc', 'xmp'], true) ? $source : 'file';
 
@@ -59,7 +67,7 @@ $activeGroup = array_key_first($groups);
                 <tbody>
                   <?php foreach($items as $item) : ?>
                     <tr>
-                      <th scope="row" class="text-break"><?php echo $this->escape(Text::_($item['label'])); ?></th>
+                      <th scope="row" class="w-40 text-break" style="min-width:200px"><?php echo $this->escape(Text::_($item['label'])); ?></th>
                       <td class="text-break"><?php echo $this->escape($item['value']); ?></td>
                     </tr>
                   <?php endforeach; ?>

@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\MetadataHelper;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 
@@ -93,15 +94,16 @@ class Metadata implements MetadataInterface
         }
 
         $pathKey         = implode('.', $itemPath);
-        $definition      = $definitions[$pathKey] ?? null;
+        $metadataType    = strtolower((string) ($itemPath[0] ?? ''));
+        $definition      = MetadataHelper::getDefinition($metadataType, $pathKey);
         $attribute       = (string) ($definition['Attribute'] ?? $key);
         $items[$pathKey] = [
           'path'  => $pathKey,
           'key'   => (string) $key,
-          'label' => $definition['Name'] ?? (string) $key,
+          'label' => $definition ? MetadataHelper::getName($metadataType, $pathKey) : (string) $key,
           'value' => preg_match('/(?:DateTime|Date Created|Time Created|Digital Creation Date)/i', $attribute)
             ? $this->formatRenderDate((string) $value)
-            : (string) $value,
+            : MetadataHelper::getValue($metadataType, $pathKey, $value),
         ];
       }
     };

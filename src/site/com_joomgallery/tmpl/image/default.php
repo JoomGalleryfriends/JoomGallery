@@ -19,6 +19,7 @@ use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
+use Joomla\Registry\Registry;
 
 // image params
 $image_type        = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
@@ -46,12 +47,16 @@ $wa->useStyle('com_joomgallery.site');
 $wa->useStyle('com_joomgallery.jg-icon-font');
 $wa->useScript('bootstrap.modal');
 
-HTMLHelper::_('bootstrap.popover', '.jg-detail [data-jg-feature-popover]', [
-  'trigger'   => 'hover focus',
-  'container' => 'body',
-  'boundary'  => 'clippingParents',
-  'html'      => true,
-]);
+HTMLHelper::_(
+    'bootstrap.popover',
+    '.jg-detail [data-jg-feature-popover]',
+    [
+      'trigger'   => 'hover focus',
+      'container' => 'body',
+      'boundary'  => 'clippingParents',
+      'html'      => true,
+    ]
+);
 
 // Access check
 $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
@@ -61,7 +66,7 @@ $canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $t
 // URLs & Links
 $imageUrl     = JoomHelper::getImg($this->item, $image_type);
 $returnToken  = rawurlencode(base64_encode($this->backUrl));
-$currentRoute = JoomHelper::getViewRoute('image', $this->item->id, $this->item->catid, $this->item->language, $this->getLayout());
+$currentRoute = JoomHelper::getViewRoute('image', $this->item->id, $this->item->catid, null, null, $this->item->language, $this->getLayout() === 'default' ? null : $this->getLayout());
 $editReturn   = rawurlencode(base64_encode($currentRoute));
 $imageAuthor  = trim((string) ($this->item->author ?? ''));
 $createdBy    = trim((string) ($this->item->created_by_name ?? ''));
@@ -186,6 +191,32 @@ $baseTitle        = trim(Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX') . ' ' . $t
 $sitename         = $app->get('sitename');
 $siteNamePosition = (int) $app->get('sitename_pagetitles', 0);
 $app->getDocument()->setTitle($siteNamePosition === 1 ? $sitename . ' - ' . $baseTitle : ($siteNamePosition === 2 ? $baseTitle . ' - ' . $sitename : $baseTitle));
+
+// Render structured data through an overridable layout
+$metadata     = new Registry($this->item->imgmetadata);
+$jsonLdLayout = new FileLayout('joomgallery.jsonld.image');
+$jsonLd       = trim(
+    $jsonLdLayout->render(
+        [
+          'item'          => $this->item,
+          'metadata'      => $metadata,
+          'metadataItems' => $metadataItems,
+          'imageInfo'     => $this->imageInfo,
+          'pageUrl'       => Route::_($currentRoute, false, Route::TLS_IGNORE, true),
+          'pageTitle'     => $doc->getTitle(),
+          'imageUrl'      => $imageUrl,
+          'thumbnailUrl'  => JoomHelper::getImg($this->item, 'thumbnail'),
+        ]
+    )
+);
+
+if($jsonLd !== '')
+{
+  $doc->addCustomTag('<script type="application/ld+json">' . $jsonLd . '</script>');
+}
+
+// Receive copyright owner
+$copyright = $metadata->get('exif.IFD0.Copyright', '') ?: $metadata->get('iptc.2#116', '') ?: $imageAuthor ?: $createdBy;
 
 // Custom Fields
 $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
@@ -327,23 +358,23 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 
     <dl class="row mb-0">
       <?php if($show_imgauthor && $imageAuthor !== '') : ?>
-        <dt class="col-sm-3 col-lg-2"><?php echo Text::_('JAUTHOR'); ?></dt>
-        <dd class="col-sm-9 col-lg-10"><?php echo $this->escape($imageAuthor); ?></dd>
+        <dt class="col-sm-4 col-lg-3"><?php echo Text::_('JAUTHOR'); ?></dt>
+        <dd class="col-sm-8 col-lg-9"><?php echo $this->escape($imageAuthor); ?></dd>
       <?php endif; ?>
       <?php if($show_category) : ?>
-        <dt class="col-sm-3 col-lg-2"><?php echo Text::_('JCATEGORY'); ?></dt>
-        <dd class="col-sm-9 col-lg-10"><a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>"><?php echo $this->escape($this->item->cattitle); ?></a></dd>
+        <dt class="col-sm-4 col-lg-3"><?php echo Text::_('JCATEGORY'); ?></dt>
+        <dd class="col-sm-8 col-lg-9"><a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>"><?php echo $this->escape($this->item->cattitle); ?></a></dd>
       <?php endif; ?>
       <?php if($show_metadata && !empty($this->imageInfo->width) && !empty($this->imageInfo->height)) : ?>
-        <dt class="col-sm-3 col-lg-2"><?php echo Text::_('COM_JOOMGALLERY_IMAGE_SIZE'); ?></dt>
-        <dd class="col-sm-9 col-lg-10"><?php echo (int) $this->imageInfo->width; ?> &times; <?php echo (int) $this->imageInfo->height; ?> px</dd>
+        <dt class="col-sm-4 col-lg-3"><?php echo Text::_('COM_JOOMGALLERY_IMAGE_SIZE'); ?></dt>
+        <dd class="col-sm-8 col-lg-9"><?php echo (int) $this->imageInfo->width; ?> &times; <?php echo (int) $this->imageInfo->height; ?> px</dd>
       <?php endif; ?>
 
       <?php // Custom fields ?>
       <?php foreach($fields as $field) : ?>
         <?php if($this->component->getAccess()->checkViewLevel($field->access) && $field->params->get('display') > 0) : ?>
-          <dt class="col-sm-3 col-lg-2"><?php echo $this->escape($field->title); ?></dt>
-          <dd class="col-sm-9 col-lg-10"><?php echo $this->escape($field->value); ?></dd>
+          <dt class="col-sm-4 col-lg-3"><?php echo $this->escape($field->title); ?></dt>
+          <dd class="col-sm-8 col-lg-9"><?php echo $this->escape($field->value); ?></dd>
         <?php endif; ?>
       <?php endforeach; ?>
 
@@ -368,8 +399,8 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       <?php endforeach; ?>
     <?php endif; ?>
 
-    <?php if(($show_created_by && $createdBy !== '') || ($show_imgauthor && $imageAuthor !== '')) : ?>
-      <div class="mt-4 text-body-secondary">&copy; <?php if($show_imgdate && !empty($this->item->date)) echo HTMLHelper::_('date', $this->item->date, 'Y'); ?> <?php echo $this->escape($show_imgauthor && $imageAuthor !== '' ? $imageAuthor : $createdBy); ?></div>
+    <?php if($copyright) : ?>
+      <div class="mt-4 text-body-secondary">&copy; <?php if($show_imgdate && !empty($this->item->date)) echo HTMLHelper::_('date', $this->item->date, 'Y'); ?> <?php echo $this->escape($copyright); ?></div>
     <?php endif; ?>
   </div>
 </article>

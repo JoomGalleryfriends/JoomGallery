@@ -16,6 +16,6 @@ use Joomla\Registry\Registry;
 $metadata = $displayData instanceof Registry ? $displayData : new Registry($displayData);
 ?>
 <?php foreach($metadata->get('items', []) as $item) : ?>
-  <dt class="col-sm-3 col-lg-2"><?php echo $this->escape(Text::_($item['label'])); ?></dt>
-  <dd class="col-sm-9 col-lg-10"><?php echo $this->escape($item['value']); ?></dd>
+  <dt class="col-sm-4 col-lg-3"><?php echo $this->escape(Text::_($item['label'])); ?></dt>
+  <dd class="col-sm-8 col-lg-9"><?php echo $this->escape($item['value']); ?></dd>
 <?php endforeach; ?>
