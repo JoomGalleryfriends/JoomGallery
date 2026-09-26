@@ -191,18 +191,19 @@ $app->getDocument()->setTitle($siteNamePosition === 1 ? $sitename . ' - ' . $bas
 $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 ?>
 
-<?php // load modules on jg_image_top ?>
-<?php $modules = ModuleHelper::getModules('jg_image_top'); ?>
-<?php if(!empty($modules)) : ?>
-  <?php foreach($modules as $module) : ?>
-    <div class="mt-3"><?php echo ModuleHelper::renderModule($module, ['style' => 'card']); ?></div>
-  <?php endforeach; ?>
-<?php endif; ?>
-
 <article class="jg-detail overflow-hidden" itemscope itemtype="https://schema.org/ImageObject">
   <a class="jg-detail__back btn btn-outline-primary" href="<?php echo htmlspecialchars($this->backUrl, ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo Text::_($backLabel); ?>" title="<?php echo Text::_($backLabel); ?>">
     <i class="icon-arrow-left" aria-hidden="true"></i><span><?php echo Text::_($backLabel); ?></span>
   </a>
+
+  <?php // load modules on jg_image_top ?>
+  <?php $modules = ModuleHelper::getModules('jg_image_top'); ?>
+  <?php if(!empty($modules)) : ?>
+    <?php foreach($modules as $module) : ?>
+      <div class="mt-2 mb-2"><?php echo ModuleHelper::renderModule($module); ?></div>
+    <?php endforeach; ?>
+  <?php endif; ?>
+
   <div class="jg-detail__stage position-relative d-flex align-items-center justify-content-center p-3">
     <?php if($previousUrl) : ?>
       <a class="jg-detail__nav jg-detail__nav--prev btn btn-light rounded-circle position-absolute top-50 start-0 translate-middle-y ms-2 shadow" href="<?php echo $previousUrl; ?>" aria-label="<?php echo Text::_('JPREV'); ?>"><i class="icon-chevron-left" aria-hidden="true"></i></a>
@@ -214,6 +215,14 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
   </div>
 
   <div class="container-fluid py-4">
+    <?php // load modules on jg_image_bottom ?>
+    <?php $modules = ModuleHelper::getModules('jg_image_bottom'); ?>
+    <?php if(!empty($modules)) : ?>
+      <?php foreach($modules as $module) : ?>
+        <div class="mt-2 mb-2"><?php echo ModuleHelper::renderModule($module); ?></div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+
     <div class="d-flex flex-wrap align-items-center gap-2 pb-3 border-bottom" aria-label="Image actions">
       <?php if($show_favorite_btn) : ?>
         <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
@@ -284,6 +293,14 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       </header>
     <?php endif; ?>
 
+    <?php // load modules on jg_image_before_info ?>
+    <?php $modules = ModuleHelper::getModules('jg_image_before_info'); ?>
+    <?php if(!empty($modules)) : ?>
+      <?php foreach($modules as $module) : ?>
+        <div class="mt-2 mb-2"><?php echo ModuleHelper::renderModule($module); ?></div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+
     <div class="d-flex flex-wrap gap-4 py-3 border-bottom text-body-secondary">
       <?php if($show_votes) : ?>
         <span><span class="icon-heart" aria-hidden="true"></span> <?php echo (int) $this->item->votes; ?> <?php echo Text::_('COM_JOOMGALLERY_VOTES'); ?></span>
@@ -343,6 +360,14 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       </button>
     <?php endif; ?>
 
+    <?php // load modules on jg_image_after_info ?>
+    <?php $modules = ModuleHelper::getModules('jg_image_after_info'); ?>
+    <?php if(!empty($modules)) : ?>
+      <?php foreach($modules as $module) : ?>
+        <div class="mt-2 mb-2"><?php echo ModuleHelper::renderModule($module); ?></div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+
     <?php if(($show_created_by && $createdBy !== '') || ($show_imgauthor && $imageAuthor !== '')) : ?>
       <div class="mt-4 text-body-secondary">&copy; <?php if($show_imgdate && !empty($this->item->date)) echo HTMLHelper::_('date', $this->item->date, 'Y'); ?> <?php echo $this->escape($show_imgauthor && $imageAuthor !== '' ? $imageAuthor : $createdBy); ?></div>
     <?php endif; ?>
@@ -352,11 +377,6 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 <?php if($show_metadata && \count($otherMetadata->get('items', [])) > 0) : ?>
   <?php echo $metadataModalLayout->render($otherMetadata); ?>
 <?php endif; ?>
-
-<?php foreach(ModuleHelper::getModules('jg_image_before_info') as $module) : ?><div class="mt-3"><?php echo ModuleHelper::renderModule($module, ['style' => 'card']); ?></div><?php
-endforeach; ?>
-<?php foreach(ModuleHelper::getModules('jg_image_bottom') as $module) : ?><div class="mt-3"><?php echo ModuleHelper::renderModule($module, ['style' => 'card']); ?></div><?php
-endforeach; ?>
 
 <script>
   document.querySelector('[data-jg-copy-link]')?.addEventListener('click', async function () {
