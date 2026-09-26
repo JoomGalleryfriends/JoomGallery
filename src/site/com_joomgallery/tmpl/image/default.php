@@ -21,30 +21,42 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 
 // image params
-$image_type       = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
-$show_title       = $this->params['configs']->get('jg_detail_view_show_title', 0, 'INT');
-$show_category    = $this->params['configs']->get('jg_detail_view_show_category', 0, 'INT');
-$show_description = $this->params['configs']->get('jg_detail_view_show_description', 0, 'INT');
-$show_imgdate     = $this->params['configs']->get('jg_detail_view_show_imgdate', 0, 'INT');
-$show_imgauthor   = $this->params['configs']->get('jg_detail_view_show_imgauthor', 0, 'INT');
-$show_created_by  = $this->params['configs']->get('jg_detail_view_show_created_by', 0, 'INT');
-$show_votes       = $this->params['configs']->get('jg_detail_view_show_votes', 0, 'INT');
-$show_rating      = $this->params['configs']->get('jg_detail_view_show_rating', 0, 'INT');
-$show_hits        = $this->params['configs']->get('jg_detail_view_show_hits', 0, 'INT');
-$show_downloads   = $this->params['configs']->get('jg_detail_view_show_downloads', 0, 'INT');
-$show_tags        = $this->params['configs']->get('jg_detail_view_show_tags', 0, 'INT');
-$show_metadata    = $this->params['configs']->get('jg_detail_view_show_metadata', 0, 'INT');
-$meta_keys        = $this->params['configs']->get('jg_detail_view_metadata_keys', 'Model,Make,DateTimeOriginal,DateTime', 'STRING');
+$image_type        = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
+$show_title        = $this->params['configs']->get('jg_detail_view_show_title', 1, 'INT');
+$show_category     = $this->params['configs']->get('jg_detail_view_show_category', 1, 'INT');
+$show_description  = $this->params['configs']->get('jg_detail_view_show_description', 1, 'INT');
+$show_imgdate      = $this->params['configs']->get('jg_detail_view_show_imgdate', 1, 'INT');
+$show_imgauthor    = $this->params['configs']->get('jg_detail_view_show_imgauthor', 1, 'INT');
+$show_created_by   = $this->params['configs']->get('jg_detail_view_show_created_by', 1, 'INT');
+$show_votes        = $this->params['configs']->get('jg_detail_view_show_votes', 1, 'INT');
+$show_rating       = $this->params['configs']->get('jg_detail_view_show_rating', 1, 'INT');
+$show_hits         = $this->params['configs']->get('jg_detail_view_show_hits', 1, 'INT');
+$show_downloads    = $this->params['configs']->get('jg_detail_view_show_downloads', 1, 'INT');
+$show_tags         = $this->params['configs']->get('jg_detail_view_show_tags', 1, 'INT');
+$show_metadata     = $this->params['configs']->get('jg_detail_view_show_metadata', 1, 'INT');
+$show_voting_btn   = $this->params['configs']->get('jg_detail_view_show_voting_btn', 1, 'INT');
+$show_download_btn = $this->params['configs']->get('jg_detail_view_show_download_btn', 1, 'INT');
+$show_comment_btn  = $this->params['configs']->get('jg_detail_view_show_comment_btn', 1, 'INT');
+$show_favorite_btn = $this->params['configs']->get('jg_detail_view_show_favorite_btn', 1, 'INT');
+$show_share_btn    = $this->params['configs']->get('jg_detail_view_show_share_btn', 1, 'INT');
+$meta_keys         = $this->params['configs']->get('jg_detail_view_metadata_keys', 'Model,Make,DateTimeOriginal,DateTime', 'STRING');
 
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.site');
 $wa->useStyle('com_joomgallery.jg-icon-font');
 $wa->useScript('bootstrap.modal');
 
+HTMLHelper::_('bootstrap.popover', '.jg-detail [data-jg-feature-popover]', [
+  'trigger'   => 'hover focus',
+  'container' => 'body',
+  'boundary'  => 'clippingParents',
+  'html'      => true,
+]);
+
 // Access check
 $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
 $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
-$canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $this->item->id, $this->item->catid, true) || $this->item->checked_out == $this->getCurrentUser()->id;
+$canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
 
 // URLs & Links
 $imageUrl     = JoomHelper::getImg($this->item, $image_type);
@@ -203,18 +215,31 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 
   <div class="container-fluid py-4">
     <div class="d-flex flex-wrap align-items-center gap-2 pb-3 border-bottom" aria-label="Image actions">
-      <span class="d-inline-block" tabindex="0" title="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_FEATURE_COMING_SOON'); ?>">
-        <button class="btn btn-outline-secondary" type="button" disabled><span class="icon-heart me-1" aria-hidden="true"></span>Favorite</button>
-      </span>
-      <span class="d-inline-block" tabindex="0" title="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_FEATURE_COMING_SOON'); ?>">
-        <button class="btn btn-outline-secondary" type="button" disabled><span class="icon-comment me-1" aria-hidden="true"></span>Comment</button>
-      </span>
-      <span class="d-inline-block" tabindex="0" title="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_FEATURE_COMING_SOON'); ?>">
-        <button class="btn btn-outline-secondary" type="button" disabled><span class="icon-download me-1" aria-hidden="true"></span>Download</button>
-      </span>
-      <button class="btn btn-outline-secondary ms-md-auto" type="button" data-jg-copy-link>
-        <span class="icon-link me-1" aria-hidden="true"></span><span>Copy link</span>
-      </button>
+      <?php if($show_favorite_btn) : ?>
+        <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
+          <button class="btn btn-outline-secondary pe-none" type="button" disabled><span class="icon-heart me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_FAVORITE'); ?></button>
+        </span>
+      <?php endif; ?>
+      <?php if($show_download_btn) : ?>
+        <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
+          <button class="btn btn-outline-secondary pe-none" type="button" disabled><span class="icon-download me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_DOWNLOAD'); ?></button>
+        </span>
+      <?php endif; ?>
+      <?php if($show_voting_btn) : ?>
+        <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
+          <button class="btn btn-outline-secondary pe-none" type="button" disabled><span class="icon-star me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_VOTE'); ?></button>
+        </span>
+      <?php endif; ?>
+      <?php if($show_comment_btn) : ?>
+        <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
+          <button class="btn btn-outline-secondary pe-none" type="button" disabled><span class="icon-comment me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_COMMENT'); ?></button>
+        </span>
+      <?php endif; ?>
+      <?php if($show_share_btn) : ?>
+        <button class="btn btn-outline-secondary ms-md-auto" type="button" data-jg-copy-link>
+          <span class="icon-link me-1" aria-hidden="true"></span><span>Copy link</span>
+        </button>
+      <?php endif; ?>
 
       <?php if($canEdit || $canDelete || $canCheckin) : ?>
         <div class="d-flex flex-wrap gap-2">
