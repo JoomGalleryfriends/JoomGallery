@@ -121,12 +121,12 @@ if($author !== '')
   if($sameAs !== '') $image['author']['sameAs'] = $sameAs;
 }
 
-// Include an explicit rights holder; the notice falls back to the image author.
+// Include an explicit rights holder and the same complete notice as the HTML footer.
 $holder = $plain($item->copyrightHolder ?? $item->copyright_holder ?? '');
 
 if($holder !== '') $image['copyrightHolder'] = ['@type' => 'Person', 'name' => $holder];
 
-$image['copyrightNotice'] = $plain($metadata->get('exif.IFD0.Copyright', '')) ?: $plain($metadata->get('iptc.2#116', '')) ?: $plain($item->author ?? '') ?: $plain($item->created_by ?? '');
+$image['copyrightNotice'] = (string) ($data['copyright'] ?? '');
 
 // Include licensing links only when an existing value resolves to an HTTP(S) URL.
 foreach(['license', 'acquireLicensePage'] as $key) $image[$key] = $url($item->{$key} ?? $metadata->get($key, ''));
@@ -179,7 +179,7 @@ if($latitude !== null && $longitude !== null)
 // Reuse prepared, translated metadata values and limit EXIF to relevant fields.
 $relevantExif = ['Make', 'Model', 'Orientation', 'DateTime', 'DateTimeOriginal', 'DateTimeDigitized', 'Compression'];
 
-foreach($data['metadataItems'] ?? [] as $entry)
+foreach(!empty($data['showMetadata']) ? ($data['metadataItems'] ?? []) : [] as $entry)
 {
   if(!str_starts_with(strtolower($entry['path'] ?? ''), 'exif.')) continue;
 

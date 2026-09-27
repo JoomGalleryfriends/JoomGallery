@@ -192,15 +192,42 @@ $sitename         = $app->get('sitename');
 $siteNamePosition = (int) $app->get('sitename_pagetitles', 0);
 $app->getDocument()->setTitle($siteNamePosition === 1 ? $sitename . ' - ' . $baseTitle : ($siteNamePosition === 2 ? $baseTitle . ' - ' . $sitename : $baseTitle));
 
+// Build one complete copyright notice for both HTML and structured data.
+// Embedded notices are already complete; only the fallback gets a symbol/year.
+$metadata   = new Registry($this->item->imgmetadata);
+$noticeText = static function ($value): string {
+  if(\is_array($value) || \is_object($value))
+  {
+    $value = implode(', ', array_filter((array) $value, 'is_scalar'));
+  }
+
+  return \is_scalar($value) ? trim(html_entity_decode(strip_tags((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8')) : '';
+};
+
+$copyright = $noticeText($metadata->get('exif.IFD0.Copyright', '')) ?: $noticeText($metadata->get('iptc.2#116', ''));
+
+if($copyright === '')
+{
+  $copyrightOwner = $noticeText($imageAuthor) ?: $noticeText($createdBy);
+
+  if($copyrightOwner !== '')
+  {
+    $copyrightYear = $databaseDate !== false && (int) $databaseDate->format('Y') > 0
+      ? HTMLHelper::_('date', $this->item->date, 'Y') : '';
+    $copyright     = html_entity_decode('&copy;', ENT_QUOTES, 'UTF-8') . ' ' . ($copyrightYear !== '' ? $copyrightYear . ' ' : '') . $copyrightOwner;
+  }
+}
+
 // Render structured data through an overridable layout
-$metadata     = new Registry($this->item->imgmetadata);
 $jsonLdLayout = new FileLayout('joomgallery.jsonld.image');
 $jsonLd       = trim(
     $jsonLdLayout->render(
         [
           'item'          => $this->item,
-          'metadata'      => $metadata,
+          'metadata'      => $this->item->imgmetadata,
           'metadataItems' => $metadataItems,
+          'showMetadata'  => (bool) $show_metadata,
+          'copyright'     => $copyright,
           'imageInfo'     => $this->imageInfo,
           'pageUrl'       => Route::_($currentRoute, false, Route::TLS_IGNORE, true),
           'pageTitle'     => $doc->getTitle(),
@@ -214,9 +241,6 @@ if($jsonLd !== '')
 {
   $doc->addCustomTag('<script type="application/ld+json">' . $jsonLd . '</script>');
 }
-
-// Receive copyright owner
-$copyright = $metadata->get('exif.IFD0.Copyright', '') ?: $metadata->get('iptc.2#116', '') ?: $imageAuthor ?: $createdBy;
 
 // Custom Fields
 $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
@@ -400,7 +424,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
     <?php endif; ?>
 
     <?php if($copyright) : ?>
-      <div class="mt-4 text-body-secondary">&copy; <?php if($show_imgdate && !empty($this->item->date)) echo HTMLHelper::_('date', $this->item->date, 'Y'); ?> <?php echo $this->escape($copyright); ?></div>
+      <div class="mt-4 text-body-secondary"><?php echo $this->escape($copyright); ?></div>
     <?php endif; ?>
   </div>
 </article>
