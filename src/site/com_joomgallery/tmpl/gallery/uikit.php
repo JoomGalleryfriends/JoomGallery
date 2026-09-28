@@ -45,7 +45,7 @@ $uikit_image_ratio      = $this->params['configs']->get('jg_uikit_gallery_image_
     <?php $moduleparams = json_decode($module->params, true); ?>
     <div class="uk-card uk-card-default uk-card-body uk-margin">
       <?php if($module->showtitle) : ?>
-        <?php echo '<' . $moduleparams['header_tag'] . ' class="uk-card-title ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+        <?php echo '<' . $this->escape($moduleparams['header_tag']) . ' class="uk-card-title ' . $this->escape($moduleparams['header_class']) . '">' . htmlspecialchars($module->title) . '</' . $this->escape($moduleparams['header_tag']) . '>'; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
     </div>
@@ -59,7 +59,7 @@ $uikit_image_ratio      = $this->params['configs']->get('jg_uikit_gallery_image_
 
   <?php if($browse_categories_link == '1') : ?>
     <div class="uk-text-center uk-margin">
-      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=1'); ?>">
+      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo $this->escape(Route::_('index.php?option=com_joomgallery&view=category&id=1')); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_GALLERY_VIEW_BROWSE_CATEGORIES'); ?>
       </a>
     </div>
@@ -97,7 +97,7 @@ $uikit_image_ratio      = $this->params['configs']->get('jg_uikit_gallery_image_
 
   <?php if($browse_categories_link == '2') : ?>
     <div class="uk-text-center uk-margin">
-      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=1'); ?>">
+      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo $this->escape(Route::_('index.php?option=com_joomgallery&view=category&id=1')); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_GALLERY_VIEW_BROWSE_CATEGORIES'); ?>
       </a>
     </div>
@@ -109,7 +109,7 @@ $uikit_image_ratio      = $this->params['configs']->get('jg_uikit_gallery_image_
   <?php $moduleparams = json_decode($module->params, true); ?>
   <div class="uk-card uk-card-default uk-card-body uk-margin">
     <?php if($module->showtitle) : ?>
-      <?php echo '<' . $moduleparams['header_tag'] . ' class="uk-card-title ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+      <?php echo '<' . $this->escape($moduleparams['header_tag']) . ' class="uk-card-title ' . $this->escape($moduleparams['header_class']) . '">' . htmlspecialchars($module->title) . '</' . $this->escape($moduleparams['header_tag']) . '>'; ?>
     <?php endif; ?>
     <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
   </div>

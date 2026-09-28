@@ -49,7 +49,7 @@ $overlay_text_class = \in_array($overlay_text, ['light', 'dark'], true) ? ' uk-'
     <div class="jg-image">
       <div class="el-item">
         <a class="uk-display-block uk-width-1-1 uk-transition-toggle uk-inline-clip uk-link-toggle<?php echo $ratio ? ' uk-cover-container' : ''; ?>"
-           href="<?php echo $href; ?>"
+           href="<?php echo $this->escape($href); ?>"
            <?php echo $lightbox ? 'data-type="image" role="button"' : ''; ?>>
           <?php if($ratio) : ?>
             <canvas width="<?php echo $ratio[0]; ?>" height="<?php echo $ratio[1]; ?>"></canvas>

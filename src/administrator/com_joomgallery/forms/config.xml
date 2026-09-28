@@ -797,6 +797,11 @@
 
     <fieldset type="tab" name="frontend-uikitlayouts" label="COM_JOOMGALLERY_CONFIG_TAB_UIKIT_LAYOUTS">
         <field
+            name="uikit_layouts_desc"
+            type="note"
+            description="COM_JOOMGALLERY_CONFIG_UIKIT_LAYOUTS_DESC"
+        />
+        <field
             label="COM_JOOMGALLERY_CONFIG_UIKIT_GALLERY_OPTIONS"
             type="spacer"
             name="uikit_gallery_options"

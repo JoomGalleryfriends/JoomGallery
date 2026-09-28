@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-  <layout title="UIkit Gallery" option="JDEFAULT">
+  <layout title="Gallery View (UIkit)" option="JDEFAULT">
     <message>
       <![CDATA[UIkit gallery layout with UIkit grid, overlay and lightbox.]]>
     </message>

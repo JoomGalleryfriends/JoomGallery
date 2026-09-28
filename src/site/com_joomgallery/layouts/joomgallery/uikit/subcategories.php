@@ -52,7 +52,7 @@ $overlay_text_class = \in_array($overlay_text, ['light', 'dark'], true) ? ' uk-'
     <div class="jg-image">
       <div class="el-item">
         <a class="uk-display-block uk-width-1-1 uk-transition-toggle uk-inline-clip uk-link-toggle<?php echo $ratio ? ' uk-cover-container' : ''; ?>"
-           href="<?php echo Route::_(JoomHelper::getViewRoute('category', (int) $item->id)); ?>">
+           href="<?php echo $this->escape(Route::_(JoomHelper::getViewRoute('category', (int) $item->id))); ?>">
           <?php if($ratio) : ?>
             <canvas width="<?php echo $ratio[0]; ?>" height="<?php echo $ratio[1]; ?>"></canvas>
           <?php endif; ?>
@@ -75,7 +75,7 @@ $overlay_text_class = \in_array($overlay_text, ['light', 'dark'], true) ? ' uk-'
         </a>
         <?php if($title_position == 'below') : ?>
           <div class="jg-image-caption uk-text-center uk-margin-small-top">
-            <a class="jg-link" href="<?php echo Route::_(JoomHelper::getViewRoute('category', (int) $item->id)); ?>">
+            <a class="jg-link" href="<?php echo $this->escape(Route::_(JoomHelper::getViewRoute('category', (int) $item->id))); ?>">
               <?php echo $this->escape($item->title); ?>
             </a>
             <?php if(!empty($image_count)) : ?>
