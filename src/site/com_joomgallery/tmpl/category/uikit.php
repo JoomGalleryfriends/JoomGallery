@@ -56,7 +56,7 @@ $uikit_image_ratio         = $this->params['configs']->get('jg_uikit_gallery_ima
   <?php $moduleparams = json_decode($module->params, true); ?>
   <div class="uk-card uk-card-default uk-card-body uk-margin">
     <?php if($module->showtitle) : ?>
-      <?php echo '<' . $moduleparams['header_tag'] . ' class="uk-card-title ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+      <?php echo '<' . $this->escape($moduleparams['header_tag']) . ' class="uk-card-title ' . $this->escape($moduleparams['header_class']) . '">' . htmlspecialchars($module->title) . '</' . $this->escape($moduleparams['header_tag']) . '>'; ?>
     <?php endif; ?>
     <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
   </div>
@@ -69,12 +69,12 @@ $uikit_image_ratio         = $this->params['configs']->get('jg_uikit_gallery_ima
 <?php if($browse_categories_link == '1' || $browse_images_link == '1') : ?>
   <div class="uk-button-group uk-margin">
     <?php if($this->item->parent_id > 0 && $browse_categories_link == '1') : ?>
-      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
+      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo $this->escape(Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id)); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?>
       </a>
     <?php endif; ?>
     <?php if($browse_images_link == '1') : ?>
-      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
+      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo $this->escape(Route::_('index.php?option=com_joomgallery&view=gallery')); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_VIEW_BROWSE_IMAGES'); ?>
       </a>
     <?php endif; ?>
@@ -83,7 +83,7 @@ $uikit_image_ratio         = $this->params['configs']->get('jg_uikit_gallery_ima
 
 <?php if($this->item->description) : ?>
   <div class="jg-category-description uk-margin">
-    <?php echo $this->item->description; ?>
+    <?php echo HTMLHelper::_('content.prepare', $this->item->description, '', 'com_joomgallery.category'); ?>
   </div>
 <?php endif; ?>
 
@@ -122,7 +122,7 @@ $uikit_image_ratio         = $this->params['configs']->get('jg_uikit_gallery_ima
   <?php $moduleparams = json_decode($module->params, true); ?>
   <div class="uk-card uk-card-default uk-card-body uk-margin">
     <?php if($module->showtitle) : ?>
-      <?php echo '<' . $moduleparams['header_tag'] . ' class="uk-card-title ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+      <?php echo '<' . $this->escape($moduleparams['header_tag']) . ' class="uk-card-title ' . $this->escape($moduleparams['header_class']) . '">' . htmlspecialchars($module->title) . '</' . $this->escape($moduleparams['header_tag']) . '>'; ?>
     <?php endif; ?>
     <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
   </div>
@@ -160,12 +160,12 @@ $uikit_image_ratio         = $this->params['configs']->get('jg_uikit_gallery_ima
 <?php if($browse_categories_link == '2' || $browse_images_link == '2') : ?>
   <div class="uk-button-group uk-margin">
     <?php if($this->item->parent_id > 0 && $browse_categories_link == '2') : ?>
-      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id); ?>">
+      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo $this->escape(Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->parent_id)); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_BACK_TO_PARENT'); ?>
       </a>
     <?php endif; ?>
     <?php if($browse_images_link == '2') : ?>
-      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo Route::_('index.php?option=com_joomgallery&view=gallery'); ?>">
+      <a class="jg-link uk-button uk-button-default uk-button-small" href="<?php echo $this->escape(Route::_('index.php?option=com_joomgallery&view=gallery')); ?>">
         <?php echo Text::_('COM_JOOMGALLERY_CATEGORY_VIEW_BROWSE_IMAGES'); ?>
       </a>
     <?php endif; ?>
@@ -176,7 +176,7 @@ $uikit_image_ratio         = $this->params['configs']->get('jg_uikit_gallery_ima
   <?php $moduleparams = json_decode($module->params, true); ?>
   <div class="uk-card uk-card-default uk-card-body uk-margin">
     <?php if($module->showtitle) : ?>
-      <?php echo '<' . $moduleparams['header_tag'] . ' class="uk-card-title ' . $moduleparams['header_class'] . '">' . htmlspecialchars($module->title) . '</' . $moduleparams['header_tag'] . '>'; ?>
+      <?php echo '<' . $this->escape($moduleparams['header_tag']) . ' class="uk-card-title ' . $this->escape($moduleparams['header_class']) . '">' . htmlspecialchars($module->title) . '</' . $this->escape($moduleparams['header_tag']) . '>'; ?>
     <?php endif; ?>
     <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
   </div>

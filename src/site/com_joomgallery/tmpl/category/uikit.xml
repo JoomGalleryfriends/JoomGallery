@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-  <layout title="UIkit Category" option="JDEFAULT">
+  <layout title="Category View (UIkit)" option="JDEFAULT">
     <message>
       <![CDATA[UIkit category layout with UIkit grid, overlay and lightbox.]]>
     </message>
