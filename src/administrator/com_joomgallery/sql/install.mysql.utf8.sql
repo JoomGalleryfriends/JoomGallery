@@ -195,6 +195,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_category_view_show_tags` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_category_view_show_tags_label` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_detail_view_type_image` VARCHAR(25) NOT NULL DEFAULT "detail",
+`jg_detail_view_social_image_type` VARCHAR(25) NOT NULL DEFAULT "detail",
 `jg_detail_view_show_title` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_detail_view_show_category` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_detail_view_show_description` TINYINT(1) NOT NULL DEFAULT 1,

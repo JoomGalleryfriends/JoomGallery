@@ -185,12 +185,57 @@ foreach($metadataItems as $metadataItem)
 // HTML Metadata
 $app = Factory::getApplication();
 $doc = $app->getDocument();
-// Title
-$title            = $this->item->title ?? '';
-$baseTitle        = trim(Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX') . ' ' . $title);
-$sitename         = $app->get('sitename');
-$siteNamePosition = (int) $app->get('sitename_pagetitles', 0);
-$app->getDocument()->setTitle($siteNamePosition === 1 ? $sitename . ' - ' . $baseTitle : ($siteNamePosition === 2 ? $baseTitle . ' - ' . $sitename : $baseTitle));
+// Reuse the document title/description prepared by the view for social previews.
+$socialType = $this->params['configs']->get('jg_detail_view_social_image_type', 'detail', 'STRING');
+$socialInfo = $this->imageInfo;
+
+if($socialType !== $image_type)
+{
+  try
+  {
+    $socialInfo = JoomHelper::getImgInfo($this->item, $socialType);
+  }
+  catch(\Throwable $e)
+  {
+    // Do not advertise the displayed image's dimensions for a different rendition.
+    $socialInfo = new \stdClass();
+  }
+}
+$socialImage = html_entity_decode(JoomHelper::getImg($this->item, $socialType), ENT_QUOTES, 'UTF-8');
+
+if(str_starts_with($socialImage, '//'))
+{
+  $socialImage = Uri::getInstance(Uri::root())->getScheme() . ':' . $socialImage;
+}
+elseif(!preg_match('#^[a-z][a-z0-9+.-]*:#i', $socialImage) && $socialImage !== '')
+{
+  $socialImage = str_starts_with($socialImage, '/')
+    ? Uri::getInstance(Uri::root())->toString(['scheme', 'host', 'port']) . $socialImage
+    : Uri::root() . $socialImage;
+}
+$plainSocialText = static function ($value): string {
+  return trim(html_entity_decode(strip_tags((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+};
+$socialData      = [
+  'title'       => $plainSocialText($doc->getTitle()),
+  'description' => $plainSocialText($doc->getDescription()) ?: $plainSocialText($this->item->description ?? ''),
+  'url'         => Route::_($currentRoute, false, Route::TLS_IGNORE, true),
+  'image'       => preg_match('#^https?://#i', $socialImage) ? $socialImage : '',
+  'alt'         => $plainSocialText($this->item->description ?? ''),
+  'imageInfo'   => $socialInfo,
+  'siteName'    => $plainSocialText($app->get('sitename')),
+  'locale'      => str_replace('-', '_', $app->getLanguage()->getTag()),
+];
+
+foreach(['joomgallery.opengraph.image', 'joomgallery.twitter.image'] as $socialLayout)
+{
+  $socialTags = trim((new FileLayout($socialLayout))->render($socialData));
+
+  if($socialTags !== '')
+  {
+    $doc->addCustomTag($socialTags);
+  }
+}
 
 // Build one complete copyright notice for both HTML and structured data.
 // Embedded notices are already complete; only the fallback gets a symbol/year.

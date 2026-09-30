@@ -1343,6 +1343,13 @@
                default="detail"
                validate="options"
         />
+        <field name="jg_detail_view_social_image_type"
+               type="jgimagetype"
+               label="COM_JOOMGALLERY_CONFIG_SOCIAL_IMAGE_TYPE"
+               description="COM_JOOMGALLERY_CONFIG_SOCIAL_IMAGE_TYPE_DESC"
+               default="detail"
+               validate="options"
+        />
         <field
             name="jg_detail_view_show_title"
             type="radio"

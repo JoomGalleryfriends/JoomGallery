@@ -187,15 +187,12 @@ class HtmlView extends JoomGalleryView
 
     if(empty($title))
     {
-      $title = $this->app->get('sitename');
-    }
-    elseif($this->app->get('sitename_pagetitles', 0) == 1)
-    {
-      $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
-    }
-    elseif($this->app->get('sitename_pagetitles', 0) == 2)
-    {
-      $title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
+      $title            = $this->item->title ?? '';
+      $baseTitle        = trim(Text::_('COM_JOOMGALLERY_META_TITLE_PREFIX') . ' ' . $title);
+      $sitename         = $this->app->get('sitename');
+      $siteNamePosition = (int) $this->app->get('sitename_pagetitles', 0);
+
+      $title = $siteNamePosition === 1 ? $sitename . ' - ' . $baseTitle : ($siteNamePosition === 2 ? $baseTitle . ' - ' . $sitename : $baseTitle);
     }
 
     $this->document->setTitle($title);
