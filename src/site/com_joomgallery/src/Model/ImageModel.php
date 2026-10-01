@@ -178,8 +178,17 @@ class ImageModel extends JoomAdminModel
       }
       else
       {
-        $listModel = $this->component->getMVCFactory()->createModel('category', 'site');
-        $listModel->getItem((int) $item->catid);
+        $categoryId = (int) $item->catid;
+        if($categoryId < 1)
+        {
+          return $navigation;
+        }
+
+        // The request ID belongs to the image, not its category.
+        $listModel = $this->component->getMVCFactory()->createModel('category', 'site', ['ignore_request' => true]);
+        $listModel->addComponentParams($categoryId);
+        $listModel->setState('category.id', $categoryId);
+        $listModel->getItem($categoryId);
       }
       $items = array_values((array) $listModel->getImages());
 
