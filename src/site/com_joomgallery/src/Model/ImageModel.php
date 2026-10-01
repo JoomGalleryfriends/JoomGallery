@@ -179,6 +179,7 @@ class ImageModel extends JoomAdminModel
       else
       {
         $categoryId = (int) $item->catid;
+
         if($categoryId < 1)
         {
           return $navigation;
