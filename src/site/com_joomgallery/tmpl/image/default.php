@@ -44,6 +44,7 @@ $meta_keys         = $this->params['configs']->get('jg_detail_view_metadata_keys
 
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.site');
+$wa->useScript('com_joomgallery.image-protection');
 $wa->useStyle('com_joomgallery.jg-icon-font');
 $wa->useScript('bootstrap.modal');
 
@@ -308,7 +309,11 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
     <?php if($previousUrl) : ?>
       <a class="jg-detail__nav jg-detail__nav--prev btn btn-light rounded-circle position-absolute top-50 start-0 translate-middle-y ms-2 shadow" href="<?php echo $previousUrl; ?>" aria-label="<?php echo Text::_('JPREV'); ?>"><i class="icon-chevron-left" aria-hidden="true"></i></a>
     <?php endif; ?>
-    <img class="jg-detail__image img-fluid d-block mx-auto" src="<?php echo $this->escape($imageUrl); ?>" alt="<?php echo $this->escape($this->item->title); ?>" itemprop="contentUrl" loading="eager">
+    <?php // A transparent overlay deters casual saving; it cannot secure a public image. ?>
+    <div class="jg-detail__protected position-relative mw-100" data-jg-image-protection>
+      <img class="jg-detail__image img-fluid d-block mx-auto" src="<?php echo $this->escape($imageUrl); ?>" alt="<?php echo $this->escape($this->item->title); ?>" itemprop="contentUrl" loading="eager" draggable="false">
+      <span class="jg-detail__image-overlay position-absolute top-0 start-0 w-100 h-100" aria-hidden="true"></span>
+    </div>
     <?php if($nextUrl) : ?>
       <a class="jg-detail__nav jg-detail__nav--next btn btn-light rounded-circle position-absolute top-50 end-0 translate-middle-y me-2 shadow" href="<?php echo $nextUrl; ?>" aria-label="<?php echo Text::_('JNEXT'); ?>"><i class="icon-chevron-right" aria-hidden="true"></i></a>
     <?php endif; ?>

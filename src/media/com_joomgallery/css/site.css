@@ -449,6 +449,20 @@ select.disabled {
 }
 
 /* Image detail view */
+/* Limit copy deterrents to the image, leaving navigation and text usable. */
+.jg-detail__protected {
+  min-width: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.jg-detail__protected img {
+  -webkit-user-drag: none;
+}
+.jg-detail__image-overlay {
+  z-index: 1;
+  background: transparent;
+}
 .jg-detail__stage {
   min-height: 60vh;
 }
