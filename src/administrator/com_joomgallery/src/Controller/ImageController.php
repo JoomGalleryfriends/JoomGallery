@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
@@ -334,6 +335,74 @@ class ImageController extends JoomFormController
 
     // Redirect to the list screen.
     $this->setRedirect(Route::_($url, false));
+
+    return true;
+  }
+
+  public function ajaxsavetags()
+  {
+    // Check for request forgeries.
+    $this->checkToken();
+
+    $result = ['error' => false, 'success' => true];
+
+    try {
+      /** @var ImageModel $model */
+      $model   = $this->getModel();
+      $id      = $this->input->get('id', 0, 'int');
+      $tags    = $this->input->get('keywords', [], 'array');
+      $action  = $this->input->get('action', '', 'string');
+      $context = (string) _JOOM_OPTION . '.' . $this->context . '.savetags';
+
+
+      // Access check.
+      if(!$this->allowEdit(['id' => $id, 'tags' => $tags]))
+      {
+        // Set the internal error and also the redirect error.
+        $result['success'] = false;
+        $result['error']   = Text::_('JLIB_APPLICATION_ERROR_SAVE_RECORD_NOT_PERMITTED');
+
+        return false;
+      }
+
+      if($action && $action == 'add')
+      {
+        // Attempt to add the tags.
+        if(!$model->addTags($id, $tags))
+        {
+          // Redirect back to the replace screen.
+          $result['success'] = false;
+          $result['error']   = $model->getError();
+
+          return false;
+        }
+      }
+      elseif($action && $action == 'remove')
+      {
+        // Attempt to remove the tags.
+        if(!$model->removeTags($id, $tags))
+        {
+          // Redirect back to the replace screen.
+          $result['success'] = false;
+          $result['error']   = $model->getError();
+
+          return false;
+        }
+      }
+
+      $json = json_encode($result, JSON_FORCE_OBJECT);
+      echo new JsonResponse($json);
+
+      $this->app->close();
+    }
+    catch(\Exception $e)
+    {
+      echo new JsonResponse($e);
+
+      $this->app->close();
+
+      return false;
+    }
 
     return true;
   }
