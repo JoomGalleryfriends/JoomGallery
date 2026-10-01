@@ -22,3 +22,5 @@ DELETE `#__fields_values` FROM `#__fields_values` INNER JOIN `#__fields` ON `#__
 DELETE FROM `#__fields_groups` WHERE (context LIKE 'com_joomgallery%');
 DELETE FROM `#__fields` WHERE (context LIKE 'com_joomgallery%');
 DELETE FROM `#__scheduler_tasks` WHERE (type LIKE 'joomgallery%');
+
+DROP TABLE IF EXISTS `#__joomgallery_cache_revisions`;

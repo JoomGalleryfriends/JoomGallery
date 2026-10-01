@@ -17,10 +17,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access;
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base\AccessOwn;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\GuestCachePolicy;
 use Joomgallery\Component\Joomgallery\Administrator\User\User;
 use Joomla\CMS\Access\Access as AccessBase;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Access Class
@@ -33,6 +36,48 @@ use Joomla\CMS\User\UserFactoryInterface;
 class Access implements AccessInterface
 {
   use ServiceTrait;
+
+  /**
+   * Namespace cache owned by this service.
+   *
+   * @var CacheInterface
+   */
+  protected CacheInterface $cache;
+
+  /**
+   * Namespace of the bounded session hot cache.
+   *
+   * @var string
+   */
+  protected $cacheNamespace = '';
+
+  /**
+   * Cache format version. Increment this when the cache key format changes.
+   *
+   * @var string
+   */
+  protected $cacheVersion = 'v1';
+
+  /**
+   * Maximum number of ACL results retained in the session.
+   *
+   * @var int
+   */
+  protected $hotCacheLimit = 64;
+
+  /**
+   * Lifetime of an ACL result in the session hot cache, in seconds.
+   *
+   * @var int
+   */
+  protected $hotCacheLifetime = 900;
+
+  /**
+   * Revision associated with this instance's request results.
+   *
+   * @var string|null
+   */
+  protected ?string $checksRevision = null;
 
   /**
    * The option which component to check the ACL.
@@ -99,6 +144,20 @@ class Access implements AccessInterface
   protected $user;
 
   /**
+   * The Joomla user matching the user for which access is checked.
+   *
+   * @var  \Joomla\CMS\User\User
+   */
+  protected $appUser;
+
+  /**
+   * Results of access checks already performed during the current request.
+   *
+   * @var array
+   */
+  protected $checks = [];
+
+  /**
    * Storage containing all applied acl checks.
    *
    * @var array
@@ -113,7 +172,10 @@ class Access implements AccessInterface
   public $tocheck = ['default' => true, 'own' => false, 'upload' => false, 'upload-own' => false];
 
   /**
-   * Initialize class for specific option
+   * Initialises the access service for a component, resolves the current
+   * identity, prepares the cache namespace and warms common permissions.
+   *
+   * @param   string  $option  Component option for which permissions are checked.
    *
    * @return  void
    *
@@ -135,6 +197,12 @@ class Access implements AccessInterface
 
     // Set current user
     $this->user = $this->component->getMVCFactory()->getIdentity();
+    $identity   = $this->app->getIdentity();
+
+    if($identity && (int) $identity->id === (int) $this->user->id)
+    {
+      $this->appUser = $identity;
+    }
 
     // Set acl map for components with advanced rules
     $mapPath = _JOOM_PATH_ADMIN . '/includes/rules.php';
@@ -144,6 +212,8 @@ class Access implements AccessInterface
       require $mapPath;
       $this->aclMap = $rules_map_array;
     }
+
+    $this->refreshCacheNamespace();
 
     // Fill AccessOwn properties
     AccessOwn::$parent_dependent_types = $this->parent_dependent_types;
@@ -165,12 +235,29 @@ class Access implements AccessInterface
    */
   public function checkACL(string $action, string $asset = '', int $pk = 0, int $parent_pk = 0, bool $use_parent = false): bool
   {
-    $appuser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->user->id);
+    $this->cache->initialise();
 
-    // Global and component administrators are always allowed.
-    if($appuser->get('isRoot') === true)
+    if($this->checksRevision !== $this->cache->getRevision())
     {
-      return true;
+      $this->checks         = [];
+      $this->checksRevision = $this->cache->getRevision();
+    }
+
+    $checkKey = implode(':', [$this->user->id, $action, $asset, $pk, $parent_pk, (int) $use_parent]);
+
+    if(\array_key_exists($checkKey, $this->checks))
+    {
+      return $this->checks[$checkKey];
+    }
+
+    if($this->isHotCacheCandidate($asset, $pk) && $this->cache->has($checkKey))
+    {
+      $hot = $this->cache->get($checkKey);
+
+      if(\is_array($hot) && isset($hot['expires']) && (int) $hot['expires'] >= time())
+      {
+        return $this->checks[$checkKey] = (bool) $hot['value'];
+      }
     }
 
     // Prepare action
@@ -225,10 +312,7 @@ class Access implements AccessInterface
       $this->allowed[$key] = null;
     }
 
-    foreach($this->tocheck as $key => $value)
-    {
-      $this->tocheck[$key] = ($key === 'default');
-    }
+    $this->tocheck = ['default' => true, 'own' => false, 'upload' => false, 'upload-own' => false];
 
     // Adjust asset for further checks when only parent given
     if($action == 'add' && $use_parent)
@@ -250,6 +334,20 @@ class Access implements AccessInterface
 
     // More preparations
     $acl_rule_array = explode('.', $acl_rule);
+
+    if(!$this->appUser)
+    {
+      $this->appUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->user->id);
+    }
+
+    $appuser = $this->appUser;
+
+    // Special case: super user
+    if($appuser->get('isRoot') === true)
+    {
+      // If it is the super user
+      return $this->cacheCheckResult($checkKey, true, $asset, $pk);
+    }
 
     // 1. Default permission checks based on asset table
     // (Global Configuration -> Recursive assets)
@@ -342,7 +440,7 @@ class Access implements AccessInterface
       }
     }
 
-    return $allowedRes;
+    return $this->cacheCheckResult($checkKey, $allowedRes, $asset, $pk);
   }
 
   /**
@@ -401,12 +499,14 @@ class Access implements AccessInterface
     $this->option = $option;
     $this->types  = $types;
     $this->aclMap = $aclMap;
+    $this->checks = [];
+    $this->refreshCacheNamespace();
   }
 
   /**
    * Set the user for which to check the access.
    *
-   * @param   int|User   $user    The user id or a user object.
+   * @param   int|string|User  $user  User ID, username or JoomGallery user object.
    *
    * @return  void
    *
@@ -417,7 +517,8 @@ class Access implements AccessInterface
     if($user instanceof User)
     {
       // user object given
-      $this->user = $user;
+      $this->user    = $user;
+      $this->appUser = null;
     }
     elseif(!\is_object($user))
     {
@@ -434,9 +535,255 @@ class Access implements AccessInterface
 
       if(isset($appuser->id))
       {
-        $this->user = new User($appuser->id);
+        $this->user    = new User($appuser->id);
+        $this->appUser = $appuser;
       }
     }
+
+    $this->checks = [];
+    $this->refreshCacheNamespace();
+  }
+
+  /**
+   * Selects and initialises a session-cache namespace bound to the component,
+   * current user ID and the user's authorised-group fingerprint.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  protected function refreshCacheNamespace(): void
+  {
+    $identity = $this->appUser ?? $this->user;
+    $groups   = array_map('intval', (array) $identity->getAuthorisedGroups());
+    sort($groups);
+
+    $this->cacheNamespace = 'com_joomgallery.accesscache.' . $this->cacheVersion . '.' . sha1($this->option) . '.' . (int) $this->user->id . '.' . sha1(implode(',', $groups));
+    $guest                = $this->app->isClient('site') && (int) $this->user->id === 0
+      && (bool) $identity->guest && $this->option === 'com_joomgallery';
+    $shared               = false;
+
+    if($guest)
+    {
+      $policy                 = GuestCachePolicy::get();
+      $shared                 = $policy['entries'] > 0 && $policy['lifetime'] > 0;
+      $this->hotCacheLimit    = $policy['entries'] ?: 64;
+      $this->hotCacheLifetime = $policy['lifetime'] ?: 900;
+    }
+    else
+    {
+      $this->loadCacheConfig();
+    }
+
+    if($guest) $this->cacheNamespace .= '.guest.' . hash('sha256', serialize([$this->app->getLanguage()->getTag(), $this->aclMap, $this->types, $policy]));
+    $this->cache                      = $this->component->createCache($this->cacheNamespace);
+    $this->cache->configure('acl', !$guest, $this->hotCacheLifetime, $shared);
+    $this->cache->initialise();
+  }
+
+  /**
+   * Loads the ACL cache entry limit and lifetime from the JoomGallery
+   * configuration while retaining safe defaults if loading fails.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  protected function loadCacheConfig(): void
+  {
+    try
+    {
+      $this->component->createConfig('com_joomgallery');
+      $config = $this->component->getConfig();
+
+      $this->hotCacheLimit    = max(0, (int) $config->get('jg_acl_cache_entries', $this->hotCacheLimit));
+      $this->hotCacheLifetime = max(0, (int) $config->get('jg_acl_cache_lifetime', $this->hotCacheLifetime / 60)) * 60;
+    }
+    catch(\Throwable $e)
+    {
+      // Retain the property defaults if loading the cache policy fails.
+    }
+  }
+
+  /**
+   * Precalculates component permissions commonly used by administrator
+   * toolbars. In the site application it precalculates the category-management
+   * permissions used by the user panel for categories owned by the current
+   * user.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  protected function warmHotCache(): void
+  {
+    if($this->hotCacheLimit === 0 || $this->hotCacheLifetime === 0)
+    {
+      return;
+    }
+
+    if($this->app->isClient('administrator'))
+    {
+      // Warmup admin application
+      foreach(['admin', 'manage', 'add', 'edit', 'editstate', 'delete'] as $action)
+      {
+        try
+        {
+          $this->checkACL($action, $this->option);
+        }
+        catch(\Throwable $e)
+        {
+          // A custom access map may not expose every standard action.
+        }
+      }
+
+      return;
+    }
+
+    if(!$this->app->isClient('site') || (int) $this->user->id === 0)
+    {
+      // The public user and applications not site and not admin gets no warmup
+      return;
+    }
+
+    // Warmup frontend (site) application
+    $warmKey = '__owned_categories_warmed__';
+    $warm    = $this->cache->get($warmKey);
+
+    if(\is_array($warm) && isset($warm['expires'], $warm['count']) && (int) $warm['expires'] >= time())
+    {
+      return;
+    }
+
+    $categoryLimit = (int) floor(($this->hotCacheLimit - 1) / 5);
+
+    if($categoryLimit < 1)
+    {
+      return;
+    }
+
+    $db     = Factory::getContainer()->get(DatabaseInterface::class);
+    $userId = (int) $this->user->id;
+    $query  = $db->getQuery(true)
+      ->select($db->quoteName(['id', 'created_by']))
+      ->from($db->quoteName(_JOOM_TABLE_CATEGORIES))
+      ->where($db->quoteName('created_by') . ' = :userId')
+      ->order($db->quoteName('modified_time') . ' DESC')
+      ->bind(':userId', $userId);
+
+    $categories = $db->setQuery($query, 0, $categoryLimit)->loadObjectList();
+
+    foreach($categories as $category)
+    {
+      $categoryId = (int) $category->id;
+      JoomHelper::registerCreator('category', $categoryId, (int) $category->created_by);
+
+      foreach(['edit', 'delete', 'editstate'] as $action)
+      {
+        $this->checkACL($action, $this->option . '.category', $categoryId);
+      }
+
+      // The category is used as parent for a new child category or image.
+      $this->checkACL('add', $this->option . '.category', 0, $categoryId, true);
+      $this->checkACL('add', $this->option . '.image', 0, $categoryId, true);
+    }
+
+    $this->cache->set(
+        $warmKey,
+        ['count' => \count($categories), 'expires' => time() + $this->hotCacheLifetime],
+        $this->hotCacheLimit
+    );
+  }
+
+  /**
+   * Stores an ACL result in the request cache and, when the asset qualifies,
+   * in the bounded and short-lived session hot cache.
+   *
+   * @param   string  $key     Unique key representing the complete ACL check.
+   * @param   bool    $result  Permission result to cache.
+   * @param   string  $asset   Asset name used by the permission check.
+   * @param   int     $pk      Primary key of the checked item.
+   *
+   * @return  bool  The cached permission result.
+   *
+   * @since   4.4.0
+   */
+  protected function cacheCheckResult(string $key, bool $result, string $asset, int $pk): bool
+  {
+    $this->checks[$key] = $result;
+
+    if($this->isHotCacheCandidate($asset, $pk))
+    {
+    $this->cache->set(
+        $key,
+        ['value' => $result, 'expires' => time() + $this->hotCacheLifetime],
+        $this->hotCacheLimit
+    );
+    }
+
+    return $result;
+  }
+
+  /**
+   * Determines whether an ACL result is sufficiently reusable to be stored
+   * in the session hot cache. Image-specific decisions remain request-local.
+   *
+   * @param   string  $asset  Asset name used by the permission check.
+   * @param   int     $pk     Primary key of the checked item.
+   *
+   * @return  bool  True when the result may be stored in the hot cache.
+   *
+   * @since   4.4.0
+   */
+  protected function isHotCacheCandidate(string $asset, int $pk): bool
+  {
+    if($this->hotCacheLimit === 0 || $this->hotCacheLifetime === 0)
+    {
+      return false;
+    }
+
+    $asset = trim($asset, '.');
+
+    if($pk > 0 && strpos($asset, '.image') !== false)
+    {
+      return false;
+    }
+
+    if($asset === '' || $asset === 'joomgallery' || $asset === $this->option)
+    {
+      return true;
+    }
+
+    $parts = explode('.', strpos($asset, 'com_') === 0 ? $asset : $this->option . '.' . $asset);
+
+    return \count($parts) <= 2 || (isset($parts[1]) && $parts[1] === 'category') || (isset($parts[1]) && $parts[1] === 'image' && $pk === 0);
+  }
+
+  /**
+   * Persists all dirty Access cache namespaces to the current session at the
+   * end of the request.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public function storeCacheToSession(): void
+  {
+    $this->cache->persistAll();
+  }
+
+  /**
+   * Invalidates the shared ACL scope for every identity and session.
+   *
+   * @return  void
+   *
+   * @since   4.4.0
+   */
+  public function clearCache(): void
+  {
+    $this->checks = [];
+
+    $this->cache->remove();
   }
 
   /**
@@ -444,7 +791,8 @@ class Access implements AccessInterface
    *
    * @param   string   $asset      The given asset.
    * @param   int      $pk         Primary key of the asset.
-   * @param   bool     $parent_pk  True if given pk is key of parent asset.
+   * @param   int      $parent_pk  Primary key of the parent asset.
+   * @param   bool     $use_parent True when the supplied parent key should be used for the check.
    *
    * @return  array    The prepared asset list.
    *
@@ -546,11 +894,12 @@ class Access implements AccessInterface
   }
 
   /**
-   * Prepare the entered action to catch similar words.
+   * Normalises an entered action and maps supported synonyms to the canonical
+   * JoomGallery action name.
    *
-   * @param   string   $action     The given aaction.
+   * @param   string  $action  Action name or supported synonym to prepare.
    *
-   * @return  string   The prepared action.
+   * @return  string  Canonical action name.
    *
    * @since   4.0.0
    * @throws  \Exception
@@ -598,13 +947,13 @@ class Access implements AccessInterface
   }
 
   /**
-   * Search for a value in a nested array and return first value of
-   * current array level.
+   * Searches recursively for a value and returns the first value from the
+   * array level in which the requested value was found.
    *
-   * @param   string   $needle    The searched value.
-   * @param   array    $array     The array.
+   * @param   string  $needle  Value to search for.
+   * @param   array   $array   Nested array to search.
    *
-   * @return  string   First value in the array where needle was found.
+   * @return  string  First value from the matching array level.
    *
    * @since   4.0.0
    */

@@ -128,6 +128,12 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_router_ids` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_router_imgids` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_compatibility_mode` TINYINT(1) NOT NULL DEFAULT 0,
+`jg_acl_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 64,
+`jg_acl_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 15,
+`jg_config_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 64,
+`jg_config_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 60,
+`jg_guest_cache_entries` INT(11) UNSIGNED NOT NULL DEFAULT 4096,
+`jg_guest_cache_lifetime` INT(11) UNSIGNED NOT NULL DEFAULT 60,
 `jg_replaceinfo` TEXT NOT NULL,
 `jg_replaceshowwarning` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_useorigfilename` TINYINT(1) NOT NULL DEFAULT 0,
@@ -246,7 +252,8 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_report_hint` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_showcomments` TINYINT(1) NOT NULL DEFAULT 1,
 PRIMARY KEY (`id`),
-KEY `idx_checkout` (`checked_out`)
+KEY `idx_checkout` (`checked_out`),
+UNIQUE KEY `idx_unique_group` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -501,6 +508,21 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_task_items` (
 PRIMARY KEY (`id`),
 INDEX `idx_task_status` (`task_id`, `status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `#__joomgallery_cache_revisions`
+--
+
+CREATE TABLE IF NOT EXISTS `#__joomgallery_cache_revisions` (
+  `scope` VARCHAR(32) NOT NULL,
+  `revision` BIGINT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`scope`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `#__joomgallery_cache_revisions` (`scope`, `revision`)
+VALUES ('config', 1), ('acl', 1), ('cleanup', 1);
 
 -- --------------------------------------------------------
 
