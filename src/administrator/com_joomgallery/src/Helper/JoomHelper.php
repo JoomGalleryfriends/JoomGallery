@@ -69,14 +69,56 @@ class JoomHelper
    * This deliberately does not depend on the current viewer's text-filter
    * permissions because stored frontend content must be safe for every viewer.
    *
-   * @param   string|null  $html  Formatted HTML
+   * @param   string|null  $html                   Formatted HTML
+   * @param   bool         $preserveTextAlignment  Convert editor alignment to safe CSS classes
    *
    * @return  string  Sanitized HTML
    *
    * @since   4.4.0
    */
-  public static function sanitizeHtml(?string $html): string
+  public static function sanitizeHtml(?string $html, bool $preserveTextAlignment = false): string
   {
+    // Preserve only known alignment values, never arbitrary inline CSS.
+    if($preserveTextAlignment && !empty($html))
+    {
+      $document = new \DOMDocument();
+      $previousErrors = libxml_use_internal_errors(true);
+      try
+      {
+        $document->loadHTML('<?xml encoding="UTF-8"><html><body>' . $html . '</body></html>', LIBXML_NONET);
+        $classes = ['left' => 'text-start', 'center' => 'text-center', 'right' => 'text-end', 'justify' => 'jg-text-justify'];
+        foreach($document->getElementsByTagName('*') as $element)
+        {
+          $alignment = strtolower(trim($element->getAttribute('align')));
+          foreach(explode(';', $element->getAttribute('style')) as $declaration)
+          {
+            if(preg_match('/^\s*text-align\s*:\s*(left|center|right|justify)\s*(?:!important)?\s*$/i', $declaration, $match))
+            {
+              $alignment = strtolower($match[1]);
+            }
+          }
+          if(isset($classes[$alignment]))
+          {
+            $element->setAttribute('class', trim($element->getAttribute('class') . ' ' . $classes[$alignment]));
+          }
+        }
+        $body = $document->getElementsByTagName('body')->item(0);
+        if($body)
+        {
+          $html = '';
+          foreach($body->childNodes as $child)
+          {
+            $html .= $document->saveHTML($child);
+          }
+        }
+      }
+      finally
+      {
+        libxml_clear_errors();
+        libxml_use_internal_errors($previousErrors);
+      }
+    }
+
     $tags       = [
       'a', 'abbr', 'b', 'blockquote', 'br', 'code', 'div', 'em', 'figcaption', 'figure',
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'li', 'ol', 'p', 'pre',

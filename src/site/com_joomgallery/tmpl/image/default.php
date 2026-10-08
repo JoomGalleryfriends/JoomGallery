@@ -34,6 +34,8 @@ $show_rating       = $this->params['configs']->get('jg_detail_view_show_rating',
 $show_hits         = $this->params['configs']->get('jg_detail_view_show_hits', 1, 'INT');
 $show_downloads    = $this->params['configs']->get('jg_detail_view_show_downloads', 1, 'INT');
 $show_tags         = $this->params['configs']->get('jg_detail_view_show_tags', 1, 'INT');
+$show_comments     = $this->params['configs']->get('jg_detail_view_show_comments', 1, 'INT');
+$show_copyright    = $this->params['configs']->get('jg_detail_view_show_copyright', 1, 'INT');
 $show_metadata     = $this->params['configs']->get('jg_detail_view_show_metadata', 1, 'INT');
 $show_voting_btn   = $this->params['configs']->get('jg_detail_view_show_voting_btn', 1, 'INT');
 $show_download_btn = $this->params['configs']->get('jg_detail_view_show_download_btn', 1, 'INT');
@@ -99,7 +101,7 @@ elseif($backView === 'gallery' || preg_match('#(?:^|/)gallery(?:/|$)#i', $backPa
 
 // Tags
 $tagLayout = new FileLayout('joomgallery.content.tags');
-$tags      = $tagLayout->render($this->item->tags);
+$tags      = !empty((array) ($this->item->tags ?? [])) ? $tagLayout->render($this->item->tags) : '';
 
 // Image Metadata
 $this->component->createMetadata($this->params['configs']->get('jg_metaprocessor', 'php'));
@@ -252,7 +254,8 @@ $noticeText = static function ($value): string {
 
 $copyright = $noticeText($metadata->get('exif.IFD0.Copyright', '')) ?: $noticeText($metadata->get('iptc.2#116', ''));
 
-if($copyright === '')
+// Embedded notices always remain in JSON-LD; generate a fallback only when enabled.
+if($show_copyright && $copyright === '')
 {
   $copyrightOwner = $noticeText($imageAuthor) ?: $noticeText($createdBy);
 
@@ -413,7 +416,9 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       <?php if($show_rating) : ?>
         <span><span class="icon-star" aria-hidden="true"></span> <?php echo $this->escape(number_format($rating, 2)); ?> <?php echo Text::_('COM_JOOMGALLERY_IMAGE_RATING'); ?></span>
       <?php endif; ?>
-      <span><span class="icon-comment" aria-hidden="true"></span> 0 Comments</span>
+      <?php if($show_comments) : ?>
+        <span><span class="icon-comment" aria-hidden="true"></span> 0 <?php echo Text::_('COM_JOOMGALLERY_COMMENTS'); ?></span>
+      <?php endif; ?>
       <?php if($show_hits) : ?>
         <span><span class="icon-eye" aria-hidden="true"></span> <?php echo (int) $this->item->hits; ?> <?php echo Text::_('JGLOBAL_HITS'); ?></span>
       <?php endif; ?>
@@ -426,7 +431,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       <div class="d-flex flex-wrap gap-2 py-4 jg-detail__tags"><?php echo $tags; ?></div>
     <?php endif; ?>
     <?php if($show_description && trim((string) $this->item->description) !== '') : ?>
-      <div class="lead mb-4" itemprop="description"><?php echo JoomHelper::sanitizeHtml($this->item->description); ?>
+      <div class="lead mb-4" itemprop="description"><?php echo JoomHelper::sanitizeHtml($this->item->description, true); ?>
     </div>
     <?php endif; ?>
 
@@ -473,7 +478,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       <?php endforeach; ?>
     <?php endif; ?>
 
-    <?php if($copyright) : ?>
+    <?php if($show_copyright && $copyright) : ?>
       <div class="mt-4 text-body-secondary"><?php echo $this->escape($copyright); ?></div>
     <?php endif; ?>
   </div>
