@@ -81,15 +81,17 @@ class JoomHelper
     // Preserve only known alignment values, never arbitrary inline CSS.
     if($preserveTextAlignment && !empty($html))
     {
-      $document = new \DOMDocument();
+      $document       = new \DOMDocument();
       $previousErrors = libxml_use_internal_errors(true);
       try
       {
         $document->loadHTML('<?xml encoding="UTF-8"><html><body>' . $html . '</body></html>', LIBXML_NONET);
         $classes = ['left' => 'text-start', 'center' => 'text-center', 'right' => 'text-end', 'justify' => 'jg-text-justify'];
+
         foreach($document->getElementsByTagName('*') as $element)
         {
           $alignment = strtolower(trim($element->getAttribute('align')));
+
           foreach(explode(';', $element->getAttribute('style')) as $declaration)
           {
             if(preg_match('/^\s*text-align\s*:\s*(left|center|right|justify)\s*(?:!important)?\s*$/i', $declaration, $match))
@@ -97,15 +99,18 @@ class JoomHelper
               $alignment = strtolower($match[1]);
             }
           }
+
           if(isset($classes[$alignment]))
           {
             $element->setAttribute('class', trim($element->getAttribute('class') . ' ' . $classes[$alignment]));
           }
         }
         $body = $document->getElementsByTagName('body')->item(0);
+
         if($body)
         {
           $html = '';
+
           foreach($body->childNodes as $child)
           {
             $html .= $document->saveHTML($child);
