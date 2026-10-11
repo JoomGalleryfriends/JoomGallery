@@ -348,13 +348,29 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
   <?php endforeach; ?>
 <?php endif; ?>
 
-<script>
-  // Add event listener to images
-  let loadImg = function() {
-    this.closest('.jg-image').classList.add('loaded');
-  }
-  let images = Array.from(document.getElementsByClassName('jg-image-thumb'));
-  images.forEach(image => {
-    image.addEventListener('load', loadImg);
-  });
+<script type="text/javascript">
+  (function() {
+    const loadImg = function (img) {
+      const container = img.closest('.jg-image');
+      if (container) {
+        container.classList.add('loaded');
+      }
+    };
+
+    const images = Array.from(document.getElementsByClassName('jg-image-thumb'));
+    images.forEach(image => {
+      // Check if image is already loaded (from cache or CDN)
+      if (image.complete && image.naturalHeight !== 0) {
+        loadImg(image);
+      } else {
+        image.addEventListener('load', function() {
+          loadImg(this);
+        });
+        // Optional: Error handling to show container even if image fails
+        image.addEventListener('error', function() {
+          loadImg(this);
+        });
+      }
+    });
+  })();
 </script>

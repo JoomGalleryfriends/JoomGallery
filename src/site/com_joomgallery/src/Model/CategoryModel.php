@@ -58,6 +58,7 @@ class CategoryModel extends JoomItemModel
     if($this->imagesModel === null)
     {
       $this->imagesModel = $this->component->getMVCFactory()->createModel('images', 'site', ['context' => 'com_joomgallery.category.images']);
+      $this->imagesModel->setSearchProvider('sql');
       $this->imagesModel->getState();
     }
 
@@ -89,11 +90,11 @@ class CategoryModel extends JoomItemModel
 
     if($id)
     {
-      $this->app->setUserState('com_joomgallery.edit.image.id', $id);
+      $this->app->setUserState('com_joomgallery.edit.category.id', $id);
     }
     else
     {
-      $id = (int) $this->app->getUserState('com_joomgallery.edit.image.id', null);
+      $id = (int) $this->app->getUserState('com_joomgallery.edit.category.id', null);
     }
 
     if(\is_null($id))
@@ -102,6 +103,24 @@ class CategoryModel extends JoomItemModel
     }
 
     $this->setState('category.id', $id);
+
+    $this->loadComponentParams($id);
+  }
+
+  /**
+   * Method to load component specific parameters into model state.
+   *
+   * @param   int   $id   ID of the content if needed (default: 0)
+   *
+   * @return  void
+   * @since   4.4.1
+   */
+  public function addComponentParams($id = 0)
+  {
+    if($id < 1)
+    {
+      $id = $this->app->input->getInt('id', null);
+    }
 
     $this->loadComponentParams($id);
   }
@@ -486,7 +505,6 @@ class CategoryModel extends JoomItemModel
     $listModel->setState('filter.access', $user->getAuthorisedViewLevels());
     $listModel->setState('filter.published', 1);
     $listModel->setState('filter.showunapproved', 0);
-    $listModel->setState('filter.showhidden', 0);
 
     if(Multilanguage::isEnabled())
     {

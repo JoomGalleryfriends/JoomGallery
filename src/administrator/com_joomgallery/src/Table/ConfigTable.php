@@ -31,6 +31,7 @@ class ConfigTable extends Table
 {
   use JoomTableTrait;
   use AssetTableTrait;
+  use LegacyDatabaseTrait;
 
   /**
    * Constructor

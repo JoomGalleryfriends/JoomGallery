@@ -97,7 +97,7 @@ extract($displayData);
             </div>
           <?php endif; ?>
 
-          <?php if($layout == 'justified') : ?>
+          <?php if($image_title && $layout == 'justified') : ?>
             <div class="jg-image-caption-hover <?php echo $this->escape($caption_align); ?>">
               <?php echo $this->escape($item->title); ?>
             </div>
