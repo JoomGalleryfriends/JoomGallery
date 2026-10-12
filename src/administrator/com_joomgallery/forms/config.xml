@@ -1396,6 +1396,17 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
+        <field
+            name="jg_detail_view_show_image_size"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_DETAIL_SHOW_IMAGE_SIZE"
+            description="COM_JOOMGALLERY_CONFIG_DETAIL_SHOW_IMAGE_SIZE_DESC"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
         <field name="jg_detail_view_show_copyright"
                type="radio"
                label="COM_JOOMGALLERY_CONFIG_DETAIL_SHOW_COPYRIGHT"

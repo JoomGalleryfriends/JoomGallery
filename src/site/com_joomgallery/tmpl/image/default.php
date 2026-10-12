@@ -37,6 +37,7 @@ $show_tags         = $this->params['configs']->get('jg_detail_view_show_tags', 1
 $show_comments     = $this->params['configs']->get('jg_detail_view_show_comments', 1, 'INT');
 $show_copyright    = $this->params['configs']->get('jg_detail_view_show_copyright', 1, 'INT');
 $show_metadata     = $this->params['configs']->get('jg_detail_view_show_metadata', 1, 'INT');
+$show_image_size   = $this->params['configs']->get('jg_detail_view_show_image_size', 1, 'INT');
 $show_voting_btn   = $this->params['configs']->get('jg_detail_view_show_voting_btn', 1, 'INT');
 $show_download_btn = $this->params['configs']->get('jg_detail_view_show_download_btn', 1, 'INT');
 $show_comment_btn  = $this->params['configs']->get('jg_detail_view_show_comment_btn', 1, 'INT');
@@ -105,12 +106,12 @@ $tags      = !empty((array) ($this->item->tags ?? [])) ? $tagLayout->render($thi
 
 // Image Metadata
 $this->component->createMetadata($this->params['configs']->get('jg_metaprocessor', 'php'));
-[$importantMetadata, $otherMetadata] = $this->component->getMetadata()->renderPrep($this->item->imgmetadata, $meta_keys);
-$metadataLayout                      = new FileLayout('joomgallery.content.metadata');
-$metadataModalLayout                 = new FileLayout('joomgallery.content.metadatamodal');
-$imageDateLabel                      = 'COM_JOOMGALLERY_DATE_UPLOAD';
-$databaseDate                        = !empty($this->item->date) ? \DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $this->item->date) : false;
-$metadataItems                       = array_merge($importantMetadata->get('items', []), $otherMetadata->get('items', []));
+[$importantMetadata, $allMetadata] = $this->component->getMetadata()->renderPrep($this->item->imgmetadata, $meta_keys);
+$metadataLayout                    = new FileLayout('joomgallery.content.metadata');
+$metadataModalLayout               = new FileLayout('joomgallery.content.metadatamodal');
+$imageDateLabel                    = 'COM_JOOMGALLERY_DATE_UPLOAD';
+$databaseDate                      = !empty($this->item->date) ? \DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $this->item->date) : false;
+$metadataItems                     = $allMetadata->get('items', []);
 
 // The view loads this information with JoomHelper::getImgInfo() for
 // jg_detail_view_type_image. Keep it separate from the original file's EXIF.
@@ -165,7 +166,7 @@ if($show_metadata)
   }
 
   // Include file-only images even when no remaining EXIF/IPTC is available.
-  $otherMetadata->set('items', array_merge($fileItems, $otherMetadata->get('items', [])));
+  $allMetadata->set('items', array_merge($fileItems, $allMetadata->get('items', [])));
 }
 
 // Adjust image date field label
@@ -367,7 +368,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
             <input type="hidden" name="cid[]" value="<?php echo (int) $this->item->id; ?>">
             <input type="hidden" name="return" value="<?php echo base64_encode($this->backUrl); ?>">
             <?php if($canCheckin) : ?>
-              <button class="btn btn-outline-secondary" type="submit" name="task" value="imageform.<?php echo $stateTask; ?>"><span class="icon-<?php echo $stateTask === 'publish' ? 'check' : 'cancel'; ?> me-1" aria-hidden="true"></span><?php echo Text::_($stateTask === 'publish' ? 'PUBLISH' : 'UNPUBLISH'); ?></button>
+              <button class="btn btn-outline-secondary" type="submit" name="task" value="image.<?php echo $stateTask; ?>"><span class="icon-<?php echo $stateTask === 'publish' ? 'check' : 'cancel'; ?> me-1" aria-hidden="true"></span><?php echo Text::_($stateTask === 'publish' ? 'PUBLISH' : 'UNPUBLISH'); ?></button>
             <?php endif; ?>
             <?php if($canDelete) : ?>
               <button class="btn btn-outline-danger" type="submit" name="task" value="imageform.remove" data-jg-delete><span class="icon-trash me-1" aria-hidden="true"></span><?php echo Text::_('JACTION_DELETE'); ?></button>
@@ -444,7 +445,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
         <dt class="col-sm-4 col-lg-3"><?php echo Text::_('JCATEGORY'); ?></dt>
         <dd class="col-sm-8 col-lg-9"><a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>"><?php echo $this->escape($this->item->cattitle); ?></a></dd>
       <?php endif; ?>
-      <?php if($show_metadata && !empty($this->imageInfo->width) && !empty($this->imageInfo->height)) : ?>
+      <?php if($show_image_size && !empty($this->imageInfo->width) && !empty($this->imageInfo->height)) : ?>
         <dt class="col-sm-4 col-lg-3"><?php echo Text::_('COM_JOOMGALLERY_IMAGE_SIZE'); ?></dt>
         <dd class="col-sm-8 col-lg-9"><?php echo (int) $this->imageInfo->width; ?> &times; <?php echo (int) $this->imageInfo->height; ?> px</dd>
       <?php endif; ?>
@@ -464,7 +465,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
     </dl>
     <br>
     <?php // Important metadata modal button ?>
-    <?php if($show_metadata && \count($otherMetadata->get('items', [])) > 0) : ?>
+    <?php if($show_metadata && \count($allMetadata->get('items', [])) > 0) : ?>
       <button class="btn btn-outline-secondary mt-2" type="button" data-bs-toggle="modal" data-bs-target="#jg-metadata-modal">
         <span class="icon-info-circle me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_IMGMETADATA'); ?>
       </button>
@@ -484,8 +485,8 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
   </div>
 </article>
 
-<?php if($show_metadata && \count($otherMetadata->get('items', [])) > 0) : ?>
-  <?php echo $metadataModalLayout->render($otherMetadata); ?>
+<?php if($show_metadata && \count($allMetadata->get('items', [])) > 0) : ?>
+  <?php echo $metadataModalLayout->render($allMetadata); ?>
 <?php endif; ?>
 
 <script>

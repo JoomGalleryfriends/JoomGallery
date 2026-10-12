@@ -207,6 +207,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_detail_view_show_tags` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_detail_view_show_metadata` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_detail_view_metadata_keys` VARCHAR(1024) NOT NULL DEFAULT 'Model,Make,DateTimeOriginal,DateTime',
+`jg_detail_view_show_image_size` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_detail_view_show_comments` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_detail_view_show_copyright` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_detail_view_show_voting_btn` TINYINT(1) NOT NULL DEFAULT 1,

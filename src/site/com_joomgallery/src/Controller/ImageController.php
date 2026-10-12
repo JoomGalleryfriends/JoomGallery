@@ -128,14 +128,57 @@ class ImageController extends JoomFormController
   }
 
   /**
-   * Method to publish an image
+   * Method to publish an image.
    *
-   * @throws \Exception
-   * @since   4.2.0
+   * @return  bool
+   *
+   * @throws  \Exception
+   *
+   * @since   __DEPLOY_VERSION__
    */
-  public function publish()
+  public function publish(): bool
   {
-    throw new \Exception('Publish image not possible. Use imageform controller instead.', 503);
+    $this->checkToken();
+
+    $cid = (array) $this->input->post->get('cid', [], 'int');
+    $id  = (int) ($cid[0] ?? $this->input->getInt('id', 0));
+
+    if(!$id)
+    {
+      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
+      $this->setRedirect(Route::_($this->getReturnPage('gallery'), false));
+
+      return false;
+    }
+
+    $parentId = JoomHelper::getParent('image', $id);
+
+    if(!$this->acl->checkACL('editstate', 'image', $id, $parentId, true))
+    {
+      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
+      $this->setRedirect(Route::_($this->getReturnPage('gallery'), false));
+
+      return false;
+    }
+
+    $task  = $this->getTask();
+    $value = $task === 'publish' ? 1 : 0;
+    $pks   = [$id];
+    $model = $this->component->getMVCFactory()->createModel('Image', 'Administrator');
+
+    if(!$model || $model->publish($pks, $value) === false)
+    {
+      $message = $model ? $model->getError() : Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE');
+      $this->setMessage(Text::sprintf('COM_JOOMGALLERY_ITEM_STATE_ERROR', $message), 'error');
+      $this->setRedirect(Route::_($this->getReturnPage('gallery'), false));
+
+      return false;
+    }
+
+    $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_' . strtoupper($task) . '_SUCCESSFUL'), 'success');
+    $this->setRedirect(Route::_($this->getReturnPage('gallery'), false));
+
+    return true;
   }
 
   /**
@@ -144,8 +187,8 @@ class ImageController extends JoomFormController
    * @throws \Exception
    * @since   4.2.0
    */
-  public function unpublish()
+  public function unpublish(): bool
   {
-    throw new \Exception('Unpublish image not possible. Use imageform controller instead.', 503);
+    return $this->publish();
   }
 }

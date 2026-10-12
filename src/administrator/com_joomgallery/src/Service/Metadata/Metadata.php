@@ -35,7 +35,7 @@ class Metadata implements MetadataInterface
    * @param   mixed         $imgmetadata           Stored image metadata
    * @param   array|string  $importantMetadataKeys Metadata keys rendered outside the modal
    *
-   * @return  array<int, Registry> Important and remaining metadata registries
+   * @return  array<int, Registry> Important and complete metadata registries
    *
    * @since   __DEPLOY_VERSION__
    */
@@ -98,10 +98,11 @@ class Metadata implements MetadataInterface
         $definition      = MetadataHelper::getDefinition($metadataType, $pathKey);
         $attribute       = (string) ($definition['Attribute'] ?? $key);
         $items[$pathKey] = [
-          'path'  => $pathKey,
-          'key'   => (string) $key,
-          'label' => $definition ? MetadataHelper::getName($metadataType, $pathKey) : (string) $key,
-          'value' => preg_match('/(?:DateTime|Date Created|Time Created|Digital Creation Date)/i', $attribute)
+          'path'      => $pathKey,
+          'key'       => (string) $key,
+          'attribute' => $attribute,
+          'label'     => $definition ? MetadataHelper::getName($metadataType, $pathKey) : (string) $key,
+          'value'     => preg_match('/(?:DateTime|Date Created|Time Created|Digital Creation Date)/i', $attribute)
             ? $this->formatRenderDate((string) $value)
             : MetadataHelper::getValue($metadataType, $pathKey, $value),
         ];
@@ -114,21 +115,27 @@ class Metadata implements MetadataInterface
       : preg_split('/[\r\n,;]+/', (string) $importantMetadataKeys, -1, PREG_SPLIT_NO_EMPTY);
     $importantKeys = array_map('trim', $importantKeys ?: []);
     $important     = [];
-    $remaining     = $items;
 
     foreach($importantKeys as $importantKey)
     {
       foreach($items as $pathKey => $item)
       {
-        if($importantKey === $pathKey || $importantKey === $item['key'] || str_ends_with($pathKey, '.' . $importantKey))
+        $normalizedImportantKey = strtolower($importantKey);
+        $normalizedPathKey      = strtolower($pathKey);
+        $normalizedItemKey      = strtolower($item['key']);
+        $normalizedAttribute    = strtolower($item['attribute']);
+
+        if($normalizedImportantKey === $normalizedPathKey
+          || $normalizedImportantKey === $normalizedItemKey
+          || $normalizedImportantKey === $normalizedAttribute
+          || str_ends_with($normalizedPathKey, '.' . $normalizedImportantKey))
         {
           $important[$pathKey] = $item;
-          unset($remaining[$pathKey]);
         }
       }
     }
 
-    return [new Registry(['items' => array_values($important)]), new Registry(['items' => array_values($remaining)])];
+    return [new Registry(['items' => array_values($important)]), new Registry(['items' => array_values($items)])];
   }
 
   /** Format supported EXIF/IPTC date representations for display. */

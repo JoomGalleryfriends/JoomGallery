@@ -28,7 +28,7 @@ interface MetadataInterface
    * @param   mixed         $imgmetadata           Stored image metadata
    * @param   array|string  $importantMetadataKeys Metadata keys rendered outside the modal
    *
-   * @return  array<int, \Joomla\Registry\Registry> Important and remaining metadata registries
+   * @return  array<int, \Joomla\Registry\Registry> Important and complete metadata registries
    *
    * @since   __DEPLOY_VERSION__
    */
