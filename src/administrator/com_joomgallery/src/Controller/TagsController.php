@@ -80,7 +80,7 @@ class TagsController extends JoomAdminController
    *
    * @return  void
    *
-   * @since   __DEPLOY_VERSION__
+   * @since   4.5.0
    */
   public function showImages()
   {
