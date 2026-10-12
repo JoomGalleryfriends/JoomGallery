@@ -82,3 +82,10 @@ jobs:
 
       - name: Run PHPCS
         run: ./vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml --runtime-set ignore_warnings_on_exit 1 src
+
+      # - name: Run PHPStan
+      #   if: ${{ hashFiles('joomla/includes/framework.php') != '' }}
+      #   run: ./vendor/bin/phpstan analyse
+
+      # - name: Run Rector dry-run
+      #   run: ./vendor/bin/rector process --dry-run
