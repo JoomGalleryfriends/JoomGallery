@@ -90,7 +90,8 @@ class JoomHelper
 
         foreach($document->getElementsByTagName('*') as $element)
         {
-          $alignment = strtolower(trim($element->getAttribute('align')));
+          $alignment   = strtolower(trim($element->getAttribute('align')));
+          $decorations = [];
 
           foreach(explode(';', $element->getAttribute('style')) as $declaration)
           {
@@ -98,11 +99,31 @@ class JoomHelper
             {
               $alignment = strtolower($match[1]);
             }
+
+            if(preg_match('/^\s*text-decoration(?:-line)?\s*:\s*([^;]+)$/i', $declaration, $match))
+            {
+              $decoration = strtolower($match[1]);
+
+              if(preg_match('/(?:^|\s)underline(?:\s|$)/', $decoration))
+              {
+                $decorations[] = 'text-decoration-underline';
+              }
+
+              if(preg_match('/(?:^|\s)line-through(?:\s|$)/', $decoration))
+              {
+                $decorations[] = 'text-decoration-line-through';
+              }
+            }
           }
 
           if(isset($classes[$alignment]))
           {
             $element->setAttribute('class', trim($element->getAttribute('class') . ' ' . $classes[$alignment]));
+          }
+
+          if($decorations)
+          {
+            $element->setAttribute('class', trim($element->getAttribute('class') . ' ' . implode(' ', array_unique($decorations))));
           }
         }
         $body = $document->getElementsByTagName('body')->item(0);
@@ -126,8 +147,8 @@ class JoomHelper
 
     $tags       = [
       'a', 'abbr', 'b', 'blockquote', 'br', 'code', 'div', 'em', 'figcaption', 'figure',
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'li', 'ol', 'p', 'pre',
-      'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead',
+      'del', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'li', 'ol', 'p', 'pre',
+      's', 'span', 'strike', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead',
       'tr', 'u', 'ul',
     ];
     $attributes = [
