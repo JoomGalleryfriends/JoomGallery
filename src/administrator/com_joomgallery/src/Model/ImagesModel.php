@@ -223,7 +223,13 @@ class ImagesModel extends JoomListModel
     if($searchProvider->handlesOrdering())
     {
       $form->removeField('fullordering', 'list');
-      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SEARCH_PROVIDER_ORDERING_NOTICE', $searchProvider->getDisplayName()), 'info');
+
+      $user = $this->app->getIdentity();
+
+      if($this->app->isClient('administrator') || $user->authorise('core.admin', 'com_joomgallery'))
+      {
+        $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SEARCH_PROVIDER_ORDERING_NOTICE', $searchProvider->getDisplayName()), 'info');
+      }
     }
 
     foreach(['filter', 'list'] as $group)
@@ -652,16 +658,10 @@ class ImagesModel extends JoomListModel
       $logicAnd = false;
     }
 
-    // Select the required fields from the table.
-    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && \count($tag) > 1 && !$logicAnd)
-    {
-      // Add DISTINCT when filtering with multiple tags
-      $query->select('COUNT(DISTINCT a.id)');
-    }
-    else
-    {
-      $query->select('COUNT(*)');
-    }
+    // Return one row per image. JoomListModel::_getListCount() counts these
+    // rows, which keeps pagination correct even when a provider or tag join
+    // produces more than one joined row for the same image.
+    $query->select($db->quoteName('a.id'));
 
     // Select table
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && $logicAnd)
@@ -734,15 +734,9 @@ class ImagesModel extends JoomListModel
     // Filter by search
     $search = trim((string) $this->getState('filter.search'));
 
-    $hasActiveSearchProviderFilter =
-      !empty($this->getState('filter.category'))
-      || !empty($this->getState('filter.tag'))
-      || !empty($this->getState('filter.language'));
-
-    if(!empty($search) || $hasActiveSearchProviderFilter)
-    {
-      $this->component->getSearch()->applyToQuery($query, $search, 'a');
-    }
+    // Keep provider filtering identical to getListQuery(). The provider decides
+    // whether the current search/filter state requires changes to the query.
+    $searchProvider->applyToQuery($query, $search, 'a');
 
     // Filter by published state
     $published = (string) $this->getState('filter.published');
@@ -898,7 +892,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter on the language.
-    if($language = $this->getState('filter.language'))
+    if(!$searchProvider->handlesFilter('language') && $language = $this->getState('filter.language'))
     {
       $query->where($db->quoteName('a.language') . ' = :language')
         ->bind(':language', $language);
@@ -940,6 +934,8 @@ class ImagesModel extends JoomListModel
       $query->where($db->quoteName('a.' . $dateField) . ' <= :endDate')
         ->bind(':endDate', $db->toSql($endDate));
     }
+
+    $query->group($db->quoteName('a.id'));
 
     return $query;
   }
