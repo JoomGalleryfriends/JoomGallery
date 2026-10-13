@@ -119,7 +119,7 @@ if($saveOrder && !empty($this->items))
                 <th scope="col" class="w-10 d-none d-md-table-cell">
                   <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_OWNER', 'a.created_by', $listDirn, $listOrder); ?>
                 </th>
-                <?php if (Multilanguage::isEnabled() && \Joomla\CMS\Language\Associations::isEnabled()) : ?>
+                <?php if(Multilanguage::isEnabled() && \Joomla\CMS\Language\Associations::isEnabled()) : ?>
                   <th scope="col" class="w-10 d-none d-md-table-cell">
                     <?php echo Text::_('COM_JOOMGALLERY_IMAGE_FIELD_ASSOCIATIONS'); ?>
                   </th>

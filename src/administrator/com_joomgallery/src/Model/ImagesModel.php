@@ -221,7 +221,7 @@ class ImagesModel extends JoomListModel
         continue;
       }
 
-      $item->associations = Associations::getAssociations(
+    $item->associations = Associations::getAssociations(
         'com_joomgallery',
         '#__joomgallery',
         'com_joomgallery.image',
@@ -229,7 +229,7 @@ class ImagesModel extends JoomListModel
         'id',
         '',
         ''
-      );
+    );
     }
 
     return $items;
