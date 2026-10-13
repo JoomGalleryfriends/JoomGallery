@@ -12,7 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
 
-defined( '_JEXEC' ) || die;
+\defined( '_JEXEC' ) || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
@@ -85,14 +85,16 @@ class ImageModel extends JoomAdminModel {
     // Set event after recreate
     if ( isset( $config[ 'event_after_recreate' ] ) ) {
       $this->event_after_recreate = $config[ 'event_after_recreate' ];
-    } elseif ( empty( $this->event_after_recreate ) ) {
+    }
+    elseif ( empty( $this->event_after_recreate ) ) {
       $this->event_after_recreate = 'onJoomAfterRecreate';
     }
 
     // Set event before recreate
     if ( isset( $config[ 'event_before_recreate' ] ) ) {
       $this->event_before_recreate = $config[ 'event_before_recreate' ];
-    } elseif ( empty( $this->event_before_recreate ) ) {
+    }
+    elseif ( empty( $this->event_before_recreate ) ) {
       $this->event_before_recreate = 'onJoomBeforeRecreate';
     }
 
@@ -117,7 +119,7 @@ class ImageModel extends JoomAdminModel {
    */
   public function getForm( $data = [], $loadData = true ) {
     // Get the form.
-    $form = $this->loadForm( $this->typeAlias, 'image', [ 'control' => 'jform', 'load_data' => $loadData ] );
+    $form = $this->loadForm( $this->typeAlias, 'image', ['control' => 'jform', 'load_data' => $loadData] );
 
     if ( empty( $form ) ) {
       return false;
@@ -260,7 +262,8 @@ class ImageModel extends JoomAdminModel {
         // If there was no underlying error, then the false means there simply was not a row in the db for this $pk.
         if ( !$table->getError() ) {
           $this->setError( Text::_( 'JLIB_APPLICATION_ERROR_NOT_EXIST' ) );
-        } else {
+        }
+        else {
           $this->setError( $table->getError() );
         }
 
@@ -326,12 +329,13 @@ class ImageModel extends JoomAdminModel {
           if ( \is_array( $table->catid ) ) {
             $table->catid = implode( ',', $table->catid );
           }
-        } else {
+        }
+        else {
           $table->catid = '';
         }
 
         // Create file manager service
-        $manager = JoomHelper::getService( 'FileManager', [ $table->catid ] );
+        $manager = JoomHelper::getService( 'FileManager', [$table->catid] );
 
         // Regenerate filename
         $newFilename = $manager->regenFilename( $table->filename );
@@ -353,15 +357,16 @@ class ImageModel extends JoomAdminModel {
         }
 
         // Trigger the before save event.
-        $result = $this->app->triggerEvent( $this->event_before_save, [ $context, & $table, true, $table ] );
+        $result = $this->app->triggerEvent( $this->event_before_save, [$context, & $table, true, $table] );
 
         if ( \in_array( false, $result, true ) || !$table->store() ) {
           throw new\Exception( $table->getError() );
         }
 
         // Trigger the after save event.
-        $this->app->triggerEvent( $this->event_after_save, [ $context, & $table, true ] );
-      } else {
+        $this->app->triggerEvent( $this->event_after_save, [$context, & $table, true] );
+      }
+      else {
         throw new\Exception( $table->getError() );
       }
     }
@@ -468,7 +473,7 @@ class ImageModel extends JoomAdminModel {
       }
 
       // Create uploader service
-      $uploader = JoomHelper::getService( 'uploader', [ $upload_service, $upload_multiple, $isAjax ] );
+      $uploader = JoomHelper::getService( 'uploader', [$upload_service, $upload_multiple, $isAjax] );
 
       // Detect uploaded file
       $imgUploaded = $uploader->isImgUploaded( $data );
@@ -501,7 +506,7 @@ class ImageModel extends JoomAdminModel {
       }
 
       // Create file manager service
-      $manager = JoomHelper::getService( 'FileManager', [ $data[ 'catid' ] ] );
+      $manager = JoomHelper::getService( 'FileManager', [$data[ 'catid' ]] );
 
       // Handle images if category was changed
       if ( !$isNew && ( $catMoved || $aliasChanged ) ) {
@@ -515,32 +520,33 @@ class ImageModel extends JoomAdminModel {
 
         if ( !$sourceImage ) {
           $this->setError( 'Source image not found.' );
+
           return false;
         }
 
         $sourceData = ( array )$sourceImage;
 
         foreach ( [
-            'filename',
-            'filesystem',
-            'uploader',
-            'multiple',
-            'published',
-            'approved',
-            'featured',
-            'hidden',
-            'access',
-            'author',
-            'created_by',
-            'date',
-            'tags',
-            'params',
-            'imgmetadata',
-            'metadesc',
-            'metakey',
-            'robots'
-          ] as $field ) {
-          if ( array_key_exists( $field, $sourceData ) ) {
+          'filename',
+          'filesystem',
+          'uploader',
+          'multiple',
+          'published',
+          'approved',
+          'featured',
+          'hidden',
+          'access',
+          'author',
+          'created_by',
+          'date',
+          'tags',
+          'params',
+          'imgmetadata',
+          'metadesc',
+          'metakey',
+          'robots',
+        ] as $field ) {
+          if ( \array_key_exists( $field, $sourceData ) ) {
             $data[ $field ] = $sourceData[ $field ];
           }
         }
@@ -605,14 +611,15 @@ class ImageModel extends JoomAdminModel {
         }
 
         if ( $src_img && $src_img->filesystem !== $table->filesystem ) {
-          $two_filesystems = [ $src_img->filesystem, $table->filesystem ];
+          $two_filesystems = [$src_img->filesystem, $table->filesystem];
         }
-      } elseif ( $catMoved ) {
+      }
+      elseif ( $catMoved ) {
         // Get filesystem for new category
         $tmp_config = new\Joomgallery\Component\Joomgallery\Administrator\Service\Config\DefaultConfig( 'com_joomgallery.category', $table->catid );
 
         if ( $tmp_config->get( 'jg_filesystem', 'local-images' ) !== $table->filesystem ) {
-          $two_filesystems = [ $table->filesystem, $tmp_config->get( 'jg_filesystem', 'local-images' ) ];
+          $two_filesystems = [$table->filesystem, $tmp_config->get( 'jg_filesystem', 'local-images' )];
         }
       }
 
@@ -641,7 +648,7 @@ class ImageModel extends JoomAdminModel {
       }
 
       // Trigger the before save event.
-      $result = $app->triggerEvent( $this->event_before_save, [ $context, $table, $isNew, $data ] );
+      $result = $app->triggerEvent( $this->event_before_save, [$context, $table, $isNew, $data] );
 
       // Stop storing data if one of the plugins returns false
       if ( \in_array( false, $result, true ) ) {
@@ -661,7 +668,8 @@ class ImageModel extends JoomAdminModel {
         if ( $imgUploaded ) {
           // Delete old images
           $filesystem_success = $manager->deleteImages( $old_table );
-        } else {
+        }
+        else {
           // Move old images to new location
           $filesystem_success = $manager->moveImages( $old_table, $table->catid );
         }
@@ -727,7 +735,7 @@ class ImageModel extends JoomAdminModel {
 
       // Handle ajax uploads
       if ( $isAjax ) {
-        $this->component->cache->set( 'imgObj', $table->getFieldsValues( [ 'form', 'imgmetadata', 'params', 'created_by', 'modified_by', 'checked_out' ] ) );
+        $this->component->cache->set( 'imgObj', $table->getFieldsValues( ['form', 'imgmetadata', 'params', 'created_by', 'modified_by', 'checked_out'] ) );
       }
 
       // All done. Clean created temp files
@@ -737,8 +745,9 @@ class ImageModel extends JoomAdminModel {
       $this->cleanCache();
 
       // Trigger the after save event.
-      $app->triggerEvent( $this->event_after_save, [ $context, $table, $isNew, $data ] );
-    } catch ( \Exception $e ) {
+      $app->triggerEvent( $this->event_after_save, [$context, $table, $isNew, $data] );
+    }
+    catch ( \Exception $e ) {
       if ( $imgUploaded ) {
         $uploader->rollback( $table );
       }
@@ -776,7 +785,7 @@ class ImageModel extends JoomAdminModel {
         $associationKey = $db->loadResult();
 
         // Start with the source image.
-        $associatedIds = [ $source_id ];
+        $associatedIds = [$source_id];
 
         // Keep every image already in the same association group.
         if ( $associationKey !== null ) {
@@ -846,7 +855,7 @@ class ImageModel extends JoomAdminModel {
           $context = $this->option . '.' . $this->name;
 
           // Trigger the before delete event.
-          $result = Factory::getApplication()->triggerEvent( $this->event_before_delete, [ $context, $table ] );
+          $result = Factory::getApplication()->triggerEvent( $this->event_before_delete, [$context, $table] );
 
           if ( \in_array( false, $result, true ) ) {
             $this->setError( $table->getError() );
@@ -855,7 +864,7 @@ class ImageModel extends JoomAdminModel {
           }
 
           // Delete corresponding imagetypes
-          $manager = JoomHelper::getService( 'FileManager', [ $table->catid ] );
+          $manager = JoomHelper::getService( 'FileManager', [$table->catid] );
 
           if ( !$manager->deleteImages( $table ) ) {
             $this->setError( $this->component->getDebug( true ) );
@@ -929,8 +938,9 @@ class ImageModel extends JoomAdminModel {
           }
 
           // Trigger the after event.
-          Factory::getApplication()->triggerEvent( $this->event_after_delete, [ $context, $table ] );
-        } else {
+          Factory::getApplication()->triggerEvent( $this->event_after_delete, [$context, $table] );
+        }
+        else {
           // Prune items that you can't change.
           unset( $pks[ $i ] );
           $error = $this->getError();
@@ -946,7 +956,8 @@ class ImageModel extends JoomAdminModel {
 
           return false;
         }
-      } else {
+      }
+      else {
         $this->setError( $table->getError() );
 
         return false;
@@ -1042,7 +1053,7 @@ class ImageModel extends JoomAdminModel {
     }
 
     // Trigger the before change state event.
-    $result = Factory::getApplication()->triggerEvent( $this->event_before_change_state, [ $context, $pks, $value ] );
+    $result = Factory::getApplication()->triggerEvent( $this->event_before_change_state, [$context, $pks, $value] );
 
     if ( \in_array( false, $result, true ) ) {
       $this->setError( $table->getError() );
@@ -1058,7 +1069,7 @@ class ImageModel extends JoomAdminModel {
     }
 
     // Trigger the change state event.
-    $result = Factory::getApplication()->triggerEvent( $this->event_change_state, [ $context, $pks, $value ] );
+    $result = Factory::getApplication()->triggerEvent( $this->event_change_state, [$context, $pks, $value] );
 
     if ( \in_array( false, $result, true ) ) {
       $this->setError( $table->getError() );
@@ -1113,7 +1124,7 @@ class ImageModel extends JoomAdminModel {
       $table->load( $pk );
 
       // Create uploader service
-      $uploader = JoomHelper::getService( 'uploader', [ 'single', false ] );
+      $uploader = JoomHelper::getService( 'uploader', ['single', false] );
 
       // Set replacement settings
       $uploader->type = $data[ 'replacetype' ];
@@ -1141,7 +1152,8 @@ class ImageModel extends JoomAdminModel {
 
       // Clean the cache.
       $this->cleanCache();
-    } catch ( \Exception $e ) {
+    }
+    catch ( \Exception $e ) {
       $uploader->rollback();
       $this->setError( $e->getMessage() );
 
@@ -1188,7 +1200,8 @@ class ImageModel extends JoomAdminModel {
         if ( ( $type == 'original' || $type == 'orig' ) && $imagetypes[ $imagetypes_dict[ 'original' ] ]->params->get( 'jg_imgtype', 1, 'int' ) > 0 ) {
           // Take original as source if available
           $type = 'original';
-        } else {
+        }
+        else {
           $type = 'detail';
         }
 
@@ -1196,7 +1209,7 @@ class ImageModel extends JoomAdminModel {
         $source = $this->component->getFileManager()->getImgPath( $table, $type );
 
         // Trigger the before recreate event.
-        $result = Factory::getApplication()->triggerEvent( $this->event_before_recreate, [ $table, $imagetypes, $source ] );
+        $result = Factory::getApplication()->triggerEvent( $this->event_before_recreate, [$table, $imagetypes, $source] );
 
         if ( \in_array( false, $result, true ) ) {
           $this->setError( $table->getError() );
@@ -1217,8 +1230,9 @@ class ImageModel extends JoomAdminModel {
         }
 
         // Trigger the after event.
-        Factory::getApplication()->triggerEvent( $this->event_after_recreate, [ $context, $table ] );
-      } else {
+        Factory::getApplication()->triggerEvent( $this->event_after_recreate, [$context, $table] );
+      }
+      else {
         // Prune items that you can't change.
         $error = $this->getError();
 
@@ -1233,7 +1247,8 @@ class ImageModel extends JoomAdminModel {
 
         return false;
       }
-    } else {
+    }
+    else {
       $this->setError( $table->getError() );
       $this->component->setError( 'Image ID not found: ' . $pk );
 
@@ -1302,11 +1317,13 @@ class ImageModel extends JoomAdminModel {
       // Perform the save using the metadata/filesystem service
       if ( $filesystem != 'local-images' ) {
         $data = $this->component->getMetadata()->writeMetadata( $path, $registry, false );
-      } else {
+      }
+      else {
         $data = $this->component->getMetadata()->writeMetadata( $path, $registry );
       }
       $this->component->getFilesystem()->createFile( basename( $path ), \dirname( $path ), $data );
-    } else {
+    }
+    else {
       $this->setError( $table->getError() );
 
       return false;
@@ -1384,31 +1401,31 @@ class ImageModel extends JoomAdminModel {
 
     if ( $isLanguageVariantForm ) {
       foreach ( [
-          'tags',
-          'published',
-          'author',
-          'access',
-          'hidden',
-          'featured',
-          'created_time',
-          'created_by',
-          'modified_time',
-          'modified_by',
-          'metadesc',
-          'metakey',
-          'robots',
-          'image',
-          'MAX_FILE_SIZE',
-          'filename',
-          'replacetype',
-          'replaceprocess',
-          'date',
-          'imgmetadata',
-          'params',
-          'version_note',
-          'uploader',
-          'multiple'
-        ] as $fieldName ) {
+        'tags',
+        'published',
+        'author',
+        'access',
+        'hidden',
+        'featured',
+        'created_time',
+        'created_by',
+        'modified_time',
+        'modified_by',
+        'metadesc',
+        'metakey',
+        'robots',
+        'image',
+        'MAX_FILE_SIZE',
+        'filename',
+        'replacetype',
+        'replaceprocess',
+        'date',
+        'imgmetadata',
+        'params',
+        'version_note',
+        'uploader',
+        'multiple',
+      ] as $fieldName ) {
         $form->removeField( $fieldName );
       }
     }

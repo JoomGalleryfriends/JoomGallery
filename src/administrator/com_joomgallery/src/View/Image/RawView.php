@@ -17,10 +17,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryRawView;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 
 /**
@@ -115,7 +115,8 @@ class RawView extends JoomGalleryRawView
           }
         }
       }
-    } else {
+    }
+    else {
       $img = $id;
     }
 
