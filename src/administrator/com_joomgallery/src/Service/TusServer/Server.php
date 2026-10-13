@@ -16,7 +16,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ResponseTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Abort;
-
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\BadHeader;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\File;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\Max;
@@ -24,7 +23,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\Exception\
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\FileToolsService;
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\ServerInterface;
 use Joomla\CMS\Factory;
-use Psr\Http\Message\ResponseInterface;
+use Joomla\CMS\Session\Session;
 
 /**
  * Tus-Server v1.0.0 implementation
@@ -61,6 +60,9 @@ class Server implements ServerInterface
    * @var string
    */
   private $uuid;
+
+  /** Joomla component used for mandatory upload authorization. */
+  private $component;
 
   /**
    * Directory to use for save the file
@@ -152,11 +154,12 @@ class Server implements ServerInterface
    */
   public function __construct(string $directory, string $location, bool $debug = false)
   {
+    $this->app       = Factory::getApplication();
+    $this->component = $this->app->bootComponent('com_joomgallery');
+    $this->debugMode = $debug;
+
     $this->setDirectory($directory);
     $this->setLocation($location);
-
-    $this->app       = Factory::getApplication();
-    $this->debugMode = $debug;
 
     require JPATH_ADMINISTRATOR . '/components/' . _JOOM_OPTION . '/includes/tusspecs.php';
     $this->specs = $tus_specs_array;
@@ -177,6 +180,21 @@ class Server implements ServerInterface
     try
     {
       $method = $this->app->input->getMethod();
+
+      if(\in_array($method, ['POST', 'PATCH', 'DELETE'], true))
+      {
+        $token = $this->app->input->server->get('HTTP_X_CSRF_TOKEN', '', 'alnum');
+
+        if(!hash_equals(Session::getFormToken(), $token))
+        {
+          throw new Request('Invalid CSRF token', 403);
+        }
+      }
+
+      if(\in_array($method, ['HEAD', 'PATCH', 'GET', 'DELETE'], true))
+      {
+        $this->loadUpload();
+      }
 
       $isOption = false;
       switch($method)
@@ -297,8 +315,14 @@ class Server implements ServerInterface
    */
   public function loadUpload(?string $uuid = null): bool
   {
-    $this->uuid = $uuid;
-    $this->getUserUuid();
+    $uuid = $uuid ?? $this->app->input->get('uuid', '', 'string');
+
+    $this->validateUuid($uuid);
+    $this->uuid         = $uuid;
+    $this->metaData     = null;
+    $this->realFileName = '';
+    $this->fileType     = '';
+    $this->assertUploadAccess();
 
     // Load the metadata and check for the uuid
     if($this->existsInMetaData('id') === false)
@@ -341,7 +365,14 @@ class Server implements ServerInterface
       throw new BadHeader('Upload-Length must be a positive integer');
     }
 
-    $finalLength = (int)$headers['Upload-Length'];
+    $rawLength = $this->app->input->server->get('HTTP_UPLOAD_LENGTH', '', 'raw');
+
+    if(!\is_string($rawLength) || !preg_match('/\A[0-9]+\z/', $rawLength)
+      || filter_var($rawLength, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) === false)
+    {
+      throw new BadHeader('Invalid Upload-Length');
+    }
+    $finalLength = (int)$rawLength;
 
     if($finalLength > $this->allowMaxSize)
     {
@@ -349,7 +380,21 @@ class Server implements ServerInterface
       throw new Request('Request Entity Too Large', 413);
     }
 
-    $this->setMetaData($this->parseMetaDataHeader($headers['Upload-Metadata']), false);
+    $metadata = $this->parseMetaDataHeader($headers['Upload-Metadata']);
+    $catid    = (int)($metadata['catid'] ?? 0);
+    $imageid  = (int)($metadata['imageid'] ?? 0);
+    $catid    = $this->authorizeTarget($catid, $imageid);
+    $client   = array_intersect_key($metadata, array_flip(['name', 'filename', 'type', 'jtitle', 'jdescription', 'jauthor']));
+
+    if(empty($client['filename']) && isset($client['name']))
+    {
+      $client['filename'] = $client['name'];
+    }
+
+    $this->setMetaData($client, false);
+    $this->setMetaDataValue('owner', $this->uploadOwner());
+    $this->setMetaDataValue('catid', $catid);
+    $this->setMetaDataValue('imageid', $imageid);
     $this->setRealFileName();
 
     $file = $this->directory . $this->getFilename();
@@ -505,7 +550,7 @@ class Server implements ServerInterface
     }
 
     $file         = $this->directory . $this->getFilename();
-    $handleOutput = fopen($file, 'ab');
+    $handleOutput = fopen($file, 'r+b');
 
     if($handleOutput === false)
     {
@@ -513,7 +558,22 @@ class Server implements ServerInterface
       throw new File('Impossible to open file to write into');
     }
 
-    if(fseek($handleOutput, $offsetSession) === false)
+    if(!flock($handleOutput, LOCK_EX))
+    {
+      fclose($handleInput);
+      fclose($handleOutput);
+      throw new File('Unable to lock upload');
+    }
+    $actualSize = fstat($handleOutput)['size'];
+
+    if($actualSize !== $offsetHeader || $lengthSession > $this->allowMaxSize)
+    {
+      fclose($handleInput);
+      fclose($handleOutput);
+      throw new Request('Upload offset or size conflict', 409);
+    }
+
+    if(fseek($handleOutput, $offsetSession) !== 0)
     {
       $this->component->addLog('Impossible to move pointer in the good position', 'error', 'jerror');
       throw new File('Impossible to move pointer in the good position');
@@ -574,7 +634,7 @@ class Server implements ServerInterface
         }
 
         // If user sent more data than expected (by POST Final-Length), abort
-        if($contentLength !== null && ($sizeRead + $currentSize > $lengthSession))
+        if($sizeRead > min($lengthSession, $this->allowMaxSize) - $currentSize)
         {
           $this->component->addLog('Size sent is greater than max length expected', 'error', 'jerror');
           throw new Max('Size sent is greater than max length expected');
@@ -590,7 +650,7 @@ class Server implements ServerInterface
         // Write data
         $sizeWrite = fwrite($handleOutput, $data);
 
-        if($sizeWrite === false)
+        if($sizeWrite === false || $sizeWrite !== $sizeRead)
         {
           $this->component->addLog('Unable to write data', 'error', 'jerror');
           throw new File('Unable to write data');
@@ -613,7 +673,7 @@ class Server implements ServerInterface
     }
     catch (Max $exp)
     {
-      $returnCode = 400;
+      $returnCode = 413;
       $returnMsg  = $exp->getMessage();
     }
     catch (File $exp)
@@ -648,7 +708,7 @@ class Server implements ServerInterface
    *
    * @return void
    */
-  private function processOptions(): ResponseInterface
+  private function processOptions(): void
   {
     $this->uuid = null;
 
@@ -790,7 +850,7 @@ class Server implements ServerInterface
       $this->addHeaderLine('Tus-Extension', self::TUS_EXTENSIONS);
       $this->addHeaderLine('Allow', $allowedMethods);
       $this->addHeaderLine('Access-Control-Allow-Methods', $allowedMethods);
-      $this->addHeaderLine('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Final-Length, Upload-Offset, Upload-Length, Tus-Resumable, Upload-Metadata');
+      $this->addHeaderLine('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Final-Length, Upload-Offset, Upload-Length, Tus-Resumable, Upload-Metadata, X-CSRF-Token');
 
       if($this->allowMaxSize > 0)
       {
@@ -808,7 +868,8 @@ class Server implements ServerInterface
    */
   private function buildUuid(): void
   {
-    $this->uuid = hash('md5', uniqid(mt_rand() . php_uname(), true));
+    $this->uuid     = bin2hex(random_bytes(16));
+    $this->metaData = null;
   }
 
   /**
@@ -818,24 +879,85 @@ class Server implements ServerInterface
    *
    * @throws \InvalidArgumentException If the UUID is empty
    */
+  private function validateUuid(string $uuid): void
+  {
+    if(preg_match('/\A[a-f0-9]{32}\z/', $uuid) !== 1)
+    {
+      throw new Request('Invalid upload identifier', 400);
+    }
+  }
+
   private function getUserUuid(): string
   {
-    if($this->uuid === null)
-    {
-      $uuid = $this->app->input->get('uuid', '', 'string');
+    $uuid = $this->uuid ?? $this->app->input->get('uuid', '', 'string');
+    $this->validateUuid($uuid);
 
-      if(\strlen($uuid) === 32 && preg_match('/[a-z0-9]/', $uuid))
-      {
-        $this->uuid = $uuid;
-      }
-      else
-      {
-        $this->component->addLog('The uuid cannot be empty.', 'error', 'jerror');
-        throw new \InvalidArgumentException('The uuid cannot be empty.');
-      }
+    return $this->uuid = $uuid;
+  }
+
+  private function uploadOwner(): string
+  {
+    $user = $this->app->getIdentity();
+
+    if($user === null)
+    {
+      throw new Request('Upload access denied', 403);
     }
 
-    return $this->uuid;
+    return $user->guest ? 'session:' . hash('sha256', $this->app->getSession()->getId()) : 'user:' . (int)$user->id;
+  }
+
+  private function authorizeTarget(int $catid, int $imageid): int
+  {
+    if($catid <= 0 && $imageid <= 0)
+    {
+      throw new Request('Upload target required', 403);
+    }
+    $model = $this->component->getMVCFactory()->createModel($imageid > 0 ? 'Image' : 'Category', 'Administrator', ['ignore_request' => true]);
+    $item  = $model->getItem($imageid > 0 ? $imageid : $catid);
+
+    if(!$item || empty($item->id))
+    {
+      throw new Request('Upload target unavailable', 403);
+    }
+
+    if($imageid > 0)
+    {
+      $catid = (int)$item->catid;
+    }
+
+    $this->component->createAccess();
+    $acl     = $this->component->getAccess();
+    $allowed = $imageid > 0 ? $acl->checkACL('edit', 'image', $imageid, $catid, true) : $acl->checkACL('add', 'image', 0, $catid, true);
+
+    if(!$allowed)
+    {
+      throw new Request('Upload access denied', 403);
+    }
+
+    return $catid;
+  }
+
+  private function assertUploadAccess(): void
+  {
+    $data = $this->getMetaData();
+
+    if(empty($data['id']) || $data['id'] !== $this->getUserUuid())
+    {
+      throw new Request('Upload not found', 404);
+    }
+
+    if(!isset($data['owner']) || !\is_string($data['owner']) || !hash_equals($data['owner'], $this->uploadOwner()))
+    {
+      throw new Request('Upload access denied', 403);
+    }
+
+    $catid = $this->authorizeTarget((int)($data['catid'] ?? 0), (int)($data['imageid'] ?? 0));
+
+    if($catid !== (int)$data['catid'])
+    {
+      throw new Request('Upload target changed', 403);
+    }
   }
 
   /**
@@ -867,16 +989,16 @@ class Server implements ServerInterface
     // Make keys lowercase
     foreach($metadata as $key => $value)
     {
-    $metadata[strtolower($key)] = $value;
+      $metadata[strtolower($key)] = $value;
     }
 
     if($replace)
     {
-    $this->metaData = $metadata;
+      $this->metaData = $metadata;
     }
     else
     {
-    $this->metaData = array_merge($this->metaData, $metadata);
+      $this->metaData = array_merge($this->metaData, $metadata);
     }
   }
 
@@ -905,8 +1027,7 @@ class Server implements ServerInterface
       throw new \RuntimeException($key . ' is not defined in medatada');
     }
 
-
-      return false;
+    return false;
   }
 
   /**
@@ -922,17 +1043,7 @@ class Server implements ServerInterface
     $data = $this->getMetaData();
     $key  = strtolower($key);
 
-    if($key == 'size')
-    {
-      if($data['size'] === 0)
-      {
-      $data['size'] = $value;
-      }
-    }
-    else
-    {
-      $data[$key] = $value;
-    }
+    $data[$key] = $value;
 
     $this->metaData = $data;
   }
@@ -960,21 +1071,24 @@ class Server implements ServerInterface
    */
   private function parseMetaDataHeader($header)
   {
-    $parts = explode(',', $header);
-
-    if(\count($parts) <= 1)
-    {
-    // if only one metadata exists, it is the filename
-    return ['filename' => $header];
-    }
-
-    // multiple metadata submitted
     $metadata = [];
 
-    foreach($parts as $part)
+    foreach(explode(',', (string)$header) as $part)
     {
-    $pair                           = explode(' ', $part);
-    $metadata[strtolower($pair[0])] = base64_decode($pair[1]);
+      if(trim($part) === '')
+      { continue;
+      }
+
+      $pair  = explode(' ', trim($part), 2);
+      $key   = strtolower($pair[0]);
+      $value = base64_decode($pair[1] ?? '', true);
+
+      if($value === false || \array_key_exists($key, $metadata))
+      {
+        throw new BadHeader('Invalid upload metadata');
+      }
+
+      $metadata[$key] = $value;
     }
 
     return $metadata;
@@ -1053,12 +1167,16 @@ class Server implements ServerInterface
       {
         $this->fileType = FileToolsService::detectMimeType($this->directory . $this->getUserUuid(), $this->getRealFileName());
       }
+
       $this->setMetaDataValue('mimetype', $this->fileType);
     }
 
     $json = json_encode($this->getMetaData());
 
-    file_put_contents($this->directory . $this->getUserUuid() . '.info', $json);
+    if($json === false || file_put_contents($this->directory . $this->getUserUuid() . '.info', $json, LOCK_EX) === false)
+    {
+      throw new File('Unable to save upload state');
+    }
   }
 
   /**
@@ -1074,9 +1192,7 @@ class Server implements ServerInterface
 
     if(file_exists($file) && is_writable($file))
     {
-      unset($file);
-
-      return true;
+      return unlink($file);
     }
 
     return false;
@@ -1146,15 +1262,15 @@ class Server implements ServerInterface
 
     foreach($files as $file)
     {
-    if(strpos(basename($file), $uuid) !== false)
-    {
-      // Delete file with uuid in its name
-      if(!unlink($file))
+      if(\in_array(basename($file), [$uuid, $uuid . '.info'], true))
       {
-      $this->component->addLog('File with name "' . $file . '" can not be deleted. 500', 'error', 'jerror');
-      throw new File('File with name "' . $file . '" can not be deleted.', 500);
+        // Delete file with uuid in its name
+        if(!unlink($file))
+        {
+          $this->component->addLog('File with name "' . $file . '" can not be deleted. 500', 'error', 'jerror');
+          throw new File('File with name "' . $file . '" can not be deleted.', 500);
+        }
       }
-    }
     }
   }
 
@@ -1307,15 +1423,15 @@ class Server implements ServerInterface
   {
     if(strpos($location, 'http') !== false || strpos($location, '://') !== false || strpos($location, 'www.') !== false)
     {
-    // looks like $location contains the domain
-    $this->component->addLog('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 'error', 'jerror');
-    throw new \Exception('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 1);
+      // looks like $location contains the domain
+      $this->component->addLog('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 'error', 'jerror');
+      throw new \Exception('Location should not contain the domain. Please provide the domain separately using setDomain() method.', 1);
     }
 
     if(substr($location, 0, 1) != '/')
     {
-    // location should always starts with a slash (/)
-    $location = '/' . $location;
+      // location should always starts with a slash (/)
+      $location = '/' . $location;
     }
 
     $this->location = $location;
@@ -1332,8 +1448,8 @@ class Server implements ServerInterface
   {
     if(substr($this->domain, -1) == '/')
     {
-    // domain should never ends with a slash (/)
-    return substr($this->domain, 0, -1);
+      // domain should never ends with a slash (/)
+      return substr($this->domain, 0, -1);
     }
 
     return $this->domain;
@@ -1350,8 +1466,8 @@ class Server implements ServerInterface
   {
     if(substr($domain, -1) == '/')
     {
-    // domain should never ends with a slash (/)
-    $domain = substr($domain, 0, -1);
+      // domain should never ends with a slash (/)
+      $domain = substr($domain, 0, -1);
     }
 
     $this->domain = $domain;
