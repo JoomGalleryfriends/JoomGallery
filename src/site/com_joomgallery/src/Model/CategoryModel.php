@@ -503,6 +503,9 @@ class CategoryModel extends JoomItemModel
 
     // Apply filters: show only images of the current category and language.
     $listModel->setState('filter.category', (int) $this->item->id);
+    $listModel->setState('filter.access', $user->getAuthorisedViewLevels());
+    $listModel->setState('filter.published', 1);
+    $listModel->setState('filter.showunapproved', 0);
 
     if(Multilanguage::isEnabled())
     {
