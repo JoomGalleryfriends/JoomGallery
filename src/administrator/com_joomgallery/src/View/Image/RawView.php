@@ -83,34 +83,39 @@ class RawView extends JoomGalleryRawView
 
     // Get image path. Language variants use the image record in the
     // configured fallback language as the physical file location.
-    if ( isset( $img_obj ) ) {
+    if( isset($img_obj) )
+    {
       $img = $img_obj;
 
-      if ( Multilanguage::isEnabled() && Associations::isEnabled() ) {
-        $fallbackLanguage = ComponentHelper::getParams( 'com_joomgallery' )->get( 'category_fallback_language', '' );
+      if( Multilanguage::isEnabled() && Associations::isEnabled() )
+      {
+        $fallbackLanguage = ComponentHelper::getParams('com_joomgallery')->get('category_fallback_language', '');
 
-        if ( $fallbackLanguage === '' ) {
-          $fallbackLanguage = ComponentHelper::getParams( 'com_languages' )->get( 'site', 'en-GB' );
+        if( $fallbackLanguage === '' )
+        {
+          $fallbackLanguage = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
         }
 
         $associations = Associations::getAssociations(
-          'com_joomgallery',
-          '#__joomgallery',
-          'com_joomgallery.image',
-          $img_obj->id,
-          'id',
-          '',
-          ''
+            'com_joomgallery',
+            '#__joomgallery',
+            'com_joomgallery.image',
+            $img_obj->id,
+            'id',
+            '',
+            ''
         );
 
-        if ( !empty( $associations[ $fallbackLanguage ] ) ) {
-          $fallbackImage = JoomHelper::getRecord(
+        if( !empty($associations[$fallbackLanguage]) )
+        {
+        $fallbackImage = JoomHelper::getRecord(
             'image',
-            ( int )$associations[ $fallbackLanguage ]->id
-          );
+            (int)$associations[$fallbackLanguage]->id
+        );
 
-          if ( $fallbackImage ) {
-            $img = $fallbackImage;
+          if( $fallbackImage )
+          {
+            $img     = $fallbackImage;
             $adapter = $fallbackImage->filesystem;
           }
         }
@@ -120,7 +125,7 @@ class RawView extends JoomGalleryRawView
       $img = $id;
     }
 
-    $img_path = JoomHelper::getImg( $img, $type, false, false );
+    $img_path = JoomHelper::getImg($img, $type, false, false);
 
     // Create filesystem service
     $this->component->createFilesystem($adapter);

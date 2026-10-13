@@ -27,11 +27,11 @@ $wa->useScript('keepalive')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip', '.hasTip');
 
-$app       = Factory::getApplication();
-$form      = $this->getForm();
-$fieldSets = $form->getFieldsets();
-$originId  = $app->input->getInt('origin_id');
-$forcedLanguage = $app->input->getString('forcedLanguage', '');
+$app               = Factory::getApplication();
+$form              = $this->getForm();
+$fieldSets         = $form->getFieldsets();
+$originId          = $app->input->getInt('origin_id');
+$forcedLanguage    = $app->input->getString('forcedLanguage', '');
 $isLanguageVariant = $originId > 0 && $forcedLanguage !== '' && (int) $this->item->id === 0;
 
 // In case of modal
@@ -98,7 +98,6 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
   <?php if(!$isLanguageVariant) : ?>
-
   <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'associations', Text::_('COM_JOOMGALLERY_IMAGE_FIELD_ASSOCIATIONS', true)); ?>
   <div class="row">
     <div class="col-12">
@@ -229,7 +228,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 </form>
 
 <?php
-if ( $app->input->getInt( 'variant_saved', 0 ) === 1 ):
+if( $app->input->getInt('variant_saved', 0) === 1 ):
   ?>
 <script>
   window.parent.postMessage({
@@ -249,10 +248,10 @@ endif;
     window.parent.postMessage({
       messageType: 'joomla:content-select',
       id: <?php echo (int) $this->item->id; ?>,
-      title: <?php echo json_encode(
+    title: <?php echo json_encode(
         (string) $this->item->title,
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
-      ); ?>
+    ); ?>
     }, window.location.origin);
   }
 </script>
