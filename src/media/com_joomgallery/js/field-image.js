@@ -11,6 +11,7 @@
       this.modalClose = this.modalClose.bind(this);
       this.setValue = this.setValue.bind(this);
       this.createButtonClick = this.createButtonClick.bind(this);
+      this.deleteVariantButtonClick = this.deleteVariantButtonClick.bind(this);
       this.handleMessage = this.handleMessage.bind(this);
     }
 
@@ -92,9 +93,14 @@
       this.inputImg = this.querySelector(this.inputImgId);
       this.buttonSelect = this.querySelector(this.buttonSelectClass); // Bootstrap modal init
       this.buttonCreate = this.querySelector('.button-create');
+      this.buttonDeleteVariant = this.querySelector('.button-delete-variant');
 
       if (this.buttonCreate) {
         this.buttonCreate.addEventListener('click', this.createButtonClick);
+      }
+
+      if (this.buttonDeleteVariant) {
+        this.buttonDeleteVariant.addEventListener('click', this.deleteVariantButtonClick);
       }
 
       if (this.modal && window.bootstrap && window.bootstrap.Modal && !window.bootstrap.Modal.getInstance(this.modal)) {
@@ -130,6 +136,10 @@
 
       if (this.buttonCreate) {
         this.buttonCreate.removeEventListener('click', this.createButtonClick);
+      }
+
+      if (this.buttonDeleteVariant) {
+        this.buttonDeleteVariant.removeEventListener('click', this.deleteVariantButtonClick);
       }
 
       if (this.modal) {
@@ -235,6 +245,66 @@
       this.modalOpen(createUrl.toString());
     }
 
+async deleteVariantButtonClick(event) {
+  const button = event.currentTarget;
+  const variantId = Number(this.input.value);
+  const language = button.getAttribute('data-language');
+  const sourceId = new URL(window.parent.location.href).searchParams.get('id');
+  const url = button.getAttribute('data-url');
+
+  if (!variantId || !sourceId || Number(sourceId) <= 0 || variantId === Number(sourceId) || !language || !url) {
+    Joomla.renderMessages({
+      error: [button.getAttribute('data-error') || 'The selected language variant cannot be deleted.']
+    });
+    return;
+  }
+
+  if (!window.confirm(button.getAttribute('data-confirm'))) {
+    return;
+  }
+
+  button.disabled = true;
+
+  try {
+    const token = Joomla.getOptions('csrf.token');
+    const body = new URLSearchParams({
+      id: String(variantId),
+      origin_id: String(sourceId),
+      forcedLanguage: language
+    });
+
+    if (token) {
+      body.append(token, '1');
+    }
+
+    const response = await fetch(new URL(url, window.location.href).toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      credentials: 'same-origin',
+      body: body.toString()
+    });
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || button.getAttribute('data-error'));
+    }
+
+    this.setValue('', '');
+    Joomla.renderMessages({
+      success: [result.message || button.getAttribute('data-success')]
+    });
+  } catch (error) {
+    Joomla.renderMessages({
+      error: [error.message || button.getAttribute('data-error')]
+    });
+  } finally {
+    button.disabled = !this.input.value;
+  }
+}
+
 modalOpen(url = this.url) {
   this.removeIframe();
 
@@ -318,6 +388,10 @@ modalClose() {
 setValue(value, name) {
   this.input.value = value;
   this.inputName.value = name || value;
+
+  if (this.buttonDeleteVariant) {
+    this.buttonDeleteVariant.disabled = !value;
+  }
 
   const imgPath = this.inputImg.getAttribute('src');
   this.inputImg.setAttribute(

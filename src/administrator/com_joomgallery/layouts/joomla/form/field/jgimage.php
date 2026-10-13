@@ -181,14 +181,17 @@ $modalHTML = HTMLHelper::_(
       <span class="visually-hidden"><?php echo Text::_('JACTION_CREATE'); ?></span>
     </button>
   <?php endif; ?>
-  <?php if(!empty($canDo['edit']) && !empty($urls['edit'])) : ?>
-    <button type="button" class="btn btn-secondary button-edit"
-      data-url="<?php echo $this->escape($urls['edit']); ?>"
-      <?php echo empty($value) ? 'disabled' : ''; ?>>
-      <span class="icon-edit" aria-hidden="true"></span>
-      <span class="visually-hidden"><?php echo Text::_('JACTION_EDIT'); ?></span>
-    </button>
-  <?php endif; ?>
+  <button type="button" class="btn btn-danger button-delete-variant"
+    data-url="index.php?option=com_joomgallery&amp;task=image.deleteVariant"
+    data-language="<?php echo $this->escape($forcedLanguage); ?>"
+    data-confirm="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_CONFIRM_DELETE_VARIANT')); ?>"
+    data-success="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_SUCCESS_DELETE_VARIANT')); ?>"
+    data-error="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_ERROR_DELETE_VARIANT_FAILED')); ?>"
+    title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_DELETE_LANGUAGE_VARIANT')); ?>"
+    <?php echo empty($value) ? 'disabled' : ''; ?>>
+    <span class="icon-minus" aria-hidden="true"></span>
+    <span class="visually-hidden"><?php echo Text::_('JACTION_DELETE'); ?></span>
+  </button>
       <?php endif; ?>
   </div>
   <?php // Create the real field, hidden, that stored the image id. ?>
