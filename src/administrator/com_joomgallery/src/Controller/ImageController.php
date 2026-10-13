@@ -50,6 +50,30 @@ class ImageController extends JoomFormController
       $this->input->set('origin_id', $this->input->getInt('id'));
     }
 
+    // Return to the variant editor after saving so it can close its popup.
+    $originId = $this->input->getInt('origin_id', 0);
+    $forcedLanguage = $this->input->getString('forcedLanguage', '');
+    $isLanguageVariant = $originId > 0 && $forcedLanguage !== '';
+
+    if($isLanguageVariant && $task === 'save')
+    {
+      $result = parent::save($key, $urlVar);
+
+      if($result)
+      {
+        $savedId = $this->input->getInt('id', 0);
+        $url = 'index.php?option=com_joomgallery&view=image&layout=edit'
+          . '&id=' . $savedId
+          . '&origin_id=' . $originId
+          . '&forcedLanguage=' . rawurlencode($forcedLanguage)
+          . '&variant_saved=1';
+
+        $this->setRedirect(\Joomla\CMS\Router\Route::_($url, false));
+      }
+
+      return $result;
+    }
+
     return parent::save($key, $urlVar);
   }
 
