@@ -501,38 +501,12 @@ class CategoryModel extends JoomItemModel
       $listModel->setState('list.select', $fields);
     }
 
-    // Apply filters
-    $associatedCategoryIds = array_values($this->item->associations ?? []);
+    // Apply filters: show only images of the current category and language.
+    $listModel->setState('filter.category', (int) $this->item->id);
 
-    if(Multilanguage::isEnabled() && !empty($associatedCategoryIds))
+    if(Multilanguage::isEnabled())
     {
-    $categoryIds = array_merge(
-        [(int) $this->item->id],
-        array_map('intval', $associatedCategoryIds)
-    );
-
-      $db = $this->getDatabase();
-
-      $query = $db->getQuery(true)
-        ->select($db->quoteName('id'))
-        ->from($db->quoteName(_JOOM_TABLE_IMAGES))
-        ->whereIn($db->quoteName('catid'), $categoryIds);
-
-      $db->setQuery($query);
-      $imageIds = $db->loadColumn();
-
-      $listModel->setState('filter.category', []);
-      $listModel->setState('filter.ids', !empty($imageIds) ? $imageIds : [-1]);
-      $listModel->setState('filter.language', '');
-    }
-    else
-    {
-      $listModel->setState('filter.category', $this->item->id);
-
-      if(Multilanguage::isEnabled())
-      {
-        $listModel->setState('filter.language', $this->item->language);
-      }
+      $listModel->setState('filter.language', $this->item->language);
     }
 
     $listModel->setState('filter.access', $user->getAuthorisedViewLevels());

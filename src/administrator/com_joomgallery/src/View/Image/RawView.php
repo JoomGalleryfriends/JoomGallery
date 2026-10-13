@@ -18,6 +18,9 @@ use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryRawView;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Associations;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
 
 /**
@@ -78,16 +81,45 @@ class RawView extends JoomGalleryRawView
       $adapter = $img_obj->filesystem;
     }
 
-    // Get image path
-    if(isset($img_obj))
-    {
+    // Get image path. Language variants use the image record in the
+    // configured fallback language as the physical file location.
+    if ( isset( $img_obj ) ) {
       $img = $img_obj;
-    }
-    else
-    {
+
+      if ( Multilanguage::isEnabled() && Associations::isEnabled() ) {
+        $fallbackLanguage = ComponentHelper::getParams( 'com_joomgallery' )->get( 'category_fallback_language', '' );
+
+        if ( $fallbackLanguage === '' ) {
+          $fallbackLanguage = ComponentHelper::getParams( 'com_languages' )->get( 'site', 'en-GB' );
+        }
+
+        $associations = Associations::getAssociations(
+          'com_joomgallery',
+          '#__joomgallery',
+          'com_joomgallery.image',
+          $img_obj->id,
+          'id',
+          '',
+          ''
+        );
+
+        if ( !empty( $associations[ $fallbackLanguage ] ) ) {
+          $fallbackImage = JoomHelper::getRecord(
+            'image',
+            ( int )$associations[ $fallbackLanguage ]->id
+          );
+
+          if ( $fallbackImage ) {
+            $img = $fallbackImage;
+            $adapter = $fallbackImage->filesystem;
+          }
+        }
+      }
+    } else {
       $img = $id;
     }
-    $img_path = JoomHelper::getImg($img, $type, false, false);
+
+    $img_path = JoomHelper::getImg( $img, $type, false, false );
 
     // Create filesystem service
     $this->component->createFilesystem($adapter);
