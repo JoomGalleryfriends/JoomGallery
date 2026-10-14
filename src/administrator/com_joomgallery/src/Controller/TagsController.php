@@ -16,6 +16,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -71,6 +73,65 @@ class TagsController extends JoomAdminController
     }
 
     $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=tags');
+  }
+
+  /**
+   * Show images assigned to a tag.
+   *
+   * @return  void
+   *
+   * @since   4.5.0
+   */
+  public function showImages()
+  {
+    $tagId = $this->input->getInt('tag_id');
+
+    if($tagId > 0)
+    {
+      $filterTagId = $tagId;
+
+      // Get configured backend search provider
+      $this->component->createConfig();
+      $providerName = $this->component->getConfig()->get('jg_backend_searchprovider', 'sql');
+
+      // Create search provider
+      $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+    $this->component->createSearch(
+        $providerName,
+        $db,
+        new Registry()
+    );
+
+      $searchProvider = $this->component->getSearch();
+
+      // Finder uses taxonomy node IDs instead of JoomGallery tag IDs
+      if($searchProvider->handlesFilter('tags'))
+      {
+        $tag = $this->getModel()->getItem($tagId);
+
+        if($tag)
+        {
+          foreach($searchProvider->getFilterOptions('tags') as $option)
+          {
+            $optionTitle = (string) ($option->title ?? $option->text ?? '');
+
+            if($optionTitle === (string) $tag->title)
+            {
+              $filterTagId = (int) ($option->value ?? $option->id);
+              break;
+            }
+          }
+        }
+      }
+
+    $this->app->setUserState(
+        'com_joomgallery.images.filter.tag',
+        [$filterTagId]
+    );
+    }
+
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=images');
   }
 
   /**

@@ -183,9 +183,14 @@ if($saveOrder && !empty($this->items))
                 <?php endif; ?>
 
                 <td class="small d-none d-md-table-cell text-center">
-                  <span class="badge bg-info">
+                  <?php
+                    $imagesUrl = Route::_(
+                        'index.php?option=com_joomgallery&task=tags.showImages&tag_id=' . (int) $item->id
+                    );
+                  ?>
+                  <a href="<?php echo $imagesUrl; ?>" class="badge bg-info text-decoration-none">
                     <?php echo $item->countTaggedItems; ?>
-                  </span>
+                  </a>
                 </td>
 
                 <td class="d-none d-lg-table-cell">
