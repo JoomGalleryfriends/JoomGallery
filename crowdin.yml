@@ -4,39 +4,57 @@ base_path: /
 preserve_hierarchy: 1
 base_url: 'https://joomla.crowdin.com'
 files:
-  - source: /site/com_joomgallery/language/en-GB/com_joomgallery.ini
-    translation: /site/com_joomgallery/language/%locale%/%original_file_name%
+  - source: /src/site/com_joomgallery/language/en-GB/com_joomgallery.ini
+    translation: /src/site/com_joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /administrator/com_joomgallery/language/en-GB/com_joomgallery.ini
-    translation: /administrator/com_joomgallery/language/%locale%/%original_file_name%
+  - source: /src/administrator/com_joomgallery/language/en-GB/com_joomgallery.ini
+    translation: /src/administrator/com_joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /administrator/com_joomgallery/language/en-GB/com_joomgallery.sys.ini
-    translation: /administrator/com_joomgallery/language/%locale%/%original_file_name%
+  - source: /src/administrator/com_joomgallery/language/en-GB/com_joomgallery.sys.ini
+    translation: /src/administrator/com_joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /administrator/com_joomgallery/language/en-GB/com_joomgallery.exif.ini
-    translation: /administrator/com_joomgallery/language/%locale%/%original_file_name%
+  - source: /src/administrator/com_joomgallery/language/en-GB/com_joomgallery.exif.ini
+    translation: /src/administrator/com_joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /administrator/com_joomgallery/language/en-GB/com_joomgallery.iptc.ini
-    translation: /administrator/com_joomgallery/language/%locale%/%original_file_name%
+  - source: /src/administrator/com_joomgallery/language/en-GB/com_joomgallery.iptc.ini
+    translation: /src/administrator/com_joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /administrator/com_joomgallery/language/en-GB/com_joomgallery.migration.Jg3ToJg4.ini
-    translation: /administrator/com_joomgallery/language/%locale%/%original_file_name%
+  - source: /src/administrator/com_joomgallery/language/en-GB/com_joomgallery.migration.Jg3ToJg4.ini
+    translation: /src/administrator/com_joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /plugins/privacy/joomgallery/language/en-GB/plg_privacy_joomgallery.ini
-    translation: /plugins/privacy/joomgallery/language/%locale%/%original_file_name%
+  - source: /src/plugins/privacy/joomgallery/language/en-GB/plg_privacy_joomgallery.ini
+    translation: /src/plugins/privacy/joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /plugins/privacy/joomgallery/language/en-GB/plg_privacy_joomgallery.sys.ini
-    translation: /plugins/privacy/joomgallery/language/%locale%/%original_file_name%
+  - source: /src/plugins/privacy/joomgallery/language/en-GB/plg_privacy_joomgallery.sys.ini
+    translation: /src/plugins/privacy/joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /plugins/system/joomgallery/language/en-GB/plg_system_joomgallery.ini
-    translation: /plugins/system/joomgallery/language/%locale%/%original_file_name%
+  - source: /src/plugins/system/joomgallery/language/en-GB/plg_system_joomgallery.ini
+    translation: /src/plugins/system/joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /plugins/system/joomgallery/language/en-GB/plg_system_joomgallery.sys.ini
-    translation: /plugins/system/joomgallery/language/%locale%/%original_file_name%
+  - source: /src/plugins/system/joomgallery/language/en-GB/plg_system_joomgallery.sys.ini
+    translation: /src/plugins/system/joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /plugins/system/joomowner/language/en-GB/plg_system_joomowner.ini
-    translation: /plugins/system/joomowner/language/%locale%/%original_file_name%
+  - source: /src/plugins/system/joomowner/language/en-GB/plg_system_joomowner.ini
+    translation: /src/plugins/system/joomowner/language/%locale%/%original_file_name%
     update_option: update_as_unapproved
-  - source: /plugins/system/joomowner/language/en-GB/plg_system_joomowner.sys.ini
-    translation: /plugins/system/joomowner/language/%locale%/%original_file_name%
+  - source: /src/plugins/system/joomowner/language/en-GB/plg_system_joomowner.sys.ini
+    translation: /src/plugins/system/joomowner/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /src/plugins/console/joomconsole/language/en-GB/plg_system_joomowner.ini
+    translation: /src/plugins/console/joomconsole/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /src/plugins/console/joomconsole/language/en-GB/plg_system_joomowner.sys.ini
+    translation: /src/plugins/console/joomconsole/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /src/plugins/finder/joomgallery/language/en-GB/plg_system_joomgallery.ini
+    translation: /src/plugins/finder/joomgallery/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /src/plugins/finder/joomgallery/language/en-GB/plg_system_joomgallery.sys.ini
+    translation: /src/plugins/finder/joomgallery/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /src/plugins/task/joomgallery/language/en-GB/plg_system_joomgallery.sys.ini
+    translation: /src/plugins/task/joomgallery/language/%locale%/%original_file_name%
+    update_option: update_as_unapproved
+  - source: /src/plugins/task/joomgallery/language/en-GB/plg_system_joomgallery.ini
+    translation: /src/plugins/task/joomgallery/language/%locale%/%original_file_name%
     update_option: update_as_unapproved

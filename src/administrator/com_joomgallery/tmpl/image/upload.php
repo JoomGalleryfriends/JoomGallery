@@ -108,6 +108,7 @@ $wa->addInlineScript('window.uppyVars = JSON.parse(\'' . json_encode($this->js_v
           <?php echo $this->form->renderField('published'); ?>
           <?php echo $this->form->renderField('access'); ?>
           <?php echo $this->form->renderField('language'); ?>
+          <?php echo $this->form->renderField('tags'); ?>
           <fieldset class="adminform">
             <?php echo $this->form->getLabel('description'); ?>
             <?php echo $this->form->getInput('description'); ?>

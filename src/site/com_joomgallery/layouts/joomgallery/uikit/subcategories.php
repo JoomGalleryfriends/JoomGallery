@@ -19,11 +19,11 @@ use Joomla\CMS\Router\Route;
 extract($displayData);
 
 $columns         = max(1, min(6, (int) ($num_columns ?? 3)));
-$gap             = $uikit_gap ?? 'small';
+$gap             = \in_array($uikit_gap ?? 'small', ['collapse', 'small', 'medium', 'large'], true) ? ($uikit_gap ?? 'small') : 'small';
 $masonry         = !empty($uikit_masonry);
-$overlay         = $uikit_overlay ?? 'default';
+$overlay         = \in_array($uikit_overlay ?? 'default', ['default', 'primary', 'none'], true) ? ($uikit_overlay ?? 'default') : 'default';
 $overlay_text    = $uikit_overlay_text ?? 'inherit';
-$title_position  = $uikit_title_position ?? 'overlay';
+$title_position  = ($uikit_title_position ?? 'overlay') === 'below' ? 'below' : 'overlay';
 $button_text     = $uikit_button_text ?? 'View';
 $image_ratio     = $uikit_image_ratio ?? 'original';
 $ratio_map       = [
@@ -38,7 +38,7 @@ $grid_class      = 'uk-grid uk-child-width-1-1 uk-child-width-1-2@s uk-child-wid
 $overlay_text_class = \in_array($overlay_text, ['light', 'dark'], true) ? ' uk-' . $overlay_text : '';
 ?>
 
-<div class="jg-images jg-subcategories <?php echo $grid_class; ?>"<?php echo $grid_attributes; ?>>
+<div class="jg-images jg-subcategories <?php echo $this->escape($grid_class); ?>"<?php echo $grid_attributes; ?>>
   <?php foreach($items as $item) : ?>
     <?php
       $img_type = $image_type;
@@ -54,15 +54,15 @@ $overlay_text_class = \in_array($overlay_text, ['light', 'dark'], true) ? ' uk-'
         <a class="uk-display-block uk-width-1-1 uk-transition-toggle uk-inline-clip uk-link-toggle<?php echo $ratio ? ' uk-cover-container' : ''; ?>"
            href="<?php echo $this->escape(Route::_(JoomHelper::getViewRoute('category', (int) $item->id))); ?>">
           <?php if($ratio) : ?>
-            <canvas width="<?php echo $ratio[0]; ?>" height="<?php echo $ratio[1]; ?>"></canvas>
+            <canvas width="<?php echo (int) $ratio[0]; ?>" height="<?php echo (int) $ratio[1]; ?>"></canvas>
           <?php endif; ?>
           <img class="jg-image-thumb el-image uk-transition-opaque"
-               src="<?php echo JoomHelper::getImg($item->thumbnail, $img_type); ?>"
+               src="<?php echo $this->escape(JoomHelper::getImg($item->thumbnail, $img_type)); ?>"
                alt="<?php echo $this->escape($item->title); ?>"
                loading="lazy"
                <?php echo $ratio ? 'uk-cover' : ''; ?>>
           <?php if($overlay != 'none') : ?>
-            <div class="uk-overlay-<?php echo $overlay; ?> uk-transition-fade uk-position-cover"></div>
+            <div class="uk-overlay-<?php echo $this->escape($overlay); ?> uk-transition-fade uk-position-cover"></div>
             <div class="uk-position-center uk-transition-fade">
               <div class="uk-overlay uk-margin-remove-first-child uk-text-center<?php echo $overlay_text_class; ?>">
                 <?php if($title_position == 'overlay') : ?>

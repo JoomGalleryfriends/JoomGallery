@@ -1,6 +1,6 @@
-ALTER TABLE `#__joomgallery_configs` ADD `jg_gallery_view_framework` VARCHAR(25) NOT NULL DEFAULT "joomla" AFTER `jg_gallery_view_ordering`;
-ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_subcategories_image_count` TINYINT(1) NOT NULL DEFAULT 0 AFTER `jg_category_view_subcategories_random_subimages`;
-ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_browse_categories_link` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_browse_images_link`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_lightbox_show_tags` TINYINT(1) NOT NULL DEFAULT 0 AFTER `jg_lightbox_thumbnails`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_tags_label` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_show_tags`;
+ALTER TABLE `#__joomgallery_configs` DROP COLUMN `jg_maxuploadfields`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_uikit_gallery_gap` VARCHAR(25) NOT NULL DEFAULT "small" AFTER `jg_gallery_view_ordering`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_uikit_gallery_masonry` TINYINT(1) NOT NULL DEFAULT 0 AFTER `jg_uikit_gallery_gap`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_uikit_gallery_lightbox` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_uikit_gallery_masonry`;

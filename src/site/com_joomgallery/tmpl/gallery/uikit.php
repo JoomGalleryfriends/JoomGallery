@@ -45,7 +45,7 @@ $uikit_image_ratio      = $this->params['configs']->get('jg_uikit_gallery_image_
     <?php $moduleparams = json_decode($module->params, true); ?>
     <div class="uk-card uk-card-default uk-card-body uk-margin">
       <?php if($module->showtitle) : ?>
-        <?php echo '<' . $this->escape($moduleparams['header_tag']) . ' class="uk-card-title ' . $this->escape($moduleparams['header_class']) . '">' . htmlspecialchars($module->title) . '</' . $this->escape($moduleparams['header_tag']) . '>'; ?>
+        <?php echo '<' . $this->escape($moduleparams['header_tag']) . ' class="uk-card-title ' . $this->escape($moduleparams['header_class']) . '">' . $this->escape($module->title) . '</' . $this->escape($moduleparams['header_tag']) . '>'; ?>
       <?php endif; ?>
       <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
     </div>
@@ -109,7 +109,7 @@ $uikit_image_ratio      = $this->params['configs']->get('jg_uikit_gallery_image_
   <?php $moduleparams = json_decode($module->params, true); ?>
   <div class="uk-card uk-card-default uk-card-body uk-margin">
     <?php if($module->showtitle) : ?>
-      <?php echo '<' . $this->escape($moduleparams['header_tag']) . ' class="uk-card-title ' . $this->escape($moduleparams['header_class']) . '">' . htmlspecialchars($module->title) . '</' . $this->escape($moduleparams['header_tag']) . '>'; ?>
+      <?php echo '<' . $this->escape($moduleparams['header_tag']) . ' class="uk-card-title ' . $this->escape($moduleparams['header_class']) . '">' . $this->escape($module->title) . '</' . $this->escape($moduleparams['header_tag']) . '>'; ?>
     <?php endif; ?>
     <?php echo ModuleHelper::renderModule($module, ['style' => 'none']); ?>
   </div>
