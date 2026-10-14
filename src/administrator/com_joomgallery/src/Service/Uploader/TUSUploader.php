@@ -70,6 +70,22 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     $uuid = $data['uuid'];
     $this->component->getTusServer()->loadUpload($uuid);
 
+    $server = $this->component->getTusServer();
+
+    if((int)$server->getMetaDataValue('catid') !== (int)($data['catid'] ?? 0)
+      || (int)$server->getMetaDataValue('imageid') !== (int)($data['id'] ?? 0))
+    {
+      throw new \RuntimeException('Upload target does not match the submitted image', 403);
+    }
+    $actualSize = filesize($server->getDirectory() . $uuid);
+
+    if(!$server->getMetaDataValue('isfinal')
+      || $actualSize !== (int)$server->getMetaDataValue('size')
+      || $actualSize !== (int)$server->getMetaDataValue('offset'))
+    {
+      throw new \RuntimeException('Upload is incomplete', 400);
+    }
+
     // Check for upload errors
     $isfinal = $this->component->getTusServer()->getMetaDataValue('isfinal');
     $offset  = $this->component->getTusServer()->getMetaDataValue('ofset');

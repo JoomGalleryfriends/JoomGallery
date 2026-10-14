@@ -25,7 +25,7 @@ jobs:
 
       - name: Clean up unnecessary files
         run: |
-          rm -rf crowdin.yml composer.json composer.lock header.txt phpstan.neon ruleset.xml docs tests tools .github .editorconfig
+          rm -rf crowdin.yml composer.json composer.lock header.txt phpstan.neon ruleset.xml docs tests tools .github .codex .editorconfig .php-cs-fixer.dist.php jorobo.dist.ini rector.php RoboFile.php
 
       - name: Cleanup pel directory
         run: |

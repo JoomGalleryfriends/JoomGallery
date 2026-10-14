@@ -523,6 +523,83 @@ class TagsModel extends JoomListModel
   }
 
   /**
+   * Get tag titles mapped to multiple images.
+   *
+   * @param   array  $imageIds  List of image ids
+   *
+   * @return  array  Associative array indexed by image id
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getMappedTitlesByImageIds(array $imageIds): array
+  {
+    $imageIds = ArrayHelper::toInteger($imageIds);
+    $imageIds = array_values(array_unique(array_filter($imageIds)));
+
+    if(empty($imageIds))
+    {
+      return [];
+    }
+
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true);
+
+    $query->select(
+        [
+          $db->quoteName('ref.imgid'),
+          $db->quoteName('a.title'),
+        ]
+    );
+
+    $query->from($db->quoteName(_JOOM_TABLE_TAGS, 'a'));
+
+    $query->join(
+        'INNER',
+        $db->quoteName(_JOOM_TABLE_TAGS_REF, 'ref')
+        . ' ON ' . $db->quoteName('ref.tagid')
+        . ' = ' . $db->quoteName('a.id')
+    );
+
+    $query->whereIn($db->quoteName('ref.imgid'), $imageIds, ParameterType::INTEGER);
+    $query->order(
+        [
+          $db->quoteName('ref.imgid') . ' ASC',
+          $db->quoteName('a.title') . ' ASC',
+        ]
+    );
+
+    $db->setQuery($query);
+
+    try
+    {
+      $rows = $db->loadObjectList();
+    }
+    catch(\RuntimeException $e)
+    {
+      $this->setError($e->getMessage());
+      $this->component->addLog($e->getMessage(), 'error', 'jerror');
+
+      return [];
+    }
+
+    $result = [];
+
+    foreach($rows as $row)
+    {
+      $imgId = (int) $row->imgid;
+
+      if(!isset($result[$imgId]))
+      {
+        $result[$imgId] = [];
+      }
+
+      $result[$imgId][] = $row->title;
+    }
+
+    return $result;
+  }
+
+  /**
    * Get an array of data items which titles are present in the given list.
    *
    * @param  array  $list   A list of titles to be looked for

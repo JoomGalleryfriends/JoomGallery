@@ -57,6 +57,8 @@ $browse_images_link     = $this->params['configs']->get('jg_category_view_browse
 $lightbox_image         = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
 $lightbox_thumbnails    = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
 $lightbox_zoom          = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
+$lightbox_show_tags     = $this->params['configs']->get('jg_lightbox_show_tags', 0, 'INT');
+$show_tags_label        = $this->params['configs']->get('jg_category_view_show_tags_label', 1, 'INT');
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -76,6 +78,22 @@ $wa->useStyle('com_joomgallery.jg-icon-font');
   </form>
   <?php return; ?>
 <?php endif; ?>
+
+<?php
+$image_tags_data = [];
+
+if(($show_tags || $lightbox_show_tags) && !empty($this->item->images->items))
+{
+$imageIds = array_map(
+    static fn($item) => (int) $item->id,
+    $this->item->images->items
+);
+
+  $component       = Factory::getApplication()->bootComponent('com_joomgallery');
+  $tagsModel       = $component->getMVCFactory()->createModel('Tags', 'administrator');
+  $image_tags_data = $tagsModel->getMappedTitlesByImageIds($imageIds);
+}
+?>
 
 <?php // Import CSS & JS
 if($subcategory_class == 'masonry' || $category_class == 'masonry')
@@ -279,6 +297,10 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
       'caption_align' => $caption_align, 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
       'image_title'   => (bool) $show_title, 'title_link' => $title_link, 'image_desc' => (bool) $show_description, 'image_desc_label' => (bool) $show_description_label,
       'image_date'    => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags,
+      'lightbox_show_tags' => (bool) $lightbox_show_tags,
+      'image_tags_data' => $image_tags_data,
+      'lightbox_tags'   => $image_tags_data,
+      'image_tags_label' => (bool) $show_tags_label,
     ];
   ?>
 
