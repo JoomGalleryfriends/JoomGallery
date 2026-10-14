@@ -54,17 +54,6 @@ Text::script('COM_JOOMGALLERY_FTP_IMPORT_LOAD_FAILED');
           </div>
           <div class="card-body">
             <div class="mb-3">
-              <button type="button" class="btn btn-secondary btn-sm" id="ftp-import-refresh">
-                <?php echo Text::_('COM_JOOMGALLERY_REFRESH'); ?>
-              </button>
-              <button type="button" class="btn btn-secondary btn-sm" id="ftp-import-select-all">
-                <?php echo Text::_('JGLOBAL_SELECTION_ALL'); ?>
-              </button>
-              <button type="button" class="btn btn-secondary btn-sm" id="ftp-import-select-none">
-                <?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_SELECT_NONE'); ?>
-              </button>
-            </div>
-            <div class="mb-3">
               <label for="ftp-import-action" class="form-label">
                 <?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_SOURCE_ACTION'); ?>
               </label>
@@ -98,6 +87,17 @@ Text::script('COM_JOOMGALLERY_FTP_IMPORT_LOAD_FAILED');
               <div class="progress-bar" id="ftp-import-progress" style="width: 0%">0%</div>
             </div>
             <div id="ftp-import-status" class="small mb-3"></div>
+            <div class="mb-3">
+              <button type="button" class="btn btn-secondary btn-sm" id="ftp-import-refresh">
+                <?php echo Text::_('COM_JOOMGALLERY_REFRESH'); ?>
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" id="ftp-import-select-all">
+                <?php echo Text::_('JGLOBAL_SELECTION_ALL'); ?>
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" id="ftp-import-select-none">
+                <?php echo Text::_('COM_JOOMGALLERY_FTP_IMPORT_SELECT_NONE'); ?>
+              </button>
+            </div>
             <div class="table-responsive">
               <table class="table table-striped table-sm">
                 <thead>
@@ -146,6 +146,7 @@ Text::script('COM_JOOMGALLERY_FTP_IMPORT_LOAD_FAILED');
           <?php echo $this->form->renderField('published'); ?>
           <?php echo $this->form->renderField('access'); ?>
           <?php echo $this->form->renderField('language'); ?>
+          <?php echo $this->form->renderField('tags'); ?>
           <fieldset class="adminform">
             <?php echo $this->form->getLabel('description'); ?>
             <?php echo $this->form->getInput('description'); ?>

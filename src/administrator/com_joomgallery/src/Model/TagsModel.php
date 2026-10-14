@@ -583,6 +583,21 @@ class TagsModel extends JoomListModel
       {
         $tag_title = str_replace('#new#', '', $tag_title);
 
+        // Check whether the tag already exists
+        $existing_tags = $this->getItemsInList([$tag_title]);
+
+        if($existing_tags === false)
+        {
+          return false;
+        }
+
+        if(!empty($existing_tags))
+        {
+          $tags[$key] = \strval($existing_tags[0]->id);
+
+          continue;
+        }
+
         // Create tag object
         $data                = [];
         $data['id']          = '0';
@@ -600,9 +615,8 @@ class TagsModel extends JoomListModel
           return false;
         }
 
-
-          // Update tags list entry on success
-          $tags[$key] = \strval($tag_model->getItem($tag_title)->id);
+        // Update tags list entry on success
+        $tags[$key] = \strval($tag_model->getItem($tag_title)->id);
       }
     }
 
