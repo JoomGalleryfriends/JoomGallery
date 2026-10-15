@@ -21,7 +21,6 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormFactoryInterface;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\Filesystem\File;
 
 /**
  * Config model.
@@ -169,6 +168,33 @@ class ConfigModel extends JoomAdminModel
     foreach($dyn_fields as $key => $field)
     {
       $form->setDynamicOptions($field);
+    }
+
+    // Derive showon conditions from provider capabilities so changing the
+    // selection updates the ordering field and its explanation immediately.
+    $orderingProviders = [];
+    $component         = clone $this->component;
+
+    foreach($component->getSearchProviders() as $provider)
+    {
+      $component->createSearch($provider['value'], $this->getDatabase(), $this->getState());
+
+      if($component->getSearch()->handlesOrdering())
+      {
+        $orderingProviders[] = $provider['value'];
+      }
+    }
+
+    if($orderingProviders)
+    {
+      $providers = implode(',', $orderingProviders);
+      $form->setFieldAttribute('jg_gallery_view_ordering', 'showon', 'jg_gallery_view_searchprovider!:' . $providers);
+      $form->setFieldAttribute('gallery_view_ordering_note', 'showon', 'jg_gallery_view_searchprovider:' . $providers);
+      $form->setFieldAttribute('backend_view_ordering_note', 'showon', 'jg_backend_searchprovider:' . $providers);
+    }
+    else
+    {
+      $form->removeField('gallery_view_ordering_note');
     }
 
     // Import the appropriate plugin group.

@@ -33,6 +33,14 @@ class SQLSearch extends Search implements SearchInterface
   protected $name = 'sql';
 
   /**
+   * The name to be displayed.
+   *
+   * @var    string
+   * @since  4.5.0
+   */
+  protected $displayName = 'COM_JOOMGALLERY_SERVICE_SEARCH_PROVIDER_SQL_TITLE';
+
+  /**
    * Function to add the search to the query.
    *
    * @param   QueryInterface  $query   The list query

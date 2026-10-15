@@ -38,12 +38,46 @@ class FinderSearch extends Search implements SearchInterface
   protected $name = 'finder';
 
   /**
+   * The name to be displayed.
+   *
+   * @var    string
+   * @since  4.5.0
+   */
+  protected $displayName = 'COM_JOOMGALLERY_SERVICE_SEARCH_PROVIDER_FINDER_TITLE';
+
+  /**
    * The filters this search service applies.
    *
    * @var   array
    * @since  4.4.0
    */
   protected $filters = ['category', 'tags', 'language'];
+
+  /**
+   * Return the SearchTools fields that are meaningful with Finder.
+   *
+   * @return  array<string, array|null>
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getDisplayFields(): array
+  {
+    return [
+      'filter' => [
+        'search',
+        'published',
+        'category',
+        'tag',
+        'access',
+        'created_by',
+        'language',
+      ],
+      'list' => [
+        'fullordering',
+        'limit',
+      ],
+    ];
+  }
 
   /**
    * True if this search service applies ordering.
@@ -61,6 +95,12 @@ class FinderSearch extends Search implements SearchInterface
    */
   protected array $boundValues = [];
 
+  /** @var bool Whether Finder ordering is available for the current query. */
+  protected bool $orderingAvailable = false;
+
+  /** @var string Direction of the current Finder ordering. */
+  protected string $orderingDirection = 'DESC';
+
   /**
    * Function to add the search to the query.
    *
@@ -74,6 +114,9 @@ class FinderSearch extends Search implements SearchInterface
    */
   public function applyToQuery(QueryInterface $query, string $term, string $alias = 'a'): void
   {
+    $this->orderingAvailable = false;
+    $this->orderingDirection = 'DESC';
+
     $term            = trim($term);
     $taxonomyNodeIds = $this->getFinderTaxonomyNodeIdsFromState();
 
@@ -170,6 +213,36 @@ class FinderSearch extends Search implements SearchInterface
         . ', ' . $this->db->quote('&id=') . ', -1), ' . $this->db->quote('&') . ', 1) AS UNSIGNED)'
         . ' = ' . $this->db->quoteName($alias . '.id')
     );
+
+    $this->orderingDirection = strtoupper((string) $finderModel->getState('list.direction', 'DESC'));
+
+    if(!\in_array($this->orderingDirection, ['ASC', 'DESC'], true))
+    {
+      $this->orderingDirection = 'DESC';
+    }
+
+    $this->orderingAvailable = true;
+  }
+
+  /**
+   * Apply Finder's calculated ordering to the final list query.
+   *
+   * @param   QueryInterface  $query  The final list query
+   *
+   * @return  bool  True when Finder ordering was applied.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function applyOrderingToQuery(QueryInterface $query): bool
+  {
+    if(!$this->orderingAvailable)
+    {
+      return false;
+    }
+
+    $query->order($this->db->quoteName('fr.ordering') . ' ' . $this->orderingDirection);
+
+    return true;
   }
 
   /**
