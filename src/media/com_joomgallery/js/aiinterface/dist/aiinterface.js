@@ -1260,7 +1260,6 @@ class AIinterface {
       }
 
       const headers = {
-        Authorization: '',
         'X-CSRF-Token': this.configs.session
       };
 
@@ -2089,6 +2088,7 @@ class AIinterface {
     let params = {
       method: 'GET',
       cache: 'default',
+      credentials: 'same-origin',
       redirect: 'follow',
       referrerPolicy: 'no-referrer-when-downgrade',
       headers: headers
@@ -2217,7 +2217,6 @@ class AIinterface {
     const url = this.sanitizeUrl(`${this.configs.base_url}/index.php?option=com_joomgallery&task=image.ajaxsavetags`);
 
     const headers = {
-      'Authorization': '',
       'Content-Type': 'application/json',
       'X-CSRF-Token': this.configs.session
     };
@@ -2281,7 +2280,6 @@ class AIinterface {
     );
 
     const headersBase64 = {
-      Authorization: '',
       'X-CSRF-Token': this.configs.session
     };
 
