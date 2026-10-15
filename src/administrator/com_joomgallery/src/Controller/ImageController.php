@@ -64,9 +64,9 @@ class ImageController extends JoomFormController
 
       if($result)
       {
-        $savedId  = $this->savedVariantId;
+        $savedId = $this->savedVariantId;
 
-        $url     = 'index.php?option=com_joomgallery&view=image&layout=edit'
+        $url = 'index.php?option=com_joomgallery&view=image&layout=edit'
           . '&id=' . $savedId
           . '&origin_id=' . $originId
           . '&forcedLanguage=' . rawurlencode($forcedLanguage)
@@ -88,10 +88,10 @@ class ImageController extends JoomFormController
 
     if($originId > 0 && $forcedLanguage !== '')
     {
-      $this->savedVariantId = (int) $model->getState(
-          $model->getName() . '.id',
-          0
-      );
+    $this->savedVariantId = (int) $model->getState(
+        $model->getName() . '.id',
+        0
+    );
     }
 
     parent::postSaveHook($model, $validData);
