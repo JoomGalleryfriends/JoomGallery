@@ -232,7 +232,13 @@ if( $app->input->getInt('variant_saved', 0) === 1 ):
   ?>
 <script>
   window.parent.postMessage({
-    messageType: 'joomgallery:variant-saved'
+    messageType: 'joomgallery:variant-saved',
+    id: <?php echo (int) $this->item->id; ?>,
+    title: <?php echo json_encode(
+        (string) $this->item->title,
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+    ); ?>,
+    language: <?php echo json_encode($forcedLanguage); ?>
   }, window.location.origin);
 </script>
 <?php

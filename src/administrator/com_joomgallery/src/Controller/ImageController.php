@@ -31,6 +31,7 @@ use Joomla\Database\ParameterType;
 class ImageController extends JoomFormController
 {
   protected $view_list = 'images';
+  protected $savedVariantId = 0;
 
   /**
    * Method to save a record.
@@ -63,7 +64,8 @@ class ImageController extends JoomFormController
 
       if($result)
       {
-        $savedId = $this->input->getInt('id', 0);
+        $savedId = $this->savedVariantId;
+
         $url     = 'index.php?option=com_joomgallery&view=image&layout=edit'
           . '&id=' . $savedId
           . '&origin_id=' . $originId
@@ -77,6 +79,25 @@ class ImageController extends JoomFormController
     }
 
     return parent::save($key, $urlVar);
+  }
+
+  protected function postSaveHook(
+    \Joomla\CMS\MVC\Model\BaseDatabaseModel $model,
+    $validData = []
+  )
+  {
+    $originId       = $this->input->getInt('origin_id', 0);
+    $forcedLanguage = $this->input->getString('forcedLanguage', '');
+
+    if($originId > 0 && $forcedLanguage !== '')
+    {
+      $this->savedVariantId = (int) $model->getState(
+        $model->getName() . '.id',
+        0
+      );
+    }
+
+    parent::postSaveHook($model, $validData);
   }
 
   /**
