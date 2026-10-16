@@ -17,10 +17,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\FileManager;
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerInterface;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Media\Administrator\Exception\FileExistsException;
 use Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Filesystem\Path;
 
 /**
@@ -482,6 +484,29 @@ class FileManager implements FileManagerInterface
    */
   public function deleteImages($img, $logfile = 'jerror'): bool
   {
+    $imageRefId = 0;
+
+    // Keep shared image files while other images reference them.
+    if(\is_object($img) && !empty($img->image_ref))
+    {
+      $db         = Factory::getContainer()->get(DatabaseInterface::class);
+      $imageRefId = (int) $img->image_ref;
+
+      $query = $db->getQuery(true)
+        ->select('COUNT(*)')
+        ->from($db->quoteName('#__joomgallery'))
+        ->where($db->quoteName('image_ref') . ' = :imageRefId')
+        ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
+
+      $db->setQuery($query);
+
+      // More than one image record still uses this reference.
+      if((int) $db->loadResult() > 1)
+      {
+        return true;
+      }
+    }
+
     // Loop through all imagetypes
     $error = false;
 
@@ -526,6 +551,18 @@ class FileManager implements FileManagerInterface
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_SOME_ERRORS_IMAGEFILE'), 'error', $logfile);
 
       return false;
+    }
+
+    // Remove the reference only after all image files were processed.
+    if($imageRefId > 0)
+    {
+      $query = $db->getQuery(true)
+        ->delete($db->quoteName('#__joomgallery_img_ref'))
+        ->where($db->quoteName('id') . ' = :imageRefId')
+        ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
+
+      $db->setQuery($query);
+      $db->execute();
     }
 
     return true;
@@ -1263,8 +1300,43 @@ class FileManager implements FileManagerInterface
       }
     }
 
-    // Get corresponding category path
-    $catpath = $this->getCatPath($catid);
+    // Get corresponding category path or shared image reference path.
+    $imageRefId = \is_object($img) && !empty($img->image_ref)
+      ? (int) $img->image_ref
+      : 0;
+
+    if($imageRefId > 0)
+    {
+      $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+      $query = $db->getQuery(true)
+        ->select(
+            [
+            $db->quoteName('path'),
+            $db->quoteName('filename'),
+            ]
+        )
+        ->from($db->quoteName('#__joomgallery_img_ref'))
+        ->where($db->quoteName('id') . ' = :imageRefId')
+        ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
+
+      $db->setQuery($query);
+      $imageRef = $db->loadObject();
+
+      if($imageRef)
+      {
+        $catpath  = $imageRef->path;
+        $filename = $imageRef->filename;
+      }
+      else
+      {
+        $catpath = $this->getCatPath($catid);
+      }
+    }
+    else
+    {
+      $catpath = $this->getCatPath($catid);
+    }
 
     if($catpath === false)
     {

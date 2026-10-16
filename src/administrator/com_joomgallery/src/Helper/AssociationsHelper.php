@@ -31,52 +31,64 @@ class AssociationsHelper extends AssociationExtensionHelper
 {
     protected $extension = 'com_joomgallery';
 
-    protected $itemTypes = ['category'];
+    protected $itemTypes = ['category', 'image'];
 
     protected $associationsSupport = true;
 
     /**
-     * Get the associations for a JoomGallery category.
+     * Get the associations for a JoomGallery item.
      *
-     * @param int         $id   The category ID.
+     * @param int         $id   The item ID.
      * @param string|null $view The view name.
      *
-     * @return array  The associated categories.
+     * @return array The associated items.
      *
      * @since 4.5.0
      */
     public function getAssociationsForItem($id = 0, $view = null)
     {
-        return $this->getAssociations('category', $id);
+        return $this->getAssociations($view === 'image' ? 'image' : 'category', $id);
     }
 
     /**
-     * Get the associations for a category.
+     * Get the associations for a category or image.
      *
      * @param string $typeName The association type.
-     * @param int    $id       The category ID.
+     * @param int    $id       The item ID.
      *
-     * @return array  The associated categories or an empty array.
+     * @return array The associated items or an empty array.
      *
      * @since 4.5.0
      */
     public function getAssociations($typeName, $id)
     {
-        if($typeName !== 'category')
+        if($typeName === 'category')
         {
-            return [];
+            return Associations::getAssociations(
+                $this->extension,
+                '#__joomgallery_categories',
+                'com_joomgallery.category',
+                $id,
+                'id',
+                '',
+                ''
+            );
         }
 
-        // Use Joomla's core association system for multilingual content.
-        return Associations::getAssociations(
-            $this->extension,
-            '#__joomgallery_categories',
-            'com_joomgallery.category',
-            $id,
-            'id',
-            '',
-            ''
-        );
+        if($typeName === 'image')
+        {
+            return Associations::getAssociations(
+                $this->extension,
+                '#__joomgallery',
+                'com_joomgallery.image',
+                $id,
+                'id',
+                '',
+                ''
+            );
+        }
+
+        return [];
     }
 
     /**
@@ -84,41 +96,62 @@ class AssociationsHelper extends AssociationExtensionHelper
      *
      * @param string $typeName The association type.
      *
-     * @return array  The association type configuration.
+     * @return array The association type configuration.
      *
      * @since 4.5.0
      */
     public function getType($typeName = '')
     {
-        if($typeName !== 'category')
+        if($typeName === 'category')
         {
+            $fields  = $this->getFieldsTemplate();
+            $support = $this->getSupportTemplate();
+
+            $fields['state'] = 'a.published';
+
+            $support['state']    = true;
+            $support['acl']      = true;
+            $support['checkout'] = true;
+
             return [
-              'fields'  => [],
-              'support' => [],
-              'tables'  => [],
-              'joins'   => [],
-              'title'   => '',
+                'fields'  => $fields,
+                'support' => $support,
+                'tables'  => [
+                    'a' => '#__joomgallery_categories',
+                ],
+                'joins' => [],
+                'title' => 'category',
             ];
         }
 
-        // Build the configuration from Joomla's default association templates.
-        $fields  = $this->getFieldsTemplate();
-        $support = $this->getSupportTemplate();
+        if($typeName === 'image')
+        {
+            $fields  = $this->getFieldsTemplate();
+            $support = $this->getSupportTemplate();
 
-        $fields['state'] = 'a.published';
+            $fields['state'] = 'a.published';
 
-        $support['state']    = true;
-        $support['acl']      = true;
-        $support['checkout'] = true;
+            $support['state']    = true;
+            $support['acl']      = true;
+            $support['checkout'] = true;
+
+            return [
+                'fields'  => $fields,
+                'support' => $support,
+                'tables'  => [
+                    'a' => '#__joomgallery',
+                ],
+                'joins' => [],
+                'title' => 'image',
+            ];
+        }
 
         return [
-          'fields'  => $fields,
-          'support' => $support,
-          'tables'  => [
-            'a' => '#__joomgallery_categories',
-          ],
-          'joins' => [],
-          'title' => 'category',
+            'fields'  => [],
+            'support' => [],
+            'tables'  => [],
+            'joins'   => [],
+            'title'   => '',
         ];
     }
 }

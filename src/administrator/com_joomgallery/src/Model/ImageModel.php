@@ -232,12 +232,17 @@ class ImageModel extends JoomAdminModel
 
     if( empty($data) )
     {
-      if( $this->item === null )
+      if( $this->item === null || $this->item === false )
       {
         $this->item = $this->getItem();
       }
 
       $data = $this->item;
+
+      if( $data === false || $data === null )
+      {
+        return $data;
+      }
 
       // Support for multiple or not foreign key field: robots
       $array = [];
@@ -583,10 +588,46 @@ class ImageModel extends JoomAdminModel
           return false;
         }
 
+        // Create a shared image reference if the source has none.
+        $db         = $this->getDatabase();
+        $imageRefId = (int)($sourceImage->image_ref ?? 0);
+
+        if($imageRefId === 0)
+        {
+          $imageRef = (object)[
+            'path'      => $manager->getCatPath($sourceImage->catid),
+            'filename'  => $sourceImage->filename,
+            'filesystem' => $sourceImage->filesystem,
+          ];
+
+          if($imageRef->path === false)
+          {
+            $this->setError('Could not resolve source image path.');
+
+            return false;
+          }
+
+          $db->insertObject('#__joomgallery_img_ref', $imageRef, 'id');
+          $imageRefId = (int)$imageRef->id;
+
+          $query = $db->getQuery(true)
+            ->update($db->quoteName('#__joomgallery'))
+            ->set($db->quoteName('image_ref') . ' = :imageRef')
+            ->where($db->quoteName('id') . ' = :sourceId')
+            ->bind(':imageRef', $imageRefId, \Joomla\Database\ParameterType::INTEGER)
+            ->bind(':sourceId', $source_id, \Joomla\Database\ParameterType::INTEGER);
+
+          $db->setQuery($query);
+          $db->execute();
+        }
+
+        $sourceImage->image_ref = $imageRefId;
+
         $sourceData = (array)$sourceImage;
 
         foreach( [
           'filename',
+          'image_ref',
           'filesystem',
           'uploader',
           'multiple',
@@ -707,13 +748,6 @@ class ImageModel extends JoomAdminModel
         return false;
       }
 
-      // Handle images if record gets copied
-      if( $isNew && $isCopy && !$imgUploaded && !$isLanguageVariant )
-      {
-        // Regenerate filename
-        $table->filename = $manager->regenFilename($data['filename']);
-      }
-
       // Handle images if alias has changed
       if( !$isNew && $aliasChanged && !$imgUploaded )
       {
@@ -756,11 +790,16 @@ class ImageModel extends JoomAdminModel
         }
       }
 
-      // Handle images if record gets copied
-      if( $isNew && ($isCopy || $isLanguageVariant) && !$imgUploaded )
+      // Copy image files only for regular copies, not language variants.
+      if( $isNew && $isCopy && !$imgUploaded && !$isLanguageVariant )
       {
-        // Copy Images
-        $filesystem_success = $manager->copyImages($source_id, $table->catid, $table->filename);
+        // Regenerate filename to prevent copying a file onto itself.
+        $newFilename = $manager->regenFilename($table->filename);
+        $table->filename = $newFilename;
+        $data['filename'] = $newFilename;
+
+        // Copy image files using the new filename.
+        $filesystem_success = $manager->copyImages($source_id, $table->catid, $newFilename);
       }
 
       // Handle images if alias has changed
