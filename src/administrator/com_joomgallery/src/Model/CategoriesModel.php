@@ -202,7 +202,7 @@ class CategoriesModel extends JoomListModel
         continue;
       }
 
-      $item->associations = Associations::getAssociations(
+    $item->associations = Associations::getAssociations(
         'com_joomgallery',
         '#__joomgallery_categories',
         'com_joomgallery.category',
@@ -210,7 +210,7 @@ class CategoriesModel extends JoomListModel
         'id',
         '',
         ''
-      );
+    );
     }
 
     return $items;
