@@ -167,7 +167,7 @@ $modalHTML = HTMLHelper::_(
   <div class="input-group">
     <img id="jform_thumbnail_img" class="jg_minithumb" src="<?php echo JoomHelper::getImg($value, 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
     <input <?php echo ArrayHelper::toString($inputAttributes), $dataAttribute; ?> readonly>
-    <?php if(!$readonly) : ?>
+    <?php if(!$readonly && empty($forcedLanguage)) : ?>
       <button type="button" class="btn btn-primary button-select" title="<?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?>">
         <span class="icon-image icon-white" aria-hidden="true"></span>
         <span class="visually-hidden"><?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?></span>
