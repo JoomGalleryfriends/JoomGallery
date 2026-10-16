@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Associations;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -177,6 +178,44 @@ class CategoriesModel extends JoomListModel
 
     return parent::getStoreId($id);
   }
+
+  /**
+   * Get the category list and its language associations.
+   *
+   * @return  array
+   */
+  public function getItems()
+  {
+    $items = parent::getItems();
+
+    if(!Associations::isEnabled() || empty($items))
+    {
+      return $items;
+    }
+
+    foreach($items as $item)
+    {
+      $item->associations = [];
+
+      if(empty($item->id))
+      {
+        continue;
+      }
+
+      $item->associations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery_categories',
+        'com_joomgallery.category',
+        (int) $item->id,
+        'id',
+        '',
+        ''
+      );
+    }
+
+    return $items;
+  }
+
 
   /**
    * Build an SQL query to load the list data.
