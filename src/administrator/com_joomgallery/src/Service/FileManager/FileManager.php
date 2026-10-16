@@ -1312,8 +1312,8 @@ class FileManager implements FileManagerInterface
       $query = $db->getQuery(true)
         ->select(
             [
-            $db->quoteName('path'),
-            $db->quoteName('filename'),
+              $db->quoteName('path'),
+              $db->quoteName('filename'),
             ]
         )
         ->from($db->quoteName('#__joomgallery_img_ref'))
