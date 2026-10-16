@@ -114,13 +114,13 @@ class AssociationsHelper extends AssociationExtensionHelper
             $support['checkout'] = true;
 
             return [
-                'fields'  => $fields,
-                'support' => $support,
-                'tables'  => [
-                    'a' => '#__joomgallery_categories',
-                ],
-                'joins' => [],
-                'title' => 'category',
+              'fields'  => $fields,
+              'support' => $support,
+              'tables'  => [
+                'a' => '#__joomgallery_categories',
+              ],
+              'joins' => [],
+              'title' => 'category',
             ];
         }
 
@@ -136,22 +136,22 @@ class AssociationsHelper extends AssociationExtensionHelper
             $support['checkout'] = true;
 
             return [
-                'fields'  => $fields,
-                'support' => $support,
-                'tables'  => [
-                    'a' => '#__joomgallery',
-                ],
-                'joins' => [],
-                'title' => 'image',
+              'fields'  => $fields,
+              'support' => $support,
+              'tables'  => [
+                'a' => '#__joomgallery',
+              ],
+              'joins' => [],
+              'title' => 'image',
             ];
         }
 
         return [
-            'fields'  => [],
-            'support' => [],
-            'tables'  => [],
-            'joins'   => [],
-            'title'   => '',
+          'fields'  => [],
+          'support' => [],
+          'tables'  => [],
+          'joins'   => [],
+          'title'   => '',
         ];
     }
 }
