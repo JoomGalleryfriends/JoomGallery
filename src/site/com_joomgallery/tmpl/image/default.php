@@ -110,7 +110,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
   <h2><?php echo $this->escape($this->item->title); ?></h2>
 <?php endif; ?>
 
-<a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
+<a class="jg-link btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->display_catid); ?>">
   <i class="jg-icon-arrow-left-alt"></i><span><?php echo Text::_('COM_JOOMGALLERY_IMAGE_BACK_TO_CATEGORY') . ' ' . $this->item->cattitle; ?></span>
 </a>
 
@@ -151,7 +151,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
     <tr>
       <th><?php echo Text::_('JCATEGORY'); ?></th>
       <td>
-              <a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>">
+              <a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->display_catid); ?>">
                 <?php echo $this->escape($this->item->cattitle); ?>
               </a>
             </td>

@@ -56,6 +56,11 @@ $modalHTML = '';
 $uri       = new Uri('index.php?option=com_joomgallery&view=categories&layout=modal&tmpl=component&required=0');
 $uri->setVar('field', $this->escape($id));
 
+if(!empty($forcedLanguage))
+{
+  $uri->setVar('forcedLanguage', $forcedLanguage);
+}
+
 if(empty($value))
 {
   $value = 0;

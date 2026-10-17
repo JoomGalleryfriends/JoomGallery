@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Associations;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -195,6 +196,43 @@ class ImagesModel extends JoomListModel
     $id .= ':' . serialize($this->getState('filter.and'));
 
     return parent::getStoreId($id);
+  }
+
+  /**
+   * Get the image list and its language associations.
+   *
+   * @return  array
+   */
+  public function getItems()
+  {
+    $items = parent::getItems();
+
+    if(!Associations::isEnabled() || empty($items))
+    {
+      return $items;
+    }
+
+    foreach($items as $item)
+    {
+      $item->associations = [];
+
+      if(empty($item->id))
+      {
+        continue;
+      }
+
+    $item->associations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery',
+        'com_joomgallery.image',
+        (int) $item->id,
+        'id',
+        '',
+        ''
+    );
+    }
+
+    return $items;
   }
 
   /**

@@ -15,6 +15,14 @@
           <option value="default">JDEFAULT</option>
         </field>
 
+        <field name="category_fallback_language"
+               type="contentlanguage"
+               default=""
+               label="COM_JOOMGALLERY_CONFIG_CATEGORY_FALLBACK_LANGUAGE_LABEL"
+               description="COM_JOOMGALLERY_CONFIG_CATEGORY_FALLBACK_LANGUAGE_DESC">
+            <option value="">JDEFAULT</option>
+        </field>
+
         <field name="save_history"
                type="radio"
                default="0"

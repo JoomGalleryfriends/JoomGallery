@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery` (
 `imgmetadata` TEXT NOT NULL,
 `published` TINYINT(1)  NOT NULL DEFAULT 0,
 `filename` VARCHAR(255) NOT NULL,
+`image_ref` INT(10) UNSIGNED DEFAULT NULL,
 `filesystem` VARCHAR(100) NOT NULL DEFAULT "local-images",
 `hits` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `downloads` INT(11) UNSIGNED NOT NULL DEFAULT 0,
@@ -282,6 +283,20 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_img_types` (
 `ordering` INT(11) NOT NULL DEFAULT 0,
 PRIMARY KEY (`id`),
 KEY `idx_typename` (`typename`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `#__joomgallery_img_ref`
+--
+
+CREATE TABLE IF NOT EXISTS `#__joomgallery_img_ref` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `path` VARCHAR(2048) NOT NULL,
+  `filename` VARCHAR(255) NOT NULL,
+  `filesystem` VARCHAR(100) NOT NULL DEFAULT 'local-images',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

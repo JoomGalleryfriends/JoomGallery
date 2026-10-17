@@ -27,9 +27,12 @@ $wa->useScript('keepalive')
    ->useStyle('com_joomgallery.admin');
 HTMLHelper::_('bootstrap.tooltip', '.hasTip');
 
-$app       = Factory::getApplication();
-$form      = $this->getForm();
-$fieldSets = $form->getFieldsets();
+$app               = Factory::getApplication();
+$form              = $this->getForm();
+$fieldSets         = $form->getFieldsets();
+$originId          = $app->input->getInt('origin_id');
+$forcedLanguage    = $app->input->getString('forcedLanguage', '');
+$isLanguageVariant = $originId > 0 && $forcedLanguage !== '' && (int) $this->item->id === 0;
 
 // In case of modal
 $isModal = $app->input->get('layout') === 'modal';
@@ -38,48 +41,72 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 ?>
 
 <form
-  action="<?php echo Route::_('index.php?option=com_joomgallery&layout=' . $layout . $tmpl . '&id=' . (int) $this->item->id); ?>"
+  action="<?php echo Route::_('index.php?option=com_joomgallery&layout=' . $layout . $tmpl . '&id=' . (int) $this->item->id . ($originId ? '&origin_id=' . $originId : '') . ($forcedLanguage ? '&forcedLanguage=' . rawurlencode($forcedLanguage) : '')); ?>"
   method="post" enctype="multipart/form-data" name="adminForm" id="image-form" class="form-validate"
   aria-label="<?php echo Text::_('COM_JOOMGALLERY_IMAGE_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>" >
 
-  <div class="row title-alias form-vertical mb-3">
-    <div class="col-12 col-md-4">
-      <?php echo $this->form->renderField('title'); ?>
-    </div>
-    <div class="col-12 col-md-4">
-      <?php echo $this->form->renderField('alias'); ?>
-    </div>
+<div class="row title-alias form-vertical mb-3">
+  <div class="<?php echo $originId ? 'col-12 col-md-6' : 'col-12 col-md-4'; ?>">
+    <?php echo $this->form->renderField('title'); ?>
+  </div>
+
+  <div class="<?php echo $originId ? 'col-12 col-md-6' : 'col-12 col-md-4'; ?>">
+    <?php echo $this->form->renderField('alias'); ?>
+  </div>
+
+  <?php if(!$originId) : ?>
     <div class="col-12 col-md-4">
       <?php echo $this->form->renderField('image'); ?>
       <?php echo $this->form->renderField('filename'); ?>
     </div>
-  </div>
+  <?php endif; ?>
+</div>
 
   <div class="main-card">
   <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'Details', 'recall' => true, 'breakpoint' => 768]); ?>
 
   <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('JDETAILS', true)); ?>  
   <div class="row">
-    <div class="col-lg-9">
+    <div class="<?php echo $isLanguageVariant ? 'col-12' : 'col-lg-9'; ?>">
       <fieldset class="adminform">
         <?php echo $this->form->getLabel('description'); ?>
         <?php echo $this->form->getInput('description'); ?>
       </fieldset>
     </div>
-    <div class="col-lg-3">
+
+    <div class="<?php echo $isLanguageVariant ? 'col-12' : 'col-lg-3'; ?>">
       <fieldset class="form-vertical">
         <legend class="visually-hidden"><?php echo Text::_('JGLOBAL_FIELDSET_GLOBAL'); ?></legend>
-        <?php echo $this->form->renderField('published'); ?>
+
+        <?php if(!$isLanguageVariant) : ?>
+          <?php echo $this->form->renderField('published'); ?>
+        <?php endif; ?>
+
         <?php echo $this->form->renderField('catid'); ?>
-        <?php echo $this->form->renderField('featured'); ?>
-        <?php echo $this->form->renderField('hidden'); ?>
-        <?php echo $this->form->renderField('access'); ?>
-        <?php echo $this->form->renderField('tags'); ?>
+
+        <?php if(!$isLanguageVariant) : ?>
+          <?php echo $this->form->renderField('featured'); ?>
+          <?php echo $this->form->renderField('hidden'); ?>
+          <?php echo $this->form->renderField('access'); ?>
+          <?php echo $this->form->renderField('tags'); ?>
+        <?php endif; ?>
+
         <?php echo $this->form->renderField('language'); ?>
       </fieldset>
     </div>
   </div>
   <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+  <?php if(!$isLanguageVariant) : ?>
+  <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'associations', Text::_('COM_JOOMGALLERY_IMAGE_FIELD_ASSOCIATIONS', true)); ?>
+  <div class="row">
+    <div class="col-12">
+      <?php echo $this->form->renderFieldset('item_associations'); ?>
+    </div>
+  </div>
+  <?php endif; ?>
+  <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
 
   <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Images', Text::_('COM_JOOMGALLERY_IMAGES', true)); ?>
   <div class="row">
@@ -199,6 +226,59 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <?php echo HTMLHelper::_('form.token'); ?>
 
 </form>
+
+<?php
+if( $app->input->getInt('variant_saved', 0) === 1 ):
+  ?>
+<script>
+  window.parent.postMessage({
+    messageType: 'joomgallery:variant-saved',
+    id: <?php echo (int) $this->item->id; ?>,
+    title: <?php echo json_encode(
+        (string) $this->item->title,
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+    ); ?>,
+    language: <?php echo json_encode($forcedLanguage); ?>
+  }, window.location.origin);
+</script>
+<?php
+endif;
+?>
+
+<script>
+  if (
+    window.parent !== window &&
+    <?php echo (int) $this->item->id; ?> &&
+    <?php echo $originId ? 'true' : 'false'; ?>
+  ) {
+    window.parent.postMessage({
+      messageType: 'joomla:content-select',
+      id: <?php echo (int) $this->item->id; ?>,
+    title: <?php echo json_encode(
+        (string) $this->item->title,
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+    ); ?>
+    }, window.location.origin);
+  }
+</script>
+
+<script>
+  const imageForm = document.getElementById('image-form');
+  const frameElement = window.frameElement;
+
+  if(imageForm && frameElement)
+  {
+    const frameUrl = new URL(frameElement.src, window.location.origin);
+    const originId = frameUrl.searchParams.get('origin_id');
+
+    if(originId)
+    {
+      const formAction = new URL(imageForm.action, window.location.origin);
+      formAction.searchParams.set('origin_id', originId);
+      imageForm.action = formAction.toString();
+    }
+  }
+</script>
 
 <?php
 $mediaManagerBtn = '<joomla-toolbar-button><button class="btn disabled" disabled>' . Text::_('COM_JOOMGALLERY_IMAGE_EDIT') . '</button></joomla-toolbar-button>';

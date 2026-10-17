@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Multilanguage;
@@ -500,8 +501,8 @@ class CategoryModel extends JoomItemModel
       $listModel->setState('list.select', $fields);
     }
 
-    // Apply filters
-    $listModel->setState('filter.category', $this->item->id);
+    // Apply filters: show only images of the current category and language.
+    $listModel->setState('filter.category', (int) $this->item->id);
     $listModel->setState('filter.access', $user->getAuthorisedViewLevels());
     $listModel->setState('filter.published', 1);
     $listModel->setState('filter.showunapproved', 0);
@@ -510,6 +511,11 @@ class CategoryModel extends JoomItemModel
     {
       $listModel->setState('filter.language', $this->item->language);
     }
+
+    $listModel->setState('filter.access', $user->getAuthorisedViewLevels());
+    $listModel->setState('filter.published', 1);
+    $listModel->setState('filter.showunapproved', 0);
+    $listModel->setState('filter.showhidden', 0);
 
     $imgform_list       = [];
     $imgform_limitstart = $this->app->getUserState('joom.categoryview.' . $this->item->id . '.image.limitstart', 0);
@@ -583,7 +589,22 @@ class CategoryModel extends JoomItemModel
 
     if(Multilanguage::isEnabled())
     {
-      $listModel->setState('filter.language', $this->item->language);
+      $currentLanguage  = $this->app->getLanguage()->getTag();
+      $fallbackLanguage = ComponentHelper::getParams('com_joomgallery')->get('category_fallback_language', '');
+
+      if($fallbackLanguage === '')
+      {
+        $fallbackLanguage = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+      }
+
+      $languages = [$currentLanguage, '*'];
+
+      if($fallbackLanguage !== $currentLanguage)
+      {
+        $languages[] = $fallbackLanguage;
+      }
+
+      $listModel->setState('filter.language', $languages);
     }
 
     $catform_list       = [];
