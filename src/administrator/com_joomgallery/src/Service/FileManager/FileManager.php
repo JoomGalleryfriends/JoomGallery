@@ -131,7 +131,7 @@ class FileManager implements FileManagerInterface
    *
    * @since   4.0.0
    */
-  public function createImages($source, $filename, $cat = 2, $processing = true, $local_source = true, $skip = [], $logfile = 'jerror'): bool
+  public function createImages($source, $filename, $cat = 2, $processing = true, $local_source = true, $skip = [], $logfile = 'jerror', $image = 0): bool
   {
     if(!$filename)
     {
@@ -329,7 +329,7 @@ class FileManager implements FileManagerInterface
       }
 
       // Path to save image
-      $file = $this->getImgPath(0, $imagetype->typename, $cat, $filename, false);
+      $file = $this->getImgPath($image, $imagetype->typename, $cat, $filename, false);
 
       // Create folders if not existent
       $folder = \dirname($file);
