@@ -141,7 +141,7 @@ class JgimageField extends FormField
             }
             else
             {
-                $name = $img->title;
+                $name = $img->title . ' (ID: ' . $img->id . ')';
             }
         }
 

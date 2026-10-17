@@ -387,7 +387,7 @@ modalClose() {
 
 setValue(value, name) {
   this.input.value = value;
-  this.inputName.value = name || value;
+  this.inputName.value = name ? `${name} (ID: ${value})` : value;
 
   if (this.buttonDeleteVariant) {
     this.buttonDeleteVariant.disabled = !value;
