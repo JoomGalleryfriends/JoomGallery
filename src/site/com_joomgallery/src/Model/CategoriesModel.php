@@ -151,9 +151,16 @@ class CategoriesModel extends AdminCategoriesModel
       ->where($db->quoteName('fa.context') . ' = ' . $db->quote('com_joomgallery.category'))
       ->where($db->quoteName('cc.language') . ' = ' . $db->quote($currentLanguage));
 
+
+    $fallbackQuery = $db->getQuery(true)
+      ->select('1')
+      ->from($db->quoteName('#__associations', 'fa'))
+      ->where($db->quoteName('fa.id') . ' = ' . $db->quoteName('a.id'))
+      ->where($db->quoteName('fa.context') . ' = ' . $db->quote('com_joomgallery.category'));
+
     $query->where(
         '(' . $db->quoteName('a.language') . ' != ' . $db->quote($fallbackLanguage)
-        . ' OR NOT EXISTS (' . $subQuery . '))'
+        . ' OR (EXISTS (' . $fallbackQuery . ') AND NOT EXISTS (' . $subQuery . ')))'
     );
 
     return $query;
