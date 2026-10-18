@@ -728,7 +728,7 @@ class ImageModel extends JoomAdminModel
       elseif( $catMoved )
       {
         // Get filesystem for new category
-        $tmp_config = new\Joomgallery\Component\Joomgallery\Administrator\Service\Config\DefaultConfig('com_joomgallery.category', $table->catid);
+        $tmp_config = new \Joomgallery\Component\Joomgallery\Administrator\Service\Config\DefaultConfig('com_joomgallery.category', $table->catid);
 
         if( $tmp_config->get('jg_filesystem', 'local-images') !== $table->filesystem )
         {
