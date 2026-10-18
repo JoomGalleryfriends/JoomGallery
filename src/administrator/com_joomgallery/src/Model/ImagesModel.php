@@ -230,6 +230,40 @@ class ImagesModel extends JoomListModel
         '',
         ''
     );
+
+      $item->multilingual_group_blocked = false;
+      $associatedIds = [];
+
+      foreach($item->associations as $association)
+      {
+        if(!empty($association->id) && (int) $association->id !== (int) $item->id)
+        {
+          $associatedIds[] = (int) $association->id;
+        }
+      }
+
+      $associatedIds = array_unique($associatedIds);
+
+      if(!empty($associatedIds))
+      {
+        $db = $this->getDatabase();
+        $query = $db->getQuery(true)
+          ->select([$db->quoteName('id'), $db->quoteName('published')])
+          ->from($db->quoteName('#__joomgallery'))
+          ->where($db->quoteName('id') . ' IN (' . implode(',', $associatedIds) . ')');
+
+        $db->setQuery($query);
+        $associationStatuses = $db->loadAssocList('id', 'published');
+
+        foreach($associationStatuses as $published)
+        {
+          if((int) $published !== 1)
+          {
+            $item->multilingual_group_blocked = true;
+            break;
+          }
+        }
+      }
     }
 
     return $items;
@@ -600,6 +634,8 @@ class ImagesModel extends JoomListModel
       }
     }
 
+    $this->applyMultilingualGroupVisibilityFilter($query);
+
     return $query;
   }
 
@@ -933,7 +969,87 @@ class ImagesModel extends JoomListModel
         ->bind(':endDate', $db->toSql($endDate));
     }
 
+    $this->applyMultilingualGroupVisibilityFilter($query);
+
     return $query;
+  }
+
+  /**
+   * Exclude a complete multilingual image group if any associated variant
+   * is not visible in the frontend category view.
+   *
+   * @param   \Joomla\Database\QueryInterface  $query  The list/count query.
+   *
+   * @return  void
+   */
+  protected function applyMultilingualGroupVisibilityFilter($query)
+  {
+    if(
+      !$this->getState('filter.multilingual_group_visibility')
+      || !Associations::isEnabled()
+    )
+    {
+      return;
+    }
+
+    $db = $this->getDatabase();
+
+    $accessLevels = ArrayHelper::toInteger(
+        (array) $this->getState('filter.access')
+    );
+
+    $accessLevels = array_values(
+        array_filter(
+            $accessLevels,
+            static fn($level) => $level > 0
+        )
+    );
+
+    if(empty($accessLevels))
+    {
+      $accessLevels = [-1];
+    }
+
+    $accessList = implode(',', $accessLevels);
+    $context    = $db->quote('com_joomgallery.image');
+
+    $query->where(
+        'NOT EXISTS (
+        SELECT 1
+        FROM ' . $db->quoteName('#__associations', 'current_assoc') . '
+        INNER JOIN ' . $db->quoteName('#__associations', 'group_assoc') . '
+          ON ' . $db->quoteName('group_assoc.context') . ' =
+             ' . $db->quoteName('current_assoc.context') . '
+          AND ' . $db->quoteName('group_assoc.key') . ' =
+              ' . $db->quoteName('current_assoc.key') . '
+        INNER JOIN ' . $db->quoteName('#__joomgallery', 'variant') . '
+          ON ' . $db->quoteName('variant.id') . ' =
+            ' . $db->quoteName('group_assoc.id') . '
+        LEFT JOIN ' . $db->quoteName(
+                '#__joomgallery_categories',
+                'variant_category'
+            ) . '
+          ON ' . $db->quoteName('variant_category.id') . ' =
+             ' . $db->quoteName('variant.catid') . '
+        WHERE ' . $db->quoteName('current_assoc.context') . ' = ' .
+          $context . '
+          AND ' . $db->quoteName('current_assoc.id') . ' =
+              ' . $db->quoteName('a.id') . '
+          AND (
+            ' . $db->quoteName('variant.published') . ' <> 1
+            OR ' . $db->quoteName('variant.approved') . ' <> 1
+            OR ' . $db->quoteName('variant.hidden') . ' <> 0
+            OR ' . $db->quoteName('variant.access') . '
+                NOT IN (' . $accessList . ')
+            OR ' . $db->quoteName('variant_category.id') . ' IS NULL
+            OR ' . $db->quoteName('variant_category.published') . ' <> 1
+            OR ' . $db->quoteName('variant_category.hidden') . ' <> 0
+            OR ' . $db->quoteName('variant_category.in_hidden') . ' <> 0
+            OR ' . $db->quoteName('variant_category.access') . '
+                NOT IN (' . $accessList . ')
+          )
+      )'
+    );
   }
 
   /**

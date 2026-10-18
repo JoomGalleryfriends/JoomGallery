@@ -517,6 +517,12 @@ class CategoryModel extends JoomItemModel
     $listModel->setState('filter.showunapproved', 0);
     $listModel->setState('filter.showhidden', 0);
 
+    // Hide complete multilingual image groups when any variant is not visible.
+    $listModel->setState(
+        'filter.multilingual_group_visibility',
+        Multilanguage::isEnabled()
+    );
+
     $imgform_list       = [];
     $imgform_limitstart = $this->app->getUserState('joom.categoryview.' . $this->item->id . '.image.limitstart', 0);
 

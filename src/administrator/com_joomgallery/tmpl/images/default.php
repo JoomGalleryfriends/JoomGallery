@@ -199,7 +199,18 @@ if($saveOrder && !empty($this->items))
                       'id'          => 'state-' . $item->id,
                     ];
 
-                    echo (new PublishedButton())->render((int) $item->published, $i, $options);
+                    if((int) $item->published === 1 && !empty($item->multilingual_group_blocked))
+                    {
+                      $blockedOptions = $options;
+                      $blockedOptions['disabled'] = true;
+
+                      echo (new PublishedButton())->render(0, $i, $blockedOptions);
+                      echo ' <span class="icon-link text-muted" aria-hidden="true" title="Eine verknüpfte Sprachvariante ist nicht veröffentlicht"></span>';
+                    }
+                    else
+                    {
+                      echo (new PublishedButton())->render((int) $item->published, $i, $options);
+                    }
                   ?>
                 </td>
 
