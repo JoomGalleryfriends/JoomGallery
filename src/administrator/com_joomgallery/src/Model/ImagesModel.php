@@ -17,6 +17,8 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -131,6 +133,17 @@ class ImagesModel extends JoomListModel
     $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '*');
     $this->setState('filter.published', $published);
     $language = $this->getUserStateFromRequest($this->context . '.filter.language', 'filter_language', '');
+
+    if(!Multilanguage::isEnabled())
+    {
+      // Clear saved language selections before loading images with a hidden filter.
+      $language = '';
+      $app->setUserState($this->context . '.filter.language', '');
+      $filters = (array) $app->getUserState($this->context . '.filter', []);
+      unset($filters['language']);
+      $app->setUserState($this->context . '.filter', $filters);
+    }
+
     $this->setState('filter.language', $language);
     $showunapproved = $this->getUserStateFromRequest($this->context . '.filter.showunapproved', 'filter_showunapproved', '1');
     $this->setState('filter.showunapproved', $showunapproved);
@@ -195,6 +208,69 @@ class ImagesModel extends JoomListModel
     $id .= ':' . serialize($this->getState('filter.and'));
 
     return parent::getStoreId($id);
+  }
+
+  /**
+   * Get the filter form adapted to the selected search provider.
+   *
+   * @param   array    $data      Data used to bind the form
+   * @param   boolean  $loadData  True to load the model state into the form
+   *
+   * @return  \Joomla\CMS\Form\Form|null
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getFilterForm($data = [], $loadData = true)
+  {
+    $form = parent::getFilterForm($data, $loadData);
+
+    if($form === null)
+    {
+      return null;
+    }
+
+    $searchProvider = $this->getSearchProvider();
+    $displayFields  = $searchProvider->getDisplayFields();
+
+    if(!Multilanguage::isEnabled())
+    {
+      $form->removeField('language', 'filter');
+    }
+
+    if($searchProvider->handlesOrdering())
+    {
+      $form->removeField('fullordering', 'list');
+
+      $user = $this->app->getIdentity();
+
+      if($this->app->isClient('administrator') || $user->authorise('core.admin', 'com_joomgallery'))
+      {
+        $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SEARCH_PROVIDER_ORDERING_NOTICE', $searchProvider->getDisplayName()), 'info');
+      }
+    }
+
+    foreach(['filter', 'list'] as $group)
+    {
+      $visibleFields = $displayFields[$group] ?? null;
+
+      // A null allowlist means that the provider does not restrict this group.
+      if($visibleFields === null)
+      {
+        continue;
+      }
+
+      foreach($form->getGroup($group) as $field)
+      {
+        $fieldName = (string) $field->fieldname;
+
+        if(!\in_array($fieldName, $visibleFields, true))
+        {
+          $form->removeField($fieldName, $group);
+        }
+      }
+    }
+
+    return $form;
   }
 
   /**
@@ -335,15 +411,8 @@ class ImagesModel extends JoomListModel
     // Filter by search
     $search = trim((string) $this->getState('filter.search'));
 
-    $hasActiveSearchProviderFilter =
-      !empty($this->getState('filter.category'))
-      || !empty($this->getState('filter.tag'))
-      || !empty($this->getState('filter.language'));
-
-    if(!empty($search) || $hasActiveSearchProviderFilter)
-    {
-      $this->component->getSearch()->applyToQuery($query, $search, 'a');
-    }
+    // Let the provider decide whether the current search/filter state is active.
+    $searchProvider->applyToQuery($query, $search, 'a');
 
     // Filter by published state
     $published = (string) $this->getState('filter.published');
@@ -546,8 +615,8 @@ class ImagesModel extends JoomListModel
         ->bind(':endDate', $endDate);
     }
 
-    // Add the list ordering clause.
-    if(!$searchProvider->handlesOrdering())
+    // Give provider-specific result ordering precedence over list ordering.
+    if(!$searchProvider->applyOrderingToQuery($query))
     {
       $orderCol  = $this->getState('list.ordering', 'a.id');
       $orderDirn = $this->getState('list.direction', 'ASC');
@@ -606,16 +675,10 @@ class ImagesModel extends JoomListModel
       $logicAnd = false;
     }
 
-    // Select the required fields from the table.
-    if(!$searchProvider->handlesFilter('tags') && !empty($tag) && \count($tag) > 1 && !$logicAnd)
-    {
-      // Add DISTINCT when filtering with multiple tags
-      $query->select('COUNT(DISTINCT a.id)');
-    }
-    else
-    {
-      $query->select('COUNT(*)');
-    }
+    // Return one row per image. JoomListModel::_getListCount() counts these
+    // rows, which keeps pagination correct even when a provider or tag join
+    // produces more than one joined row for the same image.
+    $query->select($db->quoteName('a.id'));
 
     // Select table
     if(!$searchProvider->handlesFilter('tags') && !empty($tag) && $logicAnd)
@@ -688,15 +751,9 @@ class ImagesModel extends JoomListModel
     // Filter by search
     $search = trim((string) $this->getState('filter.search'));
 
-    $hasActiveSearchProviderFilter =
-      !empty($this->getState('filter.category'))
-      || !empty($this->getState('filter.tag'))
-      || !empty($this->getState('filter.language'));
-
-    if(!empty($search) || $hasActiveSearchProviderFilter)
-    {
-      $this->component->getSearch()->applyToQuery($query, $search, 'a');
-    }
+    // Keep provider filtering identical to getListQuery(). The provider decides
+    // whether the current search/filter state requires changes to the query.
+    $searchProvider->applyToQuery($query, $search, 'a');
 
     // Filter by published state
     $published = (string) $this->getState('filter.published');
@@ -852,7 +909,7 @@ class ImagesModel extends JoomListModel
     }
 
     // Filter on the language.
-    if($language = $this->getState('filter.language'))
+    if(!$searchProvider->handlesFilter('language') && $language = $this->getState('filter.language'))
     {
       $query->where($db->quoteName('a.language') . ' = :language')
         ->bind(':language', $language);
@@ -894,6 +951,8 @@ class ImagesModel extends JoomListModel
       $query->where($db->quoteName('a.' . $dateField) . ' <= :endDate')
         ->bind(':endDate', $db->toSql($endDate));
     }
+
+    $query->group($db->quoteName('a.id'));
 
     return $query;
   }
