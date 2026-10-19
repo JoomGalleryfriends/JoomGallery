@@ -21,23 +21,23 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access;
  */
 interface AccessServiceInterface
 {
-    /**
-     * Creates the access service class
-     *
-     * @param   string   $option   Component option
-     *
-     * @return  void
-     *
-     * @since  4.0.0
-     */
-    public function createAccess($option = '');
+  /**
+   * Creates the access service class
+   *
+   * @param   string   $option   Component option
+   *
+   * @return  void
+   *
+   * @since  4.0.0
+   */
+  public function createAccess($option = '');
 
-    /**
-     * Returns the access service class.
-     *
-     * @return  AccessInterface
-     *
-     * @since  4.0.0
-     */
-    public function getAccess(): AccessInterface;
+  /**
+   * Returns the access service class.
+   *
+   * @return  AccessInterface
+   *
+   * @since  4.0.0
+   */
+  public function getAccess(): AccessInterface;
 }

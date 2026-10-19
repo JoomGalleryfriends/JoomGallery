@@ -120,6 +120,8 @@ class HtmlView extends JoomGalleryView
 
     if($this->getAcl()->checkACL('core.admin'))
     {
+      ToolBarHelper::custom('cache.clear', 'delete', '', 'COM_JOOMGALLERY_CLEAR_CACHE', false);
+      ToolBarHelper::custom('cache.purge', 'refresh', '', 'COM_JOOMGALLERY_CLEAR_EXPIRED_CACHE', false);
       ToolBarHelper::preferences('com_joomgallery');
     }
 

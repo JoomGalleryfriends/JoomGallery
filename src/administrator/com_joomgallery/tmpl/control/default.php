@@ -21,7 +21,7 @@ use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
-$wa->useStyle('com_joomgallery.admin');
+$wa->useStyle('com_joomgallery.admin')->useScript('core');
 
 // Get language tag for donate button
 $langTag = 'US';
@@ -33,6 +33,11 @@ if(strpos(strtolower(Factory::getApplication()->getLanguage()->getTag()), 'de') 
   $cTag    = 'EUR';
 }
 ?>
+
+<form action="<?php echo Route::_('index.php?option=com_joomgallery&view=control'); ?>" method="post" name="adminForm" id="adminForm">
+  <input type="hidden" name="task" value="">
+  <?php echo HTMLHelper::_('form.token'); ?>
+</form>
 
 <div class="d-flex flex-row">
   <div class="flex-fill">

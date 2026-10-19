@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -145,6 +146,55 @@ abstract class JoomListModel extends ListModel
   }
 
   /**
+   * Load list items and register ownership data already present in the result.
+   *
+   * @return  mixed  An array of data items on success, false on failure.
+   *
+   * @since   4.4.0
+   */
+  public function getItems()
+  {
+    $limit = (int) $this->getState('list.limit');
+    $start = (int) $this->getStart();
+
+    if($this->globalLimit && $start + $limit > $this->globalLimit)
+    {
+      $this->setState('list.limit', $this->globalLimit - $start);
+    }
+
+    $items = parent::getItems();
+
+    if(!\is_array($items))
+    {
+      return $items;
+    }
+
+    foreach($items as $item)
+    {
+      if(!isset($item->id))
+      {
+        continue;
+      }
+
+      if(isset($item->created_by_id))
+      {
+        JoomHelper::registerCreator($this->type, (int) $item->id, (int) $item->created_by_id);
+      }
+
+      if($this->type === 'category' && isset($item->parent_created_by))
+      {
+        JoomHelper::registerCreator('category', (int) $item->id, (int) $item->parent_created_by, true);
+      }
+      elseif($this->type === 'image' && isset($item->catid, $item->cat_uid))
+      {
+        JoomHelper::registerCreator('category', (int) $item->catid, (int) $item->cat_uid);
+      }
+    }
+
+    return $items;
+  }
+
+  /**
    * Method to load component specific parameters into model state.
    *
    * @return  void
@@ -169,26 +219,6 @@ abstract class JoomListModel extends ListModel
     $configs     = new Registry($configArray);
 
     $this->setState('parameters.configs', $configs);
-  }
-
-  /**
-   * Method to get an array of data items.
-   *
-   * @return  mixed  An array of data items on success, false on failure.
-   *
-   * @since   4.4.0
-   */
-  public function getItems()
-  {
-    $limit = (int) $this->getState('list.limit');
-    $start = (int) $this->getStart();
-
-    if($this->globalLimit && $start + $limit > $this->globalLimit)
-    {
-      $this->setState('list.limit', $this->globalLimit - $start);
-    }
-
-    return parent::getItems();
   }
 
   /**

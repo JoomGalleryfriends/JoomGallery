@@ -297,6 +297,15 @@ class ConfigModel extends JoomAdminModel
     {
       if($table->load($pk, true))
       {
+        if(!$this->isConfigGroupAvailable((int) $table->group_id))
+        {
+          $message = Text::sprintf('COM_JOOMGALLERY_ERROR_CONFIG_GROUP_EXISTS', (int) $table->group_id);
+          $this->setError($message);
+          $this->component->addLog($message, 'error', 'jerror');
+
+          throw new \Exception($message);
+        }
+
         // Reset the id to create a new record.
         $table->id = 0;
 
@@ -343,7 +352,17 @@ class ConfigModel extends JoomAdminModel
   public function save($data)
   {
     // id of the data to be saved
-    $id = \intval($data['id']);
+    $id      = (int) ($data['id'] ?? 0);
+    $groupId = $id === 1 ? 1 : (int) ($data['group_id'] ?? 0);
+
+    if($groupId > 0 && !$this->isConfigGroupAvailable($groupId, $id))
+    {
+      $message = Text::sprintf('COM_JOOMGALLERY_ERROR_CONFIG_GROUP_EXISTS', $groupId);
+      $this->setError($message);
+      $this->component->addLog($message, 'error', 'jerror');
+
+      return false;
+    }
 
     $mod_items = $this->component->getMVCFactory()->createModel('imagetypes', 'administrator');
     $model     = $this->component->getMVCFactory()->createModel('imagetype', 'administrator');
@@ -438,6 +457,32 @@ class ConfigModel extends JoomAdminModel
     }
 
     return parent::save($data);
+  }
+
+  /**
+   * Checks whether a user group can be assigned to a configuration record.
+   *
+   * @param   int  $groupId  User group ID to check.
+   * @param   int  $recordId Configuration record being edited, or zero when creating.
+   *
+   * @return  bool  True when no other configuration uses the group.
+   *
+   * @since   4.4.0
+   */
+  protected function isConfigGroupAvailable(int $groupId, int $recordId = 0): bool
+  {
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select('1')
+      ->from($db->quoteName(_JOOM_TABLE_CONFIGS))
+      ->where($db->quoteName('group_id') . ' = ' . $groupId);
+
+    if($recordId > 0)
+    {
+      $query->where($db->quoteName('id') . ' <> ' . $recordId);
+    }
+
+    return !(bool) $db->setQuery($query, 0, 1)->loadResult();
   }
 
   /**

@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Migration;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
@@ -73,6 +74,16 @@ class HtmlView extends JoomGalleryView
         {
           // Requested script does not exists
           array_push($this->error, 'COM_JOOMGALLERY_SERVICE_MIGRATION_STEP_NOT_AVAILABLE');
+        }
+      }
+
+      if(\in_array($this->layout, ['step2', 'step3'], true) && CacheHelper::isEnabled())
+      {
+        $this->app->setUserState(_JOOM_OPTION . '.migration.' . $this->script->name . '.step2.success', false);
+
+        if($this->layout === 'step3')
+        {
+          $this->error[] = Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_ERROR');
         }
       }
 

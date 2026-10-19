@@ -134,7 +134,7 @@ $wa->useStyle('com_joomgallery.admin')
           <br />
         <?php endforeach; ?>
 
-        <input type="submit" class="btn btn-primary <?php echo $this->success ? '' : 'disabled'; ?>" value="<?php echo Text::_('COM_JOOMGALLERY_MIGRATION_STEP2_BTN_TXT'); ?>"/>
+        <input type="submit" <?php echo $this->success ? '' : 'disabled'; ?> class="btn btn-primary <?php echo $this->success ? '' : 'disabled'; ?>" value="<?php echo Text::_('COM_JOOMGALLERY_MIGRATION_STEP2_BTN_TXT'); ?>"/>
       <?php endif; ?>
 
       <input type="hidden" name="task" value="migration.migrate"/>
