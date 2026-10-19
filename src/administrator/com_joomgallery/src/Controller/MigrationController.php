@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\JoomgalleryComponent;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormFactoryAwareInterface;
@@ -690,17 +691,27 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       throw new \Exception('Requested migration script does not exist.', 1);
     }
 
+    // A stored successful precheck must not allow caching to be re-enabled mid-migration.
+    $cacheEnabled = CacheHelper::isEnabled();
+
+    if($cacheEnabled)
+    {
+      $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', false);
+    }
+
     $precheck = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', false);
 
     // Check if no errors detected in precheck (step 2)
     if(!$precheck)
     {
       // Pre-checks not successful. Show error message.
-      $msg = Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED');
+      $msg = Text::_($cacheEnabled ? 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_ERROR' : 'COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED');
       $this->setMessage(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_STEP2', $msg), 'error');
       $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_STEP2', $msg), 'error', 'jerror');
       // Redirect to the step 2 screen
       $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=migration&layout=step2', false));
+
+      return false;
     }
 
     // Redirect to the step 3 screen
@@ -824,14 +835,21 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       return false;
     }
 
-    // Check if no errors detected in precheck (step 2)
+    // A stored successful precheck must not allow caching to be re-enabled mid-migration.
+    $cacheEnabled = CacheHelper::isEnabled();
+
+    if($cacheEnabled)
+    {
+      $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', false);
+    }
+
     $precheck = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', false);
 
     if(!$precheck)
     {
       // Pre-checks not successful. Show error message.
-      $response = $this->createRespond(null, false, Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED'));
-      $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED'), 'error', 'jerror');
+      $response = $this->createRespond(null, false, Text::_($cacheEnabled ? 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_ERROR' : 'COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED'));
+      $this->component->addLog(Text::_($cacheEnabled ? 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_ERROR' : 'COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED'), 'error', 'jerror');
       $this->ajaxRespond($response, $format);
 
       return false;
@@ -956,14 +974,21 @@ class MigrationController extends BaseController implements FormFactoryAwareInte
       throw new \Exception('Requested migration script does not exist.', 1);
     }
 
-    // Check if no errors detected in precheck (step 2)
+    // A stored successful precheck must not allow caching to be re-enabled mid-migration.
+    $cacheEnabled = CacheHelper::isEnabled();
+
+    if($cacheEnabled)
+    {
+      $this->app->setUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', false);
+    }
+
     $precheck = $this->app->getUserState(_JOOM_OPTION . '.migration.' . $script . '.step2.success', false);
 
     if(!$precheck)
     {
       // Pre-checks not successful. Show error message.
-      $this->setMessage(Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED'), 'error');
-      $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED'), 'error', 'jerror');
+      $this->setMessage(Text::_($cacheEnabled ? 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_ERROR' : 'COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED'), 'error');
+      $this->component->addLog(Text::_($cacheEnabled ? 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_ERROR' : 'COM_JOOMGALLERY_SERVICE_MIGRATION_ERROR_MIGRATION_CHECKS_FAILED'), 'error', 'jerror');
       $this->setRedirect(Route::_('index.php?option=' . _JOOM_OPTION . '&view=migration&layout=step2', false));
 
       return false;

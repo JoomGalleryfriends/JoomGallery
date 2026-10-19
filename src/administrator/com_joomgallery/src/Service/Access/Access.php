@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\Base\AccessOwn;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Cache\CacheInterface;
@@ -237,7 +238,7 @@ class Access implements AccessInterface
   {
     $this->cache->initialise();
 
-    if($this->checksRevision !== $this->cache->getRevision())
+    if(!CacheHelper::isEnabled() || $this->checksRevision !== $this->cache->getRevision())
     {
       $this->checks         = [];
       $this->checksRevision = $this->cache->getRevision();
@@ -617,6 +618,8 @@ class Access implements AccessInterface
    */
   protected function warmHotCache(): void
   {
+    if(!CacheHelper::isEnabled()) return;
+
     if($this->hotCacheLimit === 0 || $this->hotCacheLifetime === 0)
     {
       return;
@@ -710,6 +713,8 @@ class Access implements AccessInterface
    */
   protected function cacheCheckResult(string $key, bool $result, string $asset, int $pk): bool
   {
+    if(!CacheHelper::isEnabled()) return $result;
+
     $this->checks[$key] = $result;
 
     if($this->isHotCacheCandidate($asset, $pk))

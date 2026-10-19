@@ -14,13 +14,15 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Cache;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomla\CMS\Factory;
 
 /**
  * Namespace-specific cache backed by shared component storage
  *
  * Defaults to request-only storage. Session persistence and revision tracking
- * are selected explicitly through configure().
+ * are selected explicitly through configure(). The global cache switch bypasses
+ * all result reads and writes; removal and revision invalidation stay available.
  *
  * @package    JoomGallery
  * @since      4.5.0
@@ -134,6 +136,8 @@ class Cache implements CacheInterface
    */
   public function initialise(): void
   {
+    if(!CacheHelper::isEnabled()) return;
+
     $this->storage->register($this->namespace, $this->scope);
 
     if(!$this->requestOnly)
@@ -152,6 +156,8 @@ class Cache implements CacheInterface
    */
   public function getRevision(): ?string
   {
+    if(!CacheHelper::isEnabled()) return null;
+
     $this->initialise();
 
     return $this->storage->revision($this->namespace);
@@ -168,6 +174,8 @@ class Cache implements CacheInterface
    */
   public function has(string $key): bool
   {
+    if(!CacheHelper::isEnabled()) return false;
+
     $this->initialise();
 
     return $this->storage->has($this->namespace, $key, $this->requestOnly);
@@ -185,6 +193,8 @@ class Cache implements CacheInterface
    */
   public function get(string $key, mixed $default = null): mixed
   {
+    if(!CacheHelper::isEnabled()) return $default;
+
     $this->initialise();
 
     return $this->storage->get($this->namespace, $key, $default, $this->requestOnly);
@@ -207,6 +217,8 @@ class Cache implements CacheInterface
    */
   public function set(string $key, mixed $value = null, int $limit = 0): mixed
   {
+    if(!CacheHelper::isEnabled()) return null;
+
     $this->initialise();
     $previous = $this->storage->get($this->namespace, $key, null, $this->requestOnly, false);
     $this->storage->put($this->namespace, $key, $value, $limit, $this->requestOnly);
@@ -249,6 +261,8 @@ class Cache implements CacheInterface
    */
   public function prune(callable $keep, int $limit = 0): void
   {
+    if(!CacheHelper::isEnabled()) return;
+
     if($this->requestOnly)
     {
       throw new \LogicException('Entry pruning requires persistent cache storage.');
@@ -270,6 +284,8 @@ class Cache implements CacheInterface
    */
   public function persist(): void
   {
+    if(!CacheHelper::isEnabled()) return;
+
     if(!$this->requestOnly) $this->storage->persist($this->namespace);
   }
 
@@ -284,6 +300,8 @@ class Cache implements CacheInterface
    */
   public function persistAll(): void
   {
+    if(!CacheHelper::isEnabled()) return;
+
     if(!$this->requestOnly) $this->storage->persistAll($this->scope);
   }
 }
