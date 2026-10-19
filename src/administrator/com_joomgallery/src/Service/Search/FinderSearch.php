@@ -360,6 +360,20 @@ class FinderSearch extends Search implements SearchInterface
           ->bind(':lft', $bv->lft, ParameterType::INTEGER)
           ->bind(':rgt', $bv->rgt, ParameterType::INTEGER);
 
+        // Only offer taxonomy nodes used by accessible, published JoomGallery items.
+        // EXISTS keeps each option unique when several images share the same node.
+        $mappedImages = $this->db->getQuery(true)
+          ->select('1')
+          ->from($this->db->quoteName('#__finder_taxonomy_map', 'tm'))
+          ->join('INNER', $this->db->quoteName('#__finder_links', 'fl') . ' ON ' . $this->db->quoteName('fl.link_id') . ' = ' . $this->db->quoteName('tm.link_id'))
+          ->where($this->db->quoteName('tm.node_id') . ' = ' . $this->db->quoteName('t.id'))
+          ->where($this->db->quoteName('fl.url') . ' LIKE ' . $this->db->quote($joomgalleryUrl))
+          ->where($this->db->quoteName('fl.state') . ' = 1')
+          ->where($this->db->quoteName('fl.published') . ' = 1')
+          ->where($this->db->quoteName('fl.access') . ' IN (' . $groups . ')');
+
+        $query->where('EXISTS (' . $mappedImages . ')');
+
         // Apply multilanguage filter
         if(Multilanguage::isEnabled())
         {
