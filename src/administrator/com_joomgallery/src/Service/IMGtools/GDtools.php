@@ -1981,6 +1981,9 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
     {
       // Needs at least php v4.0.6
       $src_frame = imagecreatetruecolor($dst_imginfo['width'], $dst_imginfo['height']);
+
+        imagealphablending($src_frame, false);
+        imagesavealpha($src_frame, true);
     }
     else
     {
@@ -2459,14 +2462,22 @@ class GDtools extends BaseIMGtools implements IMGtoolsInterface
       imagefilter($srcIm, IMG_FILTER_COLORIZE, 0, 0, 0, 127 * ((100 - $pct) / 100));
     }
 
-    // if(\function_exists('imagecopyresampled'))
-    // {
-    //   \imagecopyresampled($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $srcW, $srcH);
-    // }
-    // else
-    // {
-      imagecopy($dstIm, $srcIm, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH);
-    // }
+    // Copy the source image onto the destination while preserving alpha transparency.
+    imagealphablending($dstIm, true);
+    imagesavealpha($dstIm, true);
+
+    imagecopyresampled(
+        $dstIm,
+        $srcIm,
+        $dstX,
+        $dstY,
+        $srcX,
+        $srcY,
+        $srcW,
+        $srcH,
+        $srcW,
+        $srcH
+    );
 
     return true;
   }

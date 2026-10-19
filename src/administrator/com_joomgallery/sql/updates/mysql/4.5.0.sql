@@ -8,3 +8,6 @@ ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_download_btn` TINY
 ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_comment_btn` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_download_btn`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_favorite_btn` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_comment_btn`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_share_btn` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_favorite_btn`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_lightbox_show_tags` TINYINT(1) NOT NULL DEFAULT 0 AFTER `jg_lightbox_thumbnails`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_tags_label` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_show_tags`;
+ALTER TABLE `#__joomgallery_configs` DROP COLUMN `jg_maxuploadfields`;
