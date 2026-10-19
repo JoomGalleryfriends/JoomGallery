@@ -1336,6 +1336,13 @@
                default="detail"
                validate="options"
         />
+        <field name="jg_detail_view_social_image_type"
+               type="jgimagetype"
+               label="COM_JOOMGALLERY_CONFIG_SOCIAL_IMAGE_TYPE"
+               description="COM_JOOMGALLERY_CONFIG_SOCIAL_IMAGE_TYPE_DESC"
+               default="detail"
+               validate="options"
+        />
         <field
             name="jg_detail_view_show_title"
             type="radio"
@@ -1373,7 +1380,6 @@
             name="jg_detail_view_show_imgdate"
             type="radio"
             label="COM_JOOMGALLERY_DATE"
-            description="COM_JOOMGALLERY_DATE_DESC"
             default="1"
             layout="joomla.form.field.radio.switcher"
             validate="options"
@@ -1405,6 +1411,125 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
+        <field
+            name="jg_detail_view_show_tags"
+            type="radio"
+            label="COM_JOOMGALLERY_TAGS"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="jg_detail_view_show_image_size"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_DETAIL_SHOW_IMAGE_SIZE"
+            description="COM_JOOMGALLERY_CONFIG_DETAIL_SHOW_IMAGE_SIZE_DESC"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="jg_detail_view_show_copyright"
+               type="radio"
+               label="COM_JOOMGALLERY_CONFIG_DETAIL_SHOW_COPYRIGHT"
+               description="COM_JOOMGALLERY_CONFIG_DETAIL_SHOW_COPYRIGHT_DESC"
+               default="1"
+               layout="joomla.form.field.radio.switcher"
+               validate="options">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="jg_detail_view_show_metadata"
+            type="radio"
+            label="COM_JOOMGALLERY_IMGMETADATA"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="jg_detail_view_metadata_keys"
+            type="text"
+            label="COM_JOOMGALLERY_CONFIG_IMPORTANT_METADATA_KEYS"
+            description="COM_JOOMGALLERY_CONFIG_IMPORTANT_METADATA_KEYS_DESC"
+            default="Model,Make,DateTimeOriginal,DateTime"
+            filter="string"
+            showon="jg_detail_view_show_metadata:1"
+        />
+        <field
+            name="detail_view_interactions"
+            type="note"
+            label="COM_JOOMGALLERY_CONTROL_INTERACTION"
+            class="mt-4"
+        />
+        <field
+            name="jg_detail_view_show_voting_btn"
+            type="radio"
+            label="COM_JOOMGALLERY_VOTES"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="jg_detail_view_show_download_btn"
+            type="radio"
+            label="COM_JOOMGALLERY_DOWNLOAD"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="jg_detail_view_show_comment_btn"
+            type="radio"
+            label="COM_JOOMGALLERY_COMMENT"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="jg_detail_view_show_favorite_btn"
+            type="radio"
+            label="COM_JOOMGALLERY_FAVOURITE"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="jg_detail_view_show_share_btn"
+            type="radio"
+            label="COM_JOOMGALLERY_SHARING"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="detail_view_stats"
+            type="note"
+            label="COM_JOOMGALLERY_CONTROL_STATISTIC"
+            class="mt-4"
+        />
         <field
             name="jg_detail_view_show_votes"
             type="radio"
@@ -1449,25 +1574,12 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
-        <field
-            name="jg_detail_view_show_tags"
-            type="radio"
-            label="COM_JOOMGALLERY_TAGS"
-            default="1"
-            layout="joomla.form.field.radio.switcher"
-            validate="options"
-            >
-            <option value="0">JNO</option>
-            <option value="1">JYES</option>
-        </field>
-        <field
-            name="jg_detail_view_show_metadata"
-            type="radio"
-            label="COM_JOOMGALLERY_IMGMETADATA"
-            default="1"
-            layout="joomla.form.field.radio.switcher"
-            validate="options"
-            >
+        <field name="jg_detail_view_show_comments"
+               type="radio"
+               label="COM_JOOMGALLERY_COMMENTS"
+               default="1"
+               layout="joomla.form.field.radio.switcher"
+               validate="options">
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>

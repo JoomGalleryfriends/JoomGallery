@@ -1,3 +1,13 @@
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_social_image_type` VARCHAR(25) NOT NULL DEFAULT 'detail' AFTER `jg_detail_view_type_image`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_metadata_keys` VARCHAR(1024) NOT NULL DEFAULT 'Model,Make,DateTimeOriginal,DateTime' AFTER `jg_detail_view_show_metadata`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_image_size` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_metadata_keys`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_comments` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_image_size`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_copyright` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_comments`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_voting_btn` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_copyright`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_download_btn` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_voting_btn`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_comment_btn` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_download_btn`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_favorite_btn` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_comment_btn`;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_show_share_btn` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_detail_view_show_favorite_btn`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_lightbox_show_tags` TINYINT(1) NOT NULL DEFAULT 0 AFTER `jg_lightbox_thumbnails`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_tags_label` TINYINT(1) NOT NULL DEFAULT 1 AFTER `jg_category_view_show_tags`;
 ALTER TABLE `#__joomgallery_configs` DROP COLUMN `jg_maxuploadfields`;
