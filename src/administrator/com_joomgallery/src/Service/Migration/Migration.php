@@ -1083,12 +1083,12 @@ abstract class Migration implements MigrationInterface
   {
     $disabled = !CacheHelper::isEnabled();
     $checks->addCheck(
-      $category,
-      'cache_disabled',
-      $disabled,
-      false,
-      Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED'),
-      Text::_($disabled ? 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_SUCCESS' : 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_ERROR')
+        $category,
+        'cache_disabled',
+        $disabled,
+        false,
+        Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED'),
+        Text::_($disabled ? 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_SUCCESS' : 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_ERROR')
     );
   }
 
