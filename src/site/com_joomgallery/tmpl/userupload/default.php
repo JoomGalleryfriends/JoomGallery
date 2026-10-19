@@ -230,6 +230,7 @@ if($this->isUserLoggedIn && $this->isUserHasCategory)
                 <?php echo $this->form->renderField('author'); ?>
                 <?php echo $this->form->renderField('published'); ?>
                 <?php echo $this->form->renderField('access'); ?>
+                <?php echo $this->form->renderField('tags'); ?>
                 <?php echo $this->form->renderField('language'); ?>
                 <fieldset class="adminform">
                   <?php echo $this->form->getLabel('description'); ?>
