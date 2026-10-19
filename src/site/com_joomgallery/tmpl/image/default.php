@@ -365,13 +365,13 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
             <a class="btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&task=userimage.edit&id=' . (int) $this->item->id . '&return=' . $editReturn); ?>"><span class="icon-edit me-1" aria-hidden="true"></span><?php echo Text::_('JACTION_EDIT'); ?></a>
           <?php endif; ?>
           <form class="d-flex gap-2" action="<?php echo Route::_('index.php?option=com_joomgallery'); ?>" method="post" data-jg-manage-form>
-            <input type="hidden" name="cid[]" value="<?php echo (int) $this->item->id; ?>">
+            <input type="hidden" name="id" value="<?php echo (int) $this->item->id; ?>">
             <input type="hidden" name="return" value="<?php echo base64_encode($this->backUrl); ?>">
             <?php if($canCheckin) : ?>
-              <button class="btn btn-outline-secondary" type="submit" name="task" value="image.<?php echo $stateTask; ?>"><span class="icon-<?php echo $stateTask === 'publish' ? 'check' : 'cancel'; ?> me-1" aria-hidden="true"></span><?php echo Text::_($stateTask === 'publish' ? 'PUBLISH' : 'UNPUBLISH'); ?></button>
+              <button class="btn btn-outline-secondary" type="submit" name="task" value="userimage.<?php echo $stateTask; ?>"><span class="icon-<?php echo $stateTask === 'publish' ? 'check' : 'cancel'; ?> me-1" aria-hidden="true"></span><?php echo Text::_($stateTask === 'publish' ? 'PUBLISH' : 'UNPUBLISH'); ?></button>
             <?php endif; ?>
             <?php if($canDelete) : ?>
-              <button class="btn btn-outline-danger" type="submit" name="task" value="imageform.remove" data-jg-delete><span class="icon-trash me-1" aria-hidden="true"></span><?php echo Text::_('JACTION_DELETE'); ?></button>
+              <button class="btn btn-outline-danger" type="submit" name="task" value="userimage.remove" data-jg-delete><span class="icon-trash me-1" aria-hidden="true"></span><?php echo Text::_('JACTION_DELETE'); ?></button>
             <?php endif; ?>
             <?php echo HTMLHelper::_('form.token'); ?>
           </form>

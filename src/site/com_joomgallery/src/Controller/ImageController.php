@@ -15,10 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
-use Joomla\CMS\Router\Route;
 
 /**
  * Image controller class.
@@ -40,7 +37,7 @@ class ImageController extends JoomFormController
    */
   public function edit($key = null, $urlVar = null)
   {
-    throw new \Exception('Edit an existing image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Edit an existing image not possible. Use userimage controller instead.', 503);
   }
 
 
@@ -52,7 +49,7 @@ class ImageController extends JoomFormController
    */
   public function add()
   {
-    throw new \Exception('Edit an existing image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Edit an existing image not possible. Use userimage controller instead.', 503);
   }
 
   /**
@@ -63,7 +60,7 @@ class ImageController extends JoomFormController
    */
   public function editAssociations()
   {
-    throw new \Exception('Edit associations not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Edit associations not possible. Use userimage controller instead.', 503);
   }
 
   /**
@@ -113,7 +110,7 @@ class ImageController extends JoomFormController
    */
   public function remove()
   {
-    throw new \Exception('Removing image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Removing image not possible. Use userimage controller instead.', 503);
   }
 
   /**
@@ -124,7 +121,7 @@ class ImageController extends JoomFormController
    */
   public function checkin()
   {
-    throw new \Exception('Check-in image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Check-in image not possible. Use userimage controller instead.', 503);
   }
 
   /**
@@ -138,47 +135,7 @@ class ImageController extends JoomFormController
    */
   public function publish(): bool
   {
-    $this->checkToken();
-
-    $cid = (array) $this->input->post->get('cid', [], 'int');
-    $id  = (int) ($cid[0] ?? $this->input->getInt('id', 0));
-
-    if(!$id)
-    {
-      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_ITEMID_MISSING'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('gallery'), false));
-
-      return false;
-    }
-
-    $parentId = JoomHelper::getParent('image', $id);
-
-    if(!$this->acl->checkACL('editstate', 'image', $id, $parentId, true))
-    {
-      $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('gallery'), false));
-
-      return false;
-    }
-
-    $task  = $this->getTask();
-    $value = $task === 'publish' ? 1 : 0;
-    $pks   = [$id];
-    $model = $this->component->getMVCFactory()->createModel('Image', 'Administrator');
-
-    if(!$model || $model->publish($pks, $value) === false)
-    {
-      $message = $model ? $model->getError() : Text::_('JLIB_APPLICATION_ERROR_MODEL_CREATE');
-      $this->setMessage(Text::sprintf('COM_JOOMGALLERY_ITEM_STATE_ERROR', $message), 'error');
-      $this->setRedirect(Route::_($this->getReturnPage('gallery'), false));
-
-      return false;
-    }
-
-    $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_' . strtoupper($task) . '_SUCCESSFUL'), 'success');
-    $this->setRedirect(Route::_($this->getReturnPage('gallery'), false));
-
-    return true;
+    throw new \Exception('Publishing an image not possible. Use userimage controller instead.', 503);
   }
 
   /**
@@ -189,6 +146,6 @@ class ImageController extends JoomFormController
    */
   public function unpublish(): bool
   {
-    return $this->publish();
+    throw new \Exception('Unpublishing an image not possible. Use userimage controller instead.', 503);
   }
 }
