@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
@@ -132,6 +133,17 @@ class ImagesModel extends JoomListModel
     $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '*');
     $this->setState('filter.published', $published);
     $language = $this->getUserStateFromRequest($this->context . '.filter.language', 'filter_language', '');
+
+    if(!Multilanguage::isEnabled())
+    {
+      // Clear saved language selections before loading images with a hidden filter.
+      $language = '';
+      $app->setUserState($this->context . '.filter.language', '');
+      $filters = (array) $app->getUserState($this->context . '.filter', []);
+      unset($filters['language']);
+      $app->setUserState($this->context . '.filter', $filters);
+    }
+
     $this->setState('filter.language', $language);
     $showunapproved = $this->getUserStateFromRequest($this->context . '.filter.showunapproved', 'filter_showunapproved', '1');
     $this->setState('filter.showunapproved', $showunapproved);
@@ -219,6 +231,11 @@ class ImagesModel extends JoomListModel
 
     $searchProvider = $this->getSearchProvider();
     $displayFields  = $searchProvider->getDisplayFields();
+
+    if(!Multilanguage::isEnabled())
+    {
+      $form->removeField('language', 'filter');
+    }
 
     if($searchProvider->handlesOrdering())
     {
