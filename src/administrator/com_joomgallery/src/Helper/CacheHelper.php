@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Database\DatabaseInterface;
 
 /**
@@ -28,6 +29,21 @@ use Joomla\Database\DatabaseInterface;
  */
 final class CacheHelper
 {
+  /**
+   * Whether JoomGallery may reuse or store cached results in any layer.
+   *
+   * Read the global component option, never the calculated configuration.
+   * Missing options retain caching for existing installations. Changes apply
+   * on the next request; invalidation remains active while caching is off.
+   *
+   * @return  bool
+   * @since   4.5.0
+   */
+  public static function isEnabled(): bool
+  {
+    return (bool) ComponentHelper::getParams('com_joomgallery')->get('cache_enabled', 1);
+  }
+
   /**
    * Normalises JSON-compatible values for structural comparison
    *
@@ -270,6 +286,12 @@ final class CacheHelper
     {
       $old = self::json($before['params'] ?? []);
       $new = self::json($after['params'] ?? []);
+
+      // Retire pre-migration values when caching is disabled or re-enabled.
+      if((bool) ($old['cache_enabled'] ?? 1) !== (bool) ($new['cache_enabled'] ?? 1))
+      {
+        return ['config', 'acl'];
+      }
 
       foreach(['inheritance_config' => 'default', 'save_history' => '0'] as $field => $default)
       {

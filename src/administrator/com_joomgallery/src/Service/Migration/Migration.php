@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Migration;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\CacheHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\Checks;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Migration\MigrationInterface;
@@ -581,6 +582,7 @@ abstract class Migration implements MigrationInterface
     $checks->addCategory('general', Text::_('COM_JOOMGALLERY_GENERAL'), Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_GENERAL_PRECHECK_DESC'));
     $this->checkLogFile($checks, 'general');
     $this->checkSiteState($checks, 'general');
+    $this->checkCacheDisabled($checks, 'general');
 
     // Check source extension (version, compatibility)
     $checks->addCategory('source', Text::_('COM_JOOMGALLERY_SOURCE'), Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_SOURCE_PRECHECK_DESC'));
@@ -1066,6 +1068,28 @@ abstract class Migration implements MigrationInterface
       // Check successful
       $checks->addCheck($category, 'dest_extension', true, false, Text::_('COM_JOOMGALLERY_FIELDS_DEST_EXTENSION_LABEL'), Text::sprintf('COM_JOOMGALLERY_SERVICE_MIGRATION_EXTENSION_SUCCESS', \strval($this->component->xml->name), $this->component->version));
     }
+  }
+
+  /**
+   * Precheck: Require uncached results throughout the migration.
+   *
+   * @param   Checks  $checks    The checks object
+   * @param   string  $category  The checks category
+   *
+   * @return  void
+   * @since   4.5.0
+   */
+  protected function checkCacheDisabled(Checks &$checks, string $category): void
+  {
+    $disabled = !CacheHelper::isEnabled();
+    $checks->addCheck(
+      $category,
+      'cache_disabled',
+      $disabled,
+      false,
+      Text::_('COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED'),
+      Text::_($disabled ? 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_SUCCESS' : 'COM_JOOMGALLERY_SERVICE_MIGRATION_CACHE_DISABLED_ERROR')
+    );
   }
 
   /**
