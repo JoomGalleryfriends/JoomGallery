@@ -464,6 +464,7 @@ class CategoryModel extends JoomAdminModel
       if($pk > 0)
       {
         $table->load($pk);
+        $oldPublished = (int) $table->published;
         $isNew = false;
 
         // Check if the parent category was changed
@@ -666,6 +667,11 @@ class CategoryModel extends JoomAdminModel
           $this->component->addLog($table->getError(), 'error', 'jerror');
 
           return false;
+        }
+
+        if(!$isNew && $oldPublished !== (int) $table->published)
+        {
+          $this->syncAssociatedPublished($table, $table->published);
         }
 
         // Handle folders if parent category was changed

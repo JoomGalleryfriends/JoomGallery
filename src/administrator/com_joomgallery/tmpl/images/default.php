@@ -203,7 +203,7 @@ if($saveOrder && !empty($this->items))
 
                     if((int) $this->state->get('params.jg_link_associated_items', 1) === 1 && (int) $item->published === 0 && !empty($item->multilingual_group_blocked))
                     {
-                      echo ' <span class="icon-link text-muted" aria-hidden="true" title="Eine verknüpfte Sprachvariante ist nicht veröffentlicht"></span>';
+                      echo ' <span class="icon-link text-muted" aria-hidden="true" title="' . Text::_('COM_JOOMGALLERY_ASSOCIATED_IMAGE_UNPUBLISHED') . '"></span>';
                     }
 
                   ?>

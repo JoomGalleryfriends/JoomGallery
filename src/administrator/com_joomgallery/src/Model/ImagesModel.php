@@ -232,28 +232,48 @@ class ImagesModel extends JoomListModel
     );
 
       $item->multilingual_group_blocked = false;
-      $associatedIds = [];
-
-      foreach($item->associations as $association)
+      if(!$this->component->getConfig()->get('jg_link_associated_items', 1))
       {
-        if(!empty($association->id) && (int) $association->id !== (int) $item->id)
-        {
-          $associatedIds[] = (int) $association->id;
-        }
+        continue;
       }
 
-      $associatedIds = array_unique($associatedIds);
+
+      $db = $this->getDatabase();
+      $key = null;
+
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('key'))
+        ->from($db->quoteName('#__associations'))
+        ->where($db->quoteName('context') . ' = ' . $db->quote('com_joomgallery.image'))
+        ->where($db->quoteName('id') . ' = ' . (int) $item->id);
+
+      $db->setQuery($query);
+      $key = $db->loadResult();
+
+      if(!$key)
+      {
+        continue;
+      }
+
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('id'))
+        ->from($db->quoteName('#__associations'))
+        ->where($db->quoteName('context') . ' = ' . $db->quote('com_joomgallery.image'))
+        ->where($db->quoteName('key') . ' = ' . $db->quote($key))
+        ->where($db->quoteName('id') . ' != ' . (int) $item->id);
+
+      $db->setQuery($query);
+      $associatedIds = array_map('intval', $db->loadColumn());
 
       if(!empty($associatedIds))
       {
-        $db = $this->getDatabase();
         $query = $db->getQuery(true)
-          ->select([$db->quoteName('id'), $db->quoteName('published')])
+          ->select($db->quoteName('published'))
           ->from($db->quoteName('#__joomgallery'))
-          ->where($db->quoteName('id') . ' IN (' . implode(',', $associatedIds) . ')');
+          ->whereIn($db->quoteName('id'), $associatedIds);
 
         $db->setQuery($query);
-        $associationStatuses = $db->loadAssocList('id', 'published');
+        $associationStatuses = $db->loadColumn();
 
         foreach($associationStatuses as $published)
         {
@@ -268,6 +288,9 @@ class ImagesModel extends JoomListModel
 
     return $items;
   }
+
+  /**
+   * Build an SQL query to load the list data.
 
   /**
    * Build an SQL query to load the list data.
@@ -987,11 +1010,11 @@ class ImagesModel extends JoomListModel
     if(
       !$this->getState('filter.multilingual_group_visibility')
       || !Associations::isEnabled()
+      || !$this->component->getConfig()->get('jg_link_associated_items', 1)
     )
     {
       return;
     }
-
     $db = $this->getDatabase();
 
     $accessLevels = ArrayHelper::toInteger(

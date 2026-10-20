@@ -483,6 +483,7 @@ class ImageModel extends JoomAdminModel
       if( $pk > 0 )
       {
         $table->load($pk);
+        $oldPublished = (int) $table->published;
         $isNew = false;
 
         // Check if the category was changed
@@ -839,6 +840,11 @@ class ImageModel extends JoomAdminModel
         }
 
         return false;
+      }
+
+      if(!$isNew && $oldPublished !== (int) $table->published)
+      {
+        $this->syncAssociatedPublished($table, $table->published);
       }
 
       // Create images
@@ -1242,6 +1248,23 @@ class ImageModel extends JoomAdminModel
       $this->setError($table->getError());
 
       return false;
+    }
+
+    // Synchronize published state of associated images.
+    if($type === 'publish'
+      && $this->component->getConfig()->get('jg_link_associated_items', 1)
+      && $this->associationsContext
+      && Associations::isEnabled())
+    {
+      foreach($pks as $pk)
+      {
+        $table->reset();
+
+        if($table->load($pk))
+        {
+          $this->syncAssociatedPublished($table, $value);
+        }
+      }
     }
 
     // Clear the component's cache

@@ -82,7 +82,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   </div>
   <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-  <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'associations', Text::_('COM_JOOMGALLERY_CATEGORY_FIELD_ASSOCIATIONS', true)); ?>
+  <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'associations', Text::_('COM_JOOMGALLERY_FIELD_ASSOCIATIONS', true)); ?>
   <div class="row">
     <div class="col-12">
       <?php echo $this->form->renderFieldset('item_associations'); ?>

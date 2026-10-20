@@ -94,7 +94,7 @@ if($saveOrder && !empty($this->items))
                 </th>
                 <?php if(Multilanguage::isEnabled() && \Joomla\CMS\Language\Associations::isEnabled()) : ?>
                   <th scope="col" class="w-10 d-none d-md-table-cell">
-                    <?php echo Text::_('COM_JOOMGALLERY_IMAGE_FIELD_ASSOCIATIONS'); ?>
+                    <?php echo Text::_('COM_JOOMGALLERY_FIELD_ASSOCIATIONS'); ?>
                   </th>
                 <?php endif; ?>
                 <?php if(Multilanguage::isEnabled()) : ?>

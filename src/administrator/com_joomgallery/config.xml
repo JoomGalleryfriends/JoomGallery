@@ -15,14 +15,6 @@
           <option value="default">JDEFAULT</option>
         </field>
 
-        <field name="category_fallback_language"
-               type="contentlanguage"
-               default=""
-               label="COM_JOOMGALLERY_CONFIG_CATEGORY_FALLBACK_LANGUAGE_LABEL"
-               description="COM_JOOMGALLERY_CONFIG_CATEGORY_FALLBACK_LANGUAGE_DESC">
-            <option value="">JDEFAULT</option>
-        </field>
-
         <field name="save_history"
                type="radio"
                default="0"
@@ -41,6 +33,7 @@
                default="5"
                showon="save_history:1"
         />
+
     </fieldset>
 
     <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
