@@ -237,7 +237,6 @@ class ImagesModel extends JoomListModel
         continue;
       }
 
-
       $db = $this->getDatabase();
       $key = null;
 
