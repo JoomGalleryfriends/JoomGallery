@@ -121,7 +121,7 @@ if($saveOrder && !empty($this->items))
                 </th>
                 <?php if(Multilanguage::isEnabled() && \Joomla\CMS\Language\Associations::isEnabled()) : ?>
                   <th scope="col" class="w-10 d-none d-md-table-cell">
-                    <?php echo Text::_('COM_JOOMGALLERY_IMAGE_FIELD_ASSOCIATIONS'); ?>
+                    <?php echo Text::_('COM_JOOMGALLERY_FIELD_ASSOCIATIONS'); ?>
                   </th>
                 <?php endif; ?>
                 <?php if(Multilanguage::isEnabled()) : ?>
@@ -199,18 +199,13 @@ if($saveOrder && !empty($this->items))
                       'id'          => 'state-' . $item->id,
                     ];
 
-                    if((int) $item->published === 1 && !empty($item->multilingual_group_blocked))
-                    {
-                      $blockedOptions = $options;
-                      $blockedOptions['disabled'] = true;
+                    echo (new PublishedButton())->render((int) $item->published, $i, $options);
 
-                      echo (new PublishedButton())->render(0, $i, $blockedOptions);
+                    if((int) $this->state->get('params.jg_link_associated_items', 1) === 1 && (int) $item->published === 0 && !empty($item->multilingual_group_blocked))
+                    {
                       echo ' <span class="icon-link text-muted" aria-hidden="true" title="Eine verknüpfte Sprachvariante ist nicht veröffentlicht"></span>';
                     }
-                    else
-                    {
-                      echo (new PublishedButton())->render((int) $item->published, $i, $options);
-                    }
+
                   ?>
                 </td>
 
