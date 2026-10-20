@@ -12,6 +12,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 
 \defined('_JEXEC') || die;
 
+use Joomgallery\Component\Joomgallery\Site\Helper\AssociationHelper;
 use Joomla\CMS\Association\AssociationExtensionHelper;
 use Joomla\CMS\Language\Associations;
 
@@ -47,7 +48,7 @@ class AssociationsHelper extends AssociationExtensionHelper
      */
     public function getAssociationsForItem($id = 0, $view = null)
     {
-        return $this->getAssociations($view === 'image' ? 'image' : 'category', $id);
+        return AssociationHelper::getAssociations($id, $view);
     }
 
     /**
