@@ -232,6 +232,7 @@ class ImagesModel extends JoomListModel
     );
 
       $item->multilingual_group_blocked = false;
+
       if(!$this->component->getConfig()->get('jg_link_associated_items', 1))
       {
         continue;
