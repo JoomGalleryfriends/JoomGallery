@@ -59,7 +59,7 @@ class AssociationHelper
 
     if($view === 'category')
     {
-      $associations = Associations::getAssociations(
+    $associations = Associations::getAssociations(
         'com_joomgallery',
         '#__joomgallery_categories',
         'com_joomgallery.category',
@@ -67,11 +67,11 @@ class AssociationHelper
         'id',
         'alias',
         ''
-      );
+    );
     }
     elseif($view === 'image')
     {
-      $associations = Associations::getAssociations(
+    $associations = Associations::getAssociations(
         'com_joomgallery',
         '#__joomgallery',
         'com_joomgallery.image',
@@ -79,7 +79,7 @@ class AssociationHelper
         'id',
         'alias',
         'catid'
-      );
+    );
     }
     else
     {
@@ -98,12 +98,12 @@ class AssociationHelper
       if($view === 'category')
       {
         $link = JoomHelper::getViewRoute(
-          'category',
-          (int) $item->id,
-          0,
-          null,
-          null,
-          null
+            'category',
+            (int) $item->id,
+            0,
+            null,
+            null,
+            null
         );
       }
       else
@@ -121,12 +121,12 @@ class AssociationHelper
         $catid = (int) $db->loadResult();
 
         $link = JoomHelper::getViewRoute(
-          'image',
-          $targetId,
-          $catid,
-          null,
-          null,
-          null
+            'image',
+            $targetId,
+            $catid,
+            null,
+            null,
+            null
         );
       }
 
