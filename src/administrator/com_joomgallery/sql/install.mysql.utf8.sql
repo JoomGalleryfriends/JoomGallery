@@ -129,6 +129,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_router_ids` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_router_imgids` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_link_associated_images` TINYINT(1) NOT NULL DEFAULT 1,
+`jg_link_associated_categories` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_compatibility_mode` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_replaceinfo` TEXT NOT NULL,
 `jg_replaceshowwarning` TINYINT(1) NOT NULL DEFAULT 0,

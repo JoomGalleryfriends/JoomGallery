@@ -517,6 +517,12 @@ class CategoryModel extends JoomItemModel
     $listModel->setState('filter.showunapproved', 0);
     $listModel->setState('filter.showhidden', 0);
 
+    // Allow images in the directly opened category, even if it is hidden.
+    $listModel->setState(
+        'filter.allow_hidden_category',
+        (int) $this->item->id
+    );
+
     // Hide complete multilingual image groups when any variant is not visible.
     $listModel->setState(
         'filter.multilingual_group_visibility',

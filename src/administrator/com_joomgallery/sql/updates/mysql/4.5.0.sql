@@ -3,6 +3,7 @@ ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_tags_label` TINY
 ALTER TABLE `#__joomgallery_configs` DROP COLUMN `jg_maxuploadfields`;
 ALTER TABLE `#__joomgallery_configs`
 ADD `jg_link_associated_images` TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE `#__joomgallery_configs` ADD `jg_link_associated_categories` TINYINT(1) NOT NULL DEFAULT 1;
 
 ALTER TABLE `#__joomgallery`
 ADD COLUMN `image_ref` INT(10) UNSIGNED DEFAULT NULL

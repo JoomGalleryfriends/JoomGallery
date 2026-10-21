@@ -465,6 +465,8 @@ class CategoryModel extends JoomAdminModel
       {
         $table->load($pk);
         $oldPublished = (int) $table->published;
+        $oldHidden = (int) $table->hidden;
+        $oldAccess = (int) $table->access;
         $isNew = false;
 
         // Check if the parent category was changed
@@ -669,9 +671,21 @@ class CategoryModel extends JoomAdminModel
           return false;
         }
 
-        if(!$isNew && $oldPublished !== (int) $table->published)
+        if(!$isNew)
         {
-          $this->syncAssociatedPublished($table, $table->published);
+          $fields = [
+            'published' => $oldPublished,
+            'hidden'    => $oldHidden,
+            'access'    => $oldAccess,
+          ];
+
+          foreach($fields as $field => $oldValue)
+          {
+            if($oldValue !== (int) $table->$field)
+            {
+              $this->syncAssociatedField($table, $field, $table->$field, 'jg_link_associated_categories');
+            }
+          }
         }
 
         // Handle folders if parent category was changed
@@ -816,6 +830,45 @@ class CategoryModel extends JoomAdminModel
       $this->component->addLog($table->getError(), 'error', 'jerror');
 
       return false;
+    }
+
+    $this->cleanCache();
+
+    return true;
+  }
+
+  /**
+   * Method to publish or unpublish categories and synchronize associated categories.
+   *
+   * @param   array    &$pks   A list of the primary keys to change.
+   * @param   integer  $value  The published state.
+   *
+   * @return  boolean  True on success, false on failure.
+   *
+   * @since   4.5.0
+   */
+  public function publish(&$pks, $value = 1)
+  {
+    $result = parent::publish($pks, $value);
+
+    if(!$result
+      || !$this->component->getConfig()->get('jg_link_associated_categories', 1)
+      || !$this->associationsContext
+      || !Associations::isEnabled())
+    {
+      return $result;
+    }
+
+    $table = $this->getTable();
+
+    foreach((array) $pks as $pk)
+    {
+      $table->reset();
+
+      if($table->load($pk))
+      {
+        $this->syncAssociatedField($table, 'published', $value, 'jg_link_associated_categories');
+      }
     }
 
     $this->cleanCache();

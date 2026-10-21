@@ -238,7 +238,7 @@ class ImagesModel extends JoomListModel
         continue;
       }
 
-      $db = $this->getDatabase();
+      $db  = $this->getDatabase();
       $key = null;
 
       $query = $db->getQuery(true)
@@ -487,18 +487,39 @@ class ImagesModel extends JoomListModel
       }
     }
 
-    // Filter by hidden images
+    // Filter by hidden images.
     $showhidden = (bool) $this->getState('filter.showhidden');
 
     if(!$showhidden)
     {
-    $query->where(
-        [
-          $db->quoteName('a.hidden') . ' = 0',
-          $db->quoteName('category.hidden') . ' = 0',
-          $db->quoteName('category.in_hidden') . ' = 0',
-        ]
+      $query->where($db->quoteName('a.hidden') . ' = 0');
+
+    $allowHiddenCategory = (int) $this->getState(
+        'filter.allow_hidden_category'
     );
+
+      if($allowHiddenCategory > 0)
+      {
+        $query->where(
+            '(' .
+            '(' .
+            $db->quoteName('category.hidden') . ' = 0 AND ' .
+            $db->quoteName('category.in_hidden') . ' = 0' .
+            ') OR ' .
+            $db->quoteName('category.id') . ' = ' .
+            $allowHiddenCategory .
+            ')'
+        );
+      }
+      else
+      {
+        $query->where(
+            [
+              $db->quoteName('category.hidden') . ' = 0',
+              $db->quoteName('category.in_hidden') . ' = 0',
+            ]
+        );
+      }
     }
 
     // Filter by unapproved images
@@ -842,18 +863,39 @@ class ImagesModel extends JoomListModel
       }
     }
 
-    // Filter by hidden images
+    // Filter by hidden images.
     $showhidden = (bool) $this->getState('filter.showhidden');
 
     if(!$showhidden)
     {
-    $query->where(
-        [
-          $db->quoteName('a.hidden') . ' = 0',
-          $db->quoteName('category.hidden') . ' = 0',
-          $db->quoteName('category.in_hidden') . ' = 0',
-        ]
+      $query->where($db->quoteName('a.hidden') . ' = 0');
+
+    $allowHiddenCategory = (int) $this->getState(
+        'filter.allow_hidden_category'
     );
+
+      if($allowHiddenCategory > 0)
+      {
+        $query->where(
+            '(' .
+            '(' .
+            $db->quoteName('category.hidden') . ' = 0 AND ' .
+            $db->quoteName('category.in_hidden') . ' = 0' .
+            ') OR ' .
+            $db->quoteName('category.id') . ' = ' .
+            $allowHiddenCategory .
+            ')'
+        );
+      }
+      else
+      {
+        $query->where(
+            [
+              $db->quoteName('category.hidden') . ' = 0',
+              $db->quoteName('category.in_hidden') . ' = 0',
+            ]
+        );
+      }
     }
 
     // Filter by unapproved images
@@ -1066,8 +1108,6 @@ class ImagesModel extends JoomListModel
                 NOT IN (' . $accessList . ')
             OR ' . $db->quoteName('variant_category.id') . ' IS NULL
             OR ' . $db->quoteName('variant_category.published') . ' <> 1
-            OR ' . $db->quoteName('variant_category.hidden') . ' <> 0
-            OR ' . $db->quoteName('variant_category.in_hidden') . ' <> 0
             OR ' . $db->quoteName('variant_category.access') . '
                 NOT IN (' . $accessList . ')
           )

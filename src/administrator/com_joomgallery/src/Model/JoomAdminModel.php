@@ -549,9 +549,9 @@ abstract class JoomAdminModel extends AdminModel
    *
    * @since   4.0.0
    */
-  protected function syncAssociatedField($table, $field, $value)
+  protected function syncAssociatedField($table, $field, $value, $configKey = 'jg_link_associated_images')
   {
-    if(!$this->component->getConfig()->get('jg_link_associated_images', 1)
+    if(!$this->component->getConfig()->get($configKey, 1)
       || !$this->associationsContext
       || !Associations::isEnabled())
     {
