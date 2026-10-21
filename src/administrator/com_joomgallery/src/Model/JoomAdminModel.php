@@ -549,11 +549,18 @@ abstract class JoomAdminModel extends AdminModel
    *
    * @since   4.0.0
    */
-  protected function syncAssociatedPublished($table, $value)
+  protected function syncAssociatedField($table, $field, $value)
   {
-    if(!$this->component->getConfig()->get('jg_link_associated_items', 1)
+    if(!$this->component->getConfig()->get('jg_link_associated_images', 1)
       || !$this->associationsContext
       || !Associations::isEnabled())
+    {
+      return;
+    }
+
+    $allowedFields = ['published', 'hidden', 'access', 'featured', 'approved'];
+
+    if(!\in_array($field, $allowedFields, true) || !$table->hasField($field))
     {
       return;
     }
@@ -594,13 +601,13 @@ abstract class JoomAdminModel extends AdminModel
       return;
     }
 
-    $published = (int) $value;
+    $value = (int) $value;
 
     $query = $db->getQuery(true)
       ->update($db->quoteName($table->getTableName()))
-      ->set($db->quoteName('published') . ' = :published')
+      ->set($db->quoteName($field) . ' = :value')
       ->whereIn($db->quoteName($key), array_map('intval', $ids))
-      ->bind(':published', $published, ParameterType::INTEGER);
+      ->bind(':value', $value, ParameterType::INTEGER);
 
     $db->setQuery($query);
     $db->execute();

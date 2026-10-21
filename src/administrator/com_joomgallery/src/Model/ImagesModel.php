@@ -233,7 +233,7 @@ class ImagesModel extends JoomListModel
 
       $item->multilingual_group_blocked = false;
 
-      if(!$this->component->getConfig()->get('jg_link_associated_items', 1))
+      if(!$this->component->getConfig()->get('jg_link_associated_images', 1))
       {
         continue;
       }
@@ -1010,7 +1010,7 @@ class ImagesModel extends JoomListModel
     if(
       !$this->getState('filter.multilingual_group_visibility')
       || !Associations::isEnabled()
-      || !$this->component->getConfig()->get('jg_link_associated_items', 1)
+      || !$this->component->getConfig()->get('jg_link_associated_images', 1)
     )
     {
       return;

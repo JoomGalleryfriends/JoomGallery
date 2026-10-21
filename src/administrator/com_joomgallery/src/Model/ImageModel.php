@@ -484,7 +484,11 @@ class ImageModel extends JoomAdminModel
       {
         $table->load($pk);
         $oldPublished = (int) $table->published;
-        $isNew = false;
+        $oldHidden    = (int) $table->hidden;
+        $oldAccess    = (int) $table->access;
+        $oldFeatured  = (int) $table->featured;
+        $oldApproved  = (int) $table->approved;
+        $isNew        = false;
 
         // Check if the category was changed
         if( $table->catid != $data['catid'] )
@@ -842,9 +846,23 @@ class ImageModel extends JoomAdminModel
         return false;
       }
 
-      if(!$isNew && $oldPublished !== (int) $table->published)
+      if(!$isNew)
       {
-        $this->syncAssociatedPublished($table, $table->published);
+        $fields = [
+          'published' => $oldPublished,
+          'hidden'    => $oldHidden,
+          'access'    => $oldAccess,
+          'featured'  => $oldFeatured,
+          'approved'  => $oldApproved,
+        ];
+
+        foreach($fields as $field => $oldValue)
+        {
+          if($oldValue !== (int) $table->$field)
+          {
+            $this->syncAssociatedField($table, $field, $table->$field);
+          }
+        }
       }
 
       // Create images
@@ -1250,19 +1268,30 @@ class ImageModel extends JoomAdminModel
       return false;
     }
 
-    // Synchronize published state of associated images.
-    if($type === 'publish'
-      && $this->component->getConfig()->get('jg_link_associated_items', 1)
+    // Synchronize changed state of associated images.
+    if(\in_array($type, ['publish', 'feature', 'approve'], true)
+      && $this->component->getConfig()->get('jg_link_associated_images', 1)
       && $this->associationsContext
       && Associations::isEnabled())
     {
+      $field = 'published';
+
+      if($type === 'feature')
+      {
+        $field = 'featured';
+      }
+      elseif($type === 'approve')
+      {
+        $field = 'approved';
+      }
+
       foreach($pks as $pk)
       {
         $table->reset();
 
         if($table->load($pk))
         {
-          $this->syncAssociatedPublished($table, $value);
+          $this->syncAssociatedField($table, $field, $value);
         }
       }
     }
