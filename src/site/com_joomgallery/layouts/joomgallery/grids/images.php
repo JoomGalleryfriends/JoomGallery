@@ -71,7 +71,7 @@ extract($displayData);
                       <?php echo $this->escape($item->title); ?>
                     </div>
                   <?php endif; ?>
-                  <?php if($image_desc) : ?>
+                  <?php if($image_desc && !empty(trim(strip_tags($item->description)))) : ?>
                     <div class="jg-image-desc <?php echo $this->escape($caption_align); ?>">
                       <?php echo JoomHelper::sanitizeHtml($item->description); ?>
                     </div>
