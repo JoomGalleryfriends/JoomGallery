@@ -105,7 +105,7 @@ $image_tags_data    = $image_tags_data ?? [];
                       ?>
                     </div>
                   <?php endif; ?>
-                  <?php if($image_desc) : ?>
+                  <?php if($image_desc && !empty(trim(strip_tags($item->description)))) : ?>
                     <div class="jg-image-desc <?php echo $this->escape($caption_align); ?>">
                       <?php echo JoomHelper::sanitizeHtml($item->description); ?>
                     </div>
@@ -208,7 +208,7 @@ $image_tags_data    = $image_tags_data ?? [];
             <?php if($image_date) : ?>
               <div><?php echo Text::_('COM_JOOMGALLERY_DATE') . ': ' . HTMLHelper::_('date', $item->date, Text::_('DATE_FORMAT_LC6')); ?></div>
             <?php endif; ?>
-            <?php if($image_author) : ?>
+            <?php if($image_author && !empty(trim($item->author))) : ?>
               <div><?php echo Text::_('JAUTHOR') . ': ' . $this->escape($item->author); ?></div>
             <?php endif; ?>
             <?php if($image_tags) : ?>
