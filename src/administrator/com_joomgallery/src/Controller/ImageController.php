@@ -408,6 +408,99 @@ class ImageController extends JoomFormController
   }
 
   /**
+   * Acquire, renew or release the per-session tags generation lock.
+   *
+   * The owner and expiry values make the boolean session flag safe for use
+   * across browser tabs and recoverable when a tab disappears unexpectedly.
+   *
+   * @return void
+   */
+  public function ajaxtagsgeneratelock()
+  {
+    $this->checkToken();
+
+    $activeKey = 'jgaiinterface.tags.generate.active';
+    $ownerKey  = 'jgaiinterface.tags.generate.owner';
+    $expiryKey = 'jgaiinterface.tags.generate.expires';
+    $leaseTime = 300;
+    $session   = $this->app->getSession();
+    $action    = $this->input->getCmd('action');
+    $owner     = preg_replace('/[^a-zA-Z0-9-]/', '', $this->input->getString('owner'));
+    $now       = time();
+
+    $active      = (bool) $session->get($activeKey, false);
+    $activeOwner = (string) $session->get($ownerKey, '');
+    $expires     = (int) $session->get($expiryKey, 0);
+
+    // Recover a lock left behind by a closed or crashed browser tab.
+    if($active && $expires <= $now)
+    {
+      $active      = false;
+      $activeOwner = '';
+      $expires     = 0;
+      $session->set($activeKey, false);
+      $session->set($ownerKey, '');
+      $session->set($expiryKey, 0);
+    }
+
+    $result = [
+      'active'      => $active,
+      'acquired'    => false,
+      'renewed'     => false,
+      'released'    => false,
+      'retry_after' => $active ? 2 : 0,
+    ];
+
+    // Merely reaching this point has cleared an expired lock, if present.
+    if($action === 'cleanup')
+    {
+      echo new JsonResponse($result);
+      $this->app->close();
+    }
+
+    if($owner === '')
+    {
+      echo new JsonResponse($result, 'Missing lock owner.', true);
+      $this->app->close();
+    }
+
+    if($action === 'acquire' && (!$active || $activeOwner === $owner))
+    {
+      $expires = $now + $leaseTime;
+      $session->set($activeKey, true);
+      $session->set($ownerKey, $owner);
+      $session->set($expiryKey, $expires);
+
+      $result['active']      = true;
+      $result['acquired']    = true;
+      $result['retry_after'] = 0;
+      $result['expires']     = $expires;
+    }
+    elseif($action === 'renew' && $active && $activeOwner === $owner)
+    {
+      $expires = $now + $leaseTime;
+      $session->set($expiryKey, $expires);
+
+      $result['active']  = true;
+      $result['renewed'] = true;
+      $result['expires'] = $expires;
+    }
+    elseif($action === 'release' && $activeOwner === $owner)
+    {
+      $session->set($activeKey, false);
+      $session->set($ownerKey, '');
+      $session->set($expiryKey, 0);
+
+      $result['active']      = false;
+      $result['released']    = true;
+      $result['retry_after'] = 0;
+    }
+
+    echo new JsonResponse($result);
+    $this->app->close();
+  }
+
+  /**
    * Method to open an image in the media manager
    *
    * @return  boolean  True if metada was saved successfully, false otherwise.

@@ -390,7 +390,20 @@ if(isset($this->input_cid) && !empty($this->input_cid))
               </div>
               <div class="row mb-2">
                 <div class="col-sm-4 fw-bold">Created Keywords</div>
-                <div class="col-sm-8" id="jgai-summary-keywords"></div>
+                <div class="col-sm-8">
+                  <span id="jgai-summary-keywords"></span>
+                  <a href="#" id="jgai-summary-keywords-toggle" class="ms-1 d-none"
+                    data-show-all="<?php echo Text::_('COM_JOOMGALLERY_SHOW_ALL'); ?>"
+                    data-show-less="<?php echo Text::_('COM_JOOMGALLERY_SHOW_LESS'); ?>"></a>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-sm-4 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_AIINT_ELAPSED_TIME'); ?></div>
+                <div class="col-sm-8" id="jgai-summary-elapsed-time"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-sm-4 fw-bold"><?php echo Text::_('COM_JOOMGALLERY_AIINT_AVG_REQUEST_TIME'); ?></div>
+                <div class="col-sm-8" id="jgai-summary-average-request-time"></div>
               </div>
             </div>
           </div>
