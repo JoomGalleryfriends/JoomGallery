@@ -71,11 +71,15 @@ class HtmlView extends JoomGalleryView
         $img_model->getState();
 
         // Apply preselected filters and fields selection for images
-        $fields = ['a.id', 'a.title', 'a.filename', 'a.filesystem', 'tag_ids', 'tag_titles'];
+        $fields   = ['a.id', 'a.title', 'a.filename', 'a.filesystem', 'tag_ids', 'tag_titles'];
+        $imageIds = (array) preg_split('/\D+/', $this->input_cid, -1, PREG_SPLIT_NO_EMPTY);
+
+        $img_model->setState('filter.search', '');
         $img_model->setState('list.select', $fields);
         $img_model->setState('filter.ids', $this->input_cid);
         $img_model->setState('list.pages', 1);
-        $img_model->setState('list.start', 1);
+        $img_model->setState('list.limit', max(1, \count($imageIds)));
+        $img_model->setState('list.start', 0);
         $img_model->setState('list.fullordering', 'a.date ASC', 'string');
 
         // Get images

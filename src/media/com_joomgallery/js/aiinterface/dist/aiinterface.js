@@ -1448,19 +1448,19 @@ class AIinterface {
   async remKeywordsFromImg(imgPos, keywords) {
     if (!Array.isArray(keywords) || !keywords.length) {
       console.log('Try to remove keywords, but no keywords provided.');
-      return;
+      return false;
     }
 
     // Get the panel
     const panel = document.querySelector(`#${this.prefix}-image-panel-${imgPos}`);
     if (!panel) {
       console.log(`Try to remove keywords, but image panel at position ${imgPos} not found.`)
-      return;
+      return false;
     }
 
     // Get the grid
     const grid = panel.querySelector('.grid');
-    if (!grid) return;
+    if (!grid) return false;
 
     // Get image id from data attribute
     const imgID = panel.querySelector('.image').getAttribute('data-imgid');
@@ -1470,7 +1470,7 @@ class AIinterface {
     {
       const keywords_str = keywords.join(', ');
       Joomla.renderMessages({ error: [`${this.lang.COM_JOOMGALLERY_JS_AIINT_MSG_REMOVE_ERROR} ${this.lang.COM_JOOMGALLERY_JS_AIINT_KEYWORDS}: ${keywords_str}`] }, '#image-message-container');
-      return;
+      return false;
     }
 
     // Get all existing keywords
@@ -1487,6 +1487,8 @@ class AIinterface {
         el.parentElement.remove();
       }
     });
+
+    return true;
   }
 
   addKeyword(el, event) {
@@ -1506,6 +1508,61 @@ class AIinterface {
     const pos      = this.current_image;
 
     this.remKeywordsFromImg(pos, keywords);
+  }
+
+  selectKeywordDeleteColor(el, event) {
+    event.preventDefault();
+
+    const panel = el.closest('.image-panel');
+    this.setKeywordDeleteColor(panel, el.dataset.keywordColor);
+  }
+
+  setKeywordDeleteColor(panel, color) {
+    const toggle = panel?.querySelector('.keyword-delete-color-toggle');
+    const selectedSquare = toggle?.querySelector('.color-square');
+
+    if (!toggle || !selectedSquare || !['orange', 'red', 'black'].includes(color)) {
+      return;
+    }
+
+    toggle.dataset.keywordColor = color;
+    selectedSquare.className = `color-square color-square-${color}`;
+
+    panel.querySelectorAll('.keyword-delete-color-option').forEach((option) => {
+      option.setAttribute('aria-selected', String(option.dataset.keywordColor === color));
+    });
+  }
+
+  async deleteKeywordsByColor(el, event) {
+    event.preventDefault();
+
+    const panel = el.closest('.image-panel');
+    const toggle = panel?.querySelector('.keyword-delete-color-toggle');
+    const grid = panel?.querySelector('.keywords .grid');
+
+    if (!panel || !toggle || !grid || panel.style.display === 'none') {
+      return;
+    }
+
+    const color = toggle.dataset.keywordColor;
+    const selector = color === 'black'
+      ? 'input[type="text"]'
+      : `input[type="text"].color-${color}`;
+    const keywords = Array.from(grid.querySelectorAll(selector))
+      .map((input) => input.value.trim())
+      .filter(Boolean);
+
+    if (!keywords.length) {
+      return;
+    }
+
+    el.disabled = true;
+
+    try {
+      await this.remKeywordsFromImg(this.current_image, keywords);
+    } finally {
+      el.disabled = false;
+    }
   }
 
   async showAccount(el, event) {
@@ -2587,6 +2644,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     el.querySelectorAll('.dropdown-item').forEach(item => {
       ai.addEventListenerDropdown(item);
     });
+  });
+
+  // Install event listeners on keyword bulk-delete controls
+  document.querySelectorAll('.keyword-color-select').forEach(el => {
+    el.addEventListener('click', (e) => ai.selectKeywordDeleteColor(el, e));
+  });
+  document.querySelectorAll('.keyword-delete-btn').forEach(el => {
+    el.addEventListener('click', (e) => ai.deleteKeywordsByColor(el, e));
+  });
+  document.querySelectorAll('.keyword-delete-color-option').forEach(el => {
+    el.addEventListener('click', (e) => ai.selectKeywordDeleteColor(el, e));
   });
 
   // Install event listeners on buttons

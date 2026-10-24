@@ -105,7 +105,7 @@ if(!isset($this->images) || empty($this->images))
 // Preserve images selection
 if(isset($this->input_cid) && !empty($this->input_cid))
 {
-  $form_url = $form_url . '&cid=' . $this->input_cid;
+  $form_url = $form_url . '&cid=' . rawurlencode($this->input_cid);
 }
 ?>
 
@@ -256,9 +256,41 @@ if(isset($this->input_cid) && !empty($this->input_cid))
               </div>
             <?php endforeach; ?>
           </div>
-          <div>
-            <h5 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_MEANINGS'); ?></h4>
-            <p><span class="color-black"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_EXISTING'); ?></span>, <span class="color-orange"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_MANUALLY'); ?></span>, <span class="color-red"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_AUTO'); ?></span> <?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_KEYWORDS'); ?></p>
+          <div class="keyword-footer">
+            <div class="keyword-color-legend">
+              <h5 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_MEANINGS'); ?></h5>
+              <p>
+                <button type="button" class="keyword-color-select color-black" data-keyword-color="black"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_EXISTING'); ?></button>,
+                <button type="button" class="keyword-color-select color-orange" data-keyword-color="orange"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_MANUALLY'); ?></button>,
+                <button type="button" class="keyword-color-select color-red" data-keyword-color="red"><?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_AUTO'); ?></button>
+                <?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_KEYWORDS'); ?>
+              </p>
+            </div>
+            <div class="input-group keyword-delete-controls">
+              <div class="dropdown keyword-delete-color-dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle keyword-delete-color-toggle" type="button" data-bs-toggle="dropdown" data-keyword-color="red" aria-expanded="false" aria-label="<?php echo Text::_('COM_JOOMGALLERY_AIINT_DELETE_KEYWORDS'); ?>">
+                  <span class="color-square color-square-red"></span>
+                </button>
+                <ul class="dropdown-menu color-menu">
+                  <li>
+                    <button class="dropdown-item keyword-delete-color-option" type="button" data-keyword-color="red" aria-label="<?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_AUTO'); ?>" aria-selected="true">
+                      <span class="color-square color-square-red"></span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item keyword-delete-color-option" type="button" data-keyword-color="orange" aria-label="<?php echo Text::_('COM_JOOMGALLERY_AIINT_COLOR_MANUALLY'); ?>" aria-selected="false">
+                      <span class="color-square color-square-orange"></span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item keyword-delete-color-option" type="button" data-keyword-color="black" aria-label="<?php echo Text::_('COM_JOOMGALLERY_AIINT_ALL_KEYWORDS'); ?>" aria-selected="false">
+                      <span class="color-square color-square-black"></span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <button class="btn btn-danger keyword-delete-btn" type="button"><?php echo Text::_('JACTION_DELETE'); ?></button>
+            </div>
           </div>
         </div>
       </div>
@@ -284,6 +316,9 @@ if(isset($this->input_cid) && !empty($this->input_cid))
               <?php echo $this->pagination->getListFooter(); ?>
             </div>
             <input type="hidden" name="task" value=""/>
+            <?php if(isset($this->input_cid) && !empty($this->input_cid)) : ?>
+              <input type="hidden" name="cid" value="<?php echo $this->escape($this->input_cid); ?>"/>
+            <?php endif; ?>
             <input type="hidden" name="form_submited" value="1"/>
             <?php echo HTMLHelper::_('form.token'); ?>
           </div>

@@ -3,6 +3,10 @@
   --gutter-y: 1rem;
   --grid-space-x: 1rem;
   --grid-space-y: 0.5rem;
+  --jgai-color-orange: #ff7b10;
+  --jgai-color-red: #c90c0c;
+  --jgai-color-black: #000000;
+  --jgai-bg-color-red: #8f0a0975;
 }
 .jg-tags-aiinterface .card{
   --card-spacer-x: 1.4rem;
@@ -30,6 +34,8 @@
 }
 .jg-tags-aiinterface .images-panel .keywords {
   margin-left: var(--gutter-x);
+  flex: 1;
+  min-width: 0;
 }
 .jg-tags-aiinterface .images-panel .navigation-btn {
   display: flex;
@@ -57,6 +63,97 @@
 .jg-tags-aiinterface .images-panel .keywords .grid {
   gap: var(--grid-space-y) 3rem;
   justify-content: space-between;
+}
+.jg-tags-aiinterface .keyword-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--gutter-y) var(--gutter-x);
+  margin-top: 1rem;
+}
+.jg-tags-aiinterface .keyword-color-legend p {
+  margin-bottom: 0;
+}
+.jg-tags-aiinterface .keyword-color-select {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+.jg-tags-aiinterface .keyword-color-select:hover,
+.jg-tags-aiinterface .keyword-color-select:focus {
+  text-decoration: underline;
+}
+.jg-tags-aiinterface .keyword-delete-controls {
+  width: auto;
+  margin-left: auto;
+}
+.jg-tags-aiinterface .keyword-delete-color-toggle {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.jg-tags-aiinterface .keyword-delete-color-toggle,
+.jg-tags-aiinterface .keyword-delete-btn {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+.jg-tags-aiinterface .keyword-delete-color-toggle {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-color: var(--jgai-bg-color-red);
+}
+.jg-tags-aiinterface .keyword-delete-color-toggle:hover,
+.jg-tags-aiinterface .keyword-delete-color-toggle:focus,
+.jg-tags-aiinterface .keyword-delete-color-toggle:active,
+.jg-tags-aiinterface .keyword-delete-color-toggle.active,
+.jg-tags-aiinterface .keyword-delete-color-toggle.show {
+  color: inherit;
+  background-color: transparent;
+  border-color: var(--jgai-bg-color-red, var(--border-color));
+}
+.jg-tags-aiinterface .keyword-delete-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.jg-tags-aiinterface .color-menu {
+  min-width: 3.5rem;
+  padding: 0.35rem;
+}
+.jg-tags-aiinterface .color-menu > li .keyword-delete-color-option {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+  border-bottom: 0;
+  border-radius: 0 !important;
+}
+.jg-tags-aiinterface .color-menu .keyword-delete-color-option:hover,
+.jg-tags-aiinterface .color-menu .keyword-delete-color-option:focus,
+.jg-tags-aiinterface .color-menu .keyword-delete-color-option:active,
+.jg-tags-aiinterface .color-menu .keyword-delete-color-option.active,
+.jg-tags-aiinterface .color-menu .keyword-delete-color-option[aria-selected="true"] {
+  color: inherit;
+  background-color: var(--template-bg-light);
+  border-color: transparent;
+  box-shadow: none;
+}
+.jg-tags-aiinterface .color-square {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.2rem;
+}
+.jg-tags-aiinterface .color-square-orange {
+  background-color: var(--jgai-color-orange);
+}
+.jg-tags-aiinterface .color-square-red {
+  background-color: var(--jgai-color-red);
+}
+.jg-tags-aiinterface .color-square-black {
+  background-color: var(--jgai-color-black);
 }
 .jg-tags-aiinterface .grid .grid-item {
   min-width: 100px;
@@ -87,13 +184,13 @@
   background-color: var(--warning);
 }
 .color-black {
-  color: #000000 !important;
+  color: var(--jgai-color-black) !important;
 }
 .color-orange {
-  color: #ff7b10 !important;
+  color: var(--jgai-color-orange) !important;
 }
 .color-red {
-  color: #c90c0c !important;
+  color: var(--jgai-color-red) !important;
 }
 .inline {
   display: inline;
