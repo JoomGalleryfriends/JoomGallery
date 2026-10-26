@@ -1,102 +1,137 @@
 # Contributing to JoomGallery
 
-Just like the [Joomla! CMS™](https://github.com/joomla/joomla-cms), this gallery component, JoomGallery, is an Open Source project and exists because of its community. Which means that everything in the project is developed and maintained by users of the JoomGallery.
-Therefore we ask you to use your skills and knowledge to contribute to the project. Here on GitHub you can help coding and developing the extension.
+Thank you for considering a contribution to JoomGallery. This is a volunteer-driven open-source Joomla! extension. You can contribute in many ways like code reviews, bug fixes, documentation and testing. Everything helps the project.
 
-Following the JoomGalleries coding documentation:
+--> [How to contribute](https://www.joomgalleryfriends.net/en/opensource.html)
 
-- [Release-Strategy](docs/Releasestrategy.md)
-- [Codestyle guide for PHP](docs/Codestyleguide.md)
-- [Contribution guide](/docs/Contribution.md)
+## Before you start
 
-### Setup development environment
-https://docs.joomla.org/Setting_up_your_workstation_for_Joomla_development
+1. Search [existing issues](https://github.com/JoomGalleryfriends/JoomGallery/issues) and [pull requests](https://github.com/JoomGalleryfriends/JoomGallery/pulls) for related work already in development.
+2. For a significant changes, discuss the proposal in an issue before investing in implementation. Maintainer capacity is limited, so discussions and reviews may take time.
+3. The [roadmap](https://www.forum.joomgalleryfriends.net/forum/index.php?thread/483-unverbindliche-roadmap/&postID=2880#post2880) shows what is planned for the next releases. Contributions towards this roadmap will be handled with priority.
+4. Read the [contribution guide](../docs/Contribution.md), [PHP coding style guide](../docs/Codestyleguide.md), and [release strategy](../docs/Releasestrategy.md) if available in the branch you use.
+5. Select the development base branch according to the project's current contribution instructions. **Do not assume that `master` is the correct target for every pull request.**
 
-The deployable extension tree lives in `src/`. Development dependencies are installed in the repository-level `vendor/`, while runtime dependencies shipped with the component are installed in `src/administrator/com_joomgallery/vendor/`.
+## Development prerequisites
 
-After cloning, run:
+- Git, PHP and Composer.
+- A local Joomla! installation compatible with the JoomGallery version you are developing.
+- A supported database and local web server; GD or ImageMagick if your work involves image processing.
+- A code editor or IDE (for example, VS Code or PhpStorm).
+
+### Useful references:
+- [Joomla! developer manual](https://manual.joomla.org/)
+- [Joomla! extension development community](https://joomlacommunity.cloud.mattermost.com/main/channels/extension-development-room)
+- [Robbies video series on Joomla 4 component development](https://www.youtube.com/playlist?list=PLzio09PZm6TuXGnu-ptpVb90Szkawy9IV)
+- [Nicholas book on Joomla 4 development](https://www.dionysopoulos.me/book.html)
+
+## Clone and install dependencies
 
 ```sh
+git clone https://github.com/JoomGalleryfriends/JoomGallery.git
+cd JoomGallery
 composer install
 ```
 
-Put a Joomla installation in the gitignored `joomla/` directory for PHPStan and Rector type discovery. The available checks (no file writes) are:
+Repository layout:
+
+| Path | Purpose |
+| --- | --- |
+| `src/` | Deployable extension source tree |
+| `vendor/` | Repository-level development dependencies |
+| `src/administrator/com_joomgallery/vendor/` | Runtime dependencies included with the component |
+| `joomla/` | Gitignored local Joomla installation for tools such as PHPStan and Rector |
+
+Install a Joomla! site in the gitignored `joomla/` directory to provide the Joomla classes expected by analysis tools. Configure its database and installation locally; **never commit local configuration, credentials or uploaded photos**.
+
+## Run checks
+
+Use the repository's Composer scripts to check your work without modifying files:
 
 ```sh
-composer cs-check
-composer phpcs
-composer phpstan
-composer rector
+composer cs-check  # (php-cs-fixer, code style)
+composer phpcs     # (phpcs, code style)
+composer phpstan   # (phpstan, static code analyzer)
+composer rector    # (rector, automatic code refactoring)
 ```
 
-`composer rector` is a dry run. Review its output before invoking `vendor/bin/rector process` without `--dry-run`.
+`composer rector` performs a dry run. Examine its suggestions carefully before executing Rector in write mode.
 
-To apply code-style fixes, you can do by
+For local style fixes, use the repository tools (and review the resulting diff):
 
 ```sh
+# fix indentation
+php ./tools/fixindent.php -fix
+
+# fix code style
 ./vendor/bin/php-cs-fixer fix
 ./vendor/bin/phpcbf -p --standard=ruleset.xml src
 ./vendor/bin/php-cs-fixer fix
 ```
 
-**Webserver recommendation:**
-- https://wampserver.aviatechno.net/ (Windows only)
-- https://www.apachefriends.org/index.html (Windows, Linux and macOS)
+Run the checks that apply to your changes before proposing a pull request. If a command cannot run in your environment, mention that in the pull-request description.
 
-**IDE/Editor recommendation:**
-- https://www.jetbrains.com/phpstorm/ (Windows, Linux and macOS)
-- https://code.visualstudio.com/ (Windows, Linux and macOS)
+## Test your changes in Joomla!
 
-**Git-Client recommendation:**
-- https://desktop.github.com/ (Windows and macOS)
+For active development, you can install a development build into a local Joomla! site, remove its deployed component folders and replace them with symbolic links to matching folders in your checkout. **Do this only in a disposable development installation**, never a live site; deleting deployed folders on a production installation can cause data loss or downtime.
 
-**Recommendet approach for proper versioning with Git:**
-1. Checkout the repo into a folder of your choice
-2. Download the source code of the dev-branch as zip file and install it on Joomla
-3. Remove the installed component folders within your Joomla installation
-   - administrator/components/com_joomgallery
-   - components/com_joomgallery
-   - media/com_joomgallery
-   - plugins/finder/joomgallerycategories
-   - plugins/finder/joomgalleryimages
-   - plugins/privacy/joomgalleryimages
-   - plugins/webservices/joomgallery
-4. Create symbolic links from those folders to the corresponding folders within the checked out copy of the repository
-5. The referenced copy of your component can be properly versioned using Git
+Common folders include:
 
-**Symbolic link generator tool for windows:**
-https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html
+```text
+administrator/components/com_joomgallery
+components/com_joomgallery
+media/com_joomgallery
+plugins/console/joomconsole
+plugins/finder/joomgallery
+plugins/privacy/joomgallery
+plugins/system/joomgallery
+plugins/system/joomowner
+plugins/task/joomgallery
+```
 
-<hr>
+Check the package and paths for the branch you are testing, since extensions and install locations may change. On Windows, configure symlink permissions or use an appropriate link-management tool. Ensure your Joomla test site has backups or disposable test data.
 
-## Testing
+## Submit a pull request
 
-Testing is an integrate part of the development process and can be done even without coding skills. Just look at the tab `Pull requests` to see which code changes need testing. If you want to test a code change, this is how to do it:
+1. Fork the [maintained repository](https://github.com/JoomGalleryfriends/JoomGallery) to your GitHub account.
+2. Create a descriptive branch from the current contribution base branch.
+3. Make a focused change; keep unrelated refactors separate.
+4. Add or update tests and documentation when appropriate; test relevant Joomla workflows manually.
+5. Run quality checks and inspect the diff for secrets, debug output, unrelated files and accidental formatting changes.
+6. Push your branch and open a pull request to the appropriate branch in `JoomGalleryfriends/JoomGallery`.
+7. Explain **what changed**, **why**, **how it was tested**, and any compatibility or migration implications. Reference relevant issues.
+8. Respond to review comments when possible. Maintainers may request revisions or defer changes due to volunteer capacity.
 
-<video class="ratio ratio-16x9" control="controls"><source src="https://www.joomgalleryfriends.net/images/videos/install-a-pr.mp4" type="video/mp4">Your browser does not support the video tag</video>
+Please do not add third-party code or assets unless redistribution is compatible with the project's licensing and attribution requirements.
 
-1. Open the Pull request (PR) you want to test
-2. Scroll down the comments feed of the PR all the way to the bottom
-3. Open the accordion **All checks have passed**
-4. Open the link **PR Build Artifact / build-pr-zip**
-5. Change on the left navigation to **Summary**
-6. Click the link in the **Artifacts** section which has the name "JoomGallery-PRname"
-7. A zip file of the PR gets created and downloaded
-8. Install the zip file in your Joomla!
-9. Perform tests where the PR changes anything
-10. If you find a bug or unexpected behaviour, post a comment in the pull request with the following content:
+## Test somebody else's pull request
 
-### Issue reporting
+Testing is valuable even if you do not write code. A PR may provide a downloadable build artifact through GitHub Actions:
 
-#### Steps to reproduce the issue
-List the steps to perform in order to reproduce the issue you found
-#### Expected result
-What would you have expected should have happen?
-#### Actual result
-What did really happen?
-#### System information
-- PHP-Version
-- Database type and version
-- (ImageMagick version)
-#### Additional comments
-Anything else that you think is important for the developer to fix the issue
+1. Open the pull request and inspect its changes and test instructions.
+2. Open the successful GitHub Actions run of the PR and download the PR build ZIP. GitHub login is required.
+3. Install the package into a **test Joomla! site only**; do not deploy unreviewed PR artifacts on production systems.
+4. Exercise the changed functionality and relevant regressions.
+5. Comment on the PR with the Joomla/PHP/database versions, exact reproduction steps, expected and actual results, and logs or screenshots with credentials and personal data removed.
+
+### Useful bug-report template
+
+```text
+Summary:
+Steps to reproduce:
+1.
+2.
+Expected result:
+Actual result:
+Environment: Joomla / JoomGallery / PHP / database / image processor
+Additional details (sanitized):
+```
+
+## Additional ways to help
+
+- [Translate via Crowdin](https://joomla.crowdin.com/joomgallery).
+- Improve user documentation, examples and accessibility.
+- Reproduce and triage non-security bug reports.
+- Answer questions in the [support forum](https://www.forum.joomgalleryfriends.net/).
+
+Project-maintainer history is summarized in the [README](../README.md). For official current code and PRs, always use the `JoomGallery friends` GitHub organization.
