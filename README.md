@@ -2,24 +2,26 @@
 
 <img src="https://www.joomgalleryfriends.net/images/modulbilder/logo-joomgalleryfriends.svg" width="700" alt="JoomGalleryfriends logo">
 
-**An open-source, self-hosted image gallery and photo-management component for Joomla!**
+**An open-source, self-hosted image gallery and photo management application built on top of Joomla!**
 
-JoomGallery helps photographers, communities, clubs and website owners publish and manage image collections on their own infrastructure (on-premises). It combines galleries and collections with metadata handling, configurable image derivatives, flexible access permissions, and integration with the [Joomla! CMS](https://github.com/joomla/joomla-cms).
+JoomGallery helps photographers, communities/associations and website owners to publish and manage large image collections on their own infrastructure (on-premises). It combines galleries and collections with metadata handling, configurable image derivatives, flexible access permissions, and integration with the [Joomla! CMS](https://github.com/joomla/joomla-cms).
 
-**[Project website](https://www.joomgalleryfriends.net/) · [Features](https://www.joomgalleryfriends.net/en/features.html) · [Releases](https://github.com/JoomGalleryfriends/JoomGallery/releases) · [Support forum](https://www.forum.joomgalleryfriends.net/) · [Report an issue](https://github.com/JoomGalleryfriends/JoomGallery/issues)**
+**[Project website](https://www.joomgalleryfriends.net/) · [Features](https://www.joomgalleryfriends.net/en/features.html) · [Releases](https://github.com/JoomGalleryfriends/JoomGallery/releases) · [Support forum](https://www.forum.joomgalleryfriends.net/) · [Documentation](https://www.joomgalleryfriends.net/en/documentation.html) · [Report an issue](https://github.com/JoomGalleryfriends/JoomGallery/issues)**
 
+<br>
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2TBYDQ88VH4PW)
+<br>
 
 ## Why JoomGallery?
 
-- **Own your galleries:** Host your website and images yourself, using Joomla! on your chosen server or hosting provider.
+- **Own your images:** Host your website and images yourself on your chosen server or hosting provider and stay the full owner of your content.
 - **Work with image metadata:** Read and edit EXIF/IPTC information and use selected metadata when populating image titles, descriptions, dates and tags during upload.
 - **Organize sizeable collections:** Manage images with categories, keywords/tags and user collections; the project is designed with large galleries in mind.
 - **Control image presentation:** Configure image derivative sizes, select supported processing backends (GD/ImageMagick), and customize frontend layouts through Joomla! templates and overrides.
 - **Manage access:** Use Joomla! integrated access control to manage permissions and public or restricted content.
 - **Extend and integrate:** Use Joomla! plugins, modules, custom fields and supported filesystem integrations to extend JoomGalleries possibilities.
 
-See the [full feature overview](https://www.joomgalleryfriends.net/en/features.html) for details and release-specific limitations. **JoomGallery is a gallery and image-management component, not an out-of-the-box digital-image licensing or checkout platform.** Additional integrations may be necessary for sales workflows.
+**JoomGallery is a gallery and image management component, not an out-of-the-box checkout platform.** Additional integrations ere necessary for sales workflows.
 
 ## Getting started
 
@@ -34,9 +36,9 @@ Check the release notes for the **supported Joomla! and PHP versions** before up
 
 **This `JoomGalleryfriends/JoomGallery` repository is maintained by the current JoomGallery volunteer community.**
 
-JoomGallery began in 2005 as a fork of the `PonyGaller` for Mambo and has been developed by successive groups of volunteer contributors. In 2019, the JoomGallery friends community took up its continued development with permission to fork the original code. We respect and acknowledge the work of earlier contributors.
+JoomGallery began in 2005 as a fork of the `PonyGallery` for Mambo and has been developed by successive groups of volunteer contributors. In 2019, the JoomGallery friends community took up its continued development with permission to fork the original code. We respect and acknowledge the work of earlier contributors.
 
-You may also find the historical GitHub organization at [`JoomGallery/JoomGallery`](https://github.com/JoomGallery/JoomGallery). **That organization is controlled by its original owner and is not accessible by the current maintainers.** It remains part of the project's history; its activity is not an indicator of the maintenance status of today's JoomGallery.
+You may also find the historical GitHub organization at [`JoomGallery/JoomGallery`](https://github.com/JoomGallery/JoomGallery). **That organization is controlled by its initial owners and is not accessible for the current maintainers.** It remains part of the project's history; its absent activity is not an indicator of the maintenance status of today's JoomGallery.
 
 The full history can be found on the [project website](https://www.joomgalleryfriends.net/en/history.html).
 
@@ -61,7 +63,7 @@ JoomGallery is developed and maintained by volunteers. Contributions of code, te
 
 ## Roadmap and development
 
-Development is community driven. Priorities can change depending on available volunteers. For discussion of future work, see the [non-binding roadmap (German)](https://www.forum.joomgalleryfriends.net/forum/index.php?thread/483-unverbindliche-roadmap/&postID=2880#post2880) and the repository's [issues](https://github.com/JoomGalleryfriends/JoomGallery/issues) and [pull requests](https://github.com/JoomGalleryfriends/JoomGallery/pulls).
+Development is community driven. Priorities can change depending on available volunteers. For a hint of future work, see the [non-binding roadmap (German)](https://www.forum.joomgalleryfriends.net/forum/index.php?thread/483-unverbindliche-roadmap/&postID=2880#post2880) and the repository's [issues](https://github.com/JoomGalleryfriends/JoomGallery/issues) and [pull requests](https://github.com/JoomGalleryfriends/JoomGallery/pulls).
 
 For the development environment, quality checks and contribution workflow, see [CONTRIBUTING.md](.github/CONTRIBUTING.md). Please avoid reporting vulnerabilities in public issues; follow [SECURITY.md](.github/SECURITY.md).
 
