@@ -8,9 +8,10 @@ JoomGallery helps photographers, communities/associations and website owners to 
 
 **[Project website](https://www.joomgalleryfriends.net/) · [Features](https://www.joomgalleryfriends.net/en/features.html) · [Releases](https://github.com/JoomGalleryfriends/JoomGallery/releases) · [Support forum](https://www.forum.joomgalleryfriends.net/) · [Documentation](https://www.joomgalleryfriends.net/en/documentation.html) · [Report an issue](https://github.com/JoomGalleryfriends/JoomGallery/issues)**
 
-<br>
+
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2TBYDQ88VH4PW)
-<br>
+
+<hr>
 
 ## Why JoomGallery?
 
