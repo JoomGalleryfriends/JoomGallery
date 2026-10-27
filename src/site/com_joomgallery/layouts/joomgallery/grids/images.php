@@ -19,6 +19,10 @@ use Joomla\CMS\Router\Route;
 
 extract($displayData);
 
+$lightbox_show_tags = (bool) ($lightbox_show_tags ?? false);
+$lightbox_tags      = $lightbox_tags ?? [];
+$image_tags_data    = $image_tags_data ?? [];
+
 /**
  * Layout variables
  * -----------------
@@ -38,6 +42,9 @@ extract($displayData);
  * @var   bool     $image_date        True to display the image date
  * @var   bool     $image_author      True to display the image author
  * @var   bool     $image_tags        True to display the image tags
+ * @var   bool     $lightbox_show_tags True to display image tags in the lightbox caption
+ * @var   array    $lightbox_tags      Image tags indexed by image id
+ * @var   array    $image_tags_data    Image tags indexed by image id
  */
 ?>
 
@@ -63,12 +70,39 @@ extract($displayData);
                 </div>
               <?php endif; ?>
             </a>
-              <?php // lightgallery image caption via data-sub-html ?>
-              <?php if($image_title || $image_desc) : ?>
+               <?php // lightgallery image caption via data-sub-html ?>
+              <?php if($image_title || $image_desc || $lightbox_show_tags) : ?>
                 <div id="jg-image-caption-<?php echo $item->id; ?>" style="display: none">
-                  <?php if($image_title) : ?>
+                  <?php if($image_title || $lightbox_show_tags) : ?>
                     <div class="jg-image-caption <?php echo $this->escape($caption_align); ?>">
-                      <?php echo $this->escape($item->title); ?>
+                      <?php
+                        $caption = $image_title ? $this->escape($item->title) : '';
+
+                        if($lightbox_show_tags)
+                        {
+                            $tags = $lightbox_tags[(int) $item->id] ?? [];
+
+                            if(!empty($tags))
+                            {
+                                $tagText = implode(
+                                    ' | ',
+                                    array_map(
+                                        static fn($tag) => htmlspecialchars($tag, ENT_QUOTES, 'UTF-8'),
+                                        $tags
+                                    )
+                                );
+
+                                if($image_tags_label)
+                                {
+                                    $tagText = Text::_('COM_JOOMGALLERY_TAGS') . ': ' . $tagText;
+                                }
+
+                                $caption .= '<br>' . $tagText;
+                            }
+                        }
+
+                        echo $caption;
+                      ?>
                     </div>
                   <?php endif; ?>
                   <?php if($image_desc) : ?>
@@ -113,8 +147,35 @@ extract($displayData);
                 </a>
                 <?php // lightgallery image caption via data-sub-html ?>
                 <div id="jg-image-caption-<?php echo $item->id; ?>" style="display: none">
-                  <?php if($image_title) : ?>
-                    <?php echo $this->escape($item->title); ?>
+                  <?php if($image_title || $lightbox_show_tags) : ?>
+                    <?php
+                      $caption = $image_title ? $this->escape($item->title) : '';
+
+                      if($lightbox_show_tags)
+                      {
+                          $tags = $lightbox_tags[(int) $item->id] ?? [];
+
+                          if(!empty($tags))
+                          {
+                            $tagText = implode(
+                                ' | ',
+                                array_map(
+                                    static fn($tag) => htmlspecialchars($tag, ENT_QUOTES, 'UTF-8'),
+                                    $tags
+                                )
+                            );
+
+                              if($image_tags_label)
+                              {
+                                  $tagText = Text::_('COM_JOOMGALLERY_TAGS') . ': ' . $tagText;
+                              }
+
+                              $caption .= '<br>' . $tagText;
+                          }
+                      }
+
+                      echo $caption;
+                    ?>
                   <?php endif; ?>
                   <?php if($image_desc) : ?>
                     <?php echo JoomHelper::sanitizeHtml($item->description); ?>
@@ -151,7 +212,15 @@ extract($displayData);
               <div><?php echo Text::_('JAUTHOR') . ': ' . $this->escape($item->author); ?></div>
             <?php endif; ?>
             <?php if($image_tags) : ?>
-              <div><?php echo Text::_('COM_JOOMGALLERY_TAGS') . ': '; ?></div>
+              <?php $tags = $image_tags_data[(int) $item->id] ?? []; ?>
+              <?php if(!empty($tags)) : ?>
+                <div>
+                  <?php if($image_tags_label) : ?>
+                    <?php echo Text::_('COM_JOOMGALLERY_TAGS') . ': '; ?>
+                  <?php endif; ?>
+                  <?php echo $this->escape(implode(' | ', $tags)); ?>
+                </div>
+              <?php endif; ?>
             <?php endif; ?>
           </div>
         <?php endif; ?>
