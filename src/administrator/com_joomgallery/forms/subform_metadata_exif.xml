@@ -10,5 +10,10 @@
            type="subform"
            formsource="administrator/components/com_joomgallery/forms/subform_metadata_exif_exif.xml"
            layout="joomla.form.field.subform.default" />
+
+    <field name="GPS"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_metadata_exif_gps.xml"
+           layout="joomla.form.field.subform.default" />
   </fieldset>
 </form>

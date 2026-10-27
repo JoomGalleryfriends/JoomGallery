@@ -60,6 +60,33 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
+    if($this->_layout == 'aiinterface')
+    {
+      $this->input_cid = $this->app->input->get('cid', '', 'string');
+
+      if(!empty($this->input_cid))
+      {
+        $img_model = $this->component->getMVCFactory()->createModel('images', 'administrator');
+        $img_model->setSearchProvider('sql');
+        $img_model->getState();
+
+        // Apply preselected filters and fields selection for images
+        $fields   = ['a.id', 'a.title', 'a.filename', 'a.filesystem', 'tag_ids', 'tag_titles'];
+        $imageIds = (array) preg_split('/\D+/', $this->input_cid, -1, PREG_SPLIT_NO_EMPTY);
+
+        $img_model->setState('filter.search', '');
+        $img_model->setState('list.select', $fields);
+        $img_model->setState('filter.ids', $this->input_cid);
+        $img_model->setState('list.pages', 1);
+        $img_model->setState('list.limit', max(1, \count($imageIds)));
+        $img_model->setState('list.start', 0);
+        $img_model->setState('list.fullordering', 'a.date ASC', 'string');
+
+        // Get images
+        $this->images = $img_model->getItems();
+      }
+    }
+
     $this->addToolbar();
 
     $this->sidebar = Sidebar::render();

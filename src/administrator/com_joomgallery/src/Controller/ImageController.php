@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
@@ -336,6 +337,167 @@ class ImageController extends JoomFormController
     $this->setRedirect(Route::_($url, false));
 
     return true;
+  }
+
+  public function ajaxsavetags()
+  {
+    // Check for request forgeries.
+    $this->checkToken();
+
+    $result = ['error' => false, 'success' => true];
+
+    try {
+      /** @var ImageModel $model */
+      $model   = $this->getModel();
+      $id      = $this->input->get('id', 0, 'int');
+      $tags    = $this->input->get('keywords', [], 'array');
+      $action  = $this->input->get('action', '', 'string');
+      $context = (string) _JOOM_OPTION . '.' . $this->context . '.savetags';
+
+
+      // Access check.
+      if(!$this->allowEdit(['id' => $id, 'tags' => $tags]))
+      {
+        // Set the internal error and also the redirect error.
+        $result['success'] = false;
+        $result['error']   = Text::_('JLIB_APPLICATION_ERROR_SAVE_RECORD_NOT_PERMITTED');
+
+        return false;
+      }
+
+      if($action && $action == 'add')
+      {
+        // Attempt to add the tags.
+        if(!$model->addTags($id, $tags))
+        {
+          // Redirect back to the replace screen.
+          $result['success'] = false;
+          $result['error']   = $model->getError();
+
+          return false;
+        }
+      }
+      elseif($action && $action == 'remove')
+      {
+        // Attempt to remove the tags.
+        if(!$model->removeTags($id, $tags))
+        {
+          // Redirect back to the replace screen.
+          $result['success'] = false;
+          $result['error']   = $model->getError();
+
+          return false;
+        }
+      }
+
+      $json = json_encode($result, JSON_FORCE_OBJECT);
+      echo new JsonResponse($json);
+
+      $this->app->close();
+    }
+    catch(\Exception $e)
+    {
+      echo new JsonResponse($e);
+
+      $this->app->close();
+
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Acquire, renew or release the per-session tags generation lock.
+   *
+   * The owner and expiry values make the boolean session flag safe for use
+   * across browser tabs and recoverable when a tab disappears unexpectedly.
+   *
+   * @return void
+   */
+  public function ajaxtagsgeneratelock()
+  {
+    $this->checkToken();
+
+    $activeKey = 'jgaiinterface.tags.generate.active';
+    $ownerKey  = 'jgaiinterface.tags.generate.owner';
+    $expiryKey = 'jgaiinterface.tags.generate.expires';
+    $leaseTime = 300;
+    $session   = $this->app->getSession();
+    $action    = $this->input->getCmd('action');
+    $owner     = preg_replace('/[^a-zA-Z0-9-]/', '', $this->input->getString('owner'));
+    $now       = time();
+
+    $active      = (bool) $session->get($activeKey, false);
+    $activeOwner = (string) $session->get($ownerKey, '');
+    $expires     = (int) $session->get($expiryKey, 0);
+
+    // Recover a lock left behind by a closed or crashed browser tab.
+    if($active && $expires <= $now)
+    {
+      $active      = false;
+      $activeOwner = '';
+      $expires     = 0;
+      $session->set($activeKey, false);
+      $session->set($ownerKey, '');
+      $session->set($expiryKey, 0);
+    }
+
+    $result = [
+      'active'      => $active,
+      'acquired'    => false,
+      'renewed'     => false,
+      'released'    => false,
+      'retry_after' => $active ? 2 : 0,
+    ];
+
+    // Merely reaching this point has cleared an expired lock, if present.
+    if($action === 'cleanup')
+    {
+      echo new JsonResponse($result);
+      $this->app->close();
+    }
+
+    if($owner === '')
+    {
+      echo new JsonResponse($result, 'Missing lock owner.', true);
+      $this->app->close();
+    }
+
+    if($action === 'acquire' && (!$active || $activeOwner === $owner))
+    {
+      $expires = $now + $leaseTime;
+      $session->set($activeKey, true);
+      $session->set($ownerKey, $owner);
+      $session->set($expiryKey, $expires);
+
+      $result['active']      = true;
+      $result['acquired']    = true;
+      $result['retry_after'] = 0;
+      $result['expires']     = $expires;
+    }
+    elseif($action === 'renew' && $active && $activeOwner === $owner)
+    {
+      $expires = $now + $leaseTime;
+      $session->set($expiryKey, $expires);
+
+      $result['active']  = true;
+      $result['renewed'] = true;
+      $result['expires'] = $expires;
+    }
+    elseif($action === 'release' && $activeOwner === $owner)
+    {
+      $session->set($activeKey, false);
+      $session->set($ownerKey, '');
+      $session->set($expiryKey, 0);
+
+      $result['active']      = false;
+      $result['released']    = true;
+      $result['retry_after'] = 0;
+    }
+
+    echo new JsonResponse($result);
+    $this->app->close();
   }
 
   /**
