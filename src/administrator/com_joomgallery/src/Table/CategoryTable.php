@@ -471,9 +471,7 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
    */
   public function delete($pk = null, $children = true)
   {
-    $result = parent::delete($pk, $children);
-
-    return $result;
+    return parent::delete($pk, $children);
   }
 
   /**

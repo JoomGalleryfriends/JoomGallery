@@ -12,8 +12,10 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Utilities\ArrayHelper;
@@ -55,6 +57,34 @@ extract($displayData);
 $modalHTML = '';
 $uri       = new Uri('index.php?option=com_joomgallery&view=categories&layout=modal&tmpl=component&required=0');
 $uri->setVar('field', $this->escape($id));
+
+$forcedLanguage = $forcedLanguage ?? '';
+$originId = Factory::getApplication()->getInput()->getInt('id', 0);
+$parentTranslationMissing = false;
+
+if(!empty($forcedLanguage))
+{
+  $uri->setVar('forcedLanguage', $forcedLanguage);
+
+  if($originId > 0)
+  {
+    $originCategory = JoomHelper::getRecord('category', $originId);
+
+    if($originCategory && (int) $originCategory->parent_id > 1)
+    {
+    $parentAssociations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery_categories',
+        'com_joomgallery.category',
+        (int) $originCategory->parent_id,
+        'id',
+        '',
+        ''
+    );
+    $parentTranslationMissing = !isset($parentAssociations[$forcedLanguage]);
+    }
+  }
+}
 
 if(empty($value))
 {
@@ -152,6 +182,26 @@ $modalHTML = HTMLHelper::_(
       <button type="button" class="btn btn-primary button-select" title="<?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'); ?>">
         <span class="icon-folder icon-white" aria-hidden="true"></span>
         <span class="visually-hidden"><?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_CATEGORY'); ?></span>
+      </button>
+    <?php endif; ?>
+    <?php if(!$readonly && !empty($forcedLanguage)) : ?>
+      <button type="button" class="btn btn-success button-create"
+        data-url="index.php?option=com_joomgallery&amp;view=category&amp;layout=edit&amp;origin_id=<?php echo (int) $originId; ?>&amp;forcedLanguage=<?php echo rawurlencode($forcedLanguage); ?>"
+        data-parent-missing="<?php echo $parentTranslationMissing ? '1' : '0'; ?>"
+        data-parent-error="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_ERROR_CATEGORY_VARIANT_PARENT')); ?>">
+        <span class="icon-plus" aria-hidden="true"></span>
+        <span class="visually-hidden"><?php echo Text::_('JACTION_CREATE'); ?></span>
+      </button>
+      <button type="button" class="btn btn-danger button-delete-variant"
+        data-url="index.php?option=com_joomgallery&amp;task=category.deleteVariant"
+        data-language="<?php echo $this->escape($forcedLanguage); ?>"
+        data-confirm="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_CONFIRM_DELETE_CATEGORY_VARIANT')); ?>"
+        data-success="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_SUCCESS_DELETE_CATEGORY_VARIANT')); ?>"
+        data-error="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT')); ?>"
+        title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_DELETE_CATEGORY_VARIANT')); ?>"
+        <?php echo empty($value) ? 'disabled' : ''; ?>>
+        <span class="icon-minus" aria-hidden="true"></span>
+        <span class="visually-hidden"><?php echo Text::_('JACTION_DELETE'); ?></span>
       </button>
     <?php endif; ?>
   </div>

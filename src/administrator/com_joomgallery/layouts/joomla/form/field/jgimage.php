@@ -53,8 +53,11 @@ extract($displayData);
  * @var   string   $dataAttribute   Miscellaneous data attributes preprocessed for HTML output
  * @var   array    $dataAttributes  Miscellaneous data attribute for eg, data-*.
  */
-$modalHTML = '';
-$uri       = new Uri('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
+$modalHTML      = '';
+$canDo          = $canDo ?? [];
+$urls           = $urls ?? [];
+$forcedLanguage = $forcedLanguage ?? '';
+$uri            = new Uri('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
 $uri->setVar('field', $this->escape($id));
 
 if(empty($value))
@@ -82,6 +85,12 @@ if(!empty($categories))
 if(!empty($excluded))
 {
   $uri->setVar('exclude', '[' . implode(',', $excluded) . ']');
+}
+
+// Keep the target language when opening the image list.
+if(!empty($forcedLanguage))
+{
+    $uri->setVar('forcedLanguage', $forcedLanguage);
 }
 
 // Invalidate the input value if no image selected
@@ -158,12 +167,32 @@ $modalHTML = HTMLHelper::_(
   <div class="input-group">
     <img id="jform_thumbnail_img" class="jg_minithumb" src="<?php echo JoomHelper::getImg($value, 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
     <input <?php echo ArrayHelper::toString($inputAttributes), $dataAttribute; ?> readonly>
-    <?php if(!$readonly) : ?>
+    <?php if(!$readonly && empty($forcedLanguage)) : ?>
       <button type="button" class="btn btn-primary button-select" title="<?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?>">
         <span class="icon-image icon-white" aria-hidden="true"></span>
         <span class="visually-hidden"><?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?></span>
       </button>
     <?php endif; ?>
+      <?php if(!$readonly && !empty($forcedLanguage)) : ?>
+  <?php if(!empty($canDo['new']) && !empty($urls['new'])) : ?>
+    <button type="button" class="btn btn-success button-create"
+      data-url="<?php echo $this->escape($urls['new']); ?>">
+      <span class="icon-plus" aria-hidden="true"></span>
+      <span class="visually-hidden"><?php echo Text::_('JACTION_CREATE'); ?></span>
+    </button>
+  <?php endif; ?>
+  <button type="button" class="btn btn-danger button-delete-variant"
+    data-url="index.php?option=com_joomgallery&amp;task=image.deleteVariant"
+    data-language="<?php echo $this->escape($forcedLanguage); ?>"
+    data-confirm="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_CONFIRM_DELETE_VARIANT')); ?>"
+    data-success="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_SUCCESS_DELETE_VARIANT')); ?>"
+    data-error="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_ERROR_DELETE_VARIANT_FAILED')); ?>"
+    title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_DELETE_LANGUAGE_VARIANT')); ?>"
+    <?php echo empty($value) ? 'disabled' : ''; ?>>
+    <span class="icon-minus" aria-hidden="true"></span>
+    <span class="visually-hidden"><?php echo Text::_('JACTION_DELETE'); ?></span>
+  </button>
+      <?php endif; ?>
   </div>
   <?php // Create the real field, hidden, that stored the image id. ?>
   <?php if(!$readonly) : ?>

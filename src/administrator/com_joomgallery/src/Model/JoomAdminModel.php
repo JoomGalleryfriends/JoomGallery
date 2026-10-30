@@ -19,6 +19,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterfa
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
@@ -548,6 +549,70 @@ abstract class JoomAdminModel extends AdminModel
    *
    * @since   4.0.0
    */
+  protected function syncAssociatedField($table, $field, $value, $configKey = 'jg_link_associated_images')
+  {
+    if(!$this->component->getConfig()->get($configKey, 1)
+      || !$this->associationsContext
+      || !Associations::isEnabled())
+    {
+      return;
+    }
+
+    $allowedFields = ['published', 'hidden', 'access', 'featured', 'approved'];
+
+    if(!\in_array($field, $allowedFields, true) || !$table->hasField($field))
+    {
+      return;
+    }
+
+    $db  = $this->getDatabase();
+    $key = $table->getKeyName();
+    $id  = (int) $table->$key;
+
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('key'))
+      ->from($db->quoteName('#__associations'))
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('id') . ' = :id')
+      ->bind(':context', $this->associationsContext)
+      ->bind(':id', $id, ParameterType::INTEGER);
+
+    $db->setQuery($query);
+    $associationKey = $db->loadResult();
+
+    if(!$associationKey)
+    {
+      return;
+    }
+
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('id'))
+      ->from($db->quoteName('#__associations'))
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('key') . ' = :key')
+      ->bind(':context', $this->associationsContext)
+      ->bind(':key', $associationKey);
+
+    $db->setQuery($query);
+    $ids = $db->loadColumn();
+
+    if(!$ids)
+    {
+      return;
+    }
+
+    $value = (int) $value;
+
+    $query = $db->getQuery(true)
+      ->update($db->quoteName($table->getTableName()))
+      ->set($db->quoteName($field) . ' = :value')
+      ->whereIn($db->quoteName($key), array_map('intval', $ids))
+      ->bind(':value', $value, ParameterType::INTEGER);
+
+    $db->setQuery($query);
+    $db->execute();
+  }
+
   protected function createAssociations(Table &$table, array $associations)
   {
     $key = $table->getKeyName();
