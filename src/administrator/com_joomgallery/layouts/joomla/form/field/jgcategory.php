@@ -69,6 +69,7 @@ if(!empty($forcedLanguage))
   if($originId > 0)
   {
     $originCategory = JoomHelper::getRecord('category', $originId);
+
     if($originCategory && (int) $originCategory->parent_id > 1)
     {
     $parentAssociations = Associations::getAssociations(

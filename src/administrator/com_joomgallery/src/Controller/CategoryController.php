@@ -101,12 +101,14 @@ class CategoryController extends JoomFormController
             }
 
             $variantTable = $model->getTable();
+
             if(!$variantTable->load($variantId) || $variantTable->language !== $forcedLanguage)
             {
                 throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
             }
 
             $originTable = $model->getTable();
+
             if(!$originTable->load($originId) || $originTable->language === $forcedLanguage)
             {
                 throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
@@ -134,6 +136,7 @@ class CategoryController extends JoomFormController
             }
 
             $pks = [$variantId];
+
             if(!$model->delete($pks))
             {
                 throw new \RuntimeException($model->getError() ?: Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));

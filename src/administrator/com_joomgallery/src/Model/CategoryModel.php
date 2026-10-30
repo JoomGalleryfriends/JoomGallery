@@ -129,6 +129,7 @@ class CategoryModel extends JoomAdminModel
       $form->setValue('language', null, $forcedLanguage);
 
       $sourceTable = $this->getTable();
+
       if($sourceTable->load($originId))
       {
         if((int) $sourceTable->parent_id > 1)
@@ -484,9 +485,11 @@ class CategoryModel extends JoomAdminModel
     if($isLanguageVariant)
     {
       $sourceTable = $this->getTable();
+
       if(!$sourceTable->load($sourceId) || $sourceTable->language === $forcedLanguage)
       {
         $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+
         return false;
       }
 
@@ -513,6 +516,7 @@ class CategoryModel extends JoomAdminModel
         if(!isset($parentAssociations[$forcedLanguage]))
         {
           $this->setError(Text::_('COM_JOOMGALLERY_ERROR_CATEGORY_VARIANT_PARENT'));
+
           return false;
         }
 
@@ -904,9 +908,11 @@ class CategoryModel extends JoomAdminModel
         }
 
         $associations = [];
+
         foreach($associatedIds as $associatedId)
         {
           $associatedCategory = JoomHelper::getRecord('category', (int) $associatedId);
+
           if($associatedCategory && !empty($associatedCategory->language) && $associatedCategory->language !== '*')
           {
             $associations[$associatedCategory->language] = (int) $associatedId;

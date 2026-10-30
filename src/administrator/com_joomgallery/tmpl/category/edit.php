@@ -214,6 +214,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 <?php
 $originId       = $app->input->getInt('origin_id', 0);
 $forcedLanguage = $app->input->getString('forcedLanguage', '');
+
 if($app->input->getInt('variant_saved', 0) === 1 && $originId > 0 && $forcedLanguage !== '') :
 ?>
 <script>
