@@ -32,9 +32,12 @@ if(property_exists($this, 'filesystem_js'))
 
 HTMLHelper::_('bootstrap.tooltip');
 
-$app       = Factory::getApplication();
-$form      = $this->getForm();
-$fieldSets = $form->getFieldsets();
+$app               = Factory::getApplication();
+$form              = $this->getForm();
+$fieldSets         = $form->getFieldsets();
+$originId          = $app->input->getInt('origin_id', 0);
+$forcedLanguage    = $app->input->getString('forcedLanguage', '');
+$isLanguageVariant = $originId > 0 && $forcedLanguage !== '' && (int) $this->item->id === 0;
 
 // In case of modal
 $isModal = $app->input->get('layout') === 'modal';
@@ -44,7 +47,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
 
 <div class="jg jg-category">
 <form
-  action="<?php echo Route::_('index.php?option=com_joomgallery&layout=' . $layout . $tmpl . '&id=' . (int) $this->item->id); ?>"
+  action="<?php echo Route::_('index.php?option=com_joomgallery&layout=' . $layout . $tmpl . '&id=' . (int) $this->item->id . ($originId ? '&origin_id=' . $originId : '') . ($forcedLanguage !== '' ? '&forcedLanguage=' . rawurlencode($forcedLanguage) : '')); ?>"
   method="post" enctype="multipart/form-data" name="adminForm" id="category-form" class="form-validate"
   aria-label="<?php echo Text::_('COM_JOOMGALLERY_CATEGORY_FORM_TITLE_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>" >
 
@@ -57,6 +60,23 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     </div>
   </div>
 
+  <?php if($isLanguageVariant) : ?>
+    <div class="row">
+      <div class="col-12 col-lg-9">
+        <fieldset class="adminform">
+          <?php echo $this->form->getLabel('description'); ?>
+          <?php echo $this->form->getInput('description'); ?>
+        </fieldset>
+      </div>
+      <div class="col-12 col-lg-3">
+        <fieldset class="form-vertical">
+          <legend class="visually-hidden"><?php echo Text::_('JGLOBAL_FIELDSET_GLOBAL'); ?></legend>
+          <?php echo $this->form->renderField('parent_id'); ?>
+          <?php echo $this->form->renderField('language'); ?>
+        </fieldset>
+      </div>
+    </div>
+  <?php else : ?>
   <div class="main-card">
   <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'category', 'recall' => true, 'breakpoint' => 768]); ?>
   
@@ -174,6 +194,7 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
   <?php endif; ?> 
   <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
+  <?php endif; ?>
 
   <input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
   <input type="hidden" name="jform[lft]" value="<?php echo $this->item->lft; ?>" />
@@ -182,7 +203,26 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <input type="hidden" name="jform[path]" value="<?php echo $this->item->path; ?>" />
   <input type="hidden" name="jform[in_hidden]" value="<?php echo $this->item->in_hidden; ?>" />
   <input type="hidden" name="task" value=""/>
+  <?php if($isLanguageVariant) : ?>
+    <input type="hidden" name="origin_id" value="<?php echo (int) $originId; ?>">
+    <input type="hidden" name="forcedLanguage" value="<?php echo htmlspecialchars($forcedLanguage, ENT_QUOTES, 'UTF-8'); ?>">
+  <?php endif; ?>
   <?php echo HTMLHelper::_('form.token'); ?>
 
 </form>
+
+<?php
+$originId       = $app->input->getInt('origin_id', 0);
+$forcedLanguage = $app->input->getString('forcedLanguage', '');
+if($app->input->getInt('variant_saved', 0) === 1 && $originId > 0 && $forcedLanguage !== '') :
+?>
+<script>
+  window.parent.postMessage({
+    messageType: 'joomgallery:category-variant-saved',
+    id: <?php echo (int) $this->item->id; ?>,
+    title: <?php echo json_encode((string) $this->item->title, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+    language: <?php echo json_encode($forcedLanguage); ?>
+  }, window.location.origin);
+</script>
+<?php endif; ?>
 </div>
