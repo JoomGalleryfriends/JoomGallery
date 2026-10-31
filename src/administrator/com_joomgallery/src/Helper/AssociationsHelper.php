@@ -12,8 +12,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 
 \defined('_JEXEC') || die;
 
+use Joomgallery\Component\Joomgallery\Administrator\Table\CategoryTable;
+use Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
 use Joomgallery\Component\Joomgallery\Site\Helper\AssociationHelper;
 use Joomla\CMS\Association\AssociationExtensionHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Associations;
 
 /**
@@ -32,9 +35,40 @@ class AssociationsHelper extends AssociationExtensionHelper
 {
     protected $extension = 'com_joomgallery';
 
-    protected $itemTypes = ['category', 'image'];
+    protected $itemTypes = ['jgcategory', 'image'];
 
     protected $associationsSupport = true;
+
+    /**
+     * Get a JoomGallery item by its type and ID.
+     *
+     * @param string $typeName The item type (jgcategory or image).
+     * @param int    $id       The item ID.
+     *
+     * @return object|null The loaded item, or null if not found.
+     *
+     * @since 4.5.0
+     */
+    public function getItem($typeName, $id)
+    {
+        if(empty($id))
+        {
+            return null;
+        }
+
+        $table = match ($typeName) {
+            'jgcategory' => new CategoryTable(Factory::getDbo()),
+            'image'      => new ImageTable(Factory::getDbo()),
+            default      => null,
+        };
+
+        if($table === null || !$table->load($id))
+        {
+            return null;
+        }
+
+        return $table;
+    }
 
     /**
      * Get the associations for a JoomGallery item.
@@ -63,7 +97,7 @@ class AssociationsHelper extends AssociationExtensionHelper
      */
     public function getAssociations($typeName, $id)
     {
-        if($typeName === 'category')
+        if($typeName === 'jgcategory')
         {
             return Associations::getAssociations(
                 $this->extension,
@@ -103,9 +137,12 @@ class AssociationsHelper extends AssociationExtensionHelper
      */
     public function getType($typeName = '')
     {
-        if($typeName === 'category')
+        if($typeName === 'jgcategory')
         {
             $fields  = $this->getFieldsTemplate();
+            $fields['ordering'] = '';
+            $fields['catid']    = '';
+            $fields['title'] = 'a.title';
             $support = $this->getSupportTemplate();
 
             $fields['state'] = 'a.published';
@@ -128,6 +165,7 @@ class AssociationsHelper extends AssociationExtensionHelper
         if($typeName === 'image')
         {
             $fields  = $this->getFieldsTemplate();
+            $fields['title'] = 'a.title';
             $support = $this->getSupportTemplate();
 
             $fields['state'] = 'a.published';
