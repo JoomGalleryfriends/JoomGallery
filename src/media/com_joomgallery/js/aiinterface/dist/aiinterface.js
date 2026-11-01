@@ -1217,7 +1217,9 @@ class AIinterface {
       coordinate *= -1;
     }
 
-    return coordinate;
+    // Six decimal places provide sub-metre precision and keep the API payload
+    // independent of the camera-specific EXIF rational representation.
+    return Number(coordinate.toFixed(6));
   }
 
   extractGpsCoordinates(payload) {
