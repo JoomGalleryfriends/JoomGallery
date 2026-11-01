@@ -16,7 +16,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\LanguageHelper;
-use Joomla\CMS\Language\Text;
 
 /**
  * JoomGallery Helper for JavaScript related methods
@@ -50,20 +49,30 @@ class JSHelper
     // Adjust extension/client/basePath as needed.
     $lang->load('com_joomgallery', JPATH_BASE);
 
-    // Parse a specific language file and filter by prefix
-    $file = JPATH_BASE . "/components/com_joomgallery/language/{$lang->getTag()}/com_joomgallery.ini";
-
     $strings = [];
+    $languagePath = JPATH_BASE . '/components/com_joomgallery/language';
+    $languageFiles = [
+      $languagePath . '/en-GB/com_joomgallery.ini',
+    ];
 
-    if(is_file($file))
+    // Overlay the active translation on the complete English fallback set.
+    if($lang->getTag() !== 'en-GB')
     {
-      $parsed = LanguageHelper::parseIniFile($file);
+      $languageFiles[] = $languagePath . "/{$lang->getTag()}/com_joomgallery.ini";
+    }
 
-      foreach($parsed as $key => $value)
+    foreach($languageFiles as $file)
+    {
+      if(!is_file($file))
+      {
+        continue;
+      }
+
+      foreach(LanguageHelper::parseIniFile($file) as $key => $value)
       {
         if(str_starts_with($key, $startsWith))
         {
-          $strings[$key] = Text::_($key);
+          $strings[$key] = $value;
         }
       }
     }
