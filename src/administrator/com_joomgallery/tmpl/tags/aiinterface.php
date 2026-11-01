@@ -161,7 +161,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         </div>
       </div>
       <div class="checkbox input-group mb-4 jgai-privacy">
-        <input type="checkbox" id="jgai-privacy-box" name="jgai-privacy-box" value="agree">
+        <input type="checkbox" id="jgai-privacy-box" name="jgai-privacy-box" value="agree"<?php echo $config->get('jg_aiint_tags_privacy_checked', 0) ? ' checked' : ''; ?>>
         <label for="jgai-privacy-box"> <?php echo Text::_('COM_JOOMGALLERY_AIINT_PRIVACY_LBL'); ?> *</label><br>
       </div>
       <div class="privacy jgai-privacy">
@@ -307,6 +307,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         <div class="col-md-12">
           <div id="j-main-container" class="j-main-container">
             <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this, 'options' => $filter_options]); ?>
+            <button class="btn btn-primary d-none" type="button" id="jgai-add-search-keyword-btn" disabled><?php echo Text::_('COM_JOOMGALLERY_AIINT_ADD_KEYWORD'); ?></button>
             <div class="grid">
                 <?php foreach($this->items as $i => $item) : ?>
                   <button id="jgai-keywords-list-<?php echo $this->escape($item->id); ?>-btn" class="btn btn-outline-secondary grid-item"><?php echo $this->escape($item->title); ?></button>

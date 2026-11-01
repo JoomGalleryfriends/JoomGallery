@@ -203,3 +203,16 @@ label.inline {
 fieldset.inline .switcher {
   width: inherit;
 }
+.jg-tags-aiinterface .js-stools-container-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.jg-tags-aiinterface .js-stools-container-bar > * + * {
+  margin-inline-start: 8px;
+}
+.jg-tags-aiinterface .js-stools-container-bar > button,
+.jg-tags-aiinterface .js-stools-container-bar > .btn {
+  margin: 5px 0;
+  margin-inline-start: 8px;
+}

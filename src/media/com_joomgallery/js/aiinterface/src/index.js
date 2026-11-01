@@ -723,6 +723,19 @@ class AIinterface {
     this.addKeywordsToImg(pos, keywords, 'orange');
   }
 
+  addSearchKeyword(el, event) {
+    event.preventDefault();
+
+    const search = document.getElementById('filter_search');
+    const keyword = search?.value.trim();
+
+    if (!keyword) {
+      return;
+    }
+
+    this.addKeywordsToImg(this.current_image, [keyword], 'orange');
+  }
+
   removeKeyword(el, event) {
     event.preventDefault();
 
@@ -2053,6 +2066,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.keyword-delete-color-option').forEach(el => {
     el.addEventListener('click', (e) => ai.selectKeywordDeleteColor(el, e));
   });
+
+  // Add the current tag-filter text as a keyword to the visible image.
+  const searchInput = document.getElementById('filter_search');
+  const addSearchKeywordButton = document.getElementById(`${prefix}-add-search-keyword-btn`);
+
+  if (searchInput && addSearchKeywordButton) {
+    const searchBar = searchInput.closest('.js-stools-container-bar');
+    const updateAddSearchKeywordButton = () => {
+      addSearchKeywordButton.disabled = searchInput.value.trim() === '';
+    };
+
+    if (searchBar) {
+      searchBar.appendChild(addSearchKeywordButton);
+    }
+
+    addSearchKeywordButton.classList.remove('d-none');
+    searchInput.addEventListener('input', updateAddSearchKeywordButton);
+    updateAddSearchKeywordButton();
+  }
 
   // Install event listeners on buttons
   document.querySelectorAll('[id^="'+prefix+'-"][id$="-btn"]').forEach(el => {
