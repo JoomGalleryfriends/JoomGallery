@@ -1097,6 +1097,133 @@ class AIinterface {
     return selected ? selected.dataset.value : null;
   }
 
+  getSavedElementValue(element) {
+    switch (element.dataset.saveType) {
+      case 'dropdown':
+        return element.querySelector('[aria-selected="true"]')?.dataset.value ?? null;
+
+      case 'keyword-list':
+        return Array.from(element.querySelectorAll('button'))
+          .map((button) => button.textContent.trim())
+          .filter(Boolean);
+
+      case 'radio-group':
+        return element.querySelector('input[type="radio"]:checked')?.value ?? null;
+
+      default:
+        if (element instanceof HTMLInputElement && element.type === 'checkbox') {
+          return element.checked;
+        }
+
+        return 'value' in element ? element.value : null;
+    }
+  }
+
+  setSavedElementValue(element, value) {
+    switch (element.dataset.saveType) {
+      case 'dropdown': {
+        const selectedValue = String(value);
+        const items = Array.from(element.querySelectorAll('.dropdown-item'));
+
+        if (!items.some((item) => item.dataset.value === selectedValue)) {
+          break;
+        }
+
+        items.forEach((item) => {
+          const selected = item.dataset.value === selectedValue;
+          item.classList.toggle('active', selected);
+          item.setAttribute('aria-selected', String(selected));
+        });
+        break;
+      }
+
+      case 'keyword-list':
+        element.innerHTML = '';
+
+        if (Array.isArray(value)) {
+          value.map((keyword) => String(keyword).trim()).filter(Boolean).forEach((keyword) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'btn btn-outline-primary';
+            button.textContent = keyword;
+            button.addEventListener('click', function () {
+              this.remove();
+            });
+            element.appendChild(button);
+          });
+        }
+        break;
+
+      case 'radio-group':
+        const inputs = Array.from(element.querySelectorAll('input[type="radio"]'));
+
+        if (!inputs.some((input) => input.value === String(value))) {
+          break;
+        }
+
+        inputs.forEach((input) => {
+          input.checked = input.value === String(value);
+        });
+        break;
+
+      default:
+        if (element instanceof HTMLInputElement && element.type === 'checkbox') {
+          element.checked = value === true;
+        } else if ('value' in element && (typeof value === 'string' || typeof value === 'number')) {
+          element.value = String(value);
+        }
+    }
+  }
+
+  saveGenerationOptions() {
+    const field = document.getElementById(`${this.prefix}-gen-options`);
+
+    if (!field) {
+      return;
+    }
+
+    const options = {};
+
+    document.querySelectorAll('.jg-tags-aiinterface .save-value[data-save-key]').forEach((element) => {
+      options[element.dataset.saveKey] = this.getSavedElementValue(element);
+    });
+
+    field.value = JSON.stringify(options);
+  }
+
+  restoreGenerationOptions() {
+    const field = document.getElementById(`${this.prefix}-gen-options`);
+
+    if (!field?.value) {
+      return false;
+    }
+
+    let options;
+
+    try {
+      options = JSON.parse(field.value);
+    } catch (error) {
+      console.warn('[AIinterface] Ignoring invalid saved generation options.', error);
+      field.value = '';
+      return false;
+    }
+
+    if (!options || typeof options !== 'object' || Array.isArray(options)) {
+      field.value = '';
+      return false;
+    }
+
+    document.querySelectorAll('.jg-tags-aiinterface .save-value[data-save-key]').forEach((element) => {
+      const key = element.dataset.saveKey;
+
+      if (Object.prototype.hasOwnProperty.call(options, key)) {
+        this.setSavedElementValue(element, options[key]);
+      }
+    });
+
+    return true;
+  }
+
   updateSelectionSummary() {
     const output = document.getElementById(`${this.prefix}-current-selection-value`);
 
@@ -2858,7 +2985,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  // Restore generation controls only after dynamic API dropdowns are populated.
+  ai.restoreGenerationOptions();
+
+  const useExifLocation = document.querySelector('input[name="jgai_exif_location"]:checked')?.value === '1';
+  ai.toggleHideElement('#jgai-gr-geo-location', useExifLocation);
   ai.updateSelectionSummary();
+
+  const taggingView = document.querySelector('.jg-tags-aiinterface');
+  const tagsForm = document.getElementById('tagsForm');
+  let saveOptionsQueued = false;
+  const queueSaveGenerationOptions = () => {
+    if (saveOptionsQueued) {
+      return;
+    }
+
+    saveOptionsQueued = true;
+    queueMicrotask(() => {
+      ai.saveGenerationOptions();
+      saveOptionsQueued = false;
+    });
+  };
+
+  ['input', 'change', 'click'].forEach((eventName) => {
+    taggingView?.addEventListener(eventName, (event) => {
+      if (event.target instanceof Element && event.target.closest('.save-value')) {
+        queueSaveGenerationOptions();
+      }
+    });
+  });
+
+  document.querySelectorAll('.save-value[data-save-type="keyword-list"]').forEach((element) => {
+    new MutationObserver(queueSaveGenerationOptions).observe(element, {childList: true});
+  });
+
+  tagsForm?.addEventListener('submit', () => ai.saveGenerationOptions());
+  ai.saveGenerationOptions();
 
   // Install event listeners on keyword bulk-delete controls
   document.querySelectorAll('.keyword-color-select').forEach(el => {

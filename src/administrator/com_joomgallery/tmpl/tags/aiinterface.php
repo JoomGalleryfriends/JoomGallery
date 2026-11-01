@@ -36,6 +36,7 @@ $wa->useStyle('com_joomgallery.admin')
 
 $filter_options = ['formSelector' => '#tagsForm', 'filterButton' => false, 'filtersHidden' => true];
 $form_url       = 'index.php?option=com_joomgallery&view=tags&layout=aiinterface&tmpl=component';
+$gen_options    = Factory::getApplication()->input->get('gen_options', '', 'raw');
 
 $host_url = $config->get('jg_aiint_host', 'http://localhost/api/v1');
 $base_url = parse_url($host_url, PHP_URL_SCHEME) . '://' . parse_url($host_url, PHP_URL_HOST);
@@ -136,7 +137,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <?php echo Text::_('COM_JOOMGALLERY_JS_AIINT_MODEL'); ?>
           </button>
-          <ul class="dropdown-menu" id="jgai-models-dropdown">
+          <ul class="dropdown-menu save-value" id="jgai-models-dropdown" data-save-key="model" data-save-type="dropdown">
             <li><a class="dropdown-item" href="#" data-value="gemma3:4b" aria-selected="true">gemma3:4b (Ollama/Local)</a></li>
             <li><a class="dropdown-item" href="#" data-value="gpt-4.1" aria-selected="false">gpt-4.1 (OpenAI)</a></li>
           </ul>
@@ -145,7 +146,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_TITLE'); ?>
           </button>
-          <ul class="dropdown-menu" id="jgai-modes-dropdown">
+          <ul class="dropdown-menu save-value" id="jgai-modes-dropdown" data-save-key="mode" data-save-type="dropdown">
             <li><a class="dropdown-item" href="#" data-value="performance" aria-selected="true"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_PERFORMANCE'); ?></a></li>
             <li><a class="dropdown-item" href="#" data-value="advanced" aria-selected="false"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_ADVANCED'); ?></a></li>
           </ul>
@@ -154,7 +155,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <?php echo Text::_('JGRID_HEADING_LANGUAGE'); ?>
           </button>
-          <ul class="dropdown-menu" id="jgai-langs-dropdown">
+          <ul class="dropdown-menu save-value" id="jgai-langs-dropdown" data-save-key="language" data-save-type="dropdown">
             <li><a class="dropdown-item" href="#" data-value="en" aria-selected="true">English</a></li>
             <li><a class="dropdown-item" href="#" data-value="de" aria-selected="false">Deutsch</a></li>
           </ul>
@@ -165,7 +166,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         <span id="jgai-current-selection-value"></span>
       </p>
       <div class="checkbox input-group mb-4 jgai-privacy">
-        <input type="checkbox" id="jgai-privacy-box" name="jgai-privacy-box" value="agree"<?php echo $config->get('jg_aiint_tags_privacy_checked', 0) ? ' checked' : ''; ?>>
+        <input type="checkbox" id="jgai-privacy-box" name="jgai-privacy-box" value="agree" class="save-value" data-save-key="privacy"<?php echo $config->get('jg_aiint_tags_privacy_checked', 0) ? ' checked' : ''; ?>>
         <label for="jgai-privacy-box"> <?php echo Text::_('COM_JOOMGALLERY_AIINT_PRIVACY_LBL'); ?> *</label><br>
       </div>
       <div class="privacy jgai-privacy">
@@ -177,13 +178,13 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_INPUTS'); ?></h4>
       <div class="manual-keywords col-6">
         <div class="input-group mb-3">
-          <input type="text" id="jgai-manual-keywords" class="form-control" aria-describedby="jgai-manual-keywords-btn" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_MANTAGS_DESC'); ?>">
+          <input type="text" id="jgai-manual-keywords" class="form-control save-value" data-save-key="manual_keyword_input" aria-describedby="jgai-manual-keywords-btn" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_MANTAGS_DESC'); ?>">
           <button class="btn btn-outline-secondary" type="button" id="jgai-manual-keywords-btn">⮠</button>
         </div>
-        <div class="grid"></div>
+        <div class="grid save-value" data-save-key="manual_keywords" data-save-type="keyword-list"></div>
       </div>
       <div class="prompt-inputs col-6">
-        <div class="mb-3">
+        <div class="mb-3 save-value" data-save-key="use_exif_location" data-save-type="radio-group">
           <label class="inline" for="jgai-exif-location"><?php echo Text::_('COM_JOOMGALLERY_AIINT_EXIF_LOC_LBL');?></label>
           <?php
             echo LayoutHelper::render(
@@ -203,17 +204,17 @@ if(isset($this->input_cid) && !empty($this->input_cid))
 
         <div id="jgai-gr-geo-location" class="mb-3 hidden">
           <label class="inline" for="jgai-geo-location"><?php echo Text::_('COM_JOOMGALLERY_AIINT_GEO_LOC_LBL');?></label>
-          <input type="text" id="jgai-geo-location" class="form-control" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_GEO_LOC_DESC'); ?>">
+          <input type="text" id="jgai-geo-location" class="form-control save-value" data-save-key="location" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_GEO_LOC_DESC'); ?>">
         </div>
 
         <div class="mb-3">
           <label for="jgai-prompt-description" class="form-label"><?php echo Text::_('JGLOBAL_DESCRIPTION'); ?></label>
-          <textarea class="form-control" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_DESCRIPTION_DESC'); ?>" id="jgai-prompt-description"></textarea>
+          <textarea class="form-control save-value" data-save-key="description" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_DESCRIPTION_DESC'); ?>" id="jgai-prompt-description"></textarea>
         </div>
 
         <div class="mb-3">
           <label for="jgai-nmb-keywords" class="form-label"><?php echo Text::_('COM_JOOMGALLERY_AIINT_GEN_NMB'); ?></label>
-          <input type="number" class="form-control" id="jgai-nmb-keywords" value="5">
+          <input type="number" class="form-control save-value" data-save-key="tag_count" id="jgai-nmb-keywords" value="5">
         </div>
 
         <button class="btn btn-primary" type="button" id="jgai-keywords-generate-btn"><?php echo Text::_('COM_JOOMGALLERY_AIINT_GEN_KEYWORDS'); ?></button>
@@ -326,6 +327,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
               <input type="hidden" name="cid" value="<?php echo $this->escape($this->input_cid); ?>"/>
             <?php endif; ?>
             <input type="hidden" name="form_submited" value="1"/>
+            <input type="hidden" name="gen_options" id="jgai-gen-options" value="<?php echo $this->escape($gen_options); ?>"/>
             <?php echo HTMLHelper::_('form.token'); ?>
           </div>
         </div>
