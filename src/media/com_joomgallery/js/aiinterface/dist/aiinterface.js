@@ -1097,6 +1097,25 @@ class AIinterface {
     return selected ? selected.dataset.value : null;
   }
 
+  updateSelectionSummary() {
+    const output = document.getElementById(`${this.prefix}-current-selection-value`);
+
+    if (!output) {
+      return;
+    }
+
+    const model = document.querySelector(`#${this.prefix}-models-dropdown [aria-selected="true"]`);
+    const mode = this.getSelectedListElement(`${this.prefix}-modes-dropdown`);
+    const language = this.getSelectedListElement(`${this.prefix}-langs-dropdown`);
+    const values = [
+      model?.textContent.trim(),
+      this.capitalize(mode),
+      this.capitalize(language),
+    ].filter(Boolean);
+
+    output.textContent = values.join(', ');
+  }
+
   getManualKeywords(container) {
     const keywords = [];
     const grid = container?.querySelector('.manual-keywords .grid');
@@ -1818,6 +1837,14 @@ class AIinterface {
       ? stats.generationRequestSeconds / stats.generationRequestImages
       : 0;
 
+    // Fetch the post-generation balance before rendering the summary.
+    const balanceResponse = await this.getTokens();
+    const newBalance = balanceResponse?.data?.balance ?? balanceResponse?.balance;
+
+    if (newBalance !== undefined) {
+      document.getElementById(`${this.prefix}-balance-value`).textContent = String(newBalance);
+    }
+
     this.renderGenerateSummary({
       successImages: stats.generateSuccess,
       failedImages: stats.generateFailed + stats.fetchFailed,
@@ -1826,17 +1853,12 @@ class AIinterface {
       modelTokens: stats.modelTokens,
       serviceTokens: stats.serviceTokens,
       infractions: stats.infractions,
-      newBalance: this.balance,
+      newBalance: newBalance ?? '-',
       elapsedSeconds,
       averageRequestSeconds,
       failedItems
     });
 
-    // Update user info
-    const balance = await this.getTokens();
-    if (balance?.data?.balance !== undefined) {
-      document.getElementById(`${this.prefix}-balance-value`).textContent = String(balance.data.balance);
-    }
     } catch (error) {
       this.stopKeywordGenerationProgressTimer();
       Joomla.renderMessages({
@@ -2587,9 +2609,9 @@ class AIinterface {
 
     const data = await this.sendGet(url, headers);
 
-    if (data?.data?.balance) {
+    if (data?.data?.balance !== undefined) {
       this.balance = data.data.balance;
-    } else if (data?.balance) {
+    } else if (data?.balance !== undefined) {
       this.balance = data.balance;
     }
 
@@ -2832,8 +2854,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('[id^="'+prefix+'-"][id$="-dropdown"]').forEach(el => {
     el.querySelectorAll('.dropdown-item').forEach(item => {
       ai.addEventListenerDropdown(item);
+      item.addEventListener('click', () => ai.updateSelectionSummary());
     });
   });
+
+  ai.updateSelectionSummary();
 
   // Install event listeners on keyword bulk-delete controls
   document.querySelectorAll('.keyword-color-select').forEach(el => {

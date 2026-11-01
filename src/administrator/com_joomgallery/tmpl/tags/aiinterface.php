@@ -160,6 +160,10 @@ if(isset($this->input_cid) && !empty($this->input_cid))
           </ul>
         </div>
       </div>
+      <p class="jgai-current-selection">
+        <strong><?php echo Text::_('COM_JOOMGALLERY_AIINT_CURRENT_SELECTION'); ?>:</strong><br>
+        <span id="jgai-current-selection-value"></span>
+      </p>
       <div class="checkbox input-group mb-4 jgai-privacy">
         <input type="checkbox" id="jgai-privacy-box" name="jgai-privacy-box" value="agree"<?php echo $config->get('jg_aiint_tags_privacy_checked', 0) ? ' checked' : ''; ?>>
         <label for="jgai-privacy-box"> <?php echo Text::_('COM_JOOMGALLERY_AIINT_PRIVACY_LBL'); ?> *</label><br>
@@ -240,6 +244,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
       ?>
       <div id="jgai-image-panel-<?php echo $j; ?>" class="image-panel" <?php if($j > 0) echo 'style="display: none;"'; ?>>
         <div class="images">
+          <h4 class="image-title"><?php echo $this->escape($img->title); ?></h4>
           <img class="image" data-imgid="<?php echo $img->id;?>" src="<?php echo JoomHelper::getImg($img->id, 'detail'); ?>" width="<?php echo $width; ?>" height="<?php echo $heigth; ?>" alt="<?php echo $img->title; ?>">
           <div class="navigation-btn">
             <button class="btn btn-outline-primary" id="jgai-prev-image-btn" <?php if($first_img) echo 'disabled'; ?>><span class="icon-arrow-left-4"></span> <?php echo Text::_('COM_JOOMGALLERY_PREV_IMG'); ?></button>
