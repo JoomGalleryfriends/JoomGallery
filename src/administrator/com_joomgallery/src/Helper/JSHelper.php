@@ -49,8 +49,8 @@ class JSHelper
     // Adjust extension/client/basePath as needed.
     $lang->load('com_joomgallery', JPATH_BASE);
 
-    $strings = [];
-    $languagePath = JPATH_BASE . '/components/com_joomgallery/language';
+    $strings       = [];
+    $languagePath  = JPATH_BASE . '/components/com_joomgallery/language';
     $languageFiles = [
       $languagePath . '/en-GB/com_joomgallery.ini',
     ];
