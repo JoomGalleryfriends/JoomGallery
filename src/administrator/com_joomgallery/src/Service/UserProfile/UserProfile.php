@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 
 /**

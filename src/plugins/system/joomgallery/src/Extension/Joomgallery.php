@@ -901,7 +901,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       || $this->app->input->getCmd('option') !== 'com_joomgallery'
       || !$this->app->getIdentity()->authorise('core.manage', 'com_joomgallery')
       || $this->app->input->getCmd('view') === 'migration'
-      || strpos($this->app->input->getCmd('task'), 'migration.') === 0)
+      || strpos($this->app->input->getCmd('task', ''), 'migration.') === 0)
     {
       return;
     }
