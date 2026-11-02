@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+<form addruleprefix="Joomgallery\Component\Joomgallery\Administrator\Rule" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <field name="id"
          type="text"
          filter="integer"
@@ -461,6 +461,22 @@
 
   <fieldset type="tab" name="user" label="COM_JOOMGALLERY_CONFIG_TAB_USER_SETTINGS">
     <fieldset type="tab" name="user-general" label="COM_JOOMGALLERY_CONFIG_TAB_COMMON">
+        <field name="jg_create_user" type="list" default="all" global_only="true"
+               label="COM_JOOMGALLERY_CREATE_USER"
+               description="COM_JOOMGALLERY_CREATE_USER_DESC">
+          <option value="all">COM_JOOMGALLERY_CREATE_USER_ALL</option>
+          <option value="groups">COM_JOOMGALLERY_CREATE_USER_GROUPS</option>
+          <option value="users">COM_JOOMGALLERY_CREATE_USER_USERS</option>
+        </field>
+        <field name="jg_create_user_groups" type="usergrouplist" multiple="true" global_only="true"
+               filter="int_array" showon="jg_create_user:groups"
+               label="COM_JOOMGALLERY_CREATE_USER_GROUPS"
+               description="COM_JOOMGALLERY_CREATE_USER_GROUPS_DESC" />
+        <field name="jg_create_user_ids" type="text" filter="string" global_only="true" maxlength="2048" validate="Userids" message="COM_JOOMGALLERY_CREATE_USER_IDS_INVALID"
+               showon="jg_create_user:users" label="COM_JOOMGALLERY_CREATE_USER_IDS"
+               description="COM_JOOMGALLERY_CREATE_USER_IDS_DESC"
+               hint="3,8,20-100" />
+
         <field name="jg_userspace"
               type="radio"
               default="1"

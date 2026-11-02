@@ -119,6 +119,9 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `checked_out_time` DATETIME DEFAULT NULL,
 `created_by` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT 0,
+`jg_create_user` VARCHAR(10) NOT NULL DEFAULT 'all',
+`jg_create_user_groups` VARCHAR(2048) NOT NULL DEFAULT '',
+`jg_create_user_ids` VARCHAR(2048) NOT NULL DEFAULT '',
 `jg_filesystem` VARCHAR(100) NOT NULL DEFAULT "",
 `jg_imagetypes` VARCHAR(100) NOT NULL DEFAULT "jpg,jpeg,png,gif,webp",
 `jg_pathftpupload` VARCHAR(100) NOT NULL DEFAULT "images/joomgallery/FTP/",
@@ -417,7 +420,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_users` (
 `params` TEXT NOT NULL,
 `created_time` DATETIME NOT NULL,
 PRIMARY KEY (`id`),
-KEY `idx_user` (`cmsuser`)
+UNIQUE KEY `idx_user` (`cmsuser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
