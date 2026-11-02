@@ -266,6 +266,7 @@ class GalleryModel extends JoomItemModel
     if(Multilanguage::isEnabled())
     {
       $listModel->setState('filter.language', $this->item->language);
+      $listModel->setState('filter.include_language_all', true);
     }
 
     $imgform_list       = [];

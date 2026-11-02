@@ -103,13 +103,20 @@ $tmpl    = $isModal || $app->input->get('tmpl', '', 'cmd') === 'component' ? '&t
   <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
   <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'associations', Text::_('COM_JOOMGALLERY_FIELD_ASSOCIATIONS', true)); ?>
+
   <div class="row">
     <div class="col-12">
-      <?php echo $this->form->renderFieldset('item_associations'); ?>
+      <?php if($this->item->language === '*') : ?>
+        <div class="alert alert-info">
+          <?php echo Text::_('COM_JOOMGALLERY_ASSOCIATIONS_LANGUAGE_SPECIFIC_ONLY'); ?>
+        </div>
+      <?php else : ?>
+        <?php echo $this->form->renderFieldset('item_associations'); ?>
+      <?php endif; ?>
     </div>
   </div>
 
-<?php echo HTMLHelper::_('uitab.endTab'); ?>
+  <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
   <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Options', Text::_('JGLOBAL_FIELDSET_BASIC', true)); ?>
   <div class="row">

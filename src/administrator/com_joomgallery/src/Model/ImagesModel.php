@@ -617,8 +617,22 @@ class ImagesModel extends JoomListModel
     // Filter on the language.
     if(!$searchProvider->handlesFilter('language') && $language = $this->getState('filter.language'))
     {
-      $query->where($db->quoteName('a.language') . ' = :language')
-        ->bind(':language', $language);
+      if($this->getState('filter.include_language_all', false))
+      {
+        $allLanguage = '*';
+
+        $query->where(
+            '(' . $db->quoteName('a.language') . ' = :language'
+            . ' OR ' . $db->quoteName('a.language') . ' = :allLanguage)'
+        )
+          ->bind(':language', $language)
+          ->bind(':allLanguage', $allLanguage);
+      }
+      else
+      {
+        $query->where($db->quoteName('a.language') . ' = :language')
+          ->bind(':language', $language);
+      }
     }
 
     // Filter by date range
@@ -993,8 +1007,22 @@ class ImagesModel extends JoomListModel
     // Filter on the language.
     if($language = $this->getState('filter.language'))
     {
-      $query->where($db->quoteName('a.language') . ' = :language')
-        ->bind(':language', $language);
+      if($this->getState('filter.include_language_all', false))
+      {
+        $allLanguage = '*';
+
+        $query->where(
+            '(' . $db->quoteName('a.language') . ' = :language'
+            . ' OR ' . $db->quoteName('a.language') . ' = :allLanguage)'
+        )
+          ->bind(':language', $language)
+          ->bind(':allLanguage', $allLanguage);
+      }
+      else
+      {
+        $query->where($db->quoteName('a.language') . ' = :language')
+          ->bind(':language', $language);
+      }
     }
 
     // Filter by date range
