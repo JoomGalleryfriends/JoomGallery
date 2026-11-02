@@ -38,8 +38,8 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\TusService
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\TusServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceTrait;
-use Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile\UserProfileServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile\UserProfileServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile\UserProfileServiceTrait;
 use Joomgallery\Component\Joomgallery\Site\Service\JG3Router;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Association\AssociationServiceInterface;

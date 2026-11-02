@@ -7,3 +7,9 @@ ALTER TABLE `#__joomgallery_configs` ADD `jg_create_user_ids` VARCHAR(2048) NOT 
 
 -- Do not silently merge existing profiles: duplicate cmsuser values must be resolved before upgrading.
 ALTER TABLE `#__joomgallery_users` DROP INDEX `idx_user`, ADD UNIQUE KEY `idx_user` (`cmsuser`);
+
+ALTER TABLE `#__joomgallery_collections`
+  ADD `is_default` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `description`,
+  DROP INDEX `idx_list_collections`,
+  DROP COLUMN `language`,
+  ADD INDEX `idx_list_collections` (`userid`, `is_default`, `published`, `access`, `ordering`);

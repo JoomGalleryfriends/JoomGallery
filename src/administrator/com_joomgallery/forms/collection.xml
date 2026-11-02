@@ -37,6 +37,11 @@
            filter="\Joomla\CMS\Component\ComponentHelper::filterText"
            label="JGLOBAL_DESCRIPTION" />
 
+    <field name="is_default"
+           type="hidden"
+           filter="integer"
+           default="0" />
+
     <field name="published"
            type="radio"
            layout="joomla.form.field.radio.switcher"
@@ -52,14 +57,6 @@
            label="JFIELD_ACCESS_LABEL"
            description="JFIELD_ACCESS_DESC"
            size="1" />
-
-    <field name="language"
-           type="language"
-           client="administrator"
-           label="JGRID_HEADING_LANGUAGE"
-           >
-           <option value="*">JALL</option>
-    </field>
 
     <field name="created_by"
            type="user"

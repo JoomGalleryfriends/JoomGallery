@@ -119,6 +119,13 @@ class UserProfile implements UserProfileInterface
     {
       $userModel->createProfile((int) $id);
     }
+
+    $collectionModel = $this->mvcFactory->createModel('Collection', 'Administrator', ['ignore_request' => true]);
+
+    foreach($usersModel->getEligibleProfiles($policy, $groups, $ranges, $cmsuser) as $profile)
+    {
+      $collectionModel->ensureDefaultCollection((int) $profile->id, (int) $profile->cmsuser);
+    }
   }
 
   /**
@@ -150,7 +157,7 @@ class UserProfile implements UserProfileInterface
 
     foreach($collectionsModel->getIdsByUser((int) $profile->id) as $collectionId)
     {
-      $collectionModel->deleteCollection((int) $collectionId);
+      $collectionModel->deleteCollection((int) $collectionId, true);
     }
 
     $userModel->deleteProfile((int) $profile->id);

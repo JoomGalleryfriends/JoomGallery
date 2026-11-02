@@ -188,7 +188,7 @@ abstract class JoomAdminModel extends AdminModel
     $pk    = (isset($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
 
     // Change language to 'All' if multilangugae is not enabled
-    if(!Multilanguage::isEnabled())
+    if($this->type !== 'collection' && !Multilanguage::isEnabled())
     {
       $data['language'] = '*';
     }
@@ -529,7 +529,7 @@ abstract class JoomAdminModel extends AdminModel
    */
   protected function preprocessForm(Form $form, $data, $group = 'joomgallery')
   {
-    if(!Multilanguage::isEnabled())
+    if($this->type !== 'collection' && !Multilanguage::isEnabled())
     {
       $form->setFieldAttribute('language', 'type', 'hidden');
       $form->setFieldAttribute('language', 'default', '*');

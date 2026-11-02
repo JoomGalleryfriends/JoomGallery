@@ -165,4 +165,67 @@ class UsersModel extends JoomListModel
 
     return array_map('intval', $db->setQuery($query)->loadColumn());
   }
+
+  /**
+   * Return eligible JoomGallery profiles and their linked Joomla user IDs.
+   *
+   * @param   string    $policy   Profile creation policy: all, groups or users.
+   * @param   array     $groups   Joomla user-group IDs accepted by the groups policy.
+   * @param   array     $ranges   Inclusive Joomla user-ID ranges accepted by the users policy.
+   * @param   int|null  $cmsuser  Optional Joomla user ID used to limit reconciliation to one account.
+   *
+   * @return  array  Objects containing the JoomGallery profile ID and Joomla user ID.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  public function getEligibleProfiles(string $policy, array $groups, array $ranges, ?int $cmsuser = null): array
+  {
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)->select(['g.id', 'g.cmsuser'])
+      ->from($db->quoteName('#__joomgallery_users', 'g'))
+      ->join('INNER', $db->quoteName('#__users', 'u') . ' ON u.id = g.cmsuser')
+      ->where('u.id > 0');
+
+    if($cmsuser !== null)
+    {
+      $query->where('u.id = ' . (int) $cmsuser);
+    }
+
+    if($policy === 'groups')
+    {
+      $groups = array_values(array_filter(array_map('intval', $groups), static fn($id) => $id > 0));
+
+      if(!$groups)
+      {
+        return [];
+      }
+
+    $query->where(
+        'EXISTS (SELECT 1 FROM ' . $db->quoteName('#__user_usergroup_map')
+        . ' AS m WHERE m.user_id = u.id AND m.group_id IN (' . implode(',', $groups) . '))'
+    );
+    }
+    elseif($policy === 'users')
+    {
+      if(!$ranges)
+      {
+        return [];
+      }
+
+      $conditions = [];
+
+      foreach($ranges as [$start, $end])
+      {
+        $conditions[] = 'u.id BETWEEN ' . (int) $start . ' AND ' . (int) $end;
+      }
+
+      $query->where('(' . implode(' OR ', $conditions) . ')');
+    }
+    elseif($policy !== 'all')
+    {
+      throw new \InvalidArgumentException('Invalid Create User policy.');
+    }
+
+    return $db->setQuery($query)->loadObjectList();
+  }
 }

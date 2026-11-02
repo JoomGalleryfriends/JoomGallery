@@ -14,6 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Model supporting lists of collections.
  *
@@ -117,5 +121,168 @@ class CollectionsModel extends JoomListModel
       ->where('userid = ' . $userId);
 
     return array_map('intval', $db->setQuery($query)->loadColumn());
+  }
+
+  /**
+   * Build the query for collections mapped to an image.
+   *
+   * @param   int  $img_id  Image ID.
+   *
+   * @return  \Joomla\Database\DatabaseQuery  Mapping query.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  protected function getMappedListQuery($img_id)
+  {
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select('a.*')
+      ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS, 'a'))
+    ->join(
+        'INNER',
+        $db->quoteName(_JOOM_TABLE_COLLECTIONS_REF, 'ref')
+        . ' ON ' . $db->quoteName('a.id') . ' = ' . $db->quoteName('ref.collectionid')
+    )
+      ->where($db->quoteName('ref.imgid') . ' = ' . (int) $img_id)
+      ->order('a.id ASC');
+
+    return $query;
+  }
+
+  /**
+   * Return collections mapped to an image.
+   *
+   * @param   int  $img_id  Image ID.
+   *
+   * @return  array|false  Mapped collection records, or false on failure.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  public function getMappedItems($img_id)
+  {
+    try
+    {
+      return $this->_getList($this->getMappedListQuery((int) $img_id));
+    }
+    catch(\RuntimeException $e)
+    {
+      $this->setError($e->getMessage());
+      $this->component->addLog($e->getMessage(), 'error', 'jerror');
+
+      return false;
+    }
+  }
+
+  /**
+   * Return mapped collection titles indexed by image ID.
+   *
+   * @param   array  $imageIds  Image IDs.
+   *
+   * @return  array  Associative array containing a title list for each image ID.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  public function getMappedTitlesByImageIds(array $imageIds): array
+  {
+    $imageIds = ArrayHelper::toInteger($imageIds);
+    $imageIds = array_values(array_unique(array_filter($imageIds)));
+
+    if(!$imageIds)
+    {
+      return [];
+    }
+
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select([$db->quoteName('ref.imgid'), $db->quoteName('a.title')])
+      ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS, 'a'))
+    ->join(
+        'INNER',
+        $db->quoteName(_JOOM_TABLE_COLLECTIONS_REF, 'ref')
+        . ' ON ' . $db->quoteName('ref.collectionid') . ' = ' . $db->quoteName('a.id')
+    )
+      ->whereIn($db->quoteName('ref.imgid'), $imageIds, ParameterType::INTEGER)
+      ->order([$db->quoteName('ref.imgid') . ' ASC', $db->quoteName('a.title') . ' ASC']);
+    try
+    {
+      $rows = $db->setQuery($query)->loadObjectList();
+    }
+    catch(\RuntimeException $e)
+    {
+      $this->setError($e->getMessage());
+      $this->component->addLog($e->getMessage(), 'error', 'jerror');
+
+      return [];
+    }
+
+    $titles = array_fill_keys($imageIds, []);
+
+    foreach($rows as $row)
+    {
+      $titles[(int) $row->imgid][] = $row->title;
+    }
+
+    return $titles;
+  }
+
+  /**
+   * Replace all collection mappings for an image with the supplied selection.
+   *
+   * @param   array  $new_collections  Collection IDs that should be mapped.
+   * @param   int    $img_id           Image ID.
+   *
+   * @return  boolean  True when every mapping operation succeeds.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  public function updateMapping($new_collections, $img_id)
+  {
+    $newCollections = ArrayHelper::toInteger((array) $new_collections);
+    $newCollections = array_values(array_unique(array_filter($newCollections)));
+    $mappedItems    = $this->getMappedItems((int) $img_id);
+
+    if($mappedItems === false)
+    {
+      return false;
+    }
+
+    $currentCollections = $this->idArray($mappedItems);
+    $collectionModel    = Factory::getApplication()->bootComponent('com_joomgallery')
+      ->getMVCFactory()->createModel('Collection', 'Administrator', ['ignore_request' => true]);
+    $success            = true;
+
+    foreach(array_diff($newCollections, $currentCollections) as $collectionId)
+    {
+      if(!$collectionModel->addMapping($collectionId, $img_id))
+      {
+        $this->setError($collectionModel->getError());
+        $success = false;
+      }
+    }
+
+    foreach(array_diff($currentCollections, $newCollections) as $collectionId)
+    {
+      if(!$collectionModel->removeMapping($collectionId, $img_id))
+      {
+        $this->setError($collectionModel->getError());
+        $success = false;
+      }
+    }
+
+    return $success;
+  }
+
+  /**
+   * Convert collection records to collection IDs.
+   *
+   * @param   array  $objectlist  Collection records.
+   *
+   * @return  array  Collection IDs.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  protected function idArray($objectlist): array
+  {
+    return array_map(static fn($item) => (int) $item->id, (array) $objectlist);
   }
 }
