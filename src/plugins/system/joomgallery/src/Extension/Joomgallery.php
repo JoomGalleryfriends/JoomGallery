@@ -15,11 +15,13 @@ namespace Joomgallery\Plugin\System\Joomgallery\Extension;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\User\ProfileLifecycle;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Event\Model\AfterCleanCacheEvent;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Event\DispatcherAwareInterface;
@@ -73,7 +75,25 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
    *
    * @since  4.0.0
    */
-  protected $autoloadLanguage = true;
+  protected $autoloadLanguage        = true;
+
+  /**
+   * ??
+   *
+   * @var    boolean
+   *
+   * @since  4.6.0
+   */
+  protected bool $profilePolicyDirty = false;
+
+  /**
+   * ??
+   *
+   * @var    boolean
+   *
+   * @since  4.6.0
+   */
+  protected bool $profileReconcile   = false;
 
   /**
    * List of allowed form context
@@ -112,12 +132,22 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     if(self::$jg_exists)
     {
       return [
-        'onContentCleanCache'  => ['onContentCleanCache', Priority::NORMAL],
-        'onContentPrepareForm' => ['onContentPrepareForm', Priority::NORMAL],
-        'onContentPrepareData' => ['onContentPrepareData', Priority::NORMAL],
-        'onUserAfterSave'      => ['onUserAfterSave', Priority::NORMAL],
-        'onUserAfterDelete'    => ['onUserAfterDelete', Priority::NORMAL],
-        'onContentAfterSave'   => ['onContentAfterSave', Priority::NORMAL],
+        'onContentCleanCache'    => ['onContentCleanCache', Priority::NORMAL],
+        'onContentPrepareForm'   => ['onContentPrepareForm', Priority::NORMAL],
+        'onContentPrepareData'   => ['onContentPrepareData', Priority::NORMAL],
+        'onUserAfterSaveGroup'   => ['onUserPolicyChanged', Priority::NORMAL],
+        'onUserAfterDeleteGroup' => ['onUserPolicyChanged', Priority::NORMAL],
+        'onExtensionAfterSave'   => ['onUserPolicyChanged', Priority::NORMAL],
+        'onApplicationAfterSave' => ['onUserPolicyChanged', Priority::NORMAL],
+        'onTableAfterStore'      => ['onProfilePolicyTableChange', Priority::NORMAL],
+        'onTableAfterDelete'     => ['onProfilePolicyTableChange', Priority::NORMAL],
+        'onAfterDispatch'        => ['processProfilePolicyChanges', Priority::NORMAL],
+        'onAfterRespond'         => ['processProfilePolicyChanges', Priority::NORMAL],
+        'onAfterRoute'           => ['onAfterRoute', Priority::NORMAL],
+        'onUserAfterSave'        => ['onUserAfterSave', Priority::NORMAL],
+        'onUserAfterDelete'      => ['onUserAfterDelete', Priority::NORMAL],
+        'onContentAfterDelete'   => ['onProfileContentDeleted', Priority::NORMAL],
+        'onContentAfterSave'     => ['onContentAfterSave', Priority::NORMAL],
       ];
     }
 
@@ -355,6 +385,23 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     // Save the extra input into the database
     $userId = isset($data['id']) ? (int) $data['id'] : 0;
 
+    if($userId && $result)
+    {
+      try
+      {
+        $this->refreshProfileAccess();
+        $this->getProfileLifecycle()->ensure($userId);
+      }
+      catch(\Throwable $e)
+      {
+        Log::add($e->getMessage(), Log::ERROR, 'com_joomgallery');
+        $this->setError($event, $e->getMessage());
+        $this->setResult($event, false);
+
+        return;
+      }
+    }
+
     if($userId && $result && isset($data['joomgallery']) && (\count($data['joomgallery'])))
     {
       $options = [
@@ -449,12 +496,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     {
       try
       {
+        $this->refreshProfileAccess();
+        $this->getProfileLifecycle()->delete($userId);
         $this->deleteFields($userId);
       }
-      catch(\Exception $e)
+      catch(\Throwable $e)
       {
+        Log::add($e->getMessage(), Log::ERROR, 'com_joomgallery');
         $this->setError($event, $e->getMessage());
-        $this->setResult($event, true);
+        $this->setResult($event, false);
 
         return;
       }
@@ -475,7 +525,14 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
   public function onContentAfterSave(Event $event)
   {
     // J4x and J5x (5x: $context = getContext (); $table = $event->getArgument ('subject');
-    [$context, $table, $isNew, $data] = array_values($event->getArguments());
+    [$context, $table, $isNew, $data] = array_pad(array_values($event->getArguments()), 4, null);
+
+    if(\in_array($context, ['com_users.group', 'com_users.level', 'com_joomgallery.config'], true))
+    {
+      $this->onUserPolicyChanged($event);
+
+      return;
+    }
 
     if(!\in_array($context, ['com_menus.item']) || !$this->app->isClient('administrator'))
     {
@@ -702,15 +759,112 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     }
   }
 
-  /**
-   * Delete user fields in DB
-   *
-   * @param   int  $userId  User id
-   *
-   * @return  void
-   *
-   * @since   4.0.0
-   */
+  /** Process successful group/configuration changes before a controller redirects. */
+  public function onUserPolicyChanged(EventInterface $event): void
+  {
+    $this->profilePolicyDirty = true;
+    $this->profileReconcile   = true;
+    $this->processProfilePolicyChanges();
+  }
+
+  /** Viewing-level deletion also changes access, without a user save event. */
+  public function onProfileContentDeleted(EventInterface $event): void
+  {
+    $context = $event->getArgument('context', '');
+
+    if(\in_array($context, ['com_users.level', 'com_users.group', 'com_joomgallery.config'], true))
+    {
+      $this->onUserPolicyChanged($event);
+    }
+  }
+
+  /** Asset and viewing-level writes include ACL edits outside com_users. */
+  public function onProfilePolicyTableChange(EventInterface $event): void
+  {
+    if($event->getArgument('result', true) === false)
+    {
+      return;
+    }
+    $table = $event->getArgument('subject');
+
+    if($table && \in_array($table->getTableName(), ['#__assets', '#__viewlevels', '#__usergroups', '#__joomgallery_configs'], true))
+    {
+      $this->profilePolicyDirty = true;
+      $this->profileReconcile   = $this->profileReconcile || \in_array($table->getTableName(), ['#__usergroups', '#__joomgallery_configs'], true);
+      \Joomla\CMS\Access\Access::clearStatics();
+    }
+  }
+
+  /** Clear group-dependent configuration and permissions even without profile form fields. */
+  protected function refreshProfileAccess(): void
+  {
+    \Joomla\CMS\Access\Access::clearStatics();
+    $component = $this->app->bootComponent('com_joomgallery');
+    $component->createConfig('com_joomgallery', null, true, false);
+    $component->getConfig()->emptyCache();
+    $identity = $this->app->getIdentity();
+
+    if($identity && $identity->id)
+    {
+      $identity->clearAccessRights();
+    }
+  }
+
+  /** Called after dispatch (and as a response fallback) for a single reconciliation per batch. */
+  public function processProfilePolicyChanges(): void
+  {
+    if(!$this->profilePolicyDirty)
+    {
+      return;
+    }
+    $this->profilePolicyDirty = false;
+    try
+    {
+      $this->refreshProfileAccess();
+
+      if($this->profileReconcile)
+      {
+        $this->profileReconcile = false;
+        $this->getProfileLifecycle()->ensure();
+      }
+    }
+    catch(\Throwable $e)
+    {
+      Log::add($e->getMessage(), Log::ERROR, 'com_joomgallery');
+      $this->app->enqueueMessage($e->getMessage(), 'warning');
+    }
+  }
+
+  protected function getProfileLifecycle(): ProfileLifecycle
+  {
+    $this->app->bootComponent('com_joomgallery');
+
+    return ProfileLifecycle::fromConfiguration($this->db);
+  }
+
+  /** Backfill existing accounts on administrator gallery visits, including after policy changes. */
+  public function onAfterRoute(): void
+  {
+    if(!$this->app->isClient('administrator')
+      || $this->app->input->getCmd('option') !== 'com_joomgallery'
+      || !$this->app->getIdentity()->authorise('core.manage', 'com_joomgallery')
+      || $this->app->input->getCmd('view') === 'migration'
+      || strpos($this->app->input->getCmd('task'), 'migration.') === 0)
+    {
+      return;
+    }
+
+    try
+    {
+      $this->getProfileLifecycle()->ensure();
+    }
+    catch(\Throwable $e)
+    {
+      Log::add($e->getMessage(), Log::ERROR, 'com_joomgallery');
+      $this->app->enqueueMessage($e->getMessage(), 'warning');
+    }
+  }
+  /** Delete the Joomla profile fields owned by JoomGallery. */
   protected function deleteFields($userId)
   {
     $query = $this->db->getQuery(true)
