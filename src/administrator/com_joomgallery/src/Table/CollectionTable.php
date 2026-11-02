@@ -50,6 +50,22 @@ class CollectionTable extends Table
   public $approveImages = false;
 
   /**
+   * Allow lifecycle code to create or designate a default collection.
+   *
+   * @var    bool
+   * @since  DEPLOY_VERSION
+   */
+  public bool $allowDefaultChanges = false;
+
+  /**
+   * Allow the user-profile lifecycle to delete a default collection.
+   *
+   * @var    bool
+   * @since  DEPLOY_VERSION
+   */
+  public bool $allowDefaultDelete = false;
+
+  /**
    * Constructor
    *
    * @param   JDatabase  &$db               A database connector object
@@ -81,6 +97,31 @@ class CollectionTable extends Table
   {
     $date = Factory::getDate();
     $task = Factory::getApplication()->input->get('task', '', 'cmd');
+    $id   = (int) ($array['id'] ?? $this->id ?? 0);
+
+    // Default status and ownership are lifecycle invariants, not editable fields.
+    if(!$this->allowDefaultChanges && !$this->is_migration)
+    {
+      if($id > 0)
+      {
+        $original = new self($this->getDatabase());
+
+        if($original->load($id))
+        {
+          // Only lifecycle or migration code may designate another default.
+          $array['is_default'] = (int) $original->is_default;
+
+          if((int) $original->is_default === 1)
+          {
+            $array['userid'] = (int) $original->userid;
+          }
+        }
+      }
+      elseif(!empty($array['is_default']))
+      {
+        $array['is_default'] = 0;
+      }
+    }
 
     // Support for title field: title
     if(\array_key_exists('title', $array))
@@ -251,6 +292,18 @@ class CollectionTable extends Table
    */
   public function delete($pk = null)
   {
+    if(!$this->load($pk))
+    {
+      return false;
+    }
+
+    if((int) $this->is_default === 1 && !$this->allowDefaultDelete)
+    {
+      $this->setError('The default collection can only be deleted with its JoomGallery user profile.');
+
+      return false;
+    }
+
     $this->_trackAssets = false;
 
     if($success = parent::delete($pk))

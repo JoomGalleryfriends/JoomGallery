@@ -366,11 +366,11 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_collections` (
 `alias` VARCHAR(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT "",
 `title` VARCHAR(255) NOT NULL DEFAULT "",
 `description` TEXT NOT NULL,
+`is_default` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 `access` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `published` TINYINT(1) NOT NULL DEFAULT 1,
 `hidden` TINYINT(1) NOT NULL DEFAULT 0,
 `ordering` INT(11) NOT NULL DEFAULT 0,
-`language` CHAR(7) NOT NULL DEFAULT "*" COMMENT "The language code.",
 `created_time` DATETIME NOT NULL,
 `created_by` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `modified_time` DATETIME NOT NULL,
@@ -384,7 +384,7 @@ PRIMARY KEY (`id`),
 KEY `idx_access` (`access`),
 KEY `idx_checkout` (`checked_out`),
 KEY `idx_created_by` (`created_by`),
-INDEX `idx_list_collections` (`userid`, `published`, `access`, `language`, `ordering`)
+INDEX `idx_list_collections` (`userid`, `is_default`, `published`, `access`, `ordering`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
