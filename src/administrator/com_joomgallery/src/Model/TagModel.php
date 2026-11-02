@@ -18,7 +18,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 
-/*
+/**
  * Tag model.
  *
  * @package JoomGallery

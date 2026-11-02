@@ -90,6 +90,12 @@ class ConfigTable extends Table
       $array['modified_by'] = Factory::getApplication()->getIdentity()->id;
     }
 
+    // Store the lifecycle group selector as CSV.
+    if(isset($array['jg_create_user_groups']) && \is_array($array['jg_create_user_groups']))
+    {
+      $array['jg_create_user_groups'] = implode(',', array_map('intval', $array['jg_create_user_groups']));
+    }
+
     // Support for multiple field: jg_replaceshowwarning
     $this->multipleFieldSupport($array, 'jg_replaceshowwarning');
 
