@@ -29,7 +29,7 @@ ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_tags_label` TINY
 ALTER TABLE `#__joomgallery_configs` DROP COLUMN `jg_maxuploadfields`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_detail_view_title_position` VARCHAR(5) NOT NULL DEFAULT 'below' AFTER `jg_detail_view_show_title`;
 ALTER TABLE `#__joomgallery_configs` ADD `jg_create_user` VARCHAR(10) NOT NULL DEFAULT 'all';
-ALTER TABLE `#__joomgallery_configs` ADD `jg_create_user_groups` VARCHAR(2048) NOT NULL DEFAULT '',
+ALTER TABLE `#__joomgallery_configs` ADD `jg_create_user_groups` VARCHAR(2048) NOT NULL DEFAULT '';
 ALTER TABLE `#__joomgallery_configs` ADD `jg_create_user_ids` VARCHAR(2048) NOT NULL DEFAULT '';
 
 -- Do not silently merge existing profiles: duplicate cmsuser values must be resolved before upgrading.

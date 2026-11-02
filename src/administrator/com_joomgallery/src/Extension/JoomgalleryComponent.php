@@ -38,6 +38,8 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\TusService
 use Joomgallery\Component\Joomgallery\Administrator\Service\TusServer\TusServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile\UserProfileService;
+use Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile\UserProfileServiceInterface;
 use Joomgallery\Component\Joomgallery\Site\Service\JG3Router;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Association\AssociationServiceInterface;
@@ -61,7 +63,7 @@ use Psr\Container\ContainerInterface;
  * @package JoomGallery
  * @since   4.0.0
  */
-class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface
+class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface, UserProfileServiceInterface
 {
   use MessageTrait;
   use AssociationServiceTrait;
@@ -91,6 +93,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
   use TusServiceTrait;
   use UploaderServiceTrait;
   use MigrationServiceTrait;
+  use UserProfileService;
 
   /**
    * Storage for the component cache object

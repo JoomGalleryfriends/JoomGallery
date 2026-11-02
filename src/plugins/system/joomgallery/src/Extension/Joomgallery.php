@@ -15,7 +15,7 @@ namespace Joomgallery\Plugin\System\Joomgallery\Extension;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomgallery\Component\Joomgallery\Administrator\User\ProfileLifecycle;
+use Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile\UserProfileInterface;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Event\Model\AfterCleanCacheEvent;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
@@ -75,10 +75,10 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
    *
    * @since  4.0.0
    */
-  protected $autoloadLanguage        = true;
+  protected $autoloadLanguage = true;
 
   /**
-   * ??
+   * True after a profile-affecting ACL or configuration change is detected.
    *
    * @var    boolean
    *
@@ -87,13 +87,13 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
   protected bool $profilePolicyDirty = false;
 
   /**
-   * ??
+   * True when changed policy data requires eligible user profiles to be reconciled.
    *
    * @var    boolean
    *
    * @since  4.6.0
    */
-  protected bool $profileReconcile   = false;
+  protected bool $profileReconcile = false;
 
   /**
    * List of allowed form context
@@ -390,7 +390,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       try
       {
         $this->refreshProfileAccess();
-        $this->getProfileLifecycle()->ensure($userId);
+        $this->getUserProfileService()->ensure($userId);
       }
       catch(\Throwable $e)
       {
@@ -497,7 +497,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       try
       {
         $this->refreshProfileAccess();
-        $this->getProfileLifecycle()->delete($userId);
+        $this->getUserProfileService()->delete($userId);
         $this->deleteFields($userId);
       }
       catch(\Throwable $e)
@@ -759,7 +759,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     }
   }
 
-  /** Process successful group/configuration changes before a controller redirects. */
+  /**
+   * Mark user-profile policy data as changed and reconcile eligible profiles.
+   *
+   * @param   EventInterface  $event  Joomla event that reported the policy change.
+   *
+   * @return  void
+   *
+   * @since   4.6.0
+   */
   public function onUserPolicyChanged(EventInterface $event): void
   {
     $this->profilePolicyDirty = true;
@@ -767,7 +775,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     $this->processProfilePolicyChanges();
   }
 
-  /** Viewing-level deletion also changes access, without a user save event. */
+  /**
+   * Handle deletion of viewing levels, user groups or JoomGallery configuration.
+   *
+   * @param   EventInterface  $event  Content deletion event.
+   *
+   * @return  void
+   *
+   * @since   4.6.0
+   */
   public function onProfileContentDeleted(EventInterface $event): void
   {
     $context = $event->getArgument('context', '');
@@ -778,7 +794,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     }
   }
 
-  /** Asset and viewing-level writes include ACL edits outside com_users. */
+  /**
+   * Detect table writes that can change profile eligibility or access calculations.
+   *
+   * @param   EventInterface  $event  Table store or delete event.
+   *
+   * @return  void
+   *
+   * @since   4.6.0
+   */
   public function onProfilePolicyTableChange(EventInterface $event): void
   {
     if($event->getArgument('result', true) === false)
@@ -795,7 +819,13 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     }
   }
 
-  /** Clear group-dependent configuration and permissions even without profile form fields. */
+  /**
+   * Clear group-dependent JoomGallery configuration and Joomla access caches.
+   *
+   * @return  void
+   *
+   * @since   4.6.0
+   */
   protected function refreshProfileAccess(): void
   {
     \Joomla\CMS\Access\Access::clearStatics();
@@ -810,7 +840,13 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     }
   }
 
-  /** Called after dispatch (and as a response fallback) for a single reconciliation per batch. */
+  /**
+   * Process pending policy changes once per request or event batch.
+   *
+   * @return  void
+   *
+   * @since   4.6.0
+   */
   public function processProfilePolicyChanges(): void
   {
     if(!$this->profilePolicyDirty)
@@ -825,7 +861,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       if($this->profileReconcile)
       {
         $this->profileReconcile = false;
-        $this->getProfileLifecycle()->ensure();
+        $this->getUserProfileService()->ensure();
       }
     }
     catch(\Throwable $e)
@@ -835,14 +871,30 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     }
   }
 
-  protected function getProfileLifecycle(): ProfileLifecycle
+  /**
+   * Return the component user-profile lifecycle service.
+   *
+   * @return  UserProfileInterface  User-profile lifecycle service instance.
+   *
+   * @since   4.6.0
+   */
+  protected function getUserProfileService(): UserProfileInterface
   {
-    $this->app->bootComponent('com_joomgallery');
+    $component = $this->app->bootComponent('com_joomgallery');
 
-    return ProfileLifecycle::fromConfiguration($this->db);
+    return $component->getUserProfile();
   }
 
-  /** Backfill existing accounts on administrator gallery visits, including after policy changes. */
+  /**
+   * Backfill eligible profiles when an authorised administrator opens JoomGallery.
+   *
+   * Migration requests are excluded so profile provisioning cannot interfere with
+   * user and collection records being imported.
+   *
+   * @return  void
+   *
+   * @since   4.6.0
+   */
   public function onAfterRoute(): void
   {
     if(!$this->app->isClient('administrator')
@@ -856,7 +908,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
     try
     {
-      $this->getProfileLifecycle()->ensure();
+      $this->getUserProfileService()->ensure();
     }
     catch(\Throwable $e)
     {
