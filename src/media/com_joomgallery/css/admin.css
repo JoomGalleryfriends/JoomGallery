@@ -3,6 +3,11 @@
     --modal-width: 1400px;
   }
 }
+@media (width < 992px) {
+  .com_joomgallery .modal-dialog.modal-lg {
+    --modal-width: 90%;
+  }
+}
 a[target="_blank"]::before {
   padding-inline-end: 0.5em !important;
 }
@@ -284,4 +289,22 @@ joomla-field-image .jg_minithumb {
 }
 .exif-form > .control-group > .control-label {
   display: none;
+}
+.full-height .modal-dialog {
+  width: calc(100% - 2 * var(--modal-margin));
+  height: calc(100dvh - 2 * var(--modal-margin));
+}
+.full-height .modal-content {
+  height: 100%;
+  overflow: hidden;
+}
+.full-height .modal-body {
+  min-height: 0;
+  overflow: hidden;
+  margin-bottom: 2.3rem;
+}
+.full-height .modal-body iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
 }

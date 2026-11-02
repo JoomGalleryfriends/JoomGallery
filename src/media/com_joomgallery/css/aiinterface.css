@@ -20,12 +20,17 @@
  display: flex;
  justify-content: space-between;
  align-items: center;
+ flex-wrap: wrap;
+}
+.jg-tags-aiinterface .top-controls .interface-btns {
+  margin-bottom: 0.5rem;
 }
 .jg-tags-aiinterface .token-balance {
   margin-right: var(--gutter-x);
 }
 .jg-tags-aiinterface .image-panel {
   display: flex;
+  flex-wrap: wrap;
 }
 .jg-tags-aiinterface .images-panel .images .image {
   max-width: 400px;
@@ -35,7 +40,7 @@
 .jg-tags-aiinterface .images-panel .keywords {
   margin-left: var(--gutter-x);
   flex: 1;
-  min-width: 0;
+  min-width: 250px;
 }
 .jg-tags-aiinterface .images-panel .navigation-btn {
   display: flex;
@@ -215,4 +220,15 @@ fieldset.inline .switcher {
 .jg-tags-aiinterface .js-stools-container-bar > .btn {
   margin: 5px 0;
   margin-inline-start: 8px;
+}
+@media (width < 995px) {
+  .jg-tags-aiinterface .interface-controls > div {
+    --gutter-y: 1rem;
+  }
+}
+@media (width < 850px) {
+  .jg-tags-aiinterface .images-panel .keywords {
+    margin-left: initial;
+    margin-top: var(--gutter-x);
+  }
 }

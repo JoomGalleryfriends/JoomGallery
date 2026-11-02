@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('modal-tagging');
   if (!modal) return;
+  modal.classList.add('full-height');
 
   modal.addEventListener('show.bs.modal', (event) => {
     const trigger = event.relatedTarget;

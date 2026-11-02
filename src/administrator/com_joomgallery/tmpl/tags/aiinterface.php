@@ -130,7 +130,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
   <hr>
 
   <div class="interface-controls row">
-    <div class="model-selection col-4">
+    <div class="model-selection col-lg-4">
       <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_CONFIGURE_MODEL'); ?></h4>
       <div class="input-group d-flex">
         <div class="dropdown mb-3 jgai-model">
@@ -174,16 +174,16 @@ if(isset($this->input_cid) && !empty($this->input_cid))
         <a href="<?php echo $base_url . '/' . $lang . '/model-info/'; ?>" target="_blank"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PRIVACY_LINK'); ?></a>
       </div>
     </div>
-    <div class="prompt-settings col-8 row">
+    <div class="prompt-settings col-lg-8 row">
       <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_PROMPTING_INPUTS'); ?></h4>
-      <div class="manual-keywords col-6">
+      <div class="manual-keywords col-sm-6">
         <div class="input-group mb-3">
           <input type="text" id="jgai-manual-keywords" class="form-control save-value" data-save-key="manual_keyword_input" aria-describedby="jgai-manual-keywords-btn" placeholder="<?php echo Text::_('COM_JOOMGALLERY_AIINT_MANTAGS_DESC'); ?>">
           <button class="btn btn-outline-secondary" type="button" id="jgai-manual-keywords-btn">⮠</button>
         </div>
         <div class="grid save-value" data-save-key="manual_keywords" data-save-type="keyword-list"></div>
       </div>
-      <div class="prompt-inputs col-6">
+      <div class="prompt-inputs col-sm-6">
         <div class="mb-3 save-value" data-save-key="use_exif_location" data-save-type="radio-group">
           <label class="inline" for="jgai-exif-location"><?php echo Text::_('COM_JOOMGALLERY_AIINT_EXIF_LOC_LBL');?></label>
           <?php
