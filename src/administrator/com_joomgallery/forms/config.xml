@@ -99,15 +99,6 @@
              type="externalconfig"
              label="com_media.upload_maxsize" />
 
-      <!-- <field name="jg_pathftpupload"
-             type="text"
-             default="administrator/components/com_joomgallery/temp/ftp_upload/"
-             maxlength="100"
-             filter="string"
-             class="hidden"
-             label="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH"
-             description="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH_LONG" /> -->
-
       <field name="jg_use_real_paths"
              type="radio"
              default="0"
@@ -163,6 +154,14 @@
     </fieldset>
 
     <fieldset type="tab" name="general-upload" label="COM_JOOMGALLERY_UPLOADS">
+      <field name="jg_pathftpupload"
+             type="text"
+             default="images/joomgallery/FTP/"
+             maxlength="100"
+             filter="string"
+             label="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH"
+             description="COM_JOOMGALLERY_CONFIG_FTPUPLOAD_PATH_LONG" />
+
       <field name="jg_parallelprocesses"
              type="number"
              default="1"
