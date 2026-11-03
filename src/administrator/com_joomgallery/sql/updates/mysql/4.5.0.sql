@@ -16,3 +16,4 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_img_ref` (
   `filesystem` VARCHAR(100) NOT NULL DEFAULT 'local-images',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+UPDATE `#__joomgallery_configs` SET `jg_pathftpupload` = "images/joomgallery/FTP/" WHERE `jg_pathftpupload` = "administrator/components/com_joomgallery/temp/ftp_upload/";

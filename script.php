@@ -112,8 +112,8 @@ class com_joomgalleryInstallerScript extends InstallerScript
     // Only proceed if Joomla meets the minimum requirements
     if(version_compare(JVERSION, '5.0.0', '<'))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 8, 'joomgallery');
 
       return false;
     }
@@ -123,8 +123,8 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     if(\in_array($jversion[0], $this->incompatible))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '5.x', JVERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_JOOMLA_COMPATIBILITY', '4.x', JVERSION), 8, 'joomgallery');
 
       return false;
     }
@@ -132,8 +132,8 @@ class com_joomgalleryInstallerScript extends InstallerScript
     // Only proceed if PHP meets the minimum requirements
     if(version_compare(PHP_VERSION, $this->minPhp, '<='))
     {
-      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '5.x', $this->minPhp, PHP_VERSION), 'error');
-      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '5.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_ERROR_PHP_COMPATIBILITY', '4.x', $this->minPhp, PHP_VERSION), 8, 'joomgallery');
 
       return false;
     }
@@ -497,6 +497,13 @@ class com_joomgalleryInstallerScript extends InstallerScript
    */
   function postflight($type, $parent)
   {
+    if(($type == 'install' || $type == 'update') && !$this->createFtpImportDirectory())
+    {
+      $directory = Path::clean(JPATH_ROOT . '/images/joomgallery/FTP');
+      Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_FTP_IMPORT_ERROR_CREATE_DIRECTORY', $directory), 'error');
+      Log::add(Text::sprintf('COM_JOOMGALLERY_FTP_IMPORT_ERROR_CREATE_DIRECTORY', $directory), 8, 'joomgallery');
+    }
+
     if($type == 'install' || ($type == 'update' && $this->fromOldJG))
     {
       $app = Factory::getApplication();
@@ -1547,6 +1554,20 @@ class com_joomgalleryInstallerScript extends InstallerScript
         }
       }
     }
+  }
+
+  /**
+   * Creates the default local directory used as the FTP import inbox.
+   *
+   * @return  bool  True if the directory exists or was created successfully
+   *
+   * @since   4.5.0
+   */
+  private function createFtpImportDirectory(): bool
+  {
+    $directory = Path::clean(JPATH_ROOT . '/images/joomgallery/FTP');
+
+    return is_dir($directory) || Folder::create($directory);
   }
 
   /**

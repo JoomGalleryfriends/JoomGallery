@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\QueryInterface;
@@ -37,6 +38,14 @@ class Search implements SearchInterface
    * @since  4.4.0
    */
   protected $name = '';
+
+  /**
+   * The name to be displayed.
+   *
+   * @var    string
+   * @since  4.5.0
+   */
+  protected $displayName = '';
 
   /**
    * The filters this search service applies.
@@ -99,6 +108,18 @@ class Search implements SearchInterface
   }
 
   /**
+   * Returns the display name of the search.
+   *
+   * @return  string
+   *
+   * @since   4.5.0
+   */
+  public function getDisplayName(): string
+  {
+    return Text::_($this->displayName);
+  }
+
+  /**
    * Returns the array of filters.
    *
    * @return  array
@@ -108,6 +129,21 @@ class Search implements SearchInterface
   public function getFilters(): array
   {
     return $this->filters;
+  }
+
+  /**
+   * Return the filter-form fields that should be displayed for this provider.
+   *
+   * @return  array<string, array|null>
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getDisplayFields(): array
+  {
+    return [
+      'filter' => null,
+      'list'   => null,
+    ];
   }
 
   /**
@@ -162,6 +198,20 @@ class Search implements SearchInterface
   public function handlesOrdering(): bool
   {
     return $this->ordering;
+  }
+
+  /**
+   * Apply provider-specific ordering to the final list query.
+   *
+   * @param   QueryInterface  $query  The final list query
+   *
+   * @return  bool  True when provider ordering was applied.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function applyOrderingToQuery(QueryInterface $query): bool
+  {
+    return false;
   }
 
   /**
