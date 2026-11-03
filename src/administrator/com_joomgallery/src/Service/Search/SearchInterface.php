@@ -43,6 +43,26 @@ interface SearchInterface
   public function getFilters(): array;
 
   /**
+   * Returns the display name of the search.
+   *
+   * @return  string
+   *
+   * @since   4.5.0
+   */
+  public function getDisplayName(): string;
+
+  /**
+   * Return the filter-form fields that should be displayed for this provider.
+   *
+   * A null fieldset value means that all its fields should be displayed.
+   *
+   * @return  array<string, array|null>
+   *
+   * @since   4.5.0
+   */
+  public function getDisplayFields(): array;
+
+  /**
    * Add the state to the service.
    *
    * @param   Registry  $state   The state object
@@ -83,6 +103,17 @@ interface SearchInterface
    * @since   4.4.0
    */
   public function handlesOrdering(): bool;
+
+  /**
+   * Apply provider-specific ordering to the final list query.
+   *
+   * @param   QueryInterface  $query  The final list query
+   *
+   * @return  bool  True when provider ordering was applied.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function applyOrderingToQuery(QueryInterface $query): bool;
 
   /**
    * Method to get a list of possible options
