@@ -138,8 +138,8 @@ class AssociationHelper
       $query = $db->getQuery(true)
         ->select(
             [
-                $db->quoteName('image.id'),
-                $db->quoteName('image.catid'),
+              $db->quoteName('image.id'),
+              $db->quoteName('image.catid'),
             ]
         )
         ->from($db->quoteName('#__joomgallery', 'image'))
