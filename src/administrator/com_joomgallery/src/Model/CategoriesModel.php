@@ -195,7 +195,7 @@ class CategoriesModel extends JoomListModel
 
     foreach($items as $item)
     {
-      $item->associations = [];
+      $item->associations               = [];
 
       if(empty($item->id))
       {
@@ -211,11 +211,12 @@ class CategoriesModel extends JoomListModel
         '',
         ''
     );
+
+      $item->multilingual_group_blocked = !empty($item->associations);
     }
 
     return $items;
   }
-
 
   /**
    * Build an SQL query to load the list data.
