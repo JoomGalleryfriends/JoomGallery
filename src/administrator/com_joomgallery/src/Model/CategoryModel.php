@@ -244,7 +244,7 @@ class CategoryModel extends JoomAdminModel
 
       if($this->item = parent::getItem($pk))
       {
-        if($this->associationsContext && Associations::isEnabled())
+        if($this->associationsContext && Associations::isEnabled() && !empty($this->item->id))
         {
         $associations = Associations::getAssociations(
             'com_joomgallery',

@@ -313,7 +313,7 @@ class ImageModel extends JoomAdminModel
 
     $this->item = $table->getFieldsValues();
 
-    if( $this->associationsContext && Associations::isEnabled() )
+    if( $this->associationsContext && Associations::isEnabled() && !empty($this->item->id) )
     {
     $associations = Associations::getAssociations(
         'com_joomgallery',
