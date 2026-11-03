@@ -15,7 +15,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Access\Access;
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Http\HttpFactory;
@@ -624,39 +623,6 @@ class JoomHelper
 
     if($cat->thumbnail == 0)
     {
-      if(Multilanguage::isEnabled() && Associations::isEnabled())
-      {
-        $fallbackLanguage = ComponentHelper::getParams('com_joomgallery')->get('category_fallback_language', '');
-
-        if($fallbackLanguage === '')
-        {
-          $fallbackLanguage = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
-        }
-
-        $associations = Associations::getAssociations(
-            'com_joomgallery',
-            '#__joomgallery_categories',
-            'com_joomgallery.category',
-            $cat->id,
-            'id',
-            '',
-            ''
-        );
-
-        if(!empty($associations[$fallbackLanguage]))
-        {
-        $fallbackCategory = self::getRecord(
-            'category',
-            (int) $associations[$fallbackLanguage]->id
-        );
-
-          if($fallbackCategory && !empty($fallbackCategory->thumbnail))
-          {
-            return self::getImg($fallbackCategory->thumbnail, $type, $url, $root);
-          }
-        }
-      }
-
       // Create file config service based on current user
       $config = self::getService('Config');
 
@@ -892,39 +858,6 @@ class JoomHelper
 
     try
     {
-      if(Multilanguage::isEnabled() && Associations::isEnabled())
-      {
-        $fallbackLanguage = ComponentHelper::getParams('com_joomgallery')->get('category_fallback_language', '');
-
-        if($fallbackLanguage === '')
-        {
-          $fallbackLanguage = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
-        }
-
-        $associations = Associations::getAssociations(
-            'com_joomgallery',
-            '#__joomgallery_categories',
-            'com_joomgallery.category',
-            $cat->id,
-            'id',
-            '',
-            ''
-        );
-
-        if(!empty($associations[$fallbackLanguage]))
-        {
-        $fallbackCategory = self::getRecord(
-            'category',
-            (int) $associations[$fallbackLanguage]->id
-        );
-
-          if($fallbackCategory && !empty($fallbackCategory->thumbnail))
-          {
-            return (int) $fallbackCategory->thumbnail;
-          }
-        }
-      }
-
       if($inc_subcats)
       {
         // Create the category table

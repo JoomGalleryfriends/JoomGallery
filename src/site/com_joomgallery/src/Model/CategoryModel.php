@@ -14,7 +14,6 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Multilanguage;
@@ -602,22 +601,8 @@ class CategoryModel extends JoomItemModel
 
     if(Multilanguage::isEnabled())
     {
-      $currentLanguage  = $this->app->getLanguage()->getTag();
-      $fallbackLanguage = ComponentHelper::getParams('com_joomgallery')->get('category_fallback_language', '');
-
-      if($fallbackLanguage === '')
-      {
-        $fallbackLanguage = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
-      }
-
-      $languages = [$currentLanguage, '*'];
-
-      if($fallbackLanguage !== $currentLanguage)
-      {
-        $languages[] = $fallbackLanguage;
-      }
-
-      $listModel->setState('filter.language', $languages);
+      $currentLanguage = $this->app->getLanguage()->getTag();
+      $listModel->setState('filter.language', [$currentLanguage, '*']);
     }
 
     $catform_list       = [];
