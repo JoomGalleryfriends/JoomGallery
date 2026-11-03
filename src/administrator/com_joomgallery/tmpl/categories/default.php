@@ -194,6 +194,7 @@ if($saveOrder && !empty($this->items))
                     ];
 
                     echo (new PublishedButton())->render((int) $item->published, $i, $options);
+
                     if((int) $item->published === 0 && !empty($item->multilingual_group_blocked))
                     {
                       echo ' <span class="icon-link text-muted" aria-hidden="true" title="' . Text::_('COM_JOOMGALLERY_ASSOCIATED_CATEGORY_UNPUBLISHED') . '"></span>';
