@@ -234,15 +234,15 @@ class ImagesModel extends JoomListModel
         continue;
       }
 
-      $item->associations = Associations::getAssociations(
-          'com_joomgallery',
-          '#__joomgallery',
-          'com_joomgallery.image',
-          (int) $item->id,
-          'id',
-          '',
-          ''
-      );
+    $item->associations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery',
+        'com_joomgallery.image',
+        (int) $item->id,
+        'id',
+        '',
+        ''
+    );
 
       $item->multilingual_group_blocked = false;
 
