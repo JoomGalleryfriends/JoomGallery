@@ -172,6 +172,14 @@
       }
     },
     {
+      "name": "com_joomgallery.ftp-import",
+      "type": "script",
+      "uri": "com_joomgallery/ftp-import.js",
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
       "name": "com_joomgallery.uppy",
       "type": "style",
       "uri": "com_joomgallery/uppy.css"

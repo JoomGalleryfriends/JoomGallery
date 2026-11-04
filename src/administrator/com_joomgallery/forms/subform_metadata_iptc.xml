@@ -64,11 +64,11 @@
          description="COM_JOOMGALLERY_IPTC_CREDITLINE_DEFINITION" />
 
   <field name="2#055"
-         type="calendar"
-         translateformat="true"
-         showtime="true"
-         size="22"
-         filter="user_utc"
+         type="input"
+         class="inputbox"
+         filter="string"
+         default=""
+         maxlength="8"
          label="COM_JOOMGALLERY_IPTC_DATECREATED"
          description="COM_JOOMGALLERY_IPTC_DATECREATED_DEFINITION" />
 

@@ -25,6 +25,13 @@
     <field name="uuid"
            type="hidden" />
 
+    <field name="ftp_file"
+           type="hidden" />
+
+    <field name="ftp_action"
+           default="keep"
+           type="hidden" />
+
     <field name="filesystem"
            type="text"
            readonly="true"

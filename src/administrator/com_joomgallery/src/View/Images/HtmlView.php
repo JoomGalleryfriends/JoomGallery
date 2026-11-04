@@ -109,6 +109,11 @@ class HtmlView extends JoomGalleryView
           ->text('COM_JOOMGALLERY_MULTIPLE_NEW')
           ->icon('fas fa-upload')
           ->task('image.multipleadd');
+
+        $add_childBar->standardButton('ftpimport')
+          ->text('COM_JOOMGALLERY_FTP_IMPORT')
+          ->icon('fas fa-folder-open')
+          ->task('image.ftpimport');
       }
     }
 
