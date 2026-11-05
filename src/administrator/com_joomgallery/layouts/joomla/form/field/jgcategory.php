@@ -147,8 +147,9 @@ $modalHTML = HTMLHelper::_(
       'closeButton' => true,
       'height'      => '100%',
       'width'       => '100%',
-      'modalWidth'  => 80,
-      'bodyHeight'  => 60,
+      'modalWidth'  => 90,
+      'bodyHeight'  => 90,
+      'modalCss'    => 'modal-lg jg-variant-modal',
       'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCANCEL') . '</button>',
     ]
 );

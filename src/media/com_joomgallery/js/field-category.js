@@ -41,6 +41,9 @@
       this.buttonCreate = this.querySelector('.button-create');
       this.buttonDeleteVariant = this.querySelector('.button-delete-variant');
       if (this.buttonCreate) this.buttonCreate.disabled = !!this.inputName?.value.trim();
+      if (this.buttonSelect) {
+        this.buttonSelect.disabled = Number(this.input.value) > 0;
+      }
 
       if (this.modal && window.bootstrap?.Modal && !window.bootstrap.Modal.getInstance(this.modal)) {
         Joomla.initialiseModal(this.modal, { isJoomla: true });
@@ -165,7 +168,7 @@
       // The create form must not reuse the category-selection modal.
       if (url.includes('layout=edit')) {
         const modalElement = document.createElement('div');
-        modalElement.className = 'modal fade';
+        modalElement.className = 'modal fade jg-variant-modal';
         modalElement.tabIndex = -1;
         modalElement.setAttribute('aria-hidden', 'true');
         modalElement.innerHTML = `
@@ -184,6 +187,22 @@
 
         this.variantModal = new bootstrap.Modal(modalElement);
         const modal = this.variantModal;
+
+        iframe.addEventListener('load', () => {
+          try {
+            const iframeUrl = new URL(iframe.contentWindow.location.href);
+
+            if (
+              iframeUrl.searchParams.get('option') === 'com_joomgallery' &&
+              iframeUrl.searchParams.get('view') === 'categories'
+            ) {
+              modal.hide();
+            }
+          } catch (error) {
+            // Ignore cross-origin access errors.
+          }
+        });
+
         modalElement.addEventListener('hidden.bs.modal', () => {
           if (this.variantModal === modal) this.variantModal = null;
           modalElement.remove();
@@ -216,6 +235,10 @@
 
       if (this.buttonCreate) {
         this.buttonCreate.disabled = !!this.inputName.value.trim();
+      }
+
+      if (this.buttonSelect) {
+        this.buttonSelect.disabled = Number(this.input.value) > 0;
       }
 
       if (this.buttonDeleteVariant) {

@@ -324,7 +324,7 @@ modalOpen(url = this.url) {
 
   if (url.includes('layout=edit')) {
     const modalElement = document.createElement('div');
-    modalElement.className = 'modal fade';
+    modalElement.className = 'modal fade jg-variant-modal';
     modalElement.tabIndex = -1;
     modalElement.setAttribute('aria-hidden', 'true');
 
@@ -346,6 +346,22 @@ modalOpen(url = this.url) {
 
     this.variantModal = new bootstrap.Modal(modalElement);
     const modal = this.variantModal;
+
+    iframe.addEventListener('load', () => {
+      try {
+        const iframeUrl = new URL(iframe.contentWindow.location.href);
+
+        if (
+          iframeUrl.searchParams.get('option') === 'com_joomgallery' &&
+          iframeUrl.searchParams.get('view') === 'images'
+        ) {
+          modal.hide();
+        }
+      } catch (error) {
+        // Ignore cross-origin access errors.
+      }
+    });
+
     modalElement.addEventListener('hidden.bs.modal', () => {
       modalElement.remove();
     }, {
