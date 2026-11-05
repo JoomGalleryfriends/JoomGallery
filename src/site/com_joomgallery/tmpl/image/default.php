@@ -24,6 +24,8 @@ use Joomla\Registry\Registry;
 // image params
 $image_type        = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
 $show_title        = $this->params['configs']->get('jg_detail_view_show_title', 1, 'INT');
+$title_position    = $this->params['configs']->get('jg_detail_view_title_position', 'below', 'STRING');
+$header_above = $title_position === 'above';
 $show_category     = $this->params['configs']->get('jg_detail_view_show_category', 1, 'INT');
 $show_description  = $this->params['configs']->get('jg_detail_view_show_description', 1, 'INT');
 $show_imgdate      = $this->params['configs']->get('jg_detail_view_show_imgdate', 1, 'INT');
@@ -296,10 +298,38 @@ if($jsonLd !== '')
 $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
 ?>
 
+<?php // Capture the header once for either position.
+ob_start(); ?>
+    <?php if($show_title || ($show_created_by && $createdBy !== '') || ($show_imgdate && !empty($this->item->date))) : ?>
+      <header class="d-flex flex-column flex-md-row justify-content-between gap-3 py-4">
+        <?php if($show_title || ($show_created_by && $createdBy !== '')) : ?>
+          <div class="d-flex gap-3 align-items-start">
+            <?php if($show_created_by && $createdBy !== '') : ?>
+              <span class="jg-detail__avatar d-inline-flex align-items-center justify-content-center rounded bg-primary text-white fw-bold" aria-hidden="true"><?php echo $this->escape($initial); ?></span>
+            <?php endif; ?>
+            <div>
+              <?php if($show_title) : ?>
+                <h1 class="h2 mb-1" itemprop="name"><?php echo $this->escape($this->item->title); ?></h1>
+              <?php endif; ?>
+              <?php if($show_created_by && $createdBy !== '') : ?>
+                <div class="text-body-secondary"><?php echo Text::_('COM_JOOMGALLERY_OWNER'); ?>: <strong><?php echo $this->escape($createdBy); ?></strong></div>
+              <?php endif; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+        <?php if($show_imgdate && !empty($this->item->date)) : ?>
+          <time class="text-body-secondary text-md-end" datetime="<?php echo $this->escape($this->item->date); ?>"><?php echo Text::_($imageDateLabel); ?>: <?php echo HTMLHelper::_('date', $this->item->date, Text::_('DATE_FORMAT_LC4')); ?></time>
+        <?php endif; ?>
+      </header>
+    <?php endif; ?>
+<?php $imageHeader = ob_get_clean(); ?>
+
 <article class="jg-detail overflow-hidden" itemscope itemtype="https://schema.org/ImageObject">
   <a class="jg-detail__back btn btn-outline-primary" href="<?php echo htmlspecialchars($this->backUrl, ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo Text::_($backLabel); ?>" title="<?php echo Text::_($backLabel); ?>">
     <i class="icon-arrow-left" aria-hidden="true"></i><span><?php echo Text::_($backLabel); ?></span>
   </a>
+
+  <?php if($header_above) echo $imageHeader; ?>
 
   <?php // load modules on jg_image_top ?>
   <?php $modules = ModuleHelper::getModules('jg_image_top'); ?>
@@ -379,28 +409,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
       <?php endif; ?>
     </div>
 
-    <?php if($show_title || ($show_created_by && $createdBy !== '') || ($show_imgdate && !empty($this->item->date))) : ?>
-      <header class="d-flex flex-column flex-md-row justify-content-between gap-3 py-4">
-        <?php if($show_title || ($show_created_by && $createdBy !== '')) : ?>
-          <div class="d-flex gap-3 align-items-start">
-            <?php if($show_created_by && $createdBy !== '') : ?>
-              <span class="jg-detail__avatar d-inline-flex align-items-center justify-content-center rounded bg-primary text-white fw-bold" aria-hidden="true"><?php echo $this->escape($initial); ?></span>
-            <?php endif; ?>
-            <div>
-              <?php if($show_title) : ?>
-                <h1 class="h2 mb-1" itemprop="name"><?php echo $this->escape($this->item->title); ?></h1>
-              <?php endif; ?>
-              <?php if($show_created_by && $createdBy !== '') : ?>
-                <div class="text-body-secondary"><?php echo Text::_('COM_JOOMGALLERY_OWNER'); ?>: <strong><?php echo $this->escape($createdBy); ?></strong></div>
-              <?php endif; ?>
-            </div>
-          </div>
-        <?php endif; ?>
-        <?php if($show_imgdate && !empty($this->item->date)) : ?>
-          <time class="text-body-secondary text-md-end" datetime="<?php echo $this->escape($this->item->date); ?>"><?php echo Text::_($imageDateLabel); ?>: <?php echo HTMLHelper::_('date', $this->item->date, Text::_('DATE_FORMAT_LC3')); ?></time>
-        <?php endif; ?>
-      </header>
-    <?php endif; ?>
+    <?php if(!$header_above) echo $imageHeader; ?>
 
     <?php // load modules on jg_image_before_info ?>
     <?php $modules = ModuleHelper::getModules('jg_image_before_info'); ?>
@@ -436,7 +445,7 @@ $fields = FieldsHelper::getFields('com_joomgallery.image', $this->item);
     </div>
     <?php endif; ?>
 
-    <dl class="row mb-0">
+    <dl class="row mb-0 pt-4 border-top">
       <?php if($show_imgauthor && $imageAuthor !== '') : ?>
         <dt class="col-sm-4 col-lg-3"><?php echo Text::_('JAUTHOR'); ?></dt>
         <dd class="col-sm-8 col-lg-9"><?php echo $this->escape($imageAuthor); ?></dd>

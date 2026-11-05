@@ -1355,6 +1355,17 @@
             <option value="1">JYES</option>
         </field>
         <field
+            name="jg_detail_view_title_position"
+            type="list"
+            label="COM_JOOMGALLERY_CONFIG_DETAIL_TITLE_POSITION"
+            description="COM_JOOMGALLERY_CONFIG_DETAIL_TITLE_POSITION_DESC"
+            default="below"
+            validate="options"
+            >
+            <option value="below">COM_JOOMGALLERY_CONFIG_DETAIL_TITLE_BELOW</option>
+            <option value="above">COM_JOOMGALLERY_CONFIG_DETAIL_TITLE_ABOVE</option>
+        </field>
+        <field
             name="jg_detail_view_show_category"
             type="radio"
             label="JCATEGORY"
