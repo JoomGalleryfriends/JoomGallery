@@ -93,6 +93,11 @@
       this.inputImg = this.querySelector(this.inputImgId);
       this.buttonSelect = this.querySelector(this.buttonSelectClass); // Bootstrap modal init
       this.buttonCreate = this.querySelector('.button-create');
+
+      if (this.buttonCreate) {
+        this.buttonCreate.disabled = !!this.inputName?.value.trim();
+      }
+
       this.buttonDeleteVariant = this.querySelector('.button-delete-variant');
 
       if (this.buttonCreate) {
@@ -388,6 +393,10 @@ modalClose() {
 setValue(value, name) {
   this.input.value = value;
   this.inputName.value = name ? `${name} (ID: ${value})` : value;
+
+  if (this.buttonCreate) {
+    this.buttonCreate.disabled = !!this.inputName.value.trim();
+  }
 
   if (this.buttonDeleteVariant) {
     this.buttonDeleteVariant.disabled = !value;
