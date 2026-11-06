@@ -414,6 +414,26 @@ class AIinterface {
     field.value = JSON.stringify(options);
   }
 
+  preselectUserLanguage() {
+    const dropdown = document.getElementById(this.prefix + '-langs-dropdown');
+    const normalize = (value) => String(value ?? '').trim().replace(/_/g, '-').toLowerCase();
+    const userLanguage = normalize(this.configs.def_lang);
+
+    if (!dropdown || !userLanguage) {
+      return;
+    }
+
+    const items = Array.from(dropdown.querySelectorAll('.dropdown-item'));
+    const baseLanguage = userLanguage.split('-')[0];
+    const match = items.find((item) => normalize(item.dataset.value) === userLanguage)
+      || items.find((item) => normalize(item.dataset.value) === baseLanguage)
+      || items.find((item) => normalize(item.dataset.value).split('-')[0] === baseLanguage);
+
+    if (match) {
+      this.setSavedElementValue(dropdown, match.dataset.value);
+    }
+  }
+
   restoreGenerationOptions() {
     const field = document.getElementById(`${this.prefix}-gen-options`);
 
@@ -2261,6 +2281,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Restore generation controls only after dynamic API dropdowns are populated.
+  // Use the Joomla user's language as the default; a saved choice takes precedence.
+  ai.preselectUserLanguage();
   ai.restoreGenerationOptions();
 
   const useExifLocation = document.querySelector('input[name="jgai_exif_location"]:checked')?.value === '1';
