@@ -28,6 +28,7 @@ use Joomla\CMS\Session\Session;
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.admin')
    ->useScript('com_joomgallery.admin')
+   ->useScript('com_joomgallery.admin.taggingtoolbar')
    ->useScript('table.columns')
    ->useScript('multiselect')
    ->useScript('com_joomgallery.tasks');
@@ -115,7 +116,7 @@ if($saveOrder && !empty($this->items))
                 </th>
                 <th scope="col" class="w-3 d-none d-lg-table-cell text-center">
                   <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
-                </th>              
+                </th>
                 <th scope="col" class="w-10 d-none d-md-table-cell">
                   <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_OWNER', 'a.created_by', $listDirn, $listOrder); ?>
                 </th>
@@ -236,7 +237,7 @@ if($saveOrder && !empty($this->items))
                         <?php echo $this->escape($item->cattitle); ?>
                       <?php endif; ?>
                     </div>
-                    
+
                     <?php if($item->hidden === 1) : ?>
                       <div class="small">
                         <span class="badge bg-secondary">
@@ -318,7 +319,7 @@ if($saveOrder && !empty($this->items))
         <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="form_submited" value="1"/>
         <?php echo HTMLHelper::_('form.token'); ?>
-      </div> 
+      </div>
     </div>
   </div>
 
