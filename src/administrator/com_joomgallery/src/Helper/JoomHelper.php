@@ -1806,6 +1806,20 @@ class JoomHelper
       ->where($db->quoteName('approved') . ' = 1')
       ->where($db->quoteName('published') . ' = 1');
 
+    // Filter images by the current language.
+    if(Multilanguage::isEnabled())
+    {
+      $currentLanguage = Factory::getApplication()->getLanguage()->getTag();
+      $allLanguage     = '*';
+
+    $query->where(
+        '(' . $db->quoteName('language') . ' = :language'
+          . ' OR ' . $db->quoteName('language') . ' = :allLanguage)'
+    )
+        ->bind(':language', $currentLanguage)
+        ->bind(':allLanguage', $allLanguage);
+    }
+
     $db->setQuery($query);
 
     return (int) $db->loadResult();
