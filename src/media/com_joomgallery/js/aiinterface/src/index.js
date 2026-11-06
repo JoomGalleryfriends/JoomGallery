@@ -1006,9 +1006,56 @@ class AIinterface {
     }
   }
 
+  confirmKeywordGeneration(manualKeywords) {
+    const template = document.getElementById(this.prefix + '-generation-confirmation');
+    const content = template.content.firstElementChild.cloneNode(true);
+    const selectedTitle = (name) => document.querySelector(
+      '#' + this.prefix + '-' + name + '-dropdown [aria-selected="true"]'
+    )?.textContent.trim() ?? '';
+    const useExif = document.querySelector('input[name="jgai_exif_location"]:checked')?.value === '1';
+    const values = {
+      model: selectedTitle('models'),
+      mode: selectedTitle('modes'),
+      language: selectedTitle('langs'),
+      keywords: manualKeywords.join(', '),
+      location: useExif ? template.dataset.exif : document.getElementById(this.prefix + '-geo-location')?.value,
+      description: document.getElementById(this.prefix + '-prompt-description')?.value,
+      count: document.getElementById(this.prefix + '-nmb-keywords')?.value
+    };
+
+    Object.entries(values).forEach(([key, value]) => {
+      content.querySelector('[data-setting="' + key + '"]').textContent = value || template.dataset.empty;
+    });
+
+    return new Promise((resolve) => {
+      let confirmed = false;
+      const popup = new JoomlaDialog();
+      popup.popupType = 'inline';
+      popup.classList.add('joomla-dialog-confirm');
+      popup.width = '560px';
+      popup.popupContent = content.outerHTML;
+      popup.textHeader = template.dataset.title;
+      popup.popupButtons = [{
+        label: template.dataset.cancel,
+        className: 'button button-secondary btn btn-outline-secondary',
+        onClick: () => popup.close()
+      }, {
+        label: template.dataset.continue,
+        onClick: () => {
+          confirmed = true;
+          popup.close();
+        }
+      }];
+      popup.addEventListener('joomla-dialog:close', () => {
+        popup.destroy();
+        resolve(confirmed);
+      }, { once: true });
+      popup.show();
+    });
+  }
+
   async keywordsGenerate(el, event) {
     event.preventDefault();
-    const processStartedAt = performance.now();
 
     // Get required data from UI
     this.selected_model = this.getSelectedListElement(`${this.prefix}-models-dropdown`);
@@ -1037,6 +1084,11 @@ class AIinterface {
     el.disabled = true;
 
     try {
+    if (!await this.confirmKeywordGeneration(manualKeywords)) {
+      return;
+    }
+
+    const processStartedAt = performance.now();
 
     // Create statistics object
     const stats = {

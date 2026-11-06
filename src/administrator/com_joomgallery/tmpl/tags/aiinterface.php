@@ -130,6 +130,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
   <hr>
 
   <div class="interface-controls row">
+    <h3><?php echo Text::_('COM_JOOMGALLERY_AIINT_AUTO_TITLE'); ?></h3>
     <div class="model-selection col-lg-4">
       <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_CONFIGURE_MODEL'); ?></h4>
       <div class="input-group d-flex">
@@ -306,6 +307,7 @@ if(isset($this->input_cid) && !empty($this->input_cid))
   <hr>
 
   <div class="keywords-panels">
+    <h3><?php echo Text::_('COM_JOOMGALLERY_AIINT_MAN_TITLE'); ?></h3>
     <h4 class="title"><?php echo Text::_('COM_JOOMGALLERY_AIINT_MOST_USED_KEYWORDS'); ?></h4>
     <form action="<?php echo Route::_($form_url); ?>" method="post"
       name="tagsForm" id="tagsForm">
@@ -335,6 +337,32 @@ if(isset($this->input_cid) && !empty($this->input_cid))
     </form>
   </div>
 </div>
+
+<?php // Keyword generation confirmation ?>
+<template id="jgai-generation-confirmation"
+  data-title="<?php echo Text::_('COM_JOOMGALLERY_AIINT_GEN_KEYWORDS'); ?>"
+  data-cancel="<?php echo Text::_('JCANCEL'); ?>"
+  data-continue="<?php echo Text::_('COM_JOOMGALLERY_AIINT_CONFIRM_CONTINUE'); ?>"
+  data-empty="<?php echo Text::_('COM_JOOMGALLERY_AIINT_CONFIRM_EMPTY'); ?>"
+  data-exif="<?php echo Text::_('COM_JOOMGALLERY_AIINT_EXIF_LOC_LBL'); ?>">
+  <div>
+    <p><?php echo Text::_('COM_JOOMGALLERY_AIINT_CONFIRM_GENERATION'); ?></p>
+    <div class="row text-break">
+      <?php foreach([
+        'model'       => 'COM_JOOMGALLERY_JS_AIINT_MODEL',
+        'mode'        => 'COM_JOOMGALLERY_AIINT_PROMPTING_TITLE',
+        'language'    => 'JGRID_HEADING_LANGUAGE',
+        'keywords'    => 'COM_JOOMGALLERY_AIINT_CONFIRM_MANUAL_KEYWORDS',
+        'location'    => 'COM_JOOMGALLERY_AIINT_CONFIRM_LOCATION',
+        'description' => 'JGLOBAL_DESCRIPTION',
+        'count'       => 'COM_JOOMGALLERY_AIINT_GEN_NMB',
+      ] as $setting => $label) : ?>
+        <div class="col-sm-4 fw-bold"><?php echo Text::_($label); ?></div>
+        <div class="col-sm-8 mb-2" data-setting="<?php echo $setting; ?>"></div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</template>
 
 <?php // Progress and Summary Modal ?>
 <div id="jgai-modal-generate" class="jg joomla-modal modal fade" role="dialog" tabindex="-1">
