@@ -15,10 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
-use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
-use Joomla\CMS\Router\Route;
 
 /**
  * Image controller class.
@@ -40,7 +37,7 @@ class ImageController extends JoomFormController
    */
   public function edit($key = null, $urlVar = null)
   {
-    throw new \Exception('Edit an existing image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Edit an existing image not possible. Use userimage controller instead.', 503);
   }
 
 
@@ -52,7 +49,7 @@ class ImageController extends JoomFormController
    */
   public function add()
   {
-    throw new \Exception('Edit an existing image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Edit an existing image not possible. Use userimage controller instead.', 503);
   }
 
   /**
@@ -63,7 +60,7 @@ class ImageController extends JoomFormController
    */
   public function editAssociations()
   {
-    throw new \Exception('Edit associations not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Edit associations not possible. Use userimage controller instead.', 503);
   }
 
   /**
@@ -113,7 +110,7 @@ class ImageController extends JoomFormController
    */
   public function remove()
   {
-    throw new \Exception('Removing image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Removing image not possible. Use userimage controller instead.', 503);
   }
 
   /**
@@ -124,18 +121,21 @@ class ImageController extends JoomFormController
    */
   public function checkin()
   {
-    throw new \Exception('Check-in image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Check-in image not possible. Use userimage controller instead.', 503);
   }
 
   /**
-   * Method to publish an image
+   * Method to publish an image.
    *
-   * @throws \Exception
-   * @since   4.2.0
+   * @return  bool
+   *
+   * @throws  \Exception
+   *
+   * @since   __DEPLOY_VERSION__
    */
-  public function publish()
+  public function publish(): bool
   {
-    throw new \Exception('Publish image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Publishing an image not possible. Use userimage controller instead.', 503);
   }
 
   /**
@@ -144,8 +144,8 @@ class ImageController extends JoomFormController
    * @throws \Exception
    * @since   4.2.0
    */
-  public function unpublish()
+  public function unpublish(): bool
   {
-    throw new \Exception('Unpublish image not possible. Use imageform controller instead.', 503);
+    throw new \Exception('Unpublishing an image not possible. Use userimage controller instead.', 503);
   }
 }

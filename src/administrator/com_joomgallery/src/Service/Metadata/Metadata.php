@@ -15,6 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Helper\MetadataHelper;
+use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 
 /**
  * Metadata Base Class
@@ -25,6 +28,132 @@ use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 class Metadata implements MetadataInterface
 {
   use ServiceTrait;
+
+  /**
+   * Prepares stored metadata for rendering.
+   *
+   * @param   mixed         $imgmetadata           Stored image metadata
+   * @param   array|string  $importantMetadataKeys Metadata keys rendered outside the modal
+   *
+   * @return  array<int, Registry> Important and complete metadata registries
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function renderPrep($imgmetadata, $importantMetadataKeys = []): array
+  {
+    $language = Factory::getApplication()->getLanguage();
+    $language->load('com_joomgallery.exif', JPATH_ADMINISTRATOR . '/components/com_joomgallery');
+    $language->load('com_joomgallery.iptc', JPATH_ADMINISTRATOR . '/components/com_joomgallery');
+
+    require JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/exifarray.php';
+    require JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/iptcarray.php';
+
+    $definitions = [];
+
+    foreach($exif_config_array as $group => $entries)
+    {
+      foreach($entries as $entry)
+      {
+        $attribute = (string) ($entry['Attribute'] ?? '');
+
+        if($attribute !== '')
+        {
+          $definitions['exif.' . $group . '.' . $attribute] = $entry;
+        }
+      }
+    }
+
+    foreach($iptc_config_array as $entries)
+    {
+      foreach($entries as $entry)
+      {
+        $tag = str_replace(':', '#', (string) ($entry['IMM'] ?? ''));
+
+        if($tag !== '')
+        {
+          $definitions['iptc.' . $tag] = $entry;
+        }
+      }
+    }
+
+    $items   = [];
+    $flatten = function ($values, array $path = []) use (&$flatten, &$items, $definitions): void {
+      foreach((array) $values as $key => $value)
+      {
+        $itemPath = [...$path, (string) $key];
+
+        if(\is_array($value) || \is_object($value))
+        {
+          $flatten($value, $itemPath);
+          continue;
+        }
+
+        if($value === '' || $value === null)
+        {
+          continue;
+        }
+
+        $pathKey         = implode('.', $itemPath);
+        $metadataType    = strtolower((string) ($itemPath[0] ?? ''));
+        $definition      = MetadataHelper::getDefinition($metadataType, $pathKey);
+        $attribute       = (string) ($definition['Attribute'] ?? $key);
+        $items[$pathKey] = [
+          'path'      => $pathKey,
+          'key'       => (string) $key,
+          'attribute' => $attribute,
+          'label'     => $definition ? MetadataHelper::getName($metadataType, $pathKey) : (string) $key,
+          'value'     => preg_match('/(?:DateTime|Date Created|Time Created|Digital Creation Date)/i', $attribute)
+            ? $this->formatRenderDate((string) $value)
+            : MetadataHelper::getValue($metadataType, $pathKey, $value),
+        ];
+      }
+    };
+    $flatten((new Registry($imgmetadata))->toArray());
+
+    $importantKeys = \is_array($importantMetadataKeys)
+      ? $importantMetadataKeys
+      : preg_split('/[\r\n,;]+/', (string) $importantMetadataKeys, -1, PREG_SPLIT_NO_EMPTY);
+    $importantKeys = array_map('trim', $importantKeys ?: []);
+    $important     = [];
+
+    foreach($importantKeys as $importantKey)
+    {
+      foreach($items as $pathKey => $item)
+      {
+        $normalizedImportantKey = strtolower($importantKey);
+        $normalizedPathKey      = strtolower($pathKey);
+        $normalizedItemKey      = strtolower($item['key']);
+        $normalizedAttribute    = strtolower($item['attribute']);
+
+        if($normalizedImportantKey === $normalizedPathKey
+          || $normalizedImportantKey === $normalizedItemKey
+          || $normalizedImportantKey === $normalizedAttribute
+          || str_ends_with($normalizedPathKey, '.' . $normalizedImportantKey))
+        {
+          $important[$pathKey] = $item;
+        }
+      }
+    }
+
+    return [new Registry(['items' => array_values($important)]), new Registry(['items' => array_values($items)])];
+  }
+
+  /** Format supported EXIF/IPTC date representations for display. */
+  private function formatRenderDate(string $value): string
+  {
+    foreach(['!Y:m:d H:i:s', '!Y-m-d H:i:s', '!Y-m-d\\TH:i:sP', '!Ymd H:i:s', '!Ymd'] as $format)
+    {
+      $date   = \DateTimeImmutable::createFromFormat($format, trim($value));
+      $errors = \DateTimeImmutable::getLastErrors();
+
+      if($date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0)))
+      {
+        return $date->format('d.m.Y H:i');
+      }
+    }
+
+    return $value;
+  }
 
   public function readMetadata(string $file)
   {
