@@ -159,7 +159,7 @@ class GalleryModel extends JoomItemModel
     }
 
     // Select fields to load
-    $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum'];
+    $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'image_ref', 'author', 'date', 'hits', 'votes', 'votesum'];
     $fields = $this->addColumnPrefix('a', $fields);
 
     // Apply preselected filters and fields selection for images
@@ -265,7 +265,6 @@ class GalleryModel extends JoomItemModel
 
     if(Multilanguage::isEnabled())
     {
-      $listModel->setState('filter.language', $this->item->language);
       $listModel->setState('filter.include_language_all', true);
     }
 

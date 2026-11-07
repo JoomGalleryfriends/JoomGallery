@@ -133,16 +133,29 @@ class ImagesModel extends JoomListModel
     $this->setState('filter.search', $search);
     $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '*');
     $this->setState('filter.published', $published);
-    $language = $this->getUserStateFromRequest($this->context . '.filter.language', 'filter_language', '');
+    $languageContext = $this->context;
+    $defaultLanguage = '';
+
+    if(Multilanguage::isEnabled() && strpos($this->context, 'com_joomgallery.gallery.images') === 0)
+    {
+        $defaultLanguage = $app->getLanguage()->getTag();
+        $languageContext .= '.' . $defaultLanguage;
+    }
+
+    $language = $this->getUserStateFromRequest(
+        $languageContext . '.filter.language',
+        'filter_language',
+        $defaultLanguage
+    );
 
     if(!Multilanguage::isEnabled())
     {
-      // Clear saved language selections before loading images with a hidden filter.
-      $language = '';
-      $app->setUserState($this->context . '.filter.language', '');
-      $filters = (array) $app->getUserState($this->context . '.filter', []);
-      unset($filters['language']);
-      $app->setUserState($this->context . '.filter', $filters);
+        // Clear saved language selections before loading images with a hidden filter.
+        $language = '';
+        $app->setUserState($this->context . '.filter.language', '');
+        $filters = (array) $app->getUserState($this->context . '.filter', []);
+        unset($filters['language']);
+        $app->setUserState($this->context . '.filter', $filters);
     }
 
     $this->setState('filter.language', $language);
@@ -320,6 +333,8 @@ class ImagesModel extends JoomListModel
     {
       return null;
     }
+
+    $form->setValue('language', 'filter', $this->getState('filter.language'));
 
     $searchProvider = $this->getSearchProvider();
     $displayFields  = $searchProvider->getDisplayFields();

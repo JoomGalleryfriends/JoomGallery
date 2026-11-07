@@ -42,7 +42,7 @@
       this.buttonDeleteVariant = this.querySelector('.button-delete-variant');
       if (this.buttonCreate) this.buttonCreate.disabled = !!this.inputName?.value.trim();
       if (this.buttonSelect) {
-        this.buttonSelect.disabled = Number(this.input.value) > 0;
+        this.buttonSelect.disabled = this.input?.name.startsWith('jform[associations][') && Number(this.input.value) > 0;
       }
 
       if (this.modal && window.bootstrap?.Modal && !window.bootstrap.Modal.getInstance(this.modal)) {
@@ -238,7 +238,7 @@
       }
 
       if (this.buttonSelect) {
-        this.buttonSelect.disabled = Number(this.input.value) > 0;
+        this.buttonSelect.disabled = this.input?.name.startsWith('jform[associations][') && Number(this.input.value) > 0;
       }
 
       if (this.buttonDeleteVariant) {
