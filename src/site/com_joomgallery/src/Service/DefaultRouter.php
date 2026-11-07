@@ -24,6 +24,8 @@ use Joomla\CMS\Component\Router\Rules\MenuRules;
 use Joomla\CMS\Component\Router\Rules\NomenuRules;
 use Joomla\CMS\Component\Router\Rules\StandardRules;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Associations;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Menu\AbstractMenu;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -764,13 +766,6 @@ class DefaultRouter extends RouterView
         // We can identify the image via a request query variable of type catid
         $dbquery->where($this->db->quoteName('catid') . ' = :catid');
         $dbquery->bind(':catid', $cat, ParameterType::INTEGER);
-      }
-
-      if(key_exists('view', $query) && $query['view'] == 'category' && key_exists('id', $query))
-      {
-        // We can identify the image via menu item of type category
-        $dbquery->where($this->db->quoteName('catid') . ' = :catid');
-        $dbquery->bind(':catid', $query['id'], ParameterType::INTEGER);
       }
 
       $this->db->setQuery($dbquery);

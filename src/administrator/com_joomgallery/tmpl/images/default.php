@@ -119,6 +119,11 @@ if($saveOrder && !empty($this->items))
                 <th scope="col" class="w-10 d-none d-md-table-cell">
                   <?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_OWNER', 'a.created_by', $listDirn, $listOrder); ?>
                 </th>
+                <?php if(Multilanguage::isEnabled() && \Joomla\CMS\Language\Associations::isEnabled()) : ?>
+                  <th scope="col" class="w-10 d-none d-md-table-cell">
+                    <?php echo Text::_('COM_JOOMGALLERY_FIELD_ASSOCIATIONS'); ?>
+                  </th>
+                <?php endif; ?>
                 <?php if(Multilanguage::isEnabled()) : ?>
                   <th scope="col" class="w-10 d-none d-md-table-cell">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
@@ -195,6 +200,12 @@ if($saveOrder && !empty($this->items))
                     ];
 
                     echo (new PublishedButton())->render((int) $item->published, $i, $options);
+
+                    if((int) $this->state->get('params.jg_link_associated_images', 1) === 1 && (int) $item->published === 0 && !empty($item->multilingual_group_blocked))
+                    {
+                      echo ' <span class="icon-link text-muted" aria-hidden="true" title="' . Text::_('COM_JOOMGALLERY_ASSOCIATED_IMAGE_UNPUBLISHED') . '"></span>';
+                    }
+
                   ?>
                 </td>
 
@@ -299,6 +310,17 @@ if($saveOrder && !empty($this->items))
                     <?php echo Text::_('JNONE'); ?>
                   <?php endif; ?>
                 </td>
+                <?php if(Multilanguage::isEnabled() && \Joomla\CMS\Language\Associations::isEnabled()) : ?>
+                  <td class="small d-none d-md-table-cell">
+                    <?php if(!empty($item->associations)) : ?>
+                      <?php foreach($item->associations as $language => $association) : ?>
+                        <span class="badge bg-secondary">
+                          <?php echo $this->escape($language); ?>
+                        </span>
+                      <?php endforeach; ?>
+                    <?php endif; ?>
+                  </td>
+                <?php endif; ?>
                 <?php if(Multilanguage::isEnabled()) : ?>
                   <td class="small d-none d-md-table-cell">
                     <?php echo LayoutHelper::render('joomla.content.language', $item); ?>

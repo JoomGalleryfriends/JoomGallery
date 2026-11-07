@@ -78,7 +78,7 @@ class RawView extends JoomGalleryRawView
       $adapter = $img_obj->filesystem;
     }
 
-    // Get image path
+    // Get image path. Associated language variants reference the same physical image.
     if(isset($img_obj))
     {
       $img = $img_obj;
@@ -86,8 +86,7 @@ class RawView extends JoomGalleryRawView
     else
     {
       $img = $id;
-    }
-    $img_path = JoomHelper::getImg($img, $type, false, false);
+    }    $img_path = JoomHelper::getImg($img, $type, false, false);
 
     // Create filesystem service
     $this->component->createFilesystem($adapter);

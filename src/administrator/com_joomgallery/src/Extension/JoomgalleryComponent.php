@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Extension;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\AssociationsHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceInterface;
@@ -61,7 +62,7 @@ use Psr\Container\ContainerInterface;
  * @package JoomGallery
  * @since   4.0.0
  */
-class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface
+class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface, AssociationServiceInterface
 {
   use MessageTrait;
   use AssociationServiceTrait;
@@ -140,6 +141,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
     {
       require_once JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/defines.php';
     }
+    $this->setAssociationExtension(new AssociationsHelper());
 
     // Initialize JoomGallery cache
     if(!$this->cache)
