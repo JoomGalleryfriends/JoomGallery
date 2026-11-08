@@ -84,6 +84,32 @@ class ImageController extends JoomFormController
     return parent::save($key, $urlVar);
   }
 
+  /**
+   * Convert an associated-image permission denial to the same blue information
+   * message used by the image-list action and the category editor.
+   *
+   * @param   string  $text  Message to display on redirect.
+   * @param   string  $type  Message type.
+   *
+   * @return  string  Previous message.
+   *
+   * @since   4.5.0
+   */
+  public function setMessage($text, $type = 'message')
+  {
+    $permissionError = Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED');
+    $saveFailedError = Text::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $permissionError);
+
+    if($type === 'error' && $text === $saveFailedError)
+    {
+      $this->component->addWarning($permissionError);
+
+      return null;
+    }
+
+    return parent::setMessage($text, $type);
+  }
+
   protected function postSaveHook(\Joomla\CMS\MVC\Model\BaseDatabaseModel $model, $validData = [])
   {
     $originId       = $this->input->getInt('origin_id', 0);

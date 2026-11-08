@@ -527,6 +527,25 @@ class ImageModel extends JoomAdminModel
             $data['published'] = $table->published;
           }
         }
+
+        // Preflight all associated images before storing any synchronized field.
+        // This prevents a partial update when one language variant cannot be changed.
+        $associatedFields = [
+          'published' => $oldPublished,
+          'hidden'    => $oldHidden,
+          'access'    => $oldAccess,
+          'featured'  => $oldFeatured,
+          'approved'  => $oldApproved,
+        ];
+
+        foreach($associatedFields as $field => $oldValue)
+        {
+          if(isset($data[$field]) && (int) $data[$field] !== $oldValue
+            && !$this->checkAssociatedFieldPermissions($table, $field, 'jg_link_associated_images', false))
+          {
+            return false;
+          }
+        }
       }
 
       // Save form data in session
@@ -1187,10 +1206,41 @@ class ImageModel extends JoomAdminModel
    */
   public function changeState(&$pks, $type = 'publish', $value = 1)
   {
+    // The image-list state action may reach changeState() before the component
+    // configuration has been initialized.
+    $this->component->createConfig();
+
     $user    = Factory::getContainer()->get(UserFactoryInterface::class);
     $table   = $this->getTable();
     $pks     = (array)$pks;
     $context = $this->option . '.' . $this->name . '.' . $type;
+
+    if(\in_array($type, ['publish', 'feature', 'approve'], true)
+      && $this->component->getConfig()->get('jg_link_associated_images', 1)
+      && $this->associationsContext
+      && Associations::isEnabled())
+    {
+      $field = 'published';
+
+      if($type === 'feature')
+      {
+        $field = 'featured';
+      }
+      elseif($type === 'approve')
+      {
+        $field = 'approved';
+      }
+
+      foreach($pks as $pk)
+      {
+        $table->reset();
+
+        if(!$table->load($pk) || !$this->checkAssociatedFieldPermissions($table, $field))
+        {
+          return false;
+        }
+      }
+    }
 
     // Include the plugins for the change of state event.
     PluginHelper::importPlugin($this->events_map['change_state']);

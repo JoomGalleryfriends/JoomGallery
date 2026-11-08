@@ -75,6 +75,41 @@ class CategoryController extends JoomFormController
         return parent::save($key, $urlVar);
     }
 
+    /**
+     * Set the redirect message, treating an associated-category permission denial as information.
+     *
+     * The base FormController normally marks every save failure as an error. A denied
+     * associated-category change is an intentional all-or-nothing cancellation, so
+     * convert only this specific model error to Joomla's information message type.
+     *
+     * @param   string  $text  Message to display on redirect.
+     * @param   string  $type  Message type.
+     *
+     * @return  string  Previous message.
+     *
+     * @since   4.5.0
+     */
+    public function setMessage($text, $type = 'message')
+    {
+        $permissionError = Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED');
+        $saveFailedError = Text::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $permissionError);
+
+        // FormController::save() passes the fully formatted save-failed message here.
+        // Match that message directly instead of relying on getModel(), which may
+        // resolve a different model instance in this controller context.
+        if($type === 'error' && $text === $saveFailedError)
+        {
+            // Use JoomGallery's warning queue. It renders the same blue
+            // Information message as the category-list permission warning.
+            $this->component->addWarning($permissionError);
+
+            // Do not queue a Joomla controller message, which would render green/red.
+            return null;
+        }
+
+        return parent::setMessage($text, $type);
+    }
+
     protected function postSaveHook(\Joomla\CMS\MVC\Model\BaseDatabaseModel $model, $validData = [])
     {
         if($this->input->getInt('origin_id', 0) > 0 && $this->input->getString('forcedLanguage', '') !== '')

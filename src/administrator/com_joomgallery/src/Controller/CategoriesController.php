@@ -28,6 +28,56 @@ use Joomla\Utilities\ArrayHelper;
 class CategoriesController extends JoomAdminController
 {
   /**
+   * Publish or unpublish categories and report a failed model operation correctly.
+   *
+   * Joomla's base AdminController ignores the boolean return value of publish()
+   * for unpublish operations and always queues a success message. Check the
+   * return value here so a rejected associated-category change is not reported
+   * as successful.
+   *
+   * @return  void
+   *
+   * @since   4.5.0
+   */
+  public function publish()
+  {
+    $this->checkToken();
+
+    $cid   = (array) $this->input->get('cid', [], 'int');
+    $data  = ['publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3];
+    $task  = $this->getTask();
+    $value = ArrayHelper::getValue($data, $task, 0, 'int');
+    $cid   = array_filter($cid);
+
+    if(empty($cid))
+    {
+      $this->getLogger()->warning(Text::_('COM_JOOMGALLERY_NO_ITEM_SELECTED'), ['category' => 'jerror']);
+    }
+    else
+    {
+      $model = $this->getModel();
+
+      try
+      {
+        if($model->publish($cid, $value) === false)
+        {
+          // The model already queued the specific permission or checkout warning.
+          $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=categories');
+
+          return;
+        }
+
+        $this->setMessage(Text::plural('COM_JOOMGALLERY_N_ITEMS_' . ($value === 1 ? 'PUBLISHED' : 'UNPUBLISHED'), \count($cid)));
+      }
+      catch(\Exception $e)
+      {
+        $this->setMessage($e->getMessage(), 'error');
+      }
+    }
+
+    $this->setRedirect('index.php?option=' . _JOOM_OPTION . '&view=categories');
+  }
+  /**
    * Method to clone existing Categories
    *
    * @return  void

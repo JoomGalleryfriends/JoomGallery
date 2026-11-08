@@ -549,8 +549,172 @@ abstract class JoomAdminModel extends AdminModel
    *
    * @since   4.0.0
    */
+  /**
+   * Check ACL and checkout state for all records associated with the given table row.
+   *
+   * This method only performs the preflight check. It does not change any record.
+   *
+   * @param   Table   $table      The source table row.
+   * @param   string  $field      The field that is going to be synchronized.
+   * @param   string  $configKey  The configuration key controlling synchronization.
+   *
+   * @return  boolean  True if every associated record can be changed.
+   *
+   * @since   4.5.0
+   */
+  protected function checkAssociatedFieldPermissions($table, $field, $configKey = 'jg_link_associated_images', $enqueueWarning = true)
+  {
+    // The component config is created lazily and may not exist yet.
+    $this->component->createConfig();
+
+    if(!$this->component->getConfig()->get($configKey, 1)
+      || !$this->associationsContext
+      || !Associations::isEnabled())
+    {
+      return true;
+    }
+
+    $allowedFields = ['published', 'hidden', 'access', 'featured', 'approved'];
+
+    if(!\in_array($field, $allowedFields, true) || !$table->hasField($field))
+    {
+      return true;
+    }
+
+    $db  = $this->getDatabase();
+    $key = $table->getKeyName();
+    $id  = (int) $table->$key;
+
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('key'))
+      ->from($db->quoteName('#__associations'))
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('id') . ' = :id')
+      ->bind(':context', $this->associationsContext)
+      ->bind(':id', $id, ParameterType::INTEGER);
+
+    $db->setQuery($query);
+    $associationKey = $db->loadResult();
+
+    // A record without an association is a normal single-language record.
+    if(!$associationKey)
+    {
+      return true;
+    }
+
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('id'))
+      ->from($db->quoteName('#__associations'))
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('key') . ' = :key')
+      ->bind(':context', $this->associationsContext)
+      ->bind(':key', $associationKey);
+
+    $db->setQuery($query);
+    $ids    = array_unique(array_map('intval', (array) $db->loadColumn()));
+    $userId = (int) $this->user->id;
+
+    foreach($ids as $associatedId)
+    {
+      if($associatedId === $id)
+      {
+        continue;
+      }
+
+      $associatedTable = $this->getTable();
+      $associatedTable->reset();
+
+      if(!$associatedTable->load($associatedId))
+      {
+        $this->component->setError($associatedTable->getError());
+
+        return false;
+      }
+
+      $allowed = false;
+
+      if(\in_array($field, ['published', 'featured', 'approved'], true))
+      {
+        // Categories are checked against their own category asset, exactly as in
+        // the category list. Images remain parent-dependent and use canEditState().
+        if($this->type === 'category')
+        {
+        $allowed = $this->getAcl()->checkACL(
+            'editstate',
+            _JOOM_OPTION . '.category.' . (int) $associatedTable->$key
+        );
+        }
+        else
+        {
+          $allowed = $this->canEditState($associatedTable);
+        }
+      }
+      else
+      {
+        $type      = $this->type;
+        $parentId  = 0;
+        $useParent = false;
+
+        if(\is_object($type))
+        {
+          list($option, $type) = explode('.', $type->type_alias, 2);
+        }
+
+        if(\in_array($type, $this->getAcl()->get('parent_dependent_types')) && isset($associatedTable->catid))
+        {
+          $parentId  = (int) $associatedTable->catid;
+          $useParent = true;
+        }
+
+        $allowed = $this->getAcl()->checkACL('edit', $type, (int) $associatedTable->$key, $parentId, $useParent);
+      }
+
+      if(!$allowed)
+      {
+        $message = Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED');
+
+        // Save forms report the model error themselves; list actions need an
+        // explicit component warning because they do not use the save pipeline.
+        if($enqueueWarning)
+        {
+          $this->component->addWarning($message);
+        }
+
+        $this->setError($message);
+        $this->component->addLog($message, 'warning', 'jerror');
+
+        return false;
+      }
+
+      if($associatedTable->hasField('checked_out')
+        && $associatedTable->checked_out
+        && (int) $associatedTable->checked_out !== $userId)
+      {
+        $message = Text::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH');
+
+        // Save forms report the model error themselves; list actions need an
+        // explicit component warning because they do not use the save pipeline.
+        if($enqueueWarning)
+        {
+          $this->component->addWarning($message);
+        }
+
+        $this->setError($message);
+        $this->component->addLog($message, 'warning', 'jerror');
+
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   protected function syncAssociatedField($table, $field, $value, $configKey = 'jg_link_associated_images')
   {
+    // The component config is lazy-loaded. This method can be reached on save/state paths
+    // where no earlier code has initialized it.
+    $this->component->createConfig();
+
     if(!$this->component->getConfig()->get($configKey, 1)
       || !$this->associationsContext
       || !Associations::isEnabled())

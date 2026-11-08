@@ -569,7 +569,25 @@ class CategoryModel extends JoomAdminModel
           }
         }
 
-          // Check if category has subcategories (children)
+          // Preflight all associated categories before storing any changed field.
+        // This keeps the save operation all-or-nothing when one language variant
+        // cannot be edited by the current user.
+        $associatedFields = [
+          'published' => $oldPublished,
+          'hidden'    => $oldHidden,
+          'access'    => $oldAccess,
+        ];
+
+        foreach($associatedFields as $field => $oldValue)
+        {
+          if(isset($data[$field]) && (int) $data[$field] !== $oldValue
+            && !$this->checkAssociatedFieldPermissions($table, $field, 'jg_link_associated_categories', false))
+          {
+            return false;
+          }
+        }
+
+        // Check if category has subcategories (children)
           if($this->getChildren($pk))
           {
             $hasChildren = true;
@@ -970,6 +988,26 @@ class CategoryModel extends JoomAdminModel
    */
   public function publish(&$pks, $value = 1)
   {
+    // The category-list state action can reach publish() before the component config is initialized.
+    $this->component->createConfig();
+
+    if($this->component->getConfig()->get('jg_link_associated_categories', 1)
+      && $this->associationsContext
+      && Associations::isEnabled())
+    {
+      $table = $this->getTable();
+
+      foreach((array) $pks as $pk)
+      {
+        $table->reset();
+
+        if(!$table->load($pk) || !$this->checkAssociatedFieldPermissions($table, 'published', 'jg_link_associated_categories'))
+        {
+          return false;
+        }
+      }
+    }
+
     $result = parent::publish($pks, $value);
 
     if(!$result

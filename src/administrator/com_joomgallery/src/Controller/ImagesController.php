@@ -340,7 +340,21 @@ class ImagesController extends JoomAdminController
       // Change the state of the items.
       try
       {
-        $model->changeState($cid, $type, $value);
+        if($model->changeState($cid, $type, $value) === false)
+        {
+          // The model already queued the permission or checkout warning.
+          // Do not report a successful state change when the operation was aborted.
+        $this->setRedirect(
+            Route::_(
+                'index.php?option=' . $this->option . '&view=' . $this->view_list
+                  . $this->getRedirectToListAppend(),
+                false
+            )
+        );
+
+          return;
+        }
+
         $errors = $model->getErrors();
         $ntext  = null;
 
