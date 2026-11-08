@@ -887,21 +887,23 @@ class JoomHelper
 
       if(Multilanguage::isEnabled() && Associations::isEnabled())
       {
+        $language = $cat->language;
+
         foreach($categories as $categoryId)
         {
-        $associations = Associations::getAssociations(
-            'com_joomgallery',
-            '#__joomgallery_categories',
-            'com_joomgallery.category',
-            $categoryId,
-            'id',
-            '',
-            ''
-        );
+          $associations = Associations::getAssociations(
+              'com_joomgallery',
+              '#__joomgallery_categories',
+              'com_joomgallery.category',
+              $categoryId,
+              'id',
+              '',
+              ''
+          );
 
-          foreach($associations as $association)
+          if(isset($associations[$language]))
           {
-            $categories[] = (int) $association->id;
+            $categories[] = (int) $associations[$language]->id;
           }
         }
 
@@ -919,7 +921,6 @@ class JoomHelper
       $query->select('id')
             ->from($db->quoteName(_JOOM_TABLE_IMAGES))
             ->where($db->quoteName('catid') . ' IN (' . implode(',', $categories) . ')')
-            ->where($db->quoteName('language') . ' = ' . $db->quote($cat->language))
             ->where($db->quoteName('published') . '= 1')
             ->where($db->quoteName('approved') . '= 1')
             ->where($db->quoteName('hidden') . '= 0')
