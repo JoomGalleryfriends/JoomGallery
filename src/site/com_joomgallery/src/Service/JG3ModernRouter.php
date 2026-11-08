@@ -204,11 +204,11 @@ class JG3ModernRouter extends DefaultRouter
     {
       if(!$id)
       {
-        if($query['view'] = 'image' && $query['format'] = 'raw')
+        if($query['view'] == 'image' && $query['format'] == 'raw')
         {
           return [0 => 'noimage:0'];
         }
-        elseif($query['view'] = 'userimage')
+        elseif($query['view'] == 'userimage')
         {
           // Load empty userimage form view
           return [''];
