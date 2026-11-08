@@ -121,7 +121,7 @@ class CategoryModel extends JoomAdminModel
     }
 
     $forcedLanguage = $this->app->getInput()->getString('forcedLanguage', '');
-    $originId = $this->app->getInput()->getInt('origin_id', 0);
+    $originId       = $this->app->getInput()->getInt('origin_id', 0);
 
     if($forcedLanguage !== '' && $originId > 0)
     {
@@ -478,30 +478,65 @@ class CategoryModel extends JoomAdminModel
 
 
     // Create a translated category variant from the source category.
-    $sourceId       = $app->input->getInt('origin_id', 0);
-    $forcedLanguage = $app->input->getString('forcedLanguage', '');
+    $sourceId          = $app->input->getInt('origin_id', 0);
+    $forcedLanguage    = $app->input->getString('forcedLanguage', '');
     $isLanguageVariant = $sourceId > 0 && $forcedLanguage !== '';
 
     if($isLanguageVariant)
     {
       $sourceTable = $this->getTable();
 
-      if(!$sourceTable->load($sourceId) || $sourceTable->language === $forcedLanguage)
+      // The target must be an enabled content language.
+      $contentLanguages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(false, false, null, 'ordering', 'asc');
+      $enabledLanguages = array_map(static fn($language) => $language->lang_code, $contentLanguages);
+
+      if(!in_array($forcedLanguage, $enabledLanguages, true))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+
+        return false;
+      }
+
+      // Load and validate the source before preparing any variant data.
+      if(!$sourceTable->load($sourceId)
+        || empty($sourceTable->language)
+        || $sourceTable->language === '*'
+        || $sourceTable->language === $forcedLanguage)
       {
         $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
 
         return false;
       }
 
-      $data['published'] = (int) $sourceTable->published;
-      $data['id']       = 0;
-      $data['language'] = $forcedLanguage;
-
-      if((int) $sourceTable->parent_id <= 1)
+      // A variant may only be created from a source category the user may edit/use.
+      if(!$this->getAcl()->checkACL('edit', 'category', (int) $sourceTable->id, (int) $sourceTable->parent_id, true))
       {
-        $data['parent_id'] = 1;
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+
+        return false;
       }
-      else
+
+      // Do not create a second association for the requested language.
+    $sourceAssociations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery_categories',
+        'com_joomgallery.category',
+        (int) $sourceTable->id,
+        'id',
+        '',
+        ''
+    );
+
+      if(isset($sourceAssociations[$forcedLanguage]))
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+
+        return false;
+      }
+
+      $targetParentId = 1;
+
+      if((int) $sourceTable->parent_id > 1)
       {
         $parentAssociations = Associations::getAssociations(
             'com_joomgallery',
@@ -520,8 +555,21 @@ class CategoryModel extends JoomAdminModel
           return false;
         }
 
-        $data['parent_id'] = (int) $parentAssociations[$forcedLanguage]->id;
+        $targetParentId = (int) $parentAssociations[$forcedLanguage]->id;
       }
+
+      // Check that the user may create a category below the resolved target parent.
+      if(!$this->getAcl()->checkACL('create', 'category', 0, $targetParentId, true))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_CREATE'));
+
+        return false;
+      }
+
+      $data['published'] = (int) $sourceTable->published;
+      $data['id']        = 0;
+      $data['language']  = $forcedLanguage;
+      $data['parent_id'] = $targetParentId;
     }
 
     // Change language to 'All' if multilangugae is not enabled.
@@ -541,9 +589,9 @@ class CategoryModel extends JoomAdminModel
       {
         $table->load($pk);
         $oldPublished = (int) $table->published;
-        $oldHidden = (int) $table->hidden;
-        $oldAccess = (int) $table->access;
-        $isNew = false;
+        $oldHidden    = (int) $table->hidden;
+        $oldAccess    = (int) $table->access;
+        $isNew        = false;
 
         // Check if the parent category was changed
         if($table->parent_id != $data['parent_id'])
@@ -899,9 +947,9 @@ class CategoryModel extends JoomAdminModel
     {
       if($isLanguageVariant && $sourceId > 0)
       {
-        $db = $this->getDbo();
+        $db                 = $this->getDbo();
         $associationContext = $this->associationsContext;
-        $query = $db->getQuery(true)
+        $query              = $db->getQuery(true)
           ->select($db->quoteName('key'))
           ->from($db->quoteName('#__associations'))
           ->where($db->quoteName('context') . ' = :context')
@@ -910,7 +958,7 @@ class CategoryModel extends JoomAdminModel
         $query->bind(':sourceId', $sourceId, ParameterType::INTEGER);
         $db->setQuery($query);
         $associationKey = $db->loadResult();
-        $associatedIds = [$sourceId];
+        $associatedIds  = [$sourceId];
 
         if($associationKey !== null)
         {

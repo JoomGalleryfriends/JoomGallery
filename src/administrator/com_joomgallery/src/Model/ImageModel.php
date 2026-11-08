@@ -488,6 +488,149 @@ class ImageModel extends JoomAdminModel
       return false;
     }
 
+    // Validate a language variant before any upload, file-reference or database changes.
+    if($isLanguageVariant && $isNew)
+    {
+      $contentLanguages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(false, false, null, 'ordering', 'asc');
+      $enabledLanguages = array_map(static fn($language) => $language->lang_code, $contentLanguages);
+
+      if(!in_array($forcedLanguage, $enabledLanguages, true))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+
+        return false;
+      }
+
+      $sourceImage = JoomHelper::getRecord('image', $source_id);
+
+      if(!$sourceImage || empty($sourceImage->id)
+        || empty($sourceImage->language)
+        || $sourceImage->language === '*'
+        || $sourceImage->language === $forcedLanguage)
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+
+        return false;
+      }
+
+      // The source image must be usable by the current user.
+      if(!$this->getAcl()->checkACL('edit', 'image', (int) $sourceImage->id, (int) $sourceImage->catid, true))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+
+        return false;
+      }
+
+      // Do not create a second association for the requested language.
+    $sourceAssociations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery',
+        'com_joomgallery.image',
+        (int) $sourceImage->id,
+        'id',
+        '',
+        ''
+    );
+
+      if(isset($sourceAssociations[$forcedLanguage]))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+
+        return false;
+      }
+
+      // Resolve the target category from the source category's association.
+    $categoryAssociations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery_categories',
+        'com_joomgallery.category',
+        (int) $sourceImage->catid,
+        'id',
+        '',
+        ''
+    );
+
+      if(!isset($categoryAssociations[$forcedLanguage]))
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_CATEGORY_VARIANT_PARENT'));
+
+        return false;
+      }
+
+      $targetCategoryId = (int) $categoryAssociations[$forcedLanguage]->id;
+      $categoryTable    = $this->component->getMVCFactory()->createTable('Category', 'administrator');
+
+      if(!$categoryTable->load($targetCategoryId) || $categoryTable->language !== $forcedLanguage)
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_CATEGORY_VARIANT_PARENT'));
+
+        return false;
+      }
+
+      // The user must be allowed to add/upload images in the target category.
+      if(!$this->getAcl()->checkACL('add', 'image', 0, $targetCategoryId, true))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_CREATE'));
+
+        return false;
+      }
+
+      // Verify the source image file using the filesystem stored with the image.
+      try
+      {
+        $filesystem = (string) ($sourceImage->filesystem ?? '');
+
+        // A shared image reference stores the authoritative filesystem and path.
+        if(!empty($sourceImage->image_ref))
+        {
+          $db    = $this->getDatabase();
+          $query = $db->getQuery(true)
+            ->select($db->quoteName('filesystem'))
+            ->from($db->quoteName('#__joomgallery_img_ref'))
+            ->where($db->quoteName('id') . ' = :imageRefId')
+            ->bind(':imageRefId', (int) $sourceImage->image_ref, ParameterType::INTEGER);
+
+          $db->setQuery($query);
+          $referenceFilesystem = $db->loadResult();
+
+          if($referenceFilesystem === null || $referenceFilesystem === '')
+          {
+            throw new \RuntimeException('The filesystem of the shared image reference could not be determined.');
+          }
+
+          $filesystem = (string) $referenceFilesystem;
+        }
+
+        if($filesystem === '')
+        {
+          throw new \RuntimeException('The filesystem of the source image could not be determined.');
+        }
+
+        $sourceFileManager = JoomHelper::getService('FileManager', [(int) $sourceImage->catid]);
+
+        // FileManager initially uses the category configuration. Override it with
+        // the filesystem that actually stores the source image.
+        $this->component->createFilesystem($filesystem);
+        $sourceFilePath = $sourceFileManager->getImgPath($sourceImage, 'original');
+
+        if($sourceFilePath === false)
+        {
+          throw new \RuntimeException('The source image path could not be resolved.');
+        }
+
+        $this->component->getFilesystem()->getFile($sourceFilePath);
+      }
+      catch(\Throwable $e)
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_FILE_NOT_EXISTING'));
+
+        return false;
+      }
+
+      // Never trust the category id submitted by the browser for a language variant.
+      $data['catid'] = $targetCategoryId;
+    }
+
     // Include the plugins for the save events.
     PluginHelper::importPlugin($this->events_map['save']);
 
@@ -832,8 +975,8 @@ class ImageModel extends JoomAdminModel
       if( $isNew && $isCopy && !$imgUploaded && !$isLanguageVariant )
       {
         // Regenerate filename to prevent copying a file onto itself.
-        $newFilename = $manager->regenFilename($table->filename);
-        $table->filename = $newFilename;
+        $newFilename      = $manager->regenFilename($table->filename);
+        $table->filename  = $newFilename;
         $data['filename'] = $newFilename;
 
         // Copy image files using the new filename.
