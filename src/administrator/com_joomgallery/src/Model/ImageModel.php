@@ -494,7 +494,7 @@ class ImageModel extends JoomAdminModel
       $contentLanguages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(false, false, null, 'ordering', 'asc');
       $enabledLanguages = array_map(static fn($language) => $language->lang_code, $contentLanguages);
 
-      if(!in_array($forcedLanguage, $enabledLanguages, true))
+      if(!\in_array($forcedLanguage, $enabledLanguages, true))
       {
         $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
 
