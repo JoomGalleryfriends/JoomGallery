@@ -919,6 +919,7 @@ class JoomHelper
       $query->select('id')
             ->from($db->quoteName(_JOOM_TABLE_IMAGES))
             ->where($db->quoteName('catid') . ' IN (' . implode(',', $categories) . ')')
+            ->where($db->quoteName('language') . ' = ' . $db->quote($cat->language))
             ->where($db->quoteName('published') . '= 1')
             ->where($db->quoteName('approved') . '= 1')
             ->where($db->quoteName('hidden') . '= 0')
