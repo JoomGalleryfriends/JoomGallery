@@ -891,14 +891,14 @@ class JoomHelper
 
         foreach($categories as $categoryId)
         {
-          $associations = Associations::getAssociations(
-            'com_joomgallery',
-            '#__joomgallery_categories',
-            'com_joomgallery.category',
-            $categoryId,
-            'id',
-            '',
-            ''
+        $associations = Associations::getAssociations(
+              'com_joomgallery',
+              '#__joomgallery_categories',
+              'com_joomgallery.category',
+              $categoryId,
+              'id',
+              '',
+              ''
           );
 
           if(isset($associations[$language]))
