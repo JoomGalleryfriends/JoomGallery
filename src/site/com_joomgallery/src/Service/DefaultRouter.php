@@ -248,7 +248,7 @@ class DefaultRouter extends RouterView
     {
       if(!$id)
       {
-        if($query['view'] = 'image' && $query['format'] = 'raw')
+        if($query['view'] == 'image' && $query['format'] == 'raw')
         {
           // Load the no-image
           if($this->noIMG_IDs)
@@ -258,7 +258,7 @@ class DefaultRouter extends RouterView
 
           return [0 => '0:noimage'];
         }
-        elseif($query['view'] = 'userimage')
+        elseif($query['view'] == 'userimage')
         {
           // Load empty userimage form view
           return [''];
@@ -415,7 +415,7 @@ class DefaultRouter extends RouterView
     {
       if(!$id || $id == 'null')
       {
-        if($query['view'] = 'usercategory' && $query['layout'] = 'editCat')
+        if($query['view'] == 'usercategory' && $query['layout'] == 'editCat')
         {
           // Load empty form view
           if($this->noIDs)
