@@ -20,9 +20,11 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Event\Model\AfterCleanCacheEvent;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Event\DispatcherAwareInterface;
 use Joomla\Event\DispatcherAwareTrait;
@@ -285,6 +287,50 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     // Load extra input fields to the form
     Form::addFormPath(JPATH_PLUGINS . '/system/joomgallery/forms');
     $form->loadFile('form', false);
+    $form->loadFile('user', false);
+
+    $identity = $this->getApplication()->getIdentity();
+    $targetId = 0;
+
+    if(\is_object($data) && isset($data->id))
+    {
+      $targetId = (int) $data->id;
+    }
+    elseif(\is_array($data) && isset($data['id']))
+    {
+      $targetId = (int) $data['id'];
+    }
+
+    if($targetId < 1)
+    {
+      $targetId = $this->getApplication()->getInput()->getInt('id', (int) $identity->id);
+    }
+
+    if($targetId !== (int) $identity->id || $identity->guest || !$this->isUserKeyStorageEnabled())
+    {
+      $form->removeField('edit_user_keys', 'joomgallery');
+    }
+    else
+    {
+      $this->getApplication()->getDocument()->getWebAssetManager()->useScript('bootstrap.modal');
+      $url = Route::_('index.php?option=com_joomgallery&view=userkeys&layout=modal&tmpl=component', false);
+      $modal = HTMLHelper::_('bootstrap.renderModal', 'joomgallery-userkeys-modal', [
+        'url'         => $url,
+        'title'       => Text::_('PLG_SYSTEM_JOOMGALLERY_EDIT_USER_KEYS'),
+        'closeButton' => true,
+        'height'      => '100%',
+        'width'       => '100%',
+        'modalWidth'  => 70,
+        'bodyHeight'  => 70,
+        'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+          . Text::_('JCLOSE') . '</button>',
+      ]);
+      $button = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" '
+        . 'data-bs-target="#joomgallery-userkeys-modal">'
+        . Text::_('PLG_SYSTEM_JOOMGALLERY_EDIT_USER_KEYS') . '</button>';
+
+      $form->setFieldAttribute('edit_user_keys', 'description', $button . $modal, 'joomgallery');
+    }
 
     $this->setResult($event, true);
 
@@ -355,7 +401,61 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
           }
         }
       }
+
+      if($userId > 0)
+      {
+        $profile = $this->getJoomGalleryProfile((int) $userId);
+
+        if($profile)
+        {
+          $data->joomgallery = isset($data->joomgallery) && \is_array($data->joomgallery)
+            ? $data->joomgallery : [];
+          $data->joomgallery['profile_id']   = (int) $profile->id;
+          $data->joomgallery['cmsuser']      = (int) $profile->cmsuser;
+          $data->joomgallery['description']  = (string) $profile->description;
+          $data->joomgallery['avatar']       = (string) $profile->avatar;
+          $data->joomgallery['image']        = (string) $profile->image;
+          $data->joomgallery['files']        = (string) $profile->files;
+          $data->joomgallery['created_time'] = (string) $profile->created_time;
+        }
+      }
     }
+  }
+
+  /**
+   * Load a JoomGallery profile by its linked Joomla user ID.
+   *
+   * @param   int  $userId  Joomla user ID
+   *
+   * @return  object|false
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  protected function getJoomGalleryProfile(int $userId)
+  {
+    $component = $this->getApplication()->bootComponent('com_joomgallery');
+    $model     = $component->getMVCFactory()->createModel('User', 'Administrator', ['ignore_request' => true]);
+
+    return $model->getItemByCmsUser($userId);
+  }
+
+  /**
+   * Check whether AI credentials are configured for per-user storage.
+   *
+   * The default keeps this feature usable on branches predating the AI
+   * Interface configuration switch. After merging, the configured value is
+   * authoritative.
+   *
+   * @return  bool
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  protected function isUserKeyStorageEnabled(): bool
+  {
+    $component = $this->getApplication()->bootComponent('com_joomgallery');
+    $component->createConfig();
+
+    return $component->getConfig()->get('jg_aiint_keys_storage', 'user') === 'user';
   }
 
   /**
