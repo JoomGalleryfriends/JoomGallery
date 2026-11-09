@@ -118,7 +118,7 @@ class UserkeysModel extends FormModel
     $component = Factory::getApplication()->bootComponent('com_joomgallery');
     $component->createConfig();
 
-    if($component->getConfig()->get('jg_aiint_keys_storage', 'user') !== 'user')
+    if($component->getConfig()->get('jg_aiint_keys_storage', 'configuration') !== 'user')
     {
       throw new \RuntimeException('COM_JOOMGALLERY_USERKEYS_DISABLED', 403);
     }

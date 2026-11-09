@@ -455,7 +455,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     $component = $this->getApplication()->bootComponent('com_joomgallery');
     $component->createConfig();
 
-    return $component->getConfig()->get('jg_aiint_keys_storage', 'user') === 'user';
+    return $component->getConfig()->get('jg_aiint_keys_storage', 'configuration') === 'user';
   }
 
   /**
