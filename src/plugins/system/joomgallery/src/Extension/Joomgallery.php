@@ -313,18 +313,22 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     else
     {
       $this->getApplication()->getDocument()->getWebAssetManager()->useScript('bootstrap.modal');
-      $url = Route::_('index.php?option=com_joomgallery&view=userkeys&layout=modal&tmpl=component', false);
-      $modal = HTMLHelper::_('bootstrap.renderModal', 'joomgallery-userkeys-modal', [
-        'url'         => $url,
-        'title'       => Text::_('PLG_SYSTEM_JOOMGALLERY_EDIT_USER_KEYS'),
-        'closeButton' => true,
-        'height'      => '100%',
-        'width'       => '100%',
-        'modalWidth'  => 70,
-        'bodyHeight'  => 70,
-        'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
-          . Text::_('JCLOSE') . '</button>',
-      ]);
+      $url    = Route::_('index.php?option=com_joomgallery&view=userkeys&layout=modal&tmpl=component', false);
+    $modal    = HTMLHelper::_(
+        'bootstrap.renderModal',
+        'joomgallery-userkeys-modal',
+        [
+          'url'         => $url,
+          'title'       => Text::_('PLG_SYSTEM_JOOMGALLERY_EDIT_USER_KEYS'),
+          'closeButton' => true,
+          'height'      => '100%',
+          'width'       => '100%',
+          'modalWidth'  => 70,
+          'bodyHeight'  => 70,
+          'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+            . Text::_('JCLOSE') . '</button>',
+        ]
+    );
       $button = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" '
         . 'data-bs-target="#joomgallery-userkeys-modal">'
         . Text::_('PLG_SYSTEM_JOOMGALLERY_EDIT_USER_KEYS') . '</button>';
@@ -408,7 +412,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
         if($profile)
         {
-          $data->joomgallery = isset($data->joomgallery) && \is_array($data->joomgallery)
+          $data->joomgallery                 = isset($data->joomgallery) && \is_array($data->joomgallery)
             ? $data->joomgallery : [];
           $data->joomgallery['profile_id']   = (int) $profile->id;
           $data->joomgallery['cmsuser']      = (int) $profile->cmsuser;

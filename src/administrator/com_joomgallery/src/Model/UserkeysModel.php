@@ -1,8 +1,11 @@
 <?php
 /**
- * @package    com_joomgallery
- * @copyright  2008 - 2026 JoomGallery::ProjectTeam
- * @license    GNU General Public License version 3 or later
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
  */
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Model;
@@ -57,8 +60,8 @@ class UserkeysModel extends FormModel
 
     $userModel = Factory::getApplication()->bootComponent('com_joomgallery')
       ->getMVCFactory()->createModel('User', 'Administrator', ['ignore_request' => true]);
-    $profile = $userModel->getItemByCmsUser($userId);
-    $params  = new Registry($profile->params ?? '{}');
+    $profile   = $userModel->getItemByCmsUser($userId);
+    $params    = new Registry($profile->params ?? '{}');
 
     return [
       'jg_aiint_key'           => (string) $params->get('jg_aiint_key', ''),
