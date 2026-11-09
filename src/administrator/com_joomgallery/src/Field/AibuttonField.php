@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Helper\ConfigHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JSHelper;
 use Joomla\CMS\Factory;
@@ -77,12 +78,13 @@ class AibuttonField extends FormField
     $jg = JoomHelper::getComponent();
     $jg->createConfig();
     $config = $jg->getConfig();
+    $aiKeys = ConfigHelper::getAIInterfaceKeys($config);
 
     // Initialize AIinterface
     $opts = [
       'prefix' => 'jgai',
       'host' => $config->get('jg_aiint_host', 'http://localhost/api/v1'),
-      'token' => $config->get('jg_aiint_key', ''),
+      'token' => $aiKeys['interface_key'],
       'client_name' => $this->getAttribute('clientname', 'JG-General'),
       'autoload' => false,
       'configs' => [

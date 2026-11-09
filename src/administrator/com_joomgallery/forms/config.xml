@@ -1486,6 +1486,17 @@
       <field name="aiint_note"
               type="note"
               description="COM_JOOMGALLERY_CONFIG_AIINT_NOTE_LONG" />
+      <field name="jg_aiint_keys_storage"
+             type="radio"
+             default="configuration"
+             global_only="true"
+             layout="joomla.form.field.radio.switcher"
+             validate="options"
+             label="COM_JOOMGALLERY_CONFIG_AIINT_KEYS_STORAGE_LABEL"
+             description="COM_JOOMGALLERY_CONFIG_AIINT_KEYS_STORAGE_LONG" >
+          <option value="configuration">COM_JOOMGALLERY_CONFIG_AIINT_KEYS_STORAGE_CONFIG</option>
+          <option value="user">COM_JOOMGALLERY_CONFIG_AIINT_KEYS_STORAGE_USER</option>
+      </field>
       <field name="jg_aiint_host"
              type="text"
              default="https://ai.joomgalleryfriends.net/api/v1"
@@ -1495,6 +1506,7 @@
              type="textarea"
              default=""
              rows="2"
+             showon="jg_aiint_keys_storage:configuration"
              label="COM_JOOMGALLERY_CONFIG_AIINT_KEY_LABEL"
              description="COM_JOOMGALLERY_CONFIG_AIINT_KEY_LONG" />
       <field name="jg_aiint_force_slash"
@@ -1515,25 +1527,16 @@
       <field name="spacer5"
              label="COM_JOOMGALLERY_CONFIG_AIINT_AIS_LABEL"
              type="spacer"
+             showon="jg_aiint_keys_storage:configuration"
              hr="false" >
       </field>
       <field name="jg_aiint_provider_keys"
              type="subform"
+             formsource="administrator/components/com_joomgallery/forms/subform_ai_provider_keys.xml"
              label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_LABEL"
              description="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_LONG"
-             multiple="true" >
-          <form>
-              <field name="provider_name"
-                     type="text"
-                     hint="openai"
-                     label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_NAME_LABEL" />
-              <field name="provider_key"
-                     type="textarea"
-                     label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_KEY_LABEL"
-                     default=""
-                     rows="2" />
-          </form>
-      </field>
+             multiple="true"
+             showon="jg_aiint_keys_storage:configuration" />
       <field name="spacer4"
             label="COM_JOOMGALLERY_CONFIG_AIINT_TAGGING_LABEL"
             type="spacer"

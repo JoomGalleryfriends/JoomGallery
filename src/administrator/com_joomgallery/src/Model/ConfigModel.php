@@ -462,6 +462,11 @@ class ConfigModel extends JoomAdminModel
       $data['title']    = 'Global Configuration';
       $data['group_id'] = '1';
     }
+    else
+    {
+      // Global-only settings must inherit from the global configuration set.
+      $data['jg_aiint_keys_storage'] = '-1';
+    }
 
     return parent::save($data);
   }

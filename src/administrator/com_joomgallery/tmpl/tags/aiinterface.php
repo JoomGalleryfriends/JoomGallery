@@ -41,12 +41,13 @@ $gen_options    = Factory::getApplication()->input->get('gen_options', '', 'raw'
 $host_url = $config->get('jg_aiint_host', 'http://localhost/api/v1');
 $base_url = parse_url($host_url, PHP_URL_SCHEME) . '://' . parse_url($host_url, PHP_URL_HOST);
 $lang     = str_contains('de', Factory::getLanguage()->getTag()) ? 'de' : 'en';
+$aiKeys   = ConfigHelper::getAIInterfaceKeys($config);
 
 // Initialize AIinterface
 $opts = [
   'prefix' => 'jgai',
   'host' => $host_url,
-  'token' => $config->get('jg_aiint_key', ''),
+  'token' => $aiKeys['interface_key'],
   'client_name' => 'JG-Keywording',
   'autoload' => true,
   'configs' => [
@@ -60,7 +61,7 @@ $opts = [
     'max_parallel' => $config->get('jg_parallelprocesses', 1),
     'case_sensitivity' => $config->get('jg_aiint_tags_casesens', 1),
     'letter_case' => $config->get('jg_aiint_tags_caseupper', 1),
-    'api_keys' => ConfigHelper::getProviderKeys($config),
+    'api_keys' => $aiKeys['provider_keys'],
   ],
 ];
 $this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);
@@ -76,7 +77,7 @@ $lang     = str_contains('de', Factory::getLanguage()->getTag()) ? 'de' : 'en';
 $opts = [
   'prefix' => 'jgai',
   'host' => $host_url,
-  'token' => $config->get('jg_aiint_key', ''),
+  'token' => $aiKeys['interface_key'],
   'client_name' => 'JG-General',
   'autoload' => true,
   'configs' => [
@@ -90,7 +91,7 @@ $opts = [
     'max_parallel' => $config->get('jg_parallelprocesses', 1),
     'case_sensitivity' => $config->get('jg_aiint_tags_casesens', 1),
     'letter_case' => $config->get('jg_aiint_tags_caseupper', 1),
-    'api_keys' => ConfigHelper::getProviderKeys($config),
+    'api_keys' => $aiKeys['provider_keys'],
   ],
 ];
 $this->document->addScriptOptions('com_joomgallery.aiinterface', $opts);

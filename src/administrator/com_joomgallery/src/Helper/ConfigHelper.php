@@ -295,16 +295,93 @@ class ConfigHelper
    */
   public static function getProviderKeys(ConfigInterface $config)
   {
-    $apiKeys_orig = json_decode($config->get('jg_aiint_provider_keys', '{}'), true);
+    return self::normalizeProviderKeys($config->get('jg_aiint_provider_keys', '{}'));
+  }
+
+  /**
+   * Resolve AI Interface and provider keys from the configured storage source.
+   *
+   * @param   ConfigInterface  $config  Effective JoomGallery configuration
+   * @param   int|null         $userId  Joomla user ID, defaults to current user
+   *
+   * @return  array{interface_key: string, provider_keys: array}
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public static function getAIInterfaceKeys(ConfigInterface $config, ?int $userId = null): array
+  {
+    $keysStorage = (string) $config->get('jg_aiint_keys_storage', 'configuration');
+
+    if($keysStorage !== 'user')
+    {
+      return [
+        'interface_key' => (string) $config->get('jg_aiint_key', ''),
+        'provider_keys' => self::getProviderKeys($config),
+      ];
+    }
+
+    $userId ??= (int) Factory::getApplication()->getIdentity()->id;
+
+    if($userId < 1)
+    {
+      return ['interface_key' => '', 'provider_keys' => []];
+    }
+
+    $userTable = JoomHelper::getComponent()->getMVCFactory()->createTable('User', 'Administrator');
+
+    if(!$userTable->load(['cmsuser' => $userId]))
+    {
+      return ['interface_key' => '', 'provider_keys' => []];
+    }
+
+    $params = new Registry($userTable->params ?: '{}');
+
+    return [
+      'interface_key' => (string) $params->get('jg_aiint_key', ''),
+      'provider_keys' => self::normalizeProviderKeys($params->get('jg_aiint_provider_keys', [])),
+    ];
+  }
+
+  /**
+   * Normalize provider-key subform data to provider => key pairs.
+   *
+   * @param   mixed  $providerKeys  JSON, array or object containing subform rows
+   *
+   * @return  array
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  private static function normalizeProviderKeys(mixed $providerKeys): array
+  {
+    if($providerKeys instanceof Registry)
+    {
+      $providerKeys = $providerKeys->toArray();
+    }
+    elseif(\is_string($providerKeys))
+    {
+      $providerKeys = json_decode($providerKeys, true) ?: [];
+    }
+    elseif(\is_object($providerKeys))
+    {
+      $providerKeys = json_decode(json_encode($providerKeys), true) ?: [];
+    }
 
     $api_keys = [];
 
-    foreach($apiKeys_orig as $provider)
+    foreach((array) $providerKeys as $provider)
     {
+      if(!\is_array($provider) || empty($provider['provider_name']) || !isset($provider['provider_key']))
+      {
+        continue;
+      }
+
       // Make provider names lower case
       $provider_name = OutputFilter::stringURLSafe(trim($provider['provider_name']));
 
-      $api_keys[$provider_name] = $provider['provider_key'];
+      if($provider_name !== '')
+      {
+        $api_keys[$provider_name] = (string) $provider['provider_key'];
+      }
     }
 
     return $api_keys;
