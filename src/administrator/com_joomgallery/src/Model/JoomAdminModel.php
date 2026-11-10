@@ -899,7 +899,7 @@ abstract class JoomAdminModel extends AdminModel
     {
       if(!\is_string($language) || $language === '' || $language === '*'
         || (!\is_int($associatedId) && !\is_string($associatedId))
-        || !\preg_match('/^(0|[1-9][0-9]*)$/', (string) $associatedId))
+        || !preg_match('/^(0|[1-9][0-9]*)$/', (string) $associatedId))
       {
         $this->setError(Text::_('JLIB_APPLICATION_ERROR_INVALID_DATA'));
 
@@ -1075,9 +1075,9 @@ abstract class JoomAdminModel extends AdminModel
           ->insert($db->quoteName('#__associations'))
         ->columns(
             [
-            $db->quoteName('id'),
-            $db->quoteName('context'),
-            $db->quoteName('key'),
+              $db->quoteName('id'),
+              $db->quoteName('context'),
+              $db->quoteName('key'),
             ]
         );
 
