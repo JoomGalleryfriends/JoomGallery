@@ -21,40 +21,45 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Access;
  */
 trait AccessServiceTrait
 {
-    /**
-     * Storage for the access service class.
-     *
-     * @var AccessInterface
-     *
-     * @since  4.0.0
-     */
-    private $acl = null;
+  /**
+   * Storage for the access service class.
+   *
+   * @var AccessInterface
+   *
+   * @since  4.0.0
+   */
+  private $acl = null;
 
-    /**
-     * Returns the access service class.
-     *
-     * @return  AccessInterface
-     *
-     * @since  4.0.0
-     */
-    public function getAccess(): AccessInterface
+  /**
+   * Returns the access service class.
+   *
+   * @return  AccessInterface
+   *
+   * @since  4.0.0
+   */
+  public function getAccess(): AccessInterface
+  {
+    return $this->acl;
+  }
+
+  /**
+   * Creates the access service class
+   *
+   * @param   string   $option   Component option
+   *
+   * @return  void
+   *
+   * @since  4.0.0
+   */
+  public function createAccess($option = '')
+  {
+    $option = $option ?: 'com_joomgallery';
+
+    if(\is_null($this->acl) || $this->acl->get('option') !== $option)
     {
-        return $this->acl;
+      $this->acl = new Access($option);
     }
 
-    /**
-     * Creates the access service class
-     *
-     * @param   string   $option   Component option
-     *
-     * @return  void
-     *
-     * @since  4.0.0
-     */
-    public function createAccess($option = '')
-    {
-        $this->acl = new Access($option);
-
-        return;
-    }
+    return;
+  }
 }
