@@ -143,17 +143,10 @@ class ImageModel extends JoomAdminModel
 
     $originId = $this->app->getInput()->getInt('origin_id');
 
-    if( !$originId )
-    {
-      $originId = (int)$form->getValue('origin_id');
-    }
-
     if( $originId )
     {
       $form->setFieldAttribute('image', 'required', 'false');
     }
-
-    $forcedLanguage = $this->app->getInput()->getString('forcedLanguage', '');
 
     if( $originId && $forcedLanguage )
     {
@@ -463,6 +456,7 @@ class ImageModel extends JoomAdminModel
     $source_id         = $app->input->getInt('origin_id', 0);
     $forcedLanguage    = $app->input->getString('forcedLanguage', '');
     $isLanguageVariant = $source_id > 0 && $forcedLanguage !== '';
+    $preparedAssociations = [];
 
     if( $source_id > 0 )
     {
@@ -496,7 +490,7 @@ class ImageModel extends JoomAdminModel
 
       if(!\in_array($forcedLanguage, $enabledLanguages, true))
       {
-        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
 
         return false;
       }
@@ -508,7 +502,7 @@ class ImageModel extends JoomAdminModel
         || $sourceImage->language === '*'
         || $sourceImage->language === $forcedLanguage)
       {
-        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
 
         return false;
       }
@@ -521,22 +515,23 @@ class ImageModel extends JoomAdminModel
         return false;
       }
 
-      // Do not create a second association for the requested language.
-    $sourceAssociations = Associations::getAssociations(
-        'com_joomgallery',
-        '#__joomgallery',
-        'com_joomgallery.image',
-        (int) $sourceImage->id,
-        'id',
-        '',
-        ''
-    );
-
-      if(isset($sourceAssociations[$forcedLanguage]))
+      // Load and validate the existing association group.
+      if($this->associationsContext && Associations::isEnabled())
       {
-        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+        $preparedAssociations = $this->getAssociationMap((int) $sourceImage->id);
 
-        return false;
+        if($preparedAssociations === false)
+        {
+          return false;
+        }
+
+        // Do not create a second association for the requested language.
+        if(isset($preparedAssociations[$forcedLanguage]))
+        {
+          $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+
+          return false;
+        }
       }
 
       // Resolve the target category from the source category's association.
@@ -586,9 +581,12 @@ class ImageModel extends JoomAdminModel
           $db    = $this->getDatabase();
           $query = $db->getQuery(true)
             ->select($db->quoteName('filesystem'))
-            ->from($db->quoteName('#__joomgallery_img_ref'))
-            ->where($db->quoteName('id') . ' = :imageRefId')
-            ->bind(':imageRefId', (int) $sourceImage->image_ref, ParameterType::INTEGER);
+            ->from($db->quoteName('#__joomgallery_img_ref'));
+
+          $imageRefId = (int) $sourceImage->image_ref;
+
+          $query->where($db->quoteName('id') . ' = :imageRefId')
+            ->bind(':imageRefId', $imageRefId, ParameterType::INTEGER);
 
           $db->setQuery($query);
           $referenceFilesystem = $db->loadResult();
@@ -1110,59 +1108,17 @@ class ImageModel extends JoomAdminModel
     $this->setState($this->getName() . '.new', $isNew);
 
     // Create/update associations.
-    if( $this->associationsContext && Associations::isEnabled() )
+    if($this->associationsContext && Associations::isEnabled())
     {
-      if( $isLanguageVariant && $source_id > 0 )
+      if($isLanguageVariant && $source_id > 0)
       {
-        $db = $this->getDatabase();
-
-        // Find the existing association group of the source image.
-        $query = $db->getQuery(true)->select($db->quoteName('key'))->from($db->quoteName('#__associations'))->where($db->quoteName('context') . ' = :context')->where($db->quoteName('id') . ' = :sourceId')->bind(':context', $this->associationsContext)->bind(':sourceId', $source_id, ParameterType::INTEGER);
-
-        $db->setQuery($query);
-        $associationKey = $db->loadResult();
-
-        // Start with the source image.
-        $associatedIds = [$source_id];
-
-        // Keep every image already in the same association group.
-        if( $associationKey !== null )
-        {
-          $query = $db->getQuery(true)->select($db->quoteName('id'))->from($db->quoteName('#__associations'))->where($db->quoteName('context') . ' = :context')->where($db->quoteName('key') . ' = :associationKey')->bind(':context', $this->associationsContext)->bind(':associationKey', $associationKey);
-
-          $db->setQuery($query);
-        $associatedIds = array_unique(
-            array_merge($associatedIds, $db->loadColumn())
-        );
-        }
-
-        // Rebuild the complete language-to-image mapping.
-        $associations = [];
-
-        foreach( $associatedIds as $associatedId )
-        {
-        $associatedImage = JoomHelper::getRecord(
-            'image',
-            (int)$associatedId
-        );
-
-          if(
-            $associatedImage &&
-            !empty($associatedImage->language) &&
-            $associatedImage->language !== '*'
-          )
-          {
-            $associations[$associatedImage->language] =
-              (int)$associatedId;
-          }
-        }
-
-        $data['associations'] = $associations;
+        $data['associations'] = $preparedAssociations;
       }
 
-      if( !empty($data['associations']) )
+      if(!empty($data['associations'])
+        && !$this->createAssociations($table, $data['associations']))
       {
-        $this->createAssociations($table, $data['associations']);
+        return false;
       }
     }
 

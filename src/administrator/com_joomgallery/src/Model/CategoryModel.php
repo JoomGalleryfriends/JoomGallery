@@ -481,6 +481,7 @@ class CategoryModel extends JoomAdminModel
     $sourceId          = $app->input->getInt('origin_id', 0);
     $forcedLanguage    = $app->input->getString('forcedLanguage', '');
     $isLanguageVariant = $sourceId > 0 && $forcedLanguage !== '';
+    $preparedAssociations = [];
 
     if($isLanguageVariant)
     {
@@ -516,22 +517,23 @@ class CategoryModel extends JoomAdminModel
         return false;
       }
 
-      // Do not create a second association for the requested language.
-    $sourceAssociations = Associations::getAssociations(
-        'com_joomgallery',
-        '#__joomgallery_categories',
-        'com_joomgallery.category',
-        (int) $sourceTable->id,
-        'id',
-        '',
-        ''
-    );
-
-      if(isset($sourceAssociations[$forcedLanguage]))
+      // Load and validate the existing association group.
+      if($this->associationsContext && Associations::isEnabled())
       {
-        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+        $preparedAssociations = $this->getAssociationMap((int) $sourceTable->id);
 
-        return false;
+        if($preparedAssociations === false)
+        {
+          return false;
+        }
+
+        // Do not create a second association for the requested language.
+        if(isset($preparedAssociations[$forcedLanguage]))
+        {
+          $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+
+          return false;
+        }
       }
 
       $targetParentId = 1;
@@ -942,54 +944,18 @@ class CategoryModel extends JoomAdminModel
 
     $this->setState($this->getName() . '.new', $isNew);
 
-    // Create/update associations, preserving the complete language group for a new variant.
+    // Create/update associations.
     if($this->associationsContext && Associations::isEnabled())
     {
       if($isLanguageVariant && $sourceId > 0)
       {
-        $db                 = $this->getDbo();
-        $associationContext = $this->associationsContext;
-        $query              = $db->getQuery(true)
-          ->select($db->quoteName('key'))
-          ->from($db->quoteName('#__associations'))
-          ->where($db->quoteName('context') . ' = :context')
-          ->where($db->quoteName('id') . ' = :sourceId');
-        $query->bind(':context', $associationContext, ParameterType::STRING);
-        $query->bind(':sourceId', $sourceId, ParameterType::INTEGER);
-        $db->setQuery($query);
-        $associationKey = $db->loadResult();
-        $associatedIds  = [$sourceId];
-
-        if($associationKey !== null)
-        {
-          $query = $db->getQuery(true)
-            ->select($db->quoteName('id'))
-            ->from($db->quoteName('#__associations'))
-            ->where($db->quoteName('context') . ' = :context')
-            ->where($db->quoteName('key') . ' = :associationKey');
-          $query->bind(':context', $associationContext, ParameterType::STRING);
-          $query->bind(':associationKey', $associationKey, ParameterType::STRING);
-          $db->setQuery($query);
-          $associatedIds = array_unique(array_merge($associatedIds, $db->loadColumn()));
-        }
-
-        $associations = [];
-
-        foreach($associatedIds as $associatedId)
-        {
-          $associatedCategory = JoomHelper::getRecord('category', (int) $associatedId);
-
-          if($associatedCategory && !empty($associatedCategory->language) && $associatedCategory->language !== '*')
-          {
-            $associations[$associatedCategory->language] = (int) $associatedId;
-          }
-        }
-        $data['associations'] = $associations;
+        $data['associations'] = $preparedAssociations;
       }
 
-      if(!empty($data['associations']))
+      if(!empty($data['associations'])
+        && !$this->createAssociations($table, $data['associations']))
       {
-        $this->createAssociations($table, $data['associations']);
+        return false;
       }
     }
 
