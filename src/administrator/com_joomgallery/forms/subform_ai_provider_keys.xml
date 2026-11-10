@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <field name="provider_name"
+         type="text"
+         hint="openai"
+         label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_NAME_LABEL" />
+  <field name="provider_key"
+         type="textarea"
+         label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_KEY_LABEL"
+         default=""
+         rows="2" />
+</form>

@@ -33,7 +33,8 @@
            description="COM_JOOMGALLERY_FIELDS_USER_IMAGE_DESC" />
 
     <field name="params"
-           type="text"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_userparams.xml"
            label="COM_JOOMGALLERY_PARAMETERS" />
 
     <field name="files"

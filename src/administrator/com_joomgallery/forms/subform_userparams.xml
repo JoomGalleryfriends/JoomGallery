@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <field name="jg_aiint_key"
+         type="textarea"
+         default=""
+         rows="2"
+         label="COM_JOOMGALLERY_CONFIG_AIINT_KEY_LABEL"
+         description="COM_JOOMGALLERY_CONFIG_AIINT_KEY_LONG" />
+  <field name="jg_aiint_provider_keys"
+         type="subform"
+         formsource="administrator/components/com_joomgallery/forms/subform_ai_provider_keys.xml"
+         label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_LABEL"
+         description="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_LONG"
+         multiple="true" />
+</form>
