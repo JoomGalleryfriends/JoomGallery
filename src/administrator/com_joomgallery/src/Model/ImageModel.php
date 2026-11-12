@@ -453,10 +453,11 @@ class ImageModel extends JoomAdminModel
     }
 
     // Are we going to create an image from an existing source image?
-    $source_id         = $app->input->getInt('origin_id', 0);
-    $forcedLanguage    = $app->input->getString('forcedLanguage', '');
-    $isLanguageVariant = $source_id > 0 && $forcedLanguage !== '';
+    $source_id            = $app->input->getInt('origin_id', 0);
+    $forcedLanguage       = $app->input->getString('forcedLanguage', '');
+    $isLanguageVariant    = $source_id > 0 && $forcedLanguage !== '';
     $preparedAssociations = [];
+    $sourceImageRefPath   = null;
 
     if( $source_id > 0 )
     {
@@ -609,7 +610,8 @@ class ImageModel extends JoomAdminModel
         // FileManager initially uses the category configuration. Override it with
         // the filesystem that actually stores the source image.
         $this->component->createFilesystem($filesystem);
-        $sourceFilePath = $sourceFileManager->getImgPath($sourceImage, 'original');
+        $sourceImageRefPath = $sourceFileManager->getCatPath($sourceImage->catid);
+        $sourceFilePath     = $sourceFileManager->getImgPath($sourceImage, 'original');
 
         if($sourceFilePath === false)
         {
@@ -631,6 +633,28 @@ class ImageModel extends JoomAdminModel
 
     // Include the plugins for the save events.
     PluginHelper::importPlugin($this->events_map['save']);
+
+    // Track the transaction used for creating a language variant.
+    $transactionStarted = false;
+    $db                 = $this->getDatabase();
+
+    $rollbackTransaction = function () use (
+        $app,
+        $db,
+        $table,
+        &$transactionStarted
+    ) {
+      if($transactionStarted)
+      {
+        $db->transactionRollback();
+        $transactionStarted = false;
+
+        $app->triggerEvent(
+            'onJoomgalleryImageRollbackTransaction',
+            ['id' => (int) $table->id]
+        );
+      }
+    };
 
     // Record editing and image creation
     try {
@@ -764,24 +788,33 @@ class ImageModel extends JoomAdminModel
         {
           $this->setError('Source image not found.');
 
+          if( $imgUploaded )
+          {
+            $uploader->rollback();
+          }
+
           return false;
         }
 
+        // Start transaction for creating a language variant.
+        $db->transactionStart();
+        $transactionStarted = true;
+
         // Create a shared image reference if the source has none.
-        $db         = $this->getDatabase();
         $imageRefId = (int)($sourceImage->image_ref ?? 0);
 
         if($imageRefId === 0)
         {
           $imageRef = (object)[
-            'path'      => $manager->getCatPath($sourceImage->catid),
+            'path'      => $sourceImageRefPath,
             'filename'  => $sourceImage->filename,
-            'filesystem' => $sourceImage->filesystem,
+            'filesystem' => $filesystem,
           ];
 
           if($imageRef->path === false)
           {
             $this->setError('Could not resolve source image path.');
+            $rollbackTransaction();
 
             return false;
           }
@@ -866,6 +899,8 @@ class ImageModel extends JoomAdminModel
           $uploader->rollback($table);
         }
 
+        $rollbackTransaction();
+
         return false;
       }
 
@@ -881,6 +916,8 @@ class ImageModel extends JoomAdminModel
         {
           $uploader->rollback($table);
         }
+
+        $rollbackTransaction();
 
         return false;
       }
@@ -924,6 +961,8 @@ class ImageModel extends JoomAdminModel
           $uploader->rollback($table);
         }
 
+        $rollbackTransaction();
+
         return false;
       }
 
@@ -948,6 +987,7 @@ class ImageModel extends JoomAdminModel
           $uploader->rollback($table);
         }
         $this->setError($table->getError());
+        $rollbackTransaction();
 
         return false;
       }
@@ -1004,6 +1044,8 @@ class ImageModel extends JoomAdminModel
           $uploader->rollback($table);
         }
 
+        $rollbackTransaction();
+
         return false;
       }
 
@@ -1016,6 +1058,8 @@ class ImageModel extends JoomAdminModel
         {
           $uploader->rollback($table);
         }
+
+        $rollbackTransaction();
 
         return false;
       }
@@ -1058,6 +1102,8 @@ class ImageModel extends JoomAdminModel
             }
           }
 
+          $rollbackTransaction();
+
           return false;
         }
       }
@@ -1074,18 +1120,31 @@ class ImageModel extends JoomAdminModel
       // Clean the cache.
       $this->cleanCache();
 
+      // Defer finder indexing for language variants until transaction commit.
+      if( $isLanguageVariant && $transactionStarted )
+      {
+        PluginHelper::importPlugin('finder', 'joomgallery');
+
+        $app->triggerEvent(
+            'onJoomgalleryImageDeferFinderIndex',
+            ['id' => (int) $table->id]
+        );
+      }
+
       // Trigger the after save event.
       $app->triggerEvent($this->event_after_save, [$context, $table, $isNew, $data]);
     }
-    catch ( \Exception $e ) {
-      if( $imgUploaded )
-      {
-        $uploader->rollback($table);
-      }
-      $this->setError($e->getMessage());
+      catch ( \Throwable $e ) {
+        if( $imgUploaded )
+        {
+          $uploader->rollback($table);
+        }
 
-      return false;
-    }
+        $rollbackTransaction();
+        $this->setError($e->getMessage());
+
+        return false;
+      }
 
     // Output warning messages
     if( \count($this->component->getWarning()) > 0 )
@@ -1107,18 +1166,57 @@ class ImageModel extends JoomAdminModel
 
     $this->setState($this->getName() . '.new', $isNew);
 
-    // Create/update associations.
-    if($this->associationsContext && Associations::isEnabled())
+    // Create/update associations and commit the language variant.
+    try
     {
-      if($isLanguageVariant && $source_id > 0)
+      if($this->associationsContext && Associations::isEnabled())
       {
-        $data['associations'] = $preparedAssociations;
+        if($isLanguageVariant && $source_id > 0)
+        {
+          $data['associations'] = $preparedAssociations;
+        }
+
+        if(!empty($data['associations'])
+          && !$this->createAssociations($table, $data['associations'], $transactionStarted))
+        {
+          $rollbackTransaction();
+
+          return false;
+        }
       }
 
-      if(!empty($data['associations'])
-        && !$this->createAssociations($table, $data['associations']))
+      if($transactionStarted)
       {
-        return false;
+        $db->transactionCommit();
+        $transactionStarted = false;
+      }
+    }
+    catch(\Throwable $e)
+    {
+      $rollbackTransaction();
+      $this->setError($e->getMessage());
+
+      return false;
+    }
+
+    // Reindex the language variant after the transaction has been committed.
+    if( $isLanguageVariant && $source_id > 0 )
+    {
+      try
+      {
+        $app->triggerEvent(
+            'onJoomgalleryImageAfterTransactionCommit',
+            ['id' => (int) $table->id]
+        );
+      }
+      catch(\Throwable $e)
+      {
+        $this->component->addLog(
+            'Could not reindex language variant image ' . (int) $table->id
+            . ' after transaction commit: ' . $e->getMessage(),
+            'warning',
+            'jerror'
+        );
       }
     }
 

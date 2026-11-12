@@ -122,7 +122,12 @@ interface FileManagerInterface
    *
    * @since   4.0.0
    */
-  public function createCategory($foldername, $parent = 1, $logfile = 'jerror'): bool;
+  public function createCategory(
+      $foldername,
+      $parent = 1,
+      $logfile = 'jerror',
+      ?array &$createdFolders = null
+  ): bool;
 
   /**
    * Deletion of a category

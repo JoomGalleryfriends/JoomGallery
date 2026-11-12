@@ -828,66 +828,76 @@ class FileManager implements FileManagerInterface
     return true;
   }
 
+
   /**
    * Creation of a category
    *
-   * @param   string              $foldername   Name of the folder to be created
-   * @param   object|int|string   $parent       Object, ID or alias of the parent category (default: 1)
-   * @param   string              $logfile      Name of the logfile to use
+   * @param   string              $foldername      Name of the folder to be created
+   * @param   object|int|string   $parent          Parent category (default: 1)
+   * @param   string              $logfile         Name of the logfile to use
+   * @param   array|null          $createdFolders  Newly created folder paths
    *
    * @return  bool                True on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function createCategory($foldername, $parent = 1, $logfile = 'jerror'): bool
-  {
-    // Loop through all imagetypes
+  public function createCategory(
+      $foldername,
+      $parent = 1,
+      $logfile = 'jerror',
+      ?array &$createdFolders = null
+  ): bool {
     $error       = false;
     $catsCreated = 0;
 
     foreach($this->imagetypes as $key => $imagetype)
     {
-      // Category path
       $path = $this->getCatPath(0, $imagetype->typename, $parent, $foldername, false);
 
-      // Create folders if not existent
       try
       {
-        $res = $this->component->getFilesystem()->createFolder(basename($path), \dirname($path));
+        $res = $this->component->getFilesystem()->createFolder(
+            basename($path),
+            \dirname($path),
+            false
+        );
+
+        if(!$res)
+        {
+            throw new \RuntimeException('Could not create category folder: ' . $path);
+        }
+
+        if($createdFolders !== null)
+        {
+          $createdFolders[] = $path;
+        }
+
+        $catsCreated++;
       }
-      catch(\FileExistsException $e)
+      catch(FileExistsException $e)
       {
-        // Category already exists. Do nothing.
+        // Category folder already exists. Do nothing.
       }
       catch(\Exception $e)
       {
-        // Debug info
         if(strpos(strtolower($e->getMessage()), 'file exists') !== false)
         {
-          // Category already exists. Do nothing.
+          // Category folder already exists. Do nothing.
         }
         else
         {
-          $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername));
-          $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername), 'error', $logfile);
+        $this->component->addDebug(
+            Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername)
+        );
+        $this->component->addLog(
+            Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername),
+            'error',
+            $logfile
+        );
+
           $error = true;
         }
-
-        continue;
       }
-
-      if(!$res)
-      {
-        // Debug info
-        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername), 'error', $logfile);
-        $error = true;
-
-        continue;
-      }
-
-      // Count up the # of created categories
-      $catsCreated = $catsCreated + 1;
     }
 
     if($error)
@@ -898,14 +908,16 @@ class FileManager implements FileManagerInterface
       return false;
     }
 
-    if($catsCreated > 0)
+    if($catsCreated > 0 && $createdFolders === null)
     {
-      // Debug info
-      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_CREATE_CATEGORY', $foldername));
+    $this->component->addDebug(
+        Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_CREATE_CATEGORY', $foldername)
+    );
     }
 
     return true;
   }
+
 
   /**
    * Deletion of a category

@@ -870,8 +870,11 @@ abstract class JoomAdminModel extends AdminModel
     return $associations;
   }
 
-  protected function createAssociations(Table &$table, array $associations)
-  {
+  protected function createAssociations(
+      Table &$table,
+      array $associations,
+      bool $transactionManagedExternally = false
+  ) {
     $db  = $this->getDatabase();
     $key = $table->getKeyName();
     $id  = (int) $table->$key;
@@ -1037,7 +1040,10 @@ abstract class JoomAdminModel extends AdminModel
     }
 
     // All validation is complete. Only now replace the old group and submitted members.
-    $db->transactionStart();
+    if(!$transactionManagedExternally)
+    {
+      $db->transactionStart();
+    }
 
     try
     {
@@ -1098,11 +1104,18 @@ abstract class JoomAdminModel extends AdminModel
         $db->execute();
       }
 
-      $db->transactionCommit();
+      if(!$transactionManagedExternally)
+      {
+        $db->transactionCommit();
+      }
     }
     catch(\Throwable $exception)
     {
-      $db->transactionRollback();
+      if(!$transactionManagedExternally)
+      {
+        $db->transactionRollback();
+      }
+
       $this->setError($exception->getMessage());
 
       return false;

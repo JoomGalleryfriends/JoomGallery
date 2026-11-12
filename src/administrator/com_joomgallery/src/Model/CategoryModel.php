@@ -478,9 +478,9 @@ class CategoryModel extends JoomAdminModel
 
 
     // Create a translated category variant from the source category.
-    $sourceId          = $app->input->getInt('origin_id', 0);
-    $forcedLanguage    = $app->input->getString('forcedLanguage', '');
-    $isLanguageVariant = $sourceId > 0 && $forcedLanguage !== '';
+    $sourceId             = $app->input->getInt('origin_id', 0);
+    $forcedLanguage       = $app->input->getString('forcedLanguage', '');
+    $isLanguageVariant    = $sourceId > 0 && $forcedLanguage !== '';
     $preparedAssociations = [];
 
     if($isLanguageVariant)
@@ -582,6 +582,59 @@ class CategoryModel extends JoomAdminModel
 
     // Include the plugins for the save events.
     PluginHelper::importPlugin($this->events_map['save']);
+
+    // Track the transaction used for creating a language variant.
+    $transactionStarted = false;
+    $db                 = $this->getDatabase();
+
+    $rollbackTransaction = function () use (
+        $db,
+        &$transactionStarted
+    ) {
+      if($transactionStarted)
+      {
+        $db->transactionRollback();
+        $transactionStarted = false;
+      }
+    };
+
+    // Track folders created during category saving.
+    $createdCategoryFolders = [];
+
+    // Remove only folders created during this save operation.
+    $rollbackCategoryFolders = function () use (&$createdCategoryFolders) {
+      try
+      {
+        $filesystem = $this->component->getFilesystem();
+
+        foreach(array_reverse($createdCategoryFolders) as $folderPath)
+        {
+          try
+          {
+            $filesystem->delete($folderPath);
+          }
+          catch(\Throwable $e)
+          {
+            $this->component->addLog(
+                'Could not remove category folder during rollback: '
+                . $folderPath . '. ' . $e->getMessage(),
+                'error',
+                'jerror'
+            );
+          }
+        }
+      }
+      catch(\Throwable $e)
+      {
+        $this->component->addLog(
+            'Could not access filesystem during category rollback: ' . $e->getMessage(),
+            'error',
+            'jerror'
+        );
+      }
+
+      $createdCategoryFolders = [];
+    };
 
     // Allow an exception to be thrown.
     try
@@ -780,6 +833,7 @@ class CategoryModel extends JoomAdminModel
         // Filesystem changes
         $filesystem_success = true;
 
+        // Track folders created for a new category.
         if(!$isNew && ($catMoved || $aliasChanged))
         {
           // Moving and renaming of folders will happen after storing the DB
@@ -794,8 +848,13 @@ class CategoryModel extends JoomAdminModel
         }
         elseif($isNew || !$this->component->getConfig()->get('jg_compatibility_mode', 0))
         {
-          // Create folders
-          $filesystem_success = $manager->createCategory($table->alias, $table->parent_id);
+        // Create folders
+        $filesystem_success = $manager->createCategory(
+            $table->alias,
+            $table->parent_id,
+            'jerror',
+            $createdCategoryFolders
+        );
         }
 
         // Dont store the table if filesystem changes was not successful
@@ -803,7 +862,16 @@ class CategoryModel extends JoomAdminModel
         {
           $this->component->addError(Text::_('COM_JOOMGALLERY_ERROR_SAVE_FILESYSTEM_ERROR'));
 
+          $rollbackCategoryFolders();
+
           return false;
+        }
+
+        // Start transaction for creating a language variant.
+        if($isLanguageVariant && $isNew)
+        {
+          $db->transactionStart();
+          $transactionStarted = true;
         }
 
         // Store the data.
@@ -811,6 +879,9 @@ class CategoryModel extends JoomAdminModel
         {
           $this->setError($table->getError());
           $this->component->addLog($table->getError(), 'error', 'jerror');
+
+          $rollbackTransaction();
+          $rollbackCategoryFolders();
 
           return false;
         }
@@ -844,6 +915,8 @@ class CategoryModel extends JoomAdminModel
             $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_ERROR_MOVE_CATEGORY', $manager->paths['src'], $manager->paths['dest']));
             $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_MOVE_CATEGORY', $manager->paths['src'], $manager->paths['dest']), 'error', 'jerror');
 
+            $rollbackTransaction();
+
             return false;
           }
 
@@ -853,6 +926,8 @@ class CategoryModel extends JoomAdminModel
           // Adjust path of subcategory records
           if(!$this->fixChildrenPath($table, $old_table))
           {
+            $rollbackTransaction();
+
             return false;
           }
         }
@@ -883,6 +958,8 @@ class CategoryModel extends JoomAdminModel
             $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_ERROR_RENAME_CATEGORY', $manager->paths['src'], $manager->paths['dest']));
             $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_RENAME_CATEGORY', $manager->paths['src'], $manager->paths['dest']), 'error', 'jerror');
 
+            $rollbackTransaction();
+
             return false;
           }
 
@@ -892,13 +969,13 @@ class CategoryModel extends JoomAdminModel
           // Adjust path of subcategory records
           if(!$this->fixChildrenPath($table, $old_table))
           {
+            $rollbackTransaction();
+
             return false;
           }
         }
 
-
           // Action already perfromed
-
 
         // Handle folders if record gets copied
         if($isNew && $isCopy)
@@ -915,9 +992,44 @@ class CategoryModel extends JoomAdminModel
 
         // Trigger the after save event.
         $app->triggerEvent($this->event_after_save, [$context, $table, $isNew, $data]);
+
+        // Create/update associations.
+        if($this->associationsContext && Associations::isEnabled())
+        {
+          if($isLanguageVariant && $sourceId > 0)
+          {
+            $data['associations'] = $preparedAssociations;
+          }
+
+          if(!empty($data['associations'])
+            && !$this->createAssociations($table, $data['associations'], $transactionStarted))
+          {
+            $rollbackTransaction();
+            $rollbackCategoryFolders();
+
+            return false;
+          }
+        }
+
+        // Commit the transaction after successful association creation.
+        if($transactionStarted)
+        {
+          $db->transactionCommit();
+          $transactionStarted = false;
+        }
+
+        // Show the success message only after the category was saved successfully.
+        if(!empty($createdCategoryFolders))
+        {
+        $this->component->addDebug(
+            Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_CREATE_CATEGORY', $table->alias)
+        );
+        }
     }
-    catch(\Exception $e)
+    catch(\Throwable $e)
     {
+      $rollbackTransaction();
+      $rollbackCategoryFolders();
       $this->setError($e->getMessage());
       $this->component->addLog($e->getMessage(), 'error', 'jerror');
 
@@ -943,21 +1055,6 @@ class CategoryModel extends JoomAdminModel
     }
 
     $this->setState($this->getName() . '.new', $isNew);
-
-    // Create/update associations.
-    if($this->associationsContext && Associations::isEnabled())
-    {
-      if($isLanguageVariant && $sourceId > 0)
-      {
-        $data['associations'] = $preparedAssociations;
-      }
-
-      if(!empty($data['associations'])
-        && !$this->createAssociations($table, $data['associations']))
-      {
-        return false;
-      }
-    }
 
     // Redirect to associations
     if($app->input->get('task') == 'editAssociations')
