@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\FileManager;
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Filesystem;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Media\Administrator\Exception\FileExistsException;
@@ -484,7 +485,8 @@ class FileManager implements FileManagerInterface
    */
   public function deleteImages($img, $logfile = 'jerror'): bool
   {
-    $imageRefId = 0;
+    $imageRefId          = 0;
+    $referenceFilesystem = null;
 
     // Keep shared image files while other images reference them.
     if(\is_object($img) && !empty($img->image_ref))
@@ -505,6 +507,29 @@ class FileManager implements FileManagerInterface
       {
         return true;
       }
+
+      // Load the filesystem of the shared image reference.
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('filesystem'))
+        ->from($db->quoteName('#__joomgallery_img_ref'))
+        ->where($db->quoteName('id') . ' = :imageRefId')
+        ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
+
+      $db->setQuery($query);
+      $referenceFilesystemName = $db->loadResult();
+
+      if(empty($referenceFilesystemName))
+      {
+        $this->component->addLog(
+            'Unable to delete shared image files: filesystem reference not found.',
+            'error',
+            $logfile
+        );
+
+        return false;
+      }
+
+      $referenceFilesystem = new Filesystem($referenceFilesystemName);
     }
 
     // Loop through all imagetypes
@@ -518,7 +543,7 @@ class FileManager implements FileManagerInterface
       // Delete imagetype
       try
       {
-        $this->component->getFilesystem()->delete($file);
+        ($referenceFilesystem ?? $this->component->getFilesystem())->delete($file);
       }
       catch (FileNotFoundException $e)
       {
@@ -637,6 +662,12 @@ class FileManager implements FileManagerInterface
    */
   public function moveImages($img, $dest, $filename = false, $copy = false, $logfile = 'jerror'): bool
   {
+    // Do not move files belonging to a shared image reference.
+    if(!$copy && \is_object($img) && !empty($img->image_ref))
+    {
+      return true;
+    }
+
     // Switch method
     $method = 'MOVE';
 
@@ -773,6 +804,12 @@ class FileManager implements FileManagerInterface
    */
   public function renameImages($img, $filename, $logfile = 'jerror'): bool
   {
+    // Do not rename files belonging to a shared image reference.
+    if(\is_object($img) && !empty($img->image_ref))
+    {
+      return true;
+    }
+
     // Loop through all imagetypes
     $error = false;
 

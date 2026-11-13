@@ -967,7 +967,7 @@ class ImageModel extends JoomAdminModel
       }
 
       // Handle images if alias has changed
-      if( !$isNew && $aliasChanged && !$imgUploaded )
+      if( !$isNew && $aliasChanged && !$imgUploaded && empty($old_table->image_ref) )
       {
         if( !$this->component->getConfig()->get('jg_useorigfilename') )
         {
@@ -996,7 +996,7 @@ class ImageModel extends JoomAdminModel
       $filesystem_success = true;
 
       // Handle images if category was changed
-      if( !$isNew && $catMoved )
+      if( !$isNew && $catMoved && empty($old_table->image_ref) )
       {
         if( $imgUploaded )
         {
@@ -1022,7 +1022,7 @@ class ImageModel extends JoomAdminModel
       }
 
       // Handle images if alias has changed
-      if( !$isNew && $aliasChanged && !$imgUploaded )
+      if( !$isNew && $aliasChanged && !$imgUploaded && empty($old_table->image_ref) )
       {
         if( $catMoved )
         {
@@ -1672,84 +1672,138 @@ class ImageModel extends JoomAdminModel
     // Include the plugins for the recreate events.
     PluginHelper::importPlugin($this->events_map['recreate']);
 
-    if( $table->load($pk) )
+    if($table->load($pk))
     {
-      if( $this->canRecreate($table) )
+      if($this->canRecreate($table))
       {
         $context = $this->option . '.' . $this->name . '.recreate';
 
-        // Create file manager service
+        // Create file manager service.
         $this->component->createFileManager($table->catid);
 
-        // Get imagetypes
-        $imagetypes      = $this->component->getFileManager()->get('imagetypes');
-        $imagetypes_dict = $this->component->getFileManager()->get('imagetypes_dict');
+        // Preserve the filesystem selected by the category configuration.
+        $previousFilesystem = $this->component->getFilesystem()->getFilesystem();
 
-        // Select image source
-        if( ( $type == 'original' || $type == 'orig' ) && $imagetypes[$imagetypes_dict['original']]->params->get('jg_imgtype', 1, 'int') > 0 )
+        try
         {
-          // Take original as source if available
-          $type = 'original';
-        }
-        else {
-          $type = 'detail';
-        }
+          // Use the filesystem stored with the shared image reference.
+          if(!empty($table->image_ref))
+          {
+            $db = $this->getDatabase();
 
-        // Get source file path
-        $source = $this->component->getFileManager()->getImgPath($table, $type);
+            $query = $db->getQuery(true)
+              ->select($db->quoteName('filesystem'))
+              ->from($db->quoteName('#__joomgallery_img_ref'))
+              ->where($db->quoteName('id') . ' = :imageRefId')
+              ->bind(':imageRefId', (int) $table->image_ref, ParameterType::INTEGER);
+
+            $db->setQuery($query);
+            $referenceFilesystem = $db->loadResult();
+
+            if(empty($referenceFilesystem))
+            {
+            throw new \RuntimeException(
+                'The filesystem of the shared image reference could not be determined.'
+            );
+            }
+
+            $this->component->createFilesystem($referenceFilesystem);
+          }
+
+          // Get imagetypes.
+          $imagetypes      = $this->component->getFileManager()->get('imagetypes');
+          $imagetypes_dict = $this->component->getFileManager()->get('imagetypes_dict');
+
+          // Select image source.
+          if(($type == 'original' || $type == 'orig')
+            && $imagetypes[$imagetypes_dict['original']]->params->get('jg_imgtype', 1, 'int') > 0)
+          {
+            // Take original as source if available.
+            $type = 'original';
+          }
+          else
+          {
+            $type = 'detail';
+          }
+
+          // Get source file path using the selected filesystem.
+          $source = $this->component->getFileManager()->getImgPath($table, $type);
 
         // Trigger the before recreate event.
-        $result = Factory::getApplication()->triggerEvent($this->event_before_recreate, [$table, $imagetypes, $source]);
+        $result = Factory::getApplication()->triggerEvent(
+            $this->event_before_recreate,
+            [$table, $imagetypes, $source]
+        );
 
-        if( \in_array(false, $result, true) )
-        {
-          $this->setError($table->getError());
+          if(\in_array(false, $result, true))
+          {
+            $this->setError($table->getError());
 
-          return false;
+            return false;
+          }
+
+          // Add source type to the list of skipped types.
+          if(!\in_array($type, $skip))
+          {
+            array_push($skip, $type);
+          }
+
+          // Perform the recreation using the same filesystem.
+        if(!$this->component->getFileManager()->createImages(
+            $source,
+            $table->filename,
+            $table->catid,
+            true,
+            false,
+            $skip,
+            'jerror',
+            $table
+        ))
+          {
+            $this->setError($table->getError());
+
+            return false;
         }
 
-        // Add source type to the list of skiped types
-        if( !\in_array($type, $skip) )
-        {
-          array_push($skip, $type);
+          // Trigger the after event.
+          Factory::getApplication()->triggerEvent($this->event_after_recreate, [$context, $table]);
         }
-
-        // Perform the recreation
-        if( !$this->component->getFileManager()->createImages($source, $table->filename, $table->catid, true, false, $skip) )
+        finally
         {
-          $this->setError($table->getError());
-
-          return false;
+          // Restore the filesystem selected by the category configuration.
+          $this->component->createFilesystem($previousFilesystem);
         }
-
-        // Trigger the after event.
-        Factory::getApplication()->triggerEvent($this->event_after_recreate, [$context, $table]);
       }
-      else {
+      else
+      {
         // Prune items that you can't change.
         $error = $this->getError();
 
-        if( $error )
+        if($error)
         {
           $this->component->addLog($error, 'warning', 'jerror');
 
           return false;
         }
 
-
-        $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
+        $this->component->addLog(
+            Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'),
+            'warning',
+            'jerror'
+        );
 
         return false;
       }
     }
-    else {
+    else
+    {
       $this->setError($table->getError());
       $this->component->setError('Image ID not found: ' . $pk);
 
       return false;
     }
 
-    // Clear the component's cache
+    // Clear the component's cache.
     $this->cleanCache();
 
     return true;
@@ -1796,24 +1850,61 @@ class ImageModel extends JoomAdminModel
   {
     $table = $this->getTable();
 
-    if( $table->load($pk) )
+    if(!$table->load($pk))
     {
-      // Create config service
-      $this->component->createConfig();
+      $this->setError($table->getError());
 
-      // Create filemanager service
-      $this->component->createFileManager($table->catid);
+      return false;
+    }
+
+    // Create config and filemanager services.
+    $this->component->createConfig();
+    $this->component->createFileManager($table->catid);
+
+    // Preserve the filesystem selected by the category configuration.
+    $previousFilesystem = $this->component->getFilesystem()->getFilesystem();
+
+    try
+    {
+      // Use the filesystem stored with the shared image reference.
+      if(!empty($table->image_ref))
+      {
+        $db = $this->getDatabase();
+
+        $query = $db->getQuery(true)
+          ->select($db->quoteName('filesystem'))
+          ->from($db->quoteName('#__joomgallery_img_ref'))
+          ->where($db->quoteName('id') . ' = :imageRefId')
+          ->bind(':imageRefId', (int) $table->image_ref, ParameterType::INTEGER);
+
+        $db->setQuery($query);
+        $referenceFilesystem = $db->loadResult();
+
+        if(empty($referenceFilesystem))
+        {
+          throw new \RuntimeException('The filesystem of the shared image reference could not be determined.');
+        }
+
+        $this->component->createFilesystem($referenceFilesystem);
+      }
+
+      // Resolve the image path after selecting the correct filesystem.
       $path = $this->component->getFileManager()->getImgPath($table, $type);
 
-      // Get registry to be used in writeMetadata
+      if($path === false)
+      {
+        throw new \RuntimeException('The image path could not be resolved.');
+      }
+
+      // Get registry to be used in writeMetadata.
       $registry = new Registry($table->imgmetadata);
 
-      // Create the metadata service
+      // Create the metadata service.
       $this->component->createMetadata($this->component->getConfig()->get('jg_metaprocessor', 'php'));
 
-      $filesystem = $this->component->getConfig()->get('jg_filesystem', 'local-images');
+      // Perform the save using the metadata/filesystem service.
+      $filesystem = $this->component->getFilesystem()->getFilesystem();
 
-      // Perform the save using the metadata/filesystem service
       if($filesystem != 'local-images')
       {
         $data = $this->component->getMetadata()->writeMetadata($path, $registry, false);
@@ -1825,14 +1916,19 @@ class ImageModel extends JoomAdminModel
 
       $this->component->getFilesystem()->createFile(basename($path), \dirname($path), $data);
     }
-    else
+    catch(\Throwable $e)
     {
-      $this->setError($table->getError());
+      $this->setError($e->getMessage());
 
       return false;
     }
+    finally
+    {
+      // Restore the filesystem selected by the category configuration.
+      $this->component->createFilesystem($previousFilesystem);
+    }
 
-    // Clear the component's cache
+    // Clear the component's cache.
     $this->cleanCache();
 
     return true;
