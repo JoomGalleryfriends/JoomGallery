@@ -1208,7 +1208,7 @@ class ImageModel extends JoomAdminModel
           $data['associations'] = $preparedAssociations;
         }
 
-        if(!empty($data['associations'])
+        if(array_key_exists('associations', $data)
           && !$this->createAssociations($table, $data['associations'], $transactionStarted))
         {
           $rollbackTransaction();
@@ -1297,81 +1297,72 @@ class ImageModel extends JoomAdminModel
             return false;
           }
 
-          // Delete corresponding imagetypes
-          $manager = JoomHelper::getService('FileManager', [$table->catid]);
+          // Start transaction for deleting the image and its associations.
+          $db = $this->getDatabase();
+          $db->transactionStart();
 
-          if( !$manager->deleteImages($table) )
+          try
           {
-            $this->setError($this->component->getDebug(true));
+            // Delete corresponding imagetypes.
+            $manager = JoomHelper::getService('FileManager', [$table->catid]);
 
-            return false;
-          }
+            if(!$manager->deleteImages($table))
+            {
+              $this->setError($this->component->getDebug(true));
+              $db->transactionRollback();
 
-          // Delete corresponding comments
-          $db  = $this->getDatabase();
-        $query = $db->getQuery(true)->delete($db->quoteName('#__joomgallery_comments'))->where(
-            $db->quoteName('imgid') . ' = :pk',
-        )->bind(':pk', $pk, ParameterType::INTEGER);
+              return false;
+            }
 
-          $db->setQuery($query);
-          $db->execute();
-
-          // Delete corresponding votes
-        $query = $db->getQuery(true)->delete($db->quoteName('#__joomgallery_votes'))->where(
-            $db->quoteName('imgid') . ' = :pk',
-        )->bind(':pk', $pk, ParameterType::INTEGER);
-
-          $db->setQuery($query);
-          $db->execute();
-
-          // Delete corresponding collection reference
-        $query = $db->getQuery(true)->delete($db->quoteName('#__joomgallery_collections_ref'))->where(
-            $db->quoteName('imgid') . ' = :pk',
-        )->bind(':pk', $pk, ParameterType::INTEGER);
-
-          $db->setQuery($query);
-          $db->execute();
-
-          // Multilanguage: if associated, delete the item in the _associations table
-          if( $this->associationsContext && Associations::isEnabled() )
-          {
-            $query = $db->getQuery(true)->select(
-                [
-                  'COUNT(*) AS ' . $db->quoteName('count'),
-                  $db->quoteName('as1.key'),
-                ]
-            )->from($db->quoteName('#__associations', 'as1'))->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))->where(
-                [
-                  $db->quoteName('as1.context') . ' = :context',
-                  $db->quoteName('as1.id') . ' = :pk',
-                ]
-            )->bind(':context', $this->associationsContext)->bind(':pk', $pk, ParameterType::INTEGER)->group($db->quoteName('as1.key'));
+            // Delete corresponding comments
+            $query = $db->getQuery(true)
+              ->delete($db->quoteName('#__joomgallery_comments'))
+              ->where($db->quoteName('imgid') . ' = :pk')
+              ->bind(':pk', $pk, ParameterType::INTEGER);
 
             $db->setQuery($query);
-            $row = $db->loadAssoc();
+            $db->execute();
 
-            if( !empty($row['count']) )
+            // Delete corresponding votes
+            $query = $db->getQuery(true)
+              ->delete($db->quoteName('#__joomgallery_votes'))
+              ->where($db->quoteName('imgid') . ' = :pk')
+              ->bind(':pk', $pk, ParameterType::INTEGER);
+
+            $db->setQuery($query);
+            $db->execute();
+
+            // Delete corresponding collection reference
+            $query = $db->getQuery(true)
+              ->delete($db->quoteName('#__joomgallery_collections_ref'))
+              ->where($db->quoteName('imgid') . ' = :pk')
+              ->bind(':pk', $pk, ParameterType::INTEGER);
+
+            $db->setQuery($query);
+            $db->execute();
+
+            // Remove the image from its language association group.
+            if(!$this->removeAssociationMember((int) $pk))
             {
-            $query = $db->getQuery(true)->delete($db->quoteName('#__associations'))->where(
-                [
-                  $db->quoteName('context') . ' = :context',
-                  $db->quoteName('key') . ' = :key',
-                ]
-            )->bind(':context', $this->associationsContext)->bind(':key', $row['key']);
+              $db->transactionRollback();
 
-              if( $row['count'] > 2 )
-              {
-                $query->where($db->quoteName('id') . ' = :pk')->bind(':pk', $pk, ParameterType::INTEGER);
-              }
-
-              $db->setQuery($query);
-              $db->execute();
+              return false;
             }
-          }
 
-          if( !$table->delete($pk) )
+            if(!$table->delete($pk))
+            {
+              $db->transactionRollback();
+              $this->setError($table->getError());
+
+              return false;
+            }
+
+            $db->transactionCommit();
+          }
+          catch(\Throwable $exception)
           {
-            $this->setError($table->getError());
+            $db->transactionRollback();
+            $this->setError($exception->getMessage());
 
             return false;
           }

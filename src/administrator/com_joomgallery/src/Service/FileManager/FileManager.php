@@ -581,13 +581,26 @@ class FileManager implements FileManagerInterface
     // Remove the reference only after all image files were processed.
     if($imageRefId > 0)
     {
-      $query = $db->getQuery(true)
-        ->delete($db->quoteName('#__joomgallery_img_ref'))
-        ->where($db->quoteName('id') . ' = :imageRefId')
-        ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
+      try
+      {
+        $query = $db->getQuery(true)
+          ->delete($db->quoteName('#__joomgallery_img_ref'))
+          ->where($db->quoteName('id') . ' = :imageRefId')
+          ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
 
-      $db->setQuery($query);
-      $db->execute();
+        $db->setQuery($query);
+        $db->execute();
+      }
+      catch(\Throwable $exception)
+      {
+        $this->component->addLog(
+            'Unable to delete image reference: ' . $exception->getMessage(),
+            'error',
+            $logfile
+        );
+
+        return false;
+      }
     }
 
     return true;

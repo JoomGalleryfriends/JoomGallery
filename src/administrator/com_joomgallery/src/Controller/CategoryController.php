@@ -149,9 +149,9 @@ class CategoryController extends JoomFormController
                 throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
             }
 
-            $db       = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
-            $context  = 'com_joomgallery.category';
-            $query    = $db->getQuery(true)
+            $db      = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+            $context = 'com_joomgallery.category';
+            $query   = $db->getQuery(true)
                 ->select($db->quoteName('a1.key'))
                 ->from($db->quoteName('#__associations', 'a1'))
                 ->join('INNER', $db->quoteName('#__associations', 'a2'), $db->quoteName('a1.key') . ' = ' . $db->quoteName('a2.key'))
@@ -182,6 +182,108 @@ class CategoryController extends JoomFormController
         catch(\Throwable $e)
         {
             echo new JsonResponse(null, $e->getMessage() ?: Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'), true);
+        }
+
+        $this->app->close();
+    }
+
+    /**
+     * Remove the language association without deleting the category.
+     *
+     * @return  void
+     *
+     * @since   4.5.0
+     */
+    public function unlinkVariant()
+    {
+        $this->checkToken('post');
+
+        $model          = $this->getModel();
+        $variantId      = $this->input->post->getInt('id', 0);
+        $originId       = $this->input->post->getInt('origin_id', 0);
+        $forcedLanguage = $this->input->post->getString('forcedLanguage', '');
+
+        try
+        {
+            if($variantId < 1 || $originId < 1 || $variantId === $originId || $forcedLanguage === '')
+            {
+                throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+            }
+
+            $variantTable = $model->getTable();
+
+            if(!$variantTable->load($variantId) || $variantTable->language !== $forcedLanguage)
+            {
+                throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+            }
+
+            $originTable = $model->getTable();
+
+            if(!$originTable->load($originId) || $originTable->language === $forcedLanguage)
+            {
+                throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+            }
+
+            // Check editing permissions for both categories.
+            if(!$model->getAcl()->checkACL(
+                'edit',
+                'category',
+                $variantId,
+                (int) $variantTable->parent_id,
+                true
+            ) || !$model->getAcl()->checkACL(
+                'edit',
+                'category',
+                $originId,
+                (int) $originTable->parent_id,
+                true
+            ))
+            {
+                throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'));
+            }
+
+            $db      = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+            $context = 'com_joomgallery.category';
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('a1.key'))
+                ->from($db->quoteName('#__associations', 'a1'))
+                ->join(
+                    'INNER',
+                    $db->quoteName('#__associations', 'a2'),
+                    $db->quoteName('a1.key') . ' = ' . $db->quoteName('a2.key')
+                )
+                ->where($db->quoteName('a1.context') . ' = :context')
+                ->where($db->quoteName('a2.context') . ' = :context')
+                ->where($db->quoteName('a1.id') . ' = :originId')
+                ->where($db->quoteName('a2.id') . ' = :variantId');
+
+            $query->bind(':context', $context, ParameterType::STRING);
+            $query->bind(':originId', $originId, ParameterType::INTEGER);
+            $query->bind(':variantId', $variantId, ParameterType::INTEGER);
+
+            $db->setQuery($query);
+
+            if(!$db->loadResult())
+            {
+                throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+            }
+
+            if(!$model->removeAssociationMember($variantId))
+            {
+                throw new \RuntimeException(
+                    $model->getError() ?: Text::_('JLIB_APPLICATION_ERROR_SAVE_FAILED')
+                );
+            }
+
+            echo new JsonResponse(
+                ['id' => $variantId],
+                Text::_('COM_JOOMGALLERY_SUCCESS_DELETE_CATEGORY_VARIANT')
+            );
+        }
+        catch(\Throwable $e)
+        {
+            echo new JsonResponse(null, $e->getMessage(), true);
         }
 
         $this->app->close();

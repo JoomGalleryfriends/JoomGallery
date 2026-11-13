@@ -418,11 +418,12 @@ setValue(value, name) {
     this.buttonDeleteVariant.disabled = !value;
   }
 
-  const imgPath = this.inputImg.getAttribute('src');
-  this.inputImg.setAttribute(
-    'src',
-    this.changeImgPath(imgPath, value)
-  );
+  if (value) {
+    const imgPath = this.inputImg.getAttribute('src');
+    this.inputImg.setAttribute('src', this.changeImgPath(imgPath, value));
+  } else {
+    this.inputImg.setAttribute('src', this.inputImg.getAttribute('data-empty-src'));
+  }
 
   this.input.dispatchEvent(new Event('change', { bubbles: true }));
 

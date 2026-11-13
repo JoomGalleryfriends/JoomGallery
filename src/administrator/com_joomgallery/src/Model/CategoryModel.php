@@ -326,62 +326,39 @@ class CategoryModel extends JoomAdminModel
             return false;
           }
 
-          // Multilanguage: if associated, delete the item in the _associations table
-          if($this->associationsContext && Associations::isEnabled())
+          // Start transaction for deleting the category and its association.
+          $db = $this->getDatabase();
+          $db->transactionStart();
+
+          try
           {
-            $db    = $this->getDbo();
-            $query = $db->getQuery(true)
-            ->select(
-                [
-                  'COUNT(*) AS ' . $db->quoteName('count'),
-                  $db->quoteName('as1.key'),
-                ]
-            )
-              ->from($db->quoteName('#__associations', 'as1'))
-              ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
-            ->where(
-                [
-                  $db->quoteName('as1.context') . ' = :context',
-                  $db->quoteName('as1.id') . ' = :pk',
-                ]
-            )
-              ->bind(':context', $this->associationsContext)
-              ->bind(':pk', $pk, ParameterType::INTEGER)
-              ->group($db->quoteName('as1.key'));
-
-            $db->setQuery($query);
-            $row = $db->loadAssoc();
-
-            if(!empty($row['count']))
+            // Remove the category from its language association group.
+            if(!$this->removeAssociationMember((int) $pk))
             {
-              $query = $db->getQuery(true)
-                ->delete($db->quoteName('#__associations'))
-                ->where(
-                    [
-                      $db->quoteName('context') . ' = :context',
-                      $db->quoteName('key') . ' = :key',
-                    ]
-                )
-                ->bind(':context', $this->associationsContext)
-                ->bind(':key', $row['key']);
+              $db->transactionRollback();
 
-              if($row['count'] > 2)
-              {
-                $query->where($db->quoteName('id') . ' = :pk')
-                  ->bind(':pk', $pk, ParameterType::INTEGER);
-              }
-
-              $db->setQuery($query);
-              $db->execute();
+              return false;
             }
-          }
 
-          if(!$table->delete($pk))
+            if(!$table->delete($pk))
+            {
+              $db->transactionRollback();
+              $this->setError($table->getError());
+
+              return false;
+            }
+
+            $db->transactionCommit();
+          }
+          catch(\Throwable $exception)
           {
+            $db->transactionRollback();
+            $this->setError($exception->getMessage());
+
             return false;
           }
 
-          // Trigger the after event.
+          // Trigger the after delete event.
           Factory::getApplication()->triggerEvent($this->event_after_delete, [$context, $table]);
         }
         else
@@ -1001,7 +978,7 @@ class CategoryModel extends JoomAdminModel
             $data['associations'] = $preparedAssociations;
           }
 
-          if(!empty($data['associations'])
+          if(array_key_exists('associations', $data)
             && !$this->createAssociations($table, $data['associations'], $transactionStarted))
           {
             $rollbackTransaction();

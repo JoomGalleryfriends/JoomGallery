@@ -40,6 +40,7 @@
       this.buttonSelect = this.querySelector(this.buttonSelectClass);
       this.buttonCreate = this.querySelector('.button-create');
       this.buttonDeleteVariant = this.querySelector('.button-delete-variant');
+      this.buttonUnlinkVariant = this.querySelector('.button-unlink-variant');
       if (this.buttonCreate) this.buttonCreate.disabled = !!this.inputName?.value.trim();
       if (this.buttonSelect) {
         this.buttonSelect.disabled = this.input?.name.startsWith('jform[associations][') && Number(this.input.value) > 0;
@@ -63,6 +64,7 @@
 
       this.buttonCreate?.addEventListener('click', this.createButtonClick);
       this.buttonDeleteVariant?.addEventListener('click', this.deleteVariantButtonClick);
+      this.buttonUnlinkVariant?.addEventListener('click', this.deleteVariantButtonClick);
       window.addEventListener('message', this.handleMessage);
     }
 
@@ -70,6 +72,7 @@
       if (this.onchangeStr && this.input) this.input.removeEventListener('change', this.onCategorySelect);
       this.buttonCreate?.removeEventListener('click', this.createButtonClick);
       this.buttonDeleteVariant?.removeEventListener('click', this.deleteVariantButtonClick);
+      this.buttonUnlinkVariant?.removeEventListener('click', this.deleteVariantButtonClick);
       window.removeEventListener('message', this.handleMessage);
       this.modal?.removeEventListener('hide', this.removeIframe);
     }
@@ -258,6 +261,10 @@
 
       if (this.buttonDeleteVariant) {
         this.buttonDeleteVariant.disabled = !this.input.value;
+      }
+
+      if (this.buttonUnlinkVariant) {
+        this.buttonUnlinkVariant.disabled = !this.input.value;
       }
 
       this.input.dispatchEvent(new Event('change', { bubbles: true }));

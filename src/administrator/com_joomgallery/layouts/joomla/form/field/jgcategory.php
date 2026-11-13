@@ -201,8 +201,19 @@ $modalHTML = HTMLHelper::_(
         data-error="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT')); ?>"
         title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_DELETE_CATEGORY_VARIANT')); ?>"
         <?php echo empty($value) ? 'disabled' : ''; ?>>
-        <span class="icon-minus" aria-hidden="true"></span>
+        <span class="icon-trash" aria-hidden="true"></span>
         <span class="visually-hidden"><?php echo Text::_('JACTION_DELETE'); ?></span>
+      </button>
+      <button type="button" class="btn btn-secondary button-unlink-variant"
+        data-url="index.php?option=com_joomgallery&amp;task=category.unlinkVariant"
+        data-language="<?php echo $this->escape($forcedLanguage); ?>"
+        data-confirm="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_CONFIRM_UNLINK_CATEGORY_VARIANT')); ?>"
+        data-success="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_SUCCESS_UNLINK_CATEGORY_VARIANT')); ?>"
+        data-error="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_ERROR_UNLINK_CATEGORY_VARIANT')); ?>"
+        title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_UNLINK_CATEGORY_VARIANT')); ?>"
+        <?php echo empty($value) ? 'disabled' : ''; ?>>
+        <span class="fa fa-link-slash" aria-hidden="true"></span>
+        <span class="visually-hidden"><?php echo Text::_('COM_JOOMGALLERY_UNLINK_CATEGORY_VARIANT'); ?></span>
       </button>
     <?php endif; ?>
   </div>

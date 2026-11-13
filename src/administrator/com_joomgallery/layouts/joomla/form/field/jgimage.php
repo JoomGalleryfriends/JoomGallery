@@ -165,7 +165,10 @@ $modalHTML = HTMLHelper::_(
       input-img="#jform_thumbnail_img"
     button-select=".button-select">
   <div class="input-group">
-    <img id="jform_thumbnail_img" class="jg_minithumb" src="<?php echo JoomHelper::getImg($value, 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
+      <img id="jform_thumbnail_img" class="jg_minithumb"
+      src="<?php echo JoomHelper::getImg($value, 'thumbnail'); ?>"
+      data-empty-src="<?php echo JoomHelper::getImg(0, 'thumbnail'); ?>"
+      alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
     <input <?php echo ArrayHelper::toString($inputAttributes), $dataAttribute; ?> readonly>
     <?php if(!$readonly && empty($forcedLanguage)) : ?>
       <button type="button" class="btn btn-primary button-select" title="<?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?>">
@@ -189,7 +192,7 @@ $modalHTML = HTMLHelper::_(
     data-error="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_ERROR_DELETE_VARIANT_FAILED')); ?>"
     title="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_DELETE_LANGUAGE_VARIANT')); ?>"
     <?php echo empty($value) ? 'disabled' : ''; ?>>
-    <span class="icon-minus" aria-hidden="true"></span>
+    <span class="icon-trash" aria-hidden="true"></span>
     <span class="visually-hidden"><?php echo Text::_('JACTION_DELETE'); ?></span>
   </button>
       <?php endif; ?>

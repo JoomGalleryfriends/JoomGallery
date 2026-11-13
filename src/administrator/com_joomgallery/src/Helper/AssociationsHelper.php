@@ -139,11 +139,11 @@ class AssociationsHelper extends AssociationExtensionHelper
     {
         if($typeName === 'jgcategory')
         {
-            $fields  = $this->getFieldsTemplate();
+            $fields             = $this->getFieldsTemplate();
             $fields['ordering'] = '';
             $fields['catid']    = '';
-            $fields['title'] = 'a.title';
-            $support = $this->getSupportTemplate();
+            $fields['title']    = 'a.title';
+            $support            = $this->getSupportTemplate();
 
             $fields['state'] = 'a.published';
 
@@ -164,9 +164,9 @@ class AssociationsHelper extends AssociationExtensionHelper
 
         if($typeName === 'image')
         {
-            $fields  = $this->getFieldsTemplate();
+            $fields          = $this->getFieldsTemplate();
             $fields['title'] = 'a.title';
-            $support = $this->getSupportTemplate();
+            $support         = $this->getSupportTemplate();
 
             $fields['state'] = 'a.published';
 

@@ -870,6 +870,81 @@ abstract class JoomAdminModel extends AdminModel
     return $associations;
   }
 
+
+  /**
+   * Remove a record from its language association group.
+   *
+   * @param   int  $recordId  ID of the record to remove
+   *
+   * @return  bool  True on success, false on failure
+   *
+   * @since   4.5.0
+   */
+  public function removeAssociationMember(int $recordId): bool
+  {
+    if($recordId <= 0 || !$this->associationsContext || !Associations::isEnabled())
+    {
+      return true;
+    }
+
+    $db = $this->getDatabase();
+
+    try
+    {
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('key'))
+        ->from($db->quoteName('#__associations'))
+        ->where($db->quoteName('context') . ' = :context')
+        ->where($db->quoteName('id') . ' = :recordId')
+        ->bind(':context', $this->associationsContext)
+        ->bind(':recordId', $recordId, ParameterType::INTEGER);
+
+      $db->setQuery($query);
+      $associationKey = $db->loadResult();
+
+      if($associationKey === null)
+      {
+        return true;
+      }
+
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('id'))
+        ->from($db->quoteName('#__associations'))
+        ->where($db->quoteName('context') . ' = :context')
+        ->where($db->quoteName('key') . ' = :associationKey')
+        ->bind(':context', $this->associationsContext)
+        ->bind(':associationKey', $associationKey);
+
+      $db->setQuery($query);
+      $associatedIds = array_map('intval', (array) $db->loadColumn());
+
+      $query = $db->getQuery(true)
+        ->delete($db->quoteName('#__associations'))
+        ->where($db->quoteName('context') . ' = :context')
+        ->where($db->quoteName('key') . ' = :associationKey')
+        ->bind(':context', $this->associationsContext)
+        ->bind(':associationKey', $associationKey);
+
+      if(count($associatedIds) > 2)
+      {
+        $query->where($db->quoteName('id') . ' = :recordId')
+          ->bind(':recordId', $recordId, ParameterType::INTEGER);
+      }
+
+      $db->setQuery($query);
+      $db->execute();
+
+      return true;
+    }
+    catch(\Throwable $exception)
+    {
+      $this->setError($exception->getMessage());
+
+      return false;
+    }
+  }
+
+
   protected function createAssociations(
       Table &$table,
       array $associations,
@@ -900,6 +975,11 @@ abstract class JoomAdminModel extends AdminModel
 
     foreach($associations as $language => $associatedId)
     {
+      if($associatedId === '')
+      {
+        continue;
+      }
+
       if(!\is_string($language) || $language === '' || $language === '*'
         || (!\is_int($associatedId) && !\is_string($associatedId))
         || !preg_match('/^(0|[1-9][0-9]*)$/', (string) $associatedId))
@@ -1018,7 +1098,30 @@ abstract class JoomAdminModel extends AdminModel
       }
     }
 
-    if(\count($existingKeys) > 1)
+    $canMergeGroups = false;
+
+    if(\count($existingKeys) === 2)
+    {
+      $groupSizes = [];
+
+      foreach(array_keys($existingKeys) as $existingKey)
+      {
+        $query = $db->getQuery(true)
+          ->select('COUNT(*)')
+          ->from($db->quoteName('#__associations'))
+          ->where($db->quoteName('context') . ' = :context')
+          ->where($db->quoteName('key') . ' = :existingKey')
+          ->bind(':context', $this->associationsContext)
+          ->bind(':existingKey', $existingKey);
+
+        $db->setQuery($query);
+        $groupSizes[] = (int) $db->loadResult();
+      }
+
+      $canMergeGroups = \in_array(1, $groupSizes, true);
+    }
+
+    if(\count($existingKeys) > 1 && !$canMergeGroups)
     {
       if($oldKey === null)
       {
@@ -1032,7 +1135,7 @@ abstract class JoomAdminModel extends AdminModel
       return false;
     }
 
-    if($existingKeys && $oldKey !== null && !isset($existingKeys[$oldKey]))
+    if($existingKeys && $oldKey !== null && !isset($existingKeys[$oldKey]) && !$canMergeGroups)
     {
       $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_CONFLICTING_GROUPS'));
 

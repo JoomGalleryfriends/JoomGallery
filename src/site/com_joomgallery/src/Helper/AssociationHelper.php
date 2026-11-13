@@ -62,7 +62,7 @@ class AssociationHelper
 
     if($view === 'image')
     {
-      $db = Factory::getDbo();
+      $db    = Factory::getDbo();
       $query = $db->getQuery(true)
         ->select($db->quoteName('language'))
         ->from($db->quoteName('#__joomgallery'))
@@ -77,7 +77,7 @@ class AssociationHelper
 
     if($view === 'category')
     {
-      $db = Factory::getDbo();
+      $db    = Factory::getDbo();
       $query = $db->getQuery(true)
         ->select($db->quoteName('language'))
         ->from($db->quoteName('#__joomgallery_categories'))
@@ -238,7 +238,7 @@ class AssociationHelper
       {
         $targetId = (int) $item->id;
 
-        $db = Factory::getDbo();
+        $db    = Factory::getDbo();
         $query = $db->getQuery(true)
           ->select($db->quoteName('catid'))
           ->from($db->quoteName('#__joomgallery'))
