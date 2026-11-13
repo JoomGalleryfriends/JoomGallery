@@ -581,11 +581,11 @@ abstract class Uploader implements UploaderInterface
       {
         if(!$this->component->getFileManager()->deleteImages($data_row))
         {
-          $this->component->addLog(
-              'Unable to delete uploaded image files during rollback.',
-              'error',
-              'jerror'
-          );
+        $this->component->addLog(
+            'Unable to delete uploaded image files during rollback.',
+            'error',
+            'jerror'
+        );
         }
       }
       catch(\Throwable $exception)
