@@ -289,6 +289,19 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
     $form->loadFile('form', false);
     $form->loadFile('user', false);
 
+    // Joomla merges fields from separate files but does not merge their fieldset containers.
+    // Nest the profile section in the existing gallery tab for the core user-edit layout.
+    $xml     = $form->getXml();
+    $gallery = $xml->xpath('//fields[@name="joomgallery"]/fieldset[@name="joomgallery"]')[0];
+    $profile = $xml->xpath('//fields[@name="joomgallery"]/fieldset[@name="joomgallery_profile"]')[0];
+    dom_import_simplexml($gallery)->appendChild(dom_import_simplexml($profile));
+
+
+    // The profile image fields are also rendered outside the component's own views.
+    $wa = $this->getApplication()->getDocument()->getWebAssetManager();
+    $wa->getRegistry()->addRegistryFile('media/com_joomgallery/joomla.asset.json');
+    $wa->useStyle('com_joomgallery.admin');
+
     $identity = $this->getApplication()->getIdentity();
     $targetId = 0;
 
@@ -414,8 +427,6 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
         {
           $data->joomgallery                 = isset($data->joomgallery) && \is_array($data->joomgallery)
             ? $data->joomgallery : [];
-          $data->joomgallery['profile_id']   = (int) $profile->id;
-          $data->joomgallery['cmsuser']      = (int) $profile->cmsuser;
           $data->joomgallery['description']  = (string) $profile->description;
           $data->joomgallery['avatar']       = (string) $profile->avatar;
           $data->joomgallery['image']        = (string) $profile->image;
@@ -547,7 +558,8 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
         $ordering = 0;
 
-        foreach($data['joomgallery'] as $fName => $fValue)
+        // Profile columns belong to #__joomgallery_users, not Joomla's extra profile fields.
+        foreach(array_intersect_key($data['joomgallery'], ['config_usergroup' => true]) as $fName => $fValue)
         {
           $this->insertField($userId, $fName, $fValue, $ordering);
           $ordering++;

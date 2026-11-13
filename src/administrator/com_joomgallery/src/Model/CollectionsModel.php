@@ -34,6 +34,32 @@ class CollectionsModel extends JoomListModel
    */
   protected $type = 'collection';
 
+  /** Include the owner in the list cache identity. */
+  protected function getStoreId($id = '')
+  {
+    return parent::getStoreId($id . ':' . (int) $this->getState('filter.userid'));
+  }
+
+  /** Gallery profile IDs and their linked Joomla identities for assignment. */
+  public function getOwnerOptions(): array
+  {
+    $db      = $this->getDatabase();
+    $query   = $db->getQuery(true)
+      ->select(['g.id AS value', 'u.name', 'u.username'])
+      ->from($db->quoteName('#__joomgallery_users', 'g'))
+      ->join('INNER', $db->quoteName('#__users', 'u') . ' ON u.id = g.cmsuser')
+      ->order('u.name ASC, g.id ASC');
+    $options = [];
+
+    foreach($db->setQuery($query)->loadObjectList() as $user)
+    {
+      $options[] = \Joomla\CMS\HTML\HTMLHelper::_('select.option', $user->value, $user->name . ' (' . $user->username . ')');
+    }
+
+    return $options;
+  }
+
+
   /**
    * Constructor
    *
@@ -46,7 +72,7 @@ class CollectionsModel extends JoomListModel
   {
     if(empty($config['filter_fields']))
     {
-      $config['filter_fields'] = ['id', 'a.id', 'title', 'a.title', 'published', 'a.published', 'owner', 'u.name', 'created_time', 'a.created_time'];
+      $config['filter_fields'] = ['id', 'a.id', 'title', 'a.title', 'published', 'a.published', 'owner', 'u.name', 'userid', 'a.userid', 'is_default', 'a.is_default', 'created_time', 'a.created_time'];
     }
 
     parent::__construct($config);
@@ -68,6 +94,7 @@ class CollectionsModel extends JoomListModel
   {
     parent::populateState($ordering, $direction);
     $this->setState('filter.search', $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search'));
+    $this->setState('filter.userid', $this->getUserStateFromRequest($this->context . '.filter.userid', 'filter_userid', '', 'int'));
   }
 
   /**
@@ -86,6 +113,11 @@ class CollectionsModel extends JoomListModel
       ->from($db->quoteName('#__joomgallery_collections', 'a'))
       ->join('INNER', $db->quoteName('#__joomgallery_users', 'g') . ' ON g.id = a.userid')
       ->join('INNER', $db->quoteName('#__users', 'u') . ' ON u.id = g.cmsuser');
+
+    if($owner = (int) $this->getState('filter.userid'))
+    {
+      $query->where('a.userid = ' . $owner);
+    }
 
     $search = trim((string) $this->getState('filter.search'));
 

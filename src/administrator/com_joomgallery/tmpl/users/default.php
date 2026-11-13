@@ -12,6 +12,8 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Access\Access;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -20,6 +22,11 @@ use Joomla\CMS\Router\Route;
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_joomgallery.admin')->useScript('com_joomgallery.admin');
+
+$identity     = Factory::getApplication()->getIdentity();
+$canEditUsers = $identity->authorise('core.manage', 'com_users')
+  && $identity->authorise('core.edit', 'com_users');
+$isSuperUser  = $identity->authorise('core.admin');
 
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
@@ -46,7 +53,21 @@ $listDirn  = $this->state->get('list.direction');
           <tbody>
           <?php foreach($this->items as $item) : ?>
             <tr>
-              <th scope="row"><a href="<?php echo Route::_('index.php?option=com_users&view=user&layout=edit&id=' . (int) $item->cmsuser); ?>"><?php echo $this->escape($item->name); ?></a></th>
+              <th scope="row">
+                <?php
+                $canEdit = (int) $identity->id === (int) $item->cmsuser || $canEditUsers;
+
+                if($canEdit && !$isSuperUser && Access::check((int) $item->cmsuser, 'core.admin'))
+                {
+                  $canEdit = false;
+                }
+                ?>
+                <?php if($canEdit) : ?>
+                  <a href="<?php echo Route::_('index.php?option=com_users&task=user.edit&id=' . (int) $item->cmsuser); ?>"><?php echo $this->escape($item->name); ?></a>
+                <?php else : ?>
+                  <?php echo $this->escape($item->name); ?>
+                <?php endif; ?>
+              </th>
               <td><?php echo $this->escape($item->username); ?></td>
               <td><?php echo $this->escape($item->email); ?></td>
               <td class="text-center"><?php echo (int) $item->collection_count; ?></td>

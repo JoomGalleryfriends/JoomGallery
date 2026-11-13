@@ -21,7 +21,7 @@ use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
- * View class for the read-only administrator list of collections.
+ * View class for the administrator list of collections.
  *
  * @package JoomGallery
  * @since   DEPLOY_VERSION
@@ -33,6 +33,9 @@ class HtmlView extends JoomGalleryView
 
   /** @var \Joomla\CMS\Pagination\Pagination  Pagination object for the collection list. */
   protected $pagination;
+
+  protected $ownerOptions;
+  protected $managementItem;
 
   /**
    * Display the collection list.
@@ -58,7 +61,21 @@ class HtmlView extends JoomGalleryView
       throw new GenericDataException(implode("\n", $errors), 500);
     }
 
+    $this->ownerOptions = $model->getOwnerOptions();
+    $collectionModel    = $this->component->getMVCFactory()->createModel('Collection', 'Administrator', ['ignore_request' => true]);
+
+    foreach($this->items as $item)
+    {
+      $item->managementPermissions = $collectionModel->getManagementPermissions($item);
+    }
+
     ToolbarHelper::title(Text::_('COM_JOOMGALLERY_COLLECTIONS'), 'folder');
+
+    if($this->getAcl()->checkACL('core.create', 'collection'))
+    {
+      ToolbarHelper::addNew('collection.add');
+    }
+
     Sidebar::setAction('index.php?option=com_joomgallery&view=collections');
     $this->sidebar = Sidebar::render();
     parent::display($tpl);

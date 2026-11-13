@@ -19,7 +19,8 @@ use Joomla\CMS\Router\Route;
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
-$wa->useStyle('com_joomgallery.admin')->useScript('com_joomgallery.admin');
+$wa->useStyle('com_joomgallery.admin')->useScript('com_joomgallery.admin')->useScript('bootstrap.modal');
+$modals = [];
 
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
@@ -39,7 +40,9 @@ $listDirn  = $this->state->get('list.direction');
           <thead><tr>
             <th><?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?></th>
             <th><?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_OWNER', 'u.name', $listDirn, $listOrder); ?></th>
+            <th class="text-center"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DEFAULT'); ?></th>
             <th class="text-center"><?php echo Text::_('COM_JOOMGALLERY_IMAGES'); ?></th>
+            <th><?php echo Text::_('JACTION_EDIT'); ?></th>
             <th><?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?></th>
           </tr></thead>
           <tbody>
@@ -47,7 +50,26 @@ $listDirn  = $this->state->get('list.direction');
             <tr>
               <th scope="row"><?php echo $this->escape($item->title); ?></th>
               <td><?php echo $this->escape($item->owner); ?> (<?php echo $this->escape($item->username); ?>)</td>
+              <td class="text-center"><?php echo Text::_((int) $item->is_default ? 'JYES' : 'JNO'); ?></td>
               <td class="text-center"><?php echo (int) $item->image_count; ?></td>
+              <td>
+                <?php if(\in_array(true, $item->managementPermissions, true)) : ?>
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal"
+                          data-bs-target="#collection-manage-<?php echo (int) $item->id; ?>"
+                          aria-label="<?php echo $this->escape(Text::_('JACTION_EDIT') . ': ' . $item->title); ?>">
+                    <span class="icon-edit" aria-hidden="true"></span> <?php echo Text::_('JACTION_EDIT'); ?>
+                  </button>
+                  <?php
+                  $this->managementItem = $item;
+                $modals[]               = HTMLHelper::_(
+                    'bootstrap.renderModal',
+                    'collection-manage-' . (int) $item->id,
+                    ['title' => $this->escape($item->title), 'closeButton' => true],
+                    $this->loadTemplate('manage')
+                );
+                  ?>
+                <?php endif; ?>
+              </td>
               <td><?php echo (int) $item->id; ?></td>
             </tr>
           <?php endforeach; ?>
@@ -60,3 +82,5 @@ $listDirn  = $this->state->get('list.direction');
     <?php echo HTMLHelper::_('form.token'); ?>
   </div>
 </form>
+
+<?php echo implode("\n", $modals); ?>

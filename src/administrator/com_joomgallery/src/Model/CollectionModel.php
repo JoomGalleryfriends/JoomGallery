@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Asset;
 
@@ -32,6 +33,139 @@ class CollectionModel extends JoomAdminModel
    * @var     string
    */
   protected $type = 'collection';
+
+  /** Permissions shared by the list UI and the submitted management operation. */
+  public function getManagementPermissions(object $collection): array
+  {
+    $identity    = Factory::getApplication()->getIdentity();
+    $profile     = $this->component->getMVCFactory()->createTable('User', 'Administrator');
+    $owner       = $identity->id > 0 && $profile->load((int) $collection->userid)
+      && (int) $profile->cmsuser === (int) $identity->id;
+    $permissions = [];
+
+    foreach(['reassign' => 'core.edit', 'clear' => 'joom.connect', 'delete' => 'core.delete'] as $operation => $action)
+    {
+      $allowed = $owner;
+
+      if(!$allowed && $identity->id > 0)
+      {
+        $acl = $this->getAcl();
+        $acl->checkACL($action, 'collection');
+        // Only the global collection grant applies to non-owners, not an in-own grant.
+        $allowed = (bool) $acl->allowed['default'];
+      }
+
+      $permissions[$operation] = $allowed && ($operation === 'clear' || !(int) $collection->is_default);
+    }
+
+    return $permissions;
+  }
+
+  /** Load the creation-only form without loading an existing collection. */
+  public function getCreationForm()
+  {
+    $form = $this->loadForm('com_joomgallery.collectioncreate', 'collectioncreate', ['control' => 'jform', 'load_data' => false]);
+
+    if($form)
+    {
+      $form->bind(Factory::getApplication()->getUserState('com_joomgallery.collection.create.data', []));
+    }
+
+    return $form;
+  }
+
+  /** Require a gallery profile linked to an existing Joomla account. */
+  protected function assertOwner(int $id): void
+  {
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)->select('g.id')->from($db->quoteName('#__joomgallery_users', 'g'))
+      ->join('INNER', $db->quoteName('#__users', 'u') . ' ON u.id = g.cmsuser')
+      ->where('g.id = ' . $id);
+
+    if($id <= 0 || !$db->setQuery($query)->loadResult())
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_INVALID_OWNER'));
+    }
+  }
+
+  /** Create a normal collection; record identity and lifecycle fields are server-controlled. */
+  public function createCollection(array $data): bool
+  {
+    if(!$this->getAcl()->checkACL('core.create', 'collection') || !empty($data['id']))
+    {
+      throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+    }
+
+    $this->assertOwner((int) ($data['userid'] ?? 0));
+    $data                  = array_intersect_key($data, array_flip(['userid', 'title', 'alias', 'description', 'access', 'published']));
+    $data['id']            = 0;
+    $data['is_default']    = 0;
+    $data['created_by']    = (int) Factory::getApplication()->getIdentity()->id;
+    $data['modified_by']   = $data['created_by'];
+    $data['modified_time'] = Factory::getDate()->toSql();
+    $this->setState('collection.id', 0);
+
+    return parent::save($data);
+  }
+
+  /** Apply exactly one authorised modal operation against the current database record. */
+  public function manageCollection(int $id, string $operation, int $ownerId = 0): void
+  {
+    $db = $this->getDatabase();
+    $db->transactionStart();
+
+    try
+    {
+      $table = $this->getTable();
+
+      if($id <= 0 || !$table->load($id))
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_NOT_FOUND'), 404);
+      }
+
+      $permissions = $this->getManagementPermissions($table);
+
+      if(empty($permissions[$operation]))
+      {
+        throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+      }
+
+      if($operation === 'delete')
+      {
+        $this->deleteCollection($id);
+      }
+      elseif($operation === 'clear')
+      {
+        if(!$this->removeMapping($id))
+        {
+          throw new \RuntimeException($this->getError());
+        }
+      }
+      else
+      {
+        $this->assertOwner($ownerId);
+        $table->userid        = $ownerId;
+        $table->modified_by   = (int) Factory::getApplication()->getIdentity()->id;
+        $table->modified_time = Factory::getDate()->toSql();
+
+        // Recheck alias uniqueness within the new owner's collections.
+        if(!$table->check() || !$table->store())
+        {
+          throw new \RuntimeException($table->getError());
+        }
+      }
+
+      $db->transactionCommit();
+    }
+    catch(\Throwable $e)
+    {
+      $db->transactionRollback();
+      throw $e;
+    }
+
+    $this->cleanCache();
+  }
+
 
   /**
    * Method to get the data that should be injected in the form.
@@ -58,7 +192,7 @@ class CollectionModel extends JoomAdminModel
   {
     foreach((array) $pks as $id)
     {
-      $this->deleteCollection((int) $id);
+      $this->manageCollection((int) $id, 'delete');
     }
 
     return true;

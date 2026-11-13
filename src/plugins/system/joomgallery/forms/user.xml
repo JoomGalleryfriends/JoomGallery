@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form>
-  <fields name="joomgallery">
-    <fieldset name="joomgallery_profile" label="PLG_SYSTEM_JOOMGALLERY_PROFILE_FIELDS">
-      <field name="profile_id" type="text" disabled="true"
-             label="PLG_SYSTEM_JOOMGALLERY_PROFILE_ID_LABEL" />
-      <field name="cmsuser" type="text" disabled="true"
-             label="PLG_SYSTEM_JOOMGALLERY_CMSUSER_LABEL" />
-      <field name="description" type="textarea" disabled="true" rows="4"
-             label="JGLOBAL_DESCRIPTION" />
-      <field name="avatar" type="text" disabled="true"
-             label="PLG_SYSTEM_JOOMGALLERY_AVATAR_LABEL" />
-      <field name="image" type="text" disabled="true"
-             label="PLG_SYSTEM_JOOMGALLERY_IMAGE_LABEL" />
-      <field name="files" type="textarea" disabled="true" rows="2"
-             label="PLG_SYSTEM_JOOMGALLERY_FILES_LABEL" />
-      <field name="created_time" type="text" disabled="true"
-             label="JGLOBAL_FIELD_CREATED_LABEL" />
-      <field name="edit_user_keys" type="note"
-             label="PLG_SYSTEM_JOOMGALLERY_AI_KEYS_LABEL" />
-    </fieldset>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fields name="joomgallery" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+      <fieldset name="joomgallery_profile" label="PLG_SYSTEM_JOOMGALLERY_PROFILE_FIELDS">
+        <field name="avatar" type="jgimage" disabled="true" readonly="true" filter="unset"
+               label="PLG_SYSTEM_JOOMGALLERY_AVATAR_LABEL" />
+        <field name="image" type="jgimage" disabled="true" readonly="true" filter="unset"
+               label="PLG_SYSTEM_JOOMGALLERY_IMAGE_LABEL" />
+        <field name="description" type="editor" buttons="false" disabled="true" readonly="true"
+               filter="unset"
+               label="JGLOBAL_DESCRIPTION" />
+        <field name="files" type="Jsondisplay" disabled="true" readonly="true" filter="unset"
+               label="PLG_SYSTEM_JOOMGALLERY_FILES_LABEL" />
+        <field name="created_time" type="calendar" readonly="true" disabled="true" filter="unset"
+               translateformat="true" showtime="true" label="JGLOBAL_FIELD_CREATED_LABEL" />
+        <field name="edit_user_keys" type="note"
+               label="PLG_SYSTEM_JOOMGALLERY_AI_KEYS_LABEL" />
+      </fieldset>
   </fields>
 </form>

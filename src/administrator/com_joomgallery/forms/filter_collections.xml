@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <fields name="filter">
     <field name="search" type="text" label="JSEARCH_FILTER" hint="JSEARCH_FILTER" class="js-stools-search-string" />
+    <field name="userid" type="Jguser" label="COM_JOOMGALLERY_OWNER" filter="integer" onchange="this.form.submit();" />
   </fields>
   <fields name="list">
     <field name="fullordering" type="list" label="JGLOBAL_SORT_BY" onchange="this.form.submit();" default="a.id ASC" validate="options">

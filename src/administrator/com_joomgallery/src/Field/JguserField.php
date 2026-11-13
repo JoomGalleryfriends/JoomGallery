@@ -38,6 +38,7 @@ class JguserField extends UserField
     }
 
     $attributes  = 'class="form-select"';
+    $attributes .= $this->onchange ? ' onchange="' . htmlspecialchars($this->onchange, ENT_QUOTES, 'UTF-8') . '"' : '';
     $attributes .= $this->required ? ' required' : '';
     $attributes .= ($this->readonly || $this->disabled) ? ' disabled' : '';
     $html        = HTMLHelper::_('select.genericlist', $options, $this->name, $attributes, 'value', 'text', $this->value, $this->id);
