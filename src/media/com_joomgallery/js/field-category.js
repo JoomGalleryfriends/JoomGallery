@@ -75,7 +75,11 @@
     }
 
     buttonClick({ target }) {
-      this.setValue(target.getAttribute('data-category-value'), target.getAttribute('data-category-title'));
+      this.setValue(
+        target.getAttribute('data-category-value'),
+        target.getAttribute('data-category-title'),
+        target.getAttribute('data-category-language')
+      );
       this.modalClose();
     }
 
@@ -229,9 +233,20 @@
 
     removeIframe() { if (this.modalBody) this.modalBody.innerHTML = ''; }
 
-    setValue(value, name) {
+    setValue(value, name, language) {
       this.input.value = value || '';
       this.inputName.value = name || value || '';
+
+      const languageField = this.input.form?.querySelector('[name="jform[language]"]');
+
+      if (languageField && language !== undefined && language !== null && language !== '') {
+        languageField.value = language;
+        languageField.disabled = true;
+        languageField.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      else if (languageField && !value) {
+        languageField.disabled = false;
+      }
 
       if (this.buttonCreate) {
         this.buttonCreate.disabled = !!this.inputName.value.trim();
@@ -246,7 +261,7 @@
       }
 
       this.input.dispatchEvent(new Event('change', { bubbles: true }));
-      this.dispatchEvent(new CustomEvent('change', { detail: { value, name }, bubbles: true }));
+      this.dispatchEvent(new CustomEvent('change', { detail: { value, name, language }, bubbles: true }));
     }
   }
 

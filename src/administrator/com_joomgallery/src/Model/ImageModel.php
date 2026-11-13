@@ -175,6 +175,23 @@ class ImageModel extends JoomAdminModel
       }
     }
 
+    // Set image language according to the selected category.
+    if($forcedLanguage === '' && Multilanguage::isEnabled())
+    {
+      $categoryId = (int) $form->getValue('catid');
+
+      if($categoryId > 0)
+      {
+        $categoryTable = $this->component->getMVCFactory()->createTable('Category', 'administrator');
+
+        if($categoryTable->load($categoryId))
+        {
+          $form->setValue('language', null, $categoryTable->language);
+          $form->setFieldAttribute('language', 'disabled', 'true');
+        }
+      }
+    }
+
     if( $originId > 0 && $forcedLanguage !== '' )
     {
       $form->setFieldAttribute('alias', 'required', 'false');
@@ -481,6 +498,21 @@ class ImageModel extends JoomAdminModel
       $this->setError(Text::_('COM_JOOMGALLERY_COMMON_ALERT_YOU_MUST_SELECT_CATEGORY'));
 
       return false;
+    }
+
+    // Set image language according to the selected category.
+    if(!$isLanguageVariant && Multilanguage::isEnabled())
+    {
+      $categoryTable = $this->component->getMVCFactory()->createTable('Category', 'administrator');
+
+      if(!$categoryTable->load((int) $data['catid']))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+
+        return false;
+      }
+
+      $data['language'] = $categoryTable->language;
     }
 
     // Validate a language variant before any upload, file-reference or database changes.

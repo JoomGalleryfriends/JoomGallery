@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Site\Model;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel as AdminImageModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\User\CurrentUserInterface;
 use Joomla\Database\DatabaseInterface;
 
@@ -116,6 +117,25 @@ class UserimageModel extends AdminImageModel
     if(empty($form))
     {
       return false;
+    }
+
+    // Set image language according to the selected category.
+    $forcedLanguage = $this->app->getInput()->getString('forcedLanguage', '');
+
+    if($forcedLanguage === '' && Multilanguage::isEnabled())
+    {
+      $categoryId = (int) $form->getValue('catid');
+
+      if($categoryId > 0)
+      {
+        $categoryTable = $this->component->getMVCFactory()->createTable('Category', 'administrator');
+
+        if($categoryTable->load($categoryId))
+        {
+          $form->setValue('language', null, $categoryTable->language);
+          $form->setFieldAttribute('language', 'disabled', 'true');
+        }
+      }
     }
 
     // Only component managers/admins and the current owner may transfer ownership.
