@@ -726,7 +726,7 @@ class ImageModel extends JoomAdminModel
     $this->setState($this->getName() . '.new', $isNew);
 
     // Create/update associations
-    if($this->associationsContext && Associations::isEnabled() && array_key_exists('associations', $data))
+    if($this->associationsContext && Associations::isEnabled() && \array_key_exists('associations', $data))
     {
       $this->createAssociations($table, $data['associations']);
     }

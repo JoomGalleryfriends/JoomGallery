@@ -978,7 +978,7 @@ class CategoryModel extends JoomAdminModel
             $data['associations'] = $preparedAssociations;
           }
 
-          if(array_key_exists('associations', $data)
+          if(\array_key_exists('associations', $data)
             && !$this->createAssociations($table, $data['associations'], $transactionStarted))
           {
             $rollbackTransaction();

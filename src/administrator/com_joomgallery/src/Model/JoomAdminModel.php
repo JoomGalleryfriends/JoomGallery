@@ -925,7 +925,7 @@ abstract class JoomAdminModel extends AdminModel
         ->bind(':context', $this->associationsContext)
         ->bind(':associationKey', $associationKey);
 
-      if(count($associatedIds) > 2)
+      if(\count($associatedIds) > 2)
       {
         $query->where($db->quoteName('id') . ' = :recordId')
           ->bind(':recordId', $recordId, ParameterType::INTEGER);
