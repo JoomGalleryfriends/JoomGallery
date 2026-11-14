@@ -119,6 +119,9 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `checked_out_time` DATETIME DEFAULT NULL,
 `created_by` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT 0,
+`jg_create_user` VARCHAR(10) NOT NULL DEFAULT 'all',
+`jg_create_user_groups` VARCHAR(2048) NOT NULL DEFAULT '',
+`jg_create_user_ids` VARCHAR(2048) NOT NULL DEFAULT '',
 `jg_filesystem` VARCHAR(100) NOT NULL DEFAULT "",
 `jg_imagetypes` VARCHAR(100) NOT NULL DEFAULT "jpg,jpeg,png,gif,webp",
 `jg_pathftpupload` VARCHAR(100) NOT NULL DEFAULT "images/joomgallery/FTP/",
@@ -363,11 +366,12 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_collections` (
 `alias` VARCHAR(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT "",
 `title` VARCHAR(255) NOT NULL DEFAULT "",
 `description` TEXT NOT NULL,
+`is_default` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+`default_userid` INT(11) UNSIGNED GENERATED ALWAYS AS (CASE WHEN `is_default` = 1 THEN `userid` ELSE NULL END) STORED,
 `access` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `published` TINYINT(1) NOT NULL DEFAULT 1,
 `hidden` TINYINT(1) NOT NULL DEFAULT 0,
 `ordering` INT(11) NOT NULL DEFAULT 0,
-`language` CHAR(7) NOT NULL DEFAULT "*" COMMENT "The language code.",
 `created_time` DATETIME NOT NULL,
 `created_by` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `modified_time` DATETIME NOT NULL,
@@ -381,7 +385,8 @@ PRIMARY KEY (`id`),
 KEY `idx_access` (`access`),
 KEY `idx_checkout` (`checked_out`),
 KEY `idx_created_by` (`created_by`),
-INDEX `idx_list_collections` (`userid`, `published`, `access`, `language`, `ordering`)
+UNIQUE KEY `idx_default_collection` (`default_userid`),
+INDEX `idx_list_collections` (`userid`, `is_default`, `published`, `access`, `ordering`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -398,7 +403,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_collections_ref` (
 PRIMARY KEY (`id`),
 INDEX `idx_imgid` (`imgid`),
 INDEX `idx_collectionid` (`collectionid`),
-INDEX `idx_col_img` (`collectionid`, `imgid`)
+UNIQUE KEY `idx_col_img` (`collectionid`, `imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -417,7 +422,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_users` (
 `params` TEXT NOT NULL,
 `created_time` DATETIME NOT NULL,
 PRIMARY KEY (`id`),
-KEY `idx_user` (`cmsuser`)
+UNIQUE KEY `idx_user` (`cmsuser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

@@ -25,7 +25,7 @@ use Joomla\Registry\Registry;
 $image_type        = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
 $show_title        = $this->params['configs']->get('jg_detail_view_show_title', 1, 'INT');
 $title_position    = $this->params['configs']->get('jg_detail_view_title_position', 'below', 'STRING');
-$header_above = $title_position === 'above';
+$header_above      = $title_position === 'above';
 $show_category     = $this->params['configs']->get('jg_detail_view_show_category', 1, 'INT');
 $show_description  = $this->params['configs']->get('jg_detail_view_show_description', 1, 'INT');
 $show_imgdate      = $this->params['configs']->get('jg_detail_view_show_imgdate', 1, 'INT');
@@ -52,6 +52,7 @@ $wa->useStyle('com_joomgallery.site');
 $wa->useScript('com_joomgallery.image-protection');
 $wa->useStyle('com_joomgallery.jg-icon-font');
 $wa->useScript('bootstrap.modal');
+$wa->useScript('bootstrap.dropdown');
 
 HTMLHelper::_(
     'bootstrap.popover',
@@ -364,9 +365,47 @@ ob_start(); ?>
 
     <div class="d-flex flex-wrap align-items-center gap-2 pb-3 border-bottom" aria-label="Image actions">
       <?php if($show_favorite_btn) : ?>
-        <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
-          <button class="btn btn-outline-secondary pe-none" type="button" disabled><span class="icon-heart me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_FAVORITE'); ?></button>
-        </span>
+        <?php if($this->defaultCollection !== null) : ?>
+          <?php
+          $primaryCollection = $this->primaryCollection ?? $this->defaultCollection;
+          $primaryMapped     = (int) $primaryCollection->mapped === 1;
+          $primaryIsDefault  = (int) $primaryCollection->is_default === 1;
+          $primaryLabel      = $primaryMapped
+            ? ($primaryIsDefault ? Text::_('COM_JOOMGALLERY_FAVOURITED') : Text::_((string) $primaryCollection->title))
+            : Text::_('COM_JOOMGALLERY_FAVORITE');
+          ?>
+          <form class="d-inline-flex" action="<?php echo Route::_('index.php?option=com_joomgallery&task=image.addToCollection'); ?>" method="post">
+            <input type="hidden" name="id" value="<?php echo (int) $this->item->id; ?>">
+            <input type="hidden" name="return" value="<?php echo base64_encode($currentRoute); ?>">
+            <?php if(\count($this->collections) > 1) : ?>
+              <div class="btn-group mb-0">
+                <button class="btn <?php echo $primaryMapped ? 'btn-primary active' : 'btn-outline-secondary'; ?>" type="submit" name="collection_id" value="<?php echo (int) $primaryCollection->id; ?>" formaction="<?php echo Route::_('index.php?option=com_joomgallery&task=image.toggleCollection'); ?>" aria-pressed="<?php echo $primaryMapped ? 'true' : 'false'; ?>"><span class="icon-heart me-1" aria-hidden="true"></span><?php echo $this->escape($primaryLabel); ?></button>
+                <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span class="visually-hidden"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_SELECT'); ?></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <?php foreach($this->collections as $collection) : ?>
+                    <li>
+                      <button class="dropdown-item<?php echo (int) $collection->mapped === 1 ? ' disabled' : ''; ?>" type="submit" name="collection_id" value="<?php echo (int) $collection->id; ?>"<?php echo (int) $collection->mapped === 1 ? ' disabled' : ''; ?>>
+                        <?php if((int) $collection->mapped === 1) : ?><span class="icon-check me-1" aria-hidden="true"></span><?php
+                        endif; ?>
+                        <?php echo $this->escape(Text::_((string) $collection->title)); ?>
+                      </button>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
+              </div>
+            <?php else : ?>
+              <input type="hidden" name="collection_id" value="<?php echo (int) $primaryCollection->id; ?>">
+              <button class="btn <?php echo $primaryMapped ? 'btn-primary active' : 'btn-outline-secondary'; ?>" type="submit" formaction="<?php echo Route::_('index.php?option=com_joomgallery&task=image.toggleCollection'); ?>" aria-pressed="<?php echo $primaryMapped ? 'true' : 'false'; ?>"><span class="icon-heart me-1" aria-hidden="true"></span><?php echo $this->escape($primaryLabel); ?></button>
+            <?php endif; ?>
+            <?php echo HTMLHelper::_('form.token'); ?>
+          </form>
+        <?php else : ?>
+          <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_COLLECTION_LOGIN_REQUIRED_INFO')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
+            <button class="btn btn-outline-secondary pe-none" type="button" disabled><span class="icon-heart me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_FAVORITE'); ?></button>
+          </span>
+        <?php endif; ?>
       <?php endif; ?>
       <?php if($show_download_btn) : ?>
         <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">

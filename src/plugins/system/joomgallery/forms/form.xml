@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
-  <fields name='joomgallery'>
+  <fields name="joomgallery" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
     <fieldset name="joomgallery" label="PLG_SYSTEM_JOOMGALLERY_FIELDS">
+      <fieldset name="joomgallery_configs" label="PLG_SYSTEM_JOOMGALLERY_CONFIG_FIELDS">
       <field name="config_usergroup"
             type="UserGroupList"
             layout="joomla.form.field.list-fancy-select"
@@ -9,6 +10,7 @@
             label="PLG_SYSTEM_JOOMGALLERY_CONFIGUSERGROUP_LABEL"
 		        description="PLG_SYSTEM_JOOMGALLERY_CONFIGUSERGROUP_DESC"
             default="" />
+      </fieldset>
     </fieldset>
   </fields>
 </form>
