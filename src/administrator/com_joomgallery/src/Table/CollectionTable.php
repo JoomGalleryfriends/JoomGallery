@@ -19,6 +19,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Collection table
@@ -257,15 +259,32 @@ class CollectionTable extends Table
    */
   public function store($updateNulls = true)
   {
-    $images = null;
+    $images        = null;
+    $defaultUserId = (int) $this->is_default === 1 ? (int) $this->userid : null;
+    $db            = $this->getDatabase();
+    $success       = false;
+
+    // Joomla Table writes every public property. Generated columns must be
+    // omitted because the database alone calculates their value.
+    unset($this->default_userid);
 
     if(property_exists($this, 'images') && !empty($this->images))
     {
       $images = $this->images;
     }
 
-    if($success = parent::store($updateNulls))
+    try
     {
+      $db->transactionStart(true);
+      $success = parent::store($updateNulls);
+
+      if(!$success)
+      {
+        $db->transactionRollback(true);
+
+        return false;
+      }
+
       if(!\is_null($images) && !empty($images))
       {
         $approved = false;
@@ -275,9 +294,27 @@ class CollectionTable extends Table
           $approved = true;
         }
 
-        // Do the mapping
-        $this->addMapping($images, $approved);
+        if(!$this->addMapping($images, $approved))
+        {
+          $db->transactionRollback(true);
+
+          return false;
+        }
       }
+
+      $db->transactionCommit(true);
+    }
+    catch(\Throwable $e)
+    {
+      $db->transactionRollback(true);
+      $this->setError($e->getMessage());
+      $this->getComponent()->addLog($e->getMessage(), 'error', 'jerror');
+
+      return false;
+    }
+    finally
+    {
+      $this->default_userid = $defaultUserId;
     }
 
     return $success;
@@ -335,20 +372,38 @@ class CollectionTable extends Table
     }
 
     // Prepare image ids
-    if(!\is_array($img_id))
-    {
-      $img_id = [$img_id];
-    }
+    $img_id = ArrayHelper::toInteger((array) $img_id);
+    $img_id = array_values(array_unique(array_filter($img_id, static fn($id) => $id > 0)));
 
     // Load db driver
     $db = $this->getDatabase();
 
-    foreach($img_id as $key => $iid)
+    try
     {
-      if($iid > 0)
+      foreach($img_id as $iid)
       {
+        $query    = $db->getQuery(true)->select($db->quoteName(['id', 'approved']))
+          ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
+          ->where($db->quoteName('collectionid') . ' = ' . (int) $this->getId())
+          ->where($db->quoteName('imgid') . ' = ' . $iid);
+        $existing = $db->setQuery($query)->loadObject();
+
+        if($existing)
+        {
+          if($approve === true && !(int) $existing->approved)
+          {
+            $query = $db->getQuery(true)->update($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
+              ->set($db->quoteName('approved') . ' = 1')
+              ->where($db->quoteName('collectionid') . ' = ' . (int) $this->getId())
+              ->where($db->quoteName('imgid') . ' = ' . $iid);
+            $db->setQuery($query)->execute();
+          }
+
+          continue;
+        }
+
         $mapping               = new \stdClass();
-        $mapping->imgid        = (int) $iid;
+        $mapping->imgid        = $iid;
         $mapping->collectionid = (int) $this->getId();
 
         if($approve === true)
@@ -362,12 +417,35 @@ class CollectionTable extends Table
         }
         catch(\Exception $e)
         {
-          $this->setError($e->getMessage());
-          $this->getComponent()->addLog($e->getMessage(), 'error', 'jerror');
+          // The unique key may have won a concurrent insert race. Treat that
+          // as idempotent, but retain every unrelated database failure.
+          $query    = $db->getQuery(true)->select($db->quoteName(['id', 'approved']))
+            ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
+            ->where($db->quoteName('collectionid') . ' = ' . (int) $this->getId())
+            ->where($db->quoteName('imgid') . ' = ' . $iid);
+          $existing = $db->setQuery($query)->loadObject();
 
-          return false;
+          if(!$existing)
+          {
+            throw $e;
+          }
+
+          if($approve === true && !(int) $existing->approved)
+          {
+            $query = $db->getQuery(true)->update($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
+              ->set($db->quoteName('approved') . ' = 1')
+              ->where($db->quoteName('id') . ' = ' . (int) $existing->id);
+            $db->setQuery($query)->execute();
+          }
         }
       }
+    }
+    catch(\Exception $e)
+    {
+      $this->setError($e->getMessage());
+      $this->getComponent()->addLog($e->getMessage(), 'error', 'jerror');
+
+      return false;
     }
 
     return true;
@@ -392,9 +470,15 @@ class CollectionTable extends Table
     }
 
     // Prepare image ids
-    if(!\is_array($img_id) && $img_id != 0)
+    if(\is_array($img_id) || (int) $img_id !== 0)
     {
-      $img_id = [$img_id];
+      $img_id = ArrayHelper::toInteger((array) $img_id);
+      $img_id = array_values(array_unique(array_filter($img_id, static fn($id) => $id > 0)));
+
+      if(!$img_id)
+      {
+        return true;
+      }
     }
 
     // Load db driver
@@ -407,7 +491,7 @@ class CollectionTable extends Table
     if(\is_array($img_id))
     {
       // Delete mapping only for a specified images
-      $query->where($db->quoteName('imgid') . ' IN (' . implode(',', $img_id) . ')');
+      $query->whereIn($db->quoteName('imgid'), $img_id, ParameterType::INTEGER);
     }
 
     // Create the query

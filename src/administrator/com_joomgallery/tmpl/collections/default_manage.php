@@ -39,6 +39,16 @@ $permissions = $item->managementPermissions;
     <?php echo HTMLHelper::_('form.token'); ?>
   </form>
 <?php endif; ?>
+<?php if($permissions['state']) : ?>
+  <form action="<?php echo Route::_('index.php?option=com_joomgallery&task=collection.manage'); ?>" method="post" class="mb-4">
+    <button type="submit" class="btn btn-secondary">
+      <?php echo Text::_((int) $item->published ? 'JUNPUBLISH' : 'JPUBLISH'); ?>
+    </button>
+    <input type="hidden" name="id" value="<?php echo (int) $item->id; ?>">
+    <input type="hidden" name="operation" value="<?php echo (int) $item->published ? 'unpublish' : 'publish'; ?>">
+    <?php echo HTMLHelper::_('form.token'); ?>
+  </form>
+<?php endif; ?>
 <?php if($permissions['delete']) : ?>
   <form action="<?php echo Route::_('index.php?option=com_joomgallery&task=collection.manage'); ?>" method="post">
     <p><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DELETE_DESC'); ?></p>

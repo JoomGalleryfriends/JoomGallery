@@ -34,28 +34,95 @@ class CollectionModel extends JoomAdminModel
    */
   protected $type = 'collection';
 
+  /** Return the current Joomla identity's JoomGallery profile ID. */
+  protected function getCurrentProfileId(): int
+  {
+    $identity = Factory::getApplication()->getIdentity();
+
+    if((int) $identity->id <= 0)
+    {
+      return 0;
+    }
+
+    $profile = $this->component->getMVCFactory()->createTable('User', 'Administrator');
+
+    return $profile->load(['cmsuser' => (int) $identity->id]) ? (int) $profile->id : 0;
+  }
+
+  /** Check whether the current Joomla identity owns a collection or profile. */
+  protected function isOwner(object $collection): bool
+  {
+    $profileId = $this->getCurrentProfileId();
+
+    return $profileId > 0 && $profileId === (int) $collection->userid;
+  }
+
+  /** Check only the global ACL result, excluding JoomGallery own-rule fallbacks. */
+  protected function hasGlobalPermission(string $action): bool
+  {
+    $acl = $this->getAcl();
+    $acl->checkACL($action, 'collection');
+
+    return (bool) $acl->allowed['default'];
+  }
+
+  /** Check whether a collection may be created for the requested owner. */
+  public function canCreateCollection(int $requestedOwnerId = 0): bool
+  {
+    if($this->hasGlobalPermission('add'))
+    {
+      return true;
+    }
+
+    $profileId = $this->getCurrentProfileId();
+
+    return $profileId > 0 && ($requestedOwnerId === 0 || $requestedOwnerId === $profileId);
+  }
+
+  /** Resolve the submitted owner according to global-create and ownership rules. */
+  protected function resolveCreationOwner(int $requestedOwnerId): int
+  {
+    if($this->hasGlobalPermission('add'))
+    {
+      $this->assertOwner($requestedOwnerId);
+
+      return $requestedOwnerId;
+    }
+
+    $profileId = $this->getCurrentProfileId();
+
+    if($profileId <= 0 || ($requestedOwnerId > 0 && $requestedOwnerId !== $profileId))
+    {
+      throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+    }
+
+    return $profileId;
+  }
+
   /** Permissions shared by the list UI and the submitted management operation. */
   public function getManagementPermissions(object $collection): array
   {
-    $identity    = Factory::getApplication()->getIdentity();
-    $profile     = $this->component->getMVCFactory()->createTable('User', 'Administrator');
-    $owner       = $identity->id > 0 && $profile->load((int) $collection->userid)
-      && (int) $profile->cmsuser === (int) $identity->id;
+    $owner       = $this->isOwner($collection);
     $permissions = [];
 
-    foreach(['reassign' => 'core.edit', 'clear' => 'joom.connect', 'delete' => 'core.delete'] as $operation => $action)
+    foreach(
+        [
+          'reassign' => 'core.edit',
+          'state'    => 'core.edit.state',
+          'clear'    => 'joom.connect',
+          'delete'   => 'core.delete',
+        ] as $operation => $action
+    )
     {
       $allowed = $owner;
 
-      if(!$allowed && $identity->id > 0)
+      if(!$allowed)
       {
-        $acl = $this->getAcl();
-        $acl->checkACL($action, 'collection');
-        // Only the global collection grant applies to non-owners, not an in-own grant.
-        $allowed = (bool) $acl->allowed['default'];
+        $allowed = $this->hasGlobalPermission($action);
       }
 
-      $permissions[$operation] = $allowed && ($operation === 'clear' || !(int) $collection->is_default);
+      $defaultSafe             = \in_array($operation, ['state', 'clear'], true) || !(int) $collection->is_default;
+      $permissions[$operation] = $allowed && $defaultSafe;
     }
 
     return $permissions;
@@ -68,7 +135,15 @@ class CollectionModel extends JoomAdminModel
 
     if($form)
     {
-      $form->bind(Factory::getApplication()->getUserState('com_joomgallery.collection.create.data', []));
+      $data = Factory::getApplication()->getUserState('com_joomgallery.collection.create.data', []);
+
+      if(!$this->hasGlobalPermission('add'))
+      {
+        $data['userid'] = $this->getCurrentProfileId();
+        $form->setFieldAttribute('userid', 'readonly', 'true');
+      }
+
+      $form->bind($data);
     }
 
     return $form;
@@ -91,28 +166,48 @@ class CollectionModel extends JoomAdminModel
   /** Create a normal collection; record identity and lifecycle fields are server-controlled. */
   public function createCollection(array $data): bool
   {
-    if(!$this->getAcl()->checkACL('core.create', 'collection') || !empty($data['id']))
+    if(!empty($data['id']))
     {
       throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
     }
 
-    $this->assertOwner((int) ($data['userid'] ?? 0));
+    $ownerId               = $this->resolveCreationOwner((int) ($data['userid'] ?? 0));
     $data                  = array_intersect_key($data, array_flip(['userid', 'title', 'alias', 'description', 'access', 'published']));
     $data['id']            = 0;
+    $data['userid']        = $ownerId;
     $data['is_default']    = 0;
     $data['created_by']    = (int) Factory::getApplication()->getIdentity()->id;
     $data['modified_by']   = $data['created_by'];
     $data['modified_time'] = Factory::getDate()->toSql();
+
+    if($ownerId !== $this->getCurrentProfileId() && !$this->hasGlobalPermission('editstate'))
+    {
+      $data['published'] = 0;
+    }
+
     $this->setState('collection.id', 0);
 
     return parent::save($data);
+  }
+
+  /** Owners may always edit state; other users require global core.edit.state. */
+  protected function canEditState($record)
+  {
+    $table = $this->getTable();
+
+    if((int) ($record->id ?? 0) > 0 && $table->load((int) $record->id) && $this->isOwner($table))
+    {
+      return true;
+    }
+
+    return $this->hasGlobalPermission('editstate');
   }
 
   /** Apply exactly one authorised modal operation against the current database record. */
   public function manageCollection(int $id, string $operation, int $ownerId = 0): void
   {
     $db = $this->getDatabase();
-    $db->transactionStart();
+    $db->transactionStart(true);
 
     try
     {
@@ -123,9 +218,10 @@ class CollectionModel extends JoomAdminModel
         throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_NOT_FOUND'), 404);
       }
 
-      $permissions = $this->getManagementPermissions($table);
+      $permissions  = $this->getManagementPermissions($table);
+      $permissionId = \in_array($operation, ['publish', 'unpublish'], true) ? 'state' : $operation;
 
-      if(empty($permissions[$operation]))
+      if(empty($permissions[$permissionId]))
       {
         throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
       }
@@ -139,6 +235,17 @@ class CollectionModel extends JoomAdminModel
         if(!$this->removeMapping($id))
         {
           throw new \RuntimeException($this->getError());
+        }
+      }
+      elseif(\in_array($operation, ['publish', 'unpublish'], true))
+      {
+        $table->published     = $operation === 'publish' ? 1 : 0;
+        $table->modified_by   = (int) Factory::getApplication()->getIdentity()->id;
+        $table->modified_time = Factory::getDate()->toSql();
+
+        if(!$table->store())
+        {
+          throw new \RuntimeException($table->getError());
         }
       }
       else
@@ -155,11 +262,11 @@ class CollectionModel extends JoomAdminModel
         }
       }
 
-      $db->transactionCommit();
+      $db->transactionCommit(true);
     }
     catch(\Throwable $e)
     {
-      $db->transactionRollback();
+      $db->transactionRollback(true);
       throw $e;
     }
 
@@ -271,118 +378,143 @@ class CollectionModel extends JoomAdminModel
       throw new \InvalidArgumentException('Valid JoomGallery and Joomla user IDs are required.');
     }
 
-    $db         = $this->getDatabase();
-    $query      = $db->getQuery(true)->select('id')
-      ->from($db->quoteName('#__joomgallery_collections'))
-      ->where('userid = ' . $userId)
-      ->where('is_default = 1')
-      ->order('id ASC');
-    $defaultIds = array_map('intval', $db->setQuery($query)->loadColumn());
+    $db = $this->getDatabase();
+    $db->transactionStart(true);
 
-    if($defaultIds)
+    try
     {
-      if(\count($defaultIds) > 1)
+      // Lock the profile row, which exists even when no collection row can be locked yet.
+      // This serializes concurrent default-collection creation for the same profile.
+      $query          = $db->getQuery(true)->select('cmsuser')
+        ->from($db->quoteName('#__joomgallery_users'))
+        ->where('id = ' . $userId);
+      $profileCmsUser = (int) $db->setQuery($query . ' FOR UPDATE')->loadResult();
+
+      if($profileCmsUser <= 0 || $profileCmsUser !== $cmsuser)
       {
-        throw new \RuntimeException('A JoomGallery user profile has more than one default collection.');
+        throw new \RuntimeException('The JoomGallery user profile does not match the Joomla user.');
       }
 
-      return $defaultIds[0];
-    }
+      $query      = $db->getQuery(true)->select('id')
+        ->from($db->quoteName('#__joomgallery_collections'))
+        ->where('userid = ' . $userId)
+        ->where('is_default = 1')
+        ->order('id ASC');
+      $defaultIds = array_map('intval', $db->setQuery($query)->loadColumn());
 
-    $title                      = Text::_('COM_JOOMGALLERY_FAVOURITES');
-    $query                      = $db->getQuery(true)->select('id')
-      ->from($db->quoteName('#__joomgallery_collections'))
-      ->where('userid = ' . $userId)
-      ->where('title = ' . $db->quote($title))
-      ->order('id ASC');
-    $collectionId               = (int) $db->setQuery($query, 0, 1)->loadResult();
-    $table                      = $this->getTable();
-    $table->allowDefaultChanges = true;
-
-    if($collectionId > 0)
-    {
-      if(!$table->load($collectionId))
+      if($defaultIds)
       {
-        throw new \RuntimeException($table->getError() ?: 'Could not load the migrated Favourites collection.');
+        if(\count($defaultIds) > 1)
+        {
+          throw new \RuntimeException('A JoomGallery user profile has more than one default collection.');
+        }
+
+        $db->transactionCommit(true);
+
+        return $defaultIds[0];
       }
 
-      $table->is_default = 1;
+      $title                      = Text::_('COM_JOOMGALLERY_FAVOURITES');
+      $query                      = $db->getQuery(true)->select('id')
+        ->from($db->quoteName('#__joomgallery_collections'))
+        ->where('userid = ' . $userId)
+        ->where('title = ' . $db->quote($title))
+        ->order('id ASC');
+      $collectionId               = (int) $db->setQuery($query, 0, 1)->loadResult();
+      $table                      = $this->getTable();
+      $table->allowDefaultChanges = true;
 
-      if(!$table->store())
+      if($collectionId > 0)
       {
-        throw new \RuntimeException($table->getError() ?: 'Could not designate the default collection.');
+        if(!$table->load($collectionId))
+        {
+          throw new \RuntimeException($table->getError() ?: 'Could not load the migrated Favourites collection.');
+        }
+
+        $table->is_default = 1;
+
+        if(!$table->store())
+        {
+          throw new \RuntimeException($table->getError() ?: 'Could not designate the default collection.');
+        }
+
+        $db->transactionCommit(true);
+
+        return $collectionId;
       }
+
+      $date = Factory::getDate()->toSql();
+      $data = [
+        'id'            => 0,
+        'userid'        => $userId,
+        'title'         => $title,
+        'alias'         => '',
+        'description'   => '',
+        'is_default'    => 1,
+        'access'        => 1,
+        'published'     => 1,
+        'hidden'        => 0,
+        'created_by'    => $cmsuser,
+        'modified_by'   => $cmsuser,
+        'modified_time' => $date,
+      ];
+
+      if(!$table->bind($data) || !$table->check() || !$table->store())
+      {
+        throw new \RuntimeException($table->getError() ?: 'Could not create the default collection.');
+      }
+
+      $collectionId = (int) $table->id;
+      $db->transactionCommit(true);
 
       return $collectionId;
     }
-
-    $date = \Joomla\CMS\Factory::getDate()->toSql();
-    $data = [
-      'id'            => 0,
-      'userid'        => $userId,
-      'title'         => $title,
-      'alias'         => '',
-      'description'   => '',
-      'is_default'    => 1,
-      'access'        => 1,
-      'published'     => 1,
-      'hidden'        => 0,
-      'created_by'    => $cmsuser,
-      'modified_by'   => $cmsuser,
-      'modified_time' => $date,
-    ];
-
-    if(!$table->bind($data) || !$table->check() || !$table->store())
+    catch(\Throwable $e)
     {
-      throw new \RuntimeException($table->getError() ?: 'Could not create the default collection.');
+      $db->transactionRollback(true);
+      throw $e;
     }
-
-    return (int) $table->id;
   }
 
   /**
    * Add a mapping between a collection and an image.
    *
-   * @param   int  $collection_id  Collection ID.
-   * @param   int  $img_id         Image ID.
+   * @param   int        $collection_id  Collection ID.
+   * @param   int|array  $img_id         Image ID or list of image IDs.
+   * @param   bool       $approve        True to approve the mappings.
    *
    * @return  boolean  True when the mapping exists after the operation.
    *
    * @since   DEPLOY_VERSION
    */
-  public function addMapping($collection_id, $img_id)
+  public function addMapping($collection_id, $img_id, bool $approve = false)
   {
     $collection_id = (int) $collection_id;
-    $img_id        = (int) $img_id;
 
-    if($collection_id <= 0 || $img_id <= 0)
+    if($collection_id <= 0 || (\is_array($img_id) ? empty($img_id) : (int) $img_id <= 0))
     {
       return false;
     }
 
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true)->select('id')
-      ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
-      ->where('collectionid = ' . $collection_id)
-      ->where('imgid = ' . $img_id);
-
-    if($db->setQuery($query)->loadResult())
+    if(!$this->canConnectCollection($collection_id))
     {
-      return true;
+      $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+
+      return false;
     }
 
-    $mapping               = new \stdClass();
-    $mapping->collectionid = $collection_id;
-    $mapping->imgid        = $img_id;
+    $table = $this->getTable();
 
-    try
+    if(!$table->load($collection_id))
     {
-      $db->insertObject(_JOOM_TABLE_COLLECTIONS_REF, $mapping);
+      $this->setError(Text::_('COM_JOOMGALLERY_COLLECTION_NOT_FOUND'));
+
+      return false;
     }
-    catch(\Exception $e)
+
+    if(!$table->addMapping($img_id, $approve))
     {
-      $this->setError($e->getMessage());
-      $this->component->addLog($e->getMessage(), 'error', 'jerror');
+      $this->setError($table->getError());
 
       return false;
     }
@@ -393,8 +525,8 @@ class CollectionModel extends JoomAdminModel
   /**
    * Remove one image mapping, or every image mapping for a collection.
    *
-   * @param   int  $collection_id  Collection ID.
-   * @param   int  $img_id         Image ID, or zero to remove all collection mappings.
+   * @param   int          $collection_id  Collection ID.
+   * @param   int|array    $img_id         Image ID, list of IDs, or zero to remove all mappings.
    *
    * @return  boolean  True on success.
    *
@@ -403,34 +535,53 @@ class CollectionModel extends JoomAdminModel
   public function removeMapping($collection_id, $img_id = 0)
   {
     $collection_id = (int) $collection_id;
-    $img_id        = (int) $img_id;
 
     if($collection_id <= 0)
     {
       return false;
     }
 
-    $db    = $this->getDatabase();
-    $query = $db->getQuery(true)->delete($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
-      ->where('collectionid = ' . $collection_id);
-
-    if($img_id > 0)
+    if(!$this->canConnectCollection($collection_id))
     {
-      $query->where('imgid = ' . $img_id);
+      $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+
+      return false;
     }
 
-    try
+    $table = $this->getTable();
+
+    if(!$table->load($collection_id))
     {
-      $db->setQuery($query)->execute();
+      $this->setError(Text::_('COM_JOOMGALLERY_COLLECTION_NOT_FOUND'));
+
+      return false;
     }
-    catch(\Exception $e)
+
+    if(!$table->removeMapping($img_id))
     {
-      $this->setError($e->getMessage());
-      $this->component->addLog($e->getMessage(), 'error', 'jerror');
+      $this->setError($table->getError());
 
       return false;
     }
 
     return true;
+  }
+
+  /** Owners may always connect images; other users require global joom.connect. */
+  public function canConnectCollection(int $collectionId): bool
+  {
+    if($collectionId <= 0)
+    {
+      return false;
+    }
+
+    $table = $this->getTable();
+
+    if(!$table->load($collectionId))
+    {
+      return false;
+    }
+
+    return $this->isOwner($table) || $this->hasGlobalPermission('connect');
   }
 }

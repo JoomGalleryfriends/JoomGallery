@@ -14,6 +14,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseInterface;
+
 /**
  * Component implementation of UserProfileServiceInterface.
  *
@@ -40,7 +43,10 @@ trait UserProfileServiceTrait
    */
   public function createUserProfile(): void
   {
-    $this->userProfile = new UserProfile($this->getMVCFactory());
+    $this->userProfile = new UserProfile(
+        $this->getMVCFactory(),
+        Factory::getContainer()->get(DatabaseInterface::class)
+    );
   }
 
   /**

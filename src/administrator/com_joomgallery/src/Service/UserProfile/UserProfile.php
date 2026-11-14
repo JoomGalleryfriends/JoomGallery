@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * UserProfile Class
@@ -37,17 +38,26 @@ class UserProfile implements UserProfileInterface
   private MVCFactoryInterface $mvcFactory;
 
   /**
+   * Database connection used to coordinate lifecycle transactions.
+   *
+   * @var DatabaseInterface
+   */
+  private DatabaseInterface $db;
+
+  /**
    * Constructor
    *
-   * @param   MVCFactoryInterface   $mvcFactory   The MVCFactory
+   * @param   MVCFactoryInterface  $mvcFactory  The MVCFactory.
+   * @param   DatabaseInterface    $db          The database connection.
    *
    * @return  void
    *
    * @since   DEPLOY_VERSION
    */
-  public function __construct(MVCFactoryInterface $mvcFactory)
+  public function __construct(MVCFactoryInterface $mvcFactory, DatabaseInterface $db)
   {
     $this->mvcFactory = $mvcFactory;
+    $this->db         = $db;
   }
 
   /**
@@ -112,18 +122,37 @@ class UserProfile implements UserProfileInterface
     $groups = array_filter(array_map('intval', explode(',', (string) ($config->jg_create_user_groups ?? ''))));
     $ranges = self::parseIds((string) ($config->jg_create_user_ids ?? ''));
 
-    $usersModel = $this->mvcFactory->createModel('Users', 'Administrator', ['ignore_request' => true]);
-    $userModel  = $this->mvcFactory->createModel('User', 'Administrator', ['ignore_request' => true]);
+    $usersModel      = $this->mvcFactory->createModel('Users', 'Administrator', ['ignore_request' => true]);
+    $userModel       = $this->mvcFactory->createModel('User', 'Administrator', ['ignore_request' => true]);
+    $collectionModel = $this->mvcFactory->createModel('Collection', 'Administrator', ['ignore_request' => true]);
+    $createdCmsUsers = [];
 
     foreach($usersModel->getMissingCmsUserIds($policy, $groups, $ranges, $cmsuser) as $id)
     {
-      $userModel->createProfile((int) $id);
-    }
+      $id = (int) $id;
+      $this->db->transactionStart();
 
-    $collectionModel = $this->mvcFactory->createModel('Collection', 'Administrator', ['ignore_request' => true]);
+      try
+      {
+        $profileId = $userModel->createProfile($id);
+        $collectionModel->ensureDefaultCollection($profileId, $id);
+        $this->db->transactionCommit();
+        $createdCmsUsers[$id] = true;
+      }
+      catch(\Throwable $e)
+      {
+        $this->db->transactionRollback();
+        throw $e;
+      }
+    }
 
     foreach($usersModel->getEligibleProfiles($policy, $groups, $ranges, $cmsuser) as $profile)
     {
+      if(isset($createdCmsUsers[(int) $profile->cmsuser]))
+      {
+        continue;
+      }
+
       $collectionModel->ensureDefaultCollection((int) $profile->id, (int) $profile->cmsuser);
     }
   }
@@ -154,12 +183,22 @@ class UserProfile implements UserProfileInterface
 
     $collectionsModel = $this->mvcFactory->createModel('Collections', 'Administrator', ['ignore_request' => true]);
     $collectionModel  = $this->mvcFactory->createModel('Collection', 'Administrator', ['ignore_request' => true]);
+    $this->db->transactionStart();
 
-    foreach($collectionsModel->getIdsByUser((int) $profile->id) as $collectionId)
+    try
     {
-      $collectionModel->deleteCollection((int) $collectionId, true);
-    }
+      foreach($collectionsModel->getIdsByUser((int) $profile->id) as $collectionId)
+      {
+        $collectionModel->deleteCollection((int) $collectionId, true);
+      }
 
-    $userModel->deleteProfile((int) $profile->id);
+      $userModel->deleteProfile((int) $profile->id);
+      $this->db->transactionCommit();
+    }
+    catch(\Throwable $e)
+    {
+      $this->db->transactionRollback();
+      throw $e;
+    }
   }
 }

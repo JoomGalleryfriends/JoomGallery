@@ -47,7 +47,9 @@ class CollectionController extends JoomFormController
 
   public function add()
   {
-    if(!$this->getAcl()->checkACL('core.create', 'collection'))
+    $model = $this->getModel('Collection', 'Administrator');
+
+    if(!$model->canCreateCollection())
     {
       throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
     }
@@ -62,11 +64,6 @@ class CollectionController extends JoomFormController
   {
     $this->checkToken();
 
-    if(!$this->getAcl()->checkACL('core.create', 'collection'))
-    {
-      throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-    }
-
     $data = $this->input->post->get('jform', [], 'array');
 
     if(!empty($data['id']) || $this->input->getInt('id'))
@@ -75,6 +72,12 @@ class CollectionController extends JoomFormController
     }
 
     $model = $this->getModel('Collection', 'Administrator');
+
+    if(!$model->canCreateCollection((int) ($data['userid'] ?? 0)))
+    {
+      throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+    }
+
     $form  = $model->getCreationForm();
     $valid = $form ? $model->validate($form, $data) : false;
 

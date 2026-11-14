@@ -48,10 +48,9 @@ $rules_map_array = [
                     'assets'     => [ '.',
                                       '.collection'
                                     ],
-                    'own'        => 'inown',
-                    'own-assets' => [ '.',
-                                      '.collection',
-                                    ],
+                    // Collection ownership is enforced by CollectionModel.
+                    'own'        => false,
+                    'own-assets' => [],
                   ],
   'delete'    => [  'name'       => 'delete',
                     'rule'       => 'core.delete',

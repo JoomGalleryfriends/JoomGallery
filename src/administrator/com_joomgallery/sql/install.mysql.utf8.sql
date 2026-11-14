@@ -367,6 +367,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_collections` (
 `title` VARCHAR(255) NOT NULL DEFAULT "",
 `description` TEXT NOT NULL,
 `is_default` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+`default_userid` INT(11) UNSIGNED GENERATED ALWAYS AS (CASE WHEN `is_default` = 1 THEN `userid` ELSE NULL END) STORED,
 `access` INT(11) UNSIGNED NOT NULL DEFAULT 0,
 `published` TINYINT(1) NOT NULL DEFAULT 1,
 `hidden` TINYINT(1) NOT NULL DEFAULT 0,
@@ -384,6 +385,7 @@ PRIMARY KEY (`id`),
 KEY `idx_access` (`access`),
 KEY `idx_checkout` (`checked_out`),
 KEY `idx_created_by` (`created_by`),
+UNIQUE KEY `idx_default_collection` (`default_userid`),
 INDEX `idx_list_collections` (`userid`, `is_default`, `published`, `access`, `ordering`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -401,7 +403,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_collections_ref` (
 PRIMARY KEY (`id`),
 INDEX `idx_imgid` (`imgid`),
 INDEX `idx_collectionid` (`collectionid`),
-INDEX `idx_col_img` (`collectionid`, `imgid`)
+UNIQUE KEY `idx_col_img` (`collectionid`, `imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

@@ -40,3 +40,40 @@ ALTER TABLE `#__joomgallery_collections`
   DROP INDEX `idx_list_collections`,
   DROP COLUMN `language`,
   ADD INDEX `idx_list_collections` (`userid`, `is_default`, `published`, `access`, `ordering`);
+
+-- Keep the oldest default when repairing data created before uniqueness was enforced.
+UPDATE `#__joomgallery_collections` AS `duplicate`
+INNER JOIN `#__joomgallery_collections` AS `keeper`
+  ON `keeper`.`userid` = `duplicate`.`userid`
+  AND `keeper`.`is_default` = 1
+  AND `keeper`.`id` < `duplicate`.`id`
+SET `duplicate`.`is_default` = 0
+WHERE `duplicate`.`is_default` = 1;
+
+-- NULL values are not considered equal by a unique index, so normal collections
+-- remain unlimited while each userid can occur only once for a default collection.
+ALTER TABLE `#__joomgallery_collections`
+  ADD `default_userid` INT(11) UNSIGNED
+    GENERATED ALWAYS AS (CASE WHEN `is_default` = 1 THEN `userid` ELSE NULL END) STORED
+    AFTER `is_default`,
+  ADD UNIQUE KEY `idx_default_collection` (`default_userid`);
+
+-- Preserve approval when consolidating duplicate image/collection mappings.
+UPDATE `#__joomgallery_collections_ref` AS `mapping`
+INNER JOIN `#__joomgallery_collections_ref` AS `approved_mapping`
+  ON `approved_mapping`.`collectionid` = `mapping`.`collectionid`
+  AND `approved_mapping`.`imgid` = `mapping`.`imgid`
+  AND `approved_mapping`.`approved` = 1
+SET `mapping`.`approved` = 1;
+
+-- Keep the oldest row for every image/collection pair.
+DELETE `duplicate`
+FROM `#__joomgallery_collections_ref` AS `duplicate`
+INNER JOIN `#__joomgallery_collections_ref` AS `keeper`
+  ON `keeper`.`collectionid` = `duplicate`.`collectionid`
+  AND `keeper`.`imgid` = `duplicate`.`imgid`
+  AND `keeper`.`id` < `duplicate`.`id`;
+
+ALTER TABLE `#__joomgallery_collections_ref`
+  DROP INDEX `idx_col_img`,
+  ADD UNIQUE KEY `idx_col_img` (`collectionid`, `imgid`);

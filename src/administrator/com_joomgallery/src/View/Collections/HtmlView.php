@@ -71,7 +71,7 @@ class HtmlView extends JoomGalleryView
 
     ToolbarHelper::title(Text::_('COM_JOOMGALLERY_COLLECTIONS'), 'folder');
 
-    if($this->getAcl()->checkACL('core.create', 'collection'))
+    if($collectionModel->canCreateCollection())
     {
       ToolbarHelper::addNew('collection.add');
     }
