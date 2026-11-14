@@ -16,8 +16,8 @@ namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
 use Joomgallery\Component\Joomgallery\Administrator\Controller\JoomFormController;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Router\Route;
 use Joomla\CMS\Response\JsonResponse;
+use Joomla\CMS\Router\Route;
 
 /**
  * Image controller class.
@@ -125,11 +125,11 @@ class ImageController extends JoomFormController
     {
       $this->assertCollectibleImage($imageId);
       $collectionModel = $this->component->getMVCFactory()->createModel('Collection', 'Administrator', ['ignore_request' => true]);
-      $mapped           = $collectionModel->toggleMapping($collectionId, $imageId);
-      $table            = $collectionModel->getTable();
+      $mapped          = $collectionModel->toggleMapping($collectionId, $imageId);
+      $table           = $collectionModel->getTable();
       $table->load($collectionId);
-      $title            = htmlspecialchars(Text::_((string) $table->title), ENT_QUOTES, 'UTF-8');
-      $message          = $mapped ? 'COM_JOOMGALLERY_COLLECTION_IMAGE_ADDED' : 'COM_JOOMGALLERY_COLLECTION_IMAGE_REMOVED';
+      $title   = htmlspecialchars(Text::_((string) $table->title), ENT_QUOTES, 'UTF-8');
+      $message = $mapped ? 'COM_JOOMGALLERY_COLLECTION_IMAGE_ADDED' : 'COM_JOOMGALLERY_COLLECTION_IMAGE_REMOVED';
       $this->setRedirect($redirect, Text::sprintf($message, $title), 'success');
 
       return true;

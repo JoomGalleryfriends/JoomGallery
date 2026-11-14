@@ -192,11 +192,11 @@ class HtmlView extends JoomGalleryView
     {
       $mapped = array_values(array_filter($this->collections, static fn($collection) => (int) $collection->mapped === 1));
 
-      usort(
+    usort(
         $mapped,
         static fn($left, $right) => ((int) $right->image_count <=> (int) $left->image_count)
           ?: ((int) $left->id <=> (int) $right->id)
-      );
+    );
 
       $this->primaryCollection = $mapped[0] ?? $this->defaultCollection;
     }

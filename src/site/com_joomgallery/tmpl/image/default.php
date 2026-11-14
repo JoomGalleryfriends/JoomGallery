@@ -25,7 +25,7 @@ use Joomla\Registry\Registry;
 $image_type        = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
 $show_title        = $this->params['configs']->get('jg_detail_view_show_title', 1, 'INT');
 $title_position    = $this->params['configs']->get('jg_detail_view_title_position', 'below', 'STRING');
-$header_above = $title_position === 'above';
+$header_above      = $title_position === 'above';
 $show_category     = $this->params['configs']->get('jg_detail_view_show_category', 1, 'INT');
 $show_description  = $this->params['configs']->get('jg_detail_view_show_description', 1, 'INT');
 $show_imgdate      = $this->params['configs']->get('jg_detail_view_show_imgdate', 1, 'INT');
@@ -377,7 +377,7 @@ ob_start(); ?>
           <form class="d-inline-flex" action="<?php echo Route::_('index.php?option=com_joomgallery&task=image.addToCollection'); ?>" method="post">
             <input type="hidden" name="id" value="<?php echo (int) $this->item->id; ?>">
             <input type="hidden" name="return" value="<?php echo base64_encode($currentRoute); ?>">
-            <?php if(count($this->collections) > 1) : ?>
+            <?php if(\count($this->collections) > 1) : ?>
               <div class="btn-group mb-0">
                 <button class="btn <?php echo $primaryMapped ? 'btn-primary active' : 'btn-outline-secondary'; ?>" type="submit" name="collection_id" value="<?php echo (int) $primaryCollection->id; ?>" formaction="<?php echo Route::_('index.php?option=com_joomgallery&task=image.toggleCollection'); ?>" aria-pressed="<?php echo $primaryMapped ? 'true' : 'false'; ?>"><span class="icon-heart me-1" aria-hidden="true"></span><?php echo $this->escape($primaryLabel); ?></button>
                 <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -387,7 +387,8 @@ ob_start(); ?>
                   <?php foreach($this->collections as $collection) : ?>
                     <li>
                       <button class="dropdown-item<?php echo (int) $collection->mapped === 1 ? ' disabled' : ''; ?>" type="submit" name="collection_id" value="<?php echo (int) $collection->id; ?>"<?php echo (int) $collection->mapped === 1 ? ' disabled' : ''; ?>>
-                        <?php if((int) $collection->mapped === 1) : ?><span class="icon-check me-1" aria-hidden="true"></span><?php endif; ?>
+                        <?php if((int) $collection->mapped === 1) : ?><span class="icon-check me-1" aria-hidden="true"></span><?php
+                        endif; ?>
                         <?php echo $this->escape(Text::_((string) $collection->title)); ?>
                       </button>
                     </li>

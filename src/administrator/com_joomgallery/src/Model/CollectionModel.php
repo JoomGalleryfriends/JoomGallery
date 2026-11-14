@@ -648,7 +648,7 @@ class CollectionModel extends JoomAdminModel
         throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
       }
 
-      $query = $db->getQuery(true)
+      $query  = $db->getQuery(true)
         ->select($db->quoteName('id'))
         ->from($db->quoteName('#__joomgallery_collections_ref'))
         ->where($db->quoteName('collectionid') . ' = ' . $collectionId)
