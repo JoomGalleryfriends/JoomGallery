@@ -47,6 +47,7 @@ KEY `idx_state` (`published`),
 KEY `idx_catid` (`catid`),
 KEY `idx_language` (`language`),
 KEY `idx_alias` (`alias`(191)),
+KEY `idx_image_ref` (`image_ref`),
 INDEX `idx_list_images` (`catid`, `published`, `access`, `approved`, `hidden`, `language`, `ordering`),
 FULLTEXT INDEX `idx_text_language` (`title`, `description`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;

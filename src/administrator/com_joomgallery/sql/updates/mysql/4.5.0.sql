@@ -21,6 +21,9 @@ ALTER TABLE `#__joomgallery`
 ADD COLUMN `image_ref` INT(10) UNSIGNED DEFAULT NULL
 AFTER `filename`;
 
+ALTER TABLE `#__joomgallery`
+ADD KEY `idx_image_ref` (`image_ref`);
+
 CREATE TABLE IF NOT EXISTS `#__joomgallery_img_ref` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `path` VARCHAR(2048) NOT NULL,
