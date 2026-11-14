@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile PSR1.Files.SideEffects.FoundWithSymbols
 /**
  * *********************************************************************************
  *    @package    com_joomgallery                                                 **
@@ -8,6 +7,8 @@
  *    @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
+
+// phpcs:ignoreFile PSR1.Files.SideEffects.FoundWithSymbols
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Helper;
 
