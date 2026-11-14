@@ -179,7 +179,7 @@ foreach($metadataItems as $metadataItem)
     continue;
   }
 
-  $exifDate = \DateTimeImmutable::createFromFormat('!d.m.Y H:i', $metadataItem['value']);
+  $exifDate = \DateTimeImmutable::createFromFormat('!Y:m:d H:i:s', $metadataItem['rawValue'] ?? '');
 
   if($databaseDate !== false && $exifDate !== false && $databaseDate->format('Y-m-d H:i') === $exifDate->format('Y-m-d H:i'))
   {

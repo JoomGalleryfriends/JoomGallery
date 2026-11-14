@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Metadata;
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\MetadataHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 /**
@@ -102,6 +103,7 @@ class Metadata implements MetadataInterface
           'key'       => (string) $key,
           'attribute' => $attribute,
           'label'     => $definition ? MetadataHelper::getName($metadataType, $pathKey) : (string) $key,
+          'rawValue'  => (string) $value,
           'value'     => preg_match('/(?:DateTime|Date Created|Time Created|Digital Creation Date)/i', $attribute)
             ? $this->formatRenderDate((string) $value)
             : MetadataHelper::getValue($metadataType, $pathKey, $value),
@@ -148,7 +150,9 @@ class Metadata implements MetadataInterface
 
       if($date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0)))
       {
-        return $date->format('d.m.Y H:i');
+        $displayDate = Factory::getDate($date->format('Y-m-d H:i:s'), 'UTC');
+
+        return $displayDate->format(Text::_('DATE_FORMAT_LC6'), false, true);
       }
     }
 
