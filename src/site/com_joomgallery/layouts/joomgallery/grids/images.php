@@ -45,6 +45,7 @@ $image_tags_data    = $image_tags_data ?? [];
  * @var   bool     $lightbox_show_tags True to display image tags in the lightbox caption
  * @var   array    $lightbox_tags      Image tags indexed by image id
  * @var   array    $image_tags_data    Image tags indexed by image id
+ * @var   string   $frontend_framework CSS framework used by the parent view (joomla, yootheme)
  */
 ?>
 

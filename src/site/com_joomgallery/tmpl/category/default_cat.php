@@ -59,6 +59,12 @@ $lightbox_thumbnails    = $this->params['configs']->get('jg_lightbox_thumbnails'
 $lightbox_zoom          = $this->params['configs']->get('jg_lightbox_zoom', 0, 'INT');
 $lightbox_show_tags     = $this->params['configs']->get('jg_lightbox_show_tags', 0, 'INT');
 $show_tags_label        = $this->params['configs']->get('jg_category_view_show_tags_label', 1, 'INT');
+$frontend_framework     = $this->params['configs']->get('jg_gallery_view_framework', 'joomla', 'STRING');
+$is_yootheme            = $frontend_framework === 'yootheme';
+$button_class           = $is_yootheme ? 'uk-button uk-button-default uk-button-small' : 'btn btn-outline-primary';
+$success_button_class   = $is_yootheme ? 'uk-button uk-button-primary uk-button-small' : 'btn btn-success btn-small';
+$module_class           = $is_yootheme ? 'uk-card uk-card-default uk-card-body uk-margin' : 'card';
+$module_header_class    = $is_yootheme ? 'uk-card-title ' : 'card-header ';
 
 // Import CSS & JS
 $wa = $this->document->getWebAssetManager();
@@ -296,7 +302,7 @@ $returnURL  = base64_encode(JoomHelper::getViewRoute('category', $this->item->id
       'id' => '1-' . $this->item->id, 'layout' => $category_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
       'caption_align' => $caption_align, 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
       'image_title'   => (bool) $show_title, 'title_link' => $title_link, 'image_desc' => (bool) $show_description, 'image_desc_label' => (bool) $show_description_label,
-      'image_date'    => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags,
+      'image_date'    => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags, 'frontend_framework' => $frontend_framework,
       'lightbox_show_tags' => (bool) $lightbox_show_tags,
       'image_tags_data' => $image_tags_data,
       'lightbox_tags'   => $image_tags_data,
