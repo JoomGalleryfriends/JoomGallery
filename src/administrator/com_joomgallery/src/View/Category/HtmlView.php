@@ -99,6 +99,23 @@ class HtmlView extends JoomGalleryView
 
     ToolbarHelper::title(Text::_('JCATEGORIES') . ' :: ' . Text::_('COM_JOOMGALLERY_CATEGORY_EDIT'), 'folder-open');
 
+    // Use a reduced toolbar when creating a language variant, like the image editor.
+    $app = Factory::getApplication();
+    $isLanguageVariant = $app->input->getInt('origin_id', 0) > 0
+      && $app->input->getString('forcedLanguage', '') !== '';
+
+    if($isLanguageVariant)
+    {
+      if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || $this->getAcl()->checkACL('core.create')))
+      {
+        ToolbarHelper::save('category.save', 'JTOOLBAR_SAVE');
+      }
+
+      ToolbarHelper::cancel('category.cancel', 'JTOOLBAR_CANCEL');
+
+      return;
+    }
+
     // If not checked out, can save the item.
     if(!$checkedOut && ($this->getAcl()->checkACL('core.edit') || ($this->getAcl()->checkACL('core.create'))))
     {

@@ -33,6 +33,7 @@
                default="5"
                showon="save_history:1"
         />
+
     </fieldset>
 
     <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">

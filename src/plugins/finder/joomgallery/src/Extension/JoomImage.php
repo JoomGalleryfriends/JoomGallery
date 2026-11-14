@@ -116,6 +116,14 @@ final class JoomImage extends Adapter implements SubscriberInterface
   protected $old_hidden       = null;
 
   /**
+   * Image IDs whose finder indexing must be deferred until transaction commit.
+   *
+   * @var    array
+   * @since  4.5.0
+   */
+  protected $deferredIndexIds = [];
+
+  /**
    * Returns an array of events this subscriber will listen to.
    *
    * @return  array
@@ -141,6 +149,9 @@ final class JoomImage extends Adapter implements SubscriberInterface
           'onFinderAfterDelete'         => 'onFinderAfterDelete',
           'onFinderBeforeSave'          => 'onFinderBeforeSave',
           'onFinderAfterSave'           => 'onFinderAfterSave',
+          'onJoomgalleryImageDeferFinderIndex'       => 'onJoomgalleryImageDeferFinderIndex',
+          'onJoomgalleryImageAfterTransactionCommit' => 'onJoomgalleryImageAfterTransactionCommit',
+          'onJoomgalleryImageRollbackTransaction'    => 'onJoomgalleryImageRollbackTransaction',
         ]
     );
   }
@@ -229,6 +240,65 @@ final class JoomImage extends Adapter implements SubscriberInterface
   }
 
   /**
+   * Defer finder indexing until the image transaction is committed.
+   *
+   * @param   EventInterface  $event  The event.
+   *
+   * @return  void
+   *
+   * @since   4.5.0
+   */
+  public function onJoomgalleryImageDeferFinderIndex($event): void
+  {
+    $imageId = (int) $event->getArgument('id', 0);
+
+    if($imageId > 0)
+    {
+      $this->deferredIndexIds[$imageId] = true;
+    }
+  }
+
+  /**
+   * Reindex an image after its transaction has been committed.
+   *
+   * @param   EventInterface  $event  The event.
+   *
+   * @return  void
+   *
+   * @since   4.5.0
+   */
+  public function onJoomgalleryImageAfterTransactionCommit($event): void
+  {
+    $imageId = (int) $event->getArgument('id', 0);
+
+    if($imageId > 0 && isset($this->deferredIndexIds[$imageId]))
+    {
+      unset($this->deferredIndexIds[$imageId]);
+
+      $this->reindex($imageId);
+    }
+  }
+
+  /**
+   * Remove a deferweiterred finder index entry after transaction rollback.
+   *
+   * @param   EventInterface  $event  The event.
+   *
+   * @return  void
+   *
+   * @since   4.5.0
+   */
+  public function onJoomgalleryImageRollbackTransaction($event): void
+  {
+    $imageId = (int) $event->getArgument('id', 0);
+
+    if($imageId > 0)
+    {
+      unset($this->deferredIndexIds[$imageId]);
+    }
+  }
+
+  /**
    * Smart Search after save content method.
    * Reindexes the link information for an article that has been saved.
    * It also makes adjustments if the access level of an item or the
@@ -304,8 +374,11 @@ final class JoomImage extends Adapter implements SubscriberInterface
         $this->itemStateChange([$row->id], $value, false);
       }
 
-      // Reindex the item.
-      $this->reindex($row->id);
+      // Reindex the item unless indexing is deferred until transaction commit.
+      if(!isset($this->deferredIndexIds[$row->id]))
+      {
+        $this->reindex($row->id);
+      }
     }
 
     // We only want to handle joomgallery categories here.

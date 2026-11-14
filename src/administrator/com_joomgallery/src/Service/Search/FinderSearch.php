@@ -51,7 +51,7 @@ class FinderSearch extends Search implements SearchInterface
    * @var   array
    * @since  4.4.0
    */
-  protected $filters = ['category', 'tags', 'language'];
+  protected $filters = ['category', 'tags'];
 
   /**
    * Return the SearchTools fields that are meaningful with Finder.
@@ -268,7 +268,7 @@ class FinderSearch extends Search implements SearchInterface
       if($branch->alias == $filter || $branch->path == $filter)
       {
         // We found the possible options for this filter field
-        return $branch->nodes;
+                return $branch->nodes ?? [];
       }
     }
 

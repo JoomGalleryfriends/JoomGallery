@@ -162,6 +162,7 @@ class JgcategoryField extends FormField
           'categoryName' => $name,
           'category'     => $this->getCat(),
           'excluded'     => $this->getExcluded(),
+          'forcedLanguage' => (string) ($this->element['forcedLanguage'] ?? ''),
         ];
 
         return array_merge($data, $extraData);

@@ -18,6 +18,7 @@ use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Http\HttpFactory;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -952,6 +953,31 @@ class JoomHelper
         $categories = [$cat->id];
       }
 
+      if(Multilanguage::isEnabled() && Associations::isEnabled())
+      {
+        $language = $cat->language;
+
+        foreach($categories as $categoryId)
+        {
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $categoryId,
+            'id',
+            '',
+            ''
+        );
+
+          if(isset($associations[$language]))
+          {
+            $categories[] = (int) $associations[$language]->id;
+          }
+        }
+
+        $categories = array_values(array_unique($categories));
+      }
+
       // Load the random image id
       $db    = Factory::getContainer()->get(DatabaseInterface::class);
       $query = $db->getQuery(true);
@@ -1333,11 +1359,17 @@ class JoomHelper
 
     if(!empty($items))
     {
-      $findings = [];
+      $findings        = [];
+      $currentLanguage = Factory::getApplication()->getLanguage()->getTag();
 
       foreach($items as $menuitem)
       {
         if(($menuitem->query['view'] ?? null) !== $view)
+        {
+          continue;
+        }
+
+        if(($menuitem->language ?? '*') !== '*' && ($menuitem->language ?? '*') !== $currentLanguage)
         {
           continue;
         }
@@ -1359,12 +1391,13 @@ class JoomHelper
       {
         if($count > 1)
         {
-          // We have multiple matching menuitems
         usort(
             $findings,
-            function ($a, $b) {
-              // Lets take the one with the lowest level value
-              return $a->level - $b->level;
+            function ($a, $b) use ($currentLanguage) {
+              $aLanguage = $a->language === $currentLanguage ? 0 : 1;
+              $bLanguage = $b->language === $currentLanguage ? 0 : 1;
+
+              return ($aLanguage <=> $bLanguage) ?: ($a->level <=> $b->level);
             }
         );
         }
@@ -1798,6 +1831,36 @@ class JoomHelper
       }
     }
 
+    if(Multilanguage::isEnabled() && Associations::isEnabled())
+    {
+      $categoryIds = $idsToCount;
+
+      foreach($categoryIds as $id)
+      {
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $id,
+            'id',
+            '',
+            ''
+        );
+
+        foreach($associations as $association)
+        {
+          $associationId = (int) $association->id;
+
+          if(isset($catids[$associationId]))
+          {
+            $idsToCount[] = $associationId;
+          }
+        }
+      }
+
+      $idsToCount = array_unique($idsToCount);
+    }
+
     if(empty($idsToCount))
     {
       return 0;
@@ -1812,6 +1875,20 @@ class JoomHelper
       ->where($db->quoteName('hidden') . ' = 0')
       ->where($db->quoteName('approved') . ' = 1')
       ->where($db->quoteName('published') . ' = 1');
+
+    // Filter images by the current language.
+    if(Multilanguage::isEnabled())
+    {
+      $currentLanguage = Factory::getApplication()->getLanguage()->getTag();
+      $allLanguage     = '*';
+
+    $query->where(
+        '(' . $db->quoteName('language') . ' = :language'
+          . ' OR ' . $db->quoteName('language') . ' = :allLanguage)'
+    )
+        ->bind(':language', $currentLanguage)
+        ->bind(':allLanguage', $allLanguage);
+    }
 
     $db->setQuery($query);
 

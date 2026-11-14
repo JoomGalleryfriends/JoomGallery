@@ -154,7 +154,7 @@ class HtmlView extends JoomGalleryView
     }
     else
     {
-      $this->backUrl = Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=' . (int) $this->item->catid);
+      $this->backUrl = Route::_('index.php?option=' . _JOOM_OPTION . '&view=category&id=' . (int) $this->item->display_catid);
     }
     $this->navigation = $model->getNavigation($this->originView);
   }

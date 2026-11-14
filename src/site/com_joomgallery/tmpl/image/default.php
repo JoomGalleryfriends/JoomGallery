@@ -25,7 +25,7 @@ use Joomla\Registry\Registry;
 $image_type        = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
 $show_title        = $this->params['configs']->get('jg_detail_view_show_title', 1, 'INT');
 $title_position    = $this->params['configs']->get('jg_detail_view_title_position', 'below', 'STRING');
-$header_above = $title_position === 'above';
+$header_above      = $title_position === 'above';
 $show_category     = $this->params['configs']->get('jg_detail_view_show_category', 1, 'INT');
 $show_description  = $this->params['configs']->get('jg_detail_view_show_description', 1, 'INT');
 $show_imgdate      = $this->params['configs']->get('jg_detail_view_show_imgdate', 1, 'INT');
@@ -67,25 +67,53 @@ HTMLHelper::_(
 // Access check
 $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
 $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
-$canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
+$canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $this->item->id, $this->item->catid, true)
+    || (int) $this->item->checked_out === (int) $this->getCurrentUser()->id;
 
 // URLs & Links
-$imageUrl     = JoomHelper::getImg($this->item, $image_type);
-$returnToken  = rawurlencode(base64_encode($this->backUrl));
-$currentRoute = JoomHelper::getViewRoute('image', $this->item->id, $this->item->catid, null, null, $this->item->language, $this->getLayout() === 'default' ? null : $this->getLayout());
-$editReturn   = rawurlencode(base64_encode($currentRoute));
-$imageAuthor  = trim((string) ($this->item->author ?? ''));
-$createdBy    = trim((string) ($this->item->created_by_name ?? ''));
-$owner        = $createdBy ?: ($imageAuthor ?: Text::_('JAUTHOR'));
-$initial      = \function_exists('mb_substr') ? mb_strtoupper(mb_substr($createdBy, 0, 1)) : strtoupper(substr($createdBy, 0, 1));
-$rating       = $show_rating ? (float) JoomHelper::getRating($this->item->id) : 0.0;
-$stateTask    = (int) $this->item->published === 1 ? 'unpublish' : 'publish';
-$fields       = FieldsHelper::getFields('com_joomgallery.image', $this->item);
-$navUrl       = static function ($image) use ($returnToken) {
-return $image ? Route::_(JoomHelper::getViewRoute('image', (int) $image->id, (int) $image->catid) . '&return=' . $returnToken) : '';
+$imageUrl      = JoomHelper::getImg($this->item, $image_type);
+$returnToken   = rawurlencode(base64_encode($this->backUrl));
+$imageLayout   = $this->getLayout() === 'default' ? null : $this->getLayout();
+$imageLanguage = $this->item->language;
+
+$currentRoute = JoomHelper::getViewRoute(
+    'image',
+    $this->item->id,
+    $this->item->catid,
+    null,
+    null,
+    $imageLanguage,
+    $imageLayout
+);
+
+$editReturn = rawurlencode(base64_encode($currentRoute));
+
+$imageAuthor = trim((string) ($this->item->author ?? ''));
+$createdBy   = trim((string) ($this->item->created_by_name ?? ''));
+$owner       = $createdBy ?: ($imageAuthor ?: Text::_('JAUTHOR'));
+$initial     = \function_exists('mb_substr') ? mb_strtoupper(mb_substr($createdBy, 0, 1)) : strtoupper(substr($createdBy, 0, 1));
+$rating      = $show_rating ? (float) JoomHelper::getRating($this->item->id) : 0.0;
+$stateTask   = (int) $this->item->published === 1 ? 'unpublish' : 'publish';
+$fields      = FieldsHelper::getFields('com_joomgallery.image', $this->item);
+
+$navUrl = static function ($image) use ($returnToken, $imageLanguage, $imageLayout) {
+    return $image
+        ? Route::_(
+            JoomHelper::getViewRoute(
+                'image',
+                (int) $image->id,
+                (int) $image->catid,
+                null,
+                null,
+                $imageLanguage,
+                $imageLayout
+            ) . '&return=' . $returnToken
+        )
+        : '';
 };
-$previousUrl  = $navUrl($this->navigation['previous'] ?? null);
-$nextUrl      = $navUrl($this->navigation['next'] ?? null);
+
+$previousUrl = $navUrl($this->navigation['previous'] ?? null);
+$nextUrl     = $navUrl($this->navigation['next'] ?? null);
 
 // Use the actual return URL so this also works with menu aliases and SEF URLs.
 $backUri   = Uri::getInstance(html_entity_decode($this->backUrl, ENT_QUOTES, 'UTF-8'));
@@ -452,7 +480,7 @@ ob_start(); ?>
       <?php endif; ?>
       <?php if($show_category) : ?>
         <dt class="col-sm-4 col-lg-3"><?php echo Text::_('JCATEGORY'); ?></dt>
-        <dd class="col-sm-8 col-lg-9"><a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->catid); ?>"><?php echo $this->escape($this->item->cattitle); ?></a></dd>
+        <dd class="col-sm-8 col-lg-9"><a href="<?php echo Route::_('index.php?option=com_joomgallery&view=category&id=' . (int) $this->item->display_catid); ?>"><?php echo $this->escape($this->item->cattitle); ?></a></dd>
       <?php endif; ?>
       <?php if($show_image_size && !empty($this->imageInfo->width) && !empty($this->imageInfo->height)) : ?>
         <dt class="col-sm-4 col-lg-3"><?php echo Text::_('COM_JOOMGALLERY_IMAGE_SIZE'); ?></dt>

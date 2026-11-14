@@ -19,6 +19,7 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterfa
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
@@ -548,32 +549,525 @@ abstract class JoomAdminModel extends AdminModel
    *
    * @since   4.0.0
    */
-  protected function createAssociations(Table &$table, array $associations)
+  /**
+   * Check ACL and checkout state for all records associated with the given table row.
+   *
+   * This method only performs the preflight check. It does not change any record.
+   *
+   * @param   Table   $table      The source table row.
+   * @param   string  $field      The field that is going to be synchronized.
+   * @param   string  $configKey  The configuration key controlling synchronization.
+   *
+   * @return  boolean  True if every associated record can be changed.
+   *
+   * @since   4.5.0
+   */
+  protected function checkAssociatedFieldPermissions($table, $field, $configKey = 'jg_link_associated_images', $enqueueWarning = true)
   {
-    $key = $table->getKeyName();
+    // The component config is created lazily and may not exist yet.
+    $this->component->createConfig();
 
-    // Unset any invalid associations
-    $associations = ArrayHelper::toInteger($associations);
-
-    // Unset any invalid associations
-    foreach($associations as $tag => $id)
+    if(!$this->component->getConfig()->get($configKey, 1)
+      || !$this->associationsContext
+      || !Associations::isEnabled())
     {
-      if(!$id)
+      return true;
+    }
+
+    $allowedFields = ['published', 'hidden', 'access', 'featured', 'approved'];
+
+    if(!\in_array($field, $allowedFields, true) || !$table->hasField($field))
+    {
+      return true;
+    }
+
+    $db  = $this->getDatabase();
+    $key = $table->getKeyName();
+    $id  = (int) $table->$key;
+
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('key'))
+      ->from($db->quoteName('#__associations'))
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('id') . ' = :id')
+      ->bind(':context', $this->associationsContext)
+      ->bind(':id', $id, ParameterType::INTEGER);
+
+    $db->setQuery($query);
+    $associationKey = $db->loadResult();
+
+    // A record without an association is a normal single-language record.
+    if(!$associationKey)
+    {
+      return true;
+    }
+
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('id'))
+      ->from($db->quoteName('#__associations'))
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('key') . ' = :key')
+      ->bind(':context', $this->associationsContext)
+      ->bind(':key', $associationKey);
+
+    $db->setQuery($query);
+    $ids    = array_unique(array_map('intval', (array) $db->loadColumn()));
+    $userId = (int) $this->user->id;
+
+    foreach($ids as $associatedId)
+    {
+      if($associatedId === $id)
       {
-        unset($associations[$tag]);
+        continue;
+      }
+
+      $associatedTable = $this->getTable();
+      $associatedTable->reset();
+
+      if(!$associatedTable->load($associatedId))
+      {
+        $this->component->setError($associatedTable->getError());
+
+        return false;
+      }
+
+      $allowed = false;
+
+      if(\in_array($field, ['published', 'featured', 'approved'], true))
+      {
+        // Categories are checked against their own category asset, exactly as in
+        // the category list. Images remain parent-dependent and use canEditState().
+        if($this->type === 'category')
+        {
+        $allowed = $this->getAcl()->checkACL(
+            'editstate',
+            _JOOM_OPTION . '.category.' . (int) $associatedTable->$key
+        );
+        }
+        else
+        {
+          $allowed = $this->canEditState($associatedTable);
+        }
+      }
+      else
+      {
+        $type      = $this->type;
+        $parentId  = 0;
+        $useParent = false;
+
+        if(\is_object($type))
+        {
+          list($option, $type) = explode('.', $type->type_alias, 2);
+        }
+
+        if(\in_array($type, $this->getAcl()->get('parent_dependent_types')) && isset($associatedTable->catid))
+        {
+          $parentId  = (int) $associatedTable->catid;
+          $useParent = true;
+        }
+
+        $allowed = $this->getAcl()->checkACL('edit', $type, (int) $associatedTable->$key, $parentId, $useParent);
+      }
+
+      if(!$allowed)
+      {
+        $message = Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED');
+
+        // Save forms report the model error themselves; list actions need an
+        // explicit component warning because they do not use the save pipeline.
+        if($enqueueWarning)
+        {
+          $this->component->addWarning($message);
+        }
+
+        $this->setError($message);
+        $this->component->addLog($message, 'warning', 'jerror');
+
+        return false;
+      }
+
+      if($associatedTable->hasField('checked_out')
+        && $associatedTable->checked_out
+        && (int) $associatedTable->checked_out !== $userId)
+      {
+        $message = Text::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH');
+
+        // Save forms report the model error themselves; list actions need an
+        // explicit component warning because they do not use the save pipeline.
+        if($enqueueWarning)
+        {
+          $this->component->addWarning($message);
+        }
+
+        $this->setError($message);
+        $this->component->addLog($message, 'warning', 'jerror');
+
+        return false;
       }
     }
 
-    // Show a warning if the item isn't assigned to a language but we have associations.
-    if($associations && $table->language === '*')
+    return true;
+  }
+
+  protected function syncAssociatedField($table, $field, $value, $configKey = 'jg_link_associated_images')
+  {
+    // The component config is lazy-loaded. This method can be reached on save/state paths
+    // where no earlier code has initialized it.
+    $this->component->createConfig();
+
+    if(!$this->component->getConfig()->get($configKey, 1)
+      || !$this->associationsContext
+      || !Associations::isEnabled())
     {
-      Factory::getApplication()->enqueueMessage(Text::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'), 'warning');
-      $this->component->addLog(Text::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'), 'warning', 'jerror');
+      return;
     }
 
-    // Get associationskey for edited item
-    $db    = $this->getDatabase();
-    $id    = (int) $table->$key;
+    $allowedFields = ['published', 'hidden', 'access', 'featured', 'approved'];
+
+    if(!\in_array($field, $allowedFields, true) || !$table->hasField($field))
+    {
+      return;
+    }
+
+    $db  = $this->getDatabase();
+    $key = $table->getKeyName();
+    $id  = (int) $table->$key;
+
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('key'))
+      ->from($db->quoteName('#__associations'))
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('id') . ' = :id')
+      ->bind(':context', $this->associationsContext)
+      ->bind(':id', $id, ParameterType::INTEGER);
+
+    $db->setQuery($query);
+    $associationKey = $db->loadResult();
+
+    if(!$associationKey)
+    {
+      return;
+    }
+
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('id'))
+      ->from($db->quoteName('#__associations'))
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('key') . ' = :key')
+      ->bind(':context', $this->associationsContext)
+      ->bind(':key', $associationKey);
+
+    $db->setQuery($query);
+    $ids = $db->loadColumn();
+
+    if(!$ids)
+    {
+      return;
+    }
+
+    $value = (int) $value;
+
+    $query = $db->getQuery(true)
+      ->update($db->quoteName($table->getTableName()))
+      ->set($db->quoteName($field) . ' = :value')
+      ->whereIn($db->quoteName($key), array_map('intval', $ids))
+      ->bind(':value', $value, ParameterType::INTEGER);
+
+    $db->setQuery($query);
+    $db->execute();
+  }
+
+  /**
+   * Load and validate the language association map of an existing record.
+   *
+   * @param   int  $sourceId  ID of the source record
+   *
+   * @return  array|false  Association map or false if invalid
+   *
+   * @since   4.5.0
+   */
+  protected function getAssociationMap(int $sourceId)
+  {
+    if($sourceId <= 0 || !$this->associationsContext)
+    {
+      $this->setError(Text::_('JLIB_APPLICATION_ERROR_INVALID_DATA'));
+
+      return false;
+    }
+
+    $db = $this->getDatabase();
+
+    // Get the association key of the source record.
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('key'))
+      ->from($db->quoteName('#__associations'))
+      ->where($db->quoteName('context') . ' = :context')
+      ->where($db->quoteName('id') . ' = :sourceId')
+      ->bind(':context', $this->associationsContext)
+      ->bind(':sourceId', $sourceId, ParameterType::INTEGER);
+
+    $db->setQuery($query);
+    $associationKey = $db->loadResult();
+
+    // Always include the source record itself.
+    $associatedIds = [$sourceId];
+
+    // Load all members of the existing association group.
+    if($associationKey !== null)
+    {
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('id'))
+        ->from($db->quoteName('#__associations'))
+        ->where($db->quoteName('context') . ' = :context')
+        ->where($db->quoteName('key') . ' = :associationKey')
+        ->bind(':context', $this->associationsContext)
+        ->bind(':associationKey', $associationKey);
+
+      $db->setQuery($query);
+
+    $associatedIds = array_unique(
+        array_merge(
+            $associatedIds,
+            array_map('intval', $db->loadColumn())
+        )
+    );
+    }
+
+    // Build the language-to-ID mapping and validate every member.
+    $associations = [];
+
+    foreach($associatedIds as $associatedId)
+    {
+      $associatedTable = $this->getTable();
+      $associatedTable->reset();
+
+      if(!$associatedTable->load($associatedId))
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_RECORD_INVALID'));
+
+        return false;
+      }
+
+      $language = (string) $associatedTable->language;
+
+      if($language === '' || $language === '*')
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_RECORD_INVALID'));
+
+        return false;
+      }
+
+      if(isset($associations[$language]))
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_DUPLICATE'));
+
+        return false;
+      }
+
+      $associations[$language] = (int) $associatedId;
+    }
+
+    return $associations;
+  }
+
+
+  /**
+   * Remove a record from its language association group.
+   *
+   * @param   int  $recordId  ID of the record to remove
+   *
+   * @return  bool  True on success, false on failure
+   *
+   * @since   4.5.0
+   */
+  public function removeAssociationMember(int $recordId): bool
+  {
+    if($recordId <= 0 || !$this->associationsContext || !Associations::isEnabled())
+    {
+      return true;
+    }
+
+    $db = $this->getDatabase();
+
+    try
+    {
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('key'))
+        ->from($db->quoteName('#__associations'))
+        ->where($db->quoteName('context') . ' = :context')
+        ->where($db->quoteName('id') . ' = :recordId')
+        ->bind(':context', $this->associationsContext)
+        ->bind(':recordId', $recordId, ParameterType::INTEGER);
+
+      $db->setQuery($query);
+      $associationKey = $db->loadResult();
+
+      if($associationKey === null)
+      {
+        return true;
+      }
+
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('id'))
+        ->from($db->quoteName('#__associations'))
+        ->where($db->quoteName('context') . ' = :context')
+        ->where($db->quoteName('key') . ' = :associationKey')
+        ->bind(':context', $this->associationsContext)
+        ->bind(':associationKey', $associationKey);
+
+      $db->setQuery($query);
+      $associatedIds = array_map('intval', (array) $db->loadColumn());
+
+      $query = $db->getQuery(true)
+        ->delete($db->quoteName('#__associations'))
+        ->where($db->quoteName('context') . ' = :context')
+        ->where($db->quoteName('key') . ' = :associationKey')
+        ->bind(':context', $this->associationsContext)
+        ->bind(':associationKey', $associationKey);
+
+      if(\count($associatedIds) > 2)
+      {
+        $query->where($db->quoteName('id') . ' = :recordId')
+          ->bind(':recordId', $recordId, ParameterType::INTEGER);
+      }
+
+      $db->setQuery($query);
+      $db->execute();
+
+      return true;
+    }
+    catch(\Throwable $exception)
+    {
+      $this->setError($exception->getMessage());
+
+      return false;
+    }
+  }
+
+
+  protected function createAssociations(
+      Table &$table,
+      array $associations,
+      bool $transactionManagedExternally = false
+  ) {
+    $db  = $this->getDatabase();
+    $key = $table->getKeyName();
+    $id  = (int) $table->$key;
+
+    // A language-neutral record cannot be part of a language association.
+    if($table->language === '*')
+    {
+      if($associations)
+      {
+        $message = Text::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED');
+        $this->setError($message);
+        $this->component->addLog($message, 'warning', 'jerror');
+
+        return false;
+      }
+
+      return true;
+    }
+
+    // Validate the complete submitted mapping before touching existing associations.
+    $validated = [];
+    $seenIds   = [];
+
+    foreach($associations as $language => $associatedId)
+    {
+      if($associatedId === '')
+      {
+        continue;
+      }
+
+      if(!\is_string($language) || $language === '' || $language === '*'
+        || (!\is_int($associatedId) && !\is_string($associatedId))
+        || !preg_match('/^(0|[1-9][0-9]*)$/', (string) $associatedId))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_INVALID_DATA'));
+
+        return false;
+      }
+
+      $associatedId = (int) $associatedId;
+
+      if($associatedId === 0)
+      {
+        continue;
+      }
+
+      if(isset($seenIds[$associatedId]) || isset($validated[$language]))
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_DUPLICATE'));
+
+        return false;
+      }
+
+      $associatedTable = $this->getTable();
+      $associatedTable->reset();
+
+      if(!$associatedTable->load($associatedId)
+        || (string) $associatedTable->language !== (string) $language
+        || $associatedTable->language === '*')
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_RECORD_INVALID'));
+
+        return false;
+      }
+
+      // Use the same type-specific ACL parent rules established by the existing
+      // language-variant implementation: image.catid and category.parent_id.
+      if($this->type === 'image')
+      {
+        $allowed = $this->getAcl()->checkACL(
+            'edit',
+            'image',
+            (int) $associatedTable->$key,
+            (int) $associatedTable->catid,
+            true
+        );
+      }
+      elseif($this->type === 'category')
+      {
+        $allowed = $this->getAcl()->checkACL(
+            'edit',
+            'category',
+            (int) $associatedTable->$key,
+            (int) $associatedTable->parent_id,
+            true
+        );
+      }
+      else
+      {
+        $allowed = false;
+      }
+
+      if(!$allowed)
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'));
+
+        return false;
+      }
+
+      $validated[$language]   = $associatedId;
+      $seenIds[$associatedId] = true;
+    }
+
+    // The current record is part of the resulting group when it is language-specific.
+    if($table->language !== '*')
+    {
+      if(isset($validated[$table->language]) && $validated[$table->language] !== $id)
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_LANGUAGE_CONFLICT'));
+
+        return false;
+      }
+
+      $validated[$table->language] = $id;
+    }
+
+    // Existing members may be reused only when they all belong to the current
+    // record's group (or, for a new variant, to one common source group).
     $query = $db->getQuery(true)
       ->select($db->quoteName('key'))
       ->from($db->quoteName('#__associations'))
@@ -584,44 +1078,110 @@ abstract class JoomAdminModel extends AdminModel
     $db->setQuery($query);
     $oldKey = $db->loadResult();
 
-    if($associations || $oldKey !== null)
+    $existingKeys = [];
+
+    foreach($validated as $associatedId)
     {
-      // Deleting old associations for the associated items
       $query = $db->getQuery(true)
-        ->delete($db->quoteName('#__associations'))
+        ->select($db->quoteName('key'))
+        ->from($db->quoteName('#__associations'))
         ->where($db->quoteName('context') . ' = :context')
-        ->bind(':context', $this->associationsContext);
-
-      $where = [];
-
-      if($associations)
-      {
-        $where[] = $db->quoteName('id') . ' IN (' . implode(',', $query->bindArray(array_values($associations))) . ')';
-      }
-
-      if($oldKey !== null)
-      {
-        $where[] = $db->quoteName('key') . ' = :oldKey';
-        $query->bind(':oldKey', $oldKey);
-      }
-
-      $query->extendWhere('AND', $where, 'OR');
+        ->where($db->quoteName('id') . ' = :id')
+        ->bind(':context', $this->associationsContext)
+        ->bind(':id', $associatedId, ParameterType::INTEGER);
       $db->setQuery($query);
-      $db->execute();
+      $existingKey = $db->loadResult();
+
+      if($existingKey !== null)
+      {
+        $existingKeys[$existingKey] = true;
+      }
     }
 
-    // Adding self to the association
-    if($table->language !== '*')
+    $canMergeGroups = false;
+
+    if(\count($existingKeys) === 2)
     {
-      $associations[$table->language] = (int) $table->$key;
+      $groupSizes = [];
+
+      foreach(array_keys($existingKeys) as $existingKey)
+      {
+        $query = $db->getQuery(true)
+          ->select('COUNT(*)')
+          ->from($db->quoteName('#__associations'))
+          ->where($db->quoteName('context') . ' = :context')
+          ->where($db->quoteName('key') . ' = :existingKey')
+          ->bind(':context', $this->associationsContext)
+          ->bind(':existingKey', $existingKey);
+
+        $db->setQuery($query);
+        $groupSizes[] = (int) $db->loadResult();
+      }
+
+      $canMergeGroups = \in_array(1, $groupSizes, true);
     }
 
-    if(\count($associations) > 1)
+    if(\count($existingKeys) > 1 && !$canMergeGroups)
     {
-      // Adding new association for these items
-      $key   = md5(json_encode($associations));
-      $query = $db->getQuery(true)
-        ->insert($db->quoteName('#__associations'))
+      if($oldKey === null)
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_MERGE_GROUPS'));
+      }
+      else
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_CONFLICTING_GROUPS'));
+      }
+
+      return false;
+    }
+
+    if($existingKeys && $oldKey !== null && !isset($existingKeys[$oldKey]) && !$canMergeGroups)
+    {
+      $this->setError(Text::_('COM_JOOMGALLERY_ERROR_ASSOCIATION_CONFLICTING_GROUPS'));
+
+      return false;
+    }
+
+    // All validation is complete. Only now replace the old group and submitted members.
+    if(!$transactionManagedExternally)
+    {
+      $db->transactionStart();
+    }
+
+    try
+    {
+      if($validated || $oldKey !== null)
+      {
+        $query = $db->getQuery(true)
+          ->delete($db->quoteName('#__associations'))
+          ->where($db->quoteName('context') . ' = :context')
+          ->bind(':context', $this->associationsContext);
+
+        $where = [];
+
+        if($validated)
+        {
+          $where[] = $db->quoteName('id') . ' IN ('
+            . implode(',', $query->bindArray(array_values($validated))) . ')';
+        }
+
+        if($oldKey !== null)
+        {
+          $where[] = $db->quoteName('key') . ' = :oldKey';
+          $query->bind(':oldKey', $oldKey);
+        }
+
+        $query->extendWhere('AND', $where, 'OR');
+        $db->setQuery($query);
+        $db->execute();
+      }
+
+      if(\count($validated) > 1)
+      {
+        ksort($validated);
+        $newKey = md5(json_encode($validated));
+        $query  = $db->getQuery(true)
+          ->insert($db->quoteName('#__associations'))
         ->columns(
             [
               $db->quoteName('id'),
@@ -630,22 +1190,41 @@ abstract class JoomAdminModel extends AdminModel
             ]
         );
 
-      foreach($associations as $id)
-      {
+        foreach($validated as $associatedId)
+        {
         $query->values(
             implode(
                 ',',
                 $query->bindArray(
-                    [$id, $this->associationsContext, $key],
+                    [$associatedId, $this->associationsContext, $newKey],
                     [ParameterType::INTEGER, ParameterType::STRING, ParameterType::STRING]
                 )
             )
         );
+        }
+
+        $db->setQuery($query);
+        $db->execute();
       }
 
-      $db->setQuery($query);
-      $db->execute();
+      if(!$transactionManagedExternally)
+      {
+        $db->transactionCommit();
+      }
     }
+    catch(\Throwable $exception)
+    {
+      if(!$transactionManagedExternally)
+      {
+        $db->transactionRollback();
+      }
+
+      $this->setError($exception->getMessage());
+
+      return false;
+    }
+
+    return true;
   }
 
   /**

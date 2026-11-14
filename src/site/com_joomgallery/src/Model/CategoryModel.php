@@ -391,7 +391,7 @@ class CategoryModel extends JoomItemModel
     $listModel = $this->getImagesModel();
 
     // Select fields to load
-    $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'author', 'date', 'hits', 'votes', 'votesum'];
+    $fields = ['id', 'alias', 'catid', 'title', 'description', 'filename', 'filesystem', 'image_ref', 'author', 'date', 'hits', 'votes', 'votesum'];
     $fields = $this->addColumnPrefix('a', $fields);
 
     // Apply preselected filters and fields selection for images
@@ -500,8 +500,8 @@ class CategoryModel extends JoomItemModel
       $listModel->setState('list.select', $fields);
     }
 
-    // Apply filters
-    $listModel->setState('filter.category', $this->item->id);
+    // Apply filters: show only images of the current category and language.
+    $listModel->setState('filter.category', (int) $this->item->id);
     $listModel->setState('filter.access', $user->getAuthorisedViewLevels());
     $listModel->setState('filter.published', 1);
     $listModel->setState('filter.showunapproved', 0);
@@ -509,7 +509,25 @@ class CategoryModel extends JoomItemModel
     if(Multilanguage::isEnabled())
     {
       $listModel->setState('filter.language', $this->item->language);
+      $listModel->setState('filter.include_language_all', true);
     }
+
+    $listModel->setState('filter.access', $user->getAuthorisedViewLevels());
+    $listModel->setState('filter.published', 1);
+    $listModel->setState('filter.showunapproved', 0);
+    $listModel->setState('filter.showhidden', 0);
+
+    // Allow images in the directly opened category, even if it is hidden.
+    $listModel->setState(
+        'filter.allow_hidden_category',
+        (int) $this->item->id
+    );
+
+    // Hide complete multilingual image groups when any variant is not visible.
+    $listModel->setState(
+        'filter.multilingual_group_visibility',
+        Multilanguage::isEnabled()
+    );
 
     $imgform_list       = [];
     $imgform_limitstart = $this->app->getUserState('joom.categoryview.' . $this->item->id . '.image.limitstart', 0);
@@ -583,7 +601,8 @@ class CategoryModel extends JoomItemModel
 
     if(Multilanguage::isEnabled())
     {
-      $listModel->setState('filter.language', $this->item->language);
+      $currentLanguage = $this->app->getLanguage()->getTag();
+      $listModel->setState('filter.language', [$currentLanguage, '*']);
     }
 
     $catform_list       = [];

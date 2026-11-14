@@ -571,13 +571,31 @@ abstract class Uploader implements UploaderInterface
    */
   public function rollback($data_row = false)
   {
-    if($data_row)
+    if($data_row && empty($data_row->image_ref))
     {
       // Create file manager service
       $this->component->createFileManager($data_row->catid);
 
       // Delete just created images
-      $this->component->getFileManager()->deleteImages($data_row);
+      try
+      {
+        if(!$this->component->getFileManager()->deleteImages($data_row))
+        {
+        $this->component->addLog(
+            'Unable to delete uploaded image files during rollback.',
+            'error',
+            'jerror'
+        );
+        }
+      }
+      catch(\Throwable $exception)
+      {
+        $this->component->addLog(
+            'Unable to delete uploaded image files during rollback: ' . $exception->getMessage(),
+            'error',
+            'jerror'
+        );
+      }
     }
 
     // Delete temp images

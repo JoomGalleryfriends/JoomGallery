@@ -141,7 +141,7 @@ class JgimageField extends FormField
             }
             else
             {
-                $name = $img->title;
+                $name = $img->title . ' (ID: ' . $img->id . ')';
             }
         }
 
@@ -151,10 +151,39 @@ class JgimageField extends FormField
             $name = $this->value;
         }
 
+        $canDo = [
+          'select' => (string) $this->element['select'] !== 'false',
+          'new'    => (string) $this->element['new'] === 'true',
+          'edit'   => (string) $this->element['edit'] === 'true',
+          'clear'  => (string) $this->element['clear'] !== 'false',
+        ];
+
+        $urls = [
+          'select'  => (string) $this->element['urlSelect'],
+          'new'     => (string) $this->element['urlNew'],
+          'edit'    => (string) $this->element['urlEdit'],
+          'checkin' => '',
+        ];
+
+        $modalTitles = [
+          'select' => 'JSELECT',
+          'new'    => 'JACTION_CREATE',
+          'edit'   => 'JACTION_EDIT',
+        ];
+
+        $buttonIcons = [
+          'select' => 'icon-file',
+        ];
+
         $extraData = [
           'imageName'  => $name,
           'categories' => $this->getCats(),
-          'excluded'   => $this->getExcluded(),
+          'excluded'      => $this->getExcluded(),
+          'forcedLanguage' => (string) ($this->element['forcedLanguage'] ?? ''),
+          'canDo'        => $canDo,
+          'urls'         => $urls,
+          'modalTitles'  => $modalTitles,
+          'buttonIcons'  => $buttonIcons,
         ];
 
         return array_merge($data, $extraData);
