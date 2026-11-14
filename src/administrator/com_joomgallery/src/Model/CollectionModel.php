@@ -584,4 +584,97 @@ class CollectionModel extends JoomAdminModel
 
     return $this->isOwner($table) || $this->hasGlobalPermission('connect');
   }
+
+  /**
+   * Check whether a collection belongs to the current Joomla user's profile.
+   *
+   * @param   int  $collectionId  Collection ID.
+   *
+   * @return  boolean  True when the current user owns the collection.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  public function ownsCollection(int $collectionId): bool
+  {
+    if($collectionId <= 0)
+    {
+      return false;
+    }
+
+    $table = $this->getTable();
+
+    return $table->load($collectionId) && $this->isOwner($table);
+  }
+
+  /**
+   * Toggle an image mapping in one of the current user's collections.
+   *
+   * The collection row is locked so concurrent clicks cannot both decide from
+   * the same mapping state.
+   *
+   * @param   int  $collectionId  Collection ID.
+   * @param   int  $imageId       Image ID.
+   *
+   * @return  boolean  True when the image is mapped after the operation, false when removed.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  public function toggleMapping(int $collectionId, int $imageId): bool
+  {
+    if($collectionId <= 0 || $imageId <= 0)
+    {
+      throw new \InvalidArgumentException(Text::_('COM_JOOMGALLERY_COLLECTION_INVALID_SELECTION'), 400);
+    }
+
+    $db = $this->getDatabase();
+    $db->transactionStart(true);
+
+    try
+    {
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('id'))
+        ->from($db->quoteName('#__joomgallery_collections'))
+        ->where($db->quoteName('id') . ' = ' . $collectionId);
+
+      if(!(int) $db->setQuery($query . ' FOR UPDATE')->loadResult())
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_NOT_FOUND'), 404);
+      }
+
+      $table = $this->getTable();
+
+      if(!$table->load($collectionId) || !$this->isOwner($table))
+      {
+        throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+      }
+
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('id'))
+        ->from($db->quoteName('#__joomgallery_collections_ref'))
+        ->where($db->quoteName('collectionid') . ' = ' . $collectionId)
+        ->where($db->quoteName('imgid') . ' = ' . $imageId);
+      $mapped = (bool) $db->setQuery($query)->loadResult();
+
+      if($mapped)
+      {
+        if(!$table->removeMapping($imageId))
+        {
+          throw new \RuntimeException($table->getError() ?: Text::_('COM_JOOMGALLERY_COLLECTION_REMOVE_FAILED'));
+        }
+      }
+      elseif(!$table->addMapping($imageId, true))
+      {
+        throw new \RuntimeException($table->getError() ?: Text::_('COM_JOOMGALLERY_COLLECTION_ADD_FAILED'));
+      }
+
+      $db->transactionCommit(true);
+
+      return !$mapped;
+    }
+    catch(\Throwable $e)
+    {
+      $db->transactionRollback(true);
+      throw $e;
+    }
+  }
 }

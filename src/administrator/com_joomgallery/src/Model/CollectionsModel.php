@@ -156,6 +156,43 @@ class CollectionsModel extends JoomListModel
   }
 
   /**
+   * Return the collections of a Joomla user and their mapping state.
+   *
+   * @param   int  $cmsUserId  Joomla user ID owning the JoomGallery profile.
+   * @param   int  $imageId    Image ID for which mapping state should be loaded.
+   *
+   * @return  array  Collection records ordered with the default collection first.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  public function getSelectableByCmsUser(int $cmsUserId, int $imageId): array
+  {
+    if($cmsUserId <= 0 || $imageId <= 0)
+    {
+      return [];
+    }
+
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select([$db->quoteName('a.id'), $db->quoteName('a.title'), $db->quoteName('a.is_default')])
+      ->select('CASE WHEN ' . $db->quoteName('ref.id') . ' IS NULL THEN 0 ELSE 1 END AS ' . $db->quoteName('mapped'))
+      ->select('(SELECT COUNT(*) FROM ' . $db->quoteName('#__joomgallery_collections_ref', 'total_ref')
+        . ' WHERE ' . $db->quoteName('total_ref.collectionid') . ' = ' . $db->quoteName('a.id') . ') AS ' . $db->quoteName('image_count'))
+      ->from($db->quoteName('#__joomgallery_collections', 'a'))
+      ->join('INNER', $db->quoteName('#__joomgallery_users', 'g') . ' ON ' . $db->quoteName('g.id') . ' = ' . $db->quoteName('a.userid'))
+      ->join(
+        'LEFT',
+        $db->quoteName('#__joomgallery_collections_ref', 'ref')
+        . ' ON ' . $db->quoteName('ref.collectionid') . ' = ' . $db->quoteName('a.id')
+        . ' AND ' . $db->quoteName('ref.imgid') . ' = ' . (int) $imageId
+      )
+      ->where($db->quoteName('g.cmsuser') . ' = ' . (int) $cmsUserId)
+      ->order([$db->quoteName('a.is_default') . ' DESC', $db->quoteName('a.ordering') . ' ASC', $db->quoteName('a.id') . ' ASC']);
+
+    return $db->setQuery($query)->loadObjectList();
+  }
+
+  /**
    * Build the query for collections mapped to an image.
    *
    * @param   int  $img_id  Image ID.

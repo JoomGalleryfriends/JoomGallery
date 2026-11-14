@@ -106,9 +106,16 @@ class CollectionTable extends Table
     {
       if($id > 0)
       {
-        $original = new self($this->getDatabase());
+        // Table::load() binds the loaded row through this method. Loading a
+        // second CollectionTable here would therefore recurse indefinitely.
+        $db       = $this->getDatabase();
+        $query    = $db->getQuery(true)
+          ->select($db->quoteName(['is_default', 'userid']))
+          ->from($db->quoteName($this->getTableName()))
+          ->where($db->quoteName($this->getKeyName()) . ' = ' . $id);
+        $original = $db->setQuery($query)->loadObject();
 
-        if($original->load($id))
+        if($original)
         {
           // Only lifecycle or migration code may designate another default.
           $array['is_default'] = (int) $original->is_default;
