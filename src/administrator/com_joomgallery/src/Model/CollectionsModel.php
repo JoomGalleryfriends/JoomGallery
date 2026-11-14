@@ -156,6 +156,32 @@ class CollectionsModel extends JoomListModel
   }
 
   /**
+   * Return collection titles belonging to one JoomGallery profile.
+   *
+   * @param   int  $userId  JoomGallery profile ID.
+   *
+   * @return  array  Collection titles ordered with the default collection first.
+   *
+   * @since   DEPLOY_VERSION
+   */
+  public function getTitlesByUser(int $userId): array
+  {
+    if($userId <= 0)
+    {
+      return [];
+    }
+
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select($db->quoteName('title'))
+      ->from($db->quoteName('#__joomgallery_collections'))
+      ->where($db->quoteName('userid') . ' = ' . $userId)
+      ->order([$db->quoteName('is_default') . ' DESC', $db->quoteName('id') . ' ASC']);
+
+    return array_map('strval', $db->setQuery($query)->loadColumn());
+  }
+
+  /**
    * Return the collections of a Joomla user and their mapping state.
    *
    * @param   int  $cmsUserId  Joomla user ID owning the JoomGallery profile.

@@ -47,8 +47,9 @@ $listDirn  = $this->state->get('list.direction');
           </tr></thead>
           <tbody>
           <?php foreach($this->items as $item) : ?>
+            <?php $displayTitle = Text::_((string) $item->title); ?>
             <tr>
-              <th scope="row"><?php echo $this->escape($item->title); ?></th>
+              <th scope="row"><?php echo $this->escape($displayTitle); ?></th>
               <td><?php echo $this->escape($item->owner); ?> (<?php echo $this->escape($item->username); ?>)</td>
               <td class="text-center"><?php echo Text::_((int) $item->is_default ? 'JYES' : 'JNO'); ?></td>
               <td class="text-center"><?php echo (int) $item->image_count; ?></td>
@@ -56,7 +57,7 @@ $listDirn  = $this->state->get('list.direction');
                 <?php if(\in_array(true, $item->managementPermissions, true)) : ?>
                   <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal"
                           data-bs-target="#collection-manage-<?php echo (int) $item->id; ?>"
-                          aria-label="<?php echo $this->escape(Text::_('JACTION_EDIT') . ': ' . $item->title); ?>">
+                          aria-label="<?php echo $this->escape(Text::_('JACTION_EDIT') . ': ' . $displayTitle); ?>">
                     <span class="icon-edit" aria-hidden="true"></span> <?php echo Text::_('JACTION_EDIT'); ?>
                   </button>
                   <?php
@@ -64,7 +65,7 @@ $listDirn  = $this->state->get('list.direction');
                 $modals[]               = HTMLHelper::_(
                     'bootstrap.renderModal',
                     'collection-manage-' . (int) $item->id,
-                    ['title' => $this->escape($item->title), 'closeButton' => true],
+                    ['title' => $this->escape($displayTitle), 'closeButton' => true],
                     $this->loadTemplate('manage')
                 );
                   ?>

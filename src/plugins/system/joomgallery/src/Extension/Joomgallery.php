@@ -319,6 +319,14 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
       $targetId = $this->getApplication()->getInput()->getInt('id', (int) $identity->id);
     }
 
+    $targetProfile = $targetId > 0 ? $this->getJoomGalleryProfile($targetId) : false;
+    $form->setFieldAttribute(
+        'collections',
+        'profile_id',
+        $targetProfile ? (string) $targetProfile->id : '0',
+        'joomgallery'
+    );
+
     if($targetId !== (int) $identity->id || $identity->guest || !$this->isUserKeyStorageEnabled())
     {
       $form->removeField('edit_user_keys', 'joomgallery');
@@ -425,13 +433,21 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface, Dispat
 
         if($profile)
         {
-          $data->joomgallery                 = isset($data->joomgallery) && \is_array($data->joomgallery)
-            ? $data->joomgallery : [];
+          $data->joomgallery                 = isset($data->joomgallery) && \is_array($data->joomgallery) ? $data->joomgallery : [];
           $data->joomgallery['description']  = (string) $profile->description;
           $data->joomgallery['avatar']       = (string) $profile->avatar;
           $data->joomgallery['image']        = (string) $profile->image;
           $data->joomgallery['files']        = (string) $profile->files;
           $data->joomgallery['created_time'] = (string) $profile->created_time;
+
+          $collectionsModel = $this->getApplication()->bootComponent('com_joomgallery')
+            ->getMVCFactory()->createModel('Collections', 'Administrator', ['ignore_request' => true]);
+          $collectionTitles = $collectionsModel->getTitlesByUser((int) $profile->id);
+
+          // This field is rendered by com_users, so the JoomGallery component
+          // language is not loaded automatically in this request context.
+          $this->getApplication()->getLanguage()->load('com_joomgallery', JPATH_ADMINISTRATOR . '/components/com_joomgallery');
+          $data->joomgallery['collections'] = implode(', ', array_map([Text::class, '_'], $collectionTitles));
         }
       }
     }

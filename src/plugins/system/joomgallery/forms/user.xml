@@ -6,6 +6,8 @@
                label="PLG_SYSTEM_JOOMGALLERY_AVATAR_LABEL" />
         <field name="image" type="jgimage" disabled="true" readonly="true" filter="unset"
                label="PLG_SYSTEM_JOOMGALLERY_IMAGE_LABEL" />
+        <field name="collections" type="Collections" disabled="true" readonly="true" filter="unset"
+               label="PLG_SYSTEM_JOOMGALLERY_COLLECTIONS_LABEL" />
         <field name="description" type="editor" buttons="false" disabled="true" readonly="true"
                filter="unset"
                label="JGLOBAL_DESCRIPTION" />
