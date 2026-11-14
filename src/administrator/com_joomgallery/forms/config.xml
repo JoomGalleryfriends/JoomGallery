@@ -799,6 +799,10 @@
     </fieldset>
 
     <fieldset type="tab" name="frontend-uikitlayouts" label="COM_JOOMGALLERY_CONFIG_TAB_UIKIT_LAYOUTS">
+        <field name="note_uikit"
+            type="note"
+            description="COM_JOOMGALLERY_CONFIG_UIKIT_NOTE"
+        />
         <field
             name="uikit_layouts_desc"
             type="note"
