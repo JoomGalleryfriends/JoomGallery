@@ -5,6 +5,14 @@
   "license": "GNU General Public License version 2 or later",
   "assets": [
     {
+      "name": "com_joomgallery.image-protection",
+      "type": "script",
+      "uri": "com_joomgallery/image-protection.js",
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
       "name": "com_joomgallery.admin",
       "type": "style",
       "uri": "com_joomgallery/admin.css"
