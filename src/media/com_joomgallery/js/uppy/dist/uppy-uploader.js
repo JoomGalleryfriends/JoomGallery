@@ -20121,11 +20121,17 @@ function getSelectedCatid() {
 /**
  * Read the language of the selected category.
  *
- * @returns {String} Selected category language, or '*' if it is not specified.
+ * @returns {String|null} Selected category language, or null for modal fields.
  */
 function getSelectedCategoryLanguage() {
   const field = document.getElementById('jform_catid');
-  const option = field ? field.options[field.selectedIndex] : null;
+
+  // Modal category fields handle the language in field-category.js.
+  if(!(field instanceof HTMLSelectElement)) {
+    return null;
+  }
+
+  const option = field.options[field.selectedIndex];
 
   if(!option || !option.value) {
     return '*';
@@ -20187,9 +20193,13 @@ var callback = function() {
       return;
     }
 
-    languageField.value = getSelectedCategoryLanguage();
-    languageField.disabled = true;
-    languageField.dispatchEvent(new Event('change', { bubbles: true }));
+    const language = getSelectedCategoryLanguage();
+
+    if(language !== null) {
+      languageField.value = language;
+      languageField.disabled = true;
+      languageField.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   };
 
   if(categoryField && languageField) {
