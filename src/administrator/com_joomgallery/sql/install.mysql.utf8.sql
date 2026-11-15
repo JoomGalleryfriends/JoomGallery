@@ -127,6 +127,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_wmfile` VARCHAR(100) NOT NULL DEFAULT "media/joomgallery/images/watermark.png",
 `jg_use_real_paths` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_router` VARCHAR(100) NOT NULL DEFAULT "DefaultRouter",
+`jg_show_images_breadcrumb` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_router_ids` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_router_imgids` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_link_associated_images` TINYINT(1) NOT NULL DEFAULT 1,
