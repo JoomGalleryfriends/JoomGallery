@@ -1,10 +1,10 @@
 <?php
 /**
  * *********************************************************************************
- *    @package    com_joomgallery                                                 **
- *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
- *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
- *    @license    GNU General Public License version 3 or later                   **
+ * @package    com_joomgallery                                                 **
+ * @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ * @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ * @license    GNU General Public License version 3 or later                   **
  * *********************************************************************************
  */
 
@@ -92,16 +92,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     //--- J! config part of JG -------------------------------------------
 
     // Joomla parameter part of JG
-    $router->addRoutes([new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),]);
+    $router->addRoutes([new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults)]);
 
     //--- JG config sets -------------------------------------------
     $router->createCRUDRoutes('v1/joomgallery/configs', 'configs', ['component' => 'com_joomgallery'], $getDefaults);
 
     //--- JG version in db manifest -----------------------------
 
-    // JG version
-    $router->addRoutes([// version, creationDate
-        new Route(['GET'], 'v1/joomgallery/version', 'version.displayItem', [], $getDefaults), new Route(['PATCH'], 'v1/joomgallery/version', 'version.edit', [], $getDefaults),]);
+    // JG version (version, creationDate)
+    $router->addRoutes([new Route(['GET'], 'v1/joomgallery/version', 'version.displayItem', [], $getDefaults), new Route(['PATCH'], 'v1/joomgallery/version', 'version.edit', [], $getDefaults),]);
   }
 
   /**
@@ -114,9 +113,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   {
     // Gid or name
     $router->addRoutes([new Route(['GET'], 'v1/joomgallery/latestcategory', 'latestcategory.displayItem', [], $getDefaults),
-
-        new Route(['POST'], 'v1/joomgallery/upload_image_file', 'uploadimgfile.image_data_upload', [], $getDefaults),
-
-        new Route(['PATCH'], 'v1/joomgallery/upload_image_file/:image_id', 'uploadimgfile.patch_image_upload_file', ['imgid' => '(\d+)'], $getDefaults),]);
+      new Route(['POST'], 'v1/joomgallery/upload_image_file', 'uploadimgfile.image_data_upload', [], $getDefaults),
+      new Route(['PATCH'], 'v1/joomgallery/upload_image_file/:image_id', 'uploadimgfile.patch_image_upload_file', ['imgid' => '(\d+)'], $getDefaults),]);
   }
 }
