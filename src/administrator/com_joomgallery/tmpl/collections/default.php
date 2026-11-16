@@ -40,17 +40,19 @@ $listDirn  = $this->state->get('list.direction');
           <thead><tr>
             <th><?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?></th>
             <th><?php echo HTMLHelper::_('searchtools.sort', 'COM_JOOMGALLERY_OWNER', 'u.name', $listDirn, $listOrder); ?></th>
+            <th class="text-center"><?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?></th>
             <th class="text-center"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DEFAULT'); ?></th>
             <th class="text-center"><?php echo Text::_('COM_JOOMGALLERY_IMAGES'); ?></th>
             <th><?php echo Text::_('JACTION_EDIT'); ?></th>
             <th><?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?></th>
           </tr></thead>
           <tbody>
-          <?php foreach($this->items as $item) : ?>
+          <?php foreach($this->items as $i => $item) : ?>
             <?php $displayTitle = Text::_((string) $item->title); ?>
             <tr>
               <th scope="row"><?php echo $this->escape($displayTitle); ?></th>
               <td><?php echo $this->escape($item->owner); ?> (<?php echo $this->escape($item->username); ?>)</td>
+              <td class="text-center"><?php echo HTMLHelper::_('jgrid.published', (int) $item->published, $i, '', false); ?></td>
               <td class="text-center"><?php echo Text::_((int) $item->is_default ? 'JYES' : 'JNO'); ?></td>
               <td class="text-center"><?php echo (int) $item->image_count; ?></td>
               <td>

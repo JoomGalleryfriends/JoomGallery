@@ -68,14 +68,6 @@ class HtmlView extends JoomGalleryView
   public $defaultCollection = null;
 
   /**
-   * Collection represented by the primary collection button.
-   *
-   * @var object|null
-   * @since DEPLOY_VERSION
-   */
-  public $primaryCollection = null;
-
-  /**
    * Display the view
    *
    * @param   string  $tpl  Template name
@@ -181,24 +173,8 @@ class HtmlView extends JoomGalleryView
       {
         $this->defaultCollection = $collection;
 
-        if((int) $collection->mapped === 1)
-        {
-          $this->primaryCollection = $collection;
-        }
+        break;
       }
-    }
-
-    if($this->primaryCollection === null)
-    {
-      $mapped = array_values(array_filter($this->collections, static fn($collection) => (int) $collection->mapped === 1));
-
-    usort(
-        $mapped,
-        static fn($left, $right) => ((int) $right->image_count <=> (int) $left->image_count)
-          ?: ((int) $left->id <=> (int) $right->id)
-    );
-
-      $this->primaryCollection = $mapped[0] ?? $this->defaultCollection;
     }
   }
 

@@ -11,6 +11,8 @@
       <option value="a.title DESC">JGLOBAL_TITLE_DESC</option>
       <option value="u.name ASC">COM_JOOMGALLERY_OWNER_ASC</option>
       <option value="u.name DESC">COM_JOOMGALLERY_OWNER_DESC</option>
+      <option value="a.published ASC">JGRID_HEADING_STATUS_ASC</option>
+      <option value="a.published DESC">JGRID_HEADING_STATUS_DESC</option>
       <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
       <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
     </field>

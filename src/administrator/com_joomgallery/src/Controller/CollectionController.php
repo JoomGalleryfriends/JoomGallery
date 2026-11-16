@@ -120,11 +120,11 @@ class CollectionController extends JoomFormController
 
     try
     {
-    $model->manageCollection(
-        $this->input->post->getInt('id'),
-        $this->input->post->getCmd('operation'),
-        $this->input->post->getInt('userid')
-    );
+      $model->manageCollection(
+        $this->input->post->getInt('id', 0),
+        $this->input->post->getCmd('operation', ''),
+        $this->input->post->getInt('userid', 0)
+      );
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_COLLECTION_UPDATED'));
     }
     catch(\Throwable $e)
