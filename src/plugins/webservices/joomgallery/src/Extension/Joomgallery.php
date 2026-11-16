@@ -100,7 +100,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     //--- JG version in db manifest -----------------------------
 
     // JG version (version, creationDate)
-    $router->addRoutes([new Route(['GET'], 'v1/joomgallery/version', 'version.displayItem', [], $getDefaults), new Route(['PATCH'], 'v1/joomgallery/version', 'version.edit', [], $getDefaults),]);
+    $router->addRoutes([new Route(['GET'], 'v1/joomgallery/version', 'version.displayItem', [], $getDefaults), new Route(['PATCH'], 'v1/joomgallery/version', 'version.edit', [], $getDefaults)]);
   }
 
   /**
