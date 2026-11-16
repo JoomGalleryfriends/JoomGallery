@@ -632,8 +632,7 @@ abstract class Uploader implements UploaderInterface
       array_push($files, $this->src_file);
     }
 
-      // if (isset($this->src_tmp) && !empty($this->src_tmp) && file_exists($this->src_tmp))
-      if(isset($this->src_tmp) && !empty($this->src_tmp) && is_file($this->src_tmp))
+    if(isset($this->src_tmp) && !empty($this->src_tmp) && file_exists($this->src_tmp))
       {
           array_push($files, $this->src_tmp);
       }

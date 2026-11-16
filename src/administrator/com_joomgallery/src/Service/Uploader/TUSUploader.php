@@ -29,10 +29,10 @@ use Joomla\Filesystem\Path as JPath;
  */
 class TUSUploader extends BaseUploader implements UploaderInterface
 {
-//  protected $src_name;
-//  protected $src_size;
-//  protected $src_tmp;
-//  protected $src_file;
+  protected $src_name;
+  protected $src_size;
+  protected $src_tmp;
+  protected $src_file;
 
   /**
    * Constructor
@@ -155,8 +155,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
 
     // Set permissions of uploaded file
     JPath::setPermissions($this->src_file, '0644', null);
-    //$this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
-    $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', $this->src_size / 1000)); // @Manuel
+    $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
 
     return true;
   }
