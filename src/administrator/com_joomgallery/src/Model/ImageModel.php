@@ -1268,6 +1268,116 @@ class ImageModel extends JoomAdminModel
   }
 
   /**
+   * Return the image types the current user may download for an image.
+   *
+   * The effective image configuration includes user-group and category
+   * overrides. Configured types are returned only when their file exists.
+   *
+   * @param   object       $image   Image record.
+   * @param   object|null  $config  Effective image configuration, if already loaded.
+   *
+   * @return  array  Allowed and available image type names.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getDownloadTypes(object $image, ?object $config = null): array
+  {
+    if((int) ($image->id ?? 0) <= 0)
+    {
+      return [];
+    }
+
+    if($config === null)
+    {
+      $this->component->createConfig(_JOOM_OPTION . '.image', (int) $image->id, true);
+      $config = $this->component->getConfig();
+    }
+
+    if((int) $config->get('jg_download', 0) !== 1)
+    {
+      return [];
+    }
+
+    $configuredTypes = $config->get('jg_downloadfile', []);
+
+    if(\is_string($configuredTypes))
+    {
+      // ConfigTable persists multiple selections as a comma-separated string.
+      $configuredTypes = explode(',', $configuredTypes);
+    }
+    elseif(\is_object($configuredTypes))
+    {
+      $configuredTypes = (array) $configuredTypes;
+    }
+    elseif(!\is_array($configuredTypes))
+    {
+      $configuredTypes = [$configuredTypes];
+    }
+
+    // Keep old values functional until the database update has converted them.
+    $legacyTypes = [
+      '0' => ['detail'],
+      '1' => ['original'],
+      '2' => ['detail'],
+    ];
+
+    if(\count($configuredTypes) === 1 && isset($legacyTypes[(string) reset($configuredTypes)]))
+    {
+      $configuredTypes = $legacyTypes[(string) reset($configuredTypes)];
+    }
+
+    $configuredTypes = array_values(
+        array_unique(
+            array_filter(
+                array_map(
+                    static fn($type): string => strtolower(trim((string) $type)),
+                    $configuredTypes
+                )
+            )
+        )
+    );
+
+    return array_values(
+        array_filter(
+            $configuredTypes,
+            fn(string $type): bool => $this->downloadTypeExists($image, $type)
+        )
+    );
+  }
+
+  /**
+   * Check whether the requested image-type file exists on its filesystem.
+   *
+   * @param   object  $image  Image record.
+   * @param   string  $type   Image type name.
+   *
+   * @return  boolean
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  protected function downloadTypeExists(object $image, string $type): bool
+  {
+    try
+    {
+      $path = JoomHelper::getImg($image, $type, false, false);
+
+      if(!$path)
+      {
+        return false;
+      }
+
+      $this->component->createFilesystem((string) $image->filesystem);
+      $file = $this->component->getFilesystem()->getFile($path);
+
+      return isset($file->type) && $file->type === 'file';
+    }
+    catch(\Throwable $e)
+    {
+      return false;
+    }
+  }
+
+  /**
    * Method to save metadata to an image file
    *
    * @param   int     $pk    The record primary key.

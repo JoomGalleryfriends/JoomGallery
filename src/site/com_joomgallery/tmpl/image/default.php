@@ -385,7 +385,8 @@ ob_start(); ?>
                   <?php foreach($this->collections as $collection) : ?>
                     <li>
                       <button class="dropdown-item d-flex align-items-center" type="submit" name="collection_id" value="<?php echo (int) $collection->id; ?>" aria-pressed="<?php echo (int) $collection->mapped === 1 ? 'true' : 'false'; ?>">
-                        <span class="d-inline-block me-2" style="width: 1em" aria-hidden="true"><?php if((int) $collection->mapped === 1) : ?><span class="icon-check"></span><?php endif; ?></span>
+                        <span class="d-inline-block me-2" style="width: 1em" aria-hidden="true"><?php if((int) $collection->mapped === 1) : ?><span class="icon-check"></span><?php
+                                                                                                endif; ?></span>
                         <span><?php echo $this->escape(Text::_((string) $collection->title)); ?> (<?php echo (int) $collection->image_count; ?>)</span>
                       </button>
                     </li>

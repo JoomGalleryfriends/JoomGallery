@@ -23,6 +23,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
+use Joomla\Registry\Registry;
 
 /**
  * Image controller class.
@@ -55,6 +56,251 @@ class ImageController extends JoomFormController
     }
 
     return parent::save($key, $urlVar);
+  }
+
+  /**
+   * Deliver an allowed image type as a browser download.
+   *
+   * The effective image configuration controls whether downloading is enabled,
+   * which stored image type is available, and whether a watermark is applied.
+   *
+   * @return  void
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function download(): void
+  {
+    $imageId = $this->input->getInt('id', 0);
+    $type    = strtolower($this->input->getCmd('type', ''));
+
+    try
+    {
+      if($imageId <= 0 || $type === '')
+      {
+        throw new \InvalidArgumentException(Text::_('COM_JOOMGALLERY_DOWNLOAD_INVALID_REQUEST'), 400);
+      }
+
+      /** @var ImageModel $model */
+      $model = $this->getModel('Image', 'Administrator');
+      $image = $model->getItem($imageId);
+
+      if(!$image || (int) $image->id !== $imageId)
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_IMAGE_NOT_FOUND'), 404);
+      }
+
+      $this->component->createConfig(_JOOM_OPTION . '.image', $imageId, true);
+      $config       = $this->component->getConfig();
+      $allowedTypes = $model->getDownloadTypes($image, $config);
+
+      if(!\in_array($type, $allowedTypes, true))
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_NOT_ALLOWED'), 403);
+      }
+
+      $path = JoomHelper::getImg($image, $type, false, false);
+
+      if(!$path)
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_FILE_NOT_FOUND'), 404);
+      }
+
+      $this->component->createFilesystem((string) $image->filesystem);
+
+      // Check the requested file explicitly so getResource() cannot silently
+      // turn a missing download into the generic no-image placeholder.
+      $file = $this->component->getFilesystem()->getFile($path);
+
+      if(($file->type ?? '') !== 'file')
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_FILE_NOT_FOUND'), 404);
+      }
+
+      [$fileInfo, $resource] = $this->component->getFilesystem()->getResource($path);
+      $this->processDownloadResource($fileInfo, $resource, $type, $config);
+      $this->outputDownloadResource($resource, $fileInfo, (string) $image->filename);
+    }
+    catch(\Throwable $e)
+    {
+      $status = \in_array((int) $e->getCode(), [400, 403, 404], true) ? (int) $e->getCode() : 500;
+
+      if($status === 500)
+      {
+        $this->component->addLog($e->getMessage(), 'error', 'jerror');
+      }
+
+      $message = $status === 500 ? Text::_('COM_JOOMGALLERY_DOWNLOAD_PROCESSING_FAILED') : $e->getMessage();
+      $this->outputDownloadError($status, $message);
+    }
+  }
+
+  /**
+   * Apply dynamic image settings and the download-watermark setting.
+   *
+   * @param   object    $fileInfo  Filesystem metadata, updated after processing.
+   * @param   resource  $resource  Source resource, replaced by the processed resource.
+   * @param   string    $type      Requested image type.
+   * @param   object    $config    Effective image configuration.
+   *
+   * @return  void
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  protected function processDownloadResource(object &$fileInfo, &$resource, string $type, object $config): void
+  {
+    $params = null;
+
+    foreach((array) $config->get('jg_dynamicprocessing', []) as $candidate)
+    {
+      $candidateParams = new Registry($candidate);
+
+      if((string) $candidateParams->get('jg_imgtypename') === $type)
+      {
+        $params = $candidateParams;
+
+        break;
+      }
+    }
+
+    $dynamic   = $params instanceof Registry && (int) $params->get('jg_imgtype', 0) === 1;
+    $watermark = (int) $config->get('jg_downloadwithwatermark', 0) === 1;
+    $orient    = $dynamic && (int) $params->get('jg_imgtypeorinet', 0) === 1;
+    $resize    = $dynamic ? (int) $params->get('jg_imgtyperesize', 0) : 0;
+
+    if(!$orient && $resize <= 0 && !$watermark)
+    {
+      return;
+    }
+
+    $this->component->createIMGtools($config->get('jg_imgprocessor', 'gd'));
+
+    try
+    {
+      $tools = $this->component->getIMGtools();
+
+      if(!$tools->read($resource, true))
+      {
+        throw new \RuntimeException('Unable to read the image resource for download processing.');
+      }
+
+      if($orient && !$tools->orient())
+      {
+        throw new \RuntimeException('Unable to orient the download image.');
+      }
+
+    if($resize > 0 && !$tools->resize(
+        $resize,
+        $params->get('jg_imgtypewidth', 5000),
+        $params->get('jg_imgtypeheight', 5000),
+        $params->get('jg_cropposition', 2),
+        $params->get('jg_imgtypesharpen', 0)
+    ))
+      {
+        throw new \RuntimeException('Unable to resize the download image.');
+    }
+
+      if($watermark)
+      {
+        $watermarkSettings = $params instanceof Registry ? $params : new Registry();
+
+        if(!$tools->watermark(
+            JPATH_ROOT . \DIRECTORY_SEPARATOR . $config->get('jg_wmfile', 'media/joomgallery/images/watermark.png'),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80)
+        ))
+        {
+          throw new \RuntimeException('Unable to watermark the download image.');
+        }
+      }
+
+      $quality = $dynamic ? (int) $params->get('jg_imgtypequality', 100) : 100;
+      $content = $tools->stream($quality, false);
+
+      if($content === '')
+      {
+        throw new \RuntimeException('The processed download image is empty.');
+      }
+
+      $processed = fopen('php://temp', 'w+b');
+
+      if($processed === false || fwrite($processed, $content) === false)
+      {
+        throw new \RuntimeException('Unable to create the processed download resource.');
+      }
+
+      rewind($processed);
+      $stat      = fstat($processed);
+      $imageInfo = getimagesizefromstring($content);
+
+      if(\is_resource($resource))
+      {
+        fclose($resource);
+      }
+
+      $resource       = $processed;
+      $fileInfo->size = (int) ($stat['size'] ?? \strlen($content));
+
+      if(\is_array($imageInfo))
+      {
+        $fileInfo->width     = (int) $imageInfo[0];
+        $fileInfo->height    = (int) $imageInfo[1];
+        $fileInfo->mime_type = $imageInfo['mime'] ?? $fileInfo->mime_type;
+      }
+    }
+    finally
+    {
+      $this->component->delIMGtools();
+    }
+  }
+
+  /** Send an image resource as an attachment and finish the request. */
+  protected function outputDownloadResource($resource, object $fileInfo, string $filename): void
+  {
+    $filename = str_replace(["\r", "\n"], '', basename($filename));
+    $mimeType = (string) ($fileInfo->mime_type ?? 'application/octet-stream');
+    $size     = (int) ($fileInfo->size ?? 0);
+
+    $this->app->setHeader('Content-Type', $mimeType, true);
+    $this->app->setHeader(
+        'Content-Disposition',
+        'attachment; filename="' . addcslashes($filename, '"\\') . '"; filename*=UTF-8\'\'' . rawurlencode($filename),
+        true
+    );
+    $this->app->setHeader('Content-Length', (string) $size, true);
+    $this->app->setHeader('Cache-Control', 'private, no-store, no-cache, must-revalidate', true);
+    $this->app->setHeader('Pragma', 'no-cache', true);
+    $this->app->setHeader('X-Content-Type-Options', 'nosniff', true);
+
+    while(ob_get_level() > 0)
+    {
+      ob_end_clean();
+    }
+
+    $this->app->sendHeaders();
+    fpassthru($resource);
+    fclose($resource);
+    $this->app->close();
+  }
+
+  /** Send a plain-text download error and finish the request. */
+  protected function outputDownloadError(int $status, string $message): void
+  {
+    $this->app->setHeader('Status', (string) $status, true);
+    $this->app->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
+    $this->app->setHeader('Content-Length', (string) \strlen($message), true);
+    $this->app->setHeader('Cache-Control', 'no-store', true);
+    $this->app->setHeader('X-Content-Type-Options', 'nosniff', true);
+
+    while(ob_get_level() > 0)
+    {
+      ob_end_clean();
+    }
+
+    $this->app->sendHeaders();
+    echo $message;
+    $this->app->close();
   }
 
   /**
