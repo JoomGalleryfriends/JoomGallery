@@ -15,8 +15,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Asset;
+use Joomla\Filter\OutputFilter;
+use Joomla\Registry\Registry;
 
 /**
  * Model for one collection.
@@ -604,6 +608,258 @@ class CollectionModel extends JoomAdminModel
     $table = $this->getTable();
 
     return $table->load($collectionId) && $this->isOwner($table);
+  }
+
+  /**
+   * Return an existing collection ZIP or generate and register a new archive.
+   *
+   * Archives are cached below Joomla's temporary directory in a folder owned by
+   * the collection owner's JoomGallery profile. A per-profile lock serializes
+   * generation and metadata updates for that owner's archives.
+   *
+   * @param   int     $collectionId  Collection ID.
+   * @param   string  $type          Requested image type.
+   *
+   * @return  array{path: string, name: string}  Local archive path and download name.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function prepareDownloadArchive(int $collectionId, string $type): array
+  {
+    $type = strtolower(trim($type));
+
+    if($collectionId <= 0 || $type === '' || !preg_match('/^[a-z0-9_-]+$/', $type))
+    {
+      throw new \InvalidArgumentException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_INVALID_REQUEST'), 400);
+    }
+
+    $collection = $this->getTable();
+
+    if(!$collection->load($collectionId))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_NOT_FOUND'), 404);
+    }
+
+    if(!$this->isOwner($collection) && !$this->hasGlobalPermission('connect'))
+    {
+      throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+    }
+
+    $profile = $this->component->getMVCFactory()->createTable('User', 'Administrator');
+
+    if(!$profile->load((int) $collection->userid))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_INVALID_OWNER'), 404);
+    }
+
+    $this->component->createConfig();
+    $retentionHours = max(1, (int) $this->component->getConfig()->get('jg_download_zip_retention', 24));
+    $directory      = Path::clean(
+      rtrim((string) Factory::getApplication()->get('tmp_path'), '/\\')
+      . \DIRECTORY_SEPARATOR . 'joomgallery'
+      . \DIRECTORY_SEPARATOR . 'collection-downloads'
+      . \DIRECTORY_SEPARATOR . (int) $profile->id
+    );
+
+    if(!is_dir($directory) && !Folder::create($directory))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_CREATE_FAILED'));
+    }
+
+    $cacheKey    = 'collection-' . $collectionId . '-' . $type;
+    $archiveName = $this->getCollectionArchiveName($collection, $type);
+    $archivePath = Path::clean($directory . \DIRECTORY_SEPARATOR . $cacheKey . '.zip');
+    // All archives of one profile share the same metadata registry. Lock the
+    // profile rather than one archive to prevent concurrent lost updates.
+    $lock = fopen($directory . \DIRECTORY_SEPARATOR . '.profile.lock', 'c');
+
+    if($lock === false || !flock($lock, \LOCK_EX))
+    {
+      if(\is_resource($lock))
+      {
+        fclose($lock);
+      }
+
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_CREATE_FAILED'));
+    }
+
+    try
+    {
+      // Reload after acquiring the lock because another request may have just
+      // generated and registered the same archive.
+      $profile->load((int) $collection->userid);
+      $files   = new Registry((string) $profile->files);
+      $entries = (array) $files->get('collection_downloads', []);
+      $entries = $this->purgeExpiredDownloadArchives($entries, $directory);
+      $entry   = isset($entries[$cacheKey]) ? (array) $entries[$cacheKey] : [];
+
+      $cachedPath = !empty($entry['path']) ? Path::clean((string) $entry['path']) : '';
+      $cacheRoot  = rtrim(Path::clean($directory), '/\\') . \DIRECTORY_SEPARATOR;
+
+      if($cachedPath !== ''
+        && str_starts_with(strtolower($cachedPath), strtolower($cacheRoot))
+        && is_file($cachedPath)
+        && is_readable($cachedPath))
+      {
+        $files->set('collection_downloads', $entries);
+        $this->storeProfileFiles($profile, $files);
+
+        return ['path' => $cachedPath, 'name' => $archiveName];
+      }
+
+      $temporaryPath = $archivePath . '.' . bin2hex(random_bytes(8)) . '.part';
+      $zip            = new \ZipArchive();
+
+      if($zip->open($temporaryPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true)
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_CREATE_FAILED'));
+      }
+
+      try
+      {
+        $images = $this->getCollectionDownloadImages($collectionId);
+
+        if(!$images)
+        {
+          throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_EMPTY'), 404);
+        }
+
+        /** @var ImageModel $imageModel */
+        $imageModel = $this->component->getMVCFactory()->createModel('Image', 'Administrator');
+        $added      = 0;
+
+        foreach($images as $image)
+        {
+          [$fileInfo, $resource] = $imageModel->prepareDownloadResource($image, $type);
+
+          try
+          {
+            $content = stream_get_contents($resource);
+
+            if($content === false || !$zip->addFromString((int) $image->id . '-' . basename((string) $image->filename), $content))
+            {
+              throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_CREATE_FAILED'));
+            }
+
+            $added++;
+          }
+          finally
+          {
+            if(\is_resource($resource))
+            {
+              fclose($resource);
+            }
+          }
+        }
+
+        if($added === 0)
+        {
+          throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_EMPTY'), 404);
+        }
+      }
+      catch(\Throwable $e)
+      {
+        $zip->close();
+        @unlink($temporaryPath);
+        throw $e;
+      }
+
+      $closed = $zip->close();
+
+      if(is_file($archivePath))
+      {
+        @unlink($archivePath);
+      }
+
+      if(!$closed || !@rename($temporaryPath, $archivePath))
+      {
+        @unlink($temporaryPath);
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_CREATE_FAILED'));
+      }
+
+      $created           = time();
+      $entries[$cacheKey] = [
+        'collection_id' => $collectionId,
+        'imagetype'     => $type,
+        'path'          => $archivePath,
+        'created'       => $created,
+        'expires'       => $created + ($retentionHours * 3600),
+      ];
+      $files->set('collection_downloads', $entries);
+      $this->storeProfileFiles($profile, $files);
+
+      return ['path' => $archivePath, 'name' => $archiveName];
+    }
+    finally
+    {
+      flock($lock, \LOCK_UN);
+      fclose($lock);
+    }
+  }
+
+  /** Load approved images mapped to a collection in stable order. */
+  protected function getCollectionDownloadImages(int $collectionId): array
+  {
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select('i.*')
+      ->from($db->quoteName('#__joomgallery_images', 'i'))
+      ->join('INNER', $db->quoteName('#__joomgallery_collections_ref', 'r') . ' ON r.imgid = i.id')
+      ->where('r.collectionid = ' . $collectionId)
+      ->where('r.approved = 1')
+      ->order('i.id ASC');
+
+    return $db->setQuery($query)->loadObjectList();
+  }
+
+  /** Remove expired archive metadata and files confined to the owner's cache directory. */
+  protected function purgeExpiredDownloadArchives(array $entries, string $directory): array
+  {
+    $now    = time();
+    $prefix = rtrim(Path::clean($directory), '/\\') . \DIRECTORY_SEPARATOR;
+
+    foreach($entries as $key => $entry)
+    {
+      $entry = (array) $entry;
+      $path  = !empty($entry['path']) ? Path::clean((string) $entry['path']) : '';
+
+      $insideCache = $path !== '' && str_starts_with(strtolower($path), strtolower($prefix));
+
+      if((int) ($entry['expires'] ?? 0) > $now && $insideCache && is_file($path))
+      {
+        $entries[$key] = $entry;
+        continue;
+      }
+
+      if($insideCache && is_file($path))
+      {
+        @unlink($path);
+      }
+
+      unset($entries[$key]);
+    }
+
+    return $entries;
+  }
+
+  /** Persist archive metadata in the profile files registry. */
+  protected function storeProfileFiles($profile, Registry $files): void
+  {
+    $profile->files = (string) $files;
+
+    if(!$profile->store())
+    {
+      throw new \RuntimeException($profile->getError() ?: Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_CREATE_FAILED'));
+    }
+  }
+
+  /** Build a safe, descriptive browser download name. */
+  protected function getCollectionArchiveName(object $collection, string $type): string
+  {
+    $alias = OutputFilter::stringURLSafe((string) ($collection->alias ?: $collection->title));
+    $alias = $alias !== '' ? $alias : 'collection-' . (int) $collection->id;
+
+    return $alias . '-' . $type . '.zip';
   }
 
   /**

@@ -77,3 +77,20 @@ INNER JOIN `#__joomgallery_collections_ref` AS `keeper`
 ALTER TABLE `#__joomgallery_collections_ref`
   DROP INDEX `idx_col_img`,
   ADD UNIQUE KEY `idx_col_img` (`collectionid`, `imgid`);
+
+-- Multiple downloadable image types are stored by typename.
+ALTER TABLE `#__joomgallery_configs`
+  MODIFY `jg_downloadfile` VARCHAR(1024) NOT NULL DEFAULT 'detail',
+  ADD `jg_download_zip_retention` INT NOT NULL DEFAULT 24 AFTER `jg_downloadwithwatermark`;
+
+UPDATE `#__joomgallery_configs`
+SET `jg_download_zip_retention` = -1
+WHERE `id` <> 1;
+
+UPDATE `#__joomgallery_configs`
+SET `jg_downloadfile` = CASE `jg_downloadfile`
+  WHEN '0' THEN 'detail'
+  WHEN '1' THEN 'original'
+  WHEN '2' THEN 'detail,original'
+  ELSE `jg_downloadfile`
+END;

@@ -1268,6 +1268,152 @@ class ImageModel extends JoomAdminModel
   }
 
   /**
+   * Load, authorize and dynamically process one image resource for download.
+   *
+   * @param   object       $image   Image record.
+   * @param   string       $type    Requested image type.
+   * @param   object|null  $config  Effective image configuration, if already loaded.
+   *
+   * @return  array{0: object, 1: resource}  File metadata and readable resource.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function prepareDownloadResource(object $image, string $type, ?object $config = null): array
+  {
+    $type = strtolower(trim($type));
+
+    if($config === null)
+    {
+      $this->component->createConfig(_JOOM_OPTION . '.image', (int) $image->id, true);
+      $config = $this->component->getConfig();
+    }
+
+    if(!\in_array($type, $this->getDownloadTypes($image, $config), true))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_NOT_ALLOWED'), 403);
+    }
+
+    $path = JoomHelper::getImg($image, $type, false, false);
+
+    if(!$path)
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_FILE_NOT_FOUND'), 404);
+    }
+
+    $this->component->createFilesystem((string) $image->filesystem);
+    $file = $this->component->getFilesystem()->getFile($path);
+
+    if(($file->type ?? '') !== 'file')
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_FILE_NOT_FOUND'), 404);
+    }
+
+    [$fileInfo, $resource] = $this->component->getFilesystem()->getResource($path);
+    $this->processDownloadResource($fileInfo, $resource, $type, $config);
+
+    return [$fileInfo, $resource];
+  }
+
+  /** Apply dynamic image settings and the download-watermark setting. */
+  protected function processDownloadResource(object &$fileInfo, &$resource, string $type, object $config): void
+  {
+    $params = null;
+
+    foreach((array) $config->get('jg_dynamicprocessing', []) as $candidate)
+    {
+      $candidateParams = new Registry($candidate);
+
+      if((string) $candidateParams->get('jg_imgtypename') === $type)
+      {
+        $params = $candidateParams;
+        break;
+      }
+    }
+
+    $dynamic   = $params instanceof Registry && (int) $params->get('jg_imgtype', 0) === 1;
+    $watermark = (int) $config->get('jg_downloadwithwatermark', 0) === 1;
+    $orient    = $dynamic && (int) $params->get('jg_imgtypeorinet', 0) === 1;
+    $resize    = $dynamic ? (int) $params->get('jg_imgtyperesize', 0) : 0;
+
+    if(!$orient && $resize <= 0 && !$watermark)
+    {
+      return;
+    }
+
+    $this->component->createIMGtools($config->get('jg_imgprocessor', 'gd'));
+
+    try
+    {
+      $tools = $this->component->getIMGtools();
+
+      if(!$tools->read($resource, true)
+        || ($orient && !$tools->orient())
+        || ($resize > 0 && !$tools->resize(
+          $resize,
+          $params->get('jg_imgtypewidth', 5000),
+          $params->get('jg_imgtypeheight', 5000),
+          $params->get('jg_cropposition', 2),
+          $params->get('jg_imgtypesharpen', 0)
+        )))
+      {
+        throw new \RuntimeException('Unable to process the image resource for download.');
+      }
+
+      if($watermark)
+      {
+        $watermarkSettings = $params instanceof Registry ? $params : new Registry();
+
+        if(!$tools->watermark(
+          JPATH_ROOT . \DIRECTORY_SEPARATOR . $config->get('jg_wmfile', 'media/joomgallery/images/watermark.png'),
+          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
+          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
+          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
+          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80)
+        ))
+        {
+          throw new \RuntimeException('Unable to watermark the download image.');
+        }
+      }
+
+      $content = $tools->stream($dynamic ? (int) $params->get('jg_imgtypequality', 100) : 100, false);
+
+      if($content === '')
+      {
+        throw new \RuntimeException('The processed download image is empty.');
+      }
+
+      $processed = fopen('php://temp', 'w+b');
+
+      if($processed === false || fwrite($processed, $content) === false)
+      {
+        throw new \RuntimeException('Unable to create the processed download resource.');
+      }
+
+      rewind($processed);
+      $imageInfo = getimagesizefromstring($content);
+
+      if(\is_resource($resource))
+      {
+        fclose($resource);
+      }
+
+      $resource       = $processed;
+      $fileInfo->size = \strlen($content);
+
+      if(\is_array($imageInfo))
+      {
+        $fileInfo->width     = (int) $imageInfo[0];
+        $fileInfo->height    = (int) $imageInfo[1];
+        $fileInfo->mime_type = $imageInfo['mime'] ?? $fileInfo->mime_type;
+      }
+    }
+    finally
+    {
+      $this->component->delIMGtools();
+    }
+  }
+
+  /**
    * Return the image types the current user may download for an image.
    *
    * The effective image configuration includes user-group and category

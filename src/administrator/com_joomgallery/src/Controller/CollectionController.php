@@ -37,7 +37,7 @@ class CollectionController extends JoomFormController
   /** Existing records are managed only through the restricted modal actions. */
   public function execute($task)
   {
-    if(!\in_array($task, ['add', 'save', 'cancel', 'manage'], true))
+    if(!\in_array($task, ['add', 'save', 'cancel', 'manage', 'download'], true))
     {
       throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
     }
@@ -133,5 +133,86 @@ class CollectionController extends JoomFormController
     }
 
     $this->setRedirect(Route::_('index.php?option=com_joomgallery&view=collections', false));
+  }
+
+  /**
+   * Deliver all images in a collection as a cached ZIP archive.
+   *
+   * @return  void
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function download(): void
+  {
+    $collectionId = $this->input->getInt('id', 0);
+    $type         = strtolower($this->input->getCmd('type', ''));
+
+    try
+    {
+      $model   = $this->getModel('Collection', 'Administrator');
+      $archive = $model->prepareDownloadArchive($collectionId, $type);
+      $this->outputDownloadArchive($archive['path'], $archive['name']);
+    }
+    catch(\Throwable $e)
+    {
+      $status = \in_array((int) $e->getCode(), [400, 403, 404], true) ? (int) $e->getCode() : 500;
+
+      if($status === 500)
+      {
+        $this->component->addLog($e->getMessage(), 'error', 'jerror');
+      }
+
+      $message = $status === 500 ? Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_CREATE_FAILED') : $e->getMessage();
+      $this->outputDownloadError($status, $message);
+    }
+  }
+
+  /** Send a local ZIP archive as a browser attachment and finish the request. */
+  protected function outputDownloadArchive(string $path, string $filename): void
+  {
+    if(!is_file($path) || !is_readable($path))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_FILE_NOT_FOUND'), 404);
+    }
+
+    $filename = str_replace(["\r", "\n"], '', basename($filename));
+    $this->app->setHeader('Content-Type', 'application/zip', true);
+    $this->app->setHeader(
+      'Content-Disposition',
+      'attachment; filename="' . addcslashes($filename, '"\\') . '"; filename*=UTF-8\'\'' . rawurlencode($filename),
+      true
+    );
+    $this->app->setHeader('Content-Length', (string) filesize($path), true);
+    $this->app->setHeader('Cache-Control', 'private, no-store, no-cache, must-revalidate', true);
+    $this->app->setHeader('Pragma', 'no-cache', true);
+    $this->app->setHeader('X-Content-Type-Options', 'nosniff', true);
+
+    while(ob_get_level() > 0)
+    {
+      ob_end_clean();
+    }
+
+    $this->app->sendHeaders();
+    readfile($path);
+    $this->app->close();
+  }
+
+  /** Send a plain-text archive error and finish the request. */
+  protected function outputDownloadError(int $status, string $message): void
+  {
+    $this->app->setHeader('Status', (string) $status, true);
+    $this->app->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
+    $this->app->setHeader('Content-Length', (string) strlen($message), true);
+    $this->app->setHeader('Cache-Control', 'no-store', true);
+    $this->app->setHeader('X-Content-Type-Options', 'nosniff', true);
+
+    while(ob_get_level() > 0)
+    {
+      ob_end_clean();
+    }
+
+    $this->app->sendHeaders();
+    echo $message;
+    $this->app->close();
   }
 }
