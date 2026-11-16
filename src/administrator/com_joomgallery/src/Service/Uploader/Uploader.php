@@ -633,9 +633,9 @@ abstract class Uploader implements UploaderInterface
     }
 
     if(isset($this->src_tmp) && !empty($this->src_tmp) && file_exists($this->src_tmp))
-      {
+    {
           array_push($files, $this->src_tmp);
-      }
+    }
 
       // ToDo: @manuel JFile only accepts string not array J6.0 ? earlier ?
       $isDeleted = true;
