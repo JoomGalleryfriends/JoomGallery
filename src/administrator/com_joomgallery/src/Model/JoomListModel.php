@@ -12,7 +12,6 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
-
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
