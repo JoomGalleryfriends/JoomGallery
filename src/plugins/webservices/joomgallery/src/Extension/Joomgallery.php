@@ -42,7 +42,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   /**
    * Registers com_joomgallery API's routes in the application
    *
-   * @param   BeforeApiRouteEvent   $event  The event object
+   * @param   BeforeApiRouteEvent  $event  The event object
    *
    * @return  void
    *
@@ -66,33 +66,23 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
   /**
    * DB galleries
    *
-   * @param   ApiRouter   $router
-   * @param   array       $getDefaults
+   * @param   ApiRouter  $router
+   * @param   array      $getDefaults
    *
    * @since   4.4.0
    */
   public function DBGalleriesImages(ApiRouter $router, array $getDefaults): void
   {
-    $router->createCRUDRoutes(
-        'v1/joomgallery/categories',
-        'categories',
-        ['component' => 'com_joomgallery'],
-        $getDefaults
-    );
+    $router->createCRUDRoutes('v1/joomgallery/categories', 'categories', ['component' => 'com_joomgallery'], $getDefaults);
 
-    $router->createCRUDRoutes(
-        'v1/joomgallery/images',
-        'images',
-        ['component' => 'com_joomgallery'],
-        $getDefaults
-    );
+    $router->createCRUDRoutes('v1/joomgallery/images', 'images', ['component' => 'com_joomgallery'], $getDefaults);
   }
 
   /**
    * Config and version
    *
-   * @param   ApiRouter   $router
-   * @param   array       $getDefaults
+   * @param   ApiRouter  $router
+   * @param   array      $getDefaults
    *
    *
    * @since   4.4.0
@@ -102,67 +92,31 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     //--- J! config part of JG -------------------------------------------
 
     // Joomla parameter part of JG
-    $router->addRoutes(
-        [
-          new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),
-        ]
-    );
+    $router->addRoutes([new Route(['GET'], 'v1/joomgallery/config_in_j', 'configinj.display', [], $getDefaults),]);
 
     //--- JG config sets -------------------------------------------
-    $router->createCRUDRoutes(
-        'v1/joomgallery/configs',
-        'configs',
-        ['component' => 'com_joomgallery'],
-        $getDefaults
-    );
+    $router->createCRUDRoutes('v1/joomgallery/configs', 'configs', ['component' => 'com_joomgallery'], $getDefaults);
 
     //--- JG version in db manifest -----------------------------
 
     // JG version
-    $router->addRoutes(
-        [
-          // version, creationDate
-          new Route(['GET'], 'v1/joomgallery/version', 'version.displayItem', [], $getDefaults),
-          new Route(['PATCH'], 'v1/joomgallery/version', 'version.edit', [], $getDefaults),
-        ]
-    );
+    $router->addRoutes([// version, creationDate
+        new Route(['GET'], 'v1/joomgallery/version', 'version.displayItem', [], $getDefaults), new Route(['PATCH'], 'v1/joomgallery/version', 'version.edit', [], $getDefaults),]);
   }
 
   /**
-   * @param   ApiRouter   $router
-   * @param   array       $getDefaults
+   * @param   ApiRouter  $router
+   * @param   array      $getDefaults
    *
    * @since version
    */
   private function UploadImages(ApiRouter $router, array $getDefaults): void
   {
     // Gid or name
-    $router->addRoutes(
-      [
-        new Route(
-          ['GET'],
-          'v1/joomgallery/latestcategory',
-          'latestcategory.displayItem',
-          [],
-          $getDefaults
-        ),
+    $router->addRoutes([new Route(['GET'], 'v1/joomgallery/latestcategory', 'latestcategory.displayItem', [], $getDefaults),
 
-        new Route(
-          ['POST'],
-          'v1/joomgallery/upload_image_file',
-          'uploadimgfile.image_data_upload',
-          [],
-          $getDefaults
-        ),
+        new Route(['POST'], 'v1/joomgallery/upload_image_file', 'uploadimgfile.image_data_upload', [], $getDefaults),
 
-        new Route(
-          ['PATCH'],
-          'v1/joomgallery/upload_image_file/:image_id',
-          'uploadimgfile.patch_image_upload_file',
-          ['imgid' => '(\d+)'],
-          $getDefaults
-        ),
-      ]
-    );
+        new Route(['PATCH'], 'v1/joomgallery/upload_image_file/:image_id', 'uploadimgfile.patch_image_upload_file', ['imgid' => '(\d+)'], $getDefaults),]);
   }
 }
