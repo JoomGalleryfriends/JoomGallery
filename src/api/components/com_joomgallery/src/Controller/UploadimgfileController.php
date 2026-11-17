@@ -145,10 +145,10 @@ class UploadimgfileController extends ApiController
 
     if($isSaved)
     {
-      //--- Return json with created DB data -----------------------------------------------------------------
+      // Ensure we have the record ID in case we created a new article
+      $image_id = $model->getState('image.id');
 
-      $imageState = $model->getState('image');
-      $image_id   = $imageState->id;
+      //--- Return json with created DB data -----------------------------------------------------------------
 
       return parent::displayItem($image_id);
     }
