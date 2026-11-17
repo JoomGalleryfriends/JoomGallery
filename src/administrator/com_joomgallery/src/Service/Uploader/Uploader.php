@@ -12,11 +12,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Table\ImageTable;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
@@ -24,6 +24,7 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Filesystem\File as JFile;
+use Joomla\Filesystem\Folder;
 
 /**
  * Base class for the Uploader helper classes
@@ -92,41 +93,41 @@ abstract class Uploader implements UploaderInterface
    */
   protected $async = false;
 
-    /**
-     * Path to file after upload completed
-     *
-     * @var string
-     */
-    protected $src_tmp = '';
+  /**
+   * Path to file after upload completed
+   *
+   * @var string
+   */
+  protected $src_tmp = '';
 
-    /**
-     * Path and file name for intermedia file before creating resized files
-     * Actual ../tmp/filename from upload
-     * @Manual ../tmp/filename The file name should be more unique for multiple uploads with same name and maybe different people or smae nam,e but different file origin?
-     *
-     * @var string
-     */
-    protected $src_file = '';
+  /**
+   * Path and file name for intermedia file before creating resized files
+   * Actual ../tmp/filename from upload
+   * @Manual ../tmp/filename The file name should be more unique for multiple uploads with same name and maybe different people or smae nam,e but different file origin?
+   *
+   * @var string
+   */
+  protected $src_file = '';
 
-    /**
-     * Name of file after upload
-     *
-     * @var string
-     */
-    protected $src_name = '';
+  /**
+   * Name of file after upload
+   *
+   * @var string
+   */
+  protected $src_name = '';
 
-    /**
-     * Size of file after upload
-     *
-     * @var string
-     */
-    protected $src_size = 0;
+  /**
+   * Size of file after upload
+   *
+   * @var string
+   */
+  protected $src_size = 0;
 
   /**
    * Constructor
    *
-   * @param   bool   $multiple     True, if it is a multiple upload  (default: false)
-   * @param   bool   $async        True, if it is a asynchronous upload  (default: false)
+   * @param   bool  $multiple  True, if it is a multiple upload  (default: false)
+   * @param   bool  $async     True, if it is a asynchronous upload  (default: false)
    *
    * @return  void
    *
@@ -157,7 +158,7 @@ abstract class Uploader implements UploaderInterface
    * Base method to retrieve an uploaded image. Step 1.
    * Method has to be extended! Do not use it in this way!
    *
-   * @param   array    $data        Form data (as reference)
+   * @param   array  $data            Form data (as reference)
    * @param   bool   $createFilename  True, if the filename has to be created (default: True)
    *
    * @return  bool     True on success, false otherwise
@@ -259,7 +260,7 @@ abstract class Uploader implements UploaderInterface
    * Override form data with image metadata
    * according to configuration. Step 2.
    *
-   * @param   array   $data       The form data (as a reference)
+   * @param   array  $data  The form data (as a reference)
    *
    * @return  bool    True on success, false otherwise
    *
@@ -293,7 +294,7 @@ abstract class Uploader implements UploaderInterface
     {
       $data['imgmetadata'] = json_encode($metadata, JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     }
-    catch(\JsonException $e)
+    catch (\JsonException $e)
     {
       $this->component->addDebug('Unable to encode image metadata: ' . $e->getMessage());
       $metadata            = ['exif' => [], 'iptc' => [], 'comment' => ''];
@@ -326,7 +327,7 @@ abstract class Uploader implements UploaderInterface
         case 'IFD0':
         case 'EXIF':
           // Get exif source attribute
-          if(isset($exif_config_array[$source_array[0]], $exif_config_array[$source_array[0]][$source_array[1]])  )
+          if(isset($exif_config_array[$source_array[0]], $exif_config_array[$source_array[0]][$source_array[1]]))
           {
             $source = $exif_config_array[$source_array[0]][$source_array[1]];
           }
@@ -340,8 +341,7 @@ abstract class Uploader implements UploaderInterface
           $source_name      = $source['Name'];
 
           // Get metadata value
-          if(isset($metadata['exif'][$source_array[0]], $metadata['exif'][$source_array[0]][$source_attribute])
-              && !empty($metadata['exif'][$source_array[0]][$source_attribute]))
+          if(isset($metadata['exif'][$source_array[0]], $metadata['exif'][$source_array[0]][$source_attribute]) && !empty($metadata['exif'][$source_array[0]][$source_attribute]))
           {
             $source_value = $metadata['exif'][$source_array[0]][$source_attribute];
           }
@@ -387,7 +387,7 @@ abstract class Uploader implements UploaderInterface
 
         case 'IPTC':
           // Get iptc source attribute
-          if(isset($iptc_config_array[$source_array[0]], $iptc_config_array[$source_array[0]][$source_array[1]])  )
+          if(isset($iptc_config_array[$source_array[0]], $iptc_config_array[$source_array[0]][$source_array[1]]))
           {
             $source = $iptc_config_array[$source_array[0]][$source_array[1]];
           }
@@ -424,7 +424,7 @@ abstract class Uploader implements UploaderInterface
         default:
           // Unknown metadata source
             continue 2;
-          // break;
+        // break;
       }
 
 
@@ -514,7 +514,7 @@ abstract class Uploader implements UploaderInterface
    * Method to create uploaded image files. Step 3.
    * (create imagetypes, upload imagetypes to storage, onJoomAfterUpload)
    *
-   * @param   ImageTable   $data_row     Image object
+   * @param   ImageTable  $data_row  Image object
    *
    * @return  bool         True on success, false otherwise
    *
@@ -593,7 +593,7 @@ abstract class Uploader implements UploaderInterface
   /**
    * Rollback an erroneous upload
    *
-   * @param   object  $data_row   Image object containing at least catid and filename (default: false)
+   * @param   object  $data_row  Image object containing at least catid and filename (default: false)
    *
    * @return  void
    *
@@ -625,33 +625,40 @@ abstract class Uploader implements UploaderInterface
    */
   public function deleteTmp(): bool
   {
+    $isDeleted = true;
+
     $files = [];
 
-    if(isset($this->src_file) && !empty($this->src_file) && file_exists($this->src_file))
+    if(!empty($this->src_file) && is_file($this->src_file))
     {
       array_push($files, $this->src_file);
     }
 
-    if(isset($this->src_tmp) && !empty($this->src_tmp) && file_exists($this->src_tmp))
+    // remove created temp file
+    if(!empty($this->src_tmp) && is_file($this->src_tmp))
     {
-          array_push($files, $this->src_tmp);
+      array_push($files, $this->src_tmp);
     }
 
-      // ToDo: @manuel JFile only accepts string not array J6.0 ? earlier ?
-      $isDeleted = true;
+    foreach($files as $file)
+    {
+      // $isDeleted &= JFile::delete($file);
+      $isDeleted &= JFile::delete($file);
+    }
 
-      foreach($files as $file)
-      {
-          $isDeleted &= JFile::delete($file);
-      }
+    // remove created temp folder
+    if(is_dir($this->src_tmp))
+    {
+      $isDeleted &= Folder::delete($this->src_tmp);
+    }
 
-      return $isDeleted;
+    return $isDeleted;
   }
 
   /**
    * Returns the number of images of the current user
    *
-   * @param   int $userid  Id of the current user
+   * @param   int  $userid  Id of the current user
    *
    * @return  int      The number of images of the current user
    *
@@ -661,10 +668,7 @@ abstract class Uploader implements UploaderInterface
   {
     $db = Factory::getContainer()->get(DatabaseInterface::class);
 
-    $query = $db->getQuery(true)
-          ->select('COUNT(id)')
-          ->from(_JOOM_TABLE_IMAGES)
-          ->where('created_by = ' . \intval($userid));
+    $query = $db->getQuery(true)->select('COUNT(id)')->from(_JOOM_TABLE_IMAGES)->where('created_by = ' . \intval($userid));
 
     $timespan = $this->component->getConfig()->get('jg_maxuserimage_timespan');
 
@@ -740,7 +744,7 @@ abstract class Uploader implements UploaderInterface
   /**
    * Creation of a temporary image object for the rollback
    *
-   * @param   array   $data      The form data
+   * @param   array  $data  The form data
    *
    * @return  object
    *
