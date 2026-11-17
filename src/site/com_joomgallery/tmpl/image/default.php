@@ -25,7 +25,7 @@ use Joomla\Registry\Registry;
 $image_type        = $this->params['configs']->get('jg_detail_view_type_image', 'detail', 'STRING');
 $show_title        = $this->params['configs']->get('jg_detail_view_show_title', 1, 'INT');
 $title_position    = $this->params['configs']->get('jg_detail_view_title_position', 'below', 'STRING');
-$header_above = $title_position === 'above';
+$header_above      = $title_position === 'above';
 $show_category     = $this->params['configs']->get('jg_detail_view_show_category', 1, 'INT');
 $show_description  = $this->params['configs']->get('jg_detail_view_show_description', 1, 'INT');
 $show_imgdate      = $this->params['configs']->get('jg_detail_view_show_imgdate', 1, 'INT');

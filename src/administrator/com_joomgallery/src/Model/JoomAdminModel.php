@@ -104,9 +104,9 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Constructor.
    *
-   * @param   array                 $config       An array of configuration options (name, state, dbo, table_path, ignore_request).
-   * @param   MVCFactoryInterface   $factory      The factory.
-   * @param   FormFactoryInterface  $formFactory  The form factory.
+   * @param   array                  $config       An array of configuration options (name, state, dbo, table_path, ignore_request).
+   * @param   MVCFactoryInterface    $factory      The factory.
+   * @param   FormFactoryInterface   $formFactory  The form factory.
    *
    * @since   4.0.0
    * @throws  \Exception
@@ -117,16 +117,24 @@ abstract class JoomAdminModel extends AdminModel
 
     $this->app       = Factory::getApplication('administrator');
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
-    $this->user      = $this->component->getMVCFactory()->getIdentity();
+
+    if(!$this->app->isClient('api')) // @Manuel
+    {
+      $this->user = $this->component->getMVCFactory()->getIdentity();
+    }
+    else
+    {
+      $this->user = $this->app->getIdentity();
+    }
     $this->typeAlias = _JOOM_OPTION . '.' . $this->type;
   }
 
   /**
-   * Returns a reference to the a Table object, always creating it.
+   * Returns a reference to the Table object, always creating it.
    *
-   * @param   string  $type    The table type to instantiate
-   * @param   string  $prefix  A prefix for the table class name. Optional.
-   * @param   array   $config  Configuration array for model. Optional.
+   * @param   string   $type    The table type to instantiate
+   * @param   string   $prefix  A prefix for the table class name. Optional.
+   * @param   array    $config  Configuration array for model. Optional.
    *
    * @return  Table    A database object
    *
@@ -147,8 +155,8 @@ abstract class JoomAdminModel extends AdminModel
   {
     $params = [
       'component' => $this->getState('parameters.component'),
-      'menu'               => $this->getState('parameters.menu'),
-      'configs'            => $this->getState('parameters.configs'),
+      'menu'      => $this->getState('parameters.menu'),
+      'configs'   => $this->getState('parameters.configs'),
     ];
 
     return $params;
@@ -175,7 +183,7 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Method to save image from form data.
    *
-   * @param   array  $data  The form data.
+   * @param   array   $data  The form data.
    *
    * @return  boolean  True on success, False on error.
    *
@@ -216,7 +224,7 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Method override to check-in a record or an array of record
    *
-   * @param   mixed  $pks  The ID of the primary key or an array of IDs
+   * @param   mixed   $pks  The ID of the primary key or an array of IDs
    *
    * @return  integer|boolean  Boolean false if there is an error, otherwise the count of records checked in.
    *
@@ -238,25 +246,25 @@ abstract class JoomAdminModel extends AdminModel
     // Check in all items.
     foreach($pks as $pk)
     {
-        if($table->load($pk))
+      if($table->load($pk))
+      {
+        if($table->{$checkedOutField} > 0)
         {
-          if($table->{$checkedOutField} > 0)
+          if(!$this->checkinOne($pk))
           {
-            if(!$this->checkinOne($pk))
-            {
-              return false;
-            }
-
-            $count++;
+            return false;
           }
-        }
-        else
-        {
-          $this->component->setError($table->getError());
-          $this->component->addLog($table->getError(), 'error', 'jerror');
 
-          return false;
+          $count++;
         }
+      }
+      else
+      {
+        $this->component->setError($table->getError());
+        $this->component->addLog($table->getError(), 'error', 'jerror');
+
+        return false;
+      }
     }
 
     return $count;
@@ -265,7 +273,7 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Method to checkin a row.
    *
-   * @param   integer  $pk  The numeric id of the primary key.
+   * @param   integer   $pk  The numeric id of the primary key.
    *
    * @return  boolean  False on failure or error, true otherwise.
    *
@@ -296,9 +304,9 @@ abstract class JoomAdminModel extends AdminModel
       $checkedOutField = $table->getColumnAlias('checked_out');
 
       // Check if this is the user having previously checked out the row.
-      if( $table->$checkedOutField > 0 && $table->$checkedOutField != $this->user->id &&
-          !$this->user->authorise('core.manage', 'com_checkin')
-        )
+      if($table->$checkedOutField > 0 && $table->$checkedOutField != $this->user->id &&
+        !$this->user->authorise('core.manage', 'com_checkin')
+      )
       {
         $this->component->setError(Text::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH'));
         $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH'), 'error', 'jerror');
@@ -338,13 +346,22 @@ abstract class JoomAdminModel extends AdminModel
     $this->type = $type;
 
     // Get current user
-    $this->user = $this->component->getMVCFactory()->getIdentity();
+    $app = Factory::getApplication();
+
+    if(!$app->isClient('api')) // @Manuel
+    {
+      $this->user = $this->component->getMVCFactory()->getIdentity();
+    }
+    else
+    {
+      $this->user = $app->getIdentity();
+    }
   }
 
   /**
    * Method to check the validity of the category ID for batch copy and move
    *
-   * @param   integer  $categoryId  The category ID to check
+   * @param   integer   $categoryId  The category ID to check
    *
    * @return  boolean
    *
@@ -369,10 +386,10 @@ abstract class JoomAdminModel extends AdminModel
         }
 
 
-          $this->component->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_MOVE_CATEGORY_NOT_FOUND'));
-          $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_BATCH_MOVE_CATEGORY_NOT_FOUND'), 'error', 'jerror');
+        $this->component->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_MOVE_CATEGORY_NOT_FOUND'));
+        $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_BATCH_MOVE_CATEGORY_NOT_FOUND'), 'error', 'jerror');
 
-          return false;
+        return false;
       }
     }
 
@@ -399,7 +416,7 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Method to load component specific parameters into model state.
    *
-   * @param   int   $id   ID of the content if needed (default: 0)
+   * @param   int   $id  ID of the content if needed (default: 0)
    *
    * @return  void
    * @since   4.0.0
@@ -430,7 +447,7 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Prepare and sanitise the table prior to saving.
    *
-   * @param   Table  $table  Table Object
+   * @param   Table   $table  Table Object
    *
    * @return  void
    *
@@ -444,8 +461,8 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Method to get the record form.
    *
-   * @param   array    $data      An optional array of data for the form to interogate.
-   * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+   * @param   array     $data      An optional array of data for the form to interogate.
+   * @param   boolean   $loadData  True if the form is to load its own data (default case), false if not.
    *
    * @return  \JForm|boolean  A \JForm object on success, false on failure
    *
@@ -519,9 +536,9 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Allows preprocessing of the JForm object.
    *
-   * @param   Form    $form   The form object
-   * @param   array   $data   The data to be merged into the form object
-   * @param   string  $group  The plugin group to be executed
+   * @param   Form     $form   The form object
+   * @param   array    $data   The data to be merged into the form object
+   * @param   string   $group  The plugin group to be executed
    *
    * @return  void
    *
@@ -541,8 +558,8 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Set or update associations.
    *
-   * @param   Table  &$table        Table object (with reference)
-   * @param   array  $associations  List of associated ids
+   * @param   Table  &$table         Table object (with reference)
+   * @param   array   $associations  List of associated ids
    *
    * @return  void
    *
@@ -651,7 +668,7 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Clean the cache
    *
-   * @param   string  $group  The cache group
+   * @param   string   $group  The cache group
    *
    * @return  void
    *
@@ -665,7 +682,7 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Method to test whether a record can be deleted.
    *
-   * @param   object  $record  A record object.
+   * @param   object   $record  A record object.
    *
    * @return  boolean  True if allowed to delete the record. Defaults to the permission for the component.
    *
@@ -696,7 +713,7 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Method to test whether a record can have its state changed.
    *
-   * @param   object  $record  A record object.
+   * @param   object   $record  A record object.
    *
    * @return  boolean  True if allowed to change the state of the record. Defaults to the permission for the component.
    *
@@ -727,9 +744,9 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Method to load and return a table object.
    *
-   * @param   string  $name    The name of the view
-   * @param   string  $prefix  The class prefix. Optional.
-   * @param   array   $config  Configuration settings to pass to Table::getInstance
+   * @param   string   $name    The name of the view
+   * @param   string   $prefix  The class prefix. Optional.
+   * @param   array    $config  Configuration settings to pass to Table::getInstance
    *
    * @return  Table|boolean  Table object or boolean false if failed
    *
@@ -750,8 +767,8 @@ abstract class JoomAdminModel extends AdminModel
   /**
    * Returns a property of the object or the default value if the property is not set.
    *
-   * @param   string  $property  The name of the property.
-   * @param   mixed   $default   The default value.
+   * @param   string   $property  The name of the property.
+   * @param   mixed    $default   The default value.
    *
    * @return  mixed    The value of the property.
    *

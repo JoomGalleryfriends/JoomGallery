@@ -12,13 +12,12 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-
 use Joomla\Filesystem\File as JFile;
 use Joomla\Filesystem\Path as JPath;
 
@@ -29,16 +28,17 @@ use Joomla\Filesystem\Path as JPath;
  */
 class TUSUploader extends BaseUploader implements UploaderInterface
 {
-  protected $src_name;
-  protected $src_size;
-  protected $src_tmp;
-  protected $src_file;
+// Already defined in Uploader.php
+//  protected $src_name;
+//  protected $src_size;
+//  protected $src_tmp;
+//  protected $src_file;
 
   /**
    * Constructor
    *
-   * @param   bool   $multiple     True, if it is a multiple upload  (default: false)
-   * @param   bool   $async        True, if it is a asynchronous upload  (default: false)
+   * @param   bool  $multiple  True, if it is a multiple upload  (default: false)
+   * @param   bool  $async     True, if it is a asynchronous upload  (default: false)
    *
    * @return  void
    *
@@ -55,14 +55,14 @@ class TUSUploader extends BaseUploader implements UploaderInterface
    * Method to retrieve an uploaded image. Step 1.
    * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
    *
-   * @param   array    $data        Form data (as reference)
-   * @param   bool     $filename    True, if the filename has to be created (default: True)
+   * @param   array  $data            Form data (as reference)
+   * @param   bool   $createFilename  True, if the filename has to be created (default: True)
    *
    * @return  bool     True on success, false otherwise
    *
    * @since  4.0.0
    */
-  public function retrieveImage(&$data, $filename = true): bool
+  public function retrieveImage(&$data, $createFilename = true): bool
   {
     $user = Factory::getUser();
 
@@ -134,12 +134,13 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     // - check tag and size
     // - create filename
     // - trigger onJoomBeforeUpload
-    if(!parent::retrieveImage($data, $filename))
+    if(!parent::retrieveImage($data, $createFilename))
     {
       return false;
     }
 
     // Upload file to temp file
+    // ToDo: @Manuel: Attention dirname removes uuid part ? intentionally ?
     $this->src_file = JPath::clean(\dirname($this->src_tmp) . \DIRECTORY_SEPARATOR . $this->src_name);
 
     if(!JFile::move($this->src_tmp, $this->src_file))
@@ -154,7 +155,8 @@ class TUSUploader extends BaseUploader implements UploaderInterface
 
     // Set permissions of uploaded file
     JPath::setPermissions($this->src_file, '0644', null);
-    $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
+    //$this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', filesize($this->src_file) / 1000));
+    $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_UPLOAD_COMPLETE', $this->src_size / 1000)); // @Manuel
 
     return true;
   }
@@ -163,7 +165,7 @@ class TUSUploader extends BaseUploader implements UploaderInterface
    * Override form data with image metadata
    * according to configuration. Step 2.
    *
-   * @param   array   $data     The form data (as a reference)
+   * @param   array  $data  The form data (as a reference)
    *
    * @return  bool    True on success, false otherwise
    *
@@ -212,9 +214,9 @@ class TUSUploader extends BaseUploader implements UploaderInterface
   }
 
   /**
-   * Analyses an error code and returns its text
+   * Analyzes an error code and returns its text
    *
-   * @param   int     $uploaderror  The errorcode
+   * @param   int  $uploaderror  The errorcode
    *
    * @return  string  The error message
    *
@@ -237,15 +239,15 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     }
 
 
-      $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN')), 'error', 'jerror');
+    $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN')), 'error', 'jerror');
 
-      return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
+    return Text::sprintf('COM_JOOMGALLERY_ERROR_CODE', Text::_('COM_JOOMGALLERY_ERROR_UNKNOWN'));
   }
 
   /**
    * Detect if there is an image uploaded
    *
-   * @param   array    $data      Form data
+   * @param   array  $data  Form data
    *
    * @return  bool     True if file is detected, false otherwise
    *
@@ -263,6 +265,6 @@ class TUSUploader extends BaseUploader implements UploaderInterface
     }
 
 
-      return false;
+    return false;
   }
 }

@@ -624,9 +624,14 @@ class JoomHelper
       {
         // Joomgallery internal URL
         // Example: https://www.example.org/index.php?option=com_joomgallery&controller=images&view=image&format=raw&type=orig&id=3&catid=1
-        return Route::_(self::getViewRoute('image', $img->id, $img->catid, 'raw', $type));
-      }
 
+        // Old, exception on api/cli:
+        //   return Route::_(self::getViewRoute('image', $img->id, $img->catid, 'raw', $type));
+        $imgViewRoute = self::getViewRoute('image', $img->id, $img->catid, 'raw', $type);
+        $route        = Route::link('administrator', $imgViewRoute);
+
+        return $route;
+      }
 
         // Create file manager service
         $manager = self::getService('FileManager', [$img->catid]);
