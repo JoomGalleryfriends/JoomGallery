@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Associations;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -166,7 +167,7 @@ class CategoriesModel extends JoomListModel
     $id .= ':' . $this->getState('filter.search');
     $id .= ':' . $this->getState('filter.published');
     $id .= ':' . $this->getState('filter.level');
-    $id .= ':' . $this->getState('filter.language');
+    $id .= ':' . serialize($this->getState('filter.language'));
     $id .= ':' . $this->getState('filter.showself');
     $id .= ':' . $this->getState('filter.showhidden');
     $id .= ':' . $this->getState('filter.showempty');
@@ -176,6 +177,45 @@ class CategoriesModel extends JoomListModel
     $id .= ':' . serialize($this->getState('filter.exclude'));
 
     return parent::getStoreId($id);
+  }
+
+  /**
+   * Get the category list and its language associations.
+   *
+   * @return  array
+   */
+  public function getItems()
+  {
+    $items = parent::getItems();
+
+    if(!Associations::isEnabled() || empty($items))
+    {
+      return $items;
+    }
+
+    foreach($items as $item)
+    {
+      $item->associations               = [];
+
+      if(empty($item->id))
+      {
+        continue;
+      }
+
+    $item->associations = Associations::getAssociations(
+        'com_joomgallery',
+        '#__joomgallery_categories',
+        'com_joomgallery.category',
+        (int) $item->id,
+        'id',
+        '',
+        ''
+    );
+
+      $item->multilingual_group_blocked = !empty($item->associations);
+    }
+
+    return $items;
   }
 
   /**
@@ -376,10 +416,19 @@ class CategoriesModel extends JoomListModel
     }
 
     // Filter on the language.
-    if($language = $this->getState('filter.language'))
+    $language = $this->getState('filter.language');
+
+    if(!empty($language))
     {
-      $query->where($db->quoteName('a.language') . ' = :language')
-        ->bind(':language', $language);
+      if(\is_array($language))
+      {
+        $query->whereIn($db->quoteName('a.language'), $language, ParameterType::STRING);
+      }
+      else
+      {
+        $query->where($db->quoteName('a.language') . ' = :language')
+          ->bind(':language', $language);
+      }
     }
 
     // Add the list ordering clause.
@@ -557,10 +606,19 @@ class CategoriesModel extends JoomListModel
     }
 
     // Filter on the language.
-    if($language = $this->getState('filter.language'))
+    $language = $this->getState('filter.language');
+
+    if(!empty($language))
     {
-      $query->where($db->quoteName('a.language') . ' = :language')
-        ->bind(':language', $language);
+      if(\is_array($language))
+      {
+        $query->whereIn($db->quoteName('a.language'), $language, ParameterType::STRING);
+      }
+      else
+      {
+        $query->where($db->quoteName('a.language') . ' = :language')
+          ->bind(':language', $language);
+      }
     }
 
     return $query;

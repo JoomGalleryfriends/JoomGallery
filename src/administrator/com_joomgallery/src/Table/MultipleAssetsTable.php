@@ -219,6 +219,11 @@ class MultipleAssetsTable extends Table
 
     $result = parent::delete($pk, $children);
 
+    if(!$result)
+    {
+      return false;
+    }
+
     if($trackAssets)
     {
       // Look for assets in object properties
@@ -255,9 +260,7 @@ class MultipleAssetsTable extends Table
           }
           else
           {
-              $this->setError($asset->getError());
-
-              return false;
+            continue;
           }
         }
       }

@@ -16,11 +16,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -38,6 +40,8 @@ class CategoryModel extends JoomAdminModel
    * @var     string
    */
   protected $type = 'category';
+
+  protected $associationsContext = 'com_joomgallery.category';
 
   /**
    * True if a password is set
@@ -84,7 +88,7 @@ class CategoryModel extends JoomAdminModel
     }
 
     // Apply filter for current category on thumbnail field
-    $form->setFieldAttribute('thumbnail', 'categories', $id);
+    $form->setFieldAttribute('thumbnail', 'categories', (string) $id);
 
     // Disable remove password field if no password is set
     if(!$this->is_password)
@@ -114,6 +118,42 @@ class CategoryModel extends JoomAdminModel
     if(!$this->canChangeCreatedBy($id))
     {
       $form->setFieldAttribute('created_by', 'filter', 'unset');
+    }
+
+    $forcedLanguage = $this->app->getInput()->getString('forcedLanguage', '');
+    $originId       = $this->app->getInput()->getInt('origin_id', 0);
+
+    if($forcedLanguage !== '' && $originId > 0)
+    {
+      $form->setFieldAttribute('language', 'disabled', 'true');
+      $form->setValue('language', null, $forcedLanguage);
+
+      $sourceTable = $this->getTable();
+
+      if($sourceTable->load($originId))
+      {
+        if((int) $sourceTable->parent_id > 1)
+        {
+        $parentAssociations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            (int) $sourceTable->parent_id,
+            'id',
+            '',
+            ''
+        );
+
+          if(isset($parentAssociations[$forcedLanguage]))
+          {
+            $form->setValue('parent_id', null, (int) $parentAssociations[$forcedLanguage]->id);
+          }
+        }
+        else
+        {
+          $form->setValue('parent_id', null, 1);
+        }
+      }
     }
 
     return $form;
@@ -182,17 +222,17 @@ class CategoryModel extends JoomAdminModel
     return $this->is_password;
   }
 
-  /**
-   * Method to get a single record.
-   *
-   * @param   integer  $pk  The id of the primary key.
-   *
-   * @return  Object|boolean Object on success, false on failure.
-   *
-   * @since   4.0.0
-   */
-  public function getItem($pk = null)
-  {
+    /**
+     * Method to get a single record.
+     *
+     * @param   integer  $pk  The id of the primary key.
+     *
+     * @return  Object|boolean Object on success, false on failure.
+     *
+     * @since   4.0.0
+     */
+    public function getItem($pk = null)
+    {
     if($this->item === null)
     {
       $this->item = false;
@@ -204,6 +244,26 @@ class CategoryModel extends JoomAdminModel
 
       if($this->item = parent::getItem($pk))
       {
+        if($this->associationsContext && Associations::isEnabled() && !empty($this->item->id))
+        {
+        $associations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            $this->item->id,
+            'id',
+            '',
+            ''
+        );
+
+          $this->item->associations = [];
+
+          foreach($associations as $language => $association)
+          {
+            $this->item->associations[$language] = $association->id;
+          }
+        }
+
         if(isset($this->item->params))
         {
           $this->item->params = json_encode($this->item->params);
@@ -214,7 +274,7 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $this->item;
-  }
+    }
 
   /**
    * Method to delete one or more categories.
@@ -250,7 +310,6 @@ class CategoryModel extends JoomAdminModel
 
           if(\in_array(false, $result, true))
           {
-            $this->setError($table->getError());
             $this->component->addLog($table->getError(), 'error', 'jerror');
 
             return false;
@@ -262,71 +321,44 @@ class CategoryModel extends JoomAdminModel
           // Delete corresponding folders
           if(!$manager->deleteCategory($table, $force_delete))
           {
-            $this->setError($this->component->getDebug(true));
             $this->component->addLog($this->component->getDebug(true) . '; Category ID: ' . $pk, 'error', 'jerror');
 
             return false;
           }
 
-          // Multilanguage: if associated, delete the item in the _associations table
-          if($this->associationsContext && Associations::isEnabled())
+          // Start transaction for deleting the category and its association.
+          $db = $this->getDatabase();
+          $db->transactionStart();
+
+          try
           {
-            $db    = $this->getDbo();
-            $query = $db->getQuery(true)
-            ->select(
-                [
-                  'COUNT(*) AS ' . $db->quoteName('count'),
-                  $db->quoteName('as1.key'),
-                ]
-            )
-              ->from($db->quoteName('#__associations', 'as1'))
-              ->join('LEFT', $db->quoteName('#__associations', 'as2'), $db->quoteName('as1.key') . ' = ' . $db->quoteName('as2.key'))
-            ->where(
-                [
-                  $db->quoteName('as1.context') . ' = :context',
-                  $db->quoteName('as1.id') . ' = :pk',
-                ]
-            )
-              ->bind(':context', $this->associationsContext)
-              ->bind(':pk', $pk, ParameterType::INTEGER)
-              ->group($db->quoteName('as1.key'));
-
-            $db->setQuery($query);
-            $row = $db->loadAssoc();
-
-            if(!empty($row['count']))
+            // Remove the category from its language association group.
+            if(!$this->removeAssociationMember((int) $pk))
             {
-              $query = $db->getQuery(true)
-                ->delete($db->quoteName('#__associations'))
-                ->where(
-                    [
-                      $db->quoteName('context') . ' = :context',
-                      $db->quoteName('key') . ' = :key',
-                    ]
-                )
-                ->bind(':context', $this->associationsContext)
-                ->bind(':key', $row['key']);
+              $db->transactionRollback();
 
-              if($row['count'] > 2)
-              {
-                $query->where($db->quoteName('id') . ' = :pk')
-                  ->bind(':pk', $pk, ParameterType::INTEGER);
-              }
-
-              $db->setQuery($query);
-              $db->execute();
+              return false;
             }
-          }
 
-          if(!$table->delete($pk))
+            if(!$table->delete($pk))
+            {
+              $db->transactionRollback();
+              $this->setError($table->getError());
+
+              return false;
+            }
+
+            $db->transactionCommit();
+          }
+          catch(\Throwable $exception)
           {
-            $this->setError($table->getError());
-            $this->component->addLog($table->getError(), 'error', 'jerror');
+            $db->transactionRollback();
+            $this->setError($exception->getMessage());
 
             return false;
           }
 
-          // Trigger the after event.
+          // Trigger the after delete event.
           Factory::getApplication()->triggerEvent($this->event_after_delete, [$context, $table]);
         }
         else
@@ -342,15 +374,13 @@ class CategoryModel extends JoomAdminModel
             return false;
           }
 
+          $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
 
-            $this->component->addLog(Text::_('JLIB_APPLICATION_ERROR_DELETE_NOT_PERMITTED'), 'warning', 'jerror');
-
-            return false;
+          return false;
         }
       }
       else
       {
-        $this->setError($table->getError());
         $this->component->addLog($table->getError(), 'error', 'jerror');
 
         return false;
@@ -424,7 +454,104 @@ class CategoryModel extends JoomAdminModel
     unset($data['rm_password'], $data['password']);
 
 
-    // Change language to 'All' if multilangugae is not enabled
+    // Create a translated category variant from the source category.
+    $sourceId             = $app->input->getInt('origin_id', 0);
+    $forcedLanguage       = $app->input->getString('forcedLanguage', '');
+    $isLanguageVariant    = $sourceId > 0 && $forcedLanguage !== '';
+    $preparedAssociations = [];
+
+    if($isLanguageVariant)
+    {
+      $sourceTable = $this->getTable();
+
+      // The target must be an enabled content language.
+      $contentLanguages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(false, false, null, 'ordering', 'asc');
+      $enabledLanguages = array_map(static fn($language) => $language->lang_code, $contentLanguages);
+
+      if(!\in_array($forcedLanguage, $enabledLanguages, true))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+
+        return false;
+      }
+
+      // Load and validate the source before preparing any variant data.
+      if(!$sourceTable->load($sourceId)
+        || empty($sourceTable->language)
+        || $sourceTable->language === '*'
+        || $sourceTable->language === $forcedLanguage)
+      {
+        $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+
+        return false;
+      }
+
+      // A variant may only be created from a source category the user may edit/use.
+      if(!$this->getAcl()->checkACL('edit', 'category', (int) $sourceTable->id, (int) $sourceTable->parent_id, true))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_DENIED'));
+
+        return false;
+      }
+
+      // Load and validate the existing association group.
+      if($this->associationsContext && Associations::isEnabled())
+      {
+        $preparedAssociations = $this->getAssociationMap((int) $sourceTable->id);
+
+        if($preparedAssociations === false)
+        {
+          return false;
+        }
+
+        // Do not create a second association for the requested language.
+        if(isset($preparedAssociations[$forcedLanguage]))
+        {
+          $this->setError(Text::_('COM_JOOMGALLERY_ERROR_DELETE_CATEGORY_VARIANT'));
+
+          return false;
+        }
+      }
+
+      $targetParentId = 1;
+
+      if((int) $sourceTable->parent_id > 1)
+      {
+        $parentAssociations = Associations::getAssociations(
+            'com_joomgallery',
+            '#__joomgallery_categories',
+            'com_joomgallery.category',
+            (int) $sourceTable->parent_id,
+            'id',
+            '',
+            ''
+        );
+
+        if(!isset($parentAssociations[$forcedLanguage]))
+        {
+          $this->setError(Text::_('COM_JOOMGALLERY_ERROR_CATEGORY_VARIANT_PARENT'));
+
+          return false;
+        }
+
+        $targetParentId = (int) $parentAssociations[$forcedLanguage]->id;
+      }
+
+      // Check that the user may create a category below the resolved target parent.
+      if(!$this->getAcl()->checkACL('create', 'category', 0, $targetParentId, true))
+      {
+        $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_CREATE'));
+
+        return false;
+      }
+
+      $data['published'] = (int) $sourceTable->published;
+      $data['id']        = 0;
+      $data['language']  = $forcedLanguage;
+      $data['parent_id'] = $targetParentId;
+    }
+
+    // Change language to 'All' if multilangugae is not enabled.
     if(!Multilanguage::isEnabled())
     {
       $data['language'] = '*';
@@ -433,6 +560,59 @@ class CategoryModel extends JoomAdminModel
     // Include the plugins for the save events.
     PluginHelper::importPlugin($this->events_map['save']);
 
+    // Track the transaction used for creating a language variant.
+    $transactionStarted = false;
+    $db                 = $this->getDatabase();
+
+    $rollbackTransaction = function () use (
+        $db,
+        &$transactionStarted
+    ) {
+      if($transactionStarted)
+      {
+        $db->transactionRollback();
+        $transactionStarted = false;
+      }
+    };
+
+    // Track folders created during category saving.
+    $createdCategoryFolders = [];
+
+    // Remove only folders created during this save operation.
+    $rollbackCategoryFolders = function () use (&$createdCategoryFolders) {
+      try
+      {
+        $filesystem = $this->component->getFilesystem();
+
+        foreach(array_reverse($createdCategoryFolders) as $folderPath)
+        {
+          try
+          {
+            $filesystem->delete($folderPath);
+          }
+          catch(\Throwable $e)
+          {
+            $this->component->addLog(
+                'Could not remove category folder during rollback: '
+                . $folderPath . '. ' . $e->getMessage(),
+                'error',
+                'jerror'
+            );
+          }
+        }
+      }
+      catch(\Throwable $e)
+      {
+        $this->component->addLog(
+            'Could not access filesystem during category rollback: ' . $e->getMessage(),
+            'error',
+            'jerror'
+        );
+      }
+
+      $createdCategoryFolders = [];
+    };
+
     // Allow an exception to be thrown.
     try
     {
@@ -440,7 +620,10 @@ class CategoryModel extends JoomAdminModel
       if($pk > 0)
       {
         $table->load($pk);
-        $isNew = false;
+        $oldPublished = (int) $table->published;
+        $oldHidden    = (int) $table->hidden;
+        $oldAccess    = (int) $table->access;
+        $isNew        = false;
 
         // Check if the parent category was changed
         if($table->parent_id != $data['parent_id'])
@@ -466,7 +649,25 @@ class CategoryModel extends JoomAdminModel
           }
         }
 
-          // Check if category has subcategories (children)
+          // Preflight all associated categories before storing any changed field.
+        // This keeps the save operation all-or-nothing when one language variant
+        // cannot be edited by the current user.
+        $associatedFields = [
+          'published' => $oldPublished,
+          'hidden'    => $oldHidden,
+          'access'    => $oldAccess,
+        ];
+
+        foreach($associatedFields as $field => $oldValue)
+        {
+          if(isset($data[$field]) && (int) $data[$field] !== $oldValue
+            && !$this->checkAssociatedFieldPermissions($table, $field, 'jg_link_associated_categories', false))
+          {
+            return false;
+          }
+        }
+
+        // Check if category has subcategories (children)
           if($this->getChildren($pk))
           {
             $hasChildren = true;
@@ -609,6 +810,7 @@ class CategoryModel extends JoomAdminModel
         // Filesystem changes
         $filesystem_success = true;
 
+        // Track folders created for a new category.
         if(!$isNew && ($catMoved || $aliasChanged))
         {
           // Moving and renaming of folders will happen after storing the DB
@@ -623,8 +825,13 @@ class CategoryModel extends JoomAdminModel
         }
         elseif($isNew || !$this->component->getConfig()->get('jg_compatibility_mode', 0))
         {
-          // Create folders
-          $filesystem_success = $manager->createCategory($table->alias, $table->parent_id);
+        // Create folders
+        $filesystem_success = $manager->createCategory(
+            $table->alias,
+            $table->parent_id,
+            'jerror',
+            $createdCategoryFolders
+        );
         }
 
         // Dont store the table if filesystem changes was not successful
@@ -632,7 +839,16 @@ class CategoryModel extends JoomAdminModel
         {
           $this->component->addError(Text::_('COM_JOOMGALLERY_ERROR_SAVE_FILESYSTEM_ERROR'));
 
+          $rollbackCategoryFolders();
+
           return false;
+        }
+
+        // Start transaction for creating a language variant.
+        if($isLanguageVariant && $isNew)
+        {
+          $db->transactionStart();
+          $transactionStarted = true;
         }
 
         // Store the data.
@@ -641,7 +857,27 @@ class CategoryModel extends JoomAdminModel
           $this->setError($table->getError());
           $this->component->addLog($table->getError(), 'error', 'jerror');
 
+          $rollbackTransaction();
+          $rollbackCategoryFolders();
+
           return false;
+        }
+
+        if(!$isNew)
+        {
+          $fields = [
+            'published' => $oldPublished,
+            'hidden'    => $oldHidden,
+            'access'    => $oldAccess,
+          ];
+
+          foreach($fields as $field => $oldValue)
+          {
+            if($oldValue !== (int) $table->$field)
+            {
+              $this->syncAssociatedField($table, $field, $table->$field, 'jg_link_associated_categories');
+            }
+          }
         }
 
         // Handle folders if parent category was changed
@@ -656,6 +892,8 @@ class CategoryModel extends JoomAdminModel
             $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_ERROR_MOVE_CATEGORY', $manager->paths['src'], $manager->paths['dest']));
             $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_MOVE_CATEGORY', $manager->paths['src'], $manager->paths['dest']), 'error', 'jerror');
 
+            $rollbackTransaction();
+
             return false;
           }
 
@@ -665,6 +903,8 @@ class CategoryModel extends JoomAdminModel
           // Adjust path of subcategory records
           if(!$this->fixChildrenPath($table, $old_table))
           {
+            $rollbackTransaction();
+
             return false;
           }
         }
@@ -695,6 +935,8 @@ class CategoryModel extends JoomAdminModel
             $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_ERROR_RENAME_CATEGORY', $manager->paths['src'], $manager->paths['dest']));
             $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_ERROR_RENAME_CATEGORY', $manager->paths['src'], $manager->paths['dest']), 'error', 'jerror');
 
+            $rollbackTransaction();
+
             return false;
           }
 
@@ -704,13 +946,13 @@ class CategoryModel extends JoomAdminModel
           // Adjust path of subcategory records
           if(!$this->fixChildrenPath($table, $old_table))
           {
+            $rollbackTransaction();
+
             return false;
           }
         }
 
-
           // Action already perfromed
-
 
         // Handle folders if record gets copied
         if($isNew && $isCopy)
@@ -727,9 +969,44 @@ class CategoryModel extends JoomAdminModel
 
         // Trigger the after save event.
         $app->triggerEvent($this->event_after_save, [$context, $table, $isNew, $data]);
+
+        // Create/update associations.
+        if($this->associationsContext && Associations::isEnabled())
+        {
+          if($isLanguageVariant && $sourceId > 0)
+          {
+            $data['associations'] = $preparedAssociations;
+          }
+
+          if(\array_key_exists('associations', $data)
+            && !$this->createAssociations($table, $data['associations'], $transactionStarted))
+          {
+            $rollbackTransaction();
+            $rollbackCategoryFolders();
+
+            return false;
+          }
+        }
+
+        // Commit the transaction after successful association creation.
+        if($transactionStarted)
+        {
+          $db->transactionCommit();
+          $transactionStarted = false;
+        }
+
+        // Show the success message only after the category was saved successfully.
+        if(!empty($createdCategoryFolders))
+        {
+        $this->component->addDebug(
+            Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_CREATE_CATEGORY', $table->alias)
+        );
+        }
     }
-    catch(\Exception $e)
+    catch(\Throwable $e)
     {
+      $rollbackTransaction();
+      $rollbackCategoryFolders();
       $this->setError($e->getMessage());
       $this->component->addLog($e->getMessage(), 'error', 'jerror');
 
@@ -756,12 +1033,6 @@ class CategoryModel extends JoomAdminModel
 
     $this->setState($this->getName() . '.new', $isNew);
 
-    // Create/update associations
-    if($this->associationsContext && Associations::isEnabled() && !empty($data['associations']))
-    {
-      $this->createAssociations($table, $data['associations']);
-    }
-
     // Redirect to associations
     if($app->input->get('task') == 'editAssociations')
     {
@@ -786,6 +1057,65 @@ class CategoryModel extends JoomAdminModel
       $this->component->addLog($table->getError(), 'error', 'jerror');
 
       return false;
+    }
+
+    $this->cleanCache();
+
+    return true;
+  }
+
+  /**
+   * Method to publish or unpublish categories and synchronize associated categories.
+   *
+   * @param   array    &$pks   A list of the primary keys to change.
+   * @param   integer  $value  The published state.
+   *
+   * @return  boolean  True on success, false on failure.
+   *
+   * @since   4.5.0
+   */
+  public function publish(&$pks, $value = 1)
+  {
+    // The category-list state action can reach publish() before the component config is initialized.
+    $this->component->createConfig();
+
+    if($this->component->getConfig()->get('jg_link_associated_categories', 1)
+      && $this->associationsContext
+      && Associations::isEnabled())
+    {
+      $table = $this->getTable();
+
+      foreach((array) $pks as $pk)
+      {
+        $table->reset();
+
+        if(!$table->load($pk) || !$this->checkAssociatedFieldPermissions($table, 'published', 'jg_link_associated_categories'))
+        {
+          return false;
+        }
+      }
+    }
+
+    $result = parent::publish($pks, $value);
+
+    if(!$result
+      || !$this->component->getConfig()->get('jg_link_associated_categories', 1)
+      || !$this->associationsContext
+      || !Associations::isEnabled())
+    {
+      return $result;
+    }
+
+    $table = $this->getTable();
+
+    foreach((array) $pks as $pk)
+    {
+      $table->reset();
+
+      if($table->load($pk))
+      {
+        $this->syncAssociatedField($table, 'published', $value, 'jg_link_associated_categories');
+      }
     }
 
     $this->cleanCache();
@@ -1244,5 +1574,50 @@ class CategoryModel extends JoomAdminModel
     }
 
     return $count;
+  }
+  protected function preprocessForm(\Joomla\CMS\Form\Form $form, $data, $group = 'content')
+  {
+    $languages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(false, false, null, 'ordering', 'asc');
+
+    if(\count($languages) > 1)
+    {
+        $addform = new \SimpleXMLElement('<form />');
+        $fields  = $addform->addChild('fields');
+        $fields->addAttribute('name', 'associations');
+
+        $fieldset = $fields->addChild('fieldset');
+        $fieldset->addAttribute('name', 'item_associations');
+        $fieldset->addAttribute('addfieldprefix', 'Joomla\Component\Categories\Administrator\Field');
+
+        $currentLanguage = \is_object($data)
+          ? ($data->language ?? '')
+          : ($data['language'] ?? '');
+
+        foreach($languages as $language)
+        {
+          if($language->lang_code === $currentLanguage)
+          {
+            continue;
+          }
+
+          $field = $fieldset->addChild('field');
+          $field->addAttribute('name', $language->lang_code);
+          $field->addAttribute('type', 'jgcategory');
+          $field->addAttribute('forcedLanguage', $language->lang_code);
+          $field->addAttribute('language', $language->lang_code);
+          $field->addAttribute('label', $language->title);
+          $field->addAttribute('translate_label', 'false');
+          $field->addAttribute('extension', 'com_joomgallery');
+          $field->addAttribute('select', 'true');
+          $field->addAttribute('new', 'true');
+          $field->addAttribute('edit', 'true');
+          $field->addAttribute('clear', 'true');
+          $field->addAttribute('propagate', 'true');
+        }
+
+        $form->load($addform, false);
+    }
+
+    parent::preprocessForm($form, $data, $group);
   }
 }

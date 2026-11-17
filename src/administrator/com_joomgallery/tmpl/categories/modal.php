@@ -118,7 +118,11 @@ $catRequired = (int) $input->get('required', 0, 'int');
 
                 <th scope="row" class="has-context">
                     <?php echo LayoutHelper::render('joomla.html.treeprefix', ['level' => $item->level]); ?>
-                    <a class="pointer button-select" href="#" data-category-value="<?php echo (int) $item->id; ?>" data-category-title="<?php echo $this->escape($item->title); ?>" data-category-field="<?php echo $this->escape($field); ?>">
+                    <a class="pointer button-select" href="#"
+                       data-category-value="<?php echo (int) $item->id; ?>"
+                       data-category-title="<?php echo $this->escape($item->title); ?>"
+                       data-category-language="<?php echo $this->escape($item->language); ?>"
+                       data-category-field="<?php echo $this->escape($field); ?>">
                       <?php echo $this->escape($item->title); ?>
                     </a>
 

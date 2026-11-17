@@ -121,7 +121,27 @@ class ImageModel extends JoomAdminModel
 
     if(isset($this->item->catid) && $this->item->catid != '')
     {
-      $this->item->cattitle = $this->getCategoryName($this->item->catid);
+      $this->item->display_catid = (int) $this->item->catid;
+      $this->item->cattitle      = $this->getCategoryName($this->item->catid);
+
+      if(Multilanguage::isEnabled())
+      {
+        if(!$this->category)
+        {
+          $this->category = $this->component->getMVCFactory()->createModel('category', 'site');
+        }
+
+        $category = $this->category->getItem($this->item->catid);
+        $language = $this->app->getLanguage()->getTag();
+
+        if(!empty($category->associations[$language]))
+        {
+          $associatedCategory = $this->category->getItem($category->associations[$language]);
+
+          $this->item->display_catid = (int) $associatedCategory->id;
+          $this->item->cattitle      = $associatedCategory->title;
+        }
+      }
     }
 
     // Add created by name
@@ -752,7 +772,7 @@ class ImageModel extends JoomAdminModel
     $this->setState($this->getName() . '.new', $isNew);
 
     // Create/update associations
-    if($this->associationsContext && Associations::isEnabled() && !empty($data['associations']))
+    if($this->associationsContext && Associations::isEnabled() && \array_key_exists('associations', $data))
     {
       $this->createAssociations($table, $data['associations']);
     }

@@ -38,12 +38,13 @@ interface FileManagerInterface
    * @param   bool                 $local_source  True if the source is a file located in a local folder (default: True)
    * @param   array                $skip          List of imagetypes to skip creation (default: [])
    * @param   string               $logfile       Name of the logfile to use
+   * @param   int                  $image         Image ID used to determine the image path (default: 0)
    *
    * @return  bool                 True on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function createImages($source, $filename, $cat = 2, $processing = true, $local_source = true, $skip = [], $logfile = 'jerror'): bool;
+  public function createImages($source, $filename, $cat = 2, $processing = true, $local_source = true, $skip = [], $logfile = 'jerror', $image = 0): bool;
 
   /**
    * Deletion of image types
@@ -122,7 +123,12 @@ interface FileManagerInterface
    *
    * @since   4.0.0
    */
-  public function createCategory($foldername, $parent = 1, $logfile = 'jerror'): bool;
+  public function createCategory(
+      $foldername,
+      $parent = 1,
+      $logfile = 'jerror',
+      ?array &$createdFolders = null
+  ): bool;
 
   /**
    * Deletion of a category

@@ -17,10 +17,13 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\FileManager;
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\Filesystem;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Media\Administrator\Exception\FileExistsException;
 use Joomla\Component\Media\Administrator\Exception\FileNotFoundException;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Filesystem\Path;
 
 /**
@@ -129,7 +132,7 @@ class FileManager implements FileManagerInterface
    *
    * @since   4.0.0
    */
-  public function createImages($source, $filename, $cat = 2, $processing = true, $local_source = true, $skip = [], $logfile = 'jerror'): bool
+  public function createImages($source, $filename, $cat = 2, $processing = true, $local_source = true, $skip = [], $logfile = 'jerror', $image = 0): bool
   {
     if(!$filename)
     {
@@ -327,7 +330,7 @@ class FileManager implements FileManagerInterface
       }
 
       // Path to save image
-      $file = $this->getImgPath(0, $imagetype->typename, $cat, $filename, false);
+      $file = $this->getImgPath($image, $imagetype->typename, $cat, $filename, false);
 
       // Create folders if not existent
       $folder = \dirname($file);
@@ -482,6 +485,53 @@ class FileManager implements FileManagerInterface
    */
   public function deleteImages($img, $logfile = 'jerror'): bool
   {
+    $imageRefId          = 0;
+    $referenceFilesystem = null;
+
+    // Keep shared image files while other images reference them.
+    if(\is_object($img) && !empty($img->image_ref))
+    {
+      $db         = Factory::getContainer()->get(DatabaseInterface::class);
+      $imageRefId = (int) $img->image_ref;
+
+      $query = $db->getQuery(true)
+        ->select('COUNT(*)')
+        ->from($db->quoteName('#__joomgallery'))
+        ->where($db->quoteName('image_ref') . ' = :imageRefId')
+        ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
+
+      $db->setQuery($query);
+
+      // More than one image record still uses this reference.
+      if((int) $db->loadResult() > 1)
+      {
+        return true;
+      }
+
+      // Load the filesystem of the shared image reference.
+      $query = $db->getQuery(true)
+        ->select($db->quoteName('filesystem'))
+        ->from($db->quoteName('#__joomgallery_img_ref'))
+        ->where($db->quoteName('id') . ' = :imageRefId')
+        ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
+
+      $db->setQuery($query);
+      $referenceFilesystemName = $db->loadResult();
+
+      if(empty($referenceFilesystemName))
+      {
+        $this->component->addLog(
+            'Unable to delete shared image files: filesystem reference not found.',
+            'error',
+            $logfile
+        );
+
+        return false;
+      }
+
+      $referenceFilesystem = new Filesystem($referenceFilesystemName);
+    }
+
     // Loop through all imagetypes
     $error = false;
 
@@ -493,7 +543,7 @@ class FileManager implements FileManagerInterface
       // Delete imagetype
       try
       {
-        $this->component->getFilesystem()->delete($file);
+        ($referenceFilesystem ?? $this->component->getFilesystem())->delete($file);
       }
       catch (FileNotFoundException $e)
       {
@@ -526,6 +576,31 @@ class FileManager implements FileManagerInterface
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_SOME_ERRORS_IMAGEFILE'), 'error', $logfile);
 
       return false;
+    }
+
+    // Remove the reference only after all image files were processed.
+    if($imageRefId > 0)
+    {
+      try
+      {
+        $query = $db->getQuery(true)
+          ->delete($db->quoteName('#__joomgallery_img_ref'))
+          ->where($db->quoteName('id') . ' = :imageRefId')
+          ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
+
+        $db->setQuery($query);
+        $db->execute();
+      }
+      catch(\Throwable $exception)
+      {
+        $this->component->addLog(
+            'Unable to delete image reference: ' . $exception->getMessage(),
+            'error',
+            $logfile
+        );
+
+        return false;
+      }
     }
 
     return true;
@@ -600,6 +675,12 @@ class FileManager implements FileManagerInterface
    */
   public function moveImages($img, $dest, $filename = false, $copy = false, $logfile = 'jerror'): bool
   {
+    // Do not move files belonging to a shared image reference.
+    if(!$copy && \is_object($img) && !empty($img->image_ref))
+    {
+      return true;
+    }
+
     // Switch method
     $method = 'MOVE';
 
@@ -736,6 +817,12 @@ class FileManager implements FileManagerInterface
    */
   public function renameImages($img, $filename, $logfile = 'jerror'): bool
   {
+    // Do not rename files belonging to a shared image reference.
+    if(\is_object($img) && !empty($img->image_ref))
+    {
+      return true;
+    }
+
     // Loop through all imagetypes
     $error = false;
 
@@ -791,66 +878,76 @@ class FileManager implements FileManagerInterface
     return true;
   }
 
+
   /**
    * Creation of a category
    *
-   * @param   string              $foldername   Name of the folder to be created
-   * @param   object|int|string   $parent       Object, ID or alias of the parent category (default: 1)
-   * @param   string              $logfile      Name of the logfile to use
+   * @param   string              $foldername      Name of the folder to be created
+   * @param   object|int|string   $parent          Parent category (default: 1)
+   * @param   string              $logfile         Name of the logfile to use
+   * @param   array|null          $createdFolders  Newly created folder paths
    *
    * @return  bool                True on success, false otherwise
    *
    * @since   4.0.0
    */
-  public function createCategory($foldername, $parent = 1, $logfile = 'jerror'): bool
-  {
-    // Loop through all imagetypes
+  public function createCategory(
+      $foldername,
+      $parent = 1,
+      $logfile = 'jerror',
+      ?array &$createdFolders = null
+  ): bool {
     $error       = false;
     $catsCreated = 0;
 
     foreach($this->imagetypes as $key => $imagetype)
     {
-      // Category path
       $path = $this->getCatPath(0, $imagetype->typename, $parent, $foldername, false);
 
-      // Create folders if not existent
       try
       {
-        $res = $this->component->getFilesystem()->createFolder(basename($path), \dirname($path));
+        $res = $this->component->getFilesystem()->createFolder(
+            basename($path),
+            \dirname($path),
+            false
+        );
+
+        if(!$res)
+        {
+            throw new \RuntimeException('Could not create category folder: ' . $path);
+        }
+
+        if($createdFolders !== null)
+        {
+          $createdFolders[] = $path;
+        }
+
+        $catsCreated++;
       }
-      catch(\FileExistsException $e)
+      catch(FileExistsException $e)
       {
-        // Category already exists. Do nothing.
+        // Category folder already exists. Do nothing.
       }
       catch(\Exception $e)
       {
-        // Debug info
         if(strpos(strtolower($e->getMessage()), 'file exists') !== false)
         {
-          // Category already exists. Do nothing.
+          // Category folder already exists. Do nothing.
         }
         else
         {
-          $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername));
-          $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername), 'error', $logfile);
+        $this->component->addDebug(
+            Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername)
+        );
+        $this->component->addLog(
+            Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername),
+            'error',
+            $logfile
+        );
+
           $error = true;
         }
-
-        continue;
       }
-
-      if(!$res)
-      {
-        // Debug info
-        $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername));
-        $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SERVICE_ERROR_CREATE_CATEGORY', $foldername), 'error', $logfile);
-        $error = true;
-
-        continue;
-      }
-
-      // Count up the # of created categories
-      $catsCreated = $catsCreated + 1;
     }
 
     if($error)
@@ -861,14 +958,16 @@ class FileManager implements FileManagerInterface
       return false;
     }
 
-    if($catsCreated > 0)
+    if($catsCreated > 0 && $createdFolders === null)
     {
-      // Debug info
-      $this->component->addDebug(Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_CREATE_CATEGORY', $foldername));
+    $this->component->addDebug(
+        Text::sprintf('COM_JOOMGALLERY_SERVICE_SUCCESS_CREATE_CATEGORY', $foldername)
+    );
     }
 
     return true;
   }
+
 
   /**
    * Deletion of a category
@@ -1263,8 +1362,43 @@ class FileManager implements FileManagerInterface
       }
     }
 
-    // Get corresponding category path
-    $catpath = $this->getCatPath($catid);
+    // Get corresponding category path or shared image reference path.
+    $imageRefId = \is_object($img) && !empty($img->image_ref)
+      ? (int) $img->image_ref
+      : 0;
+
+    if($imageRefId > 0)
+    {
+      $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+      $query = $db->getQuery(true)
+        ->select(
+            [
+              $db->quoteName('path'),
+              $db->quoteName('filename'),
+            ]
+        )
+        ->from($db->quoteName('#__joomgallery_img_ref'))
+        ->where($db->quoteName('id') . ' = :imageRefId')
+        ->bind(':imageRefId', $imageRefId, \Joomla\Database\ParameterType::INTEGER);
+
+      $db->setQuery($query);
+      $imageRef = $db->loadObject();
+
+      if($imageRef)
+      {
+        $catpath  = $imageRef->path;
+        $filename = $imageRef->filename;
+      }
+      else
+      {
+        $catpath = $this->getCatPath($catid);
+      }
+    }
+    else
+    {
+      $catpath = $this->getCatPath($catid);
+    }
 
     if($catpath === false)
     {

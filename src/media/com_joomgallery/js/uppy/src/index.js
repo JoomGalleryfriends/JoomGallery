@@ -17,6 +17,30 @@ function getSelectedCatid() {
 }
 
 /**
+ * Read the language of the selected category.
+ *
+ * @returns {String|null} Selected category language, or null for modal fields.
+ */
+function getSelectedCategoryLanguage() {
+  const field = document.getElementById('jform_catid');
+
+  // Modal category fields handle the language in field-category.js.
+  if(!(field instanceof HTMLSelectElement)) {
+    return null;
+  }
+
+  const option = field.options[field.selectedIndex];
+
+  if(!option || !option.value) {
+    return '*';
+  }
+
+  const match = option.textContent.match(/\(([a-z]{2}-[A-Z]{2})\)\s*$/);
+
+  return match ? match[1] : '*';
+}
+
+/**
  * Apply validity class to catid choices select field
  * 
  * @param   {Boolean}   ini      True to remove all validity classes
@@ -57,6 +81,29 @@ var callback = function() {
   // Initialize the form
   document.getElementById('adminForm').classList.remove('was-validated');
   catidFieldValidity(true);
+
+  // Set image language according to the selected category.
+  const categoryField = document.getElementById('jform_catid');
+  const languageField = document.getElementById('jform_language');
+
+  const updateImageLanguage = () => {
+    if(!categoryField || !languageField) {
+      return;
+    }
+
+    const language = getSelectedCategoryLanguage();
+
+    if(language !== null) {
+      languageField.value = language;
+      languageField.disabled = true;
+      languageField.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  };
+
+  if(categoryField && languageField) {
+    categoryField.addEventListener('change', updateImageLanguage);
+    updateImageLanguage();
+  }
   
   let uppy = new Uppy({
     autoProceed: false,

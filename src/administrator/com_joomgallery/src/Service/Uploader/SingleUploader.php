@@ -183,7 +183,7 @@ class SingleUploader extends BaseUploader implements UploaderInterface
     $this->component->createFileManager($data_row->catid, [$this->type]);
 
     // Process image to create imagetype
-    if(!$this->component->getFileManager()->createImages($this->src_file, $data_row->filename, $data_row->catid, $this->processImage))
+    if(!$this->component->getFileManager()->createImages($this->src_file, $data_row->filename, $data_row->catid, $this->processImage, true, [], 'jerror', $data_row))
     {
       $this->rollback($data_row);
       $this->error = true;

@@ -21,6 +21,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Database\ParameterType;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
@@ -32,7 +33,8 @@ use Joomla\Filesystem\Path;
  */
 class ImageController extends JoomFormController
 {
-  protected $view_list = 'images';
+  protected $view_list      = 'images';
+  protected $savedVariantId = 0;
 
   /**
    * Method to save a record.
@@ -54,7 +56,74 @@ class ImageController extends JoomFormController
       $this->input->set('origin_id', $this->input->getInt('id'));
     }
 
+    // Return to the variant editor after saving so it can close its popup.
+    $originId          = $this->input->getInt('origin_id', 0);
+    $forcedLanguage    = $this->input->getString('forcedLanguage', '');
+    $isLanguageVariant = $originId > 0 && $forcedLanguage !== '';
+
+    if($isLanguageVariant && $task === 'save')
+    {
+      $result = parent::save($key, $urlVar);
+
+      if($result)
+      {
+        $savedId = $this->savedVariantId;
+
+        $url = 'index.php?option=com_joomgallery&view=image&layout=edit'
+          . '&id=' . $savedId
+          . '&origin_id=' . $originId
+          . '&forcedLanguage=' . rawurlencode($forcedLanguage)
+          . '&variant_saved=1';
+
+        $this->setRedirect(\Joomla\CMS\Router\Route::_($url, false));
+      }
+
+      return $result;
+    }
+
     return parent::save($key, $urlVar);
+  }
+
+  /**
+   * Convert an associated-image permission denial to the same blue information
+   * message used by the image-list action and the category editor.
+   *
+   * @param   string  $text  Message to display on redirect.
+   * @param   string  $type  Message type.
+   *
+   * @return  string  Previous message.
+   *
+   * @since   4.5.0
+   */
+  public function setMessage($text, $type = 'message')
+  {
+    $permissionError = Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED');
+    $saveFailedError = Text::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $permissionError);
+
+    if($type === 'error' && $text === $saveFailedError)
+    {
+      $this->component->addWarning($permissionError);
+
+      return null;
+    }
+
+    return parent::setMessage($text, $type);
+  }
+
+  protected function postSaveHook(\Joomla\CMS\MVC\Model\BaseDatabaseModel $model, $validData = [])
+  {
+    $originId       = $this->input->getInt('origin_id', 0);
+    $forcedLanguage = $this->input->getString('forcedLanguage', '');
+
+    if($originId > 0 && $forcedLanguage !== '')
+    {
+    $this->savedVariantId = (int) $model->getState(
+        $model->getName() . '.id',
+        0
+    );
+    }
+
+    parent::postSaveHook($model, $validData);
   }
 
   /**
@@ -465,6 +534,105 @@ class ImageController extends JoomFormController
    *
    * @since   4.0.0
    */
+
+  /**
+   * Delete a language variant that is associated with the given source image.
+   *
+   * @return  void
+   *
+   * @since   4.5.0
+   */
+  public function deleteVariant()
+  {
+    // Check for request forgeries.
+    $this->checkToken('post');
+
+    $model          = $this->getModel();
+    $variantId      = $this->input->post->getInt('id', 0);
+    $originId       = $this->input->post->getInt('origin_id', 0);
+    $forcedLanguage = $this->input->post->getString('forcedLanguage', '');
+
+    try
+    {
+      if($variantId < 1 || $originId < 1 || $variantId === $originId || $forcedLanguage === '')
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_VARIANT_INVALID'));
+      }
+
+      $variantTable = $model->getTable();
+
+      if(!$variantTable->load($variantId) || $variantTable->language !== $forcedLanguage)
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_VARIANT_INVALID'));
+      }
+
+      $originTable = $model->getTable();
+
+      if(!$originTable->load($originId) || $originTable->language === $forcedLanguage)
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_VARIANT_INVALID'));
+      }
+
+      // Only allow deletion when both records belong to the same association group.
+      $db       = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+      $context1 = 'com_joomgallery.image';
+      $context2 = 'com_joomgallery.image';
+      $query    = $db->getQuery(true)
+        ->select($db->quoteName('a1.key'))
+        ->from($db->quoteName('#__associations', 'a1'))
+        ->join(
+            'INNER',
+            $db->quoteName('#__associations', 'a2'),
+            $db->quoteName('a1.key') . ' = ' . $db->quoteName('a2.key')
+        )
+        ->where(
+            [
+              $db->quoteName('a1.context') . ' = :context1',
+              $db->quoteName('a2.context') . ' = :context2',
+              $db->quoteName('a1.id') . ' = :originId',
+              $db->quoteName('a2.id') . ' = :variantId',
+            ]
+        );
+
+      // Joomla's bind() expects variables passed by reference.
+      $query->bind(':context1', $context1, ParameterType::STRING);
+      $query->bind(':context2', $context2, ParameterType::STRING);
+      $query->bind(':originId', $originId, ParameterType::INTEGER);
+      $query->bind(':variantId', $variantId, ParameterType::INTEGER);
+
+      $db->setQuery($query);
+
+      if(!$db->loadResult())
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_DELETE_VARIANT_INVALID'));
+      }
+
+      $pks = [$variantId];
+
+      if(!$model->delete($pks))
+      {
+        throw new \RuntimeException(
+            $model->getError() ?: Text::_('COM_JOOMGALLERY_ERROR_DELETE_VARIANT_FAILED')
+        );
+      }
+
+    echo new JsonResponse(
+        ['id' => $variantId],
+        Text::_('COM_JOOMGALLERY_SUCCESS_DELETE_VARIANT')
+    );
+    }
+    catch(\Throwable $e)
+    {
+    echo new JsonResponse(
+        null,
+        Text::_('COM_JOOMGALLERY_ERROR_DELETE_VARIANT_FAILED'),
+        true
+    );
+    }
+
+    $this->app->close();
+  }
+
   public function cancel($key = null)
   {
     $isOk = parent::cancel($key);
