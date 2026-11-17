@@ -114,9 +114,9 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     // Gid or name
     $router->addRoutes(
         [
-        new Route(['GET'], 'v1/joomgallery/latestcategory', 'latestcategory.displayItem', [], $getDefaults),
-        new Route(['POST'], 'v1/joomgallery/upload_image_file', 'uploadimgfile.image_data_upload', [], $getDefaults),
-        new Route(['PATCH'], 'v1/joomgallery/upload_image_file/:image_id', 'uploadimgfile.patch_image_upload_file', ['imgid' => '(\d+)'], $getDefaults),
+          new Route(['GET'], 'v1/joomgallery/latestcategory', 'latestcategory.displayItem', [], $getDefaults),
+          new Route(['POST'], 'v1/joomgallery/upload_image_file', 'uploadimgfile.image_data_upload', [], $getDefaults),
+          new Route(['PATCH'], 'v1/joomgallery/upload_image_file/:image_id', 'uploadimgfile.patch_image_upload_file', ['imgid' => '(\d+)'], $getDefaults),
         ]
     );
   }

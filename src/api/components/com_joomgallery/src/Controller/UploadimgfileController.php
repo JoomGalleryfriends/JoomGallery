@@ -153,8 +153,7 @@ class UploadimgfileController extends ApiController
       return parent::displayItem($image_id);
     }
 
-
-      throw new \RuntimeException(Text::_('UploadimgfileController: Could not save the image'), 500);
+    throw new \RuntimeException(Text::_('UploadimgfileController: Could not save the image'), 500);
   }
 
   /**

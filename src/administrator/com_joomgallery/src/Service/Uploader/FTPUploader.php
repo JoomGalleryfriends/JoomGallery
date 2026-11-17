@@ -12,11 +12,11 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
-use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\UploaderInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\File;
@@ -30,10 +30,11 @@ use Joomla\Filesystem\Path;
  */
 class FTPUploader extends BaseUploader implements UploaderInterface
 {
-  protected $src_name;
-  protected $src_size;
-  protected $src_tmp;
-  protected $src_file;
+// Already defined in Uploader.php
+//  protected $src_name;
+//  protected $src_size;
+//  protected $src_tmp;
+//  protected $src_file;
   protected $source_file;
   protected $source_action = 'keep';
 
@@ -313,9 +314,7 @@ class FTPUploader extends BaseUploader implements UploaderInterface
 
       if(is_file($destination))
       {
-        $destination = Path::clean(
-            $processed_dir . '/' . pathinfo($this->source_file, PATHINFO_FILENAME) . '_' . date('YmdHis') . '.' . pathinfo($this->source_file, PATHINFO_EXTENSION)
-        );
+        $destination = Path::clean($processed_dir . '/' . pathinfo($this->source_file, PATHINFO_FILENAME) . '_' . date('YmdHis') . '.' . pathinfo($this->source_file, PATHINFO_EXTENSION));
       }
 
       File::move($this->source_file, $destination);
