@@ -12,11 +12,14 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Uploader;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Service\Uploader\Uploader as BaseUploader;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\Component\Media\Administrator\Exception\FileExistsException;
+use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path as JPath;
 
 /**
@@ -30,8 +33,8 @@ class APIUploader extends BaseUploader implements UploaderInterface
    * Method to retrieve an uploaded image. Step 1.
    * (check upload, check user upload limit, create filename, onJoomBeforeUpload)
    *
-   * @param   array   $data            Form data (as reference)
-   * @param   bool    $createFilename  True, if the filename has to be created (default: True)
+   * @param   array  $data            Form data (as reference)
+   * @param   bool   $createFilename  True, if the filename has to be created (default: True)
    *
    * @return  bool     True on success, false otherwise
    *
@@ -43,21 +46,15 @@ class APIUploader extends BaseUploader implements UploaderInterface
 
     $this->src_size = \strlen($data['content']);
 
-//        $data ['uuid'] = $this->getUserUuid();
+    //--- create a random temp folder --------------------------------------------
 
-    //old: $this->src_tmp  = $image['tmp_name'];
-    // J! tempfolder with folder from uuid
-    // where the file does come from
-    //$this->src_tmp = $data['src_tmp'];
-    // @manuel: this is just J1 temp : Ok ? double entries ...
-    $this->src_tmp = JPath::clean(Factory::getApplication()->get('tmp_path')); // @Manuel: found in  . '/' . $data['uuid'];
-    //old: $this->src_name = $image['name'];
-    //$this->src_name = $data['filename'] . '.' . $data['file_extension'];
+    $randFolder    = (string) random_int(1000000, 9999999);
+    $stdTempFolder = Factory::getApplication()->get('tmp_path');
+    $this->src_tmp = JPath::clean($stdTempFolder . '/' . $randFolder);
+
+    Folder::create($this->src_tmp);
+
     $this->src_name = $data['filename'];
-    // @manuel: file name length as is from title + file data + random => why is title with date ? config ?
-    //old: $this->src_size = $image['size'];
-
-    //$this->src_size = filesize($this->src_tmp);
 
     // Perform the parent method
     // - check tag and size
@@ -68,7 +65,6 @@ class APIUploader extends BaseUploader implements UploaderInterface
     if($isFileNameValid)
     {
       // Save file to intermediate temp file
-      //$this->src_file = JPath::clean(\dirname($this->src_tmp) . '/' . $this->src_name);
       $this->src_file = JPath::clean($this->src_tmp . '/' . $this->src_name);
 
       $isSaved = $this->saveImgContent2Temp($data['content'], $this->src_file);
@@ -98,7 +94,7 @@ class APIUploader extends BaseUploader implements UploaderInterface
    * Override form data with image metadata
    * according to configuration. Step 2.
    *
-   * @param   array   $data  The form data (as a reference)
+   * @param   array  $data  The form data (as a reference)
    *
    * @return  bool    True on success, false otherwise
    *
@@ -120,7 +116,7 @@ class APIUploader extends BaseUploader implements UploaderInterface
   /**
    * Analyses an error code and returns its text
    *
-   * @param   int   $uploaderror  The errorcode
+   * @param   int  $uploaderror  The errorcode
    *
    * @return  string  The error message
    *
@@ -148,7 +144,7 @@ class APIUploader extends BaseUploader implements UploaderInterface
    * Save image bytes content here and tell about it
    * Attention other similar function expect the file is already on the server
    *
-   * @param   array   $data  Form data
+   * @param   array  $data  Form data
    *
    * @return  bool     True if file is detected, false otherwise
    *
@@ -180,7 +176,7 @@ class APIUploader extends BaseUploader implements UploaderInterface
 
       $isSaved = !empty($count);
     }
-    catch(\Exception $e)
+    catch (\Exception $e)
     {
       // Debug info ??
       //$this->component->addDebug(Text::sprintf('Failed to write file %s', $tmp_dst_file));
@@ -199,9 +195,9 @@ class APIUploader extends BaseUploader implements UploaderInterface
    * ToDo: @ manual: this is a copy of Filmanager code. Better: add static there
    *
    *
-   * @param   string   $filename     Original upload name without extension
-   * @param   string   $tag          File extension e.g. 'jpg'
-   * @param   int      $filecounter  Optionally a filecounter
+   * @param   string  $filename     Original upload name without extension
+   * @param   string  $tag          File extension e.g. 'jpg'
+   * @param   int     $filecounter  Optionally a filecounter
    *
    * @return  string    The generated filename
    *
