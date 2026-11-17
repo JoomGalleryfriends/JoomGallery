@@ -67,8 +67,7 @@ HTMLHelper::_(
 // Access check
 $canEdit    = $this->getAcl()->checkACL('edit', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
 $canDelete  = $this->getAcl()->checkACL('delete', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
-$canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $this->item->id, $this->item->catid, true)
-    || (int) $this->item->checked_out === (int) $this->getCurrentUser()->id;
+$canCheckin = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', $this->item->id, $this->item->catid, true);
 
 // URLs & Links
 $imageUrl      = JoomHelper::getImg($this->item, $image_type);
