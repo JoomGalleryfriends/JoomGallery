@@ -46,7 +46,7 @@ class CollectionsModel extends JoomListModel
     $db      = $this->getDatabase();
     $query   = $db->getQuery(true)
       ->select(['g.id AS value', 'u.name', 'u.username'])
-      ->from($db->quoteName('#__joomgallery_users', 'g'))
+      ->from($db->quoteName(_JOOM_TABLE_USERS, 'g'))
       ->join('INNER', $db->quoteName('#__users', 'u') . ' ON u.id = g.cmsuser')
       ->order('u.name ASC, g.id ASC');
     $options = [];
@@ -109,9 +109,9 @@ class CollectionsModel extends JoomListModel
     $db    = $this->getDatabase();
     $query = $db->getQuery(true)
       ->select(['a.*', 'u.name AS owner', 'u.username'])
-      ->select('(SELECT COUNT(*) FROM ' . $db->quoteName('#__joomgallery_collections_ref', 'r') . ' WHERE r.collectionid = a.id) AS image_count')
-      ->from($db->quoteName('#__joomgallery_collections', 'a'))
-      ->join('INNER', $db->quoteName('#__joomgallery_users', 'g') . ' ON g.id = a.userid')
+      ->select('(SELECT COUNT(*) FROM ' . $db->quoteName(_JOOM_TABLE_COLLECTIONS_REF, 'r') . ' WHERE r.collectionid = a.id) AS image_count')
+      ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS, 'a'))
+      ->join('INNER', $db->quoteName(_JOOM_TABLE_USERS, 'g') . ' ON g.id = a.userid')
       ->join('INNER', $db->quoteName('#__users', 'u') . ' ON u.id = g.cmsuser');
 
     if($owner = (int) $this->getState('filter.userid'))
@@ -149,7 +149,7 @@ class CollectionsModel extends JoomListModel
     }
 
     $db    = $this->getDatabase();
-    $query = $db->getQuery(true)->select('id')->from($db->quoteName('#__joomgallery_collections'))
+    $query = $db->getQuery(true)->select('id')->from($db->quoteName(_JOOM_TABLE_COLLECTIONS))
       ->where('userid = ' . $userId);
 
     return array_map('intval', $db->setQuery($query)->loadColumn());
@@ -174,7 +174,7 @@ class CollectionsModel extends JoomListModel
     $db    = $this->getDatabase();
     $query = $db->getQuery(true)
       ->select($db->quoteName('title'))
-      ->from($db->quoteName('#__joomgallery_collections'))
+      ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS))
       ->where($db->quoteName('userid') . ' = ' . $userId)
       ->order([$db->quoteName('is_default') . ' DESC', $db->quoteName('id') . ' ASC']);
 
@@ -203,14 +203,14 @@ class CollectionsModel extends JoomListModel
       ->select([$db->quoteName('a.id'), $db->quoteName('a.title'), $db->quoteName('a.is_default')])
       ->select('CASE WHEN ' . $db->quoteName('ref.id') . ' IS NULL THEN 0 ELSE 1 END AS ' . $db->quoteName('mapped'))
     ->select(
-        '(SELECT COUNT(*) FROM ' . $db->quoteName('#__joomgallery_collections_ref', 'total_ref')
+        '(SELECT COUNT(*) FROM ' . $db->quoteName(_JOOM_TABLE_COLLECTIONS_REF, 'total_ref')
         . ' WHERE ' . $db->quoteName('total_ref.collectionid') . ' = ' . $db->quoteName('a.id') . ') AS ' . $db->quoteName('image_count')
     )
-      ->from($db->quoteName('#__joomgallery_collections', 'a'))
-      ->join('INNER', $db->quoteName('#__joomgallery_users', 'g') . ' ON ' . $db->quoteName('g.id') . ' = ' . $db->quoteName('a.userid'))
+      ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS, 'a'))
+      ->join('INNER', $db->quoteName(_JOOM_TABLE_USERS, 'g') . ' ON ' . $db->quoteName('g.id') . ' = ' . $db->quoteName('a.userid'))
     ->join(
         'LEFT',
-        $db->quoteName('#__joomgallery_collections_ref', 'ref')
+        $db->quoteName(_JOOM_TABLE_COLLECTIONS_REF, 'ref')
           . ' ON ' . $db->quoteName('ref.collectionid') . ' = ' . $db->quoteName('a.id')
           . ' AND ' . $db->quoteName('ref.imgid') . ' = ' . (int) $imageId
     )

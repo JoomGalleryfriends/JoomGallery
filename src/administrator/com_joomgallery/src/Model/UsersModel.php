@@ -78,8 +78,8 @@ class UsersModel extends JoomListModel
     $db    = $this->getDatabase();
     $query = $db->getQuery(true)
       ->select(['a.*', 'u.name', 'u.username', 'u.email'])
-      ->select('(SELECT COUNT(*) FROM ' . $db->quoteName('#__joomgallery_collections', 'c') . ' WHERE c.userid = a.id) AS collection_count')
-      ->from($db->quoteName('#__joomgallery_users', 'a'))
+      ->select('(SELECT COUNT(*) FROM ' . $db->quoteName(_JOOM_TABLE_COLLECTIONS, 'c') . ' WHERE c.userid = a.id) AS collection_count')
+      ->from($db->quoteName(_JOOM_TABLE_USERS, 'a'))
       ->join('INNER', $db->quoteName('#__users', 'u') . ' ON u.id = a.cmsuser');
 
     $search = trim((string) $this->getState('filter.search'));
@@ -121,7 +121,7 @@ class UsersModel extends JoomListModel
     $db    = $this->getDatabase();
     $query = $db->getQuery(true)->select('u.id')->from($db->quoteName('#__users', 'u'))
       ->where('u.id > 0')
-      ->where('NOT EXISTS (SELECT 1 FROM ' . $db->quoteName('#__joomgallery_users') . ' AS g WHERE g.cmsuser = u.id)');
+      ->where('NOT EXISTS (SELECT 1 FROM ' . $db->quoteName(_JOOM_TABLE_USERS) . ' AS g WHERE g.cmsuser = u.id)');
 
     if($cmsuser !== null)
     {
@@ -182,7 +182,7 @@ class UsersModel extends JoomListModel
   {
     $db    = $this->getDatabase();
     $query = $db->getQuery(true)->select(['g.id', 'g.cmsuser'])
-      ->from($db->quoteName('#__joomgallery_users', 'g'))
+      ->from($db->quoteName(_JOOM_TABLE_USERS, 'g'))
       ->join('INNER', $db->quoteName('#__users', 'u') . ' ON u.id = g.cmsuser')
       ->where('u.id > 0');
 

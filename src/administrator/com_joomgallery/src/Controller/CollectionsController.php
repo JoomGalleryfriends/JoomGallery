@@ -35,6 +35,7 @@ class CollectionsController extends JoomAdminController
    */
   public function getModel($name = 'Collection', $prefix = 'Administrator', $config = [])
   {
+    // Load a fresh item model without applying request state to it.
     return parent::getModel($name, $prefix, ['ignore_request' => true]);
   }
 }
