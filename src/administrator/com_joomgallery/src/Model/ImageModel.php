@@ -1445,10 +1445,10 @@ class ImageModel extends JoomAdminModel
 
         if(!$tools->watermark(
           JPATH_ROOT . \DIRECTORY_SEPARATOR . $config->get('jg_wmfile', 'media/joomgallery/images/watermark.png'),
-          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
-          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
-          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
-          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80)
+          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkpos', 5),
+          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkzoom', 2),
+          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarksize', 60),
+          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkopacity', 50)
         ))
         {
           throw new \RuntimeException('Unable to watermark the image resource.');

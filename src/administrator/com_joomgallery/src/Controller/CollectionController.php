@@ -284,8 +284,11 @@ class CollectionController extends JoomFormController
    */
   protected function accessCollection($id)
   {
-    // Allow administrator access by default; site controllers may override this decision.
-    return true;
+    // Restrict backend collection downloads to the collection owner.
+    /** @var CollectionModel $model */
+    $model = $this->getModel('Collection', 'Administrator');
+
+    return $model->ownsCollection((int) $id);
   }
 
   /**

@@ -165,7 +165,7 @@ class CollectionModel extends JoomAdminModel
   {
     // Owners receive own-item permissions before global ACL rules are considered.
     $owner       = $this->isOwner($collection);
-    $permissions = [];
+    $permissions = ['owner' => $owner];
 
     // Evaluate the ACL action and default-collection restriction for each operation.
     foreach(

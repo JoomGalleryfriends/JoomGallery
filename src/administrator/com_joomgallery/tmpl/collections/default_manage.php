@@ -20,6 +20,16 @@ $permissions = $item->managementPermissions;
 <?php if((int) $item->is_default) : ?>
   <p class="alert alert-info"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DEFAULT_NOTICE'); ?></p>
 <?php endif; ?>
+<?php if($permissions['owner'] && (int) $item->image_count > 0) : ?>
+  <section class="pb-4 mb-4 border-bottom">
+    <h3 class="h5 mb-2"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD'); ?></h3>
+    <p class="text-body-secondary"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_DESC'); ?></p>
+    <a class="btn btn-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&task=collection.download&id=' . (int) $item->id . '&type=detail'); ?>">
+      <span class="icon-download" aria-hidden="true"></span>
+      <?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD'); ?>
+    </a>
+  </section>
+<?php endif; ?>
 <?php if($permissions['reassign']) : ?>
   <section class="pb-4 mb-4 border-bottom">
     <h3 class="h5 mb-2"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_MANAGE_OWNER'); ?></h3>
