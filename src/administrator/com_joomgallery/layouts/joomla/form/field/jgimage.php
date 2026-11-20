@@ -53,8 +53,12 @@ extract($displayData);
  * @var   string   $dataAttribute   Miscellaneous data attributes preprocessed for HTML output
  * @var   array    $dataAttributes  Miscellaneous data attribute for eg, data-*.
  */
-$modalHTML = '';
-$uri       = new Uri('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
+// Disabled fields show the image without opening a selector or submitting an ID.
+$readonly    = $readonly || $disabled;
+$thumbnailId = $id . '_thumbnail';
+$wrapperTag  = $readonly ? 'div' : 'joomla-field-image';
+$modalHTML   = '';
+$uri         = new Uri('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
 $uri->setVar('field', $this->escape($id));
 
 if(empty($value))
@@ -93,6 +97,11 @@ if($this->escape($imageName) === Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'))
 $inputAttributes = [
   'type' => 'text', 'id' => $id, 'class' => 'form-control field-image-input-name', 'value' => $this->escape($imageName),
 ];
+
+if($disabled)
+{
+  $inputAttributes['disabled'] = 'disabled';
+}
 
 if($class)
 {
@@ -146,24 +155,22 @@ $modalHTML = HTMLHelper::_(
 }
 ?>
 <?php // Create a dummy text field with the image name. ?>
-<joomla-field-image class="field-image-wrapper"
+<<?php echo $wrapperTag; ?> class="field-image-wrapper"
     url="<?php echo (string) $uri; ?>"
     modal=".modal"
     modal-width="100%"
     modal-height="400px"
     input=".field-image-input"
     input-name=".field-image-input-name"
-      input-img="#jform_thumbnail_img"
+      input-img="#<?php echo $this->escape($thumbnailId); ?>"
     button-select=".button-select">
   <div class="input-group">
-    <img id="jform_thumbnail_img" class="jg_minithumb" src="<?php echo JoomHelper::getImg($value, 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
+    <img id="<?php echo $this->escape($thumbnailId); ?>" class="jg_minithumb" src="<?php echo JoomHelper::getImg($value, 'thumbnail'); ?>" alt="<?php echo Text::_('COM_JOOMGALLERY_THUMBNAIL'); ?>">
     <input <?php echo ArrayHelper::toString($inputAttributes), $dataAttribute; ?> readonly>
-    <?php if(!$readonly) : ?>
-      <button type="button" class="btn btn-primary button-select" title="<?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?>">
+      <button type="button" class="btn btn-primary button-select"<?php echo $readonly ? ' disabled aria-disabled="true"' : ''; ?> title="<?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?>">
         <span class="icon-image icon-white" aria-hidden="true"></span>
         <span class="visually-hidden"><?php echo Text::_('COM_JOOMGALLERY_FIELDS_SELECT_IMAGE'); ?></span>
       </button>
-    <?php endif; ?>
   </div>
   <?php // Create the real field, hidden, that stored the image id. ?>
   <?php if(!$readonly) : ?>
@@ -172,4 +179,4 @@ $modalHTML = HTMLHelper::_(
       data-onchange="<?php echo $this->escape($onchange); ?>">
     <?php echo $modalHTML; ?>
   <?php endif; ?>
-</joomla-field-image>
+</<?php echo $wrapperTag; ?>>

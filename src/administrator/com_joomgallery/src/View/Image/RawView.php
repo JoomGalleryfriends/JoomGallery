@@ -46,7 +46,7 @@ class RawView extends JoomGalleryRawView
     $resize = $this->app->input->get('resize', 0, 'int');
 
     $options              = new \stdClass();
-    $options->resize      = \boolval($resize);
+    $options->resize      = $resize;
     $options->resize_type = $this->app->input->get('resize_type', 3);
 
     if($id == 0 || $id == '0')
@@ -162,28 +162,24 @@ class RawView extends JoomGalleryRawView
    */
   public function ppImage(&$file_info, &$resource, $imagetype, $options = null)
   {
-    if(property_exists($options, 'resize') && $options->resize)
+    try
     {
-      // Get component object
-      $com = JoomHelper::getComponent();
+      /** @var ImageModel $model */
+      $model = $this->getModel();
+    $model->processImageResource(
+        $file_info,
+        $resource,
+        (string) $imagetype,
+        $this->component->getConfig(),
+        'raw',
+        $options
+    );
+    }
+    catch(\Throwable $e)
+    {
+      $this->component->addError($e->getMessage());
 
-      // Create the IMGtools service
-      $com->createIMGtools($this->component->getConfig()->get('jg_imgprocessor'));
-
-      // Reread ressource
-      $com->getIMGtools()->read($resource, true);
-
-      // Resize image, resize by max dimension
-      $com->getIMGtools()->resize($options->resize_type, $options->resize, $options->resize);
-      $img_string = $com->getIMGtools()->stream(100, false);
-
-      // Retrieve stream resource from image string
-      $stream = fopen('php://temp', 'r+');
-      fwrite($stream, $img_string);
-      rewind($stream);
-
-      // Override new, processed resource
-      $resource = $stream;
+      return false;
     }
 
     return true;

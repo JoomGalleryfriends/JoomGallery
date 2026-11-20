@@ -68,6 +68,8 @@ class ImageModel extends JoomAdminModel
    * @param   MVCFactoryInterface   $factory      The factory.
    * @param   FormFactoryInterface  $formFactory  The form factory.
    *
+   * @return  void
+   *
    * @since   4.0.0
    * @throws  \Exception
    */
@@ -257,6 +259,8 @@ class ImageModel extends JoomAdminModel
    * @return  boolean  True if successful.
    *
    * @throws  Exception
+   *
+   * @since   4.0.0
    */
   public function duplicate(&$pks)
   {
@@ -794,7 +798,7 @@ class ImageModel extends JoomAdminModel
           // Delete corresponding comments
           $db    = $this->getDatabase();
           $query = $db->getQuery(true)
-              ->delete($db->quoteName('#__joomgallery_comments'))
+              ->delete($db->quoteName(_JOOM_TABLE_COMMENTS))
             ->where(
                 $db->quoteName('imgid') . ' = :pk',
             )
@@ -805,7 +809,7 @@ class ImageModel extends JoomAdminModel
 
           // Delete corresponding votes
           $query = $db->getQuery(true)
-              ->delete($db->quoteName('#__joomgallery_votes'))
+              ->delete($db->quoteName(_JOOM_TABLE_VOTES))
             ->where(
                 $db->quoteName('imgid') . ' = :pk',
             )
@@ -816,7 +820,7 @@ class ImageModel extends JoomAdminModel
 
           // Delete corresponding collection reference
           $query = $db->getQuery(true)
-              ->delete($db->quoteName('#__joomgallery_collections_ref'))
+              ->delete($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
             ->where(
                 $db->quoteName('imgid') . ' = :pk',
             )
@@ -1055,6 +1059,7 @@ class ImageModel extends JoomAdminModel
    */
   public function publish(&$pks, $value = 1)
   {
+    // Delegate publication changes to the generic state-change workflow.
     return $this->changeState($pks, 'publish', $value);
   }
 
@@ -1268,6 +1273,404 @@ class ImageModel extends JoomAdminModel
   }
 
   /**
+   * Load and dynamically process one image resource for download.
+   *
+   * @param   object       $image   Image record.
+   * @param   string       $type    Requested image type.
+   * @param   object|null  $config  Effective image configuration, if already loaded.
+   *
+   * @return  array{0: object, 1: resource}  File metadata and readable resource.
+   *
+   * @throws  \RuntimeException  When the type is unavailable or the resource cannot be loaded.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function prepareDownloadResource(object $image, string $type, ?object $config = null): array
+  {
+    // Normalize the requested image type before configuration and path checks.
+    $type = strtolower(trim($type));
+
+    // Load the image-specific effective configuration when none was supplied.
+    if($config === null)
+    {
+      $this->component->createConfig(_JOOM_OPTION . '.image', (int) $image->id, true);
+      $config = $this->component->getConfig();
+    }
+
+    // Reject disabled, unconfigured or unavailable download types.
+    if(!\in_array($type, $this->getDownloadTypes($image, $config), true))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_NOT_ALLOWED'), 403);
+    }
+
+    // Resolve the stored path for the requested image type.
+    $path = JoomHelper::getImg($image, $type, false, false);
+
+    if(!$path)
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_FILE_NOT_FOUND'), 404);
+    }
+
+    // Select the image filesystem and verify that the path is a real file.
+    $this->component->createFilesystem((string) $image->filesystem);
+    $file = $this->component->getFilesystem()->getFile($path);
+
+    if(($file->type ?? '') !== 'file')
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_FILE_NOT_FOUND'), 404);
+    }
+
+    // Open and post-process the resource according to download settings.
+    [$fileInfo, $resource] = $this->component->getFilesystem()->getResource($path);
+    $this->processImageResource($fileInfo, $resource, $type, $config, 'download');
+
+    return [$fileInfo, $resource];
+  }
+
+  /**
+   * Apply image processing for a raw display or download resource.
+   *
+   * @param   object       $fileInfo  Filesystem metadata, updated after processing.
+   * @param   resource     $resource  Source resource, replaced by the processed resource.
+   * @param   string       $type      Requested image type.
+   * @param   object       $config    Effective image configuration.
+   * @param   string       $purpose   Processing policy: display, download or raw.
+   * @param   object|null  $options   Optional raw-view processing options.
+   *
+   * @return  void
+   *
+   * @throws  \InvalidArgumentException  When the processing purpose is unknown.
+   * @throws  \RuntimeException          When image processing or resource creation fails.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function processImageResource(
+      object &$fileInfo,
+      &$resource,
+      string $type,
+      object $config,
+      string $purpose = 'display',
+      ?object $options = null
+  ): void {
+    // Normalize the processing selectors and initialize the matching type settings.
+    $type    = strtolower(trim($type));
+    $purpose = strtolower(trim($purpose));
+    $params  = null;
+
+    // Locate the dynamic-processing settings for the requested image type.
+    foreach((array) $config->get('jg_dynamicprocessing', []) as $candidate)
+    {
+      $candidateParams = new Registry($candidate);
+
+      if((string) $candidateParams->get('jg_imgtypename') === $type)
+      {
+        $params = $candidateParams;
+        break;
+      }
+    }
+
+    // Resolve orientation, resize, quality and watermark defaults.
+    $dynamic      = $params instanceof Registry && (int) $params->get('jg_imgtype', 0) === 1;
+    $orient       = $dynamic && (int) $params->get('jg_imgtypeorinet', 0) === 1;
+    $resizeMode   = $dynamic ? (int) $params->get('jg_imgtyperesize', 0) : 0;
+    $resizeWidth  = $dynamic ? (int) $params->get('jg_imgtypewidth', 5000) : 0;
+    $resizeHeight = $dynamic ? (int) $params->get('jg_imgtypeheight', 5000) : 0;
+    $cropPosition = $dynamic ? (int) $params->get('jg_cropposition', 2) : 2;
+    $sharpen      = $dynamic ? (int) $params->get('jg_imgtypesharpen', 0) : 0;
+    $quality      = $dynamic ? (int) $params->get('jg_imgtypequality', 100) : 100;
+    $watermark    = false;
+
+    // Apply the watermark policy for a downloadable attachment.
+    if($purpose === 'download')
+    {
+      $watermark = (int) $config->get('jg_downloadwithwatermark', 0) === 1;
+    }
+    elseif($purpose === 'display')
+    {
+      // Apply configured dynamic watermarks to inline site images.
+      $watermark = $dynamic
+        && (int) $params->get('jg_imgtypewatermark', 0) === 1
+        && (int) $config->get('jg_dynamic_watermark', 0) === 1;
+    }
+    elseif($purpose === 'raw')
+    {
+      // Restrict administrator raw processing to the explicit resize request.
+      $orient       = false;
+      $watermark    = false;
+      $quality      = 100;
+      $resizeWidth  = max(0, (int) ($options->resize ?? 0));
+      $resizeHeight = $resizeWidth;
+      $resizeMode   = $resizeWidth > 0 ? (int) ($options->resize_type ?? 3) : 0;
+      $cropPosition = 2;
+      $sharpen      = 0;
+    }
+    else
+    {
+      // Refuse processing policies that have no defined behavior.
+      throw new \InvalidArgumentException('Unknown image processing purpose: ' . $purpose);
+    }
+
+    // Return the original resource when no processing operation is required.
+    if(!$orient && $resizeMode <= 0 && !$watermark)
+    {
+      return;
+    }
+
+    // Create the configured image processor for all requested operations.
+    $this->component->createIMGtools($config->get('jg_imgprocessor', 'gd'));
+
+    try
+    {
+      // Read, orient and resize the image in the configured order.
+      $tools = $this->component->getIMGtools();
+
+      if(!$tools->read($resource, true)
+        || ($orient && !$tools->orient())
+        || ($resizeMode > 0 && !$tools->resize(
+            $resizeMode,
+            $resizeWidth,
+            $resizeHeight,
+            $cropPosition,
+            $sharpen
+        )))
+      {
+        throw new \RuntimeException('Unable to process the image resource.');
+      }
+
+      // Apply the relevant display or download watermark settings.
+      if($watermark)
+      {
+        $watermarkSettings = $params instanceof Registry ? $params : new Registry();
+
+        if(!$tools->watermark(
+            JPATH_ROOT . \DIRECTORY_SEPARATOR . $config->get('jg_wmfile', 'media/joomgallery/images/watermark.png'),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkpos', 5),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkzoom', 2),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarksize', 60),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkopacity', 50)
+        ))
+        {
+          throw new \RuntimeException('Unable to watermark the image resource.');
+        }
+      }
+
+      // Render the processed image into an in-memory or temporary-file string.
+      $content = $tools->stream($quality, false);
+
+      if(!\is_string($content) || $content === '')
+      {
+        throw new \RuntimeException('The processed image resource is empty.');
+      }
+
+      // Create a seekable resource for the processed image bytes.
+      $processed = fopen('php://temp', 'w+b');
+
+      if($processed === false)
+      {
+        throw new \RuntimeException('Unable to create the processed download resource.');
+      }
+
+      // Write the complete processed image into the replacement resource.
+      $written = fwrite($processed, $content);
+
+      if($written === false || $written !== \strlen($content))
+      {
+        fclose($processed);
+
+        throw new \RuntimeException('Unable to create the processed image resource.');
+      }
+
+      // Rewind the new resource and detect its generated image metadata.
+      rewind($processed);
+      $imageInfo = getimagesizefromstring($content);
+
+      // Close the source resource before replacing it.
+      if(\is_resource($resource))
+      {
+        fclose($resource);
+      }
+
+      // Replace the source and update its byte size.
+      $resource       = $processed;
+      $fileInfo->size = \strlen($content);
+
+      // Update dimensions and MIME type when image metadata is available.
+      if(\is_array($imageInfo))
+      {
+        $fileInfo->width     = (int) $imageInfo[0];
+        $fileInfo->height    = (int) $imageInfo[1];
+        $fileInfo->mime_type = $imageInfo['mime'] ?? $fileInfo->mime_type;
+      }
+    }
+    finally
+    {
+      // Always release the component image processor service.
+      $this->component->delIMGtools();
+    }
+  }
+
+  /**
+   * Increment the download counter for one or more images atomically.
+   *
+   * @param   int|array  $imageIds  Image ID or list of image IDs.
+   *
+   * @return  boolean
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function incrementDownloads($imageIds): bool
+  {
+    // Normalize and sanitize one or more image IDs.
+    $imageIds = array_values(
+        array_unique(
+            array_filter(
+                array_map('intval', (array) $imageIds),
+                static fn(int $imageId): bool => $imageId > 0
+            )
+        )
+    );
+
+    // Skip the database query when no valid image ID remains.
+    if(!$imageIds)
+    {
+      return true;
+    }
+
+    // Increment every selected image counter in one atomic SQL update.
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->update($db->quoteName(_JOOM_TABLE_IMAGES))
+      ->set($db->quoteName('downloads') . ' = ' . $db->quoteName('downloads') . ' + 1')
+      ->whereIn($db->quoteName('id'), $imageIds, ParameterType::INTEGER);
+
+    // Execute the counter update and report success.
+    $db->setQuery($query)->execute();
+
+    return true;
+  }
+
+  /**
+   * Return the image types the current user may download for an image.
+   *
+   * The effective image configuration includes user-group and category
+   * overrides. Configured types are returned only when their file exists.
+   *
+   * @param   object       $image   Image record.
+   * @param   object|null  $config  Effective image configuration, if already loaded.
+   *
+   * @return  array  Allowed and available image type names.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getDownloadTypes(object $image, ?object $config = null): array
+  {
+    // Reject incomplete image records.
+    if((int) ($image->id ?? 0) <= 0)
+    {
+      return [];
+    }
+
+    // Load the image-specific effective configuration when none was supplied.
+    if($config === null)
+    {
+      $this->component->createConfig(_JOOM_OPTION . '.image', (int) $image->id, true);
+      $config = $this->component->getConfig();
+    }
+
+    // Return no types when downloads are disabled for this image.
+    if((int) $config->get('jg_download', 0) !== 1)
+    {
+      return [];
+    }
+
+    // Normalize the stored download-type configuration to an array.
+    $configuredTypes = $config->get('jg_downloadfile', []);
+
+    if(\is_string($configuredTypes))
+    {
+      // ConfigTable persists multiple selections as a comma-separated string.
+      $configuredTypes = explode(',', $configuredTypes);
+    }
+    elseif(\is_object($configuredTypes))
+    {
+      $configuredTypes = (array) $configuredTypes;
+    }
+    elseif(!\is_array($configuredTypes))
+    {
+      $configuredTypes = [$configuredTypes];
+    }
+
+    // Keep old values functional until the database update has converted them.
+    $legacyTypes = [
+      '0' => ['detail'],
+      '1' => ['original'],
+      '2' => ['detail'],
+    ];
+
+    // Convert a legacy numeric setting into its equivalent image type.
+    if(\count($configuredTypes) === 1 && isset($legacyTypes[(string) reset($configuredTypes)]))
+    {
+      $configuredTypes = $legacyTypes[(string) reset($configuredTypes)];
+    }
+
+    // Normalize configured names and remove empty or duplicate values.
+    $configuredTypes = array_values(
+        array_unique(
+            array_filter(
+                array_map(
+                    static fn($type): string => strtolower(trim((string) $type)),
+                    $configuredTypes
+                )
+            )
+        )
+    );
+
+    // Keep only types whose file currently exists on the image filesystem.
+    return array_values(
+        array_filter(
+            $configuredTypes,
+            fn(string $type): bool => $this->downloadTypeExists($image, $type)
+        )
+    );
+  }
+
+  /**
+   * Check whether the requested image-type file exists on its filesystem.
+   *
+   * @param   object  $image  Image record.
+   * @param   string  $type   Image type name.
+   *
+   * @return  boolean
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  protected function downloadTypeExists(object $image, string $type): bool
+  {
+    // Treat path and filesystem errors as an unavailable download type.
+    try
+    {
+      // Resolve the stored path for the requested image type.
+      $path = JoomHelper::getImg($image, $type, false, false);
+
+      if(!$path)
+      {
+        return false;
+      }
+
+      // Query the image's filesystem adapter for a concrete file.
+      $this->component->createFilesystem((string) $image->filesystem);
+      $file = $this->component->getFilesystem()->getFile($path);
+
+      return isset($file->type) && $file->type === 'file';
+    }
+    catch(\Throwable $e)
+    {
+      // Hide storage details and report only that this type is unavailable.
+      return false;
+    }
+  }
+
+  /**
    * Method to save metadata to an image file
    *
    * @param   int     $pk    The record primary key.
@@ -1429,6 +1832,7 @@ class ImageModel extends JoomAdminModel
    */
   protected function canRecreate($record)
   {
+    // Reuse the component edit permission for image-type recreation.
     return $this->getAcl()->checkACL('core.edit', $this->typeAlias);
   }
 }

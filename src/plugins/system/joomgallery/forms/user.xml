@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fields name="joomgallery" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+      <fieldset name="joomgallery_profile" label="PLG_SYSTEM_JOOMGALLERY_PROFILE_FIELDS">
+        <field name="avatar" type="jgimage" disabled="true" readonly="true" filter="unset"
+               label="PLG_SYSTEM_JOOMGALLERY_AVATAR_LABEL" />
+        <field name="image" type="jgimage" disabled="true" readonly="true" filter="unset"
+               label="PLG_SYSTEM_JOOMGALLERY_IMAGE_LABEL" />
+        <field name="collections" type="Collections" disabled="true" readonly="true" filter="unset"
+               label="PLG_SYSTEM_JOOMGALLERY_COLLECTIONS_LABEL" />
+        <field name="description" type="editor" buttons="false" disabled="true" readonly="true"
+               filter="unset"
+               label="JGLOBAL_DESCRIPTION" />
+        <field name="files" type="Jsondisplay" disabled="true" readonly="true" filter="unset"
+               label="PLG_SYSTEM_JOOMGALLERY_FILES_LABEL" />
+        <field name="created_time" type="calendar" readonly="true" disabled="true" filter="unset"
+               translateformat="true" showtime="true" label="JGLOBAL_FIELD_CREATED_LABEL" />
+        <field name="edit_user_keys" type="note"
+               label="PLG_SYSTEM_JOOMGALLERY_AI_KEYS_LABEL" />
+      </fieldset>
+  </fields>
+</form>

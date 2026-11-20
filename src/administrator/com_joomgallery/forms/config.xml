@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+<form addruleprefix="Joomgallery\Component\Joomgallery\Administrator\Rule" addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
   <field name="id"
          type="text"
          filter="integer"
@@ -461,6 +461,22 @@
 
   <fieldset type="tab" name="user" label="COM_JOOMGALLERY_CONFIG_TAB_USER_SETTINGS">
     <fieldset type="tab" name="user-general" label="COM_JOOMGALLERY_CONFIG_TAB_COMMON">
+        <field name="jg_create_user" type="list" default="all" global_only="true"
+               label="COM_JOOMGALLERY_CREATE_USER"
+               description="COM_JOOMGALLERY_CREATE_USER_DESC">
+          <option value="all">COM_JOOMGALLERY_CREATE_USER_ALL</option>
+          <option value="groups">COM_JOOMGALLERY_CREATE_USER_GROUPS</option>
+          <option value="users">COM_JOOMGALLERY_CREATE_USER_USERS</option>
+        </field>
+        <field name="jg_create_user_groups" type="usergrouplist" multiple="true" global_only="true"
+               filter="int_array" showon="jg_create_user:groups"
+               label="COM_JOOMGALLERY_CREATE_USER_GROUPS"
+               description="COM_JOOMGALLERY_CREATE_USER_GROUPS_DESC" />
+        <field name="jg_create_user_ids" type="text" filter="string" global_only="true" maxlength="2048" validate="Userids" message="COM_JOOMGALLERY_CREATE_USER_IDS_INVALID"
+               showon="jg_create_user:users" label="COM_JOOMGALLERY_CREATE_USER_IDS"
+               description="COM_JOOMGALLERY_CREATE_USER_IDS_DESC"
+               hint="3,8,20-100" />
+
         <field name="jg_userspace"
               type="radio"
               default="1"
@@ -597,8 +613,10 @@
       <field name="jg_download"
              type="radio"
              default="1"
-             class="btn-group hidden"
+             class="btn-group"
              layout="joomla.form.field.radio.switcher"
+             filter="integer"
+             validate="options"
              label="COM_JOOMGALLERY_CONFIG_DOWNLOAD"
              description="COM_JOOMGALLERY_CONFIG_DOWNLOAD_LONG" >
         <option value="0">JNO</option>
@@ -608,38 +626,51 @@
       <field name="jg_download_hint"
              type="radio"
              default="1"
-             class="btn-group hidden"
+             class="btn-group"
              layout="joomla.form.field.radio.switcher"
+             filter="integer"
+             validate="options"
              showon="jg_download:1"
              label="COM_JOOMGALLERY_CONFIG_HINT_NOT_ENOUGH_RIGHTS"
              description="COM_JOOMGALLERY_CONFIG_DOWNLOAD_HINT_LONG" >
-            <!-- <option value="0">JNO</option>-->
-            <!-- <option value="1">JYES</option>-->
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
       </field>
 
       <field name="jg_downloadfile"
-             type="list"
-             default="2"
+             type="jgimagetype"
+             multiple="true"
+             default="detail"
+             layout="joomla.form.field.list-fancy-select"
              showon="jg_download:1"
-             class="hidden"
              label="COM_JOOMGALLERY_CONFIG_DOWNLOADFILE"
-             description="COM_JOOMGALLERY_CONFIG_DOWNLOADFILE_LONG" >
-        <option value="0">COM_JOOMGALLERY_DETAIL</option>
-        <option value="1">COM_JOOMGALLERY_ORIGINAL</option>
-        <option value="2">COM_JOOMGALLERY_CONFIG_DETAIL_WHEN_NO_ORIGINAL</option>
-      </field>
+             description="COM_JOOMGALLERY_CONFIG_DOWNLOADFILE_LONG" />
 
       <field name="jg_downloadwithwatermark"
              type="radio"
              default="1"
-             class="btn-group hidden"
+             class="btn-group"
              layout="joomla.form.field.radio.switcher"
+             filter="integer"
+             validate="options"
              showon="jg_download:1"
              label="COM_JOOMGALLERY_CONFIG_DOWNLOADWITHWATERMARK"
              description="COM_JOOMGALLERY_CONFIG_DOWNLOADWITHWATERMARK_LONG" >
-            <!--  <option value="0">JNO</option>-->
-            <!--  <option value="1">JYES</option>-->
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
       </field>
+
+      <field name="jg_download_zip_retention"
+             type="number"
+             default="24"
+             min="1"
+             max="8760"
+             step="1"
+             filter="integer"
+             validate="number"
+             showon="jg_download:1"
+             label="COM_JOOMGALLERY_CONFIG_DOWNLOAD_ZIP_RETENTION"
+             description="COM_JOOMGALLERY_CONFIG_DOWNLOAD_ZIP_RETENTION_DESC" />
     </fieldset>
 
     <fieldset type="tab" name="user-ratings" label="COM_JOOMGALLERY_RATINGS">

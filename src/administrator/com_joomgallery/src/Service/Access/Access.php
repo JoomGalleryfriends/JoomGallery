@@ -170,6 +170,8 @@ class Access implements AccessInterface
     // Global and component administrators are always allowed.
     if($appuser->get('isRoot') === true)
     {
+      $this->allowed['default'] = true;
+
       return true;
     }
 
@@ -583,9 +585,11 @@ class Access implements AccessInterface
     $adminSyn = ['admin', 'acl'];
     // Synonyms for manage
     $manageSyn = ['manage', 'options'];
+    // Synonyms for connect
+    $connectSyn = ['connect', 'map', 'allocate', 'link'];
 
     // Compose array
-    $composition = [$addSyn, $delSyn, $editSyn, $editSyn, $stateSyn, $adminSyn, $manageSyn];
+    $composition = [$addSyn, $delSyn, $editSyn, $stateSyn, $adminSyn, $manageSyn, $connectSyn];
 
     // Get the correct action from composition array
     if(!$res = $this->arrayRecursiveSearch($action, $composition))
