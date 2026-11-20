@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Language\Text;
@@ -194,7 +195,7 @@ class CollectionModel extends JoomAdminModel
   /**
    * Load the creation-only form without loading an existing collection.
    *
-   * @return  \Joomla\CMS\Form\Form|boolean  Form instance on success, false on failure.
+   * @return  Form|boolean  Form instance on success, false on failure.
    *
    * @since   DEPLOY_VERSION
    */
