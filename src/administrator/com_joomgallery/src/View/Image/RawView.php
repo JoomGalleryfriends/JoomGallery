@@ -166,14 +166,14 @@ class RawView extends JoomGalleryRawView
     {
       /** @var ImageModel $model */
       $model = $this->getModel();
-      $model->processImageResource(
+    $model->processImageResource(
         $file_info,
         $resource,
         (string) $imagetype,
         $this->component->getConfig(),
         'raw',
         $options
-      );
+    );
     }
     catch(\Throwable $e)
     {

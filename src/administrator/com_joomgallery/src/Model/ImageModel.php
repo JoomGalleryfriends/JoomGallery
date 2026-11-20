@@ -1345,14 +1345,13 @@ class ImageModel extends JoomAdminModel
    * @since   __DEPLOY_VERSION__
    */
   public function processImageResource(
-    object &$fileInfo,
-    &$resource,
-    string $type,
-    object $config,
-    string $purpose = 'display',
-    ?object $options = null
-  ): void
-  {
+      object &$fileInfo,
+      &$resource,
+      string $type,
+      object $config,
+      string $purpose = 'display',
+      ?object $options = null
+  ): void {
     // Normalize the processing selectors and initialize the matching type settings.
     $type    = strtolower(trim($type));
     $purpose = strtolower(trim($purpose));
@@ -1371,15 +1370,15 @@ class ImageModel extends JoomAdminModel
     }
 
     // Resolve orientation, resize, quality and watermark defaults.
-    $dynamic       = $params instanceof Registry && (int) $params->get('jg_imgtype', 0) === 1;
-    $orient        = $dynamic && (int) $params->get('jg_imgtypeorinet', 0) === 1;
-    $resizeMode    = $dynamic ? (int) $params->get('jg_imgtyperesize', 0) : 0;
-    $resizeWidth   = $dynamic ? (int) $params->get('jg_imgtypewidth', 5000) : 0;
-    $resizeHeight  = $dynamic ? (int) $params->get('jg_imgtypeheight', 5000) : 0;
-    $cropPosition  = $dynamic ? (int) $params->get('jg_cropposition', 2) : 2;
-    $sharpen       = $dynamic ? (int) $params->get('jg_imgtypesharpen', 0) : 0;
-    $quality       = $dynamic ? (int) $params->get('jg_imgtypequality', 100) : 100;
-    $watermark     = false;
+    $dynamic      = $params instanceof Registry && (int) $params->get('jg_imgtype', 0) === 1;
+    $orient       = $dynamic && (int) $params->get('jg_imgtypeorinet', 0) === 1;
+    $resizeMode   = $dynamic ? (int) $params->get('jg_imgtyperesize', 0) : 0;
+    $resizeWidth  = $dynamic ? (int) $params->get('jg_imgtypewidth', 5000) : 0;
+    $resizeHeight = $dynamic ? (int) $params->get('jg_imgtypeheight', 5000) : 0;
+    $cropPosition = $dynamic ? (int) $params->get('jg_cropposition', 2) : 2;
+    $sharpen      = $dynamic ? (int) $params->get('jg_imgtypesharpen', 0) : 0;
+    $quality      = $dynamic ? (int) $params->get('jg_imgtypequality', 100) : 100;
+    $watermark    = false;
 
     // Apply the watermark policy for a downloadable attachment.
     if($purpose === 'download')
@@ -1428,11 +1427,11 @@ class ImageModel extends JoomAdminModel
       if(!$tools->read($resource, true)
         || ($orient && !$tools->orient())
         || ($resizeMode > 0 && !$tools->resize(
-          $resizeMode,
-          $resizeWidth,
-          $resizeHeight,
-          $cropPosition,
-          $sharpen
+            $resizeMode,
+            $resizeWidth,
+            $resizeHeight,
+            $cropPosition,
+            $sharpen
         )))
       {
         throw new \RuntimeException('Unable to process the image resource.');
@@ -1444,11 +1443,11 @@ class ImageModel extends JoomAdminModel
         $watermarkSettings = $params instanceof Registry ? $params : new Registry();
 
         if(!$tools->watermark(
-          JPATH_ROOT . \DIRECTORY_SEPARATOR . $config->get('jg_wmfile', 'media/joomgallery/images/watermark.png'),
-          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkpos', 5),
-          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkzoom', 2),
-          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarksize', 60),
-          $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkopacity', 50)
+            JPATH_ROOT . \DIRECTORY_SEPARATOR . $config->get('jg_wmfile', 'media/joomgallery/images/watermark.png'),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkpos', 5),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkzoom', 2),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarksize', 60),
+            $watermarkSettings->get('jg_imgtypewtmsettings.jg_watermarkopacity', 50)
         ))
         {
           throw new \RuntimeException('Unable to watermark the image resource.');
@@ -1523,12 +1522,12 @@ class ImageModel extends JoomAdminModel
   {
     // Normalize and sanitize one or more image IDs.
     $imageIds = array_values(
-      array_unique(
-        array_filter(
-          array_map('intval', (array) $imageIds),
-          static fn(int $imageId): bool => $imageId > 0
+        array_unique(
+            array_filter(
+                array_map('intval', (array) $imageIds),
+                static fn(int $imageId): bool => $imageId > 0
+            )
         )
-      )
     );
 
     // Skip the database query when no valid image ID remains.

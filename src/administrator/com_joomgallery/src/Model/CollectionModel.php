@@ -15,9 +15,9 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Form\Form;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Asset;
 use Joomla\Filter\OutputFilter;
@@ -834,10 +834,10 @@ class CollectionModel extends JoomAdminModel
     $this->component->createConfig();
     $retentionHours = max(1, (int) $this->component->getConfig()->get('jg_download_zip_retention', 24));
     $directory      = Path::clean(
-      rtrim((string) Factory::getApplication()->get('tmp_path'), '/\\')
-      . \DIRECTORY_SEPARATOR . 'joomgallery'
-      . \DIRECTORY_SEPARATOR . 'collection-downloads'
-      . \DIRECTORY_SEPARATOR . (int) $profile->id
+        rtrim((string) Factory::getApplication()->get('tmp_path'), '/\\')
+        . \DIRECTORY_SEPARATOR . 'joomgallery'
+        . \DIRECTORY_SEPARATOR . 'collection-downloads'
+        . \DIRECTORY_SEPARATOR . (int) $profile->id
     );
 
     // Create the cache directory before acquiring its profile lock.
@@ -898,7 +898,7 @@ class CollectionModel extends JoomAdminModel
 
       // Open a unique temporary archive so incomplete ZIP files are never cached.
       $temporaryPath = $archivePath . '.' . bin2hex(random_bytes(8)) . '.part';
-      $zip            = new \ZipArchive();
+      $zip           = new \ZipArchive();
 
       if($zip->open($temporaryPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true)
       {
@@ -988,7 +988,7 @@ class CollectionModel extends JoomAdminModel
       }
 
       // Register the archive, expiry and exact image manifest on the profile.
-      $created           = time();
+      $created            = time();
       $entries[$cacheKey] = [
         'collection_id' => $collectionId,
         'imagetype'     => $type,

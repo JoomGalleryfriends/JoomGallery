@@ -194,11 +194,11 @@ class CollectionController extends JoomFormController
     // Execute the operation and report its result through Joomla messages.
     try
     {
-      $model->manageCollection(
+    $model->manageCollection(
         $this->input->post->getInt('id', 0),
         $this->input->post->getCmd('operation', ''),
         $this->input->post->getInt('userid', 0)
-      );
+    );
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_COLLECTION_UPDATED'));
     }
     catch(\Throwable $e)
@@ -240,13 +240,13 @@ class CollectionController extends JoomFormController
 
       // Load or create an archive containing only images that pass access checks.
       /** @var CollectionModel $model */
-      $model   = $this->getModel('Collection', 'Administrator');
-      $archive = $model->prepareDownloadArchive(
+      $model = $this->getModel('Collection', 'Administrator');
+    $archive = $model->prepareDownloadArchive(
         $collectionId,
         $type,
         $forceRecreate,
         fn(object $image, string $imageType): bool => $this->access((int) $image->id, $imageType)
-      );
+    );
 
       // Count every image represented by this download request.
       /** @var ImageModel $imageModel */
@@ -335,9 +335,9 @@ class CollectionController extends JoomFormController
     // Configure attachment, size, cache and content-safety headers.
     $this->app->setHeader('Content-Type', 'application/zip', true);
     $this->app->setHeader(
-      'Content-Disposition',
-      'attachment; filename="' . addcslashes($filename, '"\\') . '"; filename*=UTF-8\'\'' . rawurlencode($filename),
-      true
+        'Content-Disposition',
+        'attachment; filename="' . addcslashes($filename, '"\\') . '"; filename*=UTF-8\'\'' . rawurlencode($filename),
+        true
     );
     $this->app->setHeader('Content-Length', (string) filesize($path), true);
     $this->app->setHeader('Cache-Control', 'private, no-store, no-cache, must-revalidate', true);
