@@ -14,6 +14,10 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
+
 /**
  * Model for persistence of one JoomGallery user profile.
  *
@@ -155,6 +159,55 @@ class UserModel extends JoomAdminModel
     if(!$table->delete($id))
     {
       throw new \RuntimeException($table->getError() ?: 'Could not delete the JoomGallery user profile.');
+    }
+  }
+
+  /**
+   * Delete every cached collection archive owned by a JoomGallery profile.
+   *
+   * The complete profile directory is removed so unregistered temporary ZIPs
+   * and the profile lock cannot survive a user lifecycle deletion.
+   *
+   * @param   int  $id  JoomGallery profile ID.
+   *
+   * @return  void
+   *
+   * @throws  \RuntimeException  When the cache directory cannot be deleted.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function deleteCollectionDownloadFiles(int $id): void
+  {
+    if($id <= 0)
+    {
+      return;
+    }
+
+    // Recreate the same profile-specific boundary used by collection ZIP generation.
+    $temporaryPath = trim((string) Factory::getApplication()->get('tmp_path'));
+
+    if($temporaryPath === '')
+    {
+      throw new \RuntimeException('The Joomla temporary directory is not configured.');
+    }
+
+    $root      = Path::clean(
+        rtrim($temporaryPath, '/\\')
+        . \DIRECTORY_SEPARATOR . 'joomgallery'
+        . \DIRECTORY_SEPARATOR . 'collection-downloads'
+    );
+    $directory = Path::clean($root . \DIRECTORY_SEPARATOR . $id);
+    $prefix    = rtrim($root, '/\\') . \DIRECTORY_SEPARATOR;
+
+    // Refuse to remove anything outside the dedicated collection archive root.
+    if(!str_starts_with(strtolower($directory), strtolower($prefix)))
+    {
+      throw new \RuntimeException('Invalid collection download cache directory.');
+    }
+
+    if(is_dir($directory) && !Folder::delete($directory))
+    {
+      throw new \RuntimeException('Could not delete the collection download cache directory.');
     }
   }
 }

@@ -15,6 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\UserProfile;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\DatabaseInterface;
 
@@ -199,6 +200,18 @@ class UserProfile implements UserProfileInterface
     {
       $this->db->transactionRollback();
       throw $e;
+    }
+
+    // Filesystem cache cannot participate in the database transaction. Remove
+    // it only after the profile deletion committed, and preserve consistency
+    // even when an operating-system file lock temporarily prevents cleanup.
+    try
+    {
+      $userModel->deleteCollectionDownloadFiles((int) $profile->id);
+    }
+    catch(\Throwable $e)
+    {
+      Log::add($e->getMessage(), Log::WARNING, 'com_joomgallery');
     }
   }
 }

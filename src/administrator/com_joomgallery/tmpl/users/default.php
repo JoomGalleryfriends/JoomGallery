@@ -32,6 +32,7 @@ $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 ?>
 
+<div class="jg jg-users">
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=users'); ?>" method="post" name="adminForm" id="adminForm">
   <div id="j-main-container" class="j-main-container">
     <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
@@ -84,3 +85,4 @@ $listDirn  = $this->state->get('list.direction');
     <?php echo HTMLHelper::_('form.token'); ?>
   </div>
 </form>
+</div>

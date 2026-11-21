@@ -91,6 +91,6 @@ UPDATE `#__joomgallery_configs`
 SET `jg_downloadfile` = CASE `jg_downloadfile`
   WHEN '0' THEN 'detail'
   WHEN '1' THEN 'original'
-  WHEN '2' THEN 'detail,original'
+  WHEN '2' THEN 'detail'
   ELSE `jg_downloadfile`
 END;

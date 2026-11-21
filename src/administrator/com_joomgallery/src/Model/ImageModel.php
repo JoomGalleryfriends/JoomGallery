@@ -1577,7 +1577,40 @@ class ImageModel extends JoomAdminModel
       $config = $this->component->getConfig();
     }
 
-    // Return no types when downloads are disabled for this image.
+    $configuredTypes = $this->getConfiguredDownloadTypes($config);
+
+    // Keep only types whose file currently exists on the image filesystem.
+    return array_values(
+        array_filter(
+            $configuredTypes,
+            fn(string $type): bool => $this->downloadTypeExists($image, $type)
+        )
+    );
+  }
+
+  /**
+   * Return the image types enabled for download by the effective configuration.
+   *
+   * This method deliberately does not inspect a particular image file. It is
+   * used by collection download controls, while prepareDownloadResource()
+   * performs the final per-image availability check during ZIP generation.
+   *
+   * @param   object|null  $config  Effective configuration, or null to load it.
+   *
+   * @return  array  Normalized configured image type names.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getConfiguredDownloadTypes(?object $config = null): array
+  {
+    // Load the effective configuration for the current user when required.
+    if($config === null)
+    {
+      $this->component->createConfig();
+      $config = $this->component->getConfig();
+    }
+
+    // Return no types while controlled downloads are disabled.
     if((int) $config->get('jg_download', 0) !== 1)
     {
       return [];
@@ -1625,13 +1658,7 @@ class ImageModel extends JoomAdminModel
         )
     );
 
-    // Keep only types whose file currently exists on the image filesystem.
-    return array_values(
-        array_filter(
-            $configuredTypes,
-            fn(string $type): bool => $this->downloadTypeExists($image, $type)
-        )
-    );
+    return $configuredTypes;
   }
 
   /**

@@ -832,7 +832,17 @@ class CollectionModel extends JoomAdminModel
 
     // Resolve the retention period and profile-specific cache directory.
     $this->component->createConfig();
-    $retentionHours = max(1, (int) $this->component->getConfig()->get('jg_download_zip_retention', 24));
+    $config = $this->component->getConfig();
+    /** @var ImageModel $imageModel */
+    $imageModel = $this->component->getMVCFactory()->createModel('Image', 'Administrator');
+
+    // Apply the same configured image-type boundary to cached and new archives.
+    if(!\in_array($type, $imageModel->getConfiguredDownloadTypes($config), true))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_NOT_ALLOWED'), 403);
+    }
+
+    $retentionHours = max(1, (int) $config->get('jg_download_zip_retention', 24));
     $directory      = Path::clean(
         rtrim((string) Factory::getApplication()->get('tmp_path'), '/\\')
         . \DIRECTORY_SEPARATOR . 'joomgallery'
@@ -916,10 +926,8 @@ class CollectionModel extends JoomAdminModel
         }
 
         // Prepare the image model and archive manifest counters.
-        /** @var ImageModel $imageModel */
-        $imageModel = $this->component->getMVCFactory()->createModel('Image', 'Administrator');
-        $added      = 0;
-        $imageIds   = [];
+        $added    = 0;
+        $imageIds = [];
 
         // Add each accessible, processed image resource to the ZIP archive.
         foreach($images as $image)

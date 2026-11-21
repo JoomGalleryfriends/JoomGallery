@@ -14,6 +14,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Collections;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
@@ -63,10 +64,14 @@ class HtmlView extends JoomGalleryView
 
     $this->ownerOptions = $model->getOwnerOptions();
     $collectionModel    = $this->component->getMVCFactory()->createModel('Collection', 'Administrator', ['ignore_request' => true]);
+    /** @var ImageModel $imageModel */
+    $imageModel    = $this->component->getMVCFactory()->createModel('Image', 'Administrator', ['ignore_request' => true]);
+    $downloadTypes = $imageModel->getConfiguredDownloadTypes();
 
     foreach($this->items as $item)
     {
       $item->managementPermissions = $collectionModel->getManagementPermissions($item);
+      $item->downloadTypes         = $downloadTypes;
     }
 
     ToolbarHelper::title(Text::_('COM_JOOMGALLERY_COLLECTIONS'), 'folder');

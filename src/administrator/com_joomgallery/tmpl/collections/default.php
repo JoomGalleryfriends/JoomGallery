@@ -26,6 +26,7 @@ $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 ?>
 
+<div class="jg jg-collections">
 <form action="<?php echo Route::_('index.php?option=com_joomgallery&view=collections'); ?>" method="post"
     name="adminForm" id="adminForm">
   <div id="j-main-container" class="j-main-container">
@@ -85,5 +86,6 @@ $listDirn  = $this->state->get('list.direction');
     <?php echo HTMLHelper::_('form.token'); ?>
   </div>
 </form>
+</div>
 
 <?php echo implode("\n", $modals); ?>

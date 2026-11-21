@@ -243,6 +243,10 @@ joomla-field-image .jg_minithumb {
 .jg .input-group.d-flex .dropdown {
   margin-right: .5rem;
 }
+.jg-collection-download-type {
+  min-width: 10rem !important;
+  padding-inline-start: 1rem;
+}
 .jg-category .password-group > div.text-center,
 .jg-tags-aiinterface .ordering-select div:first-child {
   display: none;

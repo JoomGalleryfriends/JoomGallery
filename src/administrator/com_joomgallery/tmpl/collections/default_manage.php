@@ -16,7 +16,12 @@ use Joomla\CMS\Router\Route;
 
 $item        = $this->managementItem;
 $permissions = $item->managementPermissions;
+
+// Import CSS & JS
+$wa = $this->document->getWebAssetManager();
+$wa->useStyle('com_joomgallery.admin');
 ?>
+
 <?php if((int) $item->is_default) : ?>
   <p class="alert alert-info"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DEFAULT_NOTICE'); ?></p>
 <?php endif; ?>
@@ -24,10 +29,42 @@ $permissions = $item->managementPermissions;
   <section class="pb-4 mb-4 border-bottom">
     <h3 class="h5 mb-2"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD'); ?></h3>
     <p class="text-body-secondary"><?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_DESC'); ?></p>
-    <a class="btn btn-primary" href="<?php echo Route::_('index.php?option=com_joomgallery&task=collection.download&id=' . (int) $item->id . '&type=detail'); ?>">
-      <span class="icon-download" aria-hidden="true"></span>
-      <?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD'); ?>
-    </a>
+    <?php if(!empty($item->downloadTypes)) : ?>
+      <form action="<?php echo Route::_('index.php'); ?>" method="get" class="d-flex flex-wrap align-items-center gap-3">
+        <input type="hidden" name="option" value="com_joomgallery">
+        <input type="hidden" name="task" value="collection.download">
+        <input type="hidden" name="id" value="<?php echo (int) $item->id; ?>">
+        <label class="visually-hidden" for="collection-download-type-<?php echo (int) $item->id; ?>">
+          <?php echo Text::_('COM_JOOMGALLERY_IMAGETYPE'); ?>
+        </label>
+        <div class="input-group w-auto">
+          <select class="form-select border-start jg-collection-download-type"
+                  id="collection-download-type-<?php echo (int) $item->id; ?>" name="type">
+            <?php foreach($item->downloadTypes as $downloadType) : ?>
+              <?php
+              $typeLanguageKey = 'COM_JOOMGALLERY_' . strtoupper((string) $downloadType);
+              $typeLabel       = Text::_($typeLanguageKey);
+              $typeLabel       = $typeLabel === $typeLanguageKey ? ucfirst((string) $downloadType) : $typeLabel;
+              ?>
+              <option value="<?php echo $this->escape($downloadType); ?>"><?php echo $this->escape($typeLabel); ?></option>
+            <?php endforeach; ?>
+          </select>
+          <button type="submit" class="btn btn-primary">
+            <span class="icon-download" aria-hidden="true"></span>
+            <?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD'); ?>
+          </button>
+        </div>
+        <div class="form-check mb-0">
+          <input class="form-check-input" type="checkbox" name="force_recreate" value="1"
+                 id="collection-download-recreate-<?php echo (int) $item->id; ?>">
+          <label class="form-check-label" for="collection-download-recreate-<?php echo (int) $item->id; ?>">
+            <?php echo Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_REGENERATE'); ?>
+          </label>
+        </div>
+      </form>
+    <?php else : ?>
+      <p class="alert alert-info mb-0"><?php echo Text::_('COM_JOOMGALLERY_DOWNLOAD_NOT_ALLOWED'); ?></p>
+    <?php endif; ?>
   </section>
 <?php endif; ?>
 <?php if($permissions['reassign']) : ?>
