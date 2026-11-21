@@ -440,17 +440,15 @@ ob_start(); ?>
             <?php endif; ?>
         </div>
     <?php endif; ?>
-
+    <?php if($show_tags && trim($tags) !== '') : ?>
+      <div class="d-flex flex-wrap gap-2 py-4 jg-detail__tags"><?php echo $tags; ?></div>
+    <?php endif; ?>
     <?php if($show_description && trim((string) $this->item->description) !== '') : ?>
       <div class="lead mb-4" itemprop="description"><?php echo JoomHelper::sanitizeHtml($this->item->description, true); ?>
     </div>
     <?php endif; ?>
 
     <?php ob_start(); ?>
-      <?php if($show_tags && trim($tags) !== '') : ?>
-        <dt class="col-sm-4 col-lg-3"><?php echo Text::_('COM_JOOMGALLERY_TAGS'); ?></dt>
-        <dd class="col-sm-8 col-lg-9"><?php echo $tags; ?></dd>
-      <?php endif; ?>
       <?php if($show_imgauthor && $imageAuthor !== '') : ?>
         <dt class="col-sm-4 col-lg-3"><?php echo Text::_('JAUTHOR'); ?></dt>
         <dd class="col-sm-8 col-lg-9"><?php echo $this->escape($imageAuthor); ?></dd>
