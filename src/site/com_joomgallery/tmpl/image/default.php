@@ -362,6 +362,7 @@ ob_start(); ?>
       <?php endforeach; ?>
     <?php endif; ?>
 
+    <?php if($show_favorite_btn || $show_download_btn || $show_voting_btn || $show_comment_btn || $show_share_btn || $canEdit || $canDelete || $canCheckin) : ?>
     <div class="d-flex flex-wrap align-items-center gap-2 pb-3 border-bottom" aria-label="Image actions">
       <?php if($show_favorite_btn) : ?>
         <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
@@ -408,6 +409,7 @@ ob_start(); ?>
         </div>
       <?php endif; ?>
     </div>
+    <?php endif; ?>
 
     <?php if(!$header_above) echo $imageHeader; ?>
 
@@ -419,24 +421,25 @@ ob_start(); ?>
       <?php endforeach; ?>
     <?php endif; ?>
 
-    <div class="d-flex flex-wrap gap-4 py-3 border-bottom text-body-secondary">
-      <?php if($show_votes) : ?>
-        <span><span class="icon-heart" aria-hidden="true"></span> <?php echo (int) $this->item->votes; ?> <?php echo Text::_('COM_JOOMGALLERY_VOTES'); ?></span>
-      <?php endif; ?>
-      <?php if($show_rating) : ?>
-        <span><span class="icon-star" aria-hidden="true"></span> <?php echo $this->escape(number_format($rating, 2)); ?> <?php echo Text::_('COM_JOOMGALLERY_IMAGE_RATING'); ?></span>
-      <?php endif; ?>
-      <?php if($show_comments) : ?>
-        <span><span class="icon-comment" aria-hidden="true"></span> 0 <?php echo Text::_('COM_JOOMGALLERY_COMMENTS'); ?></span>
-      <?php endif; ?>
-      <?php if($show_hits) : ?>
-        <span><span class="icon-eye" aria-hidden="true"></span> <?php echo (int) $this->item->hits; ?> <?php echo Text::_('JGLOBAL_HITS'); ?></span>
-      <?php endif; ?>
-      <?php if($show_downloads) : ?>
-        <span><span class="icon-download" aria-hidden="true"></span> <?php echo (int) $this->item->downloads; ?> <?php echo Text::_('COM_JOOMGALLERY_DOWNLOADS'); ?></span>
-      <?php endif; ?>
-    </div>
-
+    <?php if($show_votes || $show_rating || $show_comments || $show_hits || $show_downloads) : ?>
+        <div class="d-flex flex-wrap gap-4 py-3 border-bottom text-body-secondary">
+            <?php if($show_votes) : ?>
+                <span><span class="icon-heart" aria-hidden="true"></span> <?php echo (int) $this->item->votes; ?> <?php echo Text::_('COM_JOOMGALLERY_VOTES'); ?></span>
+            <?php endif; ?>
+            <?php if($show_rating) : ?>
+                <span><span class="icon-star" aria-hidden="true"></span> <?php echo $this->escape(number_format($rating, 2)); ?> <?php echo Text::_('COM_JOOMGALLERY_IMAGE_RATING'); ?></span>
+            <?php endif; ?>
+            <?php if($show_comments) : ?>
+                <span><span class="icon-comment" aria-hidden="true"></span> 0 <?php echo Text::_('COM_JOOMGALLERY_COMMENTS'); ?></span>
+            <?php endif; ?>
+            <?php if($show_hits) : ?>
+                <span><span class="icon-eye" aria-hidden="true"></span> <?php echo (int) $this->item->hits; ?> <?php echo Text::_('JGLOBAL_HITS'); ?></span>
+            <?php endif; ?>
+            <?php if($show_downloads) : ?>
+                <span><span class="icon-download" aria-hidden="true"></span> <?php echo (int) $this->item->downloads; ?> <?php echo Text::_('COM_JOOMGALLERY_DOWNLOADS'); ?></span>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
     <?php if($show_tags && trim($tags) !== '') : ?>
       <div class="d-flex flex-wrap gap-2 py-4 jg-detail__tags"><?php echo $tags; ?></div>
     <?php endif; ?>
@@ -445,7 +448,7 @@ ob_start(); ?>
     </div>
     <?php endif; ?>
 
-    <dl class="row mb-0 pt-4 border-top">
+    <?php ob_start(); ?>
       <?php if($show_imgauthor && $imageAuthor !== '') : ?>
         <dt class="col-sm-4 col-lg-3"><?php echo Text::_('JAUTHOR'); ?></dt>
         <dd class="col-sm-8 col-lg-9"><?php echo $this->escape($imageAuthor); ?></dd>
@@ -471,7 +474,12 @@ ob_start(); ?>
       <?php if($show_metadata) : ?>
         <?php echo $metadataLayout->render($importantMetadata); ?>
       <?php endif; ?>
-    </dl>
+    <?php $details = ob_get_clean(); ?>
+    <?php if(trim(strip_tags($details)) !== '') : ?>
+      <dl class="row mb-0 pt-4 border-top">
+        <?php echo $details; ?>
+      </dl>
+    <?php endif; ?>
     <br>
     <?php // Important metadata modal button ?>
     <?php if($show_metadata && \count($allMetadata->get('items', [])) > 0) : ?>
