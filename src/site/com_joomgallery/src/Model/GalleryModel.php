@@ -210,6 +210,14 @@ class GalleryModel extends JoomItemModel
   public function getFilterForm($data = [], $loadData = true)
   {
     $form = $this->imagesModel->getFilterForm($data, $loadData);
+    $form->removeField('language', 'filter');
+
+    $params = $this->getParams();
+
+    if(!$params['configs']->get('jg_gallery_view_show_owner_filter', 1, 'int'))
+    {
+      $form->removeField('created_by', 'filter');
+    }
 
     // Get the XML category field element
     $field = $form->getXml()->xpath('//field[@name="category"]');

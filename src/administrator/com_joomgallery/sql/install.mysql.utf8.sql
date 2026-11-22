@@ -170,6 +170,7 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_gallery_view_show_imgauthor` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_gallery_view_show_tags` TINYINT(1) NOT NULL DEFAULT 0,
 `jg_gallery_view_show_tags_label` TINYINT(1) NOT NULL DEFAULT 1,
+`jg_gallery_view_show_owner_filter` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_browse_images_link` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_browse_categories_link` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_category_view_subcategory_class` VARCHAR(25) NOT NULL DEFAULT "columns",
