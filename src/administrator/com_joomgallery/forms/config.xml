@@ -871,6 +871,16 @@
             <option value="a.downloads DESC">COM_JOOMGALLERY_DOWNLOADS_DESC</option>
             <option value="RAND()">COM_JOOMGALLERY_RANDOM_ORDER</option>
         </field>
+        <field name="jg_gallery_view_show_owner_filter"
+               type="radio"
+               label="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_SHOW_OWNER_FILTER"
+               description="COM_JOOMGALLERY_CONFIG_GALLERY_VIEW_SHOW_OWNER_FILTER_DESC"
+               default="1"
+               layout="joomla.form.field.radio.switcher"
+               validate="options">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
         <field name="jg_gallery_view_class"
                type="list"
                label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_IMAGES_CLASS"
@@ -934,6 +944,111 @@
             <option value="none">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_NONE</option>
             <option value="defaultview">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_DETAILVIEW</option>
             <option value="lightgallery">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_LIGHTGALLERY</option>
+        </field>
+        <field name="jg_gallery_view_caption_align"
+            type="list"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_ALIGNMENT"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_ALIGNMENT_NOTE_DESC"
+            default="center"
+            validate="options"
+            >
+            <option value="left">JGLOBAL_LEFT</option>
+            <option value="center">JGLOBAL_CENTER</option>
+            <option value="right">JGLOBAL_RIGHT</option>
+        </field>
+        <field name="jg_gallery_view_images_show_title"
+            type="radio"
+            label="JGLOBAL_TITLE"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="jg_gallery_view_title_link"
+            type="list"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_TITLE_LINK"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_TITLE_LINK_DESC"
+            default="defaultview"
+            validate="options"
+            showon="jg_gallery_view_images_show_title:1"
+            >
+            <option value="none">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_NONE</option>
+            <option value="defaultview">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_DETAILVIEW</option>
+            <option value="lightgallery">COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_LINK_LIGHTGALLERY</option>
+        </field>
+        <field name="gallery_view_image_information"
+            label="COM_JOOMGALLERY_CONFIG_IMAGE_INFORMATION"
+            type="spacer"
+            hr="false"
+            >
+        </field>
+        <field name="jg_gallery_view_show_description"
+            type="radio"
+            label="JGLOBAL_DESCRIPTION"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="jg_gallery_view_show_description_label"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_DESCRIPTION_LABEL"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_DESCRIPTION_LABEL_DESC"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            showon="jg_gallery_view_show_description:1"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="jg_gallery_view_show_imgdate"
+            type="radio"
+            label="COM_JOOMGALLERY_DATE"
+            description="COM_JOOMGALLERY_DATE_DESC"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="jg_gallery_view_show_imgauthor"
+            type="radio"
+            label="JAUTHOR"
+            description="COM_JOOMGALLERY_FIELDS_AUTHOR_DESC"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="jg_gallery_view_show_tags"
+            type="radio"
+            label="COM_JOOMGALLERY_TAGS"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="jg_gallery_view_show_tags_label"
+            type="radio"
+            label="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_TAGS_LABEL"
+            description="COM_JOOMGALLERY_CONFIG_CATEGORY_VIEW_TAGS_LABEL_DESC"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            validate="options"
+            showon="jg_gallery_view_show_tags:1"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
         </field>
     </fieldset>
 

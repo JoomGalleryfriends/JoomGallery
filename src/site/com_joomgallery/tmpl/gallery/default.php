@@ -26,6 +26,15 @@ $image_class            = $this->params['configs']->get('jg_gallery_view_image_c
 $justified_height       = $this->params['configs']->get('jg_gallery_view_justified_height', 200, 'INT');
 $justified_gap          = $this->params['configs']->get('jg_gallery_view_justified_gap', 5, 'INT');
 $image_link             = $this->params['configs']->get('jg_gallery_view_image_link', 'defaultview', 'STRING');
+$caption_align          = $this->params['configs']->get('jg_gallery_view_caption_align', 'center', 'STRING');
+$show_title             = $this->params['configs']->get('jg_gallery_view_images_show_title', 1, 'INT');
+$title_link             = $this->params['configs']->get('jg_gallery_view_title_link', 'defaultview', 'STRING');
+$show_description       = $this->params['configs']->get('jg_gallery_view_show_description', 0, 'INT');
+$show_description_label = $this->params['configs']->get('jg_gallery_view_show_description_label', 1, 'INT');
+$show_imgdate           = $this->params['configs']->get('jg_gallery_view_show_imgdate', 0, 'INT');
+$show_imgauthor         = $this->params['configs']->get('jg_gallery_view_show_imgauthor', 0, 'INT');
+$show_tags              = $this->params['configs']->get('jg_gallery_view_show_tags', 0, 'INT');
+$show_tags_label        = $this->params['configs']->get('jg_gallery_view_show_tags_label', 1, 'INT');
 $browse_categories_link = $this->params['configs']->get('jg_gallery_view_browse_categories_link', 0, 'INT');
 $lightbox_image         = $this->params['configs']->get('jg_lightbox_image', 'detail', 'STRING');
 $lightbox_thumbnails    = $this->params['configs']->get('jg_lightbox_thumbnails', 0, 'INT');
@@ -128,16 +137,33 @@ $wa->addInlineScript($iniJS, ['position' => 'after'], [], ['com_joomgallery.joom
     echo LayoutHelper::render('joomgallery.search.searchbar', $search_vars);
   ?>
 
-  <?php // Hint for no items ?>
+  <?php
+$image_tags_data = [];
+
+if($show_tags && !empty($this->item->images->items))
+{
+$imageIds = array_map(
+    static fn($item) => (int) $item->id,
+    $this->item->images->items
+);
+
+  $component       = Joomla\CMS\Factory::getApplication()->bootComponent('com_joomgallery');
+  $tagsModel       = $component->getMVCFactory()->createModel('Tags', 'administrator');
+  $image_tags_data = $tagsModel->getMappedTitlesByImageIds($imageIds);
+}
+?>
+
+<?php // Hint for no items ?>
   <?php if(\count($this->item->images->items) == 0) : ?>
     <p><?php echo Text::_('COM_JOOMGALLERY_GALLERY_NO_IMAGES') ?></p>
   <?php else: ?>
     <?php // Display data array for grid layout
     $imgsData = [
       'id' => '1-' . $this->item->id, 'layout' => $gallery_class, 'items' => $this->item->images->items, 'num_columns' => (int) $num_columns,
-      'caption_align' => 'center', 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
-      'image_title'   => false, 'title_link' => 'defaultview', 'image_desc' => false, 'image_date' => false,
-      'image_author'  => false, 'image_tags' => false,
+      'caption_align' => $caption_align, 'image_class' => $image_class, 'image_type' => $image_type, 'lightbox_type' => $lightbox_image, 'image_link' => $image_link,
+      'image_title'   => (bool) $show_title, 'title_link' => $title_link, 'image_desc' => (bool) $show_description, 'image_desc_label' => (bool) $show_description_label,
+      'image_date'    => (bool) $show_imgdate, 'image_author' => (bool) $show_imgauthor, 'image_tags' => (bool) $show_tags,
+      'image_tags_data' => $image_tags_data, 'image_tags_label' => (bool) $show_tags_label,
     ];
     ?>
     <?php // Images grid ?>

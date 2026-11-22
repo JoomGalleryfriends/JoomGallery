@@ -15,7 +15,6 @@ namespace Joomgallery\Component\Joomgallery\Site\View\Gallery;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
-use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 
@@ -70,13 +69,6 @@ class HtmlView extends JoomGalleryView
     // Load images serach filters
     $this->filterForm    = $model->getFilterForm();
     $this->activeFilters = $model->getActiveFilters();
-
-    // We do not need to filter by language when multilingual is disabled
-    if(!Multilanguage::isEnabled())
-    {
-      unset($this->activeFilters['language']);
-      $this->filterForm->removeField('language', 'filter');
-    }
 
     // Check for errors.
     if(\count($errors = $model->getErrors()))
