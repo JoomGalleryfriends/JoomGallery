@@ -1,0 +1,64 @@
+<?php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Downloader;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
+
+use Joomla\CMS\Factory;
+use Joomla\Session\SessionInterface;
+
+/**
+ * Component implementation of DownloaderServiceInterface.
+ *
+ * @package JoomGallery
+ * @since   __DEPLOY_VERSION__
+ */
+trait DownloaderServiceTrait
+{
+  /**
+   * Downloader service instance.
+   *
+   * @var    DownloaderInterface|null
+   */
+  private $downloader = null;
+
+  /**
+   * Create the Downloader service.
+   *
+   * @return  void
+   */
+  public function createDownloader(): void
+  {
+    $this->downloader = new Downloader(
+        $this,
+        $this->getMVCFactory(),
+        Factory::getApplication(),
+        Factory::getContainer()->get(SessionInterface::class)
+    );
+  }
+
+  /**
+   * Return the Downloader service.
+   *
+   * @return  DownloaderInterface  Downloader service instance.
+   */
+  public function getDownloader(): DownloaderInterface
+  {
+    if($this->downloader === null)
+    {
+      $this->createDownloader();
+    }
+
+    return $this->downloader;
+  }
+}

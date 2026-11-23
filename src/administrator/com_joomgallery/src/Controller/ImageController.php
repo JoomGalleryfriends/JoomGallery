@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Downloader\DownloaderInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
@@ -95,14 +96,25 @@ class ImageController extends JoomFormController
         throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_IMAGE_NOT_FOUND'), 404);
       }
 
-      // Prepare and send the download
-      [$fileInfo, $resource] = $model->prepareDownloadResource($image, $type);
-      $model->incrementDownloads($imageId);
+      $downloader = $this->component->getDownloader();
+      $decision   = $downloader->authorizeImage($image, $type, 'download');
+
+      if($decision['status'] !== DownloaderInterface::STATUS_ALLOWED)
+      {
+        throw new \RuntimeException(
+            $decision['message'] ?: Text::_('COM_JOOMGALLERY_LICENSE_REQUIRED'),
+            $decision['status'] === DownloaderInterface::STATUS_PROVIDER_UNAVAILABLE ? 503 : 403
+        );
+      }
+
+      // Prepare, count and send the authorized download.
+      [$fileInfo, $resource] = $downloader->prepareImageDownload($image, $type);
+      $downloader->recordDownloads($imageId);
       $this->outputDownloadResource($resource, $fileInfo, (string) $image->filename);
     }
     catch(\Throwable $e)
     {
-      $status = \in_array((int) $e->getCode(), [400, 403, 404], true) ? (int) $e->getCode() : 500;
+      $status = \in_array((int) $e->getCode(), [400, 403, 404, 503], true) ? (int) $e->getCode() : 500;
 
       if($status === 500)
       {

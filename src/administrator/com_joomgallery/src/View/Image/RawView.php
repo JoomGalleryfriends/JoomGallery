@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Downloader\DownloaderInterface;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryRawView;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
@@ -82,6 +83,27 @@ class RawView extends JoomGalleryRawView
       // Take the adapter from the image object
       $img_obj = $model->getItem();
       $adapter = $img_obj->filesystem;
+
+      // Perform the authoritative resource/variant authorization immediately
+      // before any protected source bytes are opened.
+      $decision = $this->component->getDownloader()->authorizeImage($img_obj, $type, 'display');
+
+    if(\in_array(
+        $decision['status'],
+        [DownloaderInterface::STATUS_TERMS_REQUIRED, DownloaderInterface::STATUS_PURCHASE_REQUIRED],
+        true
+    ))
+      {
+        $this->outputLockedImage((bool) $base64);
+
+        return;
+    }
+
+      if($decision['status'] !== DownloaderInterface::STATUS_ALLOWED)
+      {
+        $status = $decision['status'] === DownloaderInterface::STATUS_PROVIDER_UNAVAILABLE ? 503 : 403;
+        $this->outputError($status, $decision['message'] ?: Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
+      }
     }
 
     // Get image path
@@ -148,6 +170,63 @@ class RawView extends JoomGalleryRawView
 
     // Output
     $this->outputResource($resource, $file_info->mime_type, $img_path, $file_info->size);
+  }
+
+  /**
+   * Return the packaged locked-image placeholder without exposing source bytes.
+   *
+   * @param   boolean  $base64  Whether the caller requested base64 output.
+   *
+   * @return  void
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  protected function outputLockedImage(bool $base64 = false): void
+  {
+    [$fileInfo, $resource, $path] = $this->component->getDownloader()->getLockedImageResource();
+
+    if($base64)
+    {
+      $content = stream_get_contents($resource);
+      fclose($resource);
+
+      if($content === false)
+      {
+        $this->outputError(500, Text::_('COM_JOOMGALLERY_LICENSE_LOCKED_IMAGE_NOT_FOUND'));
+      }
+
+      $content = base64_encode($content);
+      $this->app->setHeader('Content-Type', 'text/plain; charset=US-ASCII', true);
+    }
+    else
+    {
+      $content = stream_get_contents($resource);
+      fclose($resource);
+
+      if($content === false)
+      {
+        $this->outputError(500, Text::_('COM_JOOMGALLERY_LICENSE_LOCKED_IMAGE_NOT_FOUND'));
+      }
+
+      $this->getDocument()->setMimeEncoding((string) $fileInfo->mime_type);
+      $this->app->setHeader('Content-Type', (string) $fileInfo->mime_type, true);
+      $this->app->setHeader('Content-Disposition', 'inline; filename="' . basename($path) . '"', true);
+    }
+
+    $this->app->setHeader('Content-Length', (string) \strlen($content), true);
+    $this->app->setHeader('Cache-Control', 'private, no-store, no-cache, must-revalidate', true);
+    $this->app->setHeader('Pragma', 'no-cache', true);
+    $this->app->setHeader('X-JoomGallery-Locked', '1', true);
+    $this->app->setHeader('X-Content-Type-Options', 'nosniff', true);
+
+    while(ob_get_level() > 0)
+    {
+      ob_end_clean();
+    }
+
+    $this->app->sendHeaders();
+    echo $content;
+    $this->app->close();
   }
 
   /**

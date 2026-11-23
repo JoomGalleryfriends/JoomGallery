@@ -15,7 +15,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Model\CollectionModel;
-use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Downloader\DownloaderInterface;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
@@ -239,25 +239,37 @@ class CollectionController extends JoomFormController
       }
 
       // Load or create an archive containing only images that pass access checks.
-      /** @var CollectionModel $model */
-      $model = $this->getModel('Collection', 'Administrator');
-    $archive = $model->prepareDownloadArchive(
+      $downloader = $this->component->getDownloader();
+    $archive      = $downloader->prepareCollectionDownload(
         $collectionId,
         $type,
         $forceRecreate,
         fn(object $image, string $imageType): bool => $this->access((int) $image->id, $imageType)
     );
 
+      // Reauthorize the exact stored manifest immediately before emitting bytes.
+    $decision = $downloader->authorizeArchive(
+        $archive,
+        $type,
+        fn(object $image, string $imageType): bool => $this->access((int) $image->id, $imageType)
+    );
+
+      if($decision['status'] !== DownloaderInterface::STATUS_ALLOWED)
+      {
+        throw new \RuntimeException(
+            $decision['message'] ?: Text::_('COM_JOOMGALLERY_LICENSE_REQUIRED'),
+            $decision['status'] === DownloaderInterface::STATUS_PROVIDER_UNAVAILABLE ? 503 : 403
+        );
+      }
+
       // Count every image represented by this download request.
-      /** @var ImageModel $imageModel */
-      $imageModel = $this->getModel('Image', 'Administrator');
-      $imageModel->incrementDownloads($archive['image_ids']);
+      $downloader->recordDownloads($archive['image_ids']);
       $this->outputDownloadArchive($archive['path'], $archive['name']);
     }
     catch(\Throwable $e)
     {
       // Convert expected request failures into their matching HTTP status.
-      $status = \in_array((int) $e->getCode(), [400, 403, 404], true) ? (int) $e->getCode() : 500;
+      $status = \in_array((int) $e->getCode(), [400, 403, 404, 503], true) ? (int) $e->getCode() : 500;
 
       // Log unexpected archive failures without exposing details to the browser.
       if($status === 500)

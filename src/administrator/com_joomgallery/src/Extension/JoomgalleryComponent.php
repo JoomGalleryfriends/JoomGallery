@@ -18,6 +18,8 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessService
 use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Config\ConfigServiceTrait;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Downloader\DownloaderServiceInterface;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Downloader\DownloaderServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerServiceInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Service\FileManager\FileManagerServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Filesystem\FilesystemServiceInterface;
@@ -63,7 +65,7 @@ use Psr\Container\ContainerInterface;
  * @package JoomGallery
  * @since   4.0.0
  */
-class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface, UserProfileServiceInterface
+class JoomgalleryComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface, FieldsServiceInterface, UserProfileServiceInterface, DownloaderServiceInterface
 {
   use MessageTrait;
   use AssociationServiceTrait;
@@ -83,6 +85,7 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
    */
   use AccessServiceTrait;
   use ConfigServiceTrait;
+  use DownloaderServiceTrait;
   use FileManagerServiceTrait;
   use FilesystemServiceTrait;
   use IMGtoolsServiceTrait;
