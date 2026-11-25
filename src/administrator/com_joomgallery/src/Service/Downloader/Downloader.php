@@ -70,6 +70,10 @@ class Downloader implements DownloaderInterface
     $this->mvcFactory = $mvcFactory;
     $this->app        = $app;
     $this->session    = $session;
+
+    // Recreate server-side deny rules whenever the delivery service starts.
+    $this->protectArchiveDirectory();
+    $this->protectImageDirectory();
   }
 
   /**
@@ -201,12 +205,87 @@ class Downloader implements DownloaderInterface
   }
 
   /**
+   * Inspect the exact image set a collection request would download without creating a ZIP.
+   *
+   * @param   int      $collectionId  Collection ID.
+   * @param   string   $type          Requested imagetype.
+   * @param   boolean  $forceRecreate Ignore a cached archive.
+   *
+   * @return  array  Archive manifest containing image_ids.
+   */
+  public function inspectCollectionDownload(int $collectionId, string $type, bool $forceRecreate = false): array
+  {
+    $type = strtolower(trim($type));
+
+    if($collectionId <= 0 || $type === '' || !preg_match('/^[a-z0-9_-]+$/', $type))
+    {
+      throw new \InvalidArgumentException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_INVALID_REQUEST'), 400);
+    }
+
+    /** @var CollectionModel $model */
+    $model      = $this->mvcFactory->createModel('Collection', 'Administrator', ['ignore_request' => true]);
+    $collection = $model->getTable();
+
+    if(!$collection->load($collectionId))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_NOT_FOUND'), 404);
+    }
+
+    $profile = $this->mvcFactory->createTable('User', 'Administrator');
+
+    if(!$profile->load((int) $collection->userid))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_INVALID_OWNER'), 404);
+    }
+
+    $config     = $this->getGlobalConfig();
+    $imageModel = $this->mvcFactory->createModel('Image', 'Administrator', ['ignore_request' => true]);
+
+    if(!\in_array($type, $imageModel->getConfiguredDownloadTypes($config), true))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_NOT_ALLOWED'), 403);
+    }
+
+    $directory = Path::clean(
+        rtrim((string) $this->app->get('tmp_path'), '/\\')
+        . DIRECTORY_SEPARATOR . 'joomgallery'
+        . DIRECTORY_SEPARATOR . 'collection-downloads'
+        . DIRECTORY_SEPARATOR . (int) $profile->id
+    );
+    $cacheKey  = 'collection-' . $collectionId . '-' . $type;
+    $files     = new Registry((string) $profile->files);
+    $entries   = (array) $files->get('collection_downloads', []);
+    $entry     = isset($entries[$cacheKey]) ? (array) $entries[$cacheKey] : [];
+    $path      = !empty($entry['path']) ? Path::clean((string) $entry['path']) : '';
+    $prefix    = rtrim(Path::clean($directory), '/\\') . DIRECTORY_SEPARATOR;
+
+    if(!$forceRecreate && $path !== ''
+      && str_starts_with(strtolower($path), strtolower($prefix))
+      && (int) ($entry['expires'] ?? 0) > time()
+      && is_file($path) && is_readable($path)
+      && isset($entry['image_ids']) && \is_array($entry['image_ids']))
+    {
+      return ['image_ids' => array_values(array_map('intval', $entry['image_ids']))];
+    }
+
+    $images = $model->getCollectionDownloadImages($collectionId);
+
+    if(!$images)
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_EMPTY'), 404);
+    }
+
+    return ['image_ids' => array_values(array_map(static fn(object $image): int => (int) $image->id, $images))];
+  }
+
+  /**
    * Return an existing collection archive or generate and register a new one.
    *
    * @param   int            $collectionId  Collection ID.
    * @param   string         $type          Requested imagetype.
    * @param   boolean        $forceRecreate Force archive regeneration.
    * @param   callable|null  $access        Application-specific ordinary access callback.
+   * @param   array|null      $expectedIds   Previously authorized image IDs.
    *
    * @return  array{path: string, name: string, image_ids: array}  Archive data.
    */
@@ -214,7 +293,8 @@ class Downloader implements DownloaderInterface
       int $collectionId,
       string $type,
       bool $forceRecreate = false,
-      ?callable $access = null
+      ?callable $access = null,
+      ?array $expectedIds = null
   ): array {
     $type = strtolower(trim($type));
 
@@ -248,7 +328,7 @@ class Downloader implements DownloaderInterface
       throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_NOT_ALLOWED'), 403);
     }
 
-    $retentionHours = max(1, (int) $config->get('jg_download_zip_retention', 24));
+    $retentionHours = max(1, (int) $config->get('jg_download_zip_retention', 240));
     $directory      = Path::clean(
         rtrim((string) $this->app->get('tmp_path'), '/\\')
         . \DIRECTORY_SEPARATOR . 'joomgallery'
@@ -261,7 +341,7 @@ class Downloader implements DownloaderInterface
       throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_CREATE_FAILED'));
     }
 
-    $this->protectArchiveDirectory($directory);
+    $this->protectArchiveDirectory();
 
     $cacheKey    = 'collection-' . $collectionId . '-' . $type;
     $archiveName = $this->getCollectionArchiveName($collection, $type);
@@ -297,6 +377,11 @@ class Downloader implements DownloaderInterface
         && isset($entry['image_ids'])
         && \is_array($entry['image_ids']))
       {
+        if($expectedIds !== null && array_values(array_map('intval', $entry['image_ids'])) !== $expectedIds)
+        {
+          throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 403);
+        }
+
         $files->set('collection_downloads', $entries);
         $this->storeProfileFiles($profile, $files);
 
@@ -305,6 +390,28 @@ class Downloader implements DownloaderInterface
           'name'      => $archiveName,
           'image_ids' => array_values(array_map('intval', $entry['image_ids'])),
         ];
+      }
+
+      $images = $collectionModel->getCollectionDownloadImages($collectionId);
+
+      if(!$images)
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_EMPTY'), 404);
+      }
+
+      $currentIds = array_values(array_map(static fn(object $image): int => (int) $image->id, $images));
+
+      if($expectedIds !== null && $currentIds !== $expectedIds)
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 403);
+      }
+
+      foreach($images as $image)
+      {
+        if($access !== null && !$access($image, $type))
+        {
+          throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 403);
+        }
       }
 
       $temporaryPath = $archivePath . '.' . bin2hex(random_bytes(8)) . '.part';
@@ -317,13 +424,6 @@ class Downloader implements DownloaderInterface
 
       try
       {
-        $images = $collectionModel->getCollectionDownloadImages($collectionId);
-
-        if(!$images)
-        {
-          throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_EMPTY'), 404);
-        }
-
         $imageIds = [];
 
         foreach($images as $image)
@@ -479,6 +579,21 @@ class Downloader implements DownloaderInterface
     $arguments = [$this->app->getIdentity(), $manifest, $purpose, &$authorization];
     $results   = $this->app->triggerEvent('onJoomAuthorizeDownload', $arguments);
     $decision  = $this->normalizeProviderDecision($authorization, $results);
+
+    $responded = $authorization->status !== self::STATUS_ALLOWED
+      || $authorization->message !== ''
+      || $authorization->purchase_url !== ''
+      || $authorization->provider !== '';
+
+    foreach($results as $result)
+    {
+      $responded = $responded || $result !== null;
+    }
+
+    if(!$responded && (int) $this->getGlobalConfig()->get('jg_license_no_provider_allow', 1) !== 1)
+    {
+      return $this->decision(self::STATUS_DENIED, Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'));
+    }
 
     if($decision['status'] !== self::STATUS_ALLOWED)
     {
@@ -753,30 +868,86 @@ class Downloader implements DownloaderInterface
   /**
    * Install web-server deny files in a potentially web-accessible temp path.
    *
-   * @param   string  $directory  Owner archive directory.
+   * @return  void
+   */
+  private function protectArchiveDirectory(): void
+  {
+    $root = Path::clean(rtrim((string) $this->app->get('tmp_path'), '/\\') . DIRECTORY_SEPARATOR . 'joomgallery');
+
+    if(!is_dir($root) && !Folder::create($root))
+    {
+      throw new \RuntimeException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_CREATE_FAILED'));
+    }
+
+    $this->writeDenyFiles($root);
+  }
+
+  /**
+   * Protect the image storage directory unless legacy real paths are enabled.
    *
    * @return  void
    */
-  private function protectArchiveDirectory(string $directory): void
+  private function protectImageDirectory(): void
   {
-    $root      = dirname($directory);
+    $root      = Path::clean(JPATH_ROOT . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'joomgallery');
+    $htaccess  = $root . DIRECTORY_SEPARATOR . '.htaccess';
+    $webConfig = $root . DIRECTORY_SEPARATOR . 'web.config';
+
+    if((int) $this->getGlobalConfig()->get('jg_use_real_paths', 0) === 1)
+    {
+      // Remove only deny files written by this service when restoring real paths.
+      foreach([$htaccess => "Require all denied\nDeny from all\n", $webConfig => $this->denyWebConfig()] as $path => $contents)
+      {
+        if(is_file($path) && file_get_contents($path) === $contents)
+        {
+          File::delete($path);
+        }
+      }
+
+      return;
+    }
+
+    if(!is_dir($root) && !Folder::create($root))
+    {
+      throw new \RuntimeException('Could not protect JoomGallery image storage.');
+    }
+
+    $this->writeDenyFiles($root);
+  }
+
+  /**
+   * Add Apache and IIS deny rules to a storage directory when absent.
+   *
+   * @param   string  $root  Directory to protect.
+   *
+   * @return  void
+   */
+  private function writeDenyFiles(string $root): void
+  {
     $htaccess  = $root . \DIRECTORY_SEPARATOR . '.htaccess';
     $webConfig = $root . \DIRECTORY_SEPARATOR . 'web.config';
 
-    if(!is_file($htaccess))
+    if(!is_file($htaccess) && !File::write($htaccess, "Require all denied\nDeny from all\n"))
     {
-      File::write($htaccess, "Require all denied\nDeny from all\n");
+      throw new \RuntimeException('Could not protect JoomGallery storage.');
     }
 
-    if(!is_file($webConfig))
+    if(!is_file($webConfig) && !File::write($webConfig, $this->denyWebConfig()))
     {
-    File::write(
-        $webConfig,
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-          . "<configuration><system.webServer><security><authorization>"
-          . "<remove users=\"*\" roles=\"\" verbs=\"\"/><add accessType=\"Deny\" users=\"*\"/>"
-          . "</authorization></security></system.webServer></configuration>\n"
-    );
+      throw new \RuntimeException('Could not protect JoomGallery storage.');
     }
+  }
+
+  /**
+   * Return the IIS deny rule managed by this service.
+   *
+   * @return  string
+   */
+  private function denyWebConfig(): string
+  {
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+      . '<configuration><system.webServer><security><authorization>'
+      . '<remove users="*" roles="" verbs=""/><add accessType="Deny" users="*"/>'
+      . "</authorization></security></system.webServer></configuration>\n";
   }
 }

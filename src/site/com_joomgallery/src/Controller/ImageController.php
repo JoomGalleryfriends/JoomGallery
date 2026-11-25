@@ -557,6 +557,7 @@ class ImageController extends JoomFormController
       'purpose'  => $purpose,
       'return'   => $return,
     ];
+
     $service = $this->component->getDownloader();
 
     if($resource === 'image')
@@ -566,32 +567,17 @@ class ImageController extends JoomFormController
       return [$service->authorizeImage($image, $type, $purpose), $request];
     }
 
-    $collectionModel = $this->component->getMVCFactory()->createModel(
-        'Collection',
-        'Administrator',
-        ['ignore_request' => true]
-    );
+    $collectionModel = $this->component->getMVCFactory()->createModel('Collection', 'Administrator', ['ignore_request' => true]);
 
     if(!$collectionModel->ownsCollection($id))
     {
       throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 403);
     }
 
-    $archive = $service->prepareCollectionDownload(
-        $id,
-        $type,
-        false,
-        fn(object $image, string $imageType): bool => $this->canAccessImage($image, $imageType)
-    );
+    $manifest = $service->inspectCollectionDownload($id, $type, (bool) $this->input->getInt('force_recreate', 0));
+    $archive  = $service->authorizeArchive($manifest, $type, fn(object $image, string $imageType): bool => $this->canAccessImage($image, $imageType));
 
-    return [
-    $service->authorizeArchive(
-        $archive,
-        $type,
-        fn(object $image, string $imageType): bool => $this->canAccessImage($image, $imageType)
-    ),
-      $request,
-    ];
+    return [$archive, $request];
   }
 
   /**

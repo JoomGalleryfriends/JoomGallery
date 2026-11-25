@@ -14,15 +14,15 @@ namespace Joomgallery\Component\Joomgallery\Administrator\View\Userkeys;
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 use Joomla\CMS\Factory;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 /**
  * AI credential modal view.
  *
  * @since  __DEPLOY_VERSION__
  */
-class HtmlView extends BaseHtmlView
+class HtmlView extends JoomGalleryView
 {
   protected $form;
 

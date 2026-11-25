@@ -75,12 +75,20 @@ interface DownloaderInterface
   public function prepareImageDownload(object $image, string $type): array;
 
   /**
+   * Inspect the image IDs of a cached or newly requested collection ZIP.
+   *
+   * @return  array  Manifest containing image_ids.
+   */
+  public function inspectCollectionDownload(int $collectionId, string $type, bool $forceRecreate = false): array;
+
+  /**
    * Return an existing collection archive or generate a new one.
    *
    * @param   int            $collectionId  Collection ID.
    * @param   string         $type          Requested imagetype.
    * @param   boolean        $forceRecreate Force regeneration of an existing archive.
    * @param   callable|null  $access        Application-specific ordinary access callback.
+   * @param   array|null      $expectedIds   Previously authorized image IDs.
    *
    * @return  array{path: string, name: string, image_ids: array}  Archive data.
    */
@@ -88,7 +96,8 @@ interface DownloaderInterface
       int $collectionId,
       string $type,
       bool $forceRecreate = false,
-      ?callable $access = null
+      ?callable $access = null,
+      ?array $expectedIds = null
   ): array;
 
   /**

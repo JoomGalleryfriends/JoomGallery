@@ -58,6 +58,11 @@ class CollectionController extends JoomFormController
 
     try
     {
+      if(!$this->checkToken('get', false))
+      {
+        throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+      }
+
       if($collectionId <= 0 || $type === '')
       {
         throw new \InvalidArgumentException(Text::_('COM_JOOMGALLERY_COLLECTION_DOWNLOAD_INVALID_REQUEST'), 400);
@@ -76,8 +81,8 @@ class CollectionController extends JoomFormController
 
       $downloader = $this->component->getDownloader();
       $access     = fn(object $image, string $imageType): bool => $this->canAccessImage($image, $imageType);
-      $archive    = $downloader->prepareCollectionDownload($collectionId, $type, $forceRecreate, $access);
-      $decision   = $downloader->authorizeArchive($archive, $type, $access);
+      $manifest   = $downloader->inspectCollectionDownload($collectionId, $type, $forceRecreate);
+      $decision   = $downloader->authorizeArchive($manifest, $type, $access);
 
     if(\in_array(
         $decision['status'],
@@ -90,6 +95,7 @@ class CollectionController extends JoomFormController
           . '&id=' . $collectionId
           . '&type=' . rawurlencode($type)
           . '&purpose=download'
+          . '&force_recreate=' . (int) $forceRecreate
           . '&return=' . rawurlencode($return);
         $this->setRedirect(Route::_($url, false));
 
@@ -101,6 +107,14 @@ class CollectionController extends JoomFormController
         $status = $decision['status'] === DownloaderInterface::STATUS_PROVIDER_UNAVAILABLE ? 503 : 403;
         throw new \RuntimeException($decision['message'] ?: Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), $status);
       }
+
+    $archive = $downloader->prepareCollectionDownload(
+        $collectionId,
+        $type,
+        $forceRecreate,
+        $access,
+        $manifest['image_ids']
+    );
 
       $downloader->recordDownloads($archive['image_ids']);
       $this->outputDownloadArchive($archive['path'], $archive['name']);

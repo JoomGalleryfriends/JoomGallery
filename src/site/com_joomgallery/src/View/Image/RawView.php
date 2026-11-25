@@ -49,29 +49,12 @@ class RawView extends AdminRawView
     {
       // Use the administrator image model that owns the shared processing pipeline.
       /** @var ImageModel $model */
-    $model = $this->component->getMVCFactory()->createModel(
-        'Image',
-        'Administrator',
-        ['ignore_request' => true]
-    );
-    $model->processImageResource(
-        $file_info,
-        $resource,
-        (string) $imagetype,
-        $this->component->getConfig(),
-        'display',
-        $options
-    );
+      $model = $this->component->getMVCFactory()->createModel('Image', 'Administrator', ['ignore_request' => true]);
+      $model->processImageResource($file_info, $resource, (string) $imagetype, $this->component->getConfig(), 'display', $options);
     }
     catch(\Throwable $e)
     {
-    $this->component->addError(
-        Text::sprintf(
-            'COM_JOOMGALLERY_ERROR_DYNAMIC_IMAGE_PROCESSING',
-            $e->getMessage(),
-            (string) ($file_info->filename ?? '')
-        )
-    );
+      $this->component->addError(Text::sprintf('COM_JOOMGALLERY_ERROR_DYNAMIC_IMAGE_PROCESSING', $e->getMessage(), (string) ($file_info->filename ?? '')));
 
       return false;
     }

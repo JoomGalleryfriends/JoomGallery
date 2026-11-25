@@ -34,6 +34,7 @@ $wa->useStyle('com_joomgallery.admin');
         <input type="hidden" name="option" value="com_joomgallery">
         <input type="hidden" name="task" value="collection.download">
         <input type="hidden" name="id" value="<?php echo (int) $item->id; ?>">
+        <?php echo HTMLHelper::_('form.token'); ?>
         <label class="visually-hidden" for="collection-download-type-<?php echo (int) $item->id; ?>">
           <?php echo Text::_('COM_JOOMGALLERY_IMAGETYPE'); ?>
         </label>

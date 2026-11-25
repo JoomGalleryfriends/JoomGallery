@@ -226,6 +226,11 @@ class CollectionController extends JoomFormController
 
     try
     {
+      if(!$this->checkToken('get', false))
+      {
+        throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+      }
+
       // Reject incomplete archive requests.
       if($collectionId <= 0 || $type === '')
       {
@@ -238,21 +243,11 @@ class CollectionController extends JoomFormController
         throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 403);
       }
 
-      // Load or create an archive containing only images that pass access checks.
+      // Authorize the exact cached or current image set before creating an archive.
       $downloader = $this->component->getDownloader();
-    $archive      = $downloader->prepareCollectionDownload(
-        $collectionId,
-        $type,
-        $forceRecreate,
-        fn(object $image, string $imageType): bool => $this->access((int) $image->id, $imageType)
-    );
-
-      // Reauthorize the exact stored manifest immediately before emitting bytes.
-    $decision = $downloader->authorizeArchive(
-        $archive,
-        $type,
-        fn(object $image, string $imageType): bool => $this->access((int) $image->id, $imageType)
-    );
+      $access     = fn(object $image, string $imageType): bool => $this->access((int) $image->id, $imageType);
+      $manifest   = $downloader->inspectCollectionDownload($collectionId, $type, $forceRecreate);
+      $decision   = $downloader->authorizeArchive($manifest, $type, $access);
 
       if($decision['status'] !== DownloaderInterface::STATUS_ALLOWED)
       {
@@ -261,6 +256,8 @@ class CollectionController extends JoomFormController
             $decision['status'] === DownloaderInterface::STATUS_PROVIDER_UNAVAILABLE ? 503 : 403
         );
       }
+
+      $archive = $downloader->prepareCollectionDownload($collectionId, $type, $forceRecreate, $access, $manifest['image_ids']);
 
       // Count every image represented by this download request.
       $downloader->recordDownloads($archive['image_ids']);
