@@ -54,7 +54,7 @@ extract($displayData);
  * @var   array    $dataAttributes  Miscellaneous data attribute for eg, data-*.
  */
 $modalHTML = '';
-$uri       = new Uri('index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
+$uri       = new Uri(Uri::base() . 'index.php?option=com_joomgallery&view=images&layout=modal&tmpl=component&required=0');
 $uri->setVar('field', $this->escape($id));
 
 if(empty($value))
