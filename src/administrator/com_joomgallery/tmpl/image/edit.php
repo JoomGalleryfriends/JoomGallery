@@ -212,7 +212,13 @@ if(!\is_null($this->item->filename) && \in_array(strtolower(pathinfo($this->item
 $options = [
   'modal-dialog-scrollable' => true,
   'title'                             => 'Test Title',
-  'footer'                            => $mediaManagerBtn . '<a id="replaceBtn" class="btn hasTip" title="' . Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP') . '" href="' . Route::_('index.php?option=com_joomgallery&view=image&layout=replace&id=' . (int) $this->item->id) . '">' . Text::_('COM_JOOMGALLERY_REPLACE') . '</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('JCLOSE') . '</button>',
+  'footer'                            => $mediaManagerBtn
+    . '<a id="downloadBtn" class="btn btn-success d-none" href="#"><span class="icon-download" aria-hidden="true"></span> '
+    . Text::_('COM_JOOMGALLERY_DOWNLOAD') . '</a>'
+    . '<a id="replaceBtn" class="btn hasTip" title="' . Text::_('COM_JOOMGALLERY_IMAGE_REPLACE_TIP') . '" href="'
+    . Route::_('index.php?option=com_joomgallery&view=image&layout=replace&id=' . (int) $this->item->id) . '">'
+    . Text::_('COM_JOOMGALLERY_REPLACE') . '</a><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+    . Text::_('JCLOSE') . '</button>',
 ];
 
 echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div id="modal-body">Content set by ajax.</div>');
@@ -226,12 +232,14 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
     let modalTitle = modal.querySelector('.modal-title');
     let modalBody  = modal.querySelector('.modal-body');
     let replaceBtn = document.getElementById('replaceBtn');
+    let downloadBtn = document.getElementById('downloadBtn');
     let mediaInput = document.getElementById('mediaManagerPath');
 
     <?php
-      $imgURL   = [];
-      $title    = [];
-      $mediaURL = [];
+      $imgURL      = [];
+      $title       = [];
+      $mediaURL    = [];
+      $downloadURL = [];
 
       foreach($this->imagetypes as $key => $imagetype)
       {
@@ -247,11 +255,22 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
         }
 
         $mediaURL[$imagetype->typename] = 'index.php?option=com_joomgallery&path=' . $this->item->filesystem . ':' . $img_path;
+
+        if(\in_array($imagetype->typename, $this->downloadTypes, true))
+        {
+        $downloadURL[$imagetype->typename] = Route::_(
+            'index.php?option=com_joomgallery&task=image.download&id=' . (int) $this->item->id
+              . '&type=' . rawurlencode($imagetype->typename)
+              . '&' . \Joomla\CMS\Session\Session::getFormToken() . '=1',
+            false
+        );
+        }
       }
     ?>
     const imgURL   = <?php echo json_encode($imgURL, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES); ?>;
     const title    = <?php echo json_encode($title, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES); ?>;
     const mediaURL = <?php echo json_encode($mediaURL, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES); ?>;
+    const downloadURL = <?php echo json_encode($downloadURL, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES); ?>;
 
     modalTitle.textContent = title[typename];
 
@@ -275,6 +294,17 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
     replaceUrl.searchParams.set('type', typename);
     replaceBtn.href  = replaceUrl.toString();
     mediaInput.value = mediaURL[typename];
+
+    if(Object.prototype.hasOwnProperty.call(downloadURL, typename))
+    {
+      downloadBtn.href = downloadURL[typename];
+      downloadBtn.classList.remove('d-none');
+    }
+    else
+    {
+      downloadBtn.removeAttribute('href');
+      downloadBtn.classList.add('d-none');
+    }
 
     let bsmodal = new bootstrap.Modal(document.getElementById('image-modal-box'), {keyboard: false});
     bsmodal.show();

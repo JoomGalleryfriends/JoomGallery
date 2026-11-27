@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Joomgallery\Component\Joomgallery\Administrator\Field">
+  <fieldset name="general">
+    <field name="title" type="text" label="JGLOBAL_TITLE" required="true" maxlength="255" filter="string" />
+    <field name="alias" type="text" label="JALIAS" maxlength="255" filter="cmd" />
+    <field name="userid" type="Jguser" label="COM_JOOMGALLERY_OWNER" required="true" filter="integer" />
+    <field name="description" type="editor" label="JGLOBAL_DESCRIPTION" buttons="true"
+           filter="\Joomla\CMS\Component\ComponentHelper::filterText" />
+    <field name="published" type="list" label="JSTATUS" default="1" filter="integer" validate="options">
+      <option value="1">JPUBLISHED</option>
+      <option value="0">JUNPUBLISHED</option>
+    </field>
+    <field name="access" type="accesslevel" label="JFIELD_ACCESS_LABEL" default="1" filter="integer" />
+  </fieldset>
+</form>

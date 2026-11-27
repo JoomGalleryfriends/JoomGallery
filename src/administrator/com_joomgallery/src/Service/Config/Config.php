@@ -49,6 +49,18 @@ abstract class Config extends \stdClass implements ConfigInterface
   protected $subforms = ['jg_replaceinfo', 'jg_staticprocessing', 'jg_dynamicprocessing', 'jg_imgtypewtmsettings'];
 
   /**
+   * Configuration fields which always expose a sequential array of values.
+   *
+   * ConfigTable stores multiple selections as comma-separated strings. During
+   * model loading Joomla may recursively convert the resulting arrays to
+   * CMSObject instances, so these fields are normalized at the service boundary.
+   *
+   * @var    array<string>
+   * @since  __DEPLOY_VERSION__
+   */
+  protected $multipleFields = ['jg_downloadfile', 'jg_record_hits_select'];
+
+  /**
    * Content for which the settings has to be calculated
    *
    * @var string
@@ -356,6 +368,10 @@ abstract class Config extends \stdClass implements ConfigInterface
             {
               continue;
             }
+            elseif(\in_array($key, $this->multipleFields, true))
+            {
+              $value = $this->normalizeMultipleValue($value);
+            }
             elseif(\is_integer($value) || \is_bool($value) || $value === '1' || $value === '0')
             {
               $value = \intval($value);
@@ -370,6 +386,81 @@ abstract class Config extends \stdClass implements ConfigInterface
         }
       }
     }
+  }
+
+  /**
+   * Normalize all multiple-value properties currently held by the service.
+   *
+   * This is also used for configuration objects restored from the session
+   * cache, which bypass setParamsToClass().
+   *
+   * @return  void
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  protected function normalizeMultipleFields(): void
+  {
+    foreach($this->multipleFields as $field)
+    {
+      $value = $this->get($field, null);
+
+      if($value !== null)
+      {
+        $this->set($field, $this->normalizeMultipleValue($value));
+      }
+    }
+  }
+
+  /**
+   * Convert a stored multiple-value setting to a sequential string array.
+   *
+   * @param   mixed  $value  CSV string, array, Joomla object or scalar value.
+   *
+   * @return  array<string>
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  protected function normalizeMultipleValue($value): array
+  {
+    $normalized = [];
+
+    $collect = function ($item) use (&$collect, &$normalized): void {
+      if(\is_object($item))
+      {
+        // CMSObject contains internal state when cast directly to an array.
+        // getProperties() returns only its configuration values.
+        $item = method_exists($item, 'getProperties') ? $item->getProperties() : get_object_vars($item);
+      }
+
+      if(\is_array($item))
+      {
+        foreach($item as $nestedItem)
+        {
+          $collect($nestedItem);
+        }
+
+        return;
+      }
+
+      if(!\is_scalar($item) && $item !== null)
+      {
+        return;
+      }
+
+      foreach(explode(',', (string) $item) as $entry)
+      {
+        $entry = trim($entry);
+
+        if($entry !== '')
+        {
+          $normalized[] = $entry;
+        }
+      }
+    };
+
+    $collect($value);
+
+    return array_values(array_unique($normalized));
   }
 
   /**

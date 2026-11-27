@@ -58,6 +58,7 @@ class DefaultConfig extends Config implements ConfigInterface
       // The params for this context is available in the object cache.
       // Use cache instead.
       $this->setProperties(self::$cache[base64_encode($this->storeId)]);
+      $this->normalizeMultipleFields();
 
       return;
     }

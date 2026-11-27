@@ -37,6 +37,7 @@ class HtmlView extends JoomGalleryView
   protected $form;
   protected $config;
   protected $imagetypes;
+  protected $downloadTypes = [];
 
   protected $uploadLimit;
   protected $postMaxSize;
@@ -59,12 +60,13 @@ class HtmlView extends JoomGalleryView
     /** @var ImageModel $model */
     $model = $this->getModel();
 
-    $this->state      = $model->getState();
-    $this->item       = $model->getItem();
-    $this->form       = $model->getForm();
-    $this->config     = JoomHelper::getService('config');
-    $this->imagetypes = JoomHelper::getRecords('imagetypes');
-    $rating           = JoomHelper::getRating($this->item->id);
+    $this->state         = $model->getState();
+    $this->item          = $model->getItem();
+    $this->form          = $model->getForm();
+    $this->config        = JoomHelper::getService('config');
+    $this->imagetypes    = JoomHelper::getRecords('imagetypes');
+    $this->downloadTypes = $model->getDownloadTypes($this->item, $this->config);
+    $rating              = JoomHelper::getRating($this->item->id);
     $this->form->setvalue('rating', '', $rating);
     $this->app->getLanguage()->load('com_joomgallery.exif', _JOOM_PATH_ADMIN);
     $this->app->getLanguage()->load('com_joomgallery.iptc', _JOOM_PATH_ADMIN);

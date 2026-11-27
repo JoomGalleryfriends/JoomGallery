@@ -302,10 +302,10 @@ class FileManager implements FileManagerInterface
           // Yes
         if(!$this->component->getIMGtools()->watermark(
             JPATH_ROOT . \DIRECTORY_SEPARATOR . $this->component->getConfig()->get('jg_wmfile'),
-            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkpos', 9),
-            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkzoom', 0),
-            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarksize', 15),
-            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkopacity', 80)
+            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkpos', 5),
+            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkzoom', 2),
+            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarksize', 60),
+            $imagetype->params->get('jg_imgtypewtmsettings.jg_watermarkopacity', 50)
         )
             )
           {

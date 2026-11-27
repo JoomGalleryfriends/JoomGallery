@@ -7,7 +7,6 @@
 		<action name="joom.upload" title="COM_JOOMGALLERY_UPLOAD" description="COM_JOOMGALLERY_ACTION_COMPONENT_UPLOAD_DESC" />
 		<action name="joom.upload.inown" title="COM_JOOMGALLERY_ACTION_UPLOAD_INOWN" description="COM_JOOMGALLERY_ACTION_COMPONENT_UPLOAD_INOWN_DESC" />
 		<action name="joom.connect" title="COM_JOOMGALLERY_ACTION_CONNECT" description="COM_JOOMGALLERY_ACTION_CONNECT_DESC" />
-		<action name="joom.connect.inown" title="COM_JOOMGALLERY_ACTION_CONNECT_INOWN" description="COM_JOOMGALLERY_ACTION_CONNECT_INOWN_DESC" />
 		<action name="core.create" title="JACTION_CREATE" description="COM_JOOMGALLERY_ACTION_COMPONENT_CREATE_DESC" />
 		<action name="joom.create.inown" title="COM_JOOMGALLERY_ACTION_CREATE_INOWN" description="COM_JOOMGALLERY_ACTION_COMPONENT_CREATE_INOWN_DESC" />
 		<action name="core.delete" title="JACTION_DELETE" description="COM_JOOMGALLERY_ACTION_COMPONENT_DELETE_DESC" />
@@ -53,7 +52,6 @@
 
   <section name="collection">
 		<action name="joom.connect" title="COM_JOOMGALLERY_ACTION_CONNECT" description="COM_JOOMGALLERY_ACTION_CONNECT_DESC" />
-		<action name="joom.connect.inown" title="COM_JOOMGALLERY_ACTION_CONNECT_INOWN" description="COM_JOOMGALLERY_ACTION_CONNECT_INOWN_DESC" />
 		<action name="core.create" title="JACTION_CREATE" description="COM_JOOMGALLERY_ACTION_COLLECTION_CREATE_DESC" />
 		<action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE" />
 		<action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT" />

@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
+use Joomgallery\Component\Joomgallery\Administrator\Service\Downloader\DownloaderInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
@@ -55,6 +56,152 @@ class ImageController extends JoomFormController
     }
 
     return parent::save($key, $urlVar);
+  }
+
+  /**
+   * Deliver an allowed image type as a browser download.
+   *
+   * The effective image configuration controls whether downloading is enabled,
+   * which stored image type is available, and whether a watermark is applied.
+   *
+   * @return  void
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function download(): void
+  {
+    $imageId = $this->input->getInt('id', 0);
+    $type    = strtolower($this->input->getCmd('type', ''));
+
+    try
+    {
+      if(!$this->checkToken('get', false))
+      {
+        throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+      }
+
+      // Check required query variables
+      if($imageId <= 0 || $type === '')
+      {
+        throw new \InvalidArgumentException(Text::_('COM_JOOMGALLERY_DOWNLOAD_INVALID_REQUEST'), 400);
+      }
+
+      // Check access
+      if(!$this->access($imageId, $type))
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_ERROR_ACCESS_VIEW'), 403);
+      }
+
+      /** @var ImageModel $model */
+      $model = $this->getModel('Image', 'Administrator');
+      $image = $model->getItem($imageId);
+
+      if(!$image || (int) $image->id !== $imageId)
+      {
+        throw new \RuntimeException(Text::_('COM_JOOMGALLERY_DOWNLOAD_IMAGE_NOT_FOUND'), 404);
+      }
+
+      $downloader = $this->component->getDownloader();
+      $decision   = $downloader->authorizeImage($image, $type, 'download');
+
+      if($decision['status'] !== DownloaderInterface::STATUS_ALLOWED)
+      {
+        throw new \RuntimeException(
+            $decision['message'] ?: Text::_('COM_JOOMGALLERY_LICENSE_REQUIRED'),
+            $decision['status'] === DownloaderInterface::STATUS_PROVIDER_UNAVAILABLE ? 503 : 403
+        );
+      }
+
+      // Prepare, count and send the authorized download.
+      [$fileInfo, $resource] = $downloader->prepareImageDownload($image, $type);
+      $downloader->recordDownloads($imageId);
+      $this->outputDownloadResource($resource, $fileInfo, (string) $image->filename);
+    }
+    catch(\Throwable $e)
+    {
+      $status = \in_array((int) $e->getCode(), [400, 403, 404, 503], true) ? (int) $e->getCode() : 500;
+
+      if($status === 500)
+      {
+        $this->component->addLog($e->getMessage(), 'error', 'jerror');
+      }
+
+      $message = $status === 500 ? Text::_('COM_JOOMGALLERY_DOWNLOAD_PROCESSING_FAILED') : $e->getMessage();
+      $this->outputError($status, $message);
+    }
+  }
+
+  /**
+   * Check whether the current application permits downloading an image.
+   *
+   * Site controllers may override this method with their visibility checks.
+   */
+  protected function access($id, $type = 'thumbnail')
+  {
+    return true;
+  }
+
+  /**
+   * Send an image resource as an attachment to the client.
+   *
+   * @param   resource   $resource  The image resource
+   * @param   object     $fileInfo  The image's file info
+   * @param   string     $filename  The image's file name
+   *
+   * @return  void
+   */
+  protected function outputDownloadResource($resource, object $fileInfo, string $filename): void
+  {
+    $filename = str_replace(["\r", "\n"], '', basename($filename));
+    $mimeType = (string) ($fileInfo->mime_type ?? 'application/octet-stream');
+    $size     = (int) ($fileInfo->size ?? 0);
+
+    $this->app->setHeader('Content-Type', $mimeType, true);
+    $this->app->setHeader(
+        'Content-Disposition',
+        'attachment; filename="' . addcslashes($filename, '"\\') . '"; filename*=UTF-8\'\'' . rawurlencode($filename),
+        true
+    );
+    $this->app->setHeader('Content-Length', (string) $size, true);
+    $this->app->setHeader('Cache-Control', 'private, no-store, no-cache, must-revalidate', true);
+    $this->app->setHeader('Pragma', 'no-cache', true);
+    $this->app->setHeader('X-Content-Type-Options', 'nosniff', true);
+
+    while(ob_get_level() > 0)
+    {
+      ob_end_clean();
+    }
+
+    $this->app->sendHeaders();
+    fpassthru($resource);
+    fclose($resource);
+    $this->app->close();
+  }
+
+  /**
+   * Send an error response for a raw endpoint.
+   *
+   * @param   int      $status
+   * @param   string   $message
+   *
+   * @return  void
+   */
+  protected function outputError(int $status, string $message): void
+  {
+    $this->app->setHeader('Status', (string) $status, true);
+    $this->app->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
+    $this->app->setHeader('Content-Length', (string) \strlen($message), true);
+    $this->app->setHeader('Cache-Control', 'no-store', true);
+    $this->app->setHeader('X-Content-Type-Options', 'nosniff', true);
+
+    while(ob_get_level() > 0)
+    {
+      ob_end_clean();
+    }
+
+    $this->app->sendHeaders();
+    echo $message;
+    $this->app->close();
   }
 
   /**

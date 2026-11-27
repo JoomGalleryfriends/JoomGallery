@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <fieldset name="credentials" label="COM_JOOMGALLERY_USERKEYS_FIELDSET_LABEL">
+    <field name="jg_aiint_key"
+           type="textarea"
+           rows="2"
+           filter="raw"
+           label="COM_JOOMGALLERY_USERKEYS_INTERFACE_KEY_LABEL"
+           description="COM_JOOMGALLERY_USERKEYS_INTERFACE_KEY_DESC" />
+    <field name="jg_aiint_provider_keys"
+           type="subform"
+           formsource="administrator/components/com_joomgallery/forms/subform_ai_provider_keys.xml"
+           multiple="true"
+           label="COM_JOOMGALLERY_USERKEYS_PROVIDER_KEYS_LABEL"
+           description="COM_JOOMGALLERY_USERKEYS_PROVIDER_KEYS_DESC" />
+  </fieldset>
+</form>

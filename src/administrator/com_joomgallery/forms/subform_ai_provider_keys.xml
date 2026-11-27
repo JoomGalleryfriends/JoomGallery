@@ -5,8 +5,7 @@
          hint="openai"
          label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_NAME_LABEL" />
   <field name="provider_key"
-         type="textarea"
-         label="COM_JOOMGALLERY_CONFIG_AIINT_PROV_KEYS_KEY_LABEL"
-         default=""
-         rows="2" />
+         type="text"
+         filter="raw"
+         label="COM_JOOMGALLERY_USERKEYS_PROVIDER_KEY_LABEL" />
 </form>

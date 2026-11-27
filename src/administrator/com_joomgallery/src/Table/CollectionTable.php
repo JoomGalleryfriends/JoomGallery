@@ -19,6 +19,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Collection table
@@ -48,6 +50,22 @@ class CollectionTable extends Table
    * @since  4.0.0
    */
   public $approveImages = false;
+
+  /**
+   * Allow lifecycle code to create or designate a default collection.
+   *
+   * @var    bool
+   * @since  DEPLOY_VERSION
+   */
+  public bool $allowDefaultChanges = false;
+
+  /**
+   * Allow the user-profile lifecycle to delete a default collection.
+   *
+   * @var    bool
+   * @since  DEPLOY_VERSION
+   */
+  public bool $allowDefaultDelete = false;
 
   /**
    * Constructor
@@ -81,6 +99,38 @@ class CollectionTable extends Table
   {
     $date = Factory::getDate();
     $task = Factory::getApplication()->input->get('task', '', 'cmd');
+    $id   = (int) ($array['id'] ?? $this->id ?? 0);
+
+    // Default status and ownership are lifecycle invariants, not editable fields.
+    if(!$this->allowDefaultChanges && !$this->is_migration)
+    {
+      if($id > 0)
+      {
+        // Table::load() binds the loaded row through this method. Loading a
+        // second CollectionTable here would therefore recurse indefinitely.
+        $db       = $this->getDatabase();
+        $query    = $db->getQuery(true)
+          ->select($db->quoteName(['is_default', 'userid']))
+          ->from($db->quoteName($this->getTableName()))
+          ->where($db->quoteName($this->getKeyName()) . ' = ' . $id);
+        $original = $db->setQuery($query)->loadObject();
+
+        if($original)
+        {
+          // Only lifecycle or migration code may designate another default.
+          $array['is_default'] = (int) $original->is_default;
+
+          if((int) $original->is_default === 1)
+          {
+            $array['userid'] = (int) $original->userid;
+          }
+        }
+      }
+      elseif(!empty($array['is_default']))
+      {
+        $array['is_default'] = 0;
+      }
+    }
 
     // Support for title field: title
     if(\array_key_exists('title', $array))
@@ -216,15 +266,32 @@ class CollectionTable extends Table
    */
   public function store($updateNulls = true)
   {
-    $images = null;
+    $images        = null;
+    $defaultUserId = (int) $this->is_default === 1 ? (int) $this->userid : null;
+    $db            = $this->getDatabase();
+    $success       = false;
+
+    // Joomla Table writes every public property. Generated columns must be
+    // omitted because the database alone calculates their value.
+    unset($this->default_userid);
 
     if(property_exists($this, 'images') && !empty($this->images))
     {
       $images = $this->images;
     }
 
-    if($success = parent::store($updateNulls))
+    try
     {
+      $db->transactionStart(true);
+      $success = parent::store($updateNulls);
+
+      if(!$success)
+      {
+        $db->transactionRollback(true);
+
+        return false;
+      }
+
       if(!\is_null($images) && !empty($images))
       {
         $approved = false;
@@ -234,9 +301,27 @@ class CollectionTable extends Table
           $approved = true;
         }
 
-        // Do the mapping
-        $this->addMapping($images, $approved);
+        if(!$this->addMapping($images, $approved))
+        {
+          $db->transactionRollback(true);
+
+          return false;
+        }
       }
+
+      $db->transactionCommit(true);
+    }
+    catch(\Throwable $e)
+    {
+      $db->transactionRollback(true);
+      $this->setError($e->getMessage());
+      $this->getComponent()->addLog($e->getMessage(), 'error', 'jerror');
+
+      return false;
+    }
+    finally
+    {
+      $this->default_userid = $defaultUserId;
     }
 
     return $success;
@@ -251,6 +336,18 @@ class CollectionTable extends Table
    */
   public function delete($pk = null)
   {
+    if(!$this->load($pk))
+    {
+      return false;
+    }
+
+    if((int) $this->is_default === 1 && !$this->allowDefaultDelete)
+    {
+      $this->setError('The default collection can only be deleted with its JoomGallery user profile.');
+
+      return false;
+    }
+
     $this->_trackAssets = false;
 
     if($success = parent::delete($pk))
@@ -282,20 +379,38 @@ class CollectionTable extends Table
     }
 
     // Prepare image ids
-    if(!\is_array($img_id))
-    {
-      $img_id = [$img_id];
-    }
+    $img_id = ArrayHelper::toInteger((array) $img_id);
+    $img_id = array_values(array_unique(array_filter($img_id, static fn($id) => $id > 0)));
 
     // Load db driver
     $db = $this->getDatabase();
 
-    foreach($img_id as $key => $iid)
+    try
     {
-      if($iid > 0)
+      foreach($img_id as $iid)
       {
+        $query    = $db->getQuery(true)->select($db->quoteName(['id', 'approved']))
+          ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
+          ->where($db->quoteName('collectionid') . ' = ' . (int) $this->getId())
+          ->where($db->quoteName('imgid') . ' = ' . $iid);
+        $existing = $db->setQuery($query)->loadObject();
+
+        if($existing)
+        {
+          if($approve === true && !(int) $existing->approved)
+          {
+            $query = $db->getQuery(true)->update($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
+              ->set($db->quoteName('approved') . ' = 1')
+              ->where($db->quoteName('collectionid') . ' = ' . (int) $this->getId())
+              ->where($db->quoteName('imgid') . ' = ' . $iid);
+            $db->setQuery($query)->execute();
+          }
+
+          continue;
+        }
+
         $mapping               = new \stdClass();
-        $mapping->imgid        = (int) $iid;
+        $mapping->imgid        = $iid;
         $mapping->collectionid = (int) $this->getId();
 
         if($approve === true)
@@ -309,12 +424,35 @@ class CollectionTable extends Table
         }
         catch(\Exception $e)
         {
-          $this->setError($e->getMessage());
-          $this->getComponent()->addLog($e->getMessage(), 'error', 'jerror');
+          // The unique key may have won a concurrent insert race. Treat that
+          // as idempotent, but retain every unrelated database failure.
+          $query    = $db->getQuery(true)->select($db->quoteName(['id', 'approved']))
+            ->from($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
+            ->where($db->quoteName('collectionid') . ' = ' . (int) $this->getId())
+            ->where($db->quoteName('imgid') . ' = ' . $iid);
+          $existing = $db->setQuery($query)->loadObject();
 
-          return false;
+          if(!$existing)
+          {
+            throw $e;
+          }
+
+          if($approve === true && !(int) $existing->approved)
+          {
+            $query = $db->getQuery(true)->update($db->quoteName(_JOOM_TABLE_COLLECTIONS_REF))
+              ->set($db->quoteName('approved') . ' = 1')
+              ->where($db->quoteName('id') . ' = ' . (int) $existing->id);
+            $db->setQuery($query)->execute();
+          }
         }
       }
+    }
+    catch(\Exception $e)
+    {
+      $this->setError($e->getMessage());
+      $this->getComponent()->addLog($e->getMessage(), 'error', 'jerror');
+
+      return false;
     }
 
     return true;
@@ -339,9 +477,15 @@ class CollectionTable extends Table
     }
 
     // Prepare image ids
-    if(!\is_array($img_id) && $img_id != 0)
+    if(\is_array($img_id) || (int) $img_id !== 0)
     {
-      $img_id = [$img_id];
+      $img_id = ArrayHelper::toInteger((array) $img_id);
+      $img_id = array_values(array_unique(array_filter($img_id, static fn($id) => $id > 0)));
+
+      if(!$img_id)
+      {
+        return true;
+      }
     }
 
     // Load db driver
@@ -354,7 +498,7 @@ class CollectionTable extends Table
     if(\is_array($img_id))
     {
       // Delete mapping only for a specified images
-      $query->where($db->quoteName('imgid') . ' IN (' . implode(',', $img_id) . ')');
+      $query->whereIn($db->quoteName('imgid'), $img_id, ParameterType::INTEGER);
     }
 
     // Create the query

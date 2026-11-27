@@ -108,6 +108,16 @@ class JoomGalleryView extends BaseHtmlView
       // The option unicodeslugs is activated.
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNICODESLUGS'), 'warning');
     }
+
+    if($this->app->isClient('administrator'))
+    {
+      $this->component->createConfig();
+
+      if((int) $this->component->getConfig()->get('jg_use_real_paths', 0) === 1)
+      {
+        $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_WARNING_REAL_PATHS'), 'warning');
+      }
+    }
   }
 
   /**

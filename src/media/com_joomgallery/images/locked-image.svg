@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-labelledby="title description">
+  <title id="title">Locked image</title>
+  <desc id="description">This image requires a valid license or acceptance of its license terms.</desc>
+  <rect width="800" height="600" fill="#eef1f4"/>
+  <rect x="245" y="235" width="310" height="245" rx="28" fill="#ffffff" stroke="#6d7680" stroke-width="14"/>
+  <path d="M310 235v-60c0-66 40-110 90-110s90 44 90 110v60" fill="none" stroke="#6d7680" stroke-width="28" stroke-linecap="round"/>
+  <circle cx="400" cy="340" r="31" fill="#6d7680"/>
+  <path d="M400 360v54" stroke="#6d7680" stroke-width="25" stroke-linecap="round"/>
+  <text x="400" y="545" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" fill="#41484f">Image locked</text>
+</svg>

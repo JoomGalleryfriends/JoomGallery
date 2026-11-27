@@ -4,7 +4,7 @@
     <field name="jg_watermarkpos"
            type="list"
            groupByFieldset="false"
-           default="9"
+           default="5"
            label="COM_JOOMGALLERY_CONFIG_WATERMARK_POSITION"
            description="COM_JOOMGALLERY_CONFIG_WATERMARK_POSITION_LONG" >
         <option value="1">COM_JOOMGALLERY_CONFIG_IMG_POSITION_TL</option>
@@ -21,7 +21,7 @@
     <field name="jg_watermarkzoom"
            type="list"
            groupByFieldset="false"
-           default="0"
+           default="2"
            label="COM_JOOMGALLERY_RESIZING"
            description="COM_JOOMGALLERY_FIELDS_WATERMARK_RESIZING_DESC" >
         <option value="0">JNO</option>
@@ -32,7 +32,7 @@
     <field name="jg_watermarksize"
            type="number"
            groupByFieldset="false"
-           default="15"
+           default="60"
            min="1"
            max="100"
            step="1"
@@ -45,7 +45,7 @@
     <field name="jg_watermarkopacity"
            type="number"
            groupByFieldset="false"
-           default="80"
+           default="50"
            min="1"
            max="100"
            step="1"

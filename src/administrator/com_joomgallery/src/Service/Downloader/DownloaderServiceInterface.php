@@ -1,0 +1,38 @@
+<?php
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2026  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
+namespace Joomgallery\Component\Joomgallery\Administrator\Service\Downloader;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') || die;
+// phpcs:enable PSR1.Files.SideEffects
+
+/**
+ * Component contract for creating and retrieving the Downloader service.
+ *
+ * @package JoomGallery
+ * @since   __DEPLOY_VERSION__
+ */
+interface DownloaderServiceInterface
+{
+  /**
+   * Create the Downloader service.
+   *
+   * @return  void
+   */
+  public function createDownloader(): void;
+
+  /**
+   * Return the Downloader service.
+   *
+   * @return  DownloaderInterface  Downloader service instance.
+   */
+  public function getDownloader(): DownloaderInterface;
+}
