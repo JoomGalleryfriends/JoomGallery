@@ -261,7 +261,6 @@ CREATE TABLE IF NOT EXISTS `#__joomgallery_configs` (
 `jg_newpicnote` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_redirect_after_upload` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_download` TINYINT(1) NOT NULL DEFAULT 1,
-`jg_download_hint` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_downloadfile` VARCHAR(1024) NOT NULL DEFAULT 'detail',
 `jg_downloadwithwatermark` TINYINT(1) NOT NULL DEFAULT 1,
 `jg_download_zip_retention` INT NOT NULL DEFAULT 240,

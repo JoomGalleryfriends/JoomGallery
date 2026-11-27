@@ -406,9 +406,33 @@ ob_start(); ?>
         <?php endif; ?>
       <?php endif; ?>
       <?php if($show_download_btn) : ?>
-        <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
-          <button class="btn btn-outline-secondary pe-none" type="button" disabled><span class="icon-download me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_DOWNLOAD'); ?></button>
-        </span>
+        <?php if($this->downloadTypes) : ?>
+          <form class="d-inline-flex align-items-center gap-2" action="<?php echo Route::_('index.php'); ?>" method="get" target="_blank">
+            <input type="hidden" name="option" value="com_joomgallery">
+            <input type="hidden" name="task" value="image.download">
+            <input type="hidden" name="id" value="<?php echo (int) $this->item->id; ?>">
+            <?php echo HTMLHelper::_('form.token'); ?>
+            <?php if(\count($this->downloadTypes) > 1) : ?>
+              <label class="visually-hidden" for="jg-download-type-<?php echo (int) $this->item->id; ?>"><?php echo Text::_('COM_JOOMGALLERY_IMAGETYPE'); ?></label>
+              <select class="form-select w-auto" id="jg-download-type-<?php echo (int) $this->item->id; ?>" name="type">
+                <?php foreach($this->downloadTypes as $downloadType) : ?>
+                  <?php
+                  $typeKey   = 'COM_JOOMGALLERY_' . strtoupper($downloadType);
+                  $typeLabel = Text::_($typeKey);
+                  ?>
+                  <option value="<?php echo $this->escape($downloadType); ?>"><?php echo $this->escape($typeLabel === $typeKey ? ucfirst($downloadType) : $typeLabel); ?></option>
+                <?php endforeach; ?>
+              </select>
+            <?php else : ?>
+              <input type="hidden" name="type" value="<?php echo $this->escape($this->downloadTypes[0]); ?>">
+            <?php endif; ?>
+            <button class="btn btn-outline-secondary" type="submit"><span class="icon-download me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_DOWNLOAD'); ?></button>
+          </form>
+        <?php else : ?>
+          <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_DOWNLOAD_UNAVAILABLE')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">
+            <button class="btn btn-outline-secondary pe-none" type="button" disabled><span class="icon-download me-1" aria-hidden="true"></span><?php echo Text::_('COM_JOOMGALLERY_DOWNLOAD'); ?></button>
+          </span>
+        <?php endif; ?>
       <?php endif; ?>
       <?php if($show_voting_btn) : ?>
         <span class="d-inline-block" tabindex="0" data-jg-feature-popover data-bs-html="false" data-bs-content="<?php echo $this->escape(Text::_('COM_JOOMGALLERY_FEATURE_COMING_SOON')); ?>" data-bs-toggle="popover" data-bs-trigger="hover focus">

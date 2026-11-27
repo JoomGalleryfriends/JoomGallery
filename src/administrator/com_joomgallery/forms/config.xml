@@ -623,20 +623,6 @@
         <option value="1">JYES</option>
       </field>
 
-      <field name="jg_download_hint"
-             type="radio"
-             default="1"
-             class="btn-group"
-             layout="joomla.form.field.radio.switcher"
-             filter="integer"
-             validate="options"
-             showon="jg_download:1"
-             label="COM_JOOMGALLERY_CONFIG_HINT_NOT_ENOUGH_RIGHTS"
-             description="COM_JOOMGALLERY_CONFIG_DOWNLOAD_HINT_LONG" >
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
-      </field>
-
       <field name="jg_downloadfile"
              type="jgimagetype"
              multiple="true"

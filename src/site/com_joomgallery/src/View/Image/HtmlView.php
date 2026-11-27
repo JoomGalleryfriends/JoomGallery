@@ -68,6 +68,13 @@ class HtmlView extends JoomGalleryView
   public $defaultCollection = null;
 
   /**
+   * Image types that are configured and have an available file for download.
+   *
+   * @var array
+   */
+  public $downloadTypes = [];
+
+  /**
    * Display the view
    *
    * @param   string  $tpl  Template name
@@ -130,7 +137,9 @@ class HtmlView extends JoomGalleryView
     }
 
     // Load additional information
-    $this->item->rating = JoomHelper::getRating($this->item->id);
+    $this->item->rating  = JoomHelper::getRating($this->item->id);
+    $downloadModel       = $this->component->getMVCFactory()->createModel('Image', 'Administrator', ['ignore_request' => true]);
+    $this->downloadTypes = $downloadModel->getDownloadTypes($this->item);
     $this->prepareCollections();
     $this->prepareNavigation($model);
 

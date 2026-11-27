@@ -75,6 +75,11 @@ class ImageController extends JoomFormController
 
     try
     {
+      if(!$this->checkToken('get', false))
+      {
+        throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+      }
+
       // Check required query variables
       if($imageId <= 0 || $type === '')
       {

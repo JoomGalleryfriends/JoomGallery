@@ -47,6 +47,11 @@ class ImageController extends JoomFormController
 
     try
     {
+      if(!$this->checkToken('get', false))
+      {
+        throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+      }
+
       if($imageId <= 0 || $type === '')
       {
         throw new \InvalidArgumentException(Text::_('COM_JOOMGALLERY_DOWNLOAD_INVALID_REQUEST'), 400);

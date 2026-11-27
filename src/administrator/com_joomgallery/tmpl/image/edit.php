@@ -260,7 +260,8 @@ echo HTMLHelper::_('bootstrap.renderModal', 'image-modal-box', $options, '<div i
         {
         $downloadURL[$imagetype->typename] = Route::_(
             'index.php?option=com_joomgallery&task=image.download&id=' . (int) $this->item->id
-              . '&type=' . rawurlencode($imagetype->typename),
+              . '&type=' . rawurlencode($imagetype->typename)
+              . '&' . \Joomla\CMS\Session\Session::getFormToken() . '=1',
             false
         );
         }

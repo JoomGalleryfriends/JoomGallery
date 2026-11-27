@@ -80,6 +80,7 @@ ALTER TABLE `#__joomgallery_collections_ref`
 
 -- Multiple downloadable image types are stored by typename.
 ALTER TABLE `#__joomgallery_configs`
+  DROP COLUMN `jg_download_hint`,
   MODIFY `jg_downloadfile` VARCHAR(1024) NOT NULL DEFAULT 'detail',
   ADD `jg_download_zip_retention` INT NOT NULL DEFAULT 240 AFTER `jg_downloadwithwatermark`,
   ADD `jg_license_terms_required` TINYINT(1) NOT NULL DEFAULT 0 AFTER `jg_download_zip_retention`,
